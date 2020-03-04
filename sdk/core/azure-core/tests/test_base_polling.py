@@ -111,7 +111,14 @@ def pipeline_client_builder():
     return create_client
 
 
-def test_post(pipeline_client_builder):
+@pytest.fixture
+def deserialization_cb():
+    def cb(pipeline_response):
+        return json.loads(pipeline_response.http_response.text())
+    return cb
+
+
+def test_post(pipeline_client_builder, deserialization_cb):
 
         # Test POST LRO with both Location and Operation-Location
 
@@ -145,9 +152,6 @@ def test_post(pipeline_client_builder):
                 pytest.fail("No other query allowed")
 
         client = pipeline_client_builder(send)
-
-        def deserialization_cb(pipeline_response):
-            return json.loads(pipeline_response.http_response.text())
 
         # LRO options with Location final state
         poll = LROPoller(
@@ -187,6 +191,49 @@ def test_post(pipeline_client_builder):
             LROBasePolling(0))
         result = poll.result()
         assert result is None
+
+
+def test_post_resource_location(pipeline_client_builder, deserialization_cb):
+
+        # ResourceLocation
+
+        # The initial response contains both Location and Operation-Location, a 202 and no Body
+        initial_response = TestBasePolling.mock_send(
+            'POST',
+            202,
+            {
+                'operation-location': 'http://example.org/async_monitor',
+            },
+            ''
+        )
+
+        def send(request, **kwargs):
+            assert request.method == 'GET'
+
+            if request.url == 'http://example.org/resource_location':
+                return TestBasePolling.mock_send(
+                    'GET',
+                    200,
+                    body={'location_result': True}
+                ).http_response
+            elif request.url == 'http://example.org/async_monitor':
+                return TestBasePolling.mock_send(
+                    'GET',
+                    200,
+                    body={'status': 'Succeeded', 'resourceLocation': 'http://example.org/resource_location'}
+                ).http_response
+            else:
+                pytest.fail("No other query allowed")
+
+        client = pipeline_client_builder(send)
+
+        poll = LROPoller(
+            client,
+            initial_response,
+            deserialization_cb,
+            LROBasePolling(0))
+        result = poll.result()
+        assert result['location_result'] == True
 
 
 class TestBasePolling(object):

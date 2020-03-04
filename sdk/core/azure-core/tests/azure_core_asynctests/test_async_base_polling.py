@@ -113,8 +113,15 @@ def async_pipeline_client_builder():
     return create_client
 
 
+@pytest.fixture
+def deserialization_cb():
+    def cb(pipeline_response):
+        return json.loads(pipeline_response.http_response.text())
+    return cb
+
+
 @pytest.mark.asyncio
-async def test_post(async_pipeline_client_builder):
+async def test_post(async_pipeline_client_builder, deserialization_cb):
 
         # Test POST LRO with both Location and operation-location
 
@@ -148,9 +155,6 @@ async def test_post(async_pipeline_client_builder):
                 pytest.fail("No other query allowed")
 
         client = async_pipeline_client_builder(send)
-
-        def deserialization_cb(pipeline_response):
-            return json.loads(pipeline_response.http_response.text())
 
         # LRO options with Location final state
         poll = async_poller(
@@ -191,6 +195,49 @@ async def test_post(async_pipeline_client_builder):
         result = await poll
         assert result is None
 
+
+@pytest.mark.asyncio
+async def test_post_resource_location(async_pipeline_client_builder, deserialization_cb):
+
+        # ResourceLocation
+
+        # The initial response contains both Location and Operation-Location, a 202 and no Body
+        initial_response = TestBasePolling.mock_send(
+            'POST',
+            202,
+            {
+                'operation-location': 'http://example.org/async_monitor',
+            },
+            ''
+        )
+
+        async def send(request, **kwargs):
+            assert request.method == 'GET'
+
+            if request.url == 'http://example.org/resource_location':
+                return TestBasePolling.mock_send(
+                    'GET',
+                    200,
+                    body={'location_result': True}
+                ).http_response
+            elif request.url == 'http://example.org/async_monitor':
+                return TestBasePolling.mock_send(
+                    'GET',
+                    200,
+                    body={'status': 'Succeeded', 'resourceLocation': 'http://example.org/resource_location'}
+                ).http_response
+            else:
+                pytest.fail("No other query allowed")
+
+        client = async_pipeline_client_builder(send)
+
+        poll = async_poller(
+            client,
+            initial_response,
+            deserialization_cb,
+            AsyncLROBasePolling(0))
+        result = await poll
+        assert result['location_result'] == True
 
 class TestBasePolling(object):
 
