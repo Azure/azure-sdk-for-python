@@ -5,24 +5,10 @@
 # ------------------------------------
 
 import re
-
-
-def get_receipt_field_value(field):
-    if field is None:
-        return field
-
-    # FIXME: find field value refactor
-    value = field.value_array or field.value_date or field.value_integer or field.value_number \
-            or field.value_object or field.value_phone_number or field.value_string or field.value_time
-
-    if value is None:  # Could do this and return string value where value_number doesn't get returned (Chris says this is probably a bug for Receipt item Quantity)
-        return field.text
-    return value
+from ._helpers import get_receipt_field_value
 
 
 def get_raw_field(field, raw_result):
-
-    # FIXME: refactor this function
     raw_lines = []
     lines = set()
     try:
@@ -84,6 +70,8 @@ class FieldValue(object):
 
     @classmethod
     def _from_generated(cls, field, read_result, include_raw):
+        if field is None:
+            return field
         if include_raw:
             return cls(
                 value=get_receipt_field_value(field),
@@ -110,9 +98,9 @@ class ReceiptItem(object):
         try:
             receipt_item = items.value_array
             return [cls(
-                name=get_receipt_field_value(item.value_object["Name"]),
-                quantity=get_receipt_field_value(item.value_object["Quantity"]),
-                total_price=get_receipt_field_value(item.value_object["TotalPrice"])
+                name=get_receipt_field_value(item.value_object.get("Name")),
+                quantity=get_receipt_field_value(item.value_object.get("Quantity")),
+                total_price=get_receipt_field_value(item.value_object.get("TotalPrice"))
             ) for item in receipt_item]
         except AttributeError:
             return None
@@ -129,9 +117,9 @@ class ReceiptItemField(object):
         try:
             receipt_item = items.value_array
             return [cls(
-                name=FieldValue._from_generated(item.value_object["Name"], read_result, include_raw),
-                quantity=FieldValue._from_generated(item.value_object["Quantity"], read_result, include_raw),
-                total_price=FieldValue._from_generated(item.value_object["TotalPrice"], read_result, include_raw),
+                name=FieldValue._from_generated(item.value_object.get("Name"), read_result, include_raw),
+                quantity=FieldValue._from_generated(item.value_object.get("Quantity"), read_result, include_raw),
+                total_price=FieldValue._from_generated(item.value_object.get("TotalPrice"), read_result, include_raw),
             ) for item in receipt_item]
         except AttributeError:
             return None
@@ -355,6 +343,15 @@ class ModelInfo(object):
         self.created_date_time = kwargs.get('created_date_time', None)
         self.last_updated_date_time = kwargs.get('last_updated_date_time', None)
 
+    @classmethod
+    def _from_generated(cls, model):
+        return cls(
+            model_id=model.model_id,
+            status=model.status,
+            created_date_time=model.created_date_time,
+            last_updated_date_time=model.last_updated_date_time
+        )
+
 
 class ExtractedPage(object):
     def __init__(self, **kwargs):
@@ -434,4 +431,19 @@ class LabelValue(object):
             bounding_box=label.bounding_box,
             confidence=label.confidence,
             raw_field=None
+        )
+
+
+class ModelsSummary(object):
+    def __init__(self, **kwargs):
+        self.count = kwargs.get('count', None)
+        self.limit = kwargs.get('limit', None)
+        self.last_updated_date_time = kwargs.get('last_updated_date_time', None)
+
+    @classmethod
+    def _from_generated(cls, model):
+        return cls(
+            count=model.count,
+            limit=model.limit,
+            last_updated_date_time=model.last_updated_date_time
         )

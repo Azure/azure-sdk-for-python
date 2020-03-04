@@ -5,20 +5,22 @@
 # ------------------------------------
 
 
-from ._models import ExtractedReceipt, FieldValue, ReceiptFields, ReceiptItem, ReceiptItemField, TableCell, Table, ExtractedLayoutPage, CustomModel, LabeledCustomModel, ExtractedPage, ExtractedField, ExtractedLabel
-
-
-def get_pipeline_response(pipeline_response, _, response_headers):
-    return pipeline_response
-
-
-def get_receipt_field_value(field):
-    if field is None:
-        return field
-    # FIXME: refactor this
-    value = field.value_array or field.value_date or field.value_integer or field.value_number \
-            or field.value_object or field.value_phone_number or field.value_string or field.value_time
-    return value
+from ._models import (
+    ExtractedReceipt,
+    FieldValue,
+    ReceiptFields,
+    ReceiptItem,
+    ReceiptItemField,
+    TableCell,
+    Table,
+    ExtractedLayoutPage,
+    CustomModel,
+    LabeledCustomModel,
+    ExtractedPage,
+    ExtractedField,
+    ExtractedLabel
+)
+from ._helpers import get_receipt_field_value
 
 
 def prepare_receipt_result(response, include_raw):
@@ -121,10 +123,6 @@ def prepare_labeled_training_result(response):
     return LabeledCustomModel._from_generated(response)
 
 
-def list_models_result(response):
-    pass
-
-
 def prepare_analyze_result(response, include_raw):
     pages = []
 
@@ -161,6 +159,9 @@ def prepare_labeled_analyze_result(response, include_raw):
 
     for idx, page in enumerate(response.analyze_result.document_results):
         if page.fields:
-            pages[idx].fields = [ExtractedLabel._from_generated((label, value), read_result, include_raw) for label, value in page.fields.items()]
-
+            pages[idx].fields = [
+                ExtractedLabel._from_generated((label, value), read_result, include_raw)
+                for label, value
+                in page.fields.items()
+            ]
     return pages
