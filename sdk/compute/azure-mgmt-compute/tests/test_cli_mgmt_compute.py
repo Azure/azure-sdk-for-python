@@ -16,9 +16,18 @@
 # Coverage %      : 48.275862068965516
 # ----------------------
 
+# covered ops:
+#   snapshots: 4
+#   disks: 4
+#   disk_encription: 2
+#   
+
+# import json
+# import urllib3
 import unittest
 
 import azure.mgmt.compute
+# import azure.mgmt.keyvault
 from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 
 AZURE_LOCATION = 'eastus'
@@ -30,111 +39,169 @@ class MgmtComputeTest(AzureMgmtTestCase):
         self.mgmt_client = self.create_mgmt_client(
             azure.mgmt.compute.ComputeManagementClient
         )
+        self.keyvault_client = self.create_mgmt_client(
+            azure.mgmt.keyvault.KeyVaultManagementClient
+        )
     
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_compute(self, resource_group):
 
         SERVICE_NAME = "myapimrndxyz"
+        SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
+        TENANT_ID = self.settings.TENANT_ID
+        RESOURCE_GROUP = resource_group.name
+        STORAGE_ACCOUNT = None
+        DISK_NAME = "diskname"
+        DISK_ENCRYPTION_SET_NAME = "diskencryptionsetname"
+        SNAPSHOT_NAME = "snapshotname"
+        KEY_VAULT = "keyvaultxxyyzz"
+        KEY_NAME = "keynamexxyyzz"
+
+        # - Setup keyvault -
+        # result = self.keyvault_client.vaults.create_or_update(
+        #     resource_group.name,
+        #     KEY_VAULT,
+        #     {
+        #         'location': "eastus",
+        #         'properties': {
+        #             'sku': {
+        #                 'name': 'standard'
+        #             },
+        #             # Fake random GUID
+        #             'tenant_id': TENANT_ID,
+        #             'access_policies': [],
+        #             # 'create_mode': 'recover',
+        #             'enabled_for_disk_encryption': True,
+        #         },
+        #     }
+        # ).result()
+        # VAULT_URI = result.properties.vault_uri
+        # VAULT_ID = result.id
+
+        # BODY = {
+        #   "kty": "RSA",
+        #   "key_size": 2048,
+        #   "key_ops": [
+        #     "encrypt",
+        #     "decrypt",
+        #     "sign",
+        #     "verify",
+        #     "wrapKey",
+        #     "unwrapKey"
+        #   ],
+        #   "attributes": {},
+        #   "tags": {
+        #     "purpose": "unit test",
+        #   }
+        # }
+        # headers = {"Content-Type": "application/json; charset=utf-8"}
+        # BODY = json.dumps(BODY).encode()
+        # http = urllib3.PoolManager()
+        # result = http.request("POST", "https://keyvaultxxyyzz.vault.azure.net/keys/" + KEY_NAME + "/create?api-version=7.0", body=BODY, headers=headers)
+        # print(result.data.decode('utf-8'))
+        # - End keyvault -
 
         # Create an empty managed disk.[put]
         BODY = {
-          "location": "West US",
-          "properties": {
-            "creation_data": {
-              "create_option": "Empty"
-            },
-            "disk_size_gb": "200"
-          }
+          "location": "eastus",
+          "creation_data": {
+            "create_option": "Empty"
+          },
+          "disk_size_gb": "200"
         }
         result = self.mgmt_client.disks.create_or_update(resource_group.name, DISK_NAME, BODY)
         result = result.result()
 
-        # Create a managed disk by importing an unmanaged blob from a different subscription.[put]
-        BODY = {
-          "location": "West US",
-          "properties": {
-            "creation_data": {
-              "create_option": "Import",
-              "storage_account_id": "subscriptions/{subscriptionId}/resourceGroups/myResourceGroup/providers/Microsoft.Storage/storageAccounts/myStorageAccount",
-              "source_uri": "https://mystorageaccount.blob.core.windows.net/osimages/osimage.vhd"
-            }
-          }
-        }
-        result = self.mgmt_client.disks.create_or_update(resource_group.name, DISK_NAME, BODY)
-        result = result.result()
+        # TODO: NEED STORAGE
+        # # Create a managed disk by importing an unmanaged blob from a different subscription.[put]
+        # DISK_NAME_2 = DISK_NAME + "2"
+        # BODY = {
+        #   "location": "eastus",
+        #   "properties": {
+        #     "creation_data": {
+        #       "create_option": "Import",
+        #       "storage_account_id": "subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/myResourceGroup/providers/Microsoft.Storage/storageAccounts/" + STORAGE_ACCOUNT,
+        #       "source_uri": "https://mystorageaccount.blob.core.windows.net/osimages/osimage.vhd"
+        #     }
+        #   }
+        # }
+        # result = self.mgmt_client.disks.create_or_update(resource_group.name, DISK_NAME_2, BODY)
+        # result = result.result()
 
-        # Create a managed disk by copying a snapshot.[put]
-        BODY = {
-          "location": "West US",
-          "properties": {
-            "creation_data": {
-              "create_option": "Copy",
-              "source_resource_id": "subscriptions/{subscriptionId}/resourceGroups/myResourceGroup/providers/Microsoft.Compute/snapshots/mySnapshot"
-            }
-          }
-        }
-        result = self.mgmt_client.disks.create_or_update(resource_group.name, DISK_NAME, BODY)
-        result = result.result()
+        # TODO: NEED SNAPSHOT
+        # # Create a managed disk by copying a snapshot.[put]
+        # DISK_NAME_3 = DISK_NAME + "3"
+        # BODY = {
+        #   "location": "eastus",
+        #   "properties": {
+        #     "creation_data": {
+        #       "create_option": "Copy",
+        #       "source_resource_id": "subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/myResourceGroup/providers/Microsoft.Compute/snapshots/" + SNAP_SHOT
+        #     }
+        #   }
+        # }
+        # result = self.mgmt_client.disks.create_or_update(resource_group.name, DISK_NAME_3, BODY)
+        # result = result.result()
 
-        # Create a managed disk by importing an unmanaged blob from the same subscription.[put]
-        BODY = {
-          "location": "West US",
-          "properties": {
-            "creation_data": {
-              "create_option": "Import",
-              "source_uri": "https://mystorageaccount.blob.core.windows.net/osimages/osimage.vhd"
-            }
-          }
-        }
-        result = self.mgmt_client.disks.create_or_update(resource_group.name, DISK_NAME, BODY)
-        result = result.result()
+        # TODO: UNUSE NOW
+        # # Create a managed disk by importing an unmanaged blob from the same subscription.[put]
+        # BODY = {
+        #   "location": "eastus",
+        #   "properties": {
+        #     "creation_data": {
+        #       "create_option": "Import",
+        #       "source_uri": "https://mystorageaccount.blob.core.windows.net/osimages/osimage.vhd"
+        #     }
+        #   }
+        # }
+        # result = self.mgmt_client.disks.create_or_update(resource_group.name, DISK_NAME, BODY)
+        # result = result.result()
 
         # Create a managed disk from an existing managed disk in the same or different subscription.[put]
+        DISK_NAME_4 = DISK_NAME + "4"
         BODY = {
-          "location": "West US",
-          "properties": {
-            "creation_data": {
-              "create_option": "Copy",
-              "source_resource_id": "subscriptions/{subscriptionId}/resourceGroups/myResourceGroup/providers/Microsoft.Compute/disks/myDisk1"
-            }
+          "location": "eastus",
+          "creation_data": {
+            "create_option": "Copy",
+            "source_resource_id": "subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Compute/disks/" + DISK_NAME
           }
         }
-        result = self.mgmt_client.disks.create_or_update(resource_group.name, DISK_NAME, BODY)
+        result = self.mgmt_client.disks.create_or_update(resource_group.name, DISK_NAME_4, BODY)
         result = result.result()
 
-        # Create a managed disk from a platform image.[put]
-        BODY = {
-          "location": "West US",
-          "properties": {
-            "os_type": "Windows",
-            "creation_data": {
-              "create_option": "FromImage",
-              "image_reference": {
-                "id": "/Subscriptions/{subscriptionId}/Providers/Microsoft.Compute/Locations/uswest/Publishers/Microsoft/ArtifactTypes/VMImage/Offers/{offer}"
-              }
-            }
-          }
-        }
-        result = self.mgmt_client.disks.create_or_update(resource_group.name, DISK_NAME, BODY)
-        result = result.result()
+        # TODO: NEED A IMAGE
+        # # Create a managed disk from a platform image.[put]
+        # BODY = {
+        #   "location": "eastus",
+        #   "properties": {
+        #     "os_type": "Windows",
+        #     "creation_data": {
+        #       "create_option": "FromImage",
+        #       "image_reference": {
+        #         "id": "/Subscriptions/{subscriptionId}/Providers/Microsoft.Compute/Locations/uswest/Publishers/Microsoft/ArtifactTypes/VMImage/Offers/{offer}"
+        #       }
+        #     }
+        #   }
+        # }
+        # result = self.mgmt_client.disks.create_or_update(resource_group.name, DISK_NAME, BODY)
+        # result = result.result()
 
         # Create a managed upload disk.[put]
+        DISK_NAME_5 = DISK_NAME + '5'
         BODY = {
-          "location": "West US",
-          "properties": {
-            "creation_data": {
-              "create_option": "Upload",
-              "upload_size_bytes": "10737418752"
-            }
+          "location": "eastus",
+          "creation_data": {
+            "create_option": "Upload",
+            "upload_size_bytes": "10737418752"
           }
         }
-        result = self.mgmt_client.disks.create_or_update(resource_group.name, DISK_NAME, BODY)
+        result = self.mgmt_client.disks.create_or_update(resource_group.name, DISK_NAME_5, BODY)
         result = result.result()
 
         """
         # Create a virtual machine image from a snapshot.[put]
         BODY = {
-          "location": "West US",
+          "location": "eastus",
           "properties": {
             "storage_profile": {
               "os_disk": {
@@ -153,7 +220,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
 
         # Create a virtual machine image from a managed disk with DiskEncryptionSet resource.[put]
         BODY = {
-          "location": "West US",
+          "location": "eastus",
           "properties": {
             "storage_profile": {
               "os_disk": {
@@ -174,7 +241,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
 
         # Create a virtual machine image from an existing virtual machine.[put]
         BODY = {
-          "location": "West US",
+          "location": "eastus",
           "properties": {
             "source_virtual_machine": {
               "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Compute/virtualMachines/" + VIRTUAL_MACHINE_NAME + ""
@@ -186,7 +253,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
 
         # Create a virtual machine image that includes a data disk from a blob.[put]
         BODY = {
-          "location": "West US",
+          "location": "eastus",
           "properties": {
             "storage_profile": {
               "os_disk": {
@@ -209,7 +276,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
 
         # Create a virtual machine image that includes a data disk from a snapshot.[put]
         BODY = {
-          "location": "West US",
+          "location": "eastus",
           "properties": {
             "storage_profile": {
               "os_disk": {
@@ -236,7 +303,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
 
         # Create a virtual machine image that includes a data disk from a managed disk.[put]
         BODY = {
-          "location": "West US",
+          "location": "eastus",
           "properties": {
             "storage_profile": {
               "os_disk": {
@@ -263,7 +330,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
 
         # Create a virtual machine image from a blob with DiskEncryptionSet resource.[put]
         BODY = {
-          "location": "West US",
+          "location": "eastus",
           "properties": {
             "storage_profile": {
               "os_disk": {
@@ -282,7 +349,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
 
         # Create a virtual machine image from a managed disk.[put]
         BODY = {
-          "location": "West US",
+          "location": "eastus",
           "properties": {
             "storage_profile": {
               "os_disk": {
@@ -301,7 +368,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
 
         # Create a virtual machine image from a snapshot with DiskEncryptionSet resource.[put]
         BODY = {
-          "location": "West US",
+          "location": "eastus",
           "properties": {
             "storage_profile": {
               "os_disk": {
@@ -322,7 +389,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
 
         # Create a virtual machine image from a blob.[put]
         BODY = {
-          "location": "West US",
+          "location": "eastus",
           "properties": {
             "storage_profile": {
               "os_disk": {
@@ -339,7 +406,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
 
         # Create or update a simple gallery.[put]
         BODY = {
-          "location": "West US",
+          "location": "eastus",
           "properties": {
             "description": "This is the gallery description."
           }
@@ -348,45 +415,59 @@ class MgmtComputeTest(AzureMgmtTestCase):
         result = result.result()
         """
 
-        # Create a snapshot by importing an unmanaged blob from the same subscription.[put]
+        # New example not in swagger.
+        # Create a snapshot by copying a disk.
         BODY = {
-          "location": "West US",
-          "properties": {
-            "creation_data": {
-              "create_option": "Import",
-              "source_uri": "https://mystorageaccount.blob.core.windows.net/osimages/osimage.vhd"
-            }
+          "location": "eastus",
+          "creation_data": {
+            "create_option": "Copy",
+            "source_uri": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Compute/disks/" + DISK_NAME
           }
         }
         result = self.mgmt_client.snapshots.create_or_update(resource_group.name, SNAPSHOT_NAME, BODY)
-        result = result.result()
 
-        # Create a snapshot by importing an unmanaged blob from a different subscription.[put]
-        BODY = {
-          "location": "West US",
-          "properties": {
-            "creation_data": {
-              "create_option": "Import",
-              "storage_account_id": "subscriptions/{subscription-id}/resourceGroups/myResourceGroup/providers/Microsoft.Storage/storageAccounts/myStorageAccount",
-              "source_uri": "https://mystorageaccount.blob.core.windows.net/osimages/osimage.vhd"
-            }
-          }
-        }
-        result = self.mgmt_client.snapshots.create_or_update(resource_group.name, SNAPSHOT_NAME, BODY)
-        result = result.result()
+        # TODO: NNED BLOB
+        # # Create a snapshot by importing an unmanaged blob from the same subscription.[put]
+        # BODY = {
+        #   "location": "eastus",
+        #   "properties": {
+        #     "creation_data": {
+        #       "create_option": "Import",
+        #       "source_uri": "https://mystorageaccount.blob.core.windows.net/osimages/osimage.vhd"
+        #     }
+        #   }
+        # }
+        # result = self.mgmt_client.snapshots.create_or_update(resource_group.name, SNAPSHOT_NAME, BODY)
+        # result = result.result()
 
-        # Create a snapshot from an existing snapshot in the same or a different subscription.[put]
-        BODY = {
-          "location": "West US",
-          "properties": {
-            "creation_data": {
-              "create_option": "Copy",
-              "source_resource_id": "subscriptions/{subscription-id}/resourceGroups/myResourceGroup/providers/Microsoft.Compute/snapshots/mySnapshot1"
-            }
-          }
-        }
-        result = self.mgmt_client.snapshots.create_or_update(resource_group.name, SNAPSHOT_NAME, BODY)
-        result = result.result()
+        # TODO: TWO SUBCRIPTION
+        # # Create a snapshot by importing an unmanaged blob from a different subscription.[put]
+        # BODY = {
+        #   "location": "eastus",
+        #   "properties": {
+        #     "creation_data": {
+        #       "create_option": "Import",
+        #       "storage_account_id": "subscriptions/{subscription-id}/resourceGroups/myResourceGroup/providers/Microsoft.Storage/storageAccounts/myStorageAccount",
+        #       "source_uri": "https://mystorageaccount.blob.core.windows.net/osimages/osimage.vhd"
+        #     }
+        #   }
+        # }
+        # result = self.mgmt_client.snapshots.create_or_update(resource_group.name, SNAPSHOT_NAME, BODY)
+        # result = result.result()
+
+        # TODO: NEED ANOTHER SNAPSHOT
+        # # Create a snapshot from an existing snapshot in the same or a different subscription.[put]
+        # BODY = {
+        #   "location": "eastus",
+        #   "properties": {
+        #     "creation_data": {
+        #       "create_option": "Copy",
+        #       "source_resource_id": "subscriptions/{subscription-id}/resourceGroups/myResourceGroup/providers/Microsoft.Compute/snapshots/mySnapshot1"
+        #     }
+        #   }
+        # }
+        # result = self.mgmt_client.snapshots.create_or_update(resource_group.name, SNAPSHOT_NAME, BODY)
+        # result = result.result()
 
         """
         # Create or update a dedicated host group.[put]
@@ -1015,28 +1096,29 @@ class MgmtComputeTest(AzureMgmtTestCase):
         result = self.mgmt_client.availability_sets.create_or_update(resource_group.name, AVAILABILITY_SET_NAME, BODY)
         """
 
+        # TODO: NEED KEY VAULT
         # Create a disk encryption set.[put]
-        BODY = {
-          "location": "West US",
-          "identity": {
-            "type": "SystemAssigned"
-          },
-          "properties": {
-            "active_key": {
-              "source_vault": {
-                "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.KeyVault/vaults/" + VAULT_NAME + ""
-              },
-              "key_url": "https://myvmvault.vault-int.azure-int.net/keys/{key}"
-            }
-          }
-        }
-        result = self.mgmt_client.disk_encryption_sets.create_or_update(resource_group.name, DISK_ENCRYPTION_SET_NAME, BODY)
-        result = result.result()
+        # BODY = {
+        #   "location": "eastus",
+        #   "identity": {
+        #     "type": "SystemAssigned"
+        #   },
+        #   "active_key": {
+        #     "source_vault": {
+        #       # "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.KeyVault/vaults/" + VAULT_NAME + ""
+        #       "id": VAULT_ID
+        #     },
+        #     # "key_url": "https://myvmvault.vault-int.azure-int.net/keys/{key}"
+        #     "key_url": VAULT_URI + "/keys/" + KEY_NAME
+        #   }
+        # }
+        # result = self.mgmt_client.disk_encryption_sets.create_or_update(resource_group.name, DISK_ENCRYPTION_SET_NAME, BODY)
+        # result = result.result()
 
         """
         # Create or update a simple gallery image.[put]
         BODY = {
-          "location": "West US",
+          "location": "eastus",
           "properties": {
             "os_type": "Windows",
             "os_state": "Generalized",
@@ -2162,7 +2244,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
 
         # Create or update a simple gallery Application.[put]
         BODY = {
-          "location": "West US",
+          "location": "eastus",
           "properties": {
             "description": "This is the gallery application description.",
             "eula": "This is the gallery application EULA.",
@@ -2176,12 +2258,12 @@ class MgmtComputeTest(AzureMgmtTestCase):
 
         # Create or update a simple Gallery Image Version using snapshots as a source.[put]
         BODY = {
-          "location": "West US",
+          "location": "eastus",
           "properties": {
             "publishing_profile": {
               "target_regions": [
                 {
-                  "name": "West US",
+                  "name": "eastus",
                   "regional_replica_count": "1",
                   "encryption": {
                     "os_disk_image": {
@@ -2226,12 +2308,12 @@ class MgmtComputeTest(AzureMgmtTestCase):
 
         # Create or update a simple Gallery Image Version (Managed Image as source).[put]
         BODY = {
-          "location": "West US",
+          "location": "eastus",
           "properties": {
             "publishing_profile": {
               "target_regions": [
                 {
-                  "name": "West US",
+                  "name": "eastus",
                   "regional_replica_count": "1",
                   "encryption": {
                     "os_disk_image": {
@@ -2268,7 +2350,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
 
         # Create or update a simple gallery Application Version.[put]
         BODY = {
-          "location": "West US",
+          "location": "eastus",
           "properties": {
             "publishing_profile": {
               "source": {
@@ -2277,7 +2359,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
               },
               "target_regions": [
                 {
-                  "name": "West US",
+                  "name": "eastus",
                   "regional_replica_count": "1",
                   "storage_account_type": "Standard_LRS"
                 }
@@ -2356,8 +2438,9 @@ class MgmtComputeTest(AzureMgmtTestCase):
         result = self.mgmt_client.virtual_machines.list_available_sizes(resource_group.name, VIRTUAL_MACHINE_NAME)
         """
 
-        # Get information about a disk encryption set.[get]
-        result = self.mgmt_client.disk_encryption_sets.get(resource_group.name, DISK_ENCRYPTION_SET_NAME)
+        # TODO: NEED KEYVAULT
+        # # Get information about a disk encryption set.[get]
+        # result = self.mgmt_client.disk_encryption_sets.get(resource_group.name, DISK_ENCRYPTION_SET_NAME)
 
         """
         # Get a Virtual Machine.[get]
@@ -2483,7 +2566,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
               },
               "target_regions": [
                 {
-                  "name": "West US",
+                  "name": "eastus",
                   "regional_replica_count": "1",
                   "storage_account_type": "Standard_LRS"
                 }
@@ -2507,7 +2590,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
             "publishing_profile": {
               "target_regions": [
                 {
-                  "name": "West US",
+                  "name": "eastus",
                   "regional_replica_count": "1"
                 },
                 {
@@ -2603,23 +2686,24 @@ class MgmtComputeTest(AzureMgmtTestCase):
         result = result.result()
         """
 
+        # TODO: NEED KEYVAULT
         # Update a disk encryption set.[patch]
-        BODY = {
-          "properties": {
-            "active_key": {
-              "source_vault": {
-                "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.KeyVault/vaults/" + VAULT_NAME + ""
-              },
-              "key_url": "https://myvmvault.vault-int.azure-int.net/keys/{key}"
-            }
-          },
-          "tags": {
-            "department": "Development",
-            "project": "Encryption"
-          }
-        }
-        result = self.mgmt_client.disk_encryption_sets.update(resource_group.name, DISK_ENCRYPTION_SET_NAME, BODY)
-        result = result.result()
+        # BODY = {
+        #   # "properties": {
+        #   #   "active_key": {
+        #   #     "source_vault": {
+        #   #       "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.KeyVault/vaults/" + VAULT_NAME + ""
+        #   #     },
+        #   #     "key_url": "https://myvmvault.vault-int.azure-int.net/keys/{key}"
+        #   #   }
+        #   # },
+        #   "tags": {
+        #     "department": "Development",
+        #     "project": "Encryption"
+        #   }
+        # }
+        # result = self.mgmt_client.disk_encryption_sets.update(resource_group.name, DISK_ENCRYPTION_SET_NAME, BODY)
+        # result = result.result()
 
         """
         # Update a VM by detaching data disk[patch]
@@ -2730,9 +2814,10 @@ class MgmtComputeTest(AzureMgmtTestCase):
         result = result.result()
         """
 
-        # Delete a disk encryption set.[delete]
-        result = self.mgmt_client.disk_encryption_sets.delete(resource_group.name, DISK_ENCRYPTION_SET_NAME)
-        result = result.result()
+        # TODO: NEED ENCRYPTION SET
+        # # Delete a disk encryption set.[delete]
+        # result = self.mgmt_client.disk_encryption_sets.delete(resource_group.name, DISK_ENCRYPTION_SET_NAME)
+        # result = result.result()
 
         """
         # Delete a gallery.[delete]
