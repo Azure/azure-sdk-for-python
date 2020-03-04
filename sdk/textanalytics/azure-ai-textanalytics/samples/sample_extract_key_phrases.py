@@ -46,40 +46,7 @@ class ExtractKeyPhrasesSample(object):
                 print(doc.id, doc.error)
         # [END batch_extract_key_phrases]
 
-    def alternative_scenario_extract_key_phrases(self):
-        """This sample demonstrates how to retrieve batch statistics, the
-        model version used, and the raw response returned from the service.
-
-        It additionally shows an alternative way to pass in the input documents
-        using a list[TextDocumentInput] and supplying your own IDs and language hints along
-        with the text.
-        """
-        from azure.ai.textanalytics import TextAnalyticsClient, TextAnalyticsApiKeyCredential
-        text_analytics_client = TextAnalyticsClient(endpoint=self.endpoint, credential=TextAnalyticsApiKeyCredential(self.key))
-
-        documents = [
-            {"id": "0", "language": "en",
-             "text": "Redmond is a city in King County, Washington, United States, located 15 miles east of Seattle."},
-            {"id": "1", "language": "en",
-                "text": "I need to take my cat to the veterinarian."},
-            {"id": "2", "language": "en", "text": "I will travel to South America in the summer."}
-        ]
-        extras = []
-
-        def callback(resp):
-            extras.append(resp.statistics)
-            extras.append(resp.model_version)
-            extras.append(resp.raw_response)
-
-        result = text_analytics_client.extract_key_phrases(
-            documents,
-            show_stats=True,
-            model_version="latest",
-            raw_response_hook=callback
-        )
-
 
 if __name__ == '__main__':
     sample = ExtractKeyPhrasesSample()
     sample.extract_key_phrases()
-    sample.alternative_scenario_extract_key_phrases()
