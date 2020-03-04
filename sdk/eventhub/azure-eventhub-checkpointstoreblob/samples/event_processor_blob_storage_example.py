@@ -5,7 +5,6 @@ from azure.eventhub.extensions.checkpointstoreblob import BlobCheckpointStore
 CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
 STORAGE_CONNECTION_STR = os.environ["AZURE_STORAGE_CONN_STR"]
 BLOB_CONTAINER_NAME = "your-blob-container-name"  # Please make sure the blob container resource exists.
-STORAGE_SERVICE_API_VERSION = "2019-02-02"
 
 
 def on_event(partition_context, event):
@@ -19,7 +18,7 @@ if __name__ == '__main__':
     checkpoint_store = BlobCheckpointStore.from_connection_string(
         STORAGE_CONNECTION_STR,
         container_name=BLOB_CONTAINER_NAME,
-        api_version=STORAGE_SERVICE_API_VERSION  # api_version default value is "2019-02-02"
+        # headers={"x-ms-version": "<storage version>"}  # if you use an old version of Azure Storage Service
     )
     client = EventHubConsumerClient.from_connection_string(
         CONNECTION_STR,
