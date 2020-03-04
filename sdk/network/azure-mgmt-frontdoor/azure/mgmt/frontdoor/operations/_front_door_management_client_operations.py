@@ -42,7 +42,7 @@ class FrontDoorManagementClientOperationsMixin(object):
         """
         check_front_door_name_availability_input = models.CheckNameAvailabilityInput(name=name, type=type)
 
-        api_version = "2019-05-01"
+        api_version = "2020-01-01"
 
         # Construct URL
         url = self.check_front_door_name_availability.metadata['url']
@@ -106,7 +106,7 @@ class FrontDoorManagementClientOperationsMixin(object):
         """
         check_front_door_name_availability_input = models.CheckNameAvailabilityInput(name=name, type=type)
 
-        api_version = "2019-05-01"
+        api_version = "2020-01-01"
 
         # Construct URL
         url = self.check_front_door_name_availability_with_subscription.metadata['url']

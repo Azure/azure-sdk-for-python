@@ -16,6 +16,7 @@ from ._reports_operations import ReportsOperations
 from ._front_doors_operations import FrontDoorsOperations
 from ._frontend_endpoints_operations import FrontendEndpointsOperations
 from ._endpoints_operations import EndpointsOperations
+from ._rules_engines_operations import RulesEnginesOperations
 from ._policies_operations import PoliciesOperations
 from ._managed_rule_sets_operations import ManagedRuleSetsOperations
 from ._front_door_management_client_operations import FrontDoorManagementClientOperationsMixin
@@ -28,6 +29,7 @@ __all__ = [
     'FrontDoorsOperations',
     'FrontendEndpointsOperations',
     'EndpointsOperations',
+    'RulesEnginesOperations',
     'PoliciesOperations',
     'ManagedRuleSetsOperations',
     'FrontDoorManagementClientOperationsMixin',
