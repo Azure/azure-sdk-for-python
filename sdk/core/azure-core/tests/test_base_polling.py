@@ -260,6 +260,7 @@ class TestBasePolling(object):
             response.request.url = url
             response.status_code = POLLING_STATUS
             response.text = RESOURCE_BODY
+            response.randomFieldFromResource = None
 
         else:
             raise Exception('URL does not match')
@@ -470,7 +471,6 @@ class TestBasePolling(object):
             TestBasePolling.mock_outputs,
             LROBasePolling(0))
         poll.wait()
-        #self.assertIsNone(poll.result())
         assert poll._polling_method._pipeline_response.http_response.internal_response.randomFieldFromPollAsyncOpHeader is None
 
         # Test polling from operation-location header
@@ -482,7 +482,6 @@ class TestBasePolling(object):
             TestBasePolling.mock_outputs,
             LROBasePolling(0))
         poll.wait()
-        #self.assertIsNone(poll.result())
         assert poll._polling_method._pipeline_response.http_response.internal_response.randomFieldFromPollAsyncOpHeader is None
 
         # Test polling from location header
@@ -530,7 +529,7 @@ class TestBasePolling(object):
             LROBasePolling(0)
         )
         with pytest.raises(DecodeError):
-            poll.wait()
+            poll.result()
 
         LOCATION_BODY = '{\'"}'
         response = TestBasePolling.mock_send(
@@ -540,7 +539,7 @@ class TestBasePolling(object):
             TestBasePolling.mock_outputs,
             LROBasePolling(0))
         with pytest.raises(DecodeError):
-            poll.wait()
+            poll.result()
 
         LOCATION_BODY = '{'
         POLLING_STATUS = 203
@@ -551,7 +550,7 @@ class TestBasePolling(object):
             TestBasePolling.mock_outputs,
             LROBasePolling(0))
         with pytest.raises(HttpResponseError): # TODO: Node.js raises on deserialization
-            poll.wait()
+            poll.result()
 
         LOCATION_BODY = json.dumps({ 'name': TEST_NAME })
         POLLING_STATUS = 200

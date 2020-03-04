@@ -181,7 +181,7 @@ class OperationResourcePolling(LongRunningOperation):
 
         :rtype: bool
         """
-        return self.request.method in {'PUT', 'PATCH', 'POST'}
+        return self.request.method in {'PUT', 'PATCH'} or (self.request.method == "POST" and self.location_url)
 
     def set_initial_status(self, pipeline_response):
         # type: (azure.core.pipeline.PipelineResponse) -> str
