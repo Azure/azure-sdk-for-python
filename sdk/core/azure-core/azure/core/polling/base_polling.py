@@ -146,10 +146,11 @@ class LongRunningOperation(object):
         """Return the status string extracted from this response."""
         raise NotImplementedError()
 
-    def should_do_final_get(self):
-        """Check whether the polling should end doing a final GET.
+    def get_final_get_url(self, pipeline_response):
+        # type: (azure.core.pipeline.PipelineResponse) -> Optional[str]
+        """If a final GET is needed, returns the URL.
 
-        :rtype: bool
+        :rtype: str
         """
         raise NotImplementedError()
 
@@ -176,12 +177,25 @@ class OperationResourcePolling(LongRunningOperation):
         """
         return self.async_url
 
-    def should_do_final_get(self):
-        """Check whether the polling should end doing a final GET.
+    def get_final_get_url(self, pipeline_response):
+        # type: (azure.core.pipeline.PipelineResponse) -> Optional[str]
+        """If a final GET is needed, returns the URL.
 
-        :rtype: bool
+        :rtype: str
         """
-        return self.request.method in {'PUT', 'PATCH'} or (self.request.method == "POST" and self.location_url)
+        response = pipeline_response.http_response
+        if not _is_empty(response):
+            body = _as_json(response)
+            # https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md#target-resource-location
+            resource_location = body.get('resourceLocation')
+            if resource_location:
+                return resource_location
+
+        if self.request.method in {'PUT', 'PATCH'}:
+            return self.request.url
+
+        if self.request.method == "POST" and self.location_url:
+            return self.location_url
 
     def set_initial_status(self, pipeline_response):
         # type: (azure.core.pipeline.PipelineResponse) -> str
@@ -244,12 +258,13 @@ class LocationPolling(LongRunningOperation):
         """
         return self.location_url
 
-    def should_do_final_get(self):
-        """Check whether the polling should end doing a final GET.
+    def get_final_get_url(self, pipeline_response):
+        # type: (azure.core.pipeline.PipelineResponse) -> Optional[str]
+        """If a final GET is needed, returns the URL.
 
-        :rtype: bool
+        :rtype: str
         """
-        return False
+        return None
 
     def set_initial_status(self, pipeline_response):
         # type: (azure.core.pipeline.PipelineResponse) -> str
@@ -307,12 +322,13 @@ class StatusCheckPolling(LongRunningOperation):
         # type: (azure.core.pipeline.PipelineResponse) -> str
         return 'Succeeded'
 
-    def should_do_final_get(self):
-        """Check whether the polling should end doing a final GET.
+    def get_final_get_url(self, pipeline_response):
+        # type: (azure.core.pipeline.PipelineResponse) -> Optional[str]
+        """If a final GET is needed, returns the URL.
 
-        :rtype: bool
+        :rtype: str
         """
-        return False
+        return None
 
 class LROBasePolling(PollingMethod):
     """A base LRO poller.
@@ -427,13 +443,8 @@ class LROBasePolling(PollingMethod):
         if failed(self.status()):
             raise OperationFailed("Operation failed or canceled")
 
-        if self._operation.should_do_final_get():
-            request = self._initial_response.http_response.request
-            if request.method == 'POST' and 'location' in self._initial_response.http_response.headers:
-                final_get_url = self._initial_response.http_response.headers['location']
-            else:
-                final_get_url = request.url
-
+        final_get_url = self._operation.get_final_get_url(self._pipeline_response)
+        if final_get_url:
             self._pipeline_response = self.request_status(final_get_url)
             _raise_if_bad_http_status_and_method(self._pipeline_response.http_response)
 

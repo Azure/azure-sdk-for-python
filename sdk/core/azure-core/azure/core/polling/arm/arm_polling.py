@@ -23,6 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+from enum import Enum
 from typing import Optional
 
 from azure.core.polling.base_polling import (
@@ -38,29 +39,43 @@ from azure.core.polling.base_polling import (
 )
 
 
-_AZURE_ASYNC_OPERATION_FINAL_STATE = "azure-async-operation"
-_LOCATION_FINAL_STATE = "location"
+class _LroOption(str, Enum):
+    """Known LRO options from Swagger."""
+
+    FINAL_STATE_VIA = "final-state-via"
+
+
+class _FinalStateViaOption(str, Enum):
+    """Possible final-state-via options."""
+
+    AZURE_ASYNC_OPERATION_FINAL_STATE = "azure-async-operation"
+    LOCATION_FINAL_STATE = "location"
 
 
 class AzureAsyncOperationPolling(OperationResourcePolling):
     """Implements a operation resource polling, typically from Azure-AsyncOperation.
     """
+
     def __init__(self, lro_options=None):
         super(AzureAsyncOperationPolling, self).__init__(header="azure-asyncoperation")
 
-        if lro_options is None:
-            lro_options = {
-                'final-state-via': _AZURE_ASYNC_OPERATION_FINAL_STATE
-            }
-        self.lro_options = lro_options
+        self.lro_options = lro_options or {}
 
-    def should_do_final_get(self):
-        """Check whether the polling should end doing a final GET.
+    def get_final_get_url(self, pipeline_response):
+        # type: (azure.core.pipeline.PipelineResponse) -> Optional[str]
+        """If a final GET is needed, returns the URL.
 
-        :rtype: bool
+        :rtype: str
         """
-        return (self.lro_options['final-state-via'] == _LOCATION_FINAL_STATE and self.request.method == 'POST') or \
-            self.request.method in {'PUT', 'PATCH'}
+        if (
+            self.lro_options.get(_LroOption.FINAL_STATE_VIA)
+            == _FinalStateViaOption.AZURE_ASYNC_OPERATION_FINAL_STATE
+            and self.request.method == "POST"
+        ):
+            return None
+        return super(AzureAsyncOperationPolling, self).get_final_get_url(
+            pipeline_response
+        )
 
 
 class BodyContentPolling(LongRunningOperation):
@@ -83,12 +98,13 @@ class BodyContentPolling(LongRunningOperation):
         """
         return self.initial_response.http_response.request.url
 
-    def should_do_final_get(self):
-        """Check whether the polling should end doing a final GET.
+    def get_final_get_url(self, pipeline_response):
+        # type: (azure.core.pipeline.PipelineResponse) -> Optional[str]
+        """If a final GET is needed, returns the URL.
 
-        :rtype: bool
+        :rtype: str
         """
-        return False
+        return None
 
     def set_initial_status(self, pipeline_response):
         # type: (azure.core.pipeline.PipelineResponse) -> str
