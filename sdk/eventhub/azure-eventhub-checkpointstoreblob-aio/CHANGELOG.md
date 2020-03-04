@@ -2,7 +2,8 @@
 
 ## 1.0.1 (Unreleased)
 
-This release has internal changes only. No feature changes.
+**New features**
+- Param `api_version` of `BlobPartitionManager` now supports older versions of Azure Storage Serice API.
 
 ## 1.0.0 (2020-01-13)
 Stable release. No new features or API changes.
