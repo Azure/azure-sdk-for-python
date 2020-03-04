@@ -18,7 +18,6 @@ if __name__ == '__main__':
     checkpoint_store = BlobCheckpointStore.from_connection_string(
         STORAGE_CONNECTION_STR,
         container_name=BLOB_CONTAINER_NAME,
-        # headers={"x-ms-version": "<storage version>"}  # if you use an old version of Azure Storage Service
     )
     client = EventHubConsumerClient.from_connection_string(
         CONNECTION_STR,
