@@ -120,6 +120,6 @@ class AsyncLROBasePolling(LROBasePolling):
         # Re-inject 'x-ms-client-request-id' while polling
         if "request_id" not in self._operation_config:
             self._operation_config["request_id"] = self._get_request_id()
-        return await self._client._pipeline.run(
+        return await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **self._operation_config
-        )  # pylint: disable=protected-access
+        )

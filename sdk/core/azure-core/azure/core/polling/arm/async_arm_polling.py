@@ -33,4 +33,3 @@ class AsyncARMPolling(ARMPolling, AsyncLROBasePolling):
     pass
 
 __all__ = ["AsyncARMPolling"]
-

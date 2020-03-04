@@ -203,6 +203,8 @@ class OperationResourcePolling(LongRunningOperation):
         if self.request.method == "POST" and self.location_url:
             return self.location_url
 
+        return None
+
     def set_initial_status(self, pipeline_response):
         # type: (azure.core.pipeline.PipelineResponse) -> str
         """Process first response after initiating long running operation.
@@ -519,7 +521,6 @@ class LROBasePolling(PollingMethod):
         # Re-inject 'x-ms-client-request-id' while polling
         if "request_id" not in self._operation_config:
             self._operation_config["request_id"] = self._get_request_id()
-        return self._client._pipeline.run(
+        return self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **self._operation_config
-        )  # pylint: disable=protected-access
-
+        )
