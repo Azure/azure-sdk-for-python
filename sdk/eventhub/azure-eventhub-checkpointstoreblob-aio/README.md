@@ -107,7 +107,7 @@ from azure.eventhub.extensions.checkpointstoreblobaio import BlobCheckpointStore
 checkpoint_store = BlobCheckpointStore.from_connection_string(
         storage_connection_str,
         container_name,
-        headers={"x-ms-version": "2017-11-09"}
+        api_version="2017-11-09"
     )
 ```
 
