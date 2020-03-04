@@ -32,25 +32,25 @@ from azure.core.polling import PollingMethod
 from ..exceptions import HttpResponseError
 
 
-FINISHED = frozenset(['succeeded', 'canceled', 'failed'])
-FAILED = frozenset(['canceled', 'failed'])
-SUCCEEDED = frozenset(['succeeded'])
+FINISHED = frozenset(["succeeded", "canceled", "failed"])
+FAILED = frozenset(["canceled", "failed"])
+SUCCEEDED = frozenset(["succeeded"])
 
 
 def finished(status):
-    if hasattr(status, 'value'):
+    if hasattr(status, "value"):
         status = status.value
     return str(status).lower() in FINISHED
 
 
 def failed(status):
-    if hasattr(status, 'value'):
+    if hasattr(status, "value"):
         status = status.value
     return str(status).lower() in FAILED
 
 
 def succeeded(status):
-    if hasattr(status, 'value'):
+    if hasattr(status, "value"):
         status = status.value
     return str(status).lower() in SUCCEEDED
 
@@ -78,8 +78,8 @@ def _as_json(response):
     try:
         return json.loads(response.text())
     except ValueError:
-        raise DecodeError(
-            "Error occurred in deserializing the response body.")
+        raise DecodeError("Error occurred in deserializing the response body.")
+
 
 def _raise_if_bad_http_status_and_method(response):
     # type: (azure.core.pipeline.transport.HttpResponse) -> None
@@ -93,7 +93,11 @@ def _raise_if_bad_http_status_and_method(response):
     if code in {200, 201, 202, 204}:
         return
     raise BadStatus(
-        "Invalid return status {!r} for {!r} operation".format(code, response.request.method))
+        "Invalid return status {!r} for {!r} operation".format(
+            code, response.request.method
+        )
+    )
+
 
 def _is_empty(response):
     # type: (azure.core.pipeline.transport.HttpResponse) -> bool
@@ -108,8 +112,7 @@ def _is_empty(response):
     try:
         return not json.loads(content)
     except ValueError:
-        raise DecodeError(
-            "Error occurred in deserializing the response body.")
+        raise DecodeError("Error occurred in deserializing the response body.")
 
 
 class LongRunningOperation(object):
@@ -160,6 +163,7 @@ class OperationResourcePolling(LongRunningOperation):
 
     :param str operation_location_header: Name of the header to return operation format (default 'operation-location')
     """
+
     def __init__(self, operation_location_header="operation-location"):
         self._operation_location_header = operation_location_header
 
@@ -189,11 +193,11 @@ class OperationResourcePolling(LongRunningOperation):
         if not _is_empty(response):
             body = _as_json(response)
             # https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md#target-resource-location
-            resource_location = body.get('resourceLocation')
+            resource_location = body.get("resourceLocation")
             if resource_location:
                 return resource_location
 
-        if self.request.method in {'PUT', 'PATCH'}:
+        if self.request.method in {"PUT", "PATCH"}:
             return self.request.url
 
         if self.request.method == "POST" and self.location_url:
@@ -211,7 +215,7 @@ class OperationResourcePolling(LongRunningOperation):
         self._set_async_url_if_present(response)
 
         if response.status_code in {200, 201, 202, 204} and self.async_url:
-            return 'InProgress'
+            return "InProgress"
         raise OperationFailed("Operation failed or canceled")
 
     def _set_async_url_if_present(self, response):
@@ -220,7 +224,7 @@ class OperationResourcePolling(LongRunningOperation):
         if async_url:
             self.async_url = async_url
 
-        location_url = response.headers.get('location')
+        location_url = response.headers.get("location")
         if location_url:
             self.location_url = location_url
 
@@ -233,10 +237,12 @@ class OperationResourcePolling(LongRunningOperation):
         """
         response = pipeline_response.http_response
         if _is_empty(response):
-            raise BadResponse('The response from long running operation does not contain a body.')
+            raise BadResponse(
+                "The response from long running operation does not contain a body."
+            )
 
         body = _as_json(response)
-        status = body.get('status')
+        status = body.get("status")
         if not status:
             raise BadResponse("No status found in body")
         return status
@@ -253,7 +259,7 @@ class LocationPolling(LongRunningOperation):
         """Answer if this polling method could be used.
         """
         response = pipeline_response.http_response
-        return 'location' in response.headers
+        return "location" in response.headers
 
     def get_polling_url(self):
         """Return the polling URL.
@@ -276,10 +282,10 @@ class LocationPolling(LongRunningOperation):
         """
         response = pipeline_response.http_response
 
-        self.location_url = response.headers['location']
+        self.location_url = response.headers["location"]
 
         if response.status_code in {200, 201, 202, 204} and self.location_url:
-            return 'InProgress'
+            return "InProgress"
         raise OperationFailed("Operation failed or canceled")
 
     def get_status(self, pipeline_response):
@@ -290,10 +296,10 @@ class LocationPolling(LongRunningOperation):
         :raises: BadResponse if response has no body and not status 202.
         """
         response = pipeline_response.http_response
-        if 'location' in response.headers:
-            self.location_url = response.headers['location']
+        if "location" in response.headers:
+            self.location_url = response.headers["location"]
 
-        return "InProgress" if response.status_code == 202 else 'Succeeded'
+        return "InProgress" if response.status_code == 202 else "Succeeded"
 
 
 class StatusCheckPolling(LongRunningOperation):
@@ -318,11 +324,11 @@ class StatusCheckPolling(LongRunningOperation):
 
         :param azure.core.pipeline.PipelineResponse response: initial REST call response.
         """
-        return 'Succeeded'
+        return "Succeeded"
 
     def get_status(self, pipeline_response):
         # type: (azure.core.pipeline.PipelineResponse) -> str
-        return 'Succeeded'
+        return "Succeeded"
 
     def get_final_get_url(self, pipeline_response):
         # type: (azure.core.pipeline.PipelineResponse) -> Optional[str]
@@ -331,6 +337,7 @@ class StatusCheckPolling(LongRunningOperation):
         :rtype: str
         """
         return None
+
 
 class LROBasePolling(PollingMethod):
     """A base LRO poller.
@@ -343,7 +350,9 @@ class LROBasePolling(PollingMethod):
     If your polling need are more specific, you could implement a PollingMethod directly
     """
 
-    def __init__(self, timeout=30, lro_algorithms=None, lro_options=None, **operation_config):
+    def __init__(
+        self, timeout=30, lro_algorithms=None, lro_options=None, **operation_config
+    ):
         self._lro_algorithms = lro_algorithms or [
             OperationResourcePolling(),
             LocationPolling(),
@@ -352,7 +361,7 @@ class LROBasePolling(PollingMethod):
 
         self._timeout = timeout
         self._client = None  # Will hold the Pipelineclient
-        self._operation = None # Will hold an instance of LongRunningOperation
+        self._operation = None  # Will hold an instance of LongRunningOperation
         self._initial_response = None  # Will hold the initial response
         self._pipeline_response = None  # Will hold latest received response
         self._deserialization_callback = None  # Will hold the deserialization callback
@@ -365,7 +374,9 @@ class LROBasePolling(PollingMethod):
         :rtype: str
         """
         if not self._operation:
-            raise ValueError("set_initial_status was never called. Did you give this instance to a poller?")
+            raise ValueError(
+                "set_initial_status was never called. Did you give this instance to a poller?"
+            )
         return self._status
 
     def finished(self):
@@ -405,11 +416,13 @@ class LROBasePolling(PollingMethod):
             self._status = self._operation.set_initial_status(initial_response)
 
         except BadStatus as err:
-            self._status = 'Failed'
+            self._status = "Failed"
             raise HttpResponseError(response=initial_response.http_response, error=err)
         except BadResponse as err:
-            self._status = 'Failed'
-            raise HttpResponseError(response=initial_response.http_response, message=str(err), error=err)
+            self._status = "Failed"
+            raise HttpResponseError(
+                response=initial_response.http_response, message=str(err), error=err
+            )
         except OperationFailed as err:
             raise HttpResponseError(response=initial_response.http_response, error=err)
 
@@ -417,15 +430,23 @@ class LROBasePolling(PollingMethod):
         try:
             self._poll()
         except BadStatus as err:
-            self._status = 'Failed'
-            raise HttpResponseError(response=self._pipeline_response.http_response, error=err)
+            self._status = "Failed"
+            raise HttpResponseError(
+                response=self._pipeline_response.http_response, error=err
+            )
 
         except BadResponse as err:
-            self._status = 'Failed'
-            raise HttpResponseError(response=self._pipeline_response.http_response, message=str(err), error=err)
+            self._status = "Failed"
+            raise HttpResponseError(
+                response=self._pipeline_response.http_response,
+                message=str(err),
+                error=err,
+            )
 
         except OperationFailed as err:
-            raise HttpResponseError(response=self._pipeline_response.http_response, error=err)
+            raise HttpResponseError(
+                response=self._pipeline_response.http_response, error=err
+            )
 
     def _poll(self):
         """Poll status of operation so long as operation is incomplete and
@@ -470,8 +491,8 @@ class LROBasePolling(PollingMethod):
         if self._pipeline_response is None:
             return
         response = self._pipeline_response.http_response
-        if response.headers.get('retry-after'):
-            self._sleep(int(response.headers['retry-after']))
+        if response.headers.get("retry-after"):
+            self._sleep(int(response.headers["retry-after"]))
         else:
             self._sleep(self._timeout)
 
@@ -483,7 +504,9 @@ class LROBasePolling(PollingMethod):
         self._status = self._operation.get_status(self._pipeline_response)
 
     def _get_request_id(self):
-        return self._pipeline_response.http_response.request.headers['x-ms-client-request-id']
+        return self._pipeline_response.http_response.request.headers[
+            "x-ms-client-request-id"
+        ]
 
     def request_status(self, status_link):
         """Do a simple GET to this status link.
@@ -494,6 +517,9 @@ class LROBasePolling(PollingMethod):
         """
         request = self._client.get(status_link)
         # Re-inject 'x-ms-client-request-id' while polling
-        if 'request_id' not in self._operation_config:
-            self._operation_config['request_id'] = self._get_request_id()
-        return self._client._pipeline.run(request, stream=False, **self._operation_config)  # pylint: disable=protected-access
+        if "request_id" not in self._operation_config:
+            self._operation_config["request_id"] = self._get_request_id()
+        return self._client._pipeline.run(
+            request, stream=False, **self._operation_config
+        )  # pylint: disable=protected-access
+

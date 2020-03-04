@@ -28,7 +28,9 @@ from azure.core.polling.async_base_polling import AsyncLROBasePolling
 
 from .arm_polling import ARMPolling
 
+
 class AsyncARMPolling(ARMPolling, AsyncLROBasePolling):
     pass
 
-__all__ = ['AsyncARMPolling']
+__all__ = ["AsyncARMPolling"]
+
