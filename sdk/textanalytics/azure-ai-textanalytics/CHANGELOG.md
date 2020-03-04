@@ -2,6 +2,17 @@
 
 ## 1.0.0b3 (Unreleased)
 
+**Breaking changes**
+- `SentimentScorePerLabel` has been renamed to `SentimentConfidenceScorePerLabel`
+- `AnalyzeSentimentResult` and `SentenceSentiment` attribute `sentiment_scores` has been renamed to `confidence_scores`
+- `LinkedEntity` attribute `id` has been renamed to `data_source_entity_id`
+- Parameters `country_hint` and `language` are now passed as keyword arguments
+- The keyword argument `response_hook` has been renamed to `raw_response_hook`
+- `length` and `offset` attributes have been renamed to `grapheme_length` and `grapheme_offset` for the `SentenceSentiment`,
+`CategorizedEntity`, `PiiEntity`, and `LinkedEntityMatch` models
+
+**New features**
+- Pass `country_hint="none"` to not use the default country hint of `"US"`.
 
 **Dependency updates**
 - Adopted [azure-core](https://pypi.org/project/azure-core/) version 1.3.0 or greater

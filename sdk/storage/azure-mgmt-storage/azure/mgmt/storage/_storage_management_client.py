@@ -171,6 +171,19 @@ class StorageManagementClient(MultiApiClientMixin, SDKClient):
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
+    def encryption_scopes(self):
+        """Instance depends on the API version:
+
+           * 2019-06-01: :class:`EncryptionScopesOperations<azure.mgmt.storage.v2019_06_01.operations.EncryptionScopesOperations>`
+        """
+        api_version = self._get_api_version('encryption_scopes')
+        if api_version == '2019-06-01':
+            from .v2019_06_01.operations import EncryptionScopesOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
     def file_services(self):
         """Instance depends on the API version:
 

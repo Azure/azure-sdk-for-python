@@ -12,6 +12,7 @@ import sys
 import os
 from os import path
 import re
+import logging
 from packaging.version import parse
 
 from setup_parser import parse_setup
@@ -27,6 +28,7 @@ VERSION_STRING = 'VERSION = "%s"'
 
 DEV_STATUS_REGEX = r'(classifiers=\[(\s)*)(["\']Development Status :: .*["\'])'
 
+logging.getLogger().setLevel(logging.INFO)
 
 def path_excluded(path):
     return "-nspkg" in path or "tests" in path or "mgmt" in path or is_metapackage(path)
@@ -44,7 +46,7 @@ def get_setup_py_paths(glob_string, base_path):
     return filtered_paths
 
 
-def get_packages(args):
+def get_packages(args, package_name = ""):
     # This function returns list of path to setup.py and setup info like install requires, version for all packages discovered using glob
     # Followiong are the list of arguements expected and parsed by this method
     # service, glob_string
@@ -54,6 +56,11 @@ def get_packages(args):
         target_dir = root_dir
 
     paths = get_setup_py_paths(args.glob_string, target_dir)
+    # Check if package is excluded if a package name param is passed
+    if package_name and not any(filter(lambda x: package_name == os.path.basename(os.path.dirname(x)), paths)):
+        logging.info("Package {} is excluded from version update tool".format(package_name))
+        exit(0)
+
     packages = []
     for setup_path in paths:
         try:

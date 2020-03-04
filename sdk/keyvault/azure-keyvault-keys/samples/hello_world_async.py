@@ -92,6 +92,8 @@ async def run_sample():
 
     finally:
         print("\nrun_sample done")
+        await credential.close()
+        await client.close()
 
 
 if __name__ == "__main__":

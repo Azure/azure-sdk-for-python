@@ -10,7 +10,7 @@ from ._generated.models import ModifiedAccessConditions, PathHTTPHeaders, \
 
 
 def convert_dfs_url_to_blob_url(dfs_account_url):
-    return dfs_account_url.replace('dfs.core.windows.net', 'blob.core.windows.net', 1)
+    return dfs_account_url.replace('.dfs.', '.blob.', 1)
 
 
 def add_metadata_headers(metadata=None):

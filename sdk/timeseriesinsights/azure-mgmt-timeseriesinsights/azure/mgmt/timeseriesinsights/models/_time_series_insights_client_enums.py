@@ -26,6 +26,8 @@ class SkuName(str, Enum):
 
     s1 = "S1"
     s2 = "S2"
+    p1 = "P1"
+    l1 = "L1"
 
 
 class StorageLimitExceededBehavior(str, Enum):
@@ -45,6 +47,13 @@ class IngressState(str, Enum):
     ready = "Ready"
     running = "Running"
     paused = "Paused"
+    unknown = "Unknown"
+
+
+class WarmStoragePropertiesState(str, Enum):
+
+    ok = "Ok"
+    error = "Error"
     unknown = "Unknown"
 
 

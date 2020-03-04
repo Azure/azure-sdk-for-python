@@ -35,7 +35,11 @@ class KeyVaultTestCase(AzureMgmtTestCase):
         @functools.wraps(test_fn)
         def run(test_class_instance, *args, **kwargs):
             loop = asyncio.get_event_loop()
-            return loop.run_until_complete(test_fn(test_class_instance, *args, **kwargs))
+            client = kwargs.get("client")
+            result = loop.run_until_complete(test_fn(test_class_instance, *args, **kwargs))
+            if client:
+                loop.run_until_complete(client.close())
+            return result
 
         return run
 

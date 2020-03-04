@@ -82,6 +82,24 @@ def move_and_rename(source_location):
     os.rename(source_location, new_location)
     return new_location
 
+def find_sdist(dist_dir, pkg_name, pkg_version):
+    # This function will find a sdist for given package name
+    if not os.path.exists(dist_dir):
+        logging.error("dist_dir is incorrect")
+        return
+
+    if pkg_name is None:
+        logging.error("Package name cannot be empty to find sdist")
+        return
+
+    pkg_name_format = "{0}-{1}.zip".format(pkg_name, pkg_version)
+    packages = [os.path.basename(w) for w in glob.glob(os.path.join(dist_dir, pkg_name_format))]
+    if not packages:
+        logging.error("No sdist is found in directory %s with package name format %s", dist_dir, pkg_name_format)
+        return
+    return packages[0]
+
+
 def find_whl(whl_dir, pkg_name, pkg_version):
     # This function will find a whl for given package name
     if not os.path.exists(whl_dir):
