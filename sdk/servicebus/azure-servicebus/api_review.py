@@ -4,33 +4,22 @@ class ServiceBusClient:  # MGMT APIs
         self,
         fully_qualified_namespace : str,
         credential : TokenCredential,
-        **kwargs
+        logging_enable: bool = False,
+        http_proxy: dict = None,
+        transport_type: TransportType = None,
     ):
 
-    ########## Preivew 1 scope ##########
+    def __enter__(self):
+    def __exit__(self, *kwargs):
+    def close(self):
+
     @classmethod
     def from_connection_string(cls, conn_str, **kwargs):
+
     def get_queue_sender(self, queue_name, **kwargs) -> ServiceBusSender:
     def get_queue_receiver(self, queue_name, **kwargs) -> ServiceBusReceiver:
-    ########## Preivew 1 scope ##########
-
-    def get_topic_sender(self, topic_name) -> ServiceBusSender:
-    def get_subscription_receiver(self, topic_name, subscription_name) -> ServiceBusReceiver:
-
-    def create_queue(self, queue_name, **kwargs):
-    def delete_queue(self, queue_name, fail_not_exist=False):
-    def list_queues(self) -> List[str]:
-
-    def create_topic(self, topic_name, **kwargs):
-    def delete_topic(self, topic_name, fail_not_exist=False):
-    def list_topics(self):
-
-    def create_subscription(self, topic_name, subscription_name):
-    def delete_subscription(self, topic_name, subscription_name, fail_not_exist=False):
-    def list_subscriptions(self, topic_name):
-
-    def list_session_ids_of_queue(self, queue_name):
-    def list_session_ids_of_subscription(self, topic_name, subscription_name):
+    def get_topic_sender(self, topic_name, **kwargs) -> ServiceBusSender:
+    def get_subscription_receiver(self, topic_name, subscription_name, **kwargs) -> ServiceBusReceiver:
 
 class ServiceBusSender:
     def __init__(
@@ -45,8 +34,8 @@ class ServiceBusSender:
         retry_total : int = 3,
         retry_backoff_factor : float = 30,
         retry_backoff_maximum : int = 120  # cur_retry_backoff = retry_backoff_factor * (2^cur_retry_time)
-        connection : ServiceBusConnection = None
     ) -> None:
+    @classmethod
     def from_connection_string(
         cls,
         conn_str : str,
@@ -64,7 +53,6 @@ class ServiceBusSender:
 
     def create_batch(
         self,
-        session_id : str = None,
         max_size_in_bytes : int = None
     ) -> BatchMessage:
 
@@ -100,7 +88,6 @@ class ServiceBusReceiver:
         retry_total : int = 3,
         retry_backoff_factor: float = 30,
         retry_backoff_maximum: int = 120  # cur_retry_backoff = retry_backoff_factor * (2^cur_retry_time)
-        connection: Connection = None
     ) -> None:
     @classmethod
     def from_connection_string(
@@ -180,8 +167,6 @@ class Message:
     def partition_key(self) -> str:
     def via_partition_key(self, value: str):
     def via_partition_key(self) -> str:
-    def session_id(self, value : str):
-    def session_id(self) -> str:
     def time_to_live(self, value : Union[float, timedelta]):
     def time_to_live(self) -> datetime.timedelta:
     def annotations(self, value : dict[str, Any]):
@@ -212,6 +197,7 @@ class ReceivedMessage(Message):
     def locked_until(self) -> datetime:  # read-only
     def expired(self) -> bool:  # read-only
     def lock_token(self) -> str:  # read-only
+    def session_id(self) -> str:  # read-only
 
     # methods
     def renew_lock(self) -> None:
@@ -239,64 +225,8 @@ class TransportType(Enum):
     AmqpOverWebsocket
 
 
-class ServiceBusConnection:
-    def __int__(
-        self,
-        fully_qualified_namespace,
-        token_credential
-    ) -> None:
-    def from_connection_string(
-        self,
-        conn_str
-    ) -> ServiceBusConnection:
-
-    def __enter__(self):
-    def __exit__(self):
-
-    def open(self):
-    def close(self):
-
 class ServiceBusSharedKeyCredential:
     def __init__(self, policy, key):
     def get_token(self, *scopes, **kwargs):
 
 class ServiceBusError(Exception):
-
-################################################### Split Line ###################################################
-
-# Approach for Rule APIs - Option 1
-## APIs
-### 3-Clients approach
-
-class ServiceBusSender:
-class QueueReceiver:
-class SubscriptionReceiver:
-    def add_rule(self, rule_name, filter):
-    def remove_rule(self, rule_name):
-    def get_rules(self):
-
-
-################################################### Split Line ###################################################
-
-# Approach for Rule APIs - Option 2
-## APIs
-class ServiceBusReceiver:
-    @property
-    def subscription_rule_manager(self):  # raise Error when called on Queue
-
-class SubscriptionRuleManager:
-    def add_rule(self, rule_name, filter):
-    def remove_rule(self, rule_name):
-    def get_rules(self):
-
-
-################################################### Split Line ###################################################
-
-# Approach for Rule APIs - Option 3
-## APIs
-class SubscriptionRuleManager:
-    @classmethod
-    def from_receiver_client_for_subscription(cls, receiver_client):
-    def add_rule(self, rule_name, filter):
-    def remove_rule(self, rule_name):
-    def get_rules(self):
