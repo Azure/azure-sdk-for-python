@@ -100,12 +100,12 @@ Some environments have different versions of Azure Storage Service API. For inst
 `BlobCheckpointStore` by defaults uses the Storage Service API version 2019-07-07. To use it against a different
  version, specify that version number when you create the `BlobCheckpointStore` object.
  
- ```python
+```python
 from azure.eventhub.extensions.checkpointstoreblob import BlobCheckpointStore
 checkpoint_store = BlobCheckpointStore.from_connection_string(
         storage_connection_str,
         container_name,
-        api_version="2017-11-09"
+        headers={"x-ms-version": "2017-11-09"}
     )
 ```
 
