@@ -57,7 +57,9 @@ class AzureAsyncOperationPolling(OperationResourcePolling):
     """
 
     def __init__(self, lro_options=None):
-        super(AzureAsyncOperationPolling, self).__init__(header="azure-asyncoperation")
+        super(AzureAsyncOperationPolling, self).__init__(
+            operation_location_header="azure-asyncoperation"
+        )
 
         self.lro_options = lro_options or {}
 

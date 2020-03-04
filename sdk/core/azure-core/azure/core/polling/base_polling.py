@@ -157,9 +157,11 @@ class LongRunningOperation(object):
 
 class OperationResourcePolling(LongRunningOperation):
     """Implements a operation resource polling, typically from Operation-Location.
+
+    :param str operation_location_header: Name of the header to return operation format (default 'operation-location')
     """
-    def __init__(self, header="operation-location"):
-        self._header = header
+    def __init__(self, operation_location_header="operation-location"):
+        self._operation_location_header = operation_location_header
 
         # Store the initial URLs
         self.async_url = None
@@ -170,7 +172,7 @@ class OperationResourcePolling(LongRunningOperation):
         """Answer if this polling method could be used.
         """
         response = pipeline_response.http_response
-        return self._header in response.headers
+        return self._operation_location_header in response.headers
 
     def get_polling_url(self):
         """Return the polling URL.
@@ -214,7 +216,7 @@ class OperationResourcePolling(LongRunningOperation):
 
     def _set_async_url_if_present(self, response):
         # type: (azure.core.pipeline.transport.HttpResponse) -> None
-        async_url = response.headers.get(self._header)
+        async_url = response.headers.get(self._operation_location_header)
         if async_url:
             self.async_url = async_url
 
