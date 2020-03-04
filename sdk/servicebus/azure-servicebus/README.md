@@ -27,9 +27,9 @@ pip install azure-servicebus --pre
 To use this package, you must have:
 * Azure subscription - [Create a free account][azure_sub]
 * Azure Service Bus - [Namespace and management credentials][service_bus_namespace]
-* Python 2.7, 3.4, 3.5, 3.6 or 3.7 - [Install Python][python]
+* Python 2.7, 3.5, 3.6 or 3.7 - [Install Python][python]
 
-If you need an azure service bus namespace and do not wish to use the portal, you can use the Azure [Cloud Shell][cloud_shell_bash] to create one with this Azure CLI command:
+If you need an azure service bus namespace and do not wish to use the graphical portal UI, you can use the Azure CLI via [Cloud Shell][cloud_shell_bash], or Azure CLI run locally, to create one with this Azure CLI command:
 
 ```Bash
 az servicebus namespace create --resource-group <resource-group-name> --name <servicebus-namespace-name> --location <servicebus-namespace-location>
@@ -47,18 +47,18 @@ Use the [Azure CLI][azure_cli] snippet below to populate an environment variable
 RES_GROUP=<resource-group-name>
 NAMESPACE_NAME=<servicebus-namespace-name>
 
-export CONNECTION_STRING=$(az servicebus namespace authorization-rule keys list --resource-group $RES_GROUP --namespace-name $NAMESPACE_NAME --query RootManageSharedAccessKey --output tsv)
+export SERVICE_BUS_CONN_STR=$(az servicebus namespace authorization-rule keys list --resource-group $RES_GROUP --namespace-name $NAMESPACE_NAME --query RootManageSharedAccessKey --output tsv)
 ```
 
 #### Create client
 
-Once you've populated the `CONNECTION_STRING` environment variable, you can create the `ServiceBusClient`.
+Once you've populated the `SERVICE_BUS_CONN_STR` environment variable, you can create the `ServiceBusClient`.
 
 ```Python
 from azure.servicebus import ServiceBusClient
 
 import os
-connstr = os.environ['CONNECTION_STRING']
+connstr = os.environ['SERVICE_BUS_CONN_STR']
 
 with ServiceBusClient.from_connection_string(connstr) as client:
     ...
