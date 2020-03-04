@@ -156,7 +156,7 @@ class ServiceBusSenderClient(ClientBase, SenderMixin):
         **kwargs,
     ):
         # type: (str, Any) -> ServiceBusSenderClient
-        """Create an ServiceBusSenderClient from a connection string.
+        """Create a ServiceBusSenderClient from a connection string.
 
         :param conn_str: The connection string of a Service Bus.
         :keyword str queue_name: The path of specific Service Bus Queue the client connects to.

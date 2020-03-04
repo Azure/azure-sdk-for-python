@@ -254,7 +254,7 @@ class ServiceBusReceiverClient(ClientBase, ReceiverMixin):
         **kwargs,
     ):
         # type: (str, Any) -> ServiceBusReceiverClient
-        """Create an ServiceBusReceiverClient from a connection string.
+        """Create a ServiceBusReceiverClient from a connection string.
 
         :param conn_str: The connection string of a Service Bus.
         :keyword str queue_name: The path of specific Service Bus Queue the client connects to.
@@ -323,9 +323,8 @@ class ServiceBusReceiverClient(ClientBase, ReceiverMixin):
         When receiving deferred messages from a partitioned entity, all of the supplied
         sequence numbers must be messages from the same partition.
 
-        :param sequence_numbers: A list of the sequence numbers of messages that have been
+        :param list[int] sequence_numbers: A list of the sequence numbers of messages that have been
          deferred.
-        :type sequence_numbers: list[int]
         :rtype: list[~azure.servicebus.DeferredMessage]
         """
         if not sequence_numbers:
