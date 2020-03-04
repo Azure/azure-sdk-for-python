@@ -24,7 +24,7 @@
 #
 # --------------------------------------------------------------------------
 from enum import Enum
-from typing import Optional
+from typing import TYPE_CHECKING, Optional, Union
 
 from azure.core.polling.base_polling import (
     LongRunningOperation,
@@ -37,6 +37,17 @@ from azure.core.polling.base_polling import (
     _as_json,
     _is_empty,
 )
+
+if TYPE_CHECKING:
+    from azure.core.pipeline import PipelineResponse
+    from azure.core.pipeline.transport import (
+        HttpResponse,
+        AsyncHttpResponse,
+        HttpRequest,
+    )
+
+    ResponseType = Union[HttpResponse, AsyncHttpResponse]
+    PipelineResponseType = PipelineResponse[HttpRequest, ResponseType]
 
 
 class _LroOption(str, Enum):
@@ -64,7 +75,7 @@ class AzureAsyncOperationPolling(OperationResourcePolling):
         self.lro_options = lro_options or {}
 
     def get_final_get_url(self, pipeline_response):
-        # type: (azure.core.pipeline.PipelineResponse) -> Optional[str]
+        # type: (PipelineResponseType) -> Optional[str]
         """If a final GET is needed, returns the URL.
 
         :rtype: str
@@ -90,18 +101,20 @@ class BodyContentPolling(LongRunningOperation):
         self.initial_response = None
 
     def can_poll(self, pipeline_response):
+        # type: (PipelineResponseType) -> bool
         """Answer if this polling method could be used.
         """
         response = pipeline_response.http_response
         return response.request.method == "PUT"
 
     def get_polling_url(self):
+        # type: () -> str
         """Return the polling URL.
         """
         return self.initial_response.http_response.request.url
 
     def get_final_get_url(self, pipeline_response):
-        # type: (azure.core.pipeline.PipelineResponse) -> Optional[str]
+        # type: (PipelineResponseType) -> Optional[str]
         """If a final GET is needed, returns the URL.
 
         :rtype: str
@@ -109,7 +122,7 @@ class BodyContentPolling(LongRunningOperation):
         return None
 
     def set_initial_status(self, pipeline_response):
-        # type: (azure.core.pipeline.PipelineResponse) -> str
+        # type: (PipelineResponseType) -> str
         """Process first response after initiating long running operation.
 
         :param azure.core.pipeline.PipelineResponse response: initial REST call response.
@@ -132,9 +145,9 @@ class BodyContentPolling(LongRunningOperation):
 
     @staticmethod
     def _get_provisioning_state(response):
-        # type: (azure.core.pipeline.transport.HttpResponse) -> Optional[str]
-        """
-        Attempt to get provisioning state from resource.
+        # type: (ResponseType) -> Optional[str]
+        """Attempt to get provisioning state from resource.
+
         :param azure.core.pipeline.transport.HttpResponse response: latest REST call response.
         :returns: Status if found, else 'None'.
         """
@@ -144,7 +157,7 @@ class BodyContentPolling(LongRunningOperation):
         return body.get("properties", {}).get("provisioningState")
 
     def get_status(self, pipeline_response):
-        # type: (azure.core.pipeline.PipelineResponse) -> str
+        # type: (PipelineResponseType) -> str
         """Process the latest status update retrieved from the same URL as
         the previous request.
 
