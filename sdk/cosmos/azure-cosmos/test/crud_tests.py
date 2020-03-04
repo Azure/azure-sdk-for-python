@@ -54,12 +54,9 @@ import azure.cosmos._base as base
 import azure.cosmos.cosmos_client as cosmos_client
 from azure.cosmos.diagnostics import RecordDiagnostics
 from azure.cosmos.partition_key import PartitionKey
-import conftest
 from azure.cosmos import _retry_utility
 import requests
 from urllib3.util.retry import Retry
-from requests.exceptions import ConnectionError
-
 
 pytestmark = pytest.mark.cosmosEmulator
 
@@ -181,8 +178,6 @@ class CRUDTests(unittest.TestCase):
         )
         self.assertEqual(created_db.id, database_id)
 
-        conftest.database_ids_to_delete.append(created_db.id)
-
         # Verify offer throughput for database
         offer = created_db.read_offer()
         self.assertEqual(offer.offer_throughput, offer_throughput)
@@ -191,14 +186,12 @@ class CRUDTests(unittest.TestCase):
         new_offer_throughput = 2000
         offer = created_db.replace_throughput(new_offer_throughput)
         self.assertEqual(offer.offer_throughput, new_offer_throughput)
+        self.client.delete_database(created_db.id)
 
     def test_sql_query_crud(self):
         # create two databases.
         db1 = self.client.create_database('database 1' + str(uuid.uuid4()))
         db2 = self.client.create_database('database 2' + str(uuid.uuid4()))
-
-        conftest.database_ids_to_delete.append(db1.id)
-        conftest.database_ids_to_delete.append(db2.id)
 
         # query with parameters.
         databases = list(self.client.query_databases({
@@ -218,6 +211,8 @@ class CRUDTests(unittest.TestCase):
         # query with a string.
         databases = list(self.client.query_databases('SELECT * FROM root r WHERE r.id="' + db2.id + '"'))
         self.assertEqual(1, len(databases), 'Unexpected number of query results.')
+        self.client.delete_database(db1.id)
+        self.client.delete_database(db2.id)
 
     def test_collection_crud(self):
         created_db = self.databaseForTest
@@ -1969,12 +1964,15 @@ class CRUDTests(unittest.TestCase):
         self.assertFalse(root_included_path.get('indexes'))
 
     def test_client_request_timeout(self):
-        connection_policy = documents.ConnectionPolicy()
-        # making timeout 0 ms to make sure it will throw
-        connection_policy.RequestTimeout =  0.000000000001
-        with self.assertRaises(Exception):
-            # client does a getDatabaseAccount on initialization, which will time out
-            cosmos_client.CosmosClient(CRUDTests.host, CRUDTests.masterKey, "Session", connection_policy=connection_policy)
+        # Test is flaky on Emulator
+        if not('localhost' in self.host or '127.0.0.1' in self.host):
+            connection_policy = documents.ConnectionPolicy()
+            # making timeout 0 ms to make sure it will throw
+            connection_policy.RequestTimeout =  0.000000000001
+
+            with self.assertRaises(Exception):
+                # client does a getDatabaseAccount on initialization, which will time out
+                cosmos_client.CosmosClient(CRUDTests.host, CRUDTests.masterKey, "Session", connection_policy=connection_policy)
 
     def test_client_request_timeout_when_connection_retry_configuration_specified(self):
         connection_policy = documents.ConnectionPolicy()
