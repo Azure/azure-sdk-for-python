@@ -156,7 +156,7 @@ class LongRunningOperation(object):
 class OperationResourcePolling(LongRunningOperation):
     """Implements a operation resource polling, typically from Operation-Location.
     """
-    def __init__(self, header="Operation-Location"):
+    def __init__(self, header="operation-location"):
         self._header = header
 
         # Store the initial URLs
