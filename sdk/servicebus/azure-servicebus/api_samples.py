@@ -3,13 +3,29 @@
 
 ### creation of differen entity clients
 
+# Top Level ServiceBusClient
+
+## from connection string
+
+sb_client = ServiceBusClient.from_connection_string(conn_str="conn_str")
+sb_client = ServiceBusClient(
+    fully_qualified_namepsace="fully_qualified_namepsace",
+    crendetial=ServiceBusSharedKeyCredential("policy", "key")
+)
+
+queue_sender = sb_client.get_queue_sender(queue_name="queue_name")
+queue_receiver = sb_client.get_queue_receiver(queue_name="queue_name")
+topic_sender = sb_client.get_topic_sender(topic_name="topic_name")
+subscription_receiver = sb_client.get_subscription_sender(topic_name="topic_name", subscription_name="subscription_name")
+
 # Queue Sender
-queue_sender = ServiceBusSenderClient.from_connection_string(
+
+queue_sender = ServiceBusSender.from_connection_string(
     conn_str="conn_str",
     queue_name="queue_name"
 )
 
-queue_sender = ServiceBusSenderClient(
+queue_sender = ServiceBusSender(
     fully_qualified_namepsace="fully_qualified_namepsace",
     queue_name="queue_name",
     ServiceBusSharedKeyCredential("policy", "key")
@@ -29,12 +45,12 @@ queue_receiver = SeviceBusReceiverClient(
 )
 
 # Topic Sender
-topic_sender = ServiceBusSenderClient.from_connection_string(
+topic_sender = ServiceBusSender.from_connection_string(
     conn_str="conn_str",
     topic_name="topic_name"
 )
 
-topic_sender = ServiceBusSenderClient(
+topic_sender = ServiceBusSender(
     fully_qualified_namepsace="fully_qualified_namepsace",
     topic_name="topic_name",
     credential=ServiceBusSharedKeyCredential("policy", "key")
@@ -58,15 +74,17 @@ subscription_receiver = SeviceBusReceiverClient(
 
 ### Send and receive
 # 1 Send
+sb_client = ServiceBusClient.from_connection_string(conn_str="conn_str")
+queue_sender = sb_client.get_queue_sender(queue_name="queue_name")
 
-queue_sender = ServiceBusSenderClient(
-    fully_qualified_namepsace="fully_qualified_namepsace",
-    queue_name="queue_name",
-    credential=ServiceBusSharedKeyCredential("policy", "key")
-)
+# queue_sender = ServiceBusSender(
+#     fully_qualified_namepsace="fully_qualified_namepsace",
+#     queue_name="queue_name",
+#     credential=ServiceBusSharedKeyCredential("policy", "key")
+# )
 
 '''
-topic_sender = ServiceBusSenderClient(
+topic_sender = ServiceBusSender(
     fully_qualified_namepsace="fully_qualified_namepsace",
     topic_name="topic_name",
     credential=ServiceBusSharedKeyCredential("policy", "key")
@@ -111,15 +129,17 @@ with queue_sender:
     topic_sender.cancel_scheduled_messages(batch_sequence_numbers)
 
 # 2 Receive
+sb_client = ServiceBusClient.from_connection_string(conn_str="conn_str")
+queue_receiver = sb_client.get_queue_receiver(queue_name="queue_name")
 
-queue_receiver = ServiceBusReceiverClient(
-    fully_qualified_namespace="fully_qualified_namespace",
-    queue_name="queue_name",
-    credential=ServiceBusSharedKeyCredential("policy", "key")
-)
+# queue_receiver = ServiceBusReceiver(
+#     fully_qualified_namespace="fully_qualified_namespace",
+#     queue_name="queue_name",
+#     credential=ServiceBusSharedKeyCredential("policy", "key")
+# )
 
 '''
-subscription_receiver = ServiceBusReceiverClient(
+subscription_receiver = ServiceBusReceiver(
     fully_qualified_namespace="fully_qualified_namespace",
     topic_name="topic_name",
     subscription_name="subscription_name"
@@ -161,11 +181,14 @@ with queue_receiver:
 
 
 # 1 Send
-topic_sender = ServiceBusSenderClient(
-    fully_qualified_namespace="fully_qualified_namepsace",
-    topic_name="topic_name",
-    credential=ServiceBusSharedKeyCredential("policy", "key")
-)
+sb_client = ServiceBusClient.from_connection_string(conn_str="conn_str")
+topic_sender = sb_client.get_topic_sender(topic_name="topic_name")
+
+# topic_sender = ServiceBusSender(
+#     fully_qualified_namespace="fully_qualified_namepsace",
+#     topic_name="topic_name",
+#     credential=ServiceBusSharedKeyCredential("policy", "key")
+# )
 
 with topic_sender:
     # 1.1 send single
@@ -205,13 +228,19 @@ with topic_sender:
     topic_sender.cancel_scheduled_messages(batch_sequence_numbers)
 
 # 2 Receive
-subscription_receiver = ServiceBusReceiverClient(
-    fully_qualified_namespace="fully_qualified_namespace",
+sb_client = ServiceBusClient.from_connection_string(conn_str="conn_str")
+subscription_receiver = sb_client.get_subscription_receiver(
     topic_name="topic_name",
-    subscription_name="subscription_name",
-    credential=ServiceBusSharedKeyCredential("policy", "key"),
-    session_id="test_session"
+    subscription_name="subscription_name"
 )
+
+# subscription_receiver = ServiceBusReceiver(
+#     fully_qualified_namespace="fully_qualified_namespace",
+#     topic_name="topic_name",
+#     subscription_name="subscription_name",
+#     credential=ServiceBusSharedKeyCredential("policy", "key"),
+#     session_id="test_session"
+# )
 
 # 2.1 peek
 with subscription_receiver:
@@ -252,7 +281,7 @@ with subscription_receiver:
 
 ### Rule operations
 
-subscription_receiver = ServiceBusReceiverClient(
+subscription_receiver = ServiceBusReceiver(
     fully_qualified_namespace="fully_qualified_namespace",
     topic_name="topic_name",
     subscription_name="subscription_name",
@@ -265,7 +294,7 @@ with subscription_receiver:
 
 ### Transaction operations
 
-subscription_receiver = ServiceBusReceiverClient(
+subscription_receiver = ServiceBusReceiver(
     fully_qualified_namespace="fully_qualified_namespace",
     topic_name="topic_name",
     subscription_name="subscription_name",

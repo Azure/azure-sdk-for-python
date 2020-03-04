@@ -1,7 +1,38 @@
-# Two-Clients Approach
-
 ## APIs:
-class ServiceBusSenderClient:
+class ServiceBusClient:  # MGMT APIs
+    def __init__(
+        self,
+        fully_qualified_namespace : str,
+        credential : TokenCredential,
+        **kwargs
+    ):
+
+    ########## Preivew 1 scope ##########
+    @classmethod
+    def from_connection_string(cls, conn_str, **kwargs):
+    def get_queue_sender(self, queue_name, **kwargs) -> ServiceBusSender:
+    def get_queue_receiver(self, queue_name, **kwargs) -> ServiceBusReceiver:
+    ########## Preivew 1 scope ##########
+
+    def get_topic_sender(self, topic_name) -> ServiceBusSender:
+    def get_subscription_receiver(self, topic_name, subscription_name) -> ServiceBusReceiver:
+
+    def create_queue(self, queue_name, **kwargs):
+    def delete_queue(self, queue_name, fail_not_exist=False):
+    def list_queues(self) -> List[str]:
+
+    def create_topic(self, topic_name, **kwargs):
+    def delete_topic(self, topic_name, fail_not_exist=False):
+    def list_topics(self):
+
+    def create_subscription(self, topic_name, subscription_name):
+    def delete_subscription(self, topic_name, subscription_name, fail_not_exist=False):
+    def list_subscriptions(self, topic_name):
+
+    def list_session_ids_of_queue(self, queue_name):
+    def list_session_ids_of_subscription(self, topic_name, subscription_name):
+
+class ServiceBusSender:
     def __init__(
         self,
         fully_qualified_namespace : str,
@@ -22,7 +53,7 @@ class ServiceBusSenderClient:
         queue_name: str = None,
         topic_name: str = None,
         **kwargs
-    ) -> ServiceBusSenderClient:
+    ) -> ServiceBusSender:
 
     def __enter__(self):
     def __exit__(self):
@@ -53,7 +84,7 @@ class ServiceBusSenderClient:
     def cancel_scheduled_messages(self, sequence_number : Union[int, List[int]]) -> None:
 
 
-class ServiceBusReceiverClient:
+class ServiceBusReceiver:
     def __init__(
         self,
         fully_qualified_namespace : str,
@@ -81,7 +112,7 @@ class ServiceBusReceiverClient:
         session_id: str = None,
         mode : ReceiveSettleMode = ReceiveSettleMode.PeekLock
         **kwargs
-    )-> ServiceBusReceiverClient:
+    )-> ServiceBusReceiver:
 
     def __enter__(self):
     def __exit__(self):
@@ -231,45 +262,15 @@ class ServiceBusSharedKeyCredential:
 
 class ServiceBusError(Exception):
 
-class ServiceBusClient:  # MGMT APIs
-    def __init__(
-        self,
-        fully_qualified_namespace : str,
-        credential : TokenCredential,
-        **kwargs
-    ):
-
-    @classmethod
-    def from_connection_string(cls, conn_str, **kwargs):
-
-    def create_queue(self, queue_name, **kwargs):
-    def delete_queue(self, queue_name, fail_not_exist=False):
-    def list_queues(self) -> List[str]:
-    def get_queue_sender(self, queue_name, **kwargs) -> ServiceBusSenderClient:
-    def get_queue_receiver(self, queue_name, **kwargs) -> ServiceBusReceiverClient:
-
-    def create_topic(self, topic_name, **kwargs):
-    def delete_topic(self, topic_name, fail_not_exist=False):
-    def list_topics(self):
-    def get_topic_sender(self, topic_name) -> ServiceBusSenderClient:
-
-    def create_subscription(self, topic_name, subscription_name):
-    def delete_subscription(self, topic_name, subscription_name, fail_not_exist=False):
-    def list_subscriptions(self, topic_name):
-    def get_subscription_receiver(self, topic_name, subscription_name) -> ServiceBusReceiverClient:
-
-    def list_session_ids_of_queue(self, queue_name):
-    def list_session_ids_of_subscription(self, topic_name, subscription_name):
-
 ################################################### Split Line ###################################################
 
 # Approach for Rule APIs - Option 1
 ## APIs
 ### 3-Clients approach
 
-class ServiceBusSenderClient:
-class QueueReceiverClient:
-class SubscriptionReceiverClient:
+class ServiceBusSender:
+class QueueReceiver:
+class SubscriptionReceiver:
     def add_rule(self, rule_name, filter):
     def remove_rule(self, rule_name):
     def get_rules(self):
@@ -279,7 +280,7 @@ class SubscriptionReceiverClient:
 
 # Approach for Rule APIs - Option 2
 ## APIs
-class ServiceBusReceiverClient:
+class ServiceBusReceiver:
     @property
     def subscription_rule_manager(self):  # raise Error when called on Queue
 
