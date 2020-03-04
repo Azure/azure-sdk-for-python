@@ -53,41 +53,7 @@ class DetectLanguageSample(object):
                 print(doc.id, doc.error)
         # [END batch_detect_language]
 
-    def alternative_scenario_detect_language(self):
-        """This sample demonstrates how to retrieve batch statistics, the
-        model version used, and the raw response returned from the service.
-
-        It additionally shows an alternative way to pass in the input documents
-        using a list[DetectLanguageInput] and supplying your own IDs and country hints along
-        with the text.
-        """
-        from azure.ai.textanalytics import TextAnalyticsClient, TextAnalyticsApiKeyCredential
-        text_analytics_client = TextAnalyticsClient(endpoint=self.endpoint, credential=TextAnalyticsApiKeyCredential(self.key))
-
-        documents = [
-            {"id": "0", "country_hint": "US", "text": "This is a document written in English."},
-            {"id": "1", "country_hint": "MX", "text": "Este es un document escrito en Español."},
-            {"id": "2", "country_hint": "CN", "text": "这是一个用中文写的文件"},
-            {"id": "3", "country_hint": "DE", "text": "Dies ist ein Dokument in englischer Sprache."},
-            {"id": "4", "country_hint": "SE",  "text": "Detta är ett dokument skrivet på engelska."}
-        ]
-
-        extras = []
-
-        def callback(resp):
-            extras.append(resp.statistics)
-            extras.append(resp.model_version)
-            extras.append(resp.raw_response)
-
-        result = text_analytics_client.detect_language(
-            documents,
-            show_stats=True,
-            model_version="latest",
-            raw_response_hook=callback
-        )
-
 
 if __name__ == '__main__':
     sample = DetectLanguageSample()
     sample.detect_language()
-    sample.alternative_scenario_detect_language()
