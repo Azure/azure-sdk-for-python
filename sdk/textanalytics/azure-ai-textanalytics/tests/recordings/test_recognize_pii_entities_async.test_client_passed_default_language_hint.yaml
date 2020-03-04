@@ -1,0 +1,90 @@
+interactions:
+- request:
+    body: '{"documents": [{"id": "1", "text": "I will go to the park.", "language":
+      "es"}, {"id": "2", "text": "I did not like the hotel we stayed at.", "language":
+      "es"}, {"id": "3", "text": "The restaurant had really good food.", "language":
+      "es"}]}'
+    headers:
+      Accept: [application/json]
+      Content-Length: ['240']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [azsdk-python-azure-ai-textanalytics/1.0.0b3 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
+      X-BingApis-SDK-Client: [Python-SDK]
+    method: POST
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/entities/recognition/pii?showStats=false
+  response:
+    body: {string: '{"documents":[],"errors":[{"id":"1","error":{"code":"InvalidArgument","message":"Invalid
+        Language Code.","innerError":{"code":"UnsupportedLanguageCode","message":"Supplied
+        language not supported. Pass in one of: en"}}},{"id":"2","error":{"code":"InvalidArgument","message":"Invalid
+        Language Code.","innerError":{"code":"UnsupportedLanguageCode","message":"Supplied
+        language not supported. Pass in one of: en"}}},{"id":"3","error":{"code":"InvalidArgument","message":"Invalid
+        Language Code.","innerError":{"code":"UnsupportedLanguageCode","message":"Supplied
+        language not supported. Pass in one of: en"}}}],"modelVersion":"2020-02-01"}'}
+    headers: {apim-request-id: a4170742-974a-40ac-8290-8b003fca780c, content-type: application/json;
+        charset=utf-8, date: 'Tue, 03 Mar 2020 18:34:14 GMT', strict-transport-security: max-age=31536000;
+        includeSubDomains; preload, transfer-encoding: chunked, x-content-type-options: nosniff,
+      x-envoy-upstream-service-time: '2'}
+    status: {code: 200, message: OK}
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult [https, westus2.api.cognitive.microsoft.com,
+        //text/analytics/v3.0-preview.1/entities/recognition/pii, showStats=false,
+        '']
+- request:
+    body: '{"documents": [{"id": "1", "text": "I will go to the park.", "language":
+      "en"}, {"id": "2", "text": "I did not like the hotel we stayed at.", "language":
+      "en"}, {"id": "3", "text": "The restaurant had really good food.", "language":
+      "en"}]}'
+    headers:
+      Accept: [application/json]
+      Content-Length: ['240']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [azsdk-python-azure-ai-textanalytics/1.0.0b3 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
+      X-BingApis-SDK-Client: [Python-SDK]
+    method: POST
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/entities/recognition/pii?showStats=false
+  response:
+    body: {string: '{"documents":[{"id":"1","entities":[]},{"id":"2","entities":[]},{"id":"3","entities":[]}],"errors":[],"modelVersion":"2020-02-01"}'}
+    headers: {apim-request-id: 0737fa60-5697-46c6-8f58-2cc25e38a2a5, content-type: application/json;
+        charset=utf-8, csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3,
+      date: 'Tue, 03 Mar 2020 18:34:14 GMT', strict-transport-security: max-age=31536000;
+        includeSubDomains; preload, transfer-encoding: chunked, x-content-type-options: nosniff,
+      x-envoy-upstream-service-time: '24'}
+    status: {code: 200, message: OK}
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult [https, westus2.api.cognitive.microsoft.com,
+        //text/analytics/v3.0-preview.1/entities/recognition/pii, showStats=false,
+        '']
+- request:
+    body: '{"documents": [{"id": "1", "text": "I will go to the park.", "language":
+      "es"}, {"id": "2", "text": "I did not like the hotel we stayed at.", "language":
+      "es"}, {"id": "3", "text": "The restaurant had really good food.", "language":
+      "es"}]}'
+    headers:
+      Accept: [application/json]
+      Content-Length: ['240']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [azsdk-python-azure-ai-textanalytics/1.0.0b3 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
+      X-BingApis-SDK-Client: [Python-SDK]
+    method: POST
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/entities/recognition/pii?showStats=false
+  response:
+    body: {string: '{"documents":[],"errors":[{"id":"1","error":{"code":"InvalidArgument","message":"Invalid
+        Language Code.","innerError":{"code":"UnsupportedLanguageCode","message":"Supplied
+        language not supported. Pass in one of: en"}}},{"id":"2","error":{"code":"InvalidArgument","message":"Invalid
+        Language Code.","innerError":{"code":"UnsupportedLanguageCode","message":"Supplied
+        language not supported. Pass in one of: en"}}},{"id":"3","error":{"code":"InvalidArgument","message":"Invalid
+        Language Code.","innerError":{"code":"UnsupportedLanguageCode","message":"Supplied
+        language not supported. Pass in one of: en"}}}],"modelVersion":"2020-02-01"}'}
+    headers: {apim-request-id: 39ae6cdc-f10d-42cf-a827-f2b218e2135b, content-type: application/json;
+        charset=utf-8, date: 'Tue, 03 Mar 2020 18:34:14 GMT', strict-transport-security: max-age=31536000;
+        includeSubDomains; preload, transfer-encoding: chunked, x-content-type-options: nosniff,
+      x-envoy-upstream-service-time: '2'}
+    status: {code: 200, message: OK}
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult [https, westus2.api.cognitive.microsoft.com,
+        //text/analytics/v3.0-preview.1/entities/recognition/pii, showStats=false,
+        '']
+version: 1
