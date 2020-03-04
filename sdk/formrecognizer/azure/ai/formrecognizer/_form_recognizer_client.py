@@ -252,8 +252,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
 
     def list_custom_models(self):
         try:
-            return self._client.get_custom_models(
-                op="full",
+            return self._client.list_custom_models(
                 cls=lambda objs: [ModelInfo._from_generated(x) for x in objs],
         )
         except ErrorResponseException as err:
@@ -261,7 +260,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
 
     def get_models_summary(self):
         try:
-            page = self._client.get_custom_models(op="summary", cls=lambda obj: ModelsSummary._from_generated(obj))
-            return next(page)
+            response = self._client.get_custom_models()
+            return ModelsSummary._from_generated(response.summary)
         except ErrorResponseException as err:
             raise HttpResponseError(err)
