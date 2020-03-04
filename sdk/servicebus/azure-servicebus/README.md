@@ -11,13 +11,7 @@ Use the Service Bus client library for Python to communicate between application
 * Send and receive messages within your Service Bus channels.
 * Utilize message locks, sessions, and dead letter functionality to implement complex messaging patterns.
 
-  - [Package (PyPi)][pypi]
-  - [API reference documentation][api_docs]
-  - [Product documentation][product_docs]
-  - [Source code](./)
-  - [ChangeLog](./CHANGELOG.md)
-  - [Samples](./samples)
-  - [Versioned API References][versioned_api_ref]
+[Source code](./) | [Package (PyPi)](pypi) | [API reference documentation](api_docs) | [Product documentation](product_docs) | [Samples](./samples) | [Changelog][./CHANGELOG.md]
 
 ## Getting started
 
@@ -88,29 +82,14 @@ For more information about these resources, see [What is Azure Service Bus?][ser
 
 The following sections provide several code snippets covering some of the most common Service Bus tasks, including:
 
-* [Create a queue](#create-a-queue)
 * [Send a message to a queue](#send-to-a-queue)
 * [Receive a message from a queue](#receive-from-a-queue)
 * [Deadletter a message on receipt](#deadletter-a-message)
 
-### Create a queue
-
-After authenticating your `ServiceBusClient`, you can work with any resource in the namespace. The code snippet below creates a queue, continuing if one already exists with the same name within this Service Bus Namespace (generating a `409 Conflict` error).
-
-```Python
-queue_name = 'testQueue'
-try:
-    client.create_queue(queue_name)
-except HTTPFailure as e:
-    if e.status_code != 409:
-        raise
-```
-
-> NOTE: For more information on error handling and troubleshooting, see the [Troubleshooting](#troubleshooting) section.
 
 ### Send to a queue
 
-This example sends a message to a queue that is assumed to already exist per [creating a queue](#create-a-queue).
+This example sends a message to a queue that is assumed to already exist, created via the azure portal or az commands.
 
 ```Python
 with client.get_queue_sender(queue_name):
@@ -142,41 +121,21 @@ with client.get_queue_receiver(queue_name) as receiver:
         msg.dead_letter()
 ```
 
-## Troubleshooting
-
-### General
-
-When you interact with Service Bus using the Python SDK, errors returned by the service correspond to the same HTTP status codes returned for REST API requests:
-
-[HTTP Status Codes for Azure Service Bus Queues][queue_status_codes]
->NOTE: Status codes defined for each operation type, see the sidebar in the above link.
-
-For example, if you try to create a queue using an ID (name) that already exists in your Service Bus namespace, a `409` error is returned, indicating the conflict. In the following snippet, the error is handled gracefully by catching the exception and displaying additional information about the error.
-
-```Python
-try:
-    client.create_queue(queue_name)
-except HTTPFailure as e:
-    if e.status_code == 409:
-        print("""Error creating queue.
-HTTP status code 409: The ID (name) provided for the container is already in use.
-The queue name must be unique within the namespace.""")
-    else:
-        raise
-```
-
 ## Next steps
 
 ### More sample code
 
-Several Service Bus Python SDK samples are available to you in the SDK's GitHub repository. These samples provide example code for additional scenarios commonly encountered while working with Service Bus:
-
-* [`send_queue.py`][sample_send_queue] - Python code for sending to a service bus queue:
-* [`receive_queue.py`][sample_receive_queue] - Python code for receiving from a service bus queue:
+Please find further examples in the [samples](./samples) directory demonstrating common Service Bus scenarios such as sending, receiving, and message handling.
 
 ### Additional documentation
 
 For more extensive documentation on the Service Bus service, see the [Service Bus DB documentation][service_bus_docs] on docs.microsoft.com.
+
+### Logging
+
+- Enable `azure.servicebus` logger to collect traces from the library.
+- Enable `uamqp` logger to collect traces from the underlying uAMQP library.
+- Enable AMQP frame level trace by setting `logging_enable=True` when creating the client.
 
 ## Contributing
 
@@ -205,10 +164,7 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 [python]: https://www.python.org/downloads/
 [venv]: https://docs.python.org/3/library/venv.html
 [virtualenv]: https://virtualenv.pypa.io
-[versioned_api_ref]: https://azure.github.io/azure-sdk-for-python/ref/Service-Bus.html
 [service_bus_namespace]: https://docs.microsoft.com/azure/service-bus-messaging/service-bus-create-namespace-portal
-[service_bus_overview]: https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-messaging-overview
-[queue_status_codes]: https://docs.microsoft.com/en-us/rest/api/servicebus/create-queue#response-codes
-[service_bus_docs]: https://docs.microsoft.com/en-us/azure/service-bus/
-[sample_send_queue]: https://github.com/yunhaoling/azure-sdk-for-python/blob/servicebus-track2/sdk/servicebus/azure-servicebus/samples/sync_samples/send_queue.py
-[sample_receive_queue]: https://github.com/yunhaoling/azure-sdk-for-python/blob/servicebus-track2/sdk/servicebus/azure-servicebus/samples/sync_samples/receive_queue.py
+[service_bus_overview]: https://docs.microsoft.com/azure/service-bus-messaging/service-bus-messaging-overview
+[queue_status_codes]: https://docs.microsoft.com/rest/api/servicebus/create-queue#response-codes
+[service_bus_docs]: https://docs.microsoft.com/azure/service-bus/

@@ -19,7 +19,8 @@ QUEUE_NAME = os.environ["SERVICE_BUS_QUEUE_NAME"]
 
 sender_client = ServiceBusSenderClient.from_connection_string(
     conn_str=CONNECTION_STR,
-    queue_name=QUEUE_NAME
+    queue_name=QUEUE_NAME,
+    logging_enable=True
 )
 
 message = Message("Single message")
