@@ -1,142 +1,214 @@
-# Microsoft Azure Service Bus SDK for Python
+# Azure Service Bus client library for Python
 
-This is the Microsoft Azure Service Bus Client Library.
-This package has been tested with Python 2.7, 3.4, 3.5, 3.6 and 3.7.
+Azure Service Bus is a high performance cloud-managed messaging service for providing real-time and fault-tolerant communication between distributed senders and receivers.
 
-Microsoft Azure Service Bus supports a set of cloud-based, message-oriented middleware technologies including reliable message queuing and durable publish/subscribe messaging.
+Service Bus provides multiple mechanisms for asynchronous highly reliable communication, such as structured first-in-first-out messaging, 
+publish/subscribe capabilities, and the ability to easily scale as your needs grow.
 
-* [SDK source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus)
-* [SDK reference documentation](https://docs.microsoft.com/python/api/overview/azure/servicebus/client?view=azure-python)
-* [Service Bus documentation](https://docs.microsoft.com/azure/service-bus-messaging/)
+Use the Service Bus client library for Python to communicate between applications and services and implement asynchronous messaging patterns.
 
+* Create Service Bus namespaces, queues, topics, and subscriptions, and modify their settings
+* Send and receive messages within your Service Bus channels.
+* Utilize message locks, sessions, and dead letter functionality to implement complex messaging patterns.
 
-## What's new in v1.0.0b1?
+  - [Package (PyPi)][pypi]
+  - [API reference documentation][api_docs]
+  - [Product documentation][product_docs]
+  - [Source code](./)
+  - [ChangeLog](./CHANGELOG.md)
+  - [Samples](./samples)
+  - [Versioned API References][versioned_api_ref]
 
-As of version v1.0.0b1 a new AMQP-based API is available for sending and receiving messages. This update involves **breaking changes**.
-Please read [Migration from 0.50.2 to 1.0.0b1](#migration-from-0502-to-100b1) to determine if upgrading is
-right for you at this time.
+## Getting started
 
-The new API offers a simplified interface aligned with the current generation of ServiceBus SDKs across our language offerings,
-with expanded feature support going forward.  This initial preview focuses on core queue sending and receiving functionality,
-and will set the skeleton for the full feature set to be rolled out in concurrent previews.
+### Install the package
 
-For documentation on the legacy HTTP-based operations please see [Using HTTP-based operations of the legacy API](https://docs.microsoft.com/python/api/overview/azure/servicebus?view=azure-python#using-http-based-operations-of-the-legacy-api).
+Install the Azure Service Bus client library for Python with [pip][pip]:
 
-
-## Prerequisites
-
-* Azure subscription - [Create a free account](https://azure.microsoft.com/free/)
-* Azure Service Bus [namespace and management credentials](https://docs.microsoft.com/azure/service-bus-messaging/service-bus-create-namespace-portal)
-
-
-## Installation
-
-```shell
+```Bash
 pip install azure-servicebus --pre
 ```
 
-## Migration from 0.50.2 to 1.0.0b1
+**Prerequisites**: 
+To use this package, you must have:
+* Azure subscription - [Create a free account][azure_sub]
+* Azure Service Bus - [Namespace and management credentials][service_bus_namespace]
+* Python 2.7, 3.4, 3.5, 3.6 or 3.7 - [Install Python][python]
 
-Major breaking changes were introduced in version 1.0.0b1.
-If the existing stable API is needed (v0.50.2) as opposed to this preview release, it can be installed or reverted to via 
-```shell
-pip install azure-servicebus --upgrade
+If you need an azure service bus namespace and do not wish to use the portal, you can use the Azure [Cloud Shell][cloud_shell_bash] to create one with this Azure CLI command:
+
+```Bash
+az servicebus namespace create --resource-group <resource-group-name> --name <servicebus-namespace-name> --location <servicebus-namespace-location>
 ```
-The original HTTP-based API is still available in v1.0.0b1 - however it now exists under a new namesapce: `azure.servicebus.control_client`.
 
-### Should I upgrade?
+### Authenticate the client
 
-The primary motivation for upgrading at this point is to gain early exposure to the service bus 1.0 release to provide feedback or improvements.
+Interaction with Service Bus starts with an instance of the `ServiceBusClient` class. You either need a **connection string with SAS key**, or a **namespace** and one of its **account keys** to instantiate the client object.
 
-While we expect the SDK surface area to not change significantly as we progress through preview releases, this cannot be guaranteed.
+#### Get credentials
 
-The new package (v1.0.0b1) offers no improvements in HTTP-based operations over v0.50.2. The HTTP-based API is identical except that it now
-exists under a new namespace. For this reason if you only wish to use HTTP-based operations (`create_queue`, `delete_queue` etc) - there will be
-no additional benefit in upgrading at this time.
+Use the [Azure CLI][azure_cli] snippet below to populate an environment variable with the service bus connection string (you can also find these values in the [Azure portal][azure_portal]. The snippet is formatted for the Bash shell.
 
+```Bash
+RES_GROUP=<resource-group-name>
+NAMESPACE_NAME=<servicebus-namespace-name>
 
-### How do I migrate my code to the new version?
+export CONNECTION_STRING=$(az servicebus namespace authorization-rule keys list --resource-group $RES_GROUP --namespace-name $NAMESPACE_NAME --query RootManageSharedAccessKey --output tsv)
+```
 
-This initial preview release focuses on Queue support.  Full featureset will be rolled out in future previews.
-Code written against v0.50.2 can be ported to version 1.0.0b1 as follows:
+#### Create client
 
-#### v0.50.2 Sender
-```python
+Once you've populated the `CONNECTION_STRING` environment variable, you can create the `ServiceBusClient`.
+
+```Python
 from azure.servicebus import ServiceBusClient
 
-CONNECTION_STR = '' # connection string from Azure portal.
-QUEUE_NAME = '' # queue name, also from the Azure portal, within the service bus corrosponding to the connection string above.
+import os
+connstr = os.environ['CONNECTION_STRING']
 
-client = ServiceBusClient.from_connection_string(CONNECTION_STR)
-queue_client = client.get_queue(QUEUE_NAME)
-message1 = Message("Hello World!")
-queue_client.send(message1)
+with ServiceBusClient.from_connection_string(connstr) as client:
+    ...
 ```
 
-#### V1.0.0b1 Sender
-```python
-from azure.servicebus import ServiceBusSenderClient, Message
+Note: client can be initialized without a context manager, but must be manually closed via client.close() to not leak resources.
 
-CONNECTION_STR = '' # connection string from Azure portal.
-QUEUE_NAME = '' # queue name, also from the Azure portal, within the service bus corrosponding to the connection string above.
+## Key concepts
 
-sender_client = ServiceBusSenderClient.from_connection_string(
-    conn_str=CONNECTION_STR,
-    queue_name=QUEUE_NAME
-)
+Once you've initialized a `ServiceBusClient`, you can interact with the primary resource types within a Service Bus Namespace, of which multiple can exist and on which actual message transmission takes place, the namespace often serving as an application container:
 
-message = Message("Single message")
+* Queue: Allows for Sending and Receiving of messages, ordered first-in-first-out.  Often used for point-to-point communication.
 
-with sender_client:
-    sender_client.send(message)
+* Topic: As opposed to Queues, Topics are better suited to publish/subscribe scenarios.  A topic can be sent to, but requires a subscription, of which there can be multiple in parallel, to consume from.
+
+* Subscription: The mechanism to consume from a Topic.  Each subscription is independent, and receaves a copy of each message sent to the topic.  Rules and Filters can be used to tailor which messages are received by a specific subscription.
+
+For more information about these resources, see [What is Azure Service Bus?][service_bus_overview].
+
+## Examples
+
+The following sections provide several code snippets covering some of the most common Service Bus tasks, including:
+
+* [Create a queue](#create-a-queue)
+* [Send a message to a queue](#send-to-a-queue)
+* [Receive a message from a queue](#receive-from-a-queue)
+* [Deadletter a message on receipt](#deadletter-a-message)
+
+### Create a queue
+
+After authenticating your `ServiceBusClient`, you can work with any resource in the namespace. The code snippet below creates a queue, continuing if one already exists with the same name within this Service Bus Namespace (generating a `409 Conflict` error).
+
+```Python
+queue_name = 'testQueue'
+try:
+    client.create_queue(queue_name)
+except HTTPFailure as e:
+    if e.status_code != 409:
+        raise
 ```
 
-#### v0.50.2 Receiver
-```python
-from azure.servicebus import ServiceBusClient
+> NOTE: For more information on error handling and troubleshooting, see the [Troubleshooting](#troubleshooting) section.
 
-CONNECTION_STR = '' # connection string from Azure portal.
-QUEUE_NAME = '' # queue name, also from the Azure portal, within the service bus corrosponding to the connection string above.
+### Send to a queue
 
-client = ServiceBusClient.from_connection_string(CONNECTION_STR)
-queue_client = client.get_queue(QUEUE_NAME)
-with queue_client.get_receiver(idle_timeout=3) as queue_receiver:
-    for message in queue_receiver:
-        print(str(message))
-        message.complete()
+This example sends a message to a queue that is assumed to already exist per [creating a queue](#create-a-queue).
+
+```Python
+with client.get_queue_sender(queue_name):
+
+    message = Message("Single message")
+    queue_sender.send(message)
 ```
 
-#### V1.0.0b1 Receiver
-```python
-from azure.servicebus import ServiceBusSenderClient, Message
+### Receive from a queue
 
-CONNECTION_STR = '' # connection string from Azure portal.
-QUEUE_NAME = '' # queue name, also from the Azure portal, within the service bus corrosponding to the connection string above.
+To receive from a queue, you can either perform a one-off receive via "receiver.receive()" or receive persistently as follows:
 
-receiver_client = ServiceBusReceiverClient.from_connection_string(
-    conn_str=CONNECTION_STR,
-    queue_name=QUEUE_NAME
-)
-
-with receiver_client:
-    for msg in receiver_client.receive():
+```Python
+with client.get_queue_receiver(queue_name) as receiver:
+    for msg in receiver:
         print(str(msg))
         msg.complete()
 ```
 
-For code utilizing the `azure.servicebus.control_client` namespace in v0.50.2, no changes will be necessary.
+### Deadletter a message
 
-# Usage
+When receiving from a queue, you have multiple actions you can take on the messages you receive.  Where the prior example completes a message,
+permanently removing it from the queue and marking as complete, this example demonstrates how to send the message to the dead letter queue:
 
-For reference documentation and code snippets see [Service Bus](https://docs.microsoft.com/python/api/overview/azure/servicebus)
-on docs.microsoft.com.
+```Python
+with client.get_queue_receiver(queue_name) as receiver:
+    for msg in receiver:
+        print(str(msg))
+        msg.dead_letter()
+```
 
+## Troubleshooting
 
-# Provide Feedback
+### General
 
-If you encounter any bugs or have suggestions, please file an issue in the
-[Issues](https://github.com/Azure/azure-sdk-for-python/issues)
-section of the project.
+When you interact with Service Bus using the Python SDK, errors returned by the service correspond to the same HTTP status codes returned for REST API requests:
 
+[HTTP Status Codes for Azure Service Bus Queues][queue_status_codes]
+>NOTE: Status codes defined for each operation type, see the sidebar in the above link.
 
-![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fazure-servicebus%2FREADME.png)
+For example, if you try to create a queue using an ID (name) that already exists in your Service Bus namespace, a `409` error is returned, indicating the conflict. In the following snippet, the error is handled gracefully by catching the exception and displaying additional information about the error.
+
+```Python
+try:
+    client.create_queue(queue_name)
+except HTTPFailure as e:
+    if e.status_code == 409:
+        print("""Error creating queue.
+HTTP status code 409: The ID (name) provided for the container is already in use.
+The queue name must be unique within the namespace.""")
+    else:
+        raise
+```
+
+## Next steps
+
+### More sample code
+
+Several Service Bus Python SDK samples are available to you in the SDK's GitHub repository. These samples provide example code for additional scenarios commonly encountered while working with Service Bus:
+
+* [`send_queue.py`][sample_send_queue] - Python code for sending to a service bus queue:
+* [`receive_queue.py`][sample_receive_queue] - Python code for receiving from a service bus queue:
+
+### Additional documentation
+
+For more extensive documentation on the Service Bus service, see the [Service Bus DB documentation][service_bus_docs] on docs.microsoft.com.
+
+## Contributing
+
+This project welcomes contributions and suggestions.  Most contributions require you to agree to a
+Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us
+the rights to use your contribution. For details, visit https://cla.microsoft.com.
+
+When you submit a pull request, a CLA-bot will automatically determine whether you need to provide
+a CLA and decorate the PR appropriately (e.g., label, comment). Simply follow the instructions
+provided by the bot. You will only need to do this once across all repos using our CLA.
+
+This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
+For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or
+contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
+
+<!-- LINKS -->
+[azure_cli]: https://docs.microsoft.com/cli/azure
+[api_docs]: https://docs.microsoft.com/python/api/overview/azure/servicebus/client?view=azure-python
+[product_docs]: https://docs.microsoft.com/azure/service-bus-messaging/
+[azure_portal]: https://portal.azure.com
+[azure_sub]: https://azure.microsoft.com/free/
+[cloud_shell]: https://docs.microsoft.com/azure/cloud-shell/overview
+[cloud_shell_bash]: https://shell.azure.com/bash
+[pip]: https://pypi.org/project/pip/
+[pypi]: https://pypi.org/project/azure-servicebus/
+[python]: https://www.python.org/downloads/
+[venv]: https://docs.python.org/3/library/venv.html
+[virtualenv]: https://virtualenv.pypa.io
+[versioned_api_ref]: https://azure.github.io/azure-sdk-for-python/ref/Service-Bus.html
+[service_bus_namespace]: https://docs.microsoft.com/azure/service-bus-messaging/service-bus-create-namespace-portal
+[service_bus_overview]: https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-messaging-overview
+[queue_status_codes]: https://docs.microsoft.com/en-us/rest/api/servicebus/create-queue#response-codes
+[service_bus_docs]: https://docs.microsoft.com/en-us/azure/service-bus/
+[sample_send_queue]: https://github.com/yunhaoling/azure-sdk-for-python/blob/servicebus-track2/sdk/servicebus/azure-servicebus/samples/sync_samples/send_queue.py
+[sample_receive_queue]: https://github.com/yunhaoling/azure-sdk-for-python/blob/servicebus-track2/sdk/servicebus/azure-servicebus/samples/sync_samples/receive_queue.py
