@@ -33,7 +33,6 @@ try:
 except ImportError:
     import mock
 
-import httpretty
 import pytest
 
 from requests import Request, Response
@@ -260,7 +259,6 @@ class TestBasePolling(object):
             response.request.url = url
             response.status_code = POLLING_STATUS
             response.text = RESOURCE_BODY
-            response.randomFieldFromResource = None
 
         else:
             raise Exception('URL does not match')
@@ -304,6 +302,12 @@ class TestBasePolling(object):
             raise DecodeError("Impossible to deserialize")
             resource = SimpleResource(**body)
         return resource
+
+    @staticmethod
+    def mock_deserialization_no_body(pipeline_response):
+        """Use this mock when you don't expect a return (last body irrelevant)
+        """
+        return None
 
     def test_long_running_put(self):
         #TODO: Test custom header field
@@ -454,7 +458,7 @@ class TestBasePolling(object):
             body=""
         )
         poll = LROPoller(CLIENT, response,
-            TestBasePolling.mock_outputs,
+            TestBasePolling.mock_deserialization_no_body,
             LROBasePolling(0))
         poll.wait()
         assert poll._polling_method._pipeline_response.http_response.internal_response.randomFieldFromPollAsyncOpHeader is None
@@ -468,7 +472,7 @@ class TestBasePolling(object):
             {'operation-location': ASYNC_URL},
             body={'properties':{'provisioningState': 'Succeeded'}})
         poll = LROPoller(CLIENT, response,
-            TestBasePolling.mock_outputs,
+            TestBasePolling.mock_deserialization_no_body,
             LROBasePolling(0))
         poll.wait()
         assert poll._polling_method._pipeline_response.http_response.internal_response.randomFieldFromPollAsyncOpHeader is None
@@ -479,7 +483,7 @@ class TestBasePolling(object):
             {'operation-location': ASYNC_URL},
             body={'properties':{'provisioningState': 'Succeeded'}})
         poll = LROPoller(CLIENT, response,
-            TestBasePolling.mock_outputs,
+            TestBasePolling.mock_deserialization_no_body,
             LROBasePolling(0))
         poll.wait()
         assert poll._polling_method._pipeline_response.http_response.internal_response.randomFieldFromPollAsyncOpHeader is None

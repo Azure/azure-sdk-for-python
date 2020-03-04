@@ -48,7 +48,7 @@ from azure.core.pipeline.transport import AsyncioRequestsTransportResponse, Asyn
 from azure.core.polling.async_base_polling import (
     AsyncLROBasePolling,
 )
-from azure.mgmt.core.polling.arm_polling import (
+from azure.core.polling.base_polling import (
     BadStatus
 )
 
@@ -306,6 +306,12 @@ class TestBasePolling(object):
             resource = SimpleResource(**body)
         return resource
 
+    @staticmethod
+    def mock_deserialization_no_body(pipeline_response):
+        """Use this mock when you don't expect a return (last body irrelevant)
+        """
+        return None
+
 @pytest.mark.asyncio
 async def test_long_running_put():
     #TODO: Test custom header field
@@ -467,7 +473,7 @@ async def test_long_running_delete():
     )
     polling_method = AsyncLROBasePolling(0)
     poll = await async_poller(CLIENT, response,
-        TestBasePolling.mock_outputs,
+        TestBasePolling.mock_deserialization_no_body,
         polling_method)
     assert poll is None
     assert polling_method._pipeline_response.http_response.internal_response.randomFieldFromPollAsyncOpHeader is None
@@ -482,9 +488,8 @@ async def test_long_running_post():
         body={'properties':{'provisioningState': 'Succeeded'}})
     polling_method = AsyncLROBasePolling(0)
     poll = await async_poller(CLIENT, response,
-        TestBasePolling.mock_outputs,
+        TestBasePolling.mock_deserialization_no_body,
         polling_method)
-    #self.assertIsNone(poll)
     assert polling_method._pipeline_response.http_response.internal_response.randomFieldFromPollAsyncOpHeader is None
 
     # Test polling from operation-location header
@@ -494,9 +499,8 @@ async def test_long_running_post():
         body={'properties':{'provisioningState': 'Succeeded'}})
     polling_method = AsyncLROBasePolling(0)
     poll = await async_poller(CLIENT, response,
-        TestBasePolling.mock_outputs,
+        TestBasePolling.mock_deserialization_no_body,
         polling_method)
-    #self.assertIsNone(poll)
     assert polling_method._pipeline_response.http_response.internal_response.randomFieldFromPollAsyncOpHeader is None
 
     # Test polling from location header
