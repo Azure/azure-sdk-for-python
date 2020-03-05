@@ -16,7 +16,7 @@ from azure.core.paging import ItemPaged
 from azure.storage.blob import ContainerClient
 from ._shared.base_client import StorageAccountHostsMixin, parse_query, parse_connection_str
 from ._serialize import convert_dfs_url_to_blob_url
-from ._models import LocationMode, FileSystemProperties, PathPropertiesPaged
+from ._models import LocationMode, FileSystemProperties, PathPropertiesPaged, PublicAccess
 from ._data_lake_file_client import DataLakeFileClient
 from ._data_lake_directory_client import DataLakeDirectoryClient
 from ._data_lake_lease import DataLakeLeaseClient
@@ -211,7 +211,7 @@ class FileSystemClient(StorageAccountHostsMixin):
             file system as metadata. Example: `{'Category':'test'}`
         :type metadata: dict(str, str)
         :param public_access:
-            Possible values include: file system, file.
+            To specify whether data in the container may be accessed publicly and the level of access.
         :type public_access: ~azure.storage.filedatalake.PublicAccess
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
@@ -347,6 +347,66 @@ class FileSystemClient(StorageAccountHostsMixin):
         """
         return self._container_client.set_container_metadata(metadata=metadata, **kwargs)
 
+    def set_file_system_access_policy(
+            self, signed_identifiers,  # type: Dict[str, AccessPolicy]
+            public_access=None,  # type: Optional[Union[str, PublicAccess]]
+            **kwargs
+    ):  # type: (...) -> Dict[str, Union[str, datetime]]
+        """Sets the permissions for the specified file system or stored access
+        policies that may be used with Shared Access Signatures. The permissions
+        indicate whether blobs in a container may be accessed publicly.
+
+        :param signed_identifiers:
+            A dictionary of access policies to associate with the container. The
+            dictionary may contain up to 5 elements. An empty dictionary
+            will clear the access policies set on the service.
+        :type signed_identifiers: dict[str, ~azure.storage.filedatalake.AccessPolicy]
+        :param ~azure.storage.filedatalake.PublicAccess public_access:
+            To specify whether data in the container may be accessed publicly and the level of access.
+        :keyword lease:
+            Required if the container has an active lease. Value can be a DataLakeLeaseClient object
+            or the lease ID as a string.
+        :paramtype lease: ~azure.storage.filedatalake.DataLakeLeaseClient or str
+        :keyword ~datetime.datetime if_modified_since:
+            A datetime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only
+            if the resource has been modified since the specified date/time.
+        :keyword ~datetime.datetime if_unmodified_since:
+            A datetime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only if
+            the resource has not been modified since the specified date/time.
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns: Container-updated property dict (Etag and last modified).
+        :rtype: dict[str, str or ~datetime.datetime]
+        """
+        return self._container_client.set_container_access_policy(signed_identifiers,
+                                                                  public_access=public_access, **kwargs)
+
+    def get_file_system_access_policy(self, **kwargs):
+        # type: (Any) -> Dict[str, Any]
+        """Gets the permissions for the specified file system.
+        The permissions indicate whether file system data may be accessed publicly.
+
+        :keyword lease:
+            If specified, get_container_access_policy only succeeds if the
+            container's lease is active and matches this ID.
+        :paramtype lease: ~azure.storage.blob.BlobLeaseClient or str
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns: Access policy information in a dict.
+        :rtype: dict[str, Any]
+        """
+        access_policy = self._container_client.get_container_access_policy(**kwargs)
+        return {
+            'public_access': PublicAccess._from_generated(access_policy['public_access']),  # pylint: disable=protected-access
+            'signed_identifiers': access_policy['signed_identifiers']
+        }
+
     def get_paths(self, path=None, # type: Optional[str]
                   recursive=True,  # type: Optional[bool]
                   max_results=None,  # type: Optional[int]
@@ -395,7 +455,6 @@ class FileSystemClient(StorageAccountHostsMixin):
             page_iterator_class=PathPropertiesPaged, **kwargs)
 
     def create_directory(self, directory,  # type: Union[DirectoryProperties, str]
-                         content_settings=None,  # type: Optional[ContentSettings]
                          metadata=None,  # type: Optional[Dict[str, str]]
                          **kwargs):
         # type: (...) -> DataLakeDirectoryClient
@@ -406,11 +465,11 @@ class FileSystemClient(StorageAccountHostsMixin):
             The directory with which to interact. This can either be the name of the directory,
             or an instance of DirectoryProperties.
         :type directory: str or ~azure.storage.filedatalake.DirectoryProperties
-        :param ~azure.storage.filedatalake.ContentSettings content_settings:
-            ContentSettings object used to set path properties.
         :param metadata:
             Name-value pairs associated with the blob as metadata.
         :type metadata: dict(str, str)
+        :keyword ~azure.storage.filedatalake.ContentSettings content_settings:
+            ContentSettings object used to set path properties.
         :keyword ~azure.storage.filedatalake.DataLakeLeaseClient or str lease:
             Required if the blob has an active lease. Value can be a DataLakeLeaseClient object
             or the lease ID as a string.
@@ -449,7 +508,7 @@ class FileSystemClient(StorageAccountHostsMixin):
         :return: DataLakeDirectoryClient
         """
         directory_client = self.get_directory_client(directory)
-        directory_client.create_directory(content_settings=content_settings, metadata=metadata, **kwargs)
+        directory_client.create_directory(metadata=metadata, **kwargs)
         return directory_client
 
     def delete_directory(self, directory,  # type: Union[DirectoryProperties, str]
@@ -465,7 +524,7 @@ class FileSystemClient(StorageAccountHostsMixin):
         :keyword lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.LeaseClient or str
+        :type lease: ~azure.storage.filedatalake.DataLakeLeaseClient or str
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -561,7 +620,7 @@ class FileSystemClient(StorageAccountHostsMixin):
         :keyword lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.LeaseClient or str
+        :type lease: ~azure.storage.filedatalake.DataLakeLeaseClient or str
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -586,6 +645,15 @@ class FileSystemClient(StorageAccountHostsMixin):
         file_client = self.get_file_client(file)
         file_client.delete_file(lease=lease, **kwargs)
         return file_client
+
+    def get_root_directory_client(self):
+        # type: () -> DataLakeDirectoryClient
+        """Get a client to interact with the root directory.
+
+        :returns: A DataLakeDirectoryClient.
+        :rtype: ~azure.storage.filedatalake.DataLakeDirectoryClient
+        """
+        return self.get_directory_client('/')
 
     def get_directory_client(self, directory  # type: Union[DirectoryProperties, str]
                              ):

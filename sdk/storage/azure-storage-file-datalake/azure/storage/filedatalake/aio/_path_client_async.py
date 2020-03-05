@@ -57,7 +57,7 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
         :keyword lease:
             Required if the file/directory has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.filedatalake.DataLakeLeaseClient or str
+        :type lease: ~azure.storage.filedatalake.aio.DataLakeLeaseClient or str
         :keyword str umask:
             Optional and only valid if Hierarchical Namespace is enabled for the account.
             When creating a file or directory and the parent folder does not have a default ACL,
@@ -113,7 +113,7 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
         :keyword lease:
             Required if the file/directory has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.filedatalake.DataLakeLeaseClient or str
+        :type lease: ~azure.storage.filedatalake.aio.DataLakeLeaseClient or str
         :param ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -176,7 +176,7 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
         :keyword lease:
             Required if the file/directory has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.filedatalake.DataLakeLeaseClient or str
+        :type lease: ~azure.storage.filedatalake.aio.DataLakeLeaseClient or str
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -223,7 +223,7 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
         :keyword lease:
             Required if the file/directory has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.filedatalake.DataLakeLeaseClient or str
+        :type lease: ~azure.storage.filedatalake.aio.DataLakeLeaseClient or str
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -262,13 +262,13 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
         :param source_lease: A lease ID for the source path. If specified,
             the source path must have an active lease and the leaase ID must
             match.
-        :type source_lease: ~azure.storage.filedatalake.DataLakeLeaseClient or str
+        :type source_lease: ~azure.storage.filedatalake.aio.DataLakeLeaseClient or str
         :param ~azure.storage.filedatalake.ContentSettings content_settings:
             ContentSettings object used to set path properties.
         :param lease:
             Required if the file/directory has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.filedatalake.DataLakeLeaseClient or str
+        :type lease: ~azure.storage.filedatalake.aio.DataLakeLeaseClient or str
         :param str umask: Optional and only valid if Hierarchical Namespace is enabled for the account.
             When creating a file or directory and the parent folder does not have a default ACL,
             the umask restricts the permissions of the file or directory to be created.
@@ -337,7 +337,7 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
         :keyword lease:
             Required if the directory or file has an active lease. Value can be a DataLakeLeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.filedatalake.DataLakeLeaseClient or str
+        :type lease: ~azure.storage.filedatalake.aio.DataLakeLeaseClient or str
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -384,7 +384,7 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
             A dict containing name-value pairs to associate with the file system as
             metadata. Example: {'category':'test'}
         :type metadata: dict[str, str]
-        :keyword str or ~azure.storage.filedatalake.DataLakeLeaseClient lease:
+        :keyword str or ~azure.storage.filedatalake.aio.DataLakeLeaseClient lease:
             If specified, set_file_system_metadata only succeeds if the
             file system's lease is active and matches this ID.
         :keyword ~datetime.datetime if_modified_since:
@@ -428,7 +428,7 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
 
         :param ~azure.storage.filedatalake.ContentSettings content_settings:
             ContentSettings object used to set file/directory properties.
-        :keyword str or ~azure.storage.filedatalake.DataLakeLeaseClient lease:
+        :keyword str or ~azure.storage.filedatalake.aio.DataLakeLeaseClient lease:
             If specified, set_file_system_metadata only succeeds if the
             file system's lease is active and matches this ID.
         :keyword ~datetime.datetime if_modified_since:
@@ -492,7 +492,7 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: A DataLakeLeaseClient object, that can be run in a context manager.
-        :rtype: ~azure.storage.filedatalake.DataLakeLeaseClient
+        :rtype: ~azure.storage.filedatalake.aio.DataLakeLeaseClient
 
         .. admonition:: Example:
 

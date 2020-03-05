@@ -12,6 +12,8 @@
 try:
     from ._models_py3 import ARMProxyResource
     from ._models_py3 import ARMResourceProperties
+    from ._models_py3 import AutopilotSettingsResource
+    from ._models_py3 import AutoUpgradePolicyResource
     from ._models_py3 import AzureEntityResource
     from ._models_py3 import Capability
     from ._models_py3 import CassandraKeyspaceCreateUpdateParameters
@@ -30,6 +32,7 @@ try:
     from ._models_py3 import ConflictResolutionPolicy
     from ._models_py3 import ConsistencyPolicy
     from ._models_py3 import ContainerPartitionKey
+    from ._models_py3 import CreateUpdateOptions
     from ._models_py3 import DatabaseAccountConnectionString
     from ._models_py3 import DatabaseAccountCreateUpdateParameters
     from ._models_py3 import DatabaseAccountGetResults
@@ -109,6 +112,7 @@ try:
     from ._models_py3 import TableGetPropertiesResource
     from ._models_py3 import TableGetResults
     from ._models_py3 import TableResource
+    from ._models_py3 import ThroughputPolicyResource
     from ._models_py3 import ThroughputSettingsGetPropertiesResource
     from ._models_py3 import ThroughputSettingsGetResults
     from ._models_py3 import ThroughputSettingsResource
@@ -121,6 +125,8 @@ try:
 except (SyntaxError, ImportError):
     from ._models import ARMProxyResource
     from ._models import ARMResourceProperties
+    from ._models import AutopilotSettingsResource
+    from ._models import AutoUpgradePolicyResource
     from ._models import AzureEntityResource
     from ._models import Capability
     from ._models import CassandraKeyspaceCreateUpdateParameters
@@ -139,6 +145,7 @@ except (SyntaxError, ImportError):
     from ._models import ConflictResolutionPolicy
     from ._models import ConsistencyPolicy
     from ._models import ContainerPartitionKey
+    from ._models import CreateUpdateOptions
     from ._models import DatabaseAccountConnectionString
     from ._models import DatabaseAccountCreateUpdateParameters
     from ._models import DatabaseAccountGetResults
@@ -218,6 +225,7 @@ except (SyntaxError, ImportError):
     from ._models import TableGetPropertiesResource
     from ._models import TableGetResults
     from ._models import TableResource
+    from ._models import ThroughputPolicyResource
     from ._models import ThroughputSettingsGetPropertiesResource
     from ._models import ThroughputSettingsGetResults
     from ._models import ThroughputSettingsResource
@@ -271,6 +279,8 @@ from ._cosmos_db_management_client_enums import (
 __all__ = [
     'ARMProxyResource',
     'ARMResourceProperties',
+    'AutopilotSettingsResource',
+    'AutoUpgradePolicyResource',
     'AzureEntityResource',
     'Capability',
     'CassandraKeyspaceCreateUpdateParameters',
@@ -289,6 +299,7 @@ __all__ = [
     'ConflictResolutionPolicy',
     'ConsistencyPolicy',
     'ContainerPartitionKey',
+    'CreateUpdateOptions',
     'DatabaseAccountConnectionString',
     'DatabaseAccountCreateUpdateParameters',
     'DatabaseAccountGetResults',
@@ -368,6 +379,7 @@ __all__ = [
     'TableGetPropertiesResource',
     'TableGetResults',
     'TableResource',
+    'ThroughputPolicyResource',
     'ThroughputSettingsGetPropertiesResource',
     'ThroughputSettingsGetResults',
     'ThroughputSettingsResource',

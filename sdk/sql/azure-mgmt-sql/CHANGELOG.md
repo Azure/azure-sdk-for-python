@@ -1,5 +1,26 @@
 # Release History
 
+# 0.17.0 (2020-03-02)
+
+**Features**
+
+  - Model ManagedInstanceUpdate has a new parameter minimal_tls_version
+  - Model ServerAzureADAdministrator has a new parameter azure_ad_only_authentication
+  - Model ManagedDatabase has a new parameter long_term_retention_backup_resource_id
+  - Model ManagedDatabaseUpdate has a new parameter long_term_retention_backup_resource_id
+  - Model SensitivityLabel has a new parameter rank
+  - Model ServerUpdate has a new parameter private_endpoint_connections
+  - Model ServerUpdate has a new parameter minimal_tls_version
+  - Model ServerUpdate has a new parameter public_network_access
+  - Model Server has a new parameter private_endpoint_connections
+  - Model Server has a new parameter minimal_tls_version
+  - Model Server has a new parameter public_network_access
+  - Model ManagedInstance has a new parameter minimal_tls_version
+  - Added operation ServerAzureADAdministratorsOperations.disable_azure_ad_only_authentication
+  - Added operation ManagedDatabasesOperations.list_inaccessible_by_instance
+  - Added operation group ManagedInstanceLongTermRetentionPoliciesOperations
+  - Added operation group LongTermRetentionManagedInstanceBackupsOperations
+
 ## 0.16.0 (2019-12-17)
 
 **Features**

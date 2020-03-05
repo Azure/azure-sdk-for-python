@@ -24,7 +24,6 @@ import pytest
 import azure.cosmos
 import azure.cosmos._utils as _utils
 import platform
-import azure.cosmos.http_constants as http_constants
 import test_config
 
 pytestmark = pytest.mark.cosmosEmulator

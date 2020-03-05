@@ -78,7 +78,7 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
         :keyword lease:
             Required if the blob has an active lease. Value can be a DataLakeLeaseClient object
             or the lease ID as a string.
-        :paramtype lease: ~azure.storage.filedatalake.DataLakeLeaseClient or str
+        :paramtype lease: ~azure.storage.filedatalake.aio.DataLakeLeaseClient or str
         :keyword str umask:
             Optional and only valid if Hierarchical Namespace is enabled for the account.
             When creating a file or directory and the parent folder does not have a default ACL,
@@ -157,7 +157,7 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
         :keyword lease:
             Required if the directory or file has an active lease. Value can be a DataLakeLeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.filedatalake.DataLakeLeaseClient or str
+        :type lease: ~azure.storage.filedatalake.aio.DataLakeLeaseClient or str
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -191,25 +191,26 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
         blob_properties = await self._get_path_properties(**kwargs)
         return DirectoryProperties._from_blob_properties(blob_properties)  # pylint: disable=protected-access
 
-    async def rename_directory(self, rename_destination, **kwargs):
+    async def rename_directory(self, new_name,  # type: str
+                               **kwargs):
         # type: (**Any) -> DataLakeDirectoryClient
         """
         Rename the source directory.
 
-        :param str rename_destination:
+        :param str new_name:
             the new directory name the user want to rename to.
             The value must have the following format: "{filesystem}/{directory}/{subdirectory}".
         :keyword source_lease:
             A lease ID for the source path. If specified,
             the source path must have an active lease and the leaase ID must
             match.
-        :keyword source_lease: ~azure.storage.filedatalake.DataLakeLeaseClient or str
+        :keyword source_lease: ~azure.storage.filedatalake.aio.DataLakeLeaseClient or str
         :param ~azure.storage.filedatalake.ContentSettings content_settings:
             ContentSettings object used to set path properties.
         :keyword lease:
             Required if the file/directory has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.filedatalake.DataLakeLeaseClient or str
+        :type lease: ~azure.storage.filedatalake.aio.DataLakeLeaseClient or str
         :keyword str umask:
             Optional and only valid if Hierarchical Namespace is enabled for the account.
             When creating a file or directory and the parent folder does not have a default ACL,
@@ -264,9 +265,9 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
             The timeout parameter is expressed in seconds.
         :return: DataLakeDirectoryClient
         """
-        rename_destination = rename_destination.strip('/')
-        new_file_system = rename_destination.split('/')[0]
-        path = rename_destination[len(new_file_system):]
+        new_name = new_name.strip('/')
+        new_file_system = new_name.split('/')[0]
+        path = new_name[len(new_file_system):]
 
         new_directory_client = DataLakeDirectoryClient(
             self.url, new_file_system, directory_name=path, credential=self._raw_credential,
@@ -295,7 +296,7 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
         :param metadata:
             Name-value pairs associated with the blob as metadata.
         :type metadata: dict(str, str)
-        :keyword ~azure.storage.filedatalake.DataLakeLeaseClient or str lease:
+        :keyword ~azure.storage.filedatalake.aio.DataLakeLeaseClient or str lease:
             Required if the blob has an active lease. Value can be a DataLakeLeaseClient object
             or the lease ID as a string.
         :keyword str umask:
@@ -392,7 +393,7 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
         :keyword metadata:
             Name-value pairs associated with the blob as metadata.
         :type metadata: dict(str, str)
-        :keyword ~azure.storage.filedatalake.DataLakeLeaseClient or str lease:
+        :keyword ~azure.storage.filedatalake.aio.DataLakeLeaseClient or str lease:
             Required if the blob has an active lease. Value can be a DataLakeLeaseClient object
             or the lease ID as a string.
         :keyword str umask:
@@ -447,7 +448,7 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
             or an instance of FileProperties. eg. directory/subdirectory/file
         :type file: str or ~azure.storage.filedatalake.FileProperties
         :returns: A DataLakeFileClient.
-        :rtype: ~azure.storage.filedatalake..DataLakeFileClient
+        :rtype: ~azure.storage.filedatalake.aio.DataLakeFileClient
 
         .. admonition:: Example:
 
@@ -482,7 +483,7 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
             or an instance of DirectoryProperties.
         :type sub_directory: str or ~azure.storage.filedatalake.DirectoryProperties
         :returns: A DataLakeDirectoryClient.
-        :rtype: ~azure.storage.filedatalake.DataLakeDirectoryClient
+        :rtype: ~azure.storage.filedatalake.aio.DataLakeDirectoryClient
 
         .. admonition:: Example:
 

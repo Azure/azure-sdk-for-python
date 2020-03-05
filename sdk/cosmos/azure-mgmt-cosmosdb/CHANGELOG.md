@@ -1,5 +1,15 @@
 # Release History
 
+## 0.12.0 (2020-02-27)
+
+**Features**
+
+  - Model DatabaseAccountGetResults has a new parameter key_vault_key_uri
+  - Model ThroughputSettingsResource has a new parameter autopilot_settings
+  - Model ThroughputSettingsGetPropertiesResource has a new parameter autopilot_settings
+  - Model DatabaseAccountCreateUpdateParameters has a new parameter key_vault_key_uri
+  - Model DatabaseAccountUpdateParameters has a new parameter key_vault_key_uri
+
 ## 0.11.0 (2019-12-07)
 
 **Features**

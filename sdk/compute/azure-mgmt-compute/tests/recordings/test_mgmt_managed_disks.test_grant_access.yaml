@@ -14,12 +14,12 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
-        msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-compute/11.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_managed_disks_test_grant_access609310b8/providers/Microsoft.Compute/disks/my_disk_name?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_managed_disks_test_grant_access609310b8/providers/Microsoft.Compute/disks/my_disk_name?api-version=2019-11-01
   response:
     body:
       string: "{\r\n  \"name\": \"my_disk_name\",\r\n  \"location\": \"westus\",\r\
@@ -28,7 +28,7 @@ interactions:
         : \"Updating\",\r\n    \"isArmResource\": true\r\n  }\r\n}"
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/DiskOperations/1d8d2486-b589-4ee7-a785-e46374796714?api-version=2019-07-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/DiskOperations/e728f5d0-e6f0-4c2f-9d8f-d37cd084e975?api-version=2019-11-01
       cache-control:
       - no-cache
       content-length:
@@ -36,11 +36,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 22 Oct 2019 06:46:12 GMT
+      - Thu, 27 Feb 2020 18:19:56 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/DiskOperations/1d8d2486-b589-4ee7-a785-e46374796714?monitor=true&api-version=2019-07-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/DiskOperations/e728f5d0-e6f0-4c2f-9d8f-d37cd084e975?monitor=true&api-version=2019-11-01
       pragma:
       - no-cache
       server:
@@ -53,7 +53,7 @@ interactions:
       x-ms-ratelimit-remaining-resource:
       - Microsoft.Compute/CreateUpdateDisks3Min;997,Microsoft.Compute/CreateUpdateDisks30Min;7994
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1197'
+      - '1199'
     status:
       code: 202
       message: Accepted
@@ -67,14 +67,14 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
-        msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-compute/11.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/DiskOperations/1d8d2486-b589-4ee7-a785-e46374796714?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/DiskOperations/e728f5d0-e6f0-4c2f-9d8f-d37cd084e975?api-version=2019-11-01
   response:
     body:
-      string: "{\r\n  \"startTime\": \"2019-10-22T06:46:12.4011322+00:00\",\r\n  \"\
-        endTime\": \"2019-10-22T06:46:12.5104933+00:00\",\r\n  \"status\": \"Succeeded\"\
+      string: "{\r\n  \"startTime\": \"2020-02-27T18:19:57.1887179+00:00\",\r\n  \"\
+        endTime\": \"2020-02-27T18:19:57.3137251+00:00\",\r\n  \"status\": \"Succeeded\"\
         ,\r\n  \"properties\": {\r\n    \"output\": {\r\n  \"name\": \"my_disk_name\"\
         ,\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_managed_disks_test_grant_access609310b8/providers/Microsoft.Compute/disks/my_disk_name\"\
         ,\r\n  \"type\": \"Microsoft.Compute/disks\",\r\n  \"location\": \"westus\"\
@@ -83,10 +83,10 @@ interactions:
         : \"Empty\"\r\n    },\r\n    \"diskSizeGB\": 20,\r\n    \"diskIOPSReadWrite\"\
         : 500,\r\n    \"diskMBpsReadWrite\": 60,\r\n    \"encryption\": {\r\n    \
         \  \"type\": \"EncryptionAtRestWithPlatformKey\"\r\n    },\r\n    \"timeCreated\"\
-        : \"2019-10-22T06:46:12.4011322+00:00\",\r\n    \"provisioningState\": \"\
+        : \"2020-02-27T18:19:57.1887179+00:00\",\r\n    \"provisioningState\": \"\
         Succeeded\",\r\n    \"diskState\": \"Unattached\",\r\n    \"diskSizeBytes\"\
-        : 21474836480,\r\n    \"uniqueId\": \"a4a32575-cada-400b-83dc-9a485af941fa\"\
-        \r\n  }\r\n}\r\n  },\r\n  \"name\": \"1d8d2486-b589-4ee7-a785-e46374796714\"\
+        : 21474836480,\r\n    \"uniqueId\": \"20dec607-3773-4630-b76d-6c8786cf1554\"\
+        \r\n  }\r\n}\r\n  },\r\n  \"name\": \"e728f5d0-e6f0-4c2f-9d8f-d37cd084e975\"\
         \r\n}"
     headers:
       cache-control:
@@ -96,7 +96,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 22 Oct 2019 06:46:14 GMT
+      - Thu, 27 Feb 2020 18:19:59 GMT
       expires:
       - '-1'
       pragma:
@@ -113,7 +113,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-resource:
-      - Microsoft.Compute/GetOperation3Min;49993,Microsoft.Compute/GetOperation30Min;399965
+      - Microsoft.Compute/GetOperation3Min;49995,Microsoft.Compute/GetOperation30Min;399969
     status:
       code: 200
       message: OK
@@ -127,10 +127,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
-        msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-compute/11.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_managed_disks_test_grant_access609310b8/providers/Microsoft.Compute/disks/my_disk_name?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_managed_disks_test_grant_access609310b8/providers/Microsoft.Compute/disks/my_disk_name?api-version=2019-11-01
   response:
     body:
       string: "{\r\n  \"name\": \"my_disk_name\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_managed_disks_test_grant_access609310b8/providers/Microsoft.Compute/disks/my_disk_name\"\
@@ -140,9 +140,9 @@ interactions:
         : \"Empty\"\r\n    },\r\n    \"diskSizeGB\": 20,\r\n    \"diskIOPSReadWrite\"\
         : 500,\r\n    \"diskMBpsReadWrite\": 60,\r\n    \"encryption\": {\r\n    \
         \  \"type\": \"EncryptionAtRestWithPlatformKey\"\r\n    },\r\n    \"timeCreated\"\
-        : \"2019-10-22T06:46:12.4011322+00:00\",\r\n    \"provisioningState\": \"\
+        : \"2020-02-27T18:19:57.1887179+00:00\",\r\n    \"provisioningState\": \"\
         Succeeded\",\r\n    \"diskState\": \"Unattached\",\r\n    \"diskSizeBytes\"\
-        : 21474836480,\r\n    \"uniqueId\": \"a4a32575-cada-400b-83dc-9a485af941fa\"\
+        : 21474836480,\r\n    \"uniqueId\": \"20dec607-3773-4630-b76d-6c8786cf1554\"\
         \r\n  }\r\n}"
     headers:
       cache-control:
@@ -152,7 +152,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 22 Oct 2019 06:46:14 GMT
+      - Thu, 27 Feb 2020 18:19:59 GMT
       expires:
       - '-1'
       pragma:
@@ -169,7 +169,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-resource:
-      - Microsoft.Compute/LowCostGet3Min;4992,Microsoft.Compute/LowCostGet30Min;39965
+      - Microsoft.Compute/LowCostGet3Min;4993,Microsoft.Compute/LowCostGet30Min;39968
     status:
       code: 200
       message: OK
@@ -187,28 +187,28 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
-        msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-compute/11.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_managed_disks_test_grant_access609310b8/providers/Microsoft.Compute/disks/my_disk_name/beginGetAccess?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_managed_disks_test_grant_access609310b8/providers/Microsoft.Compute/disks/my_disk_name/beginGetAccess?api-version=2019-11-01
   response:
     body:
       string: ''
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/DiskOperations/26fd01bd-aa7e-4f70-a452-790c20f6347e?api-version=2019-07-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/DiskOperations/92ef01f2-36db-4607-8ae2-5f381ce8c967?api-version=2019-11-01
       cache-control:
       - no-cache
       content-length:
       - '0'
       date:
-      - Tue, 22 Oct 2019 06:46:15 GMT
+      - Thu, 27 Feb 2020 18:20:00 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/DiskOperations/26fd01bd-aa7e-4f70-a452-790c20f6347e?monitor=true&api-version=2019-07-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/DiskOperations/92ef01f2-36db-4607-8ae2-5f381ce8c967?monitor=true&api-version=2019-11-01
       pragma:
       - no-cache
       server:
@@ -235,25 +235,25 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
-        msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-compute/11.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/DiskOperations/26fd01bd-aa7e-4f70-a452-790c20f6347e?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/DiskOperations/92ef01f2-36db-4607-8ae2-5f381ce8c967?api-version=2019-11-01
   response:
     body:
-      string: "{\r\n  \"startTime\": \"2019-10-22T06:46:15.6511866+00:00\",\r\n  \"\
-        endTime\": \"2019-10-22T06:46:16.0731165+00:00\",\r\n  \"status\": \"Succeeded\"\
-        ,\r\n  \"properties\": {\r\n    \"output\": {\r\n  \"accessSAS\": \"https://md-qflllhbhcqlf.blob.core.windows.net/vpn0s2ktgqsr/abcd?sv=2017-04-17&sr=b&si=8ab025a0-dbd0-4c83-ac67-336d726c7427&sig=HeKk7Hlzf%2B8rOaSxrS5Cab8IpT%2BssTNLzLN3UFMxMek%3D\"\
-        \r\n}\r\n  },\r\n  \"name\": \"26fd01bd-aa7e-4f70-a452-790c20f6347e\"\r\n}"
+      string: "{\r\n  \"startTime\": \"2020-02-27T18:20:00.7357903+00:00\",\r\n  \"\
+        endTime\": \"2020-02-27T18:20:00.9389064+00:00\",\r\n  \"status\": \"Succeeded\"\
+        ,\r\n  \"properties\": {\r\n    \"output\": {\r\n  \"accessSAS\": \"https://md-mpm1lqwrnzjg.blob.core.windows.net/lrxsjnzw1bww/abcd?sv=2017-04-17&sr=b&si=78a83b57-e939-4360-acdd-a71812284c39&sig=snpEzKXzgGuDpnoV0m3G5wmN52UjWtciYFk8E5kIgJM%3D\"\
+        \r\n}\r\n  },\r\n  \"name\": \"92ef01f2-36db-4607-8ae2-5f381ce8c967\"\r\n}"
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '425'
+      - '421'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 22 Oct 2019 06:46:45 GMT
+      - Thu, 27 Feb 2020 18:20:31 GMT
       expires:
       - '-1'
       pragma:
@@ -270,7 +270,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-resource:
-      - Microsoft.Compute/GetOperation3Min;49986,Microsoft.Compute/GetOperation30Min;399958
+      - Microsoft.Compute/GetOperation3Min;49992,Microsoft.Compute/GetOperation30Min;399966
     status:
       code: 200
       message: OK
@@ -284,23 +284,23 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
-        msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-compute/11.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/DiskOperations/26fd01bd-aa7e-4f70-a452-790c20f6347e?monitor=true&api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/DiskOperations/92ef01f2-36db-4607-8ae2-5f381ce8c967?monitor=true&api-version=2019-11-01
   response:
     body:
-      string: "{\r\n  \"accessSAS\": \"https://md-qflllhbhcqlf.blob.core.windows.net/vpn0s2ktgqsr/abcd?sv=2017-04-17&sr=b&si=8ab025a0-dbd0-4c83-ac67-336d726c7427&sig=HeKk7Hlzf%2B8rOaSxrS5Cab8IpT%2BssTNLzLN3UFMxMek%3D\"\
+      string: "{\r\n  \"accessSAS\": \"https://md-mpm1lqwrnzjg.blob.core.windows.net/lrxsjnzw1bww/abcd?sv=2017-04-17&sr=b&si=78a83b57-e939-4360-acdd-a71812284c39&sig=snpEzKXzgGuDpnoV0m3G5wmN52UjWtciYFk8E5kIgJM%3D\"\
         \r\n}"
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '200'
+      - '196'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 22 Oct 2019 06:46:46 GMT
+      - Thu, 27 Feb 2020 18:20:31 GMT
       expires:
       - '-1'
       pragma:
@@ -317,7 +317,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-resource:
-      - Microsoft.Compute/GetOperation3Min;49985,Microsoft.Compute/GetOperation30Min;399957
+      - Microsoft.Compute/GetOperation3Min;49991,Microsoft.Compute/GetOperation30Min;399965
     status:
       code: 200
       message: OK

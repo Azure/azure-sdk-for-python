@@ -384,6 +384,53 @@ from azure.core.pipeline.policies import (
 )
 ```
 
+#### Available Policies
+
+| Name | Policy Flavor | Parameters accepted in Init | Parameters accepted in Request |
+| --- | --- | --- | --- |
+| HeadersPolicy | SansIOHTTPPolicy | base_headers | headers |
+|  |  | headers | |
+| RequestIdPolicy | SansIOHTTPPolicy | request_id | request_id |
+|  |  | auto_request_id | |
+| UserAgentPolicy | SansIOHTTPPolicy | base_user_agent | user_agent |
+|  |  | user_agent_overwrite | |
+|  |  | user_agent_use_env | |
+|  |  | user_agent | |
+|  |  | sdk_moniker | |
+| NetworkTraceLoggingPolicy | SansIOHTTPPolicy | logging_enable | logging_enable |
+| HttpLoggingPolicy | SansIOHTTPPolicy | logger | logger |
+| ContentDecodePolicy | SansIOHTTPPolicy | response_encoding | response_encoding |
+| ProxyPolicy | SansIOHTTPPolicy | proxies | proxies |
+| CustomHookPolicy | SansIOHTTPPolicy | raw_request_hook | raw_request_hook |
+|  |  | raw_response_hook | raw_response_hook |
+| DistributedTracingPolicy | SansIOHTTPPolicy | network_span_namer | network_span_namer |
+|  |  | tracing_attributes | |
+| --- | --- | --- | --- |
+| RedirectPolicy | HTTPPolicy | permit_redirects | permit_redirects |
+|  |  | redirect_max | redirect_max |
+|  |  | redirect_remove_headers | |
+|  |  | redirect_on_status_codes | |
+| AsyncRedirectPolicy | AsyncHTTPPolicy | permit_redirects | permit_redirects |
+|  |  | redirect_max | redirect_max |
+|  |  | redirect_remove_headers | |
+|  |  | redirect_on_status_codes | |
+| RetryPolicy | HTTPPolicy | retry_total | retry_total |
+|  |  | retry_connect | retry_connect |
+|  |  | retry_read | retry_read |
+|  |  | retry_status | retry_status |
+|  |  | retry_backoff_factor | retry_backoff_factor |
+|  |  | retry_backoff_max | retry_backoff_max |
+|  |  | retry_mode | retry_mode |
+|  |  | retry_on_status_codes | retry_on_status_codes |
+| AsyncRetryPolicy | AsyncHTTPPolicy | retry_total | retry_total |
+|  |  | retry_connect | retry_connect |
+|  |  | retry_read | retry_read |
+|  |  | retry_status | retry_status |
+|  |  | retry_backoff_factor | retry_backoff_factor |
+|  |  | retry_backoff_max | retry_backoff_max |
+|  |  | retry_mode | retry_mode |
+|  |  | retry_on_status_codes | retry_on_status_codes |
+
 ### The Pipeline
 
 The pipeline itself represents a chain of policies where the final node in the chain is the HTTP transport.

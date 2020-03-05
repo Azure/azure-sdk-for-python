@@ -24,7 +24,8 @@ from ._models import (
     DirectorySasPermissions,
     FileSasPermissions,
     UserDelegationKey,
-    PublicAccess
+    PublicAccess,
+    AccessPolicy,
 )
 from ._shared_access_signature import generate_account_sas, generate_file_system_sas, generate_directory_sas, \
     generate_file_sas
@@ -45,6 +46,7 @@ __all__ = [
     'LinearRetry',
     'LocationMode',
     'PublicAccess',
+    'AccessPolicy',
     'ResourceTypes',
     'StorageErrorCode',
     'UserDelegationKey',
