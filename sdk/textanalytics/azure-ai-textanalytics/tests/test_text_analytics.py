@@ -29,10 +29,10 @@ class TextAnalyticsTest(TestAnalyticsTestCase):
     def test_repr(self):
         detected_language = _models.DetectedLanguage(name="English", iso6391_name="en", score=1.0)
 
-        categorized_entity = _models.CategorizedEntity(text="Bill Gates", category="Person", subcategory="Age", 
+        categorized_entity = _models.CategorizedEntity(text="Bill Gates", category="Person", subcategory="Age",
                                                        grapheme_offset=0, grapheme_length=8, score=0.899)
 
-        pii_entity = _models.PiiEntity(text="555-55-5555", category="SSN", subcategory=None, grapheme_offset=0, 
+        pii_entity = _models.PiiEntity(text="555-55-5555", category="SSN", subcategory=None, grapheme_offset=0,
                                        grapheme_length=8, score=0.899)
 
         text_document_statistics = _models.TextDocumentStatistics(character_count=14, transaction_count=18)
@@ -86,7 +86,7 @@ class TextAnalyticsTest(TestAnalyticsTestCase):
             )
 
         sentiment_confidence_score_per_label = \
-            _models.SentimentConfidenceScorePerLabel(positive=0.99, neutral=0.05, negative=0.02)
+            _models.SentimentConfidenceScores(positive=0.99, neutral=0.05, negative=0.02)
 
         sentence_sentiment = _models.SentenceSentiment(
             sentiment="neutral",
@@ -155,16 +155,16 @@ class TextAnalyticsTest(TestAnalyticsTestCase):
                          "url=https://en.wikipedia.org/wiki/Bill_Gates, data_source=wikipedia)], "
                          "statistics=TextDocumentStatistics(character_count=14, "
                          "transaction_count=18), is_error=False)", repr(recognize_linked_entities_result))
-        self.assertEqual("SentimentConfidenceScorePerLabel(positive=0.99, neutral=0.05, negative=0.02)",
+        self.assertEqual("SentimentConfidenceScores(positive=0.99, neutral=0.05, negative=0.02)",
                          repr(sentiment_confidence_score_per_label))
-        self.assertEqual("SentenceSentiment(sentiment=neutral, confidence_scores=SentimentConfidenceScorePerLabel("
+        self.assertEqual("SentenceSentiment(sentiment=neutral, confidence_scores=SentimentConfidenceScores("
                          "positive=0.99, neutral=0.05, negative=0.02), grapheme_offset=0, grapheme_length=10, warnings="
                          "['sentence was too short to find sentiment'])", repr(sentence_sentiment))
         self.assertEqual("AnalyzeSentimentResult(id=1, sentiment=positive, statistics=TextDocumentStatistics("
-                         "character_count=14, transaction_count=18), confidence_scores=SentimentConfidenceScorePerLabel"
+                         "character_count=14, transaction_count=18), confidence_scores=SentimentConfidenceScores"
                          "(positive=0.99, neutral=0.05, negative=0.02), "
                          "sentences=[SentenceSentiment(sentiment=neutral, confidence_scores="
-                         "SentimentConfidenceScorePerLabel(positive=0.99, neutral=0.05, negative=0.02), "
+                         "SentimentConfidenceScores(positive=0.99, neutral=0.05, negative=0.02), "
                          "grapheme_offset=0, grapheme_length=10, "
                          "warnings=['sentence was too short to find sentiment'])], is_error=False)",
                          repr(analyze_sentiment_result))

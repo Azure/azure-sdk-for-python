@@ -396,7 +396,7 @@ class AnalyzeSentimentResult(DictMixin):
     :param confidence_scores: Document level sentiment confidence
         scores between 0 and 1 for each sentiment label.
     :type confidence_scores:
-        ~azure.ai.textanalytics.SentimentConfidenceScorePerLabel
+        ~azure.ai.textanalytics.SentimentConfidenceScores
     :param sentences: Sentence level sentiment analysis.
     :type sentences:
         list[~azure.ai.textanalytics.SentenceSentiment]
@@ -679,7 +679,7 @@ class SentenceSentiment(DictMixin):
     :param confidence_scores: The sentiment confidence score between 0
         and 1 for the sentence for all labels.
     :type confidence_scores:
-        ~azure.ai.textanalytics.SentimentConfidenceScorePerLabel
+        ~azure.ai.textanalytics.SentimentConfidenceScores
     :param grapheme_offset: The sentence offset from the start of the
         document.
     :type grapheme_offset: int
@@ -700,7 +700,7 @@ class SentenceSentiment(DictMixin):
     def _from_generated(cls, sentence):
         return cls(
             sentiment=sentence.sentiment.value,
-            confidence_scores=SentimentConfidenceScorePerLabel._from_generated(sentence.sentence_scores),  # pylint: disable=protected-access
+            confidence_scores=SentimentConfidenceScores._from_generated(sentence.sentence_scores),  # pylint: disable=protected-access
             grapheme_offset=sentence.offset,
             grapheme_length=sentence.length,
             warnings=sentence.warnings,
@@ -712,7 +712,7 @@ class SentenceSentiment(DictMixin):
                                      self.grapheme_length, self.warnings)[:1024]
 
 
-class SentimentConfidenceScorePerLabel(DictMixin):
+class SentimentConfidenceScores(DictMixin):
     """The confidence scores (Softmax scores) between 0 and 1 across all sentiment
     labels: positive, neutral, negative. Higher values indicate higher confidence.
 
@@ -738,5 +738,5 @@ class SentimentConfidenceScorePerLabel(DictMixin):
         )
 
     def __repr__(self):
-        return "SentimentConfidenceScorePerLabel(positive={}, neutral={}, negative={})" \
+        return "SentimentConfidenceScores(positive={}, neutral={}, negative={})" \
             .format(self.positive, self.neutral, self.negative)[:1024]
