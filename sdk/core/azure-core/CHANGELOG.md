@@ -11,6 +11,7 @@
 
 - Add raw_request_hook support in custom_hook_policy   #9958
 - Add timeout support in retry_policy   #10011
+- Add OdataV4 error format auto-parsing in all exceptions ('error' attribute)  #9738
 
 ## 1.2.2 (2020-02-10)
 
