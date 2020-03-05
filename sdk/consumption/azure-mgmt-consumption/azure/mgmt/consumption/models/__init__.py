@@ -10,80 +10,107 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .meter_details_py3 import MeterDetails
-    from .meter_details_response_py3 import MeterDetailsResponse
-    from .usage_detail_py3 import UsageDetail
-    from .usage_details_download_response_py3 import UsageDetailsDownloadResponse
-    from .marketplace_py3 import Marketplace
-    from .balance_properties_new_purchases_details_item_py3 import BalancePropertiesNewPurchasesDetailsItem
-    from .balance_properties_adjustment_details_item_py3 import BalancePropertiesAdjustmentDetailsItem
-    from .balance_py3 import Balance
-    from .reservation_summary_py3 import ReservationSummary
-    from .reservation_detail_py3 import ReservationDetail
-    from .reservation_recommendation_py3 import ReservationRecommendation
-    from .tag_py3 import Tag
-    from .tags_result_py3 import TagsResult
-    from .budget_time_period_py3 import BudgetTimePeriod
-    from .filters_py3 import Filters
-    from .current_spend_py3 import CurrentSpend
-    from .notification_py3 import Notification
-    from .budget_py3 import Budget
-    from .price_sheet_properties_py3 import PriceSheetProperties
-    from .price_sheet_result_py3 import PriceSheetResult
-    from .forecast_properties_confidence_levels_item_py3 import ForecastPropertiesConfidenceLevelsItem
-    from .forecast_py3 import Forecast
-    from .management_group_aggregated_cost_result_py3 import ManagementGroupAggregatedCostResult
-    from .charge_summary_py3 import ChargeSummary
-    from .charges_list_result_py3 import ChargesListResult
-    from .error_details_py3 import ErrorDetails
-    from .error_response_py3 import ErrorResponse, ErrorResponseException
-    from .operation_display_py3 import OperationDisplay
-    from .operation_py3 import Operation
-    from .resource_py3 import Resource
-    from .resource_attributes_py3 import ResourceAttributes
-    from .proxy_resource_py3 import ProxyResource
+    from ._models_py3 import Amount
+    from ._models_py3 import Balance
+    from ._models_py3 import BalancePropertiesAdjustmentDetailsItem
+    from ._models_py3 import BalancePropertiesNewPurchasesDetailsItem
+    from ._models_py3 import Budget
+    from ._models_py3 import BudgetTimePeriod
+    from ._models_py3 import ChargesListResult
+    from ._models_py3 import ChargeSummary
+    from ._models_py3 import CreditBalanceSummary
+    from ._models_py3 import CreditSummary
+    from ._models_py3 import CurrentSpend
+    from ._models_py3 import ErrorDetails
+    from ._models_py3 import ErrorResponse, ErrorResponseException
+    from ._models_py3 import EventSummary
+    from ._models_py3 import Filters
+    from ._models_py3 import Forecast
+    from ._models_py3 import ForecastPropertiesConfidenceLevelsItem
+    from ._models_py3 import LegacyChargeSummary
+    from ._models_py3 import LegacyReservationRecommendation
+    from ._models_py3 import LegacyUsageDetail
+    from ._models_py3 import LotSummary
+    from ._models_py3 import ManagementGroupAggregatedCostResult
+    from ._models_py3 import Marketplace
+    from ._models_py3 import MeterDetails
+    from ._models_py3 import MeterDetailsResponse
+    from ._models_py3 import ModernChargeSummary
+    from ._models_py3 import ModernReservationRecommendation
+    from ._models_py3 import ModernUsageDetail
+    from ._models_py3 import Notification
+    from ._models_py3 import Operation
+    from ._models_py3 import OperationDisplay
+    from ._models_py3 import PriceSheetProperties
+    from ._models_py3 import PriceSheetResult
+    from ._models_py3 import ProxyResource
+    from ._models_py3 import ReservationDetail
+    from ._models_py3 import ReservationRecommendation
+    from ._models_py3 import ReservationSummary
+    from ._models_py3 import ReservationTransaction
+    from ._models_py3 import Resource
+    from ._models_py3 import ResourceAttributes
+    from ._models_py3 import SkuProperty
+    from ._models_py3 import Tag
+    from ._models_py3 import TagsResult
+    from ._models_py3 import UsageDetail
 except (SyntaxError, ImportError):
-    from .meter_details import MeterDetails
-    from .meter_details_response import MeterDetailsResponse
-    from .usage_detail import UsageDetail
-    from .usage_details_download_response import UsageDetailsDownloadResponse
-    from .marketplace import Marketplace
-    from .balance_properties_new_purchases_details_item import BalancePropertiesNewPurchasesDetailsItem
-    from .balance_properties_adjustment_details_item import BalancePropertiesAdjustmentDetailsItem
-    from .balance import Balance
-    from .reservation_summary import ReservationSummary
-    from .reservation_detail import ReservationDetail
-    from .reservation_recommendation import ReservationRecommendation
-    from .tag import Tag
-    from .tags_result import TagsResult
-    from .budget_time_period import BudgetTimePeriod
-    from .filters import Filters
-    from .current_spend import CurrentSpend
-    from .notification import Notification
-    from .budget import Budget
-    from .price_sheet_properties import PriceSheetProperties
-    from .price_sheet_result import PriceSheetResult
-    from .forecast_properties_confidence_levels_item import ForecastPropertiesConfidenceLevelsItem
-    from .forecast import Forecast
-    from .management_group_aggregated_cost_result import ManagementGroupAggregatedCostResult
-    from .charge_summary import ChargeSummary
-    from .charges_list_result import ChargesListResult
-    from .error_details import ErrorDetails
-    from .error_response import ErrorResponse, ErrorResponseException
-    from .operation_display import OperationDisplay
-    from .operation import Operation
-    from .resource import Resource
-    from .resource_attributes import ResourceAttributes
-    from .proxy_resource import ProxyResource
-from .usage_detail_paged import UsageDetailPaged
-from .marketplace_paged import MarketplacePaged
-from .budget_paged import BudgetPaged
-from .reservation_summary_paged import ReservationSummaryPaged
-from .reservation_detail_paged import ReservationDetailPaged
-from .reservation_recommendation_paged import ReservationRecommendationPaged
-from .forecast_paged import ForecastPaged
-from .operation_paged import OperationPaged
-from .consumption_management_client_enums import (
+    from ._models import Amount
+    from ._models import Balance
+    from ._models import BalancePropertiesAdjustmentDetailsItem
+    from ._models import BalancePropertiesNewPurchasesDetailsItem
+    from ._models import Budget
+    from ._models import BudgetTimePeriod
+    from ._models import ChargesListResult
+    from ._models import ChargeSummary
+    from ._models import CreditBalanceSummary
+    from ._models import CreditSummary
+    from ._models import CurrentSpend
+    from ._models import ErrorDetails
+    from ._models import ErrorResponse, ErrorResponseException
+    from ._models import EventSummary
+    from ._models import Filters
+    from ._models import Forecast
+    from ._models import ForecastPropertiesConfidenceLevelsItem
+    from ._models import LegacyChargeSummary
+    from ._models import LegacyReservationRecommendation
+    from ._models import LegacyUsageDetail
+    from ._models import LotSummary
+    from ._models import ManagementGroupAggregatedCostResult
+    from ._models import Marketplace
+    from ._models import MeterDetails
+    from ._models import MeterDetailsResponse
+    from ._models import ModernChargeSummary
+    from ._models import ModernReservationRecommendation
+    from ._models import ModernUsageDetail
+    from ._models import Notification
+    from ._models import Operation
+    from ._models import OperationDisplay
+    from ._models import PriceSheetProperties
+    from ._models import PriceSheetResult
+    from ._models import ProxyResource
+    from ._models import ReservationDetail
+    from ._models import ReservationRecommendation
+    from ._models import ReservationSummary
+    from ._models import ReservationTransaction
+    from ._models import Resource
+    from ._models import ResourceAttributes
+    from ._models import SkuProperty
+    from ._models import Tag
+    from ._models import TagsResult
+    from ._models import UsageDetail
+from ._paged_models import BudgetPaged
+from ._paged_models import EventSummaryPaged
+from ._paged_models import ForecastPaged
+from ._paged_models import LotSummaryPaged
+from ._paged_models import MarketplacePaged
+from ._paged_models import OperationPaged
+from ._paged_models import ReservationDetailPaged
+from ._paged_models import ReservationRecommendationPaged
+from ._paged_models import ReservationSummaryPaged
+from ._paged_models import ReservationTransactionPaged
+from ._paged_models import UsageDetailPaged
+from ._consumption_management_client_enums import (
     BillingFrequency,
     CategoryType,
     TimeGrainType,
@@ -91,51 +118,68 @@ from .consumption_management_client_enums import (
     Grain,
     ChargeType,
     Bound,
+    EventType,
+    LotSource,
     Datagrain,
     Metrictype,
 )
 
 __all__ = [
-    'MeterDetails',
-    'MeterDetailsResponse',
-    'UsageDetail',
-    'UsageDetailsDownloadResponse',
-    'Marketplace',
-    'BalancePropertiesNewPurchasesDetailsItem',
-    'BalancePropertiesAdjustmentDetailsItem',
+    'Amount',
     'Balance',
-    'ReservationSummary',
-    'ReservationDetail',
-    'ReservationRecommendation',
-    'Tag',
-    'TagsResult',
-    'BudgetTimePeriod',
-    'Filters',
-    'CurrentSpend',
-    'Notification',
+    'BalancePropertiesAdjustmentDetailsItem',
+    'BalancePropertiesNewPurchasesDetailsItem',
     'Budget',
-    'PriceSheetProperties',
-    'PriceSheetResult',
-    'ForecastPropertiesConfidenceLevelsItem',
-    'Forecast',
-    'ManagementGroupAggregatedCostResult',
-    'ChargeSummary',
+    'BudgetTimePeriod',
     'ChargesListResult',
+    'ChargeSummary',
+    'CreditBalanceSummary',
+    'CreditSummary',
+    'CurrentSpend',
     'ErrorDetails',
     'ErrorResponse', 'ErrorResponseException',
-    'OperationDisplay',
+    'EventSummary',
+    'Filters',
+    'Forecast',
+    'ForecastPropertiesConfidenceLevelsItem',
+    'LegacyChargeSummary',
+    'LegacyReservationRecommendation',
+    'LegacyUsageDetail',
+    'LotSummary',
+    'ManagementGroupAggregatedCostResult',
+    'Marketplace',
+    'MeterDetails',
+    'MeterDetailsResponse',
+    'ModernChargeSummary',
+    'ModernReservationRecommendation',
+    'ModernUsageDetail',
+    'Notification',
     'Operation',
+    'OperationDisplay',
+    'PriceSheetProperties',
+    'PriceSheetResult',
+    'ProxyResource',
+    'ReservationDetail',
+    'ReservationRecommendation',
+    'ReservationSummary',
+    'ReservationTransaction',
     'Resource',
     'ResourceAttributes',
-    'ProxyResource',
+    'SkuProperty',
+    'Tag',
+    'TagsResult',
+    'UsageDetail',
     'UsageDetailPaged',
     'MarketplacePaged',
     'BudgetPaged',
     'ReservationSummaryPaged',
     'ReservationDetailPaged',
     'ReservationRecommendationPaged',
+    'ReservationTransactionPaged',
     'ForecastPaged',
     'OperationPaged',
+    'EventSummaryPaged',
+    'LotSummaryPaged',
     'BillingFrequency',
     'CategoryType',
     'TimeGrainType',
@@ -143,6 +187,8 @@ __all__ = [
     'Grain',
     'ChargeType',
     'Bound',
+    'EventType',
+    'LotSource',
     'Datagrain',
     'Metrictype',
 ]
