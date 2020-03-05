@@ -41,12 +41,11 @@ from requests import Request, Response
 from msrest import Deserializer
 
 from azure.core.polling import LROPoller
-from azure.core.exceptions import DecodeError
+from azure.core.exceptions import DecodeError, HttpResponseError
 from azure.core import PipelineClient
 from azure.core.pipeline import PipelineResponse, Pipeline
 from azure.core.pipeline.transport import RequestsTransportResponse, HttpTransport
 
-from azure.mgmt.core.exceptions import ARMError
 from azure.mgmt.core.polling.arm_polling import (
     LongRunningOperation,
     ARMPolling,
@@ -333,7 +332,7 @@ class TestArmPolling(object):
         op = LongRunningOperation(response, lambda x:None)
         with pytest.raises(BadStatus):
             op.set_initial_status(response)
-        with pytest.raises(ARMError):
+        with pytest.raises(HttpResponseError):
             LROPoller(CLIENT, response,
                 TestArmPolling.mock_outputs,
                 ARMPolling(0)).result()
@@ -575,7 +574,7 @@ class TestArmPolling(object):
         poll = LROPoller(CLIENT, response,
             TestArmPolling.mock_outputs,
             ARMPolling(0))
-        with pytest.raises(ARMError): # TODO: Node.js raises on deserialization
+        with pytest.raises(HttpResponseError): # TODO: Node.js raises on deserialization
             poll.wait()
 
         LOCATION_BODY = json.dumps({ 'name': TEST_NAME })

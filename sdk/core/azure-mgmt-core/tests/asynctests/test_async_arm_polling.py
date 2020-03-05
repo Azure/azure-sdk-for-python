@@ -40,12 +40,11 @@ from requests import Request, Response
 from msrest import Deserializer
 
 from azure.core.polling import async_poller
-from azure.core.exceptions import DecodeError
+from azure.core.exceptions import DecodeError, HttpResponseError
 from azure.core import AsyncPipelineClient
 from azure.core.pipeline import PipelineResponse, AsyncPipeline
 from azure.core.pipeline.transport import AsyncioRequestsTransportResponse, AsyncHttpTransport
 
-from azure.mgmt.core.exceptions import ARMError
 from azure.mgmt.core.polling.async_arm_polling import (
     AsyncARMPolling,
 )
@@ -335,7 +334,7 @@ async def test_long_running_put():
     op = LongRunningOperation(response, lambda x:None)
     with pytest.raises(BadStatus):
         op.set_initial_status(response)
-    with pytest.raises(ARMError):
+    with pytest.raises(HttpResponseError):
         await async_poller(CLIENT, response,
             TestArmPolling.mock_outputs,
             AsyncARMPolling(0))
@@ -589,7 +588,7 @@ async def test_long_running_negative():
     poll = async_poller(CLIENT, response,
         TestArmPolling.mock_outputs,
         AsyncARMPolling(0))
-    with pytest.raises(ARMError): # TODO: Node.js raises on deserialization
+    with pytest.raises(HttpResponseError): # TODO: Node.js raises on deserialization
         await poll
 
     LOCATION_BODY = json.dumps({ 'name': TEST_NAME })

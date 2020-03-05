@@ -23,13 +23,16 @@
 # THE SOFTWARE.
 #
 #--------------------------------------------------------------------------
-
+import functools
 import json
 
 from azure.core.pipeline.transport._base import _HttpResponseBase
 
-from azure.mgmt.core.exceptions import ARMError, TypedErrorInfo
+from azure.core.exceptions import HttpResponseError
+from azure.mgmt.core.exceptions import ARMErrorFormat, TypedErrorInfo
 
+
+ARMError = functools.partial(HttpResponseError, error_format=ARMErrorFormat)
 
 def _build_response(json_body):
     class MockResponse(_HttpResponseBase):
@@ -76,12 +79,12 @@ def test_arm_exception():
             ]
         }
     }
-    cloud_exp = ARMError(_build_response(json.dumps(message).encode("utf-8")))
-    assert cloud_exp.target ==  'query'
-    assert cloud_exp.details[0].target ==  '$search'
-    assert cloud_exp.innererror['customKey'] ==  'customValue'
-    assert cloud_exp.additional_info[0].type ==  'SomeErrorType'
-    assert cloud_exp.additional_info[0].info['customKey'] ==  'customValue'
+    cloud_exp = ARMError(response=_build_response(json.dumps(message).encode("utf-8")))
+    assert cloud_exp.error.target ==  'query'
+    assert cloud_exp.error.details[0].target ==  '$search'
+    assert cloud_exp.error.innererror['customKey'] ==  'customValue'
+    assert cloud_exp.error.additional_info[0].type ==  'SomeErrorType'
+    assert cloud_exp.error.additional_info[0].info['customKey'] ==  'customValue'
     assert 'customValue' in  str(cloud_exp)
 
     message = {
@@ -121,22 +124,22 @@ def test_arm_exception():
             ]
         }
     }
-    cloud_exp = ARMError(_build_response(json.dumps(message).encode("utf-8")))
-    assert cloud_exp.target ==  'query'
-    assert cloud_exp.details[0].target ==  '$search'
-    assert cloud_exp.additional_info[0].type ==  'SomeErrorType'
-    assert cloud_exp.additional_info[0].info['customKey'] ==  'customValue'
-    assert cloud_exp.details[0].additional_info[0].type ==  'PolicyViolation'
-    assert cloud_exp.details[0].additional_info[0].info['policyDefinitionDisplayName'] ==  'Allowed locations'
-    assert cloud_exp.details[0].additional_info[0].info['policyAssignmentParameters']['listOfAllowedLocations']['value'][0] ==  'westus'
+    cloud_exp = ARMError(response=_build_response(json.dumps(message).encode("utf-8")))
+    assert cloud_exp.error.target ==  'query'
+    assert cloud_exp.error.details[0].target ==  '$search'
+    assert cloud_exp.error.additional_info[0].type ==  'SomeErrorType'
+    assert cloud_exp.error.additional_info[0].info['customKey'] ==  'customValue'
+    assert cloud_exp.error.details[0].additional_info[0].type ==  'PolicyViolation'
+    assert cloud_exp.error.details[0].additional_info[0].info['policyDefinitionDisplayName'] ==  'Allowed locations'
+    assert cloud_exp.error.details[0].additional_info[0].info['policyAssignmentParameters']['listOfAllowedLocations']['value'][0] ==  'westus'
     assert 'customValue' in  str(cloud_exp)
 
 
-    error = ARMError(_build_response(b"{{"))
+    error = ARMError(response=_build_response(b"{{"))
     assert "Bad Request" in error.message
 
-    error = ARMError(_build_response(b'{"error":{"code":"Conflict","message":"The maximum number of Free ServerFarms allowed in a Subscription is 10.","target":null,"details":[{"message":"The maximum number of Free ServerFarms allowed in a Subscription is 10."},{"code":"Conflict"},{"errorentity":{"code":"Conflict","message":"The maximum number of Free ServerFarms allowed in a Subscription is 10.","extendedCode":"59301","messageTemplate":"The maximum number of {0} ServerFarms allowed in a Subscription is {1}.","parameters":["Free","10"],"innerErrors":null}}],"innererror":null}}'))
-    assert error.code ==  "Conflict"
+    error = ARMError(response=_build_response(b'{"error":{"code":"Conflict","message":"The maximum number of Free ServerFarms allowed in a Subscription is 10.","target":null,"details":[{"message":"The maximum number of Free ServerFarms allowed in a Subscription is 10."},{"code":"Conflict"},{"errorentity":{"code":"Conflict","message":"The maximum number of Free ServerFarms allowed in a Subscription is 10.","extendedCode":"59301","messageTemplate":"The maximum number of {0} ServerFarms allowed in a Subscription is {1}.","parameters":["Free","10"],"innerErrors":null}}],"innererror":null}}'))
+    assert error.error.code ==  "Conflict"
 
     message = json.dumps({
         "error": {
@@ -151,10 +154,10 @@ def test_arm_exception():
                 }
             ]
         }}).encode('utf-8')
-    error = ARMError(_build_response(message))
-    assert error.code ==  "BadArgument"
+    error = ARMError(response=_build_response(message))
+    assert error.error.code ==  "BadArgument"
 
     # See https://github.com/Azure/msrestazure-for-python/issues/54
     response_text = b'"{\\"error\\": {\\"code\\": \\"ResourceGroupNotFound\\", \\"message\\": \\"Resource group \'res_grp\' could not be found.\\"}}"'
-    error = ARMError(_build_response(response_text))
+    error = ARMError(response=_build_response(response_text))
     # Do not raise is plenty enough, that's a major server issue....

@@ -66,6 +66,8 @@ class ARMErrorFormat(ODataV4Format):
     def __init__(self, json_object):
         # Parse the ODatav4 part
         super(ARMErrorFormat, self).__init__(json_object)
+        if "error" in json_object:
+            json_object = json_object["error"]
 
         # ARM specific annotations
         self.additional_info = [

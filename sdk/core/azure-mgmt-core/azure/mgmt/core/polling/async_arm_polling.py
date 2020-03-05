@@ -23,7 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from ..exceptions import ARMError
+from azure.core.exceptions import HttpResponseError
 from .arm_polling import (
     failed,
     BadStatus,
@@ -43,14 +43,14 @@ class AsyncARMPolling(ARMPolling):
             await self._poll()
         except BadStatus as err:
             self._operation.status = 'Failed'
-            raise ARMError(self._pipeline_response.http_response, error=err)
+            raise HttpResponseError(response=self._pipeline_response.http_response, error=err)
 
         except BadResponse as err:
             self._operation.status = 'Failed'
-            raise ARMError(self._pipeline_response.http_response, message=str(err), error=err)
+            raise HttpResponseError(response=self._pipeline_response.http_response, message=str(err), error=err)
 
         except OperationFailed as err:
-            raise ARMError(self._pipeline_response.http_response, error=err)
+            raise HttpResponseError(response=self._pipeline_response.http_response, error=err)
 
     async def _poll(self):
         """Poll status of operation so long as operation is incomplete and

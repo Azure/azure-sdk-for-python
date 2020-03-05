@@ -32,10 +32,8 @@ except ImportError:
 
 from msrest.exceptions import DeserializationError
 
-from azure.core.exceptions import DecodeError
+from azure.core.exceptions import DecodeError, HttpResponseError
 from azure.core.polling import PollingMethod
-
-from ..exceptions import ARMError
 
 
 FINISHED = frozenset(['succeeded', 'canceled', 'failed'])
@@ -387,7 +385,7 @@ class ARMPolling(PollingMethod):
         """Set the initial status of this LRO.
 
         :param initial_response: The initial response of the poller
-        :raises: ARMError if initial status is incorrect LRO state
+        :raises: HttpResponseError if initial status is incorrect LRO state
         """
         self._client = client
         self._transport = self._client._pipeline._transport
@@ -397,26 +395,26 @@ class ARMPolling(PollingMethod):
             self._operation.set_initial_status(initial_response)
         except BadStatus as err:
             self._operation.status = 'Failed'
-            raise ARMError(initial_response.http_response, error=err)
+            raise HttpResponseError(response=initial_response.http_response, error=err)
         except BadResponse as err:
             self._operation.status = 'Failed'
-            raise ARMError(initial_response.http_response, message=str(err), error=err)
+            raise HttpResponseError(response=initial_response.http_response, message=str(err), error=err)
         except OperationFailed as err:
-            raise ARMError(initial_response.http_response, error=err)
+            raise HttpResponseError(response=initial_response.http_response, error=err)
 
     def run(self):
         try:
             self._poll()
         except BadStatus as err:
             self._operation.status = 'Failed'
-            raise ARMError(self._pipeline_response.http_response, error=err)
+            raise HttpResponseError(response=self._pipeline_response.http_response, error=err)
 
         except BadResponse as err:
             self._operation.status = 'Failed'
-            raise ARMError(self._pipeline_response.http_response, message=str(err), error=err)
+            raise HttpResponseError(response=self._pipeline_response.http_response, message=str(err), error=err)
 
         except OperationFailed as err:
-            raise ARMError(self._pipeline_response.http_response, error=err)
+            raise HttpResponseError(response=self._pipeline_response.http_response, error=err)
 
     def _poll(self):
         """Poll status of operation so long as operation is incomplete and
