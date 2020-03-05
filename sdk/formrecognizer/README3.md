@@ -77,6 +77,7 @@ class ReceiptItemField:
 
 class FieldValue:
     value: Union[str, float, int]
+    text: str
     bounding_box: List[float]
     confidence: float
     raw_field: List[ExtractedLine]
@@ -280,10 +281,12 @@ class ExtractedPage:
     cluster_id: int
 
 class ExtractedField:
-    label: str
+    label: str  # service later will return type instead of str here
+    label_text: str
     label_outline: List[float]
     label_raw_field: List[ExtractedLine]
-    value: str
+    value: str  # service later will return type instead of str here
+    value_text: str
     value_outline: List[float]
     value_raw_field: List[ExtractedLine]
     confidence: float
