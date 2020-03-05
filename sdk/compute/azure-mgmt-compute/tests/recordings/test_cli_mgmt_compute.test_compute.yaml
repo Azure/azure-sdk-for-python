@@ -28,7 +28,7 @@ interactions:
         : \"Updating\",\r\n    \"isArmResource\": true\r\n  }\r\n}"
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/DiskOperations/04dd0cd7-f917-4bf0-8a0e-8d70eac5e3dd?api-version=2019-11-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/DiskOperations/98f64257-019f-4736-b4ea-165a8e4c9cd7?api-version=2019-11-01
       cache-control:
       - no-cache
       content-length:
@@ -36,11 +36,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 04 Mar 2020 09:50:28 GMT
+      - Thu, 05 Mar 2020 07:06:54 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/DiskOperations/04dd0cd7-f917-4bf0-8a0e-8d70eac5e3dd?monitor=true&api-version=2019-11-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/DiskOperations/98f64257-019f-4736-b4ea-165a8e4c9cd7?monitor=true&api-version=2019-11-01
       pragma:
       - no-cache
       server:
@@ -51,9 +51,9 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-resource:
-      - Microsoft.Compute/CreateUpdateDisks3Min;999,Microsoft.Compute/CreateUpdateDisks30Min;7993
+      - Microsoft.Compute/CreateUpdateDisks3Min;999,Microsoft.Compute/CreateUpdateDisks30Min;7999
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1194'
+      - '1199'
     status:
       code: 202
       message: Accepted
@@ -70,11 +70,11 @@ interactions:
       - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
         msrest_azure/0.6.2 azure-mgmt-compute/11.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/DiskOperations/04dd0cd7-f917-4bf0-8a0e-8d70eac5e3dd?api-version=2019-11-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/DiskOperations/98f64257-019f-4736-b4ea-165a8e4c9cd7?api-version=2019-11-01
   response:
     body:
-      string: "{\r\n  \"startTime\": \"2020-03-04T09:50:28.9211282+00:00\",\r\n  \"\
-        endTime\": \"2020-03-04T09:50:29.0148678+00:00\",\r\n  \"status\": \"Succeeded\"\
+      string: "{\r\n  \"startTime\": \"2020-03-05T07:06:54.7087504+00:00\",\r\n  \"\
+        endTime\": \"2020-03-05T07:06:54.8337549+00:00\",\r\n  \"status\": \"Succeeded\"\
         ,\r\n  \"properties\": {\r\n    \"output\": {\r\n  \"name\": \"diskname\"\
         ,\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/disks/diskname\"\
         ,\r\n  \"type\": \"Microsoft.Compute/disks\",\r\n  \"location\": \"eastus\"\
@@ -83,10 +83,10 @@ interactions:
         : \"Empty\"\r\n    },\r\n    \"diskSizeGB\": 200,\r\n    \"diskIOPSReadWrite\"\
         : 500,\r\n    \"diskMBpsReadWrite\": 60,\r\n    \"encryption\": {\r\n    \
         \  \"type\": \"EncryptionAtRestWithPlatformKey\"\r\n    },\r\n    \"timeCreated\"\
-        : \"2020-03-04T09:50:28.9211282+00:00\",\r\n    \"provisioningState\": \"\
+        : \"2020-03-05T07:06:54.7243778+00:00\",\r\n    \"provisioningState\": \"\
         Succeeded\",\r\n    \"diskState\": \"Unattached\",\r\n    \"diskSizeBytes\"\
-        : 214748364800,\r\n    \"uniqueId\": \"1e92bf26-696e-440e-8a5e-4e3c8348deb9\"\
-        \r\n  }\r\n}\r\n  },\r\n  \"name\": \"04dd0cd7-f917-4bf0-8a0e-8d70eac5e3dd\"\
+        : 214748364800,\r\n    \"uniqueId\": \"46c4b9e5-365f-4146-ba8d-52298fd59941\"\
+        \r\n  }\r\n}\r\n  },\r\n  \"name\": \"98f64257-019f-4736-b4ea-165a8e4c9cd7\"\
         \r\n}"
     headers:
       cache-control:
@@ -96,7 +96,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 04 Mar 2020 09:50:33 GMT
+      - Thu, 05 Mar 2020 07:06:56 GMT
       expires:
       - '-1'
       pragma:
@@ -113,7 +113,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-resource:
-      - Microsoft.Compute/GetOperation3Min;49998,Microsoft.Compute/GetOperation30Min;399967
+      - Microsoft.Compute/GetOperation3Min;49999,Microsoft.Compute/GetOperation30Min;399993
     status:
       code: 200
       message: OK
@@ -140,9 +140,9 @@ interactions:
         : \"Empty\"\r\n    },\r\n    \"diskSizeGB\": 200,\r\n    \"diskIOPSReadWrite\"\
         : 500,\r\n    \"diskMBpsReadWrite\": 60,\r\n    \"encryption\": {\r\n    \
         \  \"type\": \"EncryptionAtRestWithPlatformKey\"\r\n    },\r\n    \"timeCreated\"\
-        : \"2020-03-04T09:50:28.9211282+00:00\",\r\n    \"provisioningState\": \"\
+        : \"2020-03-05T07:06:54.7243778+00:00\",\r\n    \"provisioningState\": \"\
         Succeeded\",\r\n    \"diskState\": \"Unattached\",\r\n    \"diskSizeBytes\"\
-        : 214748364800,\r\n    \"uniqueId\": \"1e92bf26-696e-440e-8a5e-4e3c8348deb9\"\
+        : 214748364800,\r\n    \"uniqueId\": \"46c4b9e5-365f-4146-ba8d-52298fd59941\"\
         \r\n  }\r\n}"
     headers:
       cache-control:
@@ -152,7 +152,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 04 Mar 2020 09:50:33 GMT
+      - Thu, 05 Mar 2020 07:06:57 GMT
       expires:
       - '-1'
       pragma:
@@ -169,7 +169,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-resource:
-      - Microsoft.Compute/LowCostGet3Min;4994,Microsoft.Compute/LowCostGet30Min;39969
+      - Microsoft.Compute/LowCostGet3Min;4999,Microsoft.Compute/LowCostGet30Min;39984
     status:
       code: 200
       message: OK
@@ -199,12 +199,12 @@ interactions:
       string: "{\r\n  \"name\": \"diskname4\",\r\n  \"location\": \"eastus\",\r\n\
         \  \"properties\": {\r\n    \"creationData\": {\r\n      \"createOption\"\
         : \"Copy\",\r\n      \"sourceResourceId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/disks/diskname\"\
-        ,\r\n      \"sourceUniqueId\": \"1e92bf26-696e-440e-8a5e-4e3c8348deb9\"\r\n\
+        ,\r\n      \"sourceUniqueId\": \"46c4b9e5-365f-4146-ba8d-52298fd59941\"\r\n\
         \    },\r\n    \"provisioningState\": \"Updating\",\r\n    \"isArmResource\"\
         : true\r\n  }\r\n}"
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/DiskOperations/2aae71e2-c4d6-4c1c-8b12-615836902882?api-version=2019-11-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/DiskOperations/3903261c-bfd9-4bdf-8851-cab15d2e5ae2?api-version=2019-11-01
       cache-control:
       - no-cache
       content-length:
@@ -212,11 +212,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 04 Mar 2020 09:50:36 GMT
+      - Thu, 05 Mar 2020 07:07:01 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/DiskOperations/2aae71e2-c4d6-4c1c-8b12-615836902882?monitor=true&api-version=2019-11-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/DiskOperations/3903261c-bfd9-4bdf-8851-cab15d2e5ae2?monitor=true&api-version=2019-11-01
       pragma:
       - no-cache
       server:
@@ -227,9 +227,9 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-resource:
-      - Microsoft.Compute/CreateUpdateDisks3Min;998,Microsoft.Compute/CreateUpdateDisks30Min;7992
+      - Microsoft.Compute/CreateUpdateDisks3Min;998,Microsoft.Compute/CreateUpdateDisks30Min;7998
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1193'
+      - '1198'
     status:
       code: 202
       message: Accepted
@@ -246,34 +246,34 @@ interactions:
       - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
         msrest_azure/0.6.2 azure-mgmt-compute/11.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/DiskOperations/2aae71e2-c4d6-4c1c-8b12-615836902882?api-version=2019-11-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/DiskOperations/3903261c-bfd9-4bdf-8851-cab15d2e5ae2?api-version=2019-11-01
   response:
     body:
-      string: "{\r\n  \"startTime\": \"2020-03-04T09:50:36.8585961+00:00\",\r\n  \"\
-        endTime\": \"2020-03-04T09:50:38.1554413+00:00\",\r\n  \"status\": \"Succeeded\"\
+      string: "{\r\n  \"startTime\": \"2020-03-05T07:07:00.849417+00:00\",\r\n  \"\
+        endTime\": \"2020-03-05T07:07:01.6462947+00:00\",\r\n  \"status\": \"Succeeded\"\
         ,\r\n  \"properties\": {\r\n    \"output\": {\r\n  \"name\": \"diskname4\"\
         ,\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/disks/diskname4\"\
         ,\r\n  \"type\": \"Microsoft.Compute/disks\",\r\n  \"location\": \"eastus\"\
         ,\r\n  \"sku\": {\r\n    \"name\": \"Standard_LRS\",\r\n    \"tier\": \"Standard\"\
         \r\n  },\r\n  \"properties\": {\r\n    \"creationData\": {\r\n      \"createOption\"\
         : \"Copy\",\r\n      \"sourceResourceId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/disks/diskname\"\
-        ,\r\n      \"sourceUniqueId\": \"1e92bf26-696e-440e-8a5e-4e3c8348deb9\"\r\n\
+        ,\r\n      \"sourceUniqueId\": \"46c4b9e5-365f-4146-ba8d-52298fd59941\"\r\n\
         \    },\r\n    \"diskSizeGB\": 200,\r\n    \"diskIOPSReadWrite\": 500,\r\n\
         \    \"diskMBpsReadWrite\": 60,\r\n    \"encryption\": {\r\n      \"type\"\
         : \"EncryptionAtRestWithPlatformKey\"\r\n    },\r\n    \"timeCreated\": \"\
-        2020-03-04T09:50:36.8585961+00:00\",\r\n    \"provisioningState\": \"Succeeded\"\
+        2020-03-05T07:07:00.849417+00:00\",\r\n    \"provisioningState\": \"Succeeded\"\
         ,\r\n    \"diskState\": \"Unattached\",\r\n    \"diskSizeBytes\": 214748364800,\r\
-        \n    \"uniqueId\": \"d388bfb0-c137-41bf-b24d-cb799aebc6a4\"\r\n  }\r\n}\r\
-        \n  },\r\n  \"name\": \"2aae71e2-c4d6-4c1c-8b12-615836902882\"\r\n}"
+        \n    \"uniqueId\": \"27bd950c-544e-44dd-818a-914971ca8299\"\r\n  }\r\n}\r\
+        \n  },\r\n  \"name\": \"3903261c-bfd9-4bdf-8851-cab15d2e5ae2\"\r\n}"
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '1269'
+      - '1267'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 04 Mar 2020 09:50:39 GMT
+      - Thu, 05 Mar 2020 07:07:04 GMT
       expires:
       - '-1'
       pragma:
@@ -290,7 +290,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-resource:
-      - Microsoft.Compute/GetOperation3Min;49996,Microsoft.Compute/GetOperation30Min;399965
+      - Microsoft.Compute/GetOperation3Min;49997,Microsoft.Compute/GetOperation30Min;399991
     status:
       code: 200
       message: OK
@@ -315,22 +315,22 @@ interactions:
         ,\r\n  \"sku\": {\r\n    \"name\": \"Standard_LRS\",\r\n    \"tier\": \"Standard\"\
         \r\n  },\r\n  \"properties\": {\r\n    \"creationData\": {\r\n      \"createOption\"\
         : \"Copy\",\r\n      \"sourceResourceId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/disks/diskname\"\
-        ,\r\n      \"sourceUniqueId\": \"1e92bf26-696e-440e-8a5e-4e3c8348deb9\"\r\n\
+        ,\r\n      \"sourceUniqueId\": \"46c4b9e5-365f-4146-ba8d-52298fd59941\"\r\n\
         \    },\r\n    \"diskSizeGB\": 200,\r\n    \"diskIOPSReadWrite\": 500,\r\n\
         \    \"diskMBpsReadWrite\": 60,\r\n    \"encryption\": {\r\n      \"type\"\
         : \"EncryptionAtRestWithPlatformKey\"\r\n    },\r\n    \"timeCreated\": \"\
-        2020-03-04T09:50:36.8585961+00:00\",\r\n    \"provisioningState\": \"Succeeded\"\
+        2020-03-05T07:07:00.849417+00:00\",\r\n    \"provisioningState\": \"Succeeded\"\
         ,\r\n    \"diskState\": \"Unattached\",\r\n    \"diskSizeBytes\": 214748364800,\r\
-        \n    \"uniqueId\": \"d388bfb0-c137-41bf-b24d-cb799aebc6a4\"\r\n  }\r\n}"
+        \n    \"uniqueId\": \"27bd950c-544e-44dd-818a-914971ca8299\"\r\n  }\r\n}"
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '1044'
+      - '1043'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 04 Mar 2020 09:50:39 GMT
+      - Thu, 05 Mar 2020 07:07:04 GMT
       expires:
       - '-1'
       pragma:
@@ -347,7 +347,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-resource:
-      - Microsoft.Compute/LowCostGet3Min;4992,Microsoft.Compute/LowCostGet30Min;39967
+      - Microsoft.Compute/LowCostGet3Min;4997,Microsoft.Compute/LowCostGet30Min;39982
     status:
       code: 200
       message: OK
@@ -381,7 +381,7 @@ interactions:
         \n}"
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/DiskOperations/332327ac-feb6-43b5-9e23-279e623a86e6?api-version=2019-11-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/DiskOperations/3d85487d-9d5a-474b-9b4e-825c80698aa8?api-version=2019-11-01
       cache-control:
       - no-cache
       content-length:
@@ -389,11 +389,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 04 Mar 2020 09:50:41 GMT
+      - Thu, 05 Mar 2020 07:07:07 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/DiskOperations/332327ac-feb6-43b5-9e23-279e623a86e6?monitor=true&api-version=2019-11-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/DiskOperations/3d85487d-9d5a-474b-9b4e-825c80698aa8?monitor=true&api-version=2019-11-01
       pragma:
       - no-cache
       server:
@@ -404,9 +404,9 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-resource:
-      - Microsoft.Compute/CreateUpdateDisks3Min;997,Microsoft.Compute/CreateUpdateDisks30Min;7991
+      - Microsoft.Compute/CreateUpdateDisks3Min;997,Microsoft.Compute/CreateUpdateDisks30Min;7997
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1192'
+      - '1197'
     status:
       code: 202
       message: Accepted
@@ -423,32 +423,29 @@ interactions:
       - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
         msrest_azure/0.6.2 azure-mgmt-compute/11.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/DiskOperations/332327ac-feb6-43b5-9e23-279e623a86e6?api-version=2019-11-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/DiskOperations/3d85487d-9d5a-474b-9b4e-825c80698aa8?api-version=2019-11-01
   response:
     body:
-      string: "{\r\n  \"startTime\": \"2020-03-04T09:50:41.9523313+00:00\",\r\n  \"\
-        endTime\": \"2020-03-04T09:50:42.0460967+00:00\",\r\n  \"status\": \"Succeeded\"\
-        ,\r\n  \"properties\": {\r\n    \"output\": {\r\n  \"name\": \"diskname5\"\
-        ,\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/disks/diskname5\"\
-        ,\r\n  \"type\": \"Microsoft.Compute/disks\",\r\n  \"location\": \"eastus\"\
-        ,\r\n  \"sku\": {\r\n    \"name\": \"Standard_LRS\",\r\n    \"tier\": \"Standard\"\
-        \r\n  },\r\n  \"properties\": {\r\n    \"creationData\": {\r\n      \"createOption\"\
-        : \"Upload\",\r\n      \"uploadSizeBytes\": 10737418752\r\n    },\r\n    \"\
-        diskIOPSReadWrite\": 500,\r\n    \"diskMBpsReadWrite\": 60,\r\n    \"encryption\"\
-        : {\r\n      \"type\": \"EncryptionAtRestWithPlatformKey\"\r\n    },\r\n \
-        \   \"timeCreated\": \"2020-03-04T09:50:41.9523313+00:00\",\r\n    \"provisioningState\"\
-        : \"Succeeded\",\r\n    \"diskState\": \"ReadyToUpload\",\r\n    \"uniqueId\"\
-        : \"f2ff8ac5-5e59-4c5e-b6d9-895c5a8c7896\"\r\n  }\r\n}\r\n  },\r\n  \"name\"\
-        : \"332327ac-feb6-43b5-9e23-279e623a86e6\"\r\n}"
+      string: "{\r\n  \"startTime\": \"2020-03-05T07:07:07.1932463+00:00\",\r\n  \"\
+        endTime\": \"2020-03-05T07:07:07.3338688+00:00\",\r\n  \"status\": \"Succeeded\"\
+        ,\r\n  \"properties\": {\r\n    \"output\": {\"name\":\"diskname5\",\"id\"\
+        :\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/disks/diskname5\"\
+        ,\"type\":\"Microsoft.Compute/disks\",\"location\":\"eastus\",\"sku\":{\"\
+        name\":\"Standard_LRS\",\"tier\":\"Standard\"},\"properties\":{\"creationData\"\
+        :{\"createOption\":\"Upload\",\"uploadSizeBytes\":10737418752},\"diskIOPSReadWrite\"\
+        :500,\"diskMBpsReadWrite\":60,\"encryption\":{\"type\":\"EncryptionAtRestWithPlatformKey\"\
+        },\"timeCreated\":\"2020-03-05T07:07:07.2088708+00:00\",\"provisioningState\"\
+        :\"Succeeded\",\"diskState\":\"ReadyToUpload\",\"uniqueId\":\"6afba7bf-856f-4b06-ab52-b19261bc1be9\"\
+        }}\r\n  },\r\n  \"name\": \"3d85487d-9d5a-474b-9b4e-825c80698aa8\"\r\n}"
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '1005'
+      - '856'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 04 Mar 2020 09:50:45 GMT
+      - Thu, 05 Mar 2020 07:07:16 GMT
       expires:
       - '-1'
       pragma:
@@ -465,7 +462,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-resource:
-      - Microsoft.Compute/GetOperation3Min;49994,Microsoft.Compute/GetOperation30Min;399963
+      - Microsoft.Compute/GetOperation3Min;49994,Microsoft.Compute/GetOperation30Min;399988
     status:
       code: 200
       message: OK
@@ -492,9 +489,9 @@ interactions:
         : \"Upload\",\r\n      \"uploadSizeBytes\": 10737418752\r\n    },\r\n    \"\
         diskIOPSReadWrite\": 500,\r\n    \"diskMBpsReadWrite\": 60,\r\n    \"encryption\"\
         : {\r\n      \"type\": \"EncryptionAtRestWithPlatformKey\"\r\n    },\r\n \
-        \   \"timeCreated\": \"2020-03-04T09:50:41.9523313+00:00\",\r\n    \"provisioningState\"\
+        \   \"timeCreated\": \"2020-03-05T07:07:07.2088708+00:00\",\r\n    \"provisioningState\"\
         : \"Succeeded\",\r\n    \"diskState\": \"ReadyToUpload\",\r\n    \"uniqueId\"\
-        : \"f2ff8ac5-5e59-4c5e-b6d9-895c5a8c7896\"\r\n  }\r\n}"
+        : \"6afba7bf-856f-4b06-ab52-b19261bc1be9\"\r\n  }\r\n}"
     headers:
       cache-control:
       - no-cache
@@ -503,7 +500,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 04 Mar 2020 09:50:45 GMT
+      - Thu, 05 Mar 2020 07:07:17 GMT
       expires:
       - '-1'
       pragma:
@@ -520,7 +517,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-resource:
-      - Microsoft.Compute/LowCostGet3Min;4990,Microsoft.Compute/LowCostGet30Min;39965
+      - Microsoft.Compute/LowCostGet3Min;4993,Microsoft.Compute/LowCostGet30Min;39978
     status:
       code: 200
       message: OK
@@ -549,12 +546,12 @@ interactions:
     body:
       string: "{\r\n  \"location\": \"eastus\",\r\n  \"properties\": {\r\n    \"creationData\"\
         : {\r\n      \"createOption\": \"Copy\",\r\n      \"sourceUri\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/disks/diskname\"\
-        ,\r\n      \"sourceUniqueId\": \"1e92bf26-696e-440e-8a5e-4e3c8348deb9\"\r\n\
+        ,\r\n      \"sourceUniqueId\": \"46c4b9e5-365f-4146-ba8d-52298fd59941\"\r\n\
         \    },\r\n    \"provisioningState\": \"Updating\",\r\n    \"isArmResource\"\
         : true\r\n  }\r\n}"
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/DiskOperations/cf7b7c76-e3d5-4a90-86b2-7d6b497f5798?api-version=2019-11-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/DiskOperations/4ea56ba0-033e-42f0-9e9f-39cac0bd494a?api-version=2019-11-01
       cache-control:
       - no-cache
       content-length:
@@ -562,11 +559,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 04 Mar 2020 09:50:46 GMT
+      - Thu, 05 Mar 2020 07:07:18 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/DiskOperations/cf7b7c76-e3d5-4a90-86b2-7d6b497f5798?monitor=true&api-version=2019-11-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/DiskOperations/4ea56ba0-033e-42f0-9e9f-39cac0bd494a?monitor=true&api-version=2019-11-01
       pragma:
       - no-cache
       server:
@@ -577,10 +574,3642 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-resource:
-      - Microsoft.Compute/HighCostSnapshotCreateHydrate3Min;239,Microsoft.Compute/HighCostSnapshotCreateHydrate30Min;1917
+      - Microsoft.Compute/HighCostSnapshotCreateHydrate3Min;239,Microsoft.Compute/HighCostSnapshotCreateHydrate30Min;1918
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1191'
+      - '1196'
     status:
       code: 202
       message: Accepted
+- request:
+    body: 'b''{"location": "eastus", "properties": {"storageProfile": {"osDisk": {"snapshot":
+      {"id": "subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/snapshots/snapshotname"},
+      "osType": "Linux", "osState": "Generalized"}, "zoneResilient": false}, "hyperVGeneration":
+      "V1"}}'''
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '348'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-compute/11.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/images/imagename?api-version=2019-07-01
+  response:
+    body:
+      string: "{\r\n  \"name\": \"imagename\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/images/imagename\"\
+        ,\r\n  \"type\": \"Microsoft.Compute/images\",\r\n  \"location\": \"eastus\"\
+        ,\r\n  \"properties\": {\r\n    \"storageProfile\": {\r\n      \"osDisk\"\
+        : {\r\n        \"osType\": \"Linux\",\r\n        \"osState\": \"Generalized\"\
+        ,\r\n        \"snapshot\": {\r\n          \"id\": \"subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/snapshots/snapshotname\"\
+        \r\n        },\r\n        \"caching\": \"None\",\r\n        \"storageAccountType\"\
+        : \"Standard_LRS\"\r\n      },\r\n      \"dataDisks\": [],\r\n      \"zoneResilient\"\
+        : false\r\n    },\r\n    \"provisioningState\": \"Creating\",\r\n    \"hyperVGeneration\"\
+        : \"V1\"\r\n  }\r\n}"
+    headers:
+      azure-asyncnotification:
+      - Enabled
+      azure-asyncoperation:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/operations/0571444a-10ac-42a0-84d9-8d722c4ee9cc?api-version=2019-07-01
+      cache-control:
+      - no-cache
+      content-length:
+      - '818'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 05 Mar 2020 07:07:21 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-resource:
+      - Microsoft.Compute/CreateImages3Min;39,Microsoft.Compute/CreateImages30Min;199
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1195'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-compute/11.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/DiskOperations/4ea56ba0-033e-42f0-9e9f-39cac0bd494a?api-version=2019-11-01
+  response:
+    body:
+      string: "{\r\n  \"startTime\": \"2020-03-05T07:07:19.0058135+00:00\",\r\n  \"\
+        endTime\": \"2020-03-05T07:07:19.4120637+00:00\",\r\n  \"status\": \"Succeeded\"\
+        ,\r\n  \"properties\": {\r\n    \"output\": {\"name\":\"snapshotname\",\"\
+        id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/snapshots/snapshotname\"\
+        ,\"type\":\"Microsoft.Compute/snapshots\",\"location\":\"eastus\",\"sku\"\
+        :{\"name\":\"Standard_LRS\",\"tier\":\"Standard\"},\"properties\":{\"creationData\"\
+        :{\"createOption\":\"Copy\",\"sourceResourceId\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/disks/diskname\"\
+        ,\"sourceUniqueId\":\"46c4b9e5-365f-4146-ba8d-52298fd59941\"},\"diskSizeGB\"\
+        :200,\"encryption\":{\"type\":\"EncryptionAtRestWithPlatformKey\"},\"incremental\"\
+        :false,\"timeCreated\":\"2020-03-05T07:07:19.0214377+00:00\",\"provisioningState\"\
+        :\"Succeeded\",\"diskState\":\"Unattached\",\"diskSizeBytes\":214748364800,\"\
+        uniqueId\":\"63ded5ba-03c2-4a75-8474-95c1106a7a8d\"}}\r\n  },\r\n  \"name\"\
+        : \"4ea56ba0-033e-42f0-9e9f-39cac0bd494a\"\r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1084'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 05 Mar 2020 07:07:30 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-resource:
+      - Microsoft.Compute/GetOperation3Min;49990,Microsoft.Compute/GetOperation30Min;399984
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-compute/11.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/snapshots/snapshotname?api-version=2019-11-01
+  response:
+    body:
+      string: "{\r\n  \"name\": \"snapshotname\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/snapshots/snapshotname\"\
+        ,\r\n  \"type\": \"Microsoft.Compute/snapshots\",\r\n  \"location\": \"eastus\"\
+        ,\r\n  \"sku\": {\r\n    \"name\": \"Standard_LRS\",\r\n    \"tier\": \"Standard\"\
+        \r\n  },\r\n  \"properties\": {\r\n    \"creationData\": {\r\n      \"createOption\"\
+        : \"Copy\",\r\n      \"sourceResourceId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/disks/diskname\"\
+        ,\r\n      \"sourceUniqueId\": \"46c4b9e5-365f-4146-ba8d-52298fd59941\"\r\n\
+        \    },\r\n    \"diskSizeGB\": 200,\r\n    \"encryption\": {\r\n      \"type\"\
+        : \"EncryptionAtRestWithPlatformKey\"\r\n    },\r\n    \"incremental\": false,\r\
+        \n    \"timeCreated\": \"2020-03-05T07:07:19.0214377+00:00\",\r\n    \"provisioningState\"\
+        : \"Succeeded\",\r\n    \"diskState\": \"Unattached\",\r\n    \"diskSizeBytes\"\
+        : 214748364800,\r\n    \"uniqueId\": \"63ded5ba-03c2-4a75-8474-95c1106a7a8d\"\
+        \r\n  }\r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1024'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 05 Mar 2020 07:07:31 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-resource:
+      - Microsoft.Compute/LowCostGet3Min;4988,Microsoft.Compute/LowCostGet30Min;39973
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-compute/11.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/operations/0571444a-10ac-42a0-84d9-8d722c4ee9cc?api-version=2019-07-01
+  response:
+    body:
+      string: "{\r\n  \"startTime\": \"2020-03-05T07:07:21.154126+00:00\",\r\n  \"\
+        endTime\": \"2020-03-05T07:07:26.279088+00:00\",\r\n  \"status\": \"Succeeded\"\
+        ,\r\n  \"name\": \"0571444a-10ac-42a0-84d9-8d722c4ee9cc\"\r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '182'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 05 Mar 2020 07:07:53 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-resource:
+      - Microsoft.Compute/GetOperation3Min;14998,Microsoft.Compute/GetOperation30Min;29998
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-compute/11.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/images/imagename?api-version=2019-07-01
+  response:
+    body:
+      string: "{\r\n  \"name\": \"imagename\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/images/imagename\"\
+        ,\r\n  \"type\": \"Microsoft.Compute/images\",\r\n  \"location\": \"eastus\"\
+        ,\r\n  \"properties\": {\r\n    \"storageProfile\": {\r\n      \"osDisk\"\
+        : {\r\n        \"osType\": \"Linux\",\r\n        \"osState\": \"Generalized\"\
+        ,\r\n        \"diskSizeGB\": 200,\r\n        \"snapshot\": {\r\n         \
+        \ \"id\": \"subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/snapshots/snapshotname\"\
+        \r\n        },\r\n        \"caching\": \"None\",\r\n        \"storageAccountType\"\
+        : \"Standard_LRS\"\r\n      },\r\n      \"dataDisks\": [],\r\n      \"zoneResilient\"\
+        : false\r\n    },\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"hyperVGeneration\"\
+        : \"V1\"\r\n  }\r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '847'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 05 Mar 2020 07:07:53 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-resource:
+      - Microsoft.Compute/GetImages3Min;358,Microsoft.Compute/GetImages30Min;1797
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"location": "eastus", "properties": {"description": "This is the gallery
+      description."}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '89'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-compute/11.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/galleries/galleryname?api-version=2019-12-01
+  response:
+    body:
+      string: "{\r\n  \"name\": \"galleryname\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/galleries/galleryname\"\
+        ,\r\n  \"type\": \"Microsoft.Compute/galleries\",\r\n  \"location\": \"eastus\"\
+        ,\r\n  \"properties\": {\r\n    \"description\": \"This is the gallery description.\"\
+        ,\r\n    \"identifier\": {\r\n      \"uniqueName\": \"00000000-0000-0000-0000-000000000000-GALLERYNAME\"\
+        \r\n    },\r\n    \"provisioningState\": \"Creating\"\r\n  }\r\n}"
+    headers:
+      azure-asyncoperation:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/capsOperations/79b18579-086b-433e-9318-a4ce4d80f4b3?api-version=2019-12-01
+      cache-control:
+      - no-cache
+      content-length:
+      - '487'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 05 Mar 2020 07:07:57 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1194'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-compute/11.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/capsOperations/79b18579-086b-433e-9318-a4ce4d80f4b3?api-version=2019-12-01
+  response:
+    body:
+      string: "{\r\n  \"startTime\": \"2020-03-05T07:07:56.6390388+00:00\",\r\n  \"\
+        endTime\": \"2020-03-05T07:07:56.8734067+00:00\",\r\n  \"status\": \"Succeeded\"\
+        ,\r\n  \"name\": \"79b18579-086b-433e-9318-a4ce4d80f4b3\"\r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '184'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 05 Mar 2020 07:08:29 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-compute/11.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/galleries/galleryname?api-version=2019-12-01
+  response:
+    body:
+      string: "{\r\n  \"name\": \"galleryname\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/galleries/galleryname\"\
+        ,\r\n  \"type\": \"Microsoft.Compute/galleries\",\r\n  \"location\": \"eastus\"\
+        ,\r\n  \"properties\": {\r\n    \"description\": \"This is the gallery description.\"\
+        ,\r\n    \"identifier\": {\r\n      \"uniqueName\": \"00000000-0000-0000-0000-000000000000-GALLERYNAME\"\
+        \r\n    },\r\n    \"provisioningState\": \"Succeeded\"\r\n  }\r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '488'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 05 Mar 2020 07:08:29 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"location": "eastus", "tags": {"department": "finance"}, "properties":
+      {"platformFaultDomainCount": 3}, "zones": ["1"]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '120'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-compute/11.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/hostGroups/hostgroupnamexyz?api-version=2019-07-01
+  response:
+    body:
+      string: "{\r\n  \"name\": \"hostgroupnamexyz\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/TEST_CLI_MGMT_COMPUTE_TEST_COMPUTEF5F00E12/providers/Microsoft.Compute/hostGroups/hostgroupnamexyz\"\
+        ,\r\n  \"location\": \"eastus\",\r\n  \"tags\": {\r\n    \"department\": \"\
+        finance\"\r\n  },\r\n  \"zones\": [\r\n    \"1\"\r\n  ],\r\n  \"properties\"\
+        : {\r\n    \"platformFaultDomainCount\": 3\r\n  }\r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '374'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 05 Mar 2020 07:08:33 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-resource:
+      - Microsoft.Compute/PutDeleteDedicatedHost3Min;119,Microsoft.Compute/PutDeleteDedicatedHost30Min;599
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1193'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: '{"location": "eastus", "properties": {"osType": "Windows", "osState": "Generalized",
+      "hyperVGeneration": "V1", "identifier": {"publisher": "myPublisherName", "offer":
+      "myOfferName", "sku": "mySkuName"}}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '203'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-compute/11.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/galleries/galleryname/images/imagename?api-version=2019-12-01
+  response:
+    body:
+      string: "{\r\n  \"name\": \"imagename\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/galleries/galleryname/images/imagename\"\
+        ,\r\n  \"type\": \"Microsoft.Compute/galleries/images\",\r\n  \"location\"\
+        : \"eastus\",\r\n  \"properties\": {\r\n    \"hyperVGeneration\": \"V1\",\r\
+        \n    \"osType\": \"Windows\",\r\n    \"osState\": \"Generalized\",\r\n  \
+        \  \"identifier\": {\r\n      \"publisher\": \"myPublisherName\",\r\n    \
+        \  \"offer\": \"myOfferName\",\r\n      \"sku\": \"mySkuName\"\r\n    },\r\
+        \n    \"provisioningState\": \"Creating\"\r\n  }\r\n}"
+    headers:
+      azure-asyncoperation:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/capsOperations/db76e972-374b-4ebb-8ef8-0ece0dd3495b?api-version=2019-12-01
+      cache-control:
+      - no-cache
+      content-length:
+      - '565'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 05 Mar 2020 07:08:37 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1192'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-compute/11.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/capsOperations/db76e972-374b-4ebb-8ef8-0ece0dd3495b?api-version=2019-12-01
+  response:
+    body:
+      string: "{\r\n  \"startTime\": \"2020-03-05T07:08:35.7015401+00:00\",\r\n  \"\
+        endTime\": \"2020-03-05T07:08:35.8421789+00:00\",\r\n  \"status\": \"Succeeded\"\
+        ,\r\n  \"name\": \"db76e972-374b-4ebb-8ef8-0ece0dd3495b\"\r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '184'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 05 Mar 2020 07:09:08 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-compute/11.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/galleries/galleryname/images/imagename?api-version=2019-12-01
+  response:
+    body:
+      string: "{\r\n  \"name\": \"imagename\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/galleries/galleryname/images/imagename\"\
+        ,\r\n  \"type\": \"Microsoft.Compute/galleries/images\",\r\n  \"location\"\
+        : \"eastus\",\r\n  \"properties\": {\r\n    \"hyperVGeneration\": \"V1\",\r\
+        \n    \"osType\": \"Windows\",\r\n    \"osState\": \"Generalized\",\r\n  \
+        \  \"identifier\": {\r\n      \"publisher\": \"myPublisherName\",\r\n    \
+        \  \"offer\": \"myOfferName\",\r\n      \"sku\": \"mySkuName\"\r\n    },\r\
+        \n    \"provisioningState\": \"Succeeded\"\r\n  }\r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '566'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 05 Mar 2020 07:09:08 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"location": "eastus", "properties": {"description": "This is the gallery
+      application description.", "eula": "This is the gallery application EULA.",
+      "supportedOSType": "Windows"}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '180'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-compute/11.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/galleries/galleryname/applications/applicationname?api-version=2019-12-01
+  response:
+    body:
+      string: "{\r\n  \"name\": \"applicationname\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/galleries/galleryname/applications/applicationname\"\
+        ,\r\n  \"type\": \"Microsoft.Compute/galleries/applications\",\r\n  \"location\"\
+        : \"eastus\",\r\n  \"properties\": {\r\n    \"supportedOSType\": \"Windows\"\
+        ,\r\n    \"description\": \"This is the gallery application description.\"\
+        ,\r\n    \"eula\": \"This is the gallery application EULA.\"\r\n  }\r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '495'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 05 Mar 2020 07:09:09 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1191'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-compute/11.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/galleries/galleryname/applications/applicationname?api-version=2019-12-01
+  response:
+    body:
+      string: "{\r\n  \"name\": \"applicationname\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/galleries/galleryname/applications/applicationname\"\
+        ,\r\n  \"type\": \"Microsoft.Compute/galleries/applications\",\r\n  \"location\"\
+        : \"eastus\",\r\n  \"properties\": {\r\n    \"supportedOSType\": \"Windows\"\
+        ,\r\n    \"description\": \"This is the gallery application description.\"\
+        ,\r\n    \"eula\": \"This is the gallery application EULA.\"\r\n  }\r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '495'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 05 Mar 2020 07:09:40 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: 'b''{"location": "eastus", "properties": {"publishingProfile": {"targetRegions":
+      [{"name": "East US", "regionalReplicaCount": 2, "storageAccountType": "Standard_ZRS"}]},
+      "storageProfile": {"osDiskImage": {"hostCaching": "ReadOnly", "source": {"id":
+      "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/snapshots/snapshotname"}}}}}'''
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '412'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-compute/11.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/galleries/galleryname/images/imagename/versions/1.0.0?api-version=2019-12-01
+  response:
+    body:
+      string: "{\r\n  \"name\": \"1.0.0\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/galleries/galleryname/images/imagename/versions/1.0.0\"\
+        ,\r\n  \"type\": \"Microsoft.Compute/galleries/images/versions\",\r\n  \"\
+        location\": \"eastus\",\r\n  \"properties\": {\r\n    \"publishingProfile\"\
+        : {\r\n      \"targetRegions\": [\r\n        {\r\n          \"name\": \"East\
+        \ US\",\r\n          \"regionalReplicaCount\": 2,\r\n          \"storageAccountType\"\
+        : \"Standard_ZRS\"\r\n        }\r\n      ],\r\n      \"replicaCount\": 1,\r\
+        \n      \"excludeFromLatest\": false,\r\n      \"publishedDate\": \"2020-03-05T07:09:45.7797062+00:00\"\
+        ,\r\n      \"storageAccountType\": \"Standard_LRS\"\r\n    },\r\n    \"storageProfile\"\
+        : {\r\n      \"osDiskImage\": {\r\n        \"hostCaching\": \"ReadOnly\",\r\
+        \n        \"source\": {\r\n          \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/snapshots/snapshotname\"\
+        \r\n        }\r\n      }\r\n    },\r\n    \"provisioningState\": \"Creating\"\
+        \r\n  }\r\n}"
+    headers:
+      azure-asyncoperation:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/capsOperations/a3aed479-8485-4843-bf3b-7446a577c60e?api-version=2019-12-01
+      cache-control:
+      - no-cache
+      content-length:
+      - '1062'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 05 Mar 2020 07:09:46 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1190'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-compute/11.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/capsOperations/a3aed479-8485-4843-bf3b-7446a577c60e?api-version=2019-12-01
+  response:
+    body:
+      string: "{\r\n  \"startTime\": \"2020-03-05T07:09:45.7641079+00:00\",\r\n  \"\
+        status\": \"InProgress\",\r\n  \"name\": \"a3aed479-8485-4843-bf3b-7446a577c60e\"\
+        \r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '134'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 05 Mar 2020 07:10:18 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-compute/11.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/capsOperations/a3aed479-8485-4843-bf3b-7446a577c60e?api-version=2019-12-01
+  response:
+    body:
+      string: "{\r\n  \"startTime\": \"2020-03-05T07:09:45.7641079+00:00\",\r\n  \"\
+        status\": \"InProgress\",\r\n  \"name\": \"a3aed479-8485-4843-bf3b-7446a577c60e\"\
+        \r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '134'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 05 Mar 2020 07:10:48 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-compute/11.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/capsOperations/a3aed479-8485-4843-bf3b-7446a577c60e?api-version=2019-12-01
+  response:
+    body:
+      string: "{\r\n  \"startTime\": \"2020-03-05T07:09:45.7641079+00:00\",\r\n  \"\
+        status\": \"InProgress\",\r\n  \"name\": \"a3aed479-8485-4843-bf3b-7446a577c60e\"\
+        \r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '134'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 05 Mar 2020 07:11:19 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-compute/11.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/capsOperations/a3aed479-8485-4843-bf3b-7446a577c60e?api-version=2019-12-01
+  response:
+    body:
+      string: "{\r\n  \"startTime\": \"2020-03-05T07:09:45.7641079+00:00\",\r\n  \"\
+        status\": \"InProgress\",\r\n  \"name\": \"a3aed479-8485-4843-bf3b-7446a577c60e\"\
+        \r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '134'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 05 Mar 2020 07:11:50 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-compute/11.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/capsOperations/a3aed479-8485-4843-bf3b-7446a577c60e?api-version=2019-12-01
+  response:
+    body:
+      string: "{\r\n  \"startTime\": \"2020-03-05T07:09:45.7641079+00:00\",\r\n  \"\
+        status\": \"InProgress\",\r\n  \"name\": \"a3aed479-8485-4843-bf3b-7446a577c60e\"\
+        \r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '134'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 05 Mar 2020 07:12:21 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-compute/11.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/capsOperations/a3aed479-8485-4843-bf3b-7446a577c60e?api-version=2019-12-01
+  response:
+    body:
+      string: "{\r\n  \"startTime\": \"2020-03-05T07:09:45.7641079+00:00\",\r\n  \"\
+        status\": \"InProgress\",\r\n  \"name\": \"a3aed479-8485-4843-bf3b-7446a577c60e\"\
+        \r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '134'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 05 Mar 2020 07:12:51 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-compute/11.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/capsOperations/a3aed479-8485-4843-bf3b-7446a577c60e?api-version=2019-12-01
+  response:
+    body:
+      string: "{\r\n  \"startTime\": \"2020-03-05T07:09:45.7641079+00:00\",\r\n  \"\
+        status\": \"InProgress\",\r\n  \"name\": \"a3aed479-8485-4843-bf3b-7446a577c60e\"\
+        \r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '134'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 05 Mar 2020 07:13:22 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-compute/11.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/capsOperations/a3aed479-8485-4843-bf3b-7446a577c60e?api-version=2019-12-01
+  response:
+    body:
+      string: "{\r\n  \"startTime\": \"2020-03-05T07:09:45.7641079+00:00\",\r\n  \"\
+        status\": \"InProgress\",\r\n  \"name\": \"a3aed479-8485-4843-bf3b-7446a577c60e\"\
+        \r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '134'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 05 Mar 2020 07:13:52 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-compute/11.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/capsOperations/a3aed479-8485-4843-bf3b-7446a577c60e?api-version=2019-12-01
+  response:
+    body:
+      string: "{\r\n  \"startTime\": \"2020-03-05T07:09:45.7641079+00:00\",\r\n  \"\
+        status\": \"InProgress\",\r\n  \"name\": \"a3aed479-8485-4843-bf3b-7446a577c60e\"\
+        \r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '134'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 05 Mar 2020 07:14:23 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-compute/11.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/capsOperations/a3aed479-8485-4843-bf3b-7446a577c60e?api-version=2019-12-01
+  response:
+    body:
+      string: "{\r\n  \"startTime\": \"2020-03-05T07:09:45.7641079+00:00\",\r\n  \"\
+        status\": \"InProgress\",\r\n  \"name\": \"a3aed479-8485-4843-bf3b-7446a577c60e\"\
+        \r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '134'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 05 Mar 2020 07:14:53 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-compute/11.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/capsOperations/a3aed479-8485-4843-bf3b-7446a577c60e?api-version=2019-12-01
+  response:
+    body:
+      string: "{\r\n  \"startTime\": \"2020-03-05T07:09:45.7641079+00:00\",\r\n  \"\
+        status\": \"InProgress\",\r\n  \"name\": \"a3aed479-8485-4843-bf3b-7446a577c60e\"\
+        \r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '134'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 05 Mar 2020 07:15:24 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-compute/11.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/capsOperations/a3aed479-8485-4843-bf3b-7446a577c60e?api-version=2019-12-01
+  response:
+    body:
+      string: "{\r\n  \"startTime\": \"2020-03-05T07:09:45.7641079+00:00\",\r\n  \"\
+        status\": \"InProgress\",\r\n  \"name\": \"a3aed479-8485-4843-bf3b-7446a577c60e\"\
+        \r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '134'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 05 Mar 2020 07:15:54 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-compute/11.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/capsOperations/a3aed479-8485-4843-bf3b-7446a577c60e?api-version=2019-12-01
+  response:
+    body:
+      string: "{\r\n  \"startTime\": \"2020-03-05T07:09:45.7641079+00:00\",\r\n  \"\
+        status\": \"InProgress\",\r\n  \"name\": \"a3aed479-8485-4843-bf3b-7446a577c60e\"\
+        \r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '134'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 05 Mar 2020 07:16:26 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-compute/11.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/capsOperations/a3aed479-8485-4843-bf3b-7446a577c60e?api-version=2019-12-01
+  response:
+    body:
+      string: "{\r\n  \"startTime\": \"2020-03-05T07:09:45.7641079+00:00\",\r\n  \"\
+        status\": \"InProgress\",\r\n  \"name\": \"a3aed479-8485-4843-bf3b-7446a577c60e\"\
+        \r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '134'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 05 Mar 2020 07:16:57 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-compute/11.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/capsOperations/a3aed479-8485-4843-bf3b-7446a577c60e?api-version=2019-12-01
+  response:
+    body:
+      string: "{\r\n  \"startTime\": \"2020-03-05T07:09:45.7641079+00:00\",\r\n  \"\
+        status\": \"InProgress\",\r\n  \"name\": \"a3aed479-8485-4843-bf3b-7446a577c60e\"\
+        \r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '134'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 05 Mar 2020 07:17:26 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-compute/11.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/capsOperations/a3aed479-8485-4843-bf3b-7446a577c60e?api-version=2019-12-01
+  response:
+    body:
+      string: "{\r\n  \"startTime\": \"2020-03-05T07:09:45.7641079+00:00\",\r\n  \"\
+        status\": \"InProgress\",\r\n  \"name\": \"a3aed479-8485-4843-bf3b-7446a577c60e\"\
+        \r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '134'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 05 Mar 2020 07:17:58 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-compute/11.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/capsOperations/a3aed479-8485-4843-bf3b-7446a577c60e?api-version=2019-12-01
+  response:
+    body:
+      string: "{\r\n  \"startTime\": \"2020-03-05T07:09:45.7641079+00:00\",\r\n  \"\
+        status\": \"InProgress\",\r\n  \"name\": \"a3aed479-8485-4843-bf3b-7446a577c60e\"\
+        \r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '134'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 05 Mar 2020 07:18:28 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-compute/11.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/capsOperations/a3aed479-8485-4843-bf3b-7446a577c60e?api-version=2019-12-01
+  response:
+    body:
+      string: "{\r\n  \"startTime\": \"2020-03-05T07:09:45.7641079+00:00\",\r\n  \"\
+        status\": \"InProgress\",\r\n  \"name\": \"a3aed479-8485-4843-bf3b-7446a577c60e\"\
+        \r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '134'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 05 Mar 2020 07:18:58 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-compute/11.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/capsOperations/a3aed479-8485-4843-bf3b-7446a577c60e?api-version=2019-12-01
+  response:
+    body:
+      string: "{\r\n  \"startTime\": \"2020-03-05T07:09:45.7641079+00:00\",\r\n  \"\
+        endTime\": \"2020-03-05T07:19:01.0303353+00:00\",\r\n  \"status\": \"Succeeded\"\
+        ,\r\n  \"name\": \"a3aed479-8485-4843-bf3b-7446a577c60e\"\r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '184'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 05 Mar 2020 07:19:29 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-compute/11.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/galleries/galleryname/images/imagename/versions/1.0.0?api-version=2019-12-01
+  response:
+    body:
+      string: "{\r\n  \"name\": \"1.0.0\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/galleries/galleryname/images/imagename/versions/1.0.0\"\
+        ,\r\n  \"type\": \"Microsoft.Compute/galleries/images/versions\",\r\n  \"\
+        location\": \"eastus\",\r\n  \"properties\": {\r\n    \"publishingProfile\"\
+        : {\r\n      \"targetRegions\": [\r\n        {\r\n          \"name\": \"East\
+        \ US\",\r\n          \"regionalReplicaCount\": 2,\r\n          \"storageAccountType\"\
+        : \"Standard_ZRS\"\r\n        }\r\n      ],\r\n      \"replicaCount\": 1,\r\
+        \n      \"excludeFromLatest\": false,\r\n      \"publishedDate\": \"2020-03-05T07:09:45.7797062+00:00\"\
+        ,\r\n      \"storageAccountType\": \"Standard_LRS\"\r\n    },\r\n    \"storageProfile\"\
+        : {\r\n      \"osDiskImage\": {\r\n        \"sizeInGB\": 200,\r\n        \"\
+        hostCaching\": \"ReadOnly\",\r\n        \"source\": {\r\n          \"id\"\
+        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/snapshots/snapshotname\"\
+        \r\n        }\r\n      }\r\n    },\r\n    \"provisioningState\": \"Succeeded\"\
+        \r\n  }\r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1089'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 05 Mar 2020 07:19:29 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-compute/11.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/galleries/galleryname/images/imagename/versions/1.0.0?api-version=2019-12-01
+  response:
+    body:
+      string: "{\r\n  \"name\": \"1.0.0\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/galleries/galleryname/images/imagename/versions/1.0.0\"\
+        ,\r\n  \"type\": \"Microsoft.Compute/galleries/images/versions\",\r\n  \"\
+        location\": \"eastus\",\r\n  \"properties\": {\r\n    \"publishingProfile\"\
+        : {\r\n      \"targetRegions\": [\r\n        {\r\n          \"name\": \"East\
+        \ US\",\r\n          \"regionalReplicaCount\": 2,\r\n          \"storageAccountType\"\
+        : \"Standard_ZRS\"\r\n        }\r\n      ],\r\n      \"replicaCount\": 1,\r\
+        \n      \"excludeFromLatest\": false,\r\n      \"publishedDate\": \"2020-03-05T07:09:45.7797062+00:00\"\
+        ,\r\n      \"storageAccountType\": \"Standard_LRS\"\r\n    },\r\n    \"storageProfile\"\
+        : {\r\n      \"osDiskImage\": {\r\n        \"sizeInGB\": 200,\r\n        \"\
+        hostCaching\": \"ReadOnly\",\r\n        \"source\": {\r\n          \"id\"\
+        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/snapshots/snapshotname\"\
+        \r\n        }\r\n      }\r\n    },\r\n    \"provisioningState\": \"Succeeded\"\
+        \r\n  }\r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1089'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 05 Mar 2020 07:19:31 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-compute/11.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/galleries/galleryname/applications/applicationname?api-version=2019-12-01
+  response:
+    body:
+      string: "{\r\n  \"name\": \"applicationname\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/galleries/galleryname/applications/applicationname\"\
+        ,\r\n  \"type\": \"Microsoft.Compute/galleries/applications\",\r\n  \"location\"\
+        : \"eastus\",\r\n  \"properties\": {\r\n    \"supportedOSType\": \"Windows\"\
+        ,\r\n    \"description\": \"This is the gallery application description.\"\
+        ,\r\n    \"eula\": \"This is the gallery application EULA.\"\r\n  }\r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '495'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 05 Mar 2020 07:19:32 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-compute/11.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/galleries/galleryname/images/imagename?api-version=2019-12-01
+  response:
+    body:
+      string: "{\r\n  \"name\": \"imagename\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/galleries/galleryname/images/imagename\"\
+        ,\r\n  \"type\": \"Microsoft.Compute/galleries/images\",\r\n  \"location\"\
+        : \"eastus\",\r\n  \"properties\": {\r\n    \"hyperVGeneration\": \"V1\",\r\
+        \n    \"osType\": \"Windows\",\r\n    \"osState\": \"Generalized\",\r\n  \
+        \  \"identifier\": {\r\n      \"publisher\": \"myPublisherName\",\r\n    \
+        \  \"offer\": \"myOfferName\",\r\n      \"sku\": \"mySkuName\"\r\n    },\r\
+        \n    \"provisioningState\": \"Succeeded\"\r\n  }\r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '566'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 05 Mar 2020 07:19:33 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-compute/11.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/hostGroups/hostgroupnamexyz?api-version=2019-07-01
+  response:
+    body:
+      string: "{\r\n  \"name\": \"hostgroupnamexyz\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/TEST_CLI_MGMT_COMPUTE_TEST_COMPUTEF5F00E12/providers/Microsoft.Compute/hostGroups/hostgroupnamexyz\"\
+        ,\r\n  \"location\": \"eastus\",\r\n  \"tags\": {\r\n    \"department\": \"\
+        finance\"\r\n  },\r\n  \"zones\": [\r\n    \"1\"\r\n  ],\r\n  \"properties\"\
+        : {\r\n    \"platformFaultDomainCount\": 3\r\n  }\r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '374'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 05 Mar 2020 07:19:33 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-resource:
+      - Microsoft.Compute/GetDedicatedHost30Min;998
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-compute/11.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/snapshots/snapshotname?api-version=2019-11-01
+  response:
+    body:
+      string: "{\r\n  \"name\": \"snapshotname\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/snapshots/snapshotname\"\
+        ,\r\n  \"type\": \"Microsoft.Compute/snapshots\",\r\n  \"location\": \"eastus\"\
+        ,\r\n  \"sku\": {\r\n    \"name\": \"Standard_LRS\",\r\n    \"tier\": \"Standard\"\
+        \r\n  },\r\n  \"properties\": {\r\n    \"creationData\": {\r\n      \"createOption\"\
+        : \"Copy\",\r\n      \"sourceResourceId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/disks/diskname\"\
+        ,\r\n      \"sourceUniqueId\": \"46c4b9e5-365f-4146-ba8d-52298fd59941\"\r\n\
+        \    },\r\n    \"diskSizeGB\": 200,\r\n    \"encryption\": {\r\n      \"type\"\
+        : \"EncryptionAtRestWithPlatformKey\"\r\n    },\r\n    \"incremental\": false,\r\
+        \n    \"timeCreated\": \"2020-03-05T07:07:19.0214377+00:00\",\r\n    \"provisioningState\"\
+        : \"Succeeded\",\r\n    \"diskState\": \"ActiveSAS\",\r\n    \"diskSizeBytes\"\
+        : 214748364800,\r\n    \"uniqueId\": \"63ded5ba-03c2-4a75-8474-95c1106a7a8d\"\
+        \r\n  }\r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1023'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 05 Mar 2020 07:19:34 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-resource:
+      - Microsoft.Compute/LowCostGet3Min;4986,Microsoft.Compute/LowCostGet30Min;39957
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-compute/11.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/galleries/galleryname?api-version=2019-12-01
+  response:
+    body:
+      string: "{\r\n  \"name\": \"galleryname\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/galleries/galleryname\"\
+        ,\r\n  \"type\": \"Microsoft.Compute/galleries\",\r\n  \"location\": \"eastus\"\
+        ,\r\n  \"properties\": {\r\n    \"description\": \"This is the gallery description.\"\
+        ,\r\n    \"identifier\": {\r\n      \"uniqueName\": \"00000000-0000-0000-0000-000000000000-GALLERYNAME\"\
+        \r\n    },\r\n    \"provisioningState\": \"Succeeded\"\r\n  }\r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '488'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 05 Mar 2020 07:19:35 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-compute/11.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/images/imagename?api-version=2019-07-01
+  response:
+    body:
+      string: "{\r\n  \"name\": \"imagename\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/images/imagename\"\
+        ,\r\n  \"type\": \"Microsoft.Compute/images\",\r\n  \"location\": \"eastus\"\
+        ,\r\n  \"properties\": {\r\n    \"storageProfile\": {\r\n      \"osDisk\"\
+        : {\r\n        \"osType\": \"Linux\",\r\n        \"osState\": \"Generalized\"\
+        ,\r\n        \"diskSizeGB\": 200,\r\n        \"snapshot\": {\r\n         \
+        \ \"id\": \"subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/snapshots/snapshotname\"\
+        \r\n        },\r\n        \"caching\": \"None\",\r\n        \"storageAccountType\"\
+        : \"Standard_LRS\"\r\n      },\r\n      \"dataDisks\": [],\r\n      \"zoneResilient\"\
+        : false\r\n    },\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"hyperVGeneration\"\
+        : \"V1\"\r\n  }\r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '847'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 05 Mar 2020 07:19:35 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-resource:
+      - Microsoft.Compute/GetImages3Min;357,Microsoft.Compute/GetImages30Min;1795
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-compute/11.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/disks/diskname?api-version=2019-11-01
+  response:
+    body:
+      string: "{\r\n  \"name\": \"diskname\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/disks/diskname\"\
+        ,\r\n  \"type\": \"Microsoft.Compute/disks\",\r\n  \"location\": \"eastus\"\
+        ,\r\n  \"sku\": {\r\n    \"name\": \"Standard_LRS\",\r\n    \"tier\": \"Standard\"\
+        \r\n  },\r\n  \"properties\": {\r\n    \"creationData\": {\r\n      \"createOption\"\
+        : \"Empty\"\r\n    },\r\n    \"diskSizeGB\": 200,\r\n    \"diskIOPSReadWrite\"\
+        : 500,\r\n    \"diskMBpsReadWrite\": 60,\r\n    \"encryption\": {\r\n    \
+        \  \"type\": \"EncryptionAtRestWithPlatformKey\"\r\n    },\r\n    \"timeCreated\"\
+        : \"2020-03-05T07:06:54.7243778+00:00\",\r\n    \"provisioningState\": \"\
+        Succeeded\",\r\n    \"diskState\": \"Unattached\",\r\n    \"diskSizeBytes\"\
+        : 214748364800,\r\n    \"uniqueId\": \"46c4b9e5-365f-4146-ba8d-52298fd59941\"\
+        \r\n  }\r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '795'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 05 Mar 2020 07:19:36 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-resource:
+      - Microsoft.Compute/LowCostGet3Min;4985,Microsoft.Compute/LowCostGet30Min;39956
+    status:
+      code: 200
+      message: OK
+- request:
+    body: 'b''{"properties": {"publishingProfile": {"targetRegions": [{"name": "East
+      US", "regionalReplicaCount": 2, "storageAccountType": "Standard_ZRS"}]}, "storageProfile":
+      {"osDiskImage": {"hostCaching": "ReadOnly", "source": {"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/snapshots/snapshotname"}}}}}'''
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '390'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-compute/11.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: PATCH
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/galleries/galleryname/images/imagename/versions/1.0.0?api-version=2019-12-01
+  response:
+    body:
+      string: "{\r\n  \"name\": \"1.0.0\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/galleries/galleryname/images/imagename/versions/1.0.0\"\
+        ,\r\n  \"type\": \"Microsoft.Compute/galleries/images/versions\",\r\n  \"\
+        location\": \"eastus\",\r\n  \"properties\": {\r\n    \"publishingProfile\"\
+        : {\r\n      \"targetRegions\": [\r\n        {\r\n          \"name\": \"East\
+        \ US\",\r\n          \"regionalReplicaCount\": 2,\r\n          \"storageAccountType\"\
+        : \"Standard_ZRS\"\r\n        }\r\n      ],\r\n      \"replicaCount\": 1,\r\
+        \n      \"excludeFromLatest\": false,\r\n      \"publishedDate\": \"2020-03-05T07:09:45.7797062+00:00\"\
+        ,\r\n      \"storageAccountType\": \"Standard_LRS\"\r\n    },\r\n    \"storageProfile\"\
+        : {\r\n      \"osDiskImage\": {\r\n        \"sizeInGB\": 200,\r\n        \"\
+        hostCaching\": \"ReadOnly\",\r\n        \"source\": {\r\n          \"id\"\
+        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/snapshots/snapshotname\"\
+        \r\n        }\r\n      }\r\n    },\r\n    \"provisioningState\": \"Updating\"\
+        \r\n  }\r\n}"
+    headers:
+      azure-asyncoperation:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/capsOperations/a2a2967c-d341-407d-a798-aae3f361564a?api-version=2019-12-01
+      cache-control:
+      - no-cache
+      content-length:
+      - '1088'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 05 Mar 2020 07:19:39 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1199'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-compute/11.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/capsOperations/a2a2967c-d341-407d-a798-aae3f361564a?api-version=2019-12-01
+  response:
+    body:
+      string: "{\r\n  \"startTime\": \"2020-03-05T07:19:39.4053241+00:00\",\r\n  \"\
+        status\": \"InProgress\",\r\n  \"name\": \"a2a2967c-d341-407d-a798-aae3f361564a\"\
+        \r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '134'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 05 Mar 2020 07:20:19 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-compute/11.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/capsOperations/a2a2967c-d341-407d-a798-aae3f361564a?api-version=2019-12-01
+  response:
+    body:
+      string: "{\r\n  \"startTime\": \"2020-03-05T07:19:39.4053241+00:00\",\r\n  \"\
+        status\": \"InProgress\",\r\n  \"name\": \"a2a2967c-d341-407d-a798-aae3f361564a\"\
+        \r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '134'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 05 Mar 2020 07:20:50 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-compute/11.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/capsOperations/a2a2967c-d341-407d-a798-aae3f361564a?api-version=2019-12-01
+  response:
+    body:
+      string: "{\r\n  \"startTime\": \"2020-03-05T07:19:39.4053241+00:00\",\r\n  \"\
+        endTime\": \"2020-03-05T07:21:09.4991334+00:00\",\r\n  \"status\": \"Succeeded\"\
+        ,\r\n  \"name\": \"a2a2967c-d341-407d-a798-aae3f361564a\"\r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '184'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 05 Mar 2020 07:21:20 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-compute/11.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/galleries/galleryname/images/imagename/versions/1.0.0?api-version=2019-12-01
+  response:
+    body:
+      string: "{\r\n  \"name\": \"1.0.0\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/galleries/galleryname/images/imagename/versions/1.0.0\"\
+        ,\r\n  \"type\": \"Microsoft.Compute/galleries/images/versions\",\r\n  \"\
+        location\": \"eastus\",\r\n  \"properties\": {\r\n    \"publishingProfile\"\
+        : {\r\n      \"targetRegions\": [\r\n        {\r\n          \"name\": \"East\
+        \ US\",\r\n          \"regionalReplicaCount\": 2,\r\n          \"storageAccountType\"\
+        : \"Standard_ZRS\"\r\n        }\r\n      ],\r\n      \"replicaCount\": 1,\r\
+        \n      \"excludeFromLatest\": false,\r\n      \"publishedDate\": \"2020-03-05T07:09:45.7797062+00:00\"\
+        ,\r\n      \"storageAccountType\": \"Standard_LRS\"\r\n    },\r\n    \"storageProfile\"\
+        : {\r\n      \"osDiskImage\": {\r\n        \"sizeInGB\": 200,\r\n        \"\
+        hostCaching\": \"ReadOnly\",\r\n        \"source\": {\r\n          \"id\"\
+        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/snapshots/snapshotname\"\
+        \r\n        }\r\n      }\r\n    },\r\n    \"provisioningState\": \"Succeeded\"\
+        \r\n  }\r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1089'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 05 Mar 2020 07:21:21 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"tags": {"tag1": "tag1"}, "properties": {"description": "This is the gallery
+      application description.", "eula": "This is the gallery application EULA.",
+      "supportedOSType": "Windows"}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '184'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-compute/11.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: PATCH
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/galleries/galleryname/applications/applicationname?api-version=2019-12-01
+  response:
+    body:
+      string: "{\r\n  \"name\": \"applicationname\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/galleries/galleryname/applications/applicationname\"\
+        ,\r\n  \"type\": \"Microsoft.Compute/galleries/applications\",\r\n  \"location\"\
+        : \"eastus\",\r\n  \"tags\": {\r\n    \"tag1\": \"tag1\"\r\n  },\r\n  \"properties\"\
+        : {\r\n    \"supportedOSType\": \"Windows\",\r\n    \"description\": \"This\
+        \ is the gallery application description.\",\r\n    \"eula\": \"This is the\
+        \ gallery application EULA.\"\r\n  }\r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '534'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 05 Mar 2020 07:21:23 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1198'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"properties": {"osType": "Windows", "osState": "Generalized", "hyperVGeneration":
+      "V1", "identifier": {"publisher": "myPublisherName", "offer": "myOfferName",
+      "sku": "mySkuName"}}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '181'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-compute/11.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: PATCH
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/galleries/galleryname/images/imagename?api-version=2019-12-01
+  response:
+    body:
+      string: "{\r\n  \"name\": \"imagename\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/galleries/galleryname/images/imagename\"\
+        ,\r\n  \"type\": \"Microsoft.Compute/galleries/images\",\r\n  \"location\"\
+        : \"eastus\",\r\n  \"properties\": {\r\n    \"hyperVGeneration\": \"V1\",\r\
+        \n    \"osType\": \"Windows\",\r\n    \"osState\": \"Generalized\",\r\n  \
+        \  \"identifier\": {\r\n      \"publisher\": \"myPublisherName\",\r\n    \
+        \  \"offer\": \"myOfferName\",\r\n      \"sku\": \"mySkuName\"\r\n    },\r\
+        \n    \"provisioningState\": \"Updating\"\r\n  }\r\n}"
+    headers:
+      azure-asyncoperation:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/capsOperations/97000fa5-6a52-4d1b-ac9c-2f7f13cd9bca?api-version=2019-12-01
+      cache-control:
+      - no-cache
+      content-length:
+      - '565'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 05 Mar 2020 07:21:24 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1197'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-compute/11.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/capsOperations/97000fa5-6a52-4d1b-ac9c-2f7f13cd9bca?api-version=2019-12-01
+  response:
+    body:
+      string: "{\r\n  \"startTime\": \"2020-03-05T07:21:24.1397746+00:00\",\r\n  \"\
+        endTime\": \"2020-03-05T07:21:24.1710102+00:00\",\r\n  \"status\": \"Succeeded\"\
+        ,\r\n  \"name\": \"97000fa5-6a52-4d1b-ac9c-2f7f13cd9bca\"\r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '184'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 05 Mar 2020 07:21:58 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-compute/11.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/galleries/galleryname/images/imagename?api-version=2019-12-01
+  response:
+    body:
+      string: "{\r\n  \"name\": \"imagename\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/galleries/galleryname/images/imagename\"\
+        ,\r\n  \"type\": \"Microsoft.Compute/galleries/images\",\r\n  \"location\"\
+        : \"eastus\",\r\n  \"properties\": {\r\n    \"hyperVGeneration\": \"V1\",\r\
+        \n    \"osType\": \"Windows\",\r\n    \"osState\": \"Generalized\",\r\n  \
+        \  \"identifier\": {\r\n      \"publisher\": \"myPublisherName\",\r\n    \
+        \  \"offer\": \"myOfferName\",\r\n      \"sku\": \"mySkuName\"\r\n    },\r\
+        \n    \"provisioningState\": \"Succeeded\"\r\n  }\r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '566'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 05 Mar 2020 07:21:58 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"properties": {"description": "This is the gallery description."}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '67'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-compute/11.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: PATCH
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/galleries/galleryname?api-version=2019-12-01
+  response:
+    body:
+      string: "{\r\n  \"name\": \"galleryname\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/galleries/galleryname\"\
+        ,\r\n  \"type\": \"Microsoft.Compute/galleries\",\r\n  \"location\": \"eastus\"\
+        ,\r\n  \"properties\": {\r\n    \"description\": \"This is the gallery description.\"\
+        ,\r\n    \"identifier\": {\r\n      \"uniqueName\": \"00000000-0000-0000-0000-000000000000-GALLERYNAME\"\
+        \r\n    },\r\n    \"provisioningState\": \"Succeeded\"\r\n  }\r\n}"
+    headers:
+      azure-asyncoperation:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/capsOperations/77a0500a-57ce-4d77-9c64-faf4e56d76d2?api-version=2019-12-01
+      cache-control:
+      - no-cache
+      content-length:
+      - '488'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 05 Mar 2020 07:21:59 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1196'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-compute/11.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/capsOperations/77a0500a-57ce-4d77-9c64-faf4e56d76d2?api-version=2019-12-01
+  response:
+    body:
+      string: "{\r\n  \"startTime\": \"2020-03-05T07:21:59.3897687+00:00\",\r\n  \"\
+        endTime\": \"2020-03-05T07:21:59.4210142+00:00\",\r\n  \"status\": \"Succeeded\"\
+        ,\r\n  \"name\": \"77a0500a-57ce-4d77-9c64-faf4e56d76d2\"\r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '184'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 05 Mar 2020 07:22:31 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-compute/11.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/galleries/galleryname?api-version=2019-12-01
+  response:
+    body:
+      string: "{\r\n  \"name\": \"galleryname\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/galleries/galleryname\"\
+        ,\r\n  \"type\": \"Microsoft.Compute/galleries\",\r\n  \"location\": \"eastus\"\
+        ,\r\n  \"properties\": {\r\n    \"description\": \"This is the gallery description.\"\
+        ,\r\n    \"identifier\": {\r\n      \"uniqueName\": \"00000000-0000-0000-0000-000000000000-GALLERYNAME\"\
+        \r\n    },\r\n    \"provisioningState\": \"Succeeded\"\r\n  }\r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '488'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 05 Mar 2020 07:22:32 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"tags": {"department": "HR"}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '30'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-compute/11.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: PATCH
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/images/imagename?api-version=2019-07-01
+  response:
+    body:
+      string: "{\r\n  \"name\": \"imagename\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/images/imagename\"\
+        ,\r\n  \"type\": \"Microsoft.Compute/images\",\r\n  \"location\": \"eastus\"\
+        ,\r\n  \"tags\": {\r\n    \"department\": \"HR\"\r\n  },\r\n  \"properties\"\
+        : {\r\n    \"storageProfile\": {\r\n      \"osDisk\": {\r\n        \"osType\"\
+        : \"Linux\",\r\n        \"osState\": \"Generalized\",\r\n        \"diskSizeGB\"\
+        : 200,\r\n        \"snapshot\": {\r\n          \"id\": \"subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/snapshots/snapshotname\"\
+        \r\n        },\r\n        \"caching\": \"None\",\r\n        \"storageAccountType\"\
+        : \"Standard_LRS\"\r\n      },\r\n      \"dataDisks\": [],\r\n      \"zoneResilient\"\
+        : false\r\n    },\r\n    \"provisioningState\": \"Updating\",\r\n    \"hyperVGeneration\"\
+        : \"V1\"\r\n  }\r\n}"
+    headers:
+      azure-asyncnotification:
+      - Enabled
+      azure-asyncoperation:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/operations/6b04254a-ec78-4f3e-b354-33a10b2ebf97?api-version=2019-07-01
+      cache-control:
+      - no-cache
+      content-length:
+      - '889'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 05 Mar 2020 07:22:36 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-resource:
+      - Microsoft.Compute/CreateImages3Min;39,Microsoft.Compute/CreateImages30Min;198
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1195'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-compute/11.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/operations/6b04254a-ec78-4f3e-b354-33a10b2ebf97?api-version=2019-07-01
+  response:
+    body:
+      string: "{\r\n  \"startTime\": \"2020-03-05T07:22:34.1066099+00:00\",\r\n  \"\
+        endTime\": \"2020-03-05T07:22:39.2159878+00:00\",\r\n  \"status\": \"Succeeded\"\
+        ,\r\n  \"name\": \"6b04254a-ec78-4f3e-b354-33a10b2ebf97\"\r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '184'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 05 Mar 2020 07:23:07 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-resource:
+      - Microsoft.Compute/GetOperation3Min;14998,Microsoft.Compute/GetOperation30Min;29996
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-compute/11.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/images/imagename?api-version=2019-07-01
+  response:
+    body:
+      string: "{\r\n  \"name\": \"imagename\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/images/imagename\"\
+        ,\r\n  \"type\": \"Microsoft.Compute/images\",\r\n  \"location\": \"eastus\"\
+        ,\r\n  \"tags\": {\r\n    \"department\": \"HR\"\r\n  },\r\n  \"properties\"\
+        : {\r\n    \"storageProfile\": {\r\n      \"osDisk\": {\r\n        \"osType\"\
+        : \"Linux\",\r\n        \"osState\": \"Generalized\",\r\n        \"diskSizeGB\"\
+        : 200,\r\n        \"snapshot\": {\r\n          \"id\": \"subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/snapshots/snapshotname\"\
+        \r\n        },\r\n        \"caching\": \"None\",\r\n        \"storageAccountType\"\
+        : \"Standard_LRS\"\r\n      },\r\n      \"dataDisks\": [],\r\n      \"zoneResilient\"\
+        : false\r\n    },\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"hyperVGeneration\"\
+        : \"V1\"\r\n  }\r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '890'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 05 Mar 2020 07:23:08 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-resource:
+      - Microsoft.Compute/GetImages3Min;358,Microsoft.Compute/GetImages30Min;1793
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-compute/11.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: DELETE
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/galleries/galleryname/images/imagename/versions/1.0.0?api-version=2019-12-01
+  response:
+    body:
+      string: ''
+    headers:
+      azure-asyncoperation:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/capsOperations/a87018fb-2055-4528-bbf3-baa62cf3e604?api-version=2019-12-01
+      cache-control:
+      - no-cache
+      content-length:
+      - '0'
+      date:
+      - Thu, 05 Mar 2020 07:23:09 GMT
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/capsOperations/a87018fb-2055-4528-bbf3-baa62cf3e604?monitor=true&api-version=2019-12-01
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-deletes:
+      - '14999'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-compute/11.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/capsOperations/a87018fb-2055-4528-bbf3-baa62cf3e604?api-version=2019-12-01
+  response:
+    body:
+      string: "{\r\n  \"startTime\": \"2020-03-05T07:23:09.6398017+00:00\",\r\n  \"\
+        status\": \"InProgress\",\r\n  \"name\": \"a87018fb-2055-4528-bbf3-baa62cf3e604\"\
+        \r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '134'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 05 Mar 2020 07:23:41 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-compute/11.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/capsOperations/a87018fb-2055-4528-bbf3-baa62cf3e604?api-version=2019-12-01
+  response:
+    body:
+      string: "{\r\n  \"startTime\": \"2020-03-05T07:23:09.6398017+00:00\",\r\n  \"\
+        status\": \"InProgress\",\r\n  \"name\": \"a87018fb-2055-4528-bbf3-baa62cf3e604\"\
+        \r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '134'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 05 Mar 2020 07:24:10 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-compute/11.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/capsOperations/a87018fb-2055-4528-bbf3-baa62cf3e604?api-version=2019-12-01
+  response:
+    body:
+      string: "{\r\n  \"startTime\": \"2020-03-05T07:23:09.6398017+00:00\",\r\n  \"\
+        endTime\": \"2020-03-05T07:24:39.8273596+00:00\",\r\n  \"status\": \"Succeeded\"\
+        ,\r\n  \"name\": \"a87018fb-2055-4528-bbf3-baa62cf3e604\"\r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '184'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 05 Mar 2020 07:24:41 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-compute/11.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: DELETE
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/galleries/galleryname/applications/applicationname?api-version=2019-12-01
+  response:
+    body:
+      string: ''
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '0'
+      date:
+      - Thu, 05 Mar 2020 07:24:43 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-deletes:
+      - '14998'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-compute/11.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/snapshots/snapshotname/endGetAccess?api-version=2019-11-01
+  response:
+    body:
+      string: ''
+    headers:
+      azure-asyncoperation:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/DiskOperations/0cf03f43-018e-4e17-8d77-71a2c17d13c5?api-version=2019-11-01
+      cache-control:
+      - no-cache
+      content-length:
+      - '0'
+      date:
+      - Thu, 05 Mar 2020 07:24:43 GMT
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/DiskOperations/0cf03f43-018e-4e17-8d77-71a2c17d13c5?monitor=true&api-version=2019-11-01
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-resource:
+      - Microsoft.Compute/HighCostSnapshotCreateHydrate3Min;239,Microsoft.Compute/HighCostSnapshotCreateHydrate30Min;1916
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1199'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-compute/11.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: DELETE
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/snapshots/snapshotname?api-version=2019-11-01
+  response:
+    body:
+      string: ''
+    headers:
+      azure-asyncoperation:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/DiskOperations/b87f791f-46cb-4d66-9af4-023082760b80?api-version=2019-11-01
+      cache-control:
+      - no-cache
+      content-length:
+      - '0'
+      date:
+      - Thu, 05 Mar 2020 07:24:44 GMT
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/DiskOperations/b87f791f-46cb-4d66-9af4-023082760b80?monitor=true&api-version=2019-11-01
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-resource:
+      - Microsoft.Compute/DeleteDisks3Min;996,Microsoft.Compute/DeleteDisks30Min;7992
+      x-ms-ratelimit-remaining-subscription-deletes:
+      - '14997'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-compute/11.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: DELETE
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/galleries/galleryname/images/imagename?api-version=2019-12-01
+  response:
+    body:
+      string: ''
+    headers:
+      azure-asyncoperation:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/capsOperations/4fd7c74d-0bc6-4794-bd17-9691b4510e71?api-version=2019-12-01
+      cache-control:
+      - no-cache
+      content-length:
+      - '0'
+      date:
+      - Thu, 05 Mar 2020 07:25:16 GMT
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/capsOperations/4fd7c74d-0bc6-4794-bd17-9691b4510e71?monitor=true&api-version=2019-12-01
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-deletes:
+      - '14996'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-compute/11.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/DiskOperations/0cf03f43-018e-4e17-8d77-71a2c17d13c5?api-version=2019-11-01
+  response:
+    body:
+      string: "{\r\n  \"startTime\": \"2020-03-05T07:24:43.5335652+00:00\",\r\n  \"\
+        endTime\": \"2020-03-05T07:24:43.767169+00:00\",\r\n  \"status\": \"Succeeded\"\
+        ,\r\n  \"name\": \"0cf03f43-018e-4e17-8d77-71a2c17d13c5\"\r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '183'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 05 Mar 2020 07:25:17 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-resource:
+      - Microsoft.Compute/GetOperation3Min;49992,Microsoft.Compute/GetOperation30Min;399957
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-compute/11.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/DiskOperations/0cf03f43-018e-4e17-8d77-71a2c17d13c5?monitor=true&api-version=2019-11-01
+  response:
+    body:
+      string: ''
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '0'
+      date:
+      - Thu, 05 Mar 2020 07:25:17 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-resource:
+      - Microsoft.Compute/GetOperation3Min;49991,Microsoft.Compute/GetOperation30Min;399956
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-compute/11.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/capsOperations/4fd7c74d-0bc6-4794-bd17-9691b4510e71?api-version=2019-12-01
+  response:
+    body:
+      string: "{\r\n  \"startTime\": \"2020-03-05T07:25:17.374291+00:00\",\r\n  \"\
+        endTime\": \"2020-03-05T07:25:17.5930478+00:00\",\r\n  \"status\": \"Succeeded\"\
+        ,\r\n  \"name\": \"4fd7c74d-0bc6-4794-bd17-9691b4510e71\"\r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '183'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 05 Mar 2020 07:25:48 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-compute/11.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: DELETE
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/images/imagename?api-version=2019-07-01
+  response:
+    body:
+      string: ''
+    headers:
+      azure-asyncnotification:
+      - Enabled
+      azure-asyncoperation:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/operations/104e5d0b-3d9b-4ed1-b5cc-6af8bd880052?api-version=2019-07-01
+      cache-control:
+      - no-cache
+      content-length:
+      - '0'
+      date:
+      - Thu, 05 Mar 2020 07:25:49 GMT
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/operations/104e5d0b-3d9b-4ed1-b5cc-6af8bd880052?monitor=true&api-version=2019-07-01
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-resource:
+      - Microsoft.Compute/DeleteImages3Min;119,Microsoft.Compute/DeleteImages30Min;599
+      x-ms-ratelimit-remaining-subscription-deletes:
+      - '14995'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-compute/11.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: DELETE
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/galleries/galleryname?api-version=2019-12-01
+  response:
+    body:
+      string: ''
+    headers:
+      azure-asyncoperation:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/capsOperations/b7d51bd6-9c57-45dc-a9c3-e3a4525e1f17?api-version=2019-12-01
+      cache-control:
+      - no-cache
+      content-length:
+      - '0'
+      date:
+      - Thu, 05 Mar 2020 07:25:50 GMT
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/capsOperations/b7d51bd6-9c57-45dc-a9c3-e3a4525e1f17?monitor=true&api-version=2019-12-01
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-deletes:
+      - '14994'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-compute/11.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/operations/104e5d0b-3d9b-4ed1-b5cc-6af8bd880052?api-version=2019-07-01
+  response:
+    body:
+      string: "{\r\n  \"startTime\": \"2020-03-05T07:25:49.762354+00:00\",\r\n  \"\
+        endTime\": \"2020-03-05T07:25:54.8717243+00:00\",\r\n  \"status\": \"Succeeded\"\
+        ,\r\n  \"name\": \"104e5d0b-3d9b-4ed1-b5cc-6af8bd880052\"\r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '183'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 05 Mar 2020 07:26:20 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-resource:
+      - Microsoft.Compute/GetOperation3Min;14998,Microsoft.Compute/GetOperation30Min;29994
+    status:
+      code: 200
+      message: OK
 version: 1

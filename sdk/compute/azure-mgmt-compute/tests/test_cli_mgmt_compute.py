@@ -17,10 +17,16 @@
 # ----------------------
 
 # covered ops:
-#   snapshots: 4
-#   disks: 4
-#   disk_encription: 2
-#   
+#   snapshots: 6/8
+#   disks: 4/8
+#   disk_encription: 2/6
+#   galleries: 6/6
+#   gallery_applications: 5/5
+#   gallery_application_versions: 0/5
+#   gallery_images: 5/5
+#   gallery_image_versions: 5/5
+#   images: 6/6
+#   dedicated_host_groups: 2/6
 
 # import json
 # import urllib3
@@ -52,6 +58,11 @@ class MgmtComputeTest(AzureMgmtTestCase):
         RESOURCE_GROUP = resource_group.name
         STORAGE_ACCOUNT = None
         DISK_NAME = "diskname"
+        GALLERY_NAME = "galleryname"
+        APPLICATION_NAME = "applicationname"
+        VERSION_NAME = "1.0.0"
+        IMAGE_NAME = "imagename"
+        HOST_GROUP_NAME = "hostgroupnamexyz"
         DISK_ENCRYPTION_SET_NAME = "diskencryptionsetname"
         SNAPSHOT_NAME = "snapshotname"
         KEY_VAULT = "keyvaultxxyyzz"
@@ -198,26 +209,36 @@ class MgmtComputeTest(AzureMgmtTestCase):
         result = self.mgmt_client.disks.create_or_update(resource_group.name, DISK_NAME_5, BODY)
         result = result.result()
 
-        """
+        # TODO: New example not in swagger.
+        # Create a snapshot by copying a disk.
+        BODY = {
+          "location": "eastus",
+          "creation_data": {
+            "create_option": "Copy",
+            "source_uri": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Compute/disks/" + DISK_NAME
+          }
+        }
+        result = self.mgmt_client.snapshots.create_or_update(resource_group.name, SNAPSHOT_NAME, BODY)
+
         # Create a virtual machine image from a snapshot.[put]
         BODY = {
           "location": "eastus",
-          "properties": {
-            "storage_profile": {
-              "os_disk": {
-                "os_type": "Linux",
-                "snapshot": {
-                  "id": "subscriptions/{subscription-id}/resourceGroups/myResourceGroup/providers/Microsoft.Compute/snapshots/mySnapshot"
-                },
-                "os_state": "Generalized"
+          "storage_profile": {
+            "os_disk": {
+              "os_type": "Linux",
+              "snapshot": {
+                "id": "subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Compute/snapshots/" + SNAPSHOT_NAME
               },
-              "zone_resilient": False
-            }
-          }
+              "os_state": "Generalized"
+            },
+            "zone_resilient": False
+          },
+          "hyper_vgeneration": "V1"  # TODO: required
         }
         result = self.mgmt_client.images.create_or_update(resource_group.name, IMAGE_NAME, BODY)
         result = result.result()
 
+        """
         # Create a virtual machine image from a managed disk with DiskEncryptionSet resource.[put]
         BODY = {
           "location": "eastus",
@@ -403,28 +424,15 @@ class MgmtComputeTest(AzureMgmtTestCase):
         }
         result = self.mgmt_client.images.create_or_update(resource_group.name, IMAGE_NAME, BODY)
         result = result.result()
+        """
 
         # Create or update a simple gallery.[put]
         BODY = {
           "location": "eastus",
-          "properties": {
-            "description": "This is the gallery description."
-          }
+          "description": "This is the gallery description."
         }
         result = self.mgmt_client.galleries.create_or_update(resource_group.name, GALLERY_NAME, BODY)
         result = result.result()
-        """
-
-        # New example not in swagger.
-        # Create a snapshot by copying a disk.
-        BODY = {
-          "location": "eastus",
-          "creation_data": {
-            "create_option": "Copy",
-            "source_uri": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Compute/disks/" + DISK_NAME
-          }
-        }
-        result = self.mgmt_client.snapshots.create_or_update(resource_group.name, SNAPSHOT_NAME, BODY)
 
         # TODO: NNED BLOB
         # # Create a snapshot by importing an unmanaged blob from the same subscription.[put]
@@ -469,22 +477,20 @@ class MgmtComputeTest(AzureMgmtTestCase):
         # result = self.mgmt_client.snapshots.create_or_update(resource_group.name, SNAPSHOT_NAME, BODY)
         # result = result.result()
 
-        """
         # Create or update a dedicated host group.[put]
         BODY = {
-          "location": "westus",
+          "location": "eastus",
           "tags": {
             "department": "finance"
           },
           "zones": [
             "1"
           ],
-          "properties": {
-            "platform_fault_domain_count": "3"
-          }
+          "platform_fault_domain_count": "3"
         }
         result = self.mgmt_client.dedicated_host_groups.create_or_update(resource_group.name, HOST_GROUP_NAME, BODY)
 
+        """
         # Create a platform-image vm with unmanaged os and data disks.[put]
         BODY = {
           "location": "westus",
@@ -1115,24 +1121,22 @@ class MgmtComputeTest(AzureMgmtTestCase):
         # result = self.mgmt_client.disk_encryption_sets.create_or_update(resource_group.name, DISK_ENCRYPTION_SET_NAME, BODY)
         # result = result.result()
 
-        """
         # Create or update a simple gallery image.[put]
         BODY = {
           "location": "eastus",
-          "properties": {
-            "os_type": "Windows",
-            "os_state": "Generalized",
-            "hyper_vgeneration": "V1",
-            "identifier": {
-              "publisher": "myPublisherName",
-              "offer": "myOfferName",
-              "sku": "mySkuName"
-            }
+          "os_type": "Windows",
+          "os_state": "Generalized",
+          "hyper_vgeneration": "V1",
+          "identifier": {
+            "publisher": "myPublisherName",
+            "offer": "myOfferName",
+            "sku": "mySkuName"
           }
         }
         result = self.mgmt_client.gallery_images.create_or_update(resource_group.name, GALLERY_NAME, IMAGE_NAME, BODY)
         result = result.result()
 
+        """
         # Create or update a dedicated host .[put]
         BODY = {
           "location": "westus",
@@ -2241,17 +2245,16 @@ class MgmtComputeTest(AzureMgmtTestCase):
           }
         }
         result = self.mgmt_client.proximity_placement_groups.create_or_update(resource_group.name, PROXIMITY_PLACEMENT_GROUP_NAME, BODY)
+        """
 
-        # Create or update a simple gallery Application.[put]
+        # # Create or update a simple gallery Application.[put]
         BODY = {
           "location": "eastus",
-          "properties": {
-            "description": "This is the gallery application description.",
-            "eula": "This is the gallery application EULA.",
-            "privacy_statement_uri": "myPrivacyStatementUri}",
-            "release_note_uri": "myReleaseNoteUri",
-            "supported_ostype": "Windows"
-          }
+          "description": "This is the gallery application description.",
+          "eula": "This is the gallery application EULA.",
+          # "privacy_statement_uri": "myPrivacyStatementUri}",
+          # "release_note_uri": "myReleaseNoteUri",
+          "supported_os_type": "Windows"
         }
         result = self.mgmt_client.gallery_applications.create_or_update(resource_group.name, GALLERY_NAME, APPLICATION_NAME, BODY)
         result = result.result()
@@ -2259,120 +2262,118 @@ class MgmtComputeTest(AzureMgmtTestCase):
         # Create or update a simple Gallery Image Version using snapshots as a source.[put]
         BODY = {
           "location": "eastus",
-          "properties": {
-            "publishing_profile": {
-              "target_regions": [
-                {
-                  "name": "eastus",
-                  "regional_replica_count": "1",
-                  "encryption": {
-                    "os_disk_image": {
-                      "disk_encryption_set_id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Compute/diskEncryptionSet/" + DISK_ENCRYPTION_SET_NAME + ""
-                    },
-                    "data_disk_images": [
-                      {
-                        "disk_encryption_set_id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Compute/diskEncryptionSet/" + DISK_ENCRYPTION_SET_NAME + "",
-                        "lun": "1"
-                      }
-                    ]
-                  }
-                },
-                {
-                  "name": "East US",
-                  "regional_replica_count": "2",
-                  "storage_account_type": "Standard_ZRS"
-                }
-              ]
-            },
-            "storage_profile": {
-              "os_disk_image": {
-                "source": {
-                  "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Compute/snapshots/" + SNAPSHOT_NAME + ""
-                },
-                "host_caching": "ReadOnly"
+          "publishing_profile": {
+            "target_regions": [
+              # {
+              #   "name": "eastus",
+              #   "regional_replica_count": "1",
+              #   "encryption": {
+              #     "os_disk_image": {
+              #       "disk_encryption_set_id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Compute/diskEncryptionSet/" + DISK_ENCRYPTION_SET_NAME + ""
+              #     },
+              #     "data_disk_images": [
+              #       {
+              #         "disk_encryption_set_id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Compute/diskEncryptionSet/" + DISK_ENCRYPTION_SET_NAME + "",
+              #         "lun": "1"
+              #       }
+              #     ]
+              #   }
+              # },
+              {
+                "name": "East US",
+                "regional_replica_count": "2",
+                "storage_account_type": "Standard_ZRS"
+              }
+            ]
+          },
+          "storage_profile": {
+            "os_disk_image": {
+              "source": {
+                "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Compute/snapshots/" + SNAPSHOT_NAME + ""
               },
-              "data_disk_images": [
-                {
-                  "source": {
-                    "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Compute/snapshots/" + SNAPSHOT_NAME + ""
-                  },
-                  "lun": "1",
-                  "host_caching": "None"
-                }
-              ]
-            }
+              "host_caching": "ReadOnly"
+            },
+            # "data_disk_images": [
+            #   {
+            #     "source": {
+            #       "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Compute/snapshots/" + SNAPSHOT_NAME + ""
+            #     },
+            #     "lun": "1",
+            #     "host_caching": "None"
+            #   }
+            # ]
           }
         }
         result = self.mgmt_client.gallery_image_versions.create_or_update(resource_group.name, GALLERY_NAME, IMAGE_NAME, VERSION_NAME, BODY)
         result = result.result()
 
+        """ TODO: need image
         # Create or update a simple Gallery Image Version (Managed Image as source).[put]
         BODY = {
           "location": "eastus",
-          "properties": {
-            "publishing_profile": {
-              "target_regions": [
-                {
-                  "name": "eastus",
-                  "regional_replica_count": "1",
-                  "encryption": {
-                    "os_disk_image": {
-                      "disk_encryption_set_id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Compute/diskEncryptionSet/" + DISK_ENCRYPTION_SET_NAME + ""
-                    },
-                    "data_disk_images": [
-                      {
-                        "lun": "0",
-                        "disk_encryption_set_id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Compute/diskEncryptionSet/" + DISK_ENCRYPTION_SET_NAME + ""
-                      },
-                      {
-                        "lun": "1",
-                        "disk_encryption_set_id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Compute/diskEncryptionSet/" + DISK_ENCRYPTION_SET_NAME + ""
-                      }
-                    ]
-                  }
-                },
-                {
-                  "name": "East US",
-                  "regional_replica_count": "2",
-                  "storage_account_type": "Standard_ZRS"
-                }
-              ]
-            },
-            "storage_profile": {
-              "source": {
-                "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Compute/images/" + IMAGE_NAME + ""
+          "publishing_profile": {
+            "target_regions": [
+              # {
+              #   "name": "eastus",
+              #   "regional_replica_count": "1",
+              #   "encryption": {
+              #     "os_disk_image": {
+              #       "disk_encryption_set_id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Compute/diskEncryptionSet/" + DISK_ENCRYPTION_SET_NAME + ""
+              #     },
+              #     "data_disk_images": [
+              #       {
+              #         "lun": "0",
+              #         "disk_encryption_set_id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Compute/diskEncryptionSet/" + DISK_ENCRYPTION_SET_NAME + ""
+              #       },
+              #       {
+              #         "lun": "1",
+              #         "disk_encryption_set_id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Compute/diskEncryptionSet/" + DISK_ENCRYPTION_SET_NAME + ""
+              #       }
+              #     ]
+              #   }
+              # },
+              {
+                "name": "East US",
+                "regional_replica_count": "2",
+                "storage_account_type": "Standard_ZRS"
               }
+            ]
+          },
+          "storage_profile": {
+            "source": {
+              "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Compute/images/" + IMAGE_NAME + ""
             }
           }
         }
         result = self.mgmt_client.gallery_image_versions.create_or_update(resource_group.name, GALLERY_NAME, IMAGE_NAME, VERSION_NAME, BODY)
         result = result.result()
+        """
 
-        # Create or update a simple gallery Application Version.[put]
-        BODY = {
-          "location": "eastus",
-          "properties": {
-            "publishing_profile": {
-              "source": {
-                "file_name": "package.zip",
-                "media_link": "https://mystorageaccount.blob.core.windows.net/mycontainer/package.zip?{sasKey}"
-              },
-              "target_regions": [
-                {
-                  "name": "eastus",
-                  "regional_replica_count": "1",
-                  "storage_account_type": "Standard_LRS"
-                }
-              ],
-              "replica_count": "1",
-              "end_of_life_date": "2019-07-01T07:00:00Z",
-              "storage_account_type": "Standard_LRS"
-            }
-          }
-        }
-        result = self.mgmt_client.gallery_application_versions.create_or_update(resource_group.name, GALLERY_NAME, APPLICATION_NAME, VERSION_NAME, BODY)
-        result = result.result()
+        # TODO: NEED STORAGE ACCOUNT
+        # # Create or update a simple gallery Application Version.[put]
+        # BODY = {
+        #   "location": "eastus",
+        #   "publishing_profile": {
+        #     "source": {
+        #       "file_name": "package.zip",
+        #       "media_link": "https://mystorageaccount.blob.core.windows.net/mycontainer/package.zip?{sasKey}"
+        #     },
+        #     "target_regions": [
+        #       {
+        #         "name": "eastus",
+        #         "regional_replica_count": "1",
+        #         "storage_account_type": "Standard_LRS"
+        #       }
+        #     ],
+        #     "replica_count": "1",
+        #     "end_of_life_date": "2019-07-01T07:00:00Z",
+        #     "storage_account_type": "Standard_LRS"
+        #   }
+        # }
+        # result = self.mgmt_client.gallery_application_versions.create_or_update(resource_group.name, GALLERY_NAME, APPLICATION_NAME, VERSION_NAME, BODY)
+        # result = result.result()
 
+        """
         # Create VirtualMachineScaleSet VM extension.[put]
         BODY = {
           "location": "westus",
@@ -2400,28 +2401,34 @@ class MgmtComputeTest(AzureMgmtTestCase):
 
         # Get a gallery Application Version.[get]
         result = self.mgmt_client.gallery_application_versions.get(resource_group.name, GALLERY_NAME, APPLICATION_NAME, VERSION_NAME)
+        """
 
-        # Get a gallery Image Version with snapshots as a source.[get]
-        result = self.mgmt_client.gallery_image_versions.get(resource_group.name, GALLERY_NAME, IMAGE_NAME, VERSION_NAME)
+        # # Get a gallery Image Version with snapshots as a source.[get]
+        # result = self.mgmt_client.gallery_image_versions.get(resource_group.name, GALLERY_NAME, IMAGE_NAME, VERSION_NAME)
 
-        # Get a gallery Image Version with replication status.[get]
-        result = self.mgmt_client.gallery_image_versions.get(resource_group.name, GALLERY_NAME, IMAGE_NAME, VERSION_NAME)
+        # # Get a gallery Image Version with replication status.[get]
+        # result = self.mgmt_client.gallery_image_versions.get(resource_group.name, GALLERY_NAME, IMAGE_NAME, VERSION_NAME)
 
         # Get a gallery Image Version.[get]
         result = self.mgmt_client.gallery_image_versions.get(resource_group.name, GALLERY_NAME, IMAGE_NAME, VERSION_NAME)
 
+        """
         # List gallery Application Versions in a gallery Application Definition.[get]
         result = self.mgmt_client.gallery_application_versions.list_by_gallery_application(resource_group.name, GALLERY_NAME, APPLICATION_NAME)
+        """
 
         # Get a gallery Application.[get]
         result = self.mgmt_client.gallery_applications.get(resource_group.name, GALLERY_NAME, APPLICATION_NAME)
 
+        """
         # Create a proximity placement group.[get]
         result = self.mgmt_client.proximity_placement_groups.get(resource_group.name, PROXIMITY_PLACEMENT_GROUP_NAME)
+        """
 
         # List gallery Image Versions in a gallery Image Definition.[get]
         result = self.mgmt_client.gallery_image_versions.list_by_gallery_image(resource_group.name, GALLERY_NAME, IMAGE_NAME)
 
+        """
         # Get Virtual Machine Instance View.[get]
         result = self.mgmt_client.virtual_machines.instance_view(resource_group.name, VIRTUAL_MACHINE_NAME)
 
@@ -2430,10 +2437,12 @@ class MgmtComputeTest(AzureMgmtTestCase):
 
         # Get a dedicated host.[get]
         result = self.mgmt_client.dedicated_hosts.get(resource_group.name, HOST_GROUP_NAME, HOST_NAME)
+        """
 
         # Get a gallery image.[get]
         result = self.mgmt_client.gallery_images.get(resource_group.name, GALLERY_NAME, IMAGE_NAME)
 
+        """
         # Lists all available virtual machine sizes to which the specified virtual machine can be resized[get]
         result = self.mgmt_client.virtual_machines.list_available_sizes(resource_group.name, VIRTUAL_MACHINE_NAME)
         """
@@ -2445,6 +2454,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
         """
         # Get a Virtual Machine.[get]
         result = self.mgmt_client.virtual_machines.get(resource_group.name, VIRTUAL_MACHINE_NAME)
+        """
 
         # List gallery Applications in a gallery.[get]
         result = self.mgmt_client.gallery_applications.list_by_gallery(resource_group.name, GALLERY_NAME)
@@ -2454,15 +2464,14 @@ class MgmtComputeTest(AzureMgmtTestCase):
 
         # Create a dedicated host group.[get]
         result = self.mgmt_client.dedicated_host_groups.get(resource_group.name, HOST_GROUP_NAME)
-        """
 
         # Get information about a snapshot.[get]
         result = self.mgmt_client.snapshots.get(resource_group.name, SNAPSHOT_NAME)
 
-        """
         # Get a gallery.[get]
         result = self.mgmt_client.galleries.get(resource_group.name, GALLERY_NAME)
 
+        """
         # VirtualMachineRunCommandGet[get]
         result = self.mgmt_client.virtual_machine_run_commands.get(LOCATION_NAME, RUN_COMMAND_NAME)
 
@@ -2471,10 +2480,10 @@ class MgmtComputeTest(AzureMgmtTestCase):
 
         # Create a proximity placement group.[get]
         result = self.mgmt_client.proximity_placement_groups.get(resource_group.name, PROXIMITY_PLACEMENT_GROUP_NAME)
+        """
 
         # Get information about a virtual machine image.[get]
         result = self.mgmt_client.images.get(resource_group.name, IMAGE_NAME)
-        """
 
         # Get information about a managed disk.[get]
         result = self.mgmt_client.disks.get(resource_group.name, DISK_NAME)
@@ -2485,18 +2494,16 @@ class MgmtComputeTest(AzureMgmtTestCase):
         """
         # Lists all the virtual machines under the specified subscription for the specified location.[get]
         result = self.mgmt_client.virtual_machines.list_by_location(LOCATION_NAME)
+        """
 
         # List galleries in a resource group.[get]
         result = self.mgmt_client.galleries.list_by_resource_group(resource_group.name)
-        """
 
         # List all snapshots in a resource group.[get]
         result = self.mgmt_client.snapshots.list_by_resource_group(resource_group.name)
 
-        """
         # List all virtual machine images in a resource group.[get]
         result = self.mgmt_client.images.list_by_resource_group(resource_group.name)
-        """
 
         # List all managed disks in a resource group.[get]
         result = self.mgmt_client.disks.list_by_resource_group(resource_group.name)
@@ -2518,18 +2525,16 @@ class MgmtComputeTest(AzureMgmtTestCase):
         """
         # List availability sets in a subscription.[get]
         result = self.mgmt_client.availability_sets.list_by_subscription()
+        """
 
         # List galleries in a subscription.[get]
         result = self.mgmt_client.galleries.list()
-        """
 
         # List all snapshots in a subscription.[get]
         result = self.mgmt_client.snapshots.list()
 
-        """
         # List all virtual machine images in a subscription.[get]
         result = self.mgmt_client.images.list()
-        """
 
         # List all managed disks in a subscription.[get]
         result = self.mgmt_client.disks.list()
@@ -2583,28 +2588,34 @@ class MgmtComputeTest(AzureMgmtTestCase):
         # Start an extension rolling upgrade.[post]
         result = self.mgmt_client.virtual_machine_scale_set_rolling_upgrades.start_extension_upgrade(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME)
         result = result.result()
+        """
 
         # Update a simple Gallery Image Version (Managed Image as source).[patch]
         BODY = {
-          "properties": {
-            "publishing_profile": {
-              "target_regions": [
-                {
-                  "name": "eastus",
-                  "regional_replica_count": "1"
-                },
-                {
-                  "name": "East US",
-                  "regional_replica_count": "2",
-                  "storage_account_type": "Standard_ZRS"
-                }
-              ]
-            },
-            "storage_profile": {
-              "source": {
-                "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Compute/images/" + IMAGE_NAME + ""
+          "publishing_profile": {
+            "target_regions": [
+              # {
+              #   "name": "eastus",
+              #   "regional_replica_count": "1"
+              # },
+              {
+                "name": "East US",
+                "regional_replica_count": "2",
+                "storage_account_type": "Standard_ZRS"
               }
-            }
+            ]
+          },
+          "storage_profile": {
+            "os_disk_image": {
+              "source": {
+                "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Compute/snapshots/" + SNAPSHOT_NAME + ""
+              },
+              "host_caching": "ReadOnly"
+            },
+            # TODO: NEED A IMAGE
+            # "source": {
+            #   "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Compute/images/" + IMAGE_NAME + ""
+            # }
           }
         }
         result = self.mgmt_client.gallery_image_versions.update(resource_group.name, GALLERY_NAME, IMAGE_NAME, VERSION_NAME, BODY)
@@ -2612,17 +2623,20 @@ class MgmtComputeTest(AzureMgmtTestCase):
 
         # Update a simple gallery Application.[patch]
         BODY = {
-          "properties": {
-            "description": "This is the gallery application description.",
-            "eula": "This is the gallery application EULA.",
-            "privacy_statement_uri": "myPrivacyStatementUri}",
-            "release_note_uri": "myReleaseNoteUri",
-            "supported_ostype": "Windows"
+          "description": "This is the gallery application description.",
+          "eula": "This is the gallery application EULA.",
+          # "privacy_statement_uri": "myPrivacyStatementUri}",
+          # "release_note_uri": "myReleaseNoteUri",
+          "supported_os_type": "Windows",
+          "tags": {
+            "tag1": "tag1"
           }
+
         }
         result = self.mgmt_client.gallery_applications.update(resource_group.name, GALLERY_NAME, APPLICATION_NAME, BODY)
         result = result.result()
 
+        """
         # Create a proximity placement group.[get]
         result = self.mgmt_client.proximity_placement_groups.get(resource_group.name, PROXIMITY_PLACEMENT_GROUP_NAME)
 
@@ -2646,23 +2660,23 @@ class MgmtComputeTest(AzureMgmtTestCase):
 
         # Generalize a Virtual Machine.[post]
         result = self.mgmt_client.virtual_machines.generalize(resource_group.name, VIRTUAL_MACHINE_NAME)
+        """
 
         # Update a simple gallery image.[patch]
         BODY = {
-          "properties": {
-            "os_type": "Windows",
-            "os_state": "Generalized",
-            "hyper_vgeneration": "V1",
-            "identifier": {
-              "publisher": "myPublisherName",
-              "offer": "myOfferName",
-              "sku": "mySkuName"
-            }
+          "os_type": "Windows",
+          "os_state": "Generalized",
+          "hyper_vgeneration": "V1",
+          "identifier": {
+            "publisher": "myPublisherName",
+            "offer": "myOfferName",
+            "sku": "mySkuName"
           }
         }
         result = self.mgmt_client.gallery_images.update(resource_group.name, GALLERY_NAME, IMAGE_NAME, BODY)
         result = result.result()
 
+        """
         # Export logs which contain all throttled Api requests made to Compute Resource Provider within the given time period.[post]
         BODY = {
           "blob_container_sas_uri": "https://somesasuri",
@@ -2761,24 +2775,23 @@ class MgmtComputeTest(AzureMgmtTestCase):
         }
         result = self.mgmt_client.virtual_machines.update(resource_group.name, VIRTUAL_MACHINE_NAME, BODY)
         result = result.result()
+        """
 
         # Update a simple gallery.[patch]
         BODY = {
-          "properties": {
-            "description": "This is the gallery description."
-          }
+          "description": "This is the gallery description."
         }
         result = self.mgmt_client.galleries.update(resource_group.name, GALLERY_NAME, BODY)
         result = result.result()
 
         # Updates tags of an Image.[patch]
         BODY = {
-          "properties": {
-            "source_virtual_machine": {
-              "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Compute/virtualMachines/" + VIRTUAL_MACHINE_NAME + ""
-            },
-            "hyper_vgeneration": "V1"
-          },
+          # "properties": {
+          #   "source_virtual_machine": {
+          #     "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Compute/virtualMachines/" + VIRTUAL_MACHINE_NAME + ""
+          #   },
+          #   "hyper_vgeneration": "V1"
+          # },
           "tags": {
             "department": "HR"
           }
@@ -2786,6 +2799,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
         result = self.mgmt_client.images.update(resource_group.name, IMAGE_NAME, BODY)
         result = result.result()
 
+        """
         # Delete VirtualMachineScaleSet VM extension.[delete]
         result = self.mgmt_client.virtual_machine_scale_set_vmextensions.delete(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME, VIRTUAL_MACHINE_NAME, EXTENSION_NAME)
         result = result.result()
@@ -2793,6 +2807,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
         # Delete a gallery Application Version.[delete]
         result = self.mgmt_client.gallery_application_versions.delete(resource_group.name, GALLERY_NAME, APPLICATION_NAME, VERSION_NAME)
         result = result.result()
+        """
 
         # Delete a gallery Image Version.[delete]
         result = self.mgmt_client.gallery_image_versions.delete(resource_group.name, GALLERY_NAME, IMAGE_NAME, VERSION_NAME)
@@ -2802,28 +2817,37 @@ class MgmtComputeTest(AzureMgmtTestCase):
         result = self.mgmt_client.gallery_applications.delete(resource_group.name, GALLERY_NAME, APPLICATION_NAME)
         result = result.result()
 
+        # Revoke access snapshot (TODO: need swagger file)
+        result = self.mgmt_client.snapshots.revoke_access(resource_group.name, SNAPSHOT_NAME)
+
+        # Delete snapshot (TODO: need swagger file)
+        result = self.mgmt_client.snapshots.delete(resource_group.name, SNAPSHOT_NAME)
+        result = result.result()
+
+        """
         # Create a proximity placement group.[get]
         result = self.mgmt_client.proximity_placement_groups.get(resource_group.name, PROXIMITY_PLACEMENT_GROUP_NAME)
 
         # Delete Container Service[delete]
         result = self.mgmt_client.container_services.delete(resource_group.name, CONTAINER_SERVICE_NAME)
         result = result.result()
+        """
 
         # Delete a gallery image.[delete]
         result = self.mgmt_client.gallery_images.delete(resource_group.name, GALLERY_NAME, IMAGE_NAME)
         result = result.result()
-        """
 
         # TODO: NEED ENCRYPTION SET
         # # Delete a disk encryption set.[delete]
         # result = self.mgmt_client.disk_encryption_sets.delete(resource_group.name, DISK_ENCRYPTION_SET_NAME)
         # result = result.result()
 
-        """
+        # Delete a image.  (TODO: need a swagger file)
+        result = self.mgmt_client.images.delete(resource_group.name, IMAGE_NAME)
+
         # Delete a gallery.[delete]
         result = self.mgmt_client.galleries.delete(resource_group.name, GALLERY_NAME)
         result = result.result()
-        """
 
 
 #------------------------------------------------------------------------------
