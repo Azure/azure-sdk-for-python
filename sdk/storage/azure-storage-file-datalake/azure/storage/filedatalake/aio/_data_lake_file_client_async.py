@@ -111,6 +111,15 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :return: response dict (Etag and last modified).
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/datalake_samples_upload_download_async.py
+                :start-after: [START create_file]
+                :end-before: [END create_file]
+                :language: python
+                :dedent: 12
+                :caption: Create file.
         """
         return await self._create('file', content_settings=content_settings, metadata=metadata, **kwargs)
 
@@ -143,6 +152,15 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :return: None
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/datalake_samples_upload_download_async.py
+                :start-after: [START delete_file]
+                :end-before: [END delete_file]
+                :language: python
+                :dedent: 12
+                :caption: Delete file.
         """
         return await self._delete(**kwargs)
 
@@ -178,12 +196,12 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_blob_samples_common.py
-                :start-after: [START get_blob_properties]
-                :end-before: [END get_blob_properties]
+            .. literalinclude:: ../samples/datalake_samples_upload_download_async.py
+                :start-after: [START get_file_properties]
+                :end-before: [END get_file_properties]
                 :language: python
                 :dedent: 8
-                :caption: Getting the properties for a file/directory.
+                :caption: Getting the properties for a file.
         """
         blob_properties = await self._get_path_properties(**kwargs)
         return FileProperties._from_blob_properties(blob_properties)  # pylint: disable=protected-access
@@ -210,6 +228,15 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
             or the lease ID as a string.
         :type lease: ~azure.storage.filedatalake.aio.DataLakeLeaseClient or str
         :return: dict of the response header
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/datalake_samples_upload_download_async.py
+                :start-after: [START append_data]
+                :end-before: [END append_data]
+                :language: python
+                :dedent: 8
+                :caption: Append data to the file.
         """
         options = self._append_data_options(
             data,
@@ -268,6 +295,15 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
         :return: response header in dict
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/datalake_samples_file_system_async.py
+                :start-after: [START upload_file_to_file_system]
+                :end-before: [END upload_file_to_file_system]
+                :language: python
+                :dedent: 8
+                :caption: Commit the previous appended data.
         """
         options = self._flush_data_options(
             offset,
@@ -325,12 +361,12 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_blob_samples_hello_world.py
-                :start-after: [START download_a_blob]
-                :end-before: [END download_a_blob]
+            .. literalinclude:: ../samples/datalake_samples_upload_download_async.py
+                :start-after: [START read_file]
+                :end-before: [END read_file]
                 :language: python
-                :dedent: 12
-                :caption: Download a blob.
+                :dedent: 8
+                :caption: Return the downloaded data.
         """
         downloader = await self._blob_client.download_blob(offset=offset, length=length, **kwargs)
         if stream:
@@ -405,7 +441,17 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
             The source match condition to use upon the etag.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :return:
+        :return: the renamed file client
+        :rtype: DataLakeFileClient
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/datalake_samples_upload_download_async.py
+                :start-after: [START rename_file]
+                :end-before: [END rename_file]
+                :language: python
+                :dedent: 8
+                :caption: Rename the source file.
         """
         new_name = new_name.strip('/')
         new_file_system = new_name.split('/')[0]

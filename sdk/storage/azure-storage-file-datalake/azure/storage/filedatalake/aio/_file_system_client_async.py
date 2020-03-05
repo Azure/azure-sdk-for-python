@@ -10,6 +10,8 @@ from typing import (  # pylint: disable=unused-import
     Union, Optional, Any, Dict, TYPE_CHECKING
 )
 
+from azure.core.tracing.decorator import distributed_trace
+
 from azure.core.async_paging import AsyncItemPaged
 
 from azure.core.tracing.decorator_async import distributed_trace_async
@@ -94,6 +96,14 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
         self._client = DataLakeStorageClient(self.url, file_system_name, None, pipeline=self._pipeline)
         self._loop = kwargs.get('loop', None)
 
+    async def __aexit__(self, *args):
+        await self._container_client.close()
+        await super(FileSystemClient, self).__aexit__(*args)
+
+    async def close(self):
+        await self._container_client.close()
+        await self.__aexit__()
+
     @distributed_trace_async
     async def acquire_lease(
             self, lease_duration=-1,  # type: int
@@ -146,9 +156,10 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
                 :caption: Acquiring a lease on the file_system.
         """
         lease = DataLakeLeaseClient(self, lease_id=lease_id)
-        lease.acquire(lease_duration=lease_duration, **kwargs)
+        await lease.acquire(lease_duration=lease_duration, **kwargs)
         return lease
 
+    @distributed_trace_async
     async def create_file_system(self, metadata=None,  # type: Optional[Dict[str, str]]
                                  public_access=None,  # type: Optional[PublicAccess]
                                  **kwargs):
@@ -183,6 +194,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
                                                              public_access=public_access,
                                                              **kwargs)
 
+    @distributed_trace_async
     async def delete_file_system(self, **kwargs):
         # type: (Any) -> None
         """Marks the specified file system for deletion.
@@ -226,6 +238,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
         """
         await self._container_client.delete_container(**kwargs)
 
+    @distributed_trace_async
     async def get_file_system_properties(self, **kwargs):
         # type: (Any) -> FileSystemProperties
         """Returns all user-defined metadata and system properties for the specified
@@ -251,6 +264,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
         container_properties = await self._container_client.get_container_properties(**kwargs)
         return FileSystemProperties._convert_from_container_props(container_properties)  # pylint: disable=protected-access
 
+    @distributed_trace_async
     async def set_file_system_metadata(  # type: ignore
             self, metadata=None,  # type: Optional[Dict[str, str]]
             **kwargs
@@ -300,6 +314,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
         """
         return await self._container_client.set_container_metadata(metadata=metadata, **kwargs)
 
+    @distributed_trace_async
     async def set_file_system_access_policy(
             self, signed_identifiers,  # type: Dict[str, AccessPolicy]
             public_access=None,  # type: Optional[Union[str, PublicAccess]]
@@ -340,6 +355,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
         return await self._container_client.set_container_access_policy(signed_identifiers,
                                                                         public_access=public_access, **kwargs)
 
+    @distributed_trace_async
     async def get_file_system_access_policy(self, **kwargs):
         # type: (Any) -> Dict[str, Any]
         """Gets the permissions for the specified file system.
@@ -360,6 +376,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
             'signed_identifiers': access_policy['signed_identifiers']
         }
 
+    @distributed_trace
     def get_paths(self, path=None,  # type: Optional[str]
                         recursive=True,  # type: Optional[bool]
                         max_results=None,  # type: Optional[int]
@@ -407,6 +424,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
             command, recursive, path=path, max_results=max_results,
             page_iterator_class=PathPropertiesPaged, **kwargs)
 
+    @distributed_trace_async
     async def create_directory(self, directory,  # type: Union[DirectoryProperties, str]
                                metadata=None,  # type: Optional[Dict[str, str]]
                                **kwargs):
@@ -464,6 +482,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
         await directory_client.create_directory(metadata=metadata, **kwargs)
         return directory_client
 
+    @distributed_trace_async
     async def delete_directory(self, directory,  # type: Union[DirectoryProperties, str]
                                **kwargs):
         # type: (...) -> DataLakeDirectoryClient
@@ -503,6 +522,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
         await directory_client.delete_directory(**kwargs)
         return directory_client
 
+    @distributed_trace_async
     async def create_file(self, file,  # type: Union[FileProperties, str]
                           **kwargs):
         # type: (...) -> DataLakeFileClient
@@ -559,6 +579,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
         await file_client.create_file(**kwargs)
         return file_client
 
+    @distributed_trace_async
     async def delete_file(self, file,  # type: Union[FileProperties, str]
                           lease=None,  # type: Optional[Union[DataLakeLeaseClient, str]]
                           **kwargs):
@@ -631,7 +652,12 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
                 :dedent: 12
                 :caption: Getting the directory client to interact with a specific directory.
         """
-        return DataLakeDirectoryClient(self.url, self.file_system_name, directory_name=directory,
+        try:
+            directory_name = directory.name
+        except AttributeError:
+            directory_name = directory
+
+        return DataLakeDirectoryClient(self.url, self.file_system_name, directory_name=directory_name,
                                        credential=self._raw_credential,
                                        _configuration=self._config, _pipeline=self._pipeline,
                                        _location_mode=self._location_mode, _hosts=self._hosts,

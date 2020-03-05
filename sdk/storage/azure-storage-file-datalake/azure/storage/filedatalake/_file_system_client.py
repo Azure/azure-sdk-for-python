@@ -49,14 +49,14 @@ class FileSystemClient(StorageAccountHostsMixin):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../samples/test_file_system_samples.py
+        .. literalinclude:: ../samples/datalake_samples_file_system.py
             :start-after: [START create_file_system_client_from_service]
             :end-before: [END create_file_system_client_from_service]
             :language: python
             :dedent: 8
             :caption: Get a FileSystemClient from an existing DataLakeServiceClient.
 
-        .. literalinclude:: ../samples/test_file_system_samples.py
+        .. literalinclude:: ../samples/datalake_samples_file_system.py
             :start-after: [START create_file_system_client_sasurl]
             :end-before: [END create_file_system_client_sasurl]
             :language: python
@@ -113,6 +113,14 @@ class FileSystemClient(StorageAccountHostsMixin):
             quote(file_system_name),
             self._query_str)
 
+    def __exit__(self, *args):
+        self._container_client.close()
+        super(FileSystemClient, self).__exit__(*args)
+
+    def close(self):
+        self._container_client.close()
+        self.__exit__()
+
     @classmethod
     def from_connection_string(
             cls, conn_str,  # type: str
@@ -135,6 +143,15 @@ class FileSystemClient(StorageAccountHostsMixin):
             Credentials provided here will take precedence over those in the connection string.
         :return a FileSystemClient
         :rtype ~azure.storage.filedatalake.FileSystemClient
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/datalake_samples_file_system.py
+                :start-after: [START create_file_system_client_from_connection_string]
+                :end-before: [END create_file_system_client_from_connection_string]
+                :language: python
+                :dedent: 8
+                :caption: Create FileSystemClient from connection string
         """
         account_url, secondary, credential = parse_connection_str(conn_str, credential, 'dfs')
         if 'secondary_hostname' not in kwargs:
@@ -185,12 +202,12 @@ class FileSystemClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/test_file_system_samples.py
+            .. literalinclude:: ../samples/datalake_samples_file_system.py
                 :start-after: [START acquire_lease_on_file_system]
                 :end-before: [END acquire_lease_on_file_system]
                 :language: python
                 :dedent: 8
-                :caption: Acquiring a lease on the file_system.
+                :caption: Acquiring a lease on the file system.
         """
         lease = DataLakeLeaseClient(self, lease_id=lease_id)
         lease.acquire(lease_duration=lease_duration, **kwargs)
@@ -219,7 +236,7 @@ class FileSystemClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/test_file_system_samples.py
+            .. literalinclude:: ../samples/datalake_samples_file_system.py
                 :start-after: [START create_file_system]
                 :end-before: [END create_file_system]
                 :language: python
@@ -264,7 +281,7 @@ class FileSystemClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/test_file_system_samples.py
+            .. literalinclude:: ../samples/datalake_samples_file_system.py
                 :start-after: [START delete_file_system]
                 :end-before: [END delete_file_system]
                 :language: python
@@ -288,7 +305,7 @@ class FileSystemClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/test_file_system_samples.py
+            .. literalinclude:: ../samples/datalake_samples_file_system.py
                 :start-after: [START get_file_system_properties]
                 :end-before: [END get_file_system_properties]
                 :language: python
@@ -338,12 +355,12 @@ class FileSystemClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/test_file_system_samples.py
+            .. literalinclude:: ../samples/datalake_samples_file_system.py
                 :start-after: [START set_file_system_metadata]
                 :end-before: [END set_file_system_metadata]
                 :language: python
                 :dedent: 12
-                :caption: Setting metadata on the container.
+                :caption: Setting metadata on the file system.
         """
         return self._container_client.set_container_metadata(metadata=metadata, **kwargs)
 
@@ -437,12 +454,12 @@ class FileSystemClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_blob_samples_containers.py
-                :start-after: [START list_blobs_in_container]
-                :end-before: [END list_blobs_in_container]
+            .. literalinclude:: ../tests/datalake_samples_file_system.py
+                :start-after: [START get_paths_in_file_system]
+                :end-before: [END get_paths_in_file_system]
                 :language: python
                 :dedent: 8
-                :caption: List the blobs in the container.
+                :caption: List the paths in the file system.
         """
         timeout = kwargs.pop('timeout', None)
         command = functools.partial(
@@ -506,6 +523,15 @@ class FileSystemClient(StorageAccountHostsMixin):
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :return: DataLakeDirectoryClient
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../tests/datalake_samples_file_system.py
+                :start-after: [START create_directory_from_file_system]
+                :end-before: [END create_directory_from_file_system]
+                :language: python
+                :dedent: 8
+                :caption: Create directory in the file system.
         """
         directory_client = self.get_directory_client(directory)
         directory_client.create_directory(metadata=metadata, **kwargs)
@@ -545,6 +571,15 @@ class FileSystemClient(StorageAccountHostsMixin):
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :return: DataLakeDirectoryClient
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../tests/datalake_samples_file_system.py
+                :start-after: [START delete_directory_from_file_system]
+                :end-before: [END delete_directory_from_file_system]
+                :language: python
+                :dedent: 8
+                :caption: Delete directory in the file system.
         """
         directory_client = self.get_directory_client(directory)
         directory_client.delete_directory(**kwargs)
@@ -601,6 +636,15 @@ class FileSystemClient(StorageAccountHostsMixin):
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :return: DataLakeFileClient
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../tests/datalake_samples_file_system.py
+                :start-after: [START create_file_from_file_system]
+                :end-before: [END create_file_from_file_system]
+                :language: python
+                :dedent: 8
+                :caption: Create file in the file system.
         """
         file_client = self.get_file_client(file)
         file_client.create_file(**kwargs)
@@ -641,6 +685,15 @@ class FileSystemClient(StorageAccountHostsMixin):
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :return: DataLakeFileClient
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../tests/datalake_samples_file_system.py
+                :start-after: [START delete_file_from_file_system]
+                :end-before: [END delete_file_from_file_system]
+                :language: python
+                :dedent: 8
+                :caption: Delete file in the file system.
         """
         file_client = self.get_file_client(file)
         file_client.delete_file(lease=lease, **kwargs)
@@ -671,14 +724,19 @@ class FileSystemClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/test_file_system_samples.py
+            .. literalinclude:: ../samples/datalake_samples_file_system.py
                 :start-after: [START get_directory_client_from_file_system]
                 :end-before: [END get_directory_client_from_file_system]
                 :language: python
                 :dedent: 12
                 :caption: Getting the directory client to interact with a specific directory.
         """
-        return DataLakeDirectoryClient(self.url, self.file_system_name, directory_name=directory,
+        try:
+            directory_name = directory.name
+        except AttributeError:
+            directory_name = directory
+
+        return DataLakeDirectoryClient(self.url, self.file_system_name, directory_name=directory_name,
                                        credential=self._raw_credential,
                                        _configuration=self._config, _pipeline=self._pipeline,
                                        _location_mode=self._location_mode, _hosts=self._hosts,
@@ -703,7 +761,7 @@ class FileSystemClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/test_file_system_samples.py
+            .. literalinclude:: ../samples/datalake_samples_file_system.py
                 :start-after: [START get_file_client_from_file_system]
                 :end-before: [END get_file_client_from_file_system]
                 :language: python

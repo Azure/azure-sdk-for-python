@@ -95,18 +95,17 @@ class DataLakeDirectoryClient(PathClient):
             account_url, file_system_name=file_system_name, directory_name=directory_name,
             credential=credential, **kwargs)
 
-    def create_directory(self, content_settings=None,  # type: Optional[ContentSettings]
-                         metadata=None,  # type: Optional[Dict[str, str]]
+    def create_directory(self, metadata=None,  # type: Optional[Dict[str, str]]
                          **kwargs):
         # type: (...) -> Dict[str, Union[str, datetime]]
         """
         Create a new directory.
 
-        :param ~azure.storage.filedatalake.ContentSettings content_settings:
-            ContentSettings object used to set path properties.
         :param metadata:
             Name-value pairs associated with the blob as metadata.
         :type metadata: dict(str, str)
+        :keyword ~azure.storage.filedatalake.ContentSettings content_settings:
+            ContentSettings object used to set path properties.
         :keyword lease:
             Required if the blob has an active lease. Value can be a DataLakeLeaseClient object
             or the lease ID as a string.
@@ -144,8 +143,17 @@ class DataLakeDirectoryClient(PathClient):
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :return: response dict (Etag and last modified).
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/datalake_samples_directory.py
+                :start-after: [START create_directory]
+                :end-before: [END create_directory]
+                :language: python
+                :dedent: 12
+                :caption: Create directory.
         """
-        return self._create('directory', content_settings=content_settings, metadata=metadata, **kwargs)
+        return self._create('directory', metadata=metadata, **kwargs)
 
     def delete_directory(self, **kwargs):
         # type: (...) -> None
@@ -176,6 +184,15 @@ class DataLakeDirectoryClient(PathClient):
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :return: None
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/datalake_samples_directory.py
+                :start-after: [START delete_directory]
+                :end-before: [END delete_directory]
+                :language: python
+                :dedent: 12
+                :caption: Delete directory.
         """
         return self._delete(**kwargs)
 
@@ -211,9 +228,9 @@ class DataLakeDirectoryClient(PathClient):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_blob_samples_common.py
-                :start-after: [START get_blob_properties]
-                :end-before: [END get_blob_properties]
+            .. literalinclude:: ../samples/datalake_samples_directory.py
+                :start-after: [START get_directory_properties]
+                :end-before: [END get_directory_properties]
                 :language: python
                 :dedent: 8
                 :caption: Getting the properties for a file/directory.
@@ -290,6 +307,15 @@ class DataLakeDirectoryClient(PathClient):
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :return: DataLakeDirectoryClient
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/datalake_samples_directory.py
+                :start-after: [START rename_directory]
+                :end-before: [END rename_directory]
+                :language: python
+                :dedent: 8
+                :caption: Rename the source directory.
         """
         new_name = new_name.strip('/')
         new_file_system = new_name.split('/')[0]
@@ -306,7 +332,6 @@ class DataLakeDirectoryClient(PathClient):
         return new_directory_client
 
     def create_sub_directory(self, sub_directory,  # type: Union[DirectoryProperties, str]
-                             content_settings=None,  # type: Optional[ContentSettings]
                              metadata=None,  # type: Optional[Dict[str, str]]
                              **kwargs):
         # type: (...) -> DataLakeDirectoryClient
@@ -317,11 +342,11 @@ class DataLakeDirectoryClient(PathClient):
             The directory with which to interact. This can either be the name of the directory,
             or an instance of DirectoryProperties.
         :type sub_directory: str or ~azure.storage.filedatalake.DirectoryProperties
-        :param ~azure.storage.filedatalake.ContentSettings content_settings:
-            ContentSettings object used to set path properties.
         :param metadata:
             Name-value pairs associated with the blob as metadata.
         :type metadata: dict(str, str)
+        :keyword ~azure.storage.filedatalake.ContentSettings content_settings:
+            ContentSettings object used to set path properties.
         :keyword ~azure.storage.filedatalake.DataLakeLeaseClient or str lease:
             Required if the blob has an active lease. Value can be a DataLakeLeaseClient object
             or the lease ID as a string.
@@ -360,7 +385,7 @@ class DataLakeDirectoryClient(PathClient):
         :return: DataLakeDirectoryClient for the subdirectory.
         """
         subdir = self.get_sub_directory_client(sub_directory)
-        subdir.create_directory(content_settings=content_settings, metadata=metadata, **kwargs)
+        subdir.create_directory(metadata=metadata, **kwargs)
         return subdir
 
     def delete_sub_directory(self, sub_directory,  # type: Union[DirectoryProperties, str]
@@ -471,15 +496,6 @@ class DataLakeDirectoryClient(PathClient):
         :type file: str or ~azure.storage.filedatalake.FileProperties
         :returns: A DataLakeFileClient.
         :rtype: ~azure.storage.filedatalake..DataLakeFileClient
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/test_datalake_service_samples.py
-                :start-after: [START bsc_get_file_client]
-                :end-before: [END bsc_get_file_client]
-                :language: python
-                :dedent: 12
-                :caption: Getting the file client to interact with a specific file.
         """
         try:
             file_path = file.name
@@ -506,15 +522,6 @@ class DataLakeDirectoryClient(PathClient):
         :type sub_directory: str or ~azure.storage.filedatalake.DirectoryProperties
         :returns: A DataLakeDirectoryClient.
         :rtype: ~azure.storage.filedatalake.DataLakeDirectoryClient
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/test_datalake_service_samples.py
-                :start-after: [START bsc_get_directory_client]
-                :end-before: [END bsc_get_directory_client]
-                :language: python
-                :dedent: 12
-                :caption: Getting the directory client to interact with a specific directory.
         """
         try:
             subdir_path = sub_directory.name

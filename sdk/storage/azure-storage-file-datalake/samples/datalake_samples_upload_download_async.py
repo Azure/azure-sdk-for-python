@@ -1,18 +1,19 @@
+import asyncio
 import os
 import random
 
-from azure.storage.filedatalake import (
+from azure.storage.filedatalake.aio import (
     DataLakeServiceClient,
 )
 SOURCE_FILE = 'SampleSource.txt'
 
-def upload_download_sample(filesystem_client):
+async def upload_download_sample(filesystem_client):
     # create a file before writing content to it
     file_name = "testfile"
     print("Creating a file named '{}'.".format(file_name))
     # [START create_file]
     file_client = filesystem_client.get_file_client(file_name)
-    file_client.create_file()
+    await file_client.create_file()
     # [END create_file]
 
     # prepare the file content with 4KB of random data
@@ -21,25 +22,25 @@ def upload_download_sample(filesystem_client):
     # append data to the file
     # the data remain uncommitted until flush is performed
     print("Uploading data to '{}'.".format(file_name))
-    file_client.append_data(data=file_content[0:1024], offset=0, length=1024)
-    file_client.append_data(data=file_content[1024:2048], offset=1024, length=1024)
+    await file_client.append_data(data=file_content[0:1024], offset=0, length=1024)
+    await file_client.append_data(data=file_content[1024:2048], offset=1024, length=1024)
     # [START append_data]
-    file_client.append_data(data=file_content[2048:3072], offset=2048, length=1024)
+    await file_client.append_data(data=file_content[2048:3072], offset=2048, length=1024)
     # [END append_data]
-    file_client.append_data(data=file_content[3072:4096], offset=3072, length=1024)
+    await file_client.append_data(data=file_content[3072:4096], offset=3072, length=1024)
 
     # data is only committed when flush is called
-    file_client.flush_data(len(file_content))
+    await file_client.flush_data(len(file_content))
 
     # Get file properties
     # [START get_file_properties]
-    properties = file_client.get_file_properties()
+    properties = await file_client.get_file_properties()
     # [END get_file_properties]
 
     # read the data back
     print("Downloading data from '{}'.".format(file_name))
     # [START read_file]
-    downloaded_bytes = file_client.read_file()
+    downloaded_bytes = await file_client.read_file()
     # [END read_file]
 
     # verify the downloaded content
@@ -50,15 +51,15 @@ def upload_download_sample(filesystem_client):
 
     # Rename the file
     # [START rename_file]
-    new_client = file_client.rename_file(file_client.file_system_name + '/' + 'newname')
+    new_client = await file_client.rename_file(file_client.file_system_name + '/' + 'newname')
     # [END rename_file]
 
     # download the renamed file in to local file
     with open(SOURCE_FILE, 'wb') as stream:
-        new_client.read_file(stream=stream)
+        await new_client.read_file(stream=stream)
 
     # [START delete_file]
-    new_client.delete_file()
+    await new_client.delete_file()
     # [END delete_file]
 
 # help method to provide random bytes to serve as file content
@@ -70,7 +71,7 @@ def get_random_bytes(size):
     return bytes(result)
 
 
-def run():
+async def run():
     account_name = os.getenv('STORAGE_ACCOUNT_NAME', "")
     account_key = os.getenv('STORAGE_ACCOUNT_KEY', "")
 
@@ -80,20 +81,22 @@ def run():
         account_name
     ), credential=account_key)
 
-    # generate a random name for testing purpose
-    fs_name = "testfs{}".format(random.randint(1, 1000))
-    print("Generating a test filesystem named '{}'.".format(fs_name))
+    async with service_client:
+        # generate a random name for testing purpose
+        fs_name = "testfs{}".format(random.randint(1, 1000))
+        print("Generating a test filesystem named '{}'.".format(fs_name))
 
-    # create the filesystem
-    filesystem_client = service_client.create_file_system(file_system=fs_name)
+        # create the filesystem
+        filesystem_client = await service_client.create_file_system(file_system=fs_name)
 
-    # invoke the sample code
-    try:
-        upload_download_sample(filesystem_client)
-    finally:
-        # clean up the demo filesystem
-        filesystem_client.delete_file_system()
+        # invoke the sample code
+        try:
+            await upload_download_sample(filesystem_client)
+        finally:
+            # clean up the demo filesystem
+            await filesystem_client.delete_file_system()
 
 
 if __name__ == '__main__':
-    run()
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(run())
