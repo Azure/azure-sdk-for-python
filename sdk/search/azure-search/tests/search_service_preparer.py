@@ -20,6 +20,7 @@ from azure_devtools.scenario_tests.exceptions import AzureTestError
 
 SERVICE_URL_FMT = "https://{}.search.windows.net/indexes?api-version=2019-05-06"
 
+
 class SearchServicePreparer(AzureMgmtPreparer):
     def __init__(
         self,
@@ -96,7 +97,6 @@ class SearchServicePreparer(AzureMgmtPreparer):
             group_name, self.service_name
         ).primary_key
 
-
         response = requests.post(
             SERVICE_URL_FMT.format(self.service_name),
             headers={"Content-Type": "application/json", "api-key": api_key},
@@ -126,9 +126,14 @@ class SearchServicePreparer(AzureMgmtPreparer):
             # and even then things are eventually consistent due to replication. In the Track 1 SDK tests, we "solved"
             # this by using a constant delay between indexing and querying.
             import time
+
             time.sleep(3)
 
-        return {"api_key": api_key, "index_name": self.index_name, "service_name": self.service_name}
+        return {
+            "api_key": api_key,
+            "index_name": self.index_name,
+            "service_name": self.service_name,
+        }
 
     def remove_resource(self, name, **kwargs):
         if not self.is_live:
