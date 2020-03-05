@@ -28,9 +28,14 @@ This module is the requests implementation of Pipeline ABC
 """
 from __future__ import absolute_import  # we have a "requests" module that conflicts with "requests" on Py2.7
 import logging
+import time
 from typing import TYPE_CHECKING, List, Callable, Iterator, Any, Union, Dict, Optional  # pylint: disable=unused-import
 
-from azure.core.exceptions import AzureError, ClientAuthenticationError
+from azure.core.exceptions import (
+    AzureError,
+    ClientAuthenticationError,
+    ServiceRequestError,
+)
 from ._base import HTTPPolicy
 from ._base_async import AsyncHTTPPolicy
 from ._retry import RetryPolicy
@@ -131,13 +136,20 @@ class AsyncRetryPolicy(RetryPolicy, AsyncHTTPPolicy):  # type: ignore
         retry_active = True
         response = None
         retry_settings = self.configure_retries(request.context.options)
+
+        absolute_timeout = retry_settings['timeout']
+        is_response_error = True
+
         while retry_active:
             try:
+                start_time = time.time()
+                self._configure_timeout(request, absolute_timeout, is_response_error)
                 response = await self.next.send(request)
                 if self.is_retry(retry_settings, response):
                     retry_active = self.increment(retry_settings, response=response)
                     if retry_active:
                         await self.sleep(retry_settings, request.context.transport, response=response)
+                        is_response_error = True
                         continue
                 break
             except ClientAuthenticationError:  # pylint:disable=try-except-raise
@@ -149,8 +161,16 @@ class AsyncRetryPolicy(RetryPolicy, AsyncHTTPPolicy):  # type: ignore
                     retry_active = self.increment(retry_settings, response=request, error=err)
                     if retry_active:
                         await self.sleep(retry_settings, request.context.transport)
+                        if isinstance(err, ServiceRequestError):
+                            is_response_error = False
+                        else:
+                            is_response_error = True
                         continue
                 raise err
+            finally:
+                end_time = time.time()
+                if absolute_timeout:
+                    absolute_timeout -= (end_time - start_time)
 
         self.update_context(response.context, retry_settings)
         return response
