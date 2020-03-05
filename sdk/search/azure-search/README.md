@@ -26,7 +26,7 @@ The above creates a resource with the "Standard" pricing tier. See [choosing a p
 
 
 ### Install the package
-Install the Azure Cognitive Srarch client library for Python with [pip](https://pypi.org/project/pip/):
+Install the Azure Cognitive Search client library for Python with [pip](https://pypi.org/project/pip/):
 
 ```bash
 pip install azure-search --pre
@@ -63,7 +63,7 @@ client = SearchIndexClient(search_service_name="<service name>",
 
 ### Client
 The Cognitive Search client library provides a [SearchIndexClient](https://aka.ms/azsdk-python-search-searchindexclient) to perform search operations on [batches of documents](#Examples "examples").
-It provides both synchronous and asynchronous operations to access a specific use of Cognitive Search indices, such as yuerying, suggestions or autocompletion.
+It provides both synchronous and asynchronous operations to access a specific use of Cognitive Search indices, such as querying, suggestions or autocompletion.
 
 
 ## Examples

@@ -7,13 +7,13 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_authentication.py
+FILE: sample_autocomplete.py
 DESCRIPTION:
     This sample demonstrates how to authenticate with the Azure Congnitive Search
     service with an API key. See more details about authentication here:
     https://docs.microsoft.com/en-us/azure/search/search-security-api-keys
 USAGE:
-    python sample_authentication.py
+    python sample_autocomplete.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_SEARCH_SERVICE_NAME - the name of your Azure Cognitive Search service
