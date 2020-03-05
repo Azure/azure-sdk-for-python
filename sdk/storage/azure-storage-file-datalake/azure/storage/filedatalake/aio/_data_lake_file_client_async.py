@@ -208,7 +208,7 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
         :keyword lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.filedatalake.DataLakeLeaseClient or str
+        :type lease: ~azure.storage.filedatalake.aio.DataLakeLeaseClient or str
         :return: dict of the response header
         """
         options = self._append_data_options(
@@ -348,13 +348,13 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
         :keyword source_lease: A lease ID for the source path. If specified,
             the source path must have an active lease and the leaase ID must
             match.
-        :keyword source_lease: ~azure.storage.filedatalake.DataLakeLeaseClient or str
+        :keyword source_lease: ~azure.storage.filedatalake.aio.DataLakeLeaseClient or str
         :param ~azure.storage.filedatalake.ContentSettings content_settings:
             ContentSettings object used to set path properties.
         :keyword lease:
             Required if the file/directory has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.filedatalake.DataLakeLeaseClient or str
+        :type lease: ~azure.storage.filedatalake.aio.DataLakeLeaseClient or str
         :keyword str umask: Optional and only valid if Hierarchical Namespace is enabled for the account.
             When creating a file or directory and the parent folder does not have a default ACL,
             the umask restricts the permissions of the file or directory to be created.

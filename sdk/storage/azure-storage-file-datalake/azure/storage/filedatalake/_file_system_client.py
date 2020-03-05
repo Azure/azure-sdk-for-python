@@ -646,6 +646,15 @@ class FileSystemClient(StorageAccountHostsMixin):
         file_client.delete_file(lease=lease, **kwargs)
         return file_client
 
+    def get_root_directory_client(self):
+        # type: () -> DataLakeDirectoryClient
+        """Get a client to interact with the root directory.
+
+        :returns: A DataLakeDirectoryClient.
+        :rtype: ~azure.storage.filedatalake.DataLakeDirectoryClient
+        """
+        return self.get_directory_client('/')
+
     def get_directory_client(self, directory  # type: Union[DirectoryProperties, str]
                              ):
         # type: (...) -> DataLakeDirectoryClient
