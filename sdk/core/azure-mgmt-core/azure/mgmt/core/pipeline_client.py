@@ -23,43 +23,41 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-
 from azure.core import PipelineClient
-from azure.core.pipeline import Pipeline
 from azure.core.pipeline.policies import ContentDecodePolicy, DistributedTracingPolicy, HttpLoggingPolicy, RequestIdPolicy
-from azure.core.pipeline.transport import RequestsTransport
 from .policies import ARMAutoResourceProviderRegistrationPolicy
 
 
 class ARMPipelineClient(PipelineClient):
     """A pipeline client designed for ARM explicitly.
+
+    :param str base_url: URL for the request.
+    :keyword Pipeline pipeline: If omitted, a Pipeline object is created and returned.
+    :keyword list[HTTPPolicy] policies: If omitted, the standard policies of the configuration object is used.
+    :keyword HttpTransport transport: If omitted, RequestsTransport is used for synchronous transport.
     """
 
-    def _build_pipeline(self, config, **kwargs): # pylint: disable=no-self-use
-        transport = kwargs.get('transport')
-        policies = kwargs.get('policies')
+    def __init__(self, base_url, **kwargs):
+        if "policies" not in kwargs:
+            if "config" not in kwargs:
+                raise ValueError("Current implementation requires to pass 'config' if you don't pass 'policies'")
+            kwargs["policies"] = self._default_policies(kwargs["config"])
+        super(ARMPipelineClient, self).__init__(base_url, **kwargs)
 
-        if policies is None:  # [] is a valid policy list
-            policies = [
-                ARMAutoResourceProviderRegistrationPolicy(),
-                RequestIdPolicy(),
-                config.headers_policy,
-                config.user_agent_policy,
-                config.proxy_policy,
-                ContentDecodePolicy(),
-                config.redirect_policy,
-                config.retry_policy,
-                config.authentication_policy,
-                config.custom_hook_policy,
-                config.logging_policy,
-                DistributedTracingPolicy(**kwargs),
-                HttpLoggingPolicy(**kwargs)
-            ]
-
-        if not transport:
-            transport = RequestsTransport(**kwargs)
-
-        return Pipeline(
-            transport,
-            policies
-        )
+    @staticmethod
+    def _default_policies(config, **kwargs):
+        return [
+            ARMAutoResourceProviderRegistrationPolicy(),
+            RequestIdPolicy(),
+            config.headers_policy,
+            config.user_agent_policy,
+            config.proxy_policy,
+            ContentDecodePolicy(),
+            config.redirect_policy,
+            config.retry_policy,
+            config.authentication_policy,
+            config.custom_hook_policy,
+            config.logging_policy,
+            DistributedTracingPolicy(**kwargs),
+            HttpLoggingPolicy(**kwargs),
+        ]

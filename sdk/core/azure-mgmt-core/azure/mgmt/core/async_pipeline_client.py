@@ -23,43 +23,41 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-
 from azure.core import AsyncPipelineClient
-from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.policies import ContentDecodePolicy, DistributedTracingPolicy, HttpLoggingPolicy, RequestIdPolicy
-from azure.core.pipeline.transport import AioHttpTransport
 from .async_policies import AsyncARMAutoResourceProviderRegistrationPolicy
 
 
 class AsyncARMPipelineClient(AsyncPipelineClient):
     """A pipeline client designed for ARM explicitly.
+
+    :param str base_url: URL for the request.
+    :keyword AsyncPipeline pipeline: If omitted, a Pipeline object is created and returned.
+    :keyword list[HTTPPolicy] policies: If omitted, the standard policies of the configuration object is used.
+    :keyword HttpTransport transport: If omitted, RequestsTransport is used for synchronous transport.
     """
 
-    def _build_pipeline(self, config, **kwargs): # pylint: disable=no-self-use
-        transport = kwargs.get('transport')
-        policies = kwargs.get('policies')
+    def __init__(self, base_url, **kwargs):
+        if "policies" not in kwargs:
+            if "config" not in kwargs:
+                raise ValueError("Current implementation requires to pass 'config' if you don't pass 'policies'")
+            kwargs["policies"] = self._default_policies(kwargs["config"])
+        super(AsyncARMPipelineClient, self).__init__(base_url, **kwargs)
 
-        if policies is None:  # [] is a valid policy list
-            policies = [
-                AsyncARMAutoResourceProviderRegistrationPolicy(),
-                RequestIdPolicy(),
-                config.headers_policy,
-                config.user_agent_policy,
-                config.proxy_policy,
-                ContentDecodePolicy(),
-                config.redirect_policy,
-                config.retry_policy,
-                config.authentication_policy,
-                config.custom_hook_policy,
-                config.logging_policy,
-                DistributedTracingPolicy(**kwargs),
-                HttpLoggingPolicy(**kwargs),
-            ]
-
-        if not transport:
-            transport = AioHttpTransport(**kwargs)
-
-        return AsyncPipeline(
-            transport,
-            policies
-        )
+    @staticmethod
+    def _default_policies(config, **kwargs):
+        return [
+            AsyncARMAutoResourceProviderRegistrationPolicy(),
+            RequestIdPolicy(),
+            config.headers_policy,
+            config.user_agent_policy,
+            config.proxy_policy,
+            ContentDecodePolicy(),
+            config.redirect_policy,
+            config.retry_policy,
+            config.authentication_policy,
+            config.custom_hook_policy,
+            config.logging_policy,
+            DistributedTracingPolicy(**kwargs),
+            HttpLoggingPolicy(**kwargs),
+        ]
