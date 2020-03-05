@@ -43,7 +43,7 @@ class ResourceGroupPreparer(AzureMgmtPreparer):
             self._need_creation = False
         if self.random_name_enabled:
             self.resource_moniker = self.name_prefix + "rgname"
-        self.set_cache(use_cache, location)
+        self.set_cache(use_cache, parameter_name)
 
     def create_resource(self, name, **kwargs):
         if self.is_live and self._need_creation:
@@ -85,4 +85,4 @@ class ResourceGroupPreparer(AzureMgmtPreparer):
             except CloudError:
                 pass
 
-CachedResourceGroupPreparer = functools.partial(ResourceGroupPreparer, use_cache=True)
+CachedResourceGroupPreparer = functools.partial(ResourceGroupPreparer, use_cache=True, random_name_enabled=True)

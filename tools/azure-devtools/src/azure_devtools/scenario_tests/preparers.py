@@ -7,6 +7,7 @@ import contextlib
 import functools
 import logging
 import sys
+from collections import namedtuple
 from threading import Lock
 
 from .base import ReplayableTest
@@ -26,7 +27,8 @@ _logger.addHandler(handler)
 class AbstractPreparer(object):
     _cache_lock = Lock()
     _resource_cache = {}
-    _cache_pending_deletes = {}
+    ResourceCacheEntry = namedtuple('ResourceCacheEntry', 'resource_name kwargs preparer')
+
     def __init__(self, name_prefix, name_len, disable_recording=False):
         self.name_prefix = name_prefix
         self.name_len = name_len
@@ -39,7 +41,7 @@ class AbstractPreparer(object):
         self._use_cache = False
         self._aggregate_cache_key = None
 
-    def _prepare_create_resource(self, test_class_instance, fn, **kwargs):
+    def _prepare_create_resource(self, test_class_instance, **kwargs):
         self.live_test = not isinstance(test_class_instance, ReplayableTest)
         self.test_class_instance = test_class_instance
 
@@ -50,59 +52,26 @@ class AbstractPreparer(object):
         else:
             resource_name = self.moniker
 
-        # If a child is cached we must use the same cached resource their equivalent parent did so all the deps line up
-        try:
-            child_is_cached = getattr(fn, '__use_cache')
-            # Note: If it is ever desired to make caching inferred, remove this if/throw.
-            # This ensures that a user must _very specifically say they want caching_ on an item and all parents.
-            if not self._use_cache:
-                raise Exception("""Preparer exception for test {}:\n Child preparers are cached, but parent {} is not.
-You must specify use_cache=True in the preparer decorator""".format(test_class_instance, self.__class__.__name__))
-            self._use_cache |= child_is_cached
-            _logger.debug("Detected transient cache for %s: %s", self.__class__.__name__, child_is_cached)
-        except AttributeError: # If the child callable doesn't declare itself cached, we can move on.
-            pass
-
-        # We must use a cache_key that includes our parents, so that we get a cached stack
-        # matching the desired resource stack. (e.g. if parent resource has specific settings)
-        try:
-            aggregate_cache_key = (self._cache_key, kwargs['__aggregate_cache_key'])
-        except KeyError: # If we're at the root of the cache stack, start with our own key.
-            aggregate_cache_key = self._cache_key
-        kwargs['__aggregate_cache_key'] = aggregate_cache_key
-        self._aggregate_cache_key = aggregate_cache_key
-        _logger.debug("Aggregate cache key: %s", aggregate_cache_key)
-
-        # If cache is enabled, and the cached resource exists, use it, otherwise create and store.
-        if self._use_cache and aggregate_cache_key in AbstractPreparer._resource_cache:
-            _logger.debug("Using cached resource for %s", self.__class__.__name__)
-            with self._cache_lock:
-                parameter_update = AbstractPreparer._resource_cache[aggregate_cache_key]
-        else:
-            _logger.debug("Creating resource %s for %s", resource_name, self.__class__.__name__)
-            with self.override_disable_recording():
-                retries = 4
-                for i in range(retries):
-                    try:
-                        parameter_update = self.create_resource(
-                            resource_name,
-                            **kwargs
-                        )
-                        _logger.debug("Successfully created resource %s", resource_name)
-                        break
-                    except AzureNameError:
-                        if i == retries - 1:
-                            raise
-                        self.resource_random_name = None
-                        resource_name = self.random_name
-                    except Exception as e:
-                        _logger.error("Failed to create resource: %s \nResponse: %s",
-                            getattr(e, 'inner_exception', e), getattr(e, 'response', None))
+        _logger.debug("Creating resource %s for %s", resource_name, self.__class__.__name__)
+        with self.override_disable_recording():
+            retries = 4
+            for i in range(retries):
+                try:
+                    parameter_update = self.create_resource(
+                        resource_name,
+                        **kwargs
+                    )
+                    _logger.debug("Successfully created resource %s", resource_name)
+                    break
+                except AzureNameError:
+                    if i == retries - 1:
                         raise
-        if self._use_cache:
-            _logger.debug("Storing cached resource for %s", self.__class__.__name__)
-            with self._cache_lock:
-                AbstractPreparer._resource_cache[aggregate_cache_key] = parameter_update
+                    self.resource_random_name = None
+                    resource_name = self.random_name
+                except Exception as e:
+                    _logger.error("Failed to create resource: %s \nResponse: %s",
+                        getattr(e, 'inner_exception', e), getattr(e, 'response', None))
+                    raise
 
         if parameter_update:
             kwargs.update(parameter_update)
@@ -115,36 +84,52 @@ You must specify use_cache=True in the preparer decorator""".format(test_class_i
             _logger.debug("Entering preparer wrapper for %s and test %s",
                 self.__class__.__name__, str(test_class_instance))
 
-            resource_name, kwargs = self._prepare_create_resource(test_class_instance, fn, **kwargs)
+            # If a child is cached we must use the same cached resource their equivalent parent did so all the deps line up
+            child_is_cached = getattr(fn, '__use_cache', False)
+            # Note: If it is ever desired to make caching inferred, remove this if/throw.
+            # This ensures that a user must _very specifically say they want caching_ on an item and all parents.
+            if not self._use_cache and child_is_cached:
+                raise Exception("""Preparer exception for test {}:\n Child preparers are cached, but parent {} is not.
+You must specify use_cache=True in the preparer decorator""".format(test_class_instance, self.__class__.__name__))
+            self._use_cache |= child_is_cached
+            _logger.debug("Child cache status for %s: %s", self.__class__.__name__, child_is_cached)
 
-            trim_kwargs_from_test_function(fn, kwargs)
+            # We must use a cache_key that includes our parents, so that we get a cached stack
+            # matching the desired resource stack. (e.g. if parent resource has specific settings)
+            try:
+                aggregate_cache_key = (self._cache_key, kwargs['__aggregate_cache_key'])
+            except KeyError: # If we're at the root of the cache stack, start with our own key.
+                aggregate_cache_key = self._cache_key
+            kwargs['__aggregate_cache_key'] = aggregate_cache_key
+            self._aggregate_cache_key = aggregate_cache_key
+            _logger.debug("Aggregate cache key: %s", aggregate_cache_key)
+
+            # If cache is enabled, and the cached resource exists, use it, otherwise create and store.
+            if self._use_cache and aggregate_cache_key in AbstractPreparer._resource_cache:
+                _logger.debug("Using cached resource for %s", self.__class__.__name__)
+                with self._cache_lock:
+                    resource_name, kwargs, _ = AbstractPreparer._resource_cache[aggregate_cache_key]
+            else:
+                resource_name, kwargs = self._prepare_create_resource(test_class_instance, **kwargs)
+
+            if self._use_cache:
+                with self._cache_lock:
+                    if aggregate_cache_key not in AbstractPreparer._resource_cache:
+                        _logger.debug("Storing cached resource for %s", self.__class__.__name__)
+                        AbstractPreparer._resource_cache[aggregate_cache_key] = AbstractPreparer.ResourceCacheEntry(resource_name, kwargs, self)
+
+            # We shouldn't trim the same kwargs that we use for deletion, 
+            # we may remove some of the variables we needed to do the delete.
+            trimmed_kwargs = {k:v for k,v in kwargs.items()}
+            trim_kwargs_from_test_function(fn, trimmed_kwargs)
 
             try:
-                test_class_instance._delay_removal = False # pylint: disable=protected-access
-                fn(test_class_instance, **kwargs)
-                if self._use_cache: # If we're cached, stop things above us (e.g. RG) from deleting.
-                    test_class_instance._delay_removal = True # pylint: disable=protected-access
+                fn(test_class_instance, **trimmed_kwargs)
             finally:              
-                def _deferred_delete():
-                    _logger.debug("Running deferred delete for %s", self)
-                    self.remove_resource_with_record_override(resource_name, **kwargs)
                 # If we use cache we delay deletion for the end.
                 # This won't guarantee deletion order, but it will guarantee everything delayed
                 # does get deleted, in the worst case by getting rid of the RG at the top.
-                if self._use_cache:
-                    # Only the first occurance though; since they point to the same underlying, and the
-                    # latter cache-fetched-instances didn't actually initialize ARM clients to be able to delete.
-                    if self._aggregate_cache_key not in AbstractPreparer._cache_pending_deletes:
-                        with self._cache_lock:
-                            AbstractPreparer._cache_pending_deletes[self._aggregate_cache_key] = _deferred_delete
-                elif test_class_instance._delay_removal: # pylint: disable=protected-access
-                    # If a child is specifying a cache but we aren't, raise an exception.
-                    # If it were ever desired to do implied caching, one would simply add a deferred delete here.
-                    # raise Exception("Preparer Error: If a child resource is cached, parents must also be cached")
-                    if self._aggregate_cache_key not in AbstractPreparer._cache_pending_deletes:
-                        with self._cache_lock:
-                            AbstractPreparer._cache_pending_deletes[self._aggregate_cache_key] = _deferred_delete
-                else:
+                if not (self._use_cache or child_is_cached):
                     # Russian Doll - the last declared resource to be deleted first.
                     self.remove_resource_with_record_override(resource_name, **kwargs)
 
@@ -205,10 +190,10 @@ You must specify use_cache=True in the preparer decorator""".format(test_class_i
     @classmethod
     def _perform_pending_deletes(cls):
         _logger.debug("Perform all delayed resource removal.")
-        for each_delete in [e for e in cls._cache_pending_deletes.values()]:
+        for resource_name, kwargs, preparer in [e for e in cls._resource_cache.values()]:
             try:
-                _logger.debug("Performing delayed delete")
-                each_delete()
+                _logger.debug("Performing delayed delete for: %s %s", preparer, resource_name)
+                preparer.remove_resource_with_record_override(resource_name, **kwargs)
             except Exception as e: #pylint: disable=broad-except
                 # Intentionally broad exception to attempt to leave as few orphan resources as possible even on error.
                 _logger.debug("Exception while performing delayed deletes (this can happen): %s", e)
