@@ -98,7 +98,7 @@ if __name__ == '__main__':
 ```
 
 #### Use `BlobCheckpointStore` with a different version of Azure Storage Service API
-Some environments have different versions of Azure Storage Service API. For instance, some Azure Stack use 2017-11-09.  
+Some environments have different versions of Azure Storage Service API. For instance, Azure Stack may use 2017-11-09.  
 `BlobCheckpointStore` by default uses the Storage Service API version 2019-07-07. To use it against a different
  version, specify that version number when you create the `BlobCheckpointStore` object.
  
