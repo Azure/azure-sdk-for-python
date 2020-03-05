@@ -501,7 +501,7 @@ class UserDelegationKey(BlobUserDelegationKey):
         delegation_key.signed_expiry = generated.signed_expiry
         delegation_key.signed_service = generated.signed_service
         delegation_key.signed_version = generated.signed_version
-        delegation_key.value = None
+        delegation_key.value = generated.value
         return delegation_key
 
 
