@@ -713,8 +713,8 @@ class SentenceSentiment(DictMixin):
 
 
 class SentimentConfidenceScores(DictMixin):
-    """The confidence scores (Softmax scores) between 0 and 1 across all sentiment
-    labels: positive, neutral, negative. Higher values indicate higher confidence.
+    """The confidence scores (Softmax scores) between 0 and 1.
+    Higher values indicate higher confidence.
 
     :param positive: Positive score.
     :type positive: float
