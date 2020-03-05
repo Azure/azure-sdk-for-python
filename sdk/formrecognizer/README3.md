@@ -4,7 +4,7 @@ The Form Recognizer client library provides two clients to interact with the ser
 `CustomFormClient`, which can be imported from the `azure.ai.formrecognizer` namespace. The asynchronous clients 
 can be imported from `azure.ai.formrecognizer.aio`.
 
-`FormRecognizerClient` provides methods for interacting with the prebuilt models (receipt and layout).
+`FormRecognizerClient` provides methods for interacting with the receipt and layout models.
 `CustomFormClient` provides the methods for training custom models to analyze forms.
 
 Authentication is achieved by passing an instance of `CognitiveKeyCredential("<api_key>")` to the client,
@@ -15,7 +15,7 @@ or by providing a token credential from `azure.identity` to use Azure Active Dir
 The prebuilt models are accessed through the `FormRecognizerClient`. The input form or document can be passed as a 
 string url/path to the image, or as a file stream. The SDK will determine content-type and send the appropriate header. 
 
-Both prebuilt methods return poller objects which are used to get the result.
+Both receipt and layout methods return poller objects which are used to get the result.
 The `begin_extract_receipt` method returns an `ExtractedReceipt` with hardcoded receipt fields.
 The `begin_extract_layout` method returns the extracted tables in a tabular format such that the user can
 index into a specific row or column and easily integrate with other Python libraries.
@@ -180,7 +180,7 @@ The user can choose to train with or without labels using the methods `begin_lab
 Both methods take as input a blob SAS uri or valid path to the documents to use for training. Each training method 
 will return a poller object which is used to get the training result.
 
-A custom model can be used to analyze forms using the `begin_extract_form` or `begin_extract_labeled_fields` methods.
+A custom model can be used to analyze forms using the `begin_extract_form` method.
 The `model_id` from the training result is passed into the methods, along with the input form to analyze (content-type
 is determined internally). Both methods return a poller object which is used to get the result object.
 
@@ -202,8 +202,6 @@ client.begin_training(
 ) -> LROPoller -> CustomModel
 
 client.begin_extract_form(form: Any, model_id: str,) -> LROPoller -> List[ExtractedPage]
-
-client.begin_extract_labeled_fields(form: Any, model_id: str) -> LROPoller -> List[LabeledExtractedPage]
 
 client.list_custom_models() -> ItemPaged[ModelInfo]
 
@@ -237,34 +235,6 @@ class TrainingDocumentInfo:
 class ErrorInformation:
     code: str
     message: str
-
-# Analyze ---------------------------------------------------
-class ExtractedPage:
-    fields: List[ExtractedField]
-    tables: List[ExtractedTable]
-    page_number: int
-    cluster_id: int
-
-class ExtractedField:
-    name: ExtractedText
-    value: ExtractedText
-    confidence: float
-
-class ExtractedText:
-    text: str
-    bounding_box: List[float]
-    raw_field: List[ExtractedLine]
-
-class ExtractedLine:
-    text: str
-    bounding_box: List[float]
-    language: str
-    words: List[ExtractedWord]
-
-class ExtractedWord:
-    text: str
-    bounding_box: List[float]
-    confidence: float
 ```
 
 ### Custom Models Labeled
@@ -296,22 +266,25 @@ class FieldNames:
 class ErrorInformation:
     code: str
     message: str
+```
 
+### Custom Extract Form
+```python
 # Analyze ---------------------------------------------------
-class LabeledExtractedPage:
-    fields: List[ExtractedLabel]
+class ExtractedPage:
+    fields: List[ExtractedField]
     tables: List[ExtractedTable]
     page_number: int
+    cluster_id: int
 
-class ExtractedLabel:
-    name: str
-    value: LabelValue
-
-class LabelValue:
-    text: str
-    bounding_box: List[float]
+class ExtractedField:
+    label: str
+    label_outline: List[float]
+    label_raw_field: List[ExtractedLine]
+    value: str
+    value_outline: List[float]
+    value_raw_field: List[ExtractedLine]
     confidence: float
-    raw_field: List[ExtractedLine]
 
 class ExtractedLine:
     text: str
@@ -369,7 +342,7 @@ result = poller.result()
 for page in result:
     print("Page: {}".format(page.page_number))
     for field in page.fields:
-        print(field.name.text, field.value.text)
+        print(field.label, field.value)
 ```
 
 #### Train and Analyze with labels
@@ -393,13 +366,13 @@ for document in custom_model.train_result.documents:
     print(document.document_errors)
 
 blob_sas_url = "xxxxx"  # form to analyze uploaded to blob storage
-poller = client.begin_extract_labeled_fields(blob_sas_url, model_id=custom_model.model_id)
+poller = client.begin_extract_form(blob_sas_url, model_id=custom_model.model_id)
 result = poller.result()
 
 for page in result:
     print("Page: {}".format(page.page_number))
     for field in page.fields:
-        print(field.name, field.value.text)
+        print(field.label, field.value)
 ```
 
 #### List custom models

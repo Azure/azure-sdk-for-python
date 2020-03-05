@@ -18,13 +18,14 @@ from ._models import (
     LabeledCustomModel,
     ExtractedPage,
     ExtractedField,
-    ExtractedLabel
 )
 from ._helpers import get_receipt_field_value
 
 
 def prepare_receipt_result(response, include_raw):
     receipts = []
+    read_result = response.analyze_result.read_results
+
     for page in response.analyze_result.document_results:
         receipt = ExtractedReceipt(
             merchant_address=get_receipt_field_value(page.fields.get("MerchantAddress")),
@@ -41,22 +42,22 @@ def prepare_receipt_result(response, include_raw):
             fields=ReceiptFields(
                 merchant_address=FieldValue._from_generated(
                     page.fields.get("MerchantAddress"),
-                    response.analyze_result.read_results,
+                    read_result,
                     include_raw
                 ),
                 merchant_name=FieldValue._from_generated(
                     page.fields.get("MerchantName"),
-                    response.analyze_result.read_results,
+                    read_result,
                     include_raw
                 ),
                 merchant_phone_number=FieldValue._from_generated(
                     page.fields.get("MerchantPhoneNumber"),
-                    response.analyze_result.read_results,
+                    read_result,
                     include_raw
                 ),
                 receipt_type=FieldValue._from_generated(
                     page.fields.get("ReceiptType"),
-                    response.analyze_result.read_results,
+                    read_result,
                     include_raw
                 ),
                 receipt_items=ReceiptItemField._from_generated(
@@ -66,32 +67,32 @@ def prepare_receipt_result(response, include_raw):
                 ),
                 subtotal=FieldValue._from_generated(
                     page.fields.get("Subtotal"),
-                    response.analyze_result.read_results,
+                    read_result,
                     include_raw
                 ),
                 tax=FieldValue._from_generated(
                     page.fields.get("Tax"),
-                    response.analyze_result.read_results,
+                    read_result,
                     include_raw
                 ),
                 tip=FieldValue._from_generated(
                     page.fields.get("Tip"),
-                    response.analyze_result.read_results,
+                    read_result,
                     include_raw
                 ),
                 total=FieldValue._from_generated(
                     page.fields.get("Total"),
-                    response.analyze_result.read_results,
+                    read_result,
                     include_raw
                 ),
                 transaction_date=FieldValue._from_generated(
                     page.fields.get("TransactionDate"),
-                    response.analyze_result.read_results,
+                    read_result,
                     include_raw
                 ),
                 transaction_time=FieldValue._from_generated(
                     page.fields.get("TransactionTime"),
-                    response.analyze_result.read_results,
+                    read_result,
                     include_raw
                 ),
             )
@@ -102,6 +103,7 @@ def prepare_receipt_result(response, include_raw):
 
 def prepare_layout_result(response, include_raw):
     pages = []
+    read_result = response.analyze_result.read_results
 
     for page in response.analyze_result.page_results:
         result_page = ExtractedLayoutPage(page_number=page.page, tables=[])
@@ -109,7 +111,7 @@ def prepare_layout_result(response, include_raw):
             my_table = [[None for x in range(table.columns)] for y in range(table.rows)]
             for cell in table.cells:
                 my_table[cell.row_index][cell.column_index] = \
-                    TableCell._from_generated(cell, response.analyze_result.read_results, include_raw)
+                    TableCell._from_generated(cell, read_result, include_raw)
             result_page.tables.append(Table(my_table))
         pages.append(result_page)
     return pages
@@ -125,29 +127,13 @@ def prepare_labeled_training_result(response):
 
 def prepare_analyze_result(response, include_raw):
     pages = []
-
-    for page in response.analyze_result.page_results:
-        result_page = ExtractedPage(page_number=page.page, tables=[], fields=[], cluster_id=page.cluster_id)
-        if page.tables:
-            for table in page.tables:
-                my_table = [[None for x in range(table.columns)] for y in range(table.rows)]
-                for cell in table.cells:
-                    my_table[cell.row_index][cell.column_index] = \
-                        TableCell._from_generated(cell, response.analyze_result.read_results, include_raw)
-                result_page.tables.append(Table(my_table))
-        if page.key_value_pairs:
-            for item in page.key_value_pairs:
-                extracted_field = ExtractedField._from_generated(item, response.analyze_result.read_results, include_raw)
-                result_page.fields.append(extracted_field)
-        pages.append(result_page)
-    return pages
-
-
-def prepare_labeled_analyze_result(response, include_raw):
-    pages = []
     read_result = response.analyze_result.read_results
+
     for page in response.analyze_result.page_results:
-        result_page = ExtractedPage(page_number=page.page, tables=[], fields=[])
+        try:
+            result_page = ExtractedPage(page_number=page.page, tables=[], fields=[], form_type_id=page.cluster_id)
+        except AttributeError:
+            result_page = ExtractedPage(page_number=page.page, tables=[], fields=[])
         if page.tables:
             for table in page.tables:
                 my_table = [[None for x in range(table.columns)] for y in range(table.rows)]
@@ -155,13 +141,23 @@ def prepare_labeled_analyze_result(response, include_raw):
                     my_table[cell.row_index][cell.column_index] = \
                         TableCell._from_generated(cell, read_result, include_raw)
                 result_page.tables.append(Table(my_table))
-        pages.append(result_page)
+        try:
+            if page.key_value_pairs:
+                for item in page.key_value_pairs:
+                    extracted_field = ExtractedField._from_generated(item, read_result, include_raw)
+                    result_page.fields.append(extracted_field)
+            pages.append(result_page)
+        except AttributeError:
+            pass
 
-    for idx, page in enumerate(response.analyze_result.document_results):
-        if page.fields:
-            pages[idx].fields = [
-                ExtractedLabel._from_generated((label, value), read_result, include_raw)
-                for label, value
-                in page.fields.items()
-            ]
+    try:
+        for idx, page in enumerate(response.analyze_result.document_results):
+            if page.fields:
+                pages[idx].fields = [
+                    ExtractedField._from_labeled_generated((label, value), read_result, include_raw)
+                    for label, value
+                    in page.fields.items()
+                ]
+    except AttributeError:
+        pass
     return pages

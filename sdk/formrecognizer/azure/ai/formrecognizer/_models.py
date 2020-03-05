@@ -72,18 +72,11 @@ class FieldValue(object):
     def _from_generated(cls, field, read_result, include_raw):
         if field is None:
             return field
-        if include_raw:
-            return cls(
-                value=get_receipt_field_value(field),
-                bounding_box=field.bounding_box,
-                confidence=field.confidence,
-                raw_field=get_raw_field(field, read_result)
-            )
         return cls(
             value=get_receipt_field_value(field),
             bounding_box=field.bounding_box,
             confidence=field.confidence,
-            raw_field=None
+            raw_field=get_raw_field(field, read_result) if include_raw else None
         )
 
 
@@ -192,19 +185,6 @@ class TableCell(object):
 
     @classmethod
     def _from_generated(cls, cell, read_result, include_raw):
-        if include_raw:
-            return cls(
-                text=cell.text,
-                row_index=cell.row_index,
-                column_index=cell.column_index,
-                row_span=cell.row_span or 1,
-                column_span=cell.column_span or 1,
-                bounding_box=cell.bounding_box,
-                confidence=cell.confidence,
-                is_header=cell.is_header,
-                is_footer=cell.is_footer,
-                raw_field=get_raw_field(cell, read_result)
-            )
         return cls(
             text=cell.text,
             row_index=cell.row_index,
@@ -215,7 +195,7 @@ class TableCell(object):
             confidence=cell.confidence,
             is_header=cell.is_header,
             is_footer=cell.is_footer,
-            raw_field=None
+            raw_field=get_raw_field(cell, read_result) if include_raw else None
         )
 
 
@@ -336,6 +316,49 @@ class FieldNames(object):
             ) for field in fields]
 
 
+class ExtractedPage(object):
+    def __init__(self, **kwargs):
+        self.fields = kwargs.get('fields', None)
+        self.tables = kwargs.get('tables', None)
+        self.page_number = kwargs.get('page_number', None)
+        self.form_type_id = kwargs.get('form_type_id', None)
+
+
+class ExtractedField(object):
+    def __init__(self, **kwargs):
+        self.label = kwargs.get('label', None)
+        self.label_outline = kwargs.get('label_outline', None)
+        self.label_raw_field = kwargs.get('label_raw_field', None)
+        self.value = kwargs.get('value', None)
+        self.value_outline = kwargs.get('value_outline', None)
+        self.value_raw_field = kwargs.get('value_raw_field', None)
+        self.confidence = kwargs.get('confidence', None)
+
+    @classmethod
+    def _from_generated(cls, field, read_result, include_raw):
+        return cls(
+            label=field.key.text,
+            label_outline=field.key.bounding_box,
+            label_raw_field=get_raw_field(field.key, read_result) if include_raw else None,
+            value=field.value.text,
+            value_outline=field.value.bounding_box,
+            value_raw_field=get_raw_field(field.value, read_result) if include_raw else None,
+            confidence=field.confidence
+        )
+
+    @classmethod
+    def _from_labeled_generated(cls, label, read_result, include_raw):
+        return cls(
+            label=label[0],
+            label_outline=None,
+            label_raw_field=None,
+            value=label[1].text,
+            value_outline=label[1].bounding_box,
+            value_raw_field=get_raw_field(label[1], read_result) if include_raw else None,
+            confidence=label[1].confidence
+        )
+
+
 class ModelInfo(object):
     def __init__(self, **kwargs):
         self.model_id = kwargs.get('model_id', None)
@@ -350,87 +373,6 @@ class ModelInfo(object):
             status=model.status,
             created_date_time=model.created_date_time,
             last_updated_date_time=model.last_updated_date_time
-        )
-
-
-class ExtractedPage(object):
-    def __init__(self, **kwargs):
-        self.fields = kwargs.get('fields', None)
-        self.tables = kwargs.get('tables', None)
-        self.page_number = kwargs.get('page_number', None)
-        self.cluster_id = kwargs.get('cluster_id', None)
-
-
-class ExtractedField(object):
-    def __init__(self, **kwargs):
-        self.name = kwargs.get('name', None)
-        self.value = kwargs.get('value', None)
-        self.confidence = kwargs.get('confidence', None)
-
-    @classmethod
-    def _from_generated(cls, field, read_result, include_raw):
-        return cls(
-            name=ExtractedText._from_generated(field.key, read_result, include_raw),
-            value=ExtractedText._from_generated(field.value, read_result, include_raw),
-            confidence=field.confidence
-        )
-
-
-class ExtractedText(object):
-    def __init__(self, **kwargs):
-        self.text = kwargs.get('text', None)
-        self.bounding_box = kwargs.get('bounding_box', None)
-        self.raw_field = kwargs.get('raw_field', None)
-
-    @classmethod
-    def _from_generated(cls, text, read_result, include_raw):
-        if include_raw:
-            return cls(
-                text=text.text,
-                bounding_box=text.bounding_box,
-                raw_field=get_raw_field(text, read_result)
-            )
-        return cls(
-            text=text.text,
-            bounding_box=text.bounding_box,
-            raw_field=None
-        )
-
-
-class ExtractedLabel(object):
-    def __init__(self, **kwargs):
-        self.name = kwargs.get('name', None)
-        self.value = kwargs.get('value', None)
-
-    @classmethod
-    def _from_generated(cls, label, read_result, include_raw):
-        return cls(
-            name=label[0],
-            value=LabelValue._from_generated(label[1], read_result, include_raw)
-        )
-
-
-class LabelValue(object):
-    def __init__(self, **kwargs):
-        self.text = kwargs.get('text', None)
-        self.bounding_box = kwargs.get('bounding_box', None)
-        self.confidence = kwargs.get('confidence', None)
-        self.raw_field = kwargs.get('raw_field', None)
-
-    @classmethod
-    def _from_generated(cls, label, read_result, include_raw):
-        if include_raw:
-            return cls(
-                text=label.text,
-                bounding_box=label.bounding_box,
-                confidence=label.confidence,
-                raw_field=get_raw_field(label, read_result)
-            )
-        return cls(
-            text=label.text,
-            bounding_box=label.bounding_box,
-            confidence=label.confidence,
-            raw_field=None
         )
 
 

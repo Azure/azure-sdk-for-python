@@ -24,7 +24,6 @@ from ._response_handlers import (
     prepare_training_result,
     prepare_labeled_training_result,
     prepare_analyze_result,
-    prepare_labeled_analyze_result
 )
 from azure.core.exceptions import HttpResponseError
 from azure.core.polling import LROPoller
@@ -201,42 +200,6 @@ class FormRecognizerClient(FormRecognizerClientBase):
             extracted_form = self._client._deserialize(AnalyzeOperationResult, raw_response)
             form_result = prepare_analyze_result(extracted_form, include_text_details)
             return form_result
-
-        poll_method = LROBasePolling()
-        poller = LROPoller(self._client._client, response, callback, poll_method)
-        return poller
-
-    def begin_extract_labeled_fields(self, form, model_id, content_type, **kwargs):
-        include_text_details = kwargs.pop("include_text_details", False)
-        # import json
-        #
-        # json_file_path = "../result_labeled_pdf.json"
-        #
-        # with open(json_file_path, 'r') as j:
-        #     result = json.loads(j.read())
-        #
-        # extracted_form = self._client._deserialize(AnalyzeOperationResult, result)
-        # form_result = prepare_labeled_analyze_result(extracted_form, include_text_details)
-        # return form_result
-
-        if isinstance(form, six.string_types):
-            form = {"source": form}
-
-        try:
-            response = self._client.analyze_with_custom_model(
-                file_stream=form,
-                content_type=content_type,
-                model_id=model_id,
-                include_text_details=include_text_details,
-                cls=get_pipeline_response
-            )
-        except ErrorResponseException as err:
-            raise HttpResponseError(err)
-
-        def callback(raw_response):
-            analyze_result = self._client._deserialize(AnalyzeOperationResult, raw_response)
-            label_result = prepare_labeled_analyze_result(analyze_result, include_text_details)
-            return label_result
 
         poll_method = LROBasePolling()
         poller = LROPoller(self._client._client, response, callback, poll_method)
