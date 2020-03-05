@@ -58,6 +58,10 @@ pip install azure-ai-textanalytics --pre
 Check out the [API reference documentation](https://aka.ms/azsdk-python-textanalytics-ref-docs) to learn more about
 what you can do with the Azure Text Analytics client library.
 
+|**Advanced Sample File Name**|**Description**|
+|----------------|-------------|
+|[sample_get_detailed_diagnostics_information.py][get_detailed_diagnostics_information] and [sample_get_detailed_diagnostics_information_async.py][get_detailed_diagnostics_information_async]|Get the request batch statistics, model version, and raw response through a callback|
+
 [python_35]: https://www.python.org/downloads/release/python-350/
 [python_27]: https://www.python.org/downloads/release/python-270/
 [azure-identity]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity
@@ -75,3 +79,5 @@ what you can do with the Azure Text Analytics client library.
 [extract_key_phrases_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_extract_key_phrases_async.py
 [analyze_sentiment]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/textanalytics/azure-ai-textanalytics/samples/sample_analyze_sentiment.py
 [analyze_sentiment_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_analyze_sentiment_async.py
+[get_detailed_diagnostics_information]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/textanalytics/azure-ai-textanalytics/samples/sample_get_detailed_diagnostics_information.py
+[get_detailed_diagnostics_information_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_get_detailed_diagnostics_information_async.py
