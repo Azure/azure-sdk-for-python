@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_get_statistics_and_model_version_async.py
+FILE: sample_get_detailed_diagnostics_information_async.py
 
 DESCRIPTION:
     This sample demonstrates how to retrieve batch statistics, the
@@ -17,7 +17,7 @@ DESCRIPTION:
     Here we supply our own IDs and language hints along with the text.
 
 USAGE:
-    python sample_get_statistics_and_model_version_async.py
+    python sample_get_detailed_diagnostics_information_async.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_TEXT_ANALYTICS_ENDPOINT - the endpoint to your cognitive services resource.
@@ -26,13 +26,16 @@ USAGE:
 
 import os
 import asyncio
+import logging
 
-class GetStatisticsAndModelVersionAsyncSample(object):
+_LOGGER = logging.getLogger(__name__)
+
+class GetDetailedDiagnosticsInformationSampleAsync(object):
 
     endpoint = os.getenv("AZURE_TEXT_ANALYTICS_ENDPOINT")
     key = os.getenv("AZURE_TEXT_ANALYTICS_KEY")
 
-    async def get_statistics_and_model_version_async(self):
+    async def get_detailed_diagnostics_information_async(self):
         from azure.ai.textanalytics.aio import TextAnalyticsClient
         from azure.ai.textanalytics import TextAnalyticsApiKeyCredential
         text_analytics_client = TextAnalyticsClient(endpoint=self.endpoint, credential=TextAnalyticsApiKeyCredential(self.key))
@@ -46,12 +49,11 @@ class GetStatisticsAndModelVersionAsyncSample(object):
              "text": "L'hôtel n'était pas très confortable. L'éclairage était trop sombre."}
         ]
 
-        extras = {}
-
         def callback(resp):
-            extras["statistics"] = resp.statistics
-            extras["model_version"] = resp.model_version
-            extras["raw_response"] = resp.raw_response
+            for statistic, value in resp.statistics.items():
+                _LOGGER.info("{}: {}".format(statistic, value))
+            _LOGGER.info("model_version: {}".format(resp.model_version))
+            _LOGGER.info("raw_response: {}".format(resp.raw_response))
 
         async with text_analytics_client:
             result = await text_analytics_client.analyze_sentiment(
@@ -61,15 +63,10 @@ class GetStatisticsAndModelVersionAsyncSample(object):
                 raw_response_hook=callback
             )
 
-        for statistic, value in extras["statistics"].items():
-            print("{}: {}".format(statistic, value))
-        print("model_version: {}".format(extras["model_version"]))
-        print("raw_response: {}".format(extras["raw_response"]))
-
 
 async def main():
-    sample = GetStatisticsAndModelVersionAsyncSample()
-    await sample.get_statistics_and_model_version_async()
+    sample = GetDetailedDiagnosticsInformationSampleAsync()
+    await sample.get_detailed_diagnostics_information_async()
 
 
 if __name__ == '__main__':
