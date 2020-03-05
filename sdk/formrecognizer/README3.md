@@ -53,6 +53,7 @@ class ExtractedReceipt:
 class ReceiptItem:
     name: str
     quantity: int
+    item_price: float
     total_price: float
 
 class ReceiptFields:
@@ -71,6 +72,7 @@ class ReceiptFields:
 class ReceiptItemField:
     name: FieldValue
     quantity: FieldValue
+    item_price: FieldValue
     total_price: FieldValue
 
 class FieldValue:

@@ -159,6 +159,10 @@ class ExtractedLayoutPage(object):
 def Table(table):
     class ExtractedTable(type(table)):
 
+        def __getitem__(self, cell):
+            row, col = cell
+            return table[cell[row][col]]
+
         @property
         def row_count(self):
             return len(table)
