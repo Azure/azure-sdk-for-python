@@ -4,7 +4,6 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-import six
 from azure.core.configuration import Configuration
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.transport import RequestsTransport
@@ -20,8 +19,8 @@ from azure.core.pipeline.policies import (
     DistributedTracingPolicy,
     HttpLoggingPolicy,
 )
-from ._policies import CognitiveServicesCredentialPolicy, TextAnalyticsResponseHook
-from ._version import VERSION
+from ._policies import CognitiveServicesCredentialPolicy, TextAnalyticsResponseHookPolicy
+from ._user_agent import USER_AGENT
 
 
 class TextAnalyticsClientBase(object):
@@ -36,18 +35,16 @@ class TextAnalyticsClientBase(object):
             credential_policy = BearerTokenCredentialPolicy(
                 credential, "https://cognitiveservices.azure.com/.default"
             )
-        elif isinstance(credential, six.string_types):
+        elif hasattr(credential, "api_key"):
             credential_policy = CognitiveServicesCredentialPolicy(credential)
         elif credential is not None:
-            raise TypeError("Unsupported credential: {}".format(credential))
+            raise TypeError("Unsupported credential: {}. Use an instance of TextAnalyticsApiKeyCredential "
+                            "or a token credential from azure.identity".format(type(credential)))
 
         config = self._create_configuration(**kwargs)
         config.transport = kwargs.get("transport")  # type: ignore
         if not config.transport:
             config.transport = RequestsTransport(**kwargs)
-        config.user_agent_policy.add_user_agent(
-            "azsdk-python-azure-ai-textanalytics/{}".format(VERSION)
-        )
 
         policies = [
             config.headers_policy,
@@ -58,7 +55,7 @@ class TextAnalyticsClientBase(object):
             config.retry_policy,
             credential_policy,
             config.logging_policy,
-            TextAnalyticsResponseHook(**kwargs),
+            TextAnalyticsResponseHookPolicy(**kwargs),
             DistributedTracingPolicy(**kwargs),
             HttpLoggingPolicy(**kwargs),
         ]
@@ -66,7 +63,8 @@ class TextAnalyticsClientBase(object):
 
     def _create_configuration(self, **kwargs):  # pylint: disable=no-self-use
         config = Configuration(**kwargs)
-        config.user_agent_policy = kwargs.get("user_agent_policy") or UserAgentPolicy(**kwargs)
+        config.user_agent_policy = kwargs.get("user_agent_policy") or \
+            UserAgentPolicy(base_user_agent=USER_AGENT, **kwargs)
         config.headers_policy = kwargs.get("headers_policy") or HeadersPolicy(**kwargs)
         config.proxy_policy = kwargs.get("proxy_policy") or ProxyPolicy(**kwargs)
         config.logging_policy = kwargs.get("logging_policy") or NetworkTraceLoggingPolicy(**kwargs)

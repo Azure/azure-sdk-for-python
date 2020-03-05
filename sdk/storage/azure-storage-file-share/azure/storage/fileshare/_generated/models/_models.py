@@ -39,6 +39,57 @@ class AccessPolicy(Model):
         self.permission = kwargs.get('permission', None)
 
 
+class CopyFileSmbInfo(Model):
+    """Additional parameters for start_copy operation.
+
+    :param file_permission_copy_mode: Specifies the option to copy file
+     security descriptor from source file or to set it using the value which is
+     defined by the header value of x-ms-file-permission or
+     x-ms-file-permission-key. Possible values include: 'source', 'override'
+    :type file_permission_copy_mode: str or
+     ~azure.storage.fileshare.models.PermissionCopyModeType
+    :param ignore_read_only: Specifies the option to overwrite the target file
+     if it already exists and has read-only attribute set.
+    :type ignore_read_only: bool
+    :param file_attributes: Specifies either the option to copy file
+     attributes from a source file(source) to a target file or a list of
+     attributes to set on a target file.
+    :type file_attributes: str
+    :param file_creation_time: Specifies either the option to copy file
+     creation time from a source file(source) to a target file or a time value
+     in ISO 8601 format to set as creation time on a target file.
+    :type file_creation_time: str
+    :param file_last_write_time: Specifies either the option to copy file last
+     write time from a source file(source) to a target file or a time value in
+     ISO 8601 format to set as last write time on a target file.
+    :type file_last_write_time: str
+    :param set_archive_attribute: Specifies the option to set archive
+     attribute on a target file. True means archive attribute will be set on a
+     target file despite attribute overrides or a source file state.
+    :type set_archive_attribute: bool
+    """
+
+    _attribute_map = {
+        'file_permission_copy_mode': {'key': '', 'type': 'PermissionCopyModeType', 'xml': {'name': 'file_permission_copy_mode'}},
+        'ignore_read_only': {'key': '', 'type': 'bool', 'xml': {'name': 'ignore_read_only'}},
+        'file_attributes': {'key': '', 'type': 'str', 'xml': {'name': 'file_attributes'}},
+        'file_creation_time': {'key': '', 'type': 'str', 'xml': {'name': 'file_creation_time'}},
+        'file_last_write_time': {'key': '', 'type': 'str', 'xml': {'name': 'file_last_write_time'}},
+        'set_archive_attribute': {'key': '', 'type': 'bool', 'xml': {'name': 'set_archive_attribute'}},
+    }
+    _xml_map = {
+    }
+
+    def __init__(self, **kwargs):
+        super(CopyFileSmbInfo, self).__init__(**kwargs)
+        self.file_permission_copy_mode = kwargs.get('file_permission_copy_mode', None)
+        self.ignore_read_only = kwargs.get('ignore_read_only', None)
+        self.file_attributes = kwargs.get('file_attributes', None)
+        self.file_creation_time = kwargs.get('file_creation_time', None)
+        self.file_last_write_time = kwargs.get('file_last_write_time', None)
+        self.set_archive_attribute = kwargs.get('set_archive_attribute', None)
+
+
 class CorsRule(Model):
     """CORS is an HTTP feature that enables a web application running under one
     domain to access resources in another domain. Web browsers implement a
@@ -315,6 +366,25 @@ class HandleItem(Model):
         self.client_ip = kwargs.get('client_ip', None)
         self.open_time = kwargs.get('open_time', None)
         self.last_reconnect_time = kwargs.get('last_reconnect_time', None)
+
+
+class LeaseAccessConditions(Model):
+    """Additional parameters for a set of operations.
+
+    :param lease_id: If specified, the operation only succeeds if the
+     resource's lease is active and matches this ID.
+    :type lease_id: str
+    """
+
+    _attribute_map = {
+        'lease_id': {'key': '', 'type': 'str', 'xml': {'name': 'lease_id'}},
+    }
+    _xml_map = {
+    }
+
+    def __init__(self, **kwargs):
+        super(LeaseAccessConditions, self).__init__(**kwargs)
+        self.lease_id = kwargs.get('lease_id', None)
 
 
 class ListFilesAndDirectoriesSegmentResponse(Model):
@@ -631,6 +701,14 @@ class ShareProperties(Model):
     :type etag: str
     :param quota: Required.
     :type quota: int
+    :param provisioned_iops:
+    :type provisioned_iops: int
+    :param provisioned_ingress_mbps:
+    :type provisioned_ingress_mbps: int
+    :param provisioned_egress_mbps:
+    :type provisioned_egress_mbps: int
+    :param next_allowed_quota_downgrade_time:
+    :type next_allowed_quota_downgrade_time: datetime
     """
 
     _validation = {
@@ -643,6 +721,10 @@ class ShareProperties(Model):
         'last_modified': {'key': 'Last-Modified', 'type': 'rfc-1123', 'xml': {'name': 'Last-Modified'}},
         'etag': {'key': 'Etag', 'type': 'str', 'xml': {'name': 'Etag'}},
         'quota': {'key': 'Quota', 'type': 'int', 'xml': {'name': 'Quota'}},
+        'provisioned_iops': {'key': 'ProvisionedIops', 'type': 'int', 'xml': {'name': 'ProvisionedIops'}},
+        'provisioned_ingress_mbps': {'key': 'ProvisionedIngressMBps', 'type': 'int', 'xml': {'name': 'ProvisionedIngressMBps'}},
+        'provisioned_egress_mbps': {'key': 'ProvisionedEgressMBps', 'type': 'int', 'xml': {'name': 'ProvisionedEgressMBps'}},
+        'next_allowed_quota_downgrade_time': {'key': 'NextAllowedQuotaDowngradeTime', 'type': 'rfc-1123', 'xml': {'name': 'NextAllowedQuotaDowngradeTime'}},
     }
     _xml_map = {
     }
@@ -652,6 +734,10 @@ class ShareProperties(Model):
         self.last_modified = kwargs.get('last_modified', None)
         self.etag = kwargs.get('etag', None)
         self.quota = kwargs.get('quota', None)
+        self.provisioned_iops = kwargs.get('provisioned_iops', None)
+        self.provisioned_ingress_mbps = kwargs.get('provisioned_ingress_mbps', None)
+        self.provisioned_egress_mbps = kwargs.get('provisioned_egress_mbps', None)
+        self.next_allowed_quota_downgrade_time = kwargs.get('next_allowed_quota_downgrade_time', None)
 
 
 class ShareStats(Model):

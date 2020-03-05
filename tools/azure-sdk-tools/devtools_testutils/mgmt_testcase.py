@@ -52,7 +52,7 @@ class AzureMgmtTestCase(AzureTestCase):
     def __init__(self, method_name, config_file=None,
                  recording_dir=None, recording_name=None,
                  recording_processors=None, replay_processors=None,
-                 recording_patches=None, replay_patches=None):
+                 recording_patches=None, replay_patches=None, **kwargs):
         self.region = 'westus'
         super(AzureMgmtTestCase, self).__init__(
             method_name,
@@ -63,6 +63,7 @@ class AzureMgmtTestCase(AzureTestCase):
             replay_processors=replay_processors,
             recording_patches=recording_patches,
             replay_patches=replay_patches,
+            **kwargs
         )
 
     def _setup_scrubber(self):

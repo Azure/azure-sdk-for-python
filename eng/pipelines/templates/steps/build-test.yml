@@ -6,11 +6,13 @@ parameters:
   PythonVersion: ''
   OSName: ''
   BeforeTestSteps: []
+  AfterTestSteps: []
   CoverageArg: ''
   BuildTargetingString: 'azure-*'
   ToxTestEnv: ""
   RunCoverage: ne(variables['CoverageArg'], '--disablecov')
   ToxEnvParallel: ''
+  InjectedPackages: ''
 
 steps:
   - pwsh: |
@@ -28,7 +30,7 @@ steps:
   - script: |
       pip install -r eng/ci_tools.txt
     displayName: 'Prep Environment'
-    
+
   - ${{ parameters.BeforeTestSteps }}
 
   - task: PythonScript@0
@@ -36,21 +38,25 @@ steps:
     inputs:
       scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
       arguments: >-
-        "${{ parameters.BuildTargetingString }}" 
-        ${{ parameters.AdditionalTestArgs }} 
-        ${{ parameters.CoverageArg }} 
-        --mark_arg="${{ parameters.TestMarkArgument }}" 
-        --service="${{ parameters.ServiceDirectory }}" 
+        "${{ parameters.BuildTargetingString }}"
+        ${{ parameters.AdditionalTestArgs }}
+        ${{ parameters.CoverageArg }}
+        --mark_arg="${{ parameters.TestMarkArgument }}"
+        --service="${{ parameters.ServiceDirectory }}"
         --toxenv="${{ parameters.ToxTestEnv }}"
+        --injected-packages="${{ parameters.InjectedPackages }}"
         ${{ parameters.ToxEnvParallel }}
     env: ${{ parameters.EnvVars }}
+
+  - ${{ parameters.AfterTestSteps }}
 
   - task: PublishTestResults@2
     condition: always()
     inputs:
       testResultsFiles: '**/*test*.xml'
       testRunTitle: '${{ parameters.OSName }} Python ${{ parameters.PythonVersion }}'
-  
+      failTaskOnFailedTests: true
+
   - template: publish-coverage.yml
-    parameters: 
+    parameters:
       RunCoverage: ${{ parameters.RunCoverage }}

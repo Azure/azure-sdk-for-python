@@ -1,7 +1,13 @@
+# --------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+# --------------------------------------------------------------------------
 from collections import namedtuple
 import os
 
 from azure.mgmt.storage import StorageManagementClient
+from azure.mgmt.storage.models import StorageAccount, Endpoints
 
 from azure_devtools.scenario_tests.preparers import (
     AbstractPreparer,
@@ -14,7 +20,6 @@ from .resource_testcase import RESOURCE_GROUP_PARAM
 
 
 FakeStorageAccount = FakeResource
-
 
 # Storage Account Preparer and its shorthand decorator
 
@@ -67,11 +72,29 @@ class StorageAccountPreparer(AzureMgmtPreparer):
                 self.resource_moniker
             )
         else:
-            self.resource = FakeResource(name=name, id=name)
+            self.resource = StorageAccount(
+                location=self.location,
+            )
+            self.resource.name = name
+            self.resource.id = name
+            self.resource.primary_endpoints = Endpoints()
+            self.resource.primary_endpoints.blob = 'https://{}.{}.core.windows.net'.format(name, 'blob')
+            self.resource.primary_endpoints.queue = 'https://{}.{}.core.windows.net'.format(name, 'queue')
+            self.resource.primary_endpoints.table = 'https://{}.{}.core.windows.net'.format(name, 'table')
+            self.resource.primary_endpoints.file = 'https://{}.{}.core.windows.net'.format(name, 'file')
             self.storage_key = 'ZmFrZV9hY29jdW50X2tleQ=='
         return {
             self.parameter_name: self.resource,
             '{}_key'.format(self.parameter_name): self.storage_key,
+            '{}_cs'.format(self.parameter_name): ";".join([
+                "DefaultEndpointsProtocol=https",
+                "AccountName={}".format(name),
+                "AccountKey={}".format(self.storage_key),
+                "BlobEndpoint={}".format(self.resource.primary_endpoints.blob),
+                "TableEndpoint={}".format(self.resource.primary_endpoints.table),
+                "QueueEndpoint={}".format(self.resource.primary_endpoints.queue),
+                "FileEndpoint={}".format(self.resource.primary_endpoints.file),
+            ])
         }
 
     def remove_resource(self, name, **kwargs):

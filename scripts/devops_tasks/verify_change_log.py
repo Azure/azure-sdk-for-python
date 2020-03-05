@@ -55,7 +55,7 @@ def verify_packages(targeted_packages):
 
     for package in targeted_packages:
         # Parse setup.py using common helper method to get version and package name
-        pkg_name, version, _ = parse_setup(package)
+        pkg_name, version, _, _ = parse_setup(package)
 
         # Skip management packages
         if "-mgmt" in pkg_name or pkg_name in excluded_packages:

@@ -16,7 +16,8 @@ from .._shared.base_client_async import AsyncStorageAccountHostsMixin
 from .._shared.policies_async import ExponentialRetry
 from .._shared.response_handlers import return_response_headers, process_storage_error
 from .._deserialize import get_page_ranges_result
-from .._serialize import get_modify_conditions
+from .._serialize import get_modify_conditions, get_api_version
+from .._generated import VERSION
 from .._generated.aio import AzureBlobStorage
 from .._generated.models import StorageErrorException, CpkInfo
 from .._deserialize import deserialize_blob_properties
@@ -63,6 +64,12 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         account URL already has a SAS token. The value can be a SAS token string, an account
         shared access key, or an instance of a TokenCredentials class from azure.identity.
         If the URL already has a SAS token, specifying an explicit credential will take priority.
+    :keyword str api_version:
+        The Storage API version to use for requests. Default value is '2019-07-07'.
+        Setting to an older version may result in reduced feature compatibility.
+
+        .. versionadded:: 12.2.0
+
     :keyword str secondary_hostname:
         The hostname of the secondary endpoint.
     :keyword int max_block_size: The maximum chunk size for uploading a block blob in chunks.
@@ -113,6 +120,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             credential=credential,
             **kwargs)
         self._client = AzureBlobStorage(url=self.url, pipeline=self._pipeline)
+        self._client._config.version = get_api_version(kwargs, VERSION)  # pylint: disable=protected-access
         self._loop = kwargs.get('loop', None)
 
     @distributed_trace_async
@@ -212,6 +220,14 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
+        :keyword str encryption_scope:
+            A predefined encryption scope used to encrypt the data on the service. An encryption
+            scope can be created using the Management API and referenced here by name. If a default
+            encryption scope has been defined at the container, this value will override it if the
+            container-level scope is configured to allow overrides. Otherwise an error will be raised.
+
+            .. versionadded:: 12.2.0
+
         :keyword str encoding:
             Defaults to UTF-8.
         :keyword int timeout:
@@ -554,6 +570,14 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
+        :keyword str encryption_scope:
+            A predefined encryption scope used to encrypt the data on the service. An encryption
+            scope can be created using the Management API and referenced here by name. If a default
+            encryption scope has been defined at the container, this value will override it if the
+            container-level scope is configured to allow overrides. Otherwise an error will be raised.
+
+            .. versionadded:: 12.2.0
+
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Etag and last modified)
@@ -618,6 +642,14 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
+        :keyword str encryption_scope:
+            A predefined encryption scope used to encrypt the data on the service. An encryption
+            scope can be created using the Management API and referenced here by name. If a default
+            encryption scope has been defined at the container, this value will override it if the
+            container-level scope is configured to allow overrides. Otherwise an error will be raised.
+
+            .. versionadded:: 12.2.0
+
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Etag and last modified).
@@ -671,6 +703,14 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
+        :keyword str encryption_scope:
+            A predefined encryption scope used to encrypt the data on the service. An encryption
+            scope can be created using the Management API and referenced here by name. If a default
+            encryption scope has been defined at the container, this value will override it if the
+            container-level scope is configured to allow overrides. Otherwise an error will be raised.
+
+            .. versionadded:: 12.2.0
+
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Etag and last modified).
@@ -727,6 +767,14 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
+        :keyword str encryption_scope:
+            A predefined encryption scope used to encrypt the data on the service. An encryption
+            scope can be created using the Management API and referenced here by name. If a default
+            encryption scope has been defined at the container, this value will override it if the
+            container-level scope is configured to allow overrides. Otherwise an error will be raised.
+
+            .. versionadded:: 12.2.0
+
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Snapshot ID, Etag, and last modified).
@@ -1045,6 +1093,14 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
+        :keyword str encryption_scope:
+            A predefined encryption scope used to encrypt the data on the service. An encryption
+            scope can be created using the Management API and referenced here by name. If a default
+            encryption scope has been defined at the container, this value will override it if the
+            container-level scope is configured to allow overrides. Otherwise an error will be raised.
+
+            .. versionadded:: 12.2.0
+
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
@@ -1093,6 +1149,14 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
+        :keyword str encryption_scope:
+            A predefined encryption scope used to encrypt the data on the service. An encryption
+            scope can be created using the Management API and referenced here by name. If a default
+            encryption scope has been defined at the container, this value will override it if the
+            container-level scope is configured to allow overrides. Otherwise an error will be raised.
+
+            .. versionadded:: 12.2.0
+
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
@@ -1195,6 +1259,14 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
+        :keyword str encryption_scope:
+            A predefined encryption scope used to encrypt the data on the service. An encryption
+            scope can be created using the Management API and referenced here by name. If a default
+            encryption scope has been defined at the container, this value will override it if the
+            container-level scope is configured to allow overrides. Otherwise an error will be raised.
+
+            .. versionadded:: 12.2.0
+
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Etag and last modified).
@@ -1309,6 +1381,79 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
                 ranges = await self._client.page_blob.get_page_ranges_diff(**options)
             else:
                 ranges = await self._client.page_blob.get_page_ranges(**options)
+        except StorageErrorException as error:
+            process_storage_error(error)
+        return get_page_ranges_result(ranges)
+
+    @distributed_trace_async
+    async def get_page_range_diff_for_managed_disk(
+            self, previous_snapshot_url,  # type: str
+            offset=None, # type: Optional[int]
+            length=None,  # type: Optional[int]
+            **kwargs
+        ):
+        # type: (...) -> Tuple[List[Dict[str, int]], List[Dict[str, int]]]
+        """Returns the list of valid page ranges for a managed disk or snapshot.
+
+        .. note::
+            This operation is only available for managed disk accounts.
+
+        .. versionadded:: 12.2.0
+            This operation was introduced in API version '2019-07-07'.
+
+        :param previous_snapshot_url:
+            Specifies the URL of a previous snapshot of the managed disk.
+            The response will only contain pages that were changed between the target blob and
+            its previous snapshot.
+        :param int offset:
+            Start of byte range to use for getting valid page ranges.
+            If no length is given, all bytes after the offset will be searched.
+            Pages must be aligned with 512-byte boundaries, the start offset
+            must be a modulus of 512 and the length must be a modulus of
+            512.
+        :param int length:
+            Number of bytes to use for getting valid page ranges.
+            If length is given, offset must be provided.
+            This range will return valid page ranges from the offset start up to
+            the specified length.
+            Pages must be aligned with 512-byte boundaries, the start offset
+            must be a modulus of 512 and the length must be a modulus of
+            512.
+        :keyword lease:
+            Required if the blob has an active lease. Value can be a BlobLeaseClient object
+            or the lease ID as a string.
+        :paramtype lease: ~azure.storage.blob.aio.BlobLeaseClient or str
+        :keyword ~datetime.datetime if_modified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only
+            if the resource has been modified since the specified time.
+        :keyword ~datetime.datetime if_unmodified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only if
+            the resource has not been modified since the specified date/time.
+        :keyword str etag:
+            An ETag value, or the wildcard character (*). Used to check if the resource has changed,
+            and act according to the condition specified by the `match_condition` parameter.
+        :keyword ~azure.core.MatchConditions match_condition:
+            The match condition to use upon the etag.
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns:
+            A tuple of two lists of page ranges as dictionaries with 'start' and 'end' keys.
+            The first element are filled page ranges, the 2nd element is cleared page ranges.
+        :rtype: tuple(list(dict(str, str), list(dict(str, str))
+        """
+        options = self._get_page_ranges_options(
+            offset=offset,
+            length=length,
+            prev_snapshot_url=previous_snapshot_url,
+            **kwargs)
+        try:
+            ranges = await self._client.page_blob.get_page_ranges_diff(**options)
         except StorageErrorException as error:
             process_storage_error(error)
         return get_page_ranges_result(ranges)
@@ -1473,6 +1618,14 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
+        :keyword str encryption_scope:
+            A predefined encryption scope used to encrypt the data on the service. An encryption
+            scope can be created using the Management API and referenced here by name. If a default
+            encryption scope has been defined at the container, this value will override it if the
+            container-level scope is configured to allow overrides. Otherwise an error will be raised.
+
+            .. versionadded:: 12.2.0
+
         :keyword str encoding:
             Defaults to UTF-8.
         :keyword int timeout:
@@ -1572,6 +1725,14 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
+        :keyword str encryption_scope:
+            A predefined encryption scope used to encrypt the data on the service. An encryption
+            scope can be created using the Management API and referenced here by name. If a default
+            encryption scope has been defined at the container, this value will override it if the
+            container-level scope is configured to allow overrides. Otherwise an error will be raised.
+
+            .. versionadded:: 12.2.0
+
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         """
@@ -1709,6 +1870,14 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
+        :keyword str encryption_scope:
+            A predefined encryption scope used to encrypt the data on the service. An encryption
+            scope can be created using the Management API and referenced here by name. If a default
+            encryption scope has been defined at the container, this value will override it if the
+            container-level scope is configured to allow overrides. Otherwise an error will be raised.
+
+            .. versionadded:: 12.2.0
+
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Etag, last modified, append offset, committed block count).
@@ -1798,6 +1967,14 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
+        :keyword str encryption_scope:
+            A predefined encryption scope used to encrypt the data on the service. An encryption
+            scope can be created using the Management API and referenced here by name. If a default
+            encryption scope has been defined at the container, this value will override it if the
+            container-level scope is configured to allow overrides. Otherwise an error will be raised.
+
+            .. versionadded:: 12.2.0
+
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         """

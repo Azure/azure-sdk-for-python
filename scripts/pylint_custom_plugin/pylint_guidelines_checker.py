@@ -653,7 +653,7 @@ class ClientMethodNamesDoNotUseDoubleUnderscorePrefix(BaseChecker):
         ),
     )
     ignore_clients = ["PipelineClient", "AsyncPipelineClient"]
-    acceptable_names = ["__init__", "__enter__", "__exit__", "__aenter__", "__aexit__"]
+    acceptable_names = ["__init__", "__enter__", "__exit__", "__aenter__", "__aexit__", "__repr__"]
 
     def __init__(self, linter=None):
         super(ClientMethodNamesDoNotUseDoubleUnderscorePrefix, self).__init__(linter)

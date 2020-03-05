@@ -10,6 +10,32 @@
 # --------------------------------------------------------------------------
 
 from msrest.serialization import Model
+from msrest.exceptions import HttpOperationError
+
+
+class ActiveDirectoryObject(Model):
+    """The Active Directory Object that will be used for authenticating the token
+    of a container registry.
+
+    :param object_id: The user/group/application object ID for Active
+     Directory Object that will be used for authenticating the token of a
+     container registry.
+    :type object_id: str
+    :param tenant_id: The tenant ID of user/group/application object Active
+     Directory Object that will be used for authenticating the token of a
+     container registry.
+    :type tenant_id: str
+    """
+
+    _attribute_map = {
+        'object_id': {'key': 'objectId', 'type': 'str'},
+        'tenant_id': {'key': 'tenantId', 'type': 'str'},
+    }
+
+    def __init__(self, *, object_id: str=None, tenant_id: str=None, **kwargs) -> None:
+        super(ActiveDirectoryObject, self).__init__(**kwargs)
+        self.object_id = object_id
+        self.tenant_id = tenant_id
 
 
 class Actor(Model):
@@ -893,6 +919,62 @@ class EncodedTaskStepUpdateParameters(TaskStepUpdateParameters):
         self.encoded_values_content = encoded_values_content
         self.values = values
         self.type = 'EncodedTask'
+
+
+class Error(Model):
+    """An error response from the Azure Container Registry service.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param code: Required. error code.
+    :type code: str
+    :param message: Required. error message.
+    :type message: str
+    """
+
+    _validation = {
+        'code': {'required': True},
+        'message': {'required': True},
+    }
+
+    _attribute_map = {
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+    }
+
+    def __init__(self, *, code: str, message: str, **kwargs) -> None:
+        super(Error, self).__init__(**kwargs)
+        self.code = code
+        self.message = message
+
+
+class ErrorSchema(Model):
+    """An error response from the Azure Container Registry service.
+
+    :param error: Azure container registry build API error body.
+    :type error:
+     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.Error
+    """
+
+    _attribute_map = {
+        'error': {'key': 'error', 'type': 'Error'},
+    }
+
+    def __init__(self, *, error=None, **kwargs) -> None:
+        super(ErrorSchema, self).__init__(**kwargs)
+        self.error = error
+
+
+class ErrorSchemaException(HttpOperationError):
+    """Server responsed with exception of type: 'ErrorSchema'.
+
+    :param deserialize: A deserializer
+    :param response: Server response to be deserialized.
+    """
+
+    def __init__(self, deserialize, response, *args):
+
+        super(ErrorSchemaException, self).__init__(deserialize, response, 'ErrorSchema', *args)
 
 
 class EventInfo(Model):
@@ -3193,6 +3275,76 @@ class Task(Resource):
         self.credentials = credentials
 
 
+class TaskRun(Resource):
+    """The task run that has the ARM resource and properties.
+    The task run will have the information of request and result of a run.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: The resource ID.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource.
+    :vartype type: str
+    :param location: Required. The location of the resource. This cannot be
+     changed after the resource is created.
+    :type location: str
+    :param tags: The tags of the resource.
+    :type tags: dict[str, str]
+    :param identity: Identity for the resource.
+    :type identity:
+     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.IdentityProperties
+    :ivar provisioning_state: The provisioning state of this task run.
+     Possible values include: 'Creating', 'Updating', 'Deleting', 'Succeeded',
+     'Failed', 'Canceled'
+    :vartype provisioning_state: str or
+     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.ProvisioningState
+    :param run_request: The request (parameters) for the run
+    :type run_request:
+     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.RunRequest
+    :ivar run_result: The result of this task run
+    :vartype run_result:
+     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.Run
+    :param force_update_tag: How the run should be forced to rerun even if the
+     run request configuration has not changed
+    :type force_update_tag: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'location': {'required': True},
+        'provisioning_state': {'readonly': True},
+        'run_result': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'identity': {'key': 'identity', 'type': 'IdentityProperties'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'run_request': {'key': 'properties.runRequest', 'type': 'RunRequest'},
+        'run_result': {'key': 'properties.runResult', 'type': 'Run'},
+        'force_update_tag': {'key': 'properties.forceUpdateTag', 'type': 'str'},
+    }
+
+    def __init__(self, *, location: str, tags=None, identity=None, run_request=None, force_update_tag: str=None, **kwargs) -> None:
+        super(TaskRun, self).__init__(location=location, tags=tags, **kwargs)
+        self.identity = identity
+        self.provisioning_state = None
+        self.run_request = run_request
+        self.run_result = None
+        self.force_update_tag = force_update_tag
+
+
 class TaskRunRequest(RunRequest):
     """The parameters for a task run request.
 
@@ -3229,6 +3381,37 @@ class TaskRunRequest(RunRequest):
         self.task_id = task_id
         self.override_task_step_properties = override_task_step_properties
         self.type = 'TaskRunRequest'
+
+
+class TaskRunUpdateParameters(Model):
+    """The parameters for updating a task run.
+
+    :param identity: Identity for the resource.
+    :type identity:
+     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.IdentityProperties
+    :param run_request: The request (parameters) for the new run
+    :type run_request:
+     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.RunRequest
+    :param force_update_tag: How the run should be forced to rerun even if the
+     run request configuration has not changed
+    :type force_update_tag: str
+    :param tags: The ARM resource tags.
+    :type tags: dict[str, str]
+    """
+
+    _attribute_map = {
+        'identity': {'key': 'identity', 'type': 'IdentityProperties'},
+        'run_request': {'key': 'properties.runRequest', 'type': 'RunRequest'},
+        'force_update_tag': {'key': 'properties.forceUpdateTag', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+    }
+
+    def __init__(self, *, identity=None, run_request=None, force_update_tag: str=None, tags=None, **kwargs) -> None:
+        super(TaskRunUpdateParameters, self).__init__(**kwargs)
+        self.identity = identity
+        self.run_request = run_request
+        self.force_update_tag = force_update_tag
+        self.tags = tags
 
 
 class TaskUpdateParameters(Model):
@@ -3396,9 +3579,6 @@ class Token(ProxyResource):
     :param scope_map_id: The resource ID of the scope map to which the token
      will be associated with.
     :type scope_map_id: str
-    :param object_id: The user/group/application object ID for which the token
-     has to be created.
-    :type object_id: str
     :param credentials: The credentials that can be used for authenticating
      the token.
     :type credentials:
@@ -3424,17 +3604,15 @@ class Token(ProxyResource):
         'creation_date': {'key': 'properties.creationDate', 'type': 'iso-8601'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'scope_map_id': {'key': 'properties.scopeMapId', 'type': 'str'},
-        'object_id': {'key': 'properties.objectId', 'type': 'str'},
         'credentials': {'key': 'properties.credentials', 'type': 'TokenCredentialsProperties'},
         'status': {'key': 'properties.status', 'type': 'str'},
     }
 
-    def __init__(self, *, scope_map_id: str=None, object_id: str=None, credentials=None, status=None, **kwargs) -> None:
+    def __init__(self, *, scope_map_id: str=None, credentials=None, status=None, **kwargs) -> None:
         super(Token, self).__init__(**kwargs)
         self.creation_date = None
         self.provisioning_state = None
         self.scope_map_id = scope_map_id
-        self.object_id = object_id
         self.credentials = credentials
         self.status = status
 
@@ -3473,6 +3651,9 @@ class TokenCredentialsProperties(Model):
     """The properties of the credentials that can be used for authenticating the
     token.
 
+    :param active_directory_object:
+    :type active_directory_object:
+     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.ActiveDirectoryObject
     :param certificates:
     :type certificates:
      list[~azure.mgmt.containerregistry.v2019_06_01_preview.models.TokenCertificate]
@@ -3482,12 +3663,14 @@ class TokenCredentialsProperties(Model):
     """
 
     _attribute_map = {
+        'active_directory_object': {'key': 'activeDirectoryObject', 'type': 'ActiveDirectoryObject'},
         'certificates': {'key': 'certificates', 'type': '[TokenCertificate]'},
         'passwords': {'key': 'passwords', 'type': '[TokenPassword]'},
     }
 
-    def __init__(self, *, certificates=None, passwords=None, **kwargs) -> None:
+    def __init__(self, *, active_directory_object=None, certificates=None, passwords=None, **kwargs) -> None:
         super(TokenCredentialsProperties, self).__init__(**kwargs)
+        self.active_directory_object = active_directory_object
         self.certificates = certificates
         self.passwords = passwords
 

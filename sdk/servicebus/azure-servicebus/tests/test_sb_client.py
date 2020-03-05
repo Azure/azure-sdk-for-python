@@ -22,7 +22,7 @@ from azure.servicebus.common.errors import (
     ServiceBusAuthorizationError,
     ServiceBusResourceNotFound
 )
-from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
+from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPreparer
 from servicebus_preparer import (
     ServiceBusNamespacePreparer, 
     ServiceBusTopicPreparer, 
@@ -34,7 +34,8 @@ from servicebus_preparer import (
 class ServiceBusClientTests(AzureMgmtTestCase):
 
     @pytest.mark.liveTest
-    @ResourceGroupPreparer(name_prefix='servicebustest')
+    @pytest.mark.live_test_only
+    @RandomNameResourceGroupPreparer(name_prefix='servicebustest')
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
     def test_sb_client_bad_credentials(self, servicebus_namespace, servicebus_queue, **kwargs):
@@ -48,7 +49,8 @@ class ServiceBusClientTests(AzureMgmtTestCase):
             client.get_queue(servicebus_queue.name)
 
     @pytest.mark.liveTest
-    @ResourceGroupPreparer(name_prefix='servicebustest')
+    @pytest.mark.live_test_only
+    @RandomNameResourceGroupPreparer(name_prefix='servicebustest')
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
     def test_sb_client_bad_namespace(self, **kwargs):
 
@@ -62,7 +64,8 @@ class ServiceBusClientTests(AzureMgmtTestCase):
             client.get_queue("testq")
 
     @pytest.mark.liveTest
-    @ResourceGroupPreparer(name_prefix='servicebustest')
+    @pytest.mark.live_test_only
+    @RandomNameResourceGroupPreparer(name_prefix='servicebustest')
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
     def test_sb_client_bad_entity(self, servicebus_namespace, servicebus_namespace_key_name, servicebus_namespace_primary_key, **kwargs):
 
@@ -79,7 +82,8 @@ class ServiceBusClientTests(AzureMgmtTestCase):
             client.get_topic("invalid")
 
     @pytest.mark.liveTest
-    @ResourceGroupPreparer(name_prefix='servicebustest')
+    @pytest.mark.live_test_only
+    @RandomNameResourceGroupPreparer(name_prefix='servicebustest')
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
     def test_sb_client_entity_conflict(self, servicebus_namespace, servicebus_namespace_key_name, servicebus_namespace_primary_key, servicebus_queue, **kwargs):
@@ -97,7 +101,8 @@ class ServiceBusClientTests(AzureMgmtTestCase):
             client.create_queue(servicebus_queue.name, lock_duration=300)
 
     @pytest.mark.liveTest
-    @ResourceGroupPreparer(name_prefix='servicebustest')
+    @pytest.mark.live_test_only
+    @RandomNameResourceGroupPreparer(name_prefix='servicebustest')
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
     def test_sb_client_entity_delete(self, servicebus_namespace, servicebus_namespace_key_name, servicebus_namespace_primary_key, servicebus_queue, **kwargs):
@@ -115,7 +120,8 @@ class ServiceBusClientTests(AzureMgmtTestCase):
         client.delete_queue(servicebus_queue.name)
 
     @pytest.mark.liveTest
-    @ResourceGroupPreparer(name_prefix='servicebustest')
+    @pytest.mark.live_test_only
+    @RandomNameResourceGroupPreparer(name_prefix='servicebustest')
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
     @ServiceBusNamespaceAuthorizationRulePreparer(name_prefix='servicebustest', access_rights=[AccessRights.listen])
@@ -132,7 +138,8 @@ class ServiceBusClientTests(AzureMgmtTestCase):
             client.send(Message("test"))
 
     @pytest.mark.liveTest
-    @ResourceGroupPreparer(name_prefix='servicebustest')
+    @pytest.mark.live_test_only
+    @RandomNameResourceGroupPreparer(name_prefix='servicebustest')
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
     @ServiceBusNamespaceAuthorizationRulePreparer(name_prefix='servicebustest', access_rights=[AccessRights.send])
@@ -158,7 +165,8 @@ class ServiceBusClientTests(AzureMgmtTestCase):
 
 
     @pytest.mark.liveTest
-    @ResourceGroupPreparer(name_prefix='servicebustest')
+    @pytest.mark.live_test_only
+    @RandomNameResourceGroupPreparer(name_prefix='servicebustest')
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusNamespaceAuthorizationRulePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest_queue_one', parameter_name='wrong_queue', dead_lettering_on_message_expiration=True)

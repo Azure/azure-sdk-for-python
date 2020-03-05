@@ -129,6 +129,8 @@ class EventProcessor(
                     self._id,
                     partition_id
                 )
+                if partition_id not in self._consumers:  # task is cancelled before the consumer is created
+                    del self._tasks[partition_id]
 
     def _create_tasks_for_claimed_ownership(
         self,

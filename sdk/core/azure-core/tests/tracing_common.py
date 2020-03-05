@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 """Fake implementation of AbstractSpan for tests."""
+from contextlib import contextmanager
 from azure.core.tracing import HttpSpanMixin, SpanKind
 
 
@@ -30,6 +31,13 @@ class FakeSpan(HttpSpanMixin, object):
             self.CONTEXT[-1].children.append(self)
         self.CONTEXT.append(self)
         self.status = None
+
+    def __str__(self):
+        buffer = "Name: {}\n".format(self.name)
+        buffer += "Children:\n"
+        subchildren = "\n".join(str(child) for child in self.children)
+        buffer += "\n".join("\t{}".format(line) for line in subchildren.splitlines())
+        return buffer
 
     @property
     def span_instance(self):
@@ -160,13 +168,16 @@ class FakeSpan(HttpSpanMixin, object):
         raise NotImplementedError()
 
     @classmethod
+    @contextmanager
     def change_context(cls, span):
         # type: (Span) -> ContextManager
         """Change the context for the life of this context manager.
         """
-        cls.CONTEXT.append(span)
-        yield
-        cls.CONTEXT.pop()
+        try:
+            cls.CONTEXT.append(span)
+            yield
+        finally:
+            cls.CONTEXT.pop()
 
     @classmethod
     def set_current_span(cls, span):

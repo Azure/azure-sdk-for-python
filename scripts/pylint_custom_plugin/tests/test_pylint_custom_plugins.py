@@ -6,7 +6,8 @@
 import astroid
 import pylint.testutils
 
-from azure.core import PipelineClient, Configuration
+from azure.core import PipelineClient
+from azure.core.configuration import Configuration
 from pylint_custom_plugin import pylint_guidelines_checker as checker
 
 
@@ -2160,6 +2161,16 @@ class TestClientConstructorDoesNotHaveConnectionStringParam(pylint.testutils.Che
 
 class TestClientMethodNamesDoNotUseDoubleUnderscorePrefix(pylint.testutils.CheckerTestCase):
     CHECKER_CLASS = checker.ClientMethodNamesDoNotUseDoubleUnderscorePrefix
+
+    def test_ignores_repr(self):
+        class_node, function_node = astroid.extract_node("""
+        class SomeClient(): #@
+            def __repr__(self): #@
+                pass
+        """)
+
+        with self.assertNoMessages():
+            self.checker.visit_functiondef(function_node)
 
     def test_ignores_constructor(self):
         class_node, function_node = astroid.extract_node("""

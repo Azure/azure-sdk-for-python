@@ -27,6 +27,7 @@ try:
     from ._models_py3 import EventSubscriptionUpdateParameters
     from ._models_py3 import EventType
     from ._models_py3 import HybridConnectionEventSubscriptionDestination
+    from ._models_py3 import InboundIpRule
     from ._models_py3 import InputSchemaMapping
     from ._models_py3 import JsonField
     from ._models_py3 import JsonFieldWithDefault
@@ -75,6 +76,7 @@ except (SyntaxError, ImportError):
     from ._models import EventSubscriptionUpdateParameters
     from ._models import EventType
     from ._models import HybridConnectionEventSubscriptionDestination
+    from ._models import InboundIpRule
     from ._models import InputSchemaMapping
     from ._models import JsonField
     from ._models import JsonFieldWithDefault
@@ -115,6 +117,7 @@ from ._paged_models import TopicTypeInfoPaged
 from ._event_grid_management_client_enums import (
     DomainProvisioningState,
     InputSchema,
+    IpActionType,
     DomainTopicProvisioningState,
     EventSubscriptionProvisioningState,
     EventDeliverySchema,
@@ -141,6 +144,7 @@ __all__ = [
     'EventSubscriptionUpdateParameters',
     'EventType',
     'HybridConnectionEventSubscriptionDestination',
+    'InboundIpRule',
     'InputSchemaMapping',
     'JsonField',
     'JsonFieldWithDefault',
@@ -180,6 +184,7 @@ __all__ = [
     'TopicTypeInfoPaged',
     'DomainProvisioningState',
     'InputSchema',
+    'IpActionType',
     'DomainTopicProvisioningState',
     'EventSubscriptionProvisioningState',
     'EventDeliverySchema',

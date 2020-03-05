@@ -143,15 +143,14 @@ def test_send_over_websocket_sync(connstr_receivers):
     client = EventHubProducerClient.from_connection_string(connection_str, transport_type=TransportType.AmqpOverWebsocket)
 
     with client:
-        batch = client.create_batch()
+        batch = client.create_batch(partition_id="0")
         for i in range(5):
             batch.add(EventData("Event Number {}".format(i)))
         client.send_batch(batch)
 
     time.sleep(1)
     received = []
-    for r in receivers:
-        received.extend(r.receive_message_batch(timeout=6000))
+    received.extend(receivers[0].receive_message_batch(max_batch_size=5, timeout=10000))
     assert len(received) == 5
 
 

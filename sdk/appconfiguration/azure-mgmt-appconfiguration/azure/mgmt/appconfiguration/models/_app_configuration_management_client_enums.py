@@ -28,3 +28,17 @@ class ProvisioningState(str, Enum):
     succeeded = "Succeeded"
     failed = "Failed"
     canceled = "Canceled"
+
+
+class ConnectionStatus(str, Enum):
+
+    pending = "Pending"
+    approved = "Approved"
+    rejected = "Rejected"
+    disconnected = "Disconnected"
+
+
+class ActionsRequired(str, Enum):
+
+    none = "None"
+    recreate = "Recreate"

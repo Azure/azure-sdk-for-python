@@ -42,7 +42,8 @@ if __name__ == '__main__':
             consumer_client.receive(
                 on_event=on_event,
                 partition_id='0',
-                track_last_enqueued_event_properties=True
+                track_last_enqueued_event_properties=True,
+                starting_position="-1",  # "-1" is from the beginning of the partition.
             )
     except KeyboardInterrupt:
         print('Stopped receiving.')

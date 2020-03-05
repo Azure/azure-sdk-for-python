@@ -193,7 +193,7 @@ print(secret.value)
 
 ### Update Secret metadata
 [update_secret_properites](https://aka.ms/azsdk-python-keyvault-secrets-update-secret-ref) updates a secret's metadata. It cannot change the secret's
-value; use [set_secret](#create-a-secret) to set a secret's value.
+value; use [set_secret](#set-a-secret) to set a secret's value.
 
 ```python
 from azure.identity import DefaultAzureCredential
@@ -258,6 +258,24 @@ first install an async transport, such as [aiohttp](https://pypi.org/project/aio
 See
 [azure-core documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md#transport)
 for more information.
+
+Async clients should be closed when they're no longer needed. Each async
+client is an async context manager and defines an async `close` method. For
+example:
+
+```py
+from azure.keyvault.secrets import SecretClient
+
+# call close when the client is no longer needed
+client = SecretClient()
+...
+await client.close()
+
+# alternatively, use the client as an async context manager
+client = SecretClient()
+async with client:
+  ...
+```
 
 ### Asynchronously create a secret
 [set_secret](https://aka.ms/azsdk-python-keyvault-secrets-async-set-secret-ref) creates a secret in the Key Vault with the

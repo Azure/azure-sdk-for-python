@@ -284,26 +284,9 @@ class AzureFirewallsOperations(object):
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/azureFirewalls/{azureFirewallName}'}
 
-    def update_tags(
-            self, resource_group_name, azure_firewall_name, tags=None, custom_headers=None, raw=False, **operation_config):
-        """Updates tags of an Azure Firewall resource.
 
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param azure_firewall_name: The name of the Azure Firewall.
-        :type azure_firewall_name: str
-        :param tags: Resource tags.
-        :type tags: dict[str, str]
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: AzureFirewall or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.network.v2019_09_01.models.AzureFirewall or
-         ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
+    def _update_tags_initial(
+            self, resource_group_name, azure_firewall_name, tags=None, custom_headers=None, raw=False, **operation_config):
         parameters = models.TagsObject(tags=tags)
 
         # Construct URL
@@ -337,12 +320,13 @@ class AzureFirewallsOperations(object):
         request = self._client.patch(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 202]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
 
         deserialized = None
+
         if response.status_code == 200:
             deserialized = self._deserialize('AzureFirewall', response)
 
@@ -351,6 +335,55 @@ class AzureFirewallsOperations(object):
             return client_raw_response
 
         return deserialized
+
+    def update_tags(
+            self, resource_group_name, azure_firewall_name, tags=None, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Updates tags of an Azure Firewall resource.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param azure_firewall_name: The name of the Azure Firewall.
+        :type azure_firewall_name: str
+        :param tags: Resource tags.
+        :type tags: dict[str, str]
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns AzureFirewall or
+         ClientRawResponse<AzureFirewall> if raw==True
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.network.v2019_09_01.models.AzureFirewall]
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.network.v2019_09_01.models.AzureFirewall]]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._update_tags_initial(
+            resource_group_name=resource_group_name,
+            azure_firewall_name=azure_firewall_name,
+            tags=tags,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            deserialized = self._deserialize('AzureFirewall', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                return client_raw_response
+
+            return deserialized
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     update_tags.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/azureFirewalls/{azureFirewallName}'}
 
     def list(

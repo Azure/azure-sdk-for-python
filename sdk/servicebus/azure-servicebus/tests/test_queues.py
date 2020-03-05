@@ -61,10 +61,14 @@ def print_message(message):
         pass
     _logger.debug("Enqueued time: {}".format(message.enqueued_time))
 
-
+# A note regarding live_test_only.
+# Old servicebus tests were not written to work on both stubs and live entities.
+# This disables those tests for non-live scenarios, and should be removed as tests
+# are ported to offline-compatible code.
 class ServiceBusQueueTests(AzureMgmtTestCase):
 
     @pytest.mark.liveTest
+    @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
@@ -88,6 +92,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
         assert count == 5
 
     @pytest.mark.liveTest
+    @pytest.mark.live_test_only
     @CachedResourceGroupPreparer()
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @CachedServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
@@ -109,6 +114,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 time.sleep(40)
 
     @pytest.mark.liveTest
+    @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
@@ -139,6 +145,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
 
 
     @pytest.mark.liveTest
+    @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
@@ -174,6 +181,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     
 
     @pytest.mark.liveTest
+    @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
@@ -212,6 +220,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     
 
     @pytest.mark.liveTest
+    @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
@@ -247,6 +256,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     
 
     @pytest.mark.liveTest
+    @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
@@ -283,6 +293,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
 
     
     @pytest.mark.liveTest
+    @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
@@ -321,6 +332,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     
 
     @pytest.mark.liveTest
+    @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
@@ -365,6 +377,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     
 
     @pytest.mark.liveTest
+    @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
@@ -405,6 +418,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     
 
     @pytest.mark.liveTest
+    @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @CachedServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
@@ -450,6 +464,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     
 
     @pytest.mark.liveTest
+    @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @CachedServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
@@ -487,6 +502,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     
 
     @pytest.mark.liveTest
+    @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
@@ -523,6 +539,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     
 
     @pytest.mark.liveTest
+    @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @CachedServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
@@ -563,6 +580,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     
 
     @pytest.mark.liveTest
+    @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
@@ -606,6 +624,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     
 
     @pytest.mark.liveTest
+    @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @CachedServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
@@ -626,6 +645,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     
 
     @pytest.mark.liveTest
+    @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @CachedServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
@@ -653,6 +673,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     
 
     @pytest.mark.liveTest
+    @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @CachedServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
@@ -681,6 +702,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     
     
     @pytest.mark.liveTest
+    @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
@@ -699,6 +721,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     
 
     @pytest.mark.liveTest
+    @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @CachedServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
@@ -734,6 +757,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     
 
     @pytest.mark.liveTest
+    @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @CachedServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
@@ -769,6 +793,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     
 
     @pytest.mark.liveTest
+    @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @CachedServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
@@ -814,6 +839,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     messages[2].complete()
     
     @pytest.mark.liveTest
+    @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @CachedServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
@@ -865,6 +891,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     
 
     @pytest.mark.liveTest
+    @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
@@ -899,6 +926,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     
 
     @pytest.mark.liveTest
+    @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_duplicate_detection=True, dead_lettering_on_message_expiration=True)
@@ -929,6 +957,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     
 
     @pytest.mark.liveTest
+    @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
@@ -954,6 +983,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             messages[0].complete()
     
     @pytest.mark.liveTest
+    @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
@@ -990,6 +1020,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     
 
     @pytest.mark.liveTest
+    @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
@@ -1024,6 +1055,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     
 
     @pytest.mark.liveTest
+    @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
@@ -1066,6 +1098,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     
 
     @pytest.mark.liveTest
+    @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
@@ -1101,6 +1134,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     
 
     @pytest.mark.liveTest
+    @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
@@ -1139,6 +1173,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             
 
     @pytest.mark.liveTest
+    @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
@@ -1181,6 +1216,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             
 
     @pytest.mark.liveTest
+    @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)

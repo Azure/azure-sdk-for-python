@@ -10,87 +10,87 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .image_object_py3 import ImageObject
-    from .video_object_py3 import VideoObject
-    from .query_py3 import Query
-    from .pivot_suggestions_py3 import PivotSuggestions
-    from .videos_py3 import Videos
-    from .search_results_answer_py3 import SearchResultsAnswer
-    from .answer_py3 import Answer
-    from .query_context_py3 import QueryContext
-    from .media_object_py3 import MediaObject
-    from .response_py3 import Response
-    from .thing_py3 import Thing
-    from .creative_work_py3 import CreativeWork
-    from .identifiable_py3 import Identifiable
-    from .error_py3 import Error
-    from .error_response_py3 import ErrorResponse, ErrorResponseException
-    from .trending_videos_tile_py3 import TrendingVideosTile
-    from .trending_videos_subcategory_py3 import TrendingVideosSubcategory
-    from .trending_videos_category_py3 import TrendingVideosCategory
-    from .trending_videos_py3 import TrendingVideos
-    from .videos_module_py3 import VideosModule
-    from .video_details_py3 import VideoDetails
-    from .response_base_py3 import ResponseBase
+    from ._models_py3 import Answer
+    from ._models_py3 import CreativeWork
+    from ._models_py3 import Error
+    from ._models_py3 import ErrorResponse, ErrorResponseException
+    from ._models_py3 import Identifiable
+    from ._models_py3 import ImageObject
+    from ._models_py3 import MediaObject
+    from ._models_py3 import PivotSuggestions
+    from ._models_py3 import Query
+    from ._models_py3 import QueryContext
+    from ._models_py3 import Response
+    from ._models_py3 import ResponseBase
+    from ._models_py3 import SearchResultsAnswer
+    from ._models_py3 import Thing
+    from ._models_py3 import TrendingVideos
+    from ._models_py3 import TrendingVideosCategory
+    from ._models_py3 import TrendingVideosSubcategory
+    from ._models_py3 import TrendingVideosTile
+    from ._models_py3 import VideoDetails
+    from ._models_py3 import VideoObject
+    from ._models_py3 import Videos
+    from ._models_py3 import VideosModule
 except (SyntaxError, ImportError):
-    from .image_object import ImageObject
-    from .video_object import VideoObject
-    from .query import Query
-    from .pivot_suggestions import PivotSuggestions
-    from .videos import Videos
-    from .search_results_answer import SearchResultsAnswer
-    from .answer import Answer
-    from .query_context import QueryContext
-    from .media_object import MediaObject
-    from .response import Response
-    from .thing import Thing
-    from .creative_work import CreativeWork
-    from .identifiable import Identifiable
-    from .error import Error
-    from .error_response import ErrorResponse, ErrorResponseException
-    from .trending_videos_tile import TrendingVideosTile
-    from .trending_videos_subcategory import TrendingVideosSubcategory
-    from .trending_videos_category import TrendingVideosCategory
-    from .trending_videos import TrendingVideos
-    from .videos_module import VideosModule
-    from .video_details import VideoDetails
-    from .response_base import ResponseBase
-from .video_search_api_enums import (
-    VideoQueryScenario,
+    from ._models import Answer
+    from ._models import CreativeWork
+    from ._models import Error
+    from ._models import ErrorResponse, ErrorResponseException
+    from ._models import Identifiable
+    from ._models import ImageObject
+    from ._models import MediaObject
+    from ._models import PivotSuggestions
+    from ._models import Query
+    from ._models import QueryContext
+    from ._models import Response
+    from ._models import ResponseBase
+    from ._models import SearchResultsAnswer
+    from ._models import Thing
+    from ._models import TrendingVideos
+    from ._models import TrendingVideosCategory
+    from ._models import TrendingVideosSubcategory
+    from ._models import TrendingVideosTile
+    from ._models import VideoDetails
+    from ._models import VideoObject
+    from ._models import Videos
+    from ._models import VideosModule
+from ._video_search_client_enums import (
     ErrorCode,
     ErrorSubCode,
     Freshness,
-    VideoLength,
-    VideoPricing,
-    VideoResolution,
     SafeSearch,
     TextFormat,
     VideoInsightModule,
+    VideoLength,
+    VideoPricing,
+    VideoQueryScenario,
+    VideoResolution,
 )
 
 __all__ = [
-    'ImageObject',
-    'VideoObject',
-    'Query',
-    'PivotSuggestions',
-    'Videos',
-    'SearchResultsAnswer',
     'Answer',
-    'QueryContext',
-    'MediaObject',
-    'Response',
-    'Thing',
     'CreativeWork',
-    'Identifiable',
     'Error',
     'ErrorResponse', 'ErrorResponseException',
-    'TrendingVideosTile',
-    'TrendingVideosSubcategory',
-    'TrendingVideosCategory',
-    'TrendingVideos',
-    'VideosModule',
-    'VideoDetails',
+    'Identifiable',
+    'ImageObject',
+    'MediaObject',
+    'PivotSuggestions',
+    'Query',
+    'QueryContext',
+    'Response',
     'ResponseBase',
+    'SearchResultsAnswer',
+    'Thing',
+    'TrendingVideos',
+    'TrendingVideosCategory',
+    'TrendingVideosSubcategory',
+    'TrendingVideosTile',
+    'VideoDetails',
+    'VideoObject',
+    'Videos',
+    'VideosModule',
     'VideoQueryScenario',
     'ErrorCode',
     'ErrorSubCode',

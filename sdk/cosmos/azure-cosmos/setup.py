@@ -26,15 +26,15 @@ with open(os.path.join(PACKAGE_FOLDER_PATH, '_version.py'), 'r') as fd:
                         fd.read(), re.MULTILINE).group(1)
 
 with open("README.md", encoding="utf-8") as f:
-    README = f.read()
-with open("HISTORY.md", encoding="utf-8") as f:
-    HISTORY = f.read()
+    readme = f.read()
+with open("CHANGELOG.md", encoding="utf-8") as f:
+    changelog = f.read()
 
 setup(
     name=PACKAGE_NAME,
     version=version,
     description="Microsoft Azure {} Client Library for Python".format(PACKAGE_PPRINT_NAME),
-    long_description=README + "\n\n" + HISTORY,
+    long_description=readme + "\n\n" + changelog,
     long_description_content_type="text/markdown",
     license="MIT License",
     author="Microsoft Corporation",

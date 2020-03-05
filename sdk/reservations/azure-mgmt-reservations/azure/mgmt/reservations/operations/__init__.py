@@ -9,12 +9,22 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+from ._quota_operations import QuotaOperations
+from ._quota_request_operations import QuotaRequestOperations
+from ._quotas_operations import QuotasOperations
+from ._quota_requests_operations import QuotaRequestsOperations
+from ._auto_quota_increase_operations import AutoQuotaIncreaseOperations
 from ._reservation_operations import ReservationOperations
 from ._reservation_order_operations import ReservationOrderOperations
 from ._operation_operations import OperationOperations
 from ._azure_reservation_api_operations import AzureReservationAPIOperationsMixin
 
 __all__ = [
+    'QuotaOperations',
+    'QuotaRequestOperations',
+    'QuotasOperations',
+    'QuotaRequestsOperations',
+    'AutoQuotaIncreaseOperations',
     'ReservationOperations',
     'ReservationOrderOperations',
     'OperationOperations',

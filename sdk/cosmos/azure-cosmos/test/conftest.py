@@ -21,37 +21,16 @@
 
 # pytest fixture 'teardown' is called at the end of a test run to clean up resources
 
-import pytest
 import test_config
-import azure.cosmos.cosmos_client as cosmos_client
-import azure.cosmos.exceptions as exceptions
-from azure.cosmos.http_constants import StatusCodes
-
-database_ids_to_delete = []
+import pytest
+import cleanup
 
 @pytest.fixture(scope="session")
 def teardown(request):
 
-    def delete_database():
-        print("Cleaning up test resources...")
+    def delete_test_database():
         config = test_config._test_config
-        host = config.host
-        masterKey = config.masterKey
-        connectionPolicy = config.connectionPolicy
-        try:
-            client = cosmos_client.CosmosClient(host, masterKey, "Session", connection_policy=connectionPolicy)
-         # This is to soft-fail the teardown while cosmos tests are not running automatically
-        except Exception:
-            pass
-        else:
-            database_ids_to_delete.append(config.TEST_DATABASE_ID)
-            for database_id in database_ids_to_delete:
-                try:
-                    client.delete_database(database_id)
-                except exceptions.CosmosResourceNotFoundError:
-                    pass
-            del database_ids_to_delete[:]
-        print("Clean up completed!")
+        cleanup.delete_database(config.TEST_DATABASE_ID)
 
-    request.addfinalizer(delete_database)
+    request.addfinalizer(delete_test_database)
     return None

@@ -16,17 +16,17 @@ interactions:
       - application/json; charset=utf-8
       User-Agent:
       - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-resource/4.0.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-resource/8.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_test_deployments_linked_template27ec152e/providers/Microsoft.Resources/deployments/pytestlinked27ec152e?api-version=2019-08-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_test_deployments_linked_template27ec152e/providers/Microsoft.Resources/deployments/pytestlinked27ec152e?api-version=2019-10-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_test_deployments_linked_template27ec152e/providers/Microsoft.Resources/deployments/pytestlinked27ec152e","name":"pytestlinked27ec152e","type":"Microsoft.Resources/deployments","properties":{"templateLink":{"uri":"https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-availability-set-create-3FDs-20UDs/azuredeploy.json","contentVersion":"1.0.0.0"},"templateHash":"5389577487230661137","parametersLink":{"uri":"https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-availability-set-create-3FDs-20UDs/azuredeploy.parameters.json"},"parameters":{"location":{"type":"String","value":"westus"}},"mode":"Incremental","provisioningState":"Accepted","timestamp":"2019-12-07T13:47:03.3342705Z","duration":"PT2.1486757S","correlationId":"2649d043-11f9-4f3f-ab75-deaae12e5504","providers":[{"namespace":"Microsoft.Compute","resourceTypes":[{"resourceType":"availabilitySets","locations":["westus"]}]}],"dependencies":[]}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_test_deployments_linked_template27ec152e/providers/Microsoft.Resources/deployments/pytestlinked27ec152e","name":"pytestlinked27ec152e","type":"Microsoft.Resources/deployments","properties":{"templateLink":{"uri":"https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-availability-set-create-3FDs-20UDs/azuredeploy.json","contentVersion":"1.0.0.0"},"templateHash":"5389577487230661137","parametersLink":{"uri":"https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-availability-set-create-3FDs-20UDs/azuredeploy.parameters.json"},"parameters":{"location":{"type":"String","value":"westus"}},"mode":"Incremental","provisioningState":"Accepted","timestamp":"2020-02-04T04:11:30.6674736Z","duration":"PT2.1464617S","correlationId":"f57745d8-83aa-4c48-b41e-6e8a19138e2a","providers":[{"namespace":"Microsoft.Compute","resourceTypes":[{"resourceType":"availabilitySets","locations":["westus"]}]}],"dependencies":[]}}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_test_deployments_linked_template27ec152e/providers/Microsoft.Resources/deployments/pytestlinked27ec152e/operationStatuses/08586258804642920106?api-version=2019-08-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_test_deployments_linked_template27ec152e/providers/Microsoft.Resources/deployments/pytestlinked27ec152e/operationStatuses/08586208173969565956?api-version=2019-10-01
       cache-control:
       - no-cache
       content-length:
@@ -34,7 +34,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 07 Dec 2019 13:47:04 GMT
+      - Tue, 04 Feb 2020 04:11:31 GMT
       expires:
       - '-1'
       pragma:
@@ -44,7 +44,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1197'
+      - '1198'
     status:
       code: 201
       message: Created
@@ -59,9 +59,9 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-resource/4.0.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-resource/8.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_test_deployments_linked_template27ec152e/providers/Microsoft.Resources/deployments/pytestlinked27ec152e/operationStatuses/08586258804642920106?api-version=2019-08-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_test_deployments_linked_template27ec152e/providers/Microsoft.Resources/deployments/pytestlinked27ec152e/operationStatuses/08586208173969565956?api-version=2019-10-01
   response:
     body:
       string: '{"status":"Running"}'
@@ -73,7 +73,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 07 Dec 2019 13:47:42 GMT
+      - Tue, 04 Feb 2020 04:12:02 GMT
       expires:
       - '-1'
       pragma:
@@ -98,87 +98,9 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-resource/4.0.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-resource/8.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_test_deployments_linked_template27ec152e/providers/Microsoft.Resources/deployments/pytestlinked27ec152e/operationStatuses/08586258804642920106?api-version=2019-08-01
-  response:
-    body:
-      string: '{"status":"Running"}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '20'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Sat, 07 Dec 2019 13:48:12 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-resource/4.0.0 Azure-SDK-For-Python
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_test_deployments_linked_template27ec152e/providers/Microsoft.Resources/deployments/pytestlinked27ec152e/operationStatuses/08586258804642920106?api-version=2019-08-01
-  response:
-    body:
-      string: '{"status":"Running"}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '20'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Sat, 07 Dec 2019 13:48:43 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-resource/4.0.0 Azure-SDK-For-Python
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_test_deployments_linked_template27ec152e/providers/Microsoft.Resources/deployments/pytestlinked27ec152e/operationStatuses/08586258804642920106?api-version=2019-08-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_test_deployments_linked_template27ec152e/providers/Microsoft.Resources/deployments/pytestlinked27ec152e/operationStatuses/08586208173969565956?api-version=2019-10-01
   response:
     body:
       string: '{"status":"Succeeded"}'
@@ -190,7 +112,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 07 Dec 2019 13:49:13 GMT
+      - Tue, 04 Feb 2020 04:12:32 GMT
       expires:
       - '-1'
       pragma:
@@ -215,21 +137,21 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-resource/4.0.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-resource/8.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_test_deployments_linked_template27ec152e/providers/Microsoft.Resources/deployments/pytestlinked27ec152e?api-version=2019-08-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_test_deployments_linked_template27ec152e/providers/Microsoft.Resources/deployments/pytestlinked27ec152e?api-version=2019-10-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_test_deployments_linked_template27ec152e/providers/Microsoft.Resources/deployments/pytestlinked27ec152e","name":"pytestlinked27ec152e","type":"Microsoft.Resources/deployments","properties":{"templateLink":{"uri":"https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-availability-set-create-3FDs-20UDs/azuredeploy.json","contentVersion":"1.0.0.0"},"templateHash":"5389577487230661137","parametersLink":{"uri":"https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-availability-set-create-3FDs-20UDs/azuredeploy.parameters.json"},"parameters":{"location":{"type":"String","value":"westus"}},"mode":"Incremental","provisioningState":"Succeeded","timestamp":"2019-12-07T13:49:06.8932555Z","duration":"PT2M5.7076607S","correlationId":"2649d043-11f9-4f3f-ab75-deaae12e5504","providers":[{"namespace":"Microsoft.Compute","resourceTypes":[{"resourceType":"availabilitySets","locations":["westus"]}]}],"dependencies":[],"outputResources":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_test_deployments_linked_template27ec152e/providers/Microsoft.Compute/availabilitySets/availabilitySet1"}]}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_test_deployments_linked_template27ec152e/providers/Microsoft.Resources/deployments/pytestlinked27ec152e","name":"pytestlinked27ec152e","type":"Microsoft.Resources/deployments","properties":{"templateLink":{"uri":"https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-availability-set-create-3FDs-20UDs/azuredeploy.json","contentVersion":"1.0.0.0"},"templateHash":"5389577487230661137","parametersLink":{"uri":"https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-availability-set-create-3FDs-20UDs/azuredeploy.parameters.json"},"parameters":{"location":{"type":"String","value":"westus"}},"mode":"Incremental","provisioningState":"Succeeded","timestamp":"2020-02-04T04:12:03.7972542Z","duration":"PT35.2762423S","correlationId":"f57745d8-83aa-4c48-b41e-6e8a19138e2a","providers":[{"namespace":"Microsoft.Compute","resourceTypes":[{"resourceType":"availabilitySets","locations":["westus"]}]}],"dependencies":[],"outputResources":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_test_deployments_linked_template27ec152e/providers/Microsoft.Compute/availabilitySets/availabilitySet1"}]}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '1272'
+      - '1271'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 07 Dec 2019 13:49:14 GMT
+      - Tue, 04 Feb 2020 04:12:33 GMT
       expires:
       - '-1'
       pragma:
@@ -254,23 +176,23 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-resource/4.0.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-resource/8.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_test_deployments_linked_template27ec152e/providers/Microsoft.Resources/deployments/?api-version=2019-08-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_test_deployments_linked_template27ec152e/providers/Microsoft.Resources/deployments/?api-version=2019-10-01
   response:
     body:
-      string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_test_deployments_linked_template27ec152e/providers/Microsoft.Resources/deployments/pytestlinked27ec152e","name":"pytestlinked27ec152e","type":"Microsoft.Resources/deployments","properties":{"templateLink":{"uri":"https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-availability-set-create-3FDs-20UDs/azuredeploy.json","contentVersion":"1.0.0.0"},"templateHash":"5389577487230661137","parametersLink":{"uri":"https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-availability-set-create-3FDs-20UDs/azuredeploy.parameters.json"},"parameters":{"location":{"type":"String","value":"westus"}},"mode":"Incremental","provisioningState":"Succeeded","timestamp":"2019-12-07T13:49:06.8932555Z","duration":"PT2M5.7076607S","correlationId":"2649d043-11f9-4f3f-ab75-deaae12e5504","providers":[{"namespace":"Microsoft.Compute","resourceTypes":[{"resourceType":"availabilitySets","locations":["westus"]}]}],"dependencies":[],"outputResources":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_test_deployments_linked_template27ec152e/providers/Microsoft.Compute/availabilitySets/availabilitySet1"}]}}]}'
+      string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_test_deployments_linked_template27ec152e/providers/Microsoft.Resources/deployments/pytestlinked27ec152e","name":"pytestlinked27ec152e","type":"Microsoft.Resources/deployments","properties":{"templateLink":{"uri":"https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-availability-set-create-3FDs-20UDs/azuredeploy.json","contentVersion":"1.0.0.0"},"templateHash":"5389577487230661137","parametersLink":{"uri":"https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-availability-set-create-3FDs-20UDs/azuredeploy.parameters.json"},"parameters":{"location":{"type":"String","value":"westus"}},"mode":"Incremental","provisioningState":"Succeeded","timestamp":"2020-02-04T04:12:03.7972542Z","duration":"PT35.2762423S","correlationId":"f57745d8-83aa-4c48-b41e-6e8a19138e2a","providers":[{"namespace":"Microsoft.Compute","resourceTypes":[{"resourceType":"availabilitySets","locations":["westus"]}]}],"dependencies":[],"outputResources":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_test_deployments_linked_template27ec152e/providers/Microsoft.Compute/availabilitySets/availabilitySet1"}]}}]}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '1284'
+      - '1283'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 07 Dec 2019 13:49:15 GMT
+      - Tue, 04 Feb 2020 04:12:33 GMT
       expires:
       - '-1'
       pragma:
@@ -295,23 +217,23 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-resource/4.0.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-resource/8.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_test_deployments_linked_template27ec152e/providers/Microsoft.Resources/deployments/pytestlinked27ec152e?api-version=2019-08-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_test_deployments_linked_template27ec152e/providers/Microsoft.Resources/deployments/pytestlinked27ec152e?api-version=2019-10-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_test_deployments_linked_template27ec152e/providers/Microsoft.Resources/deployments/pytestlinked27ec152e","name":"pytestlinked27ec152e","type":"Microsoft.Resources/deployments","properties":{"templateLink":{"uri":"https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-availability-set-create-3FDs-20UDs/azuredeploy.json","contentVersion":"1.0.0.0"},"templateHash":"5389577487230661137","parametersLink":{"uri":"https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-availability-set-create-3FDs-20UDs/azuredeploy.parameters.json"},"parameters":{"location":{"type":"String","value":"westus"}},"mode":"Incremental","provisioningState":"Succeeded","timestamp":"2019-12-07T13:49:06.8932555Z","duration":"PT2M5.7076607S","correlationId":"2649d043-11f9-4f3f-ab75-deaae12e5504","providers":[{"namespace":"Microsoft.Compute","resourceTypes":[{"resourceType":"availabilitySets","locations":["westus"]}]}],"dependencies":[],"outputResources":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_test_deployments_linked_template27ec152e/providers/Microsoft.Compute/availabilitySets/availabilitySet1"}]}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_test_deployments_linked_template27ec152e/providers/Microsoft.Resources/deployments/pytestlinked27ec152e","name":"pytestlinked27ec152e","type":"Microsoft.Resources/deployments","properties":{"templateLink":{"uri":"https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-availability-set-create-3FDs-20UDs/azuredeploy.json","contentVersion":"1.0.0.0"},"templateHash":"5389577487230661137","parametersLink":{"uri":"https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-availability-set-create-3FDs-20UDs/azuredeploy.parameters.json"},"parameters":{"location":{"type":"String","value":"westus"}},"mode":"Incremental","provisioningState":"Succeeded","timestamp":"2020-02-04T04:12:03.7972542Z","duration":"PT35.2762423S","correlationId":"f57745d8-83aa-4c48-b41e-6e8a19138e2a","providers":[{"namespace":"Microsoft.Compute","resourceTypes":[{"resourceType":"availabilitySets","locations":["westus"]}]}],"dependencies":[],"outputResources":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_test_deployments_linked_template27ec152e/providers/Microsoft.Compute/availabilitySets/availabilitySet1"}]}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '1272'
+      - '1271'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 07 Dec 2019 13:49:15 GMT
+      - Tue, 04 Feb 2020 04:12:34 GMT
       expires:
       - '-1'
       pragma:

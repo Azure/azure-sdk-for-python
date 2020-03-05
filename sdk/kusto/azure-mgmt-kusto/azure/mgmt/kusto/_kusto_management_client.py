@@ -14,7 +14,9 @@ from msrest import Serializer, Deserializer
 
 from ._configuration import KustoManagementClientConfiguration
 from .operations import ClustersOperations
+from .operations import ClusterPrincipalAssignmentsOperations
 from .operations import DatabasesOperations
+from .operations import DatabasePrincipalAssignmentsOperations
 from .operations import AttachedDatabaseConfigurationsOperations
 from .operations import DataConnectionsOperations
 from .operations import Operations
@@ -29,8 +31,12 @@ class KustoManagementClient(SDKClient):
 
     :ivar clusters: Clusters operations
     :vartype clusters: azure.mgmt.kusto.operations.ClustersOperations
+    :ivar cluster_principal_assignments: ClusterPrincipalAssignments operations
+    :vartype cluster_principal_assignments: azure.mgmt.kusto.operations.ClusterPrincipalAssignmentsOperations
     :ivar databases: Databases operations
     :vartype databases: azure.mgmt.kusto.operations.DatabasesOperations
+    :ivar database_principal_assignments: DatabasePrincipalAssignments operations
+    :vartype database_principal_assignments: azure.mgmt.kusto.operations.DatabasePrincipalAssignmentsOperations
     :ivar attached_database_configurations: AttachedDatabaseConfigurations operations
     :vartype attached_database_configurations: azure.mgmt.kusto.operations.AttachedDatabaseConfigurationsOperations
     :ivar data_connections: DataConnections operations
@@ -55,13 +61,17 @@ class KustoManagementClient(SDKClient):
         super(KustoManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2019-09-07'
+        self.api_version = '2019-11-09'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
         self.clusters = ClustersOperations(
             self._client, self.config, self._serialize, self._deserialize)
+        self.cluster_principal_assignments = ClusterPrincipalAssignmentsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.databases = DatabasesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.database_principal_assignments = DatabasePrincipalAssignmentsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.attached_database_configurations = AttachedDatabaseConfigurationsOperations(
             self._client, self.config, self._serialize, self._deserialize)

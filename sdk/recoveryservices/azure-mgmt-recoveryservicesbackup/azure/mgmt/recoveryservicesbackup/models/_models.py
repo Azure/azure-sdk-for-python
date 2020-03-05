@@ -2176,6 +2176,9 @@ class AzureIaaSVMProtectionPolicy(ProtectionPolicy):
     :type protected_items_count: int
     :param backup_management_type: Required. Constant filled by server.
     :type backup_management_type: str
+    :param instant_rp_details:
+    :type instant_rp_details:
+     ~azure.mgmt.recoveryservicesbackup.models.InstantRPAdditionalDetails
     :param schedule_policy: Backup schedule specified as part of backup
      policy.
     :type schedule_policy:
@@ -2199,6 +2202,7 @@ class AzureIaaSVMProtectionPolicy(ProtectionPolicy):
     _attribute_map = {
         'protected_items_count': {'key': 'protectedItemsCount', 'type': 'int'},
         'backup_management_type': {'key': 'backupManagementType', 'type': 'str'},
+        'instant_rp_details': {'key': 'instantRPDetails', 'type': 'InstantRPAdditionalDetails'},
         'schedule_policy': {'key': 'schedulePolicy', 'type': 'SchedulePolicy'},
         'retention_policy': {'key': 'retentionPolicy', 'type': 'RetentionPolicy'},
         'instant_rp_retention_range_in_days': {'key': 'instantRpRetentionRangeInDays', 'type': 'int'},
@@ -2207,6 +2211,7 @@ class AzureIaaSVMProtectionPolicy(ProtectionPolicy):
 
     def __init__(self, **kwargs):
         super(AzureIaaSVMProtectionPolicy, self).__init__(**kwargs)
+        self.instant_rp_details = kwargs.get('instant_rp_details', None)
         self.schedule_policy = kwargs.get('schedule_policy', None)
         self.retention_policy = kwargs.get('retention_policy', None)
         self.instant_rp_retention_range_in_days = kwargs.get('instant_rp_retention_range_in_days', None)
@@ -10057,12 +10062,16 @@ class TargetRestoreInfo(Model):
     :param database_name: Database name InstanceName/DataBaseName for SQL or
      System/DbName for SAP Hana
     :type database_name: str
+    :param target_directory_for_file_restore: Target directory location for
+     restore as files.
+    :type target_directory_for_file_restore: str
     """
 
     _attribute_map = {
         'overwrite_option': {'key': 'overwriteOption', 'type': 'str'},
         'container_id': {'key': 'containerId', 'type': 'str'},
         'database_name': {'key': 'databaseName', 'type': 'str'},
+        'target_directory_for_file_restore': {'key': 'targetDirectoryForFileRestore', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -10070,6 +10079,7 @@ class TargetRestoreInfo(Model):
         self.overwrite_option = kwargs.get('overwrite_option', None)
         self.container_id = kwargs.get('container_id', None)
         self.database_name = kwargs.get('database_name', None)
+        self.target_directory_for_file_restore = kwargs.get('target_directory_for_file_restore', None)
 
 
 class TokenInformation(Model):

@@ -291,3 +291,91 @@ class CertificateType(str, Enum):
 class ResourceType(str, Enum):
 
     microsoft_cdn_profiles_endpoints = "Microsoft.Cdn/Profiles/Endpoints"
+
+
+class PolicyEnabledState(str, Enum):
+
+    disabled = "Disabled"
+    enabled = "Enabled"
+
+
+class PolicyMode(str, Enum):
+
+    prevention = "Prevention"
+    detection = "Detection"
+
+
+class CustomRuleEnabledState(str, Enum):
+
+    disabled = "Disabled"
+    enabled = "Enabled"
+
+
+class MatchVariable(str, Enum):
+
+    remote_addr = "RemoteAddr"
+    country = "Country"
+    request_method = "RequestMethod"
+    request_header = "RequestHeader"
+    request_uri = "RequestUri"
+    query_string = "QueryString"
+    request_body = "RequestBody"
+    cookies = "Cookies"
+    post_args = "PostArgs"
+
+
+class Operator(str, Enum):
+
+    any = "Any"
+    ip_match = "IPMatch"
+    geo_match = "GeoMatch"
+    equal = "Equal"
+    contains = "Contains"
+    less_than = "LessThan"
+    greater_than = "GreaterThan"
+    less_than_or_equal = "LessThanOrEqual"
+    greater_than_or_equal = "GreaterThanOrEqual"
+    begins_with = "BeginsWith"
+    ends_with = "EndsWith"
+    reg_ex = "RegEx"
+
+
+class TransformType(str, Enum):
+
+    lowercase = "Lowercase"
+    uppercase = "Uppercase"
+    trim = "Trim"
+    url_decode = "UrlDecode"
+    url_encode = "UrlEncode"
+    remove_nulls = "RemoveNulls"
+
+
+class ActionType(str, Enum):
+
+    allow = "Allow"
+    block = "Block"
+    log = "Log"
+    redirect = "Redirect"
+
+
+class ManagedRuleEnabledState(str, Enum):
+
+    disabled = "Disabled"
+    enabled = "Enabled"
+
+
+class ProvisioningState(str, Enum):
+
+    creating = "Creating"
+    succeeded = "Succeeded"
+    failed = "Failed"
+
+
+class PolicyResourceState(str, Enum):
+
+    creating = "Creating"
+    enabling = "Enabling"
+    enabled = "Enabled"
+    disabling = "Disabling"
+    disabled = "Disabled"
+    deleting = "Deleting"

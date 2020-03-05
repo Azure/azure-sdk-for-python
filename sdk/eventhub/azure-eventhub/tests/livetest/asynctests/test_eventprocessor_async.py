@@ -161,7 +161,7 @@ async def test_loadbalancer_list_ownership_error():
                                      error_handler=on_error,
                                      partition_initialize_handler=None,
                                      partition_close_handler=None,
-                                     load_balancing_interval=1)
+                                     load_balancing_interval=1.3)
     task = asyncio.ensure_future(event_processor.start())
     await asyncio.sleep(5)
     try:
@@ -243,7 +243,7 @@ async def test_partition_processor():
                                      error_handler=error_handler,
                                      partition_initialize_handler=partition_initialize_handler,
                                      partition_close_handler=partition_close_handler,
-                                     load_balancing_interval=1)
+                                     load_balancing_interval=1.3)
 
     task = asyncio.ensure_future(event_processor.start())
 
@@ -312,7 +312,7 @@ async def test_partition_processor_process_events_error():
                                      error_handler=error_handler,
                                      initial_event_position="-1",
                                      partition_initialize_handler=None,
-                                     load_balancing_interval=1)
+                                     load_balancing_interval=1.3)
     task = asyncio.ensure_future(event_processor.start())
     await asyncio.sleep(10)
     await event_processor.stop()
@@ -366,7 +366,7 @@ async def test_partition_processor_process_eventhub_consumer_error():
                                      error_handler=error_handler,
                                      partition_initialize_handler=None,
                                      partition_close_handler=partition_close_handler,
-                                     load_balancing_interval=1)
+                                     load_balancing_interval=1.3)
     task = asyncio.ensure_future(event_processor.start())
     await asyncio.sleep(5)
     await event_processor.stop()
@@ -436,7 +436,7 @@ async def test_partition_processor_process_error_close_error():
                                      error_handler=error_handler,
                                      partition_initialize_handler=partition_initialize_handler,
                                      partition_close_handler=partition_close_handler,
-                                     load_balancing_interval=1)
+                                     load_balancing_interval=1.3)
     event_processor._ownership_manager = ownership_manager
     task = asyncio.ensure_future(event_processor.start())
     await asyncio.sleep(5)
@@ -698,7 +698,7 @@ async def test_partition_processor_process_update_checkpoint_error():
                                      error_handler=error_handler,
                                      partition_initialize_handler=None,
                                      partition_close_handler=partition_close_handler,
-                                     load_balancing_interval=1)
+                                     load_balancing_interval=1.3)
     task = asyncio.ensure_future(event_processor.start())
     await asyncio.sleep(10)
     await event_processor.stop()

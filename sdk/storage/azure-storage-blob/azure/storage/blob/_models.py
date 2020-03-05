@@ -312,6 +312,8 @@ class ContainerProperties(DictMixin):
         Represents whether the container has a legal hold.
     :ivar dict metadata: A dict with name-value pairs to associate with the
         container as metadata.
+    :ivar ~azure.storage.blob.ContainerEncryptionScope encryption_scope:
+        The default encryption scope configuration for the container.
     """
 
     def __init__(self, **kwargs):
@@ -323,6 +325,13 @@ class ContainerProperties(DictMixin):
         self.has_immutability_policy = kwargs.get('x-ms-has-immutability-policy')
         self.has_legal_hold = kwargs.get('x-ms-has-legal-hold')
         self.metadata = kwargs.get('metadata')
+        self.encryption_scope = None
+        default_encryption_scope = kwargs.get('x-ms-default-encryption-scope')
+        if default_encryption_scope:
+            self.encryption_scope = ContainerEncryptionScope(
+                default_encryption_scope=default_encryption_scope,
+                prevent_encryption_scope_override=kwargs.get('x-ms-deny-encryption-scope-override', False)
+            )
 
     @classmethod
     def _from_generated(cls, generated):
@@ -335,6 +344,7 @@ class ContainerProperties(DictMixin):
         props.has_immutability_policy = generated.properties.has_immutability_policy
         props.has_legal_hold = generated.properties.has_legal_hold
         props.metadata = generated.metadata
+        props.encryption_scope = ContainerEncryptionScope._from_generated(generated)  #pylint: disable=protected-access
         return props
 
 
@@ -486,6 +496,7 @@ class BlobProperties(DictMixin):
         self.creation_time = kwargs.get('x-ms-creation-time')
         self.archive_status = kwargs.get('x-ms-archive-status')
         self.encryption_key_sha256 = kwargs.get('x-ms-encryption-key-sha256')
+        self.encryption_scope = kwargs.get('x-ms-encryption-scope')
         self.request_server_encrypted = kwargs.get('x-ms-server-encrypted')
 
     @classmethod
@@ -507,6 +518,7 @@ class BlobProperties(DictMixin):
         blob.size = generated.properties.content_length
         blob.page_blob_sequence_number = generated.properties.blob_sequence_number
         blob.server_encrypted = generated.properties.server_encrypted
+        blob.encryption_scope = generated.properties.encryption_scope
         blob.deleted_time = generated.properties.deleted_time
         blob.remaining_retention_days = generated.properties.remaining_retention_days
         blob.blob_tier = generated.properties.access_tier
@@ -1040,3 +1052,34 @@ class CustomerProvidedEncryptionKey(object):
         self.key_value = key_value
         self.key_hash = key_hash
         self.algorithm = 'AES256'
+
+
+class ContainerEncryptionScope(object):
+    """The default encryption scope configuration for a container.
+
+    This scope is used implicitly for all future writes within the container,
+    but can be overridden per blob operation.
+
+    .. versionadded:: 12.2.0
+
+    :param str default_encryption_scope:
+        Specifies the default encryption scope to set on the container and use for
+        all future writes.
+    :param bool prevent_encryption_scope_override:
+        If true, prevents any request from specifying a different encryption scope than the scope
+        set on the container. Default value is false.
+    """
+
+    def __init__(self, default_encryption_scope, **kwargs):
+        self.default_encryption_scope = default_encryption_scope
+        self.prevent_encryption_scope_override = kwargs.get('prevent_encryption_scope_override', False)
+
+    @classmethod
+    def _from_generated(cls, generated):
+        if generated.properties.default_encryption_scope:
+            scope = cls(
+                generated.properties.default_encryption_scope,
+                prevent_encryption_scope_override=generated.properties.deny_encryption_scope_override or False
+            )
+            return scope
+        return None

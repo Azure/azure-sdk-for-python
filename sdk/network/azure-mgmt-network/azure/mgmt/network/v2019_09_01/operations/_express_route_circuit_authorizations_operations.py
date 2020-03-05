@@ -194,9 +194,7 @@ class ExpressRouteCircuitAuthorizationsOperations(object):
 
 
     def _create_or_update_initial(
-            self, resource_group_name, circuit_name, authorization_name, id=None, name=None, custom_headers=None, raw=False, **operation_config):
-        authorization_parameters = models.ExpressRouteCircuitAuthorization(id=id, name=name)
-
+            self, resource_group_name, circuit_name, authorization_name, authorization_parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
@@ -248,7 +246,7 @@ class ExpressRouteCircuitAuthorizationsOperations(object):
         return deserialized
 
     def create_or_update(
-            self, resource_group_name, circuit_name, authorization_name, id=None, name=None, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, circuit_name, authorization_name, authorization_parameters, custom_headers=None, raw=False, polling=True, **operation_config):
         """Creates or updates an authorization in the specified express route
         circuit.
 
@@ -258,11 +256,10 @@ class ExpressRouteCircuitAuthorizationsOperations(object):
         :type circuit_name: str
         :param authorization_name: The name of the authorization.
         :type authorization_name: str
-        :param id: Resource ID.
-        :type id: str
-        :param name: The name of the resource that is unique within a resource
-         group. This name can be used to access the resource.
-        :type name: str
+        :param authorization_parameters: Parameters supplied to the create or
+         update express route circuit authorization operation.
+        :type authorization_parameters:
+         ~azure.mgmt.network.v2019_09_01.models.ExpressRouteCircuitAuthorization
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -281,8 +278,7 @@ class ExpressRouteCircuitAuthorizationsOperations(object):
             resource_group_name=resource_group_name,
             circuit_name=circuit_name,
             authorization_name=authorization_name,
-            id=id,
-            name=name,
+            authorization_parameters=authorization_parameters,
             custom_headers=custom_headers,
             raw=True,
             **operation_config

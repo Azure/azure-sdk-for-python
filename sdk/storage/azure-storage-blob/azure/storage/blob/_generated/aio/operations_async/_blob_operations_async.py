@@ -203,6 +203,7 @@ class BlobOperations:
                 'x-ms-blob-committed-block-count': self._deserialize('int', response.headers.get('x-ms-blob-committed-block-count')),
                 'x-ms-server-encrypted': self._deserialize('bool', response.headers.get('x-ms-server-encrypted')),
                 'x-ms-encryption-key-sha256': self._deserialize('str', response.headers.get('x-ms-encryption-key-sha256')),
+                'x-ms-encryption-scope': self._deserialize('str', response.headers.get('x-ms-encryption-scope')),
                 'x-ms-blob-content-md5': self._deserialize('bytearray', response.headers.get('x-ms-blob-content-md5')),
                 'x-ms-content-crc64': self._deserialize('bytearray', response.headers.get('x-ms-content-crc64')),
                 'x-ms-error-code': self._deserialize('str', response.headers.get('x-ms-error-code')),
@@ -240,6 +241,7 @@ class BlobOperations:
                 'x-ms-blob-committed-block-count': self._deserialize('int', response.headers.get('x-ms-blob-committed-block-count')),
                 'x-ms-server-encrypted': self._deserialize('bool', response.headers.get('x-ms-server-encrypted')),
                 'x-ms-encryption-key-sha256': self._deserialize('str', response.headers.get('x-ms-encryption-key-sha256')),
+                'x-ms-encryption-scope': self._deserialize('str', response.headers.get('x-ms-encryption-scope')),
                 'x-ms-blob-content-md5': self._deserialize('bytearray', response.headers.get('x-ms-blob-content-md5')),
                 'x-ms-content-crc64': self._deserialize('bytearray', response.headers.get('x-ms-content-crc64')),
                 'x-ms-error-code': self._deserialize('str', response.headers.get('x-ms-error-code')),
@@ -393,6 +395,7 @@ class BlobOperations:
                 'x-ms-blob-committed-block-count': self._deserialize('int', response.headers.get('x-ms-blob-committed-block-count')),
                 'x-ms-server-encrypted': self._deserialize('bool', response.headers.get('x-ms-server-encrypted')),
                 'x-ms-encryption-key-sha256': self._deserialize('str', response.headers.get('x-ms-encryption-key-sha256')),
+                'x-ms-encryption-scope': self._deserialize('str', response.headers.get('x-ms-encryption-scope')),
                 'x-ms-access-tier': self._deserialize('str', response.headers.get('x-ms-access-tier')),
                 'x-ms-access-tier-inferred': self._deserialize('bool', response.headers.get('x-ms-access-tier-inferred')),
                 'x-ms-archive-status': self._deserialize('str', response.headers.get('x-ms-archive-status')),
@@ -1144,7 +1147,7 @@ class BlobOperations:
             return cls(response, None, response_headers)
     set_http_headers.metadata = {'url': '/{containerName}/{blob}'}
 
-    async def set_metadata(self, timeout=None, metadata=None, request_id=None, lease_access_conditions=None, cpk_info=None, modified_access_conditions=None, *, cls=None, **kwargs):
+    async def set_metadata(self, timeout=None, metadata=None, request_id=None, lease_access_conditions=None, cpk_info=None, cpk_scope_info=None, modified_access_conditions=None, *, cls=None, **kwargs):
         """The Set Blob Metadata operation sets user-defined metadata for the
         specified blob as one or more name-value pairs.
 
@@ -1173,6 +1176,8 @@ class BlobOperations:
          ~azure.storage.blob.models.LeaseAccessConditions
         :param cpk_info: Additional parameters for the operation
         :type cpk_info: ~azure.storage.blob.models.CpkInfo
+        :param cpk_scope_info: Additional parameters for the operation
+        :type cpk_scope_info: ~azure.storage.blob.models.CpkScopeInfo
         :param modified_access_conditions: Additional parameters for the
          operation
         :type modified_access_conditions:
@@ -1197,6 +1202,9 @@ class BlobOperations:
         encryption_algorithm = None
         if cpk_info is not None:
             encryption_algorithm = cpk_info.encryption_algorithm
+        encryption_scope = None
+        if cpk_scope_info is not None:
+            encryption_scope = cpk_scope_info.encryption_scope
         if_modified_since = None
         if modified_access_conditions is not None:
             if_modified_since = modified_access_conditions.if_modified_since
@@ -1240,6 +1248,8 @@ class BlobOperations:
             header_parameters['x-ms-encryption-key-sha256'] = self._serialize.header("encryption_key_sha256", encryption_key_sha256, 'str')
         if encryption_algorithm is not None:
             header_parameters['x-ms-encryption-algorithm'] = self._serialize.header("encryption_algorithm", encryption_algorithm, 'EncryptionAlgorithmType')
+        if encryption_scope is not None:
+            header_parameters['x-ms-encryption-scope'] = self._serialize.header("encryption_scope", encryption_scope, 'str')
         if if_modified_since is not None:
             header_parameters['If-Modified-Since'] = self._serialize.header("if_modified_since", if_modified_since, 'rfc-1123')
         if if_unmodified_since is not None:
@@ -1268,6 +1278,7 @@ class BlobOperations:
                 'Date': self._deserialize('rfc-1123', response.headers.get('Date')),
                 'x-ms-request-server-encrypted': self._deserialize('bool', response.headers.get('x-ms-request-server-encrypted')),
                 'x-ms-encryption-key-sha256': self._deserialize('str', response.headers.get('x-ms-encryption-key-sha256')),
+                'x-ms-encryption-scope': self._deserialize('str', response.headers.get('x-ms-encryption-scope')),
                 'x-ms-error-code': self._deserialize('str', response.headers.get('x-ms-error-code')),
             }
             return cls(response, None, response_headers)
@@ -1773,7 +1784,7 @@ class BlobOperations:
             return cls(response, None, response_headers)
     break_lease.metadata = {'url': '/{containerName}/{blob}'}
 
-    async def create_snapshot(self, timeout=None, metadata=None, request_id=None, cpk_info=None, modified_access_conditions=None, lease_access_conditions=None, *, cls=None, **kwargs):
+    async def create_snapshot(self, timeout=None, metadata=None, request_id=None, cpk_info=None, cpk_scope_info=None, modified_access_conditions=None, lease_access_conditions=None, *, cls=None, **kwargs):
         """The Create Snapshot operation creates a read-only snapshot of a blob.
 
         :param timeout: The timeout parameter is expressed in seconds. For
@@ -1797,6 +1808,8 @@ class BlobOperations:
         :type request_id: str
         :param cpk_info: Additional parameters for the operation
         :type cpk_info: ~azure.storage.blob.models.CpkInfo
+        :param cpk_scope_info: Additional parameters for the operation
+        :type cpk_scope_info: ~azure.storage.blob.models.CpkScopeInfo
         :param modified_access_conditions: Additional parameters for the
          operation
         :type modified_access_conditions:
@@ -1822,6 +1835,9 @@ class BlobOperations:
         encryption_algorithm = None
         if cpk_info is not None:
             encryption_algorithm = cpk_info.encryption_algorithm
+        encryption_scope = None
+        if cpk_scope_info is not None:
+            encryption_scope = cpk_scope_info.encryption_scope
         if_modified_since = None
         if modified_access_conditions is not None:
             if_modified_since = modified_access_conditions.if_modified_since
@@ -1866,6 +1882,8 @@ class BlobOperations:
             header_parameters['x-ms-encryption-key-sha256'] = self._serialize.header("encryption_key_sha256", encryption_key_sha256, 'str')
         if encryption_algorithm is not None:
             header_parameters['x-ms-encryption-algorithm'] = self._serialize.header("encryption_algorithm", encryption_algorithm, 'EncryptionAlgorithmType')
+        if encryption_scope is not None:
+            header_parameters['x-ms-encryption-scope'] = self._serialize.header("encryption_scope", encryption_scope, 'str')
         if if_modified_since is not None:
             header_parameters['If-Modified-Since'] = self._serialize.header("if_modified_since", if_modified_since, 'rfc-1123')
         if if_unmodified_since is not None:
@@ -2054,7 +2072,7 @@ class BlobOperations:
             return cls(response, None, response_headers)
     start_copy_from_url.metadata = {'url': '/{containerName}/{blob}'}
 
-    async def copy_from_url(self, copy_source, timeout=None, metadata=None, tier=None, request_id=None, source_modified_access_conditions=None, modified_access_conditions=None, lease_access_conditions=None, *, cls=None, **kwargs):
+    async def copy_from_url(self, copy_source, timeout=None, metadata=None, tier=None, request_id=None, source_content_md5=None, source_modified_access_conditions=None, modified_access_conditions=None, lease_access_conditions=None, *, cls=None, **kwargs):
         """The Copy From URL operation copies a blob or an internet resource to a
         new blob. It will not return a response until the copy is complete.
 
@@ -2087,6 +2105,9 @@ class BlobOperations:
          KB character limit that is recorded in the analytics logs when storage
          analytics logging is enabled.
         :type request_id: str
+        :param source_content_md5: Specify the md5 calculated for the range of
+         bytes that must be read from the copy source.
+        :type source_content_md5: bytearray
         :param source_modified_access_conditions: Additional parameters for
          the operation
         :type source_modified_access_conditions:
@@ -2157,6 +2178,8 @@ class BlobOperations:
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if request_id is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id", request_id, 'str')
+        if source_content_md5 is not None:
+            header_parameters['x-ms-source-content-md5'] = self._serialize.header("source_content_md5", source_content_md5, 'bytearray')
         header_parameters['x-ms-requires-sync'] = self._serialize.header("self.x_ms_requires_sync", self.x_ms_requires_sync, 'str')
         if source_if_modified_since is not None:
             header_parameters['x-ms-source-if-modified-since'] = self._serialize.header("source_if_modified_since", source_if_modified_since, 'rfc-1123')
@@ -2196,6 +2219,8 @@ class BlobOperations:
                 'Date': self._deserialize('rfc-1123', response.headers.get('Date')),
                 'x-ms-copy-id': self._deserialize('str', response.headers.get('x-ms-copy-id')),
                 'x-ms-copy-status': self._deserialize(models.SyncCopyStatusType, response.headers.get('x-ms-copy-status')),
+                'Content-MD5': self._deserialize('bytearray', response.headers.get('Content-MD5')),
+                'x-ms-content-crc64': self._deserialize('bytearray', response.headers.get('x-ms-content-crc64')),
                 'x-ms-error-code': self._deserialize('str', response.headers.get('x-ms-error-code')),
             }
             return cls(response, None, response_headers)

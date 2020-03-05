@@ -140,7 +140,7 @@ can also perform cryptographic operations with them. For more information about
 keys and supported operations and algorithms, see the
 [Key Vault documentation](https://docs.microsoft.com/en-us/azure/key-vault/about-keys-secrets-and-certificates#key-vault-keys).
 
-[KeyClient](key_client_docs) can create keys in the vault, get existing keys
+[KeyClient][key_client_docs] can create keys in the vault, get existing keys
 from the vault, update key metadata, and delete keys, as shown in the
 [examples](#examples "examples") below.
 
@@ -276,6 +276,24 @@ first install an async transport, such as [aiohttp](https://pypi.org/project/aio
 See
 [azure-core documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md#transport)
 for more information.
+
+Async clients should be closed when they're no longer needed. Each async
+client is an async context manager and defines an async `close` method. For
+example:
+
+```py
+from azure.keyvault.keys import KeyClient
+
+# call close when the client is no longer needed
+client = KeyClient()
+...
+await client.close()
+
+# alternatively, use the client as an async context manager
+client = KeyClient()
+async with client:
+  ...
+```
 
 ### Asynchronously create a Key
 [create_rsa_key](https://aka.ms/azsdk-python-keyvault-keys-async-create-rsa-key-ref) and

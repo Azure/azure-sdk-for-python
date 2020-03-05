@@ -11,8 +11,19 @@ import sys
 import argparse
 import logging
 from os import path
-from pip._internal.operations import freeze
 from subprocess import check_call
+
+from pip._internal.operations import freeze
+
+try:
+    # pip < 20
+    from pip._internal.req import parse_requirements
+    from pip._internal.download import PipSession
+except:
+    # pip >= 20
+    from pip._internal.req import parse_requirements
+    from pip._internal.network.session import PipSession
+
 
 # import common_task module
 root_dir = path.abspath(path.join(path.abspath(__file__), "..", "..", ".."))
@@ -103,7 +114,6 @@ def install_dev_build_packages(pkg_name_to_exclude):
     uninstall_packages(azure_pkgs)
     install_packages(azure_pkgs)
 
-
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Install dev build version of dependent packages for current package"
@@ -114,11 +124,36 @@ if __name__ == "__main__":
         "--target",
         dest="target_package",
         help="The target package directory on disk.",
-        required=True,
+        required=False,
+    )
+
+    parser.add_argument(
+        "-r",
+        "--requirements",
+        dest="requirements_file",
+        help="Use dev builds of all installed azure-* packages",
+        required=False
     )
 
     args = parser.parse_args()
-    # get target package name from target package path
-    pkg_dir = path.abspath(args.target_package)
-    pkg_name, _, ver = get_package_details(path.join(pkg_dir, "setup.py"))
-    install_dev_build_packages(pkg_name)
+
+    if not args.target_package and not args.requirements_file:
+        raise "Must specify -t or -r"
+
+    if args.target_package:
+        # get target package name from target package path
+        pkg_dir = path.abspath(args.target_package)
+        pkg_name, _, ver = get_package_details(path.join(pkg_dir, "setup.py"))
+        install_dev_build_packages(pkg_name)
+
+    elif args.requirements_file:
+        # Get package names from requirements.txt
+        requirements = parse_requirements(args.requirements_file, session=PipSession())
+        package_names = [item.req.name for item in requirements]
+
+        # Remove existing packages (that came from the public feed) and install
+        # from dev feed
+        uninstall_packages(package_names)
+        install_packages(package_names)
+
+

@@ -44,21 +44,21 @@ if not VERSION:
 
 with open("README.md", encoding="utf-8") as f:
     README = f.read()
-with open("HISTORY.md", encoding="utf-8") as f:
-    HISTORY = f.read()
+with open("CHANGELOG.md", encoding="utf-8") as f:
+    CHANGELOG = f.read()
 
 setup(
     name=PACKAGE_NAME,
     version=VERSION,
     description="Microsoft Azure {} Client Library for Python".format(PACKAGE_PPRINT_NAME),
-    long_description=README + "\n\n" + HISTORY,
+    long_description=README + "\n\n" + CHANGELOG,
     long_description_content_type="text/markdown",
     license="MIT License",
     author="Microsoft Corporation",
     author_email="azurekeyvault@microsoft.com",
     url="https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys",
     classifiers=[
-        "Development Status :: 4 - Beta",
+        "Development Status :: 5 - Production/Stable",
         "Programming Language :: Python",
         "Programming Language :: Python :: 2",
         "Programming Language :: Python :: 2.7",
@@ -79,7 +79,7 @@ setup(
             "azure.keyvault",
         ]
     ),
-    install_requires=["azure-core<2.0.0,>=1.0.0", "azure-common~=1.1", "cryptography>=2.1.4", "msrest>=0.6.0"],
+    install_requires=["azure-core<2.0.0,>=1.2.1", "cryptography>=2.1.4", "msrest>=0.6.0"],
     extras_require={
         ":python_version<'3.0'": ["azure-keyvault-nspkg"],
         ":python_version<'3.4'": ["enum34>=1.0.4"],

@@ -36,6 +36,7 @@ from azure.core.pipeline.policies import (
     ProxyPolicy,
     DistributedTracingPolicy,
     HttpLoggingPolicy,
+    UserAgentPolicy
 )
 
 from .constants import STORAGE_OAUTH_SCOPE, SERVICE_HOST_BASE, CONNECTION_TIMEOUT, READ_TIMEOUT
@@ -44,7 +45,6 @@ from .authentication import SharedKeyCredentialPolicy
 from .shared_access_signature import QueryStringConstants
 from .policies import (
     StorageHeadersPolicy,
-    StorageUserAgentPolicy,
     StorageContentValidation,
     StorageRequestHook,
     StorageResponseHook,
@@ -53,6 +53,7 @@ from .policies import (
     QueueMessagePolicy,
     ExponentialRetry,
 )
+from .._version import VERSION
 from .._generated.models import StorageErrorException
 from .response_handlers import process_storage_error, PartialBatchErrorException
 
@@ -62,6 +63,7 @@ _SERVICE_PARAMS = {
     "blob": {"primary": "BlobEndpoint", "secondary": "BlobSecondaryEndpoint"},
     "queue": {"primary": "QueueEndpoint", "secondary": "QueueSecondaryEndpoint"},
     "file": {"primary": "FileEndpoint", "secondary": "FileSecondaryEndpoint"},
+    "dfs": {"primary": "BlobEndpoint", "secondary": "BlobSecondaryEndpoint"},
 }
 
 
@@ -78,7 +80,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         self._hosts = kwargs.get("_hosts")
         self.scheme = parsed_url.scheme
 
-        if service not in ["blob", "queue", "file-share"]:
+        if service not in ["blob", "queue", "file-share", "dfs"]:
             raise ValueError("Invalid service: {}".format(service))
         service_name = service.split('-')[0]
         account = parsed_url.netloc.split(".{}.core.".format(service_name))
@@ -188,6 +190,14 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         else:
             raise ValueError("No host URL for location mode: {}".format(value))
 
+    @property
+    def api_version(self):
+        """The version of the Storage API used for requests.
+
+        :type: str
+        """
+        return self._client._config.version  # pylint: disable=protected-access
+
     def _format_query_string(self, sas_token, credential, snapshot=None, share_snapshot=None):
         query_str = "?"
         if snapshot:
@@ -227,7 +237,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
             StorageContentValidation(),
             StorageRequestHook(**kwargs),
             self._credential_policy,
-            ContentDecodePolicy(),
+            ContentDecodePolicy(response_encoding="utf-8"),
             RedirectPolicy(**kwargs),
             StorageHosts(hosts=self._hosts, **kwargs),
             config.retry_policy,
@@ -249,7 +259,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         request = self._client._client.post(  # pylint: disable=protected-access
             url='https://{}/?comp=batch'.format(self.primary_hostname),
             headers={
-                'x-ms-version': self._client._config.version  # pylint: disable=protected-access
+                'x-ms-version': self.api_version
             }
         )
 
@@ -369,7 +379,8 @@ def create_configuration(**kwargs):
     # type: (**Any) -> Configuration
     config = Configuration(**kwargs)
     config.headers_policy = StorageHeadersPolicy(**kwargs)
-    config.user_agent_policy = StorageUserAgentPolicy(**kwargs)
+    config.user_agent_policy = UserAgentPolicy(
+        sdk_moniker="storage-{}/{}".format(kwargs.pop('storage_sdk'), VERSION), **kwargs)
     config.retry_policy = kwargs.get("retry_policy") or ExponentialRetry(**kwargs)
     config.logging_policy = StorageLoggingPolicy(**kwargs)
     config.proxy_policy = ProxyPolicy(**kwargs)

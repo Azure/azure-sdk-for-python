@@ -657,6 +657,8 @@ class ClusterCreateProperties(Model):
     :param disk_encryption_properties: The disk encryption properties.
     :type disk_encryption_properties:
      ~azure.mgmt.hdinsight.models.DiskEncryptionProperties
+    :param min_supported_tls_version: The minimal supported tls version.
+    :type min_supported_tls_version: str
     """
 
     _attribute_map = {
@@ -669,6 +671,7 @@ class ClusterCreateProperties(Model):
         'compute_profile': {'key': 'computeProfile', 'type': 'ComputeProfile'},
         'storage_profile': {'key': 'storageProfile', 'type': 'StorageProfile'},
         'disk_encryption_properties': {'key': 'diskEncryptionProperties', 'type': 'DiskEncryptionProperties'},
+        'min_supported_tls_version': {'key': 'minSupportedTlsVersion', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -682,6 +685,7 @@ class ClusterCreateProperties(Model):
         self.compute_profile = kwargs.get('compute_profile', None)
         self.storage_profile = kwargs.get('storage_profile', None)
         self.disk_encryption_properties = kwargs.get('disk_encryption_properties', None)
+        self.min_supported_tls_version = kwargs.get('min_supported_tls_version', None)
 
 
 class ClusterDefinition(Model):
@@ -780,6 +784,8 @@ class ClusterGetProperties(Model):
     :param disk_encryption_properties: The disk encryption properties.
     :type disk_encryption_properties:
      ~azure.mgmt.hdinsight.models.DiskEncryptionProperties
+    :param min_supported_tls_version: The minimal supported tls version.
+    :type min_supported_tls_version: str
     """
 
     _validation = {
@@ -801,6 +807,7 @@ class ClusterGetProperties(Model):
         'errors': {'key': 'errors', 'type': '[Errors]'},
         'connectivity_endpoints': {'key': 'connectivityEndpoints', 'type': '[ConnectivityEndpoint]'},
         'disk_encryption_properties': {'key': 'diskEncryptionProperties', 'type': 'DiskEncryptionProperties'},
+        'min_supported_tls_version': {'key': 'minSupportedTlsVersion', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -819,6 +826,7 @@ class ClusterGetProperties(Model):
         self.errors = kwargs.get('errors', None)
         self.connectivity_endpoints = kwargs.get('connectivity_endpoints', None)
         self.disk_encryption_properties = kwargs.get('disk_encryption_properties', None)
+        self.min_supported_tls_version = kwargs.get('min_supported_tls_version', None)
 
 
 class ClusterIdentity(Model):

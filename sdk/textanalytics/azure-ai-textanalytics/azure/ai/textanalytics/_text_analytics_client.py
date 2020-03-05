@@ -28,6 +28,8 @@ from ._response_handlers import (
 )
 
 if TYPE_CHECKING:
+    from azure.core.credentials import TokenCredential
+    from ._credential import TextAnalyticsApiKeyCredential
     from ._models import (
         DetectLanguageInput,
         TextDocumentInput,
@@ -54,11 +56,13 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     :param str endpoint: Supported Cognitive Services or Text Analytics resource
         endpoints (protocol and hostname, for example: https://westus2.api.cognitive.microsoft.com).
     :param credential: Credentials needed for the client to connect to Azure.
-        This can be the cognitive services/text analytics subscription key or a token credential
+        This can be the an instance of TextAnalyticsApiKeyCredential if using a
+        cognitive services/text analytics API key or a token credential
         from azure.identity.
-    :type credential: str or ~azure.core.credentials.TokenCredential
+    :type credential: ~azure.ai.textanalytics.TextAnalyticsApiKeyCredential or
+        ~azure.core.credentials.TokenCredential
     :keyword str default_country_hint: Sets the default country_hint to use for all operations.
-        Defaults to "US". If you don't want to use a country hint, pass the empty string "".
+        Defaults to "US". If you don't want to use a country hint, pass the string "none".
     :keyword str default_language: Sets the default language to use for all operations.
         Defaults to "en".
 
@@ -69,7 +73,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             :end-before: [END create_ta_client_with_key]
             :language: python
             :dedent: 8
-            :caption: Creating the TextAnalyticsClient with endpoint and subscription key.
+            :caption: Creating the TextAnalyticsClient with endpoint and API key.
 
         .. literalinclude:: ../samples/sample_authentication.py
             :start-after: [START create_ta_client_with_aad]
@@ -80,7 +84,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     """
 
     def __init__(self, endpoint, credential, **kwargs):
-        # type: (str, Any, Any) -> None
+        # type: (str, Union[TextAnalyticsApiKeyCredential, TokenCredential], Any) -> None
         super(TextAnalyticsClient, self).__init__(credential=credential, **kwargs)
         self._client = TextAnalytics(
             endpoint=endpoint, credentials=credential, pipeline=self._pipeline
@@ -89,10 +93,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         self._default_country_hint = kwargs.pop("default_country_hint", "US")
 
     @distributed_trace
-    def detect_languages(  # type: ignore
+    def detect_language(  # type: ignore
         self,
         inputs,  # type: Union[List[str], List[DetectLanguageInput], List[Dict[str, str]]]
-        country_hint=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> List[Union[DetectLanguageResult, DocumentError]]
@@ -102,16 +105,19 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         one. Scores close to one indicate 100% certainty that the identified
         language is true. See https://aka.ms/talangs for the list of enabled languages.
 
+        See https://docs.microsoft.com/azure/cognitive-services/text-analytics/overview#data-limits
+        for document length limits, maximum batch size, and supported text encoding.
+
         :param inputs: The set of documents to process as part of this batch.
             If you wish to specify the ID and country_hint on a per-item basis you must
             use as input a list[DetectLanguageInput] or a list of dict representations of
             DetectLanguageInput, like `{"id": "1", "country_hint": "us", "text": "hello world"}`.
         :type inputs:
             list[str] or list[~azure.ai.textanalytics.DetectLanguageInput]
-        :param str country_hint: A country hint for the entire batch. Accepts two
+        :keyword str country_hint: A country hint for the entire batch. Accepts two
             letter country codes specified by ISO 3166-1 alpha-2. Per-document
             country hints will take precedence over whole batch hints. Defaults to
-            "US". If you don't want to use a country hint, pass the empty string "".
+            "US". If you don't want to use a country hint, pass the string "none".
         :keyword str model_version: This value indicates which model will
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
@@ -125,14 +131,15 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_detect_languages.py
-                :start-after: [START batch_detect_languages]
-                :end-before: [END batch_detect_languages]
+            .. literalinclude:: ../samples/sample_detect_language.py
+                :start-after: [START batch_detect_language]
+                :end-before: [END batch_detect_language]
                 :language: python
                 :dedent: 8
                 :caption: Detecting language in a batch of documents.
         """
-        country_hint = country_hint if country_hint is not None else self._default_country_hint
+        country_hint_arg = kwargs.pop("country_hint", None)
+        country_hint = country_hint_arg if country_hint_arg is not None else self._default_country_hint
         docs = _validate_batch_input(inputs, "country_hint", country_hint)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
@@ -151,15 +158,17 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     def recognize_entities(  # type: ignore
         self,
         inputs,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
-        language=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> List[Union[RecognizeEntitiesResult, DocumentError]]
-        """Named Entity Recognition for a batch of documents.
+        """Entity Recognition for a batch of documents.
 
-        Returns a list of general named entities in a given document.
-        For a list of supported entity types, check: https://aka.ms/taner
-        For a list of enabled languages, check: https://aka.ms/talangs
+        Identifies and categorizes entities in your text as people, places,
+        organizations, date/time, quantities, percentages, currencies, and more.
+        For the list of supported entity types, check: https://aka.ms/taner
+
+        See https://docs.microsoft.com/azure/cognitive-services/text-analytics/overview#data-limits
+        for document length limits, maximum batch size, and supported text encoding.
 
         :param inputs: The set of documents to process as part of this batch.
             If you wish to specify the ID and language on a per-item basis you must
@@ -167,15 +176,15 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             TextDocumentInput, like `{"id": "1", "language": "en", "text": "hello world"}`.
         :type inputs:
             list[str] or list[~azure.ai.textanalytics.TextDocumentInput]
-        :param str language: The 2 letter ISO 639-1 representation of language for the
+        :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
             If not set, uses "en" for English as default. Per-document language will
-            take precedence over whole batch language.
+            take precedence over whole batch language. See https://aka.ms/talangs for
+            supported languages in Text Analytics API.
         :keyword str model_version: This value indicates which model will
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
-        :keyword bool show_stats: If set to true, response will contain document
-            level statistics.
+        :keyword bool show_stats: If set to true, response will contain document level statistics.
         :return: The combined list of RecognizeEntitiesResults and DocumentErrors in the order
             the original documents were passed in.
         :rtype: list[~azure.ai.textanalytics.RecognizeEntitiesResult,
@@ -191,7 +200,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 :dedent: 8
                 :caption: Recognize entities in a batch of documents.
         """
-        language = language if language is not None else self._default_language
+        language_arg = kwargs.pop("language", None)
+        language = language_arg if language_arg is not None else self._default_language
         docs = _validate_batch_input(inputs, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
@@ -210,7 +220,6 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     def recognize_pii_entities(  # type: ignore
         self,
         inputs,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
-        language=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> List[Union[RecognizePiiEntitiesResult, DocumentError]]
@@ -218,8 +227,10 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
 
         Returns a list of personal information entities ("SSN",
         "Bank Account", etc) in the document.  For the list of supported entity types,
-        check https://aka.ms/tanerpii. See https://aka.ms/talangs
-        for the list of enabled languages.
+        check https://aka.ms/tanerpii.
+
+        See https://docs.microsoft.com/azure/cognitive-services/text-analytics/overview#data-limits
+        for document length limits, maximum batch size, and supported text encoding.
 
         :param inputs: The set of documents to process as part of this batch.
             If you wish to specify the ID and language on a per-item basis you must
@@ -227,10 +238,11 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             TextDocumentInput, like `{"id": "1", "language": "en", "text": "hello world"}`.
         :type inputs:
             list[str] or list[~azure.ai.textanalytics.TextDocumentInput]
-        :param str language: The 2 letter ISO 639-1 representation of language for the
+        :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
             If not set, uses "en" for English as default. Per-document language will
-            take precedence over whole batch language.
+            take precedence over whole batch language. See https://aka.ms/talangs for
+            supported languages in Text Analytics API.
         :keyword str model_version: This value indicates which model will
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
@@ -250,7 +262,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 :dedent: 8
                 :caption: Recognize personally identifiable information entities in a batch of documents.
         """
-        language = language if language is not None else self._default_language
+        language_arg = kwargs.pop("language", None)
+        language = language_arg if language_arg is not None else self._default_language
         docs = _validate_batch_input(inputs, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
@@ -269,15 +282,18 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     def recognize_linked_entities(  # type: ignore
         self,
         inputs,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
-        language=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> List[Union[RecognizeLinkedEntitiesResult, DocumentError]]
         """Recognize linked entities from a well-known knowledge base for a batch of documents.
 
-        Returns a list of recognized entities with links to a
-        well-known knowledge base. See https://aka.ms/talangs for
-        supported languages in Text Analytics API.
+        Identifies and disambiguates the identity of each entity found in text (for example,
+        determining whether an occurrence of the word Mars refers to the planet, or to the
+        Roman god of war). Recognized entities are associated with URLs to a well-known
+        knowledge base, like Wikipedia.
+
+        See https://docs.microsoft.com/azure/cognitive-services/text-analytics/overview#data-limits
+        for document length limits, maximum batch size, and supported text encoding.
 
         :param inputs: The set of documents to process as part of this batch.
             If you wish to specify the ID and language on a per-item basis you must
@@ -285,10 +301,11 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             TextDocumentInput, like `{"id": "1", "language": "en", "text": "hello world"}`.
         :type inputs:
             list[str] or list[~azure.ai.textanalytics.TextDocumentInput]
-        :param str language: The 2 letter ISO 639-1 representation of language for the
+        :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
             If not set, uses "en" for English as default. Per-document language will
-            take precedence over whole batch language.
+            take precedence over whole batch language. See https://aka.ms/talangs for
+            supported languages in Text Analytics API.
         :keyword str model_version: This value indicates which model will
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
@@ -308,7 +325,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 :dedent: 8
                 :caption: Recognize linked entities in a batch of documents.
         """
-        language = language if language is not None else self._default_language
+        language_arg = kwargs.pop("language", None)
+        language = language_arg if language_arg is not None else self._default_language
         docs = _validate_batch_input(inputs, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
@@ -327,15 +345,18 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     def extract_key_phrases(  # type: ignore
         self,
         inputs,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
-        language=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> List[Union[ExtractKeyPhrasesResult, DocumentError]]
         """Extract Key Phrases from a batch of documents.
 
         Returns a list of strings denoting the key phrases in the input
-        text. See https://aka.ms/talangs for the list of enabled
-        languages.
+        text. For example, for the input text "The food was delicious and there
+        were wonderful staff", the API returns the main talking points: "food"
+        and "wonderful staff"
+
+        See https://docs.microsoft.com/azure/cognitive-services/text-analytics/overview#data-limits
+        for document length limits, maximum batch size, and supported text encoding.
 
         :param inputs: The set of documents to process as part of this batch.
             If you wish to specify the ID and language on a per-item basis you must
@@ -343,10 +364,11 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             TextDocumentInput, like `{"id": "1", "language": "en", "text": "hello world"}`.
         :type inputs:
             list[str] or list[~azure.ai.textanalytics.TextDocumentInput]
-        :param str language: The 2 letter ISO 639-1 representation of language for the
+        :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
             If not set, uses "en" for English as default. Per-document language will
-            take precedence over whole batch language.
+            take precedence over whole batch language. See https://aka.ms/talangs for
+            supported languages in Text Analytics API.
         :keyword str model_version: This value indicates which model will
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
@@ -366,7 +388,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 :dedent: 8
                 :caption: Extract the key phrases in a batch of documents.
         """
-        language = language if language is not None else self._default_language
+        language_arg = kwargs.pop("language", None)
+        language = language_arg if language_arg is not None else self._default_language
         docs = _validate_batch_input(inputs, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
@@ -385,7 +408,6 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     def analyze_sentiment(  # type: ignore
         self,
         inputs,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
-        language=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> List[Union[AnalyzeSentimentResult, DocumentError]]
@@ -393,8 +415,10 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
 
         Returns a sentiment prediction, as well as sentiment scores for
         each sentiment class (Positive, Negative, and Neutral) for the document
-        and each sentence within it. See https://aka.ms/talangs for the list
-        of enabled languages.
+        and each sentence within it.
+
+        See https://docs.microsoft.com/azure/cognitive-services/text-analytics/overview#data-limits
+        for document length limits, maximum batch size, and supported text encoding.
 
         :param inputs: The set of documents to process as part of this batch.
             If you wish to specify the ID and language on a per-item basis you must
@@ -402,10 +426,11 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             TextDocumentInput, like `{"id": "1", "language": "en", "text": "hello world"}`.
         :type inputs:
             list[str] or list[~azure.ai.textanalytics.TextDocumentInput]
-        :param str language: The 2 letter ISO 639-1 representation of language for the
+        :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
             If not set, uses "en" for English as default. Per-document language will
-            take precedence over whole batch language.
+            take precedence over whole batch language. See https://aka.ms/talangs for
+            supported languages in Text Analytics API.
         :keyword str model_version: This value indicates which model will
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
@@ -425,7 +450,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 :dedent: 8
                 :caption: Analyze sentiment in a batch of documents.
         """
-        language = language if language is not None else self._default_language
+        language_arg = kwargs.pop("language", None)
+        language = language_arg if language_arg is not None else self._default_language
         docs = _validate_batch_input(inputs, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)

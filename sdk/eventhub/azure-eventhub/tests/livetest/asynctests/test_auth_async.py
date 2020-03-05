@@ -43,7 +43,7 @@ async def test_client_secret_credential_async(aad_credential, live_eventhub):
     on_event.called = False
     async with consumer_client:
         task = asyncio.ensure_future(consumer_client.receive(on_event, partition_id='0', starting_position='-1'))
-        await asyncio.sleep(10)
+        await asyncio.sleep(13)
     await task
     assert on_event.called is True
     assert on_event.partition_id == "0"

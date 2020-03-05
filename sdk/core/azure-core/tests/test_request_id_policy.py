@@ -6,7 +6,10 @@
 from azure.core.pipeline.policies import RequestIdPolicy
 from azure.core.pipeline.transport import HttpRequest
 from azure.core.pipeline import PipelineRequest, PipelineContext
-from mock import patch
+try:
+    from unittest import mock
+except ImportError:
+    import mock
 from itertools import product
 import pytest
 
@@ -31,15 +34,22 @@ def test_request_id_policy(auto_request_id, request_id_init, request_id_set, req
     pipeline_request = PipelineRequest(request, PipelineContext(None))
     if request_id_req != "_unset":
         pipeline_request.context.options['request_id'] = request_id_req
-    with patch('uuid.uuid1', return_value="VALUE"):
+    with mock.patch('uuid.uuid1', return_value="VALUE"):
         request_id_policy.on_request(pipeline_request)
 
-    if request_id_req != "_unset":
+    assert all(v is not None for v in request.headers.values())
+    if request_id_req != "_unset" and request_id_req:
         assert request.headers["x-ms-client-request-id"] == request_id_req
-    elif request_id_set != "_unset":
+    elif not request_id_req:
+        assert not "x-ms-client-request-id" in request.headers
+    elif request_id_set != "_unset" and request_id_set:
         assert request.headers["x-ms-client-request-id"] == request_id_set
-    elif request_id_init != "_unset":
+    elif not request_id_set:
+        assert not "x-ms-client-request-id" in request.headers
+    elif request_id_init != "_unset" and request_id_init:
         assert request.headers["x-ms-client-request-id"] == request_id_init
+    elif not request_id_init:
+        assert not "x-ms-client-request-id" in request.headers
     elif auto_request_id or auto_request_id is None:
         assert request.headers["x-ms-client-request-id"] == "VALUE"
     else:

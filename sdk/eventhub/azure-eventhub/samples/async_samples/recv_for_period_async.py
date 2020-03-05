@@ -22,6 +22,7 @@ RECEIVE_DURATION = 15
 async def on_event(partition_context, event):
     # Put your code here.
     print("Received event from partition: {}.".format(partition_context.partition_id))
+    await partition_context.update_checkpoint(event)
 
 
 async def on_partition_initialize(partition_context):
@@ -57,16 +58,17 @@ async def main():
 
     print('Consumer will keep receiving for {} seconds, start time is {}.'.format(RECEIVE_DURATION, time.time()))
 
-    task = asyncio.ensure_future(
-        client.receive(
-            on_event=on_event,
-            on_error=on_error,
-            on_partition_close=on_partition_close,
-            on_partition_initialize=on_partition_initialize
+    async with client:
+        task = asyncio.ensure_future(
+            client.receive(
+                on_event=on_event,
+                on_error=on_error,
+                on_partition_close=on_partition_close,
+                on_partition_initialize=on_partition_initialize,
+                starting_position="-1",  # "-1" is from the beginning of the partition.
+            )
         )
-    )
-    await asyncio.sleep(RECEIVE_DURATION)
-    await client.close()
+        await asyncio.sleep(RECEIVE_DURATION)
     await task
 
     print('Consumer has stopped receiving, end time is {}.'.format(time.time()))

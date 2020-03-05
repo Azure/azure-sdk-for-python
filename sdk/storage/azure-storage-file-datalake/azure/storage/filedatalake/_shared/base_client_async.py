@@ -59,6 +59,9 @@ class AsyncStorageAccountHostsMixin(object):
         await self._client.__aexit__(*args)
 
     async def close(self):
+        """ This method is to close the sockets opened by the client.
+        It need not be used when using with a context manager.
+        """
         await self._client.close()
 
     def _create_pipeline(self, credential, **kwargs):
@@ -90,7 +93,7 @@ class AsyncStorageAccountHostsMixin(object):
             StorageContentValidation(),
             StorageRequestHook(**kwargs),
             self._credential_policy,
-            ContentDecodePolicy(),
+            ContentDecodePolicy(response_encoding="utf-8"),
             AsyncRedirectPolicy(**kwargs),
             StorageHosts(hosts=self._hosts, **kwargs), # type: ignore
             config.retry_policy,
@@ -112,7 +115,7 @@ class AsyncStorageAccountHostsMixin(object):
         request = self._client._client.post(  # pylint: disable=protected-access
             url='https://{}/?comp=batch'.format(self.primary_hostname),
             headers={
-                'x-ms-version': self._client._config.version  # pylint: disable=protected-access
+                'x-ms-version': self.api_version
             }
         )
 

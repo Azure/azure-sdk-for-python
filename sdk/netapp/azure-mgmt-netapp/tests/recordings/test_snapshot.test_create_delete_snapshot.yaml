@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: '{"location": "westcentralus"}'
+    body: '{"location": "westus2stage"}'
     headers:
       Accept:
       - application/json
@@ -9,34 +9,34 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '29'
+      - '28'
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
       - python/3.6.4 (Darwin-18.7.0-x86_64-i386-64bit) msrest/0.6.10 msrest_azure/0.4.34
-        azure-mgmt-netapp/0.5.0 Azure-SDK-For-Python
+        azure-mgmt-netapp/0.8.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-py-tests-cys/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-net-test-qa2/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1?api-version=2019-10-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-py-tests-cys/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1","name":"sdk-py-tests-acc-1","type":"Microsoft.NetApp/netAppAccounts","etag":"W/\"datetime''2019-09-27T13%3A15%3A11.6831838Z''\"","location":"westcentralus","properties":{"name":"sdk-py-tests-acc-1","provisioningState":"Succeeded"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-net-test-qa2/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1","name":"sdk-py-tests-acc-1","type":"Microsoft.NetApp/netAppAccounts","etag":"W/\"datetime''2020-01-13T14%3A48%3A08.2705275Z''\"","location":"westus2stage","properties":{"name":"sdk-py-tests-acc-1","provisioningState":"Succeeded"}}'
     headers:
       access-control-expose-headers:
       - Request-Context
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westcentralus/operationResults/9407252d-6e1a-49c1-8ead-4887563e58e9?api-version=2019-07-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westus2stage/operationResults/c5e81591-5864-49ba-93a7-ca8e46b3efcb?api-version=2019-10-01
       cache-control:
       - no-cache
       content-length:
-      - '382'
+      - '381'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 27 Sep 2019 13:15:12 GMT
+      - Mon, 13 Jan 2020 14:48:08 GMT
       etag:
-      - W/"datetime'2019-09-27T13%3A15%3A11.6831838Z'"
+      - W/"datetime'2020-01-13T14%3A48%3A08.2705275Z'"
       expires:
       - '-1'
       pragma:
@@ -67,23 +67,23 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.4 (Darwin-18.7.0-x86_64-i386-64bit) msrest/0.6.10 msrest_azure/0.4.34
-        azure-mgmt-netapp/0.5.0 Azure-SDK-For-Python
+        azure-mgmt-netapp/0.8.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westcentralus/operationResults/9407252d-6e1a-49c1-8ead-4887563e58e9?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westus2stage/operationResults/c5e81591-5864-49ba-93a7-ca8e46b3efcb?api-version=2019-10-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westcentralus/operationResults/9407252d-6e1a-49c1-8ead-4887563e58e9","name":"9407252d-6e1a-49c1-8ead-4887563e58e9","status":"Succeeded","startTime":"2019-09-27T13:15:11.6347758Z","endTime":"2019-09-27T13:15:11.7910188Z","percentComplete":100.0,"properties":{"resourceName":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-py-tests-cys/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westus2stage/operationResults/c5e81591-5864-49ba-93a7-ca8e46b3efcb","name":"c5e81591-5864-49ba-93a7-ca8e46b3efcb","status":"Succeeded","startTime":"2020-01-13T14:48:07.8027115Z","endTime":"2020-01-13T14:48:09.1152971Z","percentComplete":100.0,"properties":{"resourceName":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-net-test-qa2/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1"}}'
     headers:
       access-control-expose-headers:
       - Request-Context
       cache-control:
       - no-cache
       content-length:
-      - '517'
+      - '516'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 27 Sep 2019 13:15:43 GMT
+      - Mon, 13 Jan 2020 14:48:40 GMT
       expires:
       - '-1'
       pragma:
@@ -116,25 +116,25 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.4 (Darwin-18.7.0-x86_64-i386-64bit) msrest/0.6.10 msrest_azure/0.4.34
-        azure-mgmt-netapp/0.5.0 Azure-SDK-For-Python
+        azure-mgmt-netapp/0.8.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-py-tests-cys/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-net-test-qa2/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1?api-version=2019-10-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-py-tests-cys/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1","name":"sdk-py-tests-acc-1","type":"Microsoft.NetApp/netAppAccounts","etag":"W/\"datetime''2019-09-27T13%3A15%3A11.7842555Z''\"","location":"westcentralus","properties":{"name":"sdk-py-tests-acc-1","provisioningState":"Succeeded"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-net-test-qa2/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1","name":"sdk-py-tests-acc-1","type":"Microsoft.NetApp/netAppAccounts","etag":"W/\"datetime''2020-01-13T14%3A48%3A09.0002226Z''\"","location":"westus2stage","properties":{"name":"sdk-py-tests-acc-1","provisioningState":"Succeeded"}}'
     headers:
       access-control-expose-headers:
       - Request-Context
       cache-control:
       - no-cache
       content-length:
-      - '382'
+      - '381'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 27 Sep 2019 13:15:43 GMT
+      - Mon, 13 Jan 2020 14:48:40 GMT
       etag:
-      - W/"datetime'2019-09-27T13%3A15%3A11.7842555Z'"
+      - W/"datetime'2020-01-13T14%3A48%3A09.0002226Z'"
       expires:
       - '-1'
       pragma:
@@ -157,7 +157,7 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: '{"location": "westcentralus", "properties": {"size": 4398046511104, "serviceLevel":
+    body: '{"location": "westus2stage", "properties": {"size": 4398046511104, "serviceLevel":
       "Premium"}}'
     headers:
       Accept:
@@ -167,36 +167,36 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '95'
+      - '94'
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
       - python/3.6.4 (Darwin-18.7.0-x86_64-i386-64bit) msrest/0.6.10 msrest_azure/0.4.34
-        azure-mgmt-netapp/0.5.0 Azure-SDK-For-Python
+        azure-mgmt-netapp/0.8.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       location:
-      - westcentralus
+      - westus2stage
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-py-tests-cys/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1/capacityPools/sdk-py-tests-pool-1?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-net-test-qa2/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1/capacityPools/sdk-py-tests-pool-1?api-version=2019-10-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-py-tests-cys/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1/capacityPools/sdk-py-tests-pool-1","name":"sdk-py-tests-acc-1/sdk-py-tests-pool-1","type":"Microsoft.NetApp/netAppAccounts/capacityPools","etag":"W/\"datetime''2019-09-27T13%3A15%3A45.3053367Z''\"","location":"westcentralus","properties":{"serviceLevel":"Premium","size":4398046511104,"provisioningState":"Creating"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-net-test-qa2/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1/capacityPools/sdk-py-tests-pool-1","name":"sdk-py-tests-acc-1/sdk-py-tests-pool-1","type":"Microsoft.NetApp/netAppAccounts/capacityPools","etag":"W/\"datetime''2020-01-13T14%3A48%3A42.9765856Z''\"","location":"westus2stage","properties":{"serviceLevel":"Premium","size":4398046511104,"provisioningState":"Creating"}}'
     headers:
       access-control-expose-headers:
       - Request-Context
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westcentralus/operationResults/7b2e3490-48fc-4ce3-aaa6-018342b84452?api-version=2019-07-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westus2stage/operationResults/aad903d9-8580-4c30-8527-7c194c98ec74?api-version=2019-10-01
       cache-control:
       - no-cache
       content-length:
-      - '467'
+      - '466'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 27 Sep 2019 13:15:45 GMT
+      - Mon, 13 Jan 2020 14:48:42 GMT
       etag:
-      - W/"datetime'2019-09-27T13%3A15%3A45.3053367Z'"
+      - W/"datetime'2020-01-13T14%3A48%3A42.9765856Z'"
       expires:
       - '-1'
       pragma:
@@ -227,23 +227,23 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.4 (Darwin-18.7.0-x86_64-i386-64bit) msrest/0.6.10 msrest_azure/0.4.34
-        azure-mgmt-netapp/0.5.0 Azure-SDK-For-Python
+        azure-mgmt-netapp/0.8.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westcentralus/operationResults/7b2e3490-48fc-4ce3-aaa6-018342b84452?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westus2stage/operationResults/aad903d9-8580-4c30-8527-7c194c98ec74?api-version=2019-10-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westcentralus/operationResults/7b2e3490-48fc-4ce3-aaa6-018342b84452","name":"7b2e3490-48fc-4ce3-aaa6-018342b84452","status":"Succeeded","startTime":"2019-09-27T13:15:45.2025533Z","endTime":"2019-09-27T13:15:45.6557074Z","percentComplete":100.0,"properties":{"resourceName":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-py-tests-cys/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1/capacityPools/sdk-py-tests-pool-1"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westus2stage/operationResults/aad903d9-8580-4c30-8527-7c194c98ec74","name":"aad903d9-8580-4c30-8527-7c194c98ec74","status":"Succeeded","startTime":"2020-01-13T14:48:42.386546Z","endTime":"2020-01-13T14:48:44.6054495Z","percentComplete":100.0,"properties":{"resourceName":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-net-test-qa2/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1/capacityPools/sdk-py-tests-pool-1"}}'
     headers:
       access-control-expose-headers:
       - Request-Context
       cache-control:
       - no-cache
       content-length:
-      - '551'
+      - '549'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 27 Sep 2019 13:16:15 GMT
+      - Mon, 13 Jan 2020 14:49:14 GMT
       expires:
       - '-1'
       pragma:
@@ -276,25 +276,25 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.4 (Darwin-18.7.0-x86_64-i386-64bit) msrest/0.6.10 msrest_azure/0.4.34
-        azure-mgmt-netapp/0.5.0 Azure-SDK-For-Python
+        azure-mgmt-netapp/0.8.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-py-tests-cys/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1/capacityPools/sdk-py-tests-pool-1?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-net-test-qa2/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1/capacityPools/sdk-py-tests-pool-1?api-version=2019-10-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-py-tests-cys/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1/capacityPools/sdk-py-tests-pool-1","name":"sdk-py-tests-acc-1/sdk-py-tests-pool-1","type":"Microsoft.NetApp/netAppAccounts/capacityPools","etag":"W/\"datetime''2019-09-27T13%3A15%3A45.6555875Z''\"","location":"westcentralus","properties":{"poolId":"f31a43ee-d22b-2363-a3ba-9686ca6c520f","name":"sdk-py-tests-acc-1/sdk-py-tests-pool-1","serviceLevel":"Premium","size":4398046511104,"provisioningState":"Succeeded"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-net-test-qa2/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1/capacityPools/sdk-py-tests-pool-1","name":"sdk-py-tests-acc-1/sdk-py-tests-pool-1","type":"Microsoft.NetApp/netAppAccounts/capacityPools","etag":"W/\"datetime''2020-01-13T14%3A48%3A44.4760131Z''\"","location":"westus2stage","properties":{"poolId":"e193cab3-4a37-feee-3cb8-e071bb62dda6","name":"sdk-py-tests-acc-1/sdk-py-tests-pool-1","serviceLevel":"Premium","size":4398046511104,"provisioningState":"Succeeded"}}'
     headers:
       access-control-expose-headers:
       - Request-Context
       cache-control:
       - no-cache
       content-length:
-      - '564'
+      - '563'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 27 Sep 2019 13:16:16 GMT
+      - Mon, 13 Jan 2020 14:49:15 GMT
       etag:
-      - W/"datetime'2019-09-27T13%3A15%3A45.6555875Z'"
+      - W/"datetime'2020-01-13T14%3A48%3A44.4760131Z'"
       expires:
       - '-1'
       pragma:
@@ -317,9 +317,8 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: 'b''b\''b\\\''b\\\\\\\''{"location": "westcentralus", "properties": {"creationToken":
-      "sdk-py-tests-vol-1", "serviceLevel": "Premium", "usageThreshold": 107374182400,
-      "subnetId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-py-tests-cys/providers/Microsoft.Network/virtualNetworks/sdk-py-tests-cys-vnet/subnets/default"}}\\\\\\\''\\\''\'''''
+    body: 'b''b\''{"location": "westus2stage", "properties": {"creationToken": "sdk-py-tests-vol-1",
+      "serviceLevel": "Premium", "usageThreshold": 107374182400, "subnetId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-net-test-qa2/providers/Microsoft.Network/virtualNetworks/sdknettestqa2vnet464/subnets/default"}}\'''''
     headers:
       Accept:
       - application/json
@@ -328,34 +327,34 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '324'
+      - '322'
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
       - python/3.6.4 (Darwin-18.7.0-x86_64-i386-64bit) msrest/0.6.10 msrest_azure/0.4.34
-        azure-mgmt-netapp/0.5.0 Azure-SDK-For-Python
+        azure-mgmt-netapp/0.8.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-py-tests-cys/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1/capacityPools/sdk-py-tests-pool-1/volumes/sdk-py-tests-vol-1?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-net-test-qa2/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1/capacityPools/sdk-py-tests-pool-1/volumes/sdk-py-tests-vol-1?api-version=2019-10-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-py-tests-cys/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1/capacityPools/sdk-py-tests-pool-1/volumes/sdk-py-tests-vol-1","name":"sdk-py-tests-acc-1/sdk-py-tests-pool-1/sdk-py-tests-vol-1","type":"Microsoft.NetApp/netAppAccounts/capacityPools/volumes","etag":"W/\"datetime''2019-09-27T13%3A16%3A18.9414997Z''\"","location":"westcentralus","properties":{"serviceLevel":"Premium","creationToken":"sdk-py-tests-vol-1","usageThreshold":107374182400,"subnetId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-py-tests-cys/providers/Microsoft.Network/virtualNetworks/sdk-py-tests-cys-vnet/subnets/default","provisioningState":"Creating"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-net-test-qa2/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1/capacityPools/sdk-py-tests-pool-1/volumes/sdk-py-tests-vol-1","name":"sdk-py-tests-acc-1/sdk-py-tests-pool-1/sdk-py-tests-vol-1","type":"Microsoft.NetApp/netAppAccounts/capacityPools/volumes","etag":"W/\"datetime''2020-01-13T14%3A49%3A21.274064Z''\"","location":"westus2stage","properties":{"serviceLevel":"Premium","creationToken":"sdk-py-tests-vol-1","usageThreshold":107374182400,"subnetId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-net-test-qa2/providers/Microsoft.Network/virtualNetworks/sdknettestqa2vnet464/subnets/default","provisioningState":"Creating"}}'
     headers:
       access-control-expose-headers:
       - Request-Context
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westcentralus/operationResults/dd01c23b-94a7-4f78-81bb-8cf7812fe868?api-version=2019-07-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westus2stage/operationResults/e6345b80-adbe-46b5-a898-b1d202748601?api-version=2019-10-01
       cache-control:
       - no-cache
       content-length:
-      - '746'
+      - '743'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 27 Sep 2019 13:16:18 GMT
+      - Mon, 13 Jan 2020 14:49:21 GMT
       etag:
-      - W/"datetime'2019-09-27T13%3A16%3A18.9414997Z'"
+      - W/"datetime'2020-01-13T14%3A49%3A21.274064Z'"
       expires:
       - '-1'
       pragma:
@@ -386,23 +385,23 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.4 (Darwin-18.7.0-x86_64-i386-64bit) msrest/0.6.10 msrest_azure/0.4.34
-        azure-mgmt-netapp/0.5.0 Azure-SDK-For-Python
+        azure-mgmt-netapp/0.8.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westcentralus/operationResults/dd01c23b-94a7-4f78-81bb-8cf7812fe868?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westus2stage/operationResults/e6345b80-adbe-46b5-a898-b1d202748601?api-version=2019-10-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westcentralus/operationResults/dd01c23b-94a7-4f78-81bb-8cf7812fe868","name":"dd01c23b-94a7-4f78-81bb-8cf7812fe868","status":"Creating","startTime":"2019-09-27T13:16:18.8759823Z","endTime":"0001-01-01T00:00:00Z","percentComplete":0.0,"properties":{"resourceName":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-py-tests-cys/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1/capacityPools/sdk-py-tests-pool-1/volumes/sdk-py-tests-vol-1"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westus2stage/operationResults/e6345b80-adbe-46b5-a898-b1d202748601","name":"e6345b80-adbe-46b5-a898-b1d202748601","status":"Creating","startTime":"2020-01-13T14:49:20.6886575Z","endTime":"0001-01-01T00:00:00Z","percentComplete":0.0,"properties":{"resourceName":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-net-test-qa2/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1/capacityPools/sdk-py-tests-pool-1/volumes/sdk-py-tests-vol-1"}}'
     headers:
       access-control-expose-headers:
       - Request-Context
       cache-control:
       - no-cache
       content-length:
-      - '567'
+      - '566'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 27 Sep 2019 13:16:50 GMT
+      - Mon, 13 Jan 2020 14:49:52 GMT
       expires:
       - '-1'
       pragma:
@@ -435,23 +434,23 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.4 (Darwin-18.7.0-x86_64-i386-64bit) msrest/0.6.10 msrest_azure/0.4.34
-        azure-mgmt-netapp/0.5.0 Azure-SDK-For-Python
+        azure-mgmt-netapp/0.8.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westcentralus/operationResults/dd01c23b-94a7-4f78-81bb-8cf7812fe868?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westus2stage/operationResults/e6345b80-adbe-46b5-a898-b1d202748601?api-version=2019-10-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westcentralus/operationResults/dd01c23b-94a7-4f78-81bb-8cf7812fe868","name":"dd01c23b-94a7-4f78-81bb-8cf7812fe868","status":"Creating","startTime":"2019-09-27T13:16:18.8759823Z","endTime":"0001-01-01T00:00:00Z","percentComplete":0.0,"properties":{"resourceName":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-py-tests-cys/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1/capacityPools/sdk-py-tests-pool-1/volumes/sdk-py-tests-vol-1"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westus2stage/operationResults/e6345b80-adbe-46b5-a898-b1d202748601","name":"e6345b80-adbe-46b5-a898-b1d202748601","status":"Creating","startTime":"2020-01-13T14:49:20.6886575Z","endTime":"0001-01-01T00:00:00Z","percentComplete":0.0,"properties":{"resourceName":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-net-test-qa2/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1/capacityPools/sdk-py-tests-pool-1/volumes/sdk-py-tests-vol-1"}}'
     headers:
       access-control-expose-headers:
       - Request-Context
       cache-control:
       - no-cache
       content-length:
-      - '567'
+      - '566'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 27 Sep 2019 13:17:20 GMT
+      - Mon, 13 Jan 2020 14:50:23 GMT
       expires:
       - '-1'
       pragma:
@@ -484,23 +483,23 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.4 (Darwin-18.7.0-x86_64-i386-64bit) msrest/0.6.10 msrest_azure/0.4.34
-        azure-mgmt-netapp/0.5.0 Azure-SDK-For-Python
+        azure-mgmt-netapp/0.8.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westcentralus/operationResults/dd01c23b-94a7-4f78-81bb-8cf7812fe868?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westus2stage/operationResults/e6345b80-adbe-46b5-a898-b1d202748601?api-version=2019-10-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westcentralus/operationResults/dd01c23b-94a7-4f78-81bb-8cf7812fe868","name":"dd01c23b-94a7-4f78-81bb-8cf7812fe868","status":"Creating","startTime":"2019-09-27T13:16:18.8759823Z","endTime":"0001-01-01T00:00:00Z","percentComplete":0.0,"properties":{"resourceName":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-py-tests-cys/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1/capacityPools/sdk-py-tests-pool-1/volumes/sdk-py-tests-vol-1"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westus2stage/operationResults/e6345b80-adbe-46b5-a898-b1d202748601","name":"e6345b80-adbe-46b5-a898-b1d202748601","status":"Creating","startTime":"2020-01-13T14:49:20.6886575Z","endTime":"0001-01-01T00:00:00Z","percentComplete":0.0,"properties":{"resourceName":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-net-test-qa2/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1/capacityPools/sdk-py-tests-pool-1/volumes/sdk-py-tests-vol-1"}}'
     headers:
       access-control-expose-headers:
       - Request-Context
       cache-control:
       - no-cache
       content-length:
-      - '567'
+      - '566'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 27 Sep 2019 13:17:51 GMT
+      - Mon, 13 Jan 2020 14:50:53 GMT
       expires:
       - '-1'
       pragma:
@@ -533,23 +532,23 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.4 (Darwin-18.7.0-x86_64-i386-64bit) msrest/0.6.10 msrest_azure/0.4.34
-        azure-mgmt-netapp/0.5.0 Azure-SDK-For-Python
+        azure-mgmt-netapp/0.8.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westcentralus/operationResults/dd01c23b-94a7-4f78-81bb-8cf7812fe868?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westus2stage/operationResults/e6345b80-adbe-46b5-a898-b1d202748601?api-version=2019-10-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westcentralus/operationResults/dd01c23b-94a7-4f78-81bb-8cf7812fe868","name":"dd01c23b-94a7-4f78-81bb-8cf7812fe868","status":"Creating","startTime":"2019-09-27T13:16:18.8759823Z","endTime":"0001-01-01T00:00:00Z","percentComplete":0.0,"properties":{"resourceName":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-py-tests-cys/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1/capacityPools/sdk-py-tests-pool-1/volumes/sdk-py-tests-vol-1"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westus2stage/operationResults/e6345b80-adbe-46b5-a898-b1d202748601","name":"e6345b80-adbe-46b5-a898-b1d202748601","status":"Creating","startTime":"2020-01-13T14:49:20.6886575Z","endTime":"0001-01-01T00:00:00Z","percentComplete":0.0,"properties":{"resourceName":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-net-test-qa2/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1/capacityPools/sdk-py-tests-pool-1/volumes/sdk-py-tests-vol-1"}}'
     headers:
       access-control-expose-headers:
       - Request-Context
       cache-control:
       - no-cache
       content-length:
-      - '567'
+      - '566'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 27 Sep 2019 13:18:22 GMT
+      - Mon, 13 Jan 2020 14:51:24 GMT
       expires:
       - '-1'
       pragma:
@@ -582,23 +581,23 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.4 (Darwin-18.7.0-x86_64-i386-64bit) msrest/0.6.10 msrest_azure/0.4.34
-        azure-mgmt-netapp/0.5.0 Azure-SDK-For-Python
+        azure-mgmt-netapp/0.8.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westcentralus/operationResults/dd01c23b-94a7-4f78-81bb-8cf7812fe868?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westus2stage/operationResults/e6345b80-adbe-46b5-a898-b1d202748601?api-version=2019-10-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westcentralus/operationResults/dd01c23b-94a7-4f78-81bb-8cf7812fe868","name":"dd01c23b-94a7-4f78-81bb-8cf7812fe868","status":"Creating","startTime":"2019-09-27T13:16:18.8759823Z","endTime":"0001-01-01T00:00:00Z","percentComplete":0.0,"properties":{"resourceName":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-py-tests-cys/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1/capacityPools/sdk-py-tests-pool-1/volumes/sdk-py-tests-vol-1"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westus2stage/operationResults/e6345b80-adbe-46b5-a898-b1d202748601","name":"e6345b80-adbe-46b5-a898-b1d202748601","status":"Creating","startTime":"2020-01-13T14:49:20.6886575Z","endTime":"0001-01-01T00:00:00Z","percentComplete":0.0,"properties":{"resourceName":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-net-test-qa2/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1/capacityPools/sdk-py-tests-pool-1/volumes/sdk-py-tests-vol-1"}}'
     headers:
       access-control-expose-headers:
       - Request-Context
       cache-control:
       - no-cache
       content-length:
-      - '567'
+      - '566'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 27 Sep 2019 13:18:52 GMT
+      - Mon, 13 Jan 2020 14:51:55 GMT
       expires:
       - '-1'
       pragma:
@@ -631,23 +630,23 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.4 (Darwin-18.7.0-x86_64-i386-64bit) msrest/0.6.10 msrest_azure/0.4.34
-        azure-mgmt-netapp/0.5.0 Azure-SDK-For-Python
+        azure-mgmt-netapp/0.8.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westcentralus/operationResults/dd01c23b-94a7-4f78-81bb-8cf7812fe868?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westus2stage/operationResults/e6345b80-adbe-46b5-a898-b1d202748601?api-version=2019-10-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westcentralus/operationResults/dd01c23b-94a7-4f78-81bb-8cf7812fe868","name":"dd01c23b-94a7-4f78-81bb-8cf7812fe868","status":"Succeeded","startTime":"2019-09-27T13:16:18.8759823Z","endTime":"2019-09-27T13:19:05.6948186Z","percentComplete":100.0,"properties":{"resourceName":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-py-tests-cys/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1/capacityPools/sdk-py-tests-pool-1/volumes/sdk-py-tests-vol-1"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westus2stage/operationResults/e6345b80-adbe-46b5-a898-b1d202748601","name":"e6345b80-adbe-46b5-a898-b1d202748601","status":"Succeeded","startTime":"2020-01-13T14:49:20.6886575Z","endTime":"2020-01-13T14:52:16.179172Z","percentComplete":100.0,"properties":{"resourceName":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-net-test-qa2/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1/capacityPools/sdk-py-tests-pool-1/volumes/sdk-py-tests-vol-1"}}'
     headers:
       access-control-expose-headers:
       - Request-Context
       cache-control:
       - no-cache
       content-length:
-      - '578'
+      - '576'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 27 Sep 2019 13:19:23 GMT
+      - Mon, 13 Jan 2020 14:52:25 GMT
       expires:
       - '-1'
       pragma:
@@ -680,25 +679,25 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.4 (Darwin-18.7.0-x86_64-i386-64bit) msrest/0.6.10 msrest_azure/0.4.34
-        azure-mgmt-netapp/0.5.0 Azure-SDK-For-Python
+        azure-mgmt-netapp/0.8.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-py-tests-cys/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1/capacityPools/sdk-py-tests-pool-1/volumes/sdk-py-tests-vol-1?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-net-test-qa2/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1/capacityPools/sdk-py-tests-pool-1/volumes/sdk-py-tests-vol-1?api-version=2019-10-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-py-tests-cys/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1/capacityPools/sdk-py-tests-pool-1/volumes/sdk-py-tests-vol-1","name":"sdk-py-tests-acc-1/sdk-py-tests-pool-1/sdk-py-tests-vol-1","type":"Microsoft.NetApp/netAppAccounts/capacityPools/volumes","etag":"W/\"datetime''2019-09-27T13%3A19%3A05.7002948Z''\"","location":"westcentralus","properties":{"provisioningState":"Succeeded","fileSystemId":"fd02e1be-f47d-b479-956e-78bd95f4c247","name":"sdk-py-tests-vol-1","serviceLevel":"Premium","creationToken":"sdk-py-tests-vol-1","usageThreshold":107374182400,"usedBytes":294912,"snapshotPolicy":{"enabled":false},"exportPolicy":{"rules":[{"ruleIndex":1,"unixReadOnly":false,"unixReadWrite":true,"cifs":false,"nfsv3":true,"nfsv4":false,"nfsv41":false,"allowedClients":"0.0.0.0/0"}]},"protocolTypes":["NFSv3"],"baremetalTenantId":"baremetalTenant_svm_af4380c9b53911e9a537ce0a5a5e91ed_9ba8b043","subnetId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-py-tests-cys/providers/Microsoft.Network/virtualNetworks/sdk-py-tests-cys-vnet/subnets/default","mountTargets":[{"provisioningState":"Succeeded","mountTargetId":"2bc6dd78-8735-7ed2-3810-c57a7d0559f8","fileSystemId":"fd02e1be-f47d-b479-956e-78bd95f4c247","startIp":"10.1.3.4","endIp":"10.1.3.4","gateway":"","netmask":"","ipAddress":"10.1.3.4"}]}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-net-test-qa2/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1/capacityPools/sdk-py-tests-pool-1/volumes/sdk-py-tests-vol-1","name":"sdk-py-tests-acc-1/sdk-py-tests-pool-1/sdk-py-tests-vol-1","type":"Microsoft.NetApp/netAppAccounts/capacityPools/volumes","etag":"W/\"datetime''2020-01-13T14%3A52%3A16.0605493Z''\"","location":"westus2stage","properties":{"provisioningState":"Succeeded","fileSystemId":"6db5b73d-37de-31a1-84f1-c3d01ee7d20a","name":"sdk-py-tests-vol-1","serviceLevel":"Premium","creationToken":"sdk-py-tests-vol-1","usageThreshold":107374182400,"usedBytes":0,"exportPolicy":{"rules":[{"ruleIndex":1,"unixReadOnly":false,"unixReadWrite":true,"cifs":false,"nfsv3":true,"nfsv4":false,"nfsv41":false,"allowedClients":"0.0.0.0/0"}]},"protocolTypes":["NFSv3"],"baremetalTenantId":"baremetalTenant_svm_307950bbb92a11e9a7f006ddec9cd511_ab4ee255","subnetId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-net-test-qa2/providers/Microsoft.Network/virtualNetworks/sdknettestqa2vnet464/subnets/default","mountTargets":[{"provisioningState":"Succeeded","mountTargetId":"6db5b73d-37de-31a1-84f1-c3d01ee7d20a","fileSystemId":"6db5b73d-37de-31a1-84f1-c3d01ee7d20a","startIp":"10.1.8.4","endIp":"10.1.8.4","gateway":"","netmask":"","subnet":"","ipAddress":"10.1.8.4"}]}}'
     headers:
       access-control-expose-headers:
       - Request-Context
       cache-control:
       - no-cache
       content-length:
-      - '1411'
+      - '1381'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 27 Sep 2019 13:19:23 GMT
+      - Mon, 13 Jan 2020 14:52:26 GMT
       etag:
-      - W/"datetime'2019-09-27T13%3A19%3A05.7002948Z'"
+      - W/"datetime'2020-01-13T14%3A52%3A16.0605493Z'"
       expires:
       - '-1'
       pragma:
@@ -731,27 +730,27 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.4 (Darwin-18.7.0-x86_64-i386-64bit) msrest/0.6.10 msrest_azure/0.4.34
-        azure-mgmt-netapp/0.5.0 Azure-SDK-For-Python
+        azure-mgmt-netapp/0.8.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-py-tests-cys/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1/capacityPools/sdk-py-tests-pool-1/volumes/sdk-py-tests-vol-1?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-net-test-qa2/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1/capacityPools/sdk-py-tests-pool-1/volumes/sdk-py-tests-vol-1?api-version=2019-10-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-py-tests-cys/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1/capacityPools/sdk-py-tests-pool-1/volumes/sdk-py-tests-vol-1","name":"sdk-py-tests-acc-1/sdk-py-tests-pool-1/sdk-py-tests-vol-1","type":"Microsoft.NetApp/netAppAccounts/capacityPools/volumes","etag":"W/\"datetime''2019-09-27T13%3A19%3A05.7002948Z''\"","location":"westcentralus","properties":{"provisioningState":"Succeeded","fileSystemId":"fd02e1be-f47d-b479-956e-78bd95f4c247","name":"sdk-py-tests-vol-1","serviceLevel":"Premium","creationToken":"sdk-py-tests-vol-1","usageThreshold":107374182400,"usedBytes":294912,"snapshotPolicy":{"enabled":false},"exportPolicy":{"rules":[{"ruleIndex":1,"unixReadOnly":false,"unixReadWrite":true,"cifs":false,"nfsv3":true,"nfsv4":false,"nfsv41":false,"allowedClients":"0.0.0.0/0"}]},"protocolTypes":["NFSv3"],"baremetalTenantId":"baremetalTenant_svm_af4380c9b53911e9a537ce0a5a5e91ed_9ba8b043","subnetId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-py-tests-cys/providers/Microsoft.Network/virtualNetworks/sdk-py-tests-cys-vnet/subnets/default","mountTargets":[{"provisioningState":"Succeeded","mountTargetId":"2bc6dd78-8735-7ed2-3810-c57a7d0559f8","fileSystemId":"fd02e1be-f47d-b479-956e-78bd95f4c247","startIp":"10.1.3.4","endIp":"10.1.3.4","gateway":"","netmask":"","ipAddress":"10.1.3.4"}]}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-net-test-qa2/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1/capacityPools/sdk-py-tests-pool-1/volumes/sdk-py-tests-vol-1","name":"sdk-py-tests-acc-1/sdk-py-tests-pool-1/sdk-py-tests-vol-1","type":"Microsoft.NetApp/netAppAccounts/capacityPools/volumes","etag":"W/\"datetime''2020-01-13T14%3A52%3A16.0605493Z''\"","location":"westus2stage","properties":{"provisioningState":"Succeeded","fileSystemId":"6db5b73d-37de-31a1-84f1-c3d01ee7d20a","name":"sdk-py-tests-vol-1","serviceLevel":"Premium","creationToken":"sdk-py-tests-vol-1","usageThreshold":107374182400,"usedBytes":0,"exportPolicy":{"rules":[{"ruleIndex":1,"unixReadOnly":false,"unixReadWrite":true,"cifs":false,"nfsv3":true,"nfsv4":false,"nfsv41":false,"allowedClients":"0.0.0.0/0"}]},"protocolTypes":["NFSv3"],"baremetalTenantId":"baremetalTenant_svm_307950bbb92a11e9a7f006ddec9cd511_ab4ee255","subnetId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-net-test-qa2/providers/Microsoft.Network/virtualNetworks/sdknettestqa2vnet464/subnets/default","mountTargets":[{"provisioningState":"Succeeded","mountTargetId":"6db5b73d-37de-31a1-84f1-c3d01ee7d20a","fileSystemId":"6db5b73d-37de-31a1-84f1-c3d01ee7d20a","startIp":"10.1.8.4","endIp":"10.1.8.4","gateway":"","netmask":"","subnet":"","ipAddress":"10.1.8.4"}]}}'
     headers:
       access-control-expose-headers:
       - Request-Context
       cache-control:
       - no-cache
       content-length:
-      - '1411'
+      - '1381'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 27 Sep 2019 13:19:25 GMT
+      - Mon, 13 Jan 2020 14:52:27 GMT
       etag:
-      - W/"datetime'2019-09-27T13%3A19%3A05.7002948Z'"
+      - W/"datetime'2020-01-13T14%3A52%3A16.0605493Z'"
       expires:
       - '-1'
       pragma:
@@ -774,7 +773,7 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: '{"location": "westcentralus", "properties": {"fileSystemId": "fd02e1be-f47d-b479-956e-78bd95f4c247"}}'
+    body: '{"location": "westus2stage", "properties": {"fileSystemId": "6db5b73d-37de-31a1-84f1-c3d01ee7d20a"}}'
     headers:
       Accept:
       - application/json
@@ -783,36 +782,36 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '101'
+      - '100'
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
       - python/3.6.4 (Darwin-18.7.0-x86_64-i386-64bit) msrest/0.6.10 msrest_azure/0.4.34
-        azure-mgmt-netapp/0.5.0 Azure-SDK-For-Python
+        azure-mgmt-netapp/0.8.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-py-tests-cys/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1/capacityPools/sdk-py-tests-pool-1/volumes/sdk-py-tests-vol-1/snapshots/sdk-py-tests-snapshot-1?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-net-test-qa2/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1/capacityPools/sdk-py-tests-pool-1/volumes/sdk-py-tests-vol-1/snapshots/sdk-py-tests-snapshot-1?api-version=2019-10-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-py-tests-cys/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1/capacityPools/sdk-py-tests-pool-1/volumes/sdk-py-tests-vol-1/snapshots/sdk-py-tests-snapshot-1","name":"sdk-py-tests-acc-1/sdk-py-tests-pool-1/sdk-py-tests-vol-1/sdk-py-tests-snapshot-1","type":"Microsoft.NetApp/netAppAccounts/capacityPools/volumes/snapshots","location":"westcentralus","properties":{"provisioningState":"Creating","fileSystemId":"fd02e1be-f47d-b479-956e-78bd95f4c247","name":"sdk-py-tests-snapshot-1"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-net-test-qa2/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1/capacityPools/sdk-py-tests-pool-1/volumes/sdk-py-tests-vol-1/snapshots/sdk-py-tests-snapshot-1","name":"sdk-py-tests-acc-1/sdk-py-tests-pool-1/sdk-py-tests-vol-1/sdk-py-tests-snapshot-1","type":"Microsoft.NetApp/netAppAccounts/capacityPools/volumes/snapshots","location":"westus2stage","properties":{"provisioningState":"Creating","fileSystemId":"6db5b73d-37de-31a1-84f1-c3d01ee7d20a","name":"sdk-py-tests-snapshot-1"}}'
     headers:
       access-control-expose-headers:
       - Request-Context
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westcentralus/operationResults/8e4a6294-a8c4-411b-a138-bbaf07a88869?api-version=2019-07-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westus2stage/operationResults/390f0fbb-80e0-43e3-a7ef-40553c95fa75?api-version=2019-10-01
       cache-control:
       - no-cache
       content-length:
-      - '572'
+      - '571'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 27 Sep 2019 13:19:29 GMT
+      - Mon, 13 Jan 2020 14:52:30 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westcentralus/operationResults/8e4a6294-a8c4-411b-a138-bbaf07a88869?api-version=2019-07-01&operationResultResponseType=Location
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westus2stage/operationResults/390f0fbb-80e0-43e3-a7ef-40553c95fa75?api-version=2019-10-01&operationResultResponseType=Location
       pragma:
       - no-cache
       request-context:
@@ -841,23 +840,23 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.4 (Darwin-18.7.0-x86_64-i386-64bit) msrest/0.6.10 msrest_azure/0.4.34
-        azure-mgmt-netapp/0.5.0 Azure-SDK-For-Python
+        azure-mgmt-netapp/0.8.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westcentralus/operationResults/8e4a6294-a8c4-411b-a138-bbaf07a88869?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westus2stage/operationResults/390f0fbb-80e0-43e3-a7ef-40553c95fa75?api-version=2019-10-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westcentralus/operationResults/8e4a6294-a8c4-411b-a138-bbaf07a88869","name":"8e4a6294-a8c4-411b-a138-bbaf07a88869","status":"Succeeded","startTime":"2019-09-27T13:19:29.8001247Z","endTime":"2019-09-27T13:19:31.6019307Z","percentComplete":100.0,"properties":{"resourceName":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-py-tests-cys/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1/capacityPools/sdk-py-tests-pool-1/volumes/sdk-py-tests-vol-1/snapshots/sdk-py-tests-snapshot-1"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westus2stage/operationResults/390f0fbb-80e0-43e3-a7ef-40553c95fa75","name":"390f0fbb-80e0-43e3-a7ef-40553c95fa75","status":"Succeeded","startTime":"2020-01-13T14:52:29.9297786Z","endTime":"2020-01-13T14:52:32.602791Z","percentComplete":100.0,"properties":{"resourceName":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-net-test-qa2/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1/capacityPools/sdk-py-tests-pool-1/volumes/sdk-py-tests-vol-1/snapshots/sdk-py-tests-snapshot-1"}}'
     headers:
       access-control-expose-headers:
       - Request-Context
       cache-control:
       - no-cache
       content-length:
-      - '612'
+      - '610'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 27 Sep 2019 13:20:00 GMT
+      - Mon, 13 Jan 2020 14:53:01 GMT
       expires:
       - '-1'
       pragma:
@@ -890,23 +889,23 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.4 (Darwin-18.7.0-x86_64-i386-64bit) msrest/0.6.10 msrest_azure/0.4.34
-        azure-mgmt-netapp/0.5.0 Azure-SDK-For-Python
+        azure-mgmt-netapp/0.8.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-py-tests-cys/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1/capacityPools/sdk-py-tests-pool-1/volumes/sdk-py-tests-vol-1/snapshots/sdk-py-tests-snapshot-1?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-net-test-qa2/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1/capacityPools/sdk-py-tests-pool-1/volumes/sdk-py-tests-vol-1/snapshots/sdk-py-tests-snapshot-1?api-version=2019-10-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-py-tests-cys/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1/capacityPools/sdk-py-tests-pool-1/volumes/sdk-py-tests-vol-1/snapshots/sdk-py-tests-snapshot-1","name":"sdk-py-tests-acc-1/sdk-py-tests-pool-1/sdk-py-tests-vol-1/sdk-py-tests-snapshot-1","type":"Microsoft.NetApp/netAppAccounts/capacityPools/volumes/snapshots","location":"westcentralus","properties":{"provisioningState":"Succeeded","snapshotId":"ba6907c9-f801-ee21-7f02-6e915ccef161","fileSystemId":"fd02e1be-f47d-b479-956e-78bd95f4c247","name":"sdk-py-tests-snapshot-1","created":"2019-09-27T13:19:29Z"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-net-test-qa2/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1/capacityPools/sdk-py-tests-pool-1/volumes/sdk-py-tests-vol-1/snapshots/sdk-py-tests-snapshot-1","name":"sdk-py-tests-acc-1/sdk-py-tests-pool-1/sdk-py-tests-vol-1/sdk-py-tests-snapshot-1","type":"Microsoft.NetApp/netAppAccounts/capacityPools/volumes/snapshots","location":"westus2stage","properties":{"provisioningState":"Succeeded","snapshotId":"5d8a9d58-eec6-272a-c531-655fc430723f","fileSystemId":"6db5b73d-37de-31a1-84f1-c3d01ee7d20a","name":"sdk-py-tests-snapshot-1","created":"2020-01-13T14:52:30Z"}}'
     headers:
       access-control-expose-headers:
       - Request-Context
       cache-control:
       - no-cache
       content-length:
-      - '658'
+      - '657'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 27 Sep 2019 13:20:01 GMT
+      - Mon, 13 Jan 2020 14:53:02 GMT
       expires:
       - '-1'
       pragma:
@@ -939,25 +938,25 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.4 (Darwin-18.7.0-x86_64-i386-64bit) msrest/0.6.10 msrest_azure/0.4.34
-        azure-mgmt-netapp/0.5.0 Azure-SDK-For-Python
+        azure-mgmt-netapp/0.8.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-py-tests-cys/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1/capacityPools/sdk-py-tests-pool-1/volumes/sdk-py-tests-vol-1/snapshots?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-net-test-qa2/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1/capacityPools/sdk-py-tests-pool-1/volumes/sdk-py-tests-vol-1/snapshots?api-version=2019-10-01
   response:
     body:
-      string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-py-tests-cys/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1/capacityPools/sdk-py-tests-pool-1/volumes/sdk-py-tests-vol-1/snapshots/sdk-py-tests-snapshot-1","name":"sdk-py-tests-acc-1/sdk-py-tests-pool-1/sdk-py-tests-vol-1/sdk-py-tests-snapshot-1","type":"Microsoft.NetApp/netAppAccounts/capacityPools/volumes/snapshots","location":"westcentralus","properties":{"provisioningState":"Succeeded","snapshotId":"ba6907c9-f801-ee21-7f02-6e915ccef161","fileSystemId":"fd02e1be-f47d-b479-956e-78bd95f4c247","name":"sdk-py-tests-snapshot-1","created":"2019-09-27T13:19:29Z"}}]}'
+      string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-net-test-qa2/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1/capacityPools/sdk-py-tests-pool-1/volumes/sdk-py-tests-vol-1/snapshots/sdk-py-tests-snapshot-1","name":"sdk-py-tests-acc-1/sdk-py-tests-pool-1/sdk-py-tests-vol-1/sdk-py-tests-snapshot-1","type":"Microsoft.NetApp/netAppAccounts/capacityPools/volumes/snapshots","location":"westus2stage","properties":{"provisioningState":"Succeeded","snapshotId":"5d8a9d58-eec6-272a-c531-655fc430723f","fileSystemId":"6db5b73d-37de-31a1-84f1-c3d01ee7d20a","name":"sdk-py-tests-snapshot-1","created":"2020-01-13T14:52:30Z"}}]}'
     headers:
       access-control-expose-headers:
       - Request-Context
       cache-control:
       - no-cache
       content-length:
-      - '670'
+      - '669'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 27 Sep 2019 13:20:02 GMT
+      - Mon, 13 Jan 2020 14:53:03 GMT
       expires:
       - '-1'
       pragma:
@@ -992,11 +991,11 @@ interactions:
       - '0'
       User-Agent:
       - python/3.6.4 (Darwin-18.7.0-x86_64-i386-64bit) msrest/0.6.10 msrest_azure/0.4.34
-        azure-mgmt-netapp/0.5.0 Azure-SDK-For-Python
+        azure-mgmt-netapp/0.8.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-py-tests-cys/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1/capacityPools/sdk-py-tests-pool-1/volumes/sdk-py-tests-vol-1/snapshots/sdk-py-tests-snapshot-1?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-net-test-qa2/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1/capacityPools/sdk-py-tests-pool-1/volumes/sdk-py-tests-vol-1/snapshots/sdk-py-tests-snapshot-1?api-version=2019-10-01
   response:
     body:
       string: ''
@@ -1004,17 +1003,17 @@ interactions:
       access-control-expose-headers:
       - Request-Context
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westcentralus/operationResults/e5e20023-5aa8-47e1-a90d-3fc1ad60e02a?api-version=2019-07-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westus2stage/operationResults/14b27f27-6307-495b-a6bf-9c574e08a2b6?api-version=2019-10-01
       cache-control:
       - no-cache
       content-length:
       - '0'
       date:
-      - Fri, 27 Sep 2019 13:20:03 GMT
+      - Mon, 13 Jan 2020 14:53:04 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westcentralus/operationResults/e5e20023-5aa8-47e1-a90d-3fc1ad60e02a?api-version=2019-07-01&operationResultResponseType=Location
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westus2stage/operationResults/14b27f27-6307-495b-a6bf-9c574e08a2b6?api-version=2019-10-01&operationResultResponseType=Location
       pragma:
       - no-cache
       request-context:
@@ -1043,12 +1042,12 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.4 (Darwin-18.7.0-x86_64-i386-64bit) msrest/0.6.10 msrest_azure/0.4.34
-        azure-mgmt-netapp/0.5.0 Azure-SDK-For-Python
+        azure-mgmt-netapp/0.8.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westcentralus/operationResults/e5e20023-5aa8-47e1-a90d-3fc1ad60e02a?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westus2stage/operationResults/14b27f27-6307-495b-a6bf-9c574e08a2b6?api-version=2019-10-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westcentralus/operationResults/e5e20023-5aa8-47e1-a90d-3fc1ad60e02a","name":"e5e20023-5aa8-47e1-a90d-3fc1ad60e02a","status":"Succeeded","startTime":"2019-09-27T13:20:02.9778397Z","endTime":"2019-09-27T13:20:05.902303Z","percentComplete":100.0,"properties":{"resourceName":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-py-tests-cys/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1/capacityPools/sdk-py-tests-pool-1/volumes/sdk-py-tests-vol-1/snapshots/sdk-py-tests-snapshot-1"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westus2stage/operationResults/14b27f27-6307-495b-a6bf-9c574e08a2b6","name":"14b27f27-6307-495b-a6bf-9c574e08a2b6","status":"Succeeded","startTime":"2020-01-13T14:53:04.1398477Z","endTime":"2020-01-13T14:53:07.5149756Z","percentComplete":100.0,"properties":{"resourceName":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-net-test-qa2/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1/capacityPools/sdk-py-tests-pool-1/volumes/sdk-py-tests-vol-1/snapshots/sdk-py-tests-snapshot-1"}}'
     headers:
       access-control-expose-headers:
       - Request-Context
@@ -1059,7 +1058,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 27 Sep 2019 13:20:33 GMT
+      - Mon, 13 Jan 2020 14:53:35 GMT
       expires:
       - '-1'
       pragma:
@@ -1092,11 +1091,11 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.4 (Darwin-18.7.0-x86_64-i386-64bit) msrest/0.6.10 msrest_azure/0.4.34
-        azure-mgmt-netapp/0.5.0 Azure-SDK-For-Python
+        azure-mgmt-netapp/0.8.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-py-tests-cys/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1/capacityPools/sdk-py-tests-pool-1/volumes/sdk-py-tests-vol-1/snapshots?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-net-test-qa2/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1/capacityPools/sdk-py-tests-pool-1/volumes/sdk-py-tests-vol-1/snapshots?api-version=2019-10-01
   response:
     body:
       string: '{"value":[]}'
@@ -1110,7 +1109,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 27 Sep 2019 13:20:34 GMT
+      - Mon, 13 Jan 2020 14:53:35 GMT
       expires:
       - '-1'
       pragma:
@@ -1145,11 +1144,11 @@ interactions:
       - '0'
       User-Agent:
       - python/3.6.4 (Darwin-18.7.0-x86_64-i386-64bit) msrest/0.6.10 msrest_azure/0.4.34
-        azure-mgmt-netapp/0.5.0 Azure-SDK-For-Python
+        azure-mgmt-netapp/0.8.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-py-tests-cys/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1/capacityPools/sdk-py-tests-pool-1/volumes/sdk-py-tests-vol-1?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-net-test-qa2/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1/capacityPools/sdk-py-tests-pool-1/volumes/sdk-py-tests-vol-1?api-version=2019-10-01
   response:
     body:
       string: ''
@@ -1157,17 +1156,17 @@ interactions:
       access-control-expose-headers:
       - Request-Context
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westcentralus/operationResults/815e3219-f310-4982-9d0e-c584c80e3ce6?api-version=2019-07-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westus2stage/operationResults/ebf5fdc2-1b52-40a4-aa8b-2986ea48c8a7?api-version=2019-10-01
       cache-control:
       - no-cache
       content-length:
       - '0'
       date:
-      - Fri, 27 Sep 2019 13:20:35 GMT
+      - Mon, 13 Jan 2020 14:53:37 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westcentralus/operationResults/815e3219-f310-4982-9d0e-c584c80e3ce6?api-version=2019-07-01&operationResultResponseType=Location
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westus2stage/operationResults/ebf5fdc2-1b52-40a4-aa8b-2986ea48c8a7?api-version=2019-10-01&operationResultResponseType=Location
       pragma:
       - no-cache
       request-context:
@@ -1196,23 +1195,23 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.4 (Darwin-18.7.0-x86_64-i386-64bit) msrest/0.6.10 msrest_azure/0.4.34
-        azure-mgmt-netapp/0.5.0 Azure-SDK-For-Python
+        azure-mgmt-netapp/0.8.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westcentralus/operationResults/815e3219-f310-4982-9d0e-c584c80e3ce6?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westus2stage/operationResults/ebf5fdc2-1b52-40a4-aa8b-2986ea48c8a7?api-version=2019-10-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westcentralus/operationResults/815e3219-f310-4982-9d0e-c584c80e3ce6","name":"815e3219-f310-4982-9d0e-c584c80e3ce6","status":"Deleting","startTime":"2019-09-27T13:20:35.9060988Z","endTime":"0001-01-01T00:00:00Z","percentComplete":0.0,"properties":{"resourceName":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-py-tests-cys/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1/capacityPools/sdk-py-tests-pool-1/volumes/sdk-py-tests-vol-1"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westus2stage/operationResults/ebf5fdc2-1b52-40a4-aa8b-2986ea48c8a7","name":"ebf5fdc2-1b52-40a4-aa8b-2986ea48c8a7","status":"Deleting","startTime":"2020-01-13T14:53:37.7813735Z","endTime":"0001-01-01T00:00:00Z","percentComplete":0.0,"properties":{"resourceName":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-net-test-qa2/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1/capacityPools/sdk-py-tests-pool-1/volumes/sdk-py-tests-vol-1"}}'
     headers:
       access-control-expose-headers:
       - Request-Context
       cache-control:
       - no-cache
       content-length:
-      - '567'
+      - '566'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 27 Sep 2019 13:21:07 GMT
+      - Mon, 13 Jan 2020 14:54:09 GMT
       expires:
       - '-1'
       pragma:
@@ -1245,23 +1244,23 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.4 (Darwin-18.7.0-x86_64-i386-64bit) msrest/0.6.10 msrest_azure/0.4.34
-        azure-mgmt-netapp/0.5.0 Azure-SDK-For-Python
+        azure-mgmt-netapp/0.8.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westcentralus/operationResults/815e3219-f310-4982-9d0e-c584c80e3ce6?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westus2stage/operationResults/ebf5fdc2-1b52-40a4-aa8b-2986ea48c8a7?api-version=2019-10-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westcentralus/operationResults/815e3219-f310-4982-9d0e-c584c80e3ce6","name":"815e3219-f310-4982-9d0e-c584c80e3ce6","status":"Deleting","startTime":"2019-09-27T13:20:35.9060988Z","endTime":"0001-01-01T00:00:00Z","percentComplete":0.0,"properties":{"resourceName":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-py-tests-cys/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1/capacityPools/sdk-py-tests-pool-1/volumes/sdk-py-tests-vol-1"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westus2stage/operationResults/ebf5fdc2-1b52-40a4-aa8b-2986ea48c8a7","name":"ebf5fdc2-1b52-40a4-aa8b-2986ea48c8a7","status":"Deleting","startTime":"2020-01-13T14:53:37.7813735Z","endTime":"0001-01-01T00:00:00Z","percentComplete":0.0,"properties":{"resourceName":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-net-test-qa2/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1/capacityPools/sdk-py-tests-pool-1/volumes/sdk-py-tests-vol-1"}}'
     headers:
       access-control-expose-headers:
       - Request-Context
       cache-control:
       - no-cache
       content-length:
-      - '567'
+      - '566'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 27 Sep 2019 13:21:37 GMT
+      - Mon, 13 Jan 2020 14:54:40 GMT
       expires:
       - '-1'
       pragma:
@@ -1294,23 +1293,23 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.4 (Darwin-18.7.0-x86_64-i386-64bit) msrest/0.6.10 msrest_azure/0.4.34
-        azure-mgmt-netapp/0.5.0 Azure-SDK-For-Python
+        azure-mgmt-netapp/0.8.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westcentralus/operationResults/815e3219-f310-4982-9d0e-c584c80e3ce6?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westus2stage/operationResults/ebf5fdc2-1b52-40a4-aa8b-2986ea48c8a7?api-version=2019-10-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westcentralus/operationResults/815e3219-f310-4982-9d0e-c584c80e3ce6","name":"815e3219-f310-4982-9d0e-c584c80e3ce6","status":"Succeeded","startTime":"2019-09-27T13:20:35.9060988Z","endTime":"2019-09-27T13:21:40.4703386Z","percentComplete":100.0,"properties":{"resourceName":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-py-tests-cys/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1/capacityPools/sdk-py-tests-pool-1/volumes/sdk-py-tests-vol-1"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westus2stage/operationResults/ebf5fdc2-1b52-40a4-aa8b-2986ea48c8a7","name":"ebf5fdc2-1b52-40a4-aa8b-2986ea48c8a7","status":"Succeeded","startTime":"2020-01-13T14:53:37.7813735Z","endTime":"2020-01-13T14:54:50.0644112Z","percentComplete":100.0,"properties":{"resourceName":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-net-test-qa2/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1/capacityPools/sdk-py-tests-pool-1/volumes/sdk-py-tests-vol-1"}}'
     headers:
       access-control-expose-headers:
       - Request-Context
       cache-control:
       - no-cache
       content-length:
-      - '578'
+      - '577'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 27 Sep 2019 13:22:07 GMT
+      - Mon, 13 Jan 2020 14:55:10 GMT
       expires:
       - '-1'
       pragma:
@@ -1343,15 +1342,15 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.4 (Darwin-18.7.0-x86_64-i386-64bit) msrest/0.6.10 msrest_azure/0.4.34
-        azure-mgmt-netapp/0.5.0 Azure-SDK-For-Python
+        azure-mgmt-netapp/0.8.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-py-tests-cys/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1/capacityPools/sdk-py-tests-pool-1/volumes/sdk-py-tests-vol-1?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-net-test-qa2/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1/capacityPools/sdk-py-tests-pool-1/volumes/sdk-py-tests-vol-1?api-version=2019-10-01
   response:
     body:
       string: '{"error":{"code":"ResourceNotFound","message":"The Resource ''Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1/capacityPools/sdk-py-tests-pool-1/volumes/sdk-py-tests-vol-1''
-        under resource group ''sdk-py-tests-cys'' was not found."}}'
+        under resource group ''sdk-net-test-qa2'' was not found."}}'
     headers:
       cache-control:
       - no-cache
@@ -1360,7 +1359,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 27 Sep 2019 13:22:07 GMT
+      - Mon, 13 Jan 2020 14:55:10 GMT
       expires:
       - '-1'
       pragma:
@@ -1387,11 +1386,11 @@ interactions:
       - '0'
       User-Agent:
       - python/3.6.4 (Darwin-18.7.0-x86_64-i386-64bit) msrest/0.6.10 msrest_azure/0.4.34
-        azure-mgmt-netapp/0.5.0 Azure-SDK-For-Python
+        azure-mgmt-netapp/0.8.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-py-tests-cys/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1/capacityPools/sdk-py-tests-pool-1?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-net-test-qa2/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1/capacityPools/sdk-py-tests-pool-1?api-version=2019-10-01
   response:
     body:
       string: ''
@@ -1399,17 +1398,17 @@ interactions:
       access-control-expose-headers:
       - Request-Context
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westcentralus/operationResults/11e7fa60-e735-4e0b-ab4d-f123abf72fd1?api-version=2019-07-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westus2stage/operationResults/ee18dcbd-628f-4812-a007-5f7a9732b6d8?api-version=2019-10-01
       cache-control:
       - no-cache
       content-length:
       - '0'
       date:
-      - Fri, 27 Sep 2019 13:22:09 GMT
+      - Mon, 13 Jan 2020 14:55:12 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westcentralus/operationResults/11e7fa60-e735-4e0b-ab4d-f123abf72fd1?api-version=2019-07-01&operationResultResponseType=Location
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westus2stage/operationResults/ee18dcbd-628f-4812-a007-5f7a9732b6d8?api-version=2019-10-01&operationResultResponseType=Location
       pragma:
       - no-cache
       request-context:
@@ -1438,23 +1437,23 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.4 (Darwin-18.7.0-x86_64-i386-64bit) msrest/0.6.10 msrest_azure/0.4.34
-        azure-mgmt-netapp/0.5.0 Azure-SDK-For-Python
+        azure-mgmt-netapp/0.8.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westcentralus/operationResults/11e7fa60-e735-4e0b-ab4d-f123abf72fd1?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westus2stage/operationResults/ee18dcbd-628f-4812-a007-5f7a9732b6d8?api-version=2019-10-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westcentralus/operationResults/11e7fa60-e735-4e0b-ab4d-f123abf72fd1","name":"11e7fa60-e735-4e0b-ab4d-f123abf72fd1","status":"Succeeded","startTime":"2019-09-27T13:22:10.1191531Z","endTime":"2019-09-27T13:22:10.2911477Z","percentComplete":100.0,"properties":{"resourceName":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-py-tests-cys/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1/capacityPools/sdk-py-tests-pool-1"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westus2stage/operationResults/ee18dcbd-628f-4812-a007-5f7a9732b6d8","name":"ee18dcbd-628f-4812-a007-5f7a9732b6d8","status":"Succeeded","startTime":"2020-01-13T14:55:13.037257Z","endTime":"2020-01-13T14:55:13.9904187Z","percentComplete":100.0,"properties":{"resourceName":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-net-test-qa2/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1/capacityPools/sdk-py-tests-pool-1"}}'
     headers:
       access-control-expose-headers:
       - Request-Context
       cache-control:
       - no-cache
       content-length:
-      - '551'
+      - '549'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 27 Sep 2019 13:22:40 GMT
+      - Mon, 13 Jan 2020 14:55:44 GMT
       expires:
       - '-1'
       pragma:
@@ -1489,11 +1488,11 @@ interactions:
       - '0'
       User-Agent:
       - python/3.6.4 (Darwin-18.7.0-x86_64-i386-64bit) msrest/0.6.10 msrest_azure/0.4.34
-        azure-mgmt-netapp/0.5.0 Azure-SDK-For-Python
+        azure-mgmt-netapp/0.8.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-py-tests-cys/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1/capacityPools/sdk-py-tests-pool-1?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-net-test-qa2/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1/capacityPools/sdk-py-tests-pool-1?api-version=2019-10-01
   response:
     body:
       string: ''
@@ -1501,7 +1500,7 @@ interactions:
       cache-control:
       - no-cache
       date:
-      - Fri, 27 Sep 2019 13:22:41 GMT
+      - Mon, 13 Jan 2020 14:55:44 GMT
       expires:
       - '-1'
       pragma:
@@ -1528,11 +1527,11 @@ interactions:
       - '0'
       User-Agent:
       - python/3.6.4 (Darwin-18.7.0-x86_64-i386-64bit) msrest/0.6.10 msrest_azure/0.4.34
-        azure-mgmt-netapp/0.5.0 Azure-SDK-For-Python
+        azure-mgmt-netapp/0.8.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-py-tests-cys/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1/capacityPools/sdk-py-tests-pool-1?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-net-test-qa2/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1/capacityPools/sdk-py-tests-pool-1?api-version=2019-10-01
   response:
     body:
       string: ''
@@ -1540,7 +1539,7 @@ interactions:
       cache-control:
       - no-cache
       date:
-      - Fri, 27 Sep 2019 13:22:42 GMT
+      - Mon, 13 Jan 2020 14:55:45 GMT
       expires:
       - '-1'
       pragma:
@@ -1567,11 +1566,11 @@ interactions:
       - '0'
       User-Agent:
       - python/3.6.4 (Darwin-18.7.0-x86_64-i386-64bit) msrest/0.6.10 msrest_azure/0.4.34
-        azure-mgmt-netapp/0.5.0 Azure-SDK-For-Python
+        azure-mgmt-netapp/0.8.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-py-tests-cys/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1/capacityPools/sdk-py-tests-pool-1?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-net-test-qa2/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1/capacityPools/sdk-py-tests-pool-1?api-version=2019-10-01
   response:
     body:
       string: ''
@@ -1579,7 +1578,7 @@ interactions:
       cache-control:
       - no-cache
       date:
-      - Fri, 27 Sep 2019 13:22:42 GMT
+      - Mon, 13 Jan 2020 14:55:45 GMT
       expires:
       - '-1'
       pragma:
@@ -1606,11 +1605,11 @@ interactions:
       - '0'
       User-Agent:
       - python/3.6.4 (Darwin-18.7.0-x86_64-i386-64bit) msrest/0.6.10 msrest_azure/0.4.34
-        azure-mgmt-netapp/0.5.0 Azure-SDK-For-Python
+        azure-mgmt-netapp/0.8.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-py-tests-cys/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1/capacityPools/sdk-py-tests-pool-1?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-net-test-qa2/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1/capacityPools/sdk-py-tests-pool-1?api-version=2019-10-01
   response:
     body:
       string: ''
@@ -1618,7 +1617,7 @@ interactions:
       cache-control:
       - no-cache
       date:
-      - Fri, 27 Sep 2019 13:22:42 GMT
+      - Mon, 13 Jan 2020 14:55:45 GMT
       expires:
       - '-1'
       pragma:
@@ -1643,15 +1642,15 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.4 (Darwin-18.7.0-x86_64-i386-64bit) msrest/0.6.10 msrest_azure/0.4.34
-        azure-mgmt-netapp/0.5.0 Azure-SDK-For-Python
+        azure-mgmt-netapp/0.8.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-py-tests-cys/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1/capacityPools/sdk-py-tests-pool-1?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-net-test-qa2/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1/capacityPools/sdk-py-tests-pool-1?api-version=2019-10-01
   response:
     body:
       string: '{"error":{"code":"ResourceNotFound","message":"The Resource ''Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1/capacityPools/sdk-py-tests-pool-1''
-        under resource group ''sdk-py-tests-cys'' was not found."}}'
+        under resource group ''sdk-net-test-qa2'' was not found."}}'
     headers:
       cache-control:
       - no-cache
@@ -1660,7 +1659,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 27 Sep 2019 13:22:42 GMT
+      - Mon, 13 Jan 2020 14:55:46 GMT
       expires:
       - '-1'
       pragma:
@@ -1687,11 +1686,11 @@ interactions:
       - '0'
       User-Agent:
       - python/3.6.4 (Darwin-18.7.0-x86_64-i386-64bit) msrest/0.6.10 msrest_azure/0.4.34
-        azure-mgmt-netapp/0.5.0 Azure-SDK-For-Python
+        azure-mgmt-netapp/0.8.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-py-tests-cys/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-net-test-qa2/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1?api-version=2019-10-01
   response:
     body:
       string: ''
@@ -1699,17 +1698,17 @@ interactions:
       access-control-expose-headers:
       - Request-Context
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westcentralus/operationResults/5a459a25-fb94-4269-b506-8bdbef704458?api-version=2019-07-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westus2stage/operationResults/8e1c4098-aad6-4366-aaf8-971ff85f5b98?api-version=2019-10-01
       cache-control:
       - no-cache
       content-length:
       - '0'
       date:
-      - Fri, 27 Sep 2019 13:22:43 GMT
+      - Mon, 13 Jan 2020 14:55:47 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westcentralus/operationResults/5a459a25-fb94-4269-b506-8bdbef704458?api-version=2019-07-01&operationResultResponseType=Location
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westus2stage/operationResults/8e1c4098-aad6-4366-aaf8-971ff85f5b98?api-version=2019-10-01&operationResultResponseType=Location
       pragma:
       - no-cache
       request-context:
@@ -1738,12 +1737,12 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.4 (Darwin-18.7.0-x86_64-i386-64bit) msrest/0.6.10 msrest_azure/0.4.34
-        azure-mgmt-netapp/0.5.0 Azure-SDK-For-Python
+        azure-mgmt-netapp/0.8.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westcentralus/operationResults/5a459a25-fb94-4269-b506-8bdbef704458?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westus2stage/operationResults/8e1c4098-aad6-4366-aaf8-971ff85f5b98?api-version=2019-10-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westcentralus/operationResults/5a459a25-fb94-4269-b506-8bdbef704458","name":"5a459a25-fb94-4269-b506-8bdbef704458","status":"Succeeded","startTime":"2019-09-27T13:22:43.712134Z","endTime":"2019-09-27T13:22:43.8684492Z","percentComplete":100.0,"properties":{"resourceName":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-py-tests-cys/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westus2stage/operationResults/8e1c4098-aad6-4366-aaf8-971ff85f5b98","name":"8e1c4098-aad6-4366-aaf8-971ff85f5b98","status":"Succeeded","startTime":"2020-01-13T14:55:47.7107039Z","endTime":"2020-01-13T14:55:48.6170296Z","percentComplete":100.0,"properties":{"resourceName":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-net-test-qa2/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1"}}'
     headers:
       access-control-expose-headers:
       - Request-Context
@@ -1754,7 +1753,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 27 Sep 2019 13:23:14 GMT
+      - Mon, 13 Jan 2020 14:56:19 GMT
       expires:
       - '-1'
       pragma:
@@ -1787,15 +1786,15 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.4 (Darwin-18.7.0-x86_64-i386-64bit) msrest/0.6.10 msrest_azure/0.4.34
-        azure-mgmt-netapp/0.5.0 Azure-SDK-For-Python
+        azure-mgmt-netapp/0.8.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-py-tests-cys/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-net-test-qa2/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1?api-version=2019-10-01
   response:
     body:
       string: '{"error":{"code":"ResourceNotFound","message":"The Resource ''Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1''
-        under resource group ''sdk-py-tests-cys'' was not found."}}'
+        under resource group ''sdk-net-test-qa2'' was not found."}}'
     headers:
       cache-control:
       - no-cache
@@ -1804,7 +1803,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 27 Sep 2019 13:23:14 GMT
+      - Mon, 13 Jan 2020 14:56:19 GMT
       expires:
       - '-1'
       pragma:

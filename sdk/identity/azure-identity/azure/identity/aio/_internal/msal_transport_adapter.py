@@ -5,7 +5,6 @@
 """Adapter to substitute an async azure-core pipeline for Requests in MSAL application token acquisition methods."""
 
 import asyncio
-import atexit
 from typing import TYPE_CHECKING
 
 from azure.core.configuration import Configuration
@@ -51,21 +50,18 @@ class MsalTransportAdapter:
             HttpLoggingPolicy(**kwargs),
         ]
         self._transport = transport or AioHttpTransport(configuration=config)
-        atexit.register(self._close_transport_session)  # prevent aiohttp warnings
         self._pipeline = AsyncPipeline(transport=self._transport, policies=policies)
 
-    def _close_transport_session(self) -> None:
-        """If transport has a 'close' method, invoke it."""
+    async def __aenter__(self):
+        await self._pipeline.__aenter__()
+        return self
 
-        close = getattr(self._transport, "close", None)
-        if not callable(close):
-            return
+    async def __aexit__(self, *args):
+        await self.close()
 
-        if asyncio.iscoroutinefunction(close):
-            # we expect no loop is running because this method should be called only when the interpreter is exiting
-            asyncio.new_event_loop().run_until_complete(close())
-        else:
-            close()
+    async def close(self):
+        """Close the adapter's transport session."""
+        await self._pipeline.__aexit__()
 
     def get(
         self,

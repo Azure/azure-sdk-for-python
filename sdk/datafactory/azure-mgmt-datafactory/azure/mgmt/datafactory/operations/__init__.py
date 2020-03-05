@@ -9,20 +9,22 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .operations import Operations
-from .factories_operations import FactoriesOperations
-from .exposure_control_operations import ExposureControlOperations
-from .integration_runtimes_operations import IntegrationRuntimesOperations
-from .integration_runtime_object_metadata_operations import IntegrationRuntimeObjectMetadataOperations
-from .integration_runtime_nodes_operations import IntegrationRuntimeNodesOperations
-from .linked_services_operations import LinkedServicesOperations
-from .datasets_operations import DatasetsOperations
-from .pipelines_operations import PipelinesOperations
-from .pipeline_runs_operations import PipelineRunsOperations
-from .activity_runs_operations import ActivityRunsOperations
-from .triggers_operations import TriggersOperations
-from .trigger_runs_operations import TriggerRunsOperations
-from .rerun_triggers_operations import RerunTriggersOperations
+from ._operations import Operations
+from ._factories_operations import FactoriesOperations
+from ._exposure_control_operations import ExposureControlOperations
+from ._integration_runtimes_operations import IntegrationRuntimesOperations
+from ._integration_runtime_object_metadata_operations import IntegrationRuntimeObjectMetadataOperations
+from ._integration_runtime_nodes_operations import IntegrationRuntimeNodesOperations
+from ._linked_services_operations import LinkedServicesOperations
+from ._datasets_operations import DatasetsOperations
+from ._pipelines_operations import PipelinesOperations
+from ._pipeline_runs_operations import PipelineRunsOperations
+from ._activity_runs_operations import ActivityRunsOperations
+from ._triggers_operations import TriggersOperations
+from ._trigger_runs_operations import TriggerRunsOperations
+from ._rerun_triggers_operations import RerunTriggersOperations
+from ._data_flows_operations import DataFlowsOperations
+from ._data_flow_debug_session_operations import DataFlowDebugSessionOperations
 
 __all__ = [
     'Operations',
@@ -39,4 +41,6 @@ __all__ = [
     'TriggersOperations',
     'TriggerRunsOperations',
     'RerunTriggersOperations',
+    'DataFlowsOperations',
+    'DataFlowDebugSessionOperations',
 ]

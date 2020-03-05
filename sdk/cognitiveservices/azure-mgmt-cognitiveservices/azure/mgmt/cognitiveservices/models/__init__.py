@@ -16,10 +16,10 @@ try:
     from ._models_py3 import CheckSkuAvailabilityResult
     from ._models_py3 import CheckSkuAvailabilityResultList
     from ._models_py3 import CognitiveServicesAccount
-    from ._models_py3 import CognitiveServicesAccountCreateParameters
+    from ._models_py3 import CognitiveServicesAccountApiProperties
     from ._models_py3 import CognitiveServicesAccountEnumerateSkusResult
     from ._models_py3 import CognitiveServicesAccountKeys
-    from ._models_py3 import CognitiveServicesAccountUpdateParameters
+    from ._models_py3 import CognitiveServicesAccountProperties
     from ._models_py3 import CognitiveServicesResourceAndSku
     from ._models_py3 import Error, ErrorException
     from ._models_py3 import ErrorBody
@@ -43,10 +43,10 @@ except (SyntaxError, ImportError):
     from ._models import CheckSkuAvailabilityResult
     from ._models import CheckSkuAvailabilityResultList
     from ._models import CognitiveServicesAccount
-    from ._models import CognitiveServicesAccountCreateParameters
+    from ._models import CognitiveServicesAccountApiProperties
     from ._models import CognitiveServicesAccountEnumerateSkusResult
     from ._models import CognitiveServicesAccountKeys
-    from ._models import CognitiveServicesAccountUpdateParameters
+    from ._models import CognitiveServicesAccountProperties
     from ._models import CognitiveServicesResourceAndSku
     from ._models import Error, ErrorException
     from ._models import ErrorBody
@@ -69,7 +69,6 @@ from ._paged_models import ResourceSkuPaged
 from ._cognitive_services_management_client_enums import (
     SkuTier,
     ProvisioningState,
-    NetworkRuleBypassOptions,
     NetworkRuleAction,
     KeyName,
     UnitType,
@@ -85,10 +84,10 @@ __all__ = [
     'CheckSkuAvailabilityResult',
     'CheckSkuAvailabilityResultList',
     'CognitiveServicesAccount',
-    'CognitiveServicesAccountCreateParameters',
+    'CognitiveServicesAccountApiProperties',
     'CognitiveServicesAccountEnumerateSkusResult',
     'CognitiveServicesAccountKeys',
-    'CognitiveServicesAccountUpdateParameters',
+    'CognitiveServicesAccountProperties',
     'CognitiveServicesResourceAndSku',
     'Error', 'ErrorException',
     'ErrorBody',
@@ -110,7 +109,6 @@ __all__ = [
     'OperationEntityPaged',
     'SkuTier',
     'ProvisioningState',
-    'NetworkRuleBypassOptions',
     'NetworkRuleAction',
     'KeyName',
     'UnitType',

@@ -1,4 +1,4 @@
-# Migration Guide (EventHubs v1 to v5)
+# Guide to migrate from azure-eventhub v1 to v5
 
 This document is intended for users that are familiar with V1 of the Python SDK for Event Hubs library (`azure-eventhub 1.x.x`) and wish 
 to migrate their application to V5 of the same library.
@@ -6,9 +6,12 @@ to migrate their application to V5 of the same library.
 For users new to the Python SDK for Event Hubs, please see the [readme file for the azure-eventhub](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventhub/azure-eventhub/README.md).
 
 ## General changes
+Version 5 of the azure-eventhub package is the result of our efforts to create a client library that is user-friendly and idiomatic to the Python ecosystem.
+Alongside an API redesign driven by the new [Azure SDK Design Guidelines for Python](https://azure.github.io/azure-sdk/python_introduction.html#design-principles), 
+the latest version improves on several areas from V1.
 
-In the interest of simplifying the API surface we've made two distinct
-clients, rather than having a single `EventHubClient`. 
+### Specific clients for sending and receiving
+In V5 we've simplified the API surface, making two distinct clients, rather than having a single `EventHubClient`:
 * `EventHubProducerClient` for sending messages. [Sync API](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/5.0.0/azure.eventhub.html#azure.eventhub.EventHubProducerClient)
 and [Async API](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/5.0.0/azure.eventhub.aio.html#azure.eventhub.aio.EventHubProducerClient)
 * `EventHubConsumerClient` for receiving messages. [Sync API](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/5.0.0/azure.eventhub.html#azure.eventhub.EventHubConsumerClient)
@@ -31,6 +34,9 @@ The code samples in this migration guide use async APIs.
 | `EventHubClientAsync.from_connection_string()` | `EventHubProducerClient.from_connection_string` or `EventHubConsumerClient.from_connection_string` |[client creation](./samples/async_samples/client_creation_async.py) |
 | `EventProcessorHost()`| `EventHubConsumerClient(..., checkpoint_store)`| [receive events using checkpoint store](./samples/async_samples/recv_with_checkpoint_store_async.py) |
 
+In V5, the SDK provides `BlobCheckpointStore` in extension packages azure-eventhub-checkpointstoreblob (for sync) and azure-eventhub-checkpointstoreblob-aio (for async).
+You can define your own `CheckpointStore` class to persist checkpoint data.
+
 ### Receiving events 
 
 | In v1 | Equivalent in v5 | Sample |
@@ -38,6 +44,7 @@ The code samples in this migration guide use async APIs.
 | `EventHubClientAsync.add_async_receiver()` and `AsyncReceiver.receive()`| `EventHubConsumerClient.receive()`| [receive events](./samples/async_samples/recv_async.py) |
 
 ### Sending events
+The process of building event batches is more transparent with `send_batch` of V5.
 
 | In v1 | Equivalent in v5 | Sample |
 |---|---|---|
@@ -77,6 +84,7 @@ Becomes this in V5:
 logger = logging.getLogger("azure.eventhub")
 async def on_event(partition_context, event):
     logger.info("Message received:{}".format(event.body_as_str()))
+    await partition_context.update_checkpoint(event)
 
 client = EventHubConsumerClient.from_connection_string(
     conn_str=CONNECTION_STR, consumer_group="$Default", eventhub_name=EVENTHUB_NAME
@@ -215,8 +223,7 @@ async def on_event(partition_context, event):
     partition_id = partition_context.partition_id
     events_processed[partition_id] += 1
     logger.info("Partition id {}, Events processed {}".format(partition_id, events_processed[partition_id]))
-    if events_processed[partition_id] % 10 == 0:
-        await partition_context.update_checkpoint(event)
+    await partition_context.update_checkpoint(event)
 
 async def on_partition_initialize(context):
     logger.info("Partition {} initialized".format(context.partition_id))
@@ -243,6 +250,7 @@ async def main():
             on_error=on_error,  # optional
             on_partition_initialize=on_partition_initialize,  # optional
             on_partition_close=on_partition_close,  # optional
+            starting_position="-1",  # "-1" is from the beginning of the partition.
         )
 
 if __name__ == '__main__':

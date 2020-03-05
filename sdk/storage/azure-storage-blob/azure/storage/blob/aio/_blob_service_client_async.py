@@ -21,6 +21,7 @@ from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTran
 from .._shared.response_handlers import return_response_headers, process_storage_error
 from .._shared.parser import _to_utc_datetime
 from .._shared.response_handlers import parse_to_internal_user_delegation_key
+from .._generated import VERSION
 from .._generated.aio import AzureBlobStorage
 from .._generated.models import StorageErrorException, StorageServiceProperties, KeyInfo
 from .._blob_service_client import BlobServiceClient as BlobServiceClientBase
@@ -28,6 +29,7 @@ from ._container_client_async import ContainerClient
 from ._blob_client_async import BlobClient
 from .._models import ContainerProperties
 from .._deserialize import service_stats_deserialize, service_properties_deserialize
+from .._serialize import get_api_version
 from ._models import ContainerPropertiesPaged
 
 if TYPE_CHECKING:
@@ -64,6 +66,12 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
         account URL already has a SAS token. The value can be a SAS token string, an account
         shared access key, or an instance of a TokenCredentials class from azure.identity.
         If the URL already has a SAS token, specifying an explicit credential will take priority.
+    :keyword str api_version:
+        The Storage API version to use for requests. Default value is '2019-07-07'.
+        Setting to an older version may result in reduced feature compatibility.
+
+        .. versionadded:: 12.2.0
+
     :keyword str secondary_hostname:
         The hostname of the secondary endpoint.
     :keyword int max_block_size: The maximum chunk size for uploading a block blob in chunks.
@@ -109,6 +117,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
             credential=credential,
             **kwargs)
         self._client = AzureBlobStorage(url=self.url, pipeline=self._pipeline)
+        self._client._config.version = get_api_version(kwargs, VERSION)  # pylint: disable=protected-access
         self._loop = kwargs.get('loop', None)
 
     @distributed_trace_async
@@ -383,6 +392,13 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
         :param public_access:
             Possible values include: 'container', 'blob'.
         :type public_access: str or ~azure.storage.blob.PublicAccess
+        :keyword container_encryption_scope:
+            Specifies the default encryption scope to set on the container and use for
+            all future writes.
+
+            .. versionadded:: 12.2.0
+
+        :paramtype container_encryption_scope: dict or ~azure.storage.blob.ContainerEncryptionScope
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: ~azure.storage.blob.aio.ContainerClient
@@ -494,7 +510,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
         )
         return ContainerClient(
             self.url, container_name=container_name,
-            credential=self.credential, _configuration=self._config,
+            credential=self.credential, api_version=self.api_version, _configuration=self._config,
             _pipeline=_pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
             require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
             key_resolver_function=self.key_resolver_function, loop=self._loop)
@@ -549,7 +565,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
         )
         return BlobClient( # type: ignore
             self.url, container_name=container_name, blob_name=blob_name, snapshot=snapshot,
-            credential=self.credential, _configuration=self._config,
+            credential=self.credential, api_version=self.api_version, _configuration=self._config,
             _pipeline=_pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
             require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
             key_resolver_function=self.key_resolver_function, loop=self._loop)

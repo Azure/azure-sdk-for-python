@@ -7,10 +7,16 @@ import functools
 import hashlib
 import os
 
+from azure.keyvault.keys import KeyClient
 from azure.core.exceptions import ResourceNotFoundError
 from devtools_testutils import ResourceGroupPreparer, KeyVaultPreparer
-from keys_preparer import VaultClientPreparer
-from keys_test_case import KeyVaultTestCase
+
+from _shared.preparer import KeyVaultClientPreparer as _KeyVaultClientPreparer
+from _shared.test_case import KeyVaultTestCase
+
+
+# pre-apply the client_cls positional argument so it needn't be explicitly passed below
+KeyVaultClientPreparer = functools.partial(_KeyVaultClientPreparer, KeyClient)
 
 
 def print(*args):
@@ -33,14 +39,14 @@ def test_create_key_client():
 
 
 class TestExamplesKeyVault(KeyVaultTestCase):
-
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultPreparer(enable_soft_delete=True)
-    @VaultClientPreparer()
-    def test_example_key_crud_operations(self, vault_client, **kwargs):
+    @KeyVaultPreparer()
+    @KeyVaultClientPreparer()
+    def test_example_key_crud_operations(self, client, **kwargs):
         from dateutil import parser as date_parse
 
-        key_client = vault_client.keys
+        key_client = client
+
         # [START create_key]
         from dateutil import parser as date_parse
 
@@ -133,10 +139,10 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # [END delete_key]
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultPreparer(enable_soft_delete=True)
-    @VaultClientPreparer()
-    def test_example_key_list_operations(self, vault_client, **kwargs):
-        key_client = vault_client.keys
+    @KeyVaultPreparer()
+    @KeyVaultClientPreparer()
+    def test_example_key_list_operations(self, client, **kwargs):
+        key_client = client
 
         for i in range(4):
             key_client.create_ec_key("key{}".format(i))
@@ -180,10 +186,10 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # [END list_deleted_keys]
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultPreparer()
-    @VaultClientPreparer()
-    def test_example_keys_backup_restore(self, vault_client, **kwargs):
-        key_client = vault_client.keys
+    @KeyVaultPreparer(enable_soft_delete=False)
+    @KeyVaultClientPreparer()
+    def test_example_keys_backup_restore(self, client, **kwargs):
+        key_client = client
         created_key = key_client.create_key("keyrec", "RSA")
         key_name = created_key.name
         # [START backup_key]
@@ -196,9 +202,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         # [END backup_key]
 
-        polling_interval = 0 if self.is_playback() else 2
-
-        key_client.begin_delete_key(key_name, _polling_interval=polling_interval).wait()
+        key_client.begin_delete_key(key_name).wait()
 
         # [START restore_key_backup]
 
@@ -210,13 +214,12 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # [END restore_key_backup]
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultPreparer(enable_soft_delete=True)
-    @VaultClientPreparer()
-    def test_example_keys_recover(self, vault_client, **kwargs):
-        key_client = vault_client.keys
+    @KeyVaultPreparer()
+    @KeyVaultClientPreparer()
+    def test_example_keys_recover(self, client, **kwargs):
+        key_client = client
         created_key = key_client.create_key("key-name", "RSA")
-        polling_interval = 0 if self.is_playback() else 2
-        key_client.begin_delete_key(created_key.name, _polling_interval=polling_interval).wait()
+        key_client.begin_delete_key(created_key.name).wait()
         # [START get_deleted_key]
 
         # get a deleted key (requires soft-delete enabled for the vault)

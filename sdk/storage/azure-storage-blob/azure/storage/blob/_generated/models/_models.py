@@ -345,6 +345,9 @@ class BlobProperties(Model):
     :type archive_status: str or ~azure.storage.blob.models.ArchiveStatus
     :param customer_provided_key_sha256:
     :type customer_provided_key_sha256: str
+    :param encryption_scope: The name of the encryption scope under which the
+     blob is encrypted.
+    :type encryption_scope: str
     :param access_tier_change_time:
     :type access_tier_change_time: datetime
     """
@@ -385,6 +388,7 @@ class BlobProperties(Model):
         'access_tier_inferred': {'key': 'AccessTierInferred', 'type': 'bool', 'xml': {'name': 'AccessTierInferred'}},
         'archive_status': {'key': 'ArchiveStatus', 'type': 'str', 'xml': {'name': 'ArchiveStatus'}},
         'customer_provided_key_sha256': {'key': 'CustomerProvidedKeySha256', 'type': 'str', 'xml': {'name': 'CustomerProvidedKeySha256'}},
+        'encryption_scope': {'key': 'EncryptionScope', 'type': 'str', 'xml': {'name': 'EncryptionScope'}},
         'access_tier_change_time': {'key': 'AccessTierChangeTime', 'type': 'rfc-1123', 'xml': {'name': 'AccessTierChangeTime'}},
     }
     _xml_map = {
@@ -423,6 +427,7 @@ class BlobProperties(Model):
         self.access_tier_inferred = kwargs.get('access_tier_inferred', None)
         self.archive_status = kwargs.get('archive_status', None)
         self.customer_provided_key_sha256 = kwargs.get('customer_provided_key_sha256', None)
+        self.encryption_scope = kwargs.get('encryption_scope', None)
         self.access_tier_change_time = kwargs.get('access_tier_change_time', None)
 
 
@@ -535,6 +540,32 @@ class ClearRange(Model):
         self.end = kwargs.get('end', None)
 
 
+class ContainerCpkScopeInfo(Model):
+    """Additional parameters for create operation.
+
+    :param default_encryption_scope: Optional.  Version 2019-07-07 and later.
+     Specifies the default encryption scope to set on the container and use for
+     all future writes.
+    :type default_encryption_scope: str
+    :param deny_encryption_scope_override: Optional.  Version 2019-07-07 and
+     newer.  If true, prevents any request from specifying a different
+     encryption scope than the scope set on the container.
+    :type deny_encryption_scope_override: bool
+    """
+
+    _attribute_map = {
+        'default_encryption_scope': {'key': '', 'type': 'str', 'xml': {'name': 'default_encryption_scope'}},
+        'deny_encryption_scope_override': {'key': '', 'type': 'bool', 'xml': {'name': 'deny_encryption_scope_override'}},
+    }
+    _xml_map = {
+    }
+
+    def __init__(self, **kwargs):
+        super(ContainerCpkScopeInfo, self).__init__(**kwargs)
+        self.default_encryption_scope = kwargs.get('default_encryption_scope', None)
+        self.deny_encryption_scope_override = kwargs.get('deny_encryption_scope_override', None)
+
+
 class ContainerItem(Model):
     """An Azure Storage container.
 
@@ -591,6 +622,10 @@ class ContainerProperties(Model):
     :type has_immutability_policy: bool
     :param has_legal_hold:
     :type has_legal_hold: bool
+    :param default_encryption_scope:
+    :type default_encryption_scope: str
+    :param deny_encryption_scope_override:
+    :type deny_encryption_scope_override: bool
     """
 
     _validation = {
@@ -607,6 +642,8 @@ class ContainerProperties(Model):
         'public_access': {'key': 'PublicAccess', 'type': 'str', 'xml': {'name': 'PublicAccess'}},
         'has_immutability_policy': {'key': 'HasImmutabilityPolicy', 'type': 'bool', 'xml': {'name': 'HasImmutabilityPolicy'}},
         'has_legal_hold': {'key': 'HasLegalHold', 'type': 'bool', 'xml': {'name': 'HasLegalHold'}},
+        'default_encryption_scope': {'key': 'DefaultEncryptionScope', 'type': 'str', 'xml': {'name': 'DefaultEncryptionScope'}},
+        'deny_encryption_scope_override': {'key': 'DenyEncryptionScopeOverride', 'type': 'bool', 'xml': {'name': 'DenyEncryptionScopeOverride'}},
     }
     _xml_map = {
     }
@@ -621,6 +658,8 @@ class ContainerProperties(Model):
         self.public_access = kwargs.get('public_access', None)
         self.has_immutability_policy = kwargs.get('has_immutability_policy', None)
         self.has_legal_hold = kwargs.get('has_legal_hold', None)
+        self.default_encryption_scope = kwargs.get('default_encryption_scope', None)
+        self.deny_encryption_scope_override = kwargs.get('deny_encryption_scope_override', None)
 
 
 class CorsRule(Model):
@@ -713,6 +752,28 @@ class CpkInfo(Model):
         self.encryption_key = kwargs.get('encryption_key', None)
         self.encryption_key_sha256 = kwargs.get('encryption_key_sha256', None)
         self.encryption_algorithm = kwargs.get('encryption_algorithm', None)
+
+
+class CpkScopeInfo(Model):
+    """Additional parameters for a set of operations.
+
+    :param encryption_scope: Optional. Version 2019-07-07 and later.
+     Specifies the name of the encryption scope to use to encrypt the data
+     provided in the request. If not specified, encryption is performed with
+     the default account encryption scope.  For more information, see
+     Encryption at Rest for Azure Storage Services.
+    :type encryption_scope: str
+    """
+
+    _attribute_map = {
+        'encryption_scope': {'key': '', 'type': 'str', 'xml': {'name': 'encryption_scope'}},
+    }
+    _xml_map = {
+    }
+
+    def __init__(self, **kwargs):
+        super(CpkScopeInfo, self).__init__(**kwargs)
+        self.encryption_scope = kwargs.get('encryption_scope', None)
 
 
 class DataLakeStorageError(Model):

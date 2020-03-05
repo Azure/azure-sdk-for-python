@@ -14,6 +14,8 @@ from msrest import Serializer, Deserializer
 
 from ._configuration import KeyVaultManagementClientConfiguration
 from .operations import VaultsOperations
+from .operations import PrivateEndpointConnectionsOperations
+from .operations import PrivateLinkResourcesOperations
 from .operations import Operations
 from . import models
 
@@ -26,6 +28,10 @@ class KeyVaultManagementClient(SDKClient):
 
     :ivar vaults: Vaults operations
     :vartype vaults: azure.mgmt.keyvault.v2018_02_14.operations.VaultsOperations
+    :ivar private_endpoint_connections: PrivateEndpointConnections operations
+    :vartype private_endpoint_connections: azure.mgmt.keyvault.v2018_02_14.operations.PrivateEndpointConnectionsOperations
+    :ivar private_link_resources: PrivateLinkResources operations
+    :vartype private_link_resources: azure.mgmt.keyvault.v2018_02_14.operations.PrivateLinkResourcesOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.keyvault.v2018_02_14.operations.Operations
 
@@ -51,6 +57,10 @@ class KeyVaultManagementClient(SDKClient):
         self._deserialize = Deserializer(client_models)
 
         self.vaults = VaultsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.private_link_resources = PrivateLinkResourcesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)

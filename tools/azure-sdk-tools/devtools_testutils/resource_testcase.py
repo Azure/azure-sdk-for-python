@@ -1,6 +1,12 @@
+# --------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+# --------------------------------------------------------------------------
 from collections import namedtuple
 import functools
 import os
+from functools import partial
 
 from azure_devtools.scenario_tests import AzureTestError, ReservedResourceNameError
 
@@ -85,4 +91,5 @@ class ResourceGroupPreparer(AzureMgmtPreparer):
             except CloudError:
                 pass
 
+RandomNameResourceGroupPreparer = partial(ResourceGroupPreparer, random_name_enabled=True)
 CachedResourceGroupPreparer = functools.partial(ResourceGroupPreparer, use_cache=True, random_name_enabled=True)

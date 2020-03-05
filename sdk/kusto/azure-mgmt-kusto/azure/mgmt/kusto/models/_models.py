@@ -492,6 +492,8 @@ class Cluster(TrackedResource):
     :vartype uri: str
     :ivar data_ingestion_uri: The cluster data ingestion URI.
     :vartype data_ingestion_uri: str
+    :ivar state_reason: The reason for the cluster's current state.
+    :vartype state_reason: str
     :param trusted_external_tenants: The cluster's external tenants.
     :type trusted_external_tenants:
      list[~azure.mgmt.kusto.models.TrustedExternalTenant]
@@ -521,6 +523,7 @@ class Cluster(TrackedResource):
         'provisioning_state': {'readonly': True},
         'uri': {'readonly': True},
         'data_ingestion_uri': {'readonly': True},
+        'state_reason': {'readonly': True},
     }
 
     _attribute_map = {
@@ -536,6 +539,7 @@ class Cluster(TrackedResource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'uri': {'key': 'properties.uri', 'type': 'str'},
         'data_ingestion_uri': {'key': 'properties.dataIngestionUri', 'type': 'str'},
+        'state_reason': {'key': 'properties.stateReason', 'type': 'str'},
         'trusted_external_tenants': {'key': 'properties.trustedExternalTenants', 'type': '[TrustedExternalTenant]'},
         'optimized_autoscale': {'key': 'properties.optimizedAutoscale', 'type': 'OptimizedAutoscale'},
         'enable_disk_encryption': {'key': 'properties.enableDiskEncryption', 'type': 'bool'},
@@ -553,6 +557,7 @@ class Cluster(TrackedResource):
         self.provisioning_state = None
         self.uri = None
         self.data_ingestion_uri = None
+        self.state_reason = None
         self.trusted_external_tenants = kwargs.get('trusted_external_tenants', None)
         self.optimized_autoscale = kwargs.get('optimized_autoscale', None)
         self.enable_disk_encryption = kwargs.get('enable_disk_encryption', None)
@@ -593,6 +598,113 @@ class ClusterCheckNameRequest(Model):
         self.name = kwargs.get('name', None)
 
 
+class ClusterPrincipalAssignment(ProxyResource):
+    """Class representing a cluster principal assignment.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
+    :vartype id: str
+    :ivar name: The name of the resource
+    :vartype name: str
+    :ivar type: The type of the resource. Ex-
+     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :vartype type: str
+    :param principal_id: Required. The principal ID assigned to the cluster
+     principal. It can be a user email, application ID, or security group name.
+    :type principal_id: str
+    :param role: Required. Cluster principal role. Possible values include:
+     'AllDatabasesAdmin', 'AllDatabasesViewer'
+    :type role: str or ~azure.mgmt.kusto.models.ClusterPrincipalRole
+    :param tenant_id: The tenant id of the principal
+    :type tenant_id: str
+    :param principal_type: Required. Principal type. Possible values include:
+     'App', 'Group', 'User'
+    :type principal_type: str or ~azure.mgmt.kusto.models.PrincipalType
+    :ivar tenant_name: The tenant name of the principal
+    :vartype tenant_name: str
+    :ivar principal_name: The principal name
+    :vartype principal_name: str
+    :ivar provisioning_state: The provisioned state of the resource. Possible
+     values include: 'Running', 'Creating', 'Deleting', 'Succeeded', 'Failed',
+     'Moving'
+    :vartype provisioning_state: str or
+     ~azure.mgmt.kusto.models.ProvisioningState
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'principal_id': {'required': True},
+        'role': {'required': True},
+        'principal_type': {'required': True},
+        'tenant_name': {'readonly': True},
+        'principal_name': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'principal_id': {'key': 'properties.principalId', 'type': 'str'},
+        'role': {'key': 'properties.role', 'type': 'str'},
+        'tenant_id': {'key': 'properties.tenantId', 'type': 'str'},
+        'principal_type': {'key': 'properties.principalType', 'type': 'str'},
+        'tenant_name': {'key': 'properties.tenantName', 'type': 'str'},
+        'principal_name': {'key': 'properties.principalName', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ClusterPrincipalAssignment, self).__init__(**kwargs)
+        self.principal_id = kwargs.get('principal_id', None)
+        self.role = kwargs.get('role', None)
+        self.tenant_id = kwargs.get('tenant_id', None)
+        self.principal_type = kwargs.get('principal_type', None)
+        self.tenant_name = None
+        self.principal_name = None
+        self.provisioning_state = None
+
+
+class ClusterPrincipalAssignmentCheckNameRequest(Model):
+    """A principal assignment check name availability request.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. Principal Assignment resource name.
+    :type name: str
+    :ivar type: Required. The type of resource,
+     Microsoft.Kusto/clusters/principalAssignments. Default value:
+     "Microsoft.Kusto/clusters/principalAssignments" .
+    :vartype type: str
+    """
+
+    _validation = {
+        'name': {'required': True},
+        'type': {'required': True, 'constant': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    type = "Microsoft.Kusto/clusters/principalAssignments"
+
+    def __init__(self, **kwargs):
+        super(ClusterPrincipalAssignmentCheckNameRequest, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+
+
 class ClusterUpdate(Resource):
     """Class representing an update to a Kusto cluster.
 
@@ -628,6 +740,8 @@ class ClusterUpdate(Resource):
     :vartype uri: str
     :ivar data_ingestion_uri: The cluster data ingestion URI.
     :vartype data_ingestion_uri: str
+    :ivar state_reason: The reason for the cluster's current state.
+    :vartype state_reason: str
     :param trusted_external_tenants: The cluster's external tenants.
     :type trusted_external_tenants:
      list[~azure.mgmt.kusto.models.TrustedExternalTenant]
@@ -655,6 +769,7 @@ class ClusterUpdate(Resource):
         'provisioning_state': {'readonly': True},
         'uri': {'readonly': True},
         'data_ingestion_uri': {'readonly': True},
+        'state_reason': {'readonly': True},
     }
 
     _attribute_map = {
@@ -669,6 +784,7 @@ class ClusterUpdate(Resource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'uri': {'key': 'properties.uri', 'type': 'str'},
         'data_ingestion_uri': {'key': 'properties.dataIngestionUri', 'type': 'str'},
+        'state_reason': {'key': 'properties.stateReason', 'type': 'str'},
         'trusted_external_tenants': {'key': 'properties.trustedExternalTenants', 'type': '[TrustedExternalTenant]'},
         'optimized_autoscale': {'key': 'properties.optimizedAutoscale', 'type': 'OptimizedAutoscale'},
         'enable_disk_encryption': {'key': 'properties.enableDiskEncryption', 'type': 'bool'},
@@ -687,6 +803,7 @@ class ClusterUpdate(Resource):
         self.provisioning_state = None
         self.uri = None
         self.data_ingestion_uri = None
+        self.state_reason = None
         self.trusted_external_tenants = kwargs.get('trusted_external_tenants', None)
         self.optimized_autoscale = kwargs.get('optimized_autoscale', None)
         self.enable_disk_encryption = kwargs.get('enable_disk_encryption', None)
@@ -801,6 +918,113 @@ class DatabasePrincipal(Model):
         self.tenant_name = None
 
 
+class DatabasePrincipalAssignment(ProxyResource):
+    """Class representing a database principal assignment.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
+    :vartype id: str
+    :ivar name: The name of the resource
+    :vartype name: str
+    :ivar type: The type of the resource. Ex-
+     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :vartype type: str
+    :param principal_id: Required. The principal ID assigned to the database
+     principal. It can be a user email, application ID, or security group name.
+    :type principal_id: str
+    :param role: Required. Database principal role. Possible values include:
+     'Admin', 'Ingestor', 'Monitor', 'User', 'UnrestrictedViewers', 'Viewer'
+    :type role: str or ~azure.mgmt.kusto.models.DatabasePrincipalRole
+    :param tenant_id: The tenant id of the principal
+    :type tenant_id: str
+    :param principal_type: Required. Principal type. Possible values include:
+     'App', 'Group', 'User'
+    :type principal_type: str or ~azure.mgmt.kusto.models.PrincipalType
+    :ivar tenant_name: The tenant name of the principal
+    :vartype tenant_name: str
+    :ivar principal_name: The principal name
+    :vartype principal_name: str
+    :ivar provisioning_state: The provisioned state of the resource. Possible
+     values include: 'Running', 'Creating', 'Deleting', 'Succeeded', 'Failed',
+     'Moving'
+    :vartype provisioning_state: str or
+     ~azure.mgmt.kusto.models.ProvisioningState
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'principal_id': {'required': True},
+        'role': {'required': True},
+        'principal_type': {'required': True},
+        'tenant_name': {'readonly': True},
+        'principal_name': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'principal_id': {'key': 'properties.principalId', 'type': 'str'},
+        'role': {'key': 'properties.role', 'type': 'str'},
+        'tenant_id': {'key': 'properties.tenantId', 'type': 'str'},
+        'principal_type': {'key': 'properties.principalType', 'type': 'str'},
+        'tenant_name': {'key': 'properties.tenantName', 'type': 'str'},
+        'principal_name': {'key': 'properties.principalName', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(DatabasePrincipalAssignment, self).__init__(**kwargs)
+        self.principal_id = kwargs.get('principal_id', None)
+        self.role = kwargs.get('role', None)
+        self.tenant_id = kwargs.get('tenant_id', None)
+        self.principal_type = kwargs.get('principal_type', None)
+        self.tenant_name = None
+        self.principal_name = None
+        self.provisioning_state = None
+
+
+class DatabasePrincipalAssignmentCheckNameRequest(Model):
+    """A principal assignment check name availability request.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. Principal Assignment resource name.
+    :type name: str
+    :ivar type: Required. The type of resource,
+     Microsoft.Kusto/clusters/databases/principalAssignments. Default value:
+     "Microsoft.Kusto/clusters/databases/principalAssignments" .
+    :vartype type: str
+    """
+
+    _validation = {
+        'name': {'required': True},
+        'type': {'required': True, 'constant': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    type = "Microsoft.Kusto/clusters/databases/principalAssignments"
+
+    def __init__(self, **kwargs):
+        super(DatabasePrincipalAssignmentCheckNameRequest, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+
+
 class DatabasePrincipalListRequest(Model):
     """The list Kusto database principals operation request.
 
@@ -903,8 +1127,7 @@ class DataConnection(ProxyResource):
 
 
 class DataConnectionCheckNameRequest(Model):
-    """The result returned from a data connections check name availability
-    request.
+    """A data connection check name availability request.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -989,6 +1212,22 @@ class DataConnectionValidationResult(Model):
         self.error_message = kwargs.get('error_message', None)
 
 
+class DiagnoseVirtualNetworkResult(Model):
+    """DiagnoseVirtualNetworkResult.
+
+    :param findings: The list of network connectivity diagnostic finding
+    :type findings: list[str]
+    """
+
+    _attribute_map = {
+        'findings': {'key': 'findings', 'type': '[str]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(DiagnoseVirtualNetworkResult, self).__init__(**kwargs)
+        self.findings = kwargs.get('findings', None)
+
+
 class EventGridDataConnection(DataConnection):
     """Class representing an Event Grid data connection.
 
@@ -1026,8 +1265,8 @@ class EventGridDataConnection(DataConnection):
     :param data_format: Required. The data format of the message. Optionally
      the data format can be added to each message. Possible values include:
      'MULTIJSON', 'JSON', 'CSV', 'TSV', 'SCSV', 'SOHSV', 'PSV', 'TXT', 'RAW',
-     'SINGLEJSON', 'AVRO', 'TSVE'
-    :type data_format: str or ~azure.mgmt.kusto.models.DataFormat
+     'SINGLEJSON', 'AVRO', 'TSVE', 'PARQUET', 'ORC'
+    :type data_format: str or ~azure.mgmt.kusto.models.EventGridDataFormat
     """
 
     _validation = {
@@ -1101,10 +1340,13 @@ class EventHubDataConnection(DataConnection):
     :param data_format: The data format of the message. Optionally the data
      format can be added to each message. Possible values include: 'MULTIJSON',
      'JSON', 'CSV', 'TSV', 'SCSV', 'SOHSV', 'PSV', 'TXT', 'RAW', 'SINGLEJSON',
-     'AVRO', 'TSVE'
-    :type data_format: str or ~azure.mgmt.kusto.models.DataFormat
+     'AVRO', 'TSVE', 'PARQUET', 'ORC'
+    :type data_format: str or ~azure.mgmt.kusto.models.EventHubDataFormat
     :param event_system_properties: System properties of the event hub
     :type event_system_properties: list[str]
+    :param compression: The event hub messages compression type. Possible
+     values include: 'None', 'GZip'
+    :type compression: str or ~azure.mgmt.kusto.models.Compression
     """
 
     _validation = {
@@ -1128,6 +1370,7 @@ class EventHubDataConnection(DataConnection):
         'mapping_rule_name': {'key': 'properties.mappingRuleName', 'type': 'str'},
         'data_format': {'key': 'properties.dataFormat', 'type': 'str'},
         'event_system_properties': {'key': 'properties.eventSystemProperties', 'type': '[str]'},
+        'compression': {'key': 'properties.compression', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -1138,6 +1381,7 @@ class EventHubDataConnection(DataConnection):
         self.mapping_rule_name = kwargs.get('mapping_rule_name', None)
         self.data_format = kwargs.get('data_format', None)
         self.event_system_properties = kwargs.get('event_system_properties', None)
+        self.compression = kwargs.get('compression', None)
         self.kind = 'EventHub'
 
 
@@ -1285,12 +1529,12 @@ class IotHubDataConnection(DataConnection):
     :param data_format: The data format of the message. Optionally the data
      format can be added to each message. Possible values include: 'MULTIJSON',
      'JSON', 'CSV', 'TSV', 'SCSV', 'SOHSV', 'PSV', 'TXT', 'RAW', 'SINGLEJSON',
-     'AVRO', 'TSVE'
-    :type data_format: str or ~azure.mgmt.kusto.models.DataFormat
+     'AVRO', 'TSVE', 'PARQUET', 'ORC'
+    :type data_format: str or ~azure.mgmt.kusto.models.IotHubDataFormat
     :param event_system_properties: System properties of the iot hub
     :type event_system_properties: list[str]
     :param shared_access_policy_name: Required. The name of the share access
-     policy name
+     policy
     :type shared_access_policy_name: str
     """
 
@@ -1575,6 +1819,8 @@ class ReadWriteDatabase(Database):
     :type hot_cache_period: timedelta
     :param statistics: The statistics of the database.
     :type statistics: ~azure.mgmt.kusto.models.DatabaseStatistics
+    :ivar is_followed: Indicates whether the database is followed.
+    :vartype is_followed: str
     """
 
     _validation = {
@@ -1583,6 +1829,7 @@ class ReadWriteDatabase(Database):
         'type': {'readonly': True},
         'kind': {'required': True},
         'provisioning_state': {'readonly': True},
+        'is_followed': {'readonly': True},
     }
 
     _attribute_map = {
@@ -1595,6 +1842,7 @@ class ReadWriteDatabase(Database):
         'soft_delete_period': {'key': 'properties.softDeletePeriod', 'type': 'duration'},
         'hot_cache_period': {'key': 'properties.hotCachePeriod', 'type': 'duration'},
         'statistics': {'key': 'properties.statistics', 'type': 'DatabaseStatistics'},
+        'is_followed': {'key': 'properties.isFollowed', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -1603,6 +1851,7 @@ class ReadWriteDatabase(Database):
         self.soft_delete_period = kwargs.get('soft_delete_period', None)
         self.hot_cache_period = kwargs.get('hot_cache_period', None)
         self.statistics = kwargs.get('statistics', None)
+        self.is_followed = None
         self.kind = 'ReadWrite'
 
 

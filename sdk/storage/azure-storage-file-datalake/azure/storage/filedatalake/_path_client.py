@@ -47,13 +47,18 @@ class PathClient(StorageAccountHostsMixin):
 
         # remove the preceding/trailing delimiter from the path components
         file_system_name = file_system_name.strip('/')
-        path_name = path_name.strip('/')
+
+        # the name of root directory is /
+        if path_name != '/':
+            path_name = path_name.strip('/')
+
         if not (file_system_name and path_name):
             raise ValueError("Please specify a container name and blob name.")
         if not parsed_url.netloc:
             raise ValueError("Invalid URL: {}".format(account_url))
 
         blob_account_url = convert_dfs_url_to_blob_url(account_url)
+        self._blob_account_url = blob_account_url
 
         datalake_hosts = kwargs.pop('_hosts', None)
         blob_hosts = None

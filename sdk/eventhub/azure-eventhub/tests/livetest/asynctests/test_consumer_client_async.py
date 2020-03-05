@@ -92,5 +92,5 @@ async def test_receive_load_balancing_async(connstr_senders):
         await asyncio.sleep(10)
         assert len(client1._event_processors[("$default", ALL_PARTITIONS)]._tasks) == 1
         assert len(client2._event_processors[("$default", ALL_PARTITIONS)]._tasks) == 1
-    task1.cancel()
-    task2.cancel()
+    await task1
+    await task2

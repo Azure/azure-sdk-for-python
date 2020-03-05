@@ -47,3 +47,4 @@ jobs:
         inputs:
           testResultsFiles: '**/junit/test-results.xml'
           testRunTitle: '$(OSName) Python $(PythonVersion)'
+          failTaskOnFailedTests: true

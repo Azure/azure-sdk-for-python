@@ -40,7 +40,7 @@ class AzureBlobStorageConfiguration(Configuration):
         self.generate_client_request_id = True
 
         self.url = url
-        self.version = "2019-02-02"
+        self.version = "2019-07-07"
 
     def _configure(self, **kwargs):
         self.user_agent_policy = kwargs.get('user_agent_policy') or policies.UserAgentPolicy(**kwargs)

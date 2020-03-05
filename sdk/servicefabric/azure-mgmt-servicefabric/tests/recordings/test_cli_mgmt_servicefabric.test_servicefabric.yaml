@@ -1,0 +1,136 @@
+interactions:
+- request:
+    body: '{"location": "eastus", "properties": {"diagnosticsStorageAccountConfig":
+      {"storageAccountName": "diag", "protectedAccountKeyName": "StorageAccountKey1",
+      "blobEndpoint": "https://diag.blob.core.windows.net/", "queueEndpoint": "https://diag.queue.core.windows.net/",
+      "tableEndpoint": "https://diag.table.core.windows.net/"}, "fabricSettings":
+      [{"name": "UpgradeService", "parameters": [{"name": "AppPollIntervalInSeconds",
+      "value": "60"}]}], "managementEndpoint": "http://myCluster.eastus.cloudapp.azure.com:19080",
+      "nodeTypes": [{"name": "nt1vm", "clientConnectionEndpointPort": 19000, "httpGatewayEndpointPort":
+      19007, "durabilityLevel": "Bronze", "applicationPorts": {"startPort": 20000,
+      "endPort": 30000}, "ephemeralPorts": {"startPort": 49000, "endPort": 64000},
+      "isPrimary": true, "vmInstanceCount": 5}], "reliabilityLevel": "Silver", "upgradeMode":
+      "Automatic"}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '867'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-servicefabric/0.4.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_servicefabric_test_servicefabricbc4212c8/providers/Microsoft.ServiceFabric/clusters/cluster?api-version=2019-03-01
+  response:
+    body:
+      string: "{\r\n  \"type\": \"Microsoft.ServiceFabric/clusters\",\r\n  \"location\"\
+        : \"eastus\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_servicefabric_test_servicefabricbc4212c8/providers/Microsoft.ServiceFabric/clusters/cluster\"\
+        ,\r\n  \"name\": \"cluster\",\r\n  \"tags\": {},\r\n  \"etag\": \"W/\\\"637170011625817427\\\
+        \"\",\r\n  \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\
+        \n    \"clusterId\": \"d48e3e8b-bff1-440e-84e1-9c8167828df5\",\r\n    \"clusterCodeVersion\"\
+        : \"6.5.676.9590\",\r\n    \"clusterState\": \"WaitingForNodes\",\r\n    \"\
+        managementEndpoint\": \"http://myCluster.eastus.cloudapp.azure.com:19080\"\
+        ,\r\n    \"clusterEndpoint\": \"https://eastus.servicefabric.azure.com/runtime/clusters/d48e3e8b-bff1-440e-84e1-9c8167828df5\"\
+        ,\r\n    \"clientCertificateThumbprints\": [],\r\n    \"clientCertificateCommonNames\"\
+        : [],\r\n    \"fabricSettings\": [\r\n      {\r\n        \"name\": \"UpgradeService\"\
+        ,\r\n        \"parameters\": [\r\n          {\r\n            \"name\": \"\
+        AppPollIntervalInSeconds\",\r\n            \"value\": \"60\"\r\n         \
+        \ }\r\n        ]\r\n      }\r\n    ],\r\n    \"reliabilityLevel\": \"Silver\"\
+        ,\r\n    \"nodeTypes\": [\r\n      {\r\n        \"name\": \"nt1vm\",\r\n \
+        \       \"vmInstanceCount\": 5,\r\n        \"clientConnectionEndpointPort\"\
+        : 19000,\r\n        \"httpGatewayEndpointPort\": 19007,\r\n        \"applicationPorts\"\
+        : {\r\n          \"startPort\": 20000,\r\n          \"endPort\": 30000\r\n\
+        \        },\r\n        \"ephemeralPorts\": {\r\n          \"startPort\": 49000,\r\
+        \n          \"endPort\": 64000\r\n        },\r\n        \"isPrimary\": true,\r\
+        \n        \"durabilityLevel\": \"Bronze\"\r\n      }\r\n    ],\r\n    \"diagnosticsStorageAccountConfig\"\
+        : {\r\n      \"storageAccountName\": \"diag\",\r\n      \"primaryAccessKey\"\
+        : \"\",\r\n      \"secondaryAccessKey\": \"\",\r\n      \"protectedAccountKeyName\"\
+        : \"StorageAccountKey1\",\r\n      \"blobEndpoint\": \"https://diag.blob.core.windows.net/\"\
+        ,\r\n      \"queueEndpoint\": \"https://diag.queue.core.windows.net/\",\r\n\
+        \      \"tableEndpoint\": \"https://diag.table.core.windows.net/\"\r\n   \
+        \ },\r\n    \"upgradeMode\": \"Automatic\",\r\n    \"availableClusterVersions\"\
+        : [\r\n      {\r\n        \"codeVersion\": \"6.5.676.9590\",\r\n        \"\
+        supportExpiryUtc\": \"2020-05-01T00:00:00\",\r\n        \"environment\": \"\
+        Windows\"\r\n      },\r\n      {\r\n        \"codeVersion\": \"7.0.457.9590\"\
+        ,\r\n        \"supportExpiryUtc\": \"9999-12-31T23:59:59.9999999\",\r\n  \
+        \      \"environment\": \"Windows\"\r\n      }\r\n    ]\r\n  }\r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '2310'
+      content-type:
+      - application/json
+      date:
+      - Tue, 11 Feb 2020 06:59:23 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0,Microsoft-HTTPAPI/2.0 Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1188'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-servicefabric/0.4.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: DELETE
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_servicefabric_test_servicefabricbc4212c8/providers/Microsoft.ServiceFabric/clusters/cluster?api-version=2019-03-01
+  response:
+    body:
+      string: ''
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '0'
+      date:
+      - Tue, 11 Feb 2020 06:59:28 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0,Microsoft-HTTPAPI/2.0 Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-deletes:
+      - '14996'
+    status:
+      code: 200
+      message: OK
+version: 1

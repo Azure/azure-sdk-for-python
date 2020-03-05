@@ -6,6 +6,7 @@ import asyncio
 from typing import TYPE_CHECKING
 
 from azure.core.exceptions import ClientAuthenticationError
+from .base import AsyncCredentialBase
 from .._internal import AadClient
 
 if TYPE_CHECKING:
@@ -14,7 +15,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import AccessToken
 
 
-class AuthorizationCodeCredential(object):
+class AuthorizationCodeCredential(AsyncCredentialBase):
     """Authenticates by redeeming an authorization code previously obtained from Azure Active Directory.
 
     See https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow for more information
@@ -31,13 +32,19 @@ class AuthorizationCodeCredential(object):
     :keyword str client_secret: One of the application's client secrets. Required only for web apps and web APIs.
     """
 
+    async def __aenter__(self):
+        if self._client:
+            await self._client.__aenter__()
+        return self
+
+    async def close(self):
+        """Close the credential's transport session."""
+
+        if self._client:
+            await self._client.__aexit__()
+
     def __init__(
-        self,
-        tenant_id: str,
-        client_id: str,
-        authorization_code: str,
-        redirect_uri: str,
-        **kwargs: "Any"
+        self, tenant_id: str, client_id: str, authorization_code: str, redirect_uri: str, **kwargs: "Any"
     ) -> None:
         self._authorization_code = authorization_code  # type: Optional[str]
         self._client_id = client_id
@@ -46,7 +53,7 @@ class AuthorizationCodeCredential(object):
         self._redirect_uri = redirect_uri
 
     async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":
-        """Request an access token for ``scopes``.
+        """Request an access token for `scopes`.
 
         The first time this method is called, the credential will redeem its authorization code. On subsequent calls
         the credential will return a cached access token or redeem a refresh token, if it acquired a refresh token upon
@@ -56,8 +63,9 @@ class AuthorizationCodeCredential(object):
 
         :param str scopes: desired scopes for the access token
         :rtype: :class:`azure.core.credentials.AccessToken`
-        :raises ~azure.core.exceptions.ClientAuthenticationError:
-
+        :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The error's ``message``
+          attribute gives a reason. Any error response from Azure Active Directory is available as the error's
+          ``response`` attribute.
         :keyword ~concurrent.futures.Executor executor: An Executor instance used to execute asynchronous calls
         :keyword loop: An event loop on which to schedule network I/O. If not provided, the currently running
             loop will be used.

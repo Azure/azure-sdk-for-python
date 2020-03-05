@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .news_search_api import NewsSearchAPI
-from .version import VERSION
+from ._configuration import NewsSearchClientConfiguration
+from ._news_search_client import NewsSearchClient
+__all__ = ['NewsSearchClient', 'NewsSearchClientConfiguration']
 
-__all__ = ['NewsSearchAPI']
+from .version import VERSION
 
 __version__ = VERSION
 

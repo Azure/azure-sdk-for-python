@@ -30,10 +30,12 @@ class CustomHookPolicy(SansIOHTTPPolicy):
     """A simple policy that enable the given callback
     with the response.
 
+    :keyword callback raw_request_hook: Callback function. Will be invoked on request.
     :keyword callback raw_response_hook: Callback function. Will be invoked on response.
     """
     def __init__(self, **kwargs): # pylint: disable=unused-argument,super-init-not-called
-        self._callback = None
+        self._request_callback = kwargs.get('raw_request_hook')
+        self._response_callback = kwargs.get('raw_response_hook')
 
     def on_request(self, request): # type: ignore # pylint: disable=arguments-differ
         # type: (PipelineRequest) -> None
@@ -42,7 +44,17 @@ class CustomHookPolicy(SansIOHTTPPolicy):
         :param request: The PipelineRequest object.
         :type request: ~azure.core.pipeline.PipelineRequest
         """
-        self._callback = request.context.options.pop('raw_response_hook', None) # type: ignore
+        request_callback = request.context.options.pop('raw_request_hook', None)  # type: ignore
+        if request_callback:
+            request.context["raw_request_hook"] = request_callback
+            request_callback(request)
+        elif self._request_callback:
+            self._request_callback(request)
+
+        response_callback = request.context.options.pop('raw_response_hook', None) # type: ignore
+        if response_callback:
+            request.context["raw_response_hook"] = response_callback
+
 
 
     def on_response(self, request, response): # type: ignore # pylint: disable=arguments-differ
@@ -54,6 +66,8 @@ class CustomHookPolicy(SansIOHTTPPolicy):
         :param response: The PipelineResponse object.
         :type response: ~azure.core.pipeline.PipelineResponse
         """
-        if self._callback:
-            self._callback(response)
-            request.context.options.update({'raw_response_hook': self._callback}) # type: ignore
+        response_callback = response.context.get("raw_response_hook")
+        if response_callback:
+            response_callback(response)
+        elif self._response_callback:
+            self._response_callback(response)

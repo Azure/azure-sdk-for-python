@@ -10,6 +10,7 @@
 # --------------------------------------------------------------------------
 
 try:
+    from ._models_py3 import ActiveDirectoryObject
     from ._models_py3 import Actor
     from ._models_py3 import AgentProperties
     from ._models_py3 import Argument
@@ -27,6 +28,8 @@ try:
     from ._models_py3 import EncodedTaskRunRequest
     from ._models_py3 import EncodedTaskStep
     from ._models_py3 import EncodedTaskStepUpdateParameters
+    from ._models_py3 import Error
+    from ._models_py3 import ErrorSchema, ErrorSchemaException
     from ._models_py3 import Event
     from ._models_py3 import EventContent
     from ._models_py3 import EventInfo
@@ -91,7 +94,9 @@ try:
     from ._models_py3 import StorageAccountProperties
     from ._models_py3 import Target
     from ._models_py3 import Task
+    from ._models_py3 import TaskRun
     from ._models_py3 import TaskRunRequest
+    from ._models_py3 import TaskRunUpdateParameters
     from ._models_py3 import TaskStepProperties
     from ._models_py3 import TaskStepUpdateParameters
     from ._models_py3 import TaskUpdateParameters
@@ -112,6 +117,7 @@ try:
     from ._models_py3 import WebhookCreateParameters
     from ._models_py3 import WebhookUpdateParameters
 except (SyntaxError, ImportError):
+    from ._models import ActiveDirectoryObject
     from ._models import Actor
     from ._models import AgentProperties
     from ._models import Argument
@@ -129,6 +135,8 @@ except (SyntaxError, ImportError):
     from ._models import EncodedTaskRunRequest
     from ._models import EncodedTaskStep
     from ._models import EncodedTaskStepUpdateParameters
+    from ._models import Error
+    from ._models import ErrorSchema, ErrorSchemaException
     from ._models import Event
     from ._models import EventContent
     from ._models import EventInfo
@@ -193,7 +201,9 @@ except (SyntaxError, ImportError):
     from ._models import StorageAccountProperties
     from ._models import Target
     from ._models import Task
+    from ._models import TaskRun
     from ._models import TaskRunRequest
+    from ._models import TaskRunUpdateParameters
     from ._models import TaskStepProperties
     from ._models import TaskStepUpdateParameters
     from ._models import TaskUpdateParameters
@@ -220,6 +230,7 @@ from ._paged_models import ReplicationPaged
 from ._paged_models import RunPaged
 from ._paged_models import ScopeMapPaged
 from ._paged_models import TaskPaged
+from ._paged_models import TaskRunPaged
 from ._paged_models import TokenPaged
 from ._paged_models import WebhookPaged
 from ._container_registry_management_client_enums import (
@@ -257,6 +268,7 @@ from ._container_registry_management_client_enums import (
 )
 
 __all__ = [
+    'ActiveDirectoryObject',
     'Actor',
     'AgentProperties',
     'Argument',
@@ -274,6 +286,8 @@ __all__ = [
     'EncodedTaskRunRequest',
     'EncodedTaskStep',
     'EncodedTaskStepUpdateParameters',
+    'Error',
+    'ErrorSchema', 'ErrorSchemaException',
     'Event',
     'EventContent',
     'EventInfo',
@@ -338,7 +352,9 @@ __all__ = [
     'StorageAccountProperties',
     'Target',
     'Task',
+    'TaskRun',
     'TaskRunRequest',
+    'TaskRunUpdateParameters',
     'TaskStepProperties',
     'TaskStepUpdateParameters',
     'TaskUpdateParameters',
@@ -364,6 +380,7 @@ __all__ = [
     'WebhookPaged',
     'EventPaged',
     'RunPaged',
+    'TaskRunPaged',
     'TaskPaged',
     'ScopeMapPaged',
     'TokenPaged',

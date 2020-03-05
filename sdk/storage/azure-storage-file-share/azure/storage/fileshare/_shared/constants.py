@@ -7,6 +7,7 @@
 import sys
 from .._generated.version import VERSION
 
+
 X_MS_VERSION = VERSION
 
 # Socket timeout in seconds

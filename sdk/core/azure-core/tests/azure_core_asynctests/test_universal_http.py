@@ -28,13 +28,16 @@ import sys
 from azure.core.pipeline.transport import (
     HttpRequest,
     AioHttpTransport,
+    AioHttpTransportResponse,
     AsyncHttpTransport,
     AsyncioRequestsTransport,
     TrioRequestsTransport)
 
+import aiohttp
 import trio
 
 import pytest
+from unittest import mock
 
 
 @pytest.mark.asyncio
@@ -46,7 +49,7 @@ async def test_basic_aiohttp():
         assert response.body() is not None
 
     assert sender.session is None
-    assert response.status_code == 200
+    assert isinstance(response.status_code, int)
 
 @pytest.mark.asyncio
 async def test_aiohttp_auto_headers():
@@ -65,7 +68,7 @@ async def test_basic_async_requests():
         response = await sender.send(request)
         assert response.body() is not None
 
-    assert response.status_code == 200
+    assert isinstance(response.status_code, int)
 
 @pytest.mark.asyncio
 async def test_conf_async_requests():
@@ -75,7 +78,7 @@ async def test_conf_async_requests():
         response = await sender.send(request)
         assert response.body() is not None
 
-    assert response.status_code == 200
+    assert isinstance(response.status_code, int)
 
 def test_conf_async_trio_requests():
 
@@ -86,4 +89,34 @@ def test_conf_async_trio_requests():
             assert response.body() is not None
 
     response = trio.run(do)
-    assert response.status_code == 200
+    assert isinstance(response.status_code, int)
+
+
+def _create_aiohttp_response(body_bytes, headers=None):
+    class MockAiohttpClientResponse(aiohttp.ClientResponse):
+        def __init__(self, body_bytes, headers=None):
+            self._body = body_bytes
+            self._headers = headers
+            self._cache = {}
+
+    req_response = MockAiohttpClientResponse(body_bytes, headers)
+
+    response = AioHttpTransportResponse(
+        None, # Don't need a request here
+        req_response
+    )
+    response._body = body_bytes
+
+    return response
+
+
+@pytest.mark.asyncio
+async def test_aiohttp_response_text():
+
+    for encoding in ["utf-8", "utf-8-sig", None]:
+
+        res = _create_aiohttp_response(
+            b'\xef\xbb\xbf56',
+            {'Content-Type': 'text/plain'}
+        )
+        assert res.text(encoding) == '56', "Encoding {} didn't work".format(encoding)

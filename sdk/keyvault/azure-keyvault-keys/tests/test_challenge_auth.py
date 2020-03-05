@@ -16,12 +16,15 @@ except ImportError:  # python < 3.3
     from mock import Mock, patch  # type: ignore
 
 from azure.core.credentials import AccessToken
+from azure.core.exceptions import ServiceRequestError
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.core.pipeline.transport import HttpRequest
 from azure.keyvault.keys._shared import ChallengeAuthPolicy, HttpChallenge, HttpChallengeCache
 
-from keys_helpers import mock_response, Request, validating_transport
+import pytest
+
+from _shared.helpers import mock_response, Request, validating_transport
 
 
 def empty_challenge_cache(fn):
@@ -38,6 +41,17 @@ def get_random_url():
     """The challenge cache is keyed on URLs. Random URLs defend against tests interfering with each other."""
 
     return "https://{}/{}".format(uuid4(), uuid4()).replace("-", "")
+
+
+@empty_challenge_cache
+def test_enforces_tls():
+    url = "http://not.secure"
+    HttpChallengeCache.set_challenge_for_url(url, HttpChallenge(url, "Bearer authorization=_, resource=_"))
+
+    credential = Mock()
+    pipeline = Pipeline(transport=Mock(), policies=[ChallengeAuthPolicy(credential)])
+    with pytest.raises(ServiceRequestError):
+        pipeline.run(HttpRequest("GET", url))
 
 
 @empty_challenge_cache
@@ -98,7 +112,7 @@ def test_scope():
             raise ValueError("unexpected request")
 
         def get_token(*scopes):
-            assert len(scopes) is 1
+            assert len(scopes) == 1
             assert scopes[0] == expected_scope
             return AccessToken(expected_token, 0)
 

@@ -14,9 +14,9 @@ class StorageBlob:
 
         connectionString = os.environ["STORAGE_CONNECTION_STRING"]
         self.blob = BlobClient.from_connection_string(
-            connectionString,
-            container="mycontainer",
-            blob="pyTestBlob-" + id.hex + ".txt",
+            conn_str=connectionString,
+            container_name="mycontainer",
+            blob_name="pyTestBlob-" + id.hex + ".txt",
         )
 
     def upload_blob(self):
@@ -27,8 +27,9 @@ class StorageBlob:
 
     def download_blob(self):
         print("downloading blob...")
-        with open("./downloadedBlob.txt", "wb+") as my_blob:
-            my_blob.writelines(self.blob.download_blob())
+        with open("./downloadedBlob.txt", "wb") as my_blob:
+            blob_data = self.blob.download_blob()
+            blob_data.readinto(my_blob)
 
         print("\tdone")
 
