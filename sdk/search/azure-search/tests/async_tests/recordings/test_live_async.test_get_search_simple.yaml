@@ -11,7 +11,7 @@ interactions:
       User-Agent:
       - azsdk-python-core/1.2.3 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit) azsdk-python-searchindexclient/unknown
       api-key:
-      - 8A20A485A194E81B8207B4320E59509B
+      - BD3CE7687E1473990DB66A7242013527
     method: POST
     uri: https://search30fc0f98.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2019-05-06
   response:
@@ -65,13 +65,13 @@ interactions:
       content-encoding: gzip
       content-length: '2377'
       content-type: application/json; odata.metadata=none
-      date: Thu, 05 Mar 2020 22:30:52 GMT
-      elapsed-time: '66'
+      date: Thu, 05 Mar 2020 23:12:22 GMT
+      elapsed-time: '87'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: f867d602-5f30-11ea-8a16-8c8590507855
+      request-id: c504321e-5f36-11ea-9523-8c8590507855
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
@@ -90,7 +90,7 @@ interactions:
       User-Agent:
       - azsdk-python-core/1.2.3 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit) azsdk-python-searchindexclient/unknown
       api-key:
-      - 8A20A485A194E81B8207B4320E59509B
+      - BD3CE7687E1473990DB66A7242013527
     method: POST
     uri: https://search30fc0f98.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2019-05-06
   response:
@@ -120,13 +120,13 @@ interactions:
       content-encoding: gzip
       content-length: '1271'
       content-type: application/json; odata.metadata=none
-      date: Thu, 05 Mar 2020 22:30:52 GMT
-      elapsed-time: '5'
+      date: Thu, 05 Mar 2020 23:12:22 GMT
+      elapsed-time: '6'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: f884b3c6-5f30-11ea-8a16-8c8590507855
+      request-id: c522ef92-5f36-11ea-9523-8c8590507855
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:

@@ -28,7 +28,7 @@ from ._version import VERSION
 
 __version__ = VERSION
 
-from .index import (
+from ._index import (
     AutocompleteQuery,
     IndexBatch,
     SearchApiKeyCredential,

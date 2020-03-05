@@ -24,6 +24,6 @@
 #
 # --------------------------------------------------------------------------
 
-from .index.aio import SearchIndexClient
+from ._index.aio import SearchIndexClient
 
 __all__ = ("SearchIndexClient",)

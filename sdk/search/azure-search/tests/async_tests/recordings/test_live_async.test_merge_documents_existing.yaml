@@ -12,7 +12,7 @@ interactions:
       User-Agent:
       - azsdk-python-core/1.2.3 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit) azsdk-python-searchindexclient/unknown
       api-key:
-      - A1026E5BBC2E7AF91197E0DDC0826620
+      - 0E1FB23B32CDB5A26C3821EF0DA22ABB
     method: POST
     uri: https://searchaaf712a5.search.windows.net/indexes('drgqefsg')/docs/search.index?api-version=2019-05-06
   response:
@@ -23,13 +23,13 @@ interactions:
       content-encoding: gzip
       content-length: '190'
       content-type: application/json; odata.metadata=none
-      date: Thu, 05 Mar 2020 22:31:03 GMT
-      elapsed-time: '141'
+      date: Thu, 05 Mar 2020 23:12:34 GMT
+      elapsed-time: '69'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: ff13a06c-5f30-11ea-8a16-8c8590507855
+      request-id: cc0fac1e-5f36-11ea-9523-8c8590507855
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
@@ -44,7 +44,7 @@ interactions:
       User-Agent:
       - azsdk-python-core/1.2.3 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit) azsdk-python-searchindexclient/unknown
       api-key:
-      - A1026E5BBC2E7AF91197E0DDC0826620
+      - 0E1FB23B32CDB5A26C3821EF0DA22ABB
     method: GET
     uri: https://searchaaf712a5.search.windows.net/indexes('drgqefsg')/docs/$count?api-version=2019-05-06
   response:
@@ -55,13 +55,13 @@ interactions:
       content-encoding: gzip
       content-length: '127'
       content-type: text/plain
-      date: Thu, 05 Mar 2020 22:31:06 GMT
+      date: Thu, 05 Mar 2020 23:12:36 GMT
       elapsed-time: '4'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 0103f214-5f31-11ea-8a16-8c8590507855
+      request-id: cdf568d4-5f36-11ea-9523-8c8590507855
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
@@ -76,7 +76,7 @@ interactions:
       User-Agent:
       - azsdk-python-core/1.2.3 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit) azsdk-python-searchindexclient/unknown
       api-key:
-      - A1026E5BBC2E7AF91197E0DDC0826620
+      - 0E1FB23B32CDB5A26C3821EF0DA22ABB
     method: GET
     uri: https://searchaaf712a5.search.windows.net/indexes('drgqefsg')/docs('3')?api-version=2019-05-06
   response:
@@ -88,13 +88,13 @@ interactions:
       content-encoding: gzip
       content-length: '438'
       content-type: application/json; odata.metadata=none
-      date: Thu, 05 Mar 2020 22:31:06 GMT
-      elapsed-time: '9'
+      date: Thu, 05 Mar 2020 23:12:36 GMT
+      elapsed-time: '10'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 010945fc-5f31-11ea-8a16-8c8590507855
+      request-id: cdfad9e0-5f36-11ea-9523-8c8590507855
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
@@ -109,7 +109,7 @@ interactions:
       User-Agent:
       - azsdk-python-core/1.2.3 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit) azsdk-python-searchindexclient/unknown
       api-key:
-      - A1026E5BBC2E7AF91197E0DDC0826620
+      - 0E1FB23B32CDB5A26C3821EF0DA22ABB
     method: GET
     uri: https://searchaaf712a5.search.windows.net/indexes('drgqefsg')/docs('4')?api-version=2019-05-06
   response:
@@ -121,13 +121,13 @@ interactions:
       content-encoding: gzip
       content-length: '422'
       content-type: application/json; odata.metadata=none
-      date: Thu, 05 Mar 2020 22:31:06 GMT
+      date: Thu, 05 Mar 2020 23:12:36 GMT
       elapsed-time: '5'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 010f45f6-5f31-11ea-8a16-8c8590507855
+      request-id: ce010b62-5f36-11ea-9523-8c8590507855
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:

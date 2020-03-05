@@ -12,13 +12,13 @@ except ImportError:
 
 from azure.core.paging import ItemPaged
 
-from azure.search.index._generated.models import (
+from azure.search._index._generated.models import (
     IndexAction,
     IndexBatch as IndexBatchModel,
     SearchDocumentsResult,
     SearchResult,
 )
-from azure.search.index._search_index_client import _SearchDocumentsPaged
+from azure.search._index._search_index_client import _SearchDocumentsPaged
 
 from azure.search import (
     AutocompleteQuery,
@@ -67,7 +67,7 @@ class TestSearchIndexClient(object):
         )
 
     @mock.patch(
-        "azure.search.index._generated.operations._documents_operations.DocumentsOperations.count"
+        "azure.search._index._generated.operations._documents_operations.DocumentsOperations.count"
     )
     def test_get_document_count(self, mock_count):
         client = SearchIndexClient("service name", "index name", CREDENTIAL)
@@ -77,7 +77,7 @@ class TestSearchIndexClient(object):
         assert mock_count.call_args[1] == {}
 
     @mock.patch(
-        "azure.search.index._generated.operations._documents_operations.DocumentsOperations.get"
+        "azure.search._index._generated.operations._documents_operations.DocumentsOperations.get"
     )
     def test_get_document_count(self, mock_get):
         client = SearchIndexClient("service name", "index name", CREDENTIAL)
@@ -97,7 +97,7 @@ class TestSearchIndexClient(object):
         "query", ["search text", SearchQuery(search_text="search text")], ids=repr
     )
     @mock.patch(
-        "azure.search.index._generated.operations._documents_operations.DocumentsOperations.search_post"
+        "azure.search._index._generated.operations._documents_operations.DocumentsOperations.search_post"
     )
     def test_search_query_argument(self, mock_search_post, query):
         client = SearchIndexClient("service name", "index name", CREDENTIAL)
@@ -124,7 +124,7 @@ class TestSearchIndexClient(object):
             )
 
     @mock.patch(
-        "azure.search.index._generated.operations._documents_operations.DocumentsOperations.suggest_post"
+        "azure.search._index._generated.operations._documents_operations.DocumentsOperations.suggest_post"
     )
     def test_suggest_query_argument(self, mock_suggest_post):
         client = SearchIndexClient("service name", "index name", CREDENTIAL)
@@ -145,7 +145,7 @@ class TestSearchIndexClient(object):
             )
 
     @mock.patch(
-        "azure.search.index._generated.operations._documents_operations.DocumentsOperations.autocomplete_post"
+        "azure.search._index._generated.operations._documents_operations.DocumentsOperations.autocomplete_post"
     )
     def test_autocomplete_query_argument(self, mock_autocomplete_post):
         client = SearchIndexClient("service name", "index name", CREDENTIAL)
@@ -192,7 +192,7 @@ class TestSearchIndexClient(object):
             assert mock_index_batch.call_args[1] == {"extra": "foo"}
 
     @mock.patch(
-        "azure.search.index._generated.operations._documents_operations.DocumentsOperations.index"
+        "azure.search._index._generated.operations._documents_operations.DocumentsOperations.index"
     )
     def test_index_batch(self, mock_index):
         client = SearchIndexClient("service name", "index name", CREDENTIAL)

@@ -10,7 +10,7 @@ try:
 except ImportError:
     import mock
 
-from azure.search.index._generated.models import (
+from azure.search._index._generated.models import (
     AutocompleteRequest,
     SearchRequest,
     SuggestRequest,

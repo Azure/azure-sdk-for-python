@@ -15,7 +15,7 @@ interactions:
       User-Agent:
       - azsdk-python-core/1.2.3 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit) azsdk-python-searchindexclient/unknown
       api-key:
-      - 5693C295AD836CA78FD855ED81EE3696
+      - 7BA48FC5821D7FC4FCF8A9A67203E7CC
     method: POST
     uri: https://searchd83d0d1b.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2019-05-06
   response:
@@ -72,9 +72,9 @@ interactions:
       content-type:
       - application/json; odata.metadata=none
       date:
-      - Thu, 05 Mar 2020 20:16:00 GMT
+      - Thu, 05 Mar 2020 23:09:28 GMT
       elapsed-time:
-      - '67'
+      - '94'
       expires:
       - '-1'
       odata-version:
@@ -84,7 +84,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - 219e3628-5f1e-11ea-b7c6-8c8590507855
+      - 5ce30ca0-5f36-11ea-9523-8c8590507855
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:
@@ -108,7 +108,7 @@ interactions:
       User-Agent:
       - azsdk-python-core/1.2.3 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit) azsdk-python-searchindexclient/unknown
       api-key:
-      - 5693C295AD836CA78FD855ED81EE3696
+      - 7BA48FC5821D7FC4FCF8A9A67203E7CC
     method: POST
     uri: https://searchd83d0d1b.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2019-05-06
   response:
@@ -141,7 +141,7 @@ interactions:
       content-type:
       - application/json; odata.metadata=none
       date:
-      - Thu, 05 Mar 2020 20:16:00 GMT
+      - Thu, 05 Mar 2020 23:09:28 GMT
       elapsed-time:
       - '6'
       expires:
@@ -153,7 +153,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - 21c492e6-5f1e-11ea-b7c6-8c8590507855
+      - 5d0c3828-5f36-11ea-9523-8c8590507855
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:
