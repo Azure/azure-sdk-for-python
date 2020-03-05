@@ -11,7 +11,7 @@ from typing import Any, TYPE_CHECKING, List
 from uamqp import ReceiveClientAsync, types
 
 from ._base_handler_async import BaseHandlerAsync
-from .async_message import Message as MessageAsync, DeferredMessage
+from .async_message import ReceivedMessage, DeferredMessage
 from .._servicebus_receiver import ReceiverMixin
 from ..common.utils import create_properties
 from ..common.constants import (
@@ -95,7 +95,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
             try:
                 await self._open()
                 uamqp_message = await self._message_iter.__anext__()
-                message = self._build_message(uamqp_message, MessageAsync)
+                message = self._build_message(uamqp_message, ReceivedMessage)
                 return message
             except StopAsyncIteration:
                 await self.close()
@@ -161,7 +161,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
             max_batch_size=max_batch_size,
             timeout=timeout_ms)
         for received in batch:
-            message = self._build_message(received, MessageAsync)
+            message = self._build_message(received, ReceivedMessage)
             wrapped_batch.append(message)
 
         return wrapped_batch

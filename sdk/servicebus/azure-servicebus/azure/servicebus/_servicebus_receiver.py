@@ -13,7 +13,7 @@ from uamqp import ReceiveClient, Source, types
 
 from ._base_handler import BaseHandler
 from .common.utils import create_properties
-from .common.message import Message
+from .common.message import ReceivedMessage, DeferredMessage
 from .common.constants import (
     REQUEST_RESPONSE_RECEIVE_BY_SEQUENCE_NUMBER,
     REQUEST_RESPONSE_UPDATE_DISPOSTION_OPERATION,
@@ -51,8 +51,8 @@ class ReceiverMixin(object):
         )
         self._name = "SBReceiver-{}".format(uuid.uuid4())
 
-    def _build_message(self, received, message_type=Message):
-        message = message_type(None, message=received)
+    def _build_message(self, received, message_type=ReceivedMessage):
+        message = message_type(message=received)
         message._receiver = self  # pylint: disable=protected-access
         self._last_received_sequenced_number = message.sequence_number
         return message

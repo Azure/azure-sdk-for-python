@@ -6,6 +6,7 @@
 
 import datetime
 import functools
+import uuid
 
 from azure.servicebus.common import message
 from azure.servicebus.common.utils import get_running_loop
@@ -40,6 +41,12 @@ class Message(message.Message):
     def __init__(self, body, *, encoding='UTF-8', loop=None, **kwargs):
         self._loop = loop or get_running_loop()
         super(Message, self).__init__(body, encoding=encoding, **kwargs)
+
+
+class ReceivedMessage(message.ReceivedMessage):
+    def __init__(self, message, loop=None):
+        self._loop = loop or get_running_loop()
+        super(ReceivedMessage, self).__init__(message=message)
 
     async def renew_lock(self):
         """Renew the message lock.
@@ -139,7 +146,7 @@ class Message(message.Message):
             raise MessageSettleFailed("defer", e)
 
 
-class DeferredMessage(Message):
+class DeferredMessage(message.DeferredMessage):
     """A message that has been deferred.
 
     A deferred message can be completed,
@@ -147,13 +154,8 @@ class DeferredMessage(Message):
     """
 
     def __init__(self, deferred, mode):
+        super(DeferredMessage, self).__init__(message=deferred, mode=mode)
         self._settled = mode == 0
-        super(DeferredMessage, self).__init__(None, message=deferred)
-
-    def _is_live(self, action):
-        if not self._receiver:
-            raise ValueError("Orphan message had no open connection.")
-        super(DeferredMessage, self)._is_live(action)
 
     @property
     def lock_token(self):
