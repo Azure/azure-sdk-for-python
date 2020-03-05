@@ -75,14 +75,12 @@ def test_cli_not_installed_windows():
             AzureCliCredential().get_token("scope")
 
 
-@pytest.mark.parametrize("platform", ("darwin", "linux2", "win32"))
-def test_cannot_execute_shell(platform):
+def test_cannot_execute_shell():
     """The credential should raise CredentialUnavailableError when the subprocess doesn't start"""
 
-    with mock.patch(AzureCliCredential.__module__ + ".sys.platform", platform):
-        with mock.patch(CHECK_OUTPUT, mock.Mock(side_effect=OSError())):
-            with pytest.raises(CredentialUnavailableError):
-                AzureCliCredential().get_token("scope")
+    with mock.patch(CHECK_OUTPUT, mock.Mock(side_effect=OSError())):
+        with pytest.raises(CredentialUnavailableError):
+            AzureCliCredential().get_token("scope")
 
 
 def test_not_logged_in():

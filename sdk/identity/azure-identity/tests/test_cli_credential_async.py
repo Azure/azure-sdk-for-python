@@ -4,6 +4,7 @@
 # ------------------------------------
 from datetime import datetime
 import json
+import sys
 from unittest import mock
 
 from azure.identity import CredentialUnavailableError
@@ -41,15 +42,15 @@ async def test_context_manager():
         pass
 
 
+@pytest.mark.skipif(not sys.platform.startswith("win"), reason="tests Windows-specific behavior")
 @pytest.mark.asyncio
 async def test_windows_fallback():
     """The credential should fall back to the sync implementation when not using ProactorEventLoop on Windows"""
 
     with mock.patch("azure.identity.AzureCliCredential.get_token") as fallback:
-        with mock.patch(AzureCliCredential.__module__ + ".sys.platform", "win32"):
-            with mock.patch(AzureCliCredential.__module__ + ".asyncio.get_event_loop"):
-                credential = AzureCliCredential()
-                await credential.get_token("scope")
+        with mock.patch(AzureCliCredential.__module__ + ".asyncio.get_event_loop"):
+            credential = AzureCliCredential()
+            await credential.get_token("scope")
 
     assert fallback.call_count == 1
 
@@ -102,16 +103,14 @@ async def test_cli_not_installed_windows():
             await credential.get_token("scope")
 
 
-@pytest.mark.parametrize("platform", ("darwin", "linux2", "win32"))
 @pytest.mark.asyncio
-async def test_cannot_execute_shell(platform):
+async def test_cannot_execute_shell():
     """The credential should raise CredentialUnavailableError when the subprocess doesn't start"""
 
-    with mock.patch(AzureCliCredential.__module__ + ".sys.platform", platform):
-        with mock.patch(SUBPROCESS_EXEC, mock.Mock(side_effect=OSError())):
-            with pytest.raises(CredentialUnavailableError):
-                credential = AzureCliCredential()
-                await credential.get_token("scope")
+    with mock.patch(SUBPROCESS_EXEC, mock.Mock(side_effect=OSError())):
+        with pytest.raises(CredentialUnavailableError):
+            credential = AzureCliCredential()
+            await credential.get_token("scope")
 
 
 @pytest.mark.asyncio
