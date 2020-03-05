@@ -98,18 +98,10 @@ if __name__ == '__main__':
 ```
 
 #### Use `BlobCheckpointStore` with a different version of Azure Storage Service API
-Some environments have different versions of Azure Storage Service API. For instance, Azure Stack may use 2017-11-09.  
+Some environments have different versions of Azure Storage Service API. 
 `BlobCheckpointStore` by default uses the Storage Service API version 2019-07-07. To use it against a different
- version, specify that version number when you create the `BlobCheckpointStore` object.
- 
-```python
-from azure.eventhub.extensions.checkpointstoreblobaio import BlobCheckpointStore
-checkpoint_store = BlobCheckpointStore.from_connection_string(
-        storage_connection_str,
-        container_name,
-        api_version="2017-11-09"
-    )
-```
+version, specify `api_version` when you create the `BlobCheckpointStore` object.
+
 
 ## Troubleshooting
 
