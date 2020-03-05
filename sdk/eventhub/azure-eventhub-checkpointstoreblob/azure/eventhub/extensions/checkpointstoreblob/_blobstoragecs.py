@@ -67,11 +67,8 @@ class BlobCheckpointStore(CheckpointStore):
         if not self._container_client:
             api_version = kwargs.pop("api_version", None)
             if api_version:
-                headers = kwargs.get("headers")
-                if headers:
-                    headers["x-ms-version"] = api_version
-                else:
-                    kwargs["headers"] = {"x-ms-version": api_version}
+                headers = kwargs.get("headers") or {}
+                headers["x-ms-version"] = api_version
             self._container_client = ContainerClient(
                 blob_account_url, container_name, credential=credential, **kwargs
             )
