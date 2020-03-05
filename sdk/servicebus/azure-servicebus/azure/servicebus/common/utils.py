@@ -46,6 +46,7 @@ def parse_conn_str(conn_str):
     shared_access_key_name = None
     shared_access_key = None
     entity_path = None
+    transport_type = None
     for element in conn_str.split(';'):
         key, _, value = element.partition('=')
         if key.lower() == 'endpoint':
@@ -56,9 +57,11 @@ def parse_conn_str(conn_str):
             shared_access_key = value
         elif key.lower() == 'entitypath':
             entity_path = value
+        elif key.lower() == 'transporttype':
+            transport_type = value
     if not all([endpoint, shared_access_key_name, shared_access_key]):
         raise ValueError("Invalid connection string")
-    return endpoint, shared_access_key_name, shared_access_key, entity_path
+    return endpoint, shared_access_key_name, shared_access_key, entity_path, transport_type
 
 
 def build_uri(address, entity):

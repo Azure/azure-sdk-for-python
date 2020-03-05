@@ -53,6 +53,7 @@ class ServiceBusClient(mixins.ServiceBusMixin):
 
     def __init__(self, *, service_namespace=None, host_base=SERVICE_BUS_HOST_BASE,
                  shared_access_key_name=None, shared_access_key_value=None, loop=None,
+                 transport_type=None,
                  http_request_timeout=DEFAULT_HTTP_TIMEOUT, http_request_session=None, debug=False):
 
         self.loop = loop or get_running_loop()
@@ -60,6 +61,7 @@ class ServiceBusClient(mixins.ServiceBusMixin):
         self.host_base = host_base
         self.shared_access_key_name = shared_access_key_name
         self.shared_access_key_value = shared_access_key_value
+        self.transport_type = transport_type
         self.debug = debug
         self.mgmt_client = ServiceBusService(
             service_namespace=service_namespace,
@@ -85,7 +87,7 @@ class ServiceBusClient(mixins.ServiceBusMixin):
                 :caption: Create a ServiceBusClient via a connection string.
 
         """
-        address, policy, key, _ = parse_conn_str(conn_str)
+        address, policy, key, _, transport_type = parse_conn_str(conn_str)
         parsed_namespace = urlparse(address)
         namespace, _, base = parsed_namespace.hostname.partition('.')
         return cls(
@@ -124,6 +126,7 @@ class ServiceBusClient(mixins.ServiceBusMixin):
             self._get_host(), queue,
             shared_access_key_name=self.shared_access_key_name,
             shared_access_key_value=self.shared_access_key_value,
+            transport_type=self.transport_type,
             mgmt_client=self.mgmt_client,
             loop=self.loop,
             debug=self.debug)
@@ -144,6 +147,7 @@ class ServiceBusClient(mixins.ServiceBusMixin):
                 self._get_host(), queue,
                 shared_access_key_name=self.shared_access_key_name,
                 shared_access_key_value=self.shared_access_key_value,
+                transport_type=self.transport_type,
                 mgmt_client=self.mgmt_client,
                 loop=self.loop,
                 debug=self.debug))
@@ -177,6 +181,7 @@ class ServiceBusClient(mixins.ServiceBusMixin):
             self._get_host(), topic,
             shared_access_key_name=self.shared_access_key_name,
             shared_access_key_value=self.shared_access_key_value,
+            transport_type=self.transport_type,
             loop=self.loop,
             debug=self.debug)
 
@@ -196,6 +201,7 @@ class ServiceBusClient(mixins.ServiceBusMixin):
                 self._get_host(), topic,
                 shared_access_key_name=self.shared_access_key_name,
                 shared_access_key_value=self.shared_access_key_value,
+                transport_type=self.transport_type,
                 loop=self.loop,
                 debug=self.debug))
         return topic_clients
@@ -230,6 +236,7 @@ class ServiceBusClient(mixins.ServiceBusMixin):
             self._get_host(), topic_name, subscription,
             shared_access_key_name=self.shared_access_key_name,
             shared_access_key_value=self.shared_access_key_value,
+            transport_type=self.transport_type,
             loop=self.loop,
             debug=self.debug)
 
@@ -254,6 +261,7 @@ class ServiceBusClient(mixins.ServiceBusMixin):
                 self._get_host(), topic_name, sub,
                 shared_access_key_name=self.shared_access_key_name,
                 shared_access_key_value=self.shared_access_key_value,
+                transport_type=self.transport_type,
                 loop=self.loop,
                 debug=self.debug))
         return sub_clients
@@ -796,11 +804,11 @@ class SubscriptionClient(ReceiveClientMixin, BaseClient):
          not included in the connection string.
         :type topic: str
         """
-        address, policy, key, entity = parse_conn_str(conn_str)
+        address, policy, key, entity, transport_type = parse_conn_str(conn_str)
         entity = topic or entity
         address = build_uri(address, entity)
         address += "/Subscriptions/" + name
-        return cls(address, name, shared_access_key_name=policy, shared_access_key_value=key, **kwargs)
+        return cls(address, name, shared_access_key_name=policy, shared_access_key_value=key, transport_type=transport_type, **kwargs)
 
     @classmethod
     def from_entity(cls, address, topic, entity, **kwargs):  # pylint: disable=arguments-differ
