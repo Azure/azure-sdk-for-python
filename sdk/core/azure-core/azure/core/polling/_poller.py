@@ -64,6 +64,10 @@ class PollingMethod(object):
         # type: () -> Any
         raise NotImplementedError("This method needs to be implemented")
 
+    def restart(self, **kwargs):
+        raise NotImplementedError("This polling method doesn't support restart")
+
+
 class NoPolling(PollingMethod):
     """An empty poller that returns the deserialized initial response.
     """
@@ -102,6 +106,62 @@ class NoPolling(PollingMethod):
         return self._deserialization_callback(self._initial_response)
 
 
+def MsrestDeserializer(object):
+    """Helper for response deserialization.
+
+    This class can be partially pickled, but should be re-hydrated using "from_serialized", since
+    not all parameters can be serialized.
+
+    :param deserializer: An instance of a deserializer
+    :type msrest.serialization.Deserializer:
+    :param str body_type: The string type of the body
+    :param dict[str, str] headers_types: A dict header name to header string type
+    :param callback cls: The operation cls, if any
+    """
+    def __init__(self, deserializer, body_type, headers_types, cls=None):
+        self._deserializer = deserializer
+        self._body_type = body_type
+        self._headers_types = headers_types or {}
+        self._cls = cls
+
+    @classmethod
+    def from_serialized(klass, deserializer, serialized_string, cls=None):
+        import pickle
+        body_type, headers_type = pickle.loads(serialized_string)
+        return klass(
+            deserializer,
+            body_type,
+            headers_type,
+            cls
+        )
+
+    def __getstate__(self):
+        import pickle
+        return pickle.dumps([
+            self._body_type,
+            self._headers_types
+        ])
+
+    def __call__(self, pipeline_response):
+        # Deserialize the body
+        if self._body_type:
+            deserialized = self._deserialize(self._body_type, pipeline_response)
+        else:
+            deserialized = None
+
+        # If cls, deserialize headers as well
+        if self._cls:
+            response = pipeline_response.http_response
+            response_headers = {}
+            for header_name, header_type in self._headers_types:
+                response_headers[header_name]=self._deserialize(header_type, response.headers.get(header_name))
+
+            return self._cls(pipeline_response, deserialized, response_headers)
+
+        return deserialized
+
+
+
 class LROPoller(object):
     """Poller for long running operations.
 
@@ -117,21 +177,21 @@ class LROPoller(object):
     :type polling_method: ~azure.core.polling.PollingMethod
     """
 
-    def __init__(self, client, initial_response, deserialization_callback, polling_method):
+    def __init__(self, client, initial_response, deserialization_callback, polling_method, **kwargs):
         # type: (Any, HttpResponse, DeserializationCallbackType, PollingMethod) -> None
-        self._client = client
-        self._response = initial_response
+
         self._callbacks = []  # type: List[Callable]
         self._polling_method = polling_method
 
-        # This implicit test avoids bringing in an explicit dependency on Model directly
-        try:
-            deserialization_callback = deserialization_callback.deserialize # type: ignore
-        except AttributeError:
-            pass
+        if not kwargs.pop("_rehydrate", False):
+            # This implicit test avoids bringing in an explicit dependency on Model directly
+            try:
+                deserialization_callback = deserialization_callback.deserialize # type: ignore
+            except AttributeError:
+                pass
 
-        # Might raise a CloudError
-        self._polling_method.initialize(self._client, self._response, deserialization_callback)
+            # Might raise a CloudError
+            self._polling_method.initialize(client, initial_response, deserialization_callback)
 
         # Prepare thread execution
         self._thread = None
@@ -144,6 +204,25 @@ class LROPoller(object):
                 name="LROPoller({})".format(uuid.uuid4()))
             self._thread.daemon = True
             self._thread.start()
+
+    @classmethod
+    def from_serialized(klass, client, serialized_string, **kwargs):
+        import pickle
+        polling_method = pickle.loads(serialized_string)
+        polling_method.restart(**kwargs)
+
+        return klass(
+            client,
+            None, # No initial response
+            None, # No deserialization callback
+            polling_method,
+            _rehydrate=True
+        )
+
+
+    def __getstate__(self):
+        import pickle
+        return pickle.dumps(self._polling_method)
 
     def _start(self):
         """Start the long running operation.
