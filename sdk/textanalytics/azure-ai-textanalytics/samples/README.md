@@ -5,16 +5,16 @@ languages:
 products:
   - azure
   - azure-ai-textanalytics
-urlFragment: cognitiveservices-textanalytics-samples
+urlFragment: textanalytics-samples
 ---
 
 # Samples for Azure Text Analytics client library for Python
 
 These code samples show common scenario operations with the Azure Text Analytics client library.
-The async versions of the samples require [Python 3.5][python_35] or later.
+The async versions of the samples require Python 3.5 or later.
 
 You can authenticate your client with a Cognitive Services/Text Analytics API key or through Azure Active Directory with a token credential from [azure-identity][azure_identity]:
-* See [sample_authentication.py][sample_authentication] and [sample_authentication_async.py][sample_authentication_async] for how to authenticate in the above cases
+* See [sample_authentication.py][sample_authentication] and [sample_authentication_async.py][sample_authentication_async] for how to authenticate in the above cases.
 
 These sample programs show common scenarios for the Text Analytics client's offerings.
 
@@ -22,24 +22,24 @@ These sample programs show common scenarios for the Text Analytics client's offe
 |----------------|-------------|
 |[sample_detect_language.py][detect_language] and [sample_detect_language_async.py][detect_language_async]|Detect language in documents|
 |[sample_recognize_entities.py][recognize_entities] and [sample_recognize_entities_async.py][recognize_entities_async]|Recognize named entities in documents|
-|[sample_recognize_linked_entities.py][recognize_linked_entities] and [sample_recognize_linked_entities_async.py][recognize_linked_entities_async]|Recognize linked entities|
-|[sample_recognize_pii_entities.py][recognize_pii_entities] and [sample_recognize_pii_entities_async.py][recognize_pii_entities_async]|Recognize personally identifiable information|
+|[sample_recognize_linked_entities.py][recognize_linked_entities] and [sample_recognize_linked_entities_async.py][recognize_linked_entities_async]|Recognize linked entities in documents|
+|[sample_recognize_pii_entities.py][recognize_pii_entities] and [sample_recognize_pii_entities_async.py][recognize_pii_entities_async]|Recognize personally identifiable information in documents|
 |[sample_extract_key_phrases.py][extract_key_phrases] and [sample_extract_key_phrases_async.py][extract_key_phrases_async]|Extract key phrases from documents|
-|[sample_analyze_sentiment.py][analyze_sentiment] and [sample_analyze_sentiment_async.py][analyze_sentiment_async]|Analye the sentiment of text|
+|[sample_analyze_sentiment.py][analyze_sentiment] and [sample_analyze_sentiment_async.py][analyze_sentiment_async]|Analyze the sentiment of documents|
 
 ## Prerequisites
-* Python [2.7][python_27], or [3.5][python_35] or later is required to use this package (3.5 or later if using asyncio)
-* You must have an [Azure subscription](https://azure.microsoft.com/free/) and an
-[Azure Text Analytics account](https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account?tabs=singleservice%2Cwindows) to run these samples.
+* Python 2.7, or 3.5 or later is required to use this package (3.5 or later if using asyncio)
+* You must have an [Azure subscription][azure_subscription] and an
+[Azure Text Analytics account][azure_text_analytics_account] to run these samples.
 
 ## Setup
 
-1. Install the Azure Text Analytics client library for Python with [pip](https://pypi.org/project/pip/):
+1. Install the Azure Text Analytics client library for Python with [pip][pip]:
 
 ```bash
 pip install azure-ai-textanalytics --pre
 ```
-* If authenticating with Azure Active Directory, make sure you have [azure-identity](https://pypi.org/project/azure-identity/) installed:
+* If authenticating with Azure Active Directory, make sure you have [azure-identity][azure_identity_pip] installed:
   ```bash
   pip install azure-identity
   ```
@@ -55,16 +55,14 @@ pip install azure-ai-textanalytics --pre
 
 ## Next steps
 
-Check out the [API reference documentation](https://aka.ms/azsdk-python-textanalytics-ref-docs) to learn more about
+Check out the [API reference documentation][api_reference_documentation] to learn more about
 what you can do with the Azure Text Analytics client library.
 
 |**Advanced Sample File Name**|**Description**|
 |----------------|-------------|
 |[sample_get_detailed_diagnostics_information.py][get_detailed_diagnostics_information] and [sample_get_detailed_diagnostics_information_async.py][get_detailed_diagnostics_information_async]|Get the request batch statistics, model version, and raw response through a callback|
 
-[python_35]: https://www.python.org/downloads/release/python-350/
-[python_27]: https://www.python.org/downloads/release/python-270/
-[azure-identity]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity
+[azure_identity]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity
 [sample_authentication]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/textanalytics/azure-ai-textanalytics/samples/sample_authentication.py
 [sample_authentication_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_authentication_async.py
 [detect_language]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/textanalytics/azure-ai-textanalytics/samples/sample_detect_language.py
@@ -81,3 +79,8 @@ what you can do with the Azure Text Analytics client library.
 [analyze_sentiment_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_analyze_sentiment_async.py
 [get_detailed_diagnostics_information]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/textanalytics/azure-ai-textanalytics/samples/sample_get_detailed_diagnostics_information.py
 [get_detailed_diagnostics_information_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_get_detailed_diagnostics_information_async.py
+[pip]: https://pypi.org/project/pip/
+[azure_subscription]: https://azure.microsoft.com/free/
+[azure_text_analytics_account]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account?tabs=singleservice%2Cwindows
+[azure_identity_pip]: https://pypi.org/project/azure-identity/
+[api_reference_documentation]: https://aka.ms/azsdk-python-textanalytics-ref-docs

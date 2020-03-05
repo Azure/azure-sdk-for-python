@@ -10,10 +10,10 @@
 FILE: sample_authentication.py
 
 DESCRIPTION:
-    This sample demonstrates how to authenticate to the text analytics service.
+    This sample demonstrates how to authenticate to the Text Analytics service.
 
     There are two supported methods of authentication:
-    1) Use a cognitive services/text analytics API key with TextAnalyticsApiKeyCredential
+    1) Use a Cognitive Services/Text Analytics API key with TextAnalyticsApiKeyCredential
     2) Use a token credential from azure-identity to authenticate with Azure Active Directory
 
     See more details about authentication here:
@@ -23,8 +23,8 @@ USAGE:
     python sample_authentication.py
 
     Set the environment variables with your own values before running the sample:
-    1) AZURE_TEXT_ANALYTICS_ENDPOINT - the endpoint to your cognitive services/text analytics resource.
-    2) AZURE_TEXT_ANALYTICS_KEY - your text analytics API key
+    1) AZURE_TEXT_ANALYTICS_ENDPOINT - the endpoint to your Cognitive Services/Text Analytics resource.
+    2) AZURE_TEXT_ANALYTICS_KEY - your Text Analytics API key
     3) AZURE_CLIENT_ID - the client ID of your active directory application.
     4) AZURE_TENANT_ID - the tenant ID of your active directory application.
     5) AZURE_CLIENT_SECRET - the secret of your active directory application.
