@@ -9,7 +9,7 @@ from typing import Any, TYPE_CHECKING
 
 from uamqp import SendClient
 
-from ._client_base import ClientBase
+from ._base_handler import BaseHandler
 from .common.message import Message
 from .common.errors import (
     MessageSendFailed,
@@ -47,7 +47,7 @@ class SenderMixin(object):
         self._handler._msg_timeout = remaining_time * 1000  # type: ignore  # pylint: disable=protected-access
 
 
-class ServiceBusSenderClient(ClientBase, SenderMixin):
+class ServiceBusSender(BaseHandler, SenderMixin):
     """The ServiceBusSenderClient class defines a high level interface for
     sending messages to the Azure Service Bus Queue or Topic.
 
@@ -77,7 +77,7 @@ class ServiceBusSenderClient(ClientBase, SenderMixin):
     ):
         # type: (str, TokenCredential, Any) -> None
         if kwargs.get("from_connection_str", False):
-            super(ServiceBusSenderClient, self).__init__(
+            super(ServiceBusSender, self).__init__(
                 fully_qualified_namespace=fully_qualified_namespace,
                 credential=credential,
                 **kwargs
@@ -90,7 +90,7 @@ class ServiceBusSenderClient(ClientBase, SenderMixin):
             if not (queue_name or topic_name):
                 raise ValueError("Queue/Topic name is missing. Please specify queue_name/topic_name.")
             entity_name = queue_name or topic_name
-            super(ServiceBusSenderClient, self).__init__(
+            super(ServiceBusSender, self).__init__(
                 fully_qualified_namespace=fully_qualified_namespace,
                 credential=credential,
                 entity_name=entity_name,
@@ -132,7 +132,7 @@ class ServiceBusSenderClient(ClientBase, SenderMixin):
 
     def _reconnect(self):
         unsent_events = self._handler.pending_messages
-        super(ServiceBusSenderClient, self)._reconnect()
+        super(ServiceBusSender, self)._reconnect()
         try:
             self._handler.queue_message(*unsent_events)
             self._handler.wait()
@@ -155,7 +155,7 @@ class ServiceBusSenderClient(ClientBase, SenderMixin):
         conn_str,
         **kwargs,
     ):
-        # type: (str, Any) -> ServiceBusSenderClient
+        # type: (str, Any) -> ServiceBusSender
         """Create a ServiceBusSenderClient from a connection string.
 
         :param conn_str: The connection string of a Service Bus.

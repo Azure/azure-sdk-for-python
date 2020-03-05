@@ -8,11 +8,12 @@ from ._version import VERSION
 __version__ = VERSION
 
 from uamqp import constants
-from azure.servicebus._sender_client import ServiceBusSenderClient
-from azure.servicebus._receiver_client import ServiceBusReceiverClient
-from azure.servicebus._client_base import ServiceBusSharedKeyCredential
+from azure.servicebus._servicebus_sender import ServiceBusSender
+from azure.servicebus._servicebus_receiver import ServiceBusReceiver
+from azure.servicebus._servicebus_client import ServiceBusClient
+from azure.servicebus._base_handler import ServiceBusSharedKeyCredential
 from azure.servicebus.common.message import Message, BatchMessage, PeekMessage, DeferredMessage
-from azure.servicebus.servicebus_client import ServiceBusClient, QueueClient, TopicClient, SubscriptionClient
+from azure.servicebus.servicebus_client import QueueClient, TopicClient, SubscriptionClient
 from azure.servicebus.common.constants import ReceiveSettleMode, NEXT_AVAILABLE
 from azure.servicebus.common.utils import AutoLockRenew
 from azure.servicebus.common.errors import (
@@ -38,7 +39,6 @@ __all__ = [
     'PeekMessage',
     'AutoLockRenew',
     'DeferredMessage',
-    'ServiceBusClient',
     'QueueClient',
     'TopicClient',
     'SubscriptionClient',
@@ -57,8 +57,9 @@ __all__ = [
     'SessionLockExpired',
     'AutoLockRenewFailed',
     'AutoLockRenewTimeout',
-    'ServiceBusReceiverClient',
-    'ServiceBusSenderClient',
+    'ServiceBusClient',
+    'ServiceBusReceiver',
+    'ServiceBusSender',
     'ServiceBusSharedKeyCredential',
     "TransportType",
 ]

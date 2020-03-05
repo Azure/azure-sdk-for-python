@@ -4,9 +4,8 @@
 # --------------------------------------------------------------------------------------------
 import logging
 import asyncio
-import time
 import functools
-from typing import TYPE_CHECKING, Any, Dict, List, Callable, Optional, Union, cast
+from typing import TYPE_CHECKING, Any, Optional
 
 import uamqp
 from uamqp import (
@@ -16,7 +15,7 @@ from uamqp import (
 )
 from uamqp.message import MessageProperties
 
-from .._client_base import ClientBase, _generate_sas_token
+from .._base_handler import BaseHandler, _generate_sas_token
 from ..common.constants import JWT_TOKEN_SCOPE
 from ..common.errors import (
     InvalidHandlerState,
@@ -49,7 +48,7 @@ class ServiceBusSharedKeyCredential(object):
         return _generate_sas_token(scopes[0], self.policy, self.key)
 
 
-class ClientBaseAsync(ClientBase):
+class BaseHandlerAsync(BaseHandler):
     def __init__(
         self,
         fully_qualified_namespace: str,
@@ -58,7 +57,7 @@ class ClientBaseAsync(ClientBase):
         **kwargs: Any
     ) -> None:
         self._loop = kwargs.pop("loop", None)
-        super(ClientBaseAsync, self).__init__(
+        super(BaseHandlerAsync, self).__init__(
             fully_qualified_namespace=fully_qualified_namespace,
             entity_name=entity_name,
             credential=credential,
@@ -219,7 +218,7 @@ class ClientBaseAsync(ClientBase):
 
     @staticmethod
     def _from_connection_string(conn_str, **kwargs):
-        kwargs = ClientBase._from_connection_string(conn_str, **kwargs)
+        kwargs = BaseHandler._from_connection_string(conn_str, **kwargs)
         kwargs["credential"] = ServiceBusSharedKeyCredential(kwargs["credential"].policy, kwargs["credential"].key)
         return kwargs
 

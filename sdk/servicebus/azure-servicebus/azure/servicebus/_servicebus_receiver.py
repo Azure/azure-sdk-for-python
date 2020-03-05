@@ -11,7 +11,7 @@ from typing import Any, List, TYPE_CHECKING
 
 from uamqp import ReceiveClient, Source, types
 
-from ._client_base import ClientBase
+from ._base_handler import BaseHandler
 from .common.utils import create_properties
 from .common.message import Message
 from .common.constants import (
@@ -74,7 +74,7 @@ class ReceiverMixin(object):
             self._session_id = session_filter.decode(self._config.encoding)
 
 
-class ServiceBusReceiverClient(ClientBase, ReceiverMixin):
+class ServiceBusReceiver(BaseHandler, ReceiverMixin):
     """The ServiceBusReceiverClient class defines a high level interface for
     receiving messages from the Azure Service Bus Queue or Topic Subscription.
 
@@ -113,7 +113,7 @@ class ServiceBusReceiverClient(ClientBase, ReceiverMixin):
     ):
         # type: (str, TokenCredential, Any) -> None
         if kwargs.get("from_connection_str", False):
-            super(ServiceBusReceiverClient, self).__init__(
+            super(ServiceBusReceiver, self).__init__(
                 fully_qualified_namespace=fully_qualified_namespace,
                 credential=credential,
                 **kwargs
@@ -131,7 +131,7 @@ class ServiceBusReceiverClient(ClientBase, ReceiverMixin):
 
             entity_name = queue_name or topic_name
 
-            super(ServiceBusReceiverClient, self).__init__(
+            super(ServiceBusReceiver, self).__init__(
                 fully_qualified_namespace=fully_qualified_namespace,
                 credential=credential,
                 entity_name=entity_name,
@@ -245,7 +245,7 @@ class ServiceBusReceiverClient(ClientBase, ReceiverMixin):
         if not self._running:
             return
         self._running = False
-        super(ServiceBusReceiverClient, self).close(exception=exception)
+        super(ServiceBusReceiver, self).close(exception=exception)
 
     @classmethod
     def from_connection_string(
@@ -253,7 +253,7 @@ class ServiceBusReceiverClient(ClientBase, ReceiverMixin):
         conn_str,
         **kwargs,
     ):
-        # type: (str, Any) -> ServiceBusReceiverClient
+        # type: (str, Any) -> ServiceBusReceiver
         """Create a ServiceBusReceiverClient from a connection string.
 
         :param conn_str: The connection string of a Service Bus.

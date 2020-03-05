@@ -10,9 +10,9 @@ from typing import Any, TYPE_CHECKING, List
 
 from uamqp import ReceiveClientAsync, types
 
-from ._client_base_async import ClientBaseAsync
+from ._base_handler_async import BaseHandlerAsync
 from .async_message import Message as MessageAsync, DeferredMessage
-from .._receiver_client import ReceiverMixin
+from .._servicebus_receiver import ReceiverMixin
 from ..common.utils import create_properties
 from ..common.constants import (
     REQUEST_RESPONSE_UPDATE_DISPOSTION_OPERATION,
@@ -26,8 +26,8 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
-class ServiceBusReceiverClient(collections.abc.AsyncIterator, ClientBaseAsync, ReceiverMixin):
-    """The ServiceBusReceiverClient class defines a high level interface for
+class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, ReceiverMixin):
+    """The ServiceBusReceiver class defines a high level interface for
     receiving messages from the Azure Service Bus Queue or Topic Subscription.
 
     :param str fully_qualified_namespace: The fully qualified host name for the Service Bus namespace.
@@ -64,7 +64,7 @@ class ServiceBusReceiverClient(collections.abc.AsyncIterator, ClientBaseAsync, R
         **kwargs: Any
     ):
         if kwargs.get("from_connection_str", False):
-            super(ServiceBusReceiverClient, self).__init__(
+            super(ServiceBusReceiver, self).__init__(
                 fully_qualified_namespace=fully_qualified_namespace,
                 credential=credential,
                 **kwargs
@@ -82,7 +82,7 @@ class ServiceBusReceiverClient(collections.abc.AsyncIterator, ClientBaseAsync, R
 
             entity_name = queue_name or topic_name
 
-            super(ServiceBusReceiverClient, self).__init__(
+            super(ServiceBusReceiver, self).__init__(
                 fully_qualified_namespace=fully_qualified_namespace,
                 credential=credential,
                 entity_name=entity_name,
@@ -182,8 +182,8 @@ class ServiceBusReceiverClient(collections.abc.AsyncIterator, ClientBaseAsync, R
         cls,
         conn_str: str,
         **kwargs: Any,
-    ) -> "ServiceBusReceiverClient":
-        """Create a ServiceBusReceiverClient from a connection string.
+    ) -> "ServiceBusReceiver":
+        """Create a ServiceBusReceiver from a connection string.
 
         :param conn_str: The connection string of a Service Bus.
         :keyword str queue_name: The path of specific Service Bus Queue the client connects to.
@@ -206,7 +206,7 @@ class ServiceBusReceiverClient(collections.abc.AsyncIterator, ClientBaseAsync, R
         :keyword dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
          keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
          Additionally the following keys may also be present: `'username', 'password'`.
-        :rtype: ~azure.servicebus.aio.ServiceBusReceiverClient
+        :rtype: ~azure.servicebus.aio.ServiceBusReceiver
         """
         constructor_args = cls._from_connection_string(
             conn_str,
@@ -232,7 +232,7 @@ class ServiceBusReceiverClient(collections.abc.AsyncIterator, ClientBaseAsync, R
         if not self._running:
             return
         self._running = False
-        await super(ServiceBusReceiverClient, self).close(exception=exception)
+        await super(ServiceBusReceiver, self).close(exception=exception)
 
     async def receive(self, max_batch_size=None, timeout=None):
         # type: (int, float) -> List[ReceivedMessage]

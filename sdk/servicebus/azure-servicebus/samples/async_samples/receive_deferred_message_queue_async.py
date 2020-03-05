@@ -13,34 +13,36 @@ Example to show receiving deferred message from a Service Bus Queue asynchronous
 
 import os
 import asyncio
-from azure.servicebus.aio import ServiceBusReceiverClient
+from azure.servicebus.aio import ServiceBusClient
 
 CONNECTION_STR = os.environ['SERVICE_BUS_CONNECTION_STR']
-QUEUE_NAME = 'testqueue'#os.environ["SERVICE_BUS_QUEUE_NAME"]
+QUEUE_NAME = os.environ["SERVICE_BUS_QUEUE_NAME"]
 
-receiver_client = ServiceBusReceiverClient.from_connection_string(
-    conn_str=CONNECTION_STR,
-    queue_name=QUEUE_NAME,
-    logging_enable=True
+servicebus_client = ServiceBusClient.from_connection_string(
+    conn_str=CONNECTION_STR
+)
+receiver = servicebus_client.get_queue_receiver(
+    queue_name=QUEUE_NAME
 )
 
 
 async def main():
-    async with receiver_client:
-        received_msgs = await receiver_client.receive(max_batch_size=10, timeout=5)
-        deferred_sequenced_numbers = []
-        for msg in received_msgs:
-            print("Deferring msg: {}".format(str(msg)))
-            deferred_sequenced_numbers.append(msg.sequence_number)
-            await msg.defer()
+    async with servicebus_client:
+        async with receiver:
+            received_msgs = await receiver.receive(max_batch_size=10, timeout=5)
+            deferred_sequenced_numbers = []
+            for msg in received_msgs:
+                print("Deferring msg: {}".format(str(msg)))
+                deferred_sequenced_numbers.append(msg.sequence_number)
+                await msg.defer()
 
-        received_deferred_msg = await receiver_client.receive_deferred_messages(
-            sequence_numbers=deferred_sequenced_numbers
-        )
+            received_deferred_msg = await receiver.receive_deferred_messages(
+                sequence_numbers=deferred_sequenced_numbers
+            )
 
-        for msg in received_deferred_msg:
-            print("Completing deferred msg: {}".format(str(msg)))
-            await msg.complete()
+            for msg in received_deferred_msg:
+                print("Completing deferred msg: {}".format(str(msg)))
+                await msg.complete()
 
 loop = asyncio.get_event_loop()
 loop.run_until_complete(main())

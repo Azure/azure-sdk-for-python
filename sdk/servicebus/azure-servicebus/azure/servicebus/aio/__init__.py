@@ -4,9 +4,10 @@
 # license information.
 # -------------------------------------------------------------------------
 
-from ._client_base_async import ServiceBusSharedKeyCredential
-from ._sender_client_async import ServiceBusSenderClient
-from ._receiver_client_async import ServiceBusReceiverClient
+from ._base_handler_async import ServiceBusSharedKeyCredential
+from ._servicebus_sender_async import ServiceBusSender
+from ._servicebus_receiver_async import ServiceBusReceiver
+from ._servicebus_client_async import ServiceBusClient
 from azure.servicebus.common.errors import (
     ServiceBusError,
     ServiceBusResourceNotFound,
@@ -24,7 +25,7 @@ from azure.servicebus.common.errors import (
 from azure.servicebus.common.constants import ReceiveSettleMode, NEXT_AVAILABLE
 from azure.servicebus.common.message import BatchMessage, PeekMessage
 from .async_message import Message, DeferredMessage
-from .async_client import ServiceBusClient, QueueClient, TopicClient, SubscriptionClient
+from .async_client import QueueClient, TopicClient, SubscriptionClient
 from .async_utils import AutoLockRenew
 
 
@@ -34,7 +35,6 @@ __all__ = [
     'BatchMessage',
     'PeekMessage',
     'DeferredMessage',
-    'ServiceBusClient',
     'QueueClient',
     'TopicClient',
     'SubscriptionClient',
@@ -53,7 +53,8 @@ __all__ = [
     'SessionLockExpired',
     'AutoLockRenewFailed',
     'AutoLockRenewTimeout',
-    'ServiceBusSenderClient',
-    'ServiceBusReceiverClient',
+    'ServiceBusClient',
+    'ServiceBusSender',
+    'ServiceBusReceiver',
     'ServiceBusSharedKeyCredential'
 ]

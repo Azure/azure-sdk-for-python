@@ -8,8 +8,8 @@ from typing import Any, TYPE_CHECKING
 
 from uamqp import SendClientAsync
 
-from .._sender_client import SenderMixin
-from ._client_base_async import ClientBaseAsync
+from .._servicebus_sender import SenderMixin
+from ._base_handler_async import BaseHandlerAsync
 from ..common.errors import (
     MessageSendFailed
 )
@@ -22,8 +22,8 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
-class ServiceBusSenderClient(ClientBaseAsync, SenderMixin):
-    """The ServiceBusSenderClient class defines a high level interface for
+class ServiceBusSender(BaseHandlerAsync, SenderMixin):
+    """The ServiceBusSender class defines a high level interface for
     sending messages to the Azure Service Bus Queue or Topic.
 
     :param str fully_qualified_namespace: The fully qualified host name for the Service Bus namespace.
@@ -51,7 +51,7 @@ class ServiceBusSenderClient(ClientBaseAsync, SenderMixin):
         **kwargs: Any
     ):
         if kwargs.get("from_connection_str", False):
-            super(ServiceBusSenderClient, self).__init__(
+            super(ServiceBusSender, self).__init__(
                 fully_qualified_namespace=fully_qualified_namespace,
                 credential=credential,
                 **kwargs
@@ -64,7 +64,7 @@ class ServiceBusSenderClient(ClientBaseAsync, SenderMixin):
             if not (queue_name or topic_name):
                 raise ValueError("Queue/Topic name is missing. Please specify queue_name/topic_name.")
             entity_name = queue_name or topic_name
-            super(ServiceBusSenderClient, self).__init__(
+            super(ServiceBusSender, self).__init__(
                 fully_qualified_namespace=fully_qualified_namespace,
                 credential=credential,
                 entity_name=entity_name,
@@ -106,7 +106,7 @@ class ServiceBusSenderClient(ClientBaseAsync, SenderMixin):
 
     async def _reconnect(self):
         unsent_events = self._handler.pending_messages
-        await super(ServiceBusSenderClient, self)._reconnect()
+        await super(ServiceBusSender, self)._reconnect()
         try:
             self._handler.queue_message(*unsent_events)
             await self._handler.wait_async()
@@ -128,8 +128,8 @@ class ServiceBusSenderClient(ClientBaseAsync, SenderMixin):
         cls,
         conn_str: str,
         **kwargs: Any,
-    ) -> "ServiceBusSenderClient":
-        """Create a ServiceBusSenderClient from a connection string.
+    ) -> "ServiceBusSender":
+        """Create a ServiceBusSender from a connection string.
 
         :param conn_str: The connection string of a Service Bus.
         :keyword str queue_name: The path of specific Service Bus Queue the client connects to.
@@ -143,7 +143,7 @@ class ServiceBusSenderClient(ClientBaseAsync, SenderMixin):
         :keyword dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
          keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
          Additionally the following keys may also be present: `'username', 'password'`.
-        :rtype: ~azure.servicebus.aio.ServiceBusSenderClient
+        :rtype: ~azure.servicebus.aio.ServiceBusSender
         """
         constructor_args = cls._from_connection_string(
             conn_str,

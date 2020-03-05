@@ -118,7 +118,7 @@ class ServiceBusSharedKeyCredential(object):
         return _generate_sas_token(scopes[0], self.policy, self.key)
 
 
-class ClientBase(object):
+class BaseHandler(object):
     def __init__(
         self,
         fully_qualified_namespace,
