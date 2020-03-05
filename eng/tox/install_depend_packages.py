@@ -113,11 +113,18 @@ def filter_dev_requirements(setup_py_path, released_packages, temp_dir):
     # filter out any package available on PyPI (released_packages)
     # include packages without relative reference and packages not available on PyPI
     released_packages = [p.split('==')[0] for p in released_packages]
+    # find prebuilt whl paths in dev requiremente
+    prebuilt_dev_reqs = [os.path.basename(req.replace('\n', '')) for req  in requirements if os.path.sep in req]
+    # filter any req if wheel is for a released package
+    req_to_exclude = [req for req in prebuilt_dev_reqs if req.split('-')[0].replace('_', '-') in released_packages]
+    req_to_exclude.extend(released_packages)
+
     filtered_req = [
         req
         for req in requirements
-        if "/" not in req or req.replace('\n', '').split("/")[-1] not in released_packages
+        if os.path.basename(req.replace('\n', '')) not in req_to_exclude
     ]
+
     logging.info("Filtered dev requirements: %s", filtered_req)
 
     new_dev_req_path = ""
