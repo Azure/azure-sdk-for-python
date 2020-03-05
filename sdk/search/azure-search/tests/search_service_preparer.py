@@ -18,8 +18,7 @@ from devtools_testutils import AzureMgmtPreparer, ResourceGroupPreparer
 from devtools_testutils.resource_testcase import RESOURCE_GROUP_PARAM
 from azure_devtools.scenario_tests.exceptions import AzureTestError
 
-from consts import SERVICE_URL, TEST_SERVICE_NAME
-
+SERVICE_URL_FMT = "https://{}.search.windows.net/indexes?api-version=2019-05-06"
 
 class SearchServicePreparer(AzureMgmtPreparer):
     def __init__(
@@ -59,6 +58,8 @@ class SearchServicePreparer(AzureMgmtPreparer):
         if not self.is_live:
             return {"api_key": "api-key", "index_name": schema["name"]}
 
+        self.service_name = self.create_random_name()
+
         group_name = self._get_resource_group(**kwargs).name
 
         from azure.mgmt.search import SearchManagementClient
@@ -71,7 +72,7 @@ class SearchServicePreparer(AzureMgmtPreparer):
 
         service_config = SearchService(location="West US", sku=Sku(name="free"))
         resource = self.mgmt_client.services.create_or_update(
-            group_name, TEST_SERVICE_NAME, service_config
+            group_name, self.service_name, service_config
         )
 
         retries = 4
@@ -92,12 +93,12 @@ class SearchServicePreparer(AzureMgmtPreparer):
             raise AzureTestError("Could not create a search service")
 
         api_key = self.mgmt_client.admin_keys.get(
-            group_name, TEST_SERVICE_NAME
+            group_name, self.service_name
         ).primary_key
 
 
         response = requests.post(
-            SERVICE_URL,
+            SERVICE_URL_FMT.format(self.service_name),
             headers={"Content-Type": "application/json", "api-key": api_key},
             data=self.schema,
         )
@@ -114,17 +115,24 @@ class SearchServicePreparer(AzureMgmtPreparer):
 
             batch = IndexBatch.deserialize(self.index_batch)
             index_client = SearchIndexClient(
-                TEST_SERVICE_NAME, self.index_name, SearchApiKeyCredential(api_key)
+                self.service_name, self.index_name, SearchApiKeyCredential(api_key)
             )
             results = index_client.index_batch(batch)
             if not all(result.succeeded for result in results):
                 raise AzureTestError("Document upload to search index failed")
 
-        return {"api_key": api_key, "index_name": self.index_name}
+            # Indexing is asynchronous, so if you get a 200 from the REST API, that only means that the documents are
+            # persisted, not that they're searchable yet. The only way to check for searchability is to run queries,
+            # and even then things are eventually consistent due to replication. In the Track 1 SDK tests, we "solved"
+            # this by using a constant delay between indexing and querying.
+            import time
+            time.sleep(3)
+
+        return {"api_key": api_key, "index_name": self.index_name, "service_name": self.service_name}
 
     def remove_resource(self, name, **kwargs):
         if not self.is_live:
             return
 
         group_name = self._get_resource_group(**kwargs).name
-        self.mgmt_client.services.delete(group_name, TEST_SERVICE_NAME)
+        self.mgmt_client.services.delete(group_name, self.service_name)

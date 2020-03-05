@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: null
+    body: '{"search": "mot", "suggesterName": "sg"}'
     headers:
       Accept:
       - application/json;odata.metadata=none
@@ -8,26 +8,31 @@ interactions:
       - gzip, deflate
       Connection:
       - keep-alive
+      Content-Length:
+      - '40'
+      Content-Type:
+      - application/json
       User-Agent:
       - azsdk-python-core/1.2.3 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit) azsdk-python-searchindexclient/unknown
       api-key:
-      - CD6D4088F021D9EDF7DFB3DBD9BF207D
-    method: GET
-    uri: https://test-service-name.search.windows.net/indexes('drgqefsg')/docs/$count?api-version=2019-05-06
+      - 0CBB4FBBC5AC9CC7D2E5ED9B5299845D
+    method: POST
+    uri: https://search905a0abe.search.windows.net/indexes('drgqefsg')/docs/search.post.suggest?api-version=2019-05-06
   response:
     body:
-      string: "\uFEFF10"
+      string: '{"value":[{"@search.text":"Cheapest hotel in town. Infact, a motel.","hotelId":"2"},{"@search.text":"Secret
+        Point Motel","hotelId":"9"}]}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '5'
+      - '137'
       content-type:
-      - text/plain
+      - application/json; odata.metadata=none
       date:
-      - Thu, 05 Mar 2020 17:48:42 GMT
+      - Thu, 05 Mar 2020 20:23:41 GMT
       elapsed-time:
-      - '63'
+      - '138'
       expires:
       - '-1'
       odata-version:
@@ -37,7 +42,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - 8d76ef08-5f09-11ea-b10a-8c8590507855
+      - 34485c62-5f1f-11ea-9ab6-8c8590507855
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:
