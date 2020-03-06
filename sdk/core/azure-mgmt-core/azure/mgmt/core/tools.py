@@ -24,11 +24,8 @@
 #
 # --------------------------------------------------------------------------
 
-import json
 import re
 import logging
-import time
-import uuid
 
 
 _LOGGER = logging.getLogger(__name__)

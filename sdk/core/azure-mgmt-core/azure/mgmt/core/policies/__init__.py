@@ -26,14 +26,13 @@
 
 from ._base import ARMAutoResourceProviderRegistrationPolicy
 
-__all__ = [
-    'ARMAutoResourceProviderRegistrationPolicy',
-]
+__all__ = ["ARMAutoResourceProviderRegistrationPolicy"]
 
 try:
-    from ._base_async import AsyncARMAutoResourceProviderRegistrationPolicy
-    __all__.extend([
-        'AsyncARMAutoResourceProviderRegistrationPolicy',
-    ])
+    from ._base_async import (  # pylint: disable=unused-import
+        AsyncARMAutoResourceProviderRegistrationPolicy,
+    )
+
+    __all__.extend(["AsyncARMAutoResourceProviderRegistrationPolicy"])
 except (ImportError, SyntaxError):
     pass  # Async not supported

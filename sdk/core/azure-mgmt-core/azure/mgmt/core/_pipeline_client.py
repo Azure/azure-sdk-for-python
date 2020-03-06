@@ -24,7 +24,12 @@
 #
 # --------------------------------------------------------------------------
 from azure.core import PipelineClient
-from azure.core.pipeline.policies import ContentDecodePolicy, DistributedTracingPolicy, HttpLoggingPolicy, RequestIdPolicy
+from azure.core.pipeline.policies import (
+    ContentDecodePolicy,
+    DistributedTracingPolicy,
+    HttpLoggingPolicy,
+    RequestIdPolicy,
+)
 from .policies import ARMAutoResourceProviderRegistrationPolicy
 
 
@@ -40,7 +45,9 @@ class ARMPipelineClient(PipelineClient):
     def __init__(self, base_url, **kwargs):
         if "policies" not in kwargs:
             if "config" not in kwargs:
-                raise ValueError("Current implementation requires to pass 'config' if you don't pass 'policies'")
+                raise ValueError(
+                    "Current implementation requires to pass 'config' if you don't pass 'policies'"
+                )
             kwargs["policies"] = self._default_policies(kwargs["config"])
         super(ARMPipelineClient, self).__init__(base_url, **kwargs)
 
