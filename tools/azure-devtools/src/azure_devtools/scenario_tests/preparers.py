@@ -174,7 +174,8 @@ You must specify use_cache=True in the preparer decorator""".format(test_class_i
     # locally that sku and location are the parameters that make a resource unique)
     # This also would prevent fine-grained caching where leaf resources are still created.
     def set_cache(self, enabled, *args):
-        self._cache_key = (self.__class__.__name__, *args)
+        # can't use *args expansion directly into a tuple, py27 compat.
+        self._cache_key = tuple([self.__class__.__name__] + list(args))
         self._use_cache = enabled
 
     def create_resource(self, name, **kwargs):  # pylint: disable=unused-argument,no-self-use
