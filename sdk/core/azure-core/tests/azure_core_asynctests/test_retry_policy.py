@@ -26,11 +26,6 @@ import os
 import time
 import asyncio
 
-def get_completed_future(result=None):
-    future = asyncio.Future()
-    future.set_result(result)
-    return future
-
 def test_retry_code_class_variables():
     retry_policy = AsyncRetryPolicy()
     assert retry_policy._RETRY_CODES is not None
