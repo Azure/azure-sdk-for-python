@@ -26,6 +26,7 @@ from azure.core.exceptions import HttpResponseError
 from azure.search import AutocompleteQuery, SearchApiKeyCredential, SearchQuery, SuggestQuery
 from azure.search.aio import SearchIndexClient
 
+
 def await_prepared_test(test_fn):
     """Synchronous wrapper for async test methods. Used to avoid making changes
     upstream to AbstractPreparer (which doesn't await the functions it wraps)
@@ -85,10 +86,14 @@ class SearchIndexClientTestAsync(AzureMgmtTestCase):
             service_name, index_name, SearchApiKeyCredential(api_key)
         )
         async with client:
-            results = [x async for x in await client.search(query="hotel")]
+            results = []
+            async for x in await client.search(query="hotel"):
+                results.append(x)
             assert len(results) == 7
 
-            results = [x async for x in await client.search(query="motel")]
+            results = []
+            async for x in await client.search(query="motel"):
+                results.append(x)
             assert len(results) == 2
 
     @ResourceGroupPreparer(random_name_enabled=True)
@@ -105,7 +110,9 @@ class SearchIndexClientTestAsync(AzureMgmtTestCase):
         query.order_by("hotelName desc")
 
         async with client:
-            results = [x async for x in await client.search(query=query)]
+            results = []
+            async for x in await client.search(query=query):
+                results.append(x)
             assert [x['hotelName'] for x in results] == sorted([x['hotelName'] for x in results], reverse=True)
             expected = {"category", "hotelName", "description", "@search.score", "@search.highlights"}
             assert all(set(x) == expected for x in results)
