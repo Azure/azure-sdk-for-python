@@ -6,7 +6,7 @@ class ServiceBusClient:
         credential : TokenCredential,
         logging_enable: bool = False,
         http_proxy: dict = None,
-        transport_type: TransportType = None,
+        transport_type: TransportType = TransportType.Amqp,
     ):
 
     def __enter__(self):
@@ -30,7 +30,7 @@ class ServiceBusSender:
         topic_name: str = None,
         logging_enable: bool = False,
         http_proxy: dict = None,
-        transport_type: TransportType = None,
+        transport_type: TransportType = TransportType.Amqp,
         retry_total : int = 3,
         retry_backoff_factor : float = 30,
         retry_backoff_maximum : int = 120  # cur_retry_backoff = retry_backoff_factor * (2^cur_retry_time)
@@ -84,7 +84,7 @@ class ServiceBusReceiver:
         mode : ReceiveSettleMode = ReceiveSettleMode.PeekLock
         logging_enable: bool = False,
         http_proxy: dict = None,
-        transport_type: TransportType = None,
+        transport_type: TransportType = TransportType.Amqp,
         retry_total : int = 3,
         retry_backoff_factor: float = 30,
         retry_backoff_maximum: int = 120  # cur_retry_backoff = retry_backoff_factor * (2^cur_retry_time)
@@ -243,5 +243,6 @@ class TransportType(Enum):
 class ServiceBusSharedKeyCredential:
     def __init__(self, policy, key):
     def get_token(self, *scopes, **kwargs):
+
 
 class ServiceBusError(Exception):
