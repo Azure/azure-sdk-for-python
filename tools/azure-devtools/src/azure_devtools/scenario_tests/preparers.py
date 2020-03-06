@@ -16,6 +16,10 @@ from .recording_processors import RecordingProcessor
 from .exceptions import AzureNameError
 
 _logger = logging.getLogger("preparer")
+_logger.setLevel(logging.WARNING)
+handler = logging.StreamHandler(stream=sys.stdout)
+handler.setFormatter(logging.Formatter('%(asctime)s %(name)-12s %(levelname)-8s %(message)s'))
+_logger.addHandler(handler)
 
 # Core Utility
 
@@ -192,7 +196,7 @@ You must specify use_cache=True in the preparer decorator""".format(test_class_i
                 preparer.remove_resource_with_record_override(resource_name, **kwargs)
             except Exception as e: #pylint: disable=broad-except
                 # Intentionally broad exception to attempt to leave as few orphan resources as possible even on error.
-                _logger.debug("Exception while performing delayed deletes (this can happen): %s", e)
+                _logger.warn("Exception while performing delayed deletes (this can happen): %s", e)
 
 class SingleValueReplacer(RecordingProcessor):
     # pylint: disable=no-member
