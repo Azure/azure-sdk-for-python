@@ -9,13 +9,7 @@ Please note that this is an async library, for sync version of the Azure EventHu
 
 ## Getting started
 
-### Install the package
-
-```
-$ pip install azure-eventhub-checkpointstoreblob-aio
-```
-
-**Prerequisites**
+### Prerequisites
 
 - Python 3.5.3 or later.
 - **Microsoft Azure Subscription:**  To use Azure services, including Azure Event Hubs, you'll need a subscription.  If you do not have an existing Azure account, you may sign up for a free trial or use your MSDN subscriber benefits when you [create an account](https://azure.microsoft.com/en-us/).
@@ -24,6 +18,11 @@ $ pip install azure-eventhub-checkpointstoreblob-aio
 
 - **Azure Storage Account:** You'll need to have an Azure Storage Account and create a Azure Blob Storage Block Container to store the checkpoint data with blobs. You may follow the guide [creating an Azure Block Blob Storage Account](https://docs.microsoft.com/en-us/azure/storage/blobs/storage-blob-create-account-block-blob).
 
+### Install the package
+
+```
+$ pip install azure-eventhub-checkpointstoreblob-aio
+```
 
 ## Key concepts
 
