@@ -19,7 +19,7 @@ def flatten_args(args):
     return args
 
 
-class IndexBatch(object):
+class IndexDocumentsBatch(object):
     """Represent a batch of upate operations for documents in an Azure
     Search index.
 
@@ -34,7 +34,7 @@ class IndexBatch(object):
 
     def __repr__(self):
         # type: () -> str
-        return "<IndexBatch [{} actions]>".format(len(self.actions))[:1024]
+        return "<IndexDocumentsBatch [{} actions]>".format(len(self.actions))[:1024]
 
     def add_upload_documents(self, *documents):
         # type (Union[List[dict], List[List[dict]]]) -> None

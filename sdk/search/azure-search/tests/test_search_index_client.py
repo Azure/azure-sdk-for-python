@@ -14,7 +14,7 @@ from azure.core.paging import ItemPaged
 
 from azure.search._index._generated.models import (
     IndexAction,
-    IndexBatch as IndexBatchModel,
+    IndexBatch,
     SearchDocumentsResult,
     SearchResult,
 )
@@ -22,7 +22,7 @@ from azure.search._index._search_index_client import _SearchDocumentsPaged
 
 from azure.search import (
     AutocompleteQuery,
-    IndexBatch,
+    IndexDocumentsBatch,
     SearchApiKeyCredential,
     SearchIndexClient,
     SearchQuery,
@@ -164,41 +164,41 @@ class TestSearchIndexClient(object):
     @pytest.mark.parametrize("method_name", CRUD_METHOD_NAMES)
     def test_add_method(self, arg, method_name):
         with mock.patch.object(
-            SearchIndexClient, "index_batch", return_value=None
-        ) as mock_index_batch:
+            SearchIndexClient, "index_documents", return_value=None
+        ) as mock_index_documents:
             client = SearchIndexClient("service name", "index name", CREDENTIAL)
 
             method = getattr(client, method_name)
             method(arg, extra="foo")
 
-            assert mock_index_batch.called
-            assert len(mock_index_batch.call_args[0]) == 1
-            batch = mock_index_batch.call_args[0][0]
-            assert isinstance(batch, IndexBatch)
+            assert mock_index_documents.called
+            assert len(mock_index_documents.call_args[0]) == 1
+            batch = mock_index_documents.call_args[0][0]
+            assert isinstance(batch, IndexDocumentsBatch)
             assert all(
                 action.action_type == CRUD_METHOD_MAP[method_name]
                 for action in batch.actions
             )
             assert [action.additional_properties for action in batch.actions] == arg
-            assert mock_index_batch.call_args[1] == {"extra": "foo"}
+            assert mock_index_documents.call_args[1] == {"extra": "foo"}
 
     @mock.patch(
         "azure.search._index._generated.operations._documents_operations.DocumentsOperations.index"
     )
-    def test_index_batch(self, mock_index):
+    def test_index_documents(self, mock_index):
         client = SearchIndexClient("service name", "index name", CREDENTIAL)
 
-        batch = IndexBatch()
+        batch = IndexDocumentsBatch()
         batch.add_upload_documents("upload1")
         batch.add_delete_documents("delete1", "delete2")
         batch.add_merge_documents(["merge1", "merge2", "merge3"])
         batch.add_merge_or_upload_documents("merge_or_upload1")
 
-        client.index_batch(batch, extra="foo")
+        client.index_documents(batch, extra="foo")
         assert mock_index.called
         assert mock_index.call_args[0] == ()
         assert len(mock_index.call_args[1]) == 2
         assert mock_index.call_args[1]["extra"] == "foo"
-        index_batch = mock_index.call_args[1]["batch"]
-        assert isinstance(index_batch, IndexBatchModel)
-        assert index_batch.actions == batch.actions
+        index_documents = mock_index.call_args[1]["batch"]
+        assert isinstance(index_documents, IndexBatch)
+        assert index_documents.actions == batch.actions

@@ -14,11 +14,11 @@ from azure.core.pipeline.policies import HeadersPolicy
 from azure.core.tracing.decorator import distributed_trace
 from ._generated import SearchIndexClient as _SearchIndexClient
 from ._generated.models import (
-    IndexBatch as IndexBatchModel,
+    IndexBatch,
     IndexingResult,
     SearchRequest,
 )
-from ._index_batch import IndexBatch
+from ._index_documents_batch import IndexDocumentsBatch
 from ._queries import AutocompleteQuery, SearchQuery, SuggestQuery
 
 if TYPE_CHECKING:
@@ -256,9 +256,9 @@ class SearchIndexClient(object):
                 :dedent: 4
                 :caption: Upload new documents to an index
         """
-        batch = IndexBatch()
+        batch = IndexDocumentsBatch()
         batch.add_upload_documents(documents)
-        results = self.index_batch(batch, **kwargs)
+        results = self.index_documents(batch, **kwargs)
         return cast(List[IndexingResult], results)
 
     def delete_documents(self, documents, **kwargs):
@@ -274,9 +274,9 @@ class SearchIndexClient(object):
                 :dedent: 4
                 :caption: Delete existing documents to an index
         """
-        batch = IndexBatch()
+        batch = IndexDocumentsBatch()
         batch.add_delete_documents(documents)
-        results = self.index_batch(batch, **kwargs)
+        results = self.index_documents(batch, **kwargs)
         return cast(List[IndexingResult], results)
 
     def merge_documents(self, documents, **kwargs):
@@ -292,9 +292,9 @@ class SearchIndexClient(object):
                 :dedent: 4
                 :caption: Merge fields into existing documents to an index
         """
-        batch = IndexBatch()
+        batch = IndexDocumentsBatch()
         batch.add_merge_documents(documents)
-        results = self.index_batch(batch, **kwargs)
+        results = self.index_documents(batch, **kwargs)
         return cast(List[IndexingResult], results)
 
     def merge_or_upload_documents(self, documents, **kwargs):
@@ -303,19 +303,19 @@ class SearchIndexClient(object):
         or upload them if they do not yet exist.
 
         """
-        batch = IndexBatch()
+        batch = IndexDocumentsBatch()
         batch.add_merge_or_upload_documents(documents)
-        results = self.index_batch(batch, **kwargs)
+        results = self.index_documents(batch, **kwargs)
         return cast(List[IndexingResult], results)
 
     @distributed_trace
-    def index_batch(self, batch, **kwargs):
+    def index_documents(self, batch, **kwargs):
         # type: (IndexBatch, **Any) -> List[IndexingResult]
         """Specify a document operations to perform as a batch.
 
         """
-        index_batch = IndexBatchModel(actions=batch.actions)
-        batch_response = self._client.documents.index(batch=index_batch, **kwargs)
+        index_documents = IndexBatch(actions=batch.actions)
+        batch_response = self._client.documents.index(batch=index_documents, **kwargs)
         return cast(List[IndexingResult], batch_response.results)
 
     def __enter__(self):
