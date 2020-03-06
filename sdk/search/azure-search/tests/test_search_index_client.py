@@ -43,6 +43,7 @@ CRUD_METHOD_MAP = dict(
     zip(CRUD_METHOD_NAMES, ["upload", "delete", "merge", "mergeOrUpload"])
 )
 
+ENDPOINT = "https://"
 
 class Test_odata(object):
     def test_const(self):
@@ -68,23 +69,23 @@ class Test_odata(object):
 
 class TestSearchIndexClient(object):
     def test_init(self):
-        client = SearchIndexClient("service name", "index name", CREDENTIAL)
+        client = SearchIndexClient("endpoint", "index name", CREDENTIAL)
         assert client._client._config.headers_policy.headers == {
             "api-key": "test_api_key",
             "Accept": "application/json;odata.metadata=none",
         }
 
     def test_repr(self):
-        client = SearchIndexClient("service name", "index name", CREDENTIAL)
-        assert repr(client) == "<SearchIndexClient [service={}, index={}]>".format(
-            repr("service name"), repr("index name")
+        client = SearchIndexClient("endpoint", "index name", CREDENTIAL)
+        assert repr(client) == "<SearchIndexClient [endpoint={}, index={}]>".format(
+            repr("endpoint"), repr("index name")
         )
 
     @mock.patch(
         "azure.search._index._generated.operations._documents_operations.DocumentsOperations.count"
     )
     def test_get_document_count(self, mock_count):
-        client = SearchIndexClient("service name", "index name", CREDENTIAL)
+        client = SearchIndexClient("endpoint", "index name", CREDENTIAL)
         client.get_document_count()
         assert mock_count.called
         assert mock_count.call_args[0] == ()
@@ -94,7 +95,7 @@ class TestSearchIndexClient(object):
         "azure.search._index._generated.operations._documents_operations.DocumentsOperations.get"
     )
     def test_get_document_count(self, mock_get):
-        client = SearchIndexClient("service name", "index name", CREDENTIAL)
+        client = SearchIndexClient("endpoint", "index name", CREDENTIAL)
         client.get_document("some_key")
         assert mock_get.called
         assert mock_get.call_args[0] == ()
@@ -114,7 +115,7 @@ class TestSearchIndexClient(object):
         "azure.search._index._generated.operations._documents_operations.DocumentsOperations.search_post"
     )
     def test_search_query_argument(self, mock_search_post, query):
-        client = SearchIndexClient("service name", "index name", CREDENTIAL)
+        client = SearchIndexClient("endpoint", "index name", CREDENTIAL)
         result = client.search(query)
         assert isinstance(result, ItemPaged)
         assert result._page_iterator_class is _SearchDocumentsPaged
@@ -130,7 +131,7 @@ class TestSearchIndexClient(object):
         )
 
     def test_search_bad_argument(self):
-        client = SearchIndexClient("service name", "index name", CREDENTIAL)
+        client = SearchIndexClient("endpoint", "index name", CREDENTIAL)
         with pytest.raises(TypeError) as e:
             client.search(10)
             assert str(e) == "Expected a SuggestQuery for 'query', but got {}".format(
@@ -141,7 +142,7 @@ class TestSearchIndexClient(object):
         "azure.search._index._generated.operations._documents_operations.DocumentsOperations.suggest_post"
     )
     def test_suggest_query_argument(self, mock_suggest_post):
-        client = SearchIndexClient("service name", "index name", CREDENTIAL)
+        client = SearchIndexClient("endpoint", "index name", CREDENTIAL)
         result = client.suggest(
             SuggestQuery(search_text="search text", suggester_name="sg")
         )
@@ -153,7 +154,7 @@ class TestSearchIndexClient(object):
         )
 
     def test_suggest_bad_argument(self):
-        client = SearchIndexClient("service name", "index name", CREDENTIAL)
+        client = SearchIndexClient("endpoint", "index name", CREDENTIAL)
         with pytest.raises(TypeError) as e:
             client.suggest("bad_query")
             assert str(e) == "Expected a SuggestQuery for 'query', but got {}".format(
@@ -164,7 +165,7 @@ class TestSearchIndexClient(object):
         "azure.search._index._generated.operations._documents_operations.DocumentsOperations.autocomplete_post"
     )
     def test_autocomplete_query_argument(self, mock_autocomplete_post):
-        client = SearchIndexClient("service name", "index name", CREDENTIAL)
+        client = SearchIndexClient("endpoint", "index name", CREDENTIAL)
         result = client.autocomplete(
             AutocompleteQuery(search_text="search text", suggester_name="sg")
         )
@@ -176,7 +177,7 @@ class TestSearchIndexClient(object):
         )
 
     def test_autocomplete_bad_argument(self):
-        client = SearchIndexClient("service name", "index name", CREDENTIAL)
+        client = SearchIndexClient("endpoint", "index name", CREDENTIAL)
         with pytest.raises(TypeError) as e:
             client.autocomplete("bad_query")
             assert str(
@@ -193,7 +194,7 @@ class TestSearchIndexClient(object):
         with mock.patch.object(
             SearchIndexClient, "index_documents", return_value=None
         ) as mock_index_documents:
-            client = SearchIndexClient("service name", "index name", CREDENTIAL)
+            client = SearchIndexClient("endpoint", "index name", CREDENTIAL)
 
             method = getattr(client, method_name)
             method(arg, extra="foo")
@@ -213,7 +214,7 @@ class TestSearchIndexClient(object):
         "azure.search._index._generated.operations._documents_operations.DocumentsOperations.index"
     )
     def test_index_documents(self, mock_index):
-        client = SearchIndexClient("service name", "index name", CREDENTIAL)
+        client = SearchIndexClient("endpoint", "index name", CREDENTIAL)
 
         batch = IndexDocumentsBatch()
         batch.add_upload_documents("upload1")

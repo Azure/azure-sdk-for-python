@@ -37,28 +37,30 @@ pip install azure-search --pre
 
 ### Create an Azure Cognitive Search service
 
-### Using an Admin Key
+### Using an API Key
 
-Use the [Azure CLI][azure_cli] snippet below to get the Admin Key from the Cognitive Search resource.
+You can get the Query Keys or Admin Key from the resource information in the
+[Azure Portal][azure_portal].
+
+Alternatively, youcan se the [Azure CLI][azure_cli] snippet below to get the
+Admin Key from the Cognitive Search resource.
 
 ```PowerShell
 az search admin-key show --resource-group <your-resource-group-name> --service-name <your-resource-name>
 ```
 
-Alternatively, you can get the endpoint and Admin Key from the resource information in the [Azure Portal][azure_portal].
-
 ### Authenticate the client
 
 Interaction with this service begins with an instance of a [client](#client "search-client").
-To create a client object, you will need the cognitive services or text analytics `endpoint` to
-your resource and a `credential` that allows you access:
+To create a client object, you will need the `search_endpoint` for your resource
+and a `credential` that allows you access:
 
 ```python
 from azure.search import SearchApiKeyCredential, SearchIndexClient
 
 credential = SearchApiKeyCredential("<api key>")
 
-client = SearchIndexClient(search_service_name="<service name>",
+client = SearchIndexClient(endpoint="<service endpoint>",
                            index_name="<index name>",
                            credential=credential)
 ```
@@ -68,7 +70,7 @@ client = SearchIndexClient(search_service_name="<service name>",
 ### Client
 
 The Cognitive Search client library provides a [SearchIndexClient](https://aka.ms/azsdk-python-search-searchindexclient) to perform search operations on [batches of documents](#Examples "examples").
-It provides both synchronous and asynchronous operations to access a specific use of Cognitive Search indices, such as querying, suggestions or autocompletion.
+It provides both synchronous and asynchronous operations to access a specific use of Cognitive Search indexes, such as querying, suggestions or autocompletion.
 
 
 ## Examples
@@ -77,7 +79,7 @@ It provides both synchronous and asynchronous operations to access a specific us
 Get a specific document from the index, e.f. obtain the document for hotel "23":
 ```python
 from azure.search import SearchApiKeyCredential, SearchIndexClient
-search_client = SearchIndexClient(service_name, index_name, SearchApiKeyCredential(key))
+search_client = SearchIndexClient(service_endpoint, index_name, SearchApiKeyCredential(key))
 
 result = search_client.get_document(key="23")
 
@@ -91,7 +93,7 @@ Search the entire index or documents matching a simple search text, e.g. find
 hotels with the text "spa":
 ```python
 from azure.search import SearchApiKeyCredential, SearchIndexClient
-search_client = SearchIndexClient(service_name, index_name, SearchApiKeyCredential(key))
+search_client = SearchIndexClient(service_endpoint, index_name, SearchApiKeyCredential(key))
 
 results = search_client.search(query="spa")
 
@@ -104,7 +106,7 @@ Get search suggestions for related terms, e.g. find search suggestions for
 the term "coffee":
 ```python
 from azure.search import SearchApiKeyCredential, SearchIndexClient, SuggestQuery
-search_client = SearchIndexClient(service_name, index_name, SearchApiKeyCredential(key))
+search_client = SearchIndexClient(service_endpoint, index_name, SearchApiKeyCredential(key))
 
 query = SuggestQuery(search_text="coffee", suggester_name="sg")
 
@@ -119,7 +121,7 @@ for result in results:
 Add documents (or update existing ones), e.g add a new document for a new hotel:
 ```python
 from azure.search import SearchApiKeyCredential, SearchIndexClient
-search_client = SearchIndexClient(service_name, index_name, SearchApiKeyCredential(key))
+search_client = SearchIndexClient(service_endpoint, index_name, SearchApiKeyCredential(key))
 
 DOCUMENT = {
     'Category': 'Hotel',
@@ -162,7 +164,7 @@ handler = logging.StreamHandler(stream=sys.stdout)
 logger.addHandler(handler)
 
 # This client will log detailed information about its HTTP sessions, at DEBUG level
-search_client = SearchIndexClient(service_name, index_name, SearchApiKeyCredential(key), logging_enable=True)
+search_client = SearchIndexClient(service_endpoint, index_name, SearchApiKeyCredential(key), logging_enable=True)
 ```
 
 Similarly, `logging_enable` can enable detailed logging for a single operation,

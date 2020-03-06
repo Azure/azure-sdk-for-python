@@ -58,12 +58,13 @@ class SearchServicePreparer(AzureMgmtPreparer):
     def create_resource(self, name, **kwargs):
         schema = json.loads(self.schema)
         self.service_name = self.create_random_name()
+        self.endpoint = "https://{}.search.windows.net".format(self.service_name)
 
         if not self.is_live:
             return {
                 "api_key": "api-key",
                 "index_name": schema["name"],
-                "service_name": self.service_name,
+                "endpoint": self.endpoint,
             }
 
         group_name = self._get_resource_group(**kwargs).name
@@ -120,9 +121,9 @@ class SearchServicePreparer(AzureMgmtPreparer):
 
             batch = IndexBatch.deserialize(self.index_batch)
             index_client = SearchIndexClient(
-                self.service_name, self.index_name, SearchApiKeyCredential(api_key)
+                self.endpoint, self.index_name, SearchApiKeyCredential(api_key)
             )
-            results = index_client.index_batch(batch)
+            results = index_client.index_documents(batch)
             if not all(result.succeeded for result in results):
                 raise AzureTestError("Document upload to search index failed")
 
@@ -137,7 +138,7 @@ class SearchServicePreparer(AzureMgmtPreparer):
         return {
             "api_key": api_key,
             "index_name": self.index_name,
-            "service_name": self.service_name,
+            "endpoint": self.endpoint,
         }
 
     def remove_resource(self, name, **kwargs):

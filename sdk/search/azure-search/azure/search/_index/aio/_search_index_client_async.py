@@ -15,7 +15,6 @@ from .._generated.models import IndexBatch, IndexingResult, SearchRequest
 from .._index_documents_batch import IndexDocumentsBatch
 from .._queries import AutocompleteQuery, SearchQuery, SuggestQuery
 from .._search_index_client import (
-    DEFAULT_SEARCH_DNS_SUFFIX,
     convert_search_result,
     pack_continuation_token,
     unpack_continuation_token,
@@ -72,7 +71,7 @@ class SearchIndexClient(object):
             :caption: Creating the SearchIndexClient with an API key.
     """
 
-    def __init__(self, search_service_name, index_name, credential, **kwargs):
+    def __init__(self, endpoint, index_name, credential, **kwargs):
         # type: (str, str, SearchApiKeyCredential, **Any) -> None
 
         headers_policy = HeadersPolicy(
@@ -82,20 +81,19 @@ class SearchIndexClient(object):
             }
         )
 
-        search_dns_suffix = kwargs.pop("search_dns_suffix", DEFAULT_SEARCH_DNS_SUFFIX)
-
-        self._search_service_name = search_service_name  # type: str
+        self._endpoint = endpoint  # type: str
         self._index_name = index_name  # type: str
         self._client = _SearchIndexClient(
-            endpoint="https://" + search_service_name + "." + search_dns_suffix,
+            endpoint=endpoint,
             index_name=index_name,
             headers_policy=headers_policy,
+            **kwargs
         )  # type: _SearchIndexClient
 
     def __repr__(self):
         # type: () -> str
-        return "<SearchIndexClient [service={}, index={}]>".format(
-            repr(self._search_service_name), repr(self._index_name)
+        return "<SearchIndexClient [endpoint={}, index={}]>".format(
+            repr(self._endpoint), repr(self._index_name)
         )[:1024]
 
     async def close(self):

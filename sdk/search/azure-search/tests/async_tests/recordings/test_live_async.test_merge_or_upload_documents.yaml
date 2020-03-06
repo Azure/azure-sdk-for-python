@@ -12,7 +12,7 @@ interactions:
       User-Agent:
       - azsdk-python-searchindexclient/unknown Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
       api-key:
-      - 22DE5FD908B4BB5ABB953A07E072830C
+      - 0852A8ABCE142584DEBB9356D4BACB2C
     method: POST
     uri: https://searchbd5d12ff.search.windows.net/indexes('drgqefsg')/docs/search.index?api-version=2019-05-06-Preview
   response:
@@ -23,13 +23,13 @@ interactions:
       content-encoding: gzip
       content-length: '196'
       content-type: application/json; odata.metadata=none
-      date: Fri, 06 Mar 2020 02:38:53 GMT
-      elapsed-time: '183'
+      date: Fri, 06 Mar 2020 22:24:45 GMT
+      elapsed-time: '30'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 9e7ffb24-5f53-11ea-acd2-8c8590507855
+      request-id: 4845fed8-5ff9-11ea-b13a-8c8590507855
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
@@ -44,7 +44,7 @@ interactions:
       User-Agent:
       - azsdk-python-searchindexclient/unknown Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
       api-key:
-      - 22DE5FD908B4BB5ABB953A07E072830C
+      - 0852A8ABCE142584DEBB9356D4BACB2C
     method: GET
     uri: https://searchbd5d12ff.search.windows.net/indexes('drgqefsg')/docs/$count?api-version=2019-05-06-Preview
   response:
@@ -55,13 +55,13 @@ interactions:
       content-encoding: gzip
       content-length: '127'
       content-type: text/plain
-      date: Fri, 06 Mar 2020 02:38:55 GMT
-      elapsed-time: '4'
+      date: Fri, 06 Mar 2020 22:24:48 GMT
+      elapsed-time: '5'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: a07759e0-5f53-11ea-acd2-8c8590507855
+      request-id: 4a2888ba-5ff9-11ea-b13a-8c8590507855
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
@@ -76,7 +76,7 @@ interactions:
       User-Agent:
       - azsdk-python-searchindexclient/unknown Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
       api-key:
-      - 22DE5FD908B4BB5ABB953A07E072830C
+      - 0852A8ABCE142584DEBB9356D4BACB2C
     method: GET
     uri: https://searchbd5d12ff.search.windows.net/indexes('drgqefsg')/docs('1000')?api-version=2019-05-06-Preview
   response:
@@ -87,13 +87,13 @@ interactions:
       content-encoding: gzip
       content-length: '257'
       content-type: application/json; odata.metadata=none
-      date: Fri, 06 Mar 2020 02:38:56 GMT
-      elapsed-time: '11'
+      date: Fri, 06 Mar 2020 22:24:48 GMT
+      elapsed-time: '8'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: a07cd208-5f53-11ea-acd2-8c8590507855
+      request-id: 4a2dfd54-5ff9-11ea-b13a-8c8590507855
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
@@ -108,7 +108,7 @@ interactions:
       User-Agent:
       - azsdk-python-searchindexclient/unknown Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
       api-key:
-      - 22DE5FD908B4BB5ABB953A07E072830C
+      - 0852A8ABCE142584DEBB9356D4BACB2C
     method: GET
     uri: https://searchbd5d12ff.search.windows.net/indexes('drgqefsg')/docs('4')?api-version=2019-05-06-Preview
   response:
@@ -120,13 +120,13 @@ interactions:
       content-encoding: gzip
       content-length: '422'
       content-type: application/json; odata.metadata=none
-      date: Fri, 06 Mar 2020 02:38:56 GMT
-      elapsed-time: '8'
+      date: Fri, 06 Mar 2020 22:24:48 GMT
+      elapsed-time: '5'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: a083fcb8-5f53-11ea-acd2-8c8590507855
+      request-id: 4a33d5e4-5ff9-11ea-b13a-8c8590507855
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
