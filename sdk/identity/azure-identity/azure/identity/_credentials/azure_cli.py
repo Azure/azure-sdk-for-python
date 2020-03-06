@@ -82,12 +82,34 @@ def parse_token(output):
 
 
 def get_safe_working_dir():
-    """Invoke 'az' from a directory on $PATH to get 'az' from the path, not the executing program's directory"""
+    """Invoke 'az' from a directory on $PATH or a well-known install location, not the executing program's directory"""
 
-    path = os.environ["PATH"]
+    path = os.environ.get("PATH")
+
     if sys.platform.startswith("win"):
-        return path.split(";")[0]
-    return path.split(":")[0]
+        if path:
+            return path.split(";")[0]
+
+        # no system path; check well-known install locations
+        cli_path = "Microsoft SDKs\\Azure\\CLI2\\wbin"
+        for directory in (os.environ.get("PROGRAMFILES(X86)"), os.environ.get("PROGRAMFILES")):
+            if directory:
+                path = os.path.join(directory, cli_path)
+                if os.path.exists(os.path.join(path, "az.cmd")):
+                    return path
+
+        raise CredentialUnavailableError(message=CLI_NOT_FOUND)
+
+    # linux or mac
+    if path:
+        return path.split(":")[0]
+
+    # no system path; check well-known install locations
+    for path in ("/usr/bin", "/usr/local/bin"):
+        if os.path.exists(path + "/az"):
+            return path
+
+    raise CredentialUnavailableError(message=CLI_NOT_FOUND)
 
 
 def sanitize_output(output):
