@@ -15,7 +15,6 @@ function ExtractReleaseNotes($changeLogLocation)
     return $releaseNotes
   }
 
-  Write-Host $changeLogLocation
   try {
     $contents = Get-Content $changeLogLocation
 
