@@ -10,15 +10,15 @@
 FILE: sample_analyze_sentiment_async.py
 
 DESCRIPTION:
-    This sample demonstrates how to analyze sentiment in a batch of documents.
+    This sample demonstrates how to analyze sentiment in documents.
     An overall and per-sentence sentiment is returned.
 
 USAGE:
     python sample_analyze_sentiment_async.py
 
     Set the environment variables with your own values before running the sample:
-    1) AZURE_TEXT_ANALYTICS_ENDPOINT - the endpoint to your cognitive services resource.
-    2) AZURE_TEXT_ANALYTICS_KEY - your text analytics subscription key
+    1) AZURE_TEXT_ANALYTICS_ENDPOINT - the endpoint to your Cognitive Services resource.
+    2) AZURE_TEXT_ANALYTICS_KEY - your Text Analytics subscription key
 """
 
 import os
@@ -51,63 +51,24 @@ class AnalyzeSentimentSampleAsync(object):
             print("Document text: {}".format(documents[idx]))
             print("Overall sentiment: {}".format(doc.sentiment))
         # [END batch_analyze_sentiment_async]
-            print("Overall confidence scores: positive={0:.3f}; neutral={1:.3f}; negative={2:.3f} \n".format(
+            print("Overall confidence scores: positive={}; neutral={}; negative={} \n".format(
                 doc.confidence_scores.positive,
                 doc.confidence_scores.neutral,
                 doc.confidence_scores.negative,
             ))
             for idx, sentence in enumerate(doc.sentences):
                 print("Sentence {} sentiment: {}".format(idx+1, sentence.sentiment))
-                print("Sentence confidence scores: positive={0:.3f}; neutral={1:.3f}; negative={2:.3f}".format(
+                print("Sentence confidence scores: positive={}; neutral={}; negative={}".format(
                     sentence.confidence_scores.positive,
                     sentence.confidence_scores.neutral,
                     sentence.confidence_scores.negative,
                 ))
-                print("Offset: {}".format(sentence.grapheme_offset))
-                print("Length: {}\n".format(sentence.grapheme_length))
             print("------------------------------------")
-
-    async def alternative_scenario_analyze_sentiment_async(self):
-        """This sample demonstrates how to retrieve batch statistics, the
-        model version used, and the raw response returned from the service.
-
-        It additionally shows an alternative way to pass in the input documents
-        using a list[TextDocumentInput] and supplying your own IDs and language hints along
-        with the text.
-        """
-        from azure.ai.textanalytics.aio import TextAnalyticsClient
-        from azure.ai.textanalytics import TextAnalyticsApiKeyCredential
-        text_analytics_client = TextAnalyticsClient(endpoint=self.endpoint, credential=TextAnalyticsApiKeyCredential(self.key))
-
-        documents = [
-            {"id": "0", "language": "en", "text": "I had the best day of my life."},
-            {"id": "1", "language": "en",
-             "text": "This was a waste of my time. The speaker put me to sleep."},
-            {"id": "2", "language": "es", "text": "No tengo dinero ni nada que dar..."},
-            {"id": "3", "language": "fr",
-             "text": "L'hôtel n'était pas très confortable. L'éclairage était trop sombre."}
-        ]
-
-        extras = []
-
-        def callback(resp):
-            extras.append(resp.statistics)
-            extras.append(resp.model_version)
-            extras.append(resp.raw_response)
-
-        async with text_analytics_client:
-            result = await text_analytics_client.analyze_sentiment(
-                documents,
-                show_stats=True,
-                model_version="latest",
-                raw_response_hook=callback
-            )
 
 
 async def main():
     sample = AnalyzeSentimentSampleAsync()
     await sample.analyze_sentiment_async()
-    await sample.alternative_scenario_analyze_sentiment_async()
 
 
 if __name__ == '__main__':
