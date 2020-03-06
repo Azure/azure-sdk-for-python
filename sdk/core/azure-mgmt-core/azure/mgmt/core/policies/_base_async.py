@@ -26,15 +26,12 @@
 import asyncio
 import json
 import logging
-import re
-import time
 import uuid
 
-from azure.core.pipeline import PipelineContext, PipelineRequest
+from azure.core.pipeline import PipelineRequest
 from azure.core.pipeline.policies import AsyncHTTPPolicy
-from azure.core.pipeline.transport import HttpRequest
 
-from .policies import ARMAutoResourceProviderRegistrationPolicy
+from . import ARMAutoResourceProviderRegistrationPolicy
 
 _LOGGER = logging.getLogger(__name__)
 

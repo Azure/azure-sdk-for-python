@@ -25,7 +25,7 @@
 # --------------------------------------------------------------------------
 from azure.core import AsyncPipelineClient
 from azure.core.pipeline.policies import ContentDecodePolicy, DistributedTracingPolicy, HttpLoggingPolicy, RequestIdPolicy
-from .async_policies import AsyncARMAutoResourceProviderRegistrationPolicy
+from .policies import AsyncARMAutoResourceProviderRegistrationPolicy
 
 
 class AsyncARMPipelineClient(AsyncPipelineClient):
