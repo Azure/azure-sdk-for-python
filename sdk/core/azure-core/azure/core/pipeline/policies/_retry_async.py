@@ -136,6 +136,7 @@ class AsyncRetryPolicy(RetryPolicy, AsyncHTTPPolicy):  # type: ignore
         retry_active = True
         response = None
         retry_settings = self.configure_retries(request.context.options)
+        self._configure_positions(request, retry_settings)
 
         absolute_timeout = retry_settings['timeout']
         is_response_error = True
