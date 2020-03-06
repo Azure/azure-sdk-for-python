@@ -1,10 +1,10 @@
 # Release History
 
-## 1.4.0b1 (Unreleased)
-- Added `AzureCliCredential`, which authenticates with the identity logged in
-to the Azure CLI. This credential is part of `DefaultAzureCredential` by
-default, but can be excluded with a keyword argument:
+## 1.4.0b1 (2020-03-10)
+- `DefaultAzureCredential` can now authenticate using the identity logged in to
+the Azure CLI, unless explicitly disabled with a keyword argument:
 `DefaultAzureCredential(exclude_cli_credential=True)`
+([#10092](https://github.com/Azure/azure-sdk-for-python/pull/10092))
 
 
 ## 1.3.0 (2020-02-11)
