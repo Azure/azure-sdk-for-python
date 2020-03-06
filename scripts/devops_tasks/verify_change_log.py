@@ -113,8 +113,11 @@ if __name__ == "__main__":
     else:
         target_dir = root_dir
 
+    # Skip nspkg and metapackage from version check.
+    # Change log file may be missing for these two types
+    # process glob helper methods filter nspkg and metapackages with filter type "Docs"
     targeted_packages = process_glob_string(
-        args.glob_string, target_dir, args.package_filter_string
+        args.glob_string, target_dir, args.package_filter_string, "Docs"
     )
     change_missing = verify_packages(targeted_packages)
     if len(change_missing) > 0:
