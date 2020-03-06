@@ -130,11 +130,6 @@ class ServiceBusReceiver:
     @property
     def session(self) -> ServiceBusSession:
 
-    # Rule APIs, raise Error when called on Queue
-    def add_rule(self, rule_name : str, filter : str) -> None:
-    def remove_rule(self, rule_name : str) -> None:
-    def get_rules(self) -> List[str] -> Dict[str, Any]:
-
 
 class ServiceBusSession:
     @property
@@ -144,15 +139,6 @@ class ServiceBusSession:
     @property
     def session_id(self) -> str:
     def expired(self) -> bool:
-
-
-class Transaction:
-    def __init__(self) -> None:
-    def __enter__(self):
-    def __exit__(self):
-    def begin(self) -> None:
-    def commit(self) -> None:
-    def abort(self) -> None:
 
 
 class Message:
@@ -243,6 +229,3 @@ class TransportType(Enum):
 class ServiceBusSharedKeyCredential:
     def __init__(self, policy, key):
     def get_token(self, *scopes, **kwargs):
-
-
-class ServiceBusError(Exception):
