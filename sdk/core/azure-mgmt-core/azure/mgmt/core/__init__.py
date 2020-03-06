@@ -25,11 +25,11 @@
 # --------------------------------------------------------------------------
 
 
-from ._version import version
+from ._version import VERSION
 from ._pipeline_client import ARMPipelineClient
 
 __all__ = ["ARMPipelineClient"]
-__version__ = version
+__version__ = VERSION
 
 try:
     from ._async_pipeline_client import AsyncARMPipelineClient #pylint: disable=unused-import
