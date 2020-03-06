@@ -26,13 +26,33 @@
 #   gallery_images: 5/5
 #   gallery_image_versions: 5/5
 #   images: 6/6
+#   dedicated_hosts: 
 #   dedicated_host_groups: 2/6
+#   virtual_machines: 11/21
+#   virtual_machine_size: 1/1
+#   virtual_machine_run_commands: 2/2
+#   virtual_machine_image: 0/5
+#   virtual_machine_extensions: 0/5
+#   virtual_machine_extension_images: 0/3
+#   virtual_machine_scale_sets: 1/21
+#   virtual_machine_scale_set_vms: 0/14
+#   virtual_machine_scale_set_vm_extensions: 0/5
+#   virtual_machine_scale_set_rolling_upgrades: 0/4
+#   virtual_machine_scale_set_extensions: 0/5
+#   usage: 1/1
+#   availability_sets: 7/7
+#   log_analytics: 0/2
+#   operations: 1/1
+#   proximity_placement_groups: 6/6
+#   resource_skus: 1/1
+
 
 # import json
 # import urllib3
 import unittest
 
 import azure.mgmt.compute
+import azure.mgmt.network
 # import azure.mgmt.keyvault
 from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 
@@ -48,9 +68,61 @@ class MgmtComputeTest(AzureMgmtTestCase):
         self.keyvault_client = self.create_mgmt_client(
             azure.mgmt.keyvault.KeyVaultManagementClient
         )
+        self.network_client = self.create_mgmt_client(
+            azure.mgmt.network.NetworkManagementClient
+        )
+
+    def create_virtual_network(self, group_name, location, network_name, subnet_name):
+      
+      azure_operation_poller = self.network_client.virtual_networks.create_or_update(
+          group_name,
+          network_name,
+          {
+              'location': location,
+              'address_space': {
+                  'address_prefixes': ['10.0.0.0/16']
+              }
+          },
+      )
+      result_create = azure_operation_poller.result()
+
+      async_subnet_creation = self.network_client.subnets.create_or_update(
+          group_name,
+          network_name,
+          subnet_name,
+          {'address_prefix': '10.0.0.0/24'}
+      )
+      subnet_info = async_subnet_creation.result()
+      
+      return subnet_info
+
+    def create_network_interface(self, group_name, location, nic_name, subnet):
+
+        async_nic_creation = self.network_client.network_interfaces.create_or_update(
+            group_name,
+            nic_name,
+            {
+                'location': location,
+                'ip_configurations': [{
+                    'name': 'MyIpConfig',
+                    'subnet': {
+                        'id': subnet.id
+                    }
+                }]
+            }
+        )
+        nic_info = async_nic_creation.result()
+
+        return nic_info.id
     
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_compute(self, resource_group):
+
+        NETWORK_NAME = "networknamexyz"
+        SUBNET_NAME = "subnetxyz"
+        INTERFACE_NAME = "interface_name"
+        KEY_VAULT = "keyvaultxxyyzz"
+        KEY_NAME = "keynamexxyyzz"
 
         SERVICE_NAME = "myapimrndxyz"
         SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
@@ -65,8 +137,14 @@ class MgmtComputeTest(AzureMgmtTestCase):
         HOST_GROUP_NAME = "hostgroupnamexyz"
         DISK_ENCRYPTION_SET_NAME = "diskencryptionsetname"
         SNAPSHOT_NAME = "snapshotname"
-        KEY_VAULT = "keyvaultxxyyzz"
-        KEY_NAME = "keynamexxyyzz"
+        VIRTUAL_MACHINE_NAME = "vmnamexyz"
+        AVAILABILITY_SET_NAME = "availabilitysetnamexyz"
+        PROXIMITY_PLACEMENT_GROUP_NAME = "proximityplacementgroupname"
+        VIRTUAL_MACHINE_SCALE_SET_NAME = "virtualmachinescalesetname"
+
+
+        SUBNET = self.create_virtual_network(RESOURCE_GROUP, AZURE_LOCATION, NETWORK_NAME, SUBNET_NAME)
+        NIC_ID = self.create_network_interface(RESOURCE_GROUP, AZURE_LOCATION, INTERFACE_NAME, SUBNET)
 
         # - Setup keyvault -
         # result = self.keyvault_client.vaults.create_or_update(
@@ -493,7 +571,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
         """
         # Create a platform-image vm with unmanaged os and data disks.[put]
         BODY = {
-          "location": "westus",
+          "location": "eastus",
           "properties": {
             "hardware_profile": {
               "vm_size": "Standard_D2_v2"
@@ -551,105 +629,110 @@ class MgmtComputeTest(AzureMgmtTestCase):
         }
         result = self.mgmt_client.virtual_machines.create_or_update(resource_group.name, VIRTUAL_MACHINE_NAME, BODY)
         result = result.result()
+        """
 
+        """
         # Create a vm from a custom image.[put]
         BODY = {
-          "location": "westus",
-          "properties": {
-            "hardware_profile": {
-              "vm_size": "Standard_D1_v2"
+          "location": "eastus",
+          "hardware_profile": {
+            "vm_size": "Standard_D1_v2"
+          },
+          "storage_profile": {
+            "image_reference": {
+              "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Compute/images/" + IMAGE_NAME + ""
             },
-            "storage_profile": {
-              "image_reference": {
-                "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Compute/images/" + IMAGE_NAME + ""
+            "os_disk": {
+              "caching": "ReadWrite",
+              "managed_disk": {
+                "storage_account_type": "Standard_LRS"
               },
-              "os_disk": {
-                "caching": "ReadWrite",
-                "managed_disk": {
-                  "storage_account_type": "Standard_LRS"
-                },
-                "name": "myVMosdisk",
-                "create_option": "FromImage"
-              }
-            },
-            "os_profile": {
-              "admin_username": "{your-username}",
-              "computer_name": "myVM",
-              "admin_password": "{your-password}"
-            },
-            "network_profile": {
-              "network_interfaces": [
-                {
-                  "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/networkInterfaces/" + NETWORK_INTERFACE_NAME + "",
-                  "properties": {
-                    "primary": True
-                  }
-                }
-              ]
+              "name": "myVMosdisk",
+              "create_option": "FromImage"
             }
+          },
+          "os_profile": {
+            "admin_username": "testuser",
+            "computer_name": "myVM",
+            "admin_password": "Aa!1()_="
+          },
+          "network_profile": {
+            "network_interfaces": [
+              {
+                # "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/networkInterfaces/" + NETWORK_INTERFACE_NAME + "",
+                "id": NIC_ID,
+                "properties": {
+                  "primary": True
+                }
+              }
+            ]
           }
         }
         result = self.mgmt_client.virtual_machines.create_or_update(resource_group.name, VIRTUAL_MACHINE_NAME, BODY)
         result = result.result()
+        """
 
         # Create a vm with empty data disks.[put]
         BODY = {
-          "location": "westus",
-          "properties": {
-            "hardware_profile": {
-              "vm_size": "Standard_D2_v2"
+          "location": "eastus",
+          "hardware_profile": {
+            "vm_size": "Standard_D2_v2"
+          },
+          "storage_profile": {
+            "image_reference": {
+              "sku": "2016-Datacenter",
+              "publisher": "MicrosoftWindowsServer",
+              "version": "latest",
+              "offer": "WindowsServer"
             },
-            "storage_profile": {
-              "image_reference": {
-                "sku": "2016-Datacenter",
-                "publisher": "MicrosoftWindowsServer",
-                "version": "latest",
-                "offer": "WindowsServer"
+            "os_disk": {
+              "caching": "ReadWrite",
+              "managed_disk": {
+                "storage_account_type": "Standard_LRS"
               },
-              "os_disk": {
-                "caching": "ReadWrite",
-                "managed_disk": {
-                  "storage_account_type": "Standard_LRS"
-                },
-                "name": "myVMosdisk",
-                "create_option": "FromImage"
+              "name": "myVMosdisk",
+              "create_option": "FromImage"
+            },
+            "data_disks": [
+              {
+                "disk_size_gb": "1023",
+                "create_option": "Empty",
+                "lun": "0"
               },
-              "data_disks": [
-                {
-                  "disk_size_gb": "1023",
-                  "create_option": "Empty",
-                  "lun": "0"
-                },
-                {
-                  "disk_size_gb": "1023",
-                  "create_option": "Empty",
-                  "lun": "1"
-                }
-              ]
-            },
-            "os_profile": {
-              "admin_username": "{your-username}",
-              "computer_name": "myVM",
-              "admin_password": "{your-password}"
-            },
-            "network_profile": {
-              "network_interfaces": [
-                {
-                  "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/networkInterfaces/" + NETWORK_INTERFACE_NAME + "",
-                  "properties": {
-                    "primary": True
-                  }
-                }
-              ]
+              {
+                "disk_size_gb": "1023",
+                "create_option": "Empty",
+                "lun": "1"
+              }
+            ]
+          },
+          "os_profile": {
+            "admin_username": "testuser",
+            "computer_name": "myVM",
+            "admin_password": "Aa1!zyx_",
+            "windows_configuration": {
+              "enable_automatic_updates": True  # need automatic update for reimage
             }
+          },
+          "network_profile": {
+            "network_interfaces": [
+              {
+                # "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/networkInterfaces/" + NIC_ID + "",
+                "id": NIC_ID,
+                "properties": {
+                  "primary": True
+                }
+              }
+            ]
           }
         }
         result = self.mgmt_client.virtual_machines.create_or_update(resource_group.name, VIRTUAL_MACHINE_NAME, BODY)
         result = result.result()
 
+        """
         # Create a custom-image vm from an unmanaged generalized os image.[put]
         BODY = {
-          "location": "westus",
+          "location": "eastus",
           "properties": {
             "hardware_profile": {
               "vm_size": "Standard_D1_v2"
@@ -690,7 +773,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
 
         # Create a vm in an availability set.[put]
         BODY = {
-          "location": "westus",
+          "location": "eastus",
           "properties": {
             "hardware_profile": {
               "vm_size": "Standard_D1_v2"
@@ -736,7 +819,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
 
         # Create a vm with premium storage.[put]
         BODY = {
-          "location": "westus",
+          "location": "eastus",
           "properties": {
             "hardware_profile": {
               "vm_size": "Standard_D1_v2"
@@ -779,7 +862,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
 
         # Create a vm with ssh authentication.[put]
         BODY = {
-          "location": "westus",
+          "location": "eastus",
           "properties": {
             "hardware_profile": {
               "vm_size": "Standard_D1_v2"
@@ -832,7 +915,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
 
         # Create a vm with password authentication.[put]
         BODY = {
-          "location": "westus",
+          "location": "eastus",
           "properties": {
             "hardware_profile": {
               "vm_size": "Standard_D1_v2"
@@ -875,7 +958,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
 
         # Create a vm with ephemeral os disk.[put]
         BODY = {
-          "location": "westus",
+          "location": "eastus",
           "plan": {
             "publisher": "microsoft-ads",
             "product": "windows-data-science-vm",
@@ -926,7 +1009,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
 
         # Create a vm with DiskEncryptionSet resource id in the os disk and data disk.[put]
         BODY = {
-          "location": "westus",
+          "location": "eastus",
           "properties": {
             "hardware_profile": {
               "vm_size": "Standard_D1_v2"
@@ -996,7 +1079,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
 
         # Create a vm with a marketplace image plan.[put]
         BODY = {
-          "location": "westus",
+          "location": "eastus",
           "plan": {
             "publisher": "microsoft-ads",
             "product": "windows-data-science-vm",
@@ -1044,7 +1127,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
 
         # Create a vm with boot diagnostics.[put]
         BODY = {
-          "location": "westus",
+          "location": "eastus",
           "properties": {
             "hardware_profile": {
               "vm_size": "Standard_D1_v2"
@@ -1090,17 +1173,15 @@ class MgmtComputeTest(AzureMgmtTestCase):
         }
         result = self.mgmt_client.virtual_machines.create_or_update(resource_group.name, VIRTUAL_MACHINE_NAME, BODY)
         result = result.result()
+        """
 
         # Create an availability set.[put]
         BODY = {
-          "location": "westus",
-          "properties": {
-            "platform_fault_domain_count": "2",
-            "platform_update_domain_count": "20"
-          }
+          "location": "eastus",
+          "platform_fault_domain_count": "2",
+          "platform_update_domain_count": "20"
         }
         result = self.mgmt_client.availability_sets.create_or_update(resource_group.name, AVAILABILITY_SET_NAME, BODY)
-        """
 
         # TODO: NEED KEY VAULT
         # Create a disk encryption set.[put]
@@ -1139,7 +1220,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
         """
         # Create or update a dedicated host .[put]
         BODY = {
-          "location": "westus",
+          "location": "eastus",
           "tags": {
             "department": "HR"
           },
@@ -1245,7 +1326,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
             "capacity": "3",
             "name": "Standard_D1_v2"
           },
-          "location": "westus",
+          "location": "eastus",
           "properties": {
             "overprovision": True,
             "virtual_machine_profile": {
@@ -1358,7 +1439,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
             "product": "windows-data-science-vm",
             "name": "windows2016"
           },
-          "location": "westus"
+          "location": "eastus"
         }
         result = self.mgmt_client.virtual_machine_scale_sets.create_or_update(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME, BODY)
         result = result.result()
@@ -1370,7 +1451,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
             "capacity": "3",
             "name": "Standard_D1_v2"
           },
-          "location": "westus",
+          "location": "eastus",
           "properties": {
             "overprovision": True,
             "virtual_machine_profile": {
@@ -1441,7 +1522,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
             "capacity": "3",
             "name": "Standard_D1_v2"
           },
-          "location": "westus",
+          "location": "eastus",
           "properties": {
             "overprovision": True,
             "virtual_machine_profile": {
@@ -1494,6 +1575,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
         }
         result = self.mgmt_client.virtual_machine_scale_sets.create_or_update(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME, BODY)
         result = result.result()
+        """
 
         # Create a scale set with empty data disks on each vm.[put]
         BODY = {
@@ -1502,73 +1584,70 @@ class MgmtComputeTest(AzureMgmtTestCase):
             "capacity": "3",
             "name": "Standard_D2_v2"
           },
-          "location": "westus",
-          "properties": {
-            "overprovision": True,
-            "virtual_machine_profile": {
-              "storage_profile": {
-                "image_reference": {
-                  "sku": "2016-Datacenter",
-                  "publisher": "MicrosoftWindowsServer",
-                  "version": "latest",
-                  "offer": "WindowsServer"
-                },
-                "os_disk": {
-                  "caching": "ReadWrite",
-                  "managed_disk": {
-                    "storage_account_type": "Standard_LRS"
-                  },
-                  "create_option": "FromImage",
-                  "disk_size_gb": "512"
-                },
-                "data_disks": [
-                  {
-                    "disk_size_gb": "1023",
-                    "create_option": "Empty",
-                    "lun": "0"
-                  },
-                  {
-                    "disk_size_gb": "1023",
-                    "create_option": "Empty",
-                    "lun": "1"
-                  }
-                ]
+          "location": "eastus",
+          "overprovision": True,
+          "virtual_machine_profile": {
+            "storage_profile": {
+              "image_reference": {
+                "sku": "2016-Datacenter",
+                "publisher": "MicrosoftWindowsServer",
+                "version": "latest",
+                "offer": "WindowsServer"
               },
-              "os_profile": {
-                "computer_name_prefix": "{vmss-name}",
-                "admin_username": "{your-username}",
-                "admin_password": "{your-password}"
+              "os_disk": {
+                "caching": "ReadWrite",
+                "managed_disk": {
+                  "storage_account_type": "Standard_LRS"
+                },
+                "create_option": "FromImage",
+                "disk_size_gb": "512"
               },
-              "network_profile": {
-                "network_interface_configurations": [
-                  {
-                    "name": "{vmss-name}",
-                    "properties": {
-                      "primary": True,
-                      "enable_ipforwarding": True,
-                      "ip_configurations": [
-                        {
-                          "name": "{vmss-name}",
-                          "properties": {
-                            "subnet": {
-                              "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/virtualNetworks/" + VIRTUAL_NETWORK_NAME + "/subnets/" + SUBNET_NAME + ""
-                            }
-                          }
-                        }
-                      ]
-                    }
-                  }
-                ]
-              }
+              "data_disks": [
+                {
+                  "disk_size_gb": "1023",
+                  "create_option": "Empty",
+                  "lun": "0"
+                },
+                {
+                  "disk_size_gb": "1023",
+                  "create_option": "Empty",
+                  "lun": "1"
+                }
+              ]
             },
-            "upgrade_policy": {
-              "mode": "Manual"
+            "os_profile": {
+              "computer_name_prefix": "testPC",
+              "admin_username": "testuser",
+              "admin_password": "Aa!1()-xyz"
+            },
+            "network_profile": {
+              "network_interface_configurations": [
+                {
+                  "name": "testPC",
+                  "primary": True,
+                  "enable_ipforwarding": True,
+                  "ip_configurations": [
+                    {
+                      "name": "testPC",
+                      "properties": {
+                        "subnet": {
+                          "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/virtualNetworks/" + NETWORK_NAME + "/subnets/" + SUBNET_NAME + ""
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
             }
+          },
+          "upgrade_policy": {
+            "mode": "Manual"
           }
         }
         result = self.mgmt_client.virtual_machine_scale_sets.create_or_update(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME, BODY)
         result = result.result()
 
+        """
         # Create a scale set with an azure load balancer.[put]
         BODY = {
           "sku": {
@@ -1576,7 +1655,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
             "capacity": "3",
             "name": "Standard_D1_v2"
           },
-          "location": "westus",
+          "location": "eastus",
           "properties": {
             "overprovision": True,
             "virtual_machine_profile": {
@@ -1653,7 +1732,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
             "capacity": "3",
             "name": "Standard_D1_v2"
           },
-          "location": "westus",
+          "location": "eastus",
           "properties": {
             "overprovision": True,
             "virtual_machine_profile": {
@@ -1720,7 +1799,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
             "capacity": "3",
             "name": "Standard_D1_v2"
           },
-          "location": "westus",
+          "location": "eastus",
           "properties": {
             "overprovision": True,
             "virtual_machine_profile": {
@@ -1787,7 +1866,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
             "capacity": "3",
             "name": "Standard_D1_v2"
           },
-          "location": "westus",
+          "location": "eastus",
           "properties": {
             "overprovision": True,
             "virtual_machine_profile": {
@@ -1906,7 +1985,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
             "product": "windows-data-science-vm",
             "name": "windows2016"
           },
-          "location": "westus"
+          "location": "eastus"
         }
         result = self.mgmt_client.virtual_machine_scale_sets.create_or_update(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME, BODY)
         result = result.result()
@@ -1918,7 +1997,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
             "capacity": "3",
             "name": "Standard_D1_v2"
           },
-          "location": "westus",
+          "location": "eastus",
           "properties": {
             "overprovision": True,
             "virtual_machine_profile": {
@@ -2039,7 +2118,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
               "mode": "Manual"
             }
           },
-          "location": "westus"
+          "location": "eastus"
         }
         result = self.mgmt_client.virtual_machine_scale_sets.create_or_update(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME, BODY)
         result = result.result()
@@ -2051,7 +2130,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
             "capacity": "3",
             "name": "Standard_D1_v2"
           },
-          "location": "westus",
+          "location": "eastus",
           "properties": {
             "overprovision": True,
             "virtual_machine_profile": {
@@ -2117,7 +2196,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
             "capacity": "3",
             "name": "Standard_D1_v2"
           },
-          "location": "westus",
+          "location": "eastus",
           "properties": {
             "overprovision": True,
             "virtual_machine_profile": {
@@ -2178,7 +2257,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
             "capacity": "3",
             "name": "Standard_D1_v2"
           },
-          "location": "westus",
+          "location": "eastus",
           "properties": {
             "overprovision": True,
             "virtual_machine_profile": {
@@ -2236,16 +2315,14 @@ class MgmtComputeTest(AzureMgmtTestCase):
         }
         result = self.mgmt_client.virtual_machine_scale_sets.create_or_update(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME, BODY)
         result = result.result()
+        """
 
         # Create or Update a proximity placement group.[put]
         BODY = {
-          "location": "westus",
-          "properties": {
-            "proximity_placement_group_type": "Standard"
-          }
+          "location": "eastus",
+          "proximity_placement_group_type": "Standard"
         }
         result = self.mgmt_client.proximity_placement_groups.create_or_update(resource_group.name, PROXIMITY_PLACEMENT_GROUP_NAME, BODY)
-        """
 
         # # Create or update a simple gallery Application.[put]
         BODY = {
@@ -2376,7 +2453,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
         """
         # Create VirtualMachineScaleSet VM extension.[put]
         BODY = {
-          "location": "westus",
+          "location": "eastus",
           "properties": {
             "auto_upgrade_minor_version": True,
             "publisher": "extPublisher",
@@ -2420,18 +2497,16 @@ class MgmtComputeTest(AzureMgmtTestCase):
         # Get a gallery Application.[get]
         result = self.mgmt_client.gallery_applications.get(resource_group.name, GALLERY_NAME, APPLICATION_NAME)
 
-        """
-        # Create a proximity placement group.[get]
+        # Get a proximity placement group.[get]
         result = self.mgmt_client.proximity_placement_groups.get(resource_group.name, PROXIMITY_PLACEMENT_GROUP_NAME)
-        """
 
         # List gallery Image Versions in a gallery Image Definition.[get]
         result = self.mgmt_client.gallery_image_versions.list_by_gallery_image(resource_group.name, GALLERY_NAME, IMAGE_NAME)
 
-        """
         # Get Virtual Machine Instance View.[get]
         result = self.mgmt_client.virtual_machines.instance_view(resource_group.name, VIRTUAL_MACHINE_NAME)
 
+        """
         # Get Container Service[get]
         result = self.mgmt_client.container_services.get(resource_group.name, CONTAINER_SERVICE_NAME)
 
@@ -2442,19 +2517,15 @@ class MgmtComputeTest(AzureMgmtTestCase):
         # Get a gallery image.[get]
         result = self.mgmt_client.gallery_images.get(resource_group.name, GALLERY_NAME, IMAGE_NAME)
 
-        """
         # Lists all available virtual machine sizes to which the specified virtual machine can be resized[get]
         result = self.mgmt_client.virtual_machines.list_available_sizes(resource_group.name, VIRTUAL_MACHINE_NAME)
-        """
 
         # TODO: NEED KEYVAULT
         # # Get information about a disk encryption set.[get]
         # result = self.mgmt_client.disk_encryption_sets.get(resource_group.name, DISK_ENCRYPTION_SET_NAME)
 
-        """
         # Get a Virtual Machine.[get]
         result = self.mgmt_client.virtual_machines.get(resource_group.name, VIRTUAL_MACHINE_NAME)
-        """
 
         # List gallery Applications in a gallery.[get]
         result = self.mgmt_client.gallery_applications.list_by_gallery(resource_group.name, GALLERY_NAME)
@@ -2471,16 +2542,17 @@ class MgmtComputeTest(AzureMgmtTestCase):
         # Get a gallery.[get]
         result = self.mgmt_client.galleries.get(resource_group.name, GALLERY_NAME)
 
-        """
         # VirtualMachineRunCommandGet[get]
-        result = self.mgmt_client.virtual_machine_run_commands.get(LOCATION_NAME, RUN_COMMAND_NAME)
+        RUN_COMMAND_NAME = "RunPowerShellScript"
+        result = self.mgmt_client.virtual_machine_run_commands.get(AZURE_LOCATION, RUN_COMMAND_NAME)
 
+        """
         # List Container Services by Resource Group[get]
         result = self.mgmt_client.container_services.list_by_resource_group(resource_group.name)
-
-        # Create a proximity placement group.[get]
-        result = self.mgmt_client.proximity_placement_groups.get(resource_group.name, PROXIMITY_PLACEMENT_GROUP_NAME)
         """
+
+        # List proximity placement groups in a resource group.[get]
+        result = self.mgmt_client.proximity_placement_groups.list_by_resource_group(resource_group.name)
 
         # Get information about a virtual machine image.[get]
         result = self.mgmt_client.images.get(resource_group.name, IMAGE_NAME)
@@ -2488,13 +2560,17 @@ class MgmtComputeTest(AzureMgmtTestCase):
         # Get information about a managed disk.[get]
         result = self.mgmt_client.disks.get(resource_group.name, DISK_NAME)
 
+        # Get availability set (TODO: need swagger file)
+        result = self.mgmt_client.availability_sets.get(resource_group.name, AVAILABILITY_SET_NAME)
+
         # List all disk encryption sets in a resource group.[get]
         result = self.mgmt_client.disk_encryption_sets.list_by_resource_group(resource_group.name)
 
-        """
         # Lists all the virtual machines under the specified subscription for the specified location.[get]
-        result = self.mgmt_client.virtual_machines.list_by_location(LOCATION_NAME)
-        """
+        result = self.mgmt_client.virtual_machines.list_by_location(AZURE_LOCATION)
+
+        # List virtual machine sizes (TODO: need swagger file)
+        result = self.mgmt_client.virtual_machine_sizes.list(AZURE_LOCATION)
 
         # List galleries in a resource group.[get]
         result = self.mgmt_client.galleries.list_by_resource_group(resource_group.name)
@@ -2508,24 +2584,28 @@ class MgmtComputeTest(AzureMgmtTestCase):
         # List all managed disks in a resource group.[get]
         result = self.mgmt_client.disks.list_by_resource_group(resource_group.name)
 
-        """
         # VirtualMachineRunCommandList[get]
-        result = self.mgmt_client.virtual_machine_run_commands.list(LOCATION_NAME)
+        result = self.mgmt_client.virtual_machine_run_commands.list(AZURE_LOCATION)
 
+        """
         # List Container Services[get]
         result = self.mgmt_client.container_services.list()
-
-        # Create a proximity placement group.[get]
-        result = self.mgmt_client.proximity_placement_groups.get(resource_group.name, PROXIMITY_PLACEMENT_GROUP_NAME)
         """
+
+        # List proximity placement groups in a subscription. [get]
+        result = self.mgmt_client.proximity_placement_groups.list_by_subscription()
 
         # List all disk encryption sets in a subscription.[get]
         result = self.mgmt_client.disk_encryption_sets.list()
 
-        """
         # List availability sets in a subscription.[get]
         result = self.mgmt_client.availability_sets.list_by_subscription()
-        """
+
+        # List availability sets (TODO: need swagger file)
+        result = self.mgmt_client.availability_sets.list(resource_group.name)
+
+        # List availability sets available sizes (TODO: need swagger file)
+        result = self.mgmt_client.availability_sets.list_available_sizes(resource_group.name, AVAILABILITY_SET_NAME)
 
         # List galleries in a subscription.[get]
         result = self.mgmt_client.galleries.list()
@@ -2539,13 +2619,19 @@ class MgmtComputeTest(AzureMgmtTestCase):
         # List all managed disks in a subscription.[get]
         result = self.mgmt_client.disks.list()
 
-        """
+        # List usage (TODO: need swagger file)
+        result = self.mgmt_client.usage.list(AZURE_LOCATION)
+
+        # List operations (TODO: need swagger file)
+        result = self.mgmt_client.operations.list()
+
         # Lists all available Resource SKUs[get]
         result = self.mgmt_client.resource_skus.list()
 
-        # Lists all available Resource SKUs for the specified region[get]
-        result = self.mgmt_client.resource_skus.list()
+        # # Lists all available Resource SKUs for the specified region[get]
+        # result = self.mgmt_client.resource_skus.list()
 
+        """
         # Update VirtualMachineScaleSet VM extension.[patch]
         BODY = {
           "properties": {
@@ -2589,6 +2675,13 @@ class MgmtComputeTest(AzureMgmtTestCase):
         result = self.mgmt_client.virtual_machine_scale_set_rolling_upgrades.start_extension_upgrade(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME)
         result = result.result()
         """
+
+        # Update availability sets (TODO: neeed swagger file)
+        BODY = {
+          "platform_fault_domain_count": "2",
+          "platform_update_domain_count": "20"
+        }
+        result = self.mgmt_client.availability_sets.update(resource_group.name, AVAILABILITY_SET_NAME, BODY)
 
         # Update a simple Gallery Image Version (Managed Image as source).[patch]
         BODY = {
@@ -2636,10 +2729,14 @@ class MgmtComputeTest(AzureMgmtTestCase):
         result = self.mgmt_client.gallery_applications.update(resource_group.name, GALLERY_NAME, APPLICATION_NAME, BODY)
         result = result.result()
 
-        """
-        # Create a proximity placement group.[get]
-        result = self.mgmt_client.proximity_placement_groups.get(resource_group.name, PROXIMITY_PLACEMENT_GROUP_NAME)
+        # Update a proximity placement group.[get]
+        BODY = {
+          "location": "eastus",
+          "proximity_placement_group_type": "Standard"
+        }
+        result = self.mgmt_client.proximity_placement_groups.update(resource_group.name, PROXIMITY_PLACEMENT_GROUP_NAME, BODY)
 
+        """
         # Export logs which contain all Api requests made to Compute Resource Provider within the given time period broken down by intervals.[post]
         BODY = {
           "interval_length": "FiveMins",
@@ -2648,8 +2745,9 @@ class MgmtComputeTest(AzureMgmtTestCase):
           "to_time": "2018-01-23T01:54:06.862601Z",
           "group_by_resource_name": True
         }
-        result = self.mgmt_client.log_analytics.export_request_rate_by_interval(LOCATION_NAME, LOG_ANALYTIC_NAME, BODY)
+        result = self.mgmt_client.log_analytics.export_request_rate_by_interval(AZURE_LOCATION, LOG_ANALYTIC_NAME, BODY)
         result = result.result()
+        """
 
         # VirtualMachineRunCommand[post]
         BODY = {
@@ -2658,9 +2756,9 @@ class MgmtComputeTest(AzureMgmtTestCase):
         result = self.mgmt_client.virtual_machines.run_command(resource_group.name, VIRTUAL_MACHINE_NAME, BODY)
         result = result.result()
 
-        # Generalize a Virtual Machine.[post]
-        result = self.mgmt_client.virtual_machines.generalize(resource_group.name, VIRTUAL_MACHINE_NAME)
-        """
+        # VirtualMachine power off (TODO:need swagger file)
+        result = self.mgmt_client.virtual_machines.power_off(resource_group.name, VIRTUAL_MACHINE_NAME)
+        result = result.result()
 
         # Update a simple gallery image.[patch]
         BODY = {
@@ -2687,18 +2785,19 @@ class MgmtComputeTest(AzureMgmtTestCase):
         }
         result = self.mgmt_client.log_analytics.export_throttled_requests(LOCATION_NAME, LOG_ANALYTIC_NAME, BODY)
         result = result.result()
+        """
 
         # Reapply the state of a virtual machine.[post]
         result = self.mgmt_client.virtual_machines.reapply(resource_group.name, VIRTUAL_MACHINE_NAME)
         result = result.result()
 
+        # TODO: Message: The Reimage and OSUpgrade Virtual Machine actions require that the virtual machine has Automatic OS Upgrades enabled.
         # Reimage a Virtual Machine.[post]
-        BODY = {
-          "temp_disk": True
-        }
-        result = self.mgmt_client.virtual_machines.reimage(resource_group.name, VIRTUAL_MACHINE_NAME, BODY)
-        result = result.result()
-        """
+        # BODY = {
+        #   "temp_disk": True
+        # }
+        # result = self.mgmt_client.virtual_machines.reimage(resource_group.name, VIRTUAL_MACHINE_NAME)
+        # result = result.result()
 
         # TODO: NEED KEYVAULT
         # Update a disk encryption set.[patch]
@@ -2719,63 +2818,63 @@ class MgmtComputeTest(AzureMgmtTestCase):
         # result = self.mgmt_client.disk_encryption_sets.update(resource_group.name, DISK_ENCRYPTION_SET_NAME, BODY)
         # result = result.result()
 
-        """
         # Update a VM by detaching data disk[patch]
         BODY = {
-          "properties": {
-            "hardware_profile": {
-              "vm_size": "Standard_D2_v2"
-            },
-            "storage_profile": {
-              "image_reference": {
-                "sku": "2016-Datacenter",
-                "publisher": "MicrosoftWindowsServer",
-                "version": "latest",
-                "offer": "WindowsServer"
-              },
-              "os_disk": {
-                "caching": "ReadWrite",
-                "managed_disk": {
-                  "storage_account_type": "Standard_LRS"
-                },
-                "name": "myVMosdisk",
-                "create_option": "FromImage"
-              },
-              "data_disks": [
-                {
-                  "disk_size_gb": "1023",
-                  "create_option": "Empty",
-                  "lun": "0",
-                  "to_be_detached": True
-                },
-                {
-                  "disk_size_gb": "1023",
-                  "create_option": "Empty",
-                  "lun": "1",
-                  "to_be_detached": False
+          # "hardware_profile": {
+          #   "vm_size": "Standard_D2_v2"
+          # },
+          # "storage_profile": {
+          #   "image_reference": {
+          #     "sku": "2016-Datacenter",
+          #     "publisher": "MicrosoftWindowsServer",
+          #     "version": "latest",
+          #     "offer": "WindowsServer"
+          #   },
+          #   "os_disk": {
+          #     "caching": "ReadWrite",
+          #     "managed_disk": {
+          #       "storage_account_type": "Standard_LRS"
+          #     },
+          #     "name": "myVMosdisk",
+          #     "create_option": "FromImage"
+          #   },
+          #   "data_disks": [
+          #     {
+          #       "disk_size_gb": "1023",
+          #       "create_option": "Empty",
+          #       "lun": "0",
+          #       "to_be_detached": True
+          #     },
+          #     {
+          #       "disk_size_gb": "1023",
+          #       "create_option": "Empty",
+          #       "lun": "1",
+          #       "to_be_detached": False
+          #     }
+          #   ]
+          # },
+          # "os_profile": {
+          #   "admin_username": "{your-username}",
+          #   "computer_name": "myVM",
+          #   "admin_password": "{your-password}"
+          # },
+          "network_profile": {
+            "network_interfaces": [
+              {
+                # "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/networkInterfaces/" + NETWORK_INTERFACE_NAME + "",
+                "id": NIC_ID,
+                "properties": {
+                  "primary": True
                 }
-              ]
-            },
-            "os_profile": {
-              "admin_username": "{your-username}",
-              "computer_name": "myVM",
-              "admin_password": "{your-password}"
-            },
-            "network_profile": {
-              "network_interfaces": [
-                {
-                  "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/networkInterfaces/" + NETWORK_INTERFACE_NAME + "",
-                  "properties": {
-                    "primary": True
-                  }
-                }
-              ]
-            }
+              }
+            ]
           }
         }
         result = self.mgmt_client.virtual_machines.update(resource_group.name, VIRTUAL_MACHINE_NAME, BODY)
         result = result.result()
-        """
+
+        # Generalize a Virtual Machine.[post]
+        result = self.mgmt_client.virtual_machines.generalize(resource_group.name, VIRTUAL_MACHINE_NAME)
 
         # Update a simple gallery.[patch]
         BODY = {
@@ -2809,6 +2908,9 @@ class MgmtComputeTest(AzureMgmtTestCase):
         result = result.result()
         """
 
+        # Delete virtual machine (TODO: need swagger file)
+        result = self.mgmt_client.virtual_machines.delete(resource_group.name, VIRTUAL_MACHINE_NAME)
+
         # Delete a gallery Image Version.[delete]
         result = self.mgmt_client.gallery_image_versions.delete(resource_group.name, GALLERY_NAME, IMAGE_NAME, VERSION_NAME)
         result = result.result()
@@ -2824,10 +2926,10 @@ class MgmtComputeTest(AzureMgmtTestCase):
         result = self.mgmt_client.snapshots.delete(resource_group.name, SNAPSHOT_NAME)
         result = result.result()
 
-        """
-        # Create a proximity placement group.[get]
-        result = self.mgmt_client.proximity_placement_groups.get(resource_group.name, PROXIMITY_PLACEMENT_GROUP_NAME)
+        # Delete a proximity placement group.[get]
+        result = self.mgmt_client.proximity_placement_groups.delete(resource_group.name, PROXIMITY_PLACEMENT_GROUP_NAME)
 
+        """
         # Delete Container Service[delete]
         result = self.mgmt_client.container_services.delete(resource_group.name, CONTAINER_SERVICE_NAME)
         result = result.result()
@@ -2844,6 +2946,10 @@ class MgmtComputeTest(AzureMgmtTestCase):
 
         # Delete a image.  (TODO: need a swagger file)
         result = self.mgmt_client.images.delete(resource_group.name, IMAGE_NAME)
+        result = result.result()
+
+        # Delete availability sets (TOODO: need a swagger file)
+        resout = self.mgmt_client.availability_sets.delete(resource_group.name, AVAILABILITY_SET_NAME)
 
         # Delete a gallery.[delete]
         result = self.mgmt_client.galleries.delete(resource_group.name, GALLERY_NAME)
