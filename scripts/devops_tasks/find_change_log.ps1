@@ -57,14 +57,11 @@ function VerifyPackages($rootDirectory)
    #This function verifies version in history.md or CHANGELOG.md for a given package
    try
    {
-      $historyFiles = Get-ChildItem -Path $rootDirectory -Recurse -Include "history.md"
+      $historyFiles = Get-ChildItem -Path $rootDirectory -Recurse -Include "CHANGELOG.md"
       if ($historyFiles -eq $null)
       { 
-         $historyFiles = Get-ChildItem -Path $rootDirectory -Recurse -Include "CHANGELOG.md"
-         if ($historyFiles -eq $null){
-            Write-Host "Change log file is missing for package"
-            exit(1)
-         }
+         Write-Host "Change log file is missing for package"
+         exit(1)
       }
 
       #Find current version of package from _version.py and package name from setup.py
