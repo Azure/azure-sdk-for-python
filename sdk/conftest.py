@@ -47,3 +47,12 @@ def pytest_runtest_setup(item):
         from devtools_testutils import is_live
         if is_live() and os.environ.get('AZURE_SKIP_LIVE_RECORDING', '').lower() == 'true':
             pytest.skip("playback test only")
+
+try:
+    from azure_devtools.scenario_tests import AbstractPreparer
+    @pytest.fixture(scope='session', autouse=True)
+    def clean_cached_resources():
+        yield
+        AbstractPreparer._perform_pending_deletes()
+except ImportError:
+    pass
