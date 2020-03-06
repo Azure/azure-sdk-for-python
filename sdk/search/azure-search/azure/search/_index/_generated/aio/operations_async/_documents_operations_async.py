@@ -51,7 +51,7 @@ class DocumentsOperations:
         :rtype: long
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls: ClsType[int] = kwargs.pop('cls', None)
+        cls = kwargs.pop('cls', None)  # type: ClsType[int]
         error_map = kwargs.pop('error_map', {})
         
         _x_ms_client_request_id = None
@@ -68,11 +68,11 @@ class DocumentsOperations:
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters: Dict[str, Any] = {}
+        query_parameters = {}  # type: Dict[str, Any]
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters: Dict[str, Any] = {}
+        header_parameters = {}  # type: Dict[str, Any]
         if _x_ms_client_request_id is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("x_ms_client_request_id", _x_ms_client_request_id, 'str')
         header_parameters['Accept'] = 'application/json'
@@ -115,7 +115,7 @@ class DocumentsOperations:
         :rtype: ~search_index_client.models.SearchDocumentsResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls: ClsType["models.SearchDocumentsResult"] = kwargs.pop('cls', None)
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.SearchDocumentsResult"]
         error_map = kwargs.pop('error_map', {})
         
         _include_total_result_count = None
@@ -165,7 +165,7 @@ class DocumentsOperations:
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters: Dict[str, Any] = {}
+        query_parameters = {}  # type: Dict[str, Any]
         if search_text is not None:
             query_parameters['search'] = self._serialize.query("search_text", search_text, 'str')
         if _include_total_result_count is not None:
@@ -203,7 +203,7 @@ class DocumentsOperations:
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters: Dict[str, Any] = {}
+        header_parameters = {}  # type: Dict[str, Any]
         if _x_ms_client_request_id is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("x_ms_client_request_id", _x_ms_client_request_id, 'str')
         header_parameters['Accept'] = 'application/json'
@@ -242,7 +242,7 @@ class DocumentsOperations:
         :rtype: ~search_index_client.models.SearchDocumentsResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls: ClsType["models.SearchDocumentsResult"] = kwargs.pop('cls', None)
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.SearchDocumentsResult"]
         error_map = kwargs.pop('error_map', {})
         
         _x_ms_client_request_id = None
@@ -259,18 +259,18 @@ class DocumentsOperations:
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters: Dict[str, Any] = {}
+        query_parameters = {}  # type: Dict[str, Any]
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters: Dict[str, Any] = {}
+        header_parameters = {}  # type: Dict[str, Any]
         if _x_ms_client_request_id is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("x_ms_client_request_id", _x_ms_client_request_id, 'str')
         header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = kwargs.pop('content_type', 'application/json')
 
         # Construct and send request
-        body_content_kwargs = {}
+        body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(search_request, 'SearchRequest')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
@@ -311,7 +311,7 @@ class DocumentsOperations:
         :rtype: object
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls: ClsType[object] = kwargs.pop('cls', None)
+        cls = kwargs.pop('cls', None)  # type: ClsType[object]
         error_map = kwargs.pop('error_map', {})
         
         _x_ms_client_request_id = None
@@ -329,13 +329,13 @@ class DocumentsOperations:
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters: Dict[str, Any] = {}
+        query_parameters = {}  # type: Dict[str, Any]
         if selected_fields is not None:
             query_parameters['$select'] = self._serialize.query("selected_fields", selected_fields, '[str]')
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters: Dict[str, Any] = {}
+        header_parameters = {}  # type: Dict[str, Any]
         if _x_ms_client_request_id is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("x_ms_client_request_id", _x_ms_client_request_id, 'str')
         header_parameters['Accept'] = 'application/json'
@@ -382,7 +382,7 @@ class DocumentsOperations:
         :rtype: ~search_index_client.models.SuggestDocumentsResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls: ClsType["models.SuggestDocumentsResult"] = kwargs.pop('cls', None)
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.SuggestDocumentsResult"]
         error_map = kwargs.pop('error_map', {})
         
         _filter = None
@@ -418,7 +418,7 @@ class DocumentsOperations:
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters: Dict[str, Any] = {}
+        query_parameters = {}  # type: Dict[str, Any]
         query_parameters['search'] = self._serialize.query("search_text", search_text, 'str')
         query_parameters['suggesterName'] = self._serialize.query("suggester_name", suggester_name, 'str')
         if _filter is not None:
@@ -442,7 +442,7 @@ class DocumentsOperations:
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters: Dict[str, Any] = {}
+        header_parameters = {}  # type: Dict[str, Any]
         if _x_ms_client_request_id is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("x_ms_client_request_id", _x_ms_client_request_id, 'str')
         header_parameters['Accept'] = 'application/json'
@@ -481,7 +481,7 @@ class DocumentsOperations:
         :rtype: ~search_index_client.models.SuggestDocumentsResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls: ClsType["models.SuggestDocumentsResult"] = kwargs.pop('cls', None)
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.SuggestDocumentsResult"]
         error_map = kwargs.pop('error_map', {})
         
         _x_ms_client_request_id = None
@@ -498,18 +498,18 @@ class DocumentsOperations:
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters: Dict[str, Any] = {}
+        query_parameters = {}  # type: Dict[str, Any]
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters: Dict[str, Any] = {}
+        header_parameters = {}  # type: Dict[str, Any]
         if _x_ms_client_request_id is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("x_ms_client_request_id", _x_ms_client_request_id, 'str')
         header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = kwargs.pop('content_type', 'application/json')
 
         # Construct and send request
-        body_content_kwargs = {}
+        body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(suggest_request, 'SuggestRequest')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
@@ -546,7 +546,7 @@ class DocumentsOperations:
         :rtype: ~search_index_client.models.IndexDocumentsResult or ~search_index_client.models.IndexDocumentsResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls: ClsType["models.IndexDocumentsResult"] = kwargs.pop('cls', None)
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.IndexDocumentsResult"]
         error_map = kwargs.pop('error_map', {})
         
         _x_ms_client_request_id = None
@@ -563,18 +563,18 @@ class DocumentsOperations:
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters: Dict[str, Any] = {}
+        query_parameters = {}  # type: Dict[str, Any]
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters: Dict[str, Any] = {}
+        header_parameters = {}  # type: Dict[str, Any]
         if _x_ms_client_request_id is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("x_ms_client_request_id", _x_ms_client_request_id, 'str')
         header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = kwargs.pop('content_type', 'application/json')
 
         # Construct and send request
-        body_content_kwargs = {}
+        body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(batch, 'IndexBatch')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
@@ -623,7 +623,7 @@ class DocumentsOperations:
         :rtype: ~search_index_client.models.AutocompleteResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls: ClsType["models.AutocompleteResult"] = kwargs.pop('cls', None)
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.AutocompleteResult"]
         error_map = kwargs.pop('error_map', {})
         
         _x_ms_client_request_id = None
@@ -657,7 +657,7 @@ class DocumentsOperations:
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters: Dict[str, Any] = {}
+        query_parameters = {}  # type: Dict[str, Any]
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
         query_parameters['search'] = self._serialize.query("search_text", search_text, 'str')
         query_parameters['suggesterName'] = self._serialize.query("suggester_name", suggester_name, 'str')
@@ -679,7 +679,7 @@ class DocumentsOperations:
             query_parameters['$top'] = self._serialize.query("top", _top, 'int')
 
         # Construct headers
-        header_parameters: Dict[str, Any] = {}
+        header_parameters = {}  # type: Dict[str, Any]
         if _x_ms_client_request_id is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("x_ms_client_request_id", _x_ms_client_request_id, 'str')
         header_parameters['Accept'] = 'application/json'
@@ -718,7 +718,7 @@ class DocumentsOperations:
         :rtype: ~search_index_client.models.AutocompleteResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls: ClsType["models.AutocompleteResult"] = kwargs.pop('cls', None)
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.AutocompleteResult"]
         error_map = kwargs.pop('error_map', {})
         
         _x_ms_client_request_id = None
@@ -735,18 +735,18 @@ class DocumentsOperations:
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters: Dict[str, Any] = {}
+        query_parameters = {}  # type: Dict[str, Any]
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters: Dict[str, Any] = {}
+        header_parameters = {}  # type: Dict[str, Any]
         if _x_ms_client_request_id is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("x_ms_client_request_id", _x_ms_client_request_id, 'str')
         header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = kwargs.pop('content_type', 'application/json')
 
         # Construct and send request
-        body_content_kwargs = {}
+        body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(autocomplete_request, 'AutocompleteRequest')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
