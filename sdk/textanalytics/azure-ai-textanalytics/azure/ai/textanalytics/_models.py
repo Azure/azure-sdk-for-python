@@ -396,7 +396,7 @@ class AnalyzeSentimentResult(DictMixin):
     :param confidence_scores: Document level sentiment confidence
         scores between 0 and 1 for each sentiment label.
     :type confidence_scores:
-        ~azure.ai.textanalytics.SentimentConfidenceScorePerLabel
+        ~azure.ai.textanalytics.SentimentConfidenceScores
     :param sentences: Sentence level sentiment analysis.
     :type sentences:
         list[~azure.ai.textanalytics.SentenceSentiment]
@@ -422,16 +422,16 @@ class TextDocumentStatistics(DictMixin):
     """TextDocumentStatistics contains information about
     the document payload.
 
-    :param character_count: Number of text elements recognized in
+    :param grapheme_count: Number of text elements recognized in
         the document.
-    :type character_count: int
+    :type grapheme_count: int
     :param transaction_count: Number of transactions for the
         document.
     :type transaction_count: int
     """
 
     def __init__(self, **kwargs):
-        self.character_count = kwargs.get("character_count", None)
+        self.grapheme_count = kwargs.get("grapheme_count", None)
         self.transaction_count = kwargs.get("transaction_count", None)
 
     @classmethod
@@ -439,13 +439,13 @@ class TextDocumentStatistics(DictMixin):
         if stats is None:
             return None
         return cls(
-            character_count=stats.characters_count,
+            grapheme_count=stats.characters_count,
             transaction_count=stats.transactions_count,
         )
 
     def __repr__(self):
-        return "TextDocumentStatistics(character_count={}, transaction_count={})" \
-            .format(self.character_count, self.transaction_count)[:1024]
+        return "TextDocumentStatistics(grapheme_count={}, transaction_count={})" \
+            .format(self.grapheme_count, self.transaction_count)[:1024]
 
 
 class DocumentError(DictMixin):
@@ -679,7 +679,7 @@ class SentenceSentiment(DictMixin):
     :param confidence_scores: The sentiment confidence score between 0
         and 1 for the sentence for all labels.
     :type confidence_scores:
-        ~azure.ai.textanalytics.SentimentConfidenceScorePerLabel
+        ~azure.ai.textanalytics.SentimentConfidenceScores
     :param grapheme_offset: The sentence offset from the start of the
         document.
     :type grapheme_offset: int
@@ -700,7 +700,7 @@ class SentenceSentiment(DictMixin):
     def _from_generated(cls, sentence):
         return cls(
             sentiment=sentence.sentiment.value,
-            confidence_scores=SentimentConfidenceScorePerLabel._from_generated(sentence.sentence_scores),  # pylint: disable=protected-access
+            confidence_scores=SentimentConfidenceScores._from_generated(sentence.sentence_scores),  # pylint: disable=protected-access
             grapheme_offset=sentence.offset,
             grapheme_length=sentence.length,
             warnings=sentence.warnings,
@@ -712,9 +712,9 @@ class SentenceSentiment(DictMixin):
                                      self.grapheme_length, self.warnings)[:1024]
 
 
-class SentimentConfidenceScorePerLabel(DictMixin):
-    """The confidence scores (Softmax scores) between 0 and 1 across all sentiment
-    labels: positive, neutral, negative. Higher values indicate higher confidence.
+class SentimentConfidenceScores(DictMixin):
+    """The confidence scores (Softmax scores) between 0 and 1.
+    Higher values indicate higher confidence.
 
     :param positive: Positive score.
     :type positive: float
@@ -738,5 +738,5 @@ class SentimentConfidenceScorePerLabel(DictMixin):
         )
 
     def __repr__(self):
-        return "SentimentConfidenceScorePerLabel(positive={}, neutral={}, negative={})" \
+        return "SentimentConfidenceScores(positive={}, neutral={}, negative={})" \
             .format(self.positive, self.neutral, self.negative)[:1024]
