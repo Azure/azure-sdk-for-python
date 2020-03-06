@@ -422,16 +422,16 @@ class TextDocumentStatistics(DictMixin):
     """TextDocumentStatistics contains information about
     the document payload.
 
-    :param character_count: Number of text elements recognized in
+    :param grapheme_count: Number of text elements recognized in
         the document.
-    :type character_count: int
+    :type grapheme_count: int
     :param transaction_count: Number of transactions for the
         document.
     :type transaction_count: int
     """
 
     def __init__(self, **kwargs):
-        self.character_count = kwargs.get("character_count", None)
+        self.grapheme_count = kwargs.get("grapheme_count", None)
         self.transaction_count = kwargs.get("transaction_count", None)
 
     @classmethod
@@ -439,13 +439,13 @@ class TextDocumentStatistics(DictMixin):
         if stats is None:
             return None
         return cls(
-            character_count=stats.characters_count,
+            grapheme_count=stats.characters_count,
             transaction_count=stats.transactions_count,
         )
 
     def __repr__(self):
-        return "TextDocumentStatistics(character_count={}, transaction_count={})" \
-            .format(self.character_count, self.transaction_count)[:1024]
+        return "TextDocumentStatistics(grapheme_count={}, transaction_count={})" \
+            .format(self.grapheme_count, self.transaction_count)[:1024]
 
 
 class DocumentError(DictMixin):

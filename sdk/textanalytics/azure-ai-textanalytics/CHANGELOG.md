@@ -5,6 +5,7 @@
 **Breaking changes**
 - `SentimentScorePerLabel` has been renamed to `SentimentConfidenceScores`
 - `AnalyzeSentimentResult` and `SentenceSentiment` attribute `sentiment_scores` has been renamed to `confidence_scores`
+- `TextDocumentStatistics` attribute `character_count` has been renamed to `grapheme_count`
 - `LinkedEntity` attribute `id` has been renamed to `data_source_entity_id`
 - Parameters `country_hint` and `language` are now passed as keyword arguments
 - The keyword argument `response_hook` has been renamed to `raw_response_hook`
