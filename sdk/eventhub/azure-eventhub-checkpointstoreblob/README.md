@@ -105,7 +105,14 @@ version, specify `api_version` when you create the `BlobCheckpointStore` object.
 
 ### General
 Enabling logging will be helpful to do trouble shooting.
-Refer to [Logging](#logging) to enable loggers for related libraries.
+
+### Logging
+
+- Enable `azure.eventhub.extensions.checkpointstoreblob` logger to collect traces from the library.
+- Enable `azure.eventhub` logger to collect traces from the main azure-eventhub library.
+- Enable `azure.eventhub.extensions.checkpointstoreblob._vendor.storage` logger to collect traces from azure storage blob library.
+- Enable `uamqp` logger to collect traces from the underlying uAMQP library.
+- Enable AMQP frame level trace by setting `logging_enable=True` when creating the client.
 
 ## Next steps
 
@@ -115,14 +122,6 @@ Refer to [Logging](#logging) to enable loggers for related libraries.
 ### Documentation
 
 Reference documentation is available [here](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/5.0.0/azure.eventhub.html#azure.eventhub.CheckpointStore)
-
-### Logging
-
-- Enable `azure.eventhub.extensions.checkpointstoreblob` logger to collect traces from the library.
-- Enable `azure.eventhub` logger to collect traces from the main azure-eventhub library.
-- Enable `azure.eventhub.extensions.checkpointstoreblob._vendor.storage` logger to collect traces from azure storage blob library.
-- Enable `uamqp` logger to collect traces from the underlying uAMQP library.
-- Enable AMQP frame level trace by setting `logging_enable=True` when creating the client.
 
 ### Provide Feedback
 

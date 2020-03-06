@@ -351,6 +351,12 @@ The Event Hubs APIs generate the following exceptions in azure.eventhub.exceptio
 - **OperationTimeoutError:** EventHubConsumer.send() times out.
 - **EventHubError:** All other Eventhubs related errors. It is also the root error class of all the errors described above.
 
+### Logging
+
+- Enable `azure.eventhub` logger to collect traces from the library.
+- Enable `uamqp` logger to collect traces from the underlying uAMQP library.
+- Enable AMQP frame level trace by setting `logging_enable=True` when creating the client.
+
 ## Next steps
 
 ### More sample code
@@ -360,12 +366,6 @@ Please take a look at the [samples](./samples) directory for detailed examples o
 ### Documentation
 
 Reference documentation is available [here](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/5.0.0/azure.eventhub.html).
-
-### Logging
-
-- Enable `azure.eventhub` logger to collect traces from the library.
-- Enable `uamqp` logger to collect traces from the underlying uAMQP library.
-- Enable AMQP frame level trace by setting `logging_enable=True` when creating the client.
 
 ### Provide Feedback
 
