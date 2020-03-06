@@ -16,10 +16,6 @@ from .recording_processors import RecordingProcessor
 from .exceptions import AzureNameError
 
 _logger = logging.getLogger("preparer")
-_logger.setLevel(logging.DEBUG)
-handler = logging.StreamHandler(stream=sys.stdout)
-handler.setFormatter(logging.Formatter('%(asctime)s %(name)-12s %(levelname)-8s %(message)s'))
-_logger.addHandler(handler)
 
 # Core Utility
 
