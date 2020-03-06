@@ -88,9 +88,7 @@ class DataLakeDirectoryClient(PathClient):
         :return a DataLakeDirectoryClient
         :rtype ~azure.storage.filedatalake.DataLakeDirectoryClient
         """
-        account_url, secondary, credential = parse_connection_str(conn_str, credential, 'dfs')
-        if 'secondary_hostname' not in kwargs:
-            kwargs['secondary_hostname'] = secondary
+        account_url, _, credential = parse_connection_str(conn_str, credential, 'dfs')
         return cls(
             account_url, file_system_name=file_system_name, directory_name=directory_name,
             credential=credential, **kwargs)
@@ -298,7 +296,7 @@ class DataLakeDirectoryClient(PathClient):
         new_directory_client = DataLakeDirectoryClient(
             self.url, new_file_system, directory_name=path, credential=self._raw_credential,
             _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
-            _location_mode=self._location_mode, require_encryption=self.require_encryption,
+            require_encryption=self.require_encryption,
             key_encryption_key=self.key_encryption_key,
             key_resolver_function=self.key_resolver_function)
         new_directory_client._rename_path('/'+self.file_system_name+'/'+self.path_name,  # pylint: disable=protected-access
@@ -489,7 +487,7 @@ class DataLakeDirectoryClient(PathClient):
         return DataLakeFileClient(
             self.url, self.file_system_name, file_path=file_path, credential=self._raw_credential,
             _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
-            _location_mode=self._location_mode, require_encryption=self.require_encryption,
+            require_encryption=self.require_encryption,
             key_encryption_key=self.key_encryption_key,
             key_resolver_function=self.key_resolver_function)
 
@@ -524,6 +522,6 @@ class DataLakeDirectoryClient(PathClient):
         return DataLakeDirectoryClient(
             self.url, self.file_system_name, directory_name=subdir_path, credential=self._raw_credential,
             _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
-            _location_mode=self._location_mode, require_encryption=self.require_encryption,
+            require_encryption=self.require_encryption,
             key_encryption_key=self.key_encryption_key,
             key_resolver_function=self.key_resolver_function)
