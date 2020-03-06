@@ -5,13 +5,13 @@
 import os
 
 from azure.identity import (
-    AzureCliCredential,
     DefaultAzureCredential,
     InteractiveBrowserCredential,
     KnownAuthorities,
     SharedTokenCacheCredential,
 )
 from azure.identity._constants import EnvironmentVariables
+from azure.identity._credentials.azure_cli import AzureCliCredential
 from azure.identity._credentials.managed_identity import ManagedIdentityCredential
 from six.moves.urllib_parse import urlparse
 

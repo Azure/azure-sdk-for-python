@@ -8,7 +8,7 @@ import sys
 from unittest import mock
 
 from azure.identity import CredentialUnavailableError
-from azure.identity.aio import AzureCliCredential
+from azure.identity.aio._credentials.azure_cli import AzureCliCredential
 from azure.identity._credentials.azure_cli import CLI_NOT_FOUND
 from azure.core.exceptions import ClientAuthenticationError
 import pytest
@@ -47,7 +47,7 @@ async def test_context_manager():
 async def test_windows_fallback():
     """The credential should fall back to the sync implementation when not using ProactorEventLoop on Windows"""
 
-    with mock.patch("azure.identity.AzureCliCredential.get_token") as fallback:
+    with mock.patch("azure.identity._credentials.azure_cli.AzureCliCredential.get_token") as fallback:
         with mock.patch(AzureCliCredential.__module__ + ".asyncio.get_event_loop"):
             credential = AzureCliCredential()
             await credential.get_token("scope")

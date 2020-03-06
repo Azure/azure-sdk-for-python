@@ -8,7 +8,8 @@ from unittest.mock import Mock, patch
 from urllib.parse import urlparse
 
 from azure.identity import KnownAuthorities
-from azure.identity.aio import AzureCliCredential, DefaultAzureCredential, SharedTokenCacheCredential
+from azure.identity.aio import DefaultAzureCredential, SharedTokenCacheCredential
+from azure.identity.aio._credentials.azure_cli import AzureCliCredential
 from azure.identity.aio._credentials.managed_identity import ManagedIdentityCredential
 from azure.identity._constants import EnvironmentVariables
 import pytest
