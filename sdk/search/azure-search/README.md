@@ -52,7 +52,7 @@ az search admin-key show --resource-group <your-resource-group-name> --service-n
 ### Authenticate the client
 
 Interaction with this service begins with an instance of a [client](#client "search-client").
-To create a client object, you will need the `search_endpoint` for your resource
+To create a client object, you will need the `endpoint` for your search service
 and a `credential` that allows you access:
 
 ```python
