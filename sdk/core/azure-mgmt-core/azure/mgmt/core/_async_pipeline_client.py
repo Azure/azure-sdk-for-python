@@ -48,11 +48,11 @@ class AsyncARMPipelineClient(AsyncPipelineClient):
     def _default_policies(config, **kwargs):
         return [
             AsyncARMAutoResourceProviderRegistrationPolicy(),
-            RequestIdPolicy(),
+            RequestIdPolicy(**kwargs),
             config.headers_policy,
             config.user_agent_policy,
             config.proxy_policy,
-            ContentDecodePolicy(),
+            ContentDecodePolicy(**kwargs),
             config.redirect_policy,
             config.retry_policy,
             config.authentication_policy,
