@@ -54,7 +54,7 @@ function ExtractReleaseNotes($changeLogLocation)
 
 function VerifyPackages($rootDirectory)
 { 
-   #This function verifies version in history.md or CHANGELOG.md for a given package
+   #This function verifies version in CHANGELOG.md for a given package
    try
    {
       $historyFiles = Get-ChildItem -Path $rootDirectory -Recurse -Include "CHANGELOG.md"
