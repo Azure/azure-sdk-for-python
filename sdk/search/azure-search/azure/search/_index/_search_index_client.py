@@ -13,11 +13,7 @@ from azure.core.paging import ItemPaged, PageIterator
 from azure.core.pipeline.policies import HeadersPolicy
 from azure.core.tracing.decorator import distributed_trace
 from ._generated import SearchIndexClient as _SearchIndexClient
-from ._generated.models import (
-    IndexBatch,
-    IndexingResult,
-    SearchRequest,
-)
+from ._generated.models import IndexBatch, IndexingResult, SearchRequest
 from ._index_documents_batch import IndexDocumentsBatch
 from ._queries import AutocompleteQuery, SearchQuery, SuggestQuery
 
