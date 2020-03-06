@@ -6,6 +6,7 @@
 ### Bug fixes
 
 - Appended RequestIdPolicy to the default pipeline  #9841
+- Rewind the body position in async_retry   #10117
 
 ### Features
 
