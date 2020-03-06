@@ -7,14 +7,14 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_detect_language.py
+FILE: sample_alternative_document_input.py
 
 DESCRIPTION:
-    This sample demonstrates how to detect language in a batch of different
-    documents.
+    This sample shows an alternative way to pass in the input documents.
+    Here we specify our own IDs and the text language along with the text.
 
 USAGE:
-    python sample_detect_language.py
+    python sample_alternative_document_input.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_TEXT_ANALYTICS_ENDPOINT - the endpoint to your Cognitive Services resource.
@@ -22,23 +22,25 @@ USAGE:
 """
 
 import os
+import logging
 
+_LOGGER = logging.getLogger(__name__)
 
-class DetectLanguageSample(object):
-
+class AlternativeDocumentInputSample(object):
     endpoint = os.getenv("AZURE_TEXT_ANALYTICS_ENDPOINT")
     key = os.getenv("AZURE_TEXT_ANALYTICS_KEY")
 
-    def detect_language(self):
-        # [START batch_detect_language]
+    def alternative_document_input(self):
         from azure.ai.textanalytics import TextAnalyticsClient, TextAnalyticsApiKeyCredential
         text_analytics_client = TextAnalyticsClient(endpoint=self.endpoint, credential=TextAnalyticsApiKeyCredential(self.key))
+
         documents = [
-            "This document is written in English.",
-            "Este es un document escrito en Español.",
-            "这是一个用中文写的文件",
-            "Dies ist ein Dokument in englischer Sprache.",
-            "Detta är ett dokument skrivet på engelska."
+            {"id": "0", "language": "en", "text": "I had the best day of my life."},
+            {"id": "1", "language": "en",
+             "text": "This was a waste of my time. The speaker put me to sleep."},
+            {"id": "2", "language": "es", "text": "No tengo dinero ni nada que dar..."},
+            {"id": "3", "language": "fr",
+             "text": "L'hôtel n'était pas très confortable. L'éclairage était trop sombre."}
         ]
 
         result = text_analytics_client.detect_language(documents)
@@ -51,9 +53,8 @@ class DetectLanguageSample(object):
                 print("Confidence score: {}\n".format(doc.primary_language.score))
             if doc.is_error:
                 print(doc.id, doc.error)
-        # [END batch_detect_language]
 
 
 if __name__ == '__main__':
-    sample = DetectLanguageSample()
-    sample.detect_language()
+    sample = AlternativeDocumentInputSample()
+    sample.alternative_document_input()
