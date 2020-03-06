@@ -97,8 +97,7 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
             key_start_time=key_start_time,
             key_expiry_time=key_expiry_time,
             **kwargs)  # pylint: disable=protected-access
-        delegation_key._class_ = UserDelegationKey  # pylint: disable=protected-access
-        return delegation_key
+        return UserDelegationKey._from_generated(delegation_key)  # pylint: disable=protected-access
 
     def list_file_systems(self, name_starts_with=None,  # type: Optional[str]
                           include_metadata=None,  # type: Optional[bool]
@@ -186,7 +185,7 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
             The file system to delete. This can either be the name of the file system,
             or an instance of FileSystemProperties.
         :type file_system: str or ~azure.storage.filedatalake.FileSystemProperties
-        :keyword ~azure.storage.filedatalake.DataLakeLeaseClient lease:
+        :keyword ~azure.storage.filedatalake.aio.DataLakeLeaseClient lease:
             If specified, delete_file_system only succeeds if the
             file system's lease is active and matches this ID.
             Required if the file system has an active lease.
@@ -236,7 +235,7 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
             or an instance of FileSystemProperties.
         :type file_system: str or ~azure.storage.filedatalake.FileSystemProperties
         :returns: A FileSystemClient.
-        :rtype: ~azure.storage.filedatalake.FileSystemClient
+        :rtype: ~azure.storage.filedatalake.aio.FileSystemClient
 
         .. admonition:: Example:
 
@@ -269,7 +268,7 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
             or an instance of DirectoryProperties.
         :type directory: str or ~azure.storage.filedatalake.DirectoryProperties
         :returns: A DataLakeDirectoryClient.
-        :rtype: ~azure.storage.filedatalake.DataLakeDirectoryClient
+        :rtype: ~azure.storage.filedatalake.aio.DataLakeDirectoryClient
 
         .. admonition:: Example:
 
@@ -306,7 +305,7 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
             or an instance of FileProperties. eg. directory/subdirectory/file
         :type file_path: str or ~azure.storage.filedatalake.FileProperties
         :returns: A DataLakeFileClient.
-        :rtype: ~azure.storage.filedatalake..DataLakeFileClient
+        :rtype: ~azure.storage.filedatalake.aio.DataLakeFileClient
 
         .. admonition:: Example:
 

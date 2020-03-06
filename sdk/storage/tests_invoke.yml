@@ -5,6 +5,7 @@ parameters:
 jobs:
   - template: ../../eng/pipelines/templates/jobs/archetype-sdk-tests.yml
     parameters:
+      AllocateResourceGroup: 'false'
       BuildTargetingString: azure-storage-blob
       JobName: Test_Blob
       ServiceDirectory: storage
@@ -14,6 +15,7 @@ jobs:
 
   - template: ../../eng/pipelines/templates/jobs/archetype-sdk-tests.yml
     parameters:
+      AllocateResourceGroup: 'false'
       BuildTargetingString: azure-storage-queue
       JobName: Test_Queue
       ServiceDirectory: storage
@@ -22,6 +24,7 @@ jobs:
 
   - template: ../../eng/pipelines/templates/jobs/archetype-sdk-tests.yml
     parameters:
+      AllocateResourceGroup: 'false'
       MaxParallel: 1
       BuildTargetingString: azure-storage-file-datalake
       JobName: Test_Datalake
@@ -31,6 +34,7 @@ jobs:
 
   - template: ../../eng/pipelines/templates/jobs/archetype-sdk-tests.yml
     parameters:
+      AllocateResourceGroup: 'false'
       BuildTargetingString: azure-storage-file-share
       JobName: Test_FileShares
       ServiceDirectory: storage

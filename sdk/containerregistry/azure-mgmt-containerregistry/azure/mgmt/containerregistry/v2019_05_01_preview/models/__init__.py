@@ -10,6 +10,7 @@
 # --------------------------------------------------------------------------
 
 try:
+    from ._models_py3 import ActiveDirectoryObject
     from ._models_py3 import Actor
     from ._models_py3 import CallbackConfig
     from ._models_py3 import Event
@@ -62,6 +63,7 @@ try:
     from ._models_py3 import WebhookCreateParameters
     from ._models_py3 import WebhookUpdateParameters
 except (SyntaxError, ImportError):
+    from ._models import ActiveDirectoryObject
     from ._models import Actor
     from ._models import CallbackConfig
     from ._models import Event
@@ -139,6 +141,7 @@ from ._container_registry_management_client_enums import (
 )
 
 __all__ = [
+    'ActiveDirectoryObject',
     'Actor',
     'CallbackConfig',
     'Event',

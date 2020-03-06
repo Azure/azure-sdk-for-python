@@ -1,0 +1,32 @@
+interactions:
+- request:
+    body: '{"documents": [{"id": "0", "text": "Microsoft was founded by Bill Gates
+      and Paul Allen", "language": "en"}, {"id": "1", "text": "Microsoft fue fundado
+      por Bill Gates y Paul Allen", "language": "en"}, {"id": "2", "text": "", "language":
+      "en"}]}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['243']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [azsdk-python-azure-ai-textanalytics/1.0.0b3 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
+      X-BingApis-SDK-Client: [Python-SDK]
+    method: POST
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/keyPhrases?showStats=false
+  response:
+    body: {string: '{"documents":[{"id":"0","keyPhrases":["Bill Gates","Paul Allen","Microsoft"]},{"id":"1","keyPhrases":["Microsoft
+        fue fundado por Bill Gates y Paul Allen"]}],"errors":[{"id":"2","error":{"code":"InvalidArgument","message":"Invalid
+        document in request.","innerError":{"code":"InvalidDocument","message":"Document
+        text is empty."}}}],"modelVersion":"2019-10-01"}'}
+    headers:
+      apim-request-id: [c39a1082-5675-47c1-89bb-1f62a03fc005]
+      content-type: [application/json; charset=utf-8]
+      csp-billing-usage: [CognitiveServices.TextAnalytics.BatchScoring=2]
+      date: ['Tue, 03 Mar 2020 18:33:44 GMT']
+      strict-transport-security: [max-age=31536000; includeSubDomains; preload]
+      transfer-encoding: [chunked]
+      x-content-type-options: [nosniff]
+      x-envoy-upstream-service-time: ['4']
+    status: {code: 200, message: OK}
+version: 1

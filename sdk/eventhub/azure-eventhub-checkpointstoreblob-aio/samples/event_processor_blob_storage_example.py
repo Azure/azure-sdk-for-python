@@ -23,7 +23,7 @@ if __name__ == '__main__':
     loop = asyncio.get_event_loop()
     checkpoint_store = BlobCheckpointStore.from_connection_string(
         STORAGE_CONNECTION_STR,
-        container_name=BLOB_CONTAINER_NAME
+        container_name=BLOB_CONTAINER_NAME,
     )
     client = EventHubConsumerClient.from_connection_string(
         CONNECTION_STR,

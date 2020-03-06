@@ -230,25 +230,20 @@ class AutomaticRepairsPolicy(Model):
      suspended due to a state change on VM. The grace time starts after the
      state change has completed. This helps avoid premature or accidental
      repairs. The time duration should be specified in ISO 8601 format. The
-     default value is 5 minutes (PT5M).
+     minimum allowed grace period is 30 minutes (PT30M), which is also the
+     default value.
     :type grace_period: str
-    :param max_instance_repairs_percent: The percentage (capacity of scaleset)
-     of virtual machines that will be simultaneously repaired. The default
-     value is 20%.
-    :type max_instance_repairs_percent: int
     """
 
     _attribute_map = {
         'enabled': {'key': 'enabled', 'type': 'bool'},
         'grace_period': {'key': 'gracePeriod', 'type': 'str'},
-        'max_instance_repairs_percent': {'key': 'maxInstanceRepairsPercent', 'type': 'int'},
     }
 
-    def __init__(self, *, enabled: bool=None, grace_period: str=None, max_instance_repairs_percent: int=None, **kwargs) -> None:
+    def __init__(self, *, enabled: bool=None, grace_period: str=None, **kwargs) -> None:
         super(AutomaticRepairsPolicy, self).__init__(**kwargs)
         self.enabled = enabled
         self.grace_period = grace_period
-        self.max_instance_repairs_percent = max_instance_repairs_percent
 
 
 class Resource(Model):

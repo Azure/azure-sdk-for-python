@@ -1,7 +1,15 @@
 # Release History
 
-## 12.0.0b8 (Unreleased)
+## 12.0.0 (Unreleased)
+**New Feature**
+- Added `get_root_directory_client` sync and async API.
+- Added `set_file_system_access_policy` and `get_file_system_access_policy` APIs on FileSystemClient
 
+**Breaking changes**
+- Rename `rename_destination` to `new_name` for rename_directory and rename_file APIs
+
+**Notes**
+- The `StorageUserAgentPolicy` is now replaced with the `UserAgentPolicy` from azure-core. With this, the custom user agents are now added as a prefix instead of being appended.
 
 ## 12.0.0b7 (2020-02-12)
 **New Feature**

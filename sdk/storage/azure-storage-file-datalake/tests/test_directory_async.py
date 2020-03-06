@@ -386,7 +386,7 @@ class DirectoryTest(StorageTestCase):
 
     async def _test_rename_from_a_directory_in_another_file_system(self):
         # create a file dir1 under file system1
-        old_file_system_name = "oldfilesystem"
+        old_file_system_name = self._get_directory_reference("oldfilesystem")
         old_dir_name = "olddir"
         old_client = self.dsc.get_file_system_client(old_file_system_name)
         time.sleep(30)
@@ -404,7 +404,6 @@ class DirectoryTest(StorageTestCase):
         properties = await new_directory_client.get_directory_properties()
 
         self.assertIsNotNone(properties)
-        await self.dsc.delete_file_system(old_file_system_name)
 
     @record
     def test_rename_from_a_directory_in_another_file_system_async(self):
@@ -413,7 +412,7 @@ class DirectoryTest(StorageTestCase):
 
     async def _test_rename_to_an_existing_directory_in_another_file_system(self):
         # create a file dir1 under file system1
-        destination_file_system_name = "destfilesystem"
+        destination_file_system_name = self._get_directory_reference("destfilesystem")
         destination_dir_name = "destdir"
         fs_client = self.dsc.get_file_system_client(destination_file_system_name)
         time.sleep(30)

@@ -1,0 +1,29 @@
+interactions:
+- request:
+    body: '{"documents": [{"id": "0", "text": "This was the best day of my life.",
+      "language": "fr"}, {"id": "1", "text": "I did not like the hotel we stayed at.
+      It was too expensive.", "language": "fr"}, {"id": "2", "text": "The restaurant
+      was not as good as I hoped.", "language": "fr"}]}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['279']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [azsdk-python-azure-ai-textanalytics/1.0.0b3 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
+      X-BingApis-SDK-Client: [Python-SDK]
+    method: POST
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/sentiment?showStats=false
+  response:
+    body: {string: '{"documents":[{"id":"0","sentiment":"neutral","documentScores":{"positive":0.07,"neutral":0.93,"negative":0.0},"sentences":[{"sentiment":"neutral","sentenceScores":{"positive":0.07,"neutral":0.93,"negative":0.0},"offset":0,"length":33}]},{"id":"1","sentiment":"negative","documentScores":{"positive":0.0,"neutral":0.03,"negative":0.97},"sentences":[{"sentiment":"neutral","sentenceScores":{"positive":0.0,"neutral":0.92,"negative":0.08},"offset":0,"length":38},{"sentiment":"negative","sentenceScores":{"positive":0.0,"neutral":0.03,"negative":0.97},"offset":39,"length":21}]},{"id":"2","sentiment":"negative","documentScores":{"positive":0.01,"neutral":0.32,"negative":0.67},"sentences":[{"sentiment":"negative","sentenceScores":{"positive":0.01,"neutral":0.32,"negative":0.67},"offset":0,"length":42}]}],"errors":[],"modelVersion":"2019-10-01"}'}
+    headers:
+      apim-request-id: [85002d58-2efd-4732-8c50-338c2b44426b]
+      content-type: [application/json; charset=utf-8]
+      csp-billing-usage: [CognitiveServices.TextAnalytics.BatchScoring=3]
+      date: ['Tue, 03 Mar 2020 18:33:22 GMT']
+      strict-transport-security: [max-age=31536000; includeSubDomains; preload]
+      transfer-encoding: [chunked]
+      x-content-type-options: [nosniff]
+      x-envoy-upstream-service-time: ['78']
+    status: {code: 200, message: OK}
+version: 1

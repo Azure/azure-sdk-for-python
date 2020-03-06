@@ -71,10 +71,10 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
         Setting to an older version may result in reduced feature compatibility.
     :keyword str secondary_hostname:
         The hostname of the secondary endpoint.
-    :keyword encode_policy: The encoding policy to use on outgoing messages.
+    :keyword message_encode_policy: The encoding policy to use on outgoing messages.
         Default is not to encode messages. Other options include :class:`TextBase64EncodePolicy`,
         :class:`BinaryBase64EncodePolicy` or `None`.
-    :keyword decode_policy: The decoding policy to use on incoming messages.
+    :keyword message_decode_policy: The decoding policy to use on incoming messages.
         Default value is not to decode messages. Other options include :class:`TextBase64DecodePolicy`,
         :class:`BinaryBase64DecodePolicy` or `None`.
 
@@ -378,8 +378,8 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
             key_encryption_key=self.key_encryption_key,
             resolver=self.key_resolver_function
         )
-        content = self._config.message_encode_policy(content)
-        new_message = GenQueueMessage(message_text=content)
+        encoded_content = self._config.message_encode_policy(content)
+        new_message = GenQueueMessage(message_text=encoded_content)
 
         try:
             enqueued = await self._client.messages.enqueue(
@@ -389,7 +389,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
                 timeout=timeout,
                 **kwargs
             )
-            queue_message = QueueMessage(content=new_message.message_text)
+            queue_message = QueueMessage(content=content)
             queue_message.id = enqueued[0].message_id
             queue_message.inserted_on = enqueued[0].insertion_time
             queue_message.expires_on = enqueued[0].expiration_time
@@ -538,8 +538,8 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
             self._config.message_encode_policy.configure(
                 self.require_encryption, self.key_encryption_key, self.key_resolver_function
             )
-            message_text = self._config.message_encode_policy(message_text)
-            updated = GenQueueMessage(message_text=message_text)
+            encoded_message_text = self._config.message_encode_policy(message_text)
+            updated = GenQueueMessage(message_text=encoded_message_text)
         else:
             updated = None  # type: ignore
         try:

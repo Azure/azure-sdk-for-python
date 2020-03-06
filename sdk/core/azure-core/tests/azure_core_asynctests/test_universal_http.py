@@ -49,7 +49,7 @@ async def test_basic_aiohttp():
         assert response.body() is not None
 
     assert sender.session is None
-    assert response.status_code == 200
+    assert isinstance(response.status_code, int)
 
 @pytest.mark.asyncio
 async def test_aiohttp_auto_headers():
@@ -68,7 +68,7 @@ async def test_basic_async_requests():
         response = await sender.send(request)
         assert response.body() is not None
 
-    assert response.status_code == 200
+    assert isinstance(response.status_code, int)
 
 @pytest.mark.asyncio
 async def test_conf_async_requests():
@@ -78,7 +78,7 @@ async def test_conf_async_requests():
         response = await sender.send(request)
         assert response.body() is not None
 
-    assert response.status_code == 200
+    assert isinstance(response.status_code, int)
 
 def test_conf_async_trio_requests():
 
@@ -89,7 +89,7 @@ def test_conf_async_trio_requests():
             assert response.body() is not None
 
     response = trio.run(do)
-    assert response.status_code == 200
+    assert isinstance(response.status_code, int)
 
 
 def _create_aiohttp_response(body_bytes, headers=None):

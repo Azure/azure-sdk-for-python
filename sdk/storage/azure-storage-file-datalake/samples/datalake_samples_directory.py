@@ -20,7 +20,7 @@ def directory_sample(filesystem_client):
     new_dir_name = "testdir2"
     print("Renaming the directory named '{}' to '{}'.".format(dir_name, new_dir_name))
     new_directory = directory_client\
-        .rename_directory(rename_destination=directory_client.file_system_name + '/' + new_dir_name)
+        .rename_directory(new_name=directory_client.file_system_name + '/' + new_dir_name)
 
     # display the properties of the new directory to make sure it was renamed successfully
     props = new_directory.get_directory_properties()
