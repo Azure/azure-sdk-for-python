@@ -129,7 +129,7 @@ with sb_client:
             print(message)
             msg.complete()
             # msg.renew_lock()
-            # msg.abondon()
+            # msg.abandon()
             # msg.defer()
             # msg.dead_letter()
 
