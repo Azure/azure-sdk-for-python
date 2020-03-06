@@ -35,6 +35,7 @@ from ._index import (
     SearchIndexClient,
     SearchQuery,
     SuggestQuery,
+    odata,
 )
 
 __all__ = (
@@ -44,4 +45,5 @@ __all__ = (
     "SearchIndexClient",
     "SearchQuery",
     "SuggestQuery",
+    "odata",
 )

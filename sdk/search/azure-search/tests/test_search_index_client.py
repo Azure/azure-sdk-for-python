@@ -27,6 +27,7 @@ from azure.search import (
     SearchIndexClient,
     SearchQuery,
     SuggestQuery,
+    odata,
 )
 
 CREDENTIAL = SearchApiKeyCredential(api_key="test_api_key")
@@ -41,6 +42,28 @@ CRUD_METHOD_NAMES = [
 CRUD_METHOD_MAP = dict(
     zip(CRUD_METHOD_NAMES, ["upload", "delete", "merge", "mergeOrUpload"])
 )
+
+
+class Test_odata(object):
+    def test_const(self):
+        assert odata("no escapes") == "no escapes"
+
+    def test_numbers(self):
+        assert odata("foo eq {foo}", foo=10) == "foo eq 10"
+
+    def test_string(self):
+        assert odata("foo eq {foo}", foo="a string") == "foo eq 'a string'"
+
+    def test_mixed(self):
+        expected = "foo eq 'a string' and bar le 10"
+        out = odata("foo eq {foo} and bar le {bar}", foo="a string", bar=10)
+        assert out == expected
+
+    def test_escape_single_quote(self):
+        assert odata("foo eq {foo}", foo="a '' str'ing") == "foo eq 'a '''' str''ing'"
+
+    def test_prevent_double_quoting(self):
+        assert odata("foo eq '{foo}'", foo="a string") == "foo eq 'a string'"
 
 
 class TestSearchIndexClient(object):
@@ -119,7 +142,9 @@ class TestSearchIndexClient(object):
     )
     def test_suggest_query_argument(self, mock_suggest_post):
         client = SearchIndexClient("service name", "index name", CREDENTIAL)
-        result = client.suggest(SuggestQuery(search_text="search text", suggester_name="sg"))
+        result = client.suggest(
+            SuggestQuery(search_text="search text", suggester_name="sg")
+        )
         assert mock_suggest_post.called
         assert mock_suggest_post.call_args[0] == ()
         assert (
@@ -140,7 +165,9 @@ class TestSearchIndexClient(object):
     )
     def test_autocomplete_query_argument(self, mock_autocomplete_post):
         client = SearchIndexClient("service name", "index name", CREDENTIAL)
-        result = client.autocomplete(AutocompleteQuery(search_text="search text", suggester_name="sg"))
+        result = client.autocomplete(
+            AutocompleteQuery(search_text="search text", suggester_name="sg")
+        )
         assert mock_autocomplete_post.called
         assert mock_autocomplete_post.call_args[0] == ()
         assert (

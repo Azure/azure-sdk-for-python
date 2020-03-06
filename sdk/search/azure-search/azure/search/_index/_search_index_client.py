@@ -23,6 +23,34 @@ if TYPE_CHECKING:
     from ._credential import SearchApiKeyCredential
 
 
+def odata(statement, **kwargs):
+    """ Escape an OData query string.
+
+    The statement to prepare should include fields to substitute given inside
+    braces, e.g. `{somevar}` and then pass the corresponing value as a keyword
+    argument, e.g. `somevar=10`.
+
+    :param statement: An OData query string to prepare
+    :type statenent: str
+    :rtype: str
+
+    .. admonition:: Example:
+
+        >>> odata("name eq {name} and age eq {age}", name="O'Neil", age=37)
+        "name eq 'O''Neil' and age eq 37"
+
+
+    """
+    kw = dict(kwargs)
+    for key in kw:
+        value = kw[key]
+        if isinstance(value, six.string_types):
+            value = value.replace("'", "''")
+            if "'{{{}}}'".format(key) not in statement:
+                kw[key] = "'{}'".format(value)
+    return statement.format(**kw)
+
+
 DEFAULT_SEARCH_DNS_SUFFIX = "search.windows.net"
 
 

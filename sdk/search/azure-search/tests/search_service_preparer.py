@@ -60,8 +60,11 @@ class SearchServicePreparer(AzureMgmtPreparer):
         self.service_name = self.create_random_name()
 
         if not self.is_live:
-            return {"api_key": "api-key", "index_name": schema["name"], "service_name": self.service_name}
-
+            return {
+                "api_key": "api-key",
+                "index_name": schema["name"],
+                "service_name": self.service_name,
+            }
 
         group_name = self._get_resource_group(**kwargs).name
 
