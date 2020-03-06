@@ -77,6 +77,19 @@ class EventPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(EventPaged, self).__init__(*args, **kwargs)
+class AgentPoolPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`AgentPool <azure.mgmt.containerregistry.v2019_06_01_preview.models.AgentPool>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[AgentPool]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(AgentPoolPaged, self).__init__(*args, **kwargs)
 class RunPaged(Paged):
     """
     A paging container for iterating over a list of :class:`Run <azure.mgmt.containerregistry.v2019_06_01_preview.models.Run>` object
