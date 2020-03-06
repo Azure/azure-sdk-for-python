@@ -11,11 +11,7 @@ from azure.core.async_paging import AsyncItemPaged, AsyncPageIterator
 from azure.core.pipeline.policies import HeadersPolicy
 from azure.core.tracing.decorator_async import distributed_trace_async
 from .._generated.aio import SearchIndexClient as _SearchIndexClient
-from .._generated.models import (
-    IndexBatch,
-    IndexingResult,
-    SearchRequest,
-)
+from .._generated.models import IndexBatch, IndexingResult, SearchRequest
 from .._index_documents_batch import IndexDocumentsBatch
 from .._queries import AutocompleteQuery, SearchQuery, SuggestQuery
 from .._search_index_client import (
@@ -114,6 +110,7 @@ class SearchIndexClient(object):
         # type: (**Any) -> int
         """Return the number of documents in the Azure search index.
 
+        :rtype: int
         """
         return int(await self._client.documents.count(**kwargs))
 
@@ -121,6 +118,12 @@ class SearchIndexClient(object):
     async def get_document(self, key, selected_fields=None, **kwargs):
         # type: (str, List[str], **Any) -> dict
         """Retrieve a document from the Azure search index by its key.
+
+        :param key: The primary key value for the document to retrieve
+        :type key: str
+        :param selected_fields: a whitelist of fields to include in the results
+        :type selected_fields: List[str]
+        :rtype:  dict
 
         .. admonition:: Example:
 
@@ -140,6 +143,10 @@ class SearchIndexClient(object):
     async def search(self, query, **kwargs):
         # type: (Union[str, SearchQuery], **Any) -> AsyncItemPaged[dict]
         """Search the Azure search index for documents.
+
+        :param query: An query for searching the index
+        :type documents: str or SearchQuery
+        :rtype:  Iterable[dict]
 
         .. admonition:: Example:
 
@@ -177,6 +184,10 @@ class SearchIndexClient(object):
         # type: (Union[str, SuggestQuery], **Any) -> List[dict]
         """Get search suggestion results from the Azure search index.
 
+        :param query: An query for search suggestions
+        :type documents: SuggestQuery
+        :rtype:  List[dict]
+
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/async_samples/sample_suggestions_async.py
@@ -202,6 +213,10 @@ class SearchIndexClient(object):
         # type: (Union[str, AutocompleteQuery], **Any) -> List[dict]
         """Get search auto-completion results from the Azure search index.
 
+        :param query: An query for auto-completions
+        :type documents: AutocompleteQuery
+        :rtype:  List[dict]
+
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/async_samples/sample_autocomplete_async.py
@@ -226,7 +241,15 @@ class SearchIndexClient(object):
 
     async def upload_documents(self, documents, **kwargs):
         # type: (List[dict], **Any) -> List[IndexingResult]
-        """Upload new documents to the Azure search index.
+        """Upload documents to the Azure search index.
+
+        An upload action is similar to an "upsert" where the document will be
+        inserted if it is new and updated/replaced if it exists. All fields are
+        replaced in the update case.
+
+        :param documents: A list of documents to upload.
+        :type documents: List[dict]
+        :rtype:  List[IndexingResult]
 
         .. admonition:: Example:
 
@@ -246,6 +269,19 @@ class SearchIndexClient(object):
         # type: (List[dict], **Any) -> List[IndexingResult]
         """Delete documents from the Azure search index
 
+        Delete removes the specified document from the index. Any field you
+        specify in a delete operation, other than the key field, will be
+        ignored. If you want to remove an individual field from a document, use
+        `merge_documents` instead and set the field explicitly to None.
+
+        Delete operations are idempotent. That is, even if a document key does
+        not exist in the index, attempting a delete operation with that key will
+        result in a 200 status code.
+
+        :param documents: A list of documents to delete.
+        :type documents: List[dict]
+        :rtype:  List[IndexingResult]
+
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/async_samples/sample_crud_operations_async.py
@@ -263,6 +299,15 @@ class SearchIndexClient(object):
     async def merge_documents(self, documents, **kwargs):
         # type: (List[dict], **Any) -> List[IndexingResult]
         """Merge documents in to existing documents in the Azure search index.
+
+        Merge updates an existing document with the specified fields. If the
+        document doesn't exist, the merge will fail. Any field you specify in a
+        merge will replace the existing field in the document. This also applies
+        to collections of primitive and complex types.
+
+        :param documents: A list of documents to merge.
+        :type documents: List[dict]
+        :rtype:  List[IndexingResult]
 
         .. admonition:: Example:
 
@@ -283,6 +328,13 @@ class SearchIndexClient(object):
         """Merge documents in to existing documents in the Azure search index,
         or upload them if they do not yet exist.
 
+        This action behaves like `merge_documents` if a document with the given
+        key already exists in the index. If the document does not exist, it
+        behaves like `upload_documents` with a new document.
+
+        :param documents: A list of documents to merge or upload.
+        :type documents: List[dict]
+        :rtype:  List[IndexingResult]
         """
         batch = IndexDocumentsBatch()
         batch.add_merge_or_upload_documents(documents)
@@ -294,9 +346,14 @@ class SearchIndexClient(object):
         # type: (IndexBatch, **Any) -> List[IndexingResult]
         """Specify a document operations to perform as a batch.
 
+        :param batch: A batch of document operations to perform.
+        :type batch: IndexBatch
+        :rtype:  List[IndexingResult]
         """
         index_documents = IndexBatch(actions=batch.actions)
-        batch_response = await self._client.documents.index(batch=index_documents, **kwargs)
+        batch_response = await self._client.documents.index(
+            batch=index_documents, **kwargs
+        )
         return cast(List[IndexingResult], batch_response.results)
 
     async def __aenter__(self):
