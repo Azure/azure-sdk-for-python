@@ -1,4 +1,5 @@
 # Azure Cognitive Search client library for Python
+
 Azure Cognitive Search is a fully managed cloud search service that provides a rich search experience to custom applications.
 
 [Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/search/azure-search) |
@@ -10,6 +11,7 @@ Azure Cognitive Search is a fully managed cloud search service that provides a r
 ## Getting started
 
 ### Prerequisites
+
 * Python 2.7, or 3.5 or later is required to use this package.
 * You must have an [Azure subscription][azure_sub] and an existing.
 [Azure Cognitive Search service][search_resource] to use this package.
@@ -26,6 +28,7 @@ The above creates a resource with the "Standard" pricing tier. See [choosing a p
 
 
 ### Install the package
+
 Install the Azure Cognitive Search client library for Python with [pip](https://pypi.org/project/pip/):
 
 ```bash
@@ -45,6 +48,7 @@ az search admin-key show --resource-group <your-resource-group-name> --service-n
 Alternatively, you can get the endpoint and Admin Key from the resource information in the [Azure Portal][azure_portal].
 
 ### Authenticate the client
+
 Interaction with this service begins with an instance of a [client](#client "search-client").
 To create a client object, you will need the cognitive services or text analytics `endpoint` to
 your resource and a `credential` that allows you access:
@@ -62,43 +66,145 @@ client = SearchIndexClient(search_service_name="<service name>",
 ## Key concepts
 
 ### Client
+
 The Cognitive Search client library provides a [SearchIndexClient](https://aka.ms/azsdk-python-search-searchindexclient) to perform search operations on [batches of documents](#Examples "examples").
 It provides both synchronous and asynchronous operations to access a specific use of Cognitive Search indices, such as querying, suggestions or autocompletion.
 
 
 ## Examples
 
+### Retrieve a specific document from an index
+Get a specific document from the index, e.f. obtain the document for hotel "23":
+```python
+from azure.search import SearchApiKeyCredential, SearchIndexClient
+search_client = SearchIndexClient(service_name, index_name, SearchApiKeyCredential(key))
+
+result = search_client.get_document(key="23")
+
+print("Details for hotel '23' are:")
+print("        Name: {}".format(result["HotelName"]))
+print("      Rating: {}".format(result["Rating"]))
+print("    Category: {}".format(result["Category"]))
+```
+### Perform a simple text search on documents
+Search the entire index or documents matching a simple search text, e.g. find
+hotels with the text "spa":
+```python
+from azure.search import SearchApiKeyCredential, SearchIndexClient
+search_client = SearchIndexClient(service_name, index_name, SearchApiKeyCredential(key))
+
+results = search_client.search(query="spa")
+
+print("Hotels containing 'spa' in the name (or other fields):")
+for result in results:
+    print("    Name: {} (rating {})".format(result["HotelName"], result["Rating"]))
+```
+### Get search suggestions
+Get search suggestions for related terms, e.g. find search suggestions for
+the term "coffee":
+```python
+from azure.search import SearchApiKeyCredential, SearchIndexClient, SuggestQuery
+search_client = SearchIndexClient(service_name, index_name, SearchApiKeyCredential(key))
+
+query = SuggestQuery(search_text="coffee", suggester_name="sg")
+
+results = search_client.suggest(query=query)
+
+print("Search suggestions for 'coffee'")
+for result in results:
+    hotel = search_client.get_document(key=result["HotelId"])
+    print("    Text: {} for Hotel: {}".format(repr(result["text"]), hotel["HotelName"]))
+```
+### Upload documents to an index
+Add documents (or update existing ones), e.g add a new document for a new hotel:
+```python
+from azure.search import SearchApiKeyCredential, SearchIndexClient
+search_client = SearchIndexClient(service_name, index_name, SearchApiKeyCredential(key))
+
+DOCUMENT = {
+    'Category': 'Hotel',
+    'HotelId': '1000',
+    'Rating': 4.0,
+    'Rooms': [],
+    'HotelName': 'Azure Inn',
+}
+
+result = search_client.upload_documents(documents=[DOCUMENT])
+
+print("Upload of new document succeeded: {}".format(result[0].succeeded))
+```
+
 ## Troubleshooting
 
 ### General
-The Azure Cognitive Search client will raise exceptions defined in [Azure Core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md).
+
+The Azure Cognitive Search client will raise exceptions defined in [Azure Core][azure_core].
 
 ### Logging
-This library uses the standard
-[logging](https://docs.python.org/3.5/library/logging.html) library for logging.
+
+This library uses the standard [logging][python_logging] library for logging.
 Basic information about HTTP sessions (URLs, headers, etc.) is logged at INFO
 level.
 
+etailed DEBUG level logging, including request/response bodies and unredacted
+headers, can be enabled on a client with the `logging_enable` keyword argument:
+```python
+import sys
+import logging
+from azure.search import SearchApiKeyCredential, SearchIndexClient
+
+# Create a logger for the 'azure' SDK
+logger = logging.getLogger('azure')
+logger.setLevel(logging.DEBUG)
+
+# Configure a console output
+handler = logging.StreamHandler(stream=sys.stdout)
+logger.addHandler(handler)
+
+# This client will log detailed information about its HTTP sessions, at DEBUG level
+search_client = SearchIndexClient(service_name, index_name, SearchApiKeyCredential(key), logging_enable=True)
+```
+
+Similarly, `logging_enable` can enable detailed logging for a single operation,
+even when it isn't enabled for the client:
+```python
+result =  search_client.search(query="spa", logging_enable=True)
+```
+
 ## Next steps
 
+### More sample code
+
+
 ### Additional documentation
+
 For more extensive documentation on Cognitive Search, see the [Azure Cognitive Search documentation](https://docs.microsoft.com/en-us/azure/search/) on docs.microsoft.com.
 
 ## Contributing
 
-This project welcomes contributions and suggestions.  Most contributions require you to agree to a Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us the rights to use your contribution. For details, visit https://cla.microsoft.com.
+This project welcomes contributions and suggestions.  Most contributions require you to agree to a Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us the rights to use your contribution. For details, visit [cla.microsoft.com][cla].
 
 When you submit a pull request, a CLA-bot will automatically determine whether you need to provide a CLA and decorate the PR appropriately (e.g., label, comment). Simply follow the instructions provided by the bot. You will only need to do this once across all repos using our CLA.
 
-This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/). For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
+This project has adopted the [Microsoft Open Source Code of Conduct][code_of_conduct]. For more information see the [Code of Conduct FAQ][coc_faq] or contact [opencode@microsoft.com][coc_contact] with any additional questions or comments.
 
 ## Related projects
 
-- [Microsoft Azure SDK for Python](https://github.com/Azure/azure-sdk-for-python)
+* [Microsoft Azure SDK for Python](https://github.com/Azure/azure-sdk-for-python)
+
+<!-- LINKS -->
 
 ![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fsdk%2Fsearch%2Fazure-search%2FREADME.png)
 
 [azure_cli]: https://docs.microsoft.com/cli/azure
+[azure_core]: ../../core/azure-core/README.md
 [azure_sub]: https://azure.microsoft.com/free/
 [search_resource]: https://docs.microsoft.com/en-us/azure/search/search-create-service-portal
 [azure_portal]: https://portal.azure.com
+
+[python_logging]: https://docs.python.org/3.5/library/logging.html
+
+[cla]: https://cla.microsoft.com
+[code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
+[coc_faq]: https://opensource.microsoft.com/codeofconduct/faq/
+[coc_contact]: mailto:opencode@microsoft.com
