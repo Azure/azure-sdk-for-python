@@ -1,5 +1,5 @@
 ## APIs:
-class ServiceBusClient:  # MGMT APIs
+class ServiceBusClient:
     def __init__(
         self,
         fully_qualified_namespace : str,
@@ -127,13 +127,11 @@ class ServiceBusReceiver:
         timeout : float = None,
     ) -> List[ReceivedMessage]:  # Pull mode receive
 
-
     @property
     def session(self) -> ServiceBusSession:
 
-
     # Rule APIs, raise Error when called on Queue
-    def add_rule(self, rule_name : str, filter : str) -> None: # TODO: figure out what filter is
+    def add_rule(self, rule_name : str, filter : str) -> None:
     def remove_rule(self, rule_name : str) -> None:
     def get_rules(self) -> List[str] -> Dict[str, Any]:
 
@@ -180,11 +178,17 @@ class Message:
     def schedule(self, schedule_time_utc : datetime) -> None:
 
 
-
 class BatchMessage(Message):
 # inherited from Message
     def add(self, message: Message) -> None:
 
+
+class PeekMessage(Message):
+    def enqueued_time(self) -> datetime:  # read-only
+    def scheduled_enqueue_time(self) -> datetime:  # read-only
+    def sequence_number(self) -> int:  # read-only
+    def partition_id(self) -> str:  # read-only
+    def session_id(self) -> str:  # read-only
 
 class ReceivedMessage(Message):
 
@@ -207,12 +211,23 @@ class ReceivedMessage(Message):
     def defer(self) -> None:
 
 
-class PeekMessage(ReceivedMessage):
-# inherited from ReceivedMessage, and cannot settle/lock the message
-
-
 class DeferredMessage(ReceivedMessage):
-# interited from ReceivedMessage
+    # @properties
+    def settled(self) -> bool:  # read-only
+    def enqueued_time(self) -> datetime:  # read-only
+    def scheduled_enqueue_time(self) -> datetime:  # read-only
+    def sequence_number(self) -> int:  # read-only
+    def partition_id(self) -> str:  # read-only
+    def locked_until(self) -> datetime:  # read-only
+    def expired(self) -> bool:  # read-only
+    def lock_token(self) -> str:  # read-only
+    def session_id(self) -> str:  # read-only
+
+    # methods
+    def renew_lock(self) -> None:
+    def complete(self) -> None:
+    def dead_letter(self, description: str = None) -> None:
+    def abandon(self) -> None:
 
 
 class ReceiveSettleMode:
