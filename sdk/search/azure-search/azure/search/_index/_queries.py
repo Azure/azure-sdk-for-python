@@ -46,6 +46,9 @@ class _QueryBase(object):
 
 
 class AutocompleteQuery(_QueryBase):
+    """Represent an autocomplete query again an Azure Search index.
+
+    """
 
     _request_type = AutocompleteRequest
 
@@ -89,7 +92,7 @@ class SearchQuery(_QueryBase):
 
 
 class SuggestQuery(_QueryBase):
-    """Represent an autocomplete query again an Azure Search index.
+    """Represent a search suggestion query again an Azure Search index.
 
     """
 

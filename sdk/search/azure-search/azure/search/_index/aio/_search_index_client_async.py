@@ -100,7 +100,7 @@ class SearchIndexClient(object):
 
     async def close(self):
         # type: () -> None
-        """ Close the SearchIndexClient session
+        """Close the :class:`~azure.search.aio.SearchIndexClient` session.
 
         """
         return await self._client.close()
@@ -343,11 +343,11 @@ class SearchIndexClient(object):
 
     @distributed_trace_async
     async def index_documents(self, batch, **kwargs):
-        # type: (IndexBatch, **Any) -> List[IndexingResult]
+        # type: (IndexDocumentsBatch, **Any) -> List[IndexingResult]
         """Specify a document operations to perform as a batch.
 
         :param batch: A batch of document operations to perform.
-        :type batch: IndexBatch
+        :type batch: IndexDocumentsBatch
         :rtype:  List[IndexingResult]
         """
         index_documents = IndexBatch(actions=batch.actions)

@@ -24,7 +24,7 @@ if TYPE_CHECKING:
 
 
 def odata(statement, **kwargs):
-    """ Escape an OData query string.
+    """Escape an OData query string.
 
     The statement to prepare should include fields to substitute given inside
     braces, e.g. `{somevar}` and then pass the corresponing value as a keyword
@@ -147,7 +147,7 @@ class SearchIndexClient(object):
 
     def close(self):
         # type: () -> None
-        """ Close the SearchIndexClient session
+        """Close the :class:`~azure.search.SearchIndexClient` session.
 
         """
         return self._client.close()
@@ -390,11 +390,11 @@ class SearchIndexClient(object):
 
     @distributed_trace
     def index_documents(self, batch, **kwargs):
-        # type: (IndexBatch, **Any) -> List[IndexingResult]
+        # type: (IndexDocumentsBatch, **Any) -> List[IndexingResult]
         """Specify a document operations to perform as a batch.
 
         :param batch: A batch of document operations to perform.
-        :type batch: IndexBatch
+        :type batch: IndexDocumentsBatch
         :rtype:  List[IndexingResult]
         """
         index_documents = IndexBatch(actions=batch.actions)

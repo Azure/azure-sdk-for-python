@@ -30,7 +30,9 @@ __version__ = VERSION
 
 from ._index import (
     AutocompleteQuery,
+    IndexAction,
     IndexDocumentsBatch,
+    IndexingResult,
     SearchApiKeyCredential,
     SearchIndexClient,
     SearchQuery,
@@ -40,7 +42,9 @@ from ._index import (
 
 __all__ = (
     "AutocompleteQuery",
+    "IndexAction",
     "IndexDocumentsBatch",
+    "IndexingResult",
     "SearchApiKeyCredential",
     "SearchIndexClient",
     "SearchQuery",

@@ -9,10 +9,10 @@ import six
 
 class SearchApiKeyCredential(object):
     """Credential type used for authenticating a SearchIndexClient
-    with an API key.
+    with an admin or query API key.
 
-    :param str api_key: An admin or query key for your Azure Search
-        index.
+    :param api_key: An admin or query key for your Azure Search index.
+    :type api_key: str
 
     """
 
@@ -25,6 +25,8 @@ class SearchApiKeyCredential(object):
     @property
     def api_key(self):
         """The value of the configured API key.
+
+        :rtype: str
         """
         # type () -> str
         return self._api_key

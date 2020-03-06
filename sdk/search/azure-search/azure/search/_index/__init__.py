@@ -13,3 +13,7 @@ from ._queries import (  # pylint: disable=unused-import
     SearchQuery,
     SuggestQuery,
 )
+from ._generated.models import (
+    IndexAction,
+    IndexingResult,
+)  # pylint: disable=unused-import
