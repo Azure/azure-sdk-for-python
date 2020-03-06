@@ -17,17 +17,9 @@ The Azure Event Hubs client library allows for publishing and consuming of Azure
 
 ## Getting started
 
-### Install the package
+### Prerequisites
 
-Install the Azure Event Hubs client library for Python with pip:
-
-```
-$ pip install azure-eventhub
-```
-
-**Prerequisites**
-
-- Python 2.7, 3.5 or later.
+- Python 2.7, 3.5.3 or later.
 - **Microsoft Azure Subscription:**  To use Azure services, including Azure Event Hubs, you'll need a subscription.
 If you do not have an existing Azure account, you may sign up for a free trial or use your MSDN subscriber benefits when you [create an account](https://account.windowsazure.com/Home/Index).
 
@@ -35,6 +27,14 @@ If you do not have an existing Azure account, you may sign up for a free trial o
 If you are not familiar with creating Azure resources, you may wish to follow the step-by-step guide
 for [creating an Event Hub using the Azure portal](https://docs.microsoft.com/en-us/azure/event-hubs/event-hubs-create).
 There, you can also find detailed instructions for using the Azure CLI, Azure PowerShell, or Azure Resource Manager (ARM) templates to create an Event Hub.
+
+### Install the package
+
+Install the Azure Event Hubs client library for Python with pip:
+
+```
+$ pip install azure-eventhub
+```
 
 ### Authenticate the client
 
@@ -351,6 +351,12 @@ The Event Hubs APIs generate the following exceptions in azure.eventhub.exceptio
 - **OperationTimeoutError:** EventHubConsumer.send() times out.
 - **EventHubError:** All other Eventhubs related errors. It is also the root error class of all the errors described above.
 
+### Logging
+
+- Enable `azure.eventhub` logger to collect traces from the library.
+- Enable `uamqp` logger to collect traces from the underlying uAMQP library.
+- Enable AMQP frame level trace by setting `logging_enable=True` when creating the client.
+
 ## Next steps
 
 ### More sample code
@@ -360,12 +366,6 @@ Please take a look at the [samples](./samples) directory for detailed examples o
 ### Documentation
 
 Reference documentation is available [here](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/5.0.0/azure.eventhub.html).
-
-### Logging
-
-- Enable `azure.eventhub` logger to collect traces from the library.
-- Enable `uamqp` logger to collect traces from the underlying uAMQP library.
-- Enable AMQP frame level trace by setting `logging_enable=True` when creating the client.
 
 ### Provide Feedback
 
