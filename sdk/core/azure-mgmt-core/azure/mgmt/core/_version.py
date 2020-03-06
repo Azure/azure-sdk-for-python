@@ -24,5 +24,5 @@
 #
 # --------------------------------------------------------------------------
 
-#: version of the package. Use msrestazure.__version__ instead.
-msrestazure_version = "0.6.0"
+#: version of the package. Use __version__ instead.
+version = "0.6.0"

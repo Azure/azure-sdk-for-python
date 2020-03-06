@@ -25,11 +25,11 @@
 # --------------------------------------------------------------------------
 
 
-from ._version import msrestazure_version
+from ._version import version
 from ._pipeline_client import ARMPipelineClient
 
 __all__ = ["ARMPipelineClient"]
-__version__ = msrestazure_version
+__version__ = version
 
 try:
     from ._async_pipeline_client import AsyncARMPipelineClient #pylint: disable=unused-import
