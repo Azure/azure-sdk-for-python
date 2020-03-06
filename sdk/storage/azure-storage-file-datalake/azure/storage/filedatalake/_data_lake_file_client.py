@@ -97,9 +97,7 @@ class DataLakeFileClient(PathClient):
         :return a DataLakeFileClient
         :rtype ~azure.storage.filedatalake.DataLakeFileClient
         """
-        account_url, secondary, credential = parse_connection_str(conn_str, credential, 'dfs')
-        if 'secondary_hostname' not in kwargs:
-            kwargs['secondary_hostname'] = secondary
+        account_url, _, credential = parse_connection_str(conn_str, credential, 'dfs')
         return cls(
             account_url, file_system_name=file_system_name, file_path=file_path,
             credential=credential, **kwargs)

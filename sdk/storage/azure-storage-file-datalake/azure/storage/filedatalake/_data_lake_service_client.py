@@ -16,7 +16,7 @@ from ._shared.base_client import StorageAccountHostsMixin, parse_query, parse_co
 from ._file_system_client import FileSystemClient
 from ._data_lake_directory_client import DataLakeDirectoryClient
 from ._data_lake_file_client import DataLakeFileClient
-from ._models import UserDelegationKey, FileSystemPropertiesPaged
+from ._models import UserDelegationKey, FileSystemPropertiesPaged, LocationMode
 from ._serialize import convert_dfs_url_to_blob_url
 
 
@@ -29,8 +29,7 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
     can also be retrieved using the `get_client` functions.
 
     :ivar str url:
-        The full endpoint URL to the datalake service endpoint. This could be either the
-        primary endpoint, or the secondary endpoint depending on the current `location_mode`.
+        The full endpoint URL to the datalake service endpoint.
     :ivar str primary_endpoint:
         The full primary endpoint URL.
     :ivar str primary_hostname:
@@ -80,16 +79,18 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
         blob_account_url = convert_dfs_url_to_blob_url(account_url)
         self._blob_account_url = blob_account_url
         self._blob_service_client = BlobServiceClient(blob_account_url, credential, **kwargs)
+        self._blob_service_client._hosts[LocationMode.SECONDARY] = ""  #pylint: disable=protected-access
 
         _, sas_token = parse_query(parsed_url.query)
         self._query_str, self._raw_credential = self._format_query_string(sas_token, credential)
 
         super(DataLakeServiceClient, self).__init__(parsed_url, service='dfs',
                                                     credential=self._raw_credential, **kwargs)
+        # ADLS doesn't support secondary endpoint, make sure it's empty
+        self._hosts[LocationMode.SECONDARY] = ""
 
     def _format_url(self, hostname):
-        """Format the endpoint URL according to the current location
-        mode hostname.
+        """Format the endpoint URL according to hostname
         """
         formated_url = "{}://{}/{}".format(self.scheme, hostname, self._query_str)
         return formated_url
@@ -114,9 +115,7 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
         :return a DataLakeServiceClient
         :rtype ~azure.storage.filedatalake.DataLakeServiceClient
         """
-        account_url, secondary, credential = parse_connection_str(conn_str, credential, 'dfs')
-        if 'secondary_hostname' not in kwargs:
-            kwargs['secondary_hostname'] = secondary
+        account_url, _, credential = parse_connection_str(conn_str, credential, 'dfs')
         return cls(account_url, credential=credential, **kwargs)
 
     def get_user_delegation_key(self, key_start_time,  # type: datetime
@@ -290,7 +289,7 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
                 :caption: Getting the file system client to interact with a specific file system.
         """
         return FileSystemClient(self.url, file_system, credential=self._raw_credential, _configuration=self._config,
-                                _pipeline=self._pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
+                                _pipeline=self._pipeline, _hosts=self._hosts,
                                 require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
                                 key_resolver_function=self.key_resolver_function)
 
@@ -325,7 +324,7 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
         return DataLakeDirectoryClient(self.url, file_system, directory_name=directory,
                                        credential=self._raw_credential,
                                        _configuration=self._config, _pipeline=self._pipeline,
-                                       _location_mode=self._location_mode, _hosts=self._hosts,
+                                       _hosts=self._hosts,
                                        require_encryption=self.require_encryption,
                                        key_encryption_key=self.key_encryption_key,
                                        key_resolver_function=self.key_resolver_function
@@ -367,6 +366,6 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
         return DataLakeFileClient(
             self.url, file_system, file_path=file_path, credential=self._raw_credential,
             _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
-            _location_mode=self._location_mode, require_encryption=self.require_encryption,
+            require_encryption=self.require_encryption,
             key_encryption_key=self.key_encryption_key,
             key_resolver_function=self.key_resolver_function)

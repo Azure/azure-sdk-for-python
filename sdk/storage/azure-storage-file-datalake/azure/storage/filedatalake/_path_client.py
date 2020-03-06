@@ -64,9 +64,7 @@ class PathClient(StorageAccountHostsMixin):
         blob_hosts = None
         if datalake_hosts:
             blob_primary_account_url = convert_dfs_url_to_blob_url(datalake_hosts[LocationMode.PRIMARY])
-            blob_secondary_account_url = convert_dfs_url_to_blob_url(datalake_hosts[LocationMode.SECONDARY])
-            blob_hosts = {LocationMode.PRIMARY: blob_primary_account_url,
-                          LocationMode.SECONDARY: blob_secondary_account_url}
+            blob_hosts = {LocationMode.PRIMARY: blob_primary_account_url, LocationMode.SECONDARY: ""}
         self._blob_client = BlobClient(blob_account_url, file_system_name, path_name,
                                        credential=credential, _hosts=blob_hosts, **kwargs)
 
@@ -78,6 +76,8 @@ class PathClient(StorageAccountHostsMixin):
 
         super(PathClient, self).__init__(parsed_url, service='dfs', credential=self._raw_credential,
                                          _hosts=datalake_hosts, **kwargs)
+        # ADLS doesn't support secondary endpoint, make sure it's empty
+        self._hosts[LocationMode.SECONDARY] = ""
         self._client = DataLakeStorageClient(self.url, file_system_name, path_name, pipeline=self._pipeline)
 
     def _format_url(self, hostname):
