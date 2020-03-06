@@ -31,7 +31,7 @@ class SearchApiKeyCredential(object):
 
     def update_key(self, key):
         """Update the API key.
-        This cab be used when you've regenerated your service API key and want
+        This can be used when you've regenerated your service API key and want
         to update long-lived clients.
 
         :param str key: The API key to your Azure search account.
