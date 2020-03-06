@@ -1,10 +1,12 @@
 # Release History
 
-## 5.0.1 (Unreleased)
+## 5.0.1 (2020-03-09)
 
 **Bug fixes**
 
-- Fixed a bug that `azure.eventhub.EventHubConsumerClient.receive()` doesn't call error handler callback on_error #9660
+- Fixed a bug that swallowed errors when receiving events with `azure.eventhub.EventHubConsumerClient`  #9660
+- Fixed a bug that caused `get_eventhub_properties`, `get_partition_ids`, and `get_partition_properties` to raise
+an error on Azure Stack #9920 
 
 ## 5.0.0 (2020-01-13)
 
