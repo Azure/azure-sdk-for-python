@@ -53,8 +53,8 @@ az cognitiveservices account create \
 ```
 
 ### Authenticate the client
-Interaction with this service begins with an instance of a [client](#client "ta-client"). 
-To create a client object, you will need the cognitive services or text analytics `endpoint` to 
+Interaction with this service begins with an instance of a [client](#client "ta-client").
+To create a client object, you will need the cognitive services or text analytics `endpoint` to
 your resource and a `credential` that allows you access:
 
 ```python
@@ -63,12 +63,12 @@ from azure.ai.textanalytics import TextAnalyticsClient
 text_analytics_client  = TextAnalyticsClient(endpoint="https://<region>.api.cognitive.microsoft.com/", credential=credential)
 ```
 
-Note that if you create a [custom subdomain][cognitive_custom_subdomain] 
-name for your resource the endpoint may look different than in the above code snippet. 
+Note that if you create a [custom subdomain][cognitive_custom_subdomain]
+name for your resource the endpoint may look different than in the above code snippet.
 For example, `https://<my-custom-subdomain>.cognitiveservices.azure.com/`.
 
 #### Looking up the endpoint
-You can find the endpoint for your text analytics resource using the 
+You can find the endpoint for your text analytics resource using the
 [Azure Portal][azure_portal_get_endpoint]
 or [Azure CLI][azure_cli_endpoint_lookup]:
 
@@ -79,19 +79,19 @@ az cognitiveservices account show --name "resource-name" --resource-group "resou
 
 #### Types of credentials
 The `credential` parameter may be provided as a `TextAnalyticsApiKeyCredential` or as a token from Azure Active Directory.
-See the full details regarding [authentication][cognitive_authentication] of 
+See the full details regarding [authentication][cognitive_authentication] of
 cognitive services.
 
-1. To use an [API key][cognitive_authentication_api_key], 
-   pass the key as a string into an instance of `TextAnalyticsApiKeyCredential("<api_key>")`. 
+1. To use an [API key][cognitive_authentication_api_key],
+   pass the key as a string into an instance of `TextAnalyticsApiKeyCredential("<api_key>")`.
    The API key can be found in the Azure Portal or by running the following Azure CLI command:
 
     ```az cognitiveservices account keys list --name "resource-name" --resource-group "resource-group-name"```
-    
+
     Use the key as the credential parameter to authenticate the client:
     ```python
     from azure.ai.textanalytics import TextAnalyticsClient, TextAnalyticsApiKeyCredential
-    
+
     credential = TextAnalyticsApiKeyCredential("<api_key>")
     text = TextAnalyticsClient(endpoint="https://<region>.api.cognitive.microsoft.com/", credential=credential)
     ```
@@ -106,12 +106,12 @@ cognitive services.
    * [Install azure-identity][install_azure_identity]
    * [Register a new AAD application][register_aad_app]
    * [Grant access][grant_role_access] to Text Analytics by assigning the `"Cognitive Services User"` role to your service principal.
-   
-   After setup, you can choose which type of [credential][azure_identity_credentials] from azure.identity to use. 
+
+   After setup, you can choose which type of [credential][azure_identity_credentials] from azure.identity to use.
    As an example, [DefaultAzureCredential][default_azure_credential]
    can be used to authenticate the client:
 
-   Set the values of the client ID, tenant ID, and client secret of the AAD application as environment variables: 
+   Set the values of the client ID, tenant ID, and client secret of the AAD application as environment variables:
    AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET
 
    Use the returned token credential to authenticate the client:
@@ -130,7 +130,7 @@ cognitive services.
 
 ### Client
 The Text Analytics client library provides a [TextAnalyticsClient][text_analytics_client] to do analysis on [batches of documents](#Examples "examples").
-It provides both synchronous and asynchronous operations to access a specific use of Text Analytics, such as language detection or key phrase extraction. 
+It provides both synchronous and asynchronous operations to access a specific use of Text Analytics, such as language detection or key phrase extraction.
 
 ### Input
 A **document** is a single unit to be analyzed by the predictive models in the Text Analytics service.
@@ -141,15 +141,15 @@ Each document can be passed as a string in the list, e.g.
 docs = ["I hated the movie. It was so slow!", "The movie made it into my top ten favorites.", "What a great movie!"]
 ```
 
-or, if you wish to pass in a per-item document `id` or `language`/`country_hint`, they can be passed as a list of 
+or, if you wish to pass in a per-item document `id` or `language`/`country_hint`, they can be passed as a list of
 [DetectLanguageInput][detect_language_input] or
 [TextDocumentInput][text_document_input]
 or a dict-like representation of the object:
 
 ```python
 inputs = [
-    {"id": "1", "language": "en", "text": "I hated the movie. It was so slow!"}, 
-    {"id": "2", "language": "en", "text": "The movie made it into my top ten favorites."}, 
+    {"id": "1", "language": "en", "text": "I hated the movie. It was so slow!"},
+    {"id": "2", "language": "en", "text": "The movie made it into my top ten favorites."},
     {"id": "3", "language": "en", "text": "What a great movie!"}
 ]
 ```
@@ -157,19 +157,19 @@ inputs = [
 See [service limitations][service_limits] for the input, including document length limits, maximum batch size, and supported text encoding.
 
 ### Return Value
-The return value for a single document can be a result or error object. 
-A heterogeneous list containing a collection of result and error objects is returned from each operation. 
-These results/errors are index-matched with the order of the provided documents. 
+The return value for a single document can be a result or error object.
+A heterogeneous list containing a collection of result and error objects is returned from each operation.
+These results/errors are index-matched with the order of the provided documents.
 
-A **result**, such as [AnalyzeSentimentResult][analyze_sentiment_result], 
+A **result**, such as [AnalyzeSentimentResult][analyze_sentiment_result],
 is the result of a Text Analytics operation and contains a prediction or predictions about a document input.
 
-The **error** object, [DocumentError][document_error], indicates that the service had trouble processing the document and contains 
+The **error** object, [DocumentError][document_error], indicates that the service had trouble processing the document and contains
 the reason it was unsuccessful.
 
 ### Document Error Handling
-You can filter for a result or error object in the list by using the `is_error` attribute. For a result object this is always `False` and for a 
-[DocumentError][document_error] this is `True`. 
+You can filter for a result or error object in the list by using the `is_error` attribute. For a result object this is always `False` and for a
+[DocumentError][document_error] this is `True`.
 
 For example, to filter out all DocumentErrors you might use list comprehension:
 ```python
@@ -193,7 +193,7 @@ Analyze sentiment of text to determine if it's positive, negative, neutral or mi
 
 ```python
 from azure.ai.textanalytics import TextAnalyticsClient, TextAnalyticsApiKeyCredential
-    
+
 text_analytics_client = TextAnalyticsClient(endpoint, TextAnalyticsApiKeyCredential(key))
 
 documents = [
@@ -207,7 +207,7 @@ result = [doc for doc in response if not doc.is_error]
 
 for doc in result:
     print("Overall sentiment: {}".format(doc.sentiment))
-    print("Scores: positive={0:.3f}; neutral={1:.3f}; negative={2:.3f} \n".format(
+    print("Scores: positive={}; neutral={}; negative={} \n".format(
         doc.confidence_scores.positive,
         doc.confidence_scores.neutral,
         doc.confidence_scores.negative,
@@ -223,7 +223,7 @@ Recognize and categorize entities in text as people, places, organizations, date
 
 ```python
 from azure.ai.textanalytics import TextAnalyticsClient, TextAnalyticsApiKeyCredential
-    
+
 text_analytics_client = TextAnalyticsClient(endpoint, TextAnalyticsApiKeyCredential(key))
 
 documents = [
@@ -247,12 +247,12 @@ Please refer to the service documentation for a conceptual discussion of [named 
 and [supported types][named_entity_categories].
 
 ### Recognize PII entities
-Recognize and categorize Personally Identifiable Information (PII) entities in text, such as 
-Social Security Numbers, bank account information, credit card numbers, and more. 
+Recognize and categorize Personally Identifiable Information (PII) entities in text, such as
+Social Security Numbers, bank account information, credit card numbers, and more.
 
 ```python
 from azure.ai.textanalytics import TextAnalyticsClient, TextAnalyticsApiKeyCredential
-    
+
 text_analytics_client = TextAnalyticsClient(endpoint, TextAnalyticsApiKeyCredential(key))
 
 documents = [
@@ -280,7 +280,7 @@ Roman god of war). Recognized entities are associated with URLs to a well-known 
 
 ```python
 from azure.ai.textanalytics import TextAnalyticsClient, TextAnalyticsApiKeyCredential
-    
+
 text_analytics_client = TextAnalyticsClient(endpoint, TextAnalyticsApiKeyCredential(key))
 
 documents = [
@@ -297,9 +297,8 @@ for doc in result:
         print("URL: {}".format(entity.url))
         print("Data Source: {}".format(entity.data_source))
         for match in entity.matches:
-            print("Score: {0:.3f}".format(match.score))
-            print("Offset: {}".format(match.grapheme_offset))
-            print("Length: {}\n".format(match.grapheme_length))
+            print("Score: {}".format(match.score))
+            print("Entity as appears in request: {}".format(match.text))
 ```
 
 The returned response is a heterogeneous list of result and error objects: list[[RecognizeLinkedEntitiesResult][recognize_linked_entities_result], [DocumentError][document_error]]
@@ -312,7 +311,7 @@ Extract key phrases in text to determine the main talking points. For example, f
 
 ```python
 from azure.ai.textanalytics import TextAnalyticsClient, TextAnalyticsApiKeyCredential
-    
+
 text_analytics_client = TextAnalyticsClient(endpoint, TextAnalyticsApiKeyCredential(key))
 
 documents = [
@@ -337,7 +336,7 @@ Determine the language in text, including the confidence score of the predicted 
 
 ```python
 from azure.ai.textanalytics import TextAnalyticsClient, TextAnalyticsApiKeyCredential
-    
+
 text_analytics_client = TextAnalyticsClient(endpoint, TextAnalyticsApiKeyCredential(key))
 
 documents = [
@@ -411,8 +410,8 @@ result = text_analytics_client.analyze_sentiment(documents, logging_enable=True)
 ### More sample code
 
 These code samples show common scenario operations with the Azure Text Analytics client library.
-The async versions of the samples (the python sample files appended with `_async`) show asynchronous operations 
-with Text Analytics and require Python 3.5 or later. 
+The async versions of the samples (the python sample files appended with `_async`) show asynchronous operations
+with Text Analytics and require Python 3.5 or later.
 
 Authenticate the client with a Cognitive Services/Text Analytics API key or a token credential from [azure-identity][azure_identity]:
 * [sample_authentication.py][sample_authentication] ([async version][sample_authentication_async])

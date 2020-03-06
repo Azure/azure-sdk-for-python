@@ -10,11 +10,11 @@
 FILE: sample_authentication.py
 
 DESCRIPTION:
-    This sample demonstrates how to authenticate with the text analytics service.
+    This sample demonstrates how to authenticate to the Text Analytics service.
 
     There are two supported methods of authentication:
-    1) Use a cognitive services/text analytics API key with TextAnalyticsApiKeyCredential
-    2) Use a token credential to authenticate with Azure Active Directory
+    1) Use a Cognitive Services/Text Analytics API key with TextAnalyticsApiKeyCredential
+    2) Use a token credential from azure-identity to authenticate with Azure Active Directory
 
     See more details about authentication here:
     https://docs.microsoft.com/azure/cognitive-services/authentication
@@ -23,8 +23,8 @@ USAGE:
     python sample_authentication.py
 
     Set the environment variables with your own values before running the sample:
-    1) AZURE_TEXT_ANALYTICS_ENDPOINT - the endpoint to your cognitive services/text analytics resource.
-    2) AZURE_TEXT_ANALYTICS_KEY - your text analytics API key
+    1) AZURE_TEXT_ANALYTICS_ENDPOINT - the endpoint to your Cognitive Services/Text Analytics resource.
+    2) AZURE_TEXT_ANALYTICS_KEY - your Text Analytics API key
     3) AZURE_CLIENT_ID - the client ID of your active directory application.
     4) AZURE_TENANT_ID - the tenant ID of your active directory application.
     5) AZURE_CLIENT_SECRET - the secret of your active directory application.
@@ -36,6 +36,7 @@ import os
 class AuthenticationSample(object):
 
     def authentication_with_api_key_credential(self):
+        print("\n.. authentication_with_api_key_credential")
         # [START create_ta_client_with_key]
         from azure.ai.textanalytics import TextAnalyticsClient, TextAnalyticsApiKeyCredential
         endpoint = os.getenv("AZURE_TEXT_ANALYTICS_ENDPOINT")
@@ -51,9 +52,10 @@ class AuthenticationSample(object):
         print("Confidence score: {}".format(result[0].primary_language.score))
 
     def authentication_with_azure_active_directory(self):
-        """DefaultAzureCredential will use the values from the environment
+        """DefaultAzureCredential will use the values from these environment
         variables: AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET
         """
+        print("\n.. authentication_with_api_key_credential")
         # [START create_ta_client_with_aad]
         from azure.ai.textanalytics import TextAnalyticsClient
         from azure.identity import DefaultAzureCredential
