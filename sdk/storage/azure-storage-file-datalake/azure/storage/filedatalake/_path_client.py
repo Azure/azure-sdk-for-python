@@ -53,7 +53,7 @@ class PathClient(StorageAccountHostsMixin):
             path_name = path_name.strip('/')
 
         if not (file_system_name and path_name):
-            raise ValueError("Please specify a container name and blob name.")
+            raise ValueError("Please specify a file system name and file path.")
         if not parsed_url.netloc:
             raise ValueError("Invalid URL: {}".format(account_url))
 
@@ -121,9 +121,10 @@ class PathClient(StorageAccountHostsMixin):
         """
         Create directory or file
 
-        :param resource_type: Required for Create File and Create Directory.
-         The value must be "file" or "directory". Possible values include:
-         'directory', 'file'
+        :param resource_type:
+            Required for Create File and Create Directory.
+            The value must be "file" or "directory". Possible values include:
+            'directory', 'file'
         :type resource_type: str
         :param ~azure.storage.filedatalake.ContentSettings content_settings:
             ContentSettings object used to set path properties.
@@ -133,20 +134,22 @@ class PathClient(StorageAccountHostsMixin):
         :keyword lease:
             Required if the file/directory has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.filedatalake.DataLakeLeaseClient or str
-        :keyword str umask: Optional and only valid if Hierarchical Namespace is enabled for the account.
+        :paramtype lease: ~azure.storage.filedatalake.DataLakeLeaseClient or str
+        :keyword str umask:
+            Optional and only valid if Hierarchical Namespace is enabled for the account.
             When creating a file or directory and the parent folder does not have a default ACL,
             the umask restricts the permissions of the file or directory to be created.
             The resulting permission is given by p & ^u, where p is the permission and u is the umask.
             For example, if p is 0777 and u is 0057, then the resulting permission is 0720.
             The default permission is 0777 for a directory and 0666 for a file. The default umask is 0027.
             The umask must be specified in 4-digit octal notation (e.g. 0766).
-        :keyword permissions: Optional and only valid if Hierarchical Namespace
-         is enabled for the account. Sets POSIX access permissions for the file
-         owner, the file owning group, and others. Each class may be granted
-         read, write, or execute permission.  The sticky bit is also supported.
-         Both symbolic (rwxrw-rw-) and 4-digit octal notation (e.g. 0766) are
-         supported.
+        :keyword permissions:
+            Optional and only valid if Hierarchical Namespace
+            is enabled for the account. Sets POSIX access permissions for the file
+            owner, the file owning group, and others. Each class may be granted
+            read, write, or execute permission.  The sticky bit is also supported.
+            Both symbolic (rwxrw-rw-) and 4-digit octal notation (e.g. 0766) are
+            supported.
         :type permissions: str
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
@@ -258,29 +261,33 @@ class PathClient(StorageAccountHostsMixin):
         """
         Set the owner, group, permissions, or access control list for a path.
 
-        :param owner: Optional. The owner of the file or directory.
+        :param owner:
+            Optional. The owner of the file or directory.
         :type owner: str
-        :param group: Optional. The owning group of the file or directory.
+        :param group:
+            Optional. The owning group of the file or directory.
         :type group: str
-        :param permissions: Optional and only valid if Hierarchical Namespace
-         is enabled for the account. Sets POSIX access permissions for the file
-         owner, the file owning group, and others. Each class may be granted
-         read, write, or execute permission.  The sticky bit is also supported.
-         Both symbolic (rwxrw-rw-) and 4-digit octal notation (e.g. 0766) are
-         supported.
-         permissions and acl are mutually exclusive.
+        :param permissions:
+            Optional and only valid if Hierarchical Namespace
+            is enabled for the account. Sets POSIX access permissions for the file
+            owner, the file owning group, and others. Each class may be granted
+            read, write, or execute permission.  The sticky bit is also supported.
+            Both symbolic (rwxrw-rw-) and 4-digit octal notation (e.g. 0766) are
+            supported.
+            permissions and acl are mutually exclusive.
         :type permissions: str
-        :param acl: Sets POSIX access control rights on files and directories.
-         The value is a comma-separated list of access control entries. Each
-         access control entry (ACE) consists of a scope, a type, a user or
-         group identifier, and permissions in the format
-         "[scope:][type]:[id]:[permissions]".
-         permissions and acl are mutually exclusive.
+        :param acl:
+            Sets POSIX access control rights on files and directories.
+            The value is a comma-separated list of access control entries. Each
+            access control entry (ACE) consists of a scope, a type, a user or
+            group identifier, and permissions in the format
+            "[scope:][type]:[id]:[permissions]".
+            permissions and acl are mutually exclusive.
         :type acl: str
         :keyword lease:
             Required if the file/directory has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.filedatalake.DataLakeLeaseClient or str
+        :paramtype lease: ~azure.storage.filedatalake.DataLakeLeaseClient or str
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -330,19 +337,20 @@ class PathClient(StorageAccountHostsMixin):
                            **kwargs):
         # type: (...) -> Dict[str, Any]
         """
-        :param upn: Optional. Valid only when Hierarchical Namespace is
-         enabled for the account. If "true", the user identity values returned
-         in the x-ms-owner, x-ms-group, and x-ms-acl response headers will be
-         transformed from Azure Active Directory Object IDs to User Principal
-         Names.  If "false", the values will be returned as Azure Active
-         Directory Object IDs. The default value is false. Note that group and
-         application Object IDs are not translated because they do not have
-         unique friendly names.
+        :param upn: Optional.
+            Valid only when Hierarchical Namespace is
+            enabled for the account. If "true", the user identity values returned
+            in the x-ms-owner, x-ms-group, and x-ms-acl response headers will be
+            transformed from Azure Active Directory Object IDs to User Principal
+            Names.  If "false", the values will be returned as Azure Active
+            Directory Object IDs. The default value is false. Note that group and
+            application Object IDs are not translated because they do not have
+            unique friendly names.
         :type upn: bool
         :keyword lease:
             Required if the file/directory has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.filedatalake.DataLakeLeaseClient or str
+        :paramtype lease: ~azure.storage.filedatalake.DataLakeLeaseClient or str
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -406,39 +414,41 @@ class PathClient(StorageAccountHostsMixin):
         """
         Rename directory or file
 
-        :param rename_source: The value must have the following format: "/{filesystem}/{path}".
+        :param rename_source:
+            The value must have the following format: "/{filesystem}/{path}".
         :type rename_source: str
-        :param source_lease: A lease ID for the source path. If specified,
-         the source path must have an active lease and the leaase ID must
-         match.
-        :type source_lease: ~azure.storage.filedatalake.DataLakeLeaseClient or str
-        :param ~azure.storage.filedatalake.ContentSettings content_settings:
+        :keyword source_lease:
+            A lease ID for the source path. If specified,
+            the source path must have an active lease and the leaase ID must
+            match.
+        :paramtype source_lease: ~azure.storage.filedatalake.DataLakeLeaseClient or str
+        :keyword ~azure.storage.filedatalake.ContentSettings content_settings:
             ContentSettings object used to set path properties.
-        :param lease:
+        :keyword lease:
             Required if the file/directory has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.filedatalake.DataLakeLeaseClient or str
-        :param str umask: Optional and only valid if Hierarchical Namespace is enabled for the account.
+        :paramtype lease: ~azure.storage.filedatalake.DataLakeLeaseClient or str
+        :keyword str umask: Optional and only valid if Hierarchical Namespace is enabled for the account.
             When creating a file or directory and the parent folder does not have a default ACL,
             the umask restricts the permissions of the file or directory to be created.
             The resulting permission is given by p & ^u, where p is the permission and u is the umask.
             For example, if p is 0777 and u is 0057, then the resulting permission is 0720.
             The default permission is 0777 for a directory and 0666 for a file. The default umask is 0027.
             The umask must be specified in 4-digit octal notation (e.g. 0766).
-        :param permissions: Optional and only valid if Hierarchical Namespace
+        :keyword permissions: Optional and only valid if Hierarchical Namespace
          is enabled for the account. Sets POSIX access permissions for the file
          owner, the file owning group, and others. Each class may be granted
          read, write, or execute permission.  The sticky bit is also supported.
          Both symbolic (rwxrw-rw-) and 4-digit octal notation (e.g. 0766) are
          supported.
         :type permissions: str
-        :param ~datetime.datetime if_modified_since:
+        :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :param ~datetime.datetime if_unmodified_since:
+        :keyword ~datetime.datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
@@ -449,13 +459,13 @@ class PathClient(StorageAccountHostsMixin):
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
-        :param ~datetime.datetime source_if_modified_since:
+        :keyword ~datetime.datetime source_if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :param ~datetime.datetime source_if_unmodified_since:
+        :keyword ~datetime.datetime source_if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
@@ -466,9 +476,8 @@ class PathClient(StorageAccountHostsMixin):
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions source_match_condition:
             The source match condition to use upon the etag.
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :return:
         """
         options = self._rename_path_options(
             rename_source,
@@ -486,7 +495,7 @@ class PathClient(StorageAccountHostsMixin):
         :keyword lease:
             Required if the directory or file has an active lease. Value can be a DataLakeLeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.filedatalake.DataLakeLeaseClient or str
+        :paramtype lease: ~azure.storage.filedatalake.DataLakeLeaseClient or str
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -533,9 +542,10 @@ class PathClient(StorageAccountHostsMixin):
             A dict containing name-value pairs to associate with the file system as
             metadata. Example: {'category':'test'}
         :type metadata: dict[str, str]
-        :keyword str or ~azure.storage.filedatalake.DataLakeLeaseClient lease:
+        :keyword lease:
             If specified, set_file_system_metadata only succeeds if the
             file system's lease is active and matches this ID.
+        :paramtype lease: ~azure.storage.filedatalake.DataLakeLeaseClient or str
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -577,9 +587,10 @@ class PathClient(StorageAccountHostsMixin):
 
         :param ~azure.storage.filedatalake.ContentSettings content_settings:
             ContentSettings object used to set file/directory properties.
-        :keyword str or ~azure.storage.filedatalake.DataLakeLeaseClient lease:
+        :keyword lease:
             If specified, set_file_system_metadata only succeeds if the
             file system's lease is active and matches this ID.
+        :paramtype lease: ~azure.storage.filedatalake.DataLakeLeaseClient or str
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.

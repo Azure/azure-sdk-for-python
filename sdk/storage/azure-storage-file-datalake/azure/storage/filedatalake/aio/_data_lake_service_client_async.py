@@ -148,7 +148,8 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
         be raised. This method returns a client with which to interact with the newly
         created file system.
 
-        :param str file_system: The name of the file system to create.
+        :param str file_system:
+            The name of the file system to create.
         :param metadata:
             A dict with name-value pairs to associate with the
             file system as metadata. Example: `{'Category':'test'}`
@@ -185,10 +186,11 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
             The file system to delete. This can either be the name of the file system,
             or an instance of FileSystemProperties.
         :type file_system: str or ~azure.storage.filedatalake.FileSystemProperties
-        :keyword ~azure.storage.filedatalake.aio.DataLakeLeaseClient lease:
+        :keyword lease:
             If specified, delete_file_system only succeeds if the
             file system's lease is active and matches this ID.
             Required if the file system has an active lease.
+        :paramtype lease: ~azure.storage.filedatalake.aio.DataLakeLeaseClient or str
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
