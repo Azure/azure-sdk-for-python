@@ -1,55 +1,76 @@
-﻿# --------------------------------------------------------------------------
-#
-# Copyright (c) Microsoft Corporation. All rights reserved.
-#
-# The MIT License (MIT)
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the ""Software""), to
-# deal in the Software without restriction, including without limitation the
-# rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-# sell copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED *AS IS*, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-# IN THE SOFTWARE.
-#
-# --------------------------------------------------------------------------
+﻿#!/usr/bin/env python
 
-from setuptools import setup, find_packages
+#-------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+#--------------------------------------------------------------------------
+
+import re
+import os.path
+from io import open
+from setuptools import find_packages, setup  # type: ignore
+
+# Change the PACKAGE_NAME only to change folder and different name
+PACKAGE_NAME = "azure-mgmt-core"
+PACKAGE_PPRINT_NAME = "Management Core"
+
+# a-b-c => a/b/c
+package_folder_path = PACKAGE_NAME.replace('-', '/')
+# a-b-c => a.b.c
+namespace_name = PACKAGE_NAME.replace('-', '.')
+
+# Version extraction inspired from 'requests'
+with open(os.path.join(package_folder_path, '_version.py'), 'r') as fd:
+    version = re.search(r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]',  # type: ignore
+                        fd.read(), re.MULTILINE).group(1)
+
+if not version:
+    raise RuntimeError('Cannot find version information')
+
+with open('README.md', encoding='utf-8') as f:
+    readme = f.read()
+with open('CHANGELOG.md', encoding='utf-8') as f:
+    changelog = f.read()
 
 setup(
-    name='azure-mgmt-core',
-    version='0.1.0',
+    name=PACKAGE_NAME,
+    version=version,
+    include_package_data=True,
+    description='Microsoft Azure {} Library for Python'.format(PACKAGE_PPRINT_NAME),
+    long_description=readme + '\n\n' + changelog,
+    long_description_content_type='text/markdown',
+    license='MIT License',
     author='Microsoft Corporation',
     author_email='azpysdkhelp@microsoft.com',
-    packages=find_packages(exclude=["tests", "tests.*"]),
-    url='https://github.com/Azure/msrestazure-for-python',
-    license='MIT License',
-    description='ARM specific runtime for Mgmt SDK',
-    long_description=open('README.rst').read(),
+    url='https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/core/azure-mgmt-core',
     classifiers=[
         'Development Status :: 4 - Beta',
         'Programming Language :: Python',
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'License :: OSI Approved :: MIT License',
-        'Topic :: Software Development'],
-    install_requires=[
-        "azure-core<2.0.0,>=1.0.0",
     ],
+    zip_safe=False,
+    packages=find_packages(exclude=[
+        'tests',
+        # Exclude packages that will be covered by PEP420 or nspkg
+        'azure',
+        'azure.mgmt',
+    ]),
+    package_data={
+        'pytyped': ['py.typed'],
+    },
+    install_requires=[
+        "azure-core<2.0.0,>=1.3.0",
+    ],
+    extras_require={
+        ":python_version<'3.0'": ['azure-mgmt-nspkg'],
+        ":python_version<'3.5'": ['typing'],
+    }
 )
