@@ -4,7 +4,9 @@
 
 **Bug fixes**
 
-- Fixed a bug that `azure.eventhub.EventHubConsumerClient.receive()` doesn't call error handler callback on_error #9660
+- Fixed a bug that swallowed errors when receiving events with the sync `azure.eventhub.EventHubConsumerClient`  #9660
+- Fixed a bug that caused `get_eventhub_properties`, `get_partition_ids`, and `get_partition_properties` to raise
+and error on Azure Stack #9920 
 
 ## 5.0.0 (2020-01-13)
 
