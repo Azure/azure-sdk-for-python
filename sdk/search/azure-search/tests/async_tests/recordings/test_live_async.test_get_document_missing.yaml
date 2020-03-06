@@ -7,7 +7,7 @@ interactions:
       User-Agent:
       - azsdk-python-core/1.2.3 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit) azsdk-python-searchindexclient/unknown
       api-key:
-      - 8D88DA0DCB0EB2317F720DFABA2F6657
+      - D02D8E38B7DFDDD133A082B2715B4707
     method: GET
     uri: https://search630210f1.search.windows.net/indexes('drgqefsg')/docs('1000')?api-version=2019-05-06
   response:
@@ -16,11 +16,11 @@ interactions:
     headers:
       cache-control: no-cache
       content-length: '0'
-      date: Thu, 05 Mar 2020 23:12:01 GMT
-      elapsed-time: '75'
+      date: Fri, 06 Mar 2020 00:08:17 GMT
+      elapsed-time: '223'
       expires: '-1'
       pragma: no-cache
-      request-id: b86d89ba-5f36-11ea-9523-8c8590507855
+      request-id: 9485d14e-5f3e-11ea-abce-8c8590507855
       strict-transport-security: max-age=15724800; includeSubDomains
     status:
       code: 404

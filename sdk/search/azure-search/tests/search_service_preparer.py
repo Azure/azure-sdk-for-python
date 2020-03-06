@@ -43,6 +43,7 @@ class SearchServicePreparer(AzureMgmtPreparer):
         self.schema = schema
         self.index_name = None
         self.index_batch = index_batch
+        self.service_name = "TEST-SERVICE-NAME"
 
     def _get_resource_group(self, **kwargs):
         try:
@@ -56,10 +57,11 @@ class SearchServicePreparer(AzureMgmtPreparer):
 
     def create_resource(self, name, **kwargs):
         schema = json.loads(self.schema)
-        if not self.is_live:
-            return {"api_key": "api-key", "index_name": schema["name"]}
-
         self.service_name = self.create_random_name()
+
+        if not self.is_live:
+            return {"api_key": "api-key", "index_name": schema["name"], "service_name": self.service_name}
+
 
         group_name = self._get_resource_group(**kwargs).name
 
