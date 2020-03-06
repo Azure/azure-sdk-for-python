@@ -95,6 +95,12 @@ if __name__ == '__main__':
     main()
 ```
 
+#### Use `BlobCheckpointStore` with a different version of Azure Storage Service API
+Some environments have different versions of Azure Storage Service API. 
+`BlobCheckpointStore` by default uses the Storage Service API version 2019-07-07. To use it against a different
+version, specify `api_version` when you create the `BlobCheckpointStore` object.
+
+
 ## Troubleshooting
 
 ### General
@@ -114,7 +120,7 @@ Reference documentation is available [here](https://azuresdkdocs.blob.core.windo
 
 - Enable `azure.eventhub.extensions.checkpointstoreblob` logger to collect traces from the library.
 - Enable `azure.eventhub` logger to collect traces from the main azure-eventhub library.
-- Enable `azure.storage.blob` logger to collect traces from azure storage blob library.
+- Enable `azure.eventhub.extensions.checkpointstoreblob._vendor.storage` logger to collect traces from azure storage blob library.
 - Enable `uamqp` logger to collect traces from the underlying uAMQP library.
 - Enable AMQP frame level trace by setting `logging_enable=True` when creating the client.
 

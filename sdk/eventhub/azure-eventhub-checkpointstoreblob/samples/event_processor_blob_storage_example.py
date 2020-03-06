@@ -17,7 +17,7 @@ def on_event(partition_context, event):
 if __name__ == '__main__':
     checkpoint_store = BlobCheckpointStore.from_connection_string(
         STORAGE_CONNECTION_STR,
-        container_name=BLOB_CONTAINER_NAME
+        container_name=BLOB_CONTAINER_NAME,
     )
     client = EventHubConsumerClient.from_connection_string(
         CONNECTION_STR,
