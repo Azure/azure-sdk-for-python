@@ -24,7 +24,7 @@ psscript = os.path.join(root_dir, "scripts", "devops_tasks", "find_change_log.ps
 
 
 def find_change_log(targeted_package, version):
-    # Execute powershell script to find a matching version in history.md
+    # Execute powershell script to find a matching version in change log
     command_array = ["pwsh"]
     command_array.append("-File {}".format(psscript))
     command_array.append("-workingDir {}".format(targeted_package))
@@ -74,7 +74,7 @@ def verify_packages(targeted_packages):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="Verifies latest version is updated in history.md file, Called from DevOps YAML Pipeline"
+        description="Verifies latest version is updated in change log, Called from DevOps YAML Pipeline"
     )
 
     parser.add_argument(
@@ -118,7 +118,7 @@ if __name__ == "__main__":
     )
     change_missing = verify_packages(targeted_packages)
     if len(change_missing) > 0:
-        logging.error("Below packages do not have change log in history.md")
+        logging.error("Below packages do not have change log")
         logging.error("***************************************************")
         for pkg_name in change_missing.keys():
             logging.error("{0} - {1}".format(pkg_name, change_missing[pkg_name]))
