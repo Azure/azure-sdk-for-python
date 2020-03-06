@@ -54,8 +54,8 @@ class ARMPipelineClient(PipelineClient):
     @staticmethod
     def _default_policies(config, **kwargs):
         return [
-            ARMAutoResourceProviderRegistrationPolicy(),
             RequestIdPolicy(**kwargs),
+            ARMAutoResourceProviderRegistrationPolicy(),
             config.headers_policy,
             config.user_agent_policy,
             config.proxy_policy,

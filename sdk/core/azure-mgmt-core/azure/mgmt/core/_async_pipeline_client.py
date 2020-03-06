@@ -54,8 +54,8 @@ class AsyncARMPipelineClient(AsyncPipelineClient):
     @staticmethod
     def _default_policies(config, **kwargs):
         return [
-            AsyncARMAutoResourceProviderRegistrationPolicy(),
             RequestIdPolicy(**kwargs),
+            AsyncARMAutoResourceProviderRegistrationPolicy(),
             config.headers_policy,
             config.user_agent_policy,
             config.proxy_policy,
