@@ -176,6 +176,24 @@ result =  search_client.search(query="spa", logging_enable=True)
 ### More sample code
 
 
+Authenticate the client with a Azure Cognitive Search [API Key Credential](https://docs.microsoft.com/en-us/azure/search/search-security-api-keys):
+
+[sample_authentication.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/search/azure-search/samples/sample_authentication.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/search/azure-search/samples/iasync_samples/sample_authentication_async.py))
+
+Then for common search index operations:
+
+* Get a document by key: [sample_get_document.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/search/azure-search/samples/sample_get_document.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/search/azure-search/samples/async_samples/sample_get_document_async.py))
+
+* Perform a simple text query: [sample_simple_query.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/search/azure-search/samples/sample_simple_query.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/search/azure-search/samples/async_samples/sample_simple_query_async.py))
+
+* Perform a filtered query: [sample_filter_query.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/search/azure-search/samples/sample_filter_query.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/search/azure-search/samples/async_samples/sample_filter_query_async.py))
+
+* Get auto-completions: [sample_autocomplete.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/search/azure-search/samples/sample_autocomplete.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/search/azure-search/samples/async_samples/sample_autocomplete_async.py))
+
+* Get search suggestions: [sample_suggestions.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/search/azure-search/samples/sample_suggestions.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/search/azure-search/samples/async_samples/sample_suggestions_async.py))
+
+* Perform basic document updates: [sample_crud_operations.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/search/azure-search/samples/sample_crud_operations.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/search/azure-search/samples/async_samples/sample_crud_operations_async.py))
+
 ### Additional documentation
 
 For more extensive documentation on Cognitive Search, see the [Azure Cognitive Search documentation](https://docs.microsoft.com/en-us/azure/search/) on docs.microsoft.com.
