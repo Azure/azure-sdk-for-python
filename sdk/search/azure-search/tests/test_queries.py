@@ -21,7 +21,7 @@ from azure.search import AutocompleteQuery, SearchQuery, SuggestQuery
 
 class TestAutocompleteQuery(object):
     def test_init(self):
-        query = AutocompleteQuery()
+        query = AutocompleteQuery(search_text="text", suggester_name="sg")
         assert type(query.request) is AutocompleteRequest
         assert query.request.filter is None
 
@@ -34,22 +34,19 @@ class TestAutocompleteQuery(object):
         assert mock_request.call_args[1] == {"foo": 10, "bar": 20}
 
     def test_repr(self):
-        query = AutocompleteQuery()
-        assert repr(query) == "<AutocompleteQuery [None]>"
-
-        query = AutocompleteQuery(search_text="foo bar")
+        query = AutocompleteQuery(search_text="foo bar", suggester_name="sg")
         assert repr(query) == "<AutocompleteQuery [foo bar]>"
 
-        query = AutocompleteQuery(search_text="aaaaabbbbb" * 200)
+        query = AutocompleteQuery(search_text="aaaaabbbbb" * 200, suggester_name="sg")
         assert len(repr(query)) == 1024
 
     def test_filter(self):
-        query = AutocompleteQuery()
+        query = AutocompleteQuery(search_text="text", suggester_name="sg")
         assert query.request.filter is None
         query.filter("expr0")
         assert query.request.filter == "expr0"
 
-        query = AutocompleteQuery(filter="expr1")
+        query = AutocompleteQuery(search_text="text", suggester_name="sg", filter="expr1")
         assert query.request.filter == "expr1"
         query.filter("expr2")
         assert query.request.filter == "expr2"
@@ -75,7 +72,7 @@ class TestSearchQuery(object):
         query = SearchQuery()
         assert repr(query) == "<SearchQuery [None]>"
 
-        query = SearchQuery(search_text="foo bar")
+        query = SearchQuery(search_text="foo bar", suggester_name="sg")
         assert repr(query) == "<SearchQuery [foo bar]>"
 
         query = SearchQuery(search_text="aaaaabbbbb" * 200)
@@ -137,7 +134,7 @@ class TestSearchQuery(object):
 
 class TestSuggestQuery(object):
     def test_init(self):
-        query = SuggestQuery()
+        query = SuggestQuery(search_text="text", suggester_name="sg")
         assert type(query.request) is SuggestRequest
         assert query.request.filter is None
 
@@ -150,22 +147,19 @@ class TestSuggestQuery(object):
         assert mock_request.call_args[1] == {"foo": 10, "bar": 20}
 
     def test_repr(self):
-        query = SuggestQuery()
-        assert repr(query) == "<SuggestQuery [None]>"
-
-        query = SuggestQuery(search_text="foo bar")
+        query = SuggestQuery(search_text="foo bar", suggester_name="sg")
         assert repr(query) == "<SuggestQuery [foo bar]>"
 
-        query = SuggestQuery(search_text="aaaaabbbbb" * 200)
+        query = SuggestQuery(search_text="aaaaabbbbb" * 200, suggester_name="sg")
         assert len(repr(query)) == 1024
 
     def test_filter(self):
-        query = SuggestQuery()
+        query = SuggestQuery(search_text="text", suggester_name="sg")
         assert query.request.filter is None
         query.filter("expr0")
         assert query.request.filter == "expr0"
 
-        query = SuggestQuery(filter="expr1")
+        query = SuggestQuery(search_text="text", suggester_name="sg", filter="expr1")
         assert query.request.filter == "expr1"
         query.filter("expr2")
         assert query.request.filter == "expr2"

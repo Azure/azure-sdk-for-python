@@ -9,11 +9,11 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-core/1.2.3 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit) azsdk-python-searchindexclient/unknown
+      - azsdk-python-searchindexclient/unknown Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
       api-key:
-      - 764BCDD1349FA5DC067D16312F5D7C59
+      - 148F3444A80BDD5B323FBBA6E89AC98B
     method: GET
-    uri: https://search9b020b1b.search.windows.net/indexes('drgqefsg')/docs('1')?api-version=2019-05-06
+    uri: https://search9b020b1b.search.windows.net/indexes('drgqefsg')/docs('1')?api-version=2019-05-06-Preview
   response:
     body:
       string: '{"hotelId":"1","hotelName":"Fancy Stay","description":"Best hotel in
@@ -32,9 +32,9 @@ interactions:
       content-type:
       - application/json; odata.metadata=none
       date:
-      - Fri, 06 Mar 2020 00:03:18 GMT
+      - Fri, 06 Mar 2020 02:33:43 GMT
       elapsed-time:
-      - '270'
+      - '119'
       expires:
       - '-1'
       odata-version:
@@ -44,7 +44,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - e1e751ca-5f3d-11ea-abce-8c8590507855
+      - e63f5bc2-5f52-11ea-acd2-8c8590507855
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:
@@ -62,11 +62,11 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-core/1.2.3 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit) azsdk-python-searchindexclient/unknown
+      - azsdk-python-searchindexclient/unknown Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
       api-key:
-      - 764BCDD1349FA5DC067D16312F5D7C59
+      - 148F3444A80BDD5B323FBBA6E89AC98B
     method: GET
-    uri: https://search9b020b1b.search.windows.net/indexes('drgqefsg')/docs('2')?api-version=2019-05-06
+    uri: https://search9b020b1b.search.windows.net/indexes('drgqefsg')/docs('2')?api-version=2019-05-06-Preview
   response:
     body:
       string: '{"hotelId":"2","hotelName":"Roach Motel","description":"Cheapest hotel
@@ -80,9 +80,9 @@ interactions:
       content-type:
       - application/json; odata.metadata=none
       date:
-      - Fri, 06 Mar 2020 00:03:18 GMT
+      - Fri, 06 Mar 2020 02:33:43 GMT
       elapsed-time:
-      - '9'
+      - '4'
       expires:
       - '-1'
       odata-version:
@@ -92,7 +92,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - e235736e-5f3d-11ea-abce-8c8590507855
+      - e66bd8b4-5f52-11ea-acd2-8c8590507855
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:
@@ -110,11 +110,11 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-core/1.2.3 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit) azsdk-python-searchindexclient/unknown
+      - azsdk-python-searchindexclient/unknown Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
       api-key:
-      - 764BCDD1349FA5DC067D16312F5D7C59
+      - 148F3444A80BDD5B323FBBA6E89AC98B
     method: GET
-    uri: https://search9b020b1b.search.windows.net/indexes('drgqefsg')/docs('3')?api-version=2019-05-06
+    uri: https://search9b020b1b.search.windows.net/indexes('drgqefsg')/docs('3')?api-version=2019-05-06-Preview
   response:
     body:
       string: '{"hotelId":"3","hotelName":"EconoStay","description":"Very popular
@@ -127,9 +127,9 @@ interactions:
       content-type:
       - application/json; odata.metadata=none
       date:
-      - Fri, 06 Mar 2020 00:03:18 GMT
+      - Fri, 06 Mar 2020 02:33:43 GMT
       elapsed-time:
-      - '11'
+      - '5'
       expires:
       - '-1'
       odata-version:
@@ -139,7 +139,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - e23e4f3e-5f3d-11ea-abce-8c8590507855
+      - e67367e6-5f52-11ea-acd2-8c8590507855
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:
@@ -157,11 +157,11 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-core/1.2.3 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit) azsdk-python-searchindexclient/unknown
+      - azsdk-python-searchindexclient/unknown Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
       api-key:
-      - 764BCDD1349FA5DC067D16312F5D7C59
+      - 148F3444A80BDD5B323FBBA6E89AC98B
     method: GET
-    uri: https://search9b020b1b.search.windows.net/indexes('drgqefsg')/docs('4')?api-version=2019-05-06
+    uri: https://search9b020b1b.search.windows.net/indexes('drgqefsg')/docs('4')?api-version=2019-05-06-Preview
   response:
     body:
       string: '{"hotelId":"4","hotelName":"Express Rooms","description":"Pretty good
@@ -174,9 +174,9 @@ interactions:
       content-type:
       - application/json; odata.metadata=none
       date:
-      - Fri, 06 Mar 2020 00:03:18 GMT
+      - Fri, 06 Mar 2020 02:33:44 GMT
       elapsed-time:
-      - '6'
+      - '5'
       expires:
       - '-1'
       odata-version:
@@ -186,7 +186,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - e2473d6a-5f3d-11ea-abce-8c8590507855
+      - e67b3d04-5f52-11ea-acd2-8c8590507855
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:
@@ -204,11 +204,11 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-core/1.2.3 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit) azsdk-python-searchindexclient/unknown
+      - azsdk-python-searchindexclient/unknown Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
       api-key:
-      - 764BCDD1349FA5DC067D16312F5D7C59
+      - 148F3444A80BDD5B323FBBA6E89AC98B
     method: GET
-    uri: https://search9b020b1b.search.windows.net/indexes('drgqefsg')/docs('5')?api-version=2019-05-06
+    uri: https://search9b020b1b.search.windows.net/indexes('drgqefsg')/docs('5')?api-version=2019-05-06-Preview
   response:
     body:
       string: '{"hotelId":"5","hotelName":"Comfy Place","description":"Another good
@@ -221,9 +221,9 @@ interactions:
       content-type:
       - application/json; odata.metadata=none
       date:
-      - Fri, 06 Mar 2020 00:03:18 GMT
+      - Fri, 06 Mar 2020 02:33:44 GMT
       elapsed-time:
-      - '42'
+      - '3'
       expires:
       - '-1'
       odata-version:
@@ -233,7 +233,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - e24f4e60-5f3d-11ea-abce-8c8590507855
+      - e6830ef8-5f52-11ea-acd2-8c8590507855
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:
@@ -251,11 +251,11 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-core/1.2.3 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit) azsdk-python-searchindexclient/unknown
+      - azsdk-python-searchindexclient/unknown Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
       api-key:
-      - 764BCDD1349FA5DC067D16312F5D7C59
+      - 148F3444A80BDD5B323FBBA6E89AC98B
     method: GET
-    uri: https://search9b020b1b.search.windows.net/indexes('drgqefsg')/docs('6')?api-version=2019-05-06
+    uri: https://search9b020b1b.search.windows.net/indexes('drgqefsg')/docs('6')?api-version=2019-05-06-Preview
   response:
     body:
       string: '{"hotelId":"6","hotelName":null,"description":"Surprisingly expensive.
@@ -268,9 +268,9 @@ interactions:
       content-type:
       - application/json; odata.metadata=none
       date:
-      - Fri, 06 Mar 2020 00:03:18 GMT
+      - Fri, 06 Mar 2020 02:33:44 GMT
       elapsed-time:
-      - '11'
+      - '4'
       expires:
       - '-1'
       odata-version:
@@ -280,7 +280,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - e25d2f80-5f3d-11ea-abce-8c8590507855
+      - e68aa8de-5f52-11ea-acd2-8c8590507855
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:
@@ -298,11 +298,11 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-core/1.2.3 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit) azsdk-python-searchindexclient/unknown
+      - azsdk-python-searchindexclient/unknown Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
       api-key:
-      - 764BCDD1349FA5DC067D16312F5D7C59
+      - 148F3444A80BDD5B323FBBA6E89AC98B
     method: GET
-    uri: https://search9b020b1b.search.windows.net/indexes('drgqefsg')/docs('7')?api-version=2019-05-06
+    uri: https://search9b020b1b.search.windows.net/indexes('drgqefsg')/docs('7')?api-version=2019-05-06-Preview
   response:
     body:
       string: '{"hotelId":"7","hotelName":"Modern Stay","description":"Modern architecture,
@@ -316,7 +316,7 @@ interactions:
       content-type:
       - application/json; odata.metadata=none
       date:
-      - Fri, 06 Mar 2020 00:03:18 GMT
+      - Fri, 06 Mar 2020 02:33:44 GMT
       elapsed-time:
       - '4'
       expires:
@@ -328,7 +328,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - e266b28a-5f3d-11ea-abce-8c8590507855
+      - e69260ec-5f52-11ea-acd2-8c8590507855
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:
@@ -346,11 +346,11 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-core/1.2.3 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit) azsdk-python-searchindexclient/unknown
+      - azsdk-python-searchindexclient/unknown Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
       api-key:
-      - 764BCDD1349FA5DC067D16312F5D7C59
+      - 148F3444A80BDD5B323FBBA6E89AC98B
     method: GET
-    uri: https://search9b020b1b.search.windows.net/indexes('drgqefsg')/docs('8')?api-version=2019-05-06
+    uri: https://search9b020b1b.search.windows.net/indexes('drgqefsg')/docs('8')?api-version=2019-05-06-Preview
   response:
     body:
       string: '{"hotelId":"8","hotelName":null,"description":"Has some road noise
@@ -365,9 +365,9 @@ interactions:
       content-type:
       - application/json; odata.metadata=none
       date:
-      - Fri, 06 Mar 2020 00:03:18 GMT
+      - Fri, 06 Mar 2020 02:33:44 GMT
       elapsed-time:
-      - '11'
+      - '3'
       expires:
       - '-1'
       odata-version:
@@ -377,7 +377,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - e270f36c-5f3d-11ea-abce-8c8590507855
+      - e69ac1ec-5f52-11ea-acd2-8c8590507855
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:
@@ -395,11 +395,11 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-core/1.2.3 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit) azsdk-python-searchindexclient/unknown
+      - azsdk-python-searchindexclient/unknown Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
       api-key:
-      - 764BCDD1349FA5DC067D16312F5D7C59
+      - 148F3444A80BDD5B323FBBA6E89AC98B
     method: GET
-    uri: https://search9b020b1b.search.windows.net/indexes('drgqefsg')/docs('9')?api-version=2019-05-06
+    uri: https://search9b020b1b.search.windows.net/indexes('drgqefsg')/docs('9')?api-version=2019-05-06-Preview
   response:
     body:
       string: '{"hotelId":"9","hotelName":"Secret Point Motel","description":"The
@@ -428,9 +428,9 @@ interactions:
       content-type:
       - application/json; odata.metadata=none
       date:
-      - Fri, 06 Mar 2020 00:03:18 GMT
+      - Fri, 06 Mar 2020 02:33:44 GMT
       elapsed-time:
-      - '23'
+      - '8'
       expires:
       - '-1'
       odata-version:
@@ -440,7 +440,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - e27b8ba6-5f3d-11ea-abce-8c8590507855
+      - e6a24fe8-5f52-11ea-acd2-8c8590507855
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:
@@ -458,11 +458,11 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-core/1.2.3 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit) azsdk-python-searchindexclient/unknown
+      - azsdk-python-searchindexclient/unknown Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
       api-key:
-      - 764BCDD1349FA5DC067D16312F5D7C59
+      - 148F3444A80BDD5B323FBBA6E89AC98B
     method: GET
-    uri: https://search9b020b1b.search.windows.net/indexes('drgqefsg')/docs('10')?api-version=2019-05-06
+    uri: https://search9b020b1b.search.windows.net/indexes('drgqefsg')/docs('10')?api-version=2019-05-06-Preview
   response:
     body:
       string: '{"hotelId":"10","hotelName":"Countryside Hotel","description":"Save
@@ -487,9 +487,9 @@ interactions:
       content-type:
       - application/json; odata.metadata=none
       date:
-      - Fri, 06 Mar 2020 00:03:18 GMT
+      - Fri, 06 Mar 2020 02:33:44 GMT
       elapsed-time:
-      - '18'
+      - '6'
       expires:
       - '-1'
       odata-version:
@@ -499,7 +499,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - e286b5d0-5f3d-11ea-abce-8c8590507855
+      - e6abc640-5f52-11ea-acd2-8c8590507855
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:

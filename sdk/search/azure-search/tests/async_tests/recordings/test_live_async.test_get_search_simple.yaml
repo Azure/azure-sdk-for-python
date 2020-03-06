@@ -9,11 +9,11 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-core/1.2.3 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit) azsdk-python-searchindexclient/unknown
+      - azsdk-python-searchindexclient/unknown Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
       api-key:
-      - 36CEA2FD79A51B15F30C633CA612BA07
+      - 8150E481A059D8F88604D4B3DE8301A2
     method: POST
-    uri: https://search30fc0f98.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2019-05-06
+    uri: https://search30fc0f98.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2019-05-06-Preview
   response:
     body:
       string: '{"value":[{"@search.score":0.48248714,"hotelId":"10","hotelName":"Countryside
@@ -65,19 +65,19 @@ interactions:
       content-encoding: gzip
       content-length: '2377'
       content-type: application/json; odata.metadata=none
-      date: Fri, 06 Mar 2020 00:08:53 GMT
-      elapsed-time: '74'
+      date: Fri, 06 Mar 2020 02:38:06 GMT
+      elapsed-time: '269'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: aaa5cdc6-5f3e-11ea-abce-8c8590507855
+      request-id: 828876d0-5f53-11ea-acd2-8c8590507855
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
       code: 200
       message: OK
-    url: https://search30fc0f98.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2019-05-06
+    url: https://search30fc0f98.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2019-05-06-Preview
 - request:
     body: '{"search": "motel"}'
     headers:
@@ -88,11 +88,11 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-core/1.2.3 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit) azsdk-python-searchindexclient/unknown
+      - azsdk-python-searchindexclient/unknown Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
       api-key:
-      - 36CEA2FD79A51B15F30C633CA612BA07
+      - 8150E481A059D8F88604D4B3DE8301A2
     method: POST
-    uri: https://search30fc0f98.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2019-05-06
+    uri: https://search30fc0f98.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2019-05-06-Preview
   response:
     body:
       string: '{"value":[{"@search.score":1.2368374,"hotelId":"2","hotelName":"Roach
@@ -120,17 +120,17 @@ interactions:
       content-encoding: gzip
       content-length: '1271'
       content-type: application/json; odata.metadata=none
-      date: Fri, 06 Mar 2020 00:08:53 GMT
-      elapsed-time: '30'
+      date: Fri, 06 Mar 2020 02:38:06 GMT
+      elapsed-time: '7'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: aacd8c4e-5f3e-11ea-abce-8c8590507855
+      request-id: 82c2f238-5f53-11ea-acd2-8c8590507855
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
       code: 200
       message: OK
-    url: https://search30fc0f98.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2019-05-06
+    url: https://search30fc0f98.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2019-05-06-Preview
 version: 1

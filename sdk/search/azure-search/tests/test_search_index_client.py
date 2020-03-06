@@ -51,15 +51,6 @@ class TestSearchIndexClient(object):
             "Accept": "application/json;odata.metadata=none",
         }
 
-    def test_search_dns_suffix(self):
-        client = SearchIndexClient("service name", "index name", CREDENTIAL)
-        assert client._client._config.search_dns_suffix == "search.windows.net"
-
-        client = SearchIndexClient(
-            "service name", "index name", CREDENTIAL, search_dns_suffix="DNS suffix"
-        )
-        assert client._client._config.search_dns_suffix == "DNS suffix"
-
     def test_repr(self):
         client = SearchIndexClient("service name", "index name", CREDENTIAL)
         assert repr(client) == "<SearchIndexClient [service={}, index={}]>".format(
@@ -128,7 +119,7 @@ class TestSearchIndexClient(object):
     )
     def test_suggest_query_argument(self, mock_suggest_post):
         client = SearchIndexClient("service name", "index name", CREDENTIAL)
-        result = client.suggest(SuggestQuery(search_text="search text"))
+        result = client.suggest(SuggestQuery(search_text="search text", suggester_name="sg"))
         assert mock_suggest_post.called
         assert mock_suggest_post.call_args[0] == ()
         assert (
@@ -149,7 +140,7 @@ class TestSearchIndexClient(object):
     )
     def test_autocomplete_query_argument(self, mock_autocomplete_post):
         client = SearchIndexClient("service name", "index name", CREDENTIAL)
-        result = client.autocomplete(AutocompleteQuery(search_text="search text"))
+        result = client.autocomplete(AutocompleteQuery(search_text="search text", suggester_name="sg"))
         assert mock_autocomplete_post.called
         assert mock_autocomplete_post.call_args[0] == ()
         assert (

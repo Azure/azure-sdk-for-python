@@ -110,8 +110,7 @@ class SearchIndexClient(object):
         self._search_service_name = search_service_name  # type: str
         self._index_name = index_name  # type: str
         self._client = _SearchIndexClient(
-            search_service_name=search_service_name,
-            search_dns_suffix=search_dns_suffix,
+            endpoint="https://" + search_service_name + "." + search_dns_suffix,
             index_name=index_name,
             headers_policy=headers_policy,
         )  # type: _SearchIndexClient
@@ -154,7 +153,7 @@ class SearchIndexClient(object):
         result = self._client.documents.get(
             key=key, selected_fields=selected_fields, **kwargs
         )
-        return cast(dict, result.additional_properties)
+        return cast(dict, result)
 
     @distributed_trace
     def search(self, query, **kwargs):

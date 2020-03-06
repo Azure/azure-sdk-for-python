@@ -14,11 +14,11 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-core/1.2.3 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit) azsdk-python-searchindexclient/unknown
+      - azsdk-python-searchindexclient/unknown Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
       api-key:
-      - CF4F5AFAFB31CC4AB93F221CF6BC15BC
+      - FB86E0638F6E97E69AEF9E15302242E2
     method: POST
-    uri: https://search30a60fb7.search.windows.net/indexes('drgqefsg')/docs/search.index?api-version=2019-05-06
+    uri: https://search30a60fb7.search.windows.net/indexes('drgqefsg')/docs/search.index?api-version=2019-05-06-Preview
   response:
     body:
       string: '{"value":[{"key":"1000","status":false,"errorMessage":"Document not
@@ -31,9 +31,9 @@ interactions:
       content-type:
       - application/json; odata.metadata=none
       date:
-      - Fri, 06 Mar 2020 00:04:59 GMT
+      - Fri, 06 Mar 2020 02:34:58 GMT
       elapsed-time:
-      - '272'
+      - '51'
       expires:
       - '-1'
       odata-version:
@@ -43,7 +43,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - 1f181eb2-5f3e-11ea-abce-8c8590507855
+      - 12adfa10-5f53-11ea-acd2-8c8590507855
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:
@@ -61,11 +61,11 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-core/1.2.3 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit) azsdk-python-searchindexclient/unknown
+      - azsdk-python-searchindexclient/unknown Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
       api-key:
-      - CF4F5AFAFB31CC4AB93F221CF6BC15BC
+      - FB86E0638F6E97E69AEF9E15302242E2
     method: GET
-    uri: https://search30a60fb7.search.windows.net/indexes('drgqefsg')/docs/$count?api-version=2019-05-06
+    uri: https://search30a60fb7.search.windows.net/indexes('drgqefsg')/docs/$count?api-version=2019-05-06-Preview
   response:
     body:
       string: "\uFEFF10"
@@ -77,9 +77,9 @@ interactions:
       content-type:
       - text/plain
       date:
-      - Fri, 06 Mar 2020 00:05:03 GMT
+      - Fri, 06 Mar 2020 02:35:02 GMT
       elapsed-time:
-      - '10'
+      - '11'
       expires:
       - '-1'
       odata-version:
@@ -89,7 +89,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - 2126f1f6-5f3e-11ea-abce-8c8590507855
+      - 149a9586-5f53-11ea-acd2-8c8590507855
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:
@@ -107,11 +107,11 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-core/1.2.3 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit) azsdk-python-searchindexclient/unknown
+      - azsdk-python-searchindexclient/unknown Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
       api-key:
-      - CF4F5AFAFB31CC4AB93F221CF6BC15BC
+      - FB86E0638F6E97E69AEF9E15302242E2
     method: GET
-    uri: https://search30a60fb7.search.windows.net/indexes('drgqefsg')/docs('1000')?api-version=2019-05-06
+    uri: https://search30a60fb7.search.windows.net/indexes('drgqefsg')/docs('1000')?api-version=2019-05-06-Preview
   response:
     body:
       string: ''
@@ -121,7 +121,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 06 Mar 2020 00:05:03 GMT
+      - Fri, 06 Mar 2020 02:35:02 GMT
       elapsed-time:
       - '5'
       expires:
@@ -129,7 +129,7 @@ interactions:
       pragma:
       - no-cache
       request-id:
-      - 2130979c-5f3e-11ea-abce-8c8590507855
+      - 14a3ac20-5f53-11ea-acd2-8c8590507855
       strict-transport-security:
       - max-age=15724800; includeSubDomains
     status:
@@ -145,11 +145,11 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-core/1.2.3 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit) azsdk-python-searchindexclient/unknown
+      - azsdk-python-searchindexclient/unknown Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
       api-key:
-      - CF4F5AFAFB31CC4AB93F221CF6BC15BC
+      - FB86E0638F6E97E69AEF9E15302242E2
     method: GET
-    uri: https://search30a60fb7.search.windows.net/indexes('drgqefsg')/docs('4')?api-version=2019-05-06
+    uri: https://search30a60fb7.search.windows.net/indexes('drgqefsg')/docs('4')?api-version=2019-05-06-Preview
   response:
     body:
       string: '{"hotelId":"4","hotelName":"Express Rooms","description":"Pretty good
@@ -162,9 +162,9 @@ interactions:
       content-type:
       - application/json; odata.metadata=none
       date:
-      - Fri, 06 Mar 2020 00:05:03 GMT
+      - Fri, 06 Mar 2020 02:35:02 GMT
       elapsed-time:
-      - '28'
+      - '10'
       expires:
       - '-1'
       odata-version:
@@ -174,7 +174,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - 213912d2-5f3e-11ea-abce-8c8590507855
+      - 14ab7860-5f53-11ea-acd2-8c8590507855
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:

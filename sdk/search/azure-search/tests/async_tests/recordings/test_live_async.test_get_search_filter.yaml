@@ -10,11 +10,11 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-core/1.2.3 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit) azsdk-python-searchindexclient/unknown
+      - azsdk-python-searchindexclient/unknown Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
       api-key:
-      - 9150B4FF70926906170E1A2F5C9A58AE
+      - 820E1026D3CD8D2922081C37CE11145E
     method: POST
-    uri: https://search30b50f94.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2019-05-06
+    uri: https://search30b50f94.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2019-05-06-Preview
   response:
     body:
       string: '{"value":[{"@search.score":0.19169211,"hotelName":"Express Rooms","description":"Pretty
@@ -29,17 +29,17 @@ interactions:
       content-encoding: gzip
       content-length: '441'
       content-type: application/json; odata.metadata=none
-      date: Fri, 06 Mar 2020 00:08:34 GMT
-      elapsed-time: '336'
+      date: Fri, 06 Mar 2020 02:37:54 GMT
+      elapsed-time: '177'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 9e8bb05a-5f3e-11ea-abce-8c8590507855
+      request-id: 7b3c52f2-5f53-11ea-acd2-8c8590507855
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
       code: 200
       message: OK
-    url: https://search30b50f94.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2019-05-06
+    url: https://search30b50f94.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2019-05-06-Preview
 version: 1

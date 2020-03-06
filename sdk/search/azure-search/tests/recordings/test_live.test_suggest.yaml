@@ -13,11 +13,11 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-core/1.2.3 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit) azsdk-python-searchindexclient/unknown
+      - azsdk-python-searchindexclient/unknown Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
       api-key:
-      - B45F20F5AF6FA864C65EE14E40701D76
+      - BB7F316A33D135324E717385EA305927
     method: POST
-    uri: https://search687b091f.search.windows.net/indexes('drgqefsg')/docs/search.post.suggest?api-version=2019-05-06
+    uri: https://search687b091f.search.windows.net/indexes('drgqefsg')/docs/search.post.suggest?api-version=2019-05-06-Preview
   response:
     body:
       string: '{"value":[{"@search.text":"Cheapest hotel in town. Infact, a motel.","hotelId":"2"},{"@search.text":"Secret
@@ -30,9 +30,9 @@ interactions:
       content-type:
       - application/json; odata.metadata=none
       date:
-      - Fri, 06 Mar 2020 00:05:39 GMT
+      - Fri, 06 Mar 2020 02:35:54 GMT
       elapsed-time:
-      - '399'
+      - '169'
       expires:
       - '-1'
       odata-version:
@@ -42,7 +42,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - 365d4282-5f3e-11ea-abce-8c8590507855
+      - 33a435d6-5f53-11ea-acd2-8c8590507855
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:

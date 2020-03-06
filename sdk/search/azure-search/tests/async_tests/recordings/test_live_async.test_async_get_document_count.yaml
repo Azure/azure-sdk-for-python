@@ -5,11 +5,11 @@ interactions:
       Accept:
       - application/json;odata.metadata=none
       User-Agent:
-      - azsdk-python-core/1.2.3 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit) azsdk-python-searchindexclient/unknown
+      - azsdk-python-searchindexclient/unknown Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
       api-key:
-      - AFA879C4E18743324F922495B54C8F47
+      - 343D29C8A300153B14F33895CB419C1A
     method: GET
-    uri: https://searchaab2129d.search.windows.net/indexes('drgqefsg')/docs/$count?api-version=2019-05-06
+    uri: https://searchaab2129d.search.windows.net/indexes('drgqefsg')/docs/$count?api-version=2019-05-06-Preview
   response:
     body:
       string: "\uFEFF10"
@@ -18,17 +18,17 @@ interactions:
       content-encoding: gzip
       content-length: '127'
       content-type: text/plain
-      date: Fri, 06 Mar 2020 00:06:33 GMT
-      elapsed-time: '235'
+      date: Fri, 06 Mar 2020 02:36:34 GMT
+      elapsed-time: '6'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 5680ff2c-5f3e-11ea-abce-8c8590507855
+      request-id: 4bfe896a-5f53-11ea-acd2-8c8590507855
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
       code: 200
       message: OK
-    url: https://searchaab2129d.search.windows.net/indexes('drgqefsg')/docs/$count?api-version=2019-05-06
+    url: https://searchaab2129d.search.windows.net/indexes('drgqefsg')/docs/$count?api-version=2019-05-06-Preview
 version: 1
