@@ -118,6 +118,10 @@ class FileSystemClient(StorageAccountHostsMixin):
         super(FileSystemClient, self).__exit__(*args)
 
     def close(self):
+        # type: () -> None
+        """ This method is to close the sockets opened by the client.
+        It need not be used when using with a context manager.
+        """
         self._container_client.close()
         self.__exit__()
 

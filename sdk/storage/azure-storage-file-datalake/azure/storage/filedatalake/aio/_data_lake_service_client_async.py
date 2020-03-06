@@ -80,6 +80,10 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
         await super(DataLakeServiceClient, self).__aexit__(*args)
 
     async def close(self):
+        # type: () -> None
+        """ This method is to close the sockets opened by the client.
+        It need not be used when using with a context manager.
+        """
         await self._blob_service_client.close()
         await self.__aexit__()
 
