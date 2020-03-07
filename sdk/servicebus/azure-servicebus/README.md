@@ -27,7 +27,7 @@ pip install azure-servicebus --pre
 To use this package, you must have:
 * Azure subscription - [Create a free account][azure_sub]
 * Azure Service Bus - [Namespace and management credentials][service_bus_namespace]
-* Python 2.7, 3.5, 3.6 or 3.7 - [Install Python][python]
+* Python 2.7, 3.5, 3.6, 3.7 or 3.8 - [Install Python][python]
 
 If you need an azure service bus namespace and do not wish to use the graphical portal UI, you can use the Azure CLI via [Cloud Shell][cloud_shell_bash], or Azure CLI run locally, to create one with this Azure CLI command:
 
