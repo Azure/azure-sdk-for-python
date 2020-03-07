@@ -12,19 +12,22 @@ Example to show iterator receiving from a Service Bus Queue.
 # pylint: disable=C0111
 
 import os
-from azure.servicebus import ServiceBusReceiverClient
+from azure.servicebus import ServiceBusClient
 
 CONNECTION_STR = os.environ['SERVICE_BUS_CONNECTION_STR']
 QUEUE_NAME = os.environ["SERVICE_BUS_QUEUE_NAME"]
 
-receiver_client = ServiceBusReceiverClient.from_connection_string(
-    conn_str=CONNECTION_STR,
+servicebus_client = ServiceBusClient.from_connection_string(
+    conn_str=CONNECTION_STR
+)
+receiver = servicebus_client.get_queue_receiver(
     queue_name=QUEUE_NAME
 )
 
-with receiver_client:
-    for msg in receiver_client:
-        print(str(msg))
-        msg.complete()
+with servicebus_client:
+    with receiver:
+        for msg in receiver:
+            print(str(msg))
+            msg.complete()
 
 print("Receive is done.")

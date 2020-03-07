@@ -4,9 +4,8 @@
 # --------------------------------------------------------------------------------------------
 import logging
 import asyncio
-import time
 import functools
-from typing import TYPE_CHECKING, Any, Dict, List, Callable, Optional, Union, cast
+from typing import TYPE_CHECKING, Any, Optional
 
 import uamqp
 from uamqp import (
@@ -16,7 +15,7 @@ from uamqp import (
 )
 from uamqp.message import MessageProperties
 
-from .._client_base import ClientBase, _generate_sas_token
+from .._base_handler import BaseHandler, _generate_sas_token
 from ..common.constants import JWT_TOKEN_SCOPE
 from ..common.errors import (
     InvalidHandlerState,
@@ -49,7 +48,7 @@ class ServiceBusSharedKeyCredential(object):
         return _generate_sas_token(scopes[0], self.policy, self.key)
 
 
-class ClientBaseAsync(ClientBase):
+class BaseHandlerAsync(BaseHandler):
     def __init__(
         self,
         fully_qualified_namespace: str,
@@ -58,7 +57,7 @@ class ClientBaseAsync(ClientBase):
         **kwargs: Any
     ) -> None:
         self._loop = kwargs.pop("loop", None)
-        super(ClientBaseAsync, self).__init__(
+        super(BaseHandlerAsync, self).__init__(
             fully_qualified_namespace=fully_qualified_namespace,
             entity_name=entity_name,
             credential=credential,
@@ -139,7 +138,7 @@ class ClientBaseAsync(ClientBase):
             await self.close(exception=error)
             raise error
 
-    async def _backoff_async(
+    async def _backoff(
             self,
             retried_times,
             last_exception,
@@ -181,8 +180,8 @@ class ClientBaseAsync(ClientBase):
                     kwargs["timeout"] = timeout
                 return await operation(**kwargs)
             except Exception as exception:
-                last_exception = await self._handle_exception_async(exception)
-                await self._backoff_async(
+                last_exception = await self._handle_exception(exception)
+                await self._backoff(
                     retried_times=retried_times,
                     last_exception=last_exception,
                     timeout=timeout
@@ -219,11 +218,21 @@ class ClientBaseAsync(ClientBase):
 
     @staticmethod
     def _from_connection_string(conn_str, **kwargs):
-        kwargs = ClientBase._from_connection_string(conn_str, **kwargs)
+        kwargs = BaseHandler._from_connection_string(conn_str, **kwargs)
         kwargs["credential"] = ServiceBusSharedKeyCredential(kwargs["credential"].policy, kwargs["credential"].key)
         return kwargs
 
     async def close(self, exception=None):
+        # type: (Exception) -> None
+        """Close down the handler connection.
+
+        If the handler has already closed, this operation will do nothing. An optional exception can be passed in to
+        indicate that the handler was shutdown due to error.
+
+        :param Exception exception: An optional exception if the handler is closing
+         due to an error.
+        :rtype: None
+        """
         if self._error:
             return
         if isinstance(exception, ServiceBusError):

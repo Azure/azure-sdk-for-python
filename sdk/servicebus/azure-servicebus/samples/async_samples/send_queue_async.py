@@ -13,22 +13,24 @@ Example to show sending single message to a Service Bus Queue asynchronously.
 
 import os
 import asyncio
-from azure.servicebus.aio import ServiceBusSenderClient, Message
+from azure.servicebus.aio import ServiceBusClient, Message
 
 CONNECTION_STR = os.environ['SERVICE_BUS_CONNECTION_STR']
 QUEUE_NAME = os.environ["SERVICE_BUS_QUEUE_NAME"]
 
-sender_client = ServiceBusSenderClient.from_connection_string(
-    conn_str=CONNECTION_STR,
+servicebus_client = ServiceBusClient.from_connection_string(
+    conn_str=CONNECTION_STR
+)
+sender = servicebus_client.get_queue_sender(
     queue_name=QUEUE_NAME
 )
 
 
 async def main():
     message = Message("Single message")
-
-    async with sender_client:
-        await sender_client.send(message)
+    async with servicebus_client:
+        async with sender:
+            await sender.send(message)
 
     print("Send message is done.")
 
