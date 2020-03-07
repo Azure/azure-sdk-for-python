@@ -230,6 +230,18 @@ class CertificateProperties(object):
         return self._attributes.updated if self._attributes else None
 
     @property
+    def recoverable_days(self):
+        # type: () -> Optional[int]
+        """The number of days the certificate is retained before being deleted from a soft-delete enabled Key Vault.
+
+        :rtype: int
+        """
+        # recoverable_days was added in 7.1-preview
+        if self._attributes and hasattr(self._attributes, "recoverable_days"):
+            return self._attributes.recoverable_days
+        return None
+
+    @property
     def recovery_level(self):
         # type: () -> models.DeletionRecoveryLevel
         """The deletion recovery level currently in effect for the certificate.
