@@ -164,7 +164,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
             file system as metadata. Example: `{'Category':'test'}`
         :type metadata: dict(str, str)
         :param public_access:
-            To specify whether data in the container may be accessed publicly and the level of access.
+            To specify whether data in the file system may be accessed publicly and the level of access.
         :type public_access: ~azure.storage.filedatalake.PublicAccess
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
@@ -190,10 +190,11 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
         The file system and any files contained within it are later deleted during garbage collection.
         If the file system is not found, a ResourceNotFoundError will be raised.
 
-        :keyword str or ~azure.storage.filedatalake.aio.DataLakeLeaseClient lease:
+        :keyword lease:
             If specified, delete_file_system only succeeds if the
             file system's lease is active and matches this ID.
             Required if the file system has an active lease.
+        :paramtype lease: ~azure.storage.filedatalake.aio.DataLakeLeaseClient or str
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -231,9 +232,10 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
         """Returns all user-defined metadata and system properties for the specified
         file system. The data returned does not include the file system's list of paths.
 
-        :keyword str or ~azure.storage.filedatalake.aio.DataLakeLeaseClient lease:
+        :keyword lease:
             If specified, get_file_system_properties only succeeds if the
             file system's lease is active and matches this ID.
+        :paramtype lease: ~azure.storage.filedatalake.aio.DataLakeLeaseClient or str
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :return: Properties for the specified file system within a file system object.
@@ -265,9 +267,10 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
             A dict containing name-value pairs to associate with the file system as
             metadata. Example: {'category':'test'}
         :type metadata: dict[str, str]
-        :keyword str or ~azure.storage.filedatalake.aio.DataLakeLeaseClient lease:
+        :keyword lease:
             If specified, set_file_system_metadata only succeeds if the
             file system's lease is active and matches this ID.
+        :paramtype lease: ~azure.storage.filedatalake.aio.DataLakeLeaseClient or str
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -307,17 +310,17 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
     ):  # type: (...) -> Dict[str, Union[str, datetime]]
         """Sets the permissions for the specified file system or stored access
         policies that may be used with Shared Access Signatures. The permissions
-        indicate whether blobs in a container may be accessed publicly.
+        indicate whether files in a file system may be accessed publicly.
 
         :param signed_identifiers:
-            A dictionary of access policies to associate with the container. The
+            A dictionary of access policies to associate with the file system. The
             dictionary may contain up to 5 elements. An empty dictionary
             will clear the access policies set on the service.
         :type signed_identifiers: dict[str, ~azure.storage.filedatalake.AccessPolicy]
         :param ~azure.storage.filedatalake.PublicAccess public_access:
-            To specify whether data in the container may be accessed publicly and the level of access.
+            To specify whether data in the file system may be accessed publicly and the level of access.
         :keyword lease:
-            Required if the container has an active lease. Value can be a DataLakeLeaseClient object
+            Required if the file system has an active lease. Value can be a DataLakeLeaseClient object
             or the lease ID as a string.
         :paramtype lease: ~azure.storage.filedatalake.aio.DataLakeLeaseClient or str
         :keyword ~datetime.datetime if_modified_since:
@@ -334,7 +337,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
             the resource has not been modified since the specified date/time.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :returns: Container-updated property dict (Etag and last modified).
+        :returns: filesystem-updated property dict (Etag and last modified).
         :rtype: dict[str, str or ~datetime.datetime]
         """
         return await self._container_client.set_container_access_policy(signed_identifiers,
@@ -346,9 +349,9 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
         The permissions indicate whether file system data may be accessed publicly.
 
         :keyword lease:
-            If specified, get_container_access_policy only succeeds if the
-            container's lease is active and matches this ID.
-        :paramtype lease: ~azure.storage.blob.BlobLeaseClient or str
+            If specified, get_file_system_access_policy only succeeds if the
+            file system's lease is active and matches this ID.
+        :paramtype lease: ~azure.storage.filedatalake.aio.DataLakeLeaseClient or str
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Access policy information in a dict.
@@ -371,17 +374,19 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
 
         :param str path:
             Filters the results to return only paths under the specified path.
-        :param int max_results: An optional value that specifies the maximum
+        :param int max_results:
+            An optional value that specifies the maximum
             number of items to return per page. If omitted or greater than 5,000, the
             response will include up to 5,000 items per page.
-        :keyword upn: Optional. Valid only when Hierarchical Namespace is
-         enabled for the account. If "true", the user identity values returned
-         in the x-ms-owner, x-ms-group, and x-ms-acl response headers will be
-         transformed from Azure Active Directory Object IDs to User Principal
-         Names.  If "false", the values will be returned as Azure Active
-         Directory Object IDs. The default value is false. Note that group and
-         application Object IDs are not translated because they do not have
-         unique friendly names.
+        :keyword upn:
+            Optional. Valid only when Hierarchical Namespace is
+            enabled for the account. If "true", the user identity values returned
+            in the x-ms-owner, x-ms-group, and x-ms-acl response headers will be
+            transformed from Azure Active Directory Object IDs to User Principal
+            Names.  If "false", the values will be returned as Azure Active
+            Directory Object IDs. The default value is false. Note that group and
+            application Object IDs are not translated because they do not have
+            unique friendly names.
         :type upn: bool
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
@@ -419,26 +424,29 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
             or an instance of DirectoryProperties.
         :type directory: str or ~azure.storage.filedatalake.DirectoryProperties
         :param metadata:
-            Name-value pairs associated with the blob as metadata.
+            Name-value pairs associated with the file as metadata.
         :type metadata: dict(str, str)
         :keyword ~azure.storage.filedatalake.ContentSettings content_settings:
             ContentSettings object used to set path properties.
-        :keyword ~azure.storage.filedatalake.aio.DataLakeLeaseClient or str lease:
-            Required if the blob has an active lease. Value can be a DataLakeLeaseClient object
+        :keyword lease:
+            Required if the file has an active lease. Value can be a DataLakeLeaseClient object
             or the lease ID as a string.
-        :keyword str umask: Optional and only valid if Hierarchical Namespace is enabled for the account.
+        :paramtype lease: ~azure.storage.filedatalake.aio.DataLakeLeaseClient or str
+        :keyword str umask:
+            Optional and only valid if Hierarchical Namespace is enabled for the account.
             When creating a file or directory and the parent folder does not have a default ACL,
             the umask restricts the permissions of the file or directory to be created.
             The resulting permission is given by p & ^u, where p is the permission and u is the umask.
             For example, if p is 0777 and u is 0057, then the resulting permission is 0720.
             The default permission is 0777 for a directory and 0666 for a file. The default umask is 0027.
             The umask must be specified in 4-digit octal notation (e.g. 0766).
-        :keyword str permissions: Optional and only valid if Hierarchical Namespace
-         is enabled for the account. Sets POSIX access permissions for the file
-         owner, the file owning group, and others. Each class may be granted
-         read, write, or execute permission.  The sticky bit is also supported.
-         Both symbolic (rwxrw-rw-) and 4-digit octal notation (e.g. 0766) are
-         supported.
+        :keyword str permissions:
+            Optional and only valid if Hierarchical Namespace
+            is enabled for the account. Sets POSIX access permissions for the file
+            owner, the file owning group, and others. Each class may be granted
+            read, write, or execute permission.  The sticky bit is also supported.
+            Both symbolic (rwxrw-rw-) and 4-digit octal notation (e.g. 0766) are
+            supported.
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -475,9 +483,9 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
             or an instance of DirectoryProperties.
         :type directory: str or ~azure.storage.filedatalake.DirectoryProperties
         :keyword lease:
-            Required if the blob has an active lease. Value can be a LeaseClient object
+            Required if the file has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.LeaseClient or str
+        :paramtype lease: ~azure.storage.filedatalake.aio.DataLakeLeaseClient or str
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -516,24 +524,27 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
         :param ~azure.storage.filedatalake.ContentSettings content_settings:
             ContentSettings object used to set path properties.
         :param metadata:
-            Name-value pairs associated with the blob as metadata.
+            Name-value pairs associated with the file as metadata.
         :type metadata: dict(str, str)
-        :keyword ~azure.storage.filedatalake.aio.DataLakeLeaseClient or str lease:
-            Required if the blob has an active lease. Value can be a DataLakeLeaseClient object
+        :keyword lease:
+            Required if the file has an active lease. Value can be a DataLakeLeaseClient object
             or the lease ID as a string.
-        :keyword str umask: Optional and only valid if Hierarchical Namespace is enabled for the account.
+        :paramtype lease: ~azure.storage.filedatalake.aio.DataLakeLeaseClient or str
+        :keyword str umask:
+            Optional and only valid if Hierarchical Namespace is enabled for the account.
             When creating a file or directory and the parent folder does not have a default ACL,
             the umask restricts the permissions of the file or directory to be created.
             The resulting permission is given by p & ^u, where p is the permission and u is the umask.
             For example, if p is 0777 and u is 0057, then the resulting permission is 0720.
             The default permission is 0777 for a directory and 0666 for a file. The default umask is 0027.
             The umask must be specified in 4-digit octal notation (e.g. 0766).
-        :keyword str permissions: Optional and only valid if Hierarchical Namespace
-         is enabled for the account. Sets POSIX access permissions for the file
-         owner, the file owning group, and others. Each class may be granted
-         read, write, or execute permission.  The sticky bit is also supported.
-         Both symbolic (rwxrw-rw-) and 4-digit octal notation (e.g. 0766) are
-         supported.
+        :keyword str permissions:
+            Optional and only valid if Hierarchical Namespace
+            is enabled for the account. Sets POSIX access permissions for the file
+            owner, the file owning group, and others. Each class may be granted
+            read, write, or execute permission.  The sticky bit is also supported.
+            Both symbolic (rwxrw-rw-) and 4-digit octal notation (e.g. 0766) are
+            supported.
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -571,9 +582,9 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
             or an instance of FileProperties.
         :type file: str or ~azure.storage.filedatalake.FileProperties
         :keyword lease:
-            Required if the blob has an active lease. Value can be a LeaseClient object
+            Required if the file has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.LeaseClient or str
+        :paramtype lease: ~azure.storage.filedatalake.aio.DataLakeLeaseClient or str
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -634,7 +645,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
         return DataLakeDirectoryClient(self.url, self.file_system_name, directory_name=directory,
                                        credential=self._raw_credential,
                                        _configuration=self._config, _pipeline=self._pipeline,
-                                       _location_mode=self._location_mode, _hosts=self._hosts,
+                                       _hosts=self._hosts,
                                        require_encryption=self.require_encryption,
                                        key_encryption_key=self.key_encryption_key,
                                        key_resolver_function=self.key_resolver_function,
@@ -672,6 +683,6 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
         return DataLakeFileClient(
             self.url, self.file_system_name, file_path=file_path, credential=self._raw_credential,
             _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
-            _location_mode=self._location_mode, require_encryption=self.require_encryption,
+            require_encryption=self.require_encryption,
             key_encryption_key=self.key_encryption_key,
             key_resolver_function=self.key_resolver_function, loop=self._loop)

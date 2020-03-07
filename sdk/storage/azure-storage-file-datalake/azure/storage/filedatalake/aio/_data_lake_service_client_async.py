@@ -14,7 +14,7 @@ from .._shared.policies_async import ExponentialRetry
 from ._data_lake_directory_client_async import DataLakeDirectoryClient
 from ._data_lake_file_client_async import DataLakeFileClient
 from ._models import FileSystemPropertiesPaged
-from .._models import UserDelegationKey
+from .._models import UserDelegationKey, LocationMode
 
 
 class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClientBase):
@@ -26,8 +26,7 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
     can also be retrieved using the `get_client` functions.
 
     :ivar str url:
-        The full endpoint URL to the datalake service endpoint. This could be either the
-        primary endpoint, or the secondary endpoint depending on the current `location_mode`.
+        The full endpoint URL to the datalake service endpoint.
     :ivar str primary_endpoint:
         The full primary endpoint URL.
     :ivar str primary_hostname:
@@ -72,6 +71,7 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
             **kwargs
         )
         self._blob_service_client = BlobServiceClient(self._blob_account_url, credential, **kwargs)
+        self._blob_service_client._hosts[LocationMode.SECONDARY] = ""  #pylint: disable=protected-access
         self._client = DataLakeStorageClient(self.url, None, None, pipeline=self._pipeline)
         self._loop = kwargs.get('loop', None)
 
@@ -148,7 +148,8 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
         be raised. This method returns a client with which to interact with the newly
         created file system.
 
-        :param str file_system: The name of the file system to create.
+        :param str file_system:
+            The name of the file system to create.
         :param metadata:
             A dict with name-value pairs to associate with the
             file system as metadata. Example: `{'Category':'test'}`
@@ -185,10 +186,11 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
             The file system to delete. This can either be the name of the file system,
             or an instance of FileSystemProperties.
         :type file_system: str or ~azure.storage.filedatalake.FileSystemProperties
-        :keyword ~azure.storage.filedatalake.aio.DataLakeLeaseClient lease:
+        :keyword lease:
             If specified, delete_file_system only succeeds if the
             file system's lease is active and matches this ID.
             Required if the file system has an active lease.
+        :paramtype lease: ~azure.storage.filedatalake.aio.DataLakeLeaseClient or str
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -247,7 +249,7 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
                 :caption: Getting the file system client to interact with a specific file system.
         """
         return FileSystemClient(self.url, file_system, credential=self._raw_credential, _configuration=self._config,
-                                _pipeline=self._pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
+                                _pipeline=self._pipeline, _hosts=self._hosts,
                                 require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
                                 key_resolver_function=self.key_resolver_function)
 
@@ -282,7 +284,7 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
         return DataLakeDirectoryClient(self.url, file_system, directory_name=directory,
                                        credential=self._raw_credential,
                                        _configuration=self._config, _pipeline=self._pipeline,
-                                       _location_mode=self._location_mode, _hosts=self._hosts,
+                                       _hosts=self._hosts,
                                        require_encryption=self.require_encryption,
                                        key_encryption_key=self.key_encryption_key,
                                        key_resolver_function=self.key_resolver_function
@@ -324,6 +326,6 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
         return DataLakeFileClient(
             self.url, file_system, file_path=file_path, credential=self._raw_credential,
             _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
-            _location_mode=self._location_mode, require_encryption=self.require_encryption,
+            require_encryption=self.require_encryption,
             key_encryption_key=self.key_encryption_key,
             key_resolver_function=self.key_resolver_function)
