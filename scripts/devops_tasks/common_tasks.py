@@ -52,6 +52,10 @@ REGRESSION_EXCLUDED_PACKAGES = [
     "azure-common",
 ]
 
+MANAGEMENT_PACKAGES_FILTER_EXCLUSIONS = [
+    "azure-mgmt-core",
+]
+
 omit_regression = (
     lambda x: "nspkg" not in x
     and "mgmt" not in x
@@ -62,12 +66,14 @@ omit_regression = (
 omit_docs = lambda x: "nspkg" not in x and os.path.basename(x) not in META_PACKAGES
 omit_build = lambda x: x # Dummy lambda to match omit type
 lambda_filter_azure_pkg = lambda x: x.startswith("azure") and "-nspkg" not in x
+omit_mgmt = lambda x: "mgmt" not in x or os.path.basename(x) in MANAGEMENT_PACKAGES_FILTER_EXCLUSIONS
 
 # dict of filter type and filter function
 omit_funct_dict = {
     "Build": omit_build,
     "Docs": omit_docs,
     "Regression": omit_regression,
+    "Omit_management": omit_mgmt,
 }
 
 def log_file(file_location, is_error=False):
