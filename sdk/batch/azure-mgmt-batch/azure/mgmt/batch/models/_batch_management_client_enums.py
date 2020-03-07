@@ -12,10 +12,22 @@
 from enum import Enum
 
 
+class KeySource(str, Enum):
+
+    microsoft_batch = "Microsoft.Batch"  #: Batch creates and manages the encryption keys used to protect the account data.
+    microsoft_key_vault = "Microsoft.KeyVault"  #: The encryption keys used to protect the account data are stored in an external key vault.
+
+
 class PoolAllocationMode(str, Enum):
 
     batch_service = "BatchService"  #: Pools will be allocated in subscriptions owned by the Batch service.
     user_subscription = "UserSubscription"  #: Pools will be allocated in a subscription owned by the user.
+
+
+class PublicNetworkAccessType(str, Enum):
+
+    enabled = "Enabled"  #: Enables connectivity to Azure Batch through public DNS.
+    disabled = "Disabled"  #: Disables public connectivity and enables private connectivity to Azure Batch Service through private endpoint resource.
 
 
 class ProvisioningState(str, Enum):
@@ -53,6 +65,21 @@ class CertificateProvisioningState(str, Enum):
     failed = "Failed"  #: The user requested that the certificate be deleted, but there are pools that still have references to the certificate, or it is still installed on one or more compute nodes. (The latter can occur if the certificate has been removed from the pool, but the node has not yet restarted. Nodes refresh their certificates only when they restart.) You may use the cancel certificate delete operation to cancel the delete, or the delete certificate operation to retry the delete.
 
 
+class PrivateEndpointConnectionProvisioningState(str, Enum):
+
+    succeeded = "Succeeded"  #: The connection status is final and is ready for use if Status is Approved.
+    updating = "Updating"  #: The user has requested that the connection status be updated, but the update operation has not yet completed. You may not reference the connection when connecting the Batch account.
+    failed = "Failed"  #: The user requested that the connection be updated and it failed. You may retry the update operation.
+
+
+class PrivateLinkServiceConnectionStatus(str, Enum):
+
+    approved = "Approved"  #: The private endpoint connection is approved and can be used to access Batch account
+    pending = "Pending"  #: The private endpoint connection is pending and cannot be used to access Batch account
+    rejected = "Rejected"  #: The private endpoint connection is rejected and cannot be used to access Batch account
+    disconnected = "Disconnected"  #: The private endpoint connection is disconnected and cannot be used to access Batch account
+
+
 class PoolProvisioningState(str, Enum):
 
     succeeded = "Succeeded"  #: The pool is available to run tasks subject to the availability of compute nodes.
@@ -79,6 +106,12 @@ class StorageAccountType(str, Enum):
     premium_lrs = "Premium_LRS"  #: The data disk should use premium locally redundant storage.
 
 
+class DiskEncryptionTarget(str, Enum):
+
+    os_disk = "OsDisk"  #: The OS Disk on the compute node is encrypted.
+    temporary_disk = "TemporaryDisk"  #: The temporary disk on the compute node is encrypted. On Linux this encryption applies to other partitions (such as those on mounted data disks) when encryption occurs at boot time.
+
+
 class ComputeNodeDeallocationOption(str, Enum):
 
     requeue = "Requeue"  #: Terminate running task processes and requeue the tasks. The tasks will run again when a node is available. Remove nodes as soon as tasks have been terminated.
@@ -103,6 +136,13 @@ class NetworkSecurityGroupRuleAccess(str, Enum):
 
     allow = "Allow"  #: Allow access.
     deny = "Deny"  #: Deny access.
+
+
+class IPAddressProvisioningType(str, Enum):
+
+    batch_managed = "BatchManaged"  #: A public IP will be created and managed by Batch. There may be multiple public IPs depending on the size of the Pool.
+    user_managed = "UserManaged"  #: Public IPs are provided by the user and will be used to provision the Compute Nodes.
+    no_public_ip_addresses = "NoPublicIPAddresses"  #: No public IP Address will be created for the Compute Nodes in the Pool.
 
 
 class ComputeNodeFillType(str, Enum):

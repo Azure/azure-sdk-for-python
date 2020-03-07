@@ -15,6 +15,8 @@ from ._application_operations import ApplicationOperations
 from ._location_operations import LocationOperations
 from ._operations import Operations
 from ._certificate_operations import CertificateOperations
+from ._private_link_resource_operations import PrivateLinkResourceOperations
+from ._private_endpoint_connection_operations import PrivateEndpointConnectionOperations
 from ._pool_operations import PoolOperations
 
 __all__ = [
@@ -24,5 +26,7 @@ __all__ = [
     'LocationOperations',
     'Operations',
     'CertificateOperations',
+    'PrivateLinkResourceOperations',
+    'PrivateEndpointConnectionOperations',
     'PoolOperations',
 ]
