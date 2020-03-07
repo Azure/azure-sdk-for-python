@@ -137,3 +137,5 @@ opentelemetry-api==0.4a0
 #override azure-storage-file-share azure-core<2.0.0,>=1.2.2
 #override azure-storage-file-datalake azure-core<2.0.0,>=1.2.2
 #override azure-servicebus uamqp>=1.2.5,<2.0.0
+#override azure-search msrest>=0.6.10
+#override azure-search azure-core<2.0.0,>=1.2.2
