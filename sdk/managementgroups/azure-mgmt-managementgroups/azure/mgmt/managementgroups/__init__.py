@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .management_groups_api import ManagementGroupsAPI
-from .version import VERSION
+from ._configuration import ManagementGroupsAPIConfiguration
+from ._management_groups_api import ManagementGroupsAPI
+__all__ = ['ManagementGroupsAPI', 'ManagementGroupsAPIConfiguration']
 
-__all__ = ['ManagementGroupsAPI']
+from .version import VERSION
 
 __version__ = VERSION
 

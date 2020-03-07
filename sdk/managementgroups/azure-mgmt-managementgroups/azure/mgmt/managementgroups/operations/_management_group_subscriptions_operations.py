@@ -18,11 +18,13 @@ from .. import models
 class ManagementGroupSubscriptionsOperations(object):
     """ManagementGroupSubscriptionsOperations operations.
 
+    You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
+
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. The current version is 2018-01-01-preview. Constant value: "2018-03-01-preview".
+    :ivar api_version: Version of the API to be used with the client request. The current version is 2018-01-01-preview. Constant value: "2020-02-01".
     """
 
     models = models
@@ -32,13 +34,14 @@ class ManagementGroupSubscriptionsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-03-01-preview"
+        self.api_version = "2020-02-01"
 
         self.config = config
 
     def create(
             self, group_id, subscription_id, cache_control="no-cache", custom_headers=None, raw=False, **operation_config):
         """Associates existing subscription with the management group.
+        .
 
         :param group_id: Management Group ID.
         :type group_id: str
@@ -84,7 +87,7 @@ class ManagementGroupSubscriptionsOperations(object):
         request = self._client.put(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [204]:
+        if response.status_code not in [200, 204]:
             raise models.ErrorResponseException(self._deserialize, response)
 
         if raw:
@@ -95,6 +98,7 @@ class ManagementGroupSubscriptionsOperations(object):
     def delete(
             self, group_id, subscription_id, cache_control="no-cache", custom_headers=None, raw=False, **operation_config):
         """De-associates subscription from the management group.
+        .
 
         :param group_id: Management Group ID.
         :type group_id: str
@@ -140,7 +144,7 @@ class ManagementGroupSubscriptionsOperations(object):
         request = self._client.delete(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [204]:
+        if response.status_code not in [200, 204]:
             raise models.ErrorResponseException(self._deserialize, response)
 
         if raw:
