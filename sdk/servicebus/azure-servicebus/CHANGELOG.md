@@ -1,5 +1,13 @@
 # Release History
 
+## 1.0.0b1 (2020-3-20)
+
+**Features**
+
+* Simplified API and set of clients
+* Support for Azure Identity
+* Support Sending and Receiving on queues
+
 ## 0.50.2 (2019-12-9)
 
 **Features**

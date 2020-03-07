@@ -17,7 +17,7 @@ from azure.servicebus import ServiceBusClient, Message
 CONNECTION_STR = os.environ['SERVICE_BUS_CONNECTION_STR']
 QUEUE_NAME = os.environ["SERVICE_BUS_QUEUE_NAME"]
 
-servicebus_client = ServiceBusClient.from_connection_string(conn_str=CONNECTION_STR)
+servicebus_client = ServiceBusClient.from_connection_string(conn_str=CONNECTION_STR, logging_enable=True)
 
 sender = servicebus_client.get_queue_sender(
     queue_name=QUEUE_NAME
