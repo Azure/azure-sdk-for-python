@@ -20,7 +20,8 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dic
 class MonitoringOperations(object):
     """MonitoringOperations operations.
 
-    You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
+    You should not instantiate this class directly. Instead, you should create a Client instance that
+    instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
     :type models: ~azure.synapse.models
@@ -61,7 +62,7 @@ class MonitoringOperations(object):
         :param attempt_id: The attempt id.
         :type attempt_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: HistoryServerDataResponse or  or the result of cls(response)
+        :return: HistoryServerDataResponse or the result of cls(response)
         :rtype: ~azure.synapse.models.HistoryServerDataResponse or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -82,11 +83,11 @@ class MonitoringOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters = {}  # type: Dict[str, Any]
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
         # Construct and send request
@@ -119,7 +120,7 @@ class MonitoringOperations(object):
         :param workspace_name: The name of the workspace to execute operations on.
         :type workspace_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: SparkJobListViewResponse or  or the result of cls(response)
+        :return: SparkJobListViewResponse or the result of cls(response)
         :rtype: ~azure.synapse.models.SparkJobListViewResponse or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -136,11 +137,11 @@ class MonitoringOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters = {}  # type: Dict[str, Any]
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
         # Construct and send request
@@ -179,7 +180,7 @@ class MonitoringOperations(object):
         :param livy_id: The livy id.
         :type livy_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: SparkJobListViewResponse or  or the result of cls(response)
+        :return: SparkJobListViewResponse or the result of cls(response)
         :rtype: ~azure.synapse.models.SparkJobListViewResponse or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -198,11 +199,11 @@ class MonitoringOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters = {}  # type: Dict[str, Any]
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
         # Construct and send request
@@ -235,7 +236,7 @@ class MonitoringOperations(object):
         :param workspace_name: The name of the workspace to execute operations on.
         :type workspace_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: HistoryServerPropertiesResponse or  or the result of cls(response)
+        :return: HistoryServerPropertiesResponse or the result of cls(response)
         :rtype: ~azure.synapse.models.HistoryServerPropertiesResponse or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -252,11 +253,11 @@ class MonitoringOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters = {}  # type: Dict[str, Any]
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
         # Construct and send request
@@ -301,7 +302,7 @@ class MonitoringOperations(object):
         :param attempt_id: The attempt id.
         :type attempt_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: HistoryServerDiagnosticResponse or  or the result of cls(response)
+        :return: HistoryServerDiagnosticResponse or the result of cls(response)
         :rtype: ~azure.synapse.models.HistoryServerDiagnosticResponse or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -322,11 +323,11 @@ class MonitoringOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters = {}  # type: Dict[str, Any]
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
         # Construct and send request
@@ -371,7 +372,7 @@ class MonitoringOperations(object):
         :param attempt_id: The attempt id.
         :type attempt_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: HistoryServerGraphResponse or  or the result of cls(response)
+        :return: HistoryServerGraphResponse or the result of cls(response)
         :rtype: ~azure.synapse.models.HistoryServerGraphResponse or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -392,11 +393,11 @@ class MonitoringOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters = {}  # type: Dict[str, Any]
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
         # Construct and send request

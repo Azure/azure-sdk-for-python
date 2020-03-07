@@ -10,10 +10,34 @@ from ._monitoring_operations_async import MonitoringOperations
 from ._spark_batch_operations_async import SparkBatchOperations
 from ._spark_session_operations_async import SparkSessionOperations
 from ._workspace_acl_operations_async import WorkspaceAclOperations
+from ._linked_services_operations_async import LinkedServicesOperations
+from ._datasets_operations_async import DatasetsOperations
+from ._pipelines_operations_async import PipelinesOperations
+from ._pipeline_runs_operations_async import PipelineRunsOperations
+from ._activity_runs_operations_async import ActivityRunsOperations
+from ._triggers_operations_async import TriggersOperations
+from ._trigger_runs_operations_async import TriggerRunsOperations
+from ._data_flows_operations_async import DataFlowsOperations
+from ._data_flow_debug_session_operations_async import DataFlowDebugSessionOperations
+from ._sql_scripts_operations_async import SqlScriptsOperations
+from ._spark_job_definitions_operations_async import SparkJobDefinitionsOperations
+from ._note_books_operations_async import NoteBooksOperations
 
 __all__ = [
     'MonitoringOperations',
     'SparkBatchOperations',
     'SparkSessionOperations',
     'WorkspaceAclOperations',
+    'LinkedServicesOperations',
+    'DatasetsOperations',
+    'PipelinesOperations',
+    'PipelineRunsOperations',
+    'ActivityRunsOperations',
+    'TriggersOperations',
+    'TriggerRunsOperations',
+    'DataFlowsOperations',
+    'DataFlowDebugSessionOperations',
+    'SqlScriptsOperations',
+    'SparkJobDefinitionsOperations',
+    'NoteBooksOperations',
 ]

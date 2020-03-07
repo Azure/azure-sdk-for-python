@@ -20,7 +20,8 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T
 class SparkSessionOperations:
     """SparkSessionOperations async operations.
 
-    You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
+    You should not instantiate this class directly. Instead, you should create a Client instance that
+    instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
     :type models: ~azure.synapse.models
@@ -66,7 +67,7 @@ class SparkSessionOperations:
         :rtype: ~azure.synapse.models.ExtendedLivyListSessionResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls: ClsType["models.ExtendedLivyListSessionResponse"] = kwargs.pop('cls', None)
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.ExtendedLivyListSessionResponse"]
         error_map = kwargs.pop('error_map', {})
 
         # Construct URL
@@ -80,7 +81,7 @@ class SparkSessionOperations:
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters: Dict[str, Any] = {}
+        query_parameters = {}  # type: Dict[str, Any]
         if from_parameter is not None:
             query_parameters['from'] = self._serialize.query("from_parameter", from_parameter, 'int')
         if size is not None:
@@ -89,7 +90,7 @@ class SparkSessionOperations:
             query_parameters['detailed'] = self._serialize.query("detailed", detailed, 'bool')
 
         # Construct headers
-        header_parameters: Dict[str, Any] = {}
+        header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
         # Construct and send request
@@ -133,7 +134,7 @@ class SparkSessionOperations:
         :rtype: ~azure.synapse.models.ExtendedLivySessionResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls: ClsType["models.ExtendedLivySessionResponse"] = kwargs.pop('cls', None)
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.ExtendedLivySessionResponse"]
         error_map = kwargs.pop('error_map', {})
 
         # Construct URL
@@ -147,20 +148,21 @@ class SparkSessionOperations:
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters: Dict[str, Any] = {}
+        query_parameters = {}  # type: Dict[str, Any]
         if detailed is not None:
             query_parameters['detailed'] = self._serialize.query("detailed", detailed, 'bool')
 
         # Construct headers
-        header_parameters: Dict[str, Any] = {}
+        header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = 'application/json'
-
-        # Construct body
-        body_content = self._serialize.body(livy_request, 'ExtendedLivySessionRequest')
+        header_parameters['Content-Type'] = kwargs.pop('content_type', 'application/json')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        body_content_kwargs = {}  # type: Dict[str, Any]
+        body_content = self._serialize.body(livy_request, 'ExtendedLivySessionRequest')
+        body_content_kwargs['content'] = body_content
+        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
+
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
@@ -200,7 +202,7 @@ class SparkSessionOperations:
         :rtype: ~azure.synapse.models.ExtendedLivySessionResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls: ClsType["models.ExtendedLivySessionResponse"] = kwargs.pop('cls', None)
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.ExtendedLivySessionResponse"]
         error_map = kwargs.pop('error_map', {})
 
         # Construct URL
@@ -215,12 +217,12 @@ class SparkSessionOperations:
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters: Dict[str, Any] = {}
+        query_parameters = {}  # type: Dict[str, Any]
         if detailed is not None:
             query_parameters['detailed'] = self._serialize.query("detailed", detailed, 'bool')
 
         # Construct headers
-        header_parameters: Dict[str, Any] = {}
+        header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
         # Construct and send request
@@ -251,7 +253,8 @@ class SparkSessionOperations:
 
         :param workspace_name: The name of the workspace to execute operations on.
         :type workspace_name: str
-        :param spark_pool_name: Name of the spark pool. "ondemand" targets the ondemand pool.
+        :param spark_pool_name: Name of the spark pool. "ondemand"
+                     targets the ondemand pool.
         :type spark_pool_name: str
         :param session_id: Identifier for the session.
         :type session_id: int
@@ -260,7 +263,7 @@ class SparkSessionOperations:
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls: ClsType[None] = kwargs.pop('cls', None)
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = kwargs.pop('error_map', {})
 
         # Construct URL
@@ -275,10 +278,10 @@ class SparkSessionOperations:
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters: Dict[str, Any] = {}
+        query_parameters = {}  # type: Dict[str, Any]
 
         # Construct headers
-        header_parameters: Dict[str, Any] = {}
+        header_parameters = {}  # type: Dict[str, Any]
 
         # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
@@ -305,7 +308,8 @@ class SparkSessionOperations:
 
         :param workspace_name: The name of the workspace to execute operations on.
         :type workspace_name: str
-        :param spark_pool_name: Name of the spark pool. "ondemand" targets the ondemand pool.
+        :param spark_pool_name: Name of the spark pool. "ondemand"
+                     targets the ondemand pool.
         :type spark_pool_name: str
         :param session_id: Identifier for the session.
         :type session_id: int
@@ -314,7 +318,7 @@ class SparkSessionOperations:
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls: ClsType[None] = kwargs.pop('cls', None)
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = kwargs.pop('error_map', {})
 
         # Construct URL
@@ -329,10 +333,10 @@ class SparkSessionOperations:
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters: Dict[str, Any] = {}
+        query_parameters = {}  # type: Dict[str, Any]
 
         # Construct headers
-        header_parameters: Dict[str, Any] = {}
+        header_parameters = {}  # type: Dict[str, Any]
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters)
@@ -368,7 +372,7 @@ class SparkSessionOperations:
         :rtype: ~azure.synapse.models.LivyStatementsResponseBody
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls: ClsType["models.LivyStatementsResponseBody"] = kwargs.pop('cls', None)
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.LivyStatementsResponseBody"]
         error_map = kwargs.pop('error_map', {})
 
         # Construct URL
@@ -383,10 +387,10 @@ class SparkSessionOperations:
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters: Dict[str, Any] = {}
+        query_parameters = {}  # type: Dict[str, Any]
 
         # Construct headers
-        header_parameters: Dict[str, Any] = {}
+        header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
         # Construct and send request
@@ -429,7 +433,7 @@ class SparkSessionOperations:
         :rtype: ~azure.synapse.models.LivyStatementResponseBody
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls: ClsType["models.LivyStatementResponseBody"] = kwargs.pop('cls', None)
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.LivyStatementResponseBody"]
         error_map = kwargs.pop('error_map', {})
 
         # Construct URL
@@ -444,18 +448,19 @@ class SparkSessionOperations:
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters: Dict[str, Any] = {}
+        query_parameters = {}  # type: Dict[str, Any]
 
         # Construct headers
-        header_parameters: Dict[str, Any] = {}
+        header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = 'application/json'
-
-        # Construct body
-        body_content = self._serialize.body(livy_request, 'LivyStatementRequestBody')
+        header_parameters['Content-Type'] = kwargs.pop('content_type', 'application/json')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        body_content_kwargs = {}  # type: Dict[str, Any]
+        body_content = self._serialize.body(livy_request, 'LivyStatementRequestBody')
+        body_content_kwargs['content'] = body_content
+        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
+
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
@@ -494,7 +499,7 @@ class SparkSessionOperations:
         :rtype: ~azure.synapse.models.LivyStatementResponseBody
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls: ClsType["models.LivyStatementResponseBody"] = kwargs.pop('cls', None)
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.LivyStatementResponseBody"]
         error_map = kwargs.pop('error_map', {})
 
         # Construct URL
@@ -510,10 +515,10 @@ class SparkSessionOperations:
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters: Dict[str, Any] = {}
+        query_parameters = {}  # type: Dict[str, Any]
 
         # Construct headers
-        header_parameters: Dict[str, Any] = {}
+        header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
         # Construct and send request
@@ -556,7 +561,7 @@ class SparkSessionOperations:
         :rtype: ~azure.synapse.models.LivyStatementCancellationResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls: ClsType["models.LivyStatementCancellationResponse"] = kwargs.pop('cls', None)
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.LivyStatementCancellationResponse"]
         error_map = kwargs.pop('error_map', {})
 
         # Construct URL
@@ -572,10 +577,10 @@ class SparkSessionOperations:
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters: Dict[str, Any] = {}
+        query_parameters = {}  # type: Dict[str, Any]
 
         # Construct headers
-        header_parameters: Dict[str, Any] = {}
+        header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
         # Construct and send request

@@ -20,7 +20,8 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dic
 class SparkBatchOperations(object):
     """SparkBatchOperations operations.
 
-    You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
+    You should not instantiate this class directly. Instead, you should create a Client instance that
+    instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
     :type models: ~azure.synapse.models
@@ -81,7 +82,7 @@ class SparkBatchOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters = {}  # type: Dict[str, Any]
         if from_parameter is not None:
             query_parameters['from'] = self._serialize.query("from_parameter", from_parameter, 'int')
         if size is not None:
@@ -90,7 +91,7 @@ class SparkBatchOperations(object):
             query_parameters['detailed'] = self._serialize.query("detailed", detailed, 'bool')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
         # Construct and send request
@@ -149,20 +150,21 @@ class SparkBatchOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters = {}  # type: Dict[str, Any]
         if detailed is not None:
             query_parameters['detailed'] = self._serialize.query("detailed", detailed, 'bool')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = 'application/json'
-
-        # Construct body
-        body_content = self._serialize.body(livy_request, 'ExtendedLivyBatchRequest')
+        header_parameters['Content-Type'] = kwargs.pop('content_type', 'application/json')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        body_content_kwargs = {}  # type: Dict[str, Any]
+        body_content = self._serialize.body(livy_request, 'ExtendedLivyBatchRequest')
+        body_content_kwargs['content'] = body_content
+        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
+
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
@@ -218,12 +220,12 @@ class SparkBatchOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters = {}  # type: Dict[str, Any]
         if detailed is not None:
             query_parameters['detailed'] = self._serialize.query("detailed", detailed, 'bool')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
         # Construct and send request
@@ -279,10 +281,10 @@ class SparkBatchOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters = {}  # type: Dict[str, Any]
 
         # Construct headers
-        header_parameters = {}
+        header_parameters = {}  # type: Dict[str, Any]
 
         # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)

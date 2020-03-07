@@ -15,7 +15,8 @@ from ._version import VERSION
 
 
 class SynapseClientConfiguration(Configuration):
-    """Configuration for SynapseClient
+    """Configuration for SynapseClient.
+
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
@@ -48,8 +49,8 @@ class SynapseClientConfiguration(Configuration):
         self.livy_api_version = livy_api_version
         self.api_version = "2019-11-01-preview"
         self.credential_scopes = ['https://dev.azuresynapse.net/.default']
+        kwargs.setdefault('sdk_moniker', 'azure-synapse/{}'.format(VERSION))
         self._configure(**kwargs)
-        self.user_agent_policy.add_user_agent('azsdk-python-synapseclient/{}'.format(VERSION))
 
     def _configure(
         self,
