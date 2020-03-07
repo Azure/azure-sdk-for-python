@@ -55,13 +55,6 @@ class FileSystemClient(StorageAccountHostsMixin):
             :language: python
             :dedent: 8
             :caption: Get a FileSystemClient from an existing DataLakeServiceClient.
-
-        .. literalinclude:: ../samples/datalake_samples_file_system.py
-            :start-after: [START create_file_system_client_sasurl]
-            :end-before: [END create_file_system_client_sasurl]
-            :language: python
-            :dedent: 8
-            :caption: Creating the FileSystemClient client directly.
     """
     def __init__(
         self, account_url,  # type: str
@@ -458,7 +451,7 @@ class FileSystemClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/datalake_samples_file_system.py
+            .. literalinclude:: ../samples/datalake_samples_file_system.py
                 :start-after: [START get_paths_in_file_system]
                 :end-before: [END get_paths_in_file_system]
                 :language: python
@@ -530,7 +523,7 @@ class FileSystemClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/datalake_samples_file_system.py
+            .. literalinclude:: ../samples/datalake_samples_file_system.py
                 :start-after: [START create_directory_from_file_system]
                 :end-before: [END create_directory_from_file_system]
                 :language: python
@@ -578,7 +571,7 @@ class FileSystemClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/datalake_samples_file_system.py
+            .. literalinclude:: ../samples/datalake_samples_file_system.py
                 :start-after: [START delete_directory_from_file_system]
                 :end-before: [END delete_directory_from_file_system]
                 :language: python
@@ -643,7 +636,7 @@ class FileSystemClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/datalake_samples_file_system.py
+            .. literalinclude:: ../samples/datalake_samples_file_system.py
                 :start-after: [START create_file_from_file_system]
                 :end-before: [END create_file_from_file_system]
                 :language: python
@@ -692,7 +685,7 @@ class FileSystemClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/datalake_samples_file_system.py
+            .. literalinclude:: ../samples/datalake_samples_file_system.py
                 :start-after: [START delete_file_from_file_system]
                 :end-before: [END delete_file_from_file_system]
                 :language: python
@@ -732,7 +725,7 @@ class FileSystemClient(StorageAccountHostsMixin):
                 :start-after: [START get_directory_client_from_file_system]
                 :end-before: [END get_directory_client_from_file_system]
                 :language: python
-                :dedent: 12
+                :dedent: 8
                 :caption: Getting the directory client to interact with a specific directory.
         """
         try:
@@ -769,7 +762,7 @@ class FileSystemClient(StorageAccountHostsMixin):
                 :start-after: [START get_file_client_from_file_system]
                 :end-before: [END get_file_client_from_file_system]
                 :language: python
-                :dedent: 12
+                :dedent: 8
                 :caption: Getting the file client to interact with a specific file.
         """
         try:

@@ -7,12 +7,12 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: datalake_samples_file_system.py
+FILE: datalake_samples_file_system_async.py
 DESCRIPTION:
     This sample demonstrates common file system operations including list paths, create a file system,
     set metadata etc.
 USAGE:
-    python datalake_samples_file_system.py
+    python datalake_samples_file_system_async.py
     Set the environment variables with your own values before running the sample:
     1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
 """

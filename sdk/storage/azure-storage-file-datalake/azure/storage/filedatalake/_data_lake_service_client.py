@@ -164,7 +164,7 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
                 :start-after: [START get_user_delegation_key]
                 :end-before: [END get_user_delegation_key]
                 :language: python
-                :dedent: 12
+                :dedent: 8
                 :caption: Get user delegation key from datalake service client.
         """
         delegation_key = self._blob_service_client.get_user_delegation_key(key_start_time=key_start_time,
@@ -201,7 +201,7 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
                 :start-after: [START list_file_systems]
                 :end-before: [END list_file_systems]
                 :language: python
-                :dedent: 12
+                :dedent: 8
                 :caption: Listing the file systems in the datalake service.
         """
         item_paged = self._blob_service_client.list_containers(name_starts_with=name_starts_with,
@@ -239,7 +239,7 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
                 :start-after: [START create_file_system_from_service_client]
                 :end-before: [END create_file_system_from_service_client]
                 :language: python
-                :dedent: 12
+                :dedent: 8
                 :caption: Creating a file system in the datalake service.
         """
         file_system_client = self.get_file_system_client(file_system)
@@ -289,7 +289,7 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
                 :start-after: [START delete_file_system_from_service_client]
                 :end-before: [END delete_file_system_from_service_client]
                 :language: python
-                :dedent: 12
+                :dedent: 8
                 :caption: Deleting a file system in the datalake service.
         """
         file_system_client = self.get_file_system_client(file_system)
@@ -354,7 +354,7 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
                 :start-after: [START get_directory_client_from_service_client]
                 :end-before: [END get_directory_client_from_service_client]
                 :language: python
-                :dedent: 12
+                :dedent: 8
                 :caption: Getting the directory client to interact with a specific directory.
         """
         try:
@@ -399,7 +399,7 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
                 :start-after: [START get_file_client_from_service_client]
                 :end-before: [END get_file_client_from_service_client]
                 :language: python
-                :dedent: 12
+                :dedent: 8
                 :caption: Getting the file client to interact with a specific file.
         """
         try:

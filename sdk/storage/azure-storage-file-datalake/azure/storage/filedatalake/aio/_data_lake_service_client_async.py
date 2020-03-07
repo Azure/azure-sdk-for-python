@@ -48,14 +48,14 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
             :start-after: [START create_datalake_service_client]
             :end-before: [END create_datalake_service_client]
             :language: python
-            :dedent: 8
+            :dedent: 4
             :caption: Creating the DataLakeServiceClient from connection string.
 
         .. literalinclude:: ../samples/datalake_samples_service_async.py
             :start-after: [START create_datalake_service_client_oauth]
             :end-before: [END create_datalake_service_client_oauth]
             :language: python
-            :dedent: 8
+            :dedent: 4
             :caption: Creating the DataLakeServiceClient with Azure Identity credentials.
     """
 
@@ -111,7 +111,7 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
                 :start-after: [START get_user_delegation_key]
                 :end-before: [END get_user_delegation_key]
                 :language: python
-                :dedent: 12
+                :dedent: 8
                 :caption: Get user delegation key from datalake service client.
         """
         delegation_key = await self._blob_service_client.get_user_delegation_key(
@@ -149,7 +149,7 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
                 :start-after: [START list_file_systems]
                 :end-before: [END list_file_systems]
                 :language: python
-                :dedent: 12
+                :dedent: 8
                 :caption: Listing the file systems in the datalake service.
         """
         item_paged = self._blob_service_client.list_containers(name_starts_with=name_starts_with,
@@ -187,7 +187,7 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
                 :start-after: [START create_file_system_from_service_client]
                 :end-before: [END create_file_system_from_service_client]
                 :language: python
-                :dedent: 12
+                :dedent: 8
                 :caption: Creating a file system in the datalake service.
         """
         file_system_client = self.get_file_system_client(file_system)
@@ -237,7 +237,7 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
                 :start-after: [START delete_file_system_from_service_client]
                 :end-before: [END delete_file_system_from_service_client]
                 :language: python
-                :dedent: 12
+                :dedent: 8
                 :caption: Deleting a file system in the datalake service.
         """
         file_system_client = self.get_file_system_client(file_system)
@@ -302,7 +302,7 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
                 :start-after: [START get_directory_client_from_service_client]
                 :end-before: [END get_directory_client_from_service_client]
                 :language: python
-                :dedent: 12
+                :dedent: 8
                 :caption: Getting the directory client to interact with a specific directory.
         """
         try:
@@ -347,7 +347,7 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
                 :start-after: [START get_file_client_from_service_client]
                 :end-before: [END get_file_client_from_service_client]
                 :language: python
-                :dedent: 12
+                :dedent: 8
                 :caption: Getting the file client to interact with a specific file.
         """
         try:

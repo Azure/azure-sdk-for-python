@@ -37,19 +37,12 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../samples/test_datalake_authentication_samples.py
-            :start-after: [START create_datalake_service_client]
-            :end-before: [END create_datalake_service_client]
+        .. literalinclude:: ../samples/datalake_samples_instantiate_client_async.py
+            :start-after: [START instantiate_directory_client_from_conn_str]
+            :end-before: [END instantiate_directory_client_from_conn_str]
             :language: python
-            :dedent: 8
-            :caption: Creating the DataLakeServiceClient with account url and credential.
-
-        .. literalinclude:: ../samples/test_datalake_authentication_samples.py
-            :start-after: [START create_datalake_service_client_oauth]
-            :end-before: [END create_datalake_service_client_oauth]
-            :language: python
-            :dedent: 8
-            :caption: Creating the DataLakeServiceClient with Azure Identity credentials.
+            :dedent: 4
+            :caption: Creating the DataLakeServiceClient from connection string.
     """
 
     def __init__(
@@ -120,7 +113,7 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
                 :start-after: [START create_directory]
                 :end-before: [END create_directory]
                 :language: python
-                :dedent: 12
+                :dedent: 8
                 :caption: Create directory.
         """
         return await self._create('directory', metadata=metadata, **kwargs)
@@ -161,7 +154,7 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
                 :start-after: [START delete_directory]
                 :end-before: [END delete_directory]
                 :language: python
-                :dedent: 12
+                :dedent: 4
                 :caption: Delete directory.
         """
         return await self._delete(**kwargs)
@@ -202,7 +195,7 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
                 :start-after: [START get_directory_properties]
                 :end-before: [END get_directory_properties]
                 :language: python
-                :dedent: 8
+                :dedent: 4
                 :caption: Getting the properties for a file/directory.
         """
         blob_properties = await self._get_path_properties(**kwargs)
@@ -288,7 +281,7 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
                 :start-after: [START rename_directory]
                 :end-before: [END rename_directory]
                 :language: python
-                :dedent: 8
+                :dedent: 4
                 :caption: Rename the source directory.
         """
         new_name = new_name.strip('/')

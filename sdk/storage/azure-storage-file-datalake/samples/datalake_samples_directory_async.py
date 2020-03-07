@@ -1,3 +1,22 @@
+# coding: utf-8
+
+# -------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+# --------------------------------------------------------------------------
+
+"""
+FILE: datalake_samples_directory_async.py
+DESCRIPTION:
+    This sample demonstrates create directory, rename directory, get directory properties, delete directory etc.
+USAGE:
+    python datalake_samples_directory_async.py
+    Set the environment variables with your own values before running the sample:
+    1) STORAGE_ACCOUNT_NAME - the storage account name
+    2) STORAGE_ACCOUNT_KEY - the storage account key
+"""
+
 import asyncio
 import os
 import random

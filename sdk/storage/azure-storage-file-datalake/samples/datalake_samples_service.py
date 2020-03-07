@@ -6,7 +6,28 @@
 # license information.
 # --------------------------------------------------------------------------
 
+"""
+FILE: datalake_samples_service.py
+DESCRIPTION:
+    This sample demonstrates:
+    * Instantiate DataLakeServiceClient using connection str
+    * Instantiate DataLakeServiceClient using AAD Credential
+    * Get user delegation key
+    * Create all kinds of clients from DataLakeServiceClient and operate on those clients
+    * List file systems
+USAGE:
+    python datalake_samples_service.py
+    Set the environment variables with your own values before running the sample:
+    1) AZURE_STORAGE_CONNECTION_STRING
+    2) STORAGE_ACCOUNT_NAME
+    3) ACTIVE_DIRECTORY_APPLICATION_ID
+    4) ACTIVE_DIRECTORY_APPLICATION_SECRET
+    5) ACTIVE_DIRECTORY_TENANT_ID
+"""
+
 import os
+
+
 class DataLakeServiceSamples(object):
 
     connection_string = os.environ['AZURE_STORAGE_CONNECTION_STRING']
