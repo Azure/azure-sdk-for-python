@@ -26,7 +26,7 @@
 #   gallery_images: 5/5
 #   gallery_image_versions: 5/5
 #   images: 6/6
-#   dedicated_hosts: 
+#   dedicated_hosts: 5/5
 #   dedicated_host_groups: 2/6
 #   virtual_machines: 11/21
 #   virtual_machine_size: 1/1
@@ -134,6 +134,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
         APPLICATION_NAME = "applicationname"
         VERSION_NAME = "1.0.0"
         IMAGE_NAME = "imagename"
+        HOST_NAME = "hostname"
         HOST_GROUP_NAME = "hostgroupnamexyz"
         DISK_ENCRYPTION_SET_NAME = "diskencryptionsetname"
         SNAPSHOT_NAME = "snapshotname"
@@ -1217,16 +1218,13 @@ class MgmtComputeTest(AzureMgmtTestCase):
         result = self.mgmt_client.gallery_images.create_or_update(resource_group.name, GALLERY_NAME, IMAGE_NAME, BODY)
         result = result.result()
 
-        """
         # Create or update a dedicated host .[put]
         BODY = {
           "location": "eastus",
           "tags": {
             "department": "HR"
           },
-          "properties": {
-            "platform_fault_domain": "1"
-          },
+          "platform_fault_domain": "1",
           "sku": {
             "name": "DSv3-Type1"
           }
@@ -1234,6 +1232,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
         result = self.mgmt_client.dedicated_hosts.create_or_update(resource_group.name, HOST_GROUP_NAME, HOST_NAME, BODY)
         result = result.result()
 
+        """
         # Create/Update Container Service[put]
         BODY = {
           "location": "location1"
@@ -2509,10 +2508,10 @@ class MgmtComputeTest(AzureMgmtTestCase):
         """
         # Get Container Service[get]
         result = self.mgmt_client.container_services.get(resource_group.name, CONTAINER_SERVICE_NAME)
+        """
 
         # Get a dedicated host.[get]
         result = self.mgmt_client.dedicated_hosts.get(resource_group.name, HOST_GROUP_NAME, HOST_NAME)
-        """
 
         # Get a gallery image.[get]
         result = self.mgmt_client.gallery_images.get(resource_group.name, GALLERY_NAME, IMAGE_NAME)
@@ -2583,6 +2582,9 @@ class MgmtComputeTest(AzureMgmtTestCase):
 
         # List all managed disks in a resource group.[get]
         result = self.mgmt_client.disks.list_by_resource_group(resource_group.name)
+
+        # List dedicated hosts in host group (TODO: need swagger file)
+        result = self.mgmt_client.dedicated_hosts.list_by_host_group(resource_group.name, HOST_GROUP_NAME)
 
         # VirtualMachineRunCommandList[get]
         result = self.mgmt_client.virtual_machine_run_commands.list(AZURE_LOCATION)
@@ -2676,12 +2678,20 @@ class MgmtComputeTest(AzureMgmtTestCase):
         result = result.result()
         """
 
-        # Update availability sets (TODO: neeed swagger file)
+        # Update availability sets (TODO: need swagger file)
         BODY = {
           "platform_fault_domain_count": "2",
           "platform_update_domain_count": "20"
         }
         result = self.mgmt_client.availability_sets.update(resource_group.name, AVAILABILITY_SET_NAME, BODY)
+
+        # Update a dedicated host (TODO: need swagger file )
+        BODY = {
+          "tags": {
+            "department": "HR"
+          },
+        }
+        result = self.mgmt_client.dedicated_hosts.update(resource_group.name, HOST_GROUP_NAME, HOST_NAME, BODY)
 
         # Update a simple Gallery Image Version (Managed Image as source).[patch]
         BODY = {
@@ -2928,6 +2938,9 @@ class MgmtComputeTest(AzureMgmtTestCase):
 
         # Delete a proximity placement group.[get]
         result = self.mgmt_client.proximity_placement_groups.delete(resource_group.name, PROXIMITY_PLACEMENT_GROUP_NAME)
+
+        # Delete a dedicated host (TODO: need swagger file)
+        result = self.mgmt_client.dedicated_hosts.delete(resource_group.name, HOST_GROUP_NAME, HOST_NAME)
 
         """
         # Delete Container Service[delete]
