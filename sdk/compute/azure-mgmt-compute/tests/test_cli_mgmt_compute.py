@@ -27,13 +27,13 @@
 #   gallery_image_versions: 5/5
 #   images: 6/6
 #   dedicated_hosts: 5/5
-#   dedicated_host_groups: 2/6
-#   virtual_machines: 11/21
+#   dedicated_host_groups: 6/6
+#   virtual_machines: 17/21
 #   virtual_machine_size: 1/1
 #   virtual_machine_run_commands: 2/2
-#   virtual_machine_image: 0/5
-#   virtual_machine_extensions: 0/5
-#   virtual_machine_extension_images: 0/3
+#   virtual_machine_images: 5/5
+#   virtual_machine_extensions: 5/5
+#   virtual_machine_extension_images: 3/3
 #   virtual_machine_scale_sets: 1/21
 #   virtual_machine_scale_set_vms: 0/14
 #   virtual_machine_scale_set_vm_extensions: 0/5
@@ -142,6 +142,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
         AVAILABILITY_SET_NAME = "availabilitysetnamexyz"
         PROXIMITY_PLACEMENT_GROUP_NAME = "proximityplacementgroupname"
         VIRTUAL_MACHINE_SCALE_SET_NAME = "virtualmachinescalesetname"
+        VIRTUAL_MACHINE_EXTENSION_NAME = "virtualmachineextensionname"
 
 
         SUBNET = self.create_virtual_network(RESOURCE_GROUP, AZURE_LOCATION, NETWORK_NAME, SUBNET_NAME)
@@ -2383,6 +2384,20 @@ class MgmtComputeTest(AzureMgmtTestCase):
         result = self.mgmt_client.gallery_image_versions.create_or_update(resource_group.name, GALLERY_NAME, IMAGE_NAME, VERSION_NAME, BODY)
         result = result.result()
 
+        # Create virtual machine extension (TODO: need swagger file)
+        BODY = {
+          "location": "eastus",
+          "auto_upgrade_minor_version": True,
+          # "instance_view": {
+          #   "name": "CustomScript",
+          #   "type": "CustomScriptExtension"
+          # },
+          "publisher": "Microsoft.Azure.NetworkWatcher",
+          "virtual_machine_extension_type": "NetworkWatcherAgentWindows",
+          "type_handler_version": "1.4",
+        }
+        result = self.mgmt_client.virtual_machine_extensions.create_or_update(resource_group.name, VIRTUAL_MACHINE_NAME, VIRTUAL_MACHINE_EXTENSION_NAME, BODY)
+
         """ TODO: need image
         # Create or update a simple Gallery Image Version (Managed Image as source).[put]
         BODY = {
@@ -2505,6 +2520,19 @@ class MgmtComputeTest(AzureMgmtTestCase):
         # Get Virtual Machine Instance View.[get]
         result = self.mgmt_client.virtual_machines.instance_view(resource_group.name, VIRTUAL_MACHINE_NAME)
 
+        # Get Virtual Machine Image (TODO: need swagger file)
+        PUBLISHER_NAME = "MicrosoftWindowsServer"
+        OFFER = "WindowsServer"
+        SKUS = "2019-Datacenter"
+        VERSION = "2019.0.20190115" 
+        result = self.mgmt_client.virtual_machine_images.get(AZURE_LOCATION, PUBLISHER_NAME, OFFER, SKUS, VERSION)
+
+        # Get Virtual Machine Extension Image (TODO: neet swagger file)
+        EXTENSION_PUBLISHER_NAME = "Microsoft.Compute"
+        EXTENSION_IMAGE_TYPE = "VMAccessAgent"
+        EXTENSION_IMAGE_VERSION = "1.0.2"
+        result = self.mgmt_client.virtual_machine_extension_images.get(AZURE_LOCATION, EXTENSION_PUBLISHER_NAME, EXTENSION_IMAGE_TYPE, EXTENSION_IMAGE_VERSION)
+
         """
         # Get Container Service[get]
         result = self.mgmt_client.container_services.get(resource_group.name, CONTAINER_SERVICE_NAME)
@@ -2525,6 +2553,30 @@ class MgmtComputeTest(AzureMgmtTestCase):
 
         # Get a Virtual Machine.[get]
         result = self.mgmt_client.virtual_machines.get(resource_group.name, VIRTUAL_MACHINE_NAME)
+
+        # Get virtual machine extension (TODO: need swagger file)
+        result = self.mgmt_client.virtual_machine_extensions.get(resource_group.name, VIRTUAL_MACHINE_NAME, VIRTUAL_MACHINE_EXTENSION_NAME)
+
+        # Llist virtual machine extensions (TODO: need swagger file)
+        result = self.mgmt_client.virtual_machine_extensions.list(resource_group.name, VIRTUAL_MACHINE_NAME)
+
+        # List Virtual Machine images (TODO: need swagger file)
+        result = self.mgmt_client.virtual_machine_images.list(AZURE_LOCATION, PUBLISHER_NAME, OFFER, SKUS)
+
+        # List Virtual Machine image offers (TODO: need swagger file)
+        result = self.mgmt_client.virtual_machine_images.list_offers(AZURE_LOCATION, PUBLISHER_NAME)
+
+        # List Virtual Machine image publishers (TODO: need swagger file)
+        result = self.mgmt_client.virtual_machine_images.list_publishers(AZURE_LOCATION)
+
+        # List Virtual Machine image skus (TODO: need swagger file)
+        result = self.mgmt_client.virtual_machine_images.list_skus(AZURE_LOCATION, PUBLISHER_NAME, OFFER)
+
+        # List Virtual Machine extension image types (TODO: need swagger file)
+        result = self.mgmt_client.virtual_machine_extension_images.list_types(AZURE_LOCATION, EXTENSION_PUBLISHER_NAME)
+
+        # # List Virtual Machine extension image versions (TODO: need swagger file)
+        result = self.mgmt_client.virtual_machine_extension_images.list_versions(AZURE_LOCATION, EXTENSION_PUBLISHER_NAME, EXTENSION_IMAGE_TYPE)
 
         # List gallery Applications in a gallery.[get]
         result = self.mgmt_client.gallery_applications.list_by_gallery(resource_group.name, GALLERY_NAME)
@@ -2565,11 +2617,20 @@ class MgmtComputeTest(AzureMgmtTestCase):
         # List all disk encryption sets in a resource group.[get]
         result = self.mgmt_client.disk_encryption_sets.list_by_resource_group(resource_group.name)
 
+        # List the virtual machines (TODO: need swagger file)
+        result = self.mgmt_client.virtual_machines.list(resource_group.name)
+
+        # List all virtual machines (TODO: need swagger file)
+        result = self.mgmt_client.virtual_machines.list_all()
+
         # Lists all the virtual machines under the specified subscription for the specified location.[get]
         result = self.mgmt_client.virtual_machines.list_by_location(AZURE_LOCATION)
 
         # List virtual machine sizes (TODO: need swagger file)
         result = self.mgmt_client.virtual_machine_sizes.list(AZURE_LOCATION)
+
+        # List dedicated host groups in a resource group (TODO: need swagger file)
+        result = self.mgmt_client.dedicated_host_groups.list_by_resource_group(resource_group.name)
 
         # List galleries in a resource group.[get]
         result = self.mgmt_client.galleries.list_by_resource_group(resource_group.name)
@@ -2599,6 +2660,9 @@ class MgmtComputeTest(AzureMgmtTestCase):
 
         # List all disk encryption sets in a subscription.[get]
         result = self.mgmt_client.disk_encryption_sets.list()
+
+        # List dedicated host groups in a subscription (TODO: need swagger file)
+        result = self.mgmt_client.dedicated_host_groups.list_by_subscription()
 
         # List availability sets in a subscription.[get]
         result = self.mgmt_client.availability_sets.list_by_subscription()
@@ -2632,6 +2696,16 @@ class MgmtComputeTest(AzureMgmtTestCase):
 
         # # Lists all available Resource SKUs for the specified region[get]
         # result = self.mgmt_client.resource_skus.list()
+
+        # Update a dedicated host group.[put]
+        BODY = {
+          "tags": {
+            "department": "finance"
+          },
+          "platform_fault_domain_count": "3"
+        }
+        result = self.mgmt_client.dedicated_host_groups.update(resource_group.name, HOST_GROUP_NAME, BODY)
+
 
         """
         # Update VirtualMachineScaleSet VM extension.[patch]
@@ -2766,7 +2840,32 @@ class MgmtComputeTest(AzureMgmtTestCase):
         result = self.mgmt_client.virtual_machines.run_command(resource_group.name, VIRTUAL_MACHINE_NAME, BODY)
         result = result.result()
 
+        # VirtualMachine restart (TODO: need swagger file)
+        result = self.mgmt_client.virtual_machines.restart(resource_group.name, VIRTUAL_MACHINE_NAME)
+
         # VirtualMachine power off (TODO:need swagger file)
+        result = self.mgmt_client.virtual_machines.power_off(resource_group.name, VIRTUAL_MACHINE_NAME)
+        result = result.result()
+
+        # VirtualMachine start (TODO: need swagger file)
+        result = self.mgmt_client.virtual_machines.start(resource_group.name, VIRTUAL_MACHINE_NAME)
+        result = result.result()
+
+        # Update virtual machine extension (TODO: need swagger file)
+        BODY = {
+          "auto_upgrade_minor_version": True,
+          "instance_view": {
+            "name": VIRTUAL_MACHINE_EXTENSION_NAME,
+            "type": "CustomScriptExtension"
+          }
+        }
+        result = self.mgmt_client.virtual_machine_extensions.update(resource_group.name, VIRTUAL_MACHINE_NAME, VIRTUAL_MACHINE_EXTENSION_NAME, BODY)
+        
+        # This operation need VM running.
+        # Delete virtual machine extension (TODO: need swagger file)
+        result = self.mgmt_client.virtual_machine_extensions.delete(resource_group.name, VIRTUAL_MACHINE_NAME,VIRTUAL_MACHINE_EXTENSION_NAME)
+
+        # VirtualMachine power off again.
         result = self.mgmt_client.virtual_machines.power_off(resource_group.name, VIRTUAL_MACHINE_NAME)
         result = result.result()
 
@@ -2800,6 +2899,18 @@ class MgmtComputeTest(AzureMgmtTestCase):
         # Reapply the state of a virtual machine.[post]
         result = self.mgmt_client.virtual_machines.reapply(resource_group.name, VIRTUAL_MACHINE_NAME)
         result = result.result()
+
+        # Redeploy the virtual machine. (TODO: need swagger file)
+        result = self.mgmt_client.virtual_machines.redeploy(resource_group.name, VIRTUAL_MACHINE_NAME)
+        result = result.result()
+
+        # # Perform maintenance the virtual machine (TODO: need swagger file)
+        # result = self.mgmt_client.virtual_machines.perform_maintenance(resource_group.name, VIRTUAL_MACHINE_NAME)
+        # result = result.result()
+
+        # # VirtualMachine convert to managed disks (TODO: need swagger file)
+        # result = self.mgmt_client.virtual_machines.convert_to_managed_disks(resource_group.name, VIRTUAL_MACHINE_NAME)
+        # result = result.result()
 
         # TODO: Message: The Reimage and OSUpgrade Virtual Machine actions require that the virtual machine has Automatic OS Upgrades enabled.
         # Reimage a Virtual Machine.[post]
@@ -2908,6 +3019,9 @@ class MgmtComputeTest(AzureMgmtTestCase):
         result = self.mgmt_client.images.update(resource_group.name, IMAGE_NAME, BODY)
         result = result.result()
 
+        # Deallocate virtual machine (TODO: need swagger file)
+        result= self.mgmt_client.virtual_machines.deallocate(resource_group.name, VIRTUAL_MACHINE_NAME)
+
         """
         # Delete VirtualMachineScaleSet VM extension.[delete]
         result = self.mgmt_client.virtual_machine_scale_set_vmextensions.delete(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME, VIRTUAL_MACHINE_NAME, EXTENSION_NAME)
@@ -2936,11 +3050,15 @@ class MgmtComputeTest(AzureMgmtTestCase):
         result = self.mgmt_client.snapshots.delete(resource_group.name, SNAPSHOT_NAME)
         result = result.result()
 
-        # Delete a proximity placement group.[get]
+        # Delete a proximity placement group.[delete]
         result = self.mgmt_client.proximity_placement_groups.delete(resource_group.name, PROXIMITY_PLACEMENT_GROUP_NAME)
 
         # Delete a dedicated host (TODO: need swagger file)
         result = self.mgmt_client.dedicated_hosts.delete(resource_group.name, HOST_GROUP_NAME, HOST_NAME)
+        result = result.result()
+
+        # Delete a dedicated host group (TODO: need swagger file)
+        result = self.mgmt_client.dedicated_host_groups.delete(resource_group.name, HOST_GROUP_NAME)
 
         """
         # Delete Container Service[delete]
