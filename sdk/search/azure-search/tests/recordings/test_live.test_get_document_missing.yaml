@@ -1,0 +1,40 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json;odata.metadata=none
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-searchindexclient/unknown Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
+      api-key:
+      - DD3FF4F33AECD9C561E4E6898CE4D05B
+    method: GET
+    uri: https://search2db0e74.search.windows.net/indexes('drgqefsg')/docs('1000')?api-version=2019-05-06-Preview
+  response:
+    body:
+      string: ''
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '0'
+      date:
+      - Fri, 06 Mar 2020 22:20:50 GMT
+      elapsed-time:
+      - '68'
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-id:
+      - bc218b20-5ff8-11ea-b13a-8c8590507855
+      strict-transport-security:
+      - max-age=15724800; includeSubDomains
+    status:
+      code: 404
+      message: Not Found
+version: 1

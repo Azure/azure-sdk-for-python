@@ -115,7 +115,7 @@ six>=1.6
 #override azure-keyvault-secrets azure-core<2.0.0,>=1.2.1
 #override azure-synapse azure-core<2.0.0,>=1.2.2
 #override azure-ai-textanalytics msrest>=0.6.0
-#override azure-ai-textanalytics azure-core<2.0.0,>=1.1.0
+#override azure-ai-textanalytics azure-core<2.0.0,>=1.3.0
 #override azure-storage-blob msrest>=0.6.10
 #override azure-storage-queue msrest>=0.6.10
 #override azure-storage-file-share msrest>=0.6.10
@@ -137,3 +137,5 @@ opentelemetry-api==0.4a0
 #override azure-storage-file-share azure-core<2.0.0,>=1.2.2
 #override azure-storage-file-datalake azure-core<2.0.0,>=1.2.2
 #override azure-servicebus uamqp>=1.2.5,<2.0.0
+#override azure-search msrest>=0.6.10
+#override azure-search azure-core<2.0.0,>=1.2.2

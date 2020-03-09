@@ -19,6 +19,7 @@ class KeyOperation(str, Enum):
 
     encrypt = "encrypt"
     decrypt = "decrypt"
+    import_key = "import"
     sign = "sign"
     verify = "verify"
     wrap_key = "wrapKey"
