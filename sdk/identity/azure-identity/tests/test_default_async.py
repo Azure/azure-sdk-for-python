@@ -9,6 +9,7 @@ from urllib.parse import urlparse
 
 from azure.identity import KnownAuthorities
 from azure.identity.aio import DefaultAzureCredential, SharedTokenCacheCredential
+from azure.identity.aio._credentials.azure_cli import AzureCliCredential
 from azure.identity.aio._credentials.managed_identity import ManagedIdentityCredential
 from azure.identity._constants import EnvironmentVariables
 import pytest
@@ -105,6 +106,9 @@ def test_exclude_options():
     if SharedTokenCacheCredential.supported():
         credential = DefaultAzureCredential(exclude_shared_token_cache_credential=True)
         assert_credentials_not_present(credential, SharedTokenCacheCredential)
+
+    credential = DefaultAzureCredential(exclude_cli_credential=True)
+    assert_credentials_not_present(credential, AzureCliCredential)
 
 
 @pytest.mark.asyncio
