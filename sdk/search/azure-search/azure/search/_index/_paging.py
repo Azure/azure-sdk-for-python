@@ -57,8 +57,11 @@ class SearchItemPaged(ItemPaged[ReturnType]):
             self._first_page_iterator_instance = self.by_page()
         return self._first_page_iterator_instance
 
-    @property
-    def facets(self):
+    def get_facets(self):
+        # type: () -> Union[dict, None]
+        """Return any facet results if faceting was requested.
+
+        """
         return self._first_iterator_instance().facets
 
 

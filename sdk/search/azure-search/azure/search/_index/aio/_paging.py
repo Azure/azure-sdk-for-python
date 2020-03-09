@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Union
 
 from azure.core.async_paging import AsyncItemPaged, AsyncPageIterator, ReturnType
 from .._generated.models import SearchRequest
@@ -12,10 +12,6 @@ from .._paging import (
     pack_continuation_token,
     unpack_continuation_token,
 )
-
-if TYPE_CHECKING:
-    # pylint:disable=unused-import,ungrouped-imports
-    from typing import Any, Union
 
 
 class AsyncSearchItemPaged(AsyncItemPaged[ReturnType]):
@@ -44,8 +40,10 @@ class AsyncSearchItemPaged(AsyncItemPaged[ReturnType]):
             self._first_page_iterator_instance = self._page_iterator
         return self._first_page_iterator_instance
 
-    @property
-    async def facets(self):
+    async def get_facets(self) -> Union[dict, None]:
+        """Return any facet results if faceting was requested.
+
+        """
         return await self._first_iterator_instance().facets
 
 

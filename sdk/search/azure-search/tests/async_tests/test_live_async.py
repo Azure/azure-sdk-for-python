@@ -131,7 +131,7 @@ class SearchIndexClientTestAsync(AzureMgmtTestCase):
 
         async with client:
             results = await client.search(query=query)
-            assert await results.facets is None
+            assert await results.get_facets() is None
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
@@ -146,7 +146,7 @@ class SearchIndexClientTestAsync(AzureMgmtTestCase):
 
         async with client:
             results = await client.search(query=query)
-            assert await results.facets == {'category': [{'value': 'Budget', 'count': 4}, {'value': 'Luxury', 'count': 1}]}
+            assert await results.get_facets() == {'category': [{'value': 'Budget', 'count': 4}, {'value': 'Luxury', 'count': 1}]}
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
