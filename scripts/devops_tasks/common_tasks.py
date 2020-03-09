@@ -387,7 +387,11 @@ def filter_dev_requirements(pkg_root_path, packages_to_exclude, dest_dir):
 def is_required_version_on_pypi(package_name, spec):
     from pypi_tools.pypi import PyPIClient
     client = PyPIClient()
-    versions = [str(v) for v in client.get_ordered_versions(package_name) if str(v) in spec]
+    versions = []
+    try:
+        versions = [str(v) for v in client.get_ordered_versions(package_name) if str(v) in spec]
+    except:
+        logging.error("Package {} is not found on PyPI", package_name)
     return versions
 
 def find_packages_missing_on_pypi(path):
