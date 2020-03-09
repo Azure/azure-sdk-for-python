@@ -168,21 +168,20 @@ class EventHubConsumer(
         self._last_received_event = event_data
         return event_data
 
-    async def receive(self, batch, max_batch_size, max_wait_time, enable_callback_when_no_event) -> None:
+    async def receive(self, batch, max_batch_size, max_wait_time) -> None:
         max_retries = (
             self._client._config.max_retries  # pylint:disable=protected-access
         )
-        # msg_buffer_size = len(self._message_buffer)
-        fetch_trips = 0
-        deadline = time.time() + max_wait_time
-        while len(self._message_buffer) < max_batch_size and \
-                (time.time() < deadline or fetch_trips == 0):  # ensure one trip when self._max_wait_time is very small
+        fetched = False  # ensure one trip when max_wait_time is very small
+        deadline = time.time() + (max_wait_time or 0)  # max_wait_time can be None
+        while len(self._message_buffer) == 0 and \
+                (time.time() < deadline or fetched is False):
             retried_times = 0
+            fetched = True
             while retried_times <= max_retries:
                 try:
                     await self._open()
                     await cast(ReceiveClientAsync, self._handler).do_work_async()
-                    fetch_trips += 1
                     break
                 except asyncio.CancelledError:  # pylint: disable=try-except-raise
                     raise
@@ -215,7 +214,7 @@ class EventHubConsumer(
                     await self._on_event_received(events_for_callback)
                 else:
                     await self._on_event_received(self._next_message_in_buffer())
-        elif enable_callback_when_no_event:
+        elif max_batch_size:
             if batch:
                 await self._on_event_received([])
             else:
