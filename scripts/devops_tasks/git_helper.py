@@ -36,7 +36,7 @@ def get_release_tag(dep_pkg_name, isLatest):
         logging.info("Versions available on PyPI for {0} are: {1}".format(dep_pkg_name, versions))
     except:
         logging.error("Package {} is not available on PyPI".format(dep_pkg_name))
-        return
+        return None
 
     # filter excluded versions
     if dep_pkg_name in EXCLUDED_PACKAGE_VERSIONS:
