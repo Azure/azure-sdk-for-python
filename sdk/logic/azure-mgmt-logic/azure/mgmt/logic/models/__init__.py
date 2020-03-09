@@ -10,278 +10,360 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .resource_py3 import Resource
-    from .sub_resource_py3 import SubResource
-    from .resource_reference_py3 import ResourceReference
-    from .sku_py3 import Sku
-    from .workflow_parameter_py3 import WorkflowParameter
-    from .workflow_py3 import Workflow
-    from .workflow_filter_py3 import WorkflowFilter
-    from .workflow_version_py3 import WorkflowVersion
-    from .recurrence_schedule_occurrence_py3 import RecurrenceScheduleOccurrence
-    from .recurrence_schedule_py3 import RecurrenceSchedule
-    from .workflow_trigger_recurrence_py3 import WorkflowTriggerRecurrence
-    from .workflow_trigger_py3 import WorkflowTrigger
-    from .workflow_trigger_filter_py3 import WorkflowTriggerFilter
-    from .workflow_trigger_list_callback_url_queries_py3 import WorkflowTriggerListCallbackUrlQueries
-    from .workflow_trigger_callback_url_py3 import WorkflowTriggerCallbackUrl
-    from .correlation_py3 import Correlation
-    from .content_hash_py3 import ContentHash
-    from .content_link_py3 import ContentLink
-    from .workflow_trigger_history_py3 import WorkflowTriggerHistory
-    from .workflow_trigger_history_filter_py3 import WorkflowTriggerHistoryFilter
-    from .workflow_run_trigger_py3 import WorkflowRunTrigger
-    from .workflow_output_parameter_py3 import WorkflowOutputParameter
-    from .workflow_run_py3 import WorkflowRun
-    from .workflow_run_filter_py3 import WorkflowRunFilter
-    from .error_properties_py3 import ErrorProperties
-    from .error_response_py3 import ErrorResponse, ErrorResponseException
-    from .retry_history_py3 import RetryHistory
-    from .workflow_run_action_py3 import WorkflowRunAction
-    from .workflow_run_action_filter_py3 import WorkflowRunActionFilter
-    from .regenerate_action_parameter_py3 import RegenerateActionParameter
-    from .generate_upgraded_definition_parameters_py3 import GenerateUpgradedDefinitionParameters
-    from .integration_account_sku_py3 import IntegrationAccountSku
-    from .integration_account_py3 import IntegrationAccount
-    from .get_callback_url_parameters_py3 import GetCallbackUrlParameters
-    from .callback_url_py3 import CallbackUrl
-    from .integration_account_schema_py3 import IntegrationAccountSchema
-    from .integration_account_schema_filter_py3 import IntegrationAccountSchemaFilter
-    from .integration_account_map_properties_parameters_schema_py3 import IntegrationAccountMapPropertiesParametersSchema
-    from .integration_account_map_py3 import IntegrationAccountMap
-    from .integration_account_map_filter_py3 import IntegrationAccountMapFilter
-    from .business_identity_py3 import BusinessIdentity
-    from .b2_bpartner_content_py3 import B2BPartnerContent
-    from .partner_content_py3 import PartnerContent
-    from .integration_account_partner_py3 import IntegrationAccountPartner
-    from .integration_account_partner_filter_py3 import IntegrationAccountPartnerFilter
-    from .as2_message_connection_settings_py3 import AS2MessageConnectionSettings
-    from .as2_acknowledgement_connection_settings_py3 import AS2AcknowledgementConnectionSettings
-    from .as2_mdn_settings_py3 import AS2MdnSettings
-    from .as2_security_settings_py3 import AS2SecuritySettings
-    from .as2_validation_settings_py3 import AS2ValidationSettings
-    from .as2_envelope_settings_py3 import AS2EnvelopeSettings
-    from .as2_error_settings_py3 import AS2ErrorSettings
-    from .as2_protocol_settings_py3 import AS2ProtocolSettings
-    from .as2_one_way_agreement_py3 import AS2OneWayAgreement
-    from .as2_agreement_content_py3 import AS2AgreementContent
-    from .x12_validation_settings_py3 import X12ValidationSettings
-    from .x12_framing_settings_py3 import X12FramingSettings
-    from .x12_envelope_settings_py3 import X12EnvelopeSettings
-    from .x12_acknowledgement_settings_py3 import X12AcknowledgementSettings
-    from .x12_message_filter_py3 import X12MessageFilter
-    from .x12_security_settings_py3 import X12SecuritySettings
-    from .x12_processing_settings_py3 import X12ProcessingSettings
-    from .x12_envelope_override_py3 import X12EnvelopeOverride
-    from .x12_validation_override_py3 import X12ValidationOverride
-    from .x12_message_identifier_py3 import X12MessageIdentifier
-    from .x12_schema_reference_py3 import X12SchemaReference
-    from .x12_delimiter_overrides_py3 import X12DelimiterOverrides
-    from .x12_protocol_settings_py3 import X12ProtocolSettings
-    from .x12_one_way_agreement_py3 import X12OneWayAgreement
-    from .x12_agreement_content_py3 import X12AgreementContent
-    from .edifact_validation_settings_py3 import EdifactValidationSettings
-    from .edifact_framing_settings_py3 import EdifactFramingSettings
-    from .edifact_envelope_settings_py3 import EdifactEnvelopeSettings
-    from .edifact_acknowledgement_settings_py3 import EdifactAcknowledgementSettings
-    from .edifact_message_filter_py3 import EdifactMessageFilter
-    from .edifact_processing_settings_py3 import EdifactProcessingSettings
-    from .edifact_envelope_override_py3 import EdifactEnvelopeOverride
-    from .edifact_message_identifier_py3 import EdifactMessageIdentifier
-    from .edifact_schema_reference_py3 import EdifactSchemaReference
-    from .edifact_validation_override_py3 import EdifactValidationOverride
-    from .edifact_delimiter_override_py3 import EdifactDelimiterOverride
-    from .edifact_protocol_settings_py3 import EdifactProtocolSettings
-    from .edifact_one_way_agreement_py3 import EdifactOneWayAgreement
-    from .edifact_agreement_content_py3 import EdifactAgreementContent
-    from .agreement_content_py3 import AgreementContent
-    from .integration_account_agreement_py3 import IntegrationAccountAgreement
-    from .integration_account_agreement_filter_py3 import IntegrationAccountAgreementFilter
-    from .key_vault_key_reference_key_vault_py3 import KeyVaultKeyReferenceKeyVault
-    from .key_vault_key_reference_py3 import KeyVaultKeyReference
-    from .integration_account_certificate_py3 import IntegrationAccountCertificate
-    from .integration_account_session_filter_py3 import IntegrationAccountSessionFilter
-    from .integration_account_session_py3 import IntegrationAccountSession
-    from .operation_display_py3 import OperationDisplay
-    from .operation_py3 import Operation
-    from .key_vault_reference_py3 import KeyVaultReference
-    from .list_key_vault_keys_definition_py3 import ListKeyVaultKeysDefinition
-    from .key_vault_key_attributes_py3 import KeyVaultKeyAttributes
-    from .key_vault_key_py3 import KeyVaultKey
-    from .tracking_event_error_info_py3 import TrackingEventErrorInfo
-    from .tracking_event_py3 import TrackingEvent
-    from .tracking_events_definition_py3 import TrackingEventsDefinition
-    from .set_trigger_state_action_definition_py3 import SetTriggerStateActionDefinition
-    from .expression_root_py3 import ExpressionRoot
-    from .azure_resource_error_info_py3 import AzureResourceErrorInfo
-    from .expression_py3 import Expression
-    from .error_info_py3 import ErrorInfo
-    from .repetition_index_py3 import RepetitionIndex
-    from .workflow_run_action_repetition_definition_py3 import WorkflowRunActionRepetitionDefinition
-    from .workflow_run_action_repetition_definition_collection_py3 import WorkflowRunActionRepetitionDefinitionCollection
-    from .operation_result_py3 import OperationResult
-    from .run_action_correlation_py3 import RunActionCorrelation
-    from .operation_result_properties_py3 import OperationResultProperties
-    from .run_correlation_py3 import RunCorrelation
-    from .json_schema_py3 import JsonSchema
-    from .assembly_properties_py3 import AssemblyProperties
-    from .assembly_definition_py3 import AssemblyDefinition
-    from .artifact_content_properties_definition_py3 import ArtifactContentPropertiesDefinition
-    from .artifact_properties_py3 import ArtifactProperties
-    from .batch_release_criteria_py3 import BatchReleaseCriteria
-    from .batch_configuration_properties_py3 import BatchConfigurationProperties
-    from .batch_configuration_py3 import BatchConfiguration
-    from .request_py3 import Request
-    from .response_py3 import Response
-    from .request_history_properties_py3 import RequestHistoryProperties
-    from .request_history_py3 import RequestHistory
+    from ._models_py3 import AgreementContent
+    from ._models_py3 import ApiDeploymentParameterMetadata
+    from ._models_py3 import ApiDeploymentParameterMetadataSet
+    from ._models_py3 import ApiOperation
+    from ._models_py3 import ApiOperationAnnotation
+    from ._models_py3 import ApiOperationPropertiesDefinition
+    from ._models_py3 import ApiReference
+    from ._models_py3 import ApiResourceBackendService
+    from ._models_py3 import ApiResourceDefinitions
+    from ._models_py3 import ApiResourceGeneralInformation
+    from ._models_py3 import ApiResourceMetadata
+    from ._models_py3 import ApiResourcePolicies
+    from ._models_py3 import ApiResourceProperties
+    from ._models_py3 import ArtifactContentPropertiesDefinition
+    from ._models_py3 import ArtifactProperties
+    from ._models_py3 import AS2AcknowledgementConnectionSettings
+    from ._models_py3 import AS2AgreementContent
+    from ._models_py3 import AS2EnvelopeSettings
+    from ._models_py3 import AS2ErrorSettings
+    from ._models_py3 import AS2MdnSettings
+    from ._models_py3 import AS2MessageConnectionSettings
+    from ._models_py3 import AS2OneWayAgreement
+    from ._models_py3 import AS2ProtocolSettings
+    from ._models_py3 import AS2SecuritySettings
+    from ._models_py3 import AS2ValidationSettings
+    from ._models_py3 import AssemblyDefinition
+    from ._models_py3 import AssemblyProperties
+    from ._models_py3 import AzureResourceErrorInfo
+    from ._models_py3 import B2BPartnerContent
+    from ._models_py3 import BatchConfiguration
+    from ._models_py3 import BatchConfigurationProperties
+    from ._models_py3 import BatchReleaseCriteria
+    from ._models_py3 import BusinessIdentity
+    from ._models_py3 import CallbackUrl
+    from ._models_py3 import ContentHash
+    from ._models_py3 import ContentLink
+    from ._models_py3 import Correlation
+    from ._models_py3 import EdifactAcknowledgementSettings
+    from ._models_py3 import EdifactAgreementContent
+    from ._models_py3 import EdifactDelimiterOverride
+    from ._models_py3 import EdifactEnvelopeOverride
+    from ._models_py3 import EdifactEnvelopeSettings
+    from ._models_py3 import EdifactFramingSettings
+    from ._models_py3 import EdifactMessageFilter
+    from ._models_py3 import EdifactMessageIdentifier
+    from ._models_py3 import EdifactOneWayAgreement
+    from ._models_py3 import EdifactProcessingSettings
+    from ._models_py3 import EdifactProtocolSettings
+    from ._models_py3 import EdifactSchemaReference
+    from ._models_py3 import EdifactValidationOverride
+    from ._models_py3 import EdifactValidationSettings
+    from ._models_py3 import ErrorInfo
+    from ._models_py3 import ErrorProperties
+    from ._models_py3 import ErrorResponse, ErrorResponseException
+    from ._models_py3 import Expression
+    from ._models_py3 import ExpressionRoot
+    from ._models_py3 import ExtendedErrorInfo
+    from ._models_py3 import FlowEndpoints
+    from ._models_py3 import FlowEndpointsConfiguration
+    from ._models_py3 import GenerateUpgradedDefinitionParameters
+    from ._models_py3 import GetCallbackUrlParameters
+    from ._models_py3 import IntegrationAccount
+    from ._models_py3 import IntegrationAccountAgreement
+    from ._models_py3 import IntegrationAccountAgreementFilter
+    from ._models_py3 import IntegrationAccountCertificate
+    from ._models_py3 import IntegrationAccountMap
+    from ._models_py3 import IntegrationAccountMapFilter
+    from ._models_py3 import IntegrationAccountMapPropertiesParametersSchema
+    from ._models_py3 import IntegrationAccountPartner
+    from ._models_py3 import IntegrationAccountPartnerFilter
+    from ._models_py3 import IntegrationAccountSchema
+    from ._models_py3 import IntegrationAccountSchemaFilter
+    from ._models_py3 import IntegrationAccountSession
+    from ._models_py3 import IntegrationAccountSessionFilter
+    from ._models_py3 import IntegrationAccountSku
+    from ._models_py3 import IntegrationServiceEnvironment
+    from ._models_py3 import IntegrationServiceEnvironmentAccessEndpoint
+    from ._models_py3 import IntegrationServiceEnvironmentNetworkDependency
+    from ._models_py3 import IntegrationServiceEnvironmentNetworkDependencyHealth
+    from ._models_py3 import IntegrationServiceEnvironmentNetworkEndpoint
+    from ._models_py3 import IntegrationServiceEnvironmentProperties
+    from ._models_py3 import IntegrationServiceEnvironmentSku
+    from ._models_py3 import IntegrationServiceEnvironmentSkuCapacity
+    from ._models_py3 import IntegrationServiceEnvironmentSkuDefinition
+    from ._models_py3 import IntegrationServiceEnvironmentSkuDefinitionSku
+    from ._models_py3 import IntegrationServiceEnvironmentSubnetNetworkHealth
+    from ._models_py3 import IpAddress
+    from ._models_py3 import JsonSchema
+    from ._models_py3 import KeyVaultKey
+    from ._models_py3 import KeyVaultKeyAttributes
+    from ._models_py3 import KeyVaultKeyReference
+    from ._models_py3 import KeyVaultKeyReferenceKeyVault
+    from ._models_py3 import KeyVaultReference
+    from ._models_py3 import ListKeyVaultKeysDefinition
+    from ._models_py3 import ManagedApi
+    from ._models_py3 import NetworkConfiguration
+    from ._models_py3 import Operation
+    from ._models_py3 import OperationDisplay
+    from ._models_py3 import OperationResult
+    from ._models_py3 import OperationResultProperties
+    from ._models_py3 import PartnerContent
+    from ._models_py3 import RecurrenceSchedule
+    from ._models_py3 import RecurrenceScheduleOccurrence
+    from ._models_py3 import RegenerateActionParameter
+    from ._models_py3 import RepetitionIndex
+    from ._models_py3 import Request
+    from ._models_py3 import RequestHistory
+    from ._models_py3 import RequestHistoryProperties
+    from ._models_py3 import Resource
+    from ._models_py3 import ResourceReference
+    from ._models_py3 import Response
+    from ._models_py3 import RetryHistory
+    from ._models_py3 import RunActionCorrelation
+    from ._models_py3 import RunCorrelation
+    from ._models_py3 import SetTriggerStateActionDefinition
+    from ._models_py3 import Sku
+    from ._models_py3 import SubResource
+    from ._models_py3 import SwaggerCustomDynamicList
+    from ._models_py3 import SwaggerCustomDynamicProperties
+    from ._models_py3 import SwaggerCustomDynamicSchema
+    from ._models_py3 import SwaggerCustomDynamicTree
+    from ._models_py3 import SwaggerCustomDynamicTreeCommand
+    from ._models_py3 import SwaggerCustomDynamicTreeParameter
+    from ._models_py3 import SwaggerCustomDynamicTreeSettings
+    from ._models_py3 import SwaggerExternalDocumentation
+    from ._models_py3 import SwaggerSchema
+    from ._models_py3 import SwaggerXml
+    from ._models_py3 import TrackingEvent
+    from ._models_py3 import TrackingEventErrorInfo
+    from ._models_py3 import TrackingEventsDefinition
+    from ._models_py3 import Workflow
+    from ._models_py3 import WorkflowFilter
+    from ._models_py3 import WorkflowOutputParameter
+    from ._models_py3 import WorkflowParameter
+    from ._models_py3 import WorkflowRun
+    from ._models_py3 import WorkflowRunAction
+    from ._models_py3 import WorkflowRunActionFilter
+    from ._models_py3 import WorkflowRunActionRepetitionDefinition
+    from ._models_py3 import WorkflowRunFilter
+    from ._models_py3 import WorkflowRunTrigger
+    from ._models_py3 import WorkflowTrigger
+    from ._models_py3 import WorkflowTriggerCallbackUrl
+    from ._models_py3 import WorkflowTriggerFilter
+    from ._models_py3 import WorkflowTriggerHistory
+    from ._models_py3 import WorkflowTriggerHistoryFilter
+    from ._models_py3 import WorkflowTriggerListCallbackUrlQueries
+    from ._models_py3 import WorkflowTriggerRecurrence
+    from ._models_py3 import WorkflowVersion
+    from ._models_py3 import WsdlService
+    from ._models_py3 import X12AcknowledgementSettings
+    from ._models_py3 import X12AgreementContent
+    from ._models_py3 import X12DelimiterOverrides
+    from ._models_py3 import X12EnvelopeOverride
+    from ._models_py3 import X12EnvelopeSettings
+    from ._models_py3 import X12FramingSettings
+    from ._models_py3 import X12MessageFilter
+    from ._models_py3 import X12MessageIdentifier
+    from ._models_py3 import X12OneWayAgreement
+    from ._models_py3 import X12ProcessingSettings
+    from ._models_py3 import X12ProtocolSettings
+    from ._models_py3 import X12SchemaReference
+    from ._models_py3 import X12SecuritySettings
+    from ._models_py3 import X12ValidationOverride
+    from ._models_py3 import X12ValidationSettings
 except (SyntaxError, ImportError):
-    from .resource import Resource
-    from .sub_resource import SubResource
-    from .resource_reference import ResourceReference
-    from .sku import Sku
-    from .workflow_parameter import WorkflowParameter
-    from .workflow import Workflow
-    from .workflow_filter import WorkflowFilter
-    from .workflow_version import WorkflowVersion
-    from .recurrence_schedule_occurrence import RecurrenceScheduleOccurrence
-    from .recurrence_schedule import RecurrenceSchedule
-    from .workflow_trigger_recurrence import WorkflowTriggerRecurrence
-    from .workflow_trigger import WorkflowTrigger
-    from .workflow_trigger_filter import WorkflowTriggerFilter
-    from .workflow_trigger_list_callback_url_queries import WorkflowTriggerListCallbackUrlQueries
-    from .workflow_trigger_callback_url import WorkflowTriggerCallbackUrl
-    from .correlation import Correlation
-    from .content_hash import ContentHash
-    from .content_link import ContentLink
-    from .workflow_trigger_history import WorkflowTriggerHistory
-    from .workflow_trigger_history_filter import WorkflowTriggerHistoryFilter
-    from .workflow_run_trigger import WorkflowRunTrigger
-    from .workflow_output_parameter import WorkflowOutputParameter
-    from .workflow_run import WorkflowRun
-    from .workflow_run_filter import WorkflowRunFilter
-    from .error_properties import ErrorProperties
-    from .error_response import ErrorResponse, ErrorResponseException
-    from .retry_history import RetryHistory
-    from .workflow_run_action import WorkflowRunAction
-    from .workflow_run_action_filter import WorkflowRunActionFilter
-    from .regenerate_action_parameter import RegenerateActionParameter
-    from .generate_upgraded_definition_parameters import GenerateUpgradedDefinitionParameters
-    from .integration_account_sku import IntegrationAccountSku
-    from .integration_account import IntegrationAccount
-    from .get_callback_url_parameters import GetCallbackUrlParameters
-    from .callback_url import CallbackUrl
-    from .integration_account_schema import IntegrationAccountSchema
-    from .integration_account_schema_filter import IntegrationAccountSchemaFilter
-    from .integration_account_map_properties_parameters_schema import IntegrationAccountMapPropertiesParametersSchema
-    from .integration_account_map import IntegrationAccountMap
-    from .integration_account_map_filter import IntegrationAccountMapFilter
-    from .business_identity import BusinessIdentity
-    from .b2_bpartner_content import B2BPartnerContent
-    from .partner_content import PartnerContent
-    from .integration_account_partner import IntegrationAccountPartner
-    from .integration_account_partner_filter import IntegrationAccountPartnerFilter
-    from .as2_message_connection_settings import AS2MessageConnectionSettings
-    from .as2_acknowledgement_connection_settings import AS2AcknowledgementConnectionSettings
-    from .as2_mdn_settings import AS2MdnSettings
-    from .as2_security_settings import AS2SecuritySettings
-    from .as2_validation_settings import AS2ValidationSettings
-    from .as2_envelope_settings import AS2EnvelopeSettings
-    from .as2_error_settings import AS2ErrorSettings
-    from .as2_protocol_settings import AS2ProtocolSettings
-    from .as2_one_way_agreement import AS2OneWayAgreement
-    from .as2_agreement_content import AS2AgreementContent
-    from .x12_validation_settings import X12ValidationSettings
-    from .x12_framing_settings import X12FramingSettings
-    from .x12_envelope_settings import X12EnvelopeSettings
-    from .x12_acknowledgement_settings import X12AcknowledgementSettings
-    from .x12_message_filter import X12MessageFilter
-    from .x12_security_settings import X12SecuritySettings
-    from .x12_processing_settings import X12ProcessingSettings
-    from .x12_envelope_override import X12EnvelopeOverride
-    from .x12_validation_override import X12ValidationOverride
-    from .x12_message_identifier import X12MessageIdentifier
-    from .x12_schema_reference import X12SchemaReference
-    from .x12_delimiter_overrides import X12DelimiterOverrides
-    from .x12_protocol_settings import X12ProtocolSettings
-    from .x12_one_way_agreement import X12OneWayAgreement
-    from .x12_agreement_content import X12AgreementContent
-    from .edifact_validation_settings import EdifactValidationSettings
-    from .edifact_framing_settings import EdifactFramingSettings
-    from .edifact_envelope_settings import EdifactEnvelopeSettings
-    from .edifact_acknowledgement_settings import EdifactAcknowledgementSettings
-    from .edifact_message_filter import EdifactMessageFilter
-    from .edifact_processing_settings import EdifactProcessingSettings
-    from .edifact_envelope_override import EdifactEnvelopeOverride
-    from .edifact_message_identifier import EdifactMessageIdentifier
-    from .edifact_schema_reference import EdifactSchemaReference
-    from .edifact_validation_override import EdifactValidationOverride
-    from .edifact_delimiter_override import EdifactDelimiterOverride
-    from .edifact_protocol_settings import EdifactProtocolSettings
-    from .edifact_one_way_agreement import EdifactOneWayAgreement
-    from .edifact_agreement_content import EdifactAgreementContent
-    from .agreement_content import AgreementContent
-    from .integration_account_agreement import IntegrationAccountAgreement
-    from .integration_account_agreement_filter import IntegrationAccountAgreementFilter
-    from .key_vault_key_reference_key_vault import KeyVaultKeyReferenceKeyVault
-    from .key_vault_key_reference import KeyVaultKeyReference
-    from .integration_account_certificate import IntegrationAccountCertificate
-    from .integration_account_session_filter import IntegrationAccountSessionFilter
-    from .integration_account_session import IntegrationAccountSession
-    from .operation_display import OperationDisplay
-    from .operation import Operation
-    from .key_vault_reference import KeyVaultReference
-    from .list_key_vault_keys_definition import ListKeyVaultKeysDefinition
-    from .key_vault_key_attributes import KeyVaultKeyAttributes
-    from .key_vault_key import KeyVaultKey
-    from .tracking_event_error_info import TrackingEventErrorInfo
-    from .tracking_event import TrackingEvent
-    from .tracking_events_definition import TrackingEventsDefinition
-    from .set_trigger_state_action_definition import SetTriggerStateActionDefinition
-    from .expression_root import ExpressionRoot
-    from .azure_resource_error_info import AzureResourceErrorInfo
-    from .expression import Expression
-    from .error_info import ErrorInfo
-    from .repetition_index import RepetitionIndex
-    from .workflow_run_action_repetition_definition import WorkflowRunActionRepetitionDefinition
-    from .workflow_run_action_repetition_definition_collection import WorkflowRunActionRepetitionDefinitionCollection
-    from .operation_result import OperationResult
-    from .run_action_correlation import RunActionCorrelation
-    from .operation_result_properties import OperationResultProperties
-    from .run_correlation import RunCorrelation
-    from .json_schema import JsonSchema
-    from .assembly_properties import AssemblyProperties
-    from .assembly_definition import AssemblyDefinition
-    from .artifact_content_properties_definition import ArtifactContentPropertiesDefinition
-    from .artifact_properties import ArtifactProperties
-    from .batch_release_criteria import BatchReleaseCriteria
-    from .batch_configuration_properties import BatchConfigurationProperties
-    from .batch_configuration import BatchConfiguration
-    from .request import Request
-    from .response import Response
-    from .request_history_properties import RequestHistoryProperties
-    from .request_history import RequestHistory
-from .workflow_paged import WorkflowPaged
-from .workflow_version_paged import WorkflowVersionPaged
-from .workflow_trigger_paged import WorkflowTriggerPaged
-from .workflow_trigger_history_paged import WorkflowTriggerHistoryPaged
-from .workflow_run_paged import WorkflowRunPaged
-from .workflow_run_action_paged import WorkflowRunActionPaged
-from .expression_root_paged import ExpressionRootPaged
-from .workflow_run_action_repetition_definition_paged import WorkflowRunActionRepetitionDefinitionPaged
-from .request_history_paged import RequestHistoryPaged
-from .integration_account_paged import IntegrationAccountPaged
-from .key_vault_key_paged import KeyVaultKeyPaged
-from .assembly_definition_paged import AssemblyDefinitionPaged
-from .batch_configuration_paged import BatchConfigurationPaged
-from .integration_account_schema_paged import IntegrationAccountSchemaPaged
-from .integration_account_map_paged import IntegrationAccountMapPaged
-from .integration_account_partner_paged import IntegrationAccountPartnerPaged
-from .integration_account_agreement_paged import IntegrationAccountAgreementPaged
-from .integration_account_certificate_paged import IntegrationAccountCertificatePaged
-from .integration_account_session_paged import IntegrationAccountSessionPaged
-from .operation_paged import OperationPaged
-from .logic_management_client_enums import (
+    from ._models import AgreementContent
+    from ._models import ApiDeploymentParameterMetadata
+    from ._models import ApiDeploymentParameterMetadataSet
+    from ._models import ApiOperation
+    from ._models import ApiOperationAnnotation
+    from ._models import ApiOperationPropertiesDefinition
+    from ._models import ApiReference
+    from ._models import ApiResourceBackendService
+    from ._models import ApiResourceDefinitions
+    from ._models import ApiResourceGeneralInformation
+    from ._models import ApiResourceMetadata
+    from ._models import ApiResourcePolicies
+    from ._models import ApiResourceProperties
+    from ._models import ArtifactContentPropertiesDefinition
+    from ._models import ArtifactProperties
+    from ._models import AS2AcknowledgementConnectionSettings
+    from ._models import AS2AgreementContent
+    from ._models import AS2EnvelopeSettings
+    from ._models import AS2ErrorSettings
+    from ._models import AS2MdnSettings
+    from ._models import AS2MessageConnectionSettings
+    from ._models import AS2OneWayAgreement
+    from ._models import AS2ProtocolSettings
+    from ._models import AS2SecuritySettings
+    from ._models import AS2ValidationSettings
+    from ._models import AssemblyDefinition
+    from ._models import AssemblyProperties
+    from ._models import AzureResourceErrorInfo
+    from ._models import B2BPartnerContent
+    from ._models import BatchConfiguration
+    from ._models import BatchConfigurationProperties
+    from ._models import BatchReleaseCriteria
+    from ._models import BusinessIdentity
+    from ._models import CallbackUrl
+    from ._models import ContentHash
+    from ._models import ContentLink
+    from ._models import Correlation
+    from ._models import EdifactAcknowledgementSettings
+    from ._models import EdifactAgreementContent
+    from ._models import EdifactDelimiterOverride
+    from ._models import EdifactEnvelopeOverride
+    from ._models import EdifactEnvelopeSettings
+    from ._models import EdifactFramingSettings
+    from ._models import EdifactMessageFilter
+    from ._models import EdifactMessageIdentifier
+    from ._models import EdifactOneWayAgreement
+    from ._models import EdifactProcessingSettings
+    from ._models import EdifactProtocolSettings
+    from ._models import EdifactSchemaReference
+    from ._models import EdifactValidationOverride
+    from ._models import EdifactValidationSettings
+    from ._models import ErrorInfo
+    from ._models import ErrorProperties
+    from ._models import ErrorResponse, ErrorResponseException
+    from ._models import Expression
+    from ._models import ExpressionRoot
+    from ._models import ExtendedErrorInfo
+    from ._models import FlowEndpoints
+    from ._models import FlowEndpointsConfiguration
+    from ._models import GenerateUpgradedDefinitionParameters
+    from ._models import GetCallbackUrlParameters
+    from ._models import IntegrationAccount
+    from ._models import IntegrationAccountAgreement
+    from ._models import IntegrationAccountAgreementFilter
+    from ._models import IntegrationAccountCertificate
+    from ._models import IntegrationAccountMap
+    from ._models import IntegrationAccountMapFilter
+    from ._models import IntegrationAccountMapPropertiesParametersSchema
+    from ._models import IntegrationAccountPartner
+    from ._models import IntegrationAccountPartnerFilter
+    from ._models import IntegrationAccountSchema
+    from ._models import IntegrationAccountSchemaFilter
+    from ._models import IntegrationAccountSession
+    from ._models import IntegrationAccountSessionFilter
+    from ._models import IntegrationAccountSku
+    from ._models import IntegrationServiceEnvironment
+    from ._models import IntegrationServiceEnvironmentAccessEndpoint
+    from ._models import IntegrationServiceEnvironmentNetworkDependency
+    from ._models import IntegrationServiceEnvironmentNetworkDependencyHealth
+    from ._models import IntegrationServiceEnvironmentNetworkEndpoint
+    from ._models import IntegrationServiceEnvironmentProperties
+    from ._models import IntegrationServiceEnvironmentSku
+    from ._models import IntegrationServiceEnvironmentSkuCapacity
+    from ._models import IntegrationServiceEnvironmentSkuDefinition
+    from ._models import IntegrationServiceEnvironmentSkuDefinitionSku
+    from ._models import IntegrationServiceEnvironmentSubnetNetworkHealth
+    from ._models import IpAddress
+    from ._models import JsonSchema
+    from ._models import KeyVaultKey
+    from ._models import KeyVaultKeyAttributes
+    from ._models import KeyVaultKeyReference
+    from ._models import KeyVaultKeyReferenceKeyVault
+    from ._models import KeyVaultReference
+    from ._models import ListKeyVaultKeysDefinition
+    from ._models import ManagedApi
+    from ._models import NetworkConfiguration
+    from ._models import Operation
+    from ._models import OperationDisplay
+    from ._models import OperationResult
+    from ._models import OperationResultProperties
+    from ._models import PartnerContent
+    from ._models import RecurrenceSchedule
+    from ._models import RecurrenceScheduleOccurrence
+    from ._models import RegenerateActionParameter
+    from ._models import RepetitionIndex
+    from ._models import Request
+    from ._models import RequestHistory
+    from ._models import RequestHistoryProperties
+    from ._models import Resource
+    from ._models import ResourceReference
+    from ._models import Response
+    from ._models import RetryHistory
+    from ._models import RunActionCorrelation
+    from ._models import RunCorrelation
+    from ._models import SetTriggerStateActionDefinition
+    from ._models import Sku
+    from ._models import SubResource
+    from ._models import SwaggerCustomDynamicList
+    from ._models import SwaggerCustomDynamicProperties
+    from ._models import SwaggerCustomDynamicSchema
+    from ._models import SwaggerCustomDynamicTree
+    from ._models import SwaggerCustomDynamicTreeCommand
+    from ._models import SwaggerCustomDynamicTreeParameter
+    from ._models import SwaggerCustomDynamicTreeSettings
+    from ._models import SwaggerExternalDocumentation
+    from ._models import SwaggerSchema
+    from ._models import SwaggerXml
+    from ._models import TrackingEvent
+    from ._models import TrackingEventErrorInfo
+    from ._models import TrackingEventsDefinition
+    from ._models import Workflow
+    from ._models import WorkflowFilter
+    from ._models import WorkflowOutputParameter
+    from ._models import WorkflowParameter
+    from ._models import WorkflowRun
+    from ._models import WorkflowRunAction
+    from ._models import WorkflowRunActionFilter
+    from ._models import WorkflowRunActionRepetitionDefinition
+    from ._models import WorkflowRunFilter
+    from ._models import WorkflowRunTrigger
+    from ._models import WorkflowTrigger
+    from ._models import WorkflowTriggerCallbackUrl
+    from ._models import WorkflowTriggerFilter
+    from ._models import WorkflowTriggerHistory
+    from ._models import WorkflowTriggerHistoryFilter
+    from ._models import WorkflowTriggerListCallbackUrlQueries
+    from ._models import WorkflowTriggerRecurrence
+    from ._models import WorkflowVersion
+    from ._models import WsdlService
+    from ._models import X12AcknowledgementSettings
+    from ._models import X12AgreementContent
+    from ._models import X12DelimiterOverrides
+    from ._models import X12EnvelopeOverride
+    from ._models import X12EnvelopeSettings
+    from ._models import X12FramingSettings
+    from ._models import X12MessageFilter
+    from ._models import X12MessageIdentifier
+    from ._models import X12OneWayAgreement
+    from ._models import X12ProcessingSettings
+    from ._models import X12ProtocolSettings
+    from ._models import X12SchemaReference
+    from ._models import X12SecuritySettings
+    from ._models import X12ValidationOverride
+    from ._models import X12ValidationSettings
+from ._paged_models import ApiOperationPaged
+from ._paged_models import AssemblyDefinitionPaged
+from ._paged_models import BatchConfigurationPaged
+from ._paged_models import ExpressionRootPaged
+from ._paged_models import IntegrationAccountAgreementPaged
+from ._paged_models import IntegrationAccountCertificatePaged
+from ._paged_models import IntegrationAccountMapPaged
+from ._paged_models import IntegrationAccountPaged
+from ._paged_models import IntegrationAccountPartnerPaged
+from ._paged_models import IntegrationAccountSchemaPaged
+from ._paged_models import IntegrationAccountSessionPaged
+from ._paged_models import IntegrationServiceEnvironmentPaged
+from ._paged_models import IntegrationServiceEnvironmentSkuDefinitionPaged
+from ._paged_models import KeyVaultKeyPaged
+from ._paged_models import ManagedApiPaged
+from ._paged_models import OperationPaged
+from ._paged_models import RequestHistoryPaged
+from ._paged_models import WorkflowPaged
+from ._paged_models import WorkflowRunActionPaged
+from ._paged_models import WorkflowRunActionRepetitionDefinitionPaged
+from ._paged_models import WorkflowRunPaged
+from ._paged_models import WorkflowTriggerHistoryPaged
+from ._paged_models import WorkflowTriggerPaged
+from ._paged_models import WorkflowVersionPaged
+from ._logic_management_client_enums import (
     WorkflowProvisioningState,
     WorkflowState,
     SkuName,
@@ -292,6 +374,20 @@ from .logic_management_client_enums import (
     DaysOfWeek,
     DayOfWeek,
     KeyType,
+    ApiTier,
+    StatusAnnotation,
+    SwaggerSchemaType,
+    ApiType,
+    WsdlImportMethod,
+    ApiDeploymentParameterVisibility,
+    IntegrationServiceEnvironmentNetworkEndPointAccessibilityState,
+    IntegrationServiceEnvironmentNetworkDependencyCategoryType,
+    IntegrationServiceEnvironmentNetworkDependencyHealthState,
+    ErrorResponseCode,
+    AzureAsyncOperationState,
+    IntegrationServiceEnvironmentAccessEndpointType,
+    IntegrationServiceEnvironmentSkuName,
+    IntegrationServiceEnvironmentSkuScaleType,
     IntegrationAccountSkuName,
     SchemaType,
     MapType,
@@ -315,131 +411,170 @@ from .logic_management_client_enums import (
 )
 
 __all__ = [
-    'Resource',
-    'SubResource',
-    'ResourceReference',
-    'Sku',
-    'WorkflowParameter',
-    'Workflow',
-    'WorkflowFilter',
-    'WorkflowVersion',
-    'RecurrenceScheduleOccurrence',
-    'RecurrenceSchedule',
-    'WorkflowTriggerRecurrence',
-    'WorkflowTrigger',
-    'WorkflowTriggerFilter',
-    'WorkflowTriggerListCallbackUrlQueries',
-    'WorkflowTriggerCallbackUrl',
-    'Correlation',
-    'ContentHash',
-    'ContentLink',
-    'WorkflowTriggerHistory',
-    'WorkflowTriggerHistoryFilter',
-    'WorkflowRunTrigger',
-    'WorkflowOutputParameter',
-    'WorkflowRun',
-    'WorkflowRunFilter',
-    'ErrorProperties',
-    'ErrorResponse', 'ErrorResponseException',
-    'RetryHistory',
-    'WorkflowRunAction',
-    'WorkflowRunActionFilter',
-    'RegenerateActionParameter',
-    'GenerateUpgradedDefinitionParameters',
-    'IntegrationAccountSku',
-    'IntegrationAccount',
-    'GetCallbackUrlParameters',
-    'CallbackUrl',
-    'IntegrationAccountSchema',
-    'IntegrationAccountSchemaFilter',
-    'IntegrationAccountMapPropertiesParametersSchema',
-    'IntegrationAccountMap',
-    'IntegrationAccountMapFilter',
-    'BusinessIdentity',
-    'B2BPartnerContent',
-    'PartnerContent',
-    'IntegrationAccountPartner',
-    'IntegrationAccountPartnerFilter',
-    'AS2MessageConnectionSettings',
-    'AS2AcknowledgementConnectionSettings',
-    'AS2MdnSettings',
-    'AS2SecuritySettings',
-    'AS2ValidationSettings',
-    'AS2EnvelopeSettings',
-    'AS2ErrorSettings',
-    'AS2ProtocolSettings',
-    'AS2OneWayAgreement',
-    'AS2AgreementContent',
-    'X12ValidationSettings',
-    'X12FramingSettings',
-    'X12EnvelopeSettings',
-    'X12AcknowledgementSettings',
-    'X12MessageFilter',
-    'X12SecuritySettings',
-    'X12ProcessingSettings',
-    'X12EnvelopeOverride',
-    'X12ValidationOverride',
-    'X12MessageIdentifier',
-    'X12SchemaReference',
-    'X12DelimiterOverrides',
-    'X12ProtocolSettings',
-    'X12OneWayAgreement',
-    'X12AgreementContent',
-    'EdifactValidationSettings',
-    'EdifactFramingSettings',
-    'EdifactEnvelopeSettings',
-    'EdifactAcknowledgementSettings',
-    'EdifactMessageFilter',
-    'EdifactProcessingSettings',
-    'EdifactEnvelopeOverride',
-    'EdifactMessageIdentifier',
-    'EdifactSchemaReference',
-    'EdifactValidationOverride',
-    'EdifactDelimiterOverride',
-    'EdifactProtocolSettings',
-    'EdifactOneWayAgreement',
-    'EdifactAgreementContent',
     'AgreementContent',
-    'IntegrationAccountAgreement',
-    'IntegrationAccountAgreementFilter',
-    'KeyVaultKeyReferenceKeyVault',
-    'KeyVaultKeyReference',
-    'IntegrationAccountCertificate',
-    'IntegrationAccountSessionFilter',
-    'IntegrationAccountSession',
-    'OperationDisplay',
-    'Operation',
-    'KeyVaultReference',
-    'ListKeyVaultKeysDefinition',
-    'KeyVaultKeyAttributes',
-    'KeyVaultKey',
-    'TrackingEventErrorInfo',
-    'TrackingEvent',
-    'TrackingEventsDefinition',
-    'SetTriggerStateActionDefinition',
-    'ExpressionRoot',
-    'AzureResourceErrorInfo',
-    'Expression',
-    'ErrorInfo',
-    'RepetitionIndex',
-    'WorkflowRunActionRepetitionDefinition',
-    'WorkflowRunActionRepetitionDefinitionCollection',
-    'OperationResult',
-    'RunActionCorrelation',
-    'OperationResultProperties',
-    'RunCorrelation',
-    'JsonSchema',
-    'AssemblyProperties',
-    'AssemblyDefinition',
+    'ApiDeploymentParameterMetadata',
+    'ApiDeploymentParameterMetadataSet',
+    'ApiOperation',
+    'ApiOperationAnnotation',
+    'ApiOperationPropertiesDefinition',
+    'ApiReference',
+    'ApiResourceBackendService',
+    'ApiResourceDefinitions',
+    'ApiResourceGeneralInformation',
+    'ApiResourceMetadata',
+    'ApiResourcePolicies',
+    'ApiResourceProperties',
     'ArtifactContentPropertiesDefinition',
     'ArtifactProperties',
-    'BatchReleaseCriteria',
-    'BatchConfigurationProperties',
+    'AS2AcknowledgementConnectionSettings',
+    'AS2AgreementContent',
+    'AS2EnvelopeSettings',
+    'AS2ErrorSettings',
+    'AS2MdnSettings',
+    'AS2MessageConnectionSettings',
+    'AS2OneWayAgreement',
+    'AS2ProtocolSettings',
+    'AS2SecuritySettings',
+    'AS2ValidationSettings',
+    'AssemblyDefinition',
+    'AssemblyProperties',
+    'AzureResourceErrorInfo',
+    'B2BPartnerContent',
     'BatchConfiguration',
+    'BatchConfigurationProperties',
+    'BatchReleaseCriteria',
+    'BusinessIdentity',
+    'CallbackUrl',
+    'ContentHash',
+    'ContentLink',
+    'Correlation',
+    'EdifactAcknowledgementSettings',
+    'EdifactAgreementContent',
+    'EdifactDelimiterOverride',
+    'EdifactEnvelopeOverride',
+    'EdifactEnvelopeSettings',
+    'EdifactFramingSettings',
+    'EdifactMessageFilter',
+    'EdifactMessageIdentifier',
+    'EdifactOneWayAgreement',
+    'EdifactProcessingSettings',
+    'EdifactProtocolSettings',
+    'EdifactSchemaReference',
+    'EdifactValidationOverride',
+    'EdifactValidationSettings',
+    'ErrorInfo',
+    'ErrorProperties',
+    'ErrorResponse', 'ErrorResponseException',
+    'Expression',
+    'ExpressionRoot',
+    'ExtendedErrorInfo',
+    'FlowEndpoints',
+    'FlowEndpointsConfiguration',
+    'GenerateUpgradedDefinitionParameters',
+    'GetCallbackUrlParameters',
+    'IntegrationAccount',
+    'IntegrationAccountAgreement',
+    'IntegrationAccountAgreementFilter',
+    'IntegrationAccountCertificate',
+    'IntegrationAccountMap',
+    'IntegrationAccountMapFilter',
+    'IntegrationAccountMapPropertiesParametersSchema',
+    'IntegrationAccountPartner',
+    'IntegrationAccountPartnerFilter',
+    'IntegrationAccountSchema',
+    'IntegrationAccountSchemaFilter',
+    'IntegrationAccountSession',
+    'IntegrationAccountSessionFilter',
+    'IntegrationAccountSku',
+    'IntegrationServiceEnvironment',
+    'IntegrationServiceEnvironmentAccessEndpoint',
+    'IntegrationServiceEnvironmentNetworkDependency',
+    'IntegrationServiceEnvironmentNetworkDependencyHealth',
+    'IntegrationServiceEnvironmentNetworkEndpoint',
+    'IntegrationServiceEnvironmentProperties',
+    'IntegrationServiceEnvironmentSku',
+    'IntegrationServiceEnvironmentSkuCapacity',
+    'IntegrationServiceEnvironmentSkuDefinition',
+    'IntegrationServiceEnvironmentSkuDefinitionSku',
+    'IntegrationServiceEnvironmentSubnetNetworkHealth',
+    'IpAddress',
+    'JsonSchema',
+    'KeyVaultKey',
+    'KeyVaultKeyAttributes',
+    'KeyVaultKeyReference',
+    'KeyVaultKeyReferenceKeyVault',
+    'KeyVaultReference',
+    'ListKeyVaultKeysDefinition',
+    'ManagedApi',
+    'NetworkConfiguration',
+    'Operation',
+    'OperationDisplay',
+    'OperationResult',
+    'OperationResultProperties',
+    'PartnerContent',
+    'RecurrenceSchedule',
+    'RecurrenceScheduleOccurrence',
+    'RegenerateActionParameter',
+    'RepetitionIndex',
     'Request',
-    'Response',
-    'RequestHistoryProperties',
     'RequestHistory',
+    'RequestHistoryProperties',
+    'Resource',
+    'ResourceReference',
+    'Response',
+    'RetryHistory',
+    'RunActionCorrelation',
+    'RunCorrelation',
+    'SetTriggerStateActionDefinition',
+    'Sku',
+    'SubResource',
+    'SwaggerCustomDynamicList',
+    'SwaggerCustomDynamicProperties',
+    'SwaggerCustomDynamicSchema',
+    'SwaggerCustomDynamicTree',
+    'SwaggerCustomDynamicTreeCommand',
+    'SwaggerCustomDynamicTreeParameter',
+    'SwaggerCustomDynamicTreeSettings',
+    'SwaggerExternalDocumentation',
+    'SwaggerSchema',
+    'SwaggerXml',
+    'TrackingEvent',
+    'TrackingEventErrorInfo',
+    'TrackingEventsDefinition',
+    'Workflow',
+    'WorkflowFilter',
+    'WorkflowOutputParameter',
+    'WorkflowParameter',
+    'WorkflowRun',
+    'WorkflowRunAction',
+    'WorkflowRunActionFilter',
+    'WorkflowRunActionRepetitionDefinition',
+    'WorkflowRunFilter',
+    'WorkflowRunTrigger',
+    'WorkflowTrigger',
+    'WorkflowTriggerCallbackUrl',
+    'WorkflowTriggerFilter',
+    'WorkflowTriggerHistory',
+    'WorkflowTriggerHistoryFilter',
+    'WorkflowTriggerListCallbackUrlQueries',
+    'WorkflowTriggerRecurrence',
+    'WorkflowVersion',
+    'WsdlService',
+    'X12AcknowledgementSettings',
+    'X12AgreementContent',
+    'X12DelimiterOverrides',
+    'X12EnvelopeOverride',
+    'X12EnvelopeSettings',
+    'X12FramingSettings',
+    'X12MessageFilter',
+    'X12MessageIdentifier',
+    'X12OneWayAgreement',
+    'X12ProcessingSettings',
+    'X12ProtocolSettings',
+    'X12SchemaReference',
+    'X12SecuritySettings',
+    'X12ValidationOverride',
+    'X12ValidationSettings',
     'WorkflowPaged',
     'WorkflowVersionPaged',
     'WorkflowTriggerPaged',
@@ -459,6 +594,10 @@ __all__ = [
     'IntegrationAccountAgreementPaged',
     'IntegrationAccountCertificatePaged',
     'IntegrationAccountSessionPaged',
+    'IntegrationServiceEnvironmentPaged',
+    'IntegrationServiceEnvironmentSkuDefinitionPaged',
+    'ManagedApiPaged',
+    'ApiOperationPaged',
     'OperationPaged',
     'WorkflowProvisioningState',
     'WorkflowState',
@@ -470,6 +609,20 @@ __all__ = [
     'DaysOfWeek',
     'DayOfWeek',
     'KeyType',
+    'ApiTier',
+    'StatusAnnotation',
+    'SwaggerSchemaType',
+    'ApiType',
+    'WsdlImportMethod',
+    'ApiDeploymentParameterVisibility',
+    'IntegrationServiceEnvironmentNetworkEndPointAccessibilityState',
+    'IntegrationServiceEnvironmentNetworkDependencyCategoryType',
+    'IntegrationServiceEnvironmentNetworkDependencyHealthState',
+    'ErrorResponseCode',
+    'AzureAsyncOperationState',
+    'IntegrationServiceEnvironmentAccessEndpointType',
+    'IntegrationServiceEnvironmentSkuName',
+    'IntegrationServiceEnvironmentSkuScaleType',
     'IntegrationAccountSkuName',
     'SchemaType',
     'MapType',
