@@ -5,16 +5,14 @@
 # --------------------------------------------------------------------------
 from typing import cast, List, TYPE_CHECKING
 
-import base64
-import json
 import six
 
-from azure.core.paging import ItemPaged, PageIterator
 from azure.core.pipeline.policies import HeadersPolicy
 from azure.core.tracing.decorator import distributed_trace
 from ._generated import SearchIndexClient as _SearchIndexClient
-from ._generated.models import IndexBatch, IndexingResult, SearchRequest
+from ._generated.models import IndexBatch, IndexingResult
 from ._index_documents_batch import IndexDocumentsBatch
+from ._paging import SearchItemPaged, SearchPageIterator
 from ._queries import AutocompleteQuery, SearchQuery, SuggestQuery
 
 if TYPE_CHECKING:
@@ -49,58 +47,6 @@ def odata(statement, **kwargs):
             if "'{{{}}}'".format(key) not in statement:
                 kw[key] = "'{}'".format(value)
     return statement.format(**kw)
-
-
-def convert_search_result(result):
-    ret = result.additional_properties
-    ret["@search.score"] = result.score
-    ret["@search.highlights"] = result.highlights
-    return ret
-
-
-def pack_continuation_token(response):
-    if response.next_page_parameters is not None:
-        return base64.b64encode(
-            json.dumps(
-                [response.next_link, response.next_page_parameters.serialize()]
-            ).encode("utf-8")
-        )
-    return None
-
-
-def unpack_continuation_token(token):
-    next_link, next_page_parameters = json.loads(base64.b64decode(token))
-    next_page_request = SearchRequest.deserialize(next_page_parameters)
-    return next_link, next_page_request
-
-
-class _SearchDocumentsPaged(PageIterator):
-    def __init__(self, client, initial_query, kwargs, continuation_token=None):
-        super(_SearchDocumentsPaged, self).__init__(
-            get_next=self._get_next_cb,
-            extract_data=self._extract_data_cb,
-            continuation_token=continuation_token,
-        )
-        self._client = client
-        self._initial_query = initial_query
-        self._kwargs = kwargs
-
-    def _get_next_cb(self, continuation_token):
-        if continuation_token is None:
-            return self._client.documents.search_post(
-                search_request=self._initial_query.request, **self._kwargs
-            )
-
-        _next_link, next_page_request = unpack_continuation_token(continuation_token)
-
-        return self._client.documents.search_post(search_request=next_page_request)
-
-    def _extract_data_cb(self, response):  # pylint:disable=no-self-use
-        continuation_token = pack_continuation_token(response)
-
-        results = [convert_search_result(r) for r in response.results]
-
-        return continuation_token, results
 
 
 class SearchIndexClient(object):
@@ -184,7 +130,7 @@ class SearchIndexClient(object):
 
     @distributed_trace
     def search(self, query, **kwargs):
-        # type: (Union[str, SearchQuery], **Any) -> ItemPaged[dict]
+        # type: (Union[str, SearchQuery], **Any) -> SearchItemPaged[dict]
         """Search the Azure search index for documents.
 
         :param query: An query for searching the index
@@ -218,8 +164,8 @@ class SearchIndexClient(object):
                 )
             )
 
-        return ItemPaged(
-            self._client, query, kwargs, page_iterator_class=_SearchDocumentsPaged
+        return SearchItemPaged(
+            self._client, query, kwargs, page_iterator_class=SearchPageIterator
         )
 
     @distributed_trace
