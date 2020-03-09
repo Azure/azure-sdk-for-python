@@ -1,0 +1,52 @@
+interactions:
+- request:
+    body: '{"search": "mot", "suggesterName": "sg"}'
+    headers:
+      Accept:
+      - application/json;odata.metadata=none
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '40'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-core/1.2.3 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit) azsdk-python-searchindexclient/unknown
+      api-key:
+      - 6CF152470BA4BF2B1A1ED6A61D8F5945
+    method: POST
+    uri: https://searchcc080cce.search.windows.net/indexes('drgqefsg')/docs/search.post.autocomplete?api-version=2019-05-06
+  response:
+    body:
+      string: '{"value":[{"text":"motel","queryPlusText":"motel"}]}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '52'
+      content-type:
+      - application/json; odata.metadata=none
+      date:
+      - Thu, 05 Mar 2020 20:22:33 GMT
+      elapsed-time:
+      - '16'
+      expires:
+      - '-1'
+      odata-version:
+      - '4.0'
+      pragma:
+      - no-cache
+      preference-applied:
+      - odata.include-annotations="*"
+      request-id:
+      - 0bdb9fdc-5f1f-11ea-8316-8c8590507855
+      strict-transport-security:
+      - max-age=15724800; includeSubDomains
+      vary:
+      - Accept-Encoding
+    status:
+      code: 200
+      message: OK
+version: 1

@@ -34,7 +34,7 @@ class FileTest(StorageTestCase):
     def setUp(self):
         super(FileTest, self).setUp()
         url = self._get_account_url()
-        self.dsc = DataLakeServiceClient(url, credential=self.settings.STORAGE_DATA_LAKE_ACCOUNT_KEY)
+        self.dsc = DataLakeServiceClient(url, credential=self.settings.STORAGE_DATA_LAKE_ACCOUNT_KEY, logging_enable=True)
         self.config = self.dsc._config
 
         self.file_system_name = self.get_resource_name('filesystem')
@@ -221,6 +221,75 @@ class FileTest(StorageTestCase):
         with self.assertRaises(ResourceModifiedError):
             # flush is unsuccessful because extra data were appended.
             file_client.flush_data(6, etag=resp['etag'], match_condition=MatchConditions.IfNotModified)
+
+    def test_upload_data_to_none_existing_file(self):
+        # parallel upload cannot be recorded
+        if TestMode.need_recording_file(self.test_mode):
+            return
+
+        directory_name = self._get_directory_reference()
+
+        # Create a directory to put the file under that
+        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        directory_client.create_directory()
+
+        file_client = directory_client.get_file_client('filename')
+        data = self.get_random_bytes(200*1024) * 1024
+        file_client.upload_data(data, overwrite=True, max_concurrency=3)
+
+        downloaded_data = file_client.read_file()
+        self.assertEqual(data, downloaded_data)
+
+    @record
+    def test_upload_data_to_existing_file(self):
+        directory_name = self._get_directory_reference()
+
+        # Create a directory to put the file under that
+        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        directory_client.create_directory()
+
+        # create an existing file
+        file_client = directory_client.get_file_client('filename')
+        file_client.create_file()
+        file_client.append_data(b"abc", 0)
+        file_client.flush_data(3)
+
+        # to override the existing file
+        data = self.get_random_bytes(100)
+        with self.assertRaises(HttpResponseError):
+            file_client.upload_data(data, max_concurrency=5)
+        file_client.upload_data(data, overwrite=True, max_concurrency=5)
+
+        downloaded_data = file_client.read_file()
+        self.assertEqual(data, downloaded_data)
+
+    @record
+    def test_upload_data_to_existing_file_with_content_settings(self):
+        directory_name = self._get_directory_reference()
+
+        # Create a directory to put the file under that
+        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        directory_client.create_directory()
+
+        # create an existing file
+        file_client = directory_client.get_file_client('filename')
+        etag = file_client.create_file()['etag']
+
+        # to override the existing file
+        data = self.get_random_bytes(100)
+        content_settings = ContentSettings(
+            content_language='spanish',
+            content_disposition='inline')
+
+        file_client.upload_data(data, max_concurrency=5,
+                                content_settings=content_settings, etag=etag,
+                                match_condition=MatchConditions.IfNotModified)
+
+        downloaded_data = file_client.read_file()
+        properties = file_client.get_file_properties()
+
+        self.assertEqual(data, downloaded_data)
+        self.assertEqual(properties.content_settings.content_language, content_settings.content_language)
 
     @record
     def test_read_file(self):
