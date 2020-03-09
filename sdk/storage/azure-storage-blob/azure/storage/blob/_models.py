@@ -1079,7 +1079,7 @@ class ContainerEncryptionScope(object):
         if generated.properties.default_encryption_scope:
             scope = cls(
                 generated.properties.default_encryption_scope,
-                prevent_encryption_scope_override=generated.properties.deny_encryption_scope_override or False
+                prevent_encryption_scope_override=generated.properties.prevent_encryption_scope_override or False
             )
             return scope
         return None
