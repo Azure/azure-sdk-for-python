@@ -56,20 +56,27 @@ class DocumentEntities(Model):
     :param id: Required. Unique, non-empty document identifier.
     :type id: str
     :param entities: Required. Recognized entities in the document.
-    :type entities: list[~azure.ai.textanalytics.models.Entity]
+    :type entities:
+     list[~azure.cognitiveservices.language.textanalytics.models.Entity]
+    :param warnings: Required. Warnings encountered while processing document.
+    :type warnings:
+     list[~azure.cognitiveservices.language.textanalytics.models.TextAnalyticsWarning]
     :param statistics: if showStats=true was specified in the request this
      field will contain information about the document payload.
-    :type statistics: ~azure.ai.textanalytics.models.DocumentStatistics
+    :type statistics:
+     ~azure.cognitiveservices.language.textanalytics.models.DocumentStatistics
     """
 
     _validation = {
         'id': {'required': True},
         'entities': {'required': True},
+        'warnings': {'required': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'entities': {'key': 'entities', 'type': '[Entity]'},
+        'warnings': {'key': 'warnings', 'type': '[TextAnalyticsWarning]'},
         'statistics': {'key': 'statistics', 'type': 'DocumentStatistics'},
     }
 
@@ -77,6 +84,7 @@ class DocumentEntities(Model):
         super(DocumentEntities, self).__init__(**kwargs)
         self.id = kwargs.get('id', None)
         self.entities = kwargs.get('entities', None)
+        self.warnings = kwargs.get('warnings', None)
         self.statistics = kwargs.get('statistics', None)
 
 
@@ -88,7 +96,8 @@ class DocumentError(Model):
     :param id: Required. Document Id.
     :type id: str
     :param error: Required. Document Error.
-    :type error: ~azure.ai.textanalytics.models.TextAnalyticsError
+    :type error:
+     ~azure.cognitiveservices.language.textanalytics.models.TextAnalyticsError
     """
 
     _validation = {
@@ -118,19 +127,25 @@ class DocumentKeyPhrases(Model):
      The number of key phrases returned is proportional to the number of words
      in the input document.
     :type key_phrases: list[str]
+    :param warnings: Required. Warnings encountered while processing document.
+    :type warnings:
+     list[~azure.cognitiveservices.language.textanalytics.models.TextAnalyticsWarning]
     :param statistics: if showStats=true was specified in the request this
      field will contain information about the document payload.
-    :type statistics: ~azure.ai.textanalytics.models.DocumentStatistics
+    :type statistics:
+     ~azure.cognitiveservices.language.textanalytics.models.DocumentStatistics
     """
 
     _validation = {
         'id': {'required': True},
         'key_phrases': {'required': True},
+        'warnings': {'required': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'key_phrases': {'key': 'keyPhrases', 'type': '[str]'},
+        'warnings': {'key': 'warnings', 'type': '[TextAnalyticsWarning]'},
         'statistics': {'key': 'statistics', 'type': 'DocumentStatistics'},
     }
 
@@ -138,6 +153,7 @@ class DocumentKeyPhrases(Model):
         super(DocumentKeyPhrases, self).__init__(**kwargs)
         self.id = kwargs.get('id', None)
         self.key_phrases = kwargs.get('key_phrases', None)
+        self.warnings = kwargs.get('warnings', None)
         self.statistics = kwargs.get('statistics', None)
 
 
@@ -150,20 +166,26 @@ class DocumentLanguage(Model):
     :type id: str
     :param detected_languages: Required. A list of extracted languages.
     :type detected_languages:
-     list[~azure.ai.textanalytics.models.DetectedLanguage]
+     list[~azure.cognitiveservices.language.textanalytics.models.DetectedLanguage]
+    :param warnings: Required. Warnings encountered while processing document.
+    :type warnings:
+     list[~azure.cognitiveservices.language.textanalytics.models.TextAnalyticsWarning]
     :param statistics: if showStats=true was specified in the request this
      field will contain information about the document payload.
-    :type statistics: ~azure.ai.textanalytics.models.DocumentStatistics
+    :type statistics:
+     ~azure.cognitiveservices.language.textanalytics.models.DocumentStatistics
     """
 
     _validation = {
         'id': {'required': True},
         'detected_languages': {'required': True},
+        'warnings': {'required': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'detected_languages': {'key': 'detectedLanguages', 'type': '[DetectedLanguage]'},
+        'warnings': {'key': 'warnings', 'type': '[TextAnalyticsWarning]'},
         'statistics': {'key': 'statistics', 'type': 'DocumentStatistics'},
     }
 
@@ -171,6 +193,7 @@ class DocumentLanguage(Model):
         super(DocumentLanguage, self).__init__(**kwargs)
         self.id = kwargs.get('id', None)
         self.detected_languages = kwargs.get('detected_languages', None)
+        self.warnings = kwargs.get('warnings', None)
         self.statistics = kwargs.get('statistics', None)
 
 
@@ -182,20 +205,27 @@ class DocumentLinkedEntities(Model):
     :param id: Required. Unique, non-empty document identifier.
     :type id: str
     :param entities: Required. Recognized well-known entities in the document.
-    :type entities: list[~azure.ai.textanalytics.models.LinkedEntity]
+    :type entities:
+     list[~azure.cognitiveservices.language.textanalytics.models.LinkedEntity]
+    :param warnings: Required. Warnings encountered while processing document.
+    :type warnings:
+     list[~azure.cognitiveservices.language.textanalytics.models.TextAnalyticsWarning]
     :param statistics: if showStats=true was specified in the request this
      field will contain information about the document payload.
-    :type statistics: ~azure.ai.textanalytics.models.DocumentStatistics
+    :type statistics:
+     ~azure.cognitiveservices.language.textanalytics.models.DocumentStatistics
     """
 
     _validation = {
         'id': {'required': True},
         'entities': {'required': True},
+        'warnings': {'required': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'entities': {'key': 'entities', 'type': '[LinkedEntity]'},
+        'warnings': {'key': 'warnings', 'type': '[TextAnalyticsWarning]'},
         'statistics': {'key': 'statistics', 'type': 'DocumentStatistics'},
     }
 
@@ -203,6 +233,7 @@ class DocumentLinkedEntities(Model):
         super(DocumentLinkedEntities, self).__init__(**kwargs)
         self.id = kwargs.get('id', None)
         self.entities = kwargs.get('entities', None)
+        self.warnings = kwargs.get('warnings', None)
         self.statistics = kwargs.get('statistics', None)
 
 
@@ -217,15 +248,20 @@ class DocumentSentiment(Model):
      Neutral, Positive, or Mixed). Possible values include: 'positive',
      'neutral', 'negative', 'mixed'
     :type sentiment: str or
-     ~azure.ai.textanalytics.models.DocumentSentimentValue
+     ~azure.cognitiveservices.language.textanalytics.models.DocumentSentimentValue
     :param statistics:
-    :type statistics: ~azure.ai.textanalytics.models.DocumentStatistics
+    :type statistics:
+     ~azure.cognitiveservices.language.textanalytics.models.DocumentStatistics
     :param document_scores: Required. Document level sentiment confidence
      scores between 0 and 1 for each sentiment class.
     :type document_scores:
-     ~azure.ai.textanalytics.models.SentimentConfidenceScorePerLabel
+     ~azure.cognitiveservices.language.textanalytics.models.SentimentConfidenceScorePerLabel
     :param sentences: Required. Sentence level sentiment analysis.
-    :type sentences: list[~azure.ai.textanalytics.models.SentenceSentiment]
+    :type sentences:
+     list[~azure.cognitiveservices.language.textanalytics.models.SentenceSentiment]
+    :param warnings: Required. Warnings encountered while processing document.
+    :type warnings:
+     list[~azure.cognitiveservices.language.textanalytics.models.TextAnalyticsWarning]
     """
 
     _validation = {
@@ -233,6 +269,7 @@ class DocumentSentiment(Model):
         'sentiment': {'required': True},
         'document_scores': {'required': True},
         'sentences': {'required': True},
+        'warnings': {'required': True},
     }
 
     _attribute_map = {
@@ -241,6 +278,7 @@ class DocumentSentiment(Model):
         'statistics': {'key': 'statistics', 'type': 'DocumentStatistics'},
         'document_scores': {'key': 'documentScores', 'type': 'SentimentConfidenceScorePerLabel'},
         'sentences': {'key': 'sentences', 'type': '[SentenceSentiment]'},
+        'warnings': {'key': 'warnings', 'type': '[TextAnalyticsWarning]'},
     }
 
     def __init__(self, **kwargs):
@@ -250,6 +288,7 @@ class DocumentSentiment(Model):
         self.statistics = kwargs.get('statistics', None)
         self.document_scores = kwargs.get('document_scores', None)
         self.sentences = kwargs.get('sentences', None)
+        self.warnings = kwargs.get('warnings', None)
 
 
 class DocumentStatistics(Model):
@@ -288,11 +327,14 @@ class EntitiesResult(Model):
     All required parameters must be populated in order to send to Azure.
 
     :param documents: Required. Response by document
-    :type documents: list[~azure.ai.textanalytics.models.DocumentEntities]
+    :type documents:
+     list[~azure.cognitiveservices.language.textanalytics.models.DocumentEntities]
     :param errors: Required. Errors by document id.
-    :type errors: list[~azure.ai.textanalytics.models.DocumentError]
+    :type errors:
+     list[~azure.cognitiveservices.language.textanalytics.models.DocumentError]
     :param statistics:
-    :type statistics: ~azure.ai.textanalytics.models.RequestStatistics
+    :type statistics:
+     ~azure.cognitiveservices.language.textanalytics.models.RequestStatistics
     :param model_version: Required. This field indicates which model is used
      for scoring.
     :type model_version: str
@@ -375,11 +417,13 @@ class EntityLinkingResult(Model):
 
     :param documents: Required. Response by document
     :type documents:
-     list[~azure.ai.textanalytics.models.DocumentLinkedEntities]
+     list[~azure.cognitiveservices.language.textanalytics.models.DocumentLinkedEntities]
     :param errors: Required. Errors by document id.
-    :type errors: list[~azure.ai.textanalytics.models.DocumentError]
+    :type errors:
+     list[~azure.cognitiveservices.language.textanalytics.models.DocumentError]
     :param statistics:
-    :type statistics: ~azure.ai.textanalytics.models.RequestStatistics
+    :type statistics:
+     ~azure.cognitiveservices.language.textanalytics.models.RequestStatistics
     :param model_version: Required. This field indicates which model is used
      for scoring.
     :type model_version: str
@@ -415,7 +459,8 @@ class InnerError(Model):
      'invalidParameterValue', 'invalidRequestBodyFormat', 'emptyRequest',
      'missingInputRecords', 'invalidDocument', 'modelVersionIncorrect',
      'invalidDocumentBatch', 'unsupportedLanguageCode', 'invalidCountryHint'
-    :type code: str or ~azure.ai.textanalytics.models.InnerErrorCodeValue
+    :type code: str or
+     ~azure.cognitiveservices.language.textanalytics.models.InnerErrorCodeValue
     :param message: Required. Error message.
     :type message: str
     :param details: Error details.
@@ -423,7 +468,8 @@ class InnerError(Model):
     :param target: Error target.
     :type target: str
     :param inner_error: Inner error contains more specific information.
-    :type inner_error: ~azure.ai.textanalytics.models.InnerError
+    :type inner_error:
+     ~azure.cognitiveservices.language.textanalytics.models.InnerError
     """
 
     _validation = {
@@ -454,11 +500,14 @@ class KeyPhraseResult(Model):
     All required parameters must be populated in order to send to Azure.
 
     :param documents: Required. Response by document
-    :type documents: list[~azure.ai.textanalytics.models.DocumentKeyPhrases]
+    :type documents:
+     list[~azure.cognitiveservices.language.textanalytics.models.DocumentKeyPhrases]
     :param errors: Required. Errors by document id.
-    :type errors: list[~azure.ai.textanalytics.models.DocumentError]
+    :type errors:
+     list[~azure.cognitiveservices.language.textanalytics.models.DocumentError]
     :param statistics:
-    :type statistics: ~azure.ai.textanalytics.models.RequestStatistics
+    :type statistics:
+     ~azure.cognitiveservices.language.textanalytics.models.RequestStatistics
     :param model_version: Required. This field indicates which model is used
      for scoring.
     :type model_version: str
@@ -491,7 +540,8 @@ class LanguageBatchInput(Model):
     All required parameters must be populated in order to send to Azure.
 
     :param documents: Required.
-    :type documents: list[~azure.ai.textanalytics.models.LanguageInput]
+    :type documents:
+     list[~azure.cognitiveservices.language.textanalytics.models.LanguageInput]
     """
 
     _validation = {
@@ -544,11 +594,14 @@ class LanguageResult(Model):
     All required parameters must be populated in order to send to Azure.
 
     :param documents: Required. Response by document
-    :type documents: list[~azure.ai.textanalytics.models.DocumentLanguage]
+    :type documents:
+     list[~azure.cognitiveservices.language.textanalytics.models.DocumentLanguage]
     :param errors: Required. Errors by document id.
-    :type errors: list[~azure.ai.textanalytics.models.DocumentError]
+    :type errors:
+     list[~azure.cognitiveservices.language.textanalytics.models.DocumentError]
     :param statistics:
-    :type statistics: ~azure.ai.textanalytics.models.RequestStatistics
+    :type statistics:
+     ~azure.cognitiveservices.language.textanalytics.models.RequestStatistics
     :param model_version: Required. This field indicates which model is used
      for scoring.
     :type model_version: str
@@ -584,7 +637,8 @@ class LinkedEntity(Model):
     :type name: str
     :param matches: Required. List of instances this entity appears in the
      text.
-    :type matches: list[~azure.ai.textanalytics.models.Match]
+    :type matches:
+     list[~azure.cognitiveservices.language.textanalytics.models.Match]
     :param language: Required. Language used in the data source.
     :type language: str
     :param id: Unique identifier of the recognized entity from the data
@@ -671,7 +725,8 @@ class MultiLanguageBatchInput(Model):
 
     :param documents: Required. The set of documents to process as part of
      this batch.
-    :type documents: list[~azure.ai.textanalytics.models.MultiLanguageInput]
+    :type documents:
+     list[~azure.cognitiveservices.language.textanalytics.models.MultiLanguageInput]
     """
 
     _validation = {
@@ -770,18 +825,16 @@ class SentenceSentiment(Model):
     :param sentiment: Required. The predicted Sentiment for the sentence.
      Possible values include: 'positive', 'neutral', 'negative'
     :type sentiment: str or
-     ~azure.ai.textanalytics.models.SentenceSentimentValue
+     ~azure.cognitiveservices.language.textanalytics.models.SentenceSentimentValue
     :param sentence_scores: Required. The sentiment confidence score between 0
      and 1 for the sentence for all classes.
     :type sentence_scores:
-     ~azure.ai.textanalytics.models.SentimentConfidenceScorePerLabel
+     ~azure.cognitiveservices.language.textanalytics.models.SentimentConfidenceScorePerLabel
     :param offset: Required. The sentence offset from the start of the
      document.
     :type offset: int
     :param length: Required. The length of the sentence by Unicode standard.
     :type length: int
-    :param warnings: The warnings generated for the sentence.
-    :type warnings: list[str]
     """
 
     _validation = {
@@ -796,7 +849,6 @@ class SentenceSentiment(Model):
         'sentence_scores': {'key': 'sentenceScores', 'type': 'SentimentConfidenceScorePerLabel'},
         'offset': {'key': 'offset', 'type': 'int'},
         'length': {'key': 'length', 'type': 'int'},
-        'warnings': {'key': 'warnings', 'type': '[str]'},
     }
 
     def __init__(self, **kwargs):
@@ -805,7 +857,6 @@ class SentenceSentiment(Model):
         self.sentence_scores = kwargs.get('sentence_scores', None)
         self.offset = kwargs.get('offset', None)
         self.length = kwargs.get('length', None)
-        self.warnings = kwargs.get('warnings', None)
 
 
 class SentimentConfidenceScorePerLabel(Model):
@@ -847,11 +898,14 @@ class SentimentResponse(Model):
     All required parameters must be populated in order to send to Azure.
 
     :param documents: Required. Sentiment analysis per document.
-    :type documents: list[~azure.ai.textanalytics.models.DocumentSentiment]
+    :type documents:
+     list[~azure.cognitiveservices.language.textanalytics.models.DocumentSentiment]
     :param errors: Required. Errors by document id.
-    :type errors: list[~azure.ai.textanalytics.models.DocumentError]
+    :type errors:
+     list[~azure.cognitiveservices.language.textanalytics.models.DocumentError]
     :param statistics:
-    :type statistics: ~azure.ai.textanalytics.models.RequestStatistics
+    :type statistics:
+     ~azure.cognitiveservices.language.textanalytics.models.RequestStatistics
     :param model_version: Required. This field indicates which model is used
      for scoring.
     :type model_version: str
@@ -886,16 +940,19 @@ class TextAnalyticsError(Model):
     :param code: Required. Error code. Possible values include:
      'invalidRequest', 'invalidArgument', 'internalServerError',
      'serviceUnavailable'
-    :type code: str or ~azure.ai.textanalytics.models.ErrorCodeValue
+    :type code: str or
+     ~azure.cognitiveservices.language.textanalytics.models.ErrorCodeValue
     :param message: Required. Error message.
     :type message: str
     :param target: Error target.
     :type target: str
     :param inner_error: Inner error contains more specific information.
-    :type inner_error: ~azure.ai.textanalytics.models.InnerError
+    :type inner_error:
+     ~azure.cognitiveservices.language.textanalytics.models.InnerError
     :param details: Details about specific errors that led to this reported
      error.
-    :type details: list[~azure.ai.textanalytics.models.TextAnalyticsError]
+    :type details:
+     list[~azure.cognitiveservices.language.textanalytics.models.TextAnalyticsError]
     """
 
     _validation = {
@@ -934,3 +991,39 @@ class TextAnalyticsErrorException(HttpResponseError):
       if self.error is None:
           self.error = deserialize.dependencies[model_name]()
       super(TextAnalyticsErrorException, self).__init__(response=response)
+
+
+class TextAnalyticsWarning(Model):
+    """TextAnalyticsWarning.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar code: Required. Error code. Default value:
+     "TooManyLongTokensInDocument" .
+    :vartype code: str
+    :param message: Required. Warning message.
+    :type message: str
+    :param target_ref: The JSON pointer indicating the linked object.
+    :type target_ref: str
+    """
+
+    _validation = {
+        'code': {'required': True, 'constant': True},
+        'message': {'required': True},
+    }
+
+    _attribute_map = {
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+        'target_ref': {'key': 'targetRef', 'type': 'str'},
+    }
+
+    code = "TooManyLongTokensInDocument"
+
+    def __init__(self, **kwargs):
+        super(TextAnalyticsWarning, self).__init__(**kwargs)
+        self.message = kwargs.get('message', None)
+        self.target_ref = kwargs.get('target_ref', None)

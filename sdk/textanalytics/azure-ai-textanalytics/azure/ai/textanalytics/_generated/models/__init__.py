@@ -35,6 +35,7 @@ try:
     from ._models_py3 import SentimentConfidenceScorePerLabel
     from ._models_py3 import SentimentResponse
     from ._models_py3 import TextAnalyticsError, TextAnalyticsErrorException
+    from ._models_py3 import TextAnalyticsWarning
 except (SyntaxError, ImportError):
     from ._models import DetectedLanguage
     from ._models import DocumentEntities
@@ -61,6 +62,7 @@ except (SyntaxError, ImportError):
     from ._models import SentimentConfidenceScorePerLabel
     from ._models import SentimentResponse
     from ._models import TextAnalyticsError, TextAnalyticsErrorException
+    from ._models import TextAnalyticsWarning
 from ._text_analytics_client_enums import (
     ErrorCodeValue,
     InnerErrorCodeValue,
@@ -94,6 +96,7 @@ __all__ = [
     'SentimentConfidenceScorePerLabel',
     'SentimentResponse',
     'TextAnalyticsError', 'TextAnalyticsErrorException',
+    'TextAnalyticsWarning',
     'ErrorCodeValue',
     'InnerErrorCodeValue',
     'DocumentSentimentValue',
