@@ -121,7 +121,7 @@ Enabling logging will be helpful to do trouble shooting.
 
 ### Documentation
 
-Reference documentation is available [here](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/5.0.0/azure.eventhub.html#azure.eventhub.CheckpointStore)
+Reference documentation is available [here](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/5.0.1/azure.eventhub.html#azure.eventhub.CheckpointStore)
 
 ### Provide Feedback
 
