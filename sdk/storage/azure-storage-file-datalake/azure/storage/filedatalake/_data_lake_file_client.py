@@ -300,7 +300,7 @@ class DataLakeFileClient(PathClient):
             ContentSettings object used to set path properties.
         :keyword metadata:
             Name-value pairs associated with the blob as metadata.
-        :type metadata: dict(str, str)
+        :paramtype metadata: dict(str, str)
         :keyword ~azure.storage.filedatalake.DataLakeLeaseClient or str lease:
             Required if the blob has an active lease. Value can be a DataLakeLeaseClient object
             or the lease ID as a string.
@@ -452,6 +452,8 @@ class DataLakeFileClient(PathClient):
             specified position are written to the file when flush succeeds, but
             this optional parameter allows data after the flush position to be
             retained for a future flush operation.
+        :keyword ~azure.storage.filedatalake.ContentSettings content_settings:
+            ContentSettings object used to set path properties.
         :keyword bool close: Azure Storage Events allow applications to receive
             notifications when files change. When Azure Storage Events are
             enabled, a file changed event is raised. This event has a property
@@ -573,8 +575,8 @@ class DataLakeFileClient(PathClient):
         :keyword source_lease: A lease ID for the source path. If specified,
          the source path must have an active lease and the leaase ID must
          match.
-        :keyword source_lease: ~azure.storage.filedatalake.DataLakeLeaseClient or str
-        :param ~azure.storage.filedatalake.ContentSettings content_settings:
+        :paramtype source_lease: ~azure.storage.filedatalake.DataLakeLeaseClient or str
+        :keyword ~azure.storage.filedatalake.ContentSettings content_settings:
             ContentSettings object used to set path properties.
         :keyword lease:
             Required if the file/directory has an active lease. Value can be a LeaseClient object

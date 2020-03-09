@@ -265,7 +265,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
 
     @distributed_trace_async
     async def set_file_system_metadata(  # type: ignore
-            self, metadata=None,  # type: Optional[Dict[str, str]]
+            self, metadata,  # type: Dict[str, str]
             **kwargs
     ):
         # type: (...) -> Dict[str, Union[str, datetime]]
@@ -616,7 +616,6 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
 
     @distributed_trace_async
     async def delete_file(self, file,  # type: Union[FileProperties, str]
-                          lease=None,  # type: Optional[Union[DataLakeLeaseClient, str]]
                           **kwargs):
         # type: (...) -> DataLakeFileClient
         """
@@ -659,7 +658,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
             :caption: Delete file in the file system.
         """
         file_client = self.get_file_client(file)
-        await file_client.delete_file(lease=lease, **kwargs)
+        await file_client.delete_file(**kwargs)
         return file_client
 
     def get_root_directory_client(self):
