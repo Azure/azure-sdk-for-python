@@ -26,14 +26,9 @@
 
 import json
 import logging
-from typing import TYPE_CHECKING, Dict, Any, Optional
 
 
-from azure.core.exceptions import HttpResponseError, ODataV4Format, ODataV4Error
-
-
-if TYPE_CHECKING:
-    from azure.core.pipeline.transport.base import _HttpResponseBase
+from azure.core.exceptions import ODataV4Format
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -84,15 +79,3 @@ class ARMErrorFormat(ODataV4Format):
                 error_str += str(error_info)
 
         return error_str
-
-
-class ARMError(ODataV4Error):
-    """An HTTP error from an ARM endpoint.
-
-    This subclass ODataV4Error since ARM specifications requires all
-    ARM error to be complient with it.
-
-    https://github.com/Azure/azure-resource-manager-rpc/blob/master/v1.0/common-api-details.md#error-response-content
-    """
-
-    _ERROR_FORMAT = ARMErrorFormat
