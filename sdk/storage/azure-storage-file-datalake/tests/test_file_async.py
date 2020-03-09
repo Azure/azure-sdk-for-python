@@ -389,7 +389,7 @@ class FileTest(StorageTestCase):
                                       file_client.file_system_name,
                                       None,
                                       file_client.path_name,
-                                      credential=user_delegation_key,
+                                      user_delegation_key=user_delegation_key,
                                       permission=FileSasPermissions(read=True, create=True, write=True, delete=True),
                                       expiry=datetime.utcnow() + timedelta(hours=1),
                                       )
@@ -498,7 +498,7 @@ class FileTest(StorageTestCase):
             self.file_system_name,
             directory_name,
             file_name,
-            credential=self.dsc.credential.account_key,
+            account_key=self.dsc.credential.account_key,
             permission=FileSasPermissions(read=True, write=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
