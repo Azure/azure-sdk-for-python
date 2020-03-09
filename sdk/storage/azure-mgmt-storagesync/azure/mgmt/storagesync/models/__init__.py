@@ -16,6 +16,12 @@ try:
     from ._models_py3 import CheckNameAvailabilityResult
     from ._models_py3 import CloudEndpoint
     from ._models_py3 import CloudEndpointCreateParameters
+    from ._models_py3 import CloudTieringCachePerformance
+    from ._models_py3 import CloudTieringDatePolicyStatus
+    from ._models_py3 import CloudTieringFilesNotTiering
+    from ._models_py3 import CloudTieringSpaceSavings
+    from ._models_py3 import CloudTieringVolumeFreeSpacePolicyStatus
+    from ._models_py3 import FilesNotTieringError
     from ._models_py3 import OperationDisplayInfo
     from ._models_py3 import OperationDisplayResource
     from ._models_py3 import OperationEntity
@@ -60,6 +66,12 @@ except (SyntaxError, ImportError):
     from ._models import CheckNameAvailabilityResult
     from ._models import CloudEndpoint
     from ._models import CloudEndpointCreateParameters
+    from ._models import CloudTieringCachePerformance
+    from ._models import CloudTieringDatePolicyStatus
+    from ._models import CloudTieringFilesNotTiering
+    from ._models import CloudTieringSpaceSavings
+    from ._models import CloudTieringVolumeFreeSpacePolicyStatus
+    from ._models import FilesNotTieringError
     from ._models import OperationDisplayInfo
     from ._models import OperationDisplayResource
     from ._models import OperationEntity
@@ -117,6 +129,12 @@ __all__ = [
     'CheckNameAvailabilityResult',
     'CloudEndpoint',
     'CloudEndpointCreateParameters',
+    'CloudTieringCachePerformance',
+    'CloudTieringDatePolicyStatus',
+    'CloudTieringFilesNotTiering',
+    'CloudTieringSpaceSavings',
+    'CloudTieringVolumeFreeSpacePolicyStatus',
+    'FilesNotTieringError',
     'OperationDisplayInfo',
     'OperationDisplayResource',
     'OperationEntity',
