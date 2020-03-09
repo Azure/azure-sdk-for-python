@@ -90,28 +90,12 @@ class ServiceBusSender(BaseHandlerAsync, SenderMixin):
             return
         if self._handler:
             await self._handler.close_async()
-        try:
-            auth = await self._create_auth()
-            self._create_handler(auth)
-            await self._handler.open_async()
-            while not await self._handler.client_ready_async():
-                await asyncio.sleep(0.05)
-        except Exception as e:  # pylint: disable=broad-except
-            try:
-                await self._handle_exception(e)
-            except Exception:
-                self._running = False
-                raise
+        auth = await self._create_auth()
+        self._create_handler(auth)
+        await self._handler.open_async()
+        while not await self._handler.client_ready_async():
+            await asyncio.sleep(0.05)
         self._running = True
-
-    async def _reconnect(self):
-        unsent_events = self._handler.pending_messages
-        await super(ServiceBusSender, self)._reconnect()
-        try:
-            self._handler.queue_message(*unsent_events)
-            await self._handler.wait_async()
-        except Exception as e:  # pylint: disable=broad-except
-            await self._handle_exception(e)
 
     async def _send(self, message, session_id=None, timeout=None, last_exception=None):
         await self._open()

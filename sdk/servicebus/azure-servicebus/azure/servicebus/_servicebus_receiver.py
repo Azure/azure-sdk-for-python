@@ -189,19 +189,12 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):
             return
         if self._handler:
             self._handler.close()
-        try:
-            auth = self._create_auth()
-            self._create_handler(auth)
-            self._handler.open()
-            self._message_iter = self._handler.receive_messages_iter()
-            while not self._handler.client_ready():
-                time.sleep(0.05)
-        except Exception as e:  # pylint: disable=broad-except
-            try:
-                self._handle_exception(e)
-            except Exception:
-                self.running = False
-                raise
+        auth = self._create_auth()
+        self._create_handler(auth)
+        self._handler.open()
+        self._message_iter = self._handler.receive_messages_iter()
+        while not self._handler.client_ready():
+            time.sleep(0.05)
         self._running = True
 
     def _receive(self, max_batch_size=None, timeout=None):

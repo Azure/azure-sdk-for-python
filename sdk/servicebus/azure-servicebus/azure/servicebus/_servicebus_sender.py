@@ -116,28 +116,13 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             return
         if self._handler:
             self._handler.close()
-        try:
-            auth = self._create_auth()
-            self._create_handler(auth)
-            self._handler.open()
-            while not self._handler.client_ready():
-                time.sleep(0.05)
-        except Exception as e:  # pylint: disable=broad-except
-            try:
-                self._handle_exception(e)
-            except Exception:
-                self._running = False
-                raise
-        self._running = True
 
-    def _reconnect(self):
-        unsent_events = self._handler.pending_messages
-        super(ServiceBusSender, self)._reconnect()
-        try:
-            self._handler.queue_message(*unsent_events)
-            self._handler.wait()
-        except Exception as e:  # pylint: disable=broad-except
-            self._handle_exception(e)
+        auth = self._create_auth()
+        self._create_handler(auth)
+        self._handler.open()
+        while not self._handler.client_ready():
+            time.sleep(0.05)
+        self._running = True
 
     def _send(self, message, session_id=None, timeout=None, last_exception=None):
         self._open()

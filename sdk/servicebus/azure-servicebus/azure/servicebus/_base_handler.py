@@ -34,7 +34,8 @@ from .common.errors import (
     InvalidHandlerState,
     ServiceBusError,
     ServiceBusConnectionError,
-    ServiceBusAuthorizationError
+    ServiceBusAuthorizationError,
+    MessageSendFailed
 )
 from .common.constants import (
 
@@ -171,51 +172,34 @@ class BaseHandler(object):
             transport_type=self._config.transport_type,
         )
 
-    def _reconnect(self):
-        """Reconnect the handler.
-
-        If the handler was disconnected from the service with
-        a retryable error - attempt to reconnect.
-        This method will be called automatically for most retryable errors.
-        """
-        if self._handler:
-            self._handler.close()
-            self._handler = None
-        self._running = False
-        self._open()
-
     def _handle_exception(self, exception):
         if isinstance(exception, (errors.LinkDetach, errors.ConnectionClose)):
-            if exception.action and exception.action.retry and self._config.auto_reconnect:
-                _LOGGER.info("Handler detached. Attempting reconnect.")
-                self._reconnect()
-            elif exception.condition == constants.ErrorCodes.UnauthorizedAccess:
+            if exception.condition == constants.ErrorCodes.UnauthorizedAccess:
                 _LOGGER.info("Handler detached. Shutting down.")
                 error = ServiceBusAuthorizationError(str(exception), exception)
-                self.close(exception=error)
-                raise error
+                self._close_handler()
+                return error
             else:
                 _LOGGER.info("Handler detached. Shutting down.")
                 error = ServiceBusConnectionError(str(exception), exception)
-                self.close(exception=error)
-                raise error
+                self._close_handler()
+                return error
         elif isinstance(exception, errors.MessageHandlerError):
-            if self._config.auto_reconnect:
-                _LOGGER.info("Handler error. Attempting reconnect.")
-                self._reconnect()
-            else:
-                _LOGGER.info("Handler error. Shutting down.")
-                error = ServiceBusConnectionError(str(exception), exception)
-                self.close(exception=error)
-                raise error
+            _LOGGER.info("Handler error. Shutting down.")
+            error = ServiceBusConnectionError(str(exception), exception)
+            self._close_handler()
+            return error
         elif isinstance(exception, errors.AMQPConnectionError):
             message = "Failed to open handler: {}".format(exception)
-            raise ServiceBusConnectionError(message, exception)
+            return ServiceBusConnectionError(message, exception)
+        elif isinstance(exception, MessageSendFailed):
+            _LOGGER.info("Message send error (%r)", exception)
+            raise exception
         else:
             _LOGGER.info("Unexpected error occurred (%r). Shutting down.", exception)
             error = ServiceBusError("Handler failed: {}".format(exception))
-            self.close(exception=error)
-            raise error
+            self._close_handler()
+            return error
 
     @staticmethod
     def _from_connection_string(conn_str, **kwargs):
@@ -322,6 +306,12 @@ class BaseHandler(object):
         except Exception as exp:  # pylint: disable=broad-except
             raise ServiceBusError("Management request failed: {}".format(exp), exp)
 
+    def _close_handler(self):
+        if self._handler:
+            self._handler.close()
+            self._handler = None
+        self._running = False
+
     def close(self, exception=None):
         # type: (Exception) -> None
         """Close down the handler connection.
@@ -341,5 +331,5 @@ class BaseHandler(object):
             self._error = ServiceBusError(str(exception))
         else:
             self._error = ServiceBusError("This message handler is now closed.")
-        self._handler.close()
-        self._running = False
+
+        self._close_handler()

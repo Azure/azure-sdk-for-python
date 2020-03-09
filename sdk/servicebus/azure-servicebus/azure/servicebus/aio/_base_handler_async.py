@@ -21,7 +21,8 @@ from ..common.errors import (
     InvalidHandlerState,
     ServiceBusError,
     ServiceBusConnectionError,
-    ServiceBusAuthorizationError
+    ServiceBusAuthorizationError,
+    MessageSendFailed
 )
 
 if TYPE_CHECKING:
@@ -98,44 +99,34 @@ class BaseHandlerAsync(BaseHandler):
             transport_type=self._config.transport_type,
         )
 
-    async def _reconnect(self):
-        if self._handler:
-            await self._handler.close_async()
-            self._handler = None
-        self._running = False
-        await self._open()
-
     async def _handle_exception(self, exception):
         if isinstance(exception, (errors.LinkDetach, errors.ConnectionClose)):
-            if exception.action and exception.action.retry and self._config.auto_reconnect:
-                _LOGGER.info("Handler detached. Attempting reconnect.")
-                await self._reconnect()
-            elif exception.condition == constants.ErrorCodes.UnauthorizedAccess:
-                _LOGGER.info("Handler detached. Shutting down.")
+            if exception.condition == constants.ErrorCodes.UnauthorizedAccess:
+                _LOGGER.info("Async handler detached. Shutting down.")
                 error = ServiceBusAuthorizationError(str(exception), exception)
-                await self.close(exception=error)
-                raise error
+                await self._close_handler()
+                return error
             else:
-                _LOGGER.info("Handler detached. Shutting down.")
+                _LOGGER.info("Async handler detached. Shutting down.")
                 error = ServiceBusConnectionError(str(exception), exception)
-                await self.close(exception=error)
-                raise error
+                await self._close_handler()
+                return error
         elif isinstance(exception, errors.MessageHandlerError):
-            if self._config.auto_reconnect:
-                _LOGGER.info("Handler error. Attempting reconnect.")
-                await self._reconnect()
-            else:
-                _LOGGER.info("Handler error. Shutting down.")
-                error = ServiceBusConnectionError(str(exception), exception)
-                await self.close(exception=error)
-                raise error
+            _LOGGER.info("Async handler error. Shutting down.")
+            error = ServiceBusConnectionError(str(exception), exception)
+            await self._close_handler()
+            return error
         elif isinstance(exception, errors.AMQPConnectionError):
             message = "Failed to open handler: {}".format(exception)
-            raise ServiceBusConnectionError(message, exception)
+            await self._close_handler()
+            return ServiceBusConnectionError(message, exception)
+        elif isinstance(exception, MessageSendFailed):
+            _LOGGER.info("Message send error (%r)", exception)
+            raise exception
         else:
             _LOGGER.info("Unexpected error occurred (%r). Shutting down.", exception)
-            error = ServiceBusError("Handler failed: {}".format(exception))
-            await self.close(exception=error)
+            error = ServiceBusError("Handler failed: {}".format(exception), exception)
+            await self._close_handler()
             raise error
 
     async def _backoff(
@@ -222,6 +213,12 @@ class BaseHandlerAsync(BaseHandler):
         kwargs["credential"] = ServiceBusSharedKeyCredential(kwargs["credential"].policy, kwargs["credential"].key)
         return kwargs
 
+    async def _close_handler(self):
+        if self._handler:
+            await self._handler.close_async()
+            self._handler = None
+        self._running = False
+
     async def close(self, exception=None):
         # type: (Exception) -> None
         """Close down the handler connection.
@@ -241,5 +238,5 @@ class BaseHandlerAsync(BaseHandler):
             self._error = ServiceBusError(str(exception))
         else:
             self._error = ServiceBusError("This message handler is now closed.")
-        await self._handler.close_async()
-        self._running = False
+
+        await self._close_handler()

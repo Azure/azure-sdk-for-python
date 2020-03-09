@@ -136,19 +136,12 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
             return
         if self._handler:
             await self._handler.close_async()
-        try:
-            auth = await self._create_auth()
-            self._create_handler(auth)
-            await self._handler.open_async()
-            self._message_iter = self._handler.receive_messages_iter_async()
-            while not await self._handler.client_ready_async():
-                await asyncio.sleep(0.05)
-        except Exception as e:  # pylint: disable=broad-except
-            try:
-                await self._handle_exception(e)
-            except Exception:
-                self.running = False
-                raise
+        auth = await self._create_auth()
+        self._create_handler(auth)
+        await self._handler.open_async()
+        self._message_iter = self._handler.receive_messages_iter_async()
+        while not await self._handler.client_ready_async():
+            await asyncio.sleep(0.05)
         self._running = True
 
     async def _receive(self, max_batch_size=None, timeout=None):

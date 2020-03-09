@@ -11,8 +11,8 @@ class Configuration(object):  # pylint:disable=too-many-instance-attributes
     def __init__(self, **kwargs):
         self.user_agent = kwargs.get("user_agent")  # type: Optional[str]
         self.retry_total = kwargs.get("retry_total", 3)  # type: int
-        self.backoff_factor = kwargs.get("retry_backoff_factor", 0.8)  # type: float
-        self.backoff_max = kwargs.get("retry_backoff_max", 120)  # type: int
+        self.retry_backoff_factor = kwargs.get("retry_backoff_factor", 0.8)  # type: float
+        self.retry_backoff_max = kwargs.get("retry_backoff_max", 120)  # type: int
         self.logging_enable = kwargs.get("logging_enable", False)  # type: bool
         self.http_proxy = kwargs.get("http_proxy")  # type: Optional[Dict[str, Any]]
         self.transport_type = (
