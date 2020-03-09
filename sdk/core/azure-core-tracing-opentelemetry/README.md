@@ -47,16 +47,16 @@ exporter = AzureMonitorSpanExporter(
 # Regular open telemetry usage from here, see https://github.com/open-telemetry/opentelemetry-python
 # for details
 from opentelemetry import trace
-from opentelemetry.sdk.trace import Tracer
+from opentelemetry.sdk.trace import TracerSource
 from opentelemetry.sdk.trace.export import ConsoleSpanExporter
 from opentelemetry.sdk.trace.export import SimpleExportSpanProcessor
 
 # Simple console exporter
 exporter = ConsoleSpanExporter()
 
-trace.set_preferred_tracer_implementation(lambda T: Tracer())
-tracer = trace.tracer()
-tracer.add_span_processor(
+trace.set_preferred_tracer_implementation(lambda T: TracerSource())
+tracer = trace.get_tracer(__name__)
+tracer.tracer_source().add_span_processor(
     SimpleExportSpanProcessor(exporter)
 )
 
@@ -74,7 +74,7 @@ Azure Exporter can be found in the package `opentelemetry-azure-monitor-exporter
 
 ## Troubleshooting
 
-This client raises exceptions defined in [Azure Core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/docs/exceptions.md).
+This client raises exceptions defined in [Azure Core](https://docs.microsoft.com/en-us/python/api/azure-core/azure.core.exceptions?view=azure-python).
 
 
 ## Next steps

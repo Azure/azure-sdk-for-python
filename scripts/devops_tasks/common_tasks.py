@@ -52,6 +52,10 @@ REGRESSION_EXCLUDED_PACKAGES = [
     "azure-common",
 ]
 
+MANAGEMENT_PACKAGES_FILTER_EXCLUSIONS = [
+    "azure-mgmt-core",
+]
+
 omit_regression = (
     lambda x: "nspkg" not in x
     and "mgmt" not in x
@@ -62,12 +66,14 @@ omit_regression = (
 omit_docs = lambda x: "nspkg" not in x and os.path.basename(x) not in META_PACKAGES
 omit_build = lambda x: x # Dummy lambda to match omit type
 lambda_filter_azure_pkg = lambda x: x.startswith("azure") and "-nspkg" not in x
+omit_mgmt = lambda x: "mgmt" not in x or os.path.basename(x) in MANAGEMENT_PACKAGES_FILTER_EXCLUSIONS
 
 # dict of filter type and filter function
 omit_funct_dict = {
     "Build": omit_build,
     "Docs": omit_docs,
     "Regression": omit_regression,
+    "Omit_management": omit_mgmt,
 }
 
 def log_file(file_location, is_error=False):
@@ -219,36 +225,35 @@ def process_glob_string(
     # if we have individually queued this specific package, it's obvious that we want to build it specifically
     # in this case, do not honor the omission list
     if len(collected_directories) == 1:
-        return filter_for_compatibility(collected_directories)
+        pkg_set_ci_filtered = filter_for_compatibility(collected_directories)
     # however, if there are multiple packages being built, we should honor the omission list and NOT build the omitted
     # packages
     else:
-        allowed_package_set = remove_omitted_packages(collected_directories, filter_type)
-        logging.info(
-            "Target packages after filtering by omission list: {}".format(
-                allowed_package_set
-            )
-        )
-
+        allowed_package_set = remove_omitted_packages(collected_directories)
         pkg_set_ci_filtered = filter_for_compatibility(allowed_package_set)
-        logging.info(
-            "Package(s) omitted by CI filter: {}".format(
-                list(set(allowed_package_set) - set(pkg_set_ci_filtered))
-            )
+
+    # Apply filter based on filter type. for e.g. Docs, Regression, Management
+    pkg_set_ci_filtered = list(filter(omit_funct_dict.get(filter_type, omit_build), pkg_set_ci_filtered))
+    logging.info(
+        "Target packages after filtering by CI: {}".format(
+            pkg_set_ci_filtered
         )
+    )
+    logging.info(
+        "Package(s) omitted by CI filter: {}".format(
+            list(set(collected_directories) - set(pkg_set_ci_filtered))
+        )
+    )
+    return sorted(pkg_set_ci_filtered)
 
-        return sorted(pkg_set_ci_filtered)
 
-
-def remove_omitted_packages(collected_directories, filter_type="Build"):
-
+def remove_omitted_packages(collected_directories):
     packages = [
         package_dir
         for package_dir in collected_directories
         if os.path.basename(package_dir) not in OMITTED_CI_PACKAGES
     ]
 
-    packages = list(filter(omit_funct_dict.get(filter_type, omit_build), packages))
     return packages
 
 

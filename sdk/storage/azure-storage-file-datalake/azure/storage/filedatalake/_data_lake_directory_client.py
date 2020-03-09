@@ -68,9 +68,11 @@ class DataLakeDirectoryClient(PathClient):
 
         :param str conn_str:
             A connection string to an Azure Storage account.
-        :param file_system_name: The name of file system to interact with.
+        :param file_system_name:
+            The name of file system to interact with.
         :type file_system_name: str
-        :param directory_name: The name of directory to interact with. The directory is under file system.
+        :param directory_name:
+            The name of directory to interact with. The directory is under file system.
         :type directory_name: str
         :param credential:
             The credentials with which to authenticate. This is optional if the
@@ -81,9 +83,7 @@ class DataLakeDirectoryClient(PathClient):
         :return a DataLakeDirectoryClient
         :rtype ~azure.storage.filedatalake.DataLakeDirectoryClient
         """
-        account_url, secondary, credential = parse_connection_str(conn_str, credential, 'dfs')
-        if 'secondary_hostname' not in kwargs:
-            kwargs['secondary_hostname'] = secondary
+        account_url, _, credential = parse_connection_str(conn_str, credential, 'dfs')
         return cls(
             account_url, file_system_name=file_system_name, directory_name=directory_name,
             credential=credential, **kwargs)
@@ -95,27 +95,29 @@ class DataLakeDirectoryClient(PathClient):
         Create a new directory.
 
         :param metadata:
-            Name-value pairs associated with the blob as metadata.
+            Name-value pairs associated with the file as metadata.
         :type metadata: dict(str, str)
         :keyword ~azure.storage.filedatalake.ContentSettings content_settings:
             ContentSettings object used to set path properties.
         :keyword lease:
-            Required if the blob has an active lease. Value can be a DataLakeLeaseClient object
+            Required if the file has an active lease. Value can be a DataLakeLeaseClient object
             or the lease ID as a string.
         :paramtype lease: ~azure.storage.filedatalake.DataLakeLeaseClient or str
-        :keyword str umask: Optional and only valid if Hierarchical Namespace is enabled for the account.
+        :keyword str umask:
+            Optional and only valid if Hierarchical Namespace is enabled for the account.
             When creating a file or directory and the parent folder does not have a default ACL,
             the umask restricts the permissions of the file or directory to be created.
             The resulting permission is given by p & ^u, where p is the permission and u is the umask.
             For example, if p is 0777 and u is 0057, then the resulting permission is 0720.
             The default permission is 0777 for a directory and 0666 for a file. The default umask is 0027.
             The umask must be specified in 4-digit octal notation (e.g. 0766).
-        :keyword str permissions: Optional and only valid if Hierarchical Namespace
-         is enabled for the account. Sets POSIX access permissions for the file
-         owner, the file owning group, and others. Each class may be granted
-         read, write, or execute permission.  The sticky bit is also supported.
-         Both symbolic (rwxrw-rw-) and 4-digit octal notation (e.g. 0766) are
-         supported.
+        :keyword str permissions:
+            Optional and only valid if Hierarchical Namespace
+            is enabled for the account. Sets POSIX access permissions for the file
+            owner, the file owning group, and others. Each class may be granted
+            read, write, or execute permission.  The sticky bit is also supported.
+            Both symbolic (rwxrw-rw-) and 4-digit octal notation (e.g. 0766) are
+            supported.
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -154,9 +156,9 @@ class DataLakeDirectoryClient(PathClient):
         Marks the specified directory for deletion.
 
         :keyword lease:
-            Required if the blob has an active lease. Value can be a LeaseClient object
+            Required if the file has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.LeaseClient or str
+        :paramtype lease: ~azure.storage.filedatalake.DataLakeLeaseClient or str
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -197,7 +199,7 @@ class DataLakeDirectoryClient(PathClient):
         :keyword lease:
             Required if the directory or file has an active lease. Value can be a DataLakeLeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.filedatalake.DataLakeLeaseClient or str
+        :paramtype lease: ~azure.storage.filedatalake.DataLakeLeaseClient or str
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -237,31 +239,35 @@ class DataLakeDirectoryClient(PathClient):
         """
         Rename the source directory.
 
-        :param str new_name: the new directory name the user want to rename to.
+        :param str new_name:
+            the new directory name the user want to rename to.
             The value must have the following format: "{filesystem}/{directory}/{subdirectory}".
-        :keyword source_lease: A lease ID for the source path. If specified,
-         the source path must have an active lease and the leaase ID must
-         match.
-        :keyword source_lease: ~azure.storage.filedatalake.DataLakeLeaseClient or str
-        :param ~azure.storage.filedatalake.ContentSettings content_settings:
+        :keyword source_lease:
+            A lease ID for the source path. If specified,
+            the source path must have an active lease and the leaase ID must
+            match.
+        :paramtype source_lease: ~azure.storage.filedatalake.DataLakeLeaseClient or str
+        :keyword ~azure.storage.filedatalake.ContentSettings content_settings:
             ContentSettings object used to set path properties.
         :keyword lease:
             Required if the file/directory has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.filedatalake.DataLakeLeaseClient or str
-        :keyword str umask: Optional and only valid if Hierarchical Namespace is enabled for the account.
+        :paramtype lease: ~azure.storage.filedatalake.DataLakeLeaseClient or str
+        :keyword str umask:
+            Optional and only valid if Hierarchical Namespace is enabled for the account.
             When creating a file or directory and the parent folder does not have a default ACL,
             the umask restricts the permissions of the file or directory to be created.
             The resulting permission is given by p & ^u, where p is the permission and u is the umask.
             For example, if p is 0777 and u is 0057, then the resulting permission is 0720.
             The default permission is 0777 for a directory and 0666 for a file. The default umask is 0027.
             The umask must be specified in 4-digit octal notation (e.g. 0766).
-        :keyword permissions: Optional and only valid if Hierarchical Namespace
-         is enabled for the account. Sets POSIX access permissions for the file
-         owner, the file owning group, and others. Each class may be granted
-         read, write, or execute permission.  The sticky bit is also supported.
-         Both symbolic (rwxrw-rw-) and 4-digit octal notation (e.g. 0766) are
-         supported.
+        :keyword permissions:
+            Optional and only valid if Hierarchical Namespace
+            is enabled for the account. Sets POSIX access permissions for the file
+            owner, the file owning group, and others. Each class may be granted
+            read, write, or execute permission.  The sticky bit is also supported.
+            Both symbolic (rwxrw-rw-) and 4-digit octal notation (e.g. 0766) are
+            supported.
         :type permissions: str
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
@@ -317,7 +323,7 @@ class DataLakeDirectoryClient(PathClient):
         new_directory_client = DataLakeDirectoryClient(
             self.url, new_file_system, directory_name=path, credential=self._raw_credential,
             _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
-            _location_mode=self._location_mode, require_encryption=self.require_encryption,
+            require_encryption=self.require_encryption,
             key_encryption_key=self.key_encryption_key,
             key_resolver_function=self.key_resolver_function)
         new_directory_client._rename_path('/'+self.file_system_name+'/'+self.path_name,  # pylint: disable=protected-access
@@ -336,26 +342,29 @@ class DataLakeDirectoryClient(PathClient):
             or an instance of DirectoryProperties.
         :type sub_directory: str or ~azure.storage.filedatalake.DirectoryProperties
         :param metadata:
-            Name-value pairs associated with the blob as metadata.
+            Name-value pairs associated with the file as metadata.
         :type metadata: dict(str, str)
         :keyword ~azure.storage.filedatalake.ContentSettings content_settings:
             ContentSettings object used to set path properties.
-        :keyword ~azure.storage.filedatalake.DataLakeLeaseClient or str lease:
-            Required if the blob has an active lease. Value can be a DataLakeLeaseClient object
+        :keyword lease:
+            Required if the file has an active lease. Value can be a DataLakeLeaseClient object
             or the lease ID as a string.
-        :keyword str umask: Optional and only valid if Hierarchical Namespace is enabled for the account.
+        :paramtype lease: ~azure.storage.filedatalake.DataLakeLeaseClient or str
+        :keyword str umask:
+            Optional and only valid if Hierarchical Namespace is enabled for the account.
             When creating a file or directory and the parent folder does not have a default ACL,
             the umask restricts the permissions of the file or directory to be created.
             The resulting permission is given by p & ^u, where p is the permission and u is the umask.
             For example, if p is 0777 and u is 0057, then the resulting permission is 0720.
             The default permission is 0777 for a directory and 0666 for a file. The default umask is 0027.
             The umask must be specified in 4-digit octal notation (e.g. 0766).
-        :keyword str permissions: Optional and only valid if Hierarchical Namespace
-         is enabled for the account. Sets POSIX access permissions for the file
-         owner, the file owning group, and others. Each class may be granted
-         read, write, or execute permission.  The sticky bit is also supported.
-         Both symbolic (rwxrw-rw-) and 4-digit octal notation (e.g. 0766) are
-         supported.
+        :keyword str permissions:
+            Optional and only valid if Hierarchical Namespace
+            is enabled for the account. Sets POSIX access permissions for the file
+            owner, the file owning group, and others. Each class may be granted
+            read, write, or execute permission.  The sticky bit is also supported.
+            Both symbolic (rwxrw-rw-) and 4-digit octal notation (e.g. 0766) are
+            supported.
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -392,9 +401,9 @@ class DataLakeDirectoryClient(PathClient):
             or an instance of DirectoryProperties.
         :type sub_directory: str or ~azure.storage.filedatalake.DirectoryProperties
         :keyword lease:
-            Required if the blob has an active lease. Value can be a LeaseClient object
+            Required if the file has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.LeaseClient or str
+        :paramtype lease: ~azure.storage.filedatalake.DataLakeLeaseClient or str
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -433,24 +442,27 @@ class DataLakeDirectoryClient(PathClient):
         :keyword ~azure.storage.filedatalake.ContentSettings content_settings:
             ContentSettings object used to set path properties.
         :keyword metadata:
-            Name-value pairs associated with the blob as metadata.
+            Name-value pairs associated with the file as metadata.
         :type metadata: dict(str, str)
-        :keyword ~azure.storage.filedatalake.DataLakeLeaseClient or str lease:
-            Required if the blob has an active lease. Value can be a DataLakeLeaseClient object
+        :keyword lease:
+            Required if the file has an active lease. Value can be a DataLakeLeaseClient object
             or the lease ID as a string.
-        :keyword str umask: Optional and only valid if Hierarchical Namespace is enabled for the account.
+        :paramtype lease: ~azure.storage.filedatalake.DataLakeLeaseClient or str
+        :keyword str umask:
+            Optional and only valid if Hierarchical Namespace is enabled for the account.
             When creating a file or directory and the parent folder does not have a default ACL,
             the umask restricts the permissions of the file or directory to be created.
             The resulting permission is given by p & ^u, where p is the permission and u is the umask.
             For example, if p is 0777 and u is 0057, then the resulting permission is 0720.
             The default permission is 0777 for a directory and 0666 for a file. The default umask is 0027.
             The umask must be specified in 4-digit octal notation (e.g. 0766).
-        :keyword str permissions: Optional and only valid if Hierarchical Namespace
-         is enabled for the account. Sets POSIX access permissions for the file
-         owner, the file owning group, and others. Each class may be granted
-         read, write, or execute permission.  The sticky bit is also supported.
-         Both symbolic (rwxrw-rw-) and 4-digit octal notation (e.g. 0766) are
-         supported.
+        :keyword str permissions:
+            Optional and only valid if Hierarchical Namespace
+            is enabled for the account. Sets POSIX access permissions for the file
+            owner, the file owning group, and others. Each class may be granted
+            read, write, or execute permission.  The sticky bit is also supported.
+            Both symbolic (rwxrw-rw-) and 4-digit octal notation (e.g. 0766) are
+            supported.
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -498,7 +510,7 @@ class DataLakeDirectoryClient(PathClient):
         return DataLakeFileClient(
             self.url, self.file_system_name, file_path=file_path, credential=self._raw_credential,
             _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
-            _location_mode=self._location_mode, require_encryption=self.require_encryption,
+            require_encryption=self.require_encryption,
             key_encryption_key=self.key_encryption_key,
             key_resolver_function=self.key_resolver_function)
 
@@ -524,6 +536,6 @@ class DataLakeDirectoryClient(PathClient):
         return DataLakeDirectoryClient(
             self.url, self.file_system_name, directory_name=subdir_path, credential=self._raw_credential,
             _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
-            _location_mode=self._location_mode, require_encryption=self.require_encryption,
+            require_encryption=self.require_encryption,
             key_encryption_key=self.key_encryption_key,
             key_resolver_function=self.key_resolver_function)

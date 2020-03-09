@@ -11,6 +11,7 @@ from azure.identity import (
     SharedTokenCacheCredential,
 )
 from azure.identity._constants import EnvironmentVariables
+from azure.identity._credentials.azure_cli import AzureCliCredential
 from azure.identity._credentials.managed_identity import ManagedIdentityCredential
 from six.moves.urllib_parse import urlparse
 
@@ -100,6 +101,9 @@ def test_exclude_options():
     if SharedTokenCacheCredential.supported():
         credential = DefaultAzureCredential(exclude_shared_token_cache_credential=True)
         assert_credentials_not_present(credential, SharedTokenCacheCredential)
+
+    credential = DefaultAzureCredential(exclude_cli_credential=True)
+    assert_credentials_not_present(credential, AzureCliCredential)
 
     # interactive auth is excluded by default
     credential = DefaultAzureCredential(exclude_interactive_browser_credential=False)

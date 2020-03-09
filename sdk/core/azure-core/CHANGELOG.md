@@ -1,11 +1,12 @@
 
 # Release History
 
-## 1.3.0 (Unreleased)
+## 1.3.0 (2020-03-09)
 
 ### Bug fixes
 
 - Appended RequestIdPolicy to the default pipeline  #9841
+- Rewind the body position in async_retry   #10117
 
 ### Features
 
