@@ -121,14 +121,15 @@ def event_loop():
     This is necessary because SelectorEventLoop, which does not support subprocesses, is the default on Python < 3.8.
     """
 
-    if not sys.platform.startswith("win"):
-        return
-
     try:
         import asyncio
     except:
         return
 
-    loop = asyncio.ProactorEventLoop()
+    if sys.platform.startswith("win"):
+        loop = asyncio.ProactorEventLoop()
+    else:
+        loop = asyncio.new_event_loop()
+
     yield loop
     loop.close()
