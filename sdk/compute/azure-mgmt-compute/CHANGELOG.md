@@ -1,5 +1,11 @@
 # Release History
 
+## 12.0.0 (2020-03-09)
+
+**Breaking changes**
+
+- Operation VirtualMachineImagesOperations.list has a new signature
+
 ## 11.0.0 (2020-02-27)
 
 **Features**
