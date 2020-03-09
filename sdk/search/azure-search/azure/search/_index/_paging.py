@@ -62,7 +62,7 @@ class SearchItemPaged(ItemPaged[ReturnType]):
         """Return any facet results if faceting was requested.
 
         """
-        return self._first_iterator_instance().facets
+        return self._first_iterator_instance().get_facets()
 
 
 class SearchPageIterator(PageIterator):
@@ -97,8 +97,7 @@ class SearchPageIterator(PageIterator):
 
         return continuation_token, results
 
-    @property
-    def facets(self):
+    def get_facets(self):
         if self._current_page is None:
             self._response = self._get_next(self.continuation_token)
             self.continuation_token, self._current_page = self._extract_data(

@@ -44,7 +44,7 @@ class AsyncSearchItemPaged(AsyncItemPaged[ReturnType]):
         """Return any facet results if faceting was requested.
 
         """
-        return await self._first_iterator_instance().facets
+        return await self._first_iterator_instance().get_facets()
 
 
 class AsyncSearchPageIterator(AsyncPageIterator[ReturnType]):
@@ -81,9 +81,10 @@ class AsyncSearchPageIterator(AsyncPageIterator[ReturnType]):
 
         return continuation_token, results
 
-    @property
-    async def facets(self):
+    async def get_facets(self):
         if self._current_page is None:
             self._response = await self._get_next(self.continuation_token)
-            self.continuation_token, self._current_page = await self._extract_data(self._response)
+            self.continuation_token, self._current_page = await self._extract_data(
+                self._response
+            )
         return self._facets
