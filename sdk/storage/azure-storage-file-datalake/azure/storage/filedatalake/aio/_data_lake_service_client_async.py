@@ -43,18 +43,18 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../samples/test_datalake_authentication_samples.py
+        .. literalinclude:: ../samples/datalake_samples_service_async.py
             :start-after: [START create_datalake_service_client]
             :end-before: [END create_datalake_service_client]
             :language: python
-            :dedent: 8
-            :caption: Creating the DataLakeServiceClient with account url and credential.
+            :dedent: 4
+            :caption: Creating the DataLakeServiceClient from connection string.
 
-        .. literalinclude:: ../samples/test_datalake_authentication_samples.py
+        .. literalinclude:: ../samples/datalake_samples_service_async.py
             :start-after: [START create_datalake_service_client_oauth]
             :end-before: [END create_datalake_service_client_oauth]
             :language: python
-            :dedent: 8
+            :dedent: 4
             :caption: Creating the DataLakeServiceClient with Azure Identity credentials.
     """
 
@@ -75,6 +75,18 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
         self._client = DataLakeStorageClient(self.url, None, None, pipeline=self._pipeline)
         self._loop = kwargs.get('loop', None)
 
+    async def __aexit__(self, *args):
+        await self._blob_service_client.close()
+        await super(DataLakeServiceClient, self).__aexit__(*args)
+
+    async def close(self):
+        # type: () -> None
+        """ This method is to close the sockets opened by the client.
+        It need not be used when using with a context manager.
+        """
+        await self._blob_service_client.close()
+        await self.__aexit__()
+
     async def get_user_delegation_key(self, key_start_time,  # type: datetime
                                       key_expiry_time,  # type: datetime
                                       **kwargs  # type: Any
@@ -92,6 +104,15 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
             The timeout parameter is expressed in seconds.
         :return: The user delegation key.
         :rtype: ~azure.storage.filedatalake.UserDelegationKey
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/datalake_samples_service_async.py
+                :start-after: [START get_user_delegation_key]
+                :end-before: [END get_user_delegation_key]
+                :language: python
+                :dedent: 8
+                :caption: Get user delegation key from datalake service client.
         """
         delegation_key = await self._blob_service_client.get_user_delegation_key(
             key_start_time=key_start_time,
@@ -124,11 +145,11 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/test_datalake_service_samples.py
-                :start-after: [START dsc_list_file_systems]
-                :end-before: [END dsc_list_file_systems]
+            .. literalinclude:: ../samples/datalake_samples_service_async.py
+                :start-after: [START list_file_systems]
+                :end-before: [END list_file_systems]
                 :language: python
-                :dedent: 12
+                :dedent: 8
                 :caption: Listing the file systems in the datalake service.
         """
         item_paged = self._blob_service_client.list_containers(name_starts_with=name_starts_with,
@@ -163,11 +184,11 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/test_datalake_service_samples.py
-                :start-after: [START dsc_create_file_system]
-                :end-before: [END dsc_create_file_system]
+            .. literalinclude:: ../samples/datalake_samples_service_async.py
+                :start-after: [START create_file_system_from_service_client]
+                :end-before: [END create_file_system_from_service_client]
                 :language: python
-                :dedent: 12
+                :dedent: 8
                 :caption: Creating a file system in the datalake service.
         """
         file_system_client = self.get_file_system_client(file_system)
@@ -214,11 +235,11 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/test_datalake_service_samples.py
-                :start-after: [START bsc_delete_file_system]
-                :end-before: [END bsc_delete_file_system]
+            .. literalinclude:: ../samples/datalake_samples_service_async.py
+                :start-after: [START delete_file_system_from_service_client]
+                :end-before: [END delete_file_system_from_service_client]
                 :language: python
-                :dedent: 12
+                :dedent: 8
                 :caption: Deleting a file system in the datalake service.
         """
         file_system_client = self.get_file_system_client(file_system)
@@ -241,14 +262,20 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/test_datalake_service_samples.py
-                :start-after: [START bsc_get_file_system_client]
-                :end-before: [END bsc_get_file_system_client]
+            .. literalinclude:: ../samples/datalake_samples_file_system_async.py
+                :start-after: [START create_file_system_client_from_service]
+                :end-before: [END create_file_system_client_from_service]
                 :language: python
                 :dedent: 8
                 :caption: Getting the file system client to interact with a specific file system.
         """
-        return FileSystemClient(self.url, file_system, credential=self._raw_credential, _configuration=self._config,
+        try:
+            file_system_name = file_system.name
+        except AttributeError:
+            file_system_name = file_system
+
+        return FileSystemClient(self.url, file_system_name, credential=self._raw_credential,
+                                _configuration=self._config,
                                 _pipeline=self._pipeline, _hosts=self._hosts,
                                 require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
                                 key_resolver_function=self.key_resolver_function)
@@ -274,14 +301,22 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/test_datalake_service_samples.py
-                :start-after: [START bsc_get_directory_client]
-                :end-before: [END bsc_get_directory_client]
+            .. literalinclude:: ../samples/datalake_samples_service_async.py
+                :start-after: [START get_directory_client_from_service_client]
+                :end-before: [END get_directory_client_from_service_client]
                 :language: python
-                :dedent: 12
+                :dedent: 8
                 :caption: Getting the directory client to interact with a specific directory.
         """
-        return DataLakeDirectoryClient(self.url, file_system, directory_name=directory,
+        try:
+            file_system_name = file_system.name
+        except AttributeError:
+            file_system_name = file_system
+        try:
+            directory_name = directory.name
+        except AttributeError:
+            directory_name = directory
+        return DataLakeDirectoryClient(self.url, file_system_name, directory_name=directory_name,
                                        credential=self._raw_credential,
                                        _configuration=self._config, _pipeline=self._pipeline,
                                        _hosts=self._hosts,
@@ -311,20 +346,24 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/test_datalake_service_samples.py
-                :start-after: [START bsc_get_file_client]
-                :end-before: [END bsc_get_file_client]
+            .. literalinclude:: ../samples/datalake_samples_service_async.py
+                :start-after: [START get_file_client_from_service_client]
+                :end-before: [END get_file_client_from_service_client]
                 :language: python
-                :dedent: 12
+                :dedent: 8
                 :caption: Getting the file client to interact with a specific file.
         """
+        try:
+            file_system_name = file_system.name
+        except AttributeError:
+            file_system_name = file_system
         try:
             file_path = file_path.name
         except AttributeError:
             pass
 
         return DataLakeFileClient(
-            self.url, file_system, file_path=file_path, credential=self._raw_credential,
+            self.url, file_system_name, file_path=file_path, credential=self._raw_credential,
             _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
             require_encryption=self.require_encryption,
             key_encryption_key=self.key_encryption_key,
