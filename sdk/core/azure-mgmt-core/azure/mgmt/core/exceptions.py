@@ -40,7 +40,7 @@ class TypedErrorInfo:
     https://github.com/Azure/azure-resource-manager-rpc/blob/master/v1.0/common-api-details.md#error-response-content
     """
 
-    def __init__(self, type, info):
+    def __init__(self, type, info):  # pylint: disable=redefined-builtin
         self.type = type
         self.info = info
 

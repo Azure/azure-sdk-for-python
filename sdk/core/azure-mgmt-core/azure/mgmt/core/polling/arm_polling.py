@@ -24,39 +24,38 @@
 #
 # --------------------------------------------------------------------------
 import json
-import time
+
 try:
     from urlparse import urlparse
 except ImportError:
     from urllib.parse import urlparse
 
-from msrest.exceptions import DeserializationError
-
 from azure.core.exceptions import DecodeError, HttpResponseError
 from azure.core.polling import PollingMethod
 
 
-FINISHED = frozenset(['succeeded', 'canceled', 'failed'])
-FAILED = frozenset(['canceled', 'failed'])
-SUCCEEDED = frozenset(['succeeded'])
+FINISHED = frozenset(["succeeded", "canceled", "failed"])
+FAILED = frozenset(["canceled", "failed"])
+SUCCEEDED = frozenset(["succeeded"])
 
 _AZURE_ASYNC_OPERATION_FINAL_STATE = "azure-async-operation"
 _LOCATION_FINAL_STATE = "location"
 
+
 def finished(status):
-    if hasattr(status, 'value'):
+    if hasattr(status, "value"):
         status = status.value
     return str(status).lower() in FINISHED
 
 
 def failed(status):
-    if hasattr(status, 'value'):
+    if hasattr(status, "value"):
         status = status.value
     return str(status).lower() in FAILED
 
 
 def succeeded(status):
-    if hasattr(status, 'value'):
+    if hasattr(status, "value"):
         status = status.value
     return str(status).lower() in SUCCEEDED
 
@@ -72,6 +71,7 @@ class BadResponse(Exception):
 class OperationFailed(Exception):
     pass
 
+
 def _validate(url):
     """Validate a url.
 
@@ -83,6 +83,7 @@ def _validate(url):
     parsed = urlparse(url)
     if not parsed.scheme or not parsed.netloc:
         raise ValueError("Invalid URL header")
+
 
 def get_header_url(response, header_name):
     # type: (azure.core.pipeline.transport.HttpResponse, str) -> Optional[str]
@@ -112,7 +113,9 @@ class LongRunningOperation(object):
     :param kwargs: Unused for now
     """
 
-    def __init__(self, pipeline_response, deserialization_callback, lro_options=None, **kwargs):
+    def __init__(
+        self, pipeline_response, deserialization_callback, lro_options=None, **kwargs  # pylint: disable=unused-argument
+    ):
         self.method = pipeline_response.http_response.request.method
         self.initial_response = pipeline_response
         self.status = ""
@@ -121,9 +124,7 @@ class LongRunningOperation(object):
         self.async_url = None
         self.location_url = None
         if lro_options is None:
-            lro_options = {
-                'final-state-via': _AZURE_ASYNC_OPERATION_FINAL_STATE
-            }
+            lro_options = {"final-state-via": _AZURE_ASYNC_OPERATION_FINAL_STATE}
         self.lro_options = lro_options
 
     def _raise_if_bad_http_status_and_method(self, response):
@@ -138,9 +139,11 @@ class LongRunningOperation(object):
         if code in {200, 201, 202, 204}:
             return
         raise BadStatus(
-            "Invalid return status {!r} for {!r} operation".format(code, self.method))
+            "Invalid return status {!r} for {!r} operation".format(code, self.method)
+        )
 
-    def _is_empty(self, response):
+    @staticmethod
+    def _is_empty(response):
         # type: (azure.core.pipeline.transport.HttpResponse) -> None
         """Check if response body contains meaningful content.
 
@@ -154,10 +157,10 @@ class LongRunningOperation(object):
         try:
             return not json.loads(content)
         except ValueError:
-            raise DecodeError(
-                "Error occurred in deserializing the response body.")
+            raise DecodeError("Error occurred in deserializing the response body.")
 
-    def _as_json(self, response):
+    @staticmethod
+    def _as_json(response):
         # type: (azure.core.pipeline.transport.HttpResponse) -> None
         """Assuming this is not empty, return the content as JSON.
 
@@ -170,8 +173,7 @@ class LongRunningOperation(object):
         try:
             return json.loads(content)
         except ValueError:
-            raise DecodeError(
-                "Error occurred in deserializing the response body.")
+            raise DecodeError("Error occurred in deserializing the response body.")
 
     def _deserialize(self, pipeline_response):
         # type: (azure.core.pipeline.PipelineResponse) -> None
@@ -192,7 +194,7 @@ class LongRunningOperation(object):
         if self._is_empty(response):
             return None
         body = self._as_json(response)
-        return body.get('status')
+        return body.get("status")
 
     def _get_provisioning_state(self, response):
         # type: (azure.core.pipeline.transport.HttpResponse) -> None
@@ -211,8 +213,14 @@ class LongRunningOperation(object):
 
         :rtype: bool
         """
-        return ((self.async_url or not self.resource) and self.method in {'PUT', 'PATCH'}) \
-                or (self.lro_options['final-state-via'] == _LOCATION_FINAL_STATE and self.location_url and self.async_url and self.method == 'POST')
+        return (
+            (self.async_url or not self.resource) and self.method in {"PUT", "PATCH"}
+        ) or (
+            self.lro_options["final-state-via"] == _LOCATION_FINAL_STATE
+            and self.location_url
+            and self.async_url
+            and self.method == "POST"
+        )
 
     def set_initial_status(self, pipeline_response):
         # type: (azure.core.pipeline.PipelineResponse) -> None
@@ -229,22 +237,22 @@ class LongRunningOperation(object):
         else:
             try:
                 self.resource = self._deserialize(pipeline_response)
-            except DeserializationError:
+            except Exception:  # pylint: disable=broad-except
                 self.resource = None
 
         self.set_async_url_if_present(response)
 
         if response.status_code in {200, 201, 202, 204}:
             if self.async_url or self.location_url or response.status_code == 202:
-                self.status = 'InProgress'
+                self.status = "InProgress"
             elif response.status_code == 201:
                 status = self._get_provisioning_state(response)
-                self.status = status or 'InProgress'
+                self.status = status or "InProgress"
             elif response.status_code == 200:
                 status = self._get_provisioning_state(response)
-                self.status = status or 'Succeeded'
+                self.status = status or "Succeeded"
             elif response.status_code == 204:
-                self.status = 'Succeeded'
+                self.status = "Succeeded"
                 self.resource = None
             else:
                 raise OperationFailed("Invalid status found")
@@ -265,7 +273,7 @@ class LongRunningOperation(object):
         if code == 202:
             self.status = "InProgress"
         else:
-            self.status = 'Succeeded'
+            self.status = "Succeeded"
             if self._is_empty(response):
                 self.resource = None
             else:
@@ -282,11 +290,12 @@ class LongRunningOperation(object):
         response = pipeline_response.http_response
         self._raise_if_bad_http_status_and_method(response)
         if self._is_empty(response):
-            raise BadResponse('The response from long running operation '
-                              'does not contain a body.')
+            raise BadResponse(
+                "The response from long running operation " "does not contain a body."
+            )
 
         status = self._get_provisioning_state(response)
-        self.status = status or 'Succeeded'
+        self.status = status or "Succeeded"
 
         self.parse_resource(pipeline_response)
 
@@ -314,8 +323,9 @@ class LongRunningOperation(object):
         response = pipeline_response.http_response
         self._raise_if_bad_http_status_and_method(response)
         if self._is_empty(response):
-            raise BadResponse('The response from long running operation '
-                              'does not contain a body.')
+            raise BadResponse(
+                "The response from long running operation " "does not contain a body."
+            )
 
         self.status = self._get_async_status(response)
         if not self.status:
@@ -326,38 +336,38 @@ class LongRunningOperation(object):
         # "properties": {
         # /\* The resource provider can choose the values here, but it should only be
         #   returned on a successful operation (status being "Succeeded"). \*/
-        #},
+        # },
         # So try to parse it
         try:
             self.resource = self._deserialize(pipeline_response)
-        except Exception:
+        except Exception:  # pylint: disable=broad-except
             self.resource = None
 
     def set_async_url_if_present(self, response):
         # type: (azure.core.pipeline.transport.HttpResponse) -> None
-        async_url = get_header_url(response, 'azure-asyncoperation')
+        async_url = get_header_url(response, "azure-asyncoperation")
         if async_url:
             self.async_url = async_url
-        location_url = get_header_url(response, 'location')
+        location_url = get_header_url(response, "location")
         if location_url:
             self.location_url = location_url
 
     def get_status_link(self):
         if self.async_url:
             return self.async_url
-        elif self.location_url:
+        if self.location_url:
             return self.location_url
-        elif self.method == "PUT":
+        if self.method == "PUT":
             return self.initial_response.request.url
-        else:
-            raise BadResponse("Unable to find a valid status link for polling")
+        raise BadResponse("Unable to find a valid status link for polling")
 
 
 class ARMPolling(PollingMethod):
-
     def __init__(self, timeout=30, lro_options=None, **operation_config):
+        self._client = None
+        self._transport = None
         self._timeout = timeout
-        self._operation = None # Will hold an instance of LongRunningOperation
+        self._operation = None  # Will hold an instance of LongRunningOperation
         self._pipeline_response = None  # Will hold latest received response
         self._operation_config = operation_config
         self._lro_options = lro_options
@@ -367,7 +377,9 @@ class ARMPolling(PollingMethod):
         :rtype: str
         """
         if not self._operation:
-            raise ValueError("set_initial_status was never called. Did you give this instance to a poller?")
+            raise ValueError(
+                "set_initial_status was never called. Did you give this instance to a poller?"
+            )
         return self._operation.status
 
     def finished(self):
@@ -388,17 +400,21 @@ class ARMPolling(PollingMethod):
         :raises: HttpResponseError if initial status is incorrect LRO state
         """
         self._client = client
-        self._transport = self._client._pipeline._transport
+        self._transport = self._client._pipeline._transport  # pylint: disable=protected-access
         self._pipeline_response = initial_response
-        self._operation = LongRunningOperation(initial_response, deserialization_callback, self._lro_options)
+        self._operation = LongRunningOperation(
+            initial_response, deserialization_callback, self._lro_options
+        )
         try:
             self._operation.set_initial_status(initial_response)
         except BadStatus as err:
-            self._operation.status = 'Failed'
+            self._operation.status = "Failed"
             raise HttpResponseError(response=initial_response.http_response, error=err)
         except BadResponse as err:
-            self._operation.status = 'Failed'
-            raise HttpResponseError(response=initial_response.http_response, message=str(err), error=err)
+            self._operation.status = "Failed"
+            raise HttpResponseError(
+                response=initial_response.http_response, message=str(err), error=err
+            )
         except OperationFailed as err:
             raise HttpResponseError(response=initial_response.http_response, error=err)
 
@@ -406,15 +422,23 @@ class ARMPolling(PollingMethod):
         try:
             self._poll()
         except BadStatus as err:
-            self._operation.status = 'Failed'
-            raise HttpResponseError(response=self._pipeline_response.http_response, error=err)
+            self._operation.status = "Failed"
+            raise HttpResponseError(
+                response=self._pipeline_response.http_response, error=err
+            )
 
         except BadResponse as err:
-            self._operation.status = 'Failed'
-            raise HttpResponseError(response=self._pipeline_response.http_response, message=str(err), error=err)
+            self._operation.status = "Failed"
+            raise HttpResponseError(
+                response=self._pipeline_response.http_response,
+                message=str(err),
+                error=err,
+            )
 
         except OperationFailed as err:
-            raise HttpResponseError(response=self._pipeline_response.http_response, error=err)
+            raise HttpResponseError(
+                response=self._pipeline_response.http_response, error=err
+            )
 
     def _poll(self):
         """Poll status of operation so long as operation is incomplete and
@@ -434,11 +458,13 @@ class ARMPolling(PollingMethod):
         if failed(self._operation.status):
             raise OperationFailed("Operation failed or canceled")
 
-        elif self._operation.should_do_final_get():
-            if self._operation.method == 'POST' and self._operation.location_url:
+        if self._operation.should_do_final_get():
+            if self._operation.method == "POST" and self._operation.location_url:
                 final_get_url = self._operation.location_url
             else:
-                final_get_url = self._operation.initial_response.http_response.request.url
+                final_get_url = (
+                    self._operation.initial_response.http_response.request.url
+                )
             self._pipeline_response = self.request_status(final_get_url)
             self._operation.parse_resource(self._pipeline_response)
 
@@ -452,8 +478,8 @@ class ARMPolling(PollingMethod):
         if self._pipeline_response is None:
             return
         response = self._pipeline_response.http_response
-        if response.headers.get('retry-after'):
-            self._sleep(int(response.headers['retry-after']))
+        if response.headers.get("retry-after"):
+            self._sleep(int(response.headers["retry-after"]))
         else:
             self._sleep(self._timeout)
 
@@ -462,16 +488,22 @@ class ARMPolling(PollingMethod):
         """
         if self._operation.async_url:
             self._pipeline_response = self.request_status(self._operation.async_url)
-            self._operation.set_async_url_if_present(self._pipeline_response.http_response)
+            self._operation.set_async_url_if_present(
+                self._pipeline_response.http_response
+            )
             self._operation.get_status_from_async(self._pipeline_response)
         elif self._operation.location_url:
             self._pipeline_response = self.request_status(self._operation.location_url)
-            self._operation.set_async_url_if_present(self._pipeline_response.http_response)
+            self._operation.set_async_url_if_present(
+                self._pipeline_response.http_response
+            )
             self._operation.get_status_from_location(self._pipeline_response)
         elif self._operation.method == "PUT":
             initial_url = self._operation.initial_response.http_response.request.url
             self._pipeline_response = self.request_status(initial_url)
-            self._operation.set_async_url_if_present(self._pipeline_response.http_response)
+            self._operation.set_async_url_if_present(
+                self._pipeline_response.http_response
+            )
             self._operation.get_status_from_resource(self._pipeline_response)
         else:
             raise BadResponse("Unable to find status link for polling.")
@@ -485,6 +517,12 @@ class ARMPolling(PollingMethod):
         """
         request = self._client.get(status_link)
         # ARM requires to re-inject 'x-ms-client-request-id' while polling
-        if 'request_id' not in self._operation_config:
-            self._operation_config['request_id'] = self._operation.initial_response.http_response.request.headers['x-ms-client-request-id']
-        return self._client._pipeline.run(request, stream=False, **self._operation_config)
+        if "request_id" not in self._operation_config:
+            self._operation_config[
+                "request_id"
+            ] = self._operation.initial_response.http_response.request.headers[
+                "x-ms-client-request-id"
+            ]
+        return self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=False, **self._operation_config
+        )
