@@ -213,7 +213,7 @@ def test_partition_processor():
     thread.join()
     assert ep_partitions == 2
     assert assert_map["initialize"] == "called"
-    assert event_map['0'] > 1 and event_map['1'] > 1
+    assert event_map['0'] >= 1 and event_map['1'] >= 1
     assert assert_map["checkpoint"] == "checkpoint called"
     assert "error" not in assert_map
     assert assert_map["close_reason"] == CloseReason.SHUTDOWN
