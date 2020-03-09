@@ -39,6 +39,18 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
         self._client = DataLakeStorageClient(self.url, file_system_name, path_name, pipeline=self._pipeline)
         self._loop = kwargs.get('loop', None)
 
+    async def __aexit__(self, *args):
+        await self._blob_client.close()
+        await super(PathClient, self).__aexit__(*args)
+
+    async def close(self):
+        # type: () -> None
+        """ This method is to close the sockets opened by the client.
+        It need not be used when using with a context manager.
+        """
+        await self._blob_client.close()
+        await self.__aexit__()
+
     async def _create(self, resource_type, content_settings=None, metadata=None, **kwargs):
         # type: (...) -> Dict[str, Union[str, datetime]]
         """
@@ -359,15 +371,6 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: DirectoryProperties or FileProperties
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../tests/test_blob_samples_common.py
-                :start-after: [START get_blob_properties]
-                :end-before: [END get_blob_properties]
-                :language: python
-                :dedent: 8
-                :caption: Getting the properties for a file/directory.
         """
         path_properties = await self._blob_client.get_blob_properties(**kwargs)
         path_properties.__class__ = DirectoryProperties
@@ -409,15 +412,6 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: file system-updated property dict (Etag and last modified).
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/test_file_system_samples.py
-                :start-after: [START set_file_system_metadata]
-                :end-before: [END set_file_system_metadata]
-                :language: python
-                :dedent: 12
-                :caption: Setting metadata on the container.
         """
         return await self._blob_client.set_blob_metadata(metadata=metadata, **kwargs)
 

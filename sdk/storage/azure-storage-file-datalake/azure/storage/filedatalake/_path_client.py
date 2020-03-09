@@ -80,6 +80,18 @@ class PathClient(StorageAccountHostsMixin):
         self._hosts[LocationMode.SECONDARY] = ""
         self._client = DataLakeStorageClient(self.url, file_system_name, path_name, pipeline=self._pipeline)
 
+    def __exit__(self, *args):
+        self._blob_client.close()
+        super(PathClient, self).__exit__(*args)
+
+    def close(self):
+        # type: () -> None
+        """ This method is to close the sockets opened by the client.
+        It need not be used when using with a context manager.
+        """
+        self._blob_client.close()
+        self.__exit__()
+
     def _format_url(self, hostname):
         file_system_name = self.file_system_name
         if isinstance(file_system_name, six.text_type):
@@ -566,15 +578,6 @@ class PathClient(StorageAccountHostsMixin):
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: file system-updated property dict (Etag and last modified).
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/test_file_system_samples.py
-                :start-after: [START set_file_system_metadata]
-                :end-before: [END set_file_system_metadata]
-                :language: python
-                :dedent: 12
-                :caption: Setting metadata on the container.
         """
         return self._blob_client.set_blob_metadata(metadata=metadata, **kwargs)
 
@@ -653,15 +656,6 @@ class PathClient(StorageAccountHostsMixin):
             The timeout parameter is expressed in seconds.
         :returns: A DataLakeLeaseClient object, that can be run in a context manager.
         :rtype: ~azure.storage.filedatalake.DataLakeLeaseClient
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/test_file_system_samples.py
-                :start-after: [START acquire_lease_on_file_system]
-                :end-before: [END acquire_lease_on_file_system]
-                :language: python
-                :dedent: 8
-                :caption: Acquiring a lease on the file_system.
         """
         lease = DataLakeLeaseClient(self, lease_id=lease_id)  # type: ignore
         lease.acquire(lease_duration=lease_duration, **kwargs)

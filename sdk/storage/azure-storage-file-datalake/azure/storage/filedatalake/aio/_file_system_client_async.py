@@ -10,6 +10,8 @@ from typing import (  # pylint: disable=unused-import
     Union, Optional, Any, Dict, TYPE_CHECKING
 )
 
+from azure.core.tracing.decorator import distributed_trace
+
 from azure.core.async_paging import AsyncItemPaged
 
 from azure.core.tracing.decorator_async import distributed_trace_async
@@ -55,21 +57,14 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
          shared access key, or an instance of a TokenCredentials class from azure.identity.
          If the URL already has a SAS token, specifying an explicit credential will take priority.
 
-     .. admonition:: Example:
+    .. admonition:: Example:
 
-         .. literalinclude:: ../samples/test_file_system_samples.py
-             :start-after: [START create_file_system_client_from_service]
-             :end-before: [END create_file_system_client_from_service]
-             :language: python
-             :dedent: 8
-             :caption: Get a FileSystemClient from an existing DataLakeServiceClient.
-
-         .. literalinclude:: ../samples/test_file_system_samples.py
-             :start-after: [START create_file_system_client_sasurl]
-             :end-before: [END create_file_system_client_sasurl]
-             :language: python
-             :dedent: 8
-             :caption: Creating the FileSystemClient client directly.
+        .. literalinclude:: ../samples/datalake_samples_file_system_async.py
+            :start-after: [START create_file_system_client_from_service]
+            :end-before: [END create_file_system_client_from_service]
+            :language: python
+            :dedent: 8
+            :caption: Get a FileSystemClient from an existing DataLakeServiceClient.
      """
 
     def __init__(
@@ -93,6 +88,18 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
                                                  **kwargs)  # type: ignore # pylint: disable=protected-access
         self._client = DataLakeStorageClient(self.url, file_system_name, None, pipeline=self._pipeline)
         self._loop = kwargs.get('loop', None)
+
+    async def __aexit__(self, *args):
+        await self._container_client.close()
+        await super(FileSystemClient, self).__aexit__(*args)
+
+    async def close(self):
+        # type: () -> None
+        """ This method is to close the sockets opened by the client.
+        It need not be used when using with a context manager.
+        """
+        await self._container_client.close()
+        await self.__aexit__()
 
     @distributed_trace_async
     async def acquire_lease(
@@ -138,17 +145,18 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/test_file_system_samples.py
+            .. literalinclude:: ../samples/datalake_samples_file_system_async.py
                 :start-after: [START acquire_lease_on_file_system]
                 :end-before: [END acquire_lease_on_file_system]
                 :language: python
-                :dedent: 8
+                :dedent: 12
                 :caption: Acquiring a lease on the file_system.
         """
         lease = DataLakeLeaseClient(self, lease_id=lease_id)
-        lease.acquire(lease_duration=lease_duration, **kwargs)
+        await lease.acquire(lease_duration=lease_duration, **kwargs)
         return lease
 
+    @distributed_trace_async
     async def create_file_system(self, metadata=None,  # type: Optional[Dict[str, str]]
                                  public_access=None,  # type: Optional[PublicAccess]
                                  **kwargs):
@@ -172,17 +180,18 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/test_file_system_samples.py
+            .. literalinclude:: ../samples/datalake_samples_file_system_async.py
                 :start-after: [START create_file_system]
                 :end-before: [END create_file_system]
                 :language: python
-                :dedent: 12
+                :dedent: 16
                 :caption: Creating a file system in the datalake service.
         """
         return await self._container_client.create_container(metadata=metadata,
                                                              public_access=public_access,
                                                              **kwargs)
 
+    @distributed_trace_async
     async def delete_file_system(self, **kwargs):
         # type: (Any) -> None
         """Marks the specified file system for deletion.
@@ -218,15 +227,16 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/test_file_system_samples.py
+            .. literalinclude:: ../samples/datalake_samples_file_system_async.py
                 :start-after: [START delete_file_system]
                 :end-before: [END delete_file_system]
                 :language: python
-                :dedent: 12
+                :dedent: 16
                 :caption: Deleting a file system in the datalake service.
         """
         await self._container_client.delete_container(**kwargs)
 
+    @distributed_trace_async
     async def get_file_system_properties(self, **kwargs):
         # type: (Any) -> FileSystemProperties
         """Returns all user-defined metadata and system properties for the specified
@@ -243,16 +253,17 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/test_file_system_samples.py
+            .. literalinclude:: ../samples/datalake_samples_file_system_async.py
                 :start-after: [START get_file_system_properties]
                 :end-before: [END get_file_system_properties]
                 :language: python
-                :dedent: 12
+                :dedent: 16
                 :caption: Getting properties on the file system.
         """
         container_properties = await self._container_client.get_container_properties(**kwargs)
         return FileSystemProperties._convert_from_container_props(container_properties)  # pylint: disable=protected-access
 
+    @distributed_trace_async
     async def set_file_system_metadata(  # type: ignore
             self, metadata=None,  # type: Optional[Dict[str, str]]
             **kwargs
@@ -294,15 +305,16 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/test_file_system_samples.py
+            .. literalinclude:: ../samples/datalake_samples_file_system_async.py
                 :start-after: [START set_file_system_metadata]
                 :end-before: [END set_file_system_metadata]
                 :language: python
-                :dedent: 12
+                :dedent: 16
                 :caption: Setting metadata on the container.
         """
         return await self._container_client.set_container_metadata(metadata=metadata, **kwargs)
 
+    @distributed_trace_async
     async def set_file_system_access_policy(
             self, signed_identifiers,  # type: Dict[str, AccessPolicy]
             public_access=None,  # type: Optional[Union[str, PublicAccess]]
@@ -343,6 +355,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
         return await self._container_client.set_container_access_policy(signed_identifiers,
                                                                         public_access=public_access, **kwargs)
 
+    @distributed_trace_async
     async def get_file_system_access_policy(self, **kwargs):
         # type: (Any) -> Dict[str, Any]
         """Gets the permissions for the specified file system.
@@ -363,6 +376,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
             'signed_identifiers': access_policy['signed_identifiers']
         }
 
+    @distributed_trace
     def get_paths(self, path=None,  # type: Optional[str]
                         recursive=True,  # type: Optional[bool]
                         max_results=None,  # type: Optional[int]
@@ -395,12 +409,12 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_blob_samples_containers.py
-                :start-after: [START list_blobs_in_container]
-                :end-before: [END list_blobs_in_container]
+            .. literalinclude:: ../samples/datalake_samples_file_system_async.py
+                :start-after: [START get_paths_in_file_system]
+                :end-before: [END get_paths_in_file_system]
                 :language: python
-                :dedent: 8
-                :caption: List the blobs in the container.
+                :dedent: 12
+                :caption: List the blobs in the file system.
         """
         timeout = kwargs.pop('timeout', None)
         command = functools.partial(
@@ -412,6 +426,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
             command, recursive, path=path, max_results=max_results,
             page_iterator_class=PathPropertiesPaged, **kwargs)
 
+    @distributed_trace_async
     async def create_directory(self, directory,  # type: Union[DirectoryProperties, str]
                                metadata=None,  # type: Optional[Dict[str, str]]
                                **kwargs):
@@ -467,11 +482,21 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :return: DataLakeDirectoryClient
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/datalake_samples_file_system_async.py
+                :start-after: [START create_directory_from_file_system]
+                :end-before: [END create_directory_from_file_system]
+                :language: python
+                :dedent: 12
+                :caption: Create directory in the file system.
         """
         directory_client = self.get_directory_client(directory)
         await directory_client.create_directory(metadata=metadata, **kwargs)
         return directory_client
 
+    @distributed_trace_async
     async def delete_directory(self, directory,  # type: Union[DirectoryProperties, str]
                                **kwargs):
         # type: (...) -> DataLakeDirectoryClient
@@ -506,11 +531,21 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :return: DataLakeDirectoryClient
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/datalake_samples_file_system_async.py
+                :start-after: [START delete_directory_from_file_system]
+                :end-before: [END delete_directory_from_file_system]
+                :language: python
+                :dedent: 12
+                :caption: Delete directory in the file system.
         """
         directory_client = self.get_directory_client(directory)
         await directory_client.delete_directory(**kwargs)
         return directory_client
 
+    @distributed_trace_async
     async def create_file(self, file,  # type: Union[FileProperties, str]
                           **kwargs):
         # type: (...) -> DataLakeFileClient
@@ -565,11 +600,21 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :return: DataLakeFileClient
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/datalake_samples_file_system_async.py
+                :start-after: [START create_file_from_file_system]
+                :end-before: [END create_file_from_file_system]
+                :language: python
+                :dedent: 12
+                :caption: Create file in the file system.
         """
         file_client = self.get_file_client(file)
         await file_client.create_file(**kwargs)
         return file_client
 
+    @distributed_trace_async
     async def delete_file(self, file,  # type: Union[FileProperties, str]
                           lease=None,  # type: Optional[Union[DataLakeLeaseClient, str]]
                           **kwargs):
@@ -605,6 +650,13 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :return: DataLakeFileClient
+
+        .. literalinclude:: ../samples/datalake_samples_file_system_async.py
+            :start-after: [START delete_file_from_file_system]
+            :end-before: [END delete_file_from_file_system]
+            :language: python
+            :dedent: 12
+            :caption: Delete file in the file system.
         """
         file_client = self.get_file_client(file)
         await file_client.delete_file(lease=lease, **kwargs)
@@ -635,14 +687,19 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/test_file_system_samples.py
+            .. literalinclude:: ../samples/datalake_samples_file_system_async.py
                 :start-after: [START get_directory_client_from_file_system]
                 :end-before: [END get_directory_client_from_file_system]
                 :language: python
                 :dedent: 12
                 :caption: Getting the directory client to interact with a specific directory.
         """
-        return DataLakeDirectoryClient(self.url, self.file_system_name, directory_name=directory,
+        try:
+            directory_name = directory.name
+        except AttributeError:
+            directory_name = directory
+
+        return DataLakeDirectoryClient(self.url, self.file_system_name, directory_name=directory_name,
                                        credential=self._raw_credential,
                                        _configuration=self._config, _pipeline=self._pipeline,
                                        _hosts=self._hosts,
@@ -668,7 +725,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/test_file_system_samples.py
+            .. literalinclude:: ../samples/datalake_samples_file_system_async.py
                 :start-after: [START get_file_client_from_file_system]
                 :end-before: [END get_file_client_from_file_system]
                 :language: python
