@@ -7,13 +7,13 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_filter_query.py
+FILE: sample_facet_query.py
 DESCRIPTION:
     This sample demonstrates how to authenticate with the Azure Congnitive Search
     service with an API key. See more details about authentication here:
     https://docs.microsoft.com/en-us/azure/search/search-security-api-keys
 USAGE:
-    python sample_filter_query.py
+    python sample_facet_query.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_SEARCH_SERVICE_ENDPOINT - the endpoint of your Azure Cognitive Search service
@@ -33,7 +33,7 @@ def filter_query():
 
     search_client = SearchIndexClient(service_endpoint, index_name, SearchApiKeyCredential(key))
 
-    query = SearchQuery(search_text="WiFi", facets=["Category"])
+    query = SearchQuery(search_text="WiFi", facets=["Category"], top=0)
 
     results = search_client.search(query=query)
 
