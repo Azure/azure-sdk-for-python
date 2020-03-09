@@ -30,15 +30,20 @@ def get_release_tag(dep_pkg_name, isLatest):
     from pypi_tools.pypi import PyPIClient
 
     client = PyPIClient()
-    versions = [str(v) for v in client.get_ordered_versions(dep_pkg_name)]
-    logging.info("Versions for {0} is: {1}".format(dep_pkg_name, versions))
+    versions = []
+    try:
+        versions = [str(v) for v in client.get_ordered_versions(dep_pkg_name)]
+        logging.info("Versions available on PyPI for {0} are: {1}".format(dep_pkg_name, versions))
+    except:
+        logging.error("Package {} is not available on PyPI".format(dep_pkg_name))
+        return None
 
     # filter excluded versions
     if dep_pkg_name in EXCLUDED_PACKAGE_VERSIONS:
         versions = [v for v in versions if  v not in EXCLUDED_PACKAGE_VERSIONS[dep_pkg_name]]
         logging.info("Filtered versions for {0} is: {1}".format(dep_pkg_name, versions))
 
-    if len(versions) == 0:
+    if not versions:
         logging.info(
             "Released version info for package {} is not available".format(dep_pkg_name)
         )
