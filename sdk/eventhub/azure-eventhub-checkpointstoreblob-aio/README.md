@@ -9,13 +9,7 @@ Please note that this is an async library, for sync version of the Azure EventHu
 
 ## Getting started
 
-### Install the package
-
-```
-$ pip install azure-eventhub-checkpointstoreblob-aio
-```
-
-**Prerequisites**
+### Prerequisites
 
 - Python 3.5.3 or later.
 - **Microsoft Azure Subscription:**  To use Azure services, including Azure Event Hubs, you'll need a subscription.  If you do not have an existing Azure account, you may sign up for a free trial or use your MSDN subscriber benefits when you [create an account](https://azure.microsoft.com/en-us/).
@@ -24,6 +18,11 @@ $ pip install azure-eventhub-checkpointstoreblob-aio
 
 - **Azure Storage Account:** You'll need to have an Azure Storage Account and create a Azure Blob Storage Block Container to store the checkpoint data with blobs. You may follow the guide [creating an Azure Block Blob Storage Account](https://docs.microsoft.com/en-us/azure/storage/blobs/storage-blob-create-account-block-blob).
 
+### Install the package
+
+```
+$ pip install azure-eventhub-checkpointstoreblob-aio
+```
 
 ## Key concepts
 
@@ -97,11 +96,24 @@ if __name__ == '__main__':
     loop.run_until_complete(main())
 ```
 
+#### Use `BlobCheckpointStore` with a different version of Azure Storage Service API
+Some environments have different versions of Azure Storage Service API. 
+`BlobCheckpointStore` by default uses the Storage Service API version 2019-07-07. To use it against a different
+version, specify `api_version` when you create the `BlobCheckpointStore` object.
+
+
 ## Troubleshooting
 
 ### General
 Enabling logging will be helpful to do trouble shooting.
-Refer to [Logging](#logging) to enable loggers for related libraries.
+
+### Logging
+
+- Enable `azure.eventhub.extensions.checkpointstoreblobaio` logger to collect traces from the library.
+- Enable `azure.eventhub` logger to collect traces from the main azure-eventhub library.
+- Enable `azure.eventhub.extensions.checkpointstoreblobaio._vendor.storage` logger to collect traces from azure storage blob library.
+- Enable `uamqp` logger to collect traces from the underlying uAMQP library.
+- Enable AMQP frame level trace by setting `logging_enable=True` when creating the client.
 
 ## Next steps
 
@@ -111,14 +123,6 @@ Refer to [Logging](#logging) to enable loggers for related libraries.
 ### Documentation
 
 Reference documentation is available [here](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/5.0.0/azure.eventhub.aio.html#azure.eventhub.aio.CheckpointStore)
-
-### Logging
-
-- Enable `azure.eventhub.extensions.checkpointstoreblobaio` logger to collect traces from the library.
-- Enable `azure.eventhub` logger to collect traces from the main azure-eventhub library.
-- Enable `azure.storage.blob` logger to collect traces from azure storage blob library.
-- Enable `uamqp` logger to collect traces from the underlying uAMQP library.
-- Enable AMQP frame level trace by setting `logging_enable=True` when creating the client.
 
 ### Provide Feedback
 

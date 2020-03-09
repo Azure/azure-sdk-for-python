@@ -70,8 +70,8 @@ class DataLakeLeaseClient(object):
         # type: (int, Optional[int], **Any) -> None
         """Requests a new lease.
 
-        If the container does not have an active lease, the Blob service creates a
-        lease on the container and returns a new lease ID.
+        If the file/file system does not have an active lease, the DataLake service creates a
+        lease on the file/file system and returns a new lease ID.
 
         :param int lease_duration:
             Specifies the duration of the lease, in seconds, or negative one
@@ -107,9 +107,9 @@ class DataLakeLeaseClient(object):
         """Renews the lease.
 
         The lease can be renewed if the lease ID specified in the
-        lease client matches that associated with the container or blob. Note that
-        the lease may be renewed even if it has expired as long as the container
-        or blob has not been leased again since the expiration of that lease. When you
+        lease client matches that associated with the file system or file. Note that
+        the lease may be renewed even if it has expired as long as the file system
+        or file has not been leased again since the expiration of that lease. When you
         renew a lease, the lease duration clock resets.
 
         :keyword ~datetime.datetime if_modified_since:
@@ -141,8 +141,8 @@ class DataLakeLeaseClient(object):
         """Release the lease.
 
         The lease may be released if the client lease id specified matches
-        that associated with the container or blob. Releasing the lease allows another client
-        to immediately acquire the lease for the container or blob as soon as the release is complete.
+        that associated with the file system or file. Releasing the lease allows another client
+        to immediately acquire the lease for the file system or file as soon as the release is complete.
 
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
@@ -173,7 +173,7 @@ class DataLakeLeaseClient(object):
         """Change the lease ID of an active lease.
 
         :param str proposed_lease_id:
-            Proposed lease ID, in a GUID string format. The Blob service returns 400
+            Proposed lease ID, in a GUID string format. The DataLake service returns 400
             (Invalid request) if the proposed lease ID is not in the correct format.
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
@@ -201,12 +201,12 @@ class DataLakeLeaseClient(object):
 
     def break_lease(self, lease_break_period=None, **kwargs):
         # type: (Optional[int], Any) -> int
-        """Break the lease, if the container or blob has an active lease.
+        """Break the lease, if the file system or file has an active lease.
 
         Once a lease is broken, it cannot be renewed. Any authorized request can break the lease;
         the request is not required to specify a matching lease ID. When a lease
         is broken, the lease break period is allowed to elapse, during which time
-        no lease operation except break and release can be performed on the container or blob.
+        no lease operation except break and release can be performed on the file system or file.
         When a lease is successfully broken, the response indicates the interval
         in seconds until a new lease can be acquired.
 

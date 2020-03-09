@@ -1,10 +1,11 @@
 # Change Log azure-ai-textanalytics
 
-## 1.0.0b3 (Unreleased)
+## 1.0.0b3 (2020-03-10)
 
 **Breaking changes**
-- `SentimentScorePerLabel` has been renamed to `SentimentConfidenceScorePerLabel`
+- `SentimentScorePerLabel` has been renamed to `SentimentConfidenceScores`
 - `AnalyzeSentimentResult` and `SentenceSentiment` attribute `sentiment_scores` has been renamed to `confidence_scores`
+- `TextDocumentStatistics` attribute `character_count` has been renamed to `grapheme_count`
 - `LinkedEntity` attribute `id` has been renamed to `data_source_entity_id`
 - Parameters `country_hint` and `language` are now passed as keyword arguments
 - The keyword argument `response_hook` has been renamed to `raw_response_hook`
@@ -23,7 +24,7 @@
 
 - The single text, module-level operations `single_detect_language()`, `single_recognize_entities()`, `single_extract_key_phrases()`, `single_analyze_sentiment()`, `single_recognize_pii_entities()`, and `single_recognize_linked_entities()`
 have been removed from the client library. Use the batching methods for optimal performance in production environments.
-- To use an API key as the credential for authenticating the client, a new credential class `TextAnalyticsApiKeyCredential("<api_key>")` must be passed in for the `credential` parameter. 
+- To use an API key as the credential for authenticating the client, a new credential class `TextAnalyticsApiKeyCredential("<api_key>")` must be passed in for the `credential` parameter.
 Passing the API key as a string is no longer supported.
 - `detect_languages()` is renamed to `detect_language()`.
 - The `TextAnalyticsError` model has been simplified to an object with only attributes `code`, `message`, and `target`.
@@ -92,8 +93,8 @@ https://azure.github.io/azure-sdk/releases/latest/python.html.
   - `show_stats` and `model_version` parameters move to keyword only arguments.
 
 - New return types
-  - The return types for the batching methods (`detect_languages`, `recognize_entities`, `recognize_pii_entities`, `recognize_linked_entities`, `extract_key_phrases`, `analyze_sentiment`) now return a heterogeneous list of 
-  result objects and document errors in the order passed in with the request. To iterate over the list and filter for result or error, a boolean property on each object called `is_error` can be used to determine whether the returned response object at 
+  - The return types for the batching methods (`detect_languages`, `recognize_entities`, `recognize_pii_entities`, `recognize_linked_entities`, `extract_key_phrases`, `analyze_sentiment`) now return a heterogeneous list of
+  result objects and document errors in the order passed in with the request. To iterate over the list and filter for result or error, a boolean property on each object called `is_error` can be used to determine whether the returned response object at
   that index is a result or an error:
   - `detect_languages` now returns a List[Union[`DetectLanguageResult`, `DocumentError`]]
   - `recognize_entities` now returns a List[Union[`RecognizeEntitiesResult`, `DocumentError`]]

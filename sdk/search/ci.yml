@@ -39,6 +39,8 @@ stages:
   parameters:
     ServiceDirectory: search
     Artifacts:
+    - name: azure_search_index
+      safeName: azuresearchindex
     - name: azure_mgmt_search
       safeName: azuremgmtsearch
-      
+
