@@ -7,12 +7,12 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_simple_query.py
+FILE: sample_facet_query_async.py
 DESCRIPTION:
-    This sample demonstrates how to get search results from a basic search text
-    from an Azure Search index.
+    This sample demonstrates how to obtain search facets on specified field in
+    an Azure Search index.
 USAGE:
-    python sample_simple_query.py
+    python sample_facet_query_async.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_SEARCH_SERVICE_ENDPOINT - the endpoint of your Azure Cognitive Search service
@@ -21,23 +21,33 @@ USAGE:
 """
 
 import os
+import asyncio
+
 
 service_endpoint = os.getenv("AZURE_SEARCH_SERVICE_ENDPOINT")
 index_name = os.getenv("AZURE_SEARCH_INDEX_NAME")
 key = os.getenv("AZURE_SEARCH_API_KEY")
 
-def simple_text_query():
-    # [START simple_query]
-    from azure.search import SearchApiKeyCredential, SearchIndexClient
+async def filter_query():
+    # [START facet_query_async]
+    from azure.search.aio import SearchIndexClient
+    from azure.search import SearchApiKeyCredential, SearchQuery
 
     search_client = SearchIndexClient(service_endpoint, index_name, SearchApiKeyCredential(key))
 
-    results = search_client.search(query="spa")
+    query = SearchQuery(search_text="WiFi", facets=["Category"], top=0)
 
-    print("Hotels containing 'spa' in the name (or other fields):")
-    for result in results:
-        print("    Name: {} (rating {})".format(result["HotelName"], result["Rating"]))
-    # [END simple_query]
+    results = await search_client.search(query=query)
+
+    facets = await results.get_facets()
+
+    print("Catgory facet counts for hotels:")
+    for facet in facets["Category"]:
+        print("    {}".format(facet))
+
+    await search_client.close()
+    # [END facet_query_async]
 
 if __name__ == '__main__':
-    simple_text_query()
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(filter_query())

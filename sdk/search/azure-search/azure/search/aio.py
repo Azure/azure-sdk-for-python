@@ -24,6 +24,6 @@
 #
 # --------------------------------------------------------------------------
 
-from ._index.aio import SearchIndexClient
+from ._index.aio import AsyncSearchItemPaged, SearchIndexClient
 
-__all__ = ("SearchIndexClient",)
+__all__ = ("AsyncSearchItemPaged", "SearchIndexClient")

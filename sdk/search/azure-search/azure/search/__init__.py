@@ -36,6 +36,7 @@ from ._index import (
     SearchApiKeyCredential,
     SearchIndexClient,
     SearchQuery,
+    SearchItemPaged,
     SuggestQuery,
     odata,
 )
@@ -47,6 +48,7 @@ __all__ = (
     "IndexingResult",
     "SearchApiKeyCredential",
     "SearchIndexClient",
+    "SearchItemPaged",
     "SearchQuery",
     "SuggestQuery",
     "odata",

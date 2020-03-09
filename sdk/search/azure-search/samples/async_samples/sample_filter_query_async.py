@@ -9,9 +9,8 @@
 """
 FILE: sample_filter_query_async.py
 DESCRIPTION:
-    This sample demonstrates how to authenticate with the Azure Congnitive Search
-    service with an API key. See more details about authentication here:
-    https://docs.microsoft.com/en-us/azure/search/search-security-api-keys
+    This sample demonstrates how search results from an Azure Search index can
+    be filtered and ordered.
 USAGE:
     python sample_filter_query_async.py
 
