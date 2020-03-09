@@ -55,6 +55,7 @@ jobs:
           AZURE_CLIENT_ID: $(aad-azure-sdk-test-client-id)
           AZURE_CLIENT_SECRET: $(aad-azure-sdk-test-client-secret)
           AZURE_TENANT_ID: $(aad-azure-sdk-test-tenant-id)
+          AZURE_AUTHORITY_HOST: $(aad-azure-sdk-test-authority-host-py)
           AZURE_PROJECT_URL: $(smoke-tests-key-vault-project-url)
           EVENT_HUBS_CONNECTION_STRING: $(smoke-tests-event-hubs-connection-string)
           COSMOS_ENDPOINT: $(smoke-tests-cosmos-endpoint)
