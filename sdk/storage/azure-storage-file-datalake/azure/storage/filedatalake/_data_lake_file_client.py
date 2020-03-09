@@ -503,8 +503,8 @@ class DataLakeFileClient(PathClient):
         except StorageErrorException as error:
             process_storage_error(error)
 
-    def read_file(self, offset=None, length=None, **kwargs):
-        # type: (Optional[int], Optional[int], Any) -> Union[int, byte]
+    def download_file(self, offset=None, length=None, **kwargs):
+        # type: (Optional[int], Optional[int], Any) -> StorageStreamDownloader
         """Downloads a file to the StorageStreamDownloader. The readall() method must
         be used to read all the content, or readinto() must be used to download the file into
         a stream.

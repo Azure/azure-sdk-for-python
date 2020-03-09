@@ -280,7 +280,7 @@ class FileTest(StorageTestCase):
         data = self.get_random_bytes(400*1024) * 1024
         await file_client.upload_data(data, overwrite=True, max_concurrency=5)
 
-        downloaded_data = await (await file_client.read_file()).readall()
+        downloaded_data = await (await file_client.download_file()).readall()
         self.assertEqual(data, downloaded_data)
 
     def test_upload_data_async(self):
@@ -306,7 +306,7 @@ class FileTest(StorageTestCase):
             await file_client.upload_data(data, max_concurrency=5)
         await file_client.upload_data(data, overwrite=True, max_concurrency=5)
 
-        downloaded_data = await (await file_client.read_file()).readall()
+        downloaded_data = await (await file_client.download_file()).readall()
         self.assertEqual(data, downloaded_data)
 
     @record
@@ -339,7 +339,7 @@ class FileTest(StorageTestCase):
                                       content_settings=content_settings, etag=etag,
                                       match_condition=MatchConditions.IfNotModified)
 
-        downloaded_data = await (await file_client.read_file()).readall()
+        downloaded_data = await (await file_client.download_file()).readall()
         properties = await file_client.get_file_properties()
 
         self.assertEqual(data, downloaded_data)
@@ -359,7 +359,7 @@ class FileTest(StorageTestCase):
         await file_client.flush_data(len(data))
 
         # doanload the data and make sure it is the same as uploaded data
-        downloaded_data = await (await file_client.read_file()).readall()
+        downloaded_data = await (await file_client.download_file()).readall()
         self.assertEqual(data, downloaded_data)
 
     @record
@@ -399,7 +399,7 @@ class FileTest(StorageTestCase):
                                              file_client.file_system_name,
                                              file_client.path_name,
                                              credential=sas_token)
-        downloaded_data = await (await new_file_client.read_file()).readall()
+        downloaded_data = await (await new_file_client.download_file()).readall()
         self.assertEqual(data, downloaded_data)
 
     @record
@@ -417,7 +417,7 @@ class FileTest(StorageTestCase):
 
         # doanload the data into a file and make sure it is the same as uploaded data
         with open(FILE_PATH, 'wb') as stream:
-            download = await file_client.read_file(max_concurrency=2)
+            download = await file_client.download_file(max_concurrency=2)
             await download.readinto(stream)
 
         # Assert
@@ -439,7 +439,7 @@ class FileTest(StorageTestCase):
         await file_client.flush_data(len(data))
 
         # doanload the text data and make sure it is the same as uploaded data
-        downloaded_data = await (await file_client.read_file(max_concurrency=2, encoding="utf-8")).readall()
+        downloaded_data = await (await file_client.download_file(max_concurrency=2, encoding="utf-8")).readall()
 
         # Assert
         self.assertEqual(data, downloaded_data)
@@ -648,7 +648,7 @@ class FileTest(StorageTestCase):
         await file_client.flush_data(3)
         new_client = await file_client.rename_file(file_client.file_system_name+'/'+'newname')
 
-        data = await (await new_client.read_file()).readall()
+        data = await (await new_client.download_file()).readall()
         self.assertEqual(data, data_bytes)
         self.assertEqual(new_client.path_name, "newname")
 
@@ -672,7 +672,7 @@ class FileTest(StorageTestCase):
         new_client = await file_client.rename_file(file_client.file_system_name+'/'+existing_file_client.path_name)
         new_url = file_client.url
 
-        data = await (await new_client.read_file()).readall()
+        data = await (await new_client.download_file()).readall()
         # the existing file was overridden
         self.assertEqual(data, data_bytes)
 
@@ -704,17 +704,17 @@ class FileTest(StorageTestCase):
 
         new_client = await f3.rename_file(f1.file_system_name+'/'+f1.path_name)
 
-        self.assertEqual(await (await new_client.read_file()).readall(), b"file3")
+        self.assertEqual(await (await new_client.download_file()).readall(), b"file3")
 
         # make sure the data in file2 and file4 weren't touched
-        f2_data = await (await f2.read_file()).readall()
+        f2_data = await (await f2.download_file()).readall()
         self.assertEqual(f2_data, b"file2")
 
-        f4_data = await (await f4.read_file()).readall()
+        f4_data = await (await f4.download_file()).readall()
         self.assertEqual(f4_data, b"file4")
 
         with self.assertRaises(HttpResponseError):
-            await (await f3.read_file()).readall()
+            await (await f3.download_file()).readall()
 
     @record
     def test_rename_file_will_not_change_existing_directory_async(self):

@@ -237,7 +237,7 @@ class FileTest(StorageTestCase):
         data = self.get_random_bytes(200*1024) * 1024
         file_client.upload_data(data, overwrite=True, max_concurrency=3)
 
-        downloaded_data = file_client.read_file().readall()
+        downloaded_data = file_client.download_file().readall()
         self.assertEqual(data, downloaded_data)
 
     @record
@@ -260,7 +260,7 @@ class FileTest(StorageTestCase):
             file_client.upload_data(data, max_concurrency=5)
         file_client.upload_data(data, overwrite=True, max_concurrency=5)
 
-        downloaded_data = file_client.read_file().readall()
+        downloaded_data = file_client.download_file().readall()
         self.assertEqual(data, downloaded_data)
 
     @record
@@ -285,7 +285,7 @@ class FileTest(StorageTestCase):
                                 content_settings=content_settings, etag=etag,
                                 match_condition=MatchConditions.IfNotModified)
 
-        downloaded_data = file_client.read_file().readall()
+        downloaded_data = file_client.download_file().readall()
         properties = file_client.get_file_properties()
 
         self.assertEqual(data, downloaded_data)
@@ -301,7 +301,7 @@ class FileTest(StorageTestCase):
         file_client.flush_data(len(data))
 
         # doanload the data and make sure it is the same as uploaded data
-        downloaded_data = file_client.read_file().readall()
+        downloaded_data = file_client.download_file().readall()
         self.assertEqual(data, downloaded_data)
 
     @record
@@ -337,7 +337,7 @@ class FileTest(StorageTestCase):
                                              file_client.file_system_name,
                                              file_client.path_name,
                                              credential=sas_token)
-        downloaded_data = new_file_client.read_file().readall()
+        downloaded_data = new_file_client.download_file().readall()
         self.assertEqual(data, downloaded_data)
 
     @record
@@ -351,7 +351,7 @@ class FileTest(StorageTestCase):
 
         # doanload the data into a file and make sure it is the same as uploaded data
         with open(FILE_PATH, 'wb') as stream:
-            download = file_client.read_file(max_concurrency=2)
+            download = file_client.download_file(max_concurrency=2)
             download.readinto(stream)
 
         # Assert
@@ -369,7 +369,7 @@ class FileTest(StorageTestCase):
         file_client.flush_data(len(data))
 
         # doanload the text data and make sure it is the same as uploaded data
-        downloaded_data = file_client.read_file(max_concurrency=2, encoding="utf-8").readall()
+        downloaded_data = file_client.download_file(max_concurrency=2, encoding="utf-8").readall()
 
         # Assert
         self.assertEqual(data, downloaded_data)
@@ -539,7 +539,7 @@ class FileTest(StorageTestCase):
         file_client.flush_data(3)
         new_client = file_client.rename_file(file_client.file_system_name+'/'+'newname')
 
-        data = new_client.read_file().readall()
+        data = new_client.download_file().readall()
         self.assertEqual(data, data_bytes)
         self.assertEqual(new_client.path_name, "newname")
 
@@ -559,7 +559,7 @@ class FileTest(StorageTestCase):
         new_client = file_client.rename_file(file_client.file_system_name+'/'+existing_file_client.path_name)
         new_url = file_client.url
 
-        data = new_client.read_file().readall()
+        data = new_client.download_file().readall()
         # the existing file was overridden
         self.assertEqual(data, data_bytes)
 
@@ -585,17 +585,17 @@ class FileTest(StorageTestCase):
 
         new_client = f3.rename_file(f1.file_system_name+'/'+f1.path_name)
 
-        self.assertEqual(new_client.read_file().readall(), b"file3")
+        self.assertEqual(new_client.download_file().readall(), b"file3")
 
         # make sure the data in file2 and file4 weren't touched
-        f2_data = f2.read_file().readall()
+        f2_data = f2.download_file().readall()
         self.assertEqual(f2_data, b"file2")
 
-        f4_data = f4.read_file().readall()
+        f4_data = f4.download_file().readall()
         self.assertEqual(f4_data, b"file4")
 
         with self.assertRaises(HttpResponseError):
-            f3.read_file().readall()
+            f3.download_file().readall()
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':

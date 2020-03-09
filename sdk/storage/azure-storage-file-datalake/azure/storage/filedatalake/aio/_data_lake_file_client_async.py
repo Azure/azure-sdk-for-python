@@ -371,7 +371,7 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
         except StorageErrorException as error:
             process_storage_error(error)
 
-    async def read_file(self, offset=None, length=None, **kwargs):
+    async def download_file(self, offset=None, length=None, **kwargs):
         # type: (Optional[int], Optional[int], Any) -> StorageStreamDownloader
         """Downloads a file to the StorageStreamDownloader. The readall() method must
         be used to read all the content, or readinto() must be used to download the file into
@@ -411,7 +411,7 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
             multiple calls to the Azure service and the timeout will apply to
             each call individually.
         :returns: A streaming object (StorageStreamDownloader)
-        :rtype: ~azure.storage.aio.filedatalake.StorageStreamDownloader
+        :rtype: ~azure.storage.filedatalake.aio.StorageStreamDownloader
 
         .. admonition:: Example:
 

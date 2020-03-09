@@ -65,7 +65,8 @@ async def upload_download_sample(filesystem_client):
     # read the data back
     print("Downloading data from '{}'.".format(file_name))
     # [START read_file]
-    downloaded_bytes = await file_client.read_file()
+    download = await file_client.download_file()
+    downloaded_bytes = await download.readall()
     # [END read_file]
 
     # verify the downloaded content
@@ -81,7 +82,8 @@ async def upload_download_sample(filesystem_client):
 
     # download the renamed file in to local file
     with open(SOURCE_FILE, 'wb') as stream:
-        await new_client.read_file(stream=stream)
+        download = await new_client.download_file()
+        await download.readinto(stream)
 
     # [START delete_file]
     await new_client.delete_file()
