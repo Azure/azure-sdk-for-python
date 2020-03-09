@@ -36,6 +36,10 @@ try:
     from ._models_py3 import DimensionProperties
     from ._models_py3 import Identity
     from ._models_py3 import Invitation
+    from ._models_py3 import KustoClusterDataSet
+    from ._models_py3 import KustoClusterDataSetMapping
+    from ._models_py3 import KustoDatabaseDataSet
+    from ._models_py3 import KustoDatabaseDataSetMapping
     from ._models_py3 import OperationMetaLogSpecification
     from ._models_py3 import OperationMetaMetricSpecification
     from ._models_py3 import OperationMetaServiceSpecification
@@ -87,6 +91,10 @@ except (SyntaxError, ImportError):
     from ._models import DimensionProperties
     from ._models import Identity
     from ._models import Invitation
+    from ._models import KustoClusterDataSet
+    from ._models import KustoClusterDataSetMapping
+    from ._models import KustoDatabaseDataSet
+    from ._models import KustoDatabaseDataSetMapping
     from ._models import OperationMetaLogSpecification
     from ._models import OperationMetaMetricSpecification
     from ._models import OperationMetaServiceSpecification
@@ -133,9 +141,9 @@ from ._data_share_management_client_enums import (
     Status,
     InvitationStatus,
     ShareKind,
+    SynchronizationMode,
     DataSetType,
     ShareSubscriptionStatus,
-    SynchronizationMode,
     RecurrenceInterval,
     TriggerStatus,
     DataSetMappingStatus,
@@ -169,6 +177,10 @@ __all__ = [
     'DimensionProperties',
     'Identity',
     'Invitation',
+    'KustoClusterDataSet',
+    'KustoClusterDataSetMapping',
+    'KustoDatabaseDataSet',
+    'KustoDatabaseDataSetMapping',
     'OperationMetaLogSpecification',
     'OperationMetaMetricSpecification',
     'OperationMetaServiceSpecification',
@@ -203,9 +215,9 @@ __all__ = [
     'ShareSynchronizationPaged',
     'SynchronizationDetailsPaged',
     'ProviderShareSubscriptionPaged',
+    'ShareSubscriptionPaged',
     'SourceShareSynchronizationSettingPaged',
     'ShareSubscriptionSynchronizationPaged',
-    'ShareSubscriptionPaged',
     'ConsumerSourceDataSetPaged',
     'SynchronizationSettingPaged',
     'TriggerPaged',
@@ -214,9 +226,9 @@ __all__ = [
     'Status',
     'InvitationStatus',
     'ShareKind',
+    'SynchronizationMode',
     'DataSetType',
     'ShareSubscriptionStatus',
-    'SynchronizationMode',
     'RecurrenceInterval',
     'TriggerStatus',
     'DataSetMappingStatus',

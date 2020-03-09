@@ -24,7 +24,7 @@ class ConsumerInvitationsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The api version to use. Constant value: "2018-11-01-preview".
+    :ivar api_version: The api version to use. Constant value: "2019-11-01".
     """
 
     models = models
@@ -34,7 +34,7 @@ class ConsumerInvitationsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-11-01-preview"
+        self.api_version = "2019-11-01"
 
         self.config = config
 
