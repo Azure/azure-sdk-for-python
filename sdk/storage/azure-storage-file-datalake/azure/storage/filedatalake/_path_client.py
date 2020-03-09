@@ -321,6 +321,8 @@ class PathClient(StorageAccountHostsMixin):
             The timeout parameter is expressed in seconds.
         :keyword: response dict (Etag and last modified).
         """
+        if not any([owner, group, permissions, acl]):
+            raise ValueError("At least one parameter should be set for set_access_control API")
         options = self._set_access_control_options(owner=owner, group=group, permissions=permissions, acl=acl, **kwargs)
         try:
             return self._client.path.set_access_control(**options)
@@ -542,7 +544,7 @@ class PathClient(StorageAccountHostsMixin):
         path_properties.__class__ = DirectoryProperties
         return path_properties
 
-    def set_metadata(self, metadata=None,  # type: Optional[Dict[str, str]]
+    def set_metadata(self, metadata,  # type: Dict[str, str]
                      **kwargs):
         # type: (...) -> Dict[str, Union[str, datetime]]
         """Sets one or more user-defined name-value pairs for the specified

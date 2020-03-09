@@ -204,9 +204,9 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
         return FileProperties._from_blob_properties(blob_properties)  # pylint: disable=protected-access
 
     async def upload_data(self, data,  # type: Union[AnyStr, Iterable[AnyStr], IO[AnyStr]]
-                    length=None,  # type: Optional[int]
-                    overwrite=None,  # type: Optional[bool]
-                    **kwargs):
+                          length=None,  # type: Optional[int]
+                          overwrite=False,  # type: Optional[bool]
+                          **kwargs):
         # type: (...) -> Dict[str, Any]
         """
         Upload data to a file.
@@ -218,7 +218,7 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
             ContentSettings object used to set path properties.
         :keyword metadata:
             Name-value pairs associated with the blob as metadata.
-        :type metadata: dict(str, str)
+        :paramtype metadata: dict(str, str)
         :keyword ~azure.storage.filedatalake.DataLakeLeaseClient or str lease:
             Required if the blob has an active lease. Value can be a DataLakeLeaseClient object
             or the lease ID as a string.
@@ -320,6 +320,8 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
             specified position are written to the file when flush succeeds, but
             this optional parameter allows data after the flush position to be
             retained for a future flush operation.
+        :keyword ~azure.storage.filedatalake.ContentSettings content_settings:
+            ContentSettings object used to set path properties.
         :keyword bool close: Azure Storage Events allow applications to receive
             notifications when files change. When Azure Storage Events are
             enabled, a file changed event is raised. This event has a property

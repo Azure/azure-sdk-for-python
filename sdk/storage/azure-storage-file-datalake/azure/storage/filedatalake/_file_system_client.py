@@ -311,7 +311,7 @@ class FileSystemClient(StorageAccountHostsMixin):
         return FileSystemProperties._convert_from_container_props(container_properties)  # pylint: disable=protected-access
 
     def set_file_system_metadata(  # type: ignore
-        self, metadata=None,  # type: Optional[Dict[str, str]]
+        self, metadata,  # type: Dict[str, str]
         **kwargs
     ):
         # type: (...) -> Dict[str, Union[str, datetime]]
@@ -653,7 +653,6 @@ class FileSystemClient(StorageAccountHostsMixin):
         return file_client
 
     def delete_file(self, file,  # type: Union[FileProperties, str]
-                    lease=None,  # type: Optional[Union[DataLakeLeaseClient, str]]
                     **kwargs):
         # type: (...) -> DataLakeFileClient
         """
@@ -698,7 +697,7 @@ class FileSystemClient(StorageAccountHostsMixin):
                 :caption: Delete file in the file system.
         """
         file_client = self.get_file_client(file)
-        file_client.delete_file(lease=lease, **kwargs)
+        file_client.delete_file(**kwargs)
         return file_client
 
     def get_root_directory_client(self):
