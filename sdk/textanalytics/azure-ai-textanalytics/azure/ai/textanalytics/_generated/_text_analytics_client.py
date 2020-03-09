@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from azure.core import PipelineClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 
 from ._configuration import TextAnalyticsClientConfiguration
@@ -17,35 +17,28 @@ from .operations import TextAnalyticsClientOperationsMixin
 from . import models
 
 
-class TextAnalyticsClient(TextAnalyticsClientOperationsMixin):
+class TextAnalyticsClient(TextAnalyticsClientOperationsMixin, SDKClient):
     """The Text Analytics API is a suite of text analytics web services built with best-in-class Microsoft machine learning algorithms. The API can be used to analyze unstructured text for tasks such as sentiment analysis, key phrase extraction and language detection. No training data is needed to use this API; just bring your text data. This API uses advanced natural language processing techniques to deliver best in class predictions. Further documentation can be found in https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/overview
 
+    :ivar config: Configuration for client.
+    :vartype config: TextAnalyticsClientConfiguration
 
-    :param credentials: Credentials needed for the client to connect to Azure.
-    :type credentials: :mod:`A msrestazure Credentials
-     object<msrestazure.azure_active_directory>`
     :param endpoint: Supported Cognitive Services endpoints (protocol and
      hostname, for example: https://westus.api.cognitive.microsoft.com).
     :type endpoint: str
+    :param credentials: Subscription credentials which uniquely identify
+     client subscription.
+    :type credentials: None
     """
 
     def __init__(
-            self, credentials, endpoint, **kwargs):
+            self, endpoint, credentials):
 
-        base_url = '{Endpoint}/text/analytics/v3.0-preview.1'
-        self._config = TextAnalyticsClientConfiguration(credentials, endpoint, **kwargs)
-        self._client = PipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self.config = TextAnalyticsClientConfiguration(endpoint, credentials)
+        super(TextAnalyticsClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = 'v3.0-preview.1'
+        self.api_version = 'v3.0'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
-
-    def close(self):
-        self._client.close()
-    def __enter__(self):
-        self._client.__enter__()
-        return self
-    def __exit__(self, *exc_details):
-        self._client.__exit__(*exc_details)

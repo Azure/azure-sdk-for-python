@@ -9,14 +9,14 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from azure.core.exceptions import map_error
+from msrest.pipeline import ClientRawResponse
 from ... import models
-import uuid
 
 
 class TextAnalyticsClientOperationsMixin:
 
-    async def entities_recognition_general(self, documents, model_version=None, show_stats=None, *, cls=None, **kwargs):
+    async def entities_recognition_general(
+            self, documents, model_version=None, show_stats=None, *, custom_headers=None, raw=False, **operation_config):
         """Named Entity Recognition.
 
         The API returns a list of general named entities in a given document.
@@ -28,7 +28,7 @@ class TextAnalyticsClientOperationsMixin:
         :param documents: The set of documents to process as part of this
          batch.
         :type documents:
-         list[~azure.ai.textanalytics.models.MultiLanguageInput]
+         list[~azure.cognitiveservices.language.textanalytics.models.MultiLanguageInput]
         :param model_version: (Optional) This value indicates which model will
          be used for scoring. If a model-version is not specified, the API
          should default to the latest, non-preview version.
@@ -36,20 +36,24 @@ class TextAnalyticsClientOperationsMixin:
         :param show_stats: (Optional) if set to true, response will contain
          input and document level statistics.
         :type show_stats: bool
-        :param callable cls: A custom type or function that will be passed the
-         direct response
-        :return: EntitiesResult or the result of cls(response)
-        :rtype: ~azure.ai.textanalytics.models.EntitiesResult
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: EntitiesResult or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.cognitiveservices.language.textanalytics.models.EntitiesResult
+         or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`TextAnalyticsErrorException<azure.ai.textanalytics.models.TextAnalyticsErrorException>`
+         :class:`TextAnalyticsErrorException<azure.cognitiveservices.language.textanalytics.models.TextAnalyticsErrorException>`
         """
-        error_map = kwargs.pop('error_map', None)
         input = models.MultiLanguageBatchInput(documents=documents)
 
         # Construct URL
         url = self.entities_recognition_general.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True)
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -64,32 +68,32 @@ class TextAnalyticsClientOperationsMixin:
         header_parameters = {}
         header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self._config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
 
         # Construct body
         body_content = self._serialize.body(input, 'MultiLanguageBatchInput')
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
+        response = await self._client.async_send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.TextAnalyticsErrorException(response, self._deserialize)
+            raise models.TextAnalyticsErrorException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('EntitiesResult', response)
 
-        if cls:
-            return cls(response, deserialized, None)
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
 
         return deserialized
     entities_recognition_general.metadata = {'url': '/entities/recognition/general'}
 
-    async def entities_recognition_pii(self, documents, model_version=None, show_stats=None, *, cls=None, **kwargs):
+    async def entities_recognition_pii(
+            self, documents, model_version=None, show_stats=None, *, custom_headers=None, raw=False, **operation_config):
         """Entities containing personal information.
 
         The API returns a list of entities with personal information (\"SSN\",
@@ -103,7 +107,7 @@ class TextAnalyticsClientOperationsMixin:
         :param documents: The set of documents to process as part of this
          batch.
         :type documents:
-         list[~azure.ai.textanalytics.models.MultiLanguageInput]
+         list[~azure.cognitiveservices.language.textanalytics.models.MultiLanguageInput]
         :param model_version: (Optional) This value indicates which model will
          be used for scoring. If a model-version is not specified, the API
          should default to the latest, non-preview version.
@@ -111,20 +115,24 @@ class TextAnalyticsClientOperationsMixin:
         :param show_stats: (Optional) if set to true, response will contain
          input and document level statistics.
         :type show_stats: bool
-        :param callable cls: A custom type or function that will be passed the
-         direct response
-        :return: EntitiesResult or the result of cls(response)
-        :rtype: ~azure.ai.textanalytics.models.EntitiesResult
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: EntitiesResult or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.cognitiveservices.language.textanalytics.models.EntitiesResult
+         or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`TextAnalyticsErrorException<azure.ai.textanalytics.models.TextAnalyticsErrorException>`
+         :class:`TextAnalyticsErrorException<azure.cognitiveservices.language.textanalytics.models.TextAnalyticsErrorException>`
         """
-        error_map = kwargs.pop('error_map', None)
         input = models.MultiLanguageBatchInput(documents=documents)
 
         # Construct URL
         url = self.entities_recognition_pii.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True)
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -139,32 +147,32 @@ class TextAnalyticsClientOperationsMixin:
         header_parameters = {}
         header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self._config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
 
         # Construct body
         body_content = self._serialize.body(input, 'MultiLanguageBatchInput')
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
+        response = await self._client.async_send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.TextAnalyticsErrorException(response, self._deserialize)
+            raise models.TextAnalyticsErrorException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('EntitiesResult', response)
 
-        if cls:
-            return cls(response, deserialized, None)
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
 
         return deserialized
     entities_recognition_pii.metadata = {'url': '/entities/recognition/pii'}
 
-    async def entities_linking(self, documents, model_version=None, show_stats=None, *, cls=None, **kwargs):
+    async def entities_linking(
+            self, documents, model_version=None, show_stats=None, *, custom_headers=None, raw=False, **operation_config):
         """Linked entities from a well-known knowledge base.
 
         The API returns a list of recognized entities with links to a
@@ -175,7 +183,7 @@ class TextAnalyticsClientOperationsMixin:
         :param documents: The set of documents to process as part of this
          batch.
         :type documents:
-         list[~azure.ai.textanalytics.models.MultiLanguageInput]
+         list[~azure.cognitiveservices.language.textanalytics.models.MultiLanguageInput]
         :param model_version: (Optional) This value indicates which model will
          be used for scoring. If a model-version is not specified, the API
          should default to the latest, non-preview version.
@@ -183,20 +191,24 @@ class TextAnalyticsClientOperationsMixin:
         :param show_stats: (Optional) if set to true, response will contain
          input and document level statistics.
         :type show_stats: bool
-        :param callable cls: A custom type or function that will be passed the
-         direct response
-        :return: EntityLinkingResult or the result of cls(response)
-        :rtype: ~azure.ai.textanalytics.models.EntityLinkingResult
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: EntityLinkingResult or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.cognitiveservices.language.textanalytics.models.EntityLinkingResult
+         or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`TextAnalyticsErrorException<azure.ai.textanalytics.models.TextAnalyticsErrorException>`
+         :class:`TextAnalyticsErrorException<azure.cognitiveservices.language.textanalytics.models.TextAnalyticsErrorException>`
         """
-        error_map = kwargs.pop('error_map', None)
         input = models.MultiLanguageBatchInput(documents=documents)
 
         # Construct URL
         url = self.entities_linking.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True)
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -211,32 +223,32 @@ class TextAnalyticsClientOperationsMixin:
         header_parameters = {}
         header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self._config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
 
         # Construct body
         body_content = self._serialize.body(input, 'MultiLanguageBatchInput')
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
+        response = await self._client.async_send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.TextAnalyticsErrorException(response, self._deserialize)
+            raise models.TextAnalyticsErrorException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('EntityLinkingResult', response)
 
-        if cls:
-            return cls(response, deserialized, None)
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
 
         return deserialized
     entities_linking.metadata = {'url': '/entities/linking'}
 
-    async def key_phrases(self, documents, model_version=None, show_stats=None, *, cls=None, **kwargs):
+    async def key_phrases(
+            self, documents, model_version=None, show_stats=None, *, custom_headers=None, raw=False, **operation_config):
         """Key Phrases.
 
         The API returns a list of strings denoting the key phrases in the input
@@ -246,7 +258,7 @@ class TextAnalyticsClientOperationsMixin:
         :param documents: The set of documents to process as part of this
          batch.
         :type documents:
-         list[~azure.ai.textanalytics.models.MultiLanguageInput]
+         list[~azure.cognitiveservices.language.textanalytics.models.MultiLanguageInput]
         :param model_version: (Optional) This value indicates which model will
          be used for scoring. If a model-version is not specified, the API
          should default to the latest, non-preview version.
@@ -254,20 +266,24 @@ class TextAnalyticsClientOperationsMixin:
         :param show_stats: (Optional) if set to true, response will contain
          input and document level statistics.
         :type show_stats: bool
-        :param callable cls: A custom type or function that will be passed the
-         direct response
-        :return: KeyPhraseResult or the result of cls(response)
-        :rtype: ~azure.ai.textanalytics.models.KeyPhraseResult
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: KeyPhraseResult or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.cognitiveservices.language.textanalytics.models.KeyPhraseResult
+         or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`TextAnalyticsErrorException<azure.ai.textanalytics.models.TextAnalyticsErrorException>`
+         :class:`TextAnalyticsErrorException<azure.cognitiveservices.language.textanalytics.models.TextAnalyticsErrorException>`
         """
-        error_map = kwargs.pop('error_map', None)
         input = models.MultiLanguageBatchInput(documents=documents)
 
         # Construct URL
         url = self.key_phrases.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True)
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -282,32 +298,32 @@ class TextAnalyticsClientOperationsMixin:
         header_parameters = {}
         header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self._config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
 
         # Construct body
         body_content = self._serialize.body(input, 'MultiLanguageBatchInput')
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
+        response = await self._client.async_send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.TextAnalyticsErrorException(response, self._deserialize)
+            raise models.TextAnalyticsErrorException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('KeyPhraseResult', response)
 
-        if cls:
-            return cls(response, deserialized, None)
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
 
         return deserialized
     key_phrases.metadata = {'url': '/keyPhrases'}
 
-    async def languages(self, documents, model_version=None, show_stats=None, *, cls=None, **kwargs):
+    async def languages(
+            self, documents, model_version=None, show_stats=None, *, custom_headers=None, raw=False, **operation_config):
         """Detect Language.
 
         The API returns the detected language and a numeric score between 0 and
@@ -316,7 +332,8 @@ class TextAnalyticsClientOperationsMixin:
         languages in Text Analytics API</a> for the list of enabled languages.
 
         :param documents:
-        :type documents: list[~azure.ai.textanalytics.models.LanguageInput]
+        :type documents:
+         list[~azure.cognitiveservices.language.textanalytics.models.LanguageInput]
         :param model_version: (Optional) This value indicates which model will
          be used for scoring. If a model-version is not specified, the API
          should default to the latest, non-preview version.
@@ -324,20 +341,24 @@ class TextAnalyticsClientOperationsMixin:
         :param show_stats: (Optional) if set to true, response will contain
          input and document level statistics.
         :type show_stats: bool
-        :param callable cls: A custom type or function that will be passed the
-         direct response
-        :return: LanguageResult or the result of cls(response)
-        :rtype: ~azure.ai.textanalytics.models.LanguageResult
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: LanguageResult or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.cognitiveservices.language.textanalytics.models.LanguageResult
+         or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`TextAnalyticsErrorException<azure.ai.textanalytics.models.TextAnalyticsErrorException>`
+         :class:`TextAnalyticsErrorException<azure.cognitiveservices.language.textanalytics.models.TextAnalyticsErrorException>`
         """
-        error_map = kwargs.pop('error_map', None)
         input = models.LanguageBatchInput(documents=documents)
 
         # Construct URL
         url = self.languages.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True)
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -352,32 +373,32 @@ class TextAnalyticsClientOperationsMixin:
         header_parameters = {}
         header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self._config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
 
         # Construct body
         body_content = self._serialize.body(input, 'LanguageBatchInput')
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
+        response = await self._client.async_send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.TextAnalyticsErrorException(response, self._deserialize)
+            raise models.TextAnalyticsErrorException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('LanguageResult', response)
 
-        if cls:
-            return cls(response, deserialized, None)
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
 
         return deserialized
     languages.metadata = {'url': '/languages'}
 
-    async def sentiment(self, documents, model_version=None, show_stats=None, *, cls=None, **kwargs):
+    async def sentiment(
+            self, documents, model_version=None, show_stats=None, *, custom_headers=None, raw=False, **operation_config):
         """Sentiment.
 
         The API returns a sentiment prediction, as well as sentiment scores for
@@ -389,7 +410,7 @@ class TextAnalyticsClientOperationsMixin:
         :param documents: The set of documents to process as part of this
          batch.
         :type documents:
-         list[~azure.ai.textanalytics.models.MultiLanguageInput]
+         list[~azure.cognitiveservices.language.textanalytics.models.MultiLanguageInput]
         :param model_version: (Optional) This value indicates which model will
          be used for scoring. If a model-version is not specified, the API
          should default to the latest, non-preview version.
@@ -397,20 +418,24 @@ class TextAnalyticsClientOperationsMixin:
         :param show_stats: (Optional) if set to true, response will contain
          input and document level statistics.
         :type show_stats: bool
-        :param callable cls: A custom type or function that will be passed the
-         direct response
-        :return: SentimentResponse or the result of cls(response)
-        :rtype: ~azure.ai.textanalytics.models.SentimentResponse
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: SentimentResponse or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.cognitiveservices.language.textanalytics.models.SentimentResponse
+         or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`TextAnalyticsErrorException<azure.ai.textanalytics.models.TextAnalyticsErrorException>`
+         :class:`TextAnalyticsErrorException<azure.cognitiveservices.language.textanalytics.models.TextAnalyticsErrorException>`
         """
-        error_map = kwargs.pop('error_map', None)
         input = models.MultiLanguageBatchInput(documents=documents)
 
         # Construct URL
         url = self.sentiment.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True)
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -425,27 +450,26 @@ class TextAnalyticsClientOperationsMixin:
         header_parameters = {}
         header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self._config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
 
         # Construct body
         body_content = self._serialize.body(input, 'MultiLanguageBatchInput')
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
+        response = await self._client.async_send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.TextAnalyticsErrorException(response, self._deserialize)
+            raise models.TextAnalyticsErrorException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('SentimentResponse', response)
 
-        if cls:
-            return cls(response, deserialized, None)
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
 
         return deserialized
     sentiment.metadata = {'url': '/sentiment'}
