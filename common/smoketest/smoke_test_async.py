@@ -10,7 +10,7 @@ from event_hubs_async import EventHubAsync
 from storage_blob_async import StorageBlobAsync
 
 
-def execute_async_smoke_tests:
+def execute_async_smoke_tests():
     print("")
     print("==========================================")
     print("   AZURE TRACK 2 SDKs SMOKE TEST ASYNC")
