@@ -365,7 +365,7 @@ Please take a look at the [samples](./samples) directory for detailed examples o
 
 ### Documentation
 
-Reference documentation is available [here](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/5.0.0/azure.eventhub.html).
+Reference documentation is available [here](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/5.0.1/azure.eventhub.html).
 
 ### Provide Feedback
 
