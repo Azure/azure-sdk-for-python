@@ -6,6 +6,7 @@
 from typing import TYPE_CHECKING
 
 import base64
+import itertools
 import json
 
 from azure.core.paging import ItemPaged, PageIterator, ReturnType
@@ -40,7 +41,24 @@ def unpack_continuation_token(token):
 
 
 class SearchItemPaged(ItemPaged[ReturnType]):
-    pass
+    def __init__(self, *args, **kwargs):
+        super(SearchItemPaged, self).__init__(*args, **kwargs)
+        self._first_page_iterator_instance = None
+
+    def __next__(self) -> ReturnType:
+        if self._page_iterator is None:
+            first_iterator = self._first_iterator_instance()
+            self._page_iterator = itertools.chain.from_iterable(first_iterator)
+        return next(self._page_iterator)
+
+    def _first_iterator_instance(self):
+        if self._first_page_iterator_instance is None:
+            self._first_page_iterator_instance = self.by_page()
+        return self._first_page_iterator_instance
+
+    @property
+    def facets(self):
+        return self._first_iterator_instance().facets
 
 
 class SearchPageIterator(PageIterator):
@@ -53,6 +71,7 @@ class SearchPageIterator(PageIterator):
         self._client = client
         self._initial_query = initial_query
         self._kwargs = kwargs
+        self._facets = None
 
     def _get_next_cb(self, continuation_token):
         if continuation_token is None:
@@ -66,7 +85,19 @@ class SearchPageIterator(PageIterator):
 
     def _extract_data_cb(self, response):  # pylint:disable=no-self-use
         continuation_token = pack_continuation_token(response)
+        facets = response.facets
+        if facets is not None:
+            self._facets = {k: [x.as_dict() for x in v] for k, v in facets.items()}
 
         results = [convert_search_result(r) for r in response.results]
 
         return continuation_token, results
+
+    @property
+    def facets(self):
+        if self._current_page is None:
+            self._response = self._get_next(self.continuation_token)
+            self.continuation_token, self._current_page = self._extract_data(
+                self._response
+            )
+        return self._facets

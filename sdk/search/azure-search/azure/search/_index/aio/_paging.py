@@ -18,8 +18,35 @@ if TYPE_CHECKING:
     from typing import Any, Union
 
 
-class AsyncSearchItemPaged(AsyncItemPaged):
-    pass
+class AsyncSearchItemPaged(AsyncItemPaged[ReturnType]):
+    def __init__(self, *args, **kwargs):
+        super(AsyncSearchItemPaged, self).__init__(*args, **kwargs)
+        self._first_page_iterator_instance = None
+
+    async def __anext__(self) -> ReturnType:
+        if self._page_iterator is None:
+            self._page_iterator = self.by_page()
+            self._first_page_iterator_instance = self._page_iterator
+            return await self.__anext__()
+        if self._page is None:
+            # Let it raise StopAsyncIteration
+            self._page = await self._page_iterator.__anext__()
+            return await self.__anext__()
+        try:
+            return await self._page.__anext__()
+        except StopAsyncIteration:
+            self._page = None
+            return await self.__anext__()
+
+    def _first_iterator_instance(self):
+        if self._first_page_iterator_instance is None:
+            self._page_iterator = self.by_page()
+            self._first_page_iterator_instance = self._page_iterator
+        return self._first_page_iterator_instance
+
+    @property
+    async def facets(self):
+        return await self._first_iterator_instance().facets
 
 
 class AsyncSearchPageIterator(AsyncPageIterator[ReturnType]):
@@ -32,6 +59,7 @@ class AsyncSearchPageIterator(AsyncPageIterator[ReturnType]):
         self._client = client
         self._initial_query = initial_query
         self._kwargs = kwargs
+        self._facets = None
 
     async def _get_next_cb(self, continuation_token):
         if continuation_token is None:
@@ -47,7 +75,17 @@ class AsyncSearchPageIterator(AsyncPageIterator[ReturnType]):
 
     async def _extract_data_cb(self, response):  # pylint:disable=no-self-use
         continuation_token = pack_continuation_token(response)
+        facets = response.facets
+        if facets is not None:
+            self._facets = {k: [x.as_dict() for x in v] for k, v in facets.items()}
 
         results = [convert_search_result(r) for r in response.results]
 
         return continuation_token, results
+
+    @property
+    async def facets(self):
+        if self._current_page is None:
+            self._response = await self._get_next(self.continuation_token)
+            self.continuation_token, self._current_page = await self._extract_data(self._response)
+        return self._facets

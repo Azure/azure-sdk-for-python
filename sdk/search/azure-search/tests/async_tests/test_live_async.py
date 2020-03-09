@@ -121,6 +121,36 @@ class SearchIndexClientTestAsync(AzureMgmtTestCase):
     @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     @await_prepared_test
+    async def test_get_search_facets_none(self, api_key, endpoint, index_name, **kwargs):
+        client = SearchIndexClient(
+            endpoint, index_name, SearchApiKeyCredential(api_key)
+        )
+
+        query = SearchQuery(search_text="WiFi")
+        query.select("hotelName", "category", "description")
+
+        async with client:
+            results = await client.search(query=query)
+            assert await results.facets is None
+
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
+    @await_prepared_test
+    async def test_get_search_facets_result(self, api_key, endpoint, index_name, **kwargs):
+        client = SearchIndexClient(
+            endpoint, index_name, SearchApiKeyCredential(api_key)
+        )
+
+        query = SearchQuery(search_text="WiFi", facets=["category"])
+        query.select("hotelName", "category", "description")
+
+        async with client:
+            results = await client.search(query=query)
+            assert await results.facets == {'category': [{'value': 'Budget', 'count': 4}, {'value': 'Luxury', 'count': 1}]}
+
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
+    @await_prepared_test
     async def test_autocomplete(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexClient(
             endpoint, index_name, SearchApiKeyCredential(api_key)
