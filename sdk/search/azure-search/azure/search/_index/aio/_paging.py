@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import TYPE_CHECKING, Union
+from typing import Union
 
 from azure.core.async_paging import AsyncItemPaged, AsyncPageIterator, ReturnType
 from .._generated.models import SearchRequest
