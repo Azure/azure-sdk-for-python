@@ -45,7 +45,8 @@ class SearchItemPaged(ItemPaged[ReturnType]):
         super(SearchItemPaged, self).__init__(*args, **kwargs)
         self._first_page_iterator_instance = None
 
-    def __next__(self) -> ReturnType:
+    def __next__(self):
+        # type: () -> ReturnType
         if self._page_iterator is None:
             first_iterator = self._first_iterator_instance()
             self._page_iterator = itertools.chain.from_iterable(first_iterator)
