@@ -274,7 +274,8 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
         except AttributeError:
             file_system_name = file_system
 
-        return FileSystemClient(self.url, file_system_name, credential=self._raw_credential, _configuration=self._config,
+        return FileSystemClient(self.url, file_system_name, credential=self._raw_credential,
+                                _configuration=self._config,
                                 _pipeline=self._pipeline, _hosts=self._hosts,
                                 require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
                                 key_resolver_function=self.key_resolver_function)
