@@ -9,7 +9,8 @@ from azure.storage.blob import generate_account_sas as generate_blob_account_sas
 from azure.storage.blob import generate_container_sas, generate_blob_sas
 if TYPE_CHECKING:
     import datetime
-    from ._models import AccountSasPermissions, FileSystemSasPermissions, FileSasPermissions, ResourceTypes
+    from ._models import AccountSasPermissions, FileSystemSasPermissions, FileSasPermissions, ResourceTypes, \
+        UserDelegationKey
 
 
 def generate_account_sas(
@@ -78,8 +79,7 @@ def generate_account_sas(
 def generate_file_system_sas(
         account_name,  # type: str
         file_system_name,  # type: str
-        account_key=None,  # type: Optional[str]
-        user_delegation_key=None,  # type: Optional[UserDelegationKey]
+        credential,  # type: Union[str, UserDelegationKey]
         permission=None,  # type: Optional[Union[FileSystemSasPermissions, str]]
         expiry=None,  # type: Optional[Union[datetime, str]]
         **kwargs # type: Any
@@ -94,14 +94,15 @@ def generate_file_system_sas(
         The storage account name used to generate the shared access signature.
     :param str file_system_name:
         The name of the file system.
-    :param str account_key:
-        The access key to generate the shared access signature. Either `account_key` or
-        `user_delegation_key` must be specified.
-    :param ~azure.storage.filedatalake.UserDelegationKey user_delegation_key:
-        Instead of an account key, the user could pass in a user delegation key.
+    :param str credential:
+        Credential could be either account key or user delegation key.
+        If use account key is used as credential, then the credential type should be a str.
+        Instead of an account key, the user could also pass in a user delegation key.
         A user delegation key can be obtained from the service by authenticating with an AAD identity;
-        this can be accomplished by calling :func:`~azure.storage.filedatalake.DataLakeServiceClient.get_user_delegation_key`.
+        this can be accomplished
+        by calling :func:`~azure.storage.filedatalake.DataLakeServiceClient.get_user_delegation_key`.
         When present, the SAS is signed with the user delegation key instead.
+    :type credential: str or ~azure.storage.filedatalake.UserDelegationKey
     :param permission:
         The permissions associated with the shared access signature. The
         user is restricted to operations allowed by the permissions.
@@ -154,8 +155,8 @@ def generate_file_system_sas(
     return generate_container_sas(
         account_name=account_name,
         container_name=file_system_name,
-        account_key=account_key,
-        user_delegation_key=user_delegation_key,
+        account_key=credential if isinstance(credential, str) else None,
+        user_delegation_key=credential if not isinstance(credential, str) else None,
         permission=permission,
         expiry=expiry,
         **kwargs)
@@ -165,8 +166,7 @@ def generate_directory_sas(
         account_name,  # type: str
         file_system_name,  # type: str
         directory_name,  # type: str
-        account_key=None,  # type: Optional[str]
-        user_delegation_key=None,  # type: Optional[UserDelegationKey]
+        credential,  # type: Union[str, UserDelegationKey]
         permission=None,  # type: Optional[Union[FileSasPermissions, str]]
         expiry=None,  # type: Optional[Union[datetime, str]]
         **kwargs # type: Any
@@ -183,14 +183,15 @@ def generate_directory_sas(
         The name of the file system.
     :param str directory_name:
         The name of the directory.
-    :param str account_key:
-        The access key to generate the shared access signature. Either `account_key` or
-        `user_delegation_key` must be specified.
-    :param ~azure.storage.filedatalake.UserDelegationKey user_delegation_key:
-        Instead of an account key, the user could pass in a user delegation key.
+    :param str credential:
+        Credential could be either account key or user delegation key.
+        If use account key is used as credential, then the credential type should be a str.
+        Instead of an account key, the user could also pass in a user delegation key.
         A user delegation key can be obtained from the service by authenticating with an AAD identity;
-        this can be accomplished by calling :func:`~azure.storage.filedatalake.DataLakeServiceClient.get_user_delegation_key`.
+        this can be accomplished
+        by calling :func:`~azure.storage.filedatalake.DataLakeServiceClient.get_user_delegation_key`.
         When present, the SAS is signed with the user delegation key instead.
+    :type credential: str or ~azure.storage.filedatalake.UserDelegationKey
     :param permission:
         The permissions associated with the shared access signature. The
         user is restricted to operations allowed by the permissions.
@@ -244,8 +245,8 @@ def generate_directory_sas(
         account_name=account_name,
         container_name=file_system_name,
         blob_name=directory_name,
-        account_key=account_key,
-        user_delegation_key=user_delegation_key,
+        account_key=credential if isinstance(credential, str) else None,
+        user_delegation_key=credential if not isinstance(credential, str) else None,
         permission=permission,
         expiry=expiry,
         **kwargs)
@@ -256,8 +257,7 @@ def generate_file_sas(
         file_system_name,  # type: str
         directory_name,  # type: str
         file_name,  # type: str
-        account_key=None,  # type: Optional[str]
-        user_delegation_key=None,  # type: Optional[UserDelegationKey]
+        credential,  # type: Union[str, UserDelegationKey]
         permission=None,  # type: Optional[Union[FileSasPermissions, str]]
         expiry=None,  # type: Optional[Union[datetime, str]]
         **kwargs # type: Any
@@ -276,14 +276,15 @@ def generate_file_sas(
         The name of the directory.
     :param str file_name:
         The name of the file.
-    :param str account_key:
-        The access key to generate the shared access signature. Either `account_key` or
-        `user_delegation_key` must be specified.
-    :param ~azure.storage.filedatalake.UserDelegationKey user_delegation_key:
-        Instead of an account key, the user could pass in a user delegation key.
+    :param str credential:
+        Credential could be either account key or user delegation key.
+        If use account key is used as credential, then the credential type should be a str.
+        Instead of an account key, the user could also pass in a user delegation key.
         A user delegation key can be obtained from the service by authenticating with an AAD identity;
-        this can be accomplished by calling :func:`~azure.storage.filedatalake.DataLakeServiceClient.get_user_delegation_key`.
+        this can be accomplished
+        by calling :func:`~azure.storage.filedatalake.DataLakeServiceClient.get_user_delegation_key`.
         When present, the SAS is signed with the user delegation key instead.
+    :type credential: str or ~azure.storage.filedatalake.UserDelegationKey
     :param permission:
         The permissions associated with the shared access signature. The
         user is restricted to operations allowed by the permissions.
@@ -341,8 +342,8 @@ def generate_file_sas(
         account_name=account_name,
         container_name=file_system_name,
         blob_name=path,
-        account_key=account_key,
-        user_delegation_key=user_delegation_key,
+        account_key=credential if isinstance(credential, str) else None,
+        user_delegation_key=credential if not isinstance(credential, str) else None,
         permission=permission,
         expiry=expiry,
         **kwargs)

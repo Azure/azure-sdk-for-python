@@ -356,18 +356,31 @@ class ContentSettings(BlobContentSettings):
         If the content_md5 has been set for the file, this response
         header is stored so that the client can check for message content
         integrity.
+    :keyword str content_type:
+        The content type specified for the file or directory. If no content type was
+        specified, the default content type is application/octet-stream.
+    :keyword str content_encoding:
+        If the content_encoding has previously been set
+        for the file, that value is stored.
+    :keyword str content_language:
+        If the content_language has previously been set
+        for the file, that value is stored.
+    :keyword str content_disposition:
+        content_disposition conveys additional information about how to
+        process the response payload, and also can be used to attach
+        additional metadata. If content_disposition has previously been set
+        for the file, that value is stored.
+    :keyword str cache_control:
+        If the cache_control has previously been set for
+        the file, that value is stored.
+    :keyword str content_md5:
+        If the content_md5 has been set for the file, this response
+        header is stored so that the client can check for message content
+        integrity.
     """
     def __init__(
-            self, content_type=None, content_encoding=None,
-            content_language=None, content_disposition=None,
-            cache_control=None, content_md5=None, **kwargs):
+            self, **kwargs):
         super(ContentSettings, self).__init__(
-            content_type=content_type,
-            content_encoding=content_encoding,
-            content_language=content_language,
-            content_disposition=content_disposition,
-            cache_control=cache_control,
-            content_md5=content_md5,
             **kwargs
         )
 
