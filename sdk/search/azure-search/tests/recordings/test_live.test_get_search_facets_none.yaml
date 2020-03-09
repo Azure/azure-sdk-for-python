@@ -13,9 +13,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-searchindexclient/unknown Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
+      - azsdk-python-search/1.0.0b1 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
       api-key:
-      - 0F57320C29A0AD9346083B4C367E8367
+      - 7B63A8A2EE86E1034EECADDFEE20194B
     method: POST
     uri: https://search1eef0f16.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2019-05-06-Preview
   response:
@@ -39,9 +39,9 @@ interactions:
       content-type:
       - application/json; odata.metadata=none
       date:
-      - Mon, 09 Mar 2020 18:44:09 GMT
+      - Mon, 09 Mar 2020 21:19:49 GMT
       elapsed-time:
-      - '137'
+      - '239'
       expires:
       - '-1'
       odata-version:
@@ -51,7 +51,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - f6213e6c-6235-11ea-b055-acde48001122
+      - b5328256-624b-11ea-9360-8c8590507855
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:
