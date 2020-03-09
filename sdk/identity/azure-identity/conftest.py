@@ -113,3 +113,22 @@ def live_user_details():
         pytest.skip("To test username/password authentication, set $AZURE_USERNAME, $AZURE_PASSWORD, $USER_TENANT")
     else:
         return user_details
+
+@pytest.fixture()
+def event_loop():
+    """Ensure the event loop used by pytest-asyncio on Windows is ProactorEventLoop, which supports subprocesses.
+
+    This is necessary because SelectorEventLoop, which does not support subprocesses, is the default on Python < 3.8.
+    """
+
+    if not sys.platform.startswith("win"):
+        return
+
+    try:
+        import asyncio
+    except:
+        return
+
+    loop = asyncio.ProactorEventLoop()
+    yield loop
+    loop.close()

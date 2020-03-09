@@ -47,12 +47,15 @@ async def test_context_manager():
 async def test_windows_fallback():
     """The credential should fall back to the sync implementation when not using ProactorEventLoop on Windows"""
 
-    with mock.patch("azure.identity._credentials.azure_cli.AzureCliCredential.get_token") as fallback:
+    sync_get_token = mock.Mock()
+    with mock.patch("azure.identity.aio._credentials.azure_cli._SyncAzureCliCredential") as fallback:
+        fallback.return_value = mock.Mock(get_token=sync_get_token)
         with mock.patch(AzureCliCredential.__module__ + ".asyncio.get_event_loop"):
+            # asyncio.get_event_loop now returns Mock, i.e. never ProactorEventLoop
             credential = AzureCliCredential()
             await credential.get_token("scope")
 
-    assert fallback.call_count == 1
+    assert sync_get_token.call_count == 1
 
 
 @pytest.mark.asyncio
