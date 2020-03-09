@@ -454,8 +454,8 @@ class TestRecognizeEntities(AsyncTextAnalyticsTest):
         try:
             result = await text_analytics.recognize_entities(docs, model_version="bad")
         except HttpResponseError as err:
-            self.assertEqual(err.error_code, "InvalidRequest")
-            self.assertIsNotNone(err.message)
+            self.assertEqual(err.error.code, "InvalidRequest")
+            self.assertIsNotNone(err.error.message)
 
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
@@ -485,8 +485,8 @@ class TestRecognizeEntities(AsyncTextAnalyticsTest):
         try:
             result = await text_analytics.recognize_entities(docs)
         except HttpResponseError as err:
-            self.assertEqual(err.error_code, "MissingInputRecords")
-            self.assertIsNotNone(err.message)
+            self.assertEqual(err.error.code, "MissingInputRecords")
+            self.assertIsNotNone(err.error.message)
 
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
@@ -498,8 +498,8 @@ class TestRecognizeEntities(AsyncTextAnalyticsTest):
         try:
             result = await text_analytics.recognize_entities(docs)
         except HttpResponseError as err:
-            self.assertEqual(err.error_code, "InvalidDocument")
-            self.assertIsNotNone(err.message)
+            self.assertEqual(err.error.code, "InvalidDocument")
+            self.assertIsNotNone(err.error.message)
 
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
@@ -510,8 +510,8 @@ class TestRecognizeEntities(AsyncTextAnalyticsTest):
         try:
             response = await text_analytics.recognize_entities(docs)
         except HttpResponseError as err:
-            self.assertEqual(err.error_code, "InvalidDocumentBatch")
-            self.assertIsNotNone(err.message)
+            self.assertEqual(err.error.code, "InvalidDocumentBatch")
+            self.assertIsNotNone(err.error.message)
 
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test

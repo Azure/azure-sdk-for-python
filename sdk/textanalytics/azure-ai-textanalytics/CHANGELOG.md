@@ -15,6 +15,9 @@
 **New features**
 - Pass `country_hint="none"` to not use the default country hint of `"US"`.
 
+**Dependency updates**
+- Adopted [azure-core](https://pypi.org/project/azure-core/) version 1.3.0 or greater
+
 ## 1.0.0b2 (2020-02-11)
 
 **Breaking changes**
