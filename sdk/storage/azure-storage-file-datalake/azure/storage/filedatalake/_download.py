@@ -7,7 +7,7 @@
 from ._models import FileProperties
 
 
-class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attributes
+class StorageStreamDownloader(object):
     """A streaming object to download from Azure Storage.
 
     :ivar str name:
@@ -23,7 +23,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
     def __init__(self, downloader):
         self._downloader = downloader
         self.name = self._downloader.name
-        self.properties = FileProperties._from_blob_properties(self._downloader.properties) 
+        self.properties = FileProperties._from_blob_properties(self._downloader.properties)  # pylint: disable=protected-access
         self.size = self._downloader.size
 
     def __len__(self):
