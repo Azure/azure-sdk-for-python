@@ -1,5 +1,26 @@
 # Release History
 
+## 3.0.0rc10 (2020-03-09) 
+
+**Features**
+
+- Model Token has a new parameter object_id
+
+**Breaking changes**
+
+- Model TokenCredentialsProperties no longer has parameter active_directory_object
+- Model RegistryUpdateParameters no longer has parameter identity
+- Model RegistryUpdateParameters no longer has parameter encryption
+- Model RegistryUpdateParameters no longer has parameter data_endpoint_enabled
+- Model Registry no longer has parameter encryption
+- Model Registry no longer has parameter data_endpoint_host_names
+- Model Registry no longer has parameter identity
+- Model Registry no longer has parameter private_endpoint_connections
+- Model Registry no longer has parameter data_endpoint_enabled
+- Removed operation RegistriesOperations.list_private_link_resources
+- Removed operation group TaskRunsOperations
+- Removed operation group PrivateEndpointConnectionsOperations
+
 ## 3.0.0rc9 (2020-03-02)
 
 **Features**
