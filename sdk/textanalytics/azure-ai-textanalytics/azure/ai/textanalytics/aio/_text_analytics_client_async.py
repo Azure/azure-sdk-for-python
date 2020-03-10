@@ -58,9 +58,9 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
     :param credential: Credentials needed for the client to connect to Azure.
         This can be the an instance of TextAnalyticsApiKeyCredential if using a
         cognitive services/text analytics API key or a token credential
-        from azure.identity.
-    :type credential: ~azure.ai.textanalytics.TextAnalyticsApiKeyCredential
-        or ~azure.core.credentials.TokenCredential
+        from :mod:`azure.identity`.
+    :type credential: :class:`~azure.ai.textanalytics.TextAnalyticsApiKeyCredential`
+        or :class:`~azure.core.credentials_async.AsyncTokenCredential`
     :keyword str default_country_hint: Sets the default country_hint to use for all operations.
         Defaults to "US". If you don't want to use a country hint, pass the string "none".
     :keyword str default_language: Sets the default language to use for all operations.
@@ -113,8 +113,9 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
 
         :param inputs: The set of documents to process as part of this batch.
             If you wish to specify the ID and country_hint on a per-item basis you must
-            use as input a list[DetectLanguageInput] or a list of dict representations of
-            DetectLanguageInput, like `{"id": "1", "country_hint": "us", "text": "hello world"}`.
+            use as input a list[:class:`~azure.ai.textanalytics.DetectLanguageInput`] or a list of
+            dict representations of :class:`~azure.ai.textanalytics.DetectLanguageInput`, like
+            `{"id": "1", "country_hint": "us", "text": "hello world"}`.
         :type inputs:
             list[str] or list[~azure.ai.textanalytics.DetectLanguageInput]
         :keyword str country_hint: A country hint for the entire batch. Accepts two
@@ -126,8 +127,9 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             is not specified, the API will default to the latest, non-preview version.
         :keyword bool show_stats: If set to true, response will contain document
             level statistics.
-        :return: The combined list of DetectLanguageResults and DocumentErrors in the order
-            the original documents were passed in.
+        :return: The combined list of :class:`~azure.ai.textanalytics.DetectLanguageResults`
+            and :class:`~azure.ai.textanalytics.DocumentErrors` in the order the original documents
+            were passed in.
         :rtype: list[~azure.ai.textanalytics.DetectLanguageResult,
             ~azure.ai.textanalytics.DocumentError]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -174,8 +176,9 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
 
         :param inputs: The set of documents to process as part of this batch.
             If you wish to specify the ID and language on a per-item basis you must
-            use as input a list[TextDocumentInput] or a list of dict representations of
-            TextDocumentInput, like `{"id": "1", "language": "en", "text": "hello world"}`.
+            use as input a list[:class:`~azure.ai.textanalytics.TextDocumentInput`] or a list of
+            dict representations of :class:`~azure.ai.textanalytics.TextDocumentInput`, like
+            `{"id": "1", "language": "en", "text": "hello world"}`.
         :type inputs:
             list[str] or list[~azure.ai.textanalytics.TextDocumentInput]
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
@@ -187,8 +190,9 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
         :keyword bool show_stats: If set to true, response will contain document level statistics.
-        :return: The combined list of RecognizeEntitiesResults and DocumentErrors in the order
-            the original documents were passed in.
+        :return: The combined list of :class:`~azure.ai.textanalytics.RecognizeEntitiesResults` and
+            :class:`~azure.ai.textanalytics.DocumentErrors` in the order the original documents were
+            passed in.
         :rtype: list[~azure.ai.textanalytics.RecognizeEntitiesResult,
             ~azure.ai.textanalytics.DocumentError]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -235,8 +239,9 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
 
         :param inputs: The set of documents to process as part of this batch.
             If you wish to specify the ID and language on a per-item basis you must
-            use as input a list[TextDocumentInput] or a list of dict representations of
-            TextDocumentInput, like `{"id": "1", "language": "en", "text": "hello world"}`.
+            use as input a list[:class:`~azure.ai.textanalytics.TextDocumentInput`] or a list of
+            dict representations of :class:`~azure.ai.textanalytics.TextDocumentInput`, like
+            `{"id": "1", "language": "en", "text": "hello world"}`.
         :type inputs:
             list[str] or list[~azure.ai.textanalytics.TextDocumentInput]
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
@@ -248,8 +253,9 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
         :keyword bool show_stats: If set to true, response will contain document level statistics.
-        :return: The combined list of RecognizePiiEntitiesResults and DocumentErrors in the order
-            the original documents were passed in.
+        :return: The combined list of :class:`~azure.ai.textanalytics.RecognizePiiEntitiesResults`
+            and :class:`~azure.ai.textanalytics.DocumentErrors` in the order the original documents
+            were passed in.
         :rtype: list[~azure.ai.textanalytics.RecognizePiiEntitiesResult,
             ~azure.ai.textanalytics.DocumentError]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -297,8 +303,9 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
 
         :param inputs: The set of documents to process as part of this batch.
             If you wish to specify the ID and language on a per-item basis you must
-            use as input a list[TextDocumentInput] or a list of dict representations of
-            TextDocumentInput, like `{"id": "1", "language": "en", "text": "hello world"}`.
+            use as input a list[:class:`~azure.ai.textanalytics.TextDocumentInput`] or a list of
+            dict representations of :class:`~azure.ai.textanalytics.TextDocumentInput`, like
+            `{"id": "1", "language": "en", "text": "hello world"}`.
         :type inputs:
             list[str] or list[~azure.ai.textanalytics.TextDocumentInput]
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
@@ -310,8 +317,9 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
         :keyword bool show_stats: If set to true, response will contain document level statistics.
-        :return: The combined list of RecognizeLinkedEntitiesResults and DocumentErrors in the order
-            the original documents were passed in.
+        :return: The combined list of :class:`~azure.ai.textanalytics.RecognizeLinkedEntitiesResults`
+            and :class:`~azure.ai.textanalytics.DocumentErrors` in the order the original documents
+            were passed in.
         :rtype: list[~azure.ai.textanalytics.RecognizeLinkedEntitiesResult,
             ~azure.ai.textanalytics.DocumentError]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -359,8 +367,9 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
 
         :param inputs: The set of documents to process as part of this batch.
             If you wish to specify the ID and language on a per-item basis you must
-            use as input a list[TextDocumentInput] or a list of dict representations of
-            TextDocumentInput, like `{"id": "1", "language": "en", "text": "hello world"}`.
+            use as input a list[:class:`~azure.ai.textanalytics.TextDocumentInput`] or a list of
+            dict representations of :class:`~azure.ai.textanalytics.TextDocumentInput`, like
+            `{"id": "1", "language": "en", "text": "hello world"}`.
         :type inputs:
             list[str] or list[~azure.ai.textanalytics.TextDocumentInput]
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
@@ -372,8 +381,9 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
         :keyword bool show_stats: If set to true, response will contain document level statistics.
-        :return: The combined list of ExtractKeyPhrasesResults and DocumentErrors in the order
-            the original documents were passed in.
+        :return: The combined list of :class:`~azure.ai.textanalytics.ExtractKeyPhrasesResults` and
+            :class:`~azure.ai.textanalytics.DocumentErrors` in the order the original documents were
+            passed in.
         :rtype: list[~azure.ai.textanalytics.ExtractKeyPhrasesResult,
             ~azure.ai.textanalytics.DocumentError]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -420,8 +430,9 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
 
         :param inputs: The set of documents to process as part of this batch.
             If you wish to specify the ID and language on a per-item basis you must
-            use as input a list[TextDocumentInput] or a list of dict representations of
-            TextDocumentInput, like `{"id": "1", "language": "en", "text": "hello world"}`.
+            use as input a list[:class:`~azure.ai.textanalytics.TextDocumentInput`] or a list of
+            dict representations of :class:`~azure.ai.textanalytics.TextDocumentInput`, like
+            `{"id": "1", "language": "en", "text": "hello world"}`.
         :type inputs:
             list[str] or list[~azure.ai.textanalytics.TextDocumentInput]
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
@@ -433,8 +444,9 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
         :keyword bool show_stats: If set to true, response will contain document level statistics.
-        :return: The combined list of AnalyzeSentimentResults and DocumentErrors in the order
-            the original documents were passed in.
+        :return: The combined list of :class:`~azure.ai.textanalytics.AnalyzeSentimentResults` and
+            :class:`~azure.ai.textanalytics.DocumentErrors` in the order the original documents were
+            passed in.
         :rtype: list[~azure.ai.textanalytics.AnalyzeSentimentResult,
             ~azure.ai.textanalytics.DocumentError]
         :raises ~azure.core.exceptions.HttpResponseError:
