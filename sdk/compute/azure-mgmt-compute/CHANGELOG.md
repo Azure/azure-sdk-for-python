@@ -4,9 +4,9 @@
 
 **Features**
 
-- Operation VirtualMachineImagesOperations.list has a new parameters $expand
+- Operation VirtualMachineImagesOperations.list has a new parameter $expand
 
-**Bugfixs**
+**Bugfixes**
 
 - remove not-working $filter in Operation VirtualMachineImagesOperations.list
 
