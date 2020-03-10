@@ -1624,6 +1624,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             'validate_content': validate_content,
             'cpk_scope_info': cpk_scope_info,
             'cpk_info': cpk_info,
+            'cls': return_response_headers,
         }
         options.update(kwargs)
         return options
@@ -1635,7 +1636,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             length=None,  # type: Optional[int]
             **kwargs
         ):
-        # type: (...) -> None
+        # type: (...) -> Dict[str, Any]
         """Creates a new block to be committed as part of a blob.
 
         :param str block_id: A valid Base64 string value that identifies the
@@ -1674,7 +1675,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :rtype: None
+        :returns: Blob property dict.
+        :rtype: dict[str, Any]
         """
         options = self._stage_block_options(
             block_id,
@@ -1682,7 +1684,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             length=length,
             **kwargs)
         try:
-            self._client.block_blob.stage_block(**options)
+            return self._client.block_blob.stage_block(**options)
         except StorageErrorException as error:
             process_storage_error(error)
 
@@ -1737,7 +1739,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             source_content_md5=None,  # type: Optional[Union[bytes, bytearray]]
             **kwargs
         ):
-        # type: (...) -> None
+        # type: (...) -> Dict[str, Any]
         """Creates a new block to be committed as part of a blob where
         the contents are read from a URL.
 
@@ -1772,7 +1774,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :rtype: None
+        :returns: Blob property dict.
+        :rtype: dict[str, Any]
         """
         options = self._stage_block_from_url_options(
             block_id,
@@ -1782,7 +1785,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             source_content_md5=source_content_md5,
             **kwargs)
         try:
-            self._client.block_blob.stage_block_from_url(**options)
+            return self._client.block_blob.stage_block_from_url(**options)
         except StorageErrorException as error:
             process_storage_error(error)
 
