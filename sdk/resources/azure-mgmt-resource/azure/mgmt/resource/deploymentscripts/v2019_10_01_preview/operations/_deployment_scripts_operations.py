@@ -101,7 +101,7 @@ class DeploymentScriptsOperations(object):
         :type script_name: str
         :param deployment_script: Deployment script supplied to the operation.
         :type deployment_script:
-         ~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.DeploymentScript
+         ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.DeploymentScript
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -110,11 +110,11 @@ class DeploymentScriptsOperations(object):
         :return: An instance of LROPoller that returns DeploymentScript or
          ClientRawResponse<DeploymentScript> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.DeploymentScript]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.DeploymentScript]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.DeploymentScript]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.DeploymentScript]]
         :raises:
-         :class:`DeploymentScriptsErrorException<azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.DeploymentScriptsErrorException>`
+         :class:`DeploymentScriptsErrorException<azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.DeploymentScriptsErrorException>`
         """
         raw_result = self._create_initial(
             resource_group_name=resource_group_name,
@@ -161,10 +161,10 @@ class DeploymentScriptsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: DeploymentScript or ClientRawResponse if raw=true
         :rtype:
-         ~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.DeploymentScript
+         ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.DeploymentScript
          or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DeploymentScriptsErrorException<azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.DeploymentScriptsErrorException>`
+         :class:`DeploymentScriptsErrorException<azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.DeploymentScriptsErrorException>`
         """
         deployment_script = None
         if tags is not None:
@@ -234,10 +234,10 @@ class DeploymentScriptsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: DeploymentScript or ClientRawResponse if raw=true
         :rtype:
-         ~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.DeploymentScript
+         ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.DeploymentScript
          or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DeploymentScriptsErrorException<azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.DeploymentScriptsErrorException>`
+         :class:`DeploymentScriptsErrorException<azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.DeploymentScriptsErrorException>`
         """
         # Construct URL
         url = self.get.metadata['url']
@@ -298,7 +298,7 @@ class DeploymentScriptsOperations(object):
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DeploymentScriptsErrorException<azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.DeploymentScriptsErrorException>`
+         :class:`DeploymentScriptsErrorException<azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.DeploymentScriptsErrorException>`
         """
         # Construct URL
         url = self.delete.metadata['url']
@@ -345,9 +345,9 @@ class DeploymentScriptsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of DeploymentScript
         :rtype:
-         ~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.DeploymentScriptPaged[~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.DeploymentScript]
+         ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.DeploymentScriptPaged[~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.DeploymentScript]
         :raises:
-         :class:`DeploymentScriptsErrorException<azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.DeploymentScriptsErrorException>`
+         :class:`DeploymentScriptsErrorException<azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.DeploymentScriptsErrorException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -415,10 +415,10 @@ class DeploymentScriptsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: ScriptLogsList or ClientRawResponse if raw=true
         :rtype:
-         ~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.ScriptLogsList
+         ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.ScriptLogsList
          or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DeploymentScriptsErrorException<azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.DeploymentScriptsErrorException>`
+         :class:`DeploymentScriptsErrorException<azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.DeploymentScriptsErrorException>`
         """
         # Construct URL
         url = self.get_logs.metadata['url']
@@ -482,10 +482,10 @@ class DeploymentScriptsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: ScriptLog or ClientRawResponse if raw=true
         :rtype:
-         ~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.ScriptLog
+         ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.ScriptLog
          or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DeploymentScriptsErrorException<azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.DeploymentScriptsErrorException>`
+         :class:`DeploymentScriptsErrorException<azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.DeploymentScriptsErrorException>`
         """
         # Construct URL
         url = self.get_logs_default.metadata['url']
@@ -544,9 +544,9 @@ class DeploymentScriptsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of DeploymentScript
         :rtype:
-         ~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.DeploymentScriptPaged[~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.DeploymentScript]
+         ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.DeploymentScriptPaged[~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.DeploymentScript]
         :raises:
-         :class:`DeploymentScriptsErrorException<azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.DeploymentScriptsErrorException>`
+         :class:`DeploymentScriptsErrorException<azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.DeploymentScriptsErrorException>`
         """
         def prepare_request(next_link=None):
             if not next_link:

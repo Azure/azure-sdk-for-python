@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class DeploymentScriptPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`DeploymentScript <azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.DeploymentScript>` object
+    A paging container for iterating over a list of :class:`DeploymentScript <azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.DeploymentScript>` object
     """
 
     _attribute_map = {

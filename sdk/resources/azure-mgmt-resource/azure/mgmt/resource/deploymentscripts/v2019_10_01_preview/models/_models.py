@@ -39,7 +39,7 @@ class AzureResourceBase(Model):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(AzureResourceBase, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -66,7 +66,7 @@ class DeploymentScript(AzureResourceBase):
     :param identity: Required. Managed identity to be used for this deployment
      script. Currently, only user-assigned MSI is supported.
     :type identity:
-     ~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.ManagedServiceIdentity
+     ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.ManagedServiceIdentity
     :param location: Required. The location of the ACI and the storage account
      for the deployment script.
     :type location: str
@@ -99,11 +99,11 @@ class DeploymentScript(AzureResourceBase):
         'kind': {'AzurePowerShell': 'AzurePowerShellScript', 'AzureCLI': 'AzureCliScript'}
     }
 
-    def __init__(self, *, identity, location: str, tags=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(DeploymentScript, self).__init__(**kwargs)
-        self.identity = identity
-        self.location = location
-        self.tags = tags
+        self.identity = kwargs.get('identity', None)
+        self.location = kwargs.get('location', None)
+        self.tags = kwargs.get('tags', None)
         self.kind = None
         self.kind = 'DeploymentScript'
 
@@ -125,7 +125,7 @@ class AzureCliScript(DeploymentScript):
     :param identity: Required. Managed identity to be used for this deployment
      script. Currently, only user-assigned MSI is supported.
     :type identity:
-     ~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.ManagedServiceIdentity
+     ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.ManagedServiceIdentity
     :param location: Required. The location of the ACI and the storage account
      for the deployment script.
     :type location: str
@@ -137,15 +137,15 @@ class AzureCliScript(DeploymentScript):
      execution gets in a terminal state. Default setting is 'Always'. Possible
      values include: 'Always', 'OnSuccess', 'OnExpiration'
     :type cleanup_preference: str or
-     ~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.CleanupOptions
+     ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.CleanupOptions
     :ivar provisioning_state: State of the script execution. This only appears
      in the response. Possible values include: 'Creating',
      'ProvisioningResources', 'Running', 'Succeeded', 'Failed', 'Canceled'
     :vartype provisioning_state: str or
-     ~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.ScriptProvisioningState
+     ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.ScriptProvisioningState
     :ivar status: Contains the results of script execution.
     :vartype status:
-     ~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.ScriptStatus
+     ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.ScriptStatus
     :ivar outputs: List of script outputs.
     :vartype outputs: dict[str, object]
     :param primary_script_uri: Uri for the script. This is the entry point for
@@ -161,7 +161,7 @@ class AzureCliScript(DeploymentScript):
     :param environment_variables: The environment variables to pass over to
      the script.
     :type environment_variables:
-     list[~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.EnvironmentVariable]
+     list[~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.EnvironmentVariable]
     :param force_update_tag: Gets or sets how the deployment script should be
      forced to execute even if the script resource has not changed. Can be
      current time stamp or a GUID.
@@ -216,21 +216,21 @@ class AzureCliScript(DeploymentScript):
         'az_cli_version': {'key': 'properties.azCliVersion', 'type': 'str'},
     }
 
-    def __init__(self, *, identity, location: str, retention_interval, az_cli_version: str, tags=None, cleanup_preference=None, primary_script_uri: str=None, supporting_script_uris=None, script_content: str=None, arguments: str=None, environment_variables=None, force_update_tag: str=None, timeout=None, **kwargs) -> None:
-        super(AzureCliScript, self).__init__(identity=identity, location=location, tags=tags, **kwargs)
-        self.cleanup_preference = cleanup_preference
+    def __init__(self, **kwargs):
+        super(AzureCliScript, self).__init__(**kwargs)
+        self.cleanup_preference = kwargs.get('cleanup_preference', None)
         self.provisioning_state = None
         self.status = None
         self.outputs = None
-        self.primary_script_uri = primary_script_uri
-        self.supporting_script_uris = supporting_script_uris
-        self.script_content = script_content
-        self.arguments = arguments
-        self.environment_variables = environment_variables
-        self.force_update_tag = force_update_tag
-        self.retention_interval = retention_interval
-        self.timeout = timeout
-        self.az_cli_version = az_cli_version
+        self.primary_script_uri = kwargs.get('primary_script_uri', None)
+        self.supporting_script_uris = kwargs.get('supporting_script_uris', None)
+        self.script_content = kwargs.get('script_content', None)
+        self.arguments = kwargs.get('arguments', None)
+        self.environment_variables = kwargs.get('environment_variables', None)
+        self.force_update_tag = kwargs.get('force_update_tag', None)
+        self.retention_interval = kwargs.get('retention_interval', None)
+        self.timeout = kwargs.get('timeout', None)
+        self.az_cli_version = kwargs.get('az_cli_version', None)
         self.kind = 'AzureCLI'
 
 
@@ -251,7 +251,7 @@ class AzurePowerShellScript(DeploymentScript):
     :param identity: Required. Managed identity to be used for this deployment
      script. Currently, only user-assigned MSI is supported.
     :type identity:
-     ~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.ManagedServiceIdentity
+     ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.ManagedServiceIdentity
     :param location: Required. The location of the ACI and the storage account
      for the deployment script.
     :type location: str
@@ -263,15 +263,15 @@ class AzurePowerShellScript(DeploymentScript):
      execution gets in a terminal state. Default setting is 'Always'. Possible
      values include: 'Always', 'OnSuccess', 'OnExpiration'
     :type cleanup_preference: str or
-     ~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.CleanupOptions
+     ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.CleanupOptions
     :ivar provisioning_state: State of the script execution. This only appears
      in the response. Possible values include: 'Creating',
      'ProvisioningResources', 'Running', 'Succeeded', 'Failed', 'Canceled'
     :vartype provisioning_state: str or
-     ~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.ScriptProvisioningState
+     ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.ScriptProvisioningState
     :ivar status: Contains the results of script execution.
     :vartype status:
-     ~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.ScriptStatus
+     ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.ScriptStatus
     :ivar outputs: List of script outputs.
     :vartype outputs: dict[str, object]
     :param primary_script_uri: Uri for the script. This is the entry point for
@@ -287,7 +287,7 @@ class AzurePowerShellScript(DeploymentScript):
     :param environment_variables: The environment variables to pass over to
      the script.
     :type environment_variables:
-     list[~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.EnvironmentVariable]
+     list[~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.EnvironmentVariable]
     :param force_update_tag: Gets or sets how the deployment script should be
      forced to execute even if the script resource has not changed. Can be
      current time stamp or a GUID.
@@ -343,21 +343,21 @@ class AzurePowerShellScript(DeploymentScript):
         'az_power_shell_version': {'key': 'properties.azPowerShellVersion', 'type': 'str'},
     }
 
-    def __init__(self, *, identity, location: str, retention_interval, az_power_shell_version: str, tags=None, cleanup_preference=None, primary_script_uri: str=None, supporting_script_uris=None, script_content: str=None, arguments: str=None, environment_variables=None, force_update_tag: str=None, timeout=None, **kwargs) -> None:
-        super(AzurePowerShellScript, self).__init__(identity=identity, location=location, tags=tags, **kwargs)
-        self.cleanup_preference = cleanup_preference
+    def __init__(self, **kwargs):
+        super(AzurePowerShellScript, self).__init__(**kwargs)
+        self.cleanup_preference = kwargs.get('cleanup_preference', None)
         self.provisioning_state = None
         self.status = None
         self.outputs = None
-        self.primary_script_uri = primary_script_uri
-        self.supporting_script_uris = supporting_script_uris
-        self.script_content = script_content
-        self.arguments = arguments
-        self.environment_variables = environment_variables
-        self.force_update_tag = force_update_tag
-        self.retention_interval = retention_interval
-        self.timeout = timeout
-        self.az_power_shell_version = az_power_shell_version
+        self.primary_script_uri = kwargs.get('primary_script_uri', None)
+        self.supporting_script_uris = kwargs.get('supporting_script_uris', None)
+        self.script_content = kwargs.get('script_content', None)
+        self.arguments = kwargs.get('arguments', None)
+        self.environment_variables = kwargs.get('environment_variables', None)
+        self.force_update_tag = kwargs.get('force_update_tag', None)
+        self.retention_interval = kwargs.get('retention_interval', None)
+        self.timeout = kwargs.get('timeout', None)
+        self.az_power_shell_version = kwargs.get('az_power_shell_version', None)
         self.kind = 'AzurePowerShell'
 
 
@@ -379,15 +379,15 @@ class DeploymentScriptPropertiesBase(Model):
      execution gets in a terminal state. Default setting is 'Always'. Possible
      values include: 'Always', 'OnSuccess', 'OnExpiration'
     :type cleanup_preference: str or
-     ~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.CleanupOptions
+     ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.CleanupOptions
     :ivar provisioning_state: State of the script execution. This only appears
      in the response. Possible values include: 'Creating',
      'ProvisioningResources', 'Running', 'Succeeded', 'Failed', 'Canceled'
     :vartype provisioning_state: str or
-     ~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.ScriptProvisioningState
+     ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.ScriptProvisioningState
     :ivar status: Contains the results of script execution.
     :vartype status:
-     ~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.ScriptStatus
+     ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.ScriptStatus
     :ivar outputs: List of script outputs.
     :vartype outputs: dict[str, object]
     """
@@ -405,9 +405,9 @@ class DeploymentScriptPropertiesBase(Model):
         'outputs': {'key': 'outputs', 'type': '{object}'},
     }
 
-    def __init__(self, *, cleanup_preference=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(DeploymentScriptPropertiesBase, self).__init__(**kwargs)
-        self.cleanup_preference = cleanup_preference
+        self.cleanup_preference = kwargs.get('cleanup_preference', None)
         self.provisioning_state = None
         self.status = None
         self.outputs = None
@@ -418,16 +418,16 @@ class DeploymentScriptsError(Model):
 
     :param error:
     :type error:
-     ~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.ErrorResponse
+     ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.ErrorResponse
     """
 
     _attribute_map = {
         'error': {'key': 'error', 'type': 'ErrorResponse'},
     }
 
-    def __init__(self, *, error=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(DeploymentScriptsError, self).__init__(**kwargs)
-        self.error = error
+        self.error = kwargs.get('error', None)
 
 
 class DeploymentScriptsErrorException(HttpOperationError):
@@ -471,9 +471,9 @@ class DeploymentScriptUpdateParameter(AzureResourceBase):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, *, tags=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(DeploymentScriptUpdateParameter, self).__init__(**kwargs)
-        self.tags = tags
+        self.tags = kwargs.get('tags', None)
 
 
 class EnvironmentVariable(Model):
@@ -499,11 +499,11 @@ class EnvironmentVariable(Model):
         'secure_value': {'key': 'secureValue', 'type': 'str'},
     }
 
-    def __init__(self, *, name: str, value: str=None, secure_value: str=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(EnvironmentVariable, self).__init__(**kwargs)
-        self.name = name
-        self.value = value
-        self.secure_value = secure_value
+        self.name = kwargs.get('name', None)
+        self.value = kwargs.get('value', None)
+        self.secure_value = kwargs.get('secure_value', None)
 
 
 class ErrorAdditionalInfo(Model):
@@ -528,7 +528,7 @@ class ErrorAdditionalInfo(Model):
         'info': {'key': 'info', 'type': 'object'},
     }
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(ErrorAdditionalInfo, self).__init__(**kwargs)
         self.type = None
         self.info = None
@@ -548,10 +548,10 @@ class ErrorResponse(Model):
     :vartype target: str
     :ivar details: The error details.
     :vartype details:
-     list[~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.ErrorResponse]
+     list[~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.ErrorResponse]
     :ivar additional_info: The error additional info.
     :vartype additional_info:
-     list[~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.ErrorAdditionalInfo]
+     list[~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.ErrorAdditionalInfo]
     """
 
     _validation = {
@@ -570,7 +570,7 @@ class ErrorResponse(Model):
         'additional_info': {'key': 'additionalInfo', 'type': '[ErrorAdditionalInfo]'},
     }
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(ErrorResponse, self).__init__(**kwargs)
         self.code = None
         self.message = None
@@ -585,12 +585,12 @@ class ManagedServiceIdentity(Model):
     :param type: Type of the managed identity. Possible values include:
      'UserAssigned'
     :type type: str or
-     ~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.ManagedServiceIdentityType
+     ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.ManagedServiceIdentityType
     :param user_assigned_identities: The list of user-assigned managed
      identities associated with the resource. Key is the Azure resource Id of
      the managed identity.
     :type user_assigned_identities: dict[str,
-     ~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.UserAssignedIdentity]
+     ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.UserAssignedIdentity]
     """
 
     _attribute_map = {
@@ -598,10 +598,10 @@ class ManagedServiceIdentity(Model):
         'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{UserAssignedIdentity}'},
     }
 
-    def __init__(self, *, type=None, user_assigned_identities=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(ManagedServiceIdentity, self).__init__(**kwargs)
-        self.type = type
-        self.user_assigned_identities = user_assigned_identities
+        self.type = kwargs.get('type', None)
+        self.user_assigned_identities = kwargs.get('user_assigned_identities', None)
 
 
 class ScriptConfigurationBase(Model):
@@ -623,7 +623,7 @@ class ScriptConfigurationBase(Model):
     :param environment_variables: The environment variables to pass over to
      the script.
     :type environment_variables:
-     list[~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.EnvironmentVariable]
+     list[~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.EnvironmentVariable]
     :param force_update_tag: Gets or sets how the deployment script should be
      forced to execute even if the script resource has not changed. Can be
      current time stamp or a GUID.
@@ -654,16 +654,16 @@ class ScriptConfigurationBase(Model):
         'timeout': {'key': 'timeout', 'type': 'duration'},
     }
 
-    def __init__(self, *, retention_interval, primary_script_uri: str=None, supporting_script_uris=None, script_content: str=None, arguments: str=None, environment_variables=None, force_update_tag: str=None, timeout=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(ScriptConfigurationBase, self).__init__(**kwargs)
-        self.primary_script_uri = primary_script_uri
-        self.supporting_script_uris = supporting_script_uris
-        self.script_content = script_content
-        self.arguments = arguments
-        self.environment_variables = environment_variables
-        self.force_update_tag = force_update_tag
-        self.retention_interval = retention_interval
-        self.timeout = timeout
+        self.primary_script_uri = kwargs.get('primary_script_uri', None)
+        self.supporting_script_uris = kwargs.get('supporting_script_uris', None)
+        self.script_content = kwargs.get('script_content', None)
+        self.arguments = kwargs.get('arguments', None)
+        self.environment_variables = kwargs.get('environment_variables', None)
+        self.force_update_tag = kwargs.get('force_update_tag', None)
+        self.retention_interval = kwargs.get('retention_interval', None)
+        self.timeout = kwargs.get('timeout', None)
 
 
 class ScriptLog(AzureResourceBase):
@@ -696,7 +696,7 @@ class ScriptLog(AzureResourceBase):
         'log': {'key': 'properties.log', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(ScriptLog, self).__init__(**kwargs)
         self.log = None
 
@@ -706,16 +706,16 @@ class ScriptLogsList(Model):
 
     :param value: Deployment scripts logs.
     :type value:
-     list[~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.ScriptLog]
+     list[~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.ScriptLog]
     """
 
     _attribute_map = {
         'value': {'key': 'value', 'type': '[ScriptLog]'},
     }
 
-    def __init__(self, *, value=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(ScriptLogsList, self).__init__(**kwargs)
-        self.value = value
+        self.value = kwargs.get('value', None)
 
 
 class ScriptStatus(Model):
@@ -736,7 +736,7 @@ class ScriptStatus(Model):
     :vartype expiration_time: datetime
     :param error: Error that is relayed from the script execution.
     :type error:
-     ~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.ErrorResponse
+     ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.ErrorResponse
     """
 
     _validation = {
@@ -756,14 +756,14 @@ class ScriptStatus(Model):
         'error': {'key': 'error', 'type': 'ErrorResponse'},
     }
 
-    def __init__(self, *, error=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(ScriptStatus, self).__init__(**kwargs)
         self.container_instance_id = None
         self.storage_account_id = None
         self.start_time = None
         self.end_time = None
         self.expiration_time = None
-        self.error = error
+        self.error = kwargs.get('error', None)
 
 
 class UserAssignedIdentity(Model):
@@ -781,7 +781,7 @@ class UserAssignedIdentity(Model):
         'client_id': {'key': 'clientId', 'type': 'str'},
     }
 
-    def __init__(self, *, principal_id: str=None, client_id: str=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(UserAssignedIdentity, self).__init__(**kwargs)
-        self.principal_id = principal_id
-        self.client_id = client_id
+        self.principal_id = kwargs.get('principal_id', None)
+        self.client_id = kwargs.get('client_id', None)

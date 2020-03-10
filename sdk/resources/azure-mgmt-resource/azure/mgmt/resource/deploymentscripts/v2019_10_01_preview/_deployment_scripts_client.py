@@ -24,7 +24,7 @@ class DeploymentScriptsClient(SDKClient):
     :vartype config: DeploymentScriptsClientConfiguration
 
     :ivar deployment_scripts: DeploymentScripts operations
-    :vartype deployment_scripts: azure.mgmt.resource.deploymentscripts.v2019_10_preview.operations.DeploymentScriptsOperations
+    :vartype deployment_scripts: azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.operations.DeploymentScriptsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
