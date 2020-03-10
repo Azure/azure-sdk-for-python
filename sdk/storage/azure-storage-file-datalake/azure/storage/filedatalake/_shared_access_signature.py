@@ -260,7 +260,7 @@ def generate_file_sas(
         credential,  # type: Union[str, UserDelegationKey]
         permission=None,  # type: Optional[Union[FileSasPermissions, str]]
         expiry=None,  # type: Optional[Union[datetime, str]]
-        **kwargs # type: Any
+        **kwargs  # type: Any
     ):
     # type: (...) -> str
     """Generates a shared access signature for a file.
