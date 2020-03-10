@@ -5,8 +5,6 @@
 import logging
 import os
 
-from azure.core.exceptions import ClientAuthenticationError
-
 from .._constants import EnvironmentVariables, KnownAuthorities
 from .browser import InteractiveBrowserCredential
 from .chained import ChainedTokenCredential
@@ -62,6 +60,8 @@ class DefaultAzureCredential(ChainedTokenCredential):
         Defaults to the value of environment variable AZURE_TENANT_ID, if any.
     """
 
+    UNAVAILABLE_MSG = "DefaultAzureCredential failed to retrieve a token from the included credentials."
+
     def __init__(self, **kwargs):
         authority = kwargs.pop("authority", None) or KnownAuthorities.AZURE_PUBLIC_CLOUD
 
@@ -108,6 +108,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
         :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The exception has a
           `message` attribute listing each authentication attempt and its error message.
         """
+<<<<<<< HEAD
         if self._successful_credential:
             return self._successful_credential.get_token(*scopes, **kwargs)
 
@@ -122,3 +123,6 @@ to learn what options DefaultAzureCredential supports""".format(
                     e.message
                 )
             )
+=======
+        return super(DefaultAzureCredential, self).get_token(*scopes, **kwargs)
+>>>>>>> update error message

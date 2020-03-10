@@ -14,12 +14,13 @@ from test_environment_credential import ALL_VARIABLES
 
 @pytest.mark.asyncio
 async def test_error_message():
-    """get_token should raise CredentialUnavailableError for incomplete configuration, listing any set variables."""
+    """get_token should raise CredentialUnavailableError for incomplete configuration."""
 
     with mock.patch.dict(os.environ, {}, clear=True):
         with pytest.raises(CredentialUnavailableError) as ex:
             await EnvironmentCredential().get_token("scope")
-    assert not any(var in ex.value.message for var in ALL_VARIABLES)
+    assert "EnvironmentCredential authentication unavailable. "
+    "Environment variables are not fully configured." in ex.value.message
 
     for a, b in itertools.combinations(ALL_VARIABLES, 2):  # all credentials require at least 3 variables set
         with mock.patch.dict(os.environ, {a: "a", b: "b"}, clear=True):
@@ -28,5 +29,5 @@ async def test_error_message():
 
         # error message should contain only the set variables
         message = ex.value.message
-        assert a in message and b in message
-        assert not any(var in message for var in ALL_VARIABLES if var != a and var != b)
+        assert "EnvironmentCredential authentication unavailable. "
+        "Environment variables are not fully configured." in message

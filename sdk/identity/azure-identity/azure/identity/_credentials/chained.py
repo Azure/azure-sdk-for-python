@@ -24,7 +24,7 @@ def _get_error_message(history):
             attempts.append("{}: {}".format(credential.__class__.__name__, error))
         else:
             attempts.append(credential.__class__.__name__)
-    return """No credential in this chain provided a token.
+    return """
 Attempted credentials:\n\t{}""".format(
         "\n\t".join(attempts)
     )
@@ -39,6 +39,8 @@ class ChainedTokenCredential(object):
     :param credentials: credential instances to form the chain
     :type credentials: :class:`azure.core.credentials.TokenCredential`
     """
+
+    UNAVAILABLE_MSG = "The ChainedTokenCredential failed to retrieve a token from the included credentials."
 
     def __init__(self, *credentials):
         # type: (*TokenCredential) -> None
@@ -72,4 +74,4 @@ class ChainedTokenCredential(object):
                 break
 
         error_message = _get_error_message(history)
-        raise ClientAuthenticationError(message=error_message)
+        raise ClientAuthenticationError(message="".join([self.UNAVAILABLE_MSG, error_message]))

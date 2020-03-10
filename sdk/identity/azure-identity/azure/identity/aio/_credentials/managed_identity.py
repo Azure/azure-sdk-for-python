@@ -118,7 +118,8 @@ class ImdsCredential(_AsyncManagedIdentityBase):
                 self._endpoint_available = False
 
         if not self._endpoint_available:
-            raise CredentialUnavailableError(message="IMDS endpoint unavailable")
+            raise CredentialUnavailableError(message="ManagedIdentityCredential authentication unavailable. "
+                                                 "IMDS endpoint unavailable.")
 
         if len(scopes) != 1:
             raise ValueError("This credential requires exactly one scope per token request.")
@@ -156,7 +157,8 @@ class MsiCredential(_AsyncManagedIdentityBase):
         :raises ~azure.identity.CredentialUnavailableError: the MSI endpoint is unavailable
         """
         if not self._endpoint:
-            raise CredentialUnavailableError(message="MSI endpoint unavailable")
+            raise CredentialUnavailableError(message="ManagedIdentityCredential authentication unavailable. "
+                                                 "MSI endpoint unavailable.")
 
         if len(scopes) != 1:
             raise ValueError("This credential requires exactly one scope per token request.")

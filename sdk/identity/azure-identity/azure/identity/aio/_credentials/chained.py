@@ -26,6 +26,8 @@ class ChainedTokenCredential(AsyncCredentialBase):
     :type credentials: :class:`azure.core.credentials.AsyncTokenCredential`
     """
 
+    UNAVAILABLE_MSG = "The ChainedTokenCredential failed to retrieve a token from the included credentials."
+
     def __init__(self, *credentials: "AsyncTokenCredential") -> None:
         if not credentials:
             raise ValueError("at least one credential is required")
@@ -64,4 +66,4 @@ class ChainedTokenCredential(AsyncCredentialBase):
                 break
 
         error_message = _get_error_message(history)
-        raise ClientAuthenticationError(message=error_message)
+        raise ClientAuthenticationError(message="".join([self.UNAVAILABLE_MSG, error_message]))
