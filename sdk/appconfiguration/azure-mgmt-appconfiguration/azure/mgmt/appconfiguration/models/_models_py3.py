@@ -193,9 +193,9 @@ class ConfigurationStore(Resource):
     :type location: str
     :param tags: A set of tags. The tags of the resource.
     :type tags: dict[str, str]
-    :param identity: An identity that can be associated with a resource.
+    :param identity: The managed identity information, if configured.
     :type identity: ~azure.mgmt.appconfiguration.models.ResourceIdentity
-    :param sku: Required. Describes a configuration store SKU.
+    :param sku: Required. The sku of the configuration store.
     :type sku: ~azure.mgmt.appconfiguration.models.Sku
     :ivar provisioning_state: The provisioning state of the configuration store. Possible values
      include: 'Creating', 'Updating', 'Deleting', 'Succeeded', 'Failed', 'Canceled'.
@@ -204,7 +204,7 @@ class ConfigurationStore(Resource):
     :vartype creation_date: ~datetime.datetime
     :ivar endpoint: The DNS endpoint where the configuration store API will be available.
     :vartype endpoint: str
-    :param encryption: The encryption settings for a configuration store.
+    :param encryption: The encryption settings of the configuration store.
     :type encryption: ~azure.mgmt.appconfiguration.models.EncryptionProperties
     """
 
@@ -290,7 +290,7 @@ class ConfigurationStoreProperties(msrest.serialization.Model):
     :vartype creation_date: ~datetime.datetime
     :ivar endpoint: The DNS endpoint where the configuration store API will be available.
     :vartype endpoint: str
-    :param encryption: The encryption settings for a configuration store.
+    :param encryption: The encryption settings of the configuration store.
     :type encryption: ~azure.mgmt.appconfiguration.models.EncryptionProperties
     """
 
@@ -323,7 +323,7 @@ class ConfigurationStoreProperties(msrest.serialization.Model):
 class ConfigurationStorePropertiesUpdateParameters(msrest.serialization.Model):
     """The properties for updating a configuration store.
 
-    :param encryption: The encryption settings for a configuration store.
+    :param encryption: The encryption settings of the configuration store.
     :type encryption: ~azure.mgmt.appconfiguration.models.EncryptionProperties
     """
 
@@ -344,13 +344,13 @@ class ConfigurationStorePropertiesUpdateParameters(msrest.serialization.Model):
 class ConfigurationStoreUpdateParameters(msrest.serialization.Model):
     """The parameters for updating a configuration store.
 
-    :param identity: An identity that can be associated with a resource.
+    :param identity: The managed identity information for the configuration store.
     :type identity: ~azure.mgmt.appconfiguration.models.ResourceIdentity
-    :param sku: Describes a configuration store SKU.
+    :param sku: The SKU of the configuration store.
     :type sku: ~azure.mgmt.appconfiguration.models.Sku
     :param tags: A set of tags. The ARM resource tags.
     :type tags: dict[str, str]
-    :param encryption: The encryption settings for a configuration store.
+    :param encryption: The encryption settings of the configuration store.
     :type encryption: ~azure.mgmt.appconfiguration.models.EncryptionProperties
     """
 
@@ -380,8 +380,7 @@ class ConfigurationStoreUpdateParameters(msrest.serialization.Model):
 class EncryptionProperties(msrest.serialization.Model):
     """The encryption settings for a configuration store.
 
-    :param key_vault_properties: Settings concerning key vault encryption for a configuration
-     store.
+    :param key_vault_properties: Key vault properties.
     :type key_vault_properties: ~azure.mgmt.appconfiguration.models.KeyVaultProperties
     """
 
@@ -399,31 +398,6 @@ class EncryptionProperties(msrest.serialization.Model):
         self.key_vault_properties = key_vault_properties
 
 
-class ErrorException(HttpResponseError):
-    """Server responded with exception of type: 'Error'.
-
-    :param response: Server response to be deserialized.
-    :param error_model: A deserialized model of the response body as model.
-    """
-
-    def __init__(self, response, error_model):
-        self.error = error_model
-        super(ErrorException, self).__init__(response=response, error_model=error_model)
-
-    @classmethod
-    def from_response(cls, response, deserialize):
-        """Deserialize this response as this exception, or a subclass of this exception.
-
-        :param response: Server response to be deserialized.
-        :param deserialize: A deserializer
-        """
-        model_name = 'Error'
-        error = deserialize(model_name, response)
-        if error is None:
-            error = deserialize.dependencies[model_name]()
-        return error._EXCEPTION_TYPE(response, error)
-
-
 class Error(msrest.serialization.Model):
     """AppConfiguration error object.
 
@@ -432,7 +406,6 @@ class Error(msrest.serialization.Model):
     :param message: Error message.
     :type message: str
     """
-    _EXCEPTION_TYPE = ErrorException
 
     _attribute_map = {
         'code': {'key': 'code', 'type': 'str'},
@@ -617,7 +590,7 @@ class OperationDefinition(msrest.serialization.Model):
 
     :param name: Operation name: {provider}/{resource}/{operation}.
     :type name: str
-    :param display: The display information for a configuration store operation.
+    :param display: The display information for the configuration store operation.
     :type display: ~azure.mgmt.appconfiguration.models.OperationDefinitionDisplay
     """
 
@@ -737,12 +710,13 @@ class PrivateEndpointConnection(msrest.serialization.Model):
     :vartype name: str
     :ivar type: The type of the resource.
     :vartype type: str
-    :ivar provisioning_state: The provisioning state of the configuration store. Possible values
-     include: 'Creating', 'Updating', 'Deleting', 'Succeeded', 'Failed', 'Canceled'.
+    :ivar provisioning_state: The provisioning status of the private endpoint connection. Possible
+     values include: 'Creating', 'Updating', 'Deleting', 'Succeeded', 'Failed', 'Canceled'.
     :vartype provisioning_state: str or ~azure.mgmt.appconfiguration.models.ProvisioningState
-    :param private_endpoint: Private endpoint which a connection belongs to.
+    :param private_endpoint: The resource of private endpoint.
     :type private_endpoint: ~azure.mgmt.appconfiguration.models.PrivateEndpoint
-    :param private_link_service_connection_state: The state of a private link service connection.
+    :param private_link_service_connection_state: A collection of information about the state of
+     the connection between service consumer and provider.
     :type private_link_service_connection_state:
      ~azure.mgmt.appconfiguration.models.PrivateLinkServiceConnectionState
     """
@@ -812,13 +786,13 @@ class PrivateEndpointConnectionProperties(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar provisioning_state: The provisioning state of the configuration store. Possible values
-     include: 'Creating', 'Updating', 'Deleting', 'Succeeded', 'Failed', 'Canceled'.
+    :ivar provisioning_state: The provisioning status of the private endpoint connection. Possible
+     values include: 'Creating', 'Updating', 'Deleting', 'Succeeded', 'Failed', 'Canceled'.
     :vartype provisioning_state: str or ~azure.mgmt.appconfiguration.models.ProvisioningState
-    :param private_endpoint: Private endpoint which a connection belongs to.
+    :param private_endpoint: The resource of private endpoint.
     :type private_endpoint: ~azure.mgmt.appconfiguration.models.PrivateEndpoint
-    :param private_link_service_connection_state: Required. The state of a private link service
-     connection.
+    :param private_link_service_connection_state: Required. A collection of information about the
+     state of the connection between service consumer and provider.
     :type private_link_service_connection_state:
      ~azure.mgmt.appconfiguration.models.PrivateLinkServiceConnectionState
     """

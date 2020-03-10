@@ -16,7 +16,7 @@ try:
     from ._models_py3 import ConfigurationStorePropertiesUpdateParameters
     from ._models_py3 import ConfigurationStoreUpdateParameters
     from ._models_py3 import EncryptionProperties
-    from ._models_py3 import Error, ErrorException
+    from ._models_py3 import Error
     from ._models_py3 import KeyValue
     from ._models_py3 import KeyVaultProperties
     from ._models_py3 import ListKeyValueParameters
@@ -47,7 +47,7 @@ except (SyntaxError, ImportError):
     from ._models import ConfigurationStorePropertiesUpdateParameters  # type: ignore
     from ._models import ConfigurationStoreUpdateParameters  # type: ignore
     from ._models import EncryptionProperties  # type: ignore
-    from ._models import Error, ErrorException  # type: ignore
+    from ._models import Error  # type: ignore
     from ._models import KeyValue  # type: ignore
     from ._models import KeyVaultProperties  # type: ignore
     from ._models import ListKeyValueParameters  # type: ignore
@@ -86,7 +86,7 @@ __all__ = [
     'ConfigurationStorePropertiesUpdateParameters',
     'ConfigurationStoreUpdateParameters',
     'EncryptionProperties',
-    'Error', 'ErrorException',
+    'Error',
     'KeyValue',
     'KeyVaultProperties',
     'ListKeyValueParameters',
