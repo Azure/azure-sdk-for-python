@@ -12,18 +12,18 @@
 from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 
-from ._configuration import customprovidersClientConfiguration
+from ._configuration import CustomProvidersClientConfiguration
 from .operations import Operations
 from .operations import CustomResourceProviderOperations
 from .operations import AssociationsOperations
 from . import models
 
 
-class customprovidersClient(SDKClient):
+class CustomProvidersClient(SDKClient):
     """Allows extension of ARM control plane with custom resource providers.
 
     :ivar config: Configuration for client.
-    :vartype config: customprovidersClientConfiguration
+    :vartype config: CustomProvidersClientConfiguration
 
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.customproviders.operations.Operations
@@ -44,8 +44,8 @@ class customprovidersClient(SDKClient):
     def __init__(
             self, credentials, subscription_id, base_url=None):
 
-        self.config = customprovidersClientConfiguration(credentials, subscription_id, base_url)
-        super(customprovidersClient, self).__init__(self.config.credentials, self.config)
+        self.config = CustomProvidersClientConfiguration(credentials, subscription_id, base_url)
+        super(CustomProvidersClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = '2018-09-01-preview'

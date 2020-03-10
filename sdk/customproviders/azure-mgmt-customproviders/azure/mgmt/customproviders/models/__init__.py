@@ -38,7 +38,7 @@ except (SyntaxError, ImportError):
 from ._paged_models import AssociationPaged
 from ._paged_models import CustomRPManifestPaged
 from ._paged_models import ResourceProviderOperationPaged
-from ._customproviders_client_enums import (
+from ._custom_providers_client_enums import (
     ActionRouting,
     ResourceTypeRouting,
     ValidationType,

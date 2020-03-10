@@ -9,9 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from ._configuration import customprovidersClientConfiguration
-from ._customproviders_client import customprovidersClient
-__all__ = ['customprovidersClient', 'customprovidersClientConfiguration']
+from ._configuration import CustomProvidersClientConfiguration
+from ._custom_providers_client import CustomProvidersClient
+__all__ = ['CustomProvidersClient', 'CustomProvidersClientConfiguration']
 
 from .version import VERSION
 
