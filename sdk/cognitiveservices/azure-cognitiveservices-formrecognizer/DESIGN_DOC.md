@@ -37,34 +37,12 @@ client.begin_extract_layout(form: Union[str, BytesIO], **kwargs) -> LROPoller ->
 
 ### Receipt Models
 ```python
-class ExtractedReceipt:
+class ExtractedReceipt(DictMixin):
     receipt_items: List[ReceiptItem]
-    merchant_address: str
-    merchant_name: str
-    merchant_phone_number: str
-    receipt_type: str
-    subtotal: float
-    tax: float
-    tip: float
-    total: float
-    transaction_date: ~datetime.date
-    transaction_time: ~datetime.time
-    page_range: List[int]
-    page_metadata: PageMetadata
-    fields: ReceiptFields
-
-class ReceiptItem:
-    name: str
-    quantity: int
-    item_price: float
-    total_price: float
-
-class ReceiptFields(DictMixin):
-    receipt_items: List[ReceiptItemField]
     merchant_address: FieldValue
     merchant_name: FieldValue
     merchant_phone_number: FieldValue
-    receipt_type: str
+    receipt_type: FieldValue
     subtotal: FieldValue
     tax: FieldValue
     tip: FieldValue
@@ -74,7 +52,7 @@ class ReceiptFields(DictMixin):
     page_range: List[int]
     page_metadata: PageMetadata
 
-class ReceiptItemField:
+class ReceiptItem:
     name: FieldValue
     quantity: FieldValue
     item_price: FieldValue
@@ -98,7 +76,7 @@ class ExtractedWord:
     confidence: float
 
 class PageMetadata:
-    page: int
+    page_number: int
     angle: float
     width: int
     height: int
@@ -115,24 +93,28 @@ client = FormRecognizerClient(endpoint, credential)
 receipt_image = "https://raw.githubusercontent.com/Azure-Samples/cognitive-services-REST-api-samples/master/curl/form-recognizer/contoso-allinone.jpg"
 poller = client.begin_extract_receipt(receipt_image)
 receipt = poller.result()
-result = receipt[0]
+r = receipt[0]
 
-print("Receipt contained the following values: ")
-print("ReceiptType: {}").format(result.receipt_type)
-print("MerchantName: {}").format(result.merchant_name)
-print("MerchantAddress: {}").format(result.merchant_address)
-print("MerchantPhoneNumber: {}").format(result.merchant_phone_number)
-print("TransactionDate: {}").format(result.transaction_date)
-print("TransactionTime: {}").format(result.transaction_time)
-for item in result.receipt_items:
-    print("Item Name: {}").format(item.name)
-    print("Item Quantity: {}").format(item.quantity)
-    print("Item Price: {}").format(item.item_price)
-    print("Total Price: {}").format(item.total_price)
-print("Subtotal: {}").format(result.subtotal)
-print("Tax: {}").format(result.tax)
-print("Tip: {}").format(result.tip)
-print("Total: {}").format(result.total)
+print("Receipt contained the following values with confidences: ")
+print("ReceiptType: {}, confidence: {}").format(r.receipt_type.value, r.receipt_type.confidence)
+print("MerchantName: {}, confidence: {}").format(r.merchant_name.value, r.merchant_name.confidence)
+print("MerchantAddress: {}, confidence: {}").format(r.merchant_address.value, r.merchant_address.confidence)
+print("MerchantPhoneNumber: {}, confidence: {}").format(r.merchant_phone_number.value, r.merchant_phone_number.confidence)
+print("TransactionDate: {}, confidence: {}").format(r.transaction_date.value, r.transaction_date.confidence)
+print("TransactionTime: {}, confidence: {}").format(r.transaction_time.value, r.transaction_time.confidence)
+for item in r.receipt_items:
+    print("Item Name: {}, confidence: {}").format(item.name.value, item.name.confidence)
+    print("Item Quantity: {}, confidence: {}").format(item.quantity.value, item.quantity.confidence)
+    print("Item Price: {}, confidence: {}").format(item.item_price.value, item.item_price.confidence)
+    print("Total Price: {}, confidence: {}").format(item.total_price.value, item.total_price.confidence)
+print("Subtotal: {}, confidence: {}").format(r.subtotal.value, r.subtotal.confidence)
+print("Tax: {}, confidence: {}").format(r.tax.value, r.tax.confidence)
+print("Tip: {}, confidence: {}").format(r.tip.value, r.tip.confidence)
+print("Total: {}, confidence: {}").format(r.total.value, r.total.confidence)
+
+# Access as a dictionary
+for item, field_value in r.items():
+    print(item, field_value.value, field_value.text, field_value.confidence, field_value.bounding_box)
 ```
 
 ### Layout Models
@@ -171,7 +153,7 @@ class ExtractedWord:
     confidence: float
 
 class PageMetadata:
-    page: int
+    page_number: int
     angle: float
     width: int
     height: int
@@ -334,7 +316,7 @@ class ExtractedWord:
     confidence: float
 
 class PageMetadata:
-    page: int
+    page_number: int
     angle: float
     width: int
     height: int
@@ -500,7 +482,7 @@ receipt_image = "https://raw.githubusercontent.com/Azure-Samples/cognitive-servi
 
 def callback(resp):
     raw_response = resp.raw_response  # raw response from service
-    result = resp.ocr_result
+    result = resp.ocr_result  # read_result
     for page in result.pages:
         print("On page: {}".format(page.page_number))
         for line in page.lines:
