@@ -1,3 +1,17 @@
+#!/usr/bin/env python
+
+# --------------------------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for license information.
+# --------------------------------------------------------------------------------------------
+
+"""
+Some environments have different versions of Azure Storage Service API. For instance, Azure Stack Platform
+version 2002 uses Azure Storage Service API 2017-11-07.
+
+Specify api_version when you create the BlobCheckpointStore as shown in this example.
+"""
+
 import os
 from azure.eventhub import EventHubConsumerClient
 from azure.eventhub.extensions.checkpointstoreblob import BlobCheckpointStore
