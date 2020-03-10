@@ -220,6 +220,27 @@ class DeferredMessage(message.DeferredMessage):
         await self._receiver._settle_deferred('abandoned', [self.lock_token])  # pylint: disable=protected-access
         self._settled = True
 
-    async def defer(self):
-        """A DeferredMessage cannot be deferred. Raises `ValueError`."""
-        raise ValueError("Message is already deferred.")
+    async def renew_lock(self):
+        """Renew the message lock.
+
+        This will maintain the lock on the message to ensure
+        it is not returned to the queue to be reprocessed. In order to complete (or otherwise settle)
+        the message, the lock must be maintained. Messages received via ReceiveAndDelete mode are not
+        locked, and therefore cannot be renewed. This operation can also be performed as an asynchronous
+        background task by registering the message with an `azure.servicebus.aio.AutoLockRenew` instance.
+        This operation is only available for non-sessionful messages.
+
+        :raises: TypeError if the message is sessionful.
+        :raises: ~azure.servicebus.common.errors.MessageLockExpired is message lock has already expired.
+        :raises: ~azure.servicebus.common.errors.SessionLockExpired if session lock has already expired.
+        :raises: ~azure.servicebus.common.errors.MessageAlreadySettled is message has already been settled.
+        """
+        if hasattr(self._receiver, 'locked_until'):
+            raise TypeError("Session messages cannot be renewed. Please renew the Session lock instead.")
+        self._is_live('renew')
+        token = self.lock_token
+        if not token:
+            raise ValueError("Unable to renew lock - no lock token found.")
+
+        expiry = await self._receiver._renew_locks(token)  # pylint: disable=protected-access
+        self._expiry = datetime.datetime.fromtimestamp(expiry[b'expirations'][0]/1000.0)
