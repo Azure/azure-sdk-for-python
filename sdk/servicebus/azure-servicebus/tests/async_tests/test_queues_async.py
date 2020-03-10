@@ -616,6 +616,8 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             count = 0
             async for message in receiver:
                 print_message(message)
+                assert message.user_properties[b'DeadLetterReason'] == b'Testing queue deadletter'
+                assert message.user_properties[b'DeadLetterErrorDescription'] == b'Testing queue deadletter'
                 await message.complete()
                 count += 1
         assert count == 10

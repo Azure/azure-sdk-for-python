@@ -98,8 +98,12 @@ class Message(message.Message):
         """
         self._is_live('reject')
         try:
-            reject = functools.partial(self.message.reject, condition=DEADLETTERNAME, description=description)
-            await self._loop.run_in_executor(None, reject)
+            details = {
+                'deadletter-reason': str(description) if description else "",
+                'deadletter-description': str(description) if description else ""
+            }
+            await self._receiver._settle_deferred(  # pylint: disable=protected-access
+                'suspended', [self.lock_token], dead_letter_details=details)
         except Exception as e:
             raise MessageSettleFailed("reject", e)
 
