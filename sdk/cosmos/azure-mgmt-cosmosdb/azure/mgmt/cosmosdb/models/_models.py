@@ -89,43 +89,6 @@ class ARMResourceProperties(Model):
         self.tags = kwargs.get('tags', None)
 
 
-class AutopilotSettingsResource(Model):
-    """Cosmos DB autopilot settings object.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param max_throughput: Required. Represents max throughput an autopilot
-     container can operate at.
-    :type max_throughput: int
-    :param auto_upgrade_policy: Cosmos DB resource auto-upgrade policy
-    :type auto_upgrade_policy:
-     ~azure.mgmt.cosmosdb.models.AutoUpgradePolicyResource
-    :ivar target_max_throughput: Represents target max throughput an autopilot
-     container should operate at once offer is no longer in pending state.
-    :vartype target_max_throughput: int
-    """
-
-    _validation = {
-        'max_throughput': {'required': True},
-        'target_max_throughput': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'max_throughput': {'key': 'maxThroughput', 'type': 'int'},
-        'auto_upgrade_policy': {'key': 'autoUpgradePolicy', 'type': 'AutoUpgradePolicyResource'},
-        'target_max_throughput': {'key': 'targetMaxThroughput', 'type': 'int'},
-    }
-
-    def __init__(self, **kwargs):
-        super(AutopilotSettingsResource, self).__init__(**kwargs)
-        self.max_throughput = kwargs.get('max_throughput', None)
-        self.auto_upgrade_policy = kwargs.get('auto_upgrade_policy', None)
-        self.target_max_throughput = None
-
-
 class AutoUpgradePolicyResource(Model):
     """Cosmos DB resource auto-upgrade policy.
 
@@ -3015,6 +2978,43 @@ class PrivateLinkServiceConnectionStateProperty(Model):
         self.actions_required = None
 
 
+class ProvisionedThroughputSettingsResource(Model):
+    """Cosmos DB provisioned throughput settings object.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param max_throughput: Required. Represents maximum throughput container
+     can scale up to.
+    :type max_throughput: int
+    :param auto_upgrade_policy: Cosmos DB resource auto-upgrade policy
+    :type auto_upgrade_policy:
+     ~azure.mgmt.cosmosdb.models.AutoUpgradePolicyResource
+    :ivar target_max_throughput: Represents target maximum throughput
+     container can scale up to once offer is no longer in pending state.
+    :vartype target_max_throughput: int
+    """
+
+    _validation = {
+        'max_throughput': {'required': True},
+        'target_max_throughput': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'max_throughput': {'key': 'maxThroughput', 'type': 'int'},
+        'auto_upgrade_policy': {'key': 'autoUpgradePolicy', 'type': 'AutoUpgradePolicyResource'},
+        'target_max_throughput': {'key': 'targetMaxThroughput', 'type': 'int'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ProvisionedThroughputSettingsResource, self).__init__(**kwargs)
+        self.max_throughput = kwargs.get('max_throughput', None)
+        self.auto_upgrade_policy = kwargs.get('auto_upgrade_policy', None)
+        self.target_max_throughput = None
+
+
 class RegionForOnlineOffline(Model):
     """Cosmos DB region to online or offline.
 
@@ -4134,13 +4134,14 @@ class ThroughputSettingsGetPropertiesResource(Model):
     sending a request.
 
     :param throughput: Value of the Cosmos DB resource throughput. Either
-     throughput is required or autopilotSettings is required, but not both.
+     throughput is required or provisionedThroughputSettings is required, but
+     not both.
     :type throughput: int
-    :param autopilot_settings: Cosmos DB resource for Autopilot settings.
-     Either throughput is required or autopilotSettings is required, but not
-     both.
-    :type autopilot_settings:
-     ~azure.mgmt.cosmosdb.models.AutopilotSettingsResource
+    :param provisioned_throughput_settings: Cosmos DB resource for provisioned
+     throughput settings. Either throughput is required or
+     provisionedThroughputSettings is required, but not both.
+    :type provisioned_throughput_settings:
+     ~azure.mgmt.cosmosdb.models.ProvisionedThroughputSettingsResource
     :ivar minimum_throughput: The minimum throughput of the resource
     :vartype minimum_throughput: str
     :ivar offer_replace_pending: The throughput replace is pending
@@ -4165,7 +4166,7 @@ class ThroughputSettingsGetPropertiesResource(Model):
 
     _attribute_map = {
         'throughput': {'key': 'throughput', 'type': 'int'},
-        'autopilot_settings': {'key': 'autopilotSettings', 'type': 'AutopilotSettingsResource'},
+        'provisioned_throughput_settings': {'key': 'provisionedThroughputSettings', 'type': 'ProvisionedThroughputSettingsResource'},
         'minimum_throughput': {'key': 'minimumThroughput', 'type': 'str'},
         'offer_replace_pending': {'key': 'offerReplacePending', 'type': 'str'},
         '_rid': {'key': '_rid', 'type': 'str'},
@@ -4176,7 +4177,7 @@ class ThroughputSettingsGetPropertiesResource(Model):
     def __init__(self, **kwargs):
         super(ThroughputSettingsGetPropertiesResource, self).__init__(**kwargs)
         self.throughput = kwargs.get('throughput', None)
-        self.autopilot_settings = kwargs.get('autopilot_settings', None)
+        self.provisioned_throughput_settings = kwargs.get('provisioned_throughput_settings', None)
         self.minimum_throughput = None
         self.offer_replace_pending = None
         self._rid = None
@@ -4228,19 +4229,20 @@ class ThroughputSettingsGetResults(ARMResourceProperties):
 
 class ThroughputSettingsResource(Model):
     """Cosmos DB resource throughput object. Either throughput is required or
-    autopilotSettings is required, but not both.
+    provisionedThroughputSettings is required, but not both.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
     :param throughput: Value of the Cosmos DB resource throughput. Either
-     throughput is required or autopilotSettings is required, but not both.
+     throughput is required or provisionedThroughputSettings is required, but
+     not both.
     :type throughput: int
-    :param autopilot_settings: Cosmos DB resource for Autopilot settings.
-     Either throughput is required or autopilotSettings is required, but not
-     both.
-    :type autopilot_settings:
-     ~azure.mgmt.cosmosdb.models.AutopilotSettingsResource
+    :param provisioned_throughput_settings: Cosmos DB resource for provisioned
+     throughput settings. Either throughput is required or
+     provisionedThroughputSettings is required, but not both.
+    :type provisioned_throughput_settings:
+     ~azure.mgmt.cosmosdb.models.ProvisionedThroughputSettingsResource
     :ivar minimum_throughput: The minimum throughput of the resource
     :vartype minimum_throughput: str
     :ivar offer_replace_pending: The throughput replace is pending
@@ -4254,7 +4256,7 @@ class ThroughputSettingsResource(Model):
 
     _attribute_map = {
         'throughput': {'key': 'throughput', 'type': 'int'},
-        'autopilot_settings': {'key': 'autopilotSettings', 'type': 'AutopilotSettingsResource'},
+        'provisioned_throughput_settings': {'key': 'provisionedThroughputSettings', 'type': 'ProvisionedThroughputSettingsResource'},
         'minimum_throughput': {'key': 'minimumThroughput', 'type': 'str'},
         'offer_replace_pending': {'key': 'offerReplacePending', 'type': 'str'},
     }
@@ -4262,7 +4264,7 @@ class ThroughputSettingsResource(Model):
     def __init__(self, **kwargs):
         super(ThroughputSettingsResource, self).__init__(**kwargs)
         self.throughput = kwargs.get('throughput', None)
-        self.autopilot_settings = kwargs.get('autopilot_settings', None)
+        self.provisioned_throughput_settings = kwargs.get('provisioned_throughput_settings', None)
         self.minimum_throughput = None
         self.offer_replace_pending = None
 
