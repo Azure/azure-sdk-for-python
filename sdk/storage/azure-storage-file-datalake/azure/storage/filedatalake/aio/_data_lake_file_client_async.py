@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
+from ._download_async import StorageStreamDownloader
 from ._path_client_async import PathClient
 from .._data_lake_file_client import DataLakeFileClient as DataLakeFileClientBase
 from .._deserialize import process_storage_error
@@ -38,19 +39,12 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../samples/test_datalake_authentication_samples.py
-            :start-after: [START create_datalake_service_client]
-            :end-before: [END create_datalake_service_client]
+        .. literalinclude:: ../samples/datalake_samples_instantiate_client_async.py
+            :start-after: [START instantiate_file_client_from_conn_str]
+            :end-before: [END instantiate_file_client_from_conn_str]
             :language: python
-            :dedent: 8
-            :caption: Creating the DataLakeServiceClient with account url and credential.
-
-        .. literalinclude:: ../samples/test_datalake_authentication_samples.py
-            :start-after: [START create_datalake_service_client_oauth]
-            :end-before: [END create_datalake_service_client_oauth]
-            :language: python
-            :dedent: 8
-            :caption: Creating the DataLakeServiceClient with Azure Identity credentials.
+            :dedent: 4
+            :caption: Creating the DataLakeServiceClient from connection string.
     """
 
     def __init__(
@@ -115,6 +109,15 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :return: response dict (Etag and last modified).
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/datalake_samples_upload_download_async.py
+                :start-after: [START create_file]
+                :end-before: [END create_file]
+                :language: python
+                :dedent: 4
+                :caption: Create file.
         """
         return await self._create('file', content_settings=content_settings, metadata=metadata, **kwargs)
 
@@ -147,6 +150,15 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :return: None
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/datalake_samples_upload_download_async.py
+                :start-after: [START delete_file]
+                :end-before: [END delete_file]
+                :language: python
+                :dedent: 4
+                :caption: Delete file.
         """
         return await self._delete(**kwargs)
 
@@ -182,20 +194,20 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_blob_samples_common.py
-                :start-after: [START get_blob_properties]
-                :end-before: [END get_blob_properties]
+            .. literalinclude:: ../samples/datalake_samples_upload_download_async.py
+                :start-after: [START get_file_properties]
+                :end-before: [END get_file_properties]
                 :language: python
-                :dedent: 8
-                :caption: Getting the properties for a file/directory.
+                :dedent: 4
+                :caption: Getting the properties for a file.
         """
         blob_properties = await self._get_path_properties(**kwargs)
         return FileProperties._from_blob_properties(blob_properties)  # pylint: disable=protected-access
 
     async def upload_data(self, data,  # type: Union[AnyStr, Iterable[AnyStr], IO[AnyStr]]
-                    length=None,  # type: Optional[int]
-                    overwrite=None,  # type: Optional[bool]
-                    **kwargs):
+                          length=None,  # type: Optional[int]
+                          overwrite=False,  # type: Optional[bool]
+                          **kwargs):
         # type: (...) -> Dict[str, Any]
         """
         Upload data to a file.
@@ -207,7 +219,7 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
             ContentSettings object used to set path properties.
         :keyword metadata:
             Name-value pairs associated with the blob as metadata.
-        :type metadata: dict(str, str)
+        :paramtype metadata: dict(str, str)
         :keyword ~azure.storage.filedatalake.DataLakeLeaseClient or str lease:
             Required if the blob has an active lease. Value can be a DataLakeLeaseClient object
             or the lease ID as a string.
@@ -274,6 +286,15 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
             or the lease ID as a string.
         :paramtype lease: ~azure.storage.filedatalake.aio.DataLakeLeaseClient or str
         :return: dict of the response header
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/datalake_samples_upload_download_async.py
+                :start-after: [START append_data]
+                :end-before: [END append_data]
+                :language: python
+                :dedent: 4
+                :caption: Append data to the file.
         """
         options = self._append_data_options(
             data,
@@ -300,6 +321,8 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
             specified position are written to the file when flush succeeds, but
             this optional parameter allows data after the flush position to be
             retained for a future flush operation.
+        :keyword ~azure.storage.filedatalake.ContentSettings content_settings:
+            ContentSettings object used to set path properties.
         :keyword bool close: Azure Storage Events allow applications to receive
             notifications when files change. When Azure Storage Events are
             enabled, a file changed event is raised. This event has a property
@@ -332,6 +355,15 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
         :return: response header in dict
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/datalake_samples_file_system_async.py
+                :start-after: [START upload_file_to_file_system]
+                :end-before: [END upload_file_to_file_system]
+                :language: python
+                :dedent: 12
+                :caption: Commit the previous appended data.
         """
         options = self._flush_data_options(
             offset,
@@ -341,13 +373,11 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
         except StorageErrorException as error:
             process_storage_error(error)
 
-    async def read_file(self, offset=None,  # type: Optional[int]
-                        length=None,  # type: Optional[int]
-                        stream=None,  # type: Optional[IO]
-                        **kwargs):
-        # type: (...) -> Union[int, byte]
-        """Download a file from the service. Return the downloaded data in bytes or
-        write the downloaded data into user provided stream and return the written size.
+    async def download_file(self, offset=None, length=None, **kwargs):
+        # type: (Optional[int], Optional[int], Any) -> StorageStreamDownloader
+        """Downloads a file to the StorageStreamDownloader. The readall() method must
+        be used to read all the content, or readinto() must be used to download the file into
+        a stream.
 
         :param int offset:
             Start of byte range to use for downloading a section of the file.
@@ -355,8 +385,6 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
         :param int length:
             Number of bytes to read from the stream. This is optional, but
             should be supplied for optimal performance.
-        :param int stream:
-            User provided stream to write the downloaded data into.
         :keyword lease:
             If specified, download only succeeds if the file's lease is active
             and matches this ID. Required if the file has an active lease.
@@ -384,22 +412,20 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
             The timeout parameter is expressed in seconds. This method may make
             multiple calls to the Azure service and the timeout will apply to
             each call individually.
-        :returns: downloaded data or the size of data written into the provided stream
-        :rtype: bytes or int
+        :returns: A streaming object (StorageStreamDownloader)
+        :rtype: ~azure.storage.filedatalake.aio.StorageStreamDownloader
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_blob_samples_hello_world.py
-                :start-after: [START download_a_blob]
-                :end-before: [END download_a_blob]
+            .. literalinclude:: ../samples/datalake_samples_upload_download_async.py
+                :start-after: [START read_file]
+                :end-before: [END read_file]
                 :language: python
-                :dedent: 12
-                :caption: Download a blob.
+                :dedent: 4
+                :caption: Return the downloaded data.
         """
         downloader = await self._blob_client.download_blob(offset=offset, length=length, **kwargs)
-        if stream:
-            return await downloader.readinto(stream)
-        return await downloader.readall()
+        return StorageStreamDownloader(downloader)
 
     async def rename_file(self, new_name,  # type: str
                           **kwargs):
@@ -471,7 +497,17 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
             The source match condition to use upon the etag.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :return:
+        :return: the renamed file client
+        :rtype: DataLakeFileClient
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/datalake_samples_upload_download_async.py
+                :start-after: [START rename_file]
+                :end-before: [END rename_file]
+                :language: python
+                :dedent: 4
+                :caption: Rename the source file.
         """
         new_name = new_name.strip('/')
         new_file_system = new_name.split('/')[0]

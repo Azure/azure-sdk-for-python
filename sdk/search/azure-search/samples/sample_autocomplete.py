@@ -9,9 +9,8 @@
 """
 FILE: sample_autocomplete.py
 DESCRIPTION:
-    This sample demonstrates how to authenticate with the Azure Congnitive Search
-    service with an API key. See more details about authentication here:
-    https://docs.microsoft.com/en-us/azure/search/search-security-api-keys
+    This sample demonstrates how to obtain autocompletion suggestions from an
+    Azure Search index.
 USAGE:
     python sample_autocomplete.py
 

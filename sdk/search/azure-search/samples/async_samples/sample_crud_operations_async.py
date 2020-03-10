@@ -9,9 +9,8 @@
 """
 FILE: sample_crud_operations_async.py
 DESCRIPTION:
-    This sample demonstrates how to authenticate with the Azure Congnitive Search
-    service with an API key. See more details about authentication here:
-    https://docs.microsoft.com/en-us/azure/search/search-security-api-keys
+    This sample demonstrates how to upload, merge, or delete documents from an
+    Azure Search index.
 USAGE:
     python sample_crud_operations_async.py
 

@@ -7,18 +7,14 @@ from typing import cast, List, TYPE_CHECKING
 
 import six
 
-from azure.core.async_paging import AsyncItemPaged, AsyncPageIterator
 from azure.core.pipeline.policies import HeadersPolicy
 from azure.core.tracing.decorator_async import distributed_trace_async
+from ._paging import AsyncSearchItemPaged, AsyncSearchPageIterator
 from .._generated.aio import SearchIndexClient as _SearchIndexClient
 from .._generated.models import IndexBatch, IndexingResult, SearchRequest
 from .._index_documents_batch import IndexDocumentsBatch
 from .._queries import AutocompleteQuery, SearchQuery, SuggestQuery
-from .._search_index_client import (
-    convert_search_result,
-    pack_continuation_token,
-    unpack_continuation_token,
-)
+from ..._version import VERSION
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
@@ -26,40 +22,15 @@ if TYPE_CHECKING:
     from .._credential import SearchApiKeyCredential
 
 
-class _SearchDocumentsPagedAsync(AsyncPageIterator):
-    def __init__(self, client, initial_query, kwargs, continuation_token=None):
-        super(_SearchDocumentsPagedAsync, self).__init__(
-            get_next=self._get_next_cb,
-            extract_data=self._extract_data_cb,
-            continuation_token=continuation_token,
-        )
-        self._client = client
-        self._initial_query = initial_query
-        self._kwargs = kwargs
-
-    async def _get_next_cb(self, continuation_token):
-        if continuation_token is None:
-            return await self._client.documents.search_post(
-                search_request=self._initial_query.request, **self._kwargs
-            )
-
-        _next_link, next_page_request = unpack_continuation_token(continuation_token)
-
-        return await self._client.documents.search_post(
-            search_request=next_page_request
-        )
-
-    async def _extract_data_cb(self, response):  # pylint:disable=no-self-use
-        continuation_token = pack_continuation_token(response)
-
-        results = [convert_search_result(r) for r in response.results]
-
-        return continuation_token, results
-
-
 class SearchIndexClient(object):
     """A client to interact with an existing Azure search index.
 
+    :param endpoint: The URL endpoint of an Azure search service
+    :type endpoint: str
+    :param index_name: The name of the index to connect to
+    :type index_name: str
+    :param credential: A credential to authorize search client requests
+    :type credential: SearchApiKeyCredential
 
     .. admonition:: Example:
 
@@ -87,6 +58,7 @@ class SearchIndexClient(object):
             endpoint=endpoint,
             index_name=index_name,
             headers_policy=headers_policy,
+            sdk_moniker="search/{}".format(VERSION),
             **kwargs
         )  # type: _SearchIndexClient
 
@@ -139,12 +111,12 @@ class SearchIndexClient(object):
 
     @distributed_trace_async
     async def search(self, query, **kwargs):
-        # type: (Union[str, SearchQuery], **Any) -> AsyncItemPaged[dict]
+        # type: (Union[str, SearchQuery], **Any) -> AsyncSearchItemPaged[dict]
         """Search the Azure search index for documents.
 
         :param query: An query for searching the index
         :type documents: str or SearchQuery
-        :rtype:  Iterable[dict]
+        :rtype:  AsyncSearchItemPaged[dict]
 
         .. admonition:: Example:
 
@@ -163,6 +135,15 @@ class SearchIndexClient(object):
                 :language: python
                 :dedent: 4
                 :caption: Filter and sort search results.
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_facet_query_async.py
+                :start-after: [START facet_query_async]
+                :end-before: [END facet_query_async]
+                :language: python
+                :dedent: 4
+                :caption: Get search result facets.
         """
         if isinstance(query, six.string_types):
             query = SearchQuery(search_text=query)
@@ -173,8 +154,8 @@ class SearchIndexClient(object):
                 )
             )
 
-        return AsyncItemPaged(
-            self._client, query, kwargs, page_iterator_class=_SearchDocumentsPagedAsync
+        return AsyncSearchItemPaged(
+            self._client, query, kwargs, page_iterator_class=AsyncSearchPageIterator
         )
 
     @distributed_trace_async

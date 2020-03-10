@@ -14,6 +14,13 @@ These are code samples that show common scenario operations with the Azure DataL
 
 Several DataLake Storage Python SDK samples are available to you in the SDK's GitHub repository. These samples provide example code for additional scenarios commonly encountered while working with DataLake Storage:
 
+* [`datalake_samples_service.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file-datalake/samples/datalake_samples_service.py) - Examples for authenticating and operating on the client:
+    * Instantiate DataLakeServiceClient using connection str
+    * Instantiate DataLakeServiceClient using AAD Credential
+    * Get user delegation key
+    * Create all kinds of clients from DataLakeServiceClient and operate on those clients
+    * List file systems
+    
 * [`datalake_samples_access_control.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file-datalake/samples/datalake_samples_access_control.py) - Examples for common DataLake Storage tasks:
     * Set up a file system
     * Create a directory

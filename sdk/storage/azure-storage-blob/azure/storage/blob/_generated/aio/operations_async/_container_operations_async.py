@@ -77,9 +77,9 @@ class ContainerOperations:
         default_encryption_scope = None
         if container_cpk_scope_info is not None:
             default_encryption_scope = container_cpk_scope_info.default_encryption_scope
-        deny_encryption_scope_override = None
+        prevent_encryption_scope_override = None
         if container_cpk_scope_info is not None:
-            deny_encryption_scope_override = container_cpk_scope_info.deny_encryption_scope_override
+            prevent_encryption_scope_override = container_cpk_scope_info.prevent_encryption_scope_override
 
         restype = "container"
 
@@ -107,8 +107,8 @@ class ContainerOperations:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id", request_id, 'str')
         if default_encryption_scope is not None:
             header_parameters['x-ms-default-encryption-scope'] = self._serialize.header("default_encryption_scope", default_encryption_scope, 'str')
-        if deny_encryption_scope_override is not None:
-            header_parameters['x-ms-deny-encryption-scope-override'] = self._serialize.header("deny_encryption_scope_override", deny_encryption_scope_override, 'bool')
+        if prevent_encryption_scope_override is not None:
+            header_parameters['x-ms-deny-encryption-scope-override'] = self._serialize.header("prevent_encryption_scope_override", prevent_encryption_scope_override, 'bool')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters)
