@@ -47,7 +47,7 @@ class AppConfigurationPreparer(AzureMgmtPreparer):
         BODY = {
             "location": "westus",
             "sku": {
-                "name": "Free"
+                "name": "Standard"
             }
         }
         group = self._get_resource_group(**kwargs).name

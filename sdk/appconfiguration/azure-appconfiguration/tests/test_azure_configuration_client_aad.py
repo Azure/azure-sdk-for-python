@@ -388,11 +388,10 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
     @AppConfigurationClientPreparer(aad_mode=True)
     def test_list_configuration_settings_contains(self, app_config_client):
         self.prepare_kv(app_config_client)
-        items = list(app_config_client.list_configuration_settings(
-            label_filter="*" + LABEL + "*"
-        ))
-        assert len(items) == 1
-        assert all(x.label == LABEL for x in items)
+        with pytest.raises(AzureError):
+            items = list(app_config_client.list_configuration_settings(
+                label_filter="*" + LABEL + "*"
+            ))
         self.cleanup_kv(app_config_client)
 
     @ResourceGroupPreparer(random_name_enabled=True)

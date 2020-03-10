@@ -20,3 +20,4 @@ jobs:
         AZURE_TENANT_ID: $(aad-azure-sdk-test-tenant-id)
         AZURE_CLIENT_OID: $(aad-azure-sdk-test-client-oid)
         TEST_MODE: 'RunLiveNoRecord'
+        AZURE_TEST_RUN_LIVE: 'true'
