@@ -342,7 +342,7 @@ text_analytics_client = TextAnalyticsClient(endpoint, TextAnalyticsApiKeyCredent
 documents = [
     "This is written in English.",
     "Il documento scritto in italiano.",
-    "Dies ist in englischer Sprache verfasst."
+    "Dies ist in deutsche Sprache verfasst."
 ]
 
 response = text_analytics_client.detect_language(documents)
