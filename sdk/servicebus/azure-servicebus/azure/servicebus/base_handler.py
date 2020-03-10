@@ -75,12 +75,18 @@ class BaseHandler(object):  # pylint: disable=too-many-instance-attributes
         if not self.running:
             raise InvalidHandlerState("Client connection is closed.")
 
+        try:
+            application_properties = {"associated-link-name":self._handler.message_handler.name}
+        except AttributeError:
+            application_properties = {}
+
         mgmt_msg = Message(
             body=message,
             properties=MessageProperties(
                 reply_to=self.mgmt_target,
                 encoding=self.encoding,
-                **kwargs))
+                **kwargs),
+            application_properties=application_properties)
         try:
             return self._handler.mgmt_request(
                 mgmt_msg,
