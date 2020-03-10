@@ -69,7 +69,7 @@ client = SearchIndexClient(endpoint="<service endpoint>",
 
 ### Client
 
-The Cognitive Search client library provides a [SearchIndexClient](https://aka.ms/azsdk-python-search-searchindexclient) to perform search operations on [batches of documents](#Examples "examples").
+The [Cognitive Search client library](http://azure.github.io/azure-sdk-for-python/ref/Search.html) provides a `SearchIndexClient` to perform search operations on [batches of documents](#Examples "examples").
 It provides both synchronous and asynchronous operations to access a specific use of Cognitive Search indexes, such as querying, suggestions or autocompletion.
 
 
