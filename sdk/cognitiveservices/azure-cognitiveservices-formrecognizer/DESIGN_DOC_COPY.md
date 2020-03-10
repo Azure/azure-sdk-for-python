@@ -499,8 +499,8 @@ client = FormRecognizerClient(endpoint=endpoint, credential=credential)
 receipt_image = "https://raw.githubusercontent.com/Azure-Samples/cognitive-services-REST-api-samples/master/curl/form-recognizer/contoso-allinone.jpg"
 
 def callback(resp):
-    raw_response = resp.raw_response  # raw response from service
-    result = resp.ocr_result
+    raw_response = resp.raw_response
+    result = resp.raw_ocr_result
     for page in result.pages:
         print("On page: {}".format(page.page_number))
         for line in page.lines:
