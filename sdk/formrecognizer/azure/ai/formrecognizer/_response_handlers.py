@@ -8,7 +8,6 @@
 from ._models import (
     ExtractedReceipt,
     FieldValue,
-    ReceiptFields,
     ReceiptItem,
     ReceiptItemField,
     TableCell,
@@ -28,18 +27,6 @@ def prepare_receipt_result(response, include_raw):
 
     for page in response.analyze_result.document_results:
         receipt = ExtractedReceipt(
-            merchant_address=get_receipt_field_value(page.fields.get("MerchantAddress")),
-            merchant_name=get_receipt_field_value(page.fields.get("MerchantName")),
-            merchant_phone_number=get_receipt_field_value(page.fields.get("MerchantPhoneNumber")),
-            receipt_type=get_receipt_field_value(page.fields.get("ReceiptType")),
-            receipt_items=ReceiptItem._from_generated(page.fields.get("Items")),
-            subtotal=get_receipt_field_value(page.fields.get("Subtotal")),
-            tax=get_receipt_field_value(page.fields.get("Tax")),
-            tip=get_receipt_field_value(page.fields.get("Tip")),
-            total=get_receipt_field_value(page.fields.get("Total")),
-            transaction_date=get_receipt_field_value(page.fields.get("TransactionDate")),
-            transaction_time=get_receipt_field_value(page.fields.get("TransactionTime")),
-            fields=ReceiptFields(
                 merchant_address=FieldValue._from_generated(
                     page.fields.pop("MerchantAddress", None),
                     read_result,
@@ -96,8 +83,7 @@ def prepare_receipt_result(response, include_raw):
                     include_raw
                 ),
             )
-        )
-        receipt.fields.update(page.fields)  # for any new fields being sent
+        receipt.update(page.fields)  # for any new fields being sent
         receipts.append(receipt)
     return receipts
 
