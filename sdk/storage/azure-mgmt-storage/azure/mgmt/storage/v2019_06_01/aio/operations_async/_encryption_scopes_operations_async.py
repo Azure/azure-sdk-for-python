@@ -9,10 +9,10 @@ from typing import Any, Callable, Dict, Generic, Optional, TypeVar, Union
 import warnings
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
-from azure.core.exceptions import map_error
+from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
-from azure.mgmt.core.exceptions import ARMError
+from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models
 
@@ -70,8 +70,8 @@ class EncryptionScopesOperations:
         :rtype: ~azure.mgmt.storage.v2019_06_01.models.EncryptionScope or ~azure.mgmt.storage.v2019_06_01.models.EncryptionScope
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls: ClsType["models.EncryptionScope"] = kwargs.pop('cls', None)
-        error_map = kwargs.pop('error_map', {})
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.EncryptionScope"]
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-06-01"
 
         # Construct URL
@@ -85,16 +85,16 @@ class EncryptionScopesOperations:
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters: Dict[str, Any] = {}
+        query_parameters = {}  # type: Dict[str, Any]
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters: Dict[str, Any] = {}
+        header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = kwargs.pop('content_type', 'application/json')
 
         # Construct and send request
-        body_content_kwargs = {}
+        body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(encryption_scope, 'EncryptionScope')
         body_content_kwargs['content'] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
@@ -104,7 +104,8 @@ class EncryptionScopesOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.ErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
         if response.status_code == 200:
@@ -148,8 +149,8 @@ class EncryptionScopesOperations:
         :rtype: ~azure.mgmt.storage.v2019_06_01.models.EncryptionScope
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls: ClsType["models.EncryptionScope"] = kwargs.pop('cls', None)
-        error_map = kwargs.pop('error_map', {})
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.EncryptionScope"]
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-06-01"
 
         # Construct URL
@@ -163,16 +164,16 @@ class EncryptionScopesOperations:
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters: Dict[str, Any] = {}
+        query_parameters = {}  # type: Dict[str, Any]
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters: Dict[str, Any] = {}
+        header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = kwargs.pop('content_type', 'application/json')
 
         # Construct and send request
-        body_content_kwargs = {}
+        body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(encryption_scope, 'EncryptionScope')
         body_content_kwargs['content'] = body_content
         request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
@@ -182,7 +183,8 @@ class EncryptionScopesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.ErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('EncryptionScope', pipeline_response)
 
@@ -218,8 +220,8 @@ class EncryptionScopesOperations:
         :rtype: ~azure.mgmt.storage.v2019_06_01.models.EncryptionScope
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls: ClsType["models.EncryptionScope"] = kwargs.pop('cls', None)
-        error_map = kwargs.pop('error_map', {})
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.EncryptionScope"]
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-06-01"
 
         # Construct URL
@@ -233,11 +235,11 @@ class EncryptionScopesOperations:
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters: Dict[str, Any] = {}
+        query_parameters = {}  # type: Dict[str, Any]
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters: Dict[str, Any] = {}
+        header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
         # Construct and send request
@@ -247,7 +249,8 @@ class EncryptionScopesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.ErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('EncryptionScope', pipeline_response)
 
@@ -275,10 +278,10 @@ class EncryptionScopesOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: EncryptionScopeListResult or the result of cls(response)
         :rtype: ~azure.mgmt.storage.v2019_06_01.models.EncryptionScopeListResult
-        :raises: ~azure.mgmt.core.ARMError
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls: ClsType["models.EncryptionScopeListResult"] = kwargs.pop('cls', None)
-        error_map = kwargs.pop('error_map', {})
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.EncryptionScopeListResult"]
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-06-01"
 
         def prepare_request(next_link=None):
@@ -295,11 +298,11 @@ class EncryptionScopesOperations:
                 url = next_link
 
             # Construct parameters
-            query_parameters: Dict[str, Any] = {}
+            query_parameters = {}  # type: Dict[str, Any]
             query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             # Construct headers
-            header_parameters: Dict[str, Any] = {}
+            header_parameters = {}  # type: Dict[str, Any]
             header_parameters['Accept'] = 'application/json'
 
             # Construct and send request
@@ -321,7 +324,7 @@ class EncryptionScopesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise ARMError(response=response)
+                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
             return pipeline_response
 

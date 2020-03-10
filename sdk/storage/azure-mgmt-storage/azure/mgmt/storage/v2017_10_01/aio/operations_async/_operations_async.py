@@ -9,10 +9,10 @@ from typing import Any, Callable, Dict, Generic, Optional, TypeVar
 import warnings
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
-from azure.core.exceptions import map_error
+from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
-from azure.mgmt.core.exceptions import ARMError
+from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models
 
@@ -50,10 +50,10 @@ class Operations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: OperationListResult or the result of cls(response)
         :rtype: ~azure.mgmt.storage.v2017_10_01.models.OperationListResult
-        :raises: ~azure.mgmt.core.ARMError
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls: ClsType["models.OperationListResult"] = kwargs.pop('cls', None)
-        error_map = kwargs.pop('error_map', {})
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.OperationListResult"]
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2017-10-01"
 
         def prepare_request(next_link=None):
@@ -64,11 +64,11 @@ class Operations:
                 url = next_link
 
             # Construct parameters
-            query_parameters: Dict[str, Any] = {}
+            query_parameters = {}  # type: Dict[str, Any]
             query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             # Construct headers
-            header_parameters: Dict[str, Any] = {}
+            header_parameters = {}  # type: Dict[str, Any]
             header_parameters['Accept'] = 'application/json'
 
             # Construct and send request
@@ -90,7 +90,7 @@ class Operations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise ARMError(response=response)
+                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
             return pipeline_response
 

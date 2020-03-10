@@ -575,6 +575,68 @@ class BlobServiceProperties(Resource):
         self.container_delete_retention_policy = container_delete_retention_policy
 
 
+class BlobServiceProperties(msrest.serialization.Model):
+    """The properties of a storage account’s Blob service.
+
+    :param cors: Specifies CORS rules for the Blob service. You can include up to five CorsRule
+     elements in the request. If no CorsRule elements are included in the request body, all CORS
+     rules will be deleted, and CORS will be disabled for the Blob service.
+    :type cors: ~azure.mgmt.storage.v2019_06_01.models.CorsRules
+    :param default_service_version: DefaultServiceVersion indicates the default version to use for
+     requests to the Blob service if an incoming request’s version is not specified. Possible values
+     include version 2008-10-27 and all more recent versions.
+    :type default_service_version: str
+    :param delete_retention_policy: The blob service properties for blob soft delete.
+    :type delete_retention_policy: ~azure.mgmt.storage.v2019_06_01.models.DeleteRetentionPolicy
+    :param is_versioning_enabled: Versioning is enabled if set to true.
+    :type is_versioning_enabled: bool
+    :param automatic_snapshot_policy_enabled: Deprecated in favor of isVersioningEnabled property.
+    :type automatic_snapshot_policy_enabled: bool
+    :param change_feed: The blob service properties for change feed events.
+    :type change_feed: ~azure.mgmt.storage.v2019_06_01.models.ChangeFeed
+    :param restore_policy: The blob service properties for blob restore policy.
+    :type restore_policy: ~azure.mgmt.storage.v2019_06_01.models.RestorePolicyProperties
+    :param container_delete_retention_policy: The blob service properties for container soft
+     delete.
+    :type container_delete_retention_policy:
+     ~azure.mgmt.storage.v2019_06_01.models.DeleteRetentionPolicy
+    """
+
+    _attribute_map = {
+        'cors': {'key': 'cors', 'type': 'CorsRules'},
+        'default_service_version': {'key': 'defaultServiceVersion', 'type': 'str'},
+        'delete_retention_policy': {'key': 'deleteRetentionPolicy', 'type': 'DeleteRetentionPolicy'},
+        'is_versioning_enabled': {'key': 'isVersioningEnabled', 'type': 'bool'},
+        'automatic_snapshot_policy_enabled': {'key': 'automaticSnapshotPolicyEnabled', 'type': 'bool'},
+        'change_feed': {'key': 'changeFeed', 'type': 'ChangeFeed'},
+        'restore_policy': {'key': 'restorePolicy', 'type': 'RestorePolicyProperties'},
+        'container_delete_retention_policy': {'key': 'containerDeleteRetentionPolicy', 'type': 'DeleteRetentionPolicy'},
+    }
+
+    def __init__(
+        self,
+        *,
+        cors: Optional["CorsRules"] = None,
+        default_service_version: Optional[str] = None,
+        delete_retention_policy: Optional["DeleteRetentionPolicy"] = None,
+        is_versioning_enabled: Optional[bool] = None,
+        automatic_snapshot_policy_enabled: Optional[bool] = None,
+        change_feed: Optional["ChangeFeed"] = None,
+        restore_policy: Optional["RestorePolicyProperties"] = None,
+        container_delete_retention_policy: Optional["DeleteRetentionPolicy"] = None,
+        **kwargs
+    ):
+        super(BlobServiceProperties, self).__init__(**kwargs)
+        self.cors = cors
+        self.default_service_version = default_service_version
+        self.delete_retention_policy = delete_retention_policy
+        self.is_versioning_enabled = is_versioning_enabled
+        self.automatic_snapshot_policy_enabled = automatic_snapshot_policy_enabled
+        self.change_feed = change_feed
+        self.restore_policy = restore_policy
+        self.container_delete_retention_policy = container_delete_retention_policy
+
+
 class ChangeFeed(msrest.serialization.Model):
     """The blob service properties for change feed events.
 
@@ -1332,31 +1394,6 @@ class Endpoints(msrest.serialization.Model):
         self.internet_endpoints = internet_endpoints
 
 
-class ErrorResponseException(HttpResponseError):
-    """Server responded with exception of type: 'ErrorResponse'.
-
-    :param response: Server response to be deserialized.
-    :param error_model: A deserialized model of the response body as model.
-    """
-
-    def __init__(self, response, error_model):
-        self.error = error_model
-        super(ErrorResponseException, self).__init__(response=response, error_model=error_model)
-
-    @classmethod
-    def from_response(cls, response, deserialize):
-        """Deserialize this response as this exception, or a subclass of this exception.
-
-        :param response: Server response to be deserialized.
-        :param deserialize: A deserializer
-        """
-        model_name = 'ErrorResponse'
-        error = deserialize(model_name, response)
-        if error is None:
-            error = deserialize.dependencies[model_name]()
-        return error._EXCEPTION_TYPE(response, error)
-
-
 class ErrorResponse(msrest.serialization.Model):
     """An error response from the storage resource provider.
 
@@ -1367,7 +1404,6 @@ class ErrorResponse(msrest.serialization.Model):
      interface.
     :type message: str
     """
-    _EXCEPTION_TYPE = ErrorResponseException
 
     _attribute_map = {
         'code': {'key': 'code', 'type': 'str'},
@@ -1460,6 +1496,35 @@ class FileServiceProperties(Resource):
     ):
         super(FileServiceProperties, self).__init__(**kwargs)
         self.sku = None
+        self.cors = cors
+        self.share_delete_retention_policy = share_delete_retention_policy
+
+
+class FileServiceProperties(msrest.serialization.Model):
+    """The properties of File services in storage account.
+
+    :param cors: Specifies CORS rules for the File service. You can include up to five CorsRule
+     elements in the request. If no CorsRule elements are included in the request body, all CORS
+     rules will be deleted, and CORS will be disabled for the File service.
+    :type cors: ~azure.mgmt.storage.v2019_06_01.models.CorsRules
+    :param share_delete_retention_policy: The file service properties for share soft delete.
+    :type share_delete_retention_policy:
+     ~azure.mgmt.storage.v2019_06_01.models.DeleteRetentionPolicy
+    """
+
+    _attribute_map = {
+        'cors': {'key': 'cors', 'type': 'CorsRules'},
+        'share_delete_retention_policy': {'key': 'shareDeleteRetentionPolicy', 'type': 'DeleteRetentionPolicy'},
+    }
+
+    def __init__(
+        self,
+        *,
+        cors: Optional["CorsRules"] = None,
+        share_delete_retention_policy: Optional["DeleteRetentionPolicy"] = None,
+        **kwargs
+    ):
+        super(FileServiceProperties, self).__init__(**kwargs)
         self.cors = cors
         self.share_delete_retention_policy = share_delete_retention_policy
 

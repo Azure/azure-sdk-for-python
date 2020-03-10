@@ -443,6 +443,51 @@ class BlobServiceProperties(Resource):
         self.change_feed = change_feed
 
 
+class BlobServiceProperties(msrest.serialization.Model):
+    """The properties of a storage account’s Blob service.
+
+    :param cors: Specifies CORS rules for the Blob service. You can include up to five CorsRule
+     elements in the request. If no CorsRule elements are included in the request body, all CORS
+     rules will be deleted, and CORS will be disabled for the Blob service.
+    :type cors: ~azure.mgmt.storage.v2019_04_01.models.CorsRules
+    :param default_service_version: DefaultServiceVersion indicates the default version to use for
+     requests to the Blob service if an incoming request’s version is not specified. Possible values
+     include version 2008-10-27 and all more recent versions.
+    :type default_service_version: str
+    :param delete_retention_policy: The blob service properties for soft delete.
+    :type delete_retention_policy: ~azure.mgmt.storage.v2019_04_01.models.DeleteRetentionPolicy
+    :param automatic_snapshot_policy_enabled: Automatic Snapshot is enabled if set to true.
+    :type automatic_snapshot_policy_enabled: bool
+    :param change_feed: The blob service properties for change feed events.
+    :type change_feed: ~azure.mgmt.storage.v2019_04_01.models.ChangeFeed
+    """
+
+    _attribute_map = {
+        'cors': {'key': 'cors', 'type': 'CorsRules'},
+        'default_service_version': {'key': 'defaultServiceVersion', 'type': 'str'},
+        'delete_retention_policy': {'key': 'deleteRetentionPolicy', 'type': 'DeleteRetentionPolicy'},
+        'automatic_snapshot_policy_enabled': {'key': 'automaticSnapshotPolicyEnabled', 'type': 'bool'},
+        'change_feed': {'key': 'changeFeed', 'type': 'ChangeFeed'},
+    }
+
+    def __init__(
+        self,
+        *,
+        cors: Optional["CorsRules"] = None,
+        default_service_version: Optional[str] = None,
+        delete_retention_policy: Optional["DeleteRetentionPolicy"] = None,
+        automatic_snapshot_policy_enabled: Optional[bool] = None,
+        change_feed: Optional["ChangeFeed"] = None,
+        **kwargs
+    ):
+        super(BlobServiceProperties, self).__init__(**kwargs)
+        self.cors = cors
+        self.default_service_version = default_service_version
+        self.delete_retention_policy = delete_retention_policy
+        self.automatic_snapshot_policy_enabled = automatic_snapshot_policy_enabled
+        self.change_feed = change_feed
+
+
 class ChangeFeed(msrest.serialization.Model):
     """The blob service properties for change feed events.
 
@@ -1068,6 +1113,29 @@ class FileServiceProperties(Resource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'cors': {'key': 'properties.cors', 'type': 'CorsRules'},
+    }
+
+    def __init__(
+        self,
+        *,
+        cors: Optional["CorsRules"] = None,
+        **kwargs
+    ):
+        super(FileServiceProperties, self).__init__(**kwargs)
+        self.cors = cors
+
+
+class FileServiceProperties(msrest.serialization.Model):
+    """The properties of File services in storage account.
+
+    :param cors: Specifies CORS rules for the File service. You can include up to five CorsRule
+     elements in the request. If no CorsRule elements are included in the request body, all CORS
+     rules will be deleted, and CORS will be disabled for the File service.
+    :type cors: ~azure.mgmt.storage.v2019_04_01.models.CorsRules
+    """
+
+    _attribute_map = {
+        'cors': {'key': 'cors', 'type': 'CorsRules'},
     }
 
     def __init__(

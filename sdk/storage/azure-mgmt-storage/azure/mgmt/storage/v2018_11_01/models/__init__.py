@@ -11,6 +11,7 @@ try:
     from ._models_py3 import AzureEntityResource
     from ._models_py3 import BlobContainer
     from ._models_py3 import BlobServiceProperties
+    from ._models_py3 import BlobServiceProperties
     from ._models_py3 import CheckNameAvailabilityResult
     from ._models_py3 import ContainerProperties
     from ._models_py3 import CorsRule
@@ -84,6 +85,7 @@ except (SyntaxError, ImportError):
     from ._models import AccountSasParameters  # type: ignore
     from ._models import AzureEntityResource  # type: ignore
     from ._models import BlobContainer  # type: ignore
+    from ._models import BlobServiceProperties  # type: ignore
     from ._models import BlobServiceProperties  # type: ignore
     from ._models import CheckNameAvailabilityResult  # type: ignore
     from ._models import ContainerProperties  # type: ignore
@@ -190,6 +192,7 @@ __all__ = [
     'AccountSasParameters',
     'AzureEntityResource',
     'BlobContainer',
+    'BlobServiceProperties',
     'BlobServiceProperties',
     'CheckNameAvailabilityResult',
     'ContainerProperties',

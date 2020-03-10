@@ -14,6 +14,7 @@ try:
     from ._models_py3 import BlobContainer
     from ._models_py3 import BlobServiceItems
     from ._models_py3 import BlobServiceProperties
+    from ._models_py3 import BlobServiceProperties
     from ._models_py3 import ChangeFeed
     from ._models_py3 import CheckNameAvailabilityResult
     from ._models_py3 import CloudErrorBody
@@ -30,6 +31,7 @@ try:
     from ._models_py3 import EncryptionServices
     from ._models_py3 import Endpoints
     from ._models_py3 import FileServiceItems
+    from ._models_py3 import FileServiceProperties
     from ._models_py3 import FileServiceProperties
     from ._models_py3 import FileShare
     from ._models_py3 import FileShareItem
@@ -99,6 +101,7 @@ except (SyntaxError, ImportError):
     from ._models import BlobContainer  # type: ignore
     from ._models import BlobServiceItems  # type: ignore
     from ._models import BlobServiceProperties  # type: ignore
+    from ._models import BlobServiceProperties  # type: ignore
     from ._models import ChangeFeed  # type: ignore
     from ._models import CheckNameAvailabilityResult  # type: ignore
     from ._models import CloudErrorBody  # type: ignore
@@ -115,6 +118,7 @@ except (SyntaxError, ImportError):
     from ._models import EncryptionServices  # type: ignore
     from ._models import Endpoints  # type: ignore
     from ._models import FileServiceItems  # type: ignore
+    from ._models import FileServiceProperties  # type: ignore
     from ._models import FileServiceProperties  # type: ignore
     from ._models import FileShare  # type: ignore
     from ._models import FileShareItem  # type: ignore
@@ -218,6 +222,7 @@ __all__ = [
     'BlobContainer',
     'BlobServiceItems',
     'BlobServiceProperties',
+    'BlobServiceProperties',
     'ChangeFeed',
     'CheckNameAvailabilityResult',
     'CloudErrorBody',
@@ -234,6 +239,7 @@ __all__ = [
     'EncryptionServices',
     'Endpoints',
     'FileServiceItems',
+    'FileServiceProperties',
     'FileServiceProperties',
     'FileShare',
     'FileShareItem',

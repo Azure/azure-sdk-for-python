@@ -17,6 +17,7 @@ try:
     from ._models_py3 import BlobRestoreStatus
     from ._models_py3 import BlobServiceItems
     from ._models_py3 import BlobServiceProperties
+    from ._models_py3 import BlobServiceProperties
     from ._models_py3 import ChangeFeed
     from ._models_py3 import CheckNameAvailabilityResult
     from ._models_py3 import CloudErrorBody
@@ -36,8 +37,9 @@ try:
     from ._models_py3 import EncryptionService
     from ._models_py3 import EncryptionServices
     from ._models_py3 import Endpoints
-    from ._models_py3 import ErrorResponse, ErrorResponseException
+    from ._models_py3 import ErrorResponse
     from ._models_py3 import FileServiceItems
+    from ._models_py3 import FileServiceProperties
     from ._models_py3 import FileServiceProperties
     from ._models_py3 import FileShare
     from ._models_py3 import FileShareItem
@@ -122,6 +124,7 @@ except (SyntaxError, ImportError):
     from ._models import BlobRestoreStatus  # type: ignore
     from ._models import BlobServiceItems  # type: ignore
     from ._models import BlobServiceProperties  # type: ignore
+    from ._models import BlobServiceProperties  # type: ignore
     from ._models import ChangeFeed  # type: ignore
     from ._models import CheckNameAvailabilityResult  # type: ignore
     from ._models import CloudErrorBody  # type: ignore
@@ -141,8 +144,9 @@ except (SyntaxError, ImportError):
     from ._models import EncryptionService  # type: ignore
     from ._models import EncryptionServices  # type: ignore
     from ._models import Endpoints  # type: ignore
-    from ._models import ErrorResponse, ErrorResponseException  # type: ignore
+    from ._models import ErrorResponse  # type: ignore
     from ._models import FileServiceItems  # type: ignore
+    from ._models import FileServiceProperties  # type: ignore
     from ._models import FileServiceProperties  # type: ignore
     from ._models import FileShare  # type: ignore
     from ._models import FileShareItem  # type: ignore
@@ -269,6 +273,7 @@ __all__ = [
     'BlobRestoreStatus',
     'BlobServiceItems',
     'BlobServiceProperties',
+    'BlobServiceProperties',
     'ChangeFeed',
     'CheckNameAvailabilityResult',
     'CloudErrorBody',
@@ -288,8 +293,9 @@ __all__ = [
     'EncryptionService',
     'EncryptionServices',
     'Endpoints',
-    'ErrorResponse', 'ErrorResponseException',
+    'ErrorResponse',
     'FileServiceItems',
+    'FileServiceProperties',
     'FileServiceProperties',
     'FileShare',
     'FileShareItem',

@@ -296,6 +296,37 @@ class BlobServiceProperties(Resource):
         self.delete_retention_policy = kwargs.get('delete_retention_policy', None)
 
 
+class BlobServiceProperties(msrest.serialization.Model):
+    """The properties of a storage account’s Blob service.
+
+    :param cors: Specifies CORS rules for the Blob service. You can include up to five CorsRule
+     elements in the request. If no CorsRule elements are included in the request body, all CORS
+     rules will be deleted, and CORS will be disabled for the Blob service.
+    :type cors: ~azure.mgmt.storage.v2018_11_01.models.CorsRules
+    :param default_service_version: DefaultServiceVersion indicates the default version to use for
+     requests to the Blob service if an incoming request’s version is not specified. Possible values
+     include version 2008-10-27 and all more recent versions.
+    :type default_service_version: str
+    :param delete_retention_policy: The blob service properties for soft delete.
+    :type delete_retention_policy: ~azure.mgmt.storage.v2018_11_01.models.DeleteRetentionPolicy
+    """
+
+    _attribute_map = {
+        'cors': {'key': 'cors', 'type': 'CorsRules'},
+        'default_service_version': {'key': 'defaultServiceVersion', 'type': 'str'},
+        'delete_retention_policy': {'key': 'deleteRetentionPolicy', 'type': 'DeleteRetentionPolicy'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(BlobServiceProperties, self).__init__(**kwargs)
+        self.cors = kwargs.get('cors', None)
+        self.default_service_version = kwargs.get('default_service_version', None)
+        self.delete_retention_policy = kwargs.get('delete_retention_policy', None)
+
+
 class CheckNameAvailabilityResult(msrest.serialization.Model):
     """The CheckNameAvailability operation response.
 
