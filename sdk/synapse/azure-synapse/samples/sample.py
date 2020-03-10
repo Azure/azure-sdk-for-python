@@ -55,10 +55,10 @@ if __name__ == "__main__":
     batch_id = 1
     # parameter for creating batch job
     job_name = "WordCount_Java"
-    file = "abfss://testfilesystem@newzzyadlsgen2.dfs.core.windows.net/samples/java/wordcount/wordcount.jar"
+    file = "abfss://{filesystem}@{adlsgen2account}.dfs.core.windows.net/samples/java/wordcount/wordcount.jar"
     class_name = "WordCount"
-    args = ["abfss://testfilesystem@newzzyadlsgen2.dfs.core.windows.net/samples/java/wordcount/shakespeare.txt",
-            "abfss://testfilesystem@newzzyadlsgen2.dfs.core.windows.net/samples/java/wordcount/result/"]
+    args = ["abfss://{filesystem}@{adlsgen2account}.dfs.core.windows.net/samples/java/wordcount/shakespeare.txt",
+            "abfss://{filesystem}@{adlsgen2account}.dfs.core.windows.net/samples/java/wordcount/result/"]
     driver_memory = "4g"
     driver_cores = 4
     executor_memory = "4g"

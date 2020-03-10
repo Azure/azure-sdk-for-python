@@ -399,8 +399,8 @@ class TestExtractKeyPhrases(TextAnalyticsTest):
         try:
             result = text_analytics.extract_key_phrases(docs, model_version="bad")
         except HttpResponseError as err:
-            self.assertEqual(err.error_code, "InvalidRequest")
-            self.assertIsNotNone(err.message)
+            self.assertEqual(err.error.code, "InvalidRequest")
+            self.assertIsNotNone(err.error.message)
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_document_errors(self, resource_group, location, text_analytics_account, text_analytics_account_key):
@@ -428,8 +428,8 @@ class TestExtractKeyPhrases(TextAnalyticsTest):
         try:
             result = text_analytics.extract_key_phrases(docs)
         except HttpResponseError as err:
-            self.assertEqual(err.error_code, "MissingInputRecords")
-            self.assertIsNotNone(err.message)
+            self.assertEqual(err.error.code, "MissingInputRecords")
+            self.assertIsNotNone(err.error.message)
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_duplicate_ids_error(self, resource_group, location, text_analytics_account, text_analytics_account_key):
@@ -440,8 +440,8 @@ class TestExtractKeyPhrases(TextAnalyticsTest):
         try:
             result = text_analytics.extract_key_phrases(docs)
         except HttpResponseError as err:
-            self.assertEqual(err.error_code, "InvalidDocument")
-            self.assertIsNotNone(err.message)
+            self.assertEqual(err.error.code, "InvalidDocument")
+            self.assertIsNotNone(err.error.message)
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_batch_size_over_limit_error(self, resource_group, location, text_analytics_account, text_analytics_account_key):
@@ -451,8 +451,8 @@ class TestExtractKeyPhrases(TextAnalyticsTest):
         try:
             response = text_analytics.extract_key_phrases(docs)
         except HttpResponseError as err:
-            self.assertEqual(err.error_code, "InvalidDocumentBatch")
-            self.assertIsNotNone(err.message)
+            self.assertEqual(err.error.code, "InvalidDocumentBatch")
+            self.assertIsNotNone(err.error.message)
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_language_kwarg_spanish(self, resource_group, location, text_analytics_account, text_analytics_account_key):

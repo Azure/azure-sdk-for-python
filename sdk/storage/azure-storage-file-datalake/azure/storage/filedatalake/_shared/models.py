@@ -24,6 +24,7 @@ class StorageErrorCode(str, Enum):
     account_is_disabled = "AccountIsDisabled"
     authentication_failed = "AuthenticationFailed"
     authorization_failure = "AuthorizationFailure"
+    no_authentication_information = "NoAuthenticationInformation"
     condition_headers_not_supported = "ConditionHeadersNotSupported"
     condition_not_met = "ConditionNotMet"
     empty_metadata_key = "EmptyMetadataKey"
