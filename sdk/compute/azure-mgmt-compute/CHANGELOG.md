@@ -1,10 +1,14 @@
 # Release History
 
-## 12.0.0 (2020-03-09)
+## 11.1.0 (2020-03-09)
 
-**Breaking changes**
+**Features**
 
-- Operation VirtualMachineImagesOperations.list has a new signature
+- Operation VirtualMachineImagesOperations.list has a new parameters $expand
+
+**Bugfixs**
+
+- remove not-working $filter in Operation VirtualMachineImagesOperations.list
 
 ## 11.0.0 (2020-02-27)
 
