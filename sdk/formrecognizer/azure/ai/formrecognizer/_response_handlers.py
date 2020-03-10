@@ -12,12 +12,12 @@ from ._models import (
     ReceiptItem,
     ReceiptItemField,
     TableCell,
-    Table,
     ExtractedLayoutPage,
     CustomModel,
     LabeledCustomModel,
     ExtractedPage,
     ExtractedField,
+    ExtractedTable
 )
 from ._helpers import get_receipt_field_value
 
@@ -41,62 +41,63 @@ def prepare_receipt_result(response, include_raw):
             transaction_time=get_receipt_field_value(page.fields.get("TransactionTime")),
             fields=ReceiptFields(
                 merchant_address=FieldValue._from_generated(
-                    page.fields.get("MerchantAddress"),
+                    page.fields.pop("MerchantAddress", None),
                     read_result,
                     include_raw
                 ),
                 merchant_name=FieldValue._from_generated(
-                    page.fields.get("MerchantName"),
+                    page.fields.pop("MerchantName", None),
                     read_result,
                     include_raw
                 ),
                 merchant_phone_number=FieldValue._from_generated(
-                    page.fields.get("MerchantPhoneNumber"),
+                    page.fields.pop("MerchantPhoneNumber", None),
                     read_result,
                     include_raw
                 ),
                 receipt_type=FieldValue._from_generated(
-                    page.fields.get("ReceiptType"),
+                    page.fields.pop("ReceiptType", None),
                     read_result,
                     include_raw
                 ),
                 receipt_items=ReceiptItemField._from_generated(
-                    page.fields.get("Items"),
+                    page.fields.pop("Items", None),
                     response.analyze_result.read_results,
                     include_raw
                 ),
                 subtotal=FieldValue._from_generated(
-                    page.fields.get("Subtotal"),
+                    page.fields.pop("Subtotal", None),
                     read_result,
                     include_raw
                 ),
                 tax=FieldValue._from_generated(
-                    page.fields.get("Tax"),
+                    page.fields.pop("Tax", None),
                     read_result,
                     include_raw
                 ),
                 tip=FieldValue._from_generated(
-                    page.fields.get("Tip"),
+                    page.fields.pop("Tip", None),
                     read_result,
                     include_raw
                 ),
                 total=FieldValue._from_generated(
-                    page.fields.get("Total"),
+                    page.fields.pop("Total", None),
                     read_result,
                     include_raw
                 ),
                 transaction_date=FieldValue._from_generated(
-                    page.fields.get("TransactionDate"),
+                    page.fields.pop("TransactionDate", None),
                     read_result,
                     include_raw
                 ),
                 transaction_time=FieldValue._from_generated(
-                    page.fields.get("TransactionTime"),
+                    page.fields.pop("TransactionTime", None),
                     read_result,
                     include_raw
                 ),
             )
         )
+        receipt.fields.update(page.fields)  # for any new fields being sent
         receipts.append(receipt)
     return receipts
 
@@ -108,11 +109,11 @@ def prepare_layout_result(response, include_raw):
     for page in response.analyze_result.page_results:
         result_page = ExtractedLayoutPage(page_number=page.page, tables=[])
         for table in page.tables:
-            my_table = [[None for x in range(table.columns)] for y in range(table.rows)]
-            for cell in table.cells:
-                my_table[cell.row_index][cell.column_index] = \
-                    TableCell._from_generated(cell, read_result, include_raw)
-            result_page.tables.append(Table(my_table))
+            my_table = ExtractedTable(row_count=table.rows, column_count=table.columns, cells=[
+                TableCell._from_generated(cell, read_result, include_raw)
+                for cell in table.cells
+            ])
+            result_page.tables.append(my_table)
         pages.append(result_page)
     return pages
 
@@ -126,6 +127,7 @@ def prepare_labeled_training_result(response):
 
 
 def prepare_analyze_result(response, include_raw):
+    # FIXME: refactor this function, fix tables
     pages = []
     read_result = response.analyze_result.read_results
 

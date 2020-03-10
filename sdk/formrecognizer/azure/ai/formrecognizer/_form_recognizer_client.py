@@ -45,6 +45,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
         )
 
     def begin_extract_receipt(self, form, content_type, **kwargs):
+        # raw_response_hook = kwargs.pop("raw_response_hook")
         include_text_details = kwargs.pop("include_text_details", False)
         if isinstance(form, six.string_types):
             form = {"source": form}
@@ -54,7 +55,8 @@ class FormRecognizerClient(FormRecognizerClientBase):
                 file_stream=form,
                 content_type=content_type,
                 include_text_details=include_text_details,
-                cls=get_pipeline_response
+                cls=get_pipeline_response,
+                **kwargs
             )
         except ErrorResponseException as err:
             raise HttpResponseError(err)
@@ -64,6 +66,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
             extracted_receipt = prepare_receipt_result(analyze_result, include_text_details)
             return extracted_receipt
 
+        # poll_method = LROBasePolling(raw_response_hook=raw_response_hook)
         poll_method = LROBasePolling()
         poller = LROPoller(self._client._client, response, callback, poll_method)
         return poller
@@ -87,7 +90,8 @@ class FormRecognizerClient(FormRecognizerClientBase):
             response = self._client.analyze_layout_async(
                 file_stream=form,
                 content_type=content_type,
-                cls=get_pipeline_response
+                cls=get_pipeline_response,
+                **kwargs
             )
         except ErrorResponseException as err:
             raise HttpResponseError(err)
@@ -101,7 +105,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
         poller = LROPoller(self._client._client, response, callback, poll_method)
         return poller
 
-    def begin_training(self, source, content_type, source_prefix_filter=None, include_sub_folders=False, include_keys=False):
+    def begin_training(self, source, content_type, source_prefix_filter=None, include_sub_folders=False, include_keys=False, **kwargs):
         # import json
         #
         # json_file_path = "../result_training_unlabeled_with_keys.json"
@@ -121,7 +125,8 @@ class FormRecognizerClient(FormRecognizerClientBase):
                     "include_sub_folders": include_sub_folders
                 },
                 content_type=content_type,
-                cls=get_pipeline_response
+                cls=get_pipeline_response,
+                **kwargs
             )
         except ErrorResponseException as err:
             raise HttpResponseError(err)
@@ -139,7 +144,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
         poller = LROPoller(self._client._client, response, callback, poll_method)
         return poller
 
-    def begin_labeled_training(self, source, content_type, source_prefix_filter=None, include_sub_folders=False):
+    def begin_labeled_training(self, source, content_type, source_prefix_filter=None, include_sub_folders=False, **kwargs):
         # import json
         #
         # json_file_path = "../result_training_labeled.json"
@@ -155,7 +160,8 @@ class FormRecognizerClient(FormRecognizerClientBase):
             response = self._client.train_custom_model_async(
                 train_request={"source": source, "source_filter": source_prefix_filter, "use_label_file": True},
                 content_type=content_type,
-                cls=get_pipeline_response
+                cls=get_pipeline_response,
+                **kwargs
             )
         except ErrorResponseException as err:
             raise HttpResponseError(err)
@@ -191,7 +197,8 @@ class FormRecognizerClient(FormRecognizerClientBase):
                 model_id=model_id,
                 include_text_details=include_text_details,
                 content_type=content_type,
-                cls=get_pipeline_response
+                cls=get_pipeline_response,
+                **kwargs
             )
         except ErrorResponseException as err:
             raise HttpResponseError(err)
@@ -205,25 +212,27 @@ class FormRecognizerClient(FormRecognizerClientBase):
         poller = LROPoller(self._client._client, response, callback, poll_method)
         return poller
 
-    def delete_custom_model(self, model_id):
+    def delete_custom_model(self, model_id, **kwargs):
         try:
             self._client.delete_custom_model(
-                model_id=model_id
+                model_id=model_id,
+                **kwargs
             )
         except ErrorResponseException as err:
             raise HttpResponseError(err)
 
-    def list_custom_models(self):
+    def list_custom_models(self, **kwargs):
         try:
             return self._client.list_custom_models(
                 cls=lambda objs: [ModelInfo._from_generated(x) for x in objs],
+                **kwargs
         )
         except ErrorResponseException as err:
             raise HttpResponseError(err)
 
-    def get_models_summary(self):
+    def get_models_summary(self, **kwargs):
         try:
-            response = self._client.get_custom_models()
+            response = self._client.get_custom_models(**kwargs)
             return ModelsSummary._from_generated(response.summary)
         except ErrorResponseException as err:
             raise HttpResponseError(err)

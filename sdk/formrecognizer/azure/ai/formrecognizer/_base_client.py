@@ -20,7 +20,7 @@ from azure.core.pipeline.policies import (
     HttpLoggingPolicy,
     ContentDecodePolicy
 )
-from ._policies import CognitiveServicesCredentialPolicy
+from ._policies import CognitiveServicesCredentialPolicy, FormRecognizerResponseHookPolicy
 from ._user_agent import USER_AGENT
 
 
@@ -57,6 +57,7 @@ class FormRecognizerClientBase(object):
             credential_policy,
             ContentDecodePolicy(**kwargs),
             config.logging_policy,
+            FormRecognizerResponseHookPolicy(**kwargs),
             DistributedTracingPolicy(**kwargs),
             HttpLoggingPolicy(**kwargs),
         ]

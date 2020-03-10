@@ -27,6 +27,57 @@ def get_raw_field(field, raw_result):
         return None
 
 
+class DictMixin(object):
+
+    def __setitem__(self, key, item):
+        self.__dict__[key] = item
+
+    def __getitem__(self, key):
+        return self.__dict__[key]
+
+    def __repr__(self):
+        return str(self)
+
+    def __len__(self):
+        return len(self.keys())
+
+    def __delitem__(self, key):
+        self.__dict__[key] = None
+
+    def __eq__(self, other):
+        """Compare objects by comparing all attributes."""
+        if isinstance(other, self.__class__):
+            return self.__dict__ == other.__dict__
+        return False
+
+    def __ne__(self, other):
+        """Compare objects by comparing all attributes."""
+        return not self.__eq__(other)
+
+    def __str__(self):
+        return str({k: v for k, v in self.__dict__.items() if not k.startswith('_')})
+
+    def has_key(self, k):
+        return k in self.__dict__
+
+    def update(self, *args, **kwargs):
+        return self.__dict__.update(*args, **kwargs)
+
+    def keys(self):
+        return [k for k in self.__dict__ if not k.startswith('_')]
+
+    def values(self):
+        return [v for k, v in self.__dict__.items() if not k.startswith('_')]
+
+    def items(self):
+        return [(k, v) for k, v in self.__dict__.items() if not k.startswith('_')]
+
+    def get(self, key, default=None):
+        if key in self.__dict__:
+            return self.__dict__[key]
+        return default
+
+
 class ExtractedReceipt(object):
 
     def __init__(self, **kwargs):
@@ -44,7 +95,7 @@ class ExtractedReceipt(object):
         self.fields = kwargs.get("fields", None)
 
 
-class ReceiptFields(object):
+class ReceiptFields(DictMixin):
 
     def __init__(self, **kwargs):
         self.merchant_address = kwargs.get("merchant_address", None)
@@ -156,22 +207,32 @@ class ExtractedLayoutPage(object):
         self.page_number = kwargs.get("page_number", None)
 
 
-def Table(table):
-    class ExtractedTable(type(table)):
+class ExtractedTable(object):
+    def __init__(self, **kwargs):
+        self.cells = kwargs.get("cells", None)
+        self.row_count = kwargs.get("row_count", None)
+        self.column_count = kwargs.get("column_count", None)
 
-        def __getitem__(self, cell):
-            row, col = cell
-            return table[cell[row][col]]
 
-        @property
-        def row_count(self):
-            return len(table)
-
-        @property
-        def column_count(self):
-            return len(table[0])
-
-    return ExtractedTable(table)
+# def Table(table):
+#     class ExtractedTable(type(table)):
+#
+#         # def __getitem__(self, cell):
+#         #     try:
+#         #         row, col = cell
+#         #         return table[row][col]
+#         #     except TypeError:
+#         #         return table
+#
+#         @property
+#         def row_count(self):
+#             return len(table)
+#
+#         @property
+#         def column_count(self):
+#             return len(table[0])
+#
+#     return ExtractedTable(table)
 
 
 class TableCell(object):

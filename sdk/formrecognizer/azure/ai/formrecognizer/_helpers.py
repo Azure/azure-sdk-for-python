@@ -18,3 +18,16 @@ def get_receipt_field_value(field):
             or field.value_object or field.value_phone_number or field.value_string or field.value_time
 
     return value
+
+
+def get_date(field):
+    if field is None:
+        return field
+    return field.value_date
+
+
+def get_integer(field):
+    if field is None:
+        return field
+    return field.value_date
+
