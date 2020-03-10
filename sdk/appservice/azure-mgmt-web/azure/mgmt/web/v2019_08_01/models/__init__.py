@@ -100,7 +100,7 @@ try:
     from ._models_py3 import DataTableResponseColumn
     from ._models_py3 import DataTableResponseObject
     from ._models_py3 import DatabaseBackupSetting
-    from ._models_py3 import DefaultErrorResponse, DefaultErrorResponseException
+    from ._models_py3 import DefaultErrorResponse
     from ._models_py3 import DefaultErrorResponseError
     from ._models_py3 import DefaultErrorResponseErrorDetailsItem
     from ._models_py3 import DeletedAppRestoreRequest
@@ -479,7 +479,7 @@ except (SyntaxError, ImportError):
     from ._models import DataTableResponseColumn  # type: ignore
     from ._models import DataTableResponseObject  # type: ignore
     from ._models import DatabaseBackupSetting  # type: ignore
-    from ._models import DefaultErrorResponse, DefaultErrorResponseException  # type: ignore
+    from ._models import DefaultErrorResponse  # type: ignore
     from ._models import DefaultErrorResponseError  # type: ignore
     from ._models import DefaultErrorResponseErrorDetailsItem  # type: ignore
     from ._models import DeletedAppRestoreRequest  # type: ignore
@@ -934,7 +934,7 @@ __all__ = [
     'DataTableResponseColumn',
     'DataTableResponseObject',
     'DatabaseBackupSetting',
-    'DefaultErrorResponse', 'DefaultErrorResponseException',
+    'DefaultErrorResponse',
     'DefaultErrorResponseError',
     'DefaultErrorResponseErrorDetailsItem',
     'DeletedAppRestoreRequest',

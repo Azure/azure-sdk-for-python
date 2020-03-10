@@ -1657,31 +1657,6 @@ class DomainRecommendationSearchParameters(msrest.serialization.Model):
         self.max_domain_recommendations = kwargs.get('max_domain_recommendations', None)
 
 
-class ErrorResponseException(HttpResponseError):
-    """Server responded with exception of type: 'ErrorResponse'.
-
-    :param response: Server response to be deserialized.
-    :param error_model: A deserialized model of the response body as model.
-    """
-
-    def __init__(self, response, error_model):
-        self.error = error_model
-        super(ErrorResponseException, self).__init__(response=response, error_model=error_model)
-
-    @classmethod
-    def from_response(cls, response, deserialize):
-        """Deserialize this response as this exception, or a subclass of this exception.
-
-        :param response: Server response to be deserialized.
-        :param deserialize: A deserializer
-        """
-        model_name = 'ErrorResponse'
-        error = deserialize(model_name, response)
-        if error is None:
-            error = deserialize.dependencies[model_name]()
-        return error._EXCEPTION_TYPE(response, error)
-
-
 class ErrorResponse(msrest.serialization.Model):
     """Error Response.
 
@@ -1690,7 +1665,6 @@ class ErrorResponse(msrest.serialization.Model):
     :param message: Error message indicating why the operation failed.
     :type message: str
     """
-    _EXCEPTION_TYPE = ErrorResponseException
 
     _attribute_map = {
         'code': {'key': 'code', 'type': 'str'},

@@ -9,10 +9,11 @@ from typing import Any, Callable, Dict, Generic, Optional, TypeVar, Union
 import warnings
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
-from azure.core.exceptions import map_error
+from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.core.polling import AsyncNoPolling, AsyncPollingMethod, async_poller
+from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
 from ... import models
@@ -59,7 +60,7 @@ class DomainsOperations:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.DomainAvailabilityCheckResult"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
 
         _identifier = models.NameIdentifier(name=name)
         api_version = "2019-08-01"
@@ -91,7 +92,8 @@ class DomainsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('DomainAvailabilityCheckResult', pipeline_response)
 
@@ -112,10 +114,10 @@ class DomainsOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DomainCollection or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2019_08_01.models.DomainCollection
-        :raises: ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.DomainCollection"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         def prepare_request(next_link=None):
@@ -155,8 +157,9 @@ class DomainsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+                error = self._deserialize(models.DefaultErrorResponse, response)
+                map_error(status_code=response.status_code, response=response, error_map=error_map, model=error)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -179,7 +182,7 @@ class DomainsOperations:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.DomainControlCenterSsoRequest"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -204,7 +207,8 @@ class DomainsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('DomainControlCenterSsoRequest', pipeline_response)
 
@@ -231,10 +235,10 @@ class DomainsOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: NameIdentifierCollection or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2019_08_01.models.NameIdentifierCollection
-        :raises: ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.NameIdentifierCollection"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         _parameters = models.DomainRecommendationSearchParameters(keywords=keywords, max_domain_recommendations=max_domain_recommendations)
         api_version = "2019-08-01"
 
@@ -280,8 +284,9 @@ class DomainsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+                error = self._deserialize(models.DefaultErrorResponse, response)
+                map_error(status_code=response.status_code, response=response, error_map=error_map, model=error)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -304,10 +309,10 @@ class DomainsOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DomainCollection or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2019_08_01.models.DomainCollection
-        :raises: ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.DomainCollection"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         def prepare_request(next_link=None):
@@ -348,8 +353,9 @@ class DomainsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+                error = self._deserialize(models.DefaultErrorResponse, response)
+                map_error(status_code=response.status_code, response=response, error_map=error_map, model=error)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -378,7 +384,7 @@ class DomainsOperations:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.Domain"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -405,7 +411,8 @@ class DomainsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Domain', pipeline_response)
 
@@ -423,7 +430,7 @@ class DomainsOperations:
         **kwargs
     ) -> "models.Domain":
         cls = kwargs.pop('cls', None)  # type: ClsType["models.Domain"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -455,7 +462,8 @@ class DomainsOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
         if response.status_code == 200:
@@ -494,7 +502,7 @@ class DomainsOperations:
         :return: An instance of LROPoller that returns Domain
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.web.v2019_08_01.models.Domain]
 
-        :raises ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["models.Domain"]
@@ -547,7 +555,7 @@ class DomainsOperations:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -575,7 +583,8 @@ class DomainsOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
           return cls(pipeline_response, None, {})
@@ -605,7 +614,7 @@ class DomainsOperations:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.Domain"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -637,7 +646,8 @@ class DomainsOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
         if response.status_code == 200:
@@ -669,10 +679,10 @@ class DomainsOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DomainOwnershipIdentifierCollection or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2019_08_01.models.DomainOwnershipIdentifierCollection
-        :raises: ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.DomainOwnershipIdentifierCollection"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         def prepare_request(next_link=None):
@@ -714,8 +724,9 @@ class DomainsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+                error = self._deserialize(models.DefaultErrorResponse, response)
+                map_error(status_code=response.status_code, response=response, error_map=error_map, model=error)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -747,7 +758,7 @@ class DomainsOperations:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.DomainOwnershipIdentifier"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -775,7 +786,8 @@ class DomainsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('DomainOwnershipIdentifier', pipeline_response)
 
@@ -815,7 +827,7 @@ class DomainsOperations:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.DomainOwnershipIdentifier"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
 
         _domain_ownership_identifier = models.DomainOwnershipIdentifier(kind=kind, ownership_id=ownership_id)
         api_version = "2019-08-01"
@@ -850,7 +862,8 @@ class DomainsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('DomainOwnershipIdentifier', pipeline_response)
 
@@ -883,7 +896,7 @@ class DomainsOperations:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -910,7 +923,8 @@ class DomainsOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
           return cls(pipeline_response, None, {})
@@ -947,7 +961,7 @@ class DomainsOperations:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.DomainOwnershipIdentifier"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
 
         _domain_ownership_identifier = models.DomainOwnershipIdentifier(kind=kind, ownership_id=ownership_id)
         api_version = "2019-08-01"
@@ -982,7 +996,8 @@ class DomainsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('DomainOwnershipIdentifier', pipeline_response)
 
@@ -1012,7 +1027,7 @@ class DomainsOperations:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -1038,7 +1053,8 @@ class DomainsOperations:
 
         if response.status_code not in [200, 202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
           return cls(pipeline_response, None, {})

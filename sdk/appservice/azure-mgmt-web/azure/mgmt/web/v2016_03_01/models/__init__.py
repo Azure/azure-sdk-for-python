@@ -44,7 +44,7 @@ try:
     from ._models_py3 import DataSource
     from ._models_py3 import DataTableResponseColumn
     from ._models_py3 import DataTableResponseObject
-    from ._models_py3 import DefaultErrorResponse, DefaultErrorResponseException
+    from ._models_py3 import DefaultErrorResponse
     from ._models_py3 import DefaultErrorResponseError
     from ._models_py3 import DefaultErrorResponseErrorDetailsItem
     from ._models_py3 import DeletedSite
@@ -210,7 +210,7 @@ except (SyntaxError, ImportError):
     from ._models import DataSource  # type: ignore
     from ._models import DataTableResponseColumn  # type: ignore
     from ._models import DataTableResponseObject  # type: ignore
-    from ._models import DefaultErrorResponse, DefaultErrorResponseException  # type: ignore
+    from ._models import DefaultErrorResponse  # type: ignore
     from ._models import DefaultErrorResponseError  # type: ignore
     from ._models import DefaultErrorResponseErrorDetailsItem  # type: ignore
     from ._models import DeletedSite  # type: ignore
@@ -413,7 +413,7 @@ __all__ = [
     'DataSource',
     'DataTableResponseColumn',
     'DataTableResponseObject',
-    'DefaultErrorResponse', 'DefaultErrorResponseException',
+    'DefaultErrorResponse',
     'DefaultErrorResponseError',
     'DefaultErrorResponseErrorDetailsItem',
     'DeletedSite',

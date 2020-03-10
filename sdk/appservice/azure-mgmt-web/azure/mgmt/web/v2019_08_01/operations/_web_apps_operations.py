@@ -8,12 +8,12 @@
 from typing import Any, Callable, Dict, Generic, IO, List, Optional, TypeVar, Union
 import warnings
 
-from azure.core.exceptions import map_error
+from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.core.polling import LROPoller, NoPolling, PollingMethod
-from azure.mgmt.core.exceptions import ARMError
+from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
 from .. import models
@@ -55,10 +55,10 @@ class WebAppsOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: WebAppCollection or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2019_08_01.models.WebAppCollection
-        :raises: ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.WebAppCollection"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         def prepare_request(next_link=None):
@@ -98,8 +98,9 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+                error = self._deserialize(models.DefaultErrorResponse, response)
+                map_error(status_code=response.status_code, response=response, error_map=error_map, model=error)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -127,10 +128,10 @@ class WebAppsOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: WebAppCollection or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2019_08_01.models.WebAppCollection
-        :raises: ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.WebAppCollection"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         def prepare_request(next_link=None):
@@ -173,8 +174,9 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+                error = self._deserialize(models.DefaultErrorResponse, response)
+                map_error(status_code=response.status_code, response=response, error_map=error_map, model=error)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -204,7 +206,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.Site"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -231,7 +233,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
         if response.status_code == 200:
@@ -252,7 +255,7 @@ class WebAppsOperations(object):
     ):
         # type: (...) -> "models.Site"
         cls = kwargs.pop('cls', None)  # type: ClsType["models.Site"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -284,7 +287,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
         if response.status_code == 200:
@@ -326,7 +330,7 @@ class WebAppsOperations(object):
         :return: An instance of LROPoller that returns Site
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.web.v2019_08_01.models.Site]
 
-        :raises ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["models.Site"]
@@ -383,7 +387,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -413,7 +417,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 204, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
           return cls(pipeline_response, None, {})
@@ -446,7 +451,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.Site"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -478,7 +483,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
         if response.status_code == 200:
@@ -517,7 +523,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.CustomHostnameAnalysisResult"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -546,7 +552,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('CustomHostnameAnalysisResult', pipeline_response)
 
@@ -584,7 +591,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
 
         _slot_swap_entity = models.CsmSlotEntity(target_slot=target_slot, preserve_vnet=preserve_vnet)
         api_version = "2019-08-01"
@@ -617,7 +624,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
           return cls(pipeline_response, None, {})
@@ -649,7 +657,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.BackupItem"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -681,7 +689,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('BackupItem', pipeline_response)
 
@@ -709,10 +718,10 @@ class WebAppsOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: BackupItemCollection or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2019_08_01.models.BackupItemCollection
-        :raises: ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.BackupItemCollection"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         def prepare_request(next_link=None):
@@ -754,8 +763,9 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+                error = self._deserialize(models.DefaultErrorResponse, response)
+                map_error(status_code=response.status_code, response=response, error_map=error_map, model=error)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -788,7 +798,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.BackupItem"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -816,7 +826,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('BackupItem', pipeline_response)
 
@@ -850,7 +861,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -877,7 +888,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
           return cls(pipeline_response, None, {})
@@ -913,7 +925,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.BackupItem"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -946,7 +958,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('BackupItem', pipeline_response)
 
@@ -966,7 +979,7 @@ class WebAppsOperations(object):
     ):
         # type: (...) -> None
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -998,7 +1011,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
           return cls(pipeline_response, None, {})
@@ -1033,7 +1047,7 @@ class WebAppsOperations(object):
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
 
-        :raises ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
@@ -1078,10 +1092,10 @@ class WebAppsOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SiteConfigResourceCollection or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2019_08_01.models.SiteConfigResourceCollection
-        :raises: ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SiteConfigResourceCollection"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         def prepare_request(next_link=None):
@@ -1123,8 +1137,9 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+                error = self._deserialize(models.DefaultErrorResponse, response)
+                map_error(status_code=response.status_code, response=response, error_map=error_map, model=error)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -1160,7 +1175,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.StringDictionary"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
 
         _app_settings = models.StringDictionary(kind=kind, properties=properties)
         api_version = "2019-08-01"
@@ -1194,7 +1209,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('StringDictionary', pipeline_response)
 
@@ -1225,7 +1241,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.StringDictionary"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -1252,7 +1268,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('StringDictionary', pipeline_response)
 
@@ -1286,7 +1303,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SiteAuthSettings"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -1318,7 +1335,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SiteAuthSettings', pipeline_response)
 
@@ -1349,7 +1367,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SiteAuthSettings"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -1376,7 +1394,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SiteAuthSettings', pipeline_response)
 
@@ -1413,7 +1432,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.AzureStoragePropertyDictionaryResource"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
 
         _azure_storage_accounts = models.AzureStoragePropertyDictionaryResource(kind=kind, properties=properties)
         api_version = "2019-08-01"
@@ -1447,7 +1466,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('AzureStoragePropertyDictionaryResource', pipeline_response)
 
@@ -1478,7 +1498,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.AzureStoragePropertyDictionaryResource"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -1505,7 +1525,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('AzureStoragePropertyDictionaryResource', pipeline_response)
 
@@ -1539,7 +1560,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.BackupRequest"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -1571,7 +1592,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('BackupRequest', pipeline_response)
 
@@ -1602,7 +1624,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -1628,7 +1650,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
           return cls(pipeline_response, None, {})
@@ -1656,7 +1679,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.BackupRequest"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -1683,7 +1706,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('BackupRequest', pipeline_response)
 
@@ -1714,7 +1738,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.KeyVaultReferenceCollection"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -1741,7 +1765,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('KeyVaultReferenceCollection', pipeline_response)
 
@@ -1775,7 +1800,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.KeyVaultReferenceResource"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -1803,7 +1828,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('KeyVaultReferenceResource', pipeline_response)
 
@@ -1840,7 +1866,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.ConnectionStringDictionary"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
 
         _connection_strings = models.ConnectionStringDictionary(kind=kind, properties=properties)
         api_version = "2019-08-01"
@@ -1874,7 +1900,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ConnectionStringDictionary', pipeline_response)
 
@@ -1905,7 +1932,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.ConnectionStringDictionary"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -1932,7 +1959,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ConnectionStringDictionary', pipeline_response)
 
@@ -1963,7 +1991,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SiteLogsConfig"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -1990,7 +2018,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SiteLogsConfig', pipeline_response)
 
@@ -2025,7 +2054,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SiteLogsConfig"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -2057,7 +2086,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SiteLogsConfig', pipeline_response)
 
@@ -2094,7 +2124,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.StringDictionary"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
 
         _metadata = models.StringDictionary(kind=kind, properties=properties)
         api_version = "2019-08-01"
@@ -2128,7 +2158,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('StringDictionary', pipeline_response)
 
@@ -2159,7 +2190,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.StringDictionary"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -2186,7 +2217,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('StringDictionary', pipeline_response)
 
@@ -2204,7 +2236,7 @@ class WebAppsOperations(object):
     ):
         # type: (...) -> "models.User"
         cls = kwargs.pop('cls', None)  # type: ClsType["models.User"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -2231,7 +2263,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('User', pipeline_response)
 
@@ -2263,7 +2296,7 @@ class WebAppsOperations(object):
         :return: An instance of LROPoller that returns User
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.web.v2019_08_01.models.User]
 
-        :raises ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["models.User"]
@@ -2315,7 +2348,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.PushSettings"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -2347,7 +2380,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PushSettings', pipeline_response)
 
@@ -2378,7 +2412,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.PushSettings"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -2405,7 +2439,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PushSettings', pipeline_response)
 
@@ -2436,7 +2471,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SlotConfigNamesResource"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -2463,7 +2498,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SlotConfigNamesResource', pipeline_response)
 
@@ -2498,7 +2534,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SlotConfigNamesResource"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -2530,7 +2566,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SlotConfigNamesResource', pipeline_response)
 
@@ -2562,7 +2599,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SiteConfigResource"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -2589,7 +2626,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SiteConfigResource', pipeline_response)
 
@@ -2623,7 +2661,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SiteConfigResource"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -2655,7 +2693,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SiteConfigResource', pipeline_response)
 
@@ -2689,7 +2728,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SiteConfigResource"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -2721,7 +2760,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SiteConfigResource', pipeline_response)
 
@@ -2750,10 +2790,10 @@ class WebAppsOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SiteConfigurationSnapshotInfoCollection or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2019_08_01.models.SiteConfigurationSnapshotInfoCollection
-        :raises: ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SiteConfigurationSnapshotInfoCollection"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         def prepare_request(next_link=None):
@@ -2795,8 +2835,9 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+                error = self._deserialize(models.DefaultErrorResponse, response)
+                map_error(status_code=response.status_code, response=response, error_map=error_map, model=error)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -2829,7 +2870,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SiteConfigResource"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -2857,7 +2898,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SiteConfigResource', pipeline_response)
 
@@ -2891,7 +2933,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -2918,7 +2960,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
           return cls(pipeline_response, None, {})
@@ -2946,7 +2989,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[IO]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -2973,7 +3016,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise ARMError(response=response)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         deserialized = None
         if response.status_code == 200:
@@ -3006,7 +3049,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[IO]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -3033,7 +3076,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise ARMError(response=response)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         deserialized = None
         if response.status_code == 200:
@@ -3063,10 +3106,10 @@ class WebAppsOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ContinuousWebJobCollection or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2019_08_01.models.ContinuousWebJobCollection
-        :raises: ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.ContinuousWebJobCollection"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         def prepare_request(next_link=None):
@@ -3108,8 +3151,9 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+                error = self._deserialize(models.DefaultErrorResponse, response)
+                map_error(status_code=response.status_code, response=response, error_map=error_map, model=error)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -3142,7 +3186,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.ContinuousWebJob"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -3170,7 +3214,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
         if response.status_code == 200:
@@ -3206,7 +3251,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -3233,7 +3278,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
           return cls(pipeline_response, None, {})
@@ -3264,7 +3310,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -3291,7 +3337,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
           return cls(pipeline_response, None, {})
@@ -3322,7 +3369,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -3349,7 +3396,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
           return cls(pipeline_response, None, {})
@@ -3374,10 +3422,10 @@ class WebAppsOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DeploymentCollection or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2019_08_01.models.DeploymentCollection
-        :raises: ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.DeploymentCollection"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         def prepare_request(next_link=None):
@@ -3419,8 +3467,9 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+                error = self._deserialize(models.DefaultErrorResponse, response)
+                map_error(status_code=response.status_code, response=response, error_map=error_map, model=error)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -3453,7 +3502,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.Deployment"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -3481,7 +3530,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Deployment', pipeline_response)
 
@@ -3518,7 +3568,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.Deployment"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -3551,7 +3601,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Deployment', pipeline_response)
 
@@ -3585,7 +3636,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -3612,7 +3663,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
           return cls(pipeline_response, None, {})
@@ -3644,7 +3696,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.Deployment"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -3672,7 +3724,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Deployment', pipeline_response)
 
@@ -3708,7 +3761,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.RestoreRequest"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -3740,7 +3793,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('RestoreRequest', pipeline_response)
 
@@ -3768,10 +3822,10 @@ class WebAppsOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: IdentifierCollection or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2019_08_01.models.IdentifierCollection
-        :raises: ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.IdentifierCollection"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         def prepare_request(next_link=None):
@@ -3813,8 +3867,9 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+                error = self._deserialize(models.DefaultErrorResponse, response)
+                map_error(status_code=response.status_code, response=response, error_map=error_map, model=error)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -3847,7 +3902,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.Identifier"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -3875,7 +3930,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Identifier', pipeline_response)
 
@@ -3915,7 +3971,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.Identifier"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
 
         _domain_ownership_identifier = models.Identifier(kind=kind, value=value)
         api_version = "2019-08-01"
@@ -3950,7 +4006,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Identifier', pipeline_response)
 
@@ -3984,7 +4041,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -4011,7 +4068,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
           return cls(pipeline_response, None, {})
@@ -4048,7 +4106,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.Identifier"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
 
         _domain_ownership_identifier = models.Identifier(kind=kind, value=value)
         api_version = "2019-08-01"
@@ -4083,7 +4141,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Identifier', pipeline_response)
 
@@ -4114,7 +4173,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.MSDeployStatus"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -4141,7 +4200,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('MSDeployStatus', pipeline_response)
 
@@ -4160,7 +4220,7 @@ class WebAppsOperations(object):
     ):
         # type: (...) -> "models.MSDeployStatus"
         cls = kwargs.pop('cls', None)  # type: ClsType["models.MSDeployStatus"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -4192,7 +4252,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [201, 409]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
         if response.status_code == 201:
@@ -4229,7 +4290,7 @@ class WebAppsOperations(object):
         :return: An instance of LROPoller that returns MSDeployStatus
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.web.v2019_08_01.models.MSDeployStatus]
 
-        :raises ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["models.MSDeployStatus"]
@@ -4279,7 +4340,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.MSDeployLog"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -4306,7 +4367,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
         if response.status_code == 200:
@@ -4336,10 +4398,10 @@ class WebAppsOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: FunctionEnvelopeCollection or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2019_08_01.models.FunctionEnvelopeCollection or None
-        :raises: ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.FunctionEnvelopeCollection"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         def prepare_request(next_link=None):
@@ -4381,8 +4443,9 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200, 404]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+                error = self._deserialize(models.DefaultErrorResponse, response)
+                map_error(status_code=response.status_code, response=response, error_map=error_map, model=error)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -4412,7 +4475,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[str]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -4439,7 +4502,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('str', pipeline_response)
 
@@ -4473,7 +4537,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.FunctionEnvelope"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -4501,7 +4565,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
         if response.status_code == 200:
@@ -4523,7 +4588,7 @@ class WebAppsOperations(object):
     ):
         # type: (...) -> "models.FunctionEnvelope"
         cls = kwargs.pop('cls', None)  # type: ClsType["models.FunctionEnvelope"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -4556,7 +4621,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('FunctionEnvelope', pipeline_response)
 
@@ -4594,7 +4660,7 @@ class WebAppsOperations(object):
         :return: An instance of LROPoller that returns FunctionEnvelope
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.web.v2019_08_01.models.FunctionEnvelope]
 
-        :raises ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["models.FunctionEnvelope"]
@@ -4648,7 +4714,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -4675,7 +4741,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [204, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
           return cls(pipeline_response, None, {})
@@ -4715,7 +4782,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.KeyInfo"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
 
         _key = models.KeyInfo(name=key_info_name, value=value)
         api_version = "2019-08-01"
@@ -4751,7 +4818,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
         if response.status_code == 200:
@@ -4793,7 +4861,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -4821,7 +4889,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [204, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
           return cls(pipeline_response, None, {})
@@ -4852,7 +4921,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.StringDictionary"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -4880,7 +4949,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('StringDictionary', pipeline_response)
 
@@ -4914,7 +4984,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.FunctionSecrets"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -4942,7 +5012,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('FunctionSecrets', pipeline_response)
 
@@ -4973,7 +5044,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.HostKeys"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -5000,7 +5071,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('HostKeys', pipeline_response)
 
@@ -5031,7 +5103,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -5057,7 +5129,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
           return cls(pipeline_response, None, {})
@@ -5085,7 +5158,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -5111,7 +5184,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
           return cls(pipeline_response, None, {})
@@ -5151,7 +5225,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.KeyInfo"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
 
         _key = models.KeyInfo(name=key_info_name, value=value)
         api_version = "2019-08-01"
@@ -5187,7 +5261,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
         if response.status_code == 200:
@@ -5229,7 +5304,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -5257,7 +5332,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [204, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
           return cls(pipeline_response, None, {})
@@ -5282,10 +5358,10 @@ class WebAppsOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: HostNameBindingCollection or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2019_08_01.models.HostNameBindingCollection
-        :raises: ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.HostNameBindingCollection"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         def prepare_request(next_link=None):
@@ -5327,8 +5403,9 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+                error = self._deserialize(models.DefaultErrorResponse, response)
+                map_error(status_code=response.status_code, response=response, error_map=error_map, model=error)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -5361,7 +5438,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.HostNameBinding"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -5389,7 +5466,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('HostNameBinding', pipeline_response)
 
@@ -5427,7 +5505,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.HostNameBinding"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -5460,7 +5538,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('HostNameBinding', pipeline_response)
 
@@ -5494,7 +5573,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -5521,7 +5600,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
           return cls(pipeline_response, None, {})
@@ -5555,7 +5635,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.HybridConnection"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -5584,7 +5664,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('HybridConnection', pipeline_response)
 
@@ -5624,7 +5705,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.HybridConnection"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -5658,7 +5739,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('HybridConnection', pipeline_response)
 
@@ -5695,7 +5777,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -5723,7 +5805,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
           return cls(pipeline_response, None, {})
@@ -5760,7 +5843,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.HybridConnection"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -5794,7 +5877,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('HybridConnection', pipeline_response)
 
@@ -5825,7 +5909,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.HybridConnection"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -5852,7 +5936,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('HybridConnection', pipeline_response)
 
@@ -5883,7 +5968,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.RelayServiceConnectionEntity"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -5910,7 +5995,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('RelayServiceConnectionEntity', pipeline_response)
 
@@ -5944,7 +6030,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.RelayServiceConnectionEntity"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -5972,7 +6058,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('RelayServiceConnectionEntity', pipeline_response)
 
@@ -6009,7 +6096,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.RelayServiceConnectionEntity"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -6042,7 +6129,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('RelayServiceConnectionEntity', pipeline_response)
 
@@ -6076,7 +6164,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -6103,7 +6191,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
           return cls(pipeline_response, None, {})
@@ -6137,7 +6226,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.RelayServiceConnectionEntity"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -6170,7 +6259,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('RelayServiceConnectionEntity', pipeline_response)
 
@@ -6198,10 +6288,10 @@ class WebAppsOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: WebAppInstanceCollection or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2019_08_01.models.WebAppInstanceCollection
-        :raises: ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.WebAppInstanceCollection"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         def prepare_request(next_link=None):
@@ -6243,8 +6333,9 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+                error = self._deserialize(models.DefaultErrorResponse, response)
+                map_error(status_code=response.status_code, response=response, error_map=error_map, model=error)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -6277,7 +6368,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.WebSiteInstanceStatus"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -6305,7 +6396,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('WebSiteInstanceStatus', pipeline_response)
 
@@ -6339,7 +6431,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.MSDeployStatus"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -6367,7 +6459,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('MSDeployStatus', pipeline_response)
 
@@ -6387,7 +6480,7 @@ class WebAppsOperations(object):
     ):
         # type: (...) -> "models.MSDeployStatus"
         cls = kwargs.pop('cls', None)  # type: ClsType["models.MSDeployStatus"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -6420,7 +6513,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [201, 409]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
         if response.status_code == 201:
@@ -6460,7 +6554,7 @@ class WebAppsOperations(object):
         :return: An instance of LROPoller that returns MSDeployStatus
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.web.v2019_08_01.models.MSDeployStatus]
 
-        :raises ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["models.MSDeployStatus"]
@@ -6514,7 +6608,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.MSDeployLog"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -6542,7 +6636,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
         if response.status_code == 200:
@@ -6577,10 +6672,10 @@ class WebAppsOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ProcessInfoCollection or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2019_08_01.models.ProcessInfoCollection or None
-        :raises: ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.ProcessInfoCollection"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         def prepare_request(next_link=None):
@@ -6623,8 +6718,9 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200, 404]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+                error = self._deserialize(models.DefaultErrorResponse, response)
+                map_error(status_code=response.status_code, response=response, error_map=error_map, model=error)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -6661,7 +6757,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.ProcessInfo"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -6690,7 +6786,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
         if response.status_code == 200:
@@ -6731,7 +6828,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -6759,7 +6856,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [204, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
           return cls(pipeline_response, None, {})
@@ -6794,7 +6892,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[IO]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -6823,7 +6921,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
         if response.status_code == 200:
@@ -6861,10 +6960,10 @@ class WebAppsOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ProcessModuleInfoCollection or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2019_08_01.models.ProcessModuleInfoCollection or None
-        :raises: ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.ProcessModuleInfoCollection"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         def prepare_request(next_link=None):
@@ -6908,8 +7007,9 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200, 404]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+                error = self._deserialize(models.DefaultErrorResponse, response)
+                map_error(status_code=response.status_code, response=response, error_map=error_map, model=error)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -6949,7 +7049,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.ProcessModuleInfo"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -6979,7 +7079,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
         if response.status_code == 200:
@@ -7016,10 +7117,10 @@ class WebAppsOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ProcessThreadInfoCollection or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2019_08_01.models.ProcessThreadInfoCollection or None
-        :raises: ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.ProcessThreadInfoCollection"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         def prepare_request(next_link=None):
@@ -7063,8 +7164,9 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200, 404]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+                error = self._deserialize(models.DefaultErrorResponse, response)
+                map_error(status_code=response.status_code, response=response, error_map=error_map, model=error)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -7094,7 +7196,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SiteCloneability"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -7121,7 +7223,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SiteCloneability', pipeline_response)
 
@@ -7149,10 +7252,10 @@ class WebAppsOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: BackupItemCollection or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2019_08_01.models.BackupItemCollection
-        :raises: ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.BackupItemCollection"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         def prepare_request(next_link=None):
@@ -7194,8 +7297,9 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+                error = self._deserialize(models.DefaultErrorResponse, response)
+                map_error(status_code=response.status_code, response=response, error_map=error_map, model=error)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -7225,7 +7329,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.FunctionSecrets"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -7252,7 +7356,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('FunctionSecrets', pipeline_response)
 
@@ -7272,7 +7377,7 @@ class WebAppsOperations(object):
     ):
         # type: (...) -> "models.StorageMigrationResponse"
         cls = kwargs.pop('cls', None)  # type: ClsType["models.StorageMigrationResponse"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -7305,7 +7410,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('StorageMigrationResponse', pipeline_response)
 
@@ -7343,7 +7449,7 @@ class WebAppsOperations(object):
         :return: An instance of LROPoller that returns StorageMigrationResponse
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.web.v2019_08_01.models.StorageMigrationResponse]
 
-        :raises ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["models.StorageMigrationResponse"]
@@ -7382,7 +7488,7 @@ class WebAppsOperations(object):
     ):
         # type: (...) -> "models.Operation"
         cls = kwargs.pop('cls', None)  # type: ClsType["models.Operation"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -7414,7 +7520,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Operation', pipeline_response)
 
@@ -7449,7 +7556,7 @@ class WebAppsOperations(object):
         :return: An instance of LROPoller that returns Operation
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.web.v2019_08_01.models.Operation]
 
-        :raises ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["models.Operation"]
@@ -7500,7 +7607,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.MigrateMySqlStatus"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -7527,7 +7634,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('MigrateMySqlStatus', pipeline_response)
 
@@ -7558,7 +7666,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SwiftVirtualNetwork"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -7585,7 +7693,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SwiftVirtualNetwork', pipeline_response)
 
@@ -7623,7 +7732,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SwiftVirtualNetwork"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -7655,7 +7764,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SwiftVirtualNetwork', pipeline_response)
 
@@ -7686,7 +7796,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -7712,7 +7822,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
           return cls(pipeline_response, None, {})
@@ -7747,7 +7858,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SwiftVirtualNetwork"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -7779,7 +7890,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SwiftVirtualNetwork', pipeline_response)
 
@@ -7813,7 +7925,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.NetworkFeatures"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -7841,7 +7953,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
         if response.status_code == 200:
@@ -7877,7 +7990,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[Union[List["NetworkTrace"], List["NetworkTrace"]]]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -7905,7 +8018,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
         if response.status_code == 200:
@@ -7950,7 +8064,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[str]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -7983,7 +8097,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('str', pipeline_response)
 
@@ -8004,7 +8119,7 @@ class WebAppsOperations(object):
     ):
         # type: (...) -> Union[List["NetworkTrace"], List["NetworkTrace"]]
         cls = kwargs.pop('cls', None)  # type: ClsType[Union[List["NetworkTrace"], List["NetworkTrace"]]]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -8037,7 +8152,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
         if response.status_code == 200:
@@ -8083,7 +8199,7 @@ class WebAppsOperations(object):
         :return: An instance of LROPoller that returns 
         :rtype: ~azure.core.polling.LROPoller[list[~azure.mgmt.web.v2019_08_01.models.NetworkTrace]]
 
-        :raises ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[Union[List["NetworkTrace"], List["NetworkTrace"]]]
@@ -8135,7 +8251,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -8161,7 +8277,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
           return cls(pipeline_response, None, {})
@@ -8192,7 +8309,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[List["NetworkTrace"]]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -8220,7 +8337,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('[NetworkTrace]', pipeline_response)
 
@@ -8254,7 +8372,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[Union[List["NetworkTrace"], List["NetworkTrace"]]]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -8282,7 +8400,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
         if response.status_code == 200:
@@ -8321,7 +8440,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[List["NetworkTrace"]]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -8349,7 +8468,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('[NetworkTrace]', pipeline_response)
 
@@ -8380,7 +8500,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -8406,7 +8526,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
           return cls(pipeline_response, None, {})
@@ -8436,10 +8557,10 @@ class WebAppsOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PerfMonCounterCollection or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2019_08_01.models.PerfMonCounterCollection
-        :raises: ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.PerfMonCounterCollection"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         def prepare_request(next_link=None):
@@ -8483,8 +8604,9 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+                error = self._deserialize(models.DefaultErrorResponse, response)
+                map_error(status_code=response.status_code, response=response, error_map=error_map, model=error)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -8514,7 +8636,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SitePhpErrorLogFlag"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -8541,7 +8663,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SitePhpErrorLogFlag', pipeline_response)
 
@@ -8572,7 +8695,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.PremierAddOn"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -8599,7 +8722,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PremierAddOn', pipeline_response)
 
@@ -8633,7 +8757,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.PremierAddOn"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -8661,7 +8785,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PremierAddOn', pipeline_response)
 
@@ -8698,7 +8823,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.PremierAddOn"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -8731,7 +8856,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PremierAddOn', pipeline_response)
 
@@ -8765,7 +8891,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -8792,7 +8918,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
           return cls(pipeline_response, None, {})
@@ -8826,7 +8953,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.PremierAddOn"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -8859,7 +8986,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PremierAddOn', pipeline_response)
 
@@ -8891,7 +9019,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.PrivateAccess"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -8918,7 +9046,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PrivateAccess', pipeline_response)
 
@@ -8953,7 +9082,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.PrivateAccess"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -8985,7 +9114,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PrivateAccess', pipeline_response)
 
@@ -9014,10 +9144,10 @@ class WebAppsOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ProcessInfoCollection or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2019_08_01.models.ProcessInfoCollection or None
-        :raises: ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.ProcessInfoCollection"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         def prepare_request(next_link=None):
@@ -9059,8 +9189,9 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200, 404]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+                error = self._deserialize(models.DefaultErrorResponse, response)
+                map_error(status_code=response.status_code, response=response, error_map=error_map, model=error)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -9093,7 +9224,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.ProcessInfo"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -9121,7 +9252,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
         if response.status_code == 200:
@@ -9158,7 +9290,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -9185,7 +9317,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [204, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
           return cls(pipeline_response, None, {})
@@ -9216,7 +9349,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[IO]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -9244,7 +9377,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
         if response.status_code == 200:
@@ -9278,10 +9412,10 @@ class WebAppsOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ProcessModuleInfoCollection or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2019_08_01.models.ProcessModuleInfoCollection or None
-        :raises: ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.ProcessModuleInfoCollection"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         def prepare_request(next_link=None):
@@ -9324,8 +9458,9 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200, 404]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+                error = self._deserialize(models.DefaultErrorResponse, response)
+                map_error(status_code=response.status_code, response=response, error_map=error_map, model=error)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -9361,7 +9496,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.ProcessModuleInfo"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -9390,7 +9525,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
         if response.status_code == 200:
@@ -9423,10 +9559,10 @@ class WebAppsOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ProcessThreadInfoCollection or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2019_08_01.models.ProcessThreadInfoCollection or None
-        :raises: ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.ProcessThreadInfoCollection"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         def prepare_request(next_link=None):
@@ -9469,8 +9605,9 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200, 404]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+                error = self._deserialize(models.DefaultErrorResponse, response)
+                map_error(status_code=response.status_code, response=response, error_map=error_map, model=error)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -9497,10 +9634,10 @@ class WebAppsOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PublicCertificateCollection or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2019_08_01.models.PublicCertificateCollection
-        :raises: ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.PublicCertificateCollection"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         def prepare_request(next_link=None):
@@ -9542,8 +9679,9 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+                error = self._deserialize(models.DefaultErrorResponse, response)
+                map_error(status_code=response.status_code, response=response, error_map=error_map, model=error)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -9576,7 +9714,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.PublicCertificate"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -9604,7 +9742,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PublicCertificate', pipeline_response)
 
@@ -9642,7 +9781,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.PublicCertificate"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -9675,7 +9814,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PublicCertificate', pipeline_response)
 
@@ -9709,7 +9849,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -9736,7 +9876,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
           return cls(pipeline_response, None, {})
@@ -9773,7 +9914,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[IO]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
 
         _publishing_profile_options = models.CsmPublishingProfileOptions(format=format, include_disaster_recovery_endpoints=include_disaster_recovery_endpoints)
         api_version = "2019-08-01"
@@ -9807,7 +9948,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline)
 
@@ -9839,7 +9981,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -9865,7 +10007,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
           return cls(pipeline_response, None, {})
@@ -9901,7 +10044,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -9931,7 +10074,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
           return cls(pipeline_response, None, {})
@@ -9947,7 +10091,7 @@ class WebAppsOperations(object):
     ):
         # type: (...) -> None
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -9978,7 +10122,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
           return cls(pipeline_response, None, {})
@@ -10010,7 +10155,7 @@ class WebAppsOperations(object):
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
 
-        :raises ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
@@ -10045,7 +10190,7 @@ class WebAppsOperations(object):
     ):
         # type: (...) -> None
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -10076,7 +10221,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
           return cls(pipeline_response, None, {})
@@ -10108,7 +10254,7 @@ class WebAppsOperations(object):
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
 
-        :raises ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
@@ -10143,7 +10289,7 @@ class WebAppsOperations(object):
     ):
         # type: (...) -> None
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -10174,7 +10320,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
           return cls(pipeline_response, None, {})
@@ -10207,7 +10354,7 @@ class WebAppsOperations(object):
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
 
-        :raises ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
@@ -10251,10 +10398,10 @@ class WebAppsOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SiteExtensionInfoCollection or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2019_08_01.models.SiteExtensionInfoCollection or None
-        :raises: ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SiteExtensionInfoCollection"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         def prepare_request(next_link=None):
@@ -10296,8 +10443,9 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200, 404]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+                error = self._deserialize(models.DefaultErrorResponse, response)
+                map_error(status_code=response.status_code, response=response, error_map=error_map, model=error)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -10330,7 +10478,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SiteExtensionInfo"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -10358,7 +10506,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
         if response.status_code == 200:
@@ -10379,7 +10528,7 @@ class WebAppsOperations(object):
     ):
         # type: (...) -> "models.SiteExtensionInfo"
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SiteExtensionInfo"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -10407,7 +10556,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 201, 429]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
         if response.status_code == 200:
@@ -10447,7 +10597,7 @@ class WebAppsOperations(object):
         :return: An instance of LROPoller that returns SiteExtensionInfo
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.web.v2019_08_01.models.SiteExtensionInfo]
 
-        :raises ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SiteExtensionInfo"]
@@ -10500,7 +10650,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -10527,7 +10677,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [204, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
           return cls(pipeline_response, None, {})
@@ -10544,7 +10695,7 @@ class WebAppsOperations(object):
     ):
         # type: (...) -> None
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
 
         _copy_slot_entity = models.CsmCopySlotEntity(target_slot=target_slot, site_config=site_config)
         api_version = "2019-08-01"
@@ -10577,7 +10728,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
           return cls(pipeline_response, None, {})
@@ -10616,7 +10768,7 @@ class WebAppsOperations(object):
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
 
-        :raises ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
@@ -10661,10 +10813,10 @@ class WebAppsOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: WebAppCollection or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2019_08_01.models.WebAppCollection
-        :raises: ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.WebAppCollection"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         def prepare_request(next_link=None):
@@ -10706,8 +10858,9 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+                error = self._deserialize(models.DefaultErrorResponse, response)
+                map_error(status_code=response.status_code, response=response, error_map=error_map, model=error)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -10740,7 +10893,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.Site"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -10768,7 +10921,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
         if response.status_code == 200:
@@ -10790,7 +10944,7 @@ class WebAppsOperations(object):
     ):
         # type: (...) -> "models.Site"
         cls = kwargs.pop('cls', None)  # type: ClsType["models.Site"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -10823,7 +10977,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
         if response.status_code == 200:
@@ -10869,7 +11024,7 @@ class WebAppsOperations(object):
         :return: An instance of LROPoller that returns Site
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.web.v2019_08_01.models.Site]
 
-        :raises ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["models.Site"]
@@ -10932,7 +11087,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -10963,7 +11118,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 204, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
           return cls(pipeline_response, None, {})
@@ -11000,7 +11156,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.Site"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -11033,7 +11189,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
         if response.status_code == 200:
@@ -11075,7 +11232,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.CustomHostnameAnalysisResult"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -11105,7 +11262,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('CustomHostnameAnalysisResult', pipeline_response)
 
@@ -11147,7 +11305,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
 
         _slot_swap_entity = models.CsmSlotEntity(target_slot=target_slot, preserve_vnet=preserve_vnet)
         api_version = "2019-08-01"
@@ -11181,7 +11339,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
           return cls(pipeline_response, None, {})
@@ -11217,7 +11376,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.BackupItem"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -11250,7 +11409,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('BackupItem', pipeline_response)
 
@@ -11282,10 +11442,10 @@ class WebAppsOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: BackupItemCollection or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2019_08_01.models.BackupItemCollection
-        :raises: ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.BackupItemCollection"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         def prepare_request(next_link=None):
@@ -11328,8 +11488,9 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+                error = self._deserialize(models.DefaultErrorResponse, response)
+                map_error(status_code=response.status_code, response=response, error_map=error_map, model=error)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -11366,7 +11527,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.BackupItem"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -11395,7 +11556,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('BackupItem', pipeline_response)
 
@@ -11433,7 +11595,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -11461,7 +11623,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
           return cls(pipeline_response, None, {})
@@ -11500,7 +11663,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.BackupItem"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -11534,7 +11697,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('BackupItem', pipeline_response)
 
@@ -11555,7 +11719,7 @@ class WebAppsOperations(object):
     ):
         # type: (...) -> None
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -11588,7 +11752,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
           return cls(pipeline_response, None, {})
@@ -11627,7 +11792,7 @@ class WebAppsOperations(object):
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
 
-        :raises ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
@@ -11677,10 +11842,10 @@ class WebAppsOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SiteConfigResourceCollection or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2019_08_01.models.SiteConfigResourceCollection
-        :raises: ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SiteConfigResourceCollection"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         def prepare_request(next_link=None):
@@ -11723,8 +11888,9 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+                error = self._deserialize(models.DefaultErrorResponse, response)
+                map_error(status_code=response.status_code, response=response, error_map=error_map, model=error)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -11764,7 +11930,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.StringDictionary"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
 
         _app_settings = models.StringDictionary(kind=kind, properties=properties)
         api_version = "2019-08-01"
@@ -11799,7 +11965,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('StringDictionary', pipeline_response)
 
@@ -11834,7 +12001,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.StringDictionary"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -11862,7 +12029,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('StringDictionary', pipeline_response)
 
@@ -11899,7 +12067,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SiteAuthSettings"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -11932,7 +12100,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SiteAuthSettings', pipeline_response)
 
@@ -11967,7 +12136,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SiteAuthSettings"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -11995,7 +12164,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SiteAuthSettings', pipeline_response)
 
@@ -12036,7 +12206,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.AzureStoragePropertyDictionaryResource"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
 
         _azure_storage_accounts = models.AzureStoragePropertyDictionaryResource(kind=kind, properties=properties)
         api_version = "2019-08-01"
@@ -12071,7 +12241,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('AzureStoragePropertyDictionaryResource', pipeline_response)
 
@@ -12106,7 +12277,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.AzureStoragePropertyDictionaryResource"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -12134,7 +12305,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('AzureStoragePropertyDictionaryResource', pipeline_response)
 
@@ -12172,7 +12344,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.BackupRequest"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -12205,7 +12377,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('BackupRequest', pipeline_response)
 
@@ -12240,7 +12413,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -12267,7 +12440,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
           return cls(pipeline_response, None, {})
@@ -12299,7 +12473,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.BackupRequest"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -12327,7 +12501,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('BackupRequest', pipeline_response)
 
@@ -12368,7 +12543,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.ConnectionStringDictionary"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
 
         _connection_strings = models.ConnectionStringDictionary(kind=kind, properties=properties)
         api_version = "2019-08-01"
@@ -12403,7 +12578,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ConnectionStringDictionary', pipeline_response)
 
@@ -12438,7 +12614,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.ConnectionStringDictionary"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -12466,7 +12642,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ConnectionStringDictionary', pipeline_response)
 
@@ -12501,7 +12678,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SiteLogsConfig"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -12529,7 +12706,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SiteLogsConfig', pipeline_response)
 
@@ -12568,7 +12746,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SiteLogsConfig"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -12601,7 +12779,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SiteLogsConfig', pipeline_response)
 
@@ -12642,7 +12821,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.StringDictionary"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
 
         _metadata = models.StringDictionary(kind=kind, properties=properties)
         api_version = "2019-08-01"
@@ -12677,7 +12856,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('StringDictionary', pipeline_response)
 
@@ -12712,7 +12892,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.StringDictionary"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -12740,7 +12920,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('StringDictionary', pipeline_response)
 
@@ -12759,7 +12940,7 @@ class WebAppsOperations(object):
     ):
         # type: (...) -> "models.User"
         cls = kwargs.pop('cls', None)  # type: ClsType["models.User"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -12787,7 +12968,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('User', pipeline_response)
 
@@ -12823,7 +13005,7 @@ class WebAppsOperations(object):
         :return: An instance of LROPoller that returns User
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.web.v2019_08_01.models.User]
 
-        :raises ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["models.User"]
@@ -12879,7 +13061,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.PushSettings"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -12912,7 +13094,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PushSettings', pipeline_response)
 
@@ -12946,7 +13129,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.PushSettings"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -12974,7 +13157,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PushSettings', pipeline_response)
 
@@ -13010,7 +13194,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SiteConfigResource"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -13038,7 +13222,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SiteConfigResource', pipeline_response)
 
@@ -13076,7 +13261,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SiteConfigResource"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -13109,7 +13294,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SiteConfigResource', pipeline_response)
 
@@ -13147,7 +13333,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SiteConfigResource"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -13180,7 +13366,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SiteConfigResource', pipeline_response)
 
@@ -13213,10 +13400,10 @@ class WebAppsOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SiteConfigurationSnapshotInfoCollection or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2019_08_01.models.SiteConfigurationSnapshotInfoCollection
-        :raises: ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SiteConfigurationSnapshotInfoCollection"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         def prepare_request(next_link=None):
@@ -13259,8 +13446,9 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+                error = self._deserialize(models.DefaultErrorResponse, response)
+                map_error(status_code=response.status_code, response=response, error_map=error_map, model=error)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -13297,7 +13485,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SiteConfigResource"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -13326,7 +13514,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SiteConfigResource', pipeline_response)
 
@@ -13364,7 +13553,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -13392,7 +13581,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
           return cls(pipeline_response, None, {})
@@ -13423,7 +13613,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[IO]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -13451,7 +13641,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise ARMError(response=response)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         deserialized = None
         if response.status_code == 200:
@@ -13487,7 +13677,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[IO]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -13515,7 +13705,7 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise ARMError(response=response)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         deserialized = None
         if response.status_code == 200:
@@ -13549,10 +13739,10 @@ class WebAppsOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ContinuousWebJobCollection or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2019_08_01.models.ContinuousWebJobCollection
-        :raises: ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.ContinuousWebJobCollection"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         def prepare_request(next_link=None):
@@ -13595,8 +13785,9 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+                error = self._deserialize(models.DefaultErrorResponse, response)
+                map_error(status_code=response.status_code, response=response, error_map=error_map, model=error)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -13633,7 +13824,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.ContinuousWebJob"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -13662,7 +13853,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
         if response.status_code == 200:
@@ -13702,7 +13894,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -13730,7 +13922,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
           return cls(pipeline_response, None, {})
@@ -13765,7 +13958,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -13793,7 +13986,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
           return cls(pipeline_response, None, {})
@@ -13828,7 +14022,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -13856,7 +14050,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
           return cls(pipeline_response, None, {})
@@ -13885,10 +14080,10 @@ class WebAppsOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DeploymentCollection or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2019_08_01.models.DeploymentCollection
-        :raises: ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.DeploymentCollection"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         def prepare_request(next_link=None):
@@ -13931,8 +14126,9 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+                error = self._deserialize(models.DefaultErrorResponse, response)
+                map_error(status_code=response.status_code, response=response, error_map=error_map, model=error)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -13969,7 +14165,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.Deployment"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -13998,7 +14194,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Deployment', pipeline_response)
 
@@ -14039,7 +14236,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.Deployment"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -14073,7 +14270,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Deployment', pipeline_response)
 
@@ -14111,7 +14309,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -14139,7 +14337,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
           return cls(pipeline_response, None, {})
@@ -14175,7 +14374,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.Deployment"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -14204,7 +14403,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Deployment', pipeline_response)
 
@@ -14244,7 +14444,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.RestoreRequest"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -14277,7 +14477,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('RestoreRequest', pipeline_response)
 
@@ -14309,10 +14510,10 @@ class WebAppsOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: IdentifierCollection or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2019_08_01.models.IdentifierCollection
-        :raises: ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.IdentifierCollection"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         def prepare_request(next_link=None):
@@ -14355,8 +14556,9 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+                error = self._deserialize(models.DefaultErrorResponse, response)
+                map_error(status_code=response.status_code, response=response, error_map=error_map, model=error)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -14393,7 +14595,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.Identifier"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -14422,7 +14624,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Identifier', pipeline_response)
 
@@ -14466,7 +14669,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.Identifier"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
 
         _domain_ownership_identifier = models.Identifier(kind=kind, value=value)
         api_version = "2019-08-01"
@@ -14502,7 +14705,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Identifier', pipeline_response)
 
@@ -14540,7 +14744,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -14568,7 +14772,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
           return cls(pipeline_response, None, {})
@@ -14609,7 +14814,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.Identifier"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
 
         _domain_ownership_identifier = models.Identifier(kind=kind, value=value)
         api_version = "2019-08-01"
@@ -14645,7 +14850,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Identifier', pipeline_response)
 
@@ -14679,7 +14885,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.MSDeployStatus"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -14707,7 +14913,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('MSDeployStatus', pipeline_response)
 
@@ -14727,7 +14934,7 @@ class WebAppsOperations(object):
     ):
         # type: (...) -> "models.MSDeployStatus"
         cls = kwargs.pop('cls', None)  # type: ClsType["models.MSDeployStatus"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -14760,7 +14967,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [201, 409]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
         if response.status_code == 201:
@@ -14800,7 +15008,7 @@ class WebAppsOperations(object):
         :return: An instance of LROPoller that returns MSDeployStatus
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.web.v2019_08_01.models.MSDeployStatus]
 
-        :raises ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["models.MSDeployStatus"]
@@ -14854,7 +15062,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.MSDeployLog"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -14882,7 +15090,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
         if response.status_code == 200:
@@ -14915,10 +15124,10 @@ class WebAppsOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: FunctionEnvelopeCollection or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2019_08_01.models.FunctionEnvelopeCollection or None
-        :raises: ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.FunctionEnvelopeCollection"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         def prepare_request(next_link=None):
@@ -14961,8 +15170,9 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200, 404]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+                error = self._deserialize(models.DefaultErrorResponse, response)
+                map_error(status_code=response.status_code, response=response, error_map=error_map, model=error)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -14995,7 +15205,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[str]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -15023,7 +15233,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('str', pipeline_response)
 
@@ -15060,7 +15271,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.FunctionEnvelope"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -15089,7 +15300,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
         if response.status_code == 200:
@@ -15112,7 +15324,7 @@ class WebAppsOperations(object):
     ):
         # type: (...) -> "models.FunctionEnvelope"
         cls = kwargs.pop('cls', None)  # type: ClsType["models.FunctionEnvelope"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -15146,7 +15358,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('FunctionEnvelope', pipeline_response)
 
@@ -15187,7 +15400,7 @@ class WebAppsOperations(object):
         :return: An instance of LROPoller that returns FunctionEnvelope
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.web.v2019_08_01.models.FunctionEnvelope]
 
-        :raises ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["models.FunctionEnvelope"]
@@ -15245,7 +15458,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -15273,7 +15486,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [204, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
           return cls(pipeline_response, None, {})
@@ -15316,7 +15530,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.KeyInfo"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
 
         _key = models.KeyInfo(name=key_info_name, value=value)
         api_version = "2019-08-01"
@@ -15353,7 +15567,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
         if response.status_code == 200:
@@ -15398,7 +15613,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -15427,7 +15642,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [204, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
           return cls(pipeline_response, None, {})
@@ -15461,7 +15677,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.StringDictionary"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -15490,7 +15706,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('StringDictionary', pipeline_response)
 
@@ -15527,7 +15744,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.FunctionSecrets"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -15556,7 +15773,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('FunctionSecrets', pipeline_response)
 
@@ -15590,7 +15808,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.HostKeys"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -15618,7 +15836,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('HostKeys', pipeline_response)
 
@@ -15652,7 +15871,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -15679,7 +15898,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
           return cls(pipeline_response, None, {})
@@ -15710,7 +15930,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -15737,7 +15957,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
           return cls(pipeline_response, None, {})
@@ -15780,7 +16001,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.KeyInfo"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
 
         _key = models.KeyInfo(name=key_info_name, value=value)
         api_version = "2019-08-01"
@@ -15817,7 +16038,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
         if response.status_code == 200:
@@ -15862,7 +16084,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -15891,7 +16113,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [204, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
           return cls(pipeline_response, None, {})
@@ -15920,10 +16143,10 @@ class WebAppsOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: HostNameBindingCollection or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2019_08_01.models.HostNameBindingCollection
-        :raises: ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.HostNameBindingCollection"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         def prepare_request(next_link=None):
@@ -15966,8 +16189,9 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+                error = self._deserialize(models.DefaultErrorResponse, response)
+                map_error(status_code=response.status_code, response=response, error_map=error_map, model=error)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -16004,7 +16228,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.HostNameBinding"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -16033,7 +16257,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('HostNameBinding', pipeline_response)
 
@@ -16075,7 +16300,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.HostNameBinding"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -16109,7 +16334,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('HostNameBinding', pipeline_response)
 
@@ -16147,7 +16373,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -16175,7 +16401,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
           return cls(pipeline_response, None, {})
@@ -16212,7 +16439,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.HybridConnection"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -16242,7 +16469,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('HybridConnection', pipeline_response)
 
@@ -16285,7 +16513,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.HybridConnection"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -16320,7 +16548,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('HybridConnection', pipeline_response)
 
@@ -16360,7 +16589,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -16389,7 +16618,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
           return cls(pipeline_response, None, {})
@@ -16429,7 +16659,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.HybridConnection"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -16464,7 +16694,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('HybridConnection', pipeline_response)
 
@@ -16498,7 +16729,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.HybridConnection"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -16526,7 +16757,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('HybridConnection', pipeline_response)
 
@@ -16561,7 +16793,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.RelayServiceConnectionEntity"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -16589,7 +16821,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('RelayServiceConnectionEntity', pipeline_response)
 
@@ -16627,7 +16860,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.RelayServiceConnectionEntity"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -16656,7 +16889,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('RelayServiceConnectionEntity', pipeline_response)
 
@@ -16697,7 +16931,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.RelayServiceConnectionEntity"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -16731,7 +16965,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('RelayServiceConnectionEntity', pipeline_response)
 
@@ -16769,7 +17004,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -16797,7 +17032,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
           return cls(pipeline_response, None, {})
@@ -16835,7 +17071,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.RelayServiceConnectionEntity"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -16869,7 +17105,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('RelayServiceConnectionEntity', pipeline_response)
 
@@ -16901,10 +17138,10 @@ class WebAppsOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: WebAppInstanceCollection or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2019_08_01.models.WebAppInstanceCollection
-        :raises: ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.WebAppInstanceCollection"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         def prepare_request(next_link=None):
@@ -16947,8 +17184,9 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+                error = self._deserialize(models.DefaultErrorResponse, response)
+                map_error(status_code=response.status_code, response=response, error_map=error_map, model=error)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -16985,7 +17223,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.WebSiteInstanceStatus"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -17014,7 +17252,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('WebSiteInstanceStatus', pipeline_response)
 
@@ -17051,7 +17290,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.MSDeployStatus"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -17080,7 +17319,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('MSDeployStatus', pipeline_response)
 
@@ -17101,7 +17341,7 @@ class WebAppsOperations(object):
     ):
         # type: (...) -> "models.MSDeployStatus"
         cls = kwargs.pop('cls', None)  # type: ClsType["models.MSDeployStatus"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -17135,7 +17375,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [201, 409]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
         if response.status_code == 201:
@@ -17178,7 +17419,7 @@ class WebAppsOperations(object):
         :return: An instance of LROPoller that returns MSDeployStatus
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.web.v2019_08_01.models.MSDeployStatus]
 
-        :raises ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["models.MSDeployStatus"]
@@ -17236,7 +17477,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.MSDeployLog"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -17265,7 +17506,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
         if response.status_code == 200:
@@ -17304,10 +17546,10 @@ class WebAppsOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ProcessInfoCollection or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2019_08_01.models.ProcessInfoCollection or None
-        :raises: ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.ProcessInfoCollection"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         def prepare_request(next_link=None):
@@ -17351,8 +17593,9 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200, 404]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+                error = self._deserialize(models.DefaultErrorResponse, response)
+                map_error(status_code=response.status_code, response=response, error_map=error_map, model=error)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -17393,7 +17636,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.ProcessInfo"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -17423,7 +17666,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
         if response.status_code == 200:
@@ -17468,7 +17712,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -17497,7 +17741,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [204, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
           return cls(pipeline_response, None, {})
@@ -17536,7 +17781,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[IO]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -17566,7 +17811,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
         if response.status_code == 200:
@@ -17608,10 +17854,10 @@ class WebAppsOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ProcessModuleInfoCollection or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2019_08_01.models.ProcessModuleInfoCollection or None
-        :raises: ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.ProcessModuleInfoCollection"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         def prepare_request(next_link=None):
@@ -17656,8 +17902,9 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200, 404]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+                error = self._deserialize(models.DefaultErrorResponse, response)
+                map_error(status_code=response.status_code, response=response, error_map=error_map, model=error)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -17701,7 +17948,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.ProcessModuleInfo"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -17732,7 +17979,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
         if response.status_code == 200:
@@ -17773,10 +18021,10 @@ class WebAppsOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ProcessThreadInfoCollection or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2019_08_01.models.ProcessThreadInfoCollection or None
-        :raises: ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.ProcessThreadInfoCollection"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         def prepare_request(next_link=None):
@@ -17821,8 +18069,9 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200, 404]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+                error = self._deserialize(models.DefaultErrorResponse, response)
+                map_error(status_code=response.status_code, response=response, error_map=error_map, model=error)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -17856,7 +18105,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SiteCloneability"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -17884,7 +18133,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SiteCloneability', pipeline_response)
 
@@ -17916,10 +18166,10 @@ class WebAppsOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: BackupItemCollection or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2019_08_01.models.BackupItemCollection
-        :raises: ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.BackupItemCollection"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         def prepare_request(next_link=None):
@@ -17962,8 +18212,9 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+                error = self._deserialize(models.DefaultErrorResponse, response)
+                map_error(status_code=response.status_code, response=response, error_map=error_map, model=error)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -17996,7 +18247,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.FunctionSecrets"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -18024,7 +18275,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('FunctionSecrets', pipeline_response)
 
@@ -18059,7 +18311,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.MigrateMySqlStatus"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -18087,7 +18339,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('MigrateMySqlStatus', pipeline_response)
 
@@ -18122,7 +18375,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SwiftVirtualNetwork"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -18150,7 +18403,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SwiftVirtualNetwork', pipeline_response)
 
@@ -18192,7 +18446,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SwiftVirtualNetwork"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -18225,7 +18479,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SwiftVirtualNetwork', pipeline_response)
 
@@ -18260,7 +18515,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -18287,7 +18542,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
           return cls(pipeline_response, None, {})
@@ -18326,7 +18582,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SwiftVirtualNetwork"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -18359,7 +18615,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SwiftVirtualNetwork', pipeline_response)
 
@@ -18397,7 +18654,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.NetworkFeatures"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -18426,7 +18683,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
         if response.status_code == 200:
@@ -18466,7 +18724,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[Union[List["NetworkTrace"], List["NetworkTrace"]]]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -18495,7 +18753,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
         if response.status_code == 200:
@@ -18543,7 +18802,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[str]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -18577,7 +18836,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('str', pipeline_response)
 
@@ -18599,7 +18859,7 @@ class WebAppsOperations(object):
     ):
         # type: (...) -> Union[List["NetworkTrace"], List["NetworkTrace"]]
         cls = kwargs.pop('cls', None)  # type: ClsType[Union[List["NetworkTrace"], List["NetworkTrace"]]]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -18633,7 +18893,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
         if response.status_code == 200:
@@ -18682,7 +18943,7 @@ class WebAppsOperations(object):
         :return: An instance of LROPoller that returns 
         :rtype: ~azure.core.polling.LROPoller[list[~azure.mgmt.web.v2019_08_01.models.NetworkTrace]]
 
-        :raises ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[Union[List["NetworkTrace"], List["NetworkTrace"]]]
@@ -18738,7 +18999,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -18765,7 +19026,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
           return cls(pipeline_response, None, {})
@@ -18800,7 +19062,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[List["NetworkTrace"]]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -18829,7 +19091,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('[NetworkTrace]', pipeline_response)
 
@@ -18867,7 +19130,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[Union[List["NetworkTrace"], List["NetworkTrace"]]]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -18896,7 +19159,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
         if response.status_code == 200:
@@ -18939,7 +19203,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[List["NetworkTrace"]]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -18968,7 +19232,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('[NetworkTrace]', pipeline_response)
 
@@ -19003,7 +19268,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -19030,7 +19295,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
           return cls(pipeline_response, None, {})
@@ -19063,10 +19329,10 @@ class WebAppsOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PerfMonCounterCollection or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2019_08_01.models.PerfMonCounterCollection
-        :raises: ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.PerfMonCounterCollection"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         def prepare_request(next_link=None):
@@ -19111,8 +19377,9 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+                error = self._deserialize(models.DefaultErrorResponse, response)
+                map_error(status_code=response.status_code, response=response, error_map=error_map, model=error)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -19145,7 +19412,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SitePhpErrorLogFlag"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -19173,7 +19440,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SitePhpErrorLogFlag', pipeline_response)
 
@@ -19208,7 +19476,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.PremierAddOn"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -19236,7 +19504,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PremierAddOn', pipeline_response)
 
@@ -19274,7 +19543,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.PremierAddOn"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -19303,7 +19572,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PremierAddOn', pipeline_response)
 
@@ -19344,7 +19614,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.PremierAddOn"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -19378,7 +19648,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PremierAddOn', pipeline_response)
 
@@ -19416,7 +19687,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -19444,7 +19715,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
           return cls(pipeline_response, None, {})
@@ -19482,7 +19754,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.PremierAddOn"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -19516,7 +19788,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PremierAddOn', pipeline_response)
 
@@ -19551,7 +19824,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.PrivateAccess"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -19579,7 +19852,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PrivateAccess', pipeline_response)
 
@@ -19617,7 +19891,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.PrivateAccess"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -19650,7 +19924,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PrivateAccess', pipeline_response)
 
@@ -19683,10 +19958,10 @@ class WebAppsOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ProcessInfoCollection or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2019_08_01.models.ProcessInfoCollection or None
-        :raises: ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.ProcessInfoCollection"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         def prepare_request(next_link=None):
@@ -19729,8 +20004,9 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200, 404]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+                error = self._deserialize(models.DefaultErrorResponse, response)
+                map_error(status_code=response.status_code, response=response, error_map=error_map, model=error)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -19767,7 +20043,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.ProcessInfo"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -19796,7 +20072,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
         if response.status_code == 200:
@@ -19837,7 +20114,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -19865,7 +20142,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [204, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
           return cls(pipeline_response, None, {})
@@ -19900,7 +20178,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[IO]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -19929,7 +20207,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
         if response.status_code == 200:
@@ -19967,10 +20246,10 @@ class WebAppsOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ProcessModuleInfoCollection or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2019_08_01.models.ProcessModuleInfoCollection or None
-        :raises: ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.ProcessModuleInfoCollection"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         def prepare_request(next_link=None):
@@ -20014,8 +20293,9 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200, 404]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+                error = self._deserialize(models.DefaultErrorResponse, response)
+                map_error(status_code=response.status_code, response=response, error_map=error_map, model=error)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -20055,7 +20335,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.ProcessModuleInfo"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -20085,7 +20365,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
         if response.status_code == 200:
@@ -20122,10 +20403,10 @@ class WebAppsOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ProcessThreadInfoCollection or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2019_08_01.models.ProcessThreadInfoCollection or None
-        :raises: ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.ProcessThreadInfoCollection"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         def prepare_request(next_link=None):
@@ -20169,8 +20450,9 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200, 404]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+                error = self._deserialize(models.DefaultErrorResponse, response)
+                map_error(status_code=response.status_code, response=response, error_map=error_map, model=error)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -20201,10 +20483,10 @@ class WebAppsOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PublicCertificateCollection or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2019_08_01.models.PublicCertificateCollection
-        :raises: ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.PublicCertificateCollection"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         def prepare_request(next_link=None):
@@ -20247,8 +20529,9 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+                error = self._deserialize(models.DefaultErrorResponse, response)
+                map_error(status_code=response.status_code, response=response, error_map=error_map, model=error)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -20285,7 +20568,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.PublicCertificate"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -20314,7 +20597,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PublicCertificate', pipeline_response)
 
@@ -20356,7 +20640,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.PublicCertificate"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -20390,7 +20674,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PublicCertificate', pipeline_response)
 
@@ -20428,7 +20713,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -20456,7 +20741,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
           return cls(pipeline_response, None, {})
@@ -20497,7 +20783,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[IO]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
 
         _publishing_profile_options = models.CsmPublishingProfileOptions(format=format, include_disaster_recovery_endpoints=include_disaster_recovery_endpoints)
         api_version = "2019-08-01"
@@ -20532,7 +20818,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline)
 
@@ -20568,7 +20855,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -20595,7 +20882,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
           return cls(pipeline_response, None, {})
@@ -20635,7 +20923,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -20666,7 +20954,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
           return cls(pipeline_response, None, {})
@@ -20683,7 +20972,7 @@ class WebAppsOperations(object):
     ):
         # type: (...) -> None
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -20715,7 +21004,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
           return cls(pipeline_response, None, {})
@@ -20751,7 +21041,7 @@ class WebAppsOperations(object):
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
 
-        :raises ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
@@ -20788,7 +21078,7 @@ class WebAppsOperations(object):
     ):
         # type: (...) -> None
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -20820,7 +21110,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
           return cls(pipeline_response, None, {})
@@ -20855,7 +21146,7 @@ class WebAppsOperations(object):
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
 
-        :raises ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
@@ -20892,7 +21183,7 @@ class WebAppsOperations(object):
     ):
         # type: (...) -> None
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -20924,7 +21215,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
           return cls(pipeline_response, None, {})
@@ -20960,7 +21252,7 @@ class WebAppsOperations(object):
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
 
-        :raises ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
@@ -21009,10 +21301,10 @@ class WebAppsOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SiteExtensionInfoCollection or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2019_08_01.models.SiteExtensionInfoCollection or None
-        :raises: ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SiteExtensionInfoCollection"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         def prepare_request(next_link=None):
@@ -21055,8 +21347,9 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200, 404]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+                error = self._deserialize(models.DefaultErrorResponse, response)
+                map_error(status_code=response.status_code, response=response, error_map=error_map, model=error)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -21093,7 +21386,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SiteExtensionInfo"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -21122,7 +21415,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
         if response.status_code == 200:
@@ -21144,7 +21438,7 @@ class WebAppsOperations(object):
     ):
         # type: (...) -> "models.SiteExtensionInfo"
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SiteExtensionInfo"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -21173,7 +21467,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 201, 429]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
         if response.status_code == 200:
@@ -21217,7 +21512,7 @@ class WebAppsOperations(object):
         :return: An instance of LROPoller that returns SiteExtensionInfo
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.web.v2019_08_01.models.SiteExtensionInfo]
 
-        :raises ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SiteExtensionInfo"]
@@ -21275,7 +21570,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -21303,7 +21598,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [204, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
           return cls(pipeline_response, None, {})
@@ -21321,7 +21617,7 @@ class WebAppsOperations(object):
     ):
         # type: (...) -> None
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
 
         _copy_slot_entity = models.CsmCopySlotEntity(target_slot=target_slot, site_config=site_config)
         api_version = "2019-08-01"
@@ -21355,7 +21651,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
           return cls(pipeline_response, None, {})
@@ -21398,7 +21695,7 @@ class WebAppsOperations(object):
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
 
-        :raises ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
@@ -21455,10 +21752,10 @@ class WebAppsOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SlotDifferenceCollection or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2019_08_01.models.SlotDifferenceCollection
-        :raises: ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SlotDifferenceCollection"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         _slot_swap_entity = models.CsmSlotEntity(target_slot=target_slot, preserve_vnet=preserve_vnet)
         api_version = "2019-08-01"
 
@@ -21507,8 +21804,9 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+                error = self._deserialize(models.DefaultErrorResponse, response)
+                map_error(status_code=response.status_code, response=response, error_map=error_map, model=error)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -21528,7 +21826,7 @@ class WebAppsOperations(object):
     ):
         # type: (...) -> None
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
 
         _slot_swap_entity = models.CsmSlotEntity(target_slot=target_slot, preserve_vnet=preserve_vnet)
         api_version = "2019-08-01"
@@ -21562,7 +21860,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
           return cls(pipeline_response, None, {})
@@ -21602,7 +21901,7 @@ class WebAppsOperations(object):
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
 
-        :raises ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
@@ -21651,10 +21950,10 @@ class WebAppsOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SnapshotCollection or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2019_08_01.models.SnapshotCollection
-        :raises: ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SnapshotCollection"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         def prepare_request(next_link=None):
@@ -21697,8 +21996,9 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+                error = self._deserialize(models.DefaultErrorResponse, response)
+                map_error(status_code=response.status_code, response=response, error_map=error_map, model=error)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -21728,10 +22028,10 @@ class WebAppsOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SnapshotCollection or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2019_08_01.models.SnapshotCollection
-        :raises: ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SnapshotCollection"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         def prepare_request(next_link=None):
@@ -21774,8 +22074,9 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+                error = self._deserialize(models.DefaultErrorResponse, response)
+                map_error(status_code=response.status_code, response=response, error_map=error_map, model=error)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -21809,7 +22110,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SiteSourceControl"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -21837,7 +22138,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 201, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
         if response.status_code == 200:
@@ -21865,7 +22167,7 @@ class WebAppsOperations(object):
     ):
         # type: (...) -> "models.SiteSourceControl"
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SiteSourceControl"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -21898,7 +22200,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 201, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
         if response.status_code == 200:
@@ -21945,7 +22248,7 @@ class WebAppsOperations(object):
         :return: An instance of LROPoller that returns SiteSourceControl
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.web.v2019_08_01.models.SiteSourceControl]
 
-        :raises ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SiteSourceControl"]
@@ -22000,7 +22303,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -22027,7 +22330,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 202, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
           return cls(pipeline_response, None, {})
@@ -22062,7 +22366,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SiteSourceControl"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -22095,7 +22399,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 201, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
         if response.status_code == 200:
@@ -22138,7 +22443,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -22165,7 +22470,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
           return cls(pipeline_response, None, {})
@@ -22184,7 +22490,7 @@ class WebAppsOperations(object):
     ):
         # type: (...) -> Union[List["NetworkTrace"], List["NetworkTrace"]]
         cls = kwargs.pop('cls', None)  # type: ClsType[Union[List["NetworkTrace"], List["NetworkTrace"]]]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -22218,7 +22524,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
         if response.status_code == 200:
@@ -22267,7 +22574,7 @@ class WebAppsOperations(object):
         :return: An instance of LROPoller that returns 
         :rtype: ~azure.core.polling.LROPoller[list[~azure.mgmt.web.v2019_08_01.models.NetworkTrace]]
 
-        :raises ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[Union[List["NetworkTrace"], List["NetworkTrace"]]]
@@ -22324,7 +22631,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -22351,7 +22658,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
           return cls(pipeline_response, None, {})
@@ -22382,7 +22690,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -22409,7 +22717,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
           return cls(pipeline_response, None, {})
@@ -22440,7 +22749,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -22467,7 +22776,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
           return cls(pipeline_response, None, {})
@@ -22498,7 +22808,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -22525,7 +22835,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
           return cls(pipeline_response, None, {})
@@ -22554,10 +22865,10 @@ class WebAppsOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: TriggeredWebJobCollection or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2019_08_01.models.TriggeredWebJobCollection
-        :raises: ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.TriggeredWebJobCollection"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         def prepare_request(next_link=None):
@@ -22600,8 +22911,9 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+                error = self._deserialize(models.DefaultErrorResponse, response)
+                map_error(status_code=response.status_code, response=response, error_map=error_map, model=error)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -22638,7 +22950,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.TriggeredWebJob"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -22667,7 +22979,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
         if response.status_code == 200:
@@ -22707,7 +23020,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -22735,7 +23048,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
           return cls(pipeline_response, None, {})
@@ -22767,10 +23081,10 @@ class WebAppsOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: TriggeredJobHistoryCollection or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2019_08_01.models.TriggeredJobHistoryCollection or None
-        :raises: ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.TriggeredJobHistoryCollection"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         def prepare_request(next_link=None):
@@ -22814,8 +23128,9 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200, 404]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+                error = self._deserialize(models.DefaultErrorResponse, response)
+                map_error(status_code=response.status_code, response=response, error_map=error_map, model=error)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -22855,7 +23170,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.TriggeredJobHistory"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -22885,7 +23200,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
         if response.status_code == 200:
@@ -22925,7 +23241,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -22953,7 +23269,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
           return cls(pipeline_response, None, {})
@@ -22988,10 +23305,10 @@ class WebAppsOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CsmUsageQuotaCollection or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2019_08_01.models.CsmUsageQuotaCollection
-        :raises: ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.CsmUsageQuotaCollection"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         def prepare_request(next_link=None):
@@ -23036,8 +23353,9 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+                error = self._deserialize(models.DefaultErrorResponse, response)
+                map_error(status_code=response.status_code, response=response, error_map=error_map, model=error)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -23071,7 +23389,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[List["VnetInfo"]]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -23099,7 +23417,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('[VnetInfo]', pipeline_response)
 
@@ -23137,7 +23456,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.VnetInfo"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -23166,7 +23485,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('VnetInfo', pipeline_response)
 
@@ -23208,7 +23528,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.VnetInfo"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -23242,7 +23562,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('VnetInfo', pipeline_response)
 
@@ -23280,7 +23601,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -23308,7 +23629,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
           return cls(pipeline_response, None, {})
@@ -23347,7 +23669,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.VnetInfo"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -23381,7 +23703,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('VnetInfo', pipeline_response)
 
@@ -23422,7 +23745,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.VnetGateway"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -23452,7 +23775,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
         if response.status_code == 200:
@@ -23498,7 +23822,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.VnetGateway"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -23533,7 +23857,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('VnetGateway', pipeline_response)
 
@@ -23577,7 +23902,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.VnetGateway"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -23612,7 +23937,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('VnetGateway', pipeline_response)
 
@@ -23644,10 +23970,10 @@ class WebAppsOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: WebJobCollection or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2019_08_01.models.WebJobCollection
-        :raises: ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.WebJobCollection"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         def prepare_request(next_link=None):
@@ -23690,8 +24016,9 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+                error = self._deserialize(models.DefaultErrorResponse, response)
+                map_error(status_code=response.status_code, response=response, error_map=error_map, model=error)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -23728,7 +24055,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.WebJob"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -23757,7 +24084,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('WebJob', pipeline_response)
 
@@ -23792,10 +24120,10 @@ class WebAppsOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SlotDifferenceCollection or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2019_08_01.models.SlotDifferenceCollection
-        :raises: ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SlotDifferenceCollection"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         _slot_swap_entity = models.CsmSlotEntity(target_slot=target_slot, preserve_vnet=preserve_vnet)
         api_version = "2019-08-01"
 
@@ -23843,8 +24171,9 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+                error = self._deserialize(models.DefaultErrorResponse, response)
+                map_error(status_code=response.status_code, response=response, error_map=error_map, model=error)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -23863,7 +24192,7 @@ class WebAppsOperations(object):
     ):
         # type: (...) -> None
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
 
         _slot_swap_entity = models.CsmSlotEntity(target_slot=target_slot, preserve_vnet=preserve_vnet)
         api_version = "2019-08-01"
@@ -23896,7 +24225,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
           return cls(pipeline_response, None, {})
@@ -23932,7 +24262,7 @@ class WebAppsOperations(object):
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
 
-        :raises ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
@@ -23977,10 +24307,10 @@ class WebAppsOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SnapshotCollection or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2019_08_01.models.SnapshotCollection
-        :raises: ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SnapshotCollection"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         def prepare_request(next_link=None):
@@ -24022,8 +24352,9 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+                error = self._deserialize(models.DefaultErrorResponse, response)
+                map_error(status_code=response.status_code, response=response, error_map=error_map, model=error)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -24050,10 +24381,10 @@ class WebAppsOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SnapshotCollection or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2019_08_01.models.SnapshotCollection
-        :raises: ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SnapshotCollection"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         def prepare_request(next_link=None):
@@ -24095,8 +24426,9 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+                error = self._deserialize(models.DefaultErrorResponse, response)
+                map_error(status_code=response.status_code, response=response, error_map=error_map, model=error)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -24126,7 +24458,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SiteSourceControl"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -24153,7 +24485,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 201, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
         if response.status_code == 200:
@@ -24180,7 +24513,7 @@ class WebAppsOperations(object):
     ):
         # type: (...) -> "models.SiteSourceControl"
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SiteSourceControl"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -24212,7 +24545,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 201, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
         if response.status_code == 200:
@@ -24255,7 +24589,7 @@ class WebAppsOperations(object):
         :return: An instance of LROPoller that returns SiteSourceControl
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.web.v2019_08_01.models.SiteSourceControl]
 
-        :raises ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SiteSourceControl"]
@@ -24305,7 +24639,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -24331,7 +24665,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 202, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
           return cls(pipeline_response, None, {})
@@ -24362,7 +24697,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SiteSourceControl"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -24394,7 +24729,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 201, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
         if response.status_code == 200:
@@ -24433,7 +24769,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -24459,7 +24795,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
           return cls(pipeline_response, None, {})
@@ -24477,7 +24814,7 @@ class WebAppsOperations(object):
     ):
         # type: (...) -> Union[List["NetworkTrace"], List["NetworkTrace"]]
         cls = kwargs.pop('cls', None)  # type: ClsType[Union[List["NetworkTrace"], List["NetworkTrace"]]]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -24510,7 +24847,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
         if response.status_code == 200:
@@ -24556,7 +24894,7 @@ class WebAppsOperations(object):
         :return: An instance of LROPoller that returns 
         :rtype: ~azure.core.polling.LROPoller[list[~azure.mgmt.web.v2019_08_01.models.NetworkTrace]]
 
-        :raises ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[Union[List["NetworkTrace"], List["NetworkTrace"]]]
@@ -24608,7 +24946,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -24634,7 +24972,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
           return cls(pipeline_response, None, {})
@@ -24662,7 +25001,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -24688,7 +25027,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
           return cls(pipeline_response, None, {})
@@ -24716,7 +25056,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -24742,7 +25082,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
           return cls(pipeline_response, None, {})
@@ -24770,7 +25111,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -24796,7 +25137,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
           return cls(pipeline_response, None, {})
@@ -24821,10 +25163,10 @@ class WebAppsOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: TriggeredWebJobCollection or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2019_08_01.models.TriggeredWebJobCollection
-        :raises: ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.TriggeredWebJobCollection"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         def prepare_request(next_link=None):
@@ -24866,8 +25208,9 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+                error = self._deserialize(models.DefaultErrorResponse, response)
+                map_error(status_code=response.status_code, response=response, error_map=error_map, model=error)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -24900,7 +25243,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.TriggeredWebJob"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -24928,7 +25271,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
         if response.status_code == 200:
@@ -24964,7 +25308,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -24991,7 +25335,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
           return cls(pipeline_response, None, {})
@@ -25019,10 +25364,10 @@ class WebAppsOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: TriggeredJobHistoryCollection or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2019_08_01.models.TriggeredJobHistoryCollection or None
-        :raises: ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.TriggeredJobHistoryCollection"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         def prepare_request(next_link=None):
@@ -25065,8 +25410,9 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200, 404]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+                error = self._deserialize(models.DefaultErrorResponse, response)
+                map_error(status_code=response.status_code, response=response, error_map=error_map, model=error)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -25102,7 +25448,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.TriggeredJobHistory"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -25131,7 +25477,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
         if response.status_code == 200:
@@ -25167,7 +25514,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -25194,7 +25541,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
           return cls(pipeline_response, None, {})
@@ -25225,10 +25573,10 @@ class WebAppsOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CsmUsageQuotaCollection or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2019_08_01.models.CsmUsageQuotaCollection
-        :raises: ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.CsmUsageQuotaCollection"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         def prepare_request(next_link=None):
@@ -25272,8 +25620,9 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+                error = self._deserialize(models.DefaultErrorResponse, response)
+                map_error(status_code=response.status_code, response=response, error_map=error_map, model=error)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -25303,7 +25652,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[List["VnetInfo"]]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -25330,7 +25679,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('[VnetInfo]', pipeline_response)
 
@@ -25364,7 +25714,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.VnetInfo"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -25392,7 +25742,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('VnetInfo', pipeline_response)
 
@@ -25430,7 +25781,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.VnetInfo"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -25463,7 +25814,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('VnetInfo', pipeline_response)
 
@@ -25497,7 +25849,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -25524,7 +25876,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
           return cls(pipeline_response, None, {})
@@ -25559,7 +25912,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.VnetInfo"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -25592,7 +25945,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('VnetInfo', pipeline_response)
 
@@ -25629,7 +25983,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.VnetGateway"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -25658,7 +26012,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
         if response.status_code == 200:
@@ -25700,7 +26055,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.VnetGateway"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -25734,7 +26089,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('VnetGateway', pipeline_response)
 
@@ -25774,7 +26130,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.VnetGateway"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -25808,7 +26164,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('VnetGateway', pipeline_response)
 
@@ -25836,10 +26193,10 @@ class WebAppsOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: WebJobCollection or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2019_08_01.models.WebJobCollection
-        :raises: ~azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.WebJobCollection"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         def prepare_request(next_link=None):
@@ -25881,8 +26238,9 @@ class WebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+                error = self._deserialize(models.DefaultErrorResponse, response)
+                map_error(status_code=response.status_code, response=response, error_map=error_map, model=error)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -25915,7 +26273,7 @@ class WebAppsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.WebJob"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-08-01"
 
         # Construct URL
@@ -25943,7 +26301,8 @@ class WebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('WebJob', pipeline_response)
 

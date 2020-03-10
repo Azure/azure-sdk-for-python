@@ -2233,31 +2233,6 @@ class DataTableResponseObject(msrest.serialization.Model):
         self.rows = rows
 
 
-class DefaultErrorResponseException(HttpResponseError):
-    """Server responded with exception of type: 'DefaultErrorResponse'.
-
-    :param response: Server response to be deserialized.
-    :param error_model: A deserialized model of the response body as model.
-    """
-
-    def __init__(self, response, error_model):
-        self.error = error_model
-        super(DefaultErrorResponseException, self).__init__(response=response, error_model=error_model)
-
-    @classmethod
-    def from_response(cls, response, deserialize):
-        """Deserialize this response as this exception, or a subclass of this exception.
-
-        :param response: Server response to be deserialized.
-        :param deserialize: A deserializer
-        """
-        model_name = 'DefaultErrorResponse'
-        error = deserialize(model_name, response)
-        if error is None:
-            error = deserialize.dependencies[model_name]()
-        return error._EXCEPTION_TYPE(response, error)
-
-
 class DefaultErrorResponse(msrest.serialization.Model):
     """App Service error response.
 
@@ -2266,7 +2241,6 @@ class DefaultErrorResponse(msrest.serialization.Model):
     :ivar error: Error model.
     :vartype error: ~azure.mgmt.web.v2016_03_01.models.DefaultErrorResponseError
     """
-    _EXCEPTION_TYPE = DefaultErrorResponseException
 
     _validation = {
         'error': {'readonly': True},

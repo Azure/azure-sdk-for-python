@@ -37,7 +37,7 @@ try:
     from ._models_py3 import DomainProperties
     from ._models_py3 import DomainPurchaseConsent
     from ._models_py3 import DomainRecommendationSearchParameters
-    from ._models_py3 import ErrorResponse, ErrorResponseException
+    from ._models_py3 import ErrorResponse
     from ._models_py3 import Experiments
     from ._models_py3 import HandlerMapping
     from ._models_py3 import HostName
@@ -127,7 +127,7 @@ except (SyntaxError, ImportError):
     from ._models import DomainProperties  # type: ignore
     from ._models import DomainPurchaseConsent  # type: ignore
     from ._models import DomainRecommendationSearchParameters  # type: ignore
-    from ._models import ErrorResponse, ErrorResponseException  # type: ignore
+    from ._models import ErrorResponse  # type: ignore
     from ._models import Experiments  # type: ignore
     from ._models import HandlerMapping  # type: ignore
     from ._models import HostName  # type: ignore
@@ -242,7 +242,7 @@ __all__ = [
     'DomainProperties',
     'DomainPurchaseConsent',
     'DomainRecommendationSearchParameters',
-    'ErrorResponse', 'ErrorResponseException',
+    'ErrorResponse',
     'Experiments',
     'HandlerMapping',
     'HostName',

@@ -9,9 +9,10 @@ from typing import Any, Callable, Dict, Generic, Optional, TypeVar
 import warnings
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
-from azure.core.exceptions import map_error
+from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
+from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models
 
@@ -51,10 +52,10 @@ class ResourceHealthMetadataOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ResourceHealthMetadataCollection or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2018_02_01.models.ResourceHealthMetadataCollection
-        :raises: ~azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.ResourceHealthMetadataCollection"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2018-02-01"
 
         def prepare_request(next_link=None):
@@ -94,8 +95,9 @@ class ResourceHealthMetadataOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+                error = self._deserialize(models.DefaultErrorResponse, response)
+                map_error(status_code=response.status_code, response=response, error_map=error_map, model=error)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -118,10 +120,10 @@ class ResourceHealthMetadataOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ResourceHealthMetadataCollection or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2018_02_01.models.ResourceHealthMetadataCollection
-        :raises: ~azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.ResourceHealthMetadataCollection"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2018-02-01"
 
         def prepare_request(next_link=None):
@@ -162,8 +164,9 @@ class ResourceHealthMetadataOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+                error = self._deserialize(models.DefaultErrorResponse, response)
+                map_error(status_code=response.status_code, response=response, error_map=error_map, model=error)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -189,10 +192,10 @@ class ResourceHealthMetadataOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ResourceHealthMetadataCollection or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2018_02_01.models.ResourceHealthMetadataCollection
-        :raises: ~azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.ResourceHealthMetadataCollection"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2018-02-01"
 
         def prepare_request(next_link=None):
@@ -234,8 +237,9 @@ class ResourceHealthMetadataOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+                error = self._deserialize(models.DefaultErrorResponse, response)
+                map_error(status_code=response.status_code, response=response, error_map=error_map, model=error)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -264,7 +268,7 @@ class ResourceHealthMetadataOperations:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.ResourceHealthMetadata"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2018-02-01"
 
         # Construct URL
@@ -291,7 +295,8 @@ class ResourceHealthMetadataOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ResourceHealthMetadata', pipeline_response)
 
@@ -321,10 +326,10 @@ class ResourceHealthMetadataOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ResourceHealthMetadataCollection or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2018_02_01.models.ResourceHealthMetadataCollection
-        :raises: ~azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.ResourceHealthMetadataCollection"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2018-02-01"
 
         def prepare_request(next_link=None):
@@ -367,8 +372,9 @@ class ResourceHealthMetadataOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+                error = self._deserialize(models.DefaultErrorResponse, response)
+                map_error(status_code=response.status_code, response=response, error_map=error_map, model=error)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -400,7 +406,7 @@ class ResourceHealthMetadataOperations:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.ResourceHealthMetadata"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2018-02-01"
 
         # Construct URL
@@ -428,7 +434,8 @@ class ResourceHealthMetadataOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.DefaultErrorResponseException.from_response(response, self._deserialize)
+            error = self._deserialize(models.DefaultErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ResourceHealthMetadata', pipeline_response)
 

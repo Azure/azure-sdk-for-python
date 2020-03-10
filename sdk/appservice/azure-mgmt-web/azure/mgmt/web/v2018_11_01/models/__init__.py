@@ -25,7 +25,7 @@ try:
     from ._models_py3 import Components1Jq1T4ISchemasManagedserviceidentityPropertiesUserassignedidentitiesAdditionalproperties
     from ._models_py3 import ConnStringInfo
     from ._models_py3 import CorsSettings
-    from ._models_py3 import DefaultErrorResponse, DefaultErrorResponseException
+    from ._models_py3 import DefaultErrorResponse
     from ._models_py3 import DefaultErrorResponseError
     from ._models_py3 import DefaultErrorResponseErrorDetailsItem
     from ._models_py3 import DeletedSite
@@ -94,7 +94,7 @@ except (SyntaxError, ImportError):
     from ._models import Components1Jq1T4ISchemasManagedserviceidentityPropertiesUserassignedidentitiesAdditionalproperties  # type: ignore
     from ._models import ConnStringInfo  # type: ignore
     from ._models import CorsSettings  # type: ignore
-    from ._models import DefaultErrorResponse, DefaultErrorResponseException  # type: ignore
+    from ._models import DefaultErrorResponse  # type: ignore
     from ._models import DefaultErrorResponseError  # type: ignore
     from ._models import DefaultErrorResponseErrorDetailsItem  # type: ignore
     from ._models import DeletedSite  # type: ignore
@@ -187,7 +187,7 @@ __all__ = [
     'Components1Jq1T4ISchemasManagedserviceidentityPropertiesUserassignedidentitiesAdditionalproperties',
     'ConnStringInfo',
     'CorsSettings',
-    'DefaultErrorResponse', 'DefaultErrorResponseException',
+    'DefaultErrorResponse',
     'DefaultErrorResponseError',
     'DefaultErrorResponseErrorDetailsItem',
     'DeletedSite',

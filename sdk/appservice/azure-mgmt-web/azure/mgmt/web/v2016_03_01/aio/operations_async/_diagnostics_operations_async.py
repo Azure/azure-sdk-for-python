@@ -10,10 +10,10 @@ from typing import Any, Callable, Dict, Generic, Optional, TypeVar
 import warnings
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
-from azure.core.exceptions import map_error
+from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
-from azure.mgmt.core.exceptions import ARMError
+from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models
 
@@ -59,10 +59,10 @@ class DiagnosticsOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DetectorResponseCollection or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2016_03_01.models.DetectorResponseCollection
-        :raises: ~azure.mgmt.core.ARMError
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.DetectorResponseCollection"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2016-03-01"
 
         def prepare_request(next_link=None):
@@ -105,7 +105,7 @@ class DiagnosticsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise ARMError(response=response)
+                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -146,7 +146,7 @@ class DiagnosticsOperations:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.DetectorResponse"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2016-03-01"
 
         # Construct URL
@@ -180,7 +180,7 @@ class DiagnosticsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise ARMError(response=response)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('DetectorResponse', pipeline_response)
 
@@ -207,10 +207,10 @@ class DiagnosticsOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DetectorResponseCollection or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2016_03_01.models.DetectorResponseCollection
-        :raises: ~azure.mgmt.core.ARMError
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.DetectorResponseCollection"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2016-03-01"
 
         def prepare_request(next_link=None):
@@ -253,7 +253,7 @@ class DiagnosticsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise ARMError(response=response)
+                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -294,7 +294,7 @@ class DiagnosticsOperations:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.DetectorResponse"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2016-03-01"
 
         # Construct URL
@@ -328,7 +328,7 @@ class DiagnosticsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise ARMError(response=response)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('DetectorResponse', pipeline_response)
 
@@ -355,10 +355,10 @@ class DiagnosticsOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DiagnosticCategoryCollection or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2016_03_01.models.DiagnosticCategoryCollection
-        :raises: ~azure.mgmt.core.ARMError
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.DiagnosticCategoryCollection"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2016-03-01"
 
         def prepare_request(next_link=None):
@@ -401,7 +401,7 @@ class DiagnosticsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise ARMError(response=response)
+                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -433,7 +433,7 @@ class DiagnosticsOperations:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.DiagnosticCategory"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2016-03-01"
 
         # Construct URL
@@ -461,7 +461,7 @@ class DiagnosticsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise ARMError(response=response)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('DiagnosticCategory', pipeline_response)
 
@@ -491,10 +491,10 @@ class DiagnosticsOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DiagnosticAnalysisCollection or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2016_03_01.models.DiagnosticAnalysisCollection
-        :raises: ~azure.mgmt.core.ARMError
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.DiagnosticAnalysisCollection"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2016-03-01"
 
         def prepare_request(next_link=None):
@@ -538,7 +538,7 @@ class DiagnosticsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise ARMError(response=response)
+                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -573,7 +573,7 @@ class DiagnosticsOperations:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.DiagnosticAnalysis"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2016-03-01"
 
         # Construct URL
@@ -602,7 +602,7 @@ class DiagnosticsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise ARMError(response=response)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('DiagnosticAnalysis', pipeline_response)
 
@@ -647,7 +647,7 @@ class DiagnosticsOperations:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.DiagnosticAnalysis"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2016-03-01"
 
         # Construct URL
@@ -682,7 +682,7 @@ class DiagnosticsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise ARMError(response=response)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('DiagnosticAnalysis', pipeline_response)
 
@@ -712,10 +712,10 @@ class DiagnosticsOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DiagnosticDetectorCollection or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2016_03_01.models.DiagnosticDetectorCollection
-        :raises: ~azure.mgmt.core.ARMError
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.DiagnosticDetectorCollection"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2016-03-01"
 
         def prepare_request(next_link=None):
@@ -759,7 +759,7 @@ class DiagnosticsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise ARMError(response=response)
+                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -791,10 +791,10 @@ class DiagnosticsOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DiagnosticDetectorCollection or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2016_03_01.models.DiagnosticDetectorCollection
-        :raises: ~azure.mgmt.core.ARMError
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.DiagnosticDetectorCollection"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2016-03-01"
 
         def prepare_request(next_link=None):
@@ -839,7 +839,7 @@ class DiagnosticsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise ARMError(response=response)
+                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -883,7 +883,7 @@ class DiagnosticsOperations:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.DiagnosticDetectorResponse"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2016-03-01"
 
         # Construct URL
@@ -918,7 +918,7 @@ class DiagnosticsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise ARMError(response=response)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('DiagnosticDetectorResponse', pipeline_response)
 
@@ -948,10 +948,10 @@ class DiagnosticsOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DetectorResponseCollection or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2016_03_01.models.DetectorResponseCollection
-        :raises: ~azure.mgmt.core.ARMError
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.DetectorResponseCollection"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2016-03-01"
 
         def prepare_request(next_link=None):
@@ -995,7 +995,7 @@ class DiagnosticsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise ARMError(response=response)
+                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -1039,7 +1039,7 @@ class DiagnosticsOperations:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.DetectorResponse"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2016-03-01"
 
         # Construct URL
@@ -1074,7 +1074,7 @@ class DiagnosticsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise ARMError(response=response)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('DetectorResponse', pipeline_response)
 
@@ -1104,10 +1104,10 @@ class DiagnosticsOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DiagnosticCategoryCollection or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2016_03_01.models.DiagnosticCategoryCollection
-        :raises: ~azure.mgmt.core.ARMError
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.DiagnosticCategoryCollection"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2016-03-01"
 
         def prepare_request(next_link=None):
@@ -1151,7 +1151,7 @@ class DiagnosticsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise ARMError(response=response)
+                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -1186,7 +1186,7 @@ class DiagnosticsOperations:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.DiagnosticCategory"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2016-03-01"
 
         # Construct URL
@@ -1215,7 +1215,7 @@ class DiagnosticsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise ARMError(response=response)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('DiagnosticCategory', pipeline_response)
 
@@ -1248,10 +1248,10 @@ class DiagnosticsOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DiagnosticAnalysisCollection or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2016_03_01.models.DiagnosticAnalysisCollection
-        :raises: ~azure.mgmt.core.ARMError
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.DiagnosticAnalysisCollection"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2016-03-01"
 
         def prepare_request(next_link=None):
@@ -1296,7 +1296,7 @@ class DiagnosticsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise ARMError(response=response)
+                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -1334,7 +1334,7 @@ class DiagnosticsOperations:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.DiagnosticAnalysis"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2016-03-01"
 
         # Construct URL
@@ -1364,7 +1364,7 @@ class DiagnosticsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise ARMError(response=response)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('DiagnosticAnalysis', pipeline_response)
 
@@ -1412,7 +1412,7 @@ class DiagnosticsOperations:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.DiagnosticAnalysis"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2016-03-01"
 
         # Construct URL
@@ -1448,7 +1448,7 @@ class DiagnosticsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise ARMError(response=response)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('DiagnosticAnalysis', pipeline_response)
 
@@ -1481,10 +1481,10 @@ class DiagnosticsOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DiagnosticDetectorCollection or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2016_03_01.models.DiagnosticDetectorCollection
-        :raises: ~azure.mgmt.core.ARMError
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.DiagnosticDetectorCollection"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2016-03-01"
 
         def prepare_request(next_link=None):
@@ -1529,7 +1529,7 @@ class DiagnosticsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise ARMError(response=response)
+                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -1564,10 +1564,10 @@ class DiagnosticsOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DiagnosticDetectorCollection or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2016_03_01.models.DiagnosticDetectorCollection
-        :raises: ~azure.mgmt.core.ARMError
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.DiagnosticDetectorCollection"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2016-03-01"
 
         def prepare_request(next_link=None):
@@ -1613,7 +1613,7 @@ class DiagnosticsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise ARMError(response=response)
+                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -1660,7 +1660,7 @@ class DiagnosticsOperations:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.DiagnosticDetectorResponse"]
-        error_map = kwargs.pop('error_map', {})
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2016-03-01"
 
         # Construct URL
@@ -1696,7 +1696,7 @@ class DiagnosticsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise ARMError(response=response)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('DiagnosticDetectorResponse', pipeline_response)
 
