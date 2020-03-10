@@ -19,6 +19,8 @@ from .. import models
 class AdminKeysOperations(object):
     """AdminKeysOperations operations.
 
+    You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
+
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -40,14 +42,14 @@ class AdminKeysOperations(object):
     def get(
             self, resource_group_name, search_service_name, search_management_request_options=None, custom_headers=None, raw=False, **operation_config):
         """Gets the primary and secondary admin API keys for the specified Azure
-        Search service.
+        Cognitive Search service.
 
         :param resource_group_name: The name of the resource group within the
          current subscription. You can obtain this value from the Azure
          Resource Manager API or the portal.
         :type resource_group_name: str
-        :param search_service_name: The name of the Azure Search service
-         associated with the specified resource group.
+        :param search_service_name: The name of the Azure Cognitive Search
+         service associated with the specified resource group.
         :type search_service_name: str
         :param search_management_request_options: Additional parameters for
          the operation
@@ -102,7 +104,6 @@ class AdminKeysOperations(object):
             raise exp
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('AdminKeyResult', response)
 
@@ -122,8 +123,8 @@ class AdminKeysOperations(object):
          current subscription. You can obtain this value from the Azure
          Resource Manager API or the portal.
         :type resource_group_name: str
-        :param search_service_name: The name of the Azure Search service
-         associated with the specified resource group.
+        :param search_service_name: The name of the Azure Cognitive Search
+         service associated with the specified resource group.
         :type search_service_name: str
         :param key_kind: Specifies which key to regenerate. Valid values
          include 'primary' and 'secondary'. Possible values include: 'primary',
@@ -183,7 +184,6 @@ class AdminKeysOperations(object):
             raise exp
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('AdminKeyResult', response)
 
