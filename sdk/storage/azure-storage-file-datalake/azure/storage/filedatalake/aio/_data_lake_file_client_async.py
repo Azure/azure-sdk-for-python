@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
+from ._download_async import StorageStreamDownloader
 from ._path_client_async import PathClient
 from .._data_lake_file_client import DataLakeFileClient as DataLakeFileClientBase
 from .._deserialize import process_storage_error
@@ -372,13 +373,11 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
         except StorageErrorException as error:
             process_storage_error(error)
 
-    async def read_file(self, offset=None,  # type: Optional[int]
-                        length=None,  # type: Optional[int]
-                        stream=None,  # type: Optional[IO]
-                        **kwargs):
-        # type: (...) -> Union[int, byte]
-        """Download a file from the service. Return the downloaded data in bytes or
-        write the downloaded data into user provided stream and return the written size.
+    async def download_file(self, offset=None, length=None, **kwargs):
+        # type: (Optional[int], Optional[int], Any) -> StorageStreamDownloader
+        """Downloads a file to the StorageStreamDownloader. The readall() method must
+        be used to read all the content, or readinto() must be used to download the file into
+        a stream.
 
         :param int offset:
             Start of byte range to use for downloading a section of the file.
@@ -386,8 +385,6 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
         :param int length:
             Number of bytes to read from the stream. This is optional, but
             should be supplied for optimal performance.
-        :param int stream:
-            User provided stream to write the downloaded data into.
         :keyword lease:
             If specified, download only succeeds if the file's lease is active
             and matches this ID. Required if the file has an active lease.
@@ -415,8 +412,8 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
             The timeout parameter is expressed in seconds. This method may make
             multiple calls to the Azure service and the timeout will apply to
             each call individually.
-        :returns: downloaded data or the size of data written into the provided stream
-        :rtype: bytes or int
+        :returns: A streaming object (StorageStreamDownloader)
+        :rtype: ~azure.storage.filedatalake.aio.StorageStreamDownloader
 
         .. admonition:: Example:
 
@@ -428,9 +425,7 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
                 :caption: Return the downloaded data.
         """
         downloader = await self._blob_client.download_blob(offset=offset, length=length, **kwargs)
-        if stream:
-            return await downloader.readinto(stream)
-        return await downloader.readall()
+        return StorageStreamDownloader(downloader)
 
     async def rename_file(self, new_name,  # type: str
                           **kwargs):
