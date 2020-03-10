@@ -1,5 +1,8 @@
 # Release History
 
+## 4.2.0b2 (Unreleased)
+
+
 ## 4.2.0b1 (2020-03-10)
 - Support for Key Vault API version 7.1-preview
 ([#10124](https://github.com/Azure/azure-sdk-for-python/pull/10124))
