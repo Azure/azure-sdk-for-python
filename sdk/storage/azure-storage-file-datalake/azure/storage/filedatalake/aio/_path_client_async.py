@@ -376,7 +376,7 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
         path_properties.__class__ = DirectoryProperties
         return path_properties
 
-    async def set_metadata(self, metadata=None,  # type: Optional[Dict[str, str]]
+    async def set_metadata(self, metadata,  # type: Dict[str, str]
                            **kwargs):
         # type: (...) -> Dict[str, Union[str, datetime]]
         """Sets one or more user-defined name-value pairs for the specified

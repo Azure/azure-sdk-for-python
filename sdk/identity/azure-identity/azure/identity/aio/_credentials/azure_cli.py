@@ -41,7 +41,7 @@ class AzureCliCredential(AsyncCredentialBase):
         """
         # only ProactorEventLoop supports subprocesses on Windows (and it isn't the default loop on Python < 3.8)
         if sys.platform.startswith("win") and not isinstance(asyncio.get_event_loop(), asyncio.ProactorEventLoop):
-            return _SyncAzureCliCredential().get_token(scopes, **kwargs)
+            return _SyncAzureCliCredential().get_token(*scopes, **kwargs)
 
         resource = _scopes_to_resource(*scopes)
         output = await _run_command(COMMAND_LINE.format(resource))

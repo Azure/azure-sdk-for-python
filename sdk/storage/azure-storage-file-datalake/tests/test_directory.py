@@ -429,7 +429,7 @@ class DirectoryTest(StorageTestCase):
             self.dsc.account_name,
             self.file_system_name,
             directory_name,
-            account_key=self.dsc.credential.account_key,
+            self.dsc.credential.account_key,
             permission=DirectorySasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
@@ -452,7 +452,7 @@ class DirectoryTest(StorageTestCase):
             self.dsc.account_name,
             self.file_system_name,
             directory_name,
-            account_key=self.dsc.credential.account_key,
+            self.dsc.credential.account_key,
             permission=DirectorySasPermissions(create=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )

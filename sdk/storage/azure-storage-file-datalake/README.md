@@ -139,7 +139,8 @@ file = DataLakeFileClient.from_connection_string("my_connection_string",
                                                  file_system_name="myfilesystem", file_path="myfile")
 
 with open("./BlockDestination.txt", "wb") as my_file:
-    file_data = file.read_file(stream=my_file)
+    download = file.download_file()
+    download.readinto(my_file)
 ```
 
 ### Enumerating paths

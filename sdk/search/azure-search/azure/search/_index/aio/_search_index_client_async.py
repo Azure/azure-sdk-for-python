@@ -14,6 +14,7 @@ from .._generated.aio import SearchIndexClient as _SearchIndexClient
 from .._generated.models import IndexBatch, IndexingResult, SearchRequest
 from .._index_documents_batch import IndexDocumentsBatch
 from .._queries import AutocompleteQuery, SearchQuery, SuggestQuery
+from ..._version import VERSION
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
@@ -24,6 +25,12 @@ if TYPE_CHECKING:
 class SearchIndexClient(object):
     """A client to interact with an existing Azure search index.
 
+    :param endpoint: The URL endpoint of an Azure search service
+    :type endpoint: str
+    :param index_name: The name of the index to connect to
+    :type index_name: str
+    :param credential: A credential to authorize search client requests
+    :type credential: SearchApiKeyCredential
 
     .. admonition:: Example:
 
@@ -51,6 +58,7 @@ class SearchIndexClient(object):
             endpoint=endpoint,
             index_name=index_name,
             headers_policy=headers_policy,
+            sdk_moniker="search/{}".format(VERSION),
             **kwargs
         )  # type: _SearchIndexClient
 
@@ -108,7 +116,7 @@ class SearchIndexClient(object):
 
         :param query: An query for searching the index
         :type documents: str or SearchQuery
-        :rtype:  Iterable[dict]
+        :rtype:  AsyncSearchItemPaged[dict]
 
         .. admonition:: Example:
 
@@ -127,6 +135,15 @@ class SearchIndexClient(object):
                 :language: python
                 :dedent: 4
                 :caption: Filter and sort search results.
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_facet_query_async.py
+                :start-after: [START facet_query_async]
+                :end-before: [END facet_query_async]
+                :language: python
+                :dedent: 4
+                :caption: Get search result facets.
         """
         if isinstance(query, six.string_types):
             query = SearchQuery(search_text=query)

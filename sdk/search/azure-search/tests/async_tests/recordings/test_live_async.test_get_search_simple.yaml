@@ -9,9 +9,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-searchindexclient/unknown Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
+      - azsdk-python-search/1.0.0b1 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
       api-key:
-      - 2F28B08BD827AF50E095AABB9A3234F0
+      - 62F243A45423B1ABDE3FD1FAF6059629
     method: POST
     uri: https://search30fc0f98.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2019-05-06-Preview
   response:
@@ -65,13 +65,13 @@ interactions:
       content-encoding: gzip
       content-length: '2377'
       content-type: application/json; odata.metadata=none
-      date: Fri, 06 Mar 2020 22:24:05 GMT
-      elapsed-time: '106'
+      date: Mon, 09 Mar 2020 21:23:40 GMT
+      elapsed-time: '81'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 30b655ce-5ff9-11ea-b13a-8c8590507855
+      request-id: 3f4ed656-624c-11ea-9360-8c8590507855
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
@@ -88,9 +88,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-searchindexclient/unknown Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
+      - azsdk-python-search/1.0.0b1 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
       api-key:
-      - 2F28B08BD827AF50E095AABB9A3234F0
+      - 62F243A45423B1ABDE3FD1FAF6059629
     method: POST
     uri: https://search30fc0f98.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2019-05-06-Preview
   response:
@@ -120,13 +120,13 @@ interactions:
       content-encoding: gzip
       content-length: '1271'
       content-type: application/json; odata.metadata=none
-      date: Fri, 06 Mar 2020 22:24:05 GMT
+      date: Mon, 09 Mar 2020 21:23:40 GMT
       elapsed-time: '6'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 30d7a67a-5ff9-11ea-b13a-8c8590507855
+      request-id: 3f6cf71c-624c-11ea-9360-8c8590507855
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:

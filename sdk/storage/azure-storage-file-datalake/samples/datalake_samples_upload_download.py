@@ -65,7 +65,8 @@ def upload_download_sample(filesystem_client):
     # read the data back
     print("Downloading data from '{}'.".format(file_name))
     # [START read_file]
-    downloaded_bytes = file_client.read_file()
+    download = file_client.download_file()
+    downloaded_bytes = download.readall()
     # [END read_file]
 
     # verify the downloaded content
@@ -81,7 +82,8 @@ def upload_download_sample(filesystem_client):
 
     # download the renamed file in to local file
     with open(SOURCE_FILE, 'wb') as stream:
-        new_client.read_file(stream=stream)
+        download = new_client.download_file()
+        download.readinto(stream)
 
     # [START delete_file]
     new_client.delete_file()
