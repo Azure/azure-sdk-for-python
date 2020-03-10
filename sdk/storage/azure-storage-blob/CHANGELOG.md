@@ -1,6 +1,10 @@
 # Release History
 
-## 12.2.1 (Unreleased)
+## 12.2.1 (2020-03-10)
+
+**Fixes**
+- Fixed a bug where a new transport is being passed in the `get_blob_client` method instead
+of using the existing one in the `ContainerClient`.
 
 **Notes**
 - The `StorageUserAgentPolicy` is now replaced with the `UserAgentPolicy` from azure-core. With this, the custom user agents are now added as a prefix instead of being appended.
