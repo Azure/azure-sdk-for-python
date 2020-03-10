@@ -302,6 +302,28 @@ class AddDataFlowToDebugSessionResponse(Model):
         self.job_version = kwargs.get('job_version', None)
 
 
+class AdditionalColumns(Model):
+    """Specify the column name and value of additional columns.
+
+    :param name: Additional column name. Type: string (or Expression with
+     resultType string).
+    :type name: object
+    :param value: Additional column value. Type: string (or Expression with
+     resultType string).
+    :type value: object
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'object'},
+        'value': {'key': 'value', 'type': 'object'},
+    }
+
+    def __init__(self, **kwargs):
+        super(AdditionalColumns, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.value = kwargs.get('value', None)
+
+
 class LinkedService(Model):
     """The Azure Data Factory nested object which contains the information and
     credential which can be used to connect with related store or compute
@@ -748,6 +770,11 @@ class TabularSource(CopySource):
      resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type query_timeout: object
+    :param additional_columns: Specifies the additional columns to be added to
+     source data. Type: array of objects (or Expression with resultType array
+     of objects).
+    :type additional_columns:
+     list[~azure.mgmt.datafactory.models.AdditionalColumns]
     """
 
     _validation = {
@@ -761,6 +788,7 @@ class TabularSource(CopySource):
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
     }
 
     _subtype_map = {
@@ -770,6 +798,7 @@ class TabularSource(CopySource):
     def __init__(self, **kwargs):
         super(TabularSource, self).__init__(**kwargs)
         self.query_timeout = kwargs.get('query_timeout', None)
+        self.additional_columns = kwargs.get('additional_columns', None)
         self.type = 'TabularSource'
 
 
@@ -798,6 +827,11 @@ class AmazonMWSSource(TabularSource):
      resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type query_timeout: object
+    :param additional_columns: Specifies the additional columns to be added to
+     source data. Type: array of objects (or Expression with resultType array
+     of objects).
+    :type additional_columns:
+     list[~azure.mgmt.datafactory.models.AdditionalColumns]
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -814,6 +848,7 @@ class AmazonMWSSource(TabularSource):
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
@@ -922,6 +957,11 @@ class AmazonRedshiftSource(TabularSource):
      resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type query_timeout: object
+    :param additional_columns: Specifies the additional columns to be added to
+     source data. Type: array of objects (or Expression with resultType array
+     of objects).
+    :type additional_columns:
+     list[~azure.mgmt.datafactory.models.AdditionalColumns]
     :param query: Database query. Type: string (or Expression with resultType
      string).
     :type query: object
@@ -944,6 +984,7 @@ class AmazonRedshiftSource(TabularSource):
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
         'query': {'key': 'query', 'type': 'object'},
         'redshift_unload_settings': {'key': 'redshiftUnloadSettings', 'type': 'RedshiftUnloadSettings'},
     }
@@ -1347,6 +1388,10 @@ class AmazonS3ReadSettings(StoreReadSettings):
     :param prefix: The prefix filter for the S3 object name. Type: string (or
      Expression with resultType string).
     :type prefix: object
+    :param file_list_path: Point to a text file that lists each file (relative
+     path to the path configured in the dataset) that you want to copy. Type:
+     string (or Expression with resultType string).
+    :type file_list_path: object
     :param enable_partition_discovery: Indicates whether to enable partition
      discovery.
     :type enable_partition_discovery: bool
@@ -1370,6 +1415,7 @@ class AmazonS3ReadSettings(StoreReadSettings):
         'wildcard_folder_path': {'key': 'wildcardFolderPath', 'type': 'object'},
         'wildcard_file_name': {'key': 'wildcardFileName', 'type': 'object'},
         'prefix': {'key': 'prefix', 'type': 'object'},
+        'file_list_path': {'key': 'fileListPath', 'type': 'object'},
         'enable_partition_discovery': {'key': 'enablePartitionDiscovery', 'type': 'bool'},
         'modified_datetime_start': {'key': 'modifiedDatetimeStart', 'type': 'object'},
         'modified_datetime_end': {'key': 'modifiedDatetimeEnd', 'type': 'object'},
@@ -1381,6 +1427,7 @@ class AmazonS3ReadSettings(StoreReadSettings):
         self.wildcard_folder_path = kwargs.get('wildcard_folder_path', None)
         self.wildcard_file_name = kwargs.get('wildcard_file_name', None)
         self.prefix = kwargs.get('prefix', None)
+        self.file_list_path = kwargs.get('file_list_path', None)
         self.enable_partition_discovery = kwargs.get('enable_partition_discovery', None)
         self.modified_datetime_start = kwargs.get('modified_datetime_start', None)
         self.modified_datetime_end = kwargs.get('modified_datetime_end', None)
@@ -1784,6 +1831,11 @@ class AvroSource(CopySource):
     :type type: str
     :param store_settings: Avro store settings.
     :type store_settings: ~azure.mgmt.datafactory.models.StoreReadSettings
+    :param additional_columns: Specifies the additional columns to be added to
+     source data. Type: array of objects (or Expression with resultType array
+     of objects).
+    :type additional_columns:
+     list[~azure.mgmt.datafactory.models.AdditionalColumns]
     """
 
     _validation = {
@@ -1797,11 +1849,13 @@ class AvroSource(CopySource):
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'store_settings': {'key': 'storeSettings', 'type': 'StoreReadSettings'},
+        'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
     }
 
     def __init__(self, **kwargs):
         super(AvroSource, self).__init__(**kwargs)
         self.store_settings = kwargs.get('store_settings', None)
+        self.additional_columns = kwargs.get('additional_columns', None)
         self.type = 'AvroSource'
 
 
@@ -2249,6 +2303,10 @@ class AzureBlobFSReadSettings(StoreReadSettings):
     :param wildcard_file_name: Azure blobFS wildcardFileName. Type: string (or
      Expression with resultType string).
     :type wildcard_file_name: object
+    :param file_list_path: Point to a text file that lists each file (relative
+     path to the path configured in the dataset) that you want to copy. Type:
+     string (or Expression with resultType string).
+    :type file_list_path: object
     :param enable_partition_discovery: Indicates whether to enable partition
      discovery.
     :type enable_partition_discovery: bool
@@ -2271,6 +2329,7 @@ class AzureBlobFSReadSettings(StoreReadSettings):
         'recursive': {'key': 'recursive', 'type': 'object'},
         'wildcard_folder_path': {'key': 'wildcardFolderPath', 'type': 'object'},
         'wildcard_file_name': {'key': 'wildcardFileName', 'type': 'object'},
+        'file_list_path': {'key': 'fileListPath', 'type': 'object'},
         'enable_partition_discovery': {'key': 'enablePartitionDiscovery', 'type': 'bool'},
         'modified_datetime_start': {'key': 'modifiedDatetimeStart', 'type': 'object'},
         'modified_datetime_end': {'key': 'modifiedDatetimeEnd', 'type': 'object'},
@@ -2281,6 +2340,7 @@ class AzureBlobFSReadSettings(StoreReadSettings):
         self.recursive = kwargs.get('recursive', None)
         self.wildcard_folder_path = kwargs.get('wildcard_folder_path', None)
         self.wildcard_file_name = kwargs.get('wildcard_file_name', None)
+        self.file_list_path = kwargs.get('file_list_path', None)
         self.enable_partition_discovery = kwargs.get('enable_partition_discovery', None)
         self.modified_datetime_start = kwargs.get('modified_datetime_start', None)
         self.modified_datetime_end = kwargs.get('modified_datetime_end', None)
@@ -2638,6 +2698,10 @@ class AzureBlobStorageReadSettings(StoreReadSettings):
     :param prefix: The prefix filter for the Azure Blob name. Type: string (or
      Expression with resultType string).
     :type prefix: object
+    :param file_list_path: Point to a text file that lists each file (relative
+     path to the path configured in the dataset) that you want to copy. Type:
+     string (or Expression with resultType string).
+    :type file_list_path: object
     :param enable_partition_discovery: Indicates whether to enable partition
      discovery.
     :type enable_partition_discovery: bool
@@ -2661,6 +2725,7 @@ class AzureBlobStorageReadSettings(StoreReadSettings):
         'wildcard_folder_path': {'key': 'wildcardFolderPath', 'type': 'object'},
         'wildcard_file_name': {'key': 'wildcardFileName', 'type': 'object'},
         'prefix': {'key': 'prefix', 'type': 'object'},
+        'file_list_path': {'key': 'fileListPath', 'type': 'object'},
         'enable_partition_discovery': {'key': 'enablePartitionDiscovery', 'type': 'bool'},
         'modified_datetime_start': {'key': 'modifiedDatetimeStart', 'type': 'object'},
         'modified_datetime_end': {'key': 'modifiedDatetimeEnd', 'type': 'object'},
@@ -2672,6 +2737,7 @@ class AzureBlobStorageReadSettings(StoreReadSettings):
         self.wildcard_folder_path = kwargs.get('wildcard_folder_path', None)
         self.wildcard_file_name = kwargs.get('wildcard_file_name', None)
         self.prefix = kwargs.get('prefix', None)
+        self.file_list_path = kwargs.get('file_list_path', None)
         self.enable_partition_discovery = kwargs.get('enable_partition_discovery', None)
         self.modified_datetime_start = kwargs.get('modified_datetime_start', None)
         self.modified_datetime_end = kwargs.get('modified_datetime_end', None)
@@ -3142,6 +3208,11 @@ class AzureDataExplorerSource(CopySource):
      resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9]))..
     :type query_timeout: object
+    :param additional_columns: Specifies the additional columns to be added to
+     source data. Type: array of objects (or Expression with resultType array
+     of objects).
+    :type additional_columns:
+     list[~azure.mgmt.datafactory.models.AdditionalColumns]
     """
 
     _validation = {
@@ -3158,6 +3229,7 @@ class AzureDataExplorerSource(CopySource):
         'query': {'key': 'query', 'type': 'object'},
         'no_truncation': {'key': 'noTruncation', 'type': 'object'},
         'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
     }
 
     def __init__(self, **kwargs):
@@ -3165,6 +3237,7 @@ class AzureDataExplorerSource(CopySource):
         self.query = kwargs.get('query', None)
         self.no_truncation = kwargs.get('no_truncation', None)
         self.query_timeout = kwargs.get('query_timeout', None)
+        self.additional_columns = kwargs.get('additional_columns', None)
         self.type = 'AzureDataExplorerSource'
 
 
@@ -3533,6 +3606,10 @@ class AzureDataLakeStoreReadSettings(StoreReadSettings):
     :param wildcard_file_name: ADLS wildcardFileName. Type: string (or
      Expression with resultType string).
     :type wildcard_file_name: object
+    :param file_list_path: Point to a text file that lists each file (relative
+     path to the path configured in the dataset) that you want to copy. Type:
+     string (or Expression with resultType string).
+    :type file_list_path: object
     :param enable_partition_discovery: Indicates whether to enable partition
      discovery.
     :type enable_partition_discovery: bool
@@ -3555,6 +3632,7 @@ class AzureDataLakeStoreReadSettings(StoreReadSettings):
         'recursive': {'key': 'recursive', 'type': 'object'},
         'wildcard_folder_path': {'key': 'wildcardFolderPath', 'type': 'object'},
         'wildcard_file_name': {'key': 'wildcardFileName', 'type': 'object'},
+        'file_list_path': {'key': 'fileListPath', 'type': 'object'},
         'enable_partition_discovery': {'key': 'enablePartitionDiscovery', 'type': 'bool'},
         'modified_datetime_start': {'key': 'modifiedDatetimeStart', 'type': 'object'},
         'modified_datetime_end': {'key': 'modifiedDatetimeEnd', 'type': 'object'},
@@ -3565,6 +3643,7 @@ class AzureDataLakeStoreReadSettings(StoreReadSettings):
         self.recursive = kwargs.get('recursive', None)
         self.wildcard_folder_path = kwargs.get('wildcard_folder_path', None)
         self.wildcard_file_name = kwargs.get('wildcard_file_name', None)
+        self.file_list_path = kwargs.get('file_list_path', None)
         self.enable_partition_discovery = kwargs.get('enable_partition_discovery', None)
         self.modified_datetime_start = kwargs.get('modified_datetime_start', None)
         self.modified_datetime_end = kwargs.get('modified_datetime_end', None)
@@ -3690,6 +3769,11 @@ class AzureDataLakeStoreWriteSettings(StoreWriteSettings):
     :type copy_behavior: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param expiry_date_time: Specifies the expiry time of the written files.
+     The time is applied to the UTC time zone in the format of
+     "2018-12-01T05:00:00Z". Default value is NULL. Type: integer (or
+     Expression with resultType integer).
+    :type expiry_date_time: object
     """
 
     _validation = {
@@ -3701,10 +3785,12 @@ class AzureDataLakeStoreWriteSettings(StoreWriteSettings):
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'copy_behavior': {'key': 'copyBehavior', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'expiry_date_time': {'key': 'expiryDateTime', 'type': 'object'},
     }
 
     def __init__(self, **kwargs):
         super(AzureDataLakeStoreWriteSettings, self).__init__(**kwargs)
+        self.expiry_date_time = kwargs.get('expiry_date_time', None)
         self.type = 'AzureDataLakeStoreWriteSettings'
 
 
@@ -3828,6 +3914,10 @@ class AzureFileStorageReadSettings(StoreReadSettings):
     :param wildcard_file_name: Azure File Storage wildcardFileName. Type:
      string (or Expression with resultType string).
     :type wildcard_file_name: object
+    :param file_list_path: Point to a text file that lists each file (relative
+     path to the path configured in the dataset) that you want to copy. Type:
+     string (or Expression with resultType string).
+    :type file_list_path: object
     :param enable_partition_discovery: Indicates whether to enable partition
      discovery.
     :type enable_partition_discovery: bool
@@ -3850,6 +3940,7 @@ class AzureFileStorageReadSettings(StoreReadSettings):
         'recursive': {'key': 'recursive', 'type': 'object'},
         'wildcard_folder_path': {'key': 'wildcardFolderPath', 'type': 'object'},
         'wildcard_file_name': {'key': 'wildcardFileName', 'type': 'object'},
+        'file_list_path': {'key': 'fileListPath', 'type': 'object'},
         'enable_partition_discovery': {'key': 'enablePartitionDiscovery', 'type': 'bool'},
         'modified_datetime_start': {'key': 'modifiedDatetimeStart', 'type': 'object'},
         'modified_datetime_end': {'key': 'modifiedDatetimeEnd', 'type': 'object'},
@@ -3860,6 +3951,7 @@ class AzureFileStorageReadSettings(StoreReadSettings):
         self.recursive = kwargs.get('recursive', None)
         self.wildcard_folder_path = kwargs.get('wildcard_folder_path', None)
         self.wildcard_file_name = kwargs.get('wildcard_file_name', None)
+        self.file_list_path = kwargs.get('file_list_path', None)
         self.enable_partition_discovery = kwargs.get('enable_partition_discovery', None)
         self.modified_datetime_start = kwargs.get('modified_datetime_start', None)
         self.modified_datetime_end = kwargs.get('modified_datetime_end', None)
@@ -4194,6 +4286,11 @@ class AzureMariaDBSource(TabularSource):
      resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type query_timeout: object
+    :param additional_columns: Specifies the additional columns to be added to
+     source data. Type: array of objects (or Expression with resultType array
+     of objects).
+    :type additional_columns:
+     list[~azure.mgmt.datafactory.models.AdditionalColumns]
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -4210,6 +4307,7 @@ class AzureMariaDBSource(TabularSource):
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
@@ -4834,6 +4932,11 @@ class AzureMySqlSource(TabularSource):
      resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type query_timeout: object
+    :param additional_columns: Specifies the additional columns to be added to
+     source data. Type: array of objects (or Expression with resultType array
+     of objects).
+    :type additional_columns:
+     list[~azure.mgmt.datafactory.models.AdditionalColumns]
     :param query: Database query. Type: string (or Expression with resultType
      string).
     :type query: object
@@ -4850,6 +4953,7 @@ class AzureMySqlSource(TabularSource):
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
@@ -5061,6 +5165,11 @@ class AzurePostgreSqlSource(TabularSource):
      resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type query_timeout: object
+    :param additional_columns: Specifies the additional columns to be added to
+     source data. Type: array of objects (or Expression with resultType array
+     of objects).
+    :type additional_columns:
+     list[~azure.mgmt.datafactory.models.AdditionalColumns]
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -5077,6 +5186,7 @@ class AzurePostgreSqlSource(TabularSource):
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
@@ -5852,6 +5962,11 @@ class AzureSqlSource(TabularSource):
      resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type query_timeout: object
+    :param additional_columns: Specifies the additional columns to be added to
+     source data. Type: array of objects (or Expression with resultType array
+     of objects).
+    :type additional_columns:
+     list[~azure.mgmt.datafactory.models.AdditionalColumns]
     :param sql_reader_query: SQL reader query. Type: string (or Expression
      with resultType string).
     :type sql_reader_query: object
@@ -5878,6 +5993,7 @@ class AzureSqlSource(TabularSource):
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
         'sql_reader_query': {'key': 'sqlReaderQuery', 'type': 'object'},
         'sql_reader_stored_procedure_name': {'key': 'sqlReaderStoredProcedureName', 'type': 'object'},
         'stored_procedure_parameters': {'key': 'storedProcedureParameters', 'type': '{StoredProcedureParameter}'},
@@ -6189,6 +6305,11 @@ class AzureTableSource(TabularSource):
      resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type query_timeout: object
+    :param additional_columns: Specifies the additional columns to be added to
+     source data. Type: array of objects (or Expression with resultType array
+     of objects).
+    :type additional_columns:
+     list[~azure.mgmt.datafactory.models.AdditionalColumns]
     :param azure_table_source_query: Azure Table source query. Type: string
      (or Expression with resultType string).
     :type azure_table_source_query: object
@@ -6209,6 +6330,7 @@ class AzureTableSource(TabularSource):
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
         'azure_table_source_query': {'key': 'azureTableSourceQuery', 'type': 'object'},
         'azure_table_source_ignore_table_not_found': {'key': 'azureTableSourceIgnoreTableNotFound', 'type': 'object'},
     }
@@ -6458,7 +6580,7 @@ class Trigger(Model):
     pipeline run.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: RerunTumblingWindowTrigger, ChainingTrigger,
+    sub-classes are: ChainingTrigger, RerunTumblingWindowTrigger,
     TumblingWindowTrigger, MultiplePipelineTrigger
 
     Variables are only populated by the server, and will be ignored when
@@ -6497,7 +6619,7 @@ class Trigger(Model):
     }
 
     _subtype_map = {
-        'type': {'RerunTumblingWindowTrigger': 'RerunTumblingWindowTrigger', 'ChainingTrigger': 'ChainingTrigger', 'TumblingWindowTrigger': 'TumblingWindowTrigger', 'MultiplePipelineTrigger': 'MultiplePipelineTrigger'}
+        'type': {'ChainingTrigger': 'ChainingTrigger', 'RerunTumblingWindowTrigger': 'RerunTumblingWindowTrigger', 'TumblingWindowTrigger': 'TumblingWindowTrigger', 'MultiplePipelineTrigger': 'MultiplePipelineTrigger'}
     }
 
     def __init__(self, **kwargs):
@@ -6930,6 +7052,11 @@ class CassandraSource(TabularSource):
      resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type query_timeout: object
+    :param additional_columns: Specifies the additional columns to be added to
+     source data. Type: array of objects (or Expression with resultType array
+     of objects).
+    :type additional_columns:
+     list[~azure.mgmt.datafactory.models.AdditionalColumns]
     :param query: Database query. Should be a SQL-92 query expression or
      Cassandra Query Language (CQL) command. Type: string (or Expression with
      resultType string).
@@ -6957,6 +7084,7 @@ class CassandraSource(TabularSource):
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
         'query': {'key': 'query', 'type': 'object'},
         'consistency_level': {'key': 'consistencyLevel', 'type': 'str'},
     }
@@ -7495,6 +7623,11 @@ class CommonDataServiceForAppsSource(CopySource):
      Microsoft Common Data Service for Apps (online & on-premises). Type:
      string (or Expression with resultType string).
     :type query: object
+    :param additional_columns: Specifies the additional columns to be added to
+     source data. Type: array of objects (or Expression with resultType array
+     of objects).
+    :type additional_columns:
+     list[~azure.mgmt.datafactory.models.AdditionalColumns]
     """
 
     _validation = {
@@ -7508,11 +7641,13 @@ class CommonDataServiceForAppsSource(CopySource):
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'query': {'key': 'query', 'type': 'object'},
+        'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
     }
 
     def __init__(self, **kwargs):
         super(CommonDataServiceForAppsSource, self).__init__(**kwargs)
         self.query = kwargs.get('query', None)
+        self.additional_columns = kwargs.get('additional_columns', None)
         self.type = 'CommonDataServiceForAppsSource'
 
 
@@ -7712,6 +7847,11 @@ class ConcurSource(TabularSource):
      resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type query_timeout: object
+    :param additional_columns: Specifies the additional columns to be added to
+     source data. Type: array of objects (or Expression with resultType array
+     of objects).
+    :type additional_columns:
+     list[~azure.mgmt.datafactory.models.AdditionalColumns]
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -7728,6 +7868,7 @@ class ConcurSource(TabularSource):
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
@@ -7790,10 +7931,19 @@ class CopyActivity(ExecutionActivity):
      settings when EnableSkipIncompatibleRow is true.
     :type redirect_incompatible_row_settings:
      ~azure.mgmt.datafactory.models.RedirectIncompatibleRowSettings
+    :param log_storage_settings: Log storage settings customer need to provide
+     when enabling session log.
+    :type log_storage_settings:
+     ~azure.mgmt.datafactory.models.LogStorageSettings
     :param preserve_rules: Preserve Rules.
     :type preserve_rules: list[object]
     :param preserve: Preserve rules.
     :type preserve: list[object]
+    :param validate_data_consistency: Whether to enable Data Consistency
+     validation. Type: boolean (or Expression with resultType boolean).
+    :type validate_data_consistency: object
+    :param skip_error_file: Specify the fault tolerance for data consistency.
+    :type skip_error_file: ~azure.mgmt.datafactory.models.SkipErrorFile
     :param inputs: List of inputs for the activity.
     :type inputs: list[~azure.mgmt.datafactory.models.DatasetReference]
     :param outputs: List of outputs for the activity.
@@ -7825,8 +7975,11 @@ class CopyActivity(ExecutionActivity):
         'data_integration_units': {'key': 'typeProperties.dataIntegrationUnits', 'type': 'object'},
         'enable_skip_incompatible_row': {'key': 'typeProperties.enableSkipIncompatibleRow', 'type': 'object'},
         'redirect_incompatible_row_settings': {'key': 'typeProperties.redirectIncompatibleRowSettings', 'type': 'RedirectIncompatibleRowSettings'},
+        'log_storage_settings': {'key': 'typeProperties.logStorageSettings', 'type': 'LogStorageSettings'},
         'preserve_rules': {'key': 'typeProperties.preserveRules', 'type': '[object]'},
         'preserve': {'key': 'typeProperties.preserve', 'type': '[object]'},
+        'validate_data_consistency': {'key': 'typeProperties.validateDataConsistency', 'type': 'object'},
+        'skip_error_file': {'key': 'typeProperties.skipErrorFile', 'type': 'SkipErrorFile'},
         'inputs': {'key': 'inputs', 'type': '[DatasetReference]'},
         'outputs': {'key': 'outputs', 'type': '[DatasetReference]'},
     }
@@ -7842,8 +7995,11 @@ class CopyActivity(ExecutionActivity):
         self.data_integration_units = kwargs.get('data_integration_units', None)
         self.enable_skip_incompatible_row = kwargs.get('enable_skip_incompatible_row', None)
         self.redirect_incompatible_row_settings = kwargs.get('redirect_incompatible_row_settings', None)
+        self.log_storage_settings = kwargs.get('log_storage_settings', None)
         self.preserve_rules = kwargs.get('preserve_rules', None)
         self.preserve = kwargs.get('preserve', None)
+        self.validate_data_consistency = kwargs.get('validate_data_consistency', None)
+        self.skip_error_file = kwargs.get('skip_error_file', None)
         self.inputs = kwargs.get('inputs', None)
         self.outputs = kwargs.get('outputs', None)
         self.type = 'Copy'
@@ -8126,6 +8282,11 @@ class CosmosDbMongoDbApiSource(CopySource):
      resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type query_timeout: object
+    :param additional_columns: Specifies the additional columns to be added to
+     source data. Type: array of objects (or Expression with resultType array
+     of objects).
+    :type additional_columns:
+     list[~azure.mgmt.datafactory.models.AdditionalColumns]
     """
 
     _validation = {
@@ -8142,6 +8303,7 @@ class CosmosDbMongoDbApiSource(CopySource):
         'cursor_methods': {'key': 'cursorMethods', 'type': 'MongoDbCursorMethodsProperties'},
         'batch_size': {'key': 'batchSize', 'type': 'object'},
         'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
     }
 
     def __init__(self, **kwargs):
@@ -8150,6 +8312,7 @@ class CosmosDbMongoDbApiSource(CopySource):
         self.cursor_methods = kwargs.get('cursor_methods', None)
         self.batch_size = kwargs.get('batch_size', None)
         self.query_timeout = kwargs.get('query_timeout', None)
+        self.additional_columns = kwargs.get('additional_columns', None)
         self.type = 'CosmosDbMongoDbApiSource'
 
 
@@ -8299,6 +8462,11 @@ class CosmosDbSqlApiSource(CopySource):
     :param preferred_regions: Preferred regions. Type: array of strings (or
      Expression with resultType array of strings).
     :type preferred_regions: object
+    :param additional_columns: Specifies the additional columns to be added to
+     source data. Type: array of objects (or Expression with resultType array
+     of objects).
+    :type additional_columns:
+     list[~azure.mgmt.datafactory.models.AdditionalColumns]
     """
 
     _validation = {
@@ -8314,6 +8482,7 @@ class CosmosDbSqlApiSource(CopySource):
         'query': {'key': 'query', 'type': 'object'},
         'page_size': {'key': 'pageSize', 'type': 'object'},
         'preferred_regions': {'key': 'preferredRegions', 'type': 'object'},
+        'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
     }
 
     def __init__(self, **kwargs):
@@ -8321,6 +8490,7 @@ class CosmosDbSqlApiSource(CopySource):
         self.query = kwargs.get('query', None)
         self.page_size = kwargs.get('page_size', None)
         self.preferred_regions = kwargs.get('preferred_regions', None)
+        self.additional_columns = kwargs.get('additional_columns', None)
         self.type = 'CosmosDbSqlApiSource'
 
 
@@ -8407,6 +8577,11 @@ class CouchbaseSource(TabularSource):
      resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type query_timeout: object
+    :param additional_columns: Specifies the additional columns to be added to
+     source data. Type: array of objects (or Expression with resultType array
+     of objects).
+    :type additional_columns:
+     list[~azure.mgmt.datafactory.models.AdditionalColumns]
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -8423,6 +8598,7 @@ class CouchbaseSource(TabularSource):
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
@@ -9925,37 +10101,47 @@ class Db2LinkedService(LinkedService):
     :type annotations: list[object]
     :param type: Required. Constant filled by server.
     :type type: str
-    :param server: Required. Server name for connection. Type: string (or
-     Expression with resultType string).
+    :param connection_string: The connection string. It is mutually exclusive
+     with server, database, authenticationType, userName, packageCollection and
+     certificateCommonName property. Type: string, SecureString or
+     AzureKeyVaultSecretReference.
+    :type connection_string: object
+    :param server: Server name for connection. It is mutually exclusive with
+     connectionString property. Type: string (or Expression with resultType
+     string).
     :type server: object
-    :param database: Required. Database name for connection. Type: string (or
-     Expression with resultType string).
+    :param database: Database name for connection. It is mutually exclusive
+     with connectionString property. Type: string (or Expression with
+     resultType string).
     :type database: object
     :param authentication_type: AuthenticationType to be used for connection.
-     Possible values include: 'Basic'
+     It is mutually exclusive with connectionString property. Possible values
+     include: 'Basic'
     :type authentication_type: str or
      ~azure.mgmt.datafactory.models.Db2AuthenticationType
-    :param username: Username for authentication. Type: string (or Expression
-     with resultType string).
+    :param username: Username for authentication. It is mutually exclusive
+     with connectionString property. Type: string (or Expression with
+     resultType string).
     :type username: object
     :param password: Password for authentication.
     :type password: ~azure.mgmt.datafactory.models.SecretBase
     :param package_collection: Under where packages are created when querying
-     database. Type: string (or Expression with resultType string).
+     database. It is mutually exclusive with connectionString property. Type:
+     string (or Expression with resultType string).
     :type package_collection: object
     :param certificate_common_name: Certificate Common Name when TLS is
-     enabled. Type: string (or Expression with resultType string).
+     enabled. It is mutually exclusive with connectionString property. Type:
+     string (or Expression with resultType string).
     :type certificate_common_name: object
     :param encrypted_credential: The encrypted credential used for
      authentication. Credentials are encrypted using the integration runtime
-     credential manager. Type: string (or Expression with resultType string).
+     credential manager. It is mutually exclusive with connectionString
+     property. Type: string (or Expression with resultType string).
     :type encrypted_credential: object
     """
 
     _validation = {
         'type': {'required': True},
-        'server': {'required': True},
-        'database': {'required': True},
     }
 
     _attribute_map = {
@@ -9965,6 +10151,7 @@ class Db2LinkedService(LinkedService):
         'parameters': {'key': 'parameters', 'type': '{ParameterSpecification}'},
         'annotations': {'key': 'annotations', 'type': '[object]'},
         'type': {'key': 'type', 'type': 'str'},
+        'connection_string': {'key': 'typeProperties.connectionString', 'type': 'object'},
         'server': {'key': 'typeProperties.server', 'type': 'object'},
         'database': {'key': 'typeProperties.database', 'type': 'object'},
         'authentication_type': {'key': 'typeProperties.authenticationType', 'type': 'str'},
@@ -9977,6 +10164,7 @@ class Db2LinkedService(LinkedService):
 
     def __init__(self, **kwargs):
         super(Db2LinkedService, self).__init__(**kwargs)
+        self.connection_string = kwargs.get('connection_string', None)
         self.server = kwargs.get('server', None)
         self.database = kwargs.get('database', None)
         self.authentication_type = kwargs.get('authentication_type', None)
@@ -10013,6 +10201,11 @@ class Db2Source(TabularSource):
      resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type query_timeout: object
+    :param additional_columns: Specifies the additional columns to be added to
+     source data. Type: array of objects (or Expression with resultType array
+     of objects).
+    :type additional_columns:
+     list[~azure.mgmt.datafactory.models.AdditionalColumns]
     :param query: Database query. Type: string (or Expression with resultType
      string).
     :type query: object
@@ -10029,6 +10222,7 @@ class Db2Source(TabularSource):
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
@@ -10459,6 +10653,11 @@ class DelimitedTextSource(CopySource):
     :param format_settings: DelimitedText format settings.
     :type format_settings:
      ~azure.mgmt.datafactory.models.DelimitedTextReadSettings
+    :param additional_columns: Specifies the additional columns to be added to
+     source data. Type: array of objects (or Expression with resultType array
+     of objects).
+    :type additional_columns:
+     list[~azure.mgmt.datafactory.models.AdditionalColumns]
     """
 
     _validation = {
@@ -10473,12 +10672,14 @@ class DelimitedTextSource(CopySource):
         'type': {'key': 'type', 'type': 'str'},
         'store_settings': {'key': 'storeSettings', 'type': 'StoreReadSettings'},
         'format_settings': {'key': 'formatSettings', 'type': 'DelimitedTextReadSettings'},
+        'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
     }
 
     def __init__(self, **kwargs):
         super(DelimitedTextSource, self).__init__(**kwargs)
         self.store_settings = kwargs.get('store_settings', None)
         self.format_settings = kwargs.get('format_settings', None)
+        self.additional_columns = kwargs.get('additional_columns', None)
         self.type = 'DelimitedTextSource'
 
 
@@ -10739,6 +10940,11 @@ class DocumentDbCollectionSource(CopySource):
      resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type query_timeout: object
+    :param additional_columns: Specifies the additional columns to be added to
+     source data. Type: array of objects (or Expression with resultType array
+     of objects).
+    :type additional_columns:
+     list[~azure.mgmt.datafactory.models.AdditionalColumns]
     """
 
     _validation = {
@@ -10754,6 +10960,7 @@ class DocumentDbCollectionSource(CopySource):
         'query': {'key': 'query', 'type': 'object'},
         'nesting_separator': {'key': 'nestingSeparator', 'type': 'object'},
         'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
     }
 
     def __init__(self, **kwargs):
@@ -10761,6 +10968,7 @@ class DocumentDbCollectionSource(CopySource):
         self.query = kwargs.get('query', None)
         self.nesting_separator = kwargs.get('nesting_separator', None)
         self.query_timeout = kwargs.get('query_timeout', None)
+        self.additional_columns = kwargs.get('additional_columns', None)
         self.type = 'DocumentDbCollectionSource'
 
 
@@ -10846,6 +11054,11 @@ class DrillSource(TabularSource):
      resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type query_timeout: object
+    :param additional_columns: Specifies the additional columns to be added to
+     source data. Type: array of objects (or Expression with resultType array
+     of objects).
+    :type additional_columns:
+     list[~azure.mgmt.datafactory.models.AdditionalColumns]
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -10862,6 +11075,7 @@ class DrillSource(TabularSource):
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
@@ -11157,6 +11371,11 @@ class DynamicsAXSource(TabularSource):
      resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type query_timeout: object
+    :param additional_columns: Specifies the additional columns to be added to
+     source data. Type: array of objects (or Expression with resultType array
+     of objects).
+    :type additional_columns:
+     list[~azure.mgmt.datafactory.models.AdditionalColumns]
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -11173,6 +11392,7 @@ class DynamicsAXSource(TabularSource):
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
@@ -11463,6 +11683,11 @@ class DynamicsCrmSource(CopySource):
      Microsoft Dynamics CRM (online & on-premises). Type: string (or Expression
      with resultType string).
     :type query: object
+    :param additional_columns: Specifies the additional columns to be added to
+     source data. Type: array of objects (or Expression with resultType array
+     of objects).
+    :type additional_columns:
+     list[~azure.mgmt.datafactory.models.AdditionalColumns]
     """
 
     _validation = {
@@ -11476,11 +11701,13 @@ class DynamicsCrmSource(CopySource):
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'query': {'key': 'query', 'type': 'object'},
+        'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
     }
 
     def __init__(self, **kwargs):
         super(DynamicsCrmSource, self).__init__(**kwargs)
         self.query = kwargs.get('query', None)
+        self.additional_columns = kwargs.get('additional_columns', None)
         self.type = 'DynamicsCrmSource'
 
 
@@ -11762,6 +11989,11 @@ class DynamicsSource(CopySource):
      Microsoft Dynamics (online & on-premises). Type: string (or Expression
      with resultType string).
     :type query: object
+    :param additional_columns: Specifies the additional columns to be added to
+     source data. Type: array of objects (or Expression with resultType array
+     of objects).
+    :type additional_columns:
+     list[~azure.mgmt.datafactory.models.AdditionalColumns]
     """
 
     _validation = {
@@ -11775,11 +12007,13 @@ class DynamicsSource(CopySource):
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'query': {'key': 'query', 'type': 'object'},
+        'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
     }
 
     def __init__(self, **kwargs):
         super(DynamicsSource, self).__init__(**kwargs)
         self.query = kwargs.get('query', None)
+        self.additional_columns = kwargs.get('additional_columns', None)
         self.type = 'DynamicsSource'
 
 
@@ -11947,6 +12181,11 @@ class EloquaSource(TabularSource):
      resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type query_timeout: object
+    :param additional_columns: Specifies the additional columns to be added to
+     source data. Type: array of objects (or Expression with resultType array
+     of objects).
+    :type additional_columns:
+     list[~azure.mgmt.datafactory.models.AdditionalColumns]
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -11963,6 +12202,7 @@ class EloquaSource(TabularSource):
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
@@ -12821,6 +13061,10 @@ class FileServerReadSettings(StoreReadSettings):
     :param wildcard_file_name: FileServer wildcardFileName. Type: string (or
      Expression with resultType string).
     :type wildcard_file_name: object
+    :param file_list_path: Point to a text file that lists each file (relative
+     path to the path configured in the dataset) that you want to copy. Type:
+     string (or Expression with resultType string).
+    :type file_list_path: object
     :param enable_partition_discovery: Indicates whether to enable partition
      discovery.
     :type enable_partition_discovery: bool
@@ -12843,6 +13087,7 @@ class FileServerReadSettings(StoreReadSettings):
         'recursive': {'key': 'recursive', 'type': 'object'},
         'wildcard_folder_path': {'key': 'wildcardFolderPath', 'type': 'object'},
         'wildcard_file_name': {'key': 'wildcardFileName', 'type': 'object'},
+        'file_list_path': {'key': 'fileListPath', 'type': 'object'},
         'enable_partition_discovery': {'key': 'enablePartitionDiscovery', 'type': 'bool'},
         'modified_datetime_start': {'key': 'modifiedDatetimeStart', 'type': 'object'},
         'modified_datetime_end': {'key': 'modifiedDatetimeEnd', 'type': 'object'},
@@ -12853,6 +13098,7 @@ class FileServerReadSettings(StoreReadSettings):
         self.recursive = kwargs.get('recursive', None)
         self.wildcard_folder_path = kwargs.get('wildcard_folder_path', None)
         self.wildcard_file_name = kwargs.get('wildcard_file_name', None)
+        self.file_list_path = kwargs.get('file_list_path', None)
         self.enable_partition_discovery = kwargs.get('enable_partition_discovery', None)
         self.modified_datetime_start = kwargs.get('modified_datetime_start', None)
         self.modified_datetime_end = kwargs.get('modified_datetime_end', None)
@@ -13060,6 +13306,11 @@ class FileSystemSource(CopySource):
      recursively. Default is true. Type: boolean (or Expression with resultType
      boolean).
     :type recursive: object
+    :param additional_columns: Specifies the additional columns to be added to
+     source data. Type: array of objects (or Expression with resultType array
+     of objects).
+    :type additional_columns:
+     list[~azure.mgmt.datafactory.models.AdditionalColumns]
     """
 
     _validation = {
@@ -13073,11 +13324,13 @@ class FileSystemSource(CopySource):
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'recursive': {'key': 'recursive', 'type': 'object'},
+        'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
     }
 
     def __init__(self, **kwargs):
         super(FileSystemSource, self).__init__(**kwargs)
         self.recursive = kwargs.get('recursive', None)
+        self.additional_columns = kwargs.get('additional_columns', None)
         self.type = 'FileSystemSource'
 
 
@@ -13215,6 +13468,10 @@ class FtpReadSettings(StoreReadSettings):
     :param wildcard_file_name: Ftp wildcardFileName. Type: string (or
      Expression with resultType string).
     :type wildcard_file_name: object
+    :param file_list_path: Point to a text file that lists each file (relative
+     path to the path configured in the dataset) that you want to copy. Type:
+     string (or Expression with resultType string).
+    :type file_list_path: object
     :param use_binary_transfer: Specify whether to use binary transfer mode
      for FTP stores.
     :type use_binary_transfer: bool
@@ -13231,6 +13488,7 @@ class FtpReadSettings(StoreReadSettings):
         'recursive': {'key': 'recursive', 'type': 'object'},
         'wildcard_folder_path': {'key': 'wildcardFolderPath', 'type': 'object'},
         'wildcard_file_name': {'key': 'wildcardFileName', 'type': 'object'},
+        'file_list_path': {'key': 'fileListPath', 'type': 'object'},
         'use_binary_transfer': {'key': 'useBinaryTransfer', 'type': 'bool'},
     }
 
@@ -13239,6 +13497,7 @@ class FtpReadSettings(StoreReadSettings):
         self.recursive = kwargs.get('recursive', None)
         self.wildcard_folder_path = kwargs.get('wildcard_folder_path', None)
         self.wildcard_file_name = kwargs.get('wildcard_file_name', None)
+        self.file_list_path = kwargs.get('file_list_path', None)
         self.use_binary_transfer = kwargs.get('use_binary_transfer', None)
         self.type = 'FtpReadSettings'
 
@@ -13695,6 +13954,11 @@ class GoogleAdWordsSource(TabularSource):
      resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type query_timeout: object
+    :param additional_columns: Specifies the additional columns to be added to
+     source data. Type: array of objects (or Expression with resultType array
+     of objects).
+    :type additional_columns:
+     list[~azure.mgmt.datafactory.models.AdditionalColumns]
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -13711,6 +13975,7 @@ class GoogleAdWordsSource(TabularSource):
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
@@ -13927,6 +14192,11 @@ class GoogleBigQuerySource(TabularSource):
      resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type query_timeout: object
+    :param additional_columns: Specifies the additional columns to be added to
+     source data. Type: array of objects (or Expression with resultType array
+     of objects).
+    :type additional_columns:
+     list[~azure.mgmt.datafactory.models.AdditionalColumns]
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -13943,6 +14213,7 @@ class GoogleBigQuerySource(TabularSource):
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
@@ -14089,6 +14360,10 @@ class GoogleCloudStorageReadSettings(StoreReadSettings):
     :param prefix: The prefix filter for the Google Cloud Storage object name.
      Type: string (or Expression with resultType string).
     :type prefix: object
+    :param file_list_path: Point to a text file that lists each file (relative
+     path to the path configured in the dataset) that you want to copy. Type:
+     string (or Expression with resultType string).
+    :type file_list_path: object
     :param enable_partition_discovery: Indicates whether to enable partition
      discovery.
     :type enable_partition_discovery: bool
@@ -14112,6 +14387,7 @@ class GoogleCloudStorageReadSettings(StoreReadSettings):
         'wildcard_folder_path': {'key': 'wildcardFolderPath', 'type': 'object'},
         'wildcard_file_name': {'key': 'wildcardFileName', 'type': 'object'},
         'prefix': {'key': 'prefix', 'type': 'object'},
+        'file_list_path': {'key': 'fileListPath', 'type': 'object'},
         'enable_partition_discovery': {'key': 'enablePartitionDiscovery', 'type': 'bool'},
         'modified_datetime_start': {'key': 'modifiedDatetimeStart', 'type': 'object'},
         'modified_datetime_end': {'key': 'modifiedDatetimeEnd', 'type': 'object'},
@@ -14123,6 +14399,7 @@ class GoogleCloudStorageReadSettings(StoreReadSettings):
         self.wildcard_folder_path = kwargs.get('wildcard_folder_path', None)
         self.wildcard_file_name = kwargs.get('wildcard_file_name', None)
         self.prefix = kwargs.get('prefix', None)
+        self.file_list_path = kwargs.get('file_list_path', None)
         self.enable_partition_discovery = kwargs.get('enable_partition_discovery', None)
         self.modified_datetime_start = kwargs.get('modified_datetime_start', None)
         self.modified_datetime_end = kwargs.get('modified_datetime_end', None)
@@ -14211,6 +14488,11 @@ class GreenplumSource(TabularSource):
      resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type query_timeout: object
+    :param additional_columns: Specifies the additional columns to be added to
+     source data. Type: array of objects (or Expression with resultType array
+     of objects).
+    :type additional_columns:
+     list[~azure.mgmt.datafactory.models.AdditionalColumns]
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -14227,6 +14509,7 @@ class GreenplumSource(TabularSource):
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
@@ -14493,6 +14776,11 @@ class HBaseSource(TabularSource):
      resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type query_timeout: object
+    :param additional_columns: Specifies the additional columns to be added to
+     source data. Type: array of objects (or Expression with resultType array
+     of objects).
+    :type additional_columns:
+     list[~azure.mgmt.datafactory.models.AdditionalColumns]
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -14509,6 +14797,7 @@ class HBaseSource(TabularSource):
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
@@ -14645,6 +14934,10 @@ class HdfsReadSettings(StoreReadSettings):
     :param wildcard_file_name: HDFS wildcardFileName. Type: string (or
      Expression with resultType string).
     :type wildcard_file_name: object
+    :param file_list_path: Point to a text file that lists each file (relative
+     path to the path configured in the dataset) that you want to copy. Type:
+     string (or Expression with resultType string).
+    :type file_list_path: object
     :param enable_partition_discovery: Indicates whether to enable partition
      discovery.
     :type enable_partition_discovery: bool
@@ -14669,6 +14962,7 @@ class HdfsReadSettings(StoreReadSettings):
         'recursive': {'key': 'recursive', 'type': 'object'},
         'wildcard_folder_path': {'key': 'wildcardFolderPath', 'type': 'object'},
         'wildcard_file_name': {'key': 'wildcardFileName', 'type': 'object'},
+        'file_list_path': {'key': 'fileListPath', 'type': 'object'},
         'enable_partition_discovery': {'key': 'enablePartitionDiscovery', 'type': 'bool'},
         'modified_datetime_start': {'key': 'modifiedDatetimeStart', 'type': 'object'},
         'modified_datetime_end': {'key': 'modifiedDatetimeEnd', 'type': 'object'},
@@ -14680,6 +14974,7 @@ class HdfsReadSettings(StoreReadSettings):
         self.recursive = kwargs.get('recursive', None)
         self.wildcard_folder_path = kwargs.get('wildcard_folder_path', None)
         self.wildcard_file_name = kwargs.get('wildcard_file_name', None)
+        self.file_list_path = kwargs.get('file_list_path', None)
         self.enable_partition_discovery = kwargs.get('enable_partition_discovery', None)
         self.modified_datetime_start = kwargs.get('modified_datetime_start', None)
         self.modified_datetime_end = kwargs.get('modified_datetime_end', None)
@@ -15721,6 +16016,11 @@ class HiveSource(TabularSource):
      resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type query_timeout: object
+    :param additional_columns: Specifies the additional columns to be added to
+     source data. Type: array of objects (or Expression with resultType array
+     of objects).
+    :type additional_columns:
+     list[~azure.mgmt.datafactory.models.AdditionalColumns]
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -15737,6 +16037,7 @@ class HiveSource(TabularSource):
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
@@ -16234,6 +16535,11 @@ class HubspotSource(TabularSource):
      resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type query_timeout: object
+    :param additional_columns: Specifies the additional columns to be added to
+     source data. Type: array of objects (or Expression with resultType array
+     of objects).
+    :type additional_columns:
+     list[~azure.mgmt.datafactory.models.AdditionalColumns]
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -16250,6 +16556,7 @@ class HubspotSource(TabularSource):
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
@@ -16519,6 +16826,11 @@ class ImpalaSource(TabularSource):
      resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type query_timeout: object
+    :param additional_columns: Specifies the additional columns to be added to
+     source data. Type: array of objects (or Expression with resultType array
+     of objects).
+    :type additional_columns:
+     list[~azure.mgmt.datafactory.models.AdditionalColumns]
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -16535,6 +16847,7 @@ class ImpalaSource(TabularSource):
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
@@ -16697,6 +17010,11 @@ class InformixSource(TabularSource):
      resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type query_timeout: object
+    :param additional_columns: Specifies the additional columns to be added to
+     source data. Type: array of objects (or Expression with resultType array
+     of objects).
+    :type additional_columns:
+     list[~azure.mgmt.datafactory.models.AdditionalColumns]
     :param query: Database query. Type: string (or Expression with resultType
      string).
     :type query: object
@@ -16713,6 +17031,7 @@ class InformixSource(TabularSource):
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
@@ -17676,6 +17995,11 @@ class JiraSource(TabularSource):
      resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type query_timeout: object
+    :param additional_columns: Specifies the additional columns to be added to
+     source data. Type: array of objects (or Expression with resultType array
+     of objects).
+    :type additional_columns:
+     list[~azure.mgmt.datafactory.models.AdditionalColumns]
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -17692,6 +18016,7 @@ class JiraSource(TabularSource):
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
@@ -17924,6 +18249,11 @@ class JsonSource(CopySource):
     :type type: str
     :param store_settings: Json store settings.
     :type store_settings: ~azure.mgmt.datafactory.models.StoreReadSettings
+    :param additional_columns: Specifies the additional columns to be added to
+     source data. Type: array of objects (or Expression with resultType array
+     of objects).
+    :type additional_columns:
+     list[~azure.mgmt.datafactory.models.AdditionalColumns]
     """
 
     _validation = {
@@ -17937,11 +18267,13 @@ class JsonSource(CopySource):
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'store_settings': {'key': 'storeSettings', 'type': 'StoreReadSettings'},
+        'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
     }
 
     def __init__(self, **kwargs):
         super(JsonSource, self).__init__(**kwargs)
         self.store_settings = kwargs.get('store_settings', None)
+        self.additional_columns = kwargs.get('additional_columns', None)
         self.type = 'JsonSource'
 
 
@@ -18490,6 +18822,11 @@ class MagentoSource(TabularSource):
      resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type query_timeout: object
+    :param additional_columns: Specifies the additional columns to be added to
+     source data. Type: array of objects (or Expression with resultType array
+     of objects).
+    :type additional_columns:
+     list[~azure.mgmt.datafactory.models.AdditionalColumns]
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -18506,6 +18843,7 @@ class MagentoSource(TabularSource):
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
@@ -18901,6 +19239,11 @@ class MariaDBSource(TabularSource):
      resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type query_timeout: object
+    :param additional_columns: Specifies the additional columns to be added to
+     source data. Type: array of objects (or Expression with resultType array
+     of objects).
+    :type additional_columns:
+     list[~azure.mgmt.datafactory.models.AdditionalColumns]
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -18917,6 +19260,7 @@ class MariaDBSource(TabularSource):
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
@@ -19149,6 +19493,11 @@ class MarketoSource(TabularSource):
      resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type query_timeout: object
+    :param additional_columns: Specifies the additional columns to be added to
+     source data. Type: array of objects (or Expression with resultType array
+     of objects).
+    :type additional_columns:
+     list[~azure.mgmt.datafactory.models.AdditionalColumns]
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -19165,6 +19514,7 @@ class MarketoSource(TabularSource):
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
@@ -19326,6 +19676,11 @@ class MicrosoftAccessSource(CopySource):
     :param query: Database query. Type: string (or Expression with resultType
      string).
     :type query: object
+    :param additional_columns: Specifies the additional columns to be added to
+     source data. Type: array of objects (or Expression with resultType array
+     of objects).
+    :type additional_columns:
+     list[~azure.mgmt.datafactory.models.AdditionalColumns]
     """
 
     _validation = {
@@ -19339,11 +19694,13 @@ class MicrosoftAccessSource(CopySource):
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'query': {'key': 'query', 'type': 'object'},
+        'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
     }
 
     def __init__(self, **kwargs):
         super(MicrosoftAccessSource, self).__init__(**kwargs)
         self.query = kwargs.get('query', None)
+        self.additional_columns = kwargs.get('additional_columns', None)
         self.type = 'MicrosoftAccessSource'
 
 
@@ -19630,6 +19987,11 @@ class MongoDbSource(CopySource):
     :param query: Database query. Should be a SQL-92 query expression. Type:
      string (or Expression with resultType string).
     :type query: object
+    :param additional_columns: Specifies the additional columns to be added to
+     source data. Type: array of objects (or Expression with resultType array
+     of objects).
+    :type additional_columns:
+     list[~azure.mgmt.datafactory.models.AdditionalColumns]
     """
 
     _validation = {
@@ -19643,11 +20005,13 @@ class MongoDbSource(CopySource):
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'query': {'key': 'query', 'type': 'object'},
+        'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
     }
 
     def __init__(self, **kwargs):
         super(MongoDbSource, self).__init__(**kwargs)
         self.query = kwargs.get('query', None)
+        self.additional_columns = kwargs.get('additional_columns', None)
         self.type = 'MongoDbSource'
 
 
@@ -19804,6 +20168,11 @@ class MongoDbV2Source(CopySource):
      resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type query_timeout: object
+    :param additional_columns: Specifies the additional columns to be added to
+     source data. Type: array of objects (or Expression with resultType array
+     of objects).
+    :type additional_columns:
+     list[~azure.mgmt.datafactory.models.AdditionalColumns]
     """
 
     _validation = {
@@ -19820,6 +20189,7 @@ class MongoDbV2Source(CopySource):
         'cursor_methods': {'key': 'cursorMethods', 'type': 'MongoDbCursorMethodsProperties'},
         'batch_size': {'key': 'batchSize', 'type': 'object'},
         'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
     }
 
     def __init__(self, **kwargs):
@@ -19828,6 +20198,7 @@ class MongoDbV2Source(CopySource):
         self.cursor_methods = kwargs.get('cursor_methods', None)
         self.batch_size = kwargs.get('batch_size', None)
         self.query_timeout = kwargs.get('query_timeout', None)
+        self.additional_columns = kwargs.get('additional_columns', None)
         self.type = 'MongoDbV2Source'
 
 
@@ -19914,6 +20285,11 @@ class MySqlSource(TabularSource):
      resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type query_timeout: object
+    :param additional_columns: Specifies the additional columns to be added to
+     source data. Type: array of objects (or Expression with resultType array
+     of objects).
+    :type additional_columns:
+     list[~azure.mgmt.datafactory.models.AdditionalColumns]
     :param query: Database query. Type: string (or Expression with resultType
      string).
     :type query: object
@@ -19930,6 +20306,7 @@ class MySqlSource(TabularSource):
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
@@ -20111,6 +20488,11 @@ class NetezzaSource(TabularSource):
      resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type query_timeout: object
+    :param additional_columns: Specifies the additional columns to be added to
+     source data. Type: array of objects (or Expression with resultType array
+     of objects).
+    :type additional_columns:
+     list[~azure.mgmt.datafactory.models.AdditionalColumns]
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -20136,6 +20518,7 @@ class NetezzaSource(TabularSource):
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
         'query': {'key': 'query', 'type': 'object'},
         'partition_option': {'key': 'partitionOption', 'type': 'str'},
         'partition_settings': {'key': 'partitionSettings', 'type': 'NetezzaPartitionSettings'},
@@ -20418,6 +20801,11 @@ class ODataSource(CopySource):
     :param query: OData query. For example, "$top=1". Type: string (or
      Expression with resultType string).
     :type query: object
+    :param additional_columns: Specifies the additional columns to be added to
+     source data. Type: array of objects (or Expression with resultType array
+     of objects).
+    :type additional_columns:
+     list[~azure.mgmt.datafactory.models.AdditionalColumns]
     """
 
     _validation = {
@@ -20431,11 +20819,13 @@ class ODataSource(CopySource):
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'query': {'key': 'query', 'type': 'object'},
+        'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
     }
 
     def __init__(self, **kwargs):
         super(ODataSource, self).__init__(**kwargs)
         self.query = kwargs.get('query', None)
+        self.additional_columns = kwargs.get('additional_columns', None)
         self.type = 'ODataSource'
 
 
@@ -20592,6 +20982,11 @@ class OdbcSource(TabularSource):
      resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type query_timeout: object
+    :param additional_columns: Specifies the additional columns to be added to
+     source data. Type: array of objects (or Expression with resultType array
+     of objects).
+    :type additional_columns:
+     list[~azure.mgmt.datafactory.models.AdditionalColumns]
     :param query: Database query. Type: string (or Expression with resultType
      string).
     :type query: object
@@ -20608,6 +21003,7 @@ class OdbcSource(TabularSource):
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
@@ -21355,6 +21751,11 @@ class OracleServiceCloudSource(TabularSource):
      resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type query_timeout: object
+    :param additional_columns: Specifies the additional columns to be added to
+     source data. Type: array of objects (or Expression with resultType array
+     of objects).
+    :type additional_columns:
+     list[~azure.mgmt.datafactory.models.AdditionalColumns]
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -21371,6 +21772,7 @@ class OracleServiceCloudSource(TabularSource):
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
@@ -21471,6 +21873,11 @@ class OracleSource(CopySource):
      source partitioning.
     :type partition_settings:
      ~azure.mgmt.datafactory.models.OraclePartitionSettings
+    :param additional_columns: Specifies the additional columns to be added to
+     source data. Type: array of objects (or Expression with resultType array
+     of objects).
+    :type additional_columns:
+     list[~azure.mgmt.datafactory.models.AdditionalColumns]
     """
 
     _validation = {
@@ -21487,6 +21894,7 @@ class OracleSource(CopySource):
         'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'partition_option': {'key': 'partitionOption', 'type': 'str'},
         'partition_settings': {'key': 'partitionSettings', 'type': 'OraclePartitionSettings'},
+        'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
     }
 
     def __init__(self, **kwargs):
@@ -21495,6 +21903,7 @@ class OracleSource(CopySource):
         self.query_timeout = kwargs.get('query_timeout', None)
         self.partition_option = kwargs.get('partition_option', None)
         self.partition_settings = kwargs.get('partition_settings', None)
+        self.additional_columns = kwargs.get('additional_columns', None)
         self.type = 'OracleSource'
 
 
@@ -21744,6 +22153,11 @@ class OrcSource(CopySource):
     :type type: str
     :param store_settings: ORC store settings.
     :type store_settings: ~azure.mgmt.datafactory.models.StoreReadSettings
+    :param additional_columns: Specifies the additional columns to be added to
+     source data. Type: array of objects (or Expression with resultType array
+     of objects).
+    :type additional_columns:
+     list[~azure.mgmt.datafactory.models.AdditionalColumns]
     """
 
     _validation = {
@@ -21757,11 +22171,13 @@ class OrcSource(CopySource):
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'store_settings': {'key': 'storeSettings', 'type': 'StoreReadSettings'},
+        'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
     }
 
     def __init__(self, **kwargs):
         super(OrcSource, self).__init__(**kwargs)
         self.store_settings = kwargs.get('store_settings', None)
+        self.additional_columns = kwargs.get('additional_columns', None)
         self.type = 'OrcSource'
 
 
@@ -21966,6 +22382,11 @@ class ParquetSource(CopySource):
     :type type: str
     :param store_settings: Parquet store settings.
     :type store_settings: ~azure.mgmt.datafactory.models.StoreReadSettings
+    :param additional_columns: Specifies the additional columns to be added to
+     source data. Type: array of objects (or Expression with resultType array
+     of objects).
+    :type additional_columns:
+     list[~azure.mgmt.datafactory.models.AdditionalColumns]
     """
 
     _validation = {
@@ -21979,11 +22400,13 @@ class ParquetSource(CopySource):
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'store_settings': {'key': 'storeSettings', 'type': 'StoreReadSettings'},
+        'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
     }
 
     def __init__(self, **kwargs):
         super(ParquetSource, self).__init__(**kwargs)
         self.store_settings = kwargs.get('store_settings', None)
+        self.additional_columns = kwargs.get('additional_columns', None)
         self.type = 'ParquetSource'
 
 
@@ -22152,6 +22575,11 @@ class PaypalSource(TabularSource):
      resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type query_timeout: object
+    :param additional_columns: Specifies the additional columns to be added to
+     source data. Type: array of objects (or Expression with resultType array
+     of objects).
+    :type additional_columns:
+     list[~azure.mgmt.datafactory.models.AdditionalColumns]
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -22168,6 +22596,7 @@ class PaypalSource(TabularSource):
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
@@ -22381,6 +22810,11 @@ class PhoenixSource(TabularSource):
      resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type query_timeout: object
+    :param additional_columns: Specifies the additional columns to be added to
+     source data. Type: array of objects (or Expression with resultType array
+     of objects).
+    :type additional_columns:
+     list[~azure.mgmt.datafactory.models.AdditionalColumns]
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -22397,6 +22831,7 @@ class PhoenixSource(TabularSource):
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
@@ -22811,6 +23246,11 @@ class PostgreSqlSource(TabularSource):
      resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type query_timeout: object
+    :param additional_columns: Specifies the additional columns to be added to
+     source data. Type: array of objects (or Expression with resultType array
+     of objects).
+    :type additional_columns:
+     list[~azure.mgmt.datafactory.models.AdditionalColumns]
     :param query: Database query. Type: string (or Expression with resultType
      string).
     :type query: object
@@ -22827,6 +23267,7 @@ class PostgreSqlSource(TabularSource):
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
@@ -23121,6 +23562,11 @@ class PrestoSource(TabularSource):
      resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type query_timeout: object
+    :param additional_columns: Specifies the additional columns to be added to
+     source data. Type: array of objects (or Expression with resultType array
+     of objects).
+    :type additional_columns:
+     list[~azure.mgmt.datafactory.models.AdditionalColumns]
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -23137,6 +23583,7 @@ class PrestoSource(TabularSource):
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
@@ -23319,6 +23766,11 @@ class QuickBooksSource(TabularSource):
      resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type query_timeout: object
+    :param additional_columns: Specifies the additional columns to be added to
+     source data. Type: array of objects (or Expression with resultType array
+     of objects).
+    :type additional_columns:
+     list[~azure.mgmt.datafactory.models.AdditionalColumns]
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -23335,6 +23787,7 @@ class QuickBooksSource(TabularSource):
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
@@ -23503,6 +23956,11 @@ class RelationalSource(CopySource):
     :param query: Database query. Type: string (or Expression with resultType
      string).
     :type query: object
+    :param additional_columns: Specifies the additional columns to be added to
+     source data. Type: array of objects (or Expression with resultType array
+     of objects).
+    :type additional_columns:
+     list[~azure.mgmt.datafactory.models.AdditionalColumns]
     """
 
     _validation = {
@@ -23516,11 +23974,13 @@ class RelationalSource(CopySource):
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'query': {'key': 'query', 'type': 'object'},
+        'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
     }
 
     def __init__(self, **kwargs):
         super(RelationalSource, self).__init__(**kwargs)
         self.query = kwargs.get('query', None)
+        self.additional_columns = kwargs.get('additional_columns', None)
         self.type = 'RelationalSource'
 
 
@@ -23584,48 +24044,6 @@ class RelationalTableDataset(Dataset):
         self.type = 'RelationalTable'
 
 
-class RerunTriggerResource(SubResource):
-    """RerunTrigger resource type.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar id: The resource identifier.
-    :vartype id: str
-    :ivar name: The resource name.
-    :vartype name: str
-    :ivar type: The resource type.
-    :vartype type: str
-    :ivar etag: Etag identifies change in the resource.
-    :vartype etag: str
-    :param properties: Required. Properties of the rerun trigger.
-    :type properties:
-     ~azure.mgmt.datafactory.models.RerunTumblingWindowTrigger
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-        'properties': {'required': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'RerunTumblingWindowTrigger'},
-    }
-
-    def __init__(self, **kwargs):
-        super(RerunTriggerResource, self).__init__(**kwargs)
-        self.properties = kwargs.get('properties', None)
-
-
 class RerunTumblingWindowTrigger(Trigger):
     """Trigger that schedules pipeline reruns for all fixed time interval windows
     from a requested start time to requested end time.
@@ -23650,7 +24068,7 @@ class RerunTumblingWindowTrigger(Trigger):
     :type annotations: list[object]
     :param type: Required. Constant filled by server.
     :type type: str
-    :param parent_trigger: The parent trigger reference.
+    :param parent_trigger: Required. The parent trigger reference.
     :type parent_trigger: object
     :param requested_start_time: Required. The start time for the time period
      for which restatement is initiated. Only UTC time is currently supported.
@@ -23658,17 +24076,18 @@ class RerunTumblingWindowTrigger(Trigger):
     :param requested_end_time: Required. The end time for the time period for
      which restatement is initiated. Only UTC time is currently supported.
     :type requested_end_time: datetime
-    :param max_concurrency: Required. The max number of parallel time windows
-     (ready for execution) for which a rerun is triggered.
-    :type max_concurrency: int
+    :param rerun_concurrency: Required. The max number of parallel time
+     windows (ready for execution) for which a rerun is triggered.
+    :type rerun_concurrency: int
     """
 
     _validation = {
         'runtime_state': {'readonly': True},
         'type': {'required': True},
+        'parent_trigger': {'required': True},
         'requested_start_time': {'required': True},
         'requested_end_time': {'required': True},
-        'max_concurrency': {'required': True, 'maximum': 50, 'minimum': 1},
+        'rerun_concurrency': {'required': True, 'maximum': 50, 'minimum': 1},
     }
 
     _attribute_map = {
@@ -23680,7 +24099,7 @@ class RerunTumblingWindowTrigger(Trigger):
         'parent_trigger': {'key': 'typeProperties.parentTrigger', 'type': 'object'},
         'requested_start_time': {'key': 'typeProperties.requestedStartTime', 'type': 'iso-8601'},
         'requested_end_time': {'key': 'typeProperties.requestedEndTime', 'type': 'iso-8601'},
-        'max_concurrency': {'key': 'typeProperties.maxConcurrency', 'type': 'int'},
+        'rerun_concurrency': {'key': 'typeProperties.rerunConcurrency', 'type': 'int'},
     }
 
     def __init__(self, **kwargs):
@@ -23688,43 +24107,8 @@ class RerunTumblingWindowTrigger(Trigger):
         self.parent_trigger = kwargs.get('parent_trigger', None)
         self.requested_start_time = kwargs.get('requested_start_time', None)
         self.requested_end_time = kwargs.get('requested_end_time', None)
-        self.max_concurrency = kwargs.get('max_concurrency', None)
+        self.rerun_concurrency = kwargs.get('rerun_concurrency', None)
         self.type = 'RerunTumblingWindowTrigger'
-
-
-class RerunTumblingWindowTriggerActionParameters(Model):
-    """Rerun tumbling window trigger Parameters.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param start_time: Required. The start time for the time period for which
-     restatement is initiated. Only UTC time is currently supported.
-    :type start_time: datetime
-    :param end_time: Required. The end time for the time period for which
-     restatement is initiated. Only UTC time is currently supported.
-    :type end_time: datetime
-    :param max_concurrency: Required. The max number of parallel time windows
-     (ready for execution) for which a rerun is triggered.
-    :type max_concurrency: int
-    """
-
-    _validation = {
-        'start_time': {'required': True},
-        'end_time': {'required': True},
-        'max_concurrency': {'required': True, 'maximum': 50, 'minimum': 1},
-    }
-
-    _attribute_map = {
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
-        'max_concurrency': {'key': 'maxConcurrency', 'type': 'int'},
-    }
-
-    def __init__(self, **kwargs):
-        super(RerunTumblingWindowTriggerActionParameters, self).__init__(**kwargs)
-        self.start_time = kwargs.get('start_time', None)
-        self.end_time = kwargs.get('end_time', None)
-        self.max_concurrency = kwargs.get('max_concurrency', None)
 
 
 class ResponsysLinkedService(LinkedService):
@@ -23894,6 +24278,11 @@ class ResponsysSource(TabularSource):
      resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type query_timeout: object
+    :param additional_columns: Specifies the additional columns to be added to
+     source data. Type: array of objects (or Expression with resultType array
+     of objects).
+    :type additional_columns:
+     list[~azure.mgmt.datafactory.models.AdditionalColumns]
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -23910,6 +24299,7 @@ class ResponsysSource(TabularSource):
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
@@ -24138,6 +24528,11 @@ class RestSource(CopySource):
     :param request_interval: The time to await before sending next page
      request.
     :type request_interval: object
+    :param additional_columns: Specifies the additional columns to be added to
+     source data. Type: array of objects (or Expression with resultType array
+     of objects).
+    :type additional_columns:
+     list[~azure.mgmt.datafactory.models.AdditionalColumns]
     """
 
     _validation = {
@@ -24156,6 +24551,7 @@ class RestSource(CopySource):
         'pagination_rules': {'key': 'paginationRules', 'type': 'object'},
         'http_request_timeout': {'key': 'httpRequestTimeout', 'type': 'object'},
         'request_interval': {'key': 'requestInterval', 'type': 'object'},
+        'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
     }
 
     def __init__(self, **kwargs):
@@ -24166,6 +24562,7 @@ class RestSource(CopySource):
         self.pagination_rules = kwargs.get('pagination_rules', None)
         self.http_request_timeout = kwargs.get('http_request_timeout', None)
         self.request_interval = kwargs.get('request_interval', None)
+        self.additional_columns = kwargs.get('additional_columns', None)
         self.type = 'RestSource'
 
 
@@ -24345,9 +24742,12 @@ class SalesforceLinkedService(LinkedService):
     :param password: The password for Basic authentication of the Salesforce
      instance.
     :type password: ~azure.mgmt.datafactory.models.SecretBase
-    :param security_token: The security token is required to remotely access
+    :param security_token: The security token is optional to remotely access
      Salesforce instance.
     :type security_token: ~azure.mgmt.datafactory.models.SecretBase
+    :param api_version: The Salesforce API version used in ADF. Type: string
+     (or Expression with resultType string).
+    :type api_version: object
     :param encrypted_credential: The encrypted credential used for
      authentication. Credentials are encrypted using the integration runtime
      credential manager. Type: string (or Expression with resultType string).
@@ -24369,6 +24769,7 @@ class SalesforceLinkedService(LinkedService):
         'username': {'key': 'typeProperties.username', 'type': 'object'},
         'password': {'key': 'typeProperties.password', 'type': 'SecretBase'},
         'security_token': {'key': 'typeProperties.securityToken', 'type': 'SecretBase'},
+        'api_version': {'key': 'typeProperties.apiVersion', 'type': 'object'},
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
@@ -24378,6 +24779,7 @@ class SalesforceLinkedService(LinkedService):
         self.username = kwargs.get('username', None)
         self.password = kwargs.get('password', None)
         self.security_token = kwargs.get('security_token', None)
+        self.api_version = kwargs.get('api_version', None)
         self.encrypted_credential = kwargs.get('encrypted_credential', None)
         self.type = 'Salesforce'
 
@@ -24546,6 +24948,11 @@ class SalesforceMarketingCloudSource(TabularSource):
      resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type query_timeout: object
+    :param additional_columns: Specifies the additional columns to be added to
+     source data. Type: array of objects (or Expression with resultType array
+     of objects).
+    :type additional_columns:
+     list[~azure.mgmt.datafactory.models.AdditionalColumns]
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -24562,6 +24969,7 @@ class SalesforceMarketingCloudSource(TabularSource):
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
@@ -24664,9 +25072,12 @@ class SalesforceServiceCloudLinkedService(LinkedService):
     :param password: The password for Basic authentication of the Salesforce
      instance.
     :type password: ~azure.mgmt.datafactory.models.SecretBase
-    :param security_token: The security token is required to remotely access
+    :param security_token: The security token is optional to remotely access
      Salesforce instance.
     :type security_token: ~azure.mgmt.datafactory.models.SecretBase
+    :param api_version: The Salesforce API version used in ADF. Type: string
+     (or Expression with resultType string).
+    :type api_version: object
     :param extended_properties: Extended properties appended to the connection
      string. Type: string (or Expression with resultType string).
     :type extended_properties: object
@@ -24691,6 +25102,7 @@ class SalesforceServiceCloudLinkedService(LinkedService):
         'username': {'key': 'typeProperties.username', 'type': 'object'},
         'password': {'key': 'typeProperties.password', 'type': 'SecretBase'},
         'security_token': {'key': 'typeProperties.securityToken', 'type': 'SecretBase'},
+        'api_version': {'key': 'typeProperties.apiVersion', 'type': 'object'},
         'extended_properties': {'key': 'typeProperties.extendedProperties', 'type': 'object'},
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
@@ -24701,6 +25113,7 @@ class SalesforceServiceCloudLinkedService(LinkedService):
         self.username = kwargs.get('username', None)
         self.password = kwargs.get('password', None)
         self.security_token = kwargs.get('security_token', None)
+        self.api_version = kwargs.get('api_version', None)
         self.extended_properties = kwargs.get('extended_properties', None)
         self.encrypted_credential = kwargs.get('encrypted_credential', None)
         self.type = 'SalesforceServiceCloud'
@@ -24866,6 +25279,11 @@ class SalesforceServiceCloudSource(CopySource):
      Query. Possible values include: 'Query', 'QueryAll'
     :type read_behavior: str or
      ~azure.mgmt.datafactory.models.SalesforceSourceReadBehavior
+    :param additional_columns: Specifies the additional columns to be added to
+     source data. Type: array of objects (or Expression with resultType array
+     of objects).
+    :type additional_columns:
+     list[~azure.mgmt.datafactory.models.AdditionalColumns]
     """
 
     _validation = {
@@ -24880,12 +25298,14 @@ class SalesforceServiceCloudSource(CopySource):
         'type': {'key': 'type', 'type': 'str'},
         'query': {'key': 'query', 'type': 'object'},
         'read_behavior': {'key': 'readBehavior', 'type': 'str'},
+        'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
     }
 
     def __init__(self, **kwargs):
         super(SalesforceServiceCloudSource, self).__init__(**kwargs)
         self.query = kwargs.get('query', None)
         self.read_behavior = kwargs.get('read_behavior', None)
+        self.additional_columns = kwargs.get('additional_columns', None)
         self.type = 'SalesforceServiceCloudSource'
 
 
@@ -24986,6 +25406,11 @@ class SalesforceSource(TabularSource):
      resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type query_timeout: object
+    :param additional_columns: Specifies the additional columns to be added to
+     source data. Type: array of objects (or Expression with resultType array
+     of objects).
+    :type additional_columns:
+     list[~azure.mgmt.datafactory.models.AdditionalColumns]
     :param query: Database query. Type: string (or Expression with resultType
      string).
     :type query: object
@@ -25006,6 +25431,7 @@ class SalesforceSource(TabularSource):
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
         'query': {'key': 'query', 'type': 'object'},
         'read_behavior': {'key': 'readBehavior', 'type': 'str'},
     }
@@ -25173,6 +25599,11 @@ class SapBwSource(TabularSource):
      resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type query_timeout: object
+    :param additional_columns: Specifies the additional columns to be added to
+     source data. Type: array of objects (or Expression with resultType array
+     of objects).
+    :type additional_columns:
+     list[~azure.mgmt.datafactory.models.AdditionalColumns]
     :param query: MDX query. Type: string (or Expression with resultType
      string).
     :type query: object
@@ -25189,6 +25620,7 @@ class SapBwSource(TabularSource):
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
@@ -25403,6 +25835,11 @@ class SapCloudForCustomerSource(TabularSource):
      resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type query_timeout: object
+    :param additional_columns: Specifies the additional columns to be added to
+     source data. Type: array of objects (or Expression with resultType array
+     of objects).
+    :type additional_columns:
+     list[~azure.mgmt.datafactory.models.AdditionalColumns]
     :param query: SAP Cloud for Customer OData query. For example, "$top=1".
      Type: string (or Expression with resultType string).
     :type query: object
@@ -25419,6 +25856,7 @@ class SapCloudForCustomerSource(TabularSource):
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
@@ -25578,6 +26016,11 @@ class SapEccSource(TabularSource):
      resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type query_timeout: object
+    :param additional_columns: Specifies the additional columns to be added to
+     source data. Type: array of objects (or Expression with resultType array
+     of objects).
+    :type additional_columns:
+     list[~azure.mgmt.datafactory.models.AdditionalColumns]
     :param query: SAP ECC OData query. For example, "$top=1". Type: string (or
      Expression with resultType string).
     :type query: object
@@ -25594,6 +26037,7 @@ class SapEccSource(TabularSource):
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
@@ -25719,6 +26163,11 @@ class SapHanaSource(TabularSource):
      resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type query_timeout: object
+    :param additional_columns: Specifies the additional columns to be added to
+     source data. Type: array of objects (or Expression with resultType array
+     of objects).
+    :type additional_columns:
+     list[~azure.mgmt.datafactory.models.AdditionalColumns]
     :param query: SAP HANA Sql query. Type: string (or Expression with
      resultType string).
     :type query: object
@@ -25747,6 +26196,7 @@ class SapHanaSource(TabularSource):
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
         'query': {'key': 'query', 'type': 'object'},
         'packet_size': {'key': 'packetSize', 'type': 'object'},
         'partition_option': {'key': 'partitionOption', 'type': 'str'},
@@ -25940,6 +26390,11 @@ class SapOpenHubSource(TabularSource):
      resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type query_timeout: object
+    :param additional_columns: Specifies the additional columns to be added to
+     source data. Type: array of objects (or Expression with resultType array
+     of objects).
+    :type additional_columns:
+     list[~azure.mgmt.datafactory.models.AdditionalColumns]
     :param exclude_last_request: Whether to exclude the records of the last
      request. The default value is true. Type: boolean (or Expression with
      resultType boolean).
@@ -25962,6 +26417,7 @@ class SapOpenHubSource(TabularSource):
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
         'exclude_last_request': {'key': 'excludeLastRequest', 'type': 'object'},
         'base_request_id': {'key': 'baseRequestId', 'type': 'object'},
     }
@@ -26297,6 +26753,11 @@ class SapTableSource(TabularSource):
      resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type query_timeout: object
+    :param additional_columns: Specifies the additional columns to be added to
+     source data. Type: array of objects (or Expression with resultType array
+     of objects).
+    :type additional_columns:
+     list[~azure.mgmt.datafactory.models.AdditionalColumns]
     :param row_count: The number of rows to be retrieved. Type: integer(or
      Expression with resultType integer).
     :type row_count: object
@@ -26342,6 +26803,7 @@ class SapTableSource(TabularSource):
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
         'row_count': {'key': 'rowCount', 'type': 'object'},
         'row_skips': {'key': 'rowSkips', 'type': 'object'},
         'rfc_table_fields': {'key': 'rfcTableFields', 'type': 'object'},
@@ -27032,6 +27494,11 @@ class ServiceNowSource(TabularSource):
      resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type query_timeout: object
+    :param additional_columns: Specifies the additional columns to be added to
+     source data. Type: array of objects (or Expression with resultType array
+     of objects).
+    :type additional_columns:
+     list[~azure.mgmt.datafactory.models.AdditionalColumns]
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -27048,6 +27515,7 @@ class ServiceNowSource(TabularSource):
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
@@ -27162,6 +27630,10 @@ class SftpReadSettings(StoreReadSettings):
     :param wildcard_file_name: Sftp wildcardFileName. Type: string (or
      Expression with resultType string).
     :type wildcard_file_name: object
+    :param file_list_path: Point to a text file that lists each file (relative
+     path to the path configured in the dataset) that you want to copy. Type:
+     string (or Expression with resultType string).
+    :type file_list_path: object
     :param modified_datetime_start: The start of file's modified datetime.
      Type: string (or Expression with resultType string).
     :type modified_datetime_start: object
@@ -27181,6 +27653,7 @@ class SftpReadSettings(StoreReadSettings):
         'recursive': {'key': 'recursive', 'type': 'object'},
         'wildcard_folder_path': {'key': 'wildcardFolderPath', 'type': 'object'},
         'wildcard_file_name': {'key': 'wildcardFileName', 'type': 'object'},
+        'file_list_path': {'key': 'fileListPath', 'type': 'object'},
         'modified_datetime_start': {'key': 'modifiedDatetimeStart', 'type': 'object'},
         'modified_datetime_end': {'key': 'modifiedDatetimeEnd', 'type': 'object'},
     }
@@ -27190,6 +27663,7 @@ class SftpReadSettings(StoreReadSettings):
         self.recursive = kwargs.get('recursive', None)
         self.wildcard_folder_path = kwargs.get('wildcard_folder_path', None)
         self.wildcard_file_name = kwargs.get('wildcard_file_name', None)
+        self.file_list_path = kwargs.get('file_list_path', None)
         self.modified_datetime_start = kwargs.get('modified_datetime_start', None)
         self.modified_datetime_end = kwargs.get('modified_datetime_end', None)
         self.type = 'SftpReadSettings'
@@ -27322,6 +27796,10 @@ class SftpWriteSettings(StoreWriteSettings):
      SFTP server. Default value: 01:00:00 (one hour). Type: string (or
      Expression with resultType string).
     :type operation_timeout: object
+    :param use_temp_file_rename: Upload to temporary file(s) and rename.
+     Disable this option if your SFTP server doesn't support rename operation.
+     Type: boolean (or Expression with resultType boolean).
+    :type use_temp_file_rename: object
     """
 
     _validation = {
@@ -27334,11 +27812,13 @@ class SftpWriteSettings(StoreWriteSettings):
         'copy_behavior': {'key': 'copyBehavior', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'operation_timeout': {'key': 'operationTimeout', 'type': 'object'},
+        'use_temp_file_rename': {'key': 'useTempFileRename', 'type': 'object'},
     }
 
     def __init__(self, **kwargs):
         super(SftpWriteSettings, self).__init__(**kwargs)
         self.operation_timeout = kwargs.get('operation_timeout', None)
+        self.use_temp_file_rename = kwargs.get('use_temp_file_rename', None)
         self.type = 'SftpWriteSettings'
 
 
@@ -27501,6 +27981,11 @@ class ShopifySource(TabularSource):
      resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type query_timeout: object
+    :param additional_columns: Specifies the additional columns to be added to
+     source data. Type: array of objects (or Expression with resultType array
+     of objects).
+    :type additional_columns:
+     list[~azure.mgmt.datafactory.models.AdditionalColumns]
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -27517,6 +28002,7 @@ class ShopifySource(TabularSource):
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
@@ -27524,6 +28010,29 @@ class ShopifySource(TabularSource):
         super(ShopifySource, self).__init__(**kwargs)
         self.query = kwargs.get('query', None)
         self.type = 'ShopifySource'
+
+
+class SkipErrorFile(Model):
+    """Skip error file.
+
+    :param file_missing: Skip if file is deleted by other client during copy.
+     Default is true. Type: boolean (or Expression with resultType boolean).
+    :type file_missing: object
+    :param data_inconsistency: Skip if source/sink file changed by other
+     concurrent write. Default is false. Type: boolean (or Expression with
+     resultType boolean).
+    :type data_inconsistency: object
+    """
+
+    _attribute_map = {
+        'file_missing': {'key': 'fileMissing', 'type': 'object'},
+        'data_inconsistency': {'key': 'dataInconsistency', 'type': 'object'},
+    }
+
+    def __init__(self, **kwargs):
+        super(SkipErrorFile, self).__init__(**kwargs)
+        self.file_missing = kwargs.get('file_missing', None)
+        self.data_inconsistency = kwargs.get('data_inconsistency', None)
 
 
 class SparkLinkedService(LinkedService):
@@ -27740,6 +28249,11 @@ class SparkSource(TabularSource):
      resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type query_timeout: object
+    :param additional_columns: Specifies the additional columns to be added to
+     source data. Type: array of objects (or Expression with resultType array
+     of objects).
+    :type additional_columns:
+     list[~azure.mgmt.datafactory.models.AdditionalColumns]
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -27756,6 +28270,7 @@ class SparkSource(TabularSource):
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
@@ -27872,6 +28387,11 @@ class SqlDWSource(TabularSource):
      resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type query_timeout: object
+    :param additional_columns: Specifies the additional columns to be added to
+     source data. Type: array of objects (or Expression with resultType array
+     of objects).
+    :type additional_columns:
+     list[~azure.mgmt.datafactory.models.AdditionalColumns]
     :param sql_reader_query: SQL Data Warehouse reader query. Type: string (or
      Expression with resultType string).
     :type sql_reader_query: object
@@ -27897,6 +28417,7 @@ class SqlDWSource(TabularSource):
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
         'sql_reader_query': {'key': 'sqlReaderQuery', 'type': 'object'},
         'sql_reader_stored_procedure_name': {'key': 'sqlReaderStoredProcedureName', 'type': 'object'},
         'stored_procedure_parameters': {'key': 'storedProcedureParameters', 'type': 'object'},
@@ -28016,6 +28537,11 @@ class SqlMISource(TabularSource):
      resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type query_timeout: object
+    :param additional_columns: Specifies the additional columns to be added to
+     source data. Type: array of objects (or Expression with resultType array
+     of objects).
+    :type additional_columns:
+     list[~azure.mgmt.datafactory.models.AdditionalColumns]
     :param sql_reader_query: SQL reader query. Type: string (or Expression
      with resultType string).
     :type sql_reader_query: object
@@ -28042,6 +28568,7 @@ class SqlMISource(TabularSource):
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
         'sql_reader_query': {'key': 'sqlReaderQuery', 'type': 'object'},
         'sql_reader_stored_procedure_name': {'key': 'sqlReaderStoredProcedureName', 'type': 'object'},
         'stored_procedure_parameters': {'key': 'storedProcedureParameters', 'type': '{StoredProcedureParameter}'},
@@ -28225,6 +28752,11 @@ class SqlServerSource(TabularSource):
      resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type query_timeout: object
+    :param additional_columns: Specifies the additional columns to be added to
+     source data. Type: array of objects (or Expression with resultType array
+     of objects).
+    :type additional_columns:
+     list[~azure.mgmt.datafactory.models.AdditionalColumns]
     :param sql_reader_query: SQL reader query. Type: string (or Expression
      with resultType string).
     :type sql_reader_query: object
@@ -28251,6 +28783,7 @@ class SqlServerSource(TabularSource):
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
         'sql_reader_query': {'key': 'sqlReaderQuery', 'type': 'object'},
         'sql_reader_stored_procedure_name': {'key': 'sqlReaderStoredProcedureName', 'type': 'object'},
         'stored_procedure_parameters': {'key': 'storedProcedureParameters', 'type': '{StoredProcedureParameter}'},
@@ -28500,6 +29033,11 @@ class SqlSource(TabularSource):
      resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type query_timeout: object
+    :param additional_columns: Specifies the additional columns to be added to
+     source data. Type: array of objects (or Expression with resultType array
+     of objects).
+    :type additional_columns:
+     list[~azure.mgmt.datafactory.models.AdditionalColumns]
     :param sql_reader_query: SQL reader query. Type: string (or Expression
      with resultType string).
     :type sql_reader_query: object
@@ -28511,6 +29049,12 @@ class SqlSource(TabularSource):
      procedure parameters. Example: "{Parameter1: {value: "1", type: "int"}}".
     :type stored_procedure_parameters: dict[str,
      ~azure.mgmt.datafactory.models.StoredProcedureParameter]
+    :param isolation_level: Specifies the transaction locking behavior for the
+     SQL source. Allowed values:
+     ReadCommitted/ReadUncommitted/RepeatableRead/Serializable/Snapshot. The
+     default value is ReadCommitted. Type: string (or Expression with
+     resultType string).
+    :type isolation_level: object
     """
 
     _validation = {
@@ -28524,9 +29068,11 @@ class SqlSource(TabularSource):
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
         'sql_reader_query': {'key': 'sqlReaderQuery', 'type': 'object'},
         'sql_reader_stored_procedure_name': {'key': 'sqlReaderStoredProcedureName', 'type': 'object'},
         'stored_procedure_parameters': {'key': 'storedProcedureParameters', 'type': '{StoredProcedureParameter}'},
+        'isolation_level': {'key': 'isolationLevel', 'type': 'object'},
     }
 
     def __init__(self, **kwargs):
@@ -28534,6 +29080,7 @@ class SqlSource(TabularSource):
         self.sql_reader_query = kwargs.get('sql_reader_query', None)
         self.sql_reader_stored_procedure_name = kwargs.get('sql_reader_stored_procedure_name', None)
         self.stored_procedure_parameters = kwargs.get('stored_procedure_parameters', None)
+        self.isolation_level = kwargs.get('isolation_level', None)
         self.type = 'SqlSource'
 
 
@@ -28708,6 +29255,11 @@ class SquareSource(TabularSource):
      resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type query_timeout: object
+    :param additional_columns: Specifies the additional columns to be added to
+     source data. Type: array of objects (or Expression with resultType array
+     of objects).
+    :type additional_columns:
+     list[~azure.mgmt.datafactory.models.AdditionalColumns]
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -28724,6 +29276,7 @@ class SquareSource(TabularSource):
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
@@ -29617,6 +30170,11 @@ class SybaseSource(TabularSource):
      resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type query_timeout: object
+    :param additional_columns: Specifies the additional columns to be added to
+     source data. Type: array of objects (or Expression with resultType array
+     of objects).
+    :type additional_columns:
+     list[~azure.mgmt.datafactory.models.AdditionalColumns]
     :param query: Database query. Type: string (or Expression with resultType
      string).
     :type query: object
@@ -29633,6 +30191,7 @@ class SybaseSource(TabularSource):
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
@@ -29829,6 +30388,11 @@ class TeradataSource(TabularSource):
      resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type query_timeout: object
+    :param additional_columns: Specifies the additional columns to be added to
+     source data. Type: array of objects (or Expression with resultType array
+     of objects).
+    :type additional_columns:
+     list[~azure.mgmt.datafactory.models.AdditionalColumns]
     :param query: Teradata query. Type: string (or Expression with resultType
      string).
     :type query: object
@@ -29854,6 +30418,7 @@ class TeradataSource(TabularSource):
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
         'query': {'key': 'query', 'type': 'object'},
         'partition_option': {'key': 'partitionOption', 'type': 'str'},
         'partition_settings': {'key': 'partitionSettings', 'type': 'TeradataPartitionSettings'},
@@ -30053,6 +30618,28 @@ class TriggerDependencyReference(DependencyReference):
         self.type = 'TriggerDependencyReference'
 
 
+class TriggerFilterParameters(Model):
+    """Query parameters for triggers.
+
+    :param continuation_token: The continuation token for getting the next
+     page of results. Null for first page.
+    :type continuation_token: str
+    :param parent_trigger_name: The name of the parent TumblingWindowTrigger
+     to get the child rerun triggers
+    :type parent_trigger_name: str
+    """
+
+    _attribute_map = {
+        'continuation_token': {'key': 'continuationToken', 'type': 'str'},
+        'parent_trigger_name': {'key': 'parentTriggerName', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(TriggerFilterParameters, self).__init__(**kwargs)
+        self.continuation_token = kwargs.get('continuation_token', None)
+        self.parent_trigger_name = kwargs.get('parent_trigger_name', None)
+
+
 class TriggerPipelineReference(Model):
     """Pipeline that needs to be triggered with the given parameters.
 
@@ -30071,6 +30658,33 @@ class TriggerPipelineReference(Model):
         super(TriggerPipelineReference, self).__init__(**kwargs)
         self.pipeline_reference = kwargs.get('pipeline_reference', None)
         self.parameters = kwargs.get('parameters', None)
+
+
+class TriggerQueryResponse(Model):
+    """A query of triggers.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param value: Required. List of triggers.
+    :type value: list[~azure.mgmt.datafactory.models.TriggerResource]
+    :param continuation_token: The continuation token for getting the next
+     page of results, if any remaining results exist, null otherwise.
+    :type continuation_token: str
+    """
+
+    _validation = {
+        'value': {'required': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[TriggerResource]'},
+        'continuation_token': {'key': 'continuationToken', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(TriggerQueryResponse, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+        self.continuation_token = kwargs.get('continuation_token', None)
 
 
 class TriggerReference(Model):
@@ -30770,6 +31384,11 @@ class VerticaSource(TabularSource):
      resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type query_timeout: object
+    :param additional_columns: Specifies the additional columns to be added to
+     source data. Type: array of objects (or Expression with resultType array
+     of objects).
+    :type additional_columns:
+     list[~azure.mgmt.datafactory.models.AdditionalColumns]
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -30786,6 +31405,7 @@ class VerticaSource(TabularSource):
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
@@ -31345,6 +31965,11 @@ class WebSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param additional_columns: Specifies the additional columns to be added to
+     source data. Type: array of objects (or Expression with resultType array
+     of objects).
+    :type additional_columns:
+     list[~azure.mgmt.datafactory.models.AdditionalColumns]
     """
 
     _validation = {
@@ -31357,10 +31982,12 @@ class WebSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
     }
 
     def __init__(self, **kwargs):
         super(WebSource, self).__init__(**kwargs)
+        self.additional_columns = kwargs.get('additional_columns', None)
         self.type = 'WebSource'
 
 
@@ -31596,6 +32223,11 @@ class XeroSource(TabularSource):
      resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type query_timeout: object
+    :param additional_columns: Specifies the additional columns to be added to
+     source data. Type: array of objects (or Expression with resultType array
+     of objects).
+    :type additional_columns:
+     list[~azure.mgmt.datafactory.models.AdditionalColumns]
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -31612,6 +32244,7 @@ class XeroSource(TabularSource):
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
@@ -31779,6 +32412,11 @@ class ZohoSource(TabularSource):
      resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type query_timeout: object
+    :param additional_columns: Specifies the additional columns to be added to
+     source data. Type: array of objects (or Expression with resultType array
+     of objects).
+    :type additional_columns:
+     list[~azure.mgmt.datafactory.models.AdditionalColumns]
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -31795,6 +32433,7 @@ class ZohoSource(TabularSource):
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
