@@ -20,7 +20,7 @@ class MgmtWebSiteTest(AzureMgmtTestCase):
         self.mgmt_client = self.create_mgmt_client(
             azure.mgmt.web.WebSiteManagementClient
         )
-    
+
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_appservice(self, resource_group):
 
@@ -36,7 +36,7 @@ class MgmtWebSiteTest(AzureMgmtTestCase):
             "capacity": "1"
           }
         }
-        azure_operation_poller = self.mgmt_client.app_service_plans.create_or_update(resource_group.name, SERVERFARM_NAME, BODY)
+        azure_operation_poller = self.mgmt_client.app_service_plans.begin_create_or_update(resource_group.name, SERVERFARM_NAME, BODY)
         result_create = azure_operation_poller.result()
 
         self.mgmt_client.list_skus()
