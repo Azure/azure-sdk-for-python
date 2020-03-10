@@ -197,7 +197,9 @@ class BaseHandler(object):
             raise exception
         else:
             _LOGGER.info("Unexpected error occurred (%r). Shutting down.", exception)
-            error = ServiceBusError("Handler failed: {}".format(exception))
+            error = exception
+            if not isinstance(exception, ServiceBusError):
+                error = ServiceBusError("Handler failed: {}".format(exception))
             self._close_handler()
             return error
 
@@ -268,12 +270,14 @@ class BaseHandler(object):
                 return operation(**kwargs)
             except Exception as exception:
                 last_exception = self._handle_exception(exception)
+                retried_times += 1
+                if retried_times > max_retries:
+                    break
                 self._backoff(
                     retried_times=retried_times,
                     last_exception=last_exception,
                     timeout=timeout
                 )
-                retried_times += 1
 
         _LOGGER.info(
             "%r operation has exhausted retry. Last exception: %r.",
@@ -282,7 +286,7 @@ class BaseHandler(object):
         )
         raise last_exception
 
-    def _mgmt_request_response(self, operation, message, callback, **kwargs):
+    def _mgmt_request_response(self, mgmt_operation, message, callback, **kwargs):
         if not self._running:
             raise InvalidHandlerState("Client connection is closed.")
 
@@ -297,7 +301,7 @@ class BaseHandler(object):
         try:
             return self._handler.mgmt_request(
                 mgmt_msg,
-                operation,
+                mgmt_operation,
                 op_type=b"entity-mgmt",
                 node=self._mgmt_target.encode(self._config.encoding),
                 timeout=5000,
@@ -305,6 +309,18 @@ class BaseHandler(object):
             )
         except Exception as exp:  # pylint: disable=broad-except
             raise ServiceBusError("Management request failed: {}".format(exp), exp)
+
+    def _mgmt_request_response_with_retry(self, mgmt_operation, message, callback, **kwargs):
+        return self._do_retryable_operation(
+            self._mgmt_request_response,
+            mgmt_operation=mgmt_operation,
+            message=message,
+            callback=callback,
+            **kwargs
+        )
+
+    def _open_with_retry(self):
+        return self._do_retryable_operation(self._open)
 
     def _close_handler(self):
         if self._handler:

@@ -189,6 +189,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):
             return
         if self._handler:
             self._handler.close()
+
         auth = self._create_auth()
         self._create_handler(auth)
         self._handler.open()
@@ -219,10 +220,11 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):
             'lock-tokens': types.AMQPArray(lock_tokens)}
         if dead_letter_details:
             message.update(dead_letter_details)
-        return self._mgmt_request_response(
+        return self._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_UPDATE_DISPOSTION_OPERATION,
             message,
-            mgmt_handlers.default)
+            mgmt_handlers.default
+        )
 
     def close(self, exception=None):
         # type: (Exception) -> None
@@ -333,10 +335,11 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):
             'session-id': self._session_id
         }
         handler = functools.partial(mgmt_handlers.deferred_message_op, mode=receive_mode)
-        messages = self._mgmt_request_response(
+        messages = self._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_RECEIVE_BY_SEQUENCE_NUMBER,
             message,
-            handler)
+            handler
+        )
         for m in messages:
             m._receiver = self  # pylint: disable=protected-access
         return messages

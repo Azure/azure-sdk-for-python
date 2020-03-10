@@ -66,32 +66,43 @@ class ServiceBusClient(object):
     async def close(self):
         pass
 
-    def get_queue_sender(self, queue_name, **kwargs):
+    async def get_queue_sender(self, queue_name, **kwargs):
         """Get ServiceBusSender for the specific queue.
 
         :param str queue_name: The path of specific Service Bus Queue the client connects to.
         :keyword int retry_total: The total number of attempts to redo a failed operation when an error occurs.
          Default value is 3.
+        :rtype: ~azure.servicebus.aio.ServiceBusSender
+        :raises: :class:`ServiceBusConnectionError`
+         :class:`ServiceBusAuthorizationError`
         """
-        return ServiceBusSender(
+        sender = ServiceBusSender(
             fully_qualified_namespace=self.fully_qualified_namespace,
             queue_name=queue_name,
             credential=self._credential,
             logging_enable=self._config.logging_enable,
             **kwargs
         )
+        await sender._open_with_retry()  # pylint: disable=protected-access
+        return sender
 
-    def get_queue_receiver(self, queue_name, **kwargs):
+    async def get_queue_receiver(self, queue_name, **kwargs):
         """Get ServiceBusReceiver for the specific queue.
 
         :param str queue_name: The path of specific Service Bus Queue the client connects to.
         :keyword int retry_total: The total number of attempts to redo a failed operation when an error occurs.
          Default value is 3.
+        :rtype: ~azure.servicebus.aio.ServiceBusReceiver
+        :raises: :class:`ServiceBusConnectionError`
+         :class:`ServiceBusAuthorizationError`
+
         """
-        return ServiceBusReceiver(
+        receiver = ServiceBusReceiver(
             fully_qualified_namespace=self.fully_qualified_namespace,
             queue_name=queue_name,
             credential=self._credential,
             logging_enable=self._config.logging_enable,
             **kwargs
         )
+        await receiver._open_with_retry()  # pylint: disable=protected-access
+        return receiver

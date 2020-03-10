@@ -125,7 +125,9 @@ class BaseHandlerAsync(BaseHandler):
             raise exception
         else:
             _LOGGER.info("Unexpected error occurred (%r). Shutting down.", exception)
-            error = ServiceBusError("Handler failed: {}".format(exception), exception)
+            error = exception
+            if not isinstance(exception, ServiceBusError):
+                error = ServiceBusError("Handler failed: {}".format(exception), exception)
             await self._close_handler()
             raise error
 
@@ -172,12 +174,14 @@ class BaseHandlerAsync(BaseHandler):
                 return await operation(**kwargs)
             except Exception as exception:
                 last_exception = await self._handle_exception(exception)
+                retried_times += 1
+                if retried_times > max_retries:
+                    break
                 await self._backoff(
                     retried_times=retried_times,
                     last_exception=last_exception,
                     timeout=timeout
                 )
-                retried_times += 1
 
         _LOGGER.info(
             "%r operation has exhausted retry. Last exception: %r.",
@@ -186,7 +190,7 @@ class BaseHandlerAsync(BaseHandler):
         )
         raise last_exception
 
-    async def _mgmt_request_response(self, operation, message, callback, **kwargs):
+    async def _mgmt_request_response(self, mgmt_operation, message, callback, **kwargs):
         if not self._running:
             raise InvalidHandlerState("Client connection is closed.")
 
@@ -199,7 +203,7 @@ class BaseHandlerAsync(BaseHandler):
         try:
             return await self._handler.mgmt_request_async(
                 mgmt_msg,
-                operation,
+                mgmt_operation,
                 op_type=b"entity-mgmt",
                 node=self._mgmt_target.encode(self._config.encoding),
                 timeout=5000,
@@ -207,11 +211,23 @@ class BaseHandlerAsync(BaseHandler):
         except Exception as exp:  # pylint: disable=broad-except
             raise ServiceBusError("Management request failed: {}".format(exp), exp)
 
+    async def _mgmt_request_response_with_retry(self, mgmt_operation, message, callback, **kwargs):
+        return await self._do_retryable_operation(
+            self._mgmt_request_response,
+            mgmt_operation=mgmt_operation,
+            message=message,
+            callback=callback,
+            **kwargs
+        )
+
     @staticmethod
     def _from_connection_string(conn_str, **kwargs):
         kwargs = BaseHandler._from_connection_string(conn_str, **kwargs)
         kwargs["credential"] = ServiceBusSharedKeyCredential(kwargs["credential"].policy, kwargs["credential"].key)
         return kwargs
+
+    async def _open_with_retry(self):
+        return await self._do_retryable_operation(self._open)
 
     async def _close_handler(self):
         if self._handler:

@@ -165,7 +165,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
             'lock-tokens': types.AMQPArray(lock_tokens)}
         if dead_letter_details:
             message.update(dead_letter_details)
-        return await self._mgmt_request_response(
+        return await self._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_UPDATE_DISPOSTION_OPERATION,
             message,
             mgmt_handlers.default)
@@ -277,7 +277,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
             'session-id': self._session_id
         }
         handler = functools.partial(mgmt_handlers.deferred_message_op, mode=receive_mode, message_type=DeferredMessage)
-        messages = await self._mgmt_request_response(
+        messages = await self._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_RECEIVE_BY_SEQUENCE_NUMBER,
             message,
             handler)
