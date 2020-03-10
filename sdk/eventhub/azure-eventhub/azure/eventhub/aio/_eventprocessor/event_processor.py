@@ -54,7 +54,6 @@ class EventProcessor(
         batch,
         max_batch_size,
         max_wait_time,
-        enable_callback_when_no_event: bool,
         partition_id: Optional[str] = None,
         checkpoint_store: Optional[CheckpointStore] = None,
         initial_event_position: Union[str, int, "datetime", Dict[str, Any]] = "@latest",
@@ -85,7 +84,6 @@ class EventProcessor(
         self._batch = batch
         self._max_batch_size = max_batch_size
         self._max_wait_time = max_wait_time
-        self._enable_callback_when_no_event = enable_callback_when_no_event
         self._error_handler = error_handler
         self._partition_initialize_handler = partition_initialize_handler
         self._partition_close_handler = partition_close_handler
@@ -284,7 +282,7 @@ class EventProcessor(
             while self._running:
                 try:
                     await self._consumers[partition_id].receive(
-                        self._batch, self._max_batch_size, self._max_wait_time, self._enable_callback_when_no_event
+                        self._batch, self._max_batch_size, self._max_wait_time
                     )
                 except asyncio.CancelledError:
                     _LOGGER.info(
