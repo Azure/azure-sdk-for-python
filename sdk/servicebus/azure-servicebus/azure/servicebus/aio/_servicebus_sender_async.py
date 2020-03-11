@@ -67,7 +67,7 @@ class ServiceBusSender(BaseHandlerAsync, SenderMixin):
             super(ServiceBusSender, self).__init__(
                 fully_qualified_namespace=fully_qualified_namespace,
                 credential=credential,
-                entity_name=entity_name,
+                entity_name=str(entity_name),
                 **kwargs
             )
 

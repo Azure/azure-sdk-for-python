@@ -48,7 +48,7 @@ class SenderMixin(object):
 
 
 class ServiceBusSender(BaseHandler, SenderMixin):
-    """The ServiceBusSenderClient class defines a high level interface for
+    """The ServiceBusSender class defines a high level interface for
     sending messages to the Azure Service Bus Queue or Topic.
 
     :param str fully_qualified_namespace: The fully qualified host name for the Service Bus namespace.
@@ -141,7 +141,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         **kwargs,
     ):
         # type: (str, Any) -> ServiceBusSender
-        """Create a ServiceBusSenderClient from a connection string.
+        """Create a ServiceBusSender from a connection string.
 
         :param conn_str: The connection string of a Service Bus.
         :keyword str queue_name: The path of specific Service Bus Queue the client connects to.

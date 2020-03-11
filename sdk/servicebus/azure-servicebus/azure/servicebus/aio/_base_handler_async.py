@@ -106,30 +106,29 @@ class BaseHandlerAsync(BaseHandler):
                 error = ServiceBusAuthorizationError(str(exception), exception)
                 await self._close_handler()
                 return error
-            else:
-                _LOGGER.info("Async handler detached. Shutting down.")
-                error = ServiceBusConnectionError(str(exception), exception)
-                await self._close_handler()
-                return error
-        elif isinstance(exception, errors.MessageHandlerError):
+            _LOGGER.info("Async handler detached. Shutting down.")
+            error = ServiceBusConnectionError(str(exception), exception)
+            await self._close_handler()
+            return error
+        if isinstance(exception, errors.MessageHandlerError):
             _LOGGER.info("Async handler error. Shutting down.")
             error = ServiceBusConnectionError(str(exception), exception)
             await self._close_handler()
             return error
-        elif isinstance(exception, errors.AMQPConnectionError):
+        if isinstance(exception, errors.AMQPConnectionError):
             message = "Failed to open handler: {}".format(exception)
             await self._close_handler()
             return ServiceBusConnectionError(message, exception)
-        elif isinstance(exception, MessageSendFailed):
+        if isinstance(exception, MessageSendFailed):
             _LOGGER.info("Message send error (%r)", exception)
             raise exception
-        else:
-            _LOGGER.info("Unexpected error occurred (%r). Shutting down.", exception)
-            error = exception
-            if not isinstance(exception, ServiceBusError):
-                error = ServiceBusError("Handler failed: {}".format(exception), exception)
-            await self._close_handler()
-            raise error
+
+        _LOGGER.info("Unexpected error occurred (%r). Shutting down.", exception)
+        error = exception
+        if not isinstance(exception, ServiceBusError):
+            error = ServiceBusError("Handler failed: {}".format(exception), exception)
+        await self._close_handler()
+        raise error
 
     async def _backoff(
             self,
@@ -138,16 +137,15 @@ class BaseHandlerAsync(BaseHandler):
             timeout=None,
             entity_name=None
     ):
-        # type: (int, Exception, Optional[int], Optional[str]) -> None
         entity_name = entity_name or self._container_id
         backoff = self._config.retry_backoff_factor * 2 ** retried_times
         if backoff <= self._config.retry_backoff_max and (
                 timeout is None or backoff <= timeout
-        ):  # pylint:disable=no-else-return
+        ):
             await asyncio.sleep(backoff)
             _LOGGER.info(
                 "%r has an exception (%r). Retrying...",
-                format(entity_name),
+                entity_name,
                 last_exception,
             )
         else:
@@ -172,7 +170,7 @@ class BaseHandlerAsync(BaseHandler):
                 if require_timeout:
                     kwargs["timeout"] = timeout
                 return await operation(**kwargs)
-            except Exception as exception:
+            except Exception as exception:  # pylint: disable=broad-except
                 last_exception = await self._handle_exception(exception)
                 retried_times += 1
                 if retried_times > max_retries:

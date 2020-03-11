@@ -55,7 +55,8 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
 
     def __init__(self, body, encoding='UTF-8', **kwargs):
         subject = kwargs.pop('subject', None)
-        # Although we might normally thread through **kwargs this causes problems as MessageProperties won't absorb spurious args.
+        # Although we might normally thread through **kwargs this causes
+        # problems as MessageProperties won't absorb spurious args.
         self.properties = uamqp.message.MessageProperties(encoding=encoding, subject=subject)
         self.header = uamqp.message.MessageHeader()
         self.received_timestamp = None
@@ -233,9 +234,8 @@ class BatchMessage(Message):
     def _build_message(self, body):
         if body is None:
             raise ValueError("Message body cannot be None.")
-        else:
-            self.message = uamqp.BatchMessage(
-                data=body, multi_messages=True, properties=self.properties, header=self.header)
+        self.message = uamqp.BatchMessage(
+            data=body, multi_messages=True, properties=self.properties, header=self.header)
 
 
 class PeekMessage(Message):

@@ -8,13 +8,13 @@ import datetime
 import functools
 import uuid
 
-from azure.servicebus.common import message
+from azure.servicebus.common import message as sync_message
 from azure.servicebus.common.utils import get_running_loop
 from azure.servicebus.common.errors import MessageSettleFailed
 from azure.servicebus.common.constants import DEADLETTERNAME
 
 
-class Message(message.Message):
+class Message(sync_message.Message):
     """A Service Bus Message.
 
     :param body: The data to send in a single message. The maximum size per message is 256 kB.
@@ -43,7 +43,7 @@ class Message(message.Message):
         super(Message, self).__init__(body, encoding=encoding, **kwargs)
 
 
-class ReceivedMessage(message.ReceivedMessage):
+class ReceivedMessage(sync_message.ReceivedMessage):
     def __init__(self, message, loop=None):
         self._loop = loop or get_running_loop()
         super(ReceivedMessage, self).__init__(message=message)
@@ -146,7 +146,7 @@ class ReceivedMessage(message.ReceivedMessage):
             raise MessageSettleFailed("defer", e)
 
 
-class DeferredMessage(message.DeferredMessage):
+class DeferredMessage(sync_message.DeferredMessage):
     """A message that has been deferred.
 
     A deferred message can be completed,

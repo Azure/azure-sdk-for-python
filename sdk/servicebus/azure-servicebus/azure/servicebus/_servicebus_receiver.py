@@ -32,7 +32,7 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
-class ReceiverMixin(object):
+class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
     def _create_attribute(self, **kwargs):
         if kwargs.get("subscription_name"):
             self.subscription_name = kwargs.get("subscription_name")
@@ -47,7 +47,7 @@ class ReceiverMixin(object):
         self._mode = kwargs.get("mode", ReceiveSettleMode.PeekLock)
         self._error_policy = _ServiceBusErrorPolicy(
             max_retries=self._config.retry_total,
-            is_session=(True if self._session_id else False)
+            is_session=bool(self._session_id)
         )
         self._name = "SBReceiver-{}".format(uuid.uuid4())
 
@@ -74,8 +74,8 @@ class ReceiverMixin(object):
             self._session_id = session_filter.decode(self._config.encoding)
 
 
-class ServiceBusReceiver(BaseHandler, ReceiverMixin):
-    """The ServiceBusReceiverClient class defines a high level interface for
+class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-many-instance-attributes
+    """The ServiceBusReceiver class defines a high level interface for
     receiving messages from the Azure Service Bus Queue or Topic Subscription.
 
     :param str fully_qualified_namespace: The fully qualified host name for the Service Bus namespace.
@@ -137,6 +137,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):
                 entity_name=entity_name,
                 **kwargs
             )
+        self._message_iter = None
         self._create_attribute(**kwargs)
 
     def __iter__(self):
@@ -249,7 +250,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):
         **kwargs,
     ):
         # type: (str, Any) -> ServiceBusReceiver
-        """Create a ServiceBusReceiverClient from a connection string.
+        """Create a ServiceBusReceiver from a connection string.
 
         :param conn_str: The connection string of a Service Bus.
         :keyword str queue_name: The path of specific Service Bus Queue the client connects to.

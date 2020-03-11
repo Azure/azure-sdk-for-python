@@ -85,10 +85,11 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
             super(ServiceBusReceiver, self).__init__(
                 fully_qualified_namespace=fully_qualified_namespace,
                 credential=credential,
-                entity_name=entity_name,
+                entity_name=str(entity_name),
                 **kwargs
             )
         self._create_attribute(**kwargs)
+        self._message_iter = None
 
     async def __anext__(self):
         while True:

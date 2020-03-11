@@ -56,6 +56,19 @@ class ServiceBusClient(object):
         **kwargs
     ):
         # type: (str, Any) -> ServiceBusClient
+        """
+        Create a ServiceBusClient from a connection string.
+
+        :param conn_str: The connection string of a Service Bus.
+        :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
+        :keyword transport_type: The type of transport protocol that will be used for communicating with
+         the Service Bus service. Default is `TransportType.Amqp`.
+        :paramtype transport_type: ~azure.servicebus.TransportType
+        :keyword dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
+         keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
+         Additionally the following keys may also be present: `'username', 'password'`.
+        :rtype: ~azure.servicebus.ServiceBusClient
+        """
         host, policy, key, _ = _parse_conn_str(conn_str)
         return cls(
             fully_qualified_namespace=host,
@@ -64,9 +77,14 @@ class ServiceBusClient(object):
         )
 
     async def close(self):
-        pass
+        # type: () -> None
+        """
+        Close down the ServiceBus client.
+        :return: None
+        """
 
     async def get_queue_sender(self, queue_name, **kwargs):
+        # type: (str, Any) -> ServiceBusSender
         """Get ServiceBusSender for the specific queue.
 
         :param str queue_name: The path of specific Service Bus Queue the client connects to.
@@ -87,6 +105,7 @@ class ServiceBusClient(object):
         return sender
 
     async def get_queue_receiver(self, queue_name, **kwargs):
+        # type: (str, Any) -> ServiceBusReceiver
         """Get ServiceBusReceiver for the specific queue.
 
         :param str queue_name: The path of specific Service Bus Queue the client connects to.

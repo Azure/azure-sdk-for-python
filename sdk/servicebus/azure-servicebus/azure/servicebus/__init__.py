@@ -3,11 +3,8 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-
-from ._version import VERSION
-__version__ = VERSION
-
 from uamqp import constants
+
 from azure.servicebus._servicebus_client import ServiceBusClient
 from azure.servicebus._servicebus_sender import ServiceBusSender
 from azure.servicebus._servicebus_receiver import ServiceBusReceiver
@@ -29,6 +26,9 @@ from azure.servicebus.common.errors import (
     SessionLockExpired,
     AutoLockRenewFailed,
     AutoLockRenewTimeout)
+
+from ._version import VERSION
+__version__ = VERSION
 
 TransportType = constants.TransportType
 
