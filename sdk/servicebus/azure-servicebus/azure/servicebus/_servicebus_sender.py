@@ -134,11 +134,9 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             time.sleep(0.05)
         self._running = True
 
-    def _send(self, message, session_id=None, timeout=None, last_exception=None):
+    def _send(self, message, timeout=None, last_exception=None):
         self._open()
         self._set_msg_timeout(timeout, last_exception)
-        if session_id and not message.properties.group_id:
-            message.properties.group_id = session_id
         try:
             self._handler.send_message(message.message)
         except Exception as e:
@@ -183,15 +181,12 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         )
         return cls(**constructor_args)
 
-    def send(self, message, session_id=None, message_timeout=None):
-        # type: (Message, str, float) -> None
+    def send(self, message, message_timeout=None):
+        # type: (Message, float) -> None
         """Sends message and blocks until acknowledgement is received or operation times out.
 
         :param message: The ServiceBus message to be sent.
         :type message: ~azure.servicebus.Message
-        :param session_id: An optional session ID. If supplied this session ID will be
-         applied to every outgoing message sent with this Sender.
-         If an individual message already has a session ID, that will be used instead.
         :param float message_timeout: The maximum wait time to send the event data.
         :rtype: None
         :raises: ~azure.servicebus.common.errors.MessageSendFailed if the message fails to
@@ -210,7 +205,6 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         self._do_retryable_operation(
             self._send,
             message=message,
-            session_id=session_id,
             timeout=message_timeout,
             require_timeout=True,
             require_last_exception=True

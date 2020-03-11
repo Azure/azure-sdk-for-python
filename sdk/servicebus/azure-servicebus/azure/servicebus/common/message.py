@@ -96,6 +96,17 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
             raise SessionLockExpired(inner_exception=self._receiver.auto_renew_error)
 
     @property
+    def session_id(self):
+        try:
+            return self.properties.group_id.decode('UTF-8')
+        except (AttributeError, UnicodeDecodeError):
+            return self.properties.group_id
+
+    @session_id.setter
+    def session_id(self, value):
+        self.properties.group_id = value
+
+    @property
     def annotations(self):
         """The annotations of the message.
 
@@ -212,13 +223,6 @@ class PeekMessage(Message):
 
     def __init__(self, message):
         super(PeekMessage, self).__init__(None, message=message)
-
-    @property
-    def session_id(self):
-        try:
-            return self.properties.group_id.decode('UTF-8')
-        except (AttributeError, UnicodeDecodeError):
-            return self.properties.group_id
 
     @property
     def settled(self):
