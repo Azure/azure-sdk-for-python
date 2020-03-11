@@ -1,6 +1,10 @@
 # Release History
 
-## 12.2.1 (2020-03-10)
+## 12.3.0 (2020-03-10)
+
+**New features**
+
+- `stage_block` now propagates the response from the service.
 
 **Fixes**
 - Fixed a bug where a new transport is being passed in the `get_blob_client` method instead
