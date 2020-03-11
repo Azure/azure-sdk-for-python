@@ -37,7 +37,6 @@ class PartitionContext(object):
         self.consumer_group = consumer_group
         self._last_received_event = None  # type: Optional[EventData]
         self._checkpoint_store = checkpoint_store
-        self.last_checkpoint_time = None
 
     @property
     def last_enqueued_event_properties(self) -> Optional[Dict[str, Any]]:
@@ -77,7 +76,6 @@ class PartitionContext(object):
                     "sequence_number": checkpoint_event.sequence_number,
                 }
                 await self._checkpoint_store.update_checkpoint(checkpoint)
-                self.last_checkpoint_time = time.time()
         else:
             _LOGGER.warning(
                 "namespace %r, eventhub %r, consumer_group %r, partition_id %r "
