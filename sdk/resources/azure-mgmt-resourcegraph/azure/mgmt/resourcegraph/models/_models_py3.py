@@ -49,6 +49,38 @@ class Column(Model):
         self.type = type
 
 
+class DateTimeInterval(Model):
+    """An interval in time specifying the date and time for the inclusive start
+    and exclusive end, i.e. `[start, end)`.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param start: Required. A datetime indicating the inclusive/closed start
+     of the time interval, i.e. `[`**`start`**`, end)`. Specifying a `start`
+     that occurs chronologically after `end` will result in an error.
+    :type start: datetime
+    :param end: Required. A datetime indicating the exclusive/open end of the
+     time interval, i.e. `[start, `**`end`**`)`. Specifying an `end` that
+     occurs chronologically before `start` will result in an error.
+    :type end: datetime
+    """
+
+    _validation = {
+        'start': {'required': True},
+        'end': {'required': True},
+    }
+
+    _attribute_map = {
+        'start': {'key': 'start', 'type': 'iso-8601'},
+        'end': {'key': 'end', 'type': 'iso-8601'},
+    }
+
+    def __init__(self, *, start, end, **kwargs) -> None:
+        super(DateTimeInterval, self).__init__(**kwargs)
+        self.start = start
+        self.end = end
+
+
 class Error(Model):
     """Error info.
 
@@ -112,6 +144,30 @@ class ErrorDetails(Model):
         self.additional_properties = additional_properties
         self.code = code
         self.message = message
+
+
+class ErrorFieldContract(Model):
+    """Error Field contract.
+
+    :param code: Property level error code.
+    :type code: str
+    :param message: Human-readable representation of property-level error.
+    :type message: str
+    :param target: Property name.
+    :type target: str
+    """
+
+    _attribute_map = {
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+        'target': {'key': 'target', 'type': 'str'},
+    }
+
+    def __init__(self, *, code: str=None, message: str=None, target: str=None, **kwargs) -> None:
+        super(ErrorFieldContract, self).__init__(**kwargs)
+        self.code = code
+        self.message = message
+        self.target = target
 
 
 class ErrorResponse(Model):
@@ -298,7 +354,7 @@ class FacetResult(Facet):
     :type count: int
     :param data: Required. A table containing the desired facets. Only present
      if the facet is valid.
-    :type data: object
+    :type data: ~azure.mgmt.resourcegraph.models.Table
     """
 
     _validation = {
@@ -314,7 +370,7 @@ class FacetResult(Facet):
         'result_type': {'key': 'resultType', 'type': 'str'},
         'total_records': {'key': 'totalRecords', 'type': 'long'},
         'count': {'key': 'count', 'type': 'int'},
-        'data': {'key': 'data', 'type': 'object'},
+        'data': {'key': 'data', 'type': 'Table'},
     }
 
     def __init__(self, *, expression: str, total_records: int, count: int, data, **kwargs) -> None:
@@ -323,6 +379,181 @@ class FacetResult(Facet):
         self.count = count
         self.data = data
         self.result_type = 'FacetResult'
+
+
+class GraphQueryError(Model):
+    """Error message body that will indicate why the operation failed.
+
+    :param code: Service-defined error code. This code serves as a sub-status
+     for the HTTP error code specified in the response.
+    :type code: str
+    :param message: Human-readable representation of the error.
+    :type message: str
+    :param details: The list of invalid fields send in request, in case of
+     validation error.
+    :type details: list[~azure.mgmt.resourcegraph.models.ErrorFieldContract]
+    """
+
+    _attribute_map = {
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+        'details': {'key': 'details', 'type': '[ErrorFieldContract]'},
+    }
+
+    def __init__(self, *, code: str=None, message: str=None, details=None, **kwargs) -> None:
+        super(GraphQueryError, self).__init__(**kwargs)
+        self.code = code
+        self.message = message
+        self.details = details
+
+
+class GraphQueryErrorException(HttpOperationError):
+    """Server responsed with exception of type: 'GraphQueryError'.
+
+    :param deserialize: A deserializer
+    :param response: Server response to be deserialized.
+    """
+
+    def __init__(self, deserialize, response, *args):
+
+        super(GraphQueryErrorException, self).__init__(deserialize, response, 'GraphQueryError', *args)
+
+
+class Resource(Model):
+    """An azure resource object.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Azure resource Id
+    :vartype id: str
+    :ivar name: Azure resource name. This is GUID value. The display name
+     should be assigned within properties field.
+    :vartype name: str
+    :ivar type: Azure resource type
+    :vartype type: str
+    :param e_tag: This will be used to handle Optimistic Concurrency. If not
+     present, it will always overwrite the existing resource without checking
+     conflict.
+    :type e_tag: str
+    :param tags: Resource tags
+    :type tags: dict[str, str]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'e_tag': {'key': 'eTag', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+    }
+
+    def __init__(self, *, e_tag: str=None, tags=None, **kwargs) -> None:
+        super(Resource, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+        self.e_tag = e_tag
+        self.tags = tags
+
+
+class GraphQueryResource(Resource):
+    """Graph Query entity definition.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Azure resource Id
+    :vartype id: str
+    :ivar name: Azure resource name. This is GUID value. The display name
+     should be assigned within properties field.
+    :vartype name: str
+    :ivar type: Azure resource type
+    :vartype type: str
+    :param e_tag: This will be used to handle Optimistic Concurrency. If not
+     present, it will always overwrite the existing resource without checking
+     conflict.
+    :type e_tag: str
+    :param tags: Resource tags
+    :type tags: dict[str, str]
+    :ivar time_modified: Date and time in UTC of the last modification that
+     was made to this graph query definition.
+    :vartype time_modified: datetime
+    :param description: The description of a graph query.
+    :type description: str
+    :param query: Required. KQL query that will be graph.
+    :type query: str
+    :ivar result_kind: Enum indicating a type of graph query. Possible values
+     include: 'basic'
+    :vartype result_kind: str or ~azure.mgmt.resourcegraph.models.ResultKind
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'time_modified': {'readonly': True},
+        'query': {'required': True},
+        'result_kind': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'e_tag': {'key': 'eTag', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'time_modified': {'key': 'properties.timeModified', 'type': 'iso-8601'},
+        'description': {'key': 'properties.description', 'type': 'str'},
+        'query': {'key': 'properties.query', 'type': 'str'},
+        'result_kind': {'key': 'properties.resultKind', 'type': 'str'},
+    }
+
+    def __init__(self, *, query: str, e_tag: str=None, tags=None, description: str=None, **kwargs) -> None:
+        super(GraphQueryResource, self).__init__(e_tag=e_tag, tags=tags, **kwargs)
+        self.time_modified = None
+        self.description = description
+        self.query = query
+        self.result_kind = None
+
+
+class GraphQueryUpdateParameters(Model):
+    """The parameters that can be provided when updating workbook properties
+    properties.
+
+    :param tags: Resource tags
+    :type tags: dict[str, str]
+    :param e_tag: This will be used to handle Optimistic Concurrency. If not
+     present, it will always overwrite the existing resource without checking
+     conflict.
+    :type e_tag: str
+    :param description: The description of a graph query.
+    :type description: str
+    :param query: KQL query that will be graph.
+    :type query: str
+    """
+
+    _attribute_map = {
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'e_tag': {'key': 'eTag', 'type': 'str'},
+        'description': {'key': 'properties.description', 'type': 'str'},
+        'query': {'key': 'properties.query', 'type': 'str'},
+    }
+
+    def __init__(self, *, tags=None, e_tag: str=None, description: str=None, query: str=None, **kwargs) -> None:
+        super(GraphQueryUpdateParameters, self).__init__(**kwargs)
+        self.tags = tags
+        self.e_tag = e_tag
+        self.description = description
+        self.query = query
 
 
 class Operation(Model):
@@ -426,9 +657,6 @@ class QueryRequestOptions(Model):
     :param skip: The number of rows to skip from the beginning of the results.
      Overrides the next page offset when ```$skipToken``` property is present.
     :type skip: int
-    :param result_format: Defines in which format query result returned.
-     Possible values include: 'table', 'objectArray'
-    :type result_format: str or ~azure.mgmt.resourcegraph.models.ResultFormat
     """
 
     _validation = {
@@ -440,15 +668,13 @@ class QueryRequestOptions(Model):
         'skip_token': {'key': '$skipToken', 'type': 'str'},
         'top': {'key': '$top', 'type': 'int'},
         'skip': {'key': '$skip', 'type': 'int'},
-        'result_format': {'key': 'resultFormat', 'type': 'ResultFormat'},
     }
 
-    def __init__(self, *, skip_token: str=None, top: int=None, skip: int=None, result_format=None, **kwargs) -> None:
+    def __init__(self, *, skip_token: str=None, top: int=None, skip: int=None, **kwargs) -> None:
         super(QueryRequestOptions, self).__init__(**kwargs)
         self.skip_token = skip_token
         self.top = top
         self.skip = skip
-        self.result_format = result_format
 
 
 class QueryResponse(Model):
@@ -472,7 +698,7 @@ class QueryResponse(Model):
      current request) to retrieve the next page of data.
     :type skip_token: str
     :param data: Required. Query output in tabular format.
-    :type data: object
+    :type data: ~azure.mgmt.resourcegraph.models.Table
     :param facets: Query facets.
     :type facets: list[~azure.mgmt.resourcegraph.models.Facet]
     """
@@ -489,7 +715,7 @@ class QueryResponse(Model):
         'count': {'key': 'count', 'type': 'long'},
         'result_truncated': {'key': 'resultTruncated', 'type': 'ResultTruncated'},
         'skip_token': {'key': '$skipToken', 'type': 'str'},
-        'data': {'key': 'data', 'type': 'object'},
+        'data': {'key': 'data', 'type': 'Table'},
         'facets': {'key': 'facets', 'type': '[Facet]'},
     }
 
@@ -501,6 +727,259 @@ class QueryResponse(Model):
         self.skip_token = skip_token
         self.data = data
         self.facets = facets
+
+
+class ResourceChangeData(Model):
+    """Data on a specific change, represented by a pair of before and after
+    resource snapshots.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param change_id: Required. The change ID. Valid and unique within the
+     specified resource only.
+    :type change_id: str
+    :param before_snapshot: Required. The snapshot before the change.
+    :type before_snapshot:
+     ~azure.mgmt.resourcegraph.models.ResourceChangeDataBeforeSnapshot
+    :param after_snapshot: Required. The snapshot after the change.
+    :type after_snapshot:
+     ~azure.mgmt.resourcegraph.models.ResourceChangeDataAfterSnapshot
+    """
+
+    _validation = {
+        'change_id': {'required': True},
+        'before_snapshot': {'required': True},
+        'after_snapshot': {'required': True},
+    }
+
+    _attribute_map = {
+        'change_id': {'key': 'changeId', 'type': 'str'},
+        'before_snapshot': {'key': 'beforeSnapshot', 'type': 'ResourceChangeDataBeforeSnapshot'},
+        'after_snapshot': {'key': 'afterSnapshot', 'type': 'ResourceChangeDataAfterSnapshot'},
+    }
+
+    def __init__(self, *, change_id: str, before_snapshot, after_snapshot, **kwargs) -> None:
+        super(ResourceChangeData, self).__init__(**kwargs)
+        self.change_id = change_id
+        self.before_snapshot = before_snapshot
+        self.after_snapshot = after_snapshot
+
+
+class ResourceSnapshotData(Model):
+    """Data on a specific resource snapshot.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param timestamp: Required. The time when the snapshot was created.
+     The snapshot timestamp provides an approximation as to when a modification
+     to a resource was detected.  There can be a difference between the actual
+     modification time and the detection time.  This is due to differences in
+     how operations that modify a resource are processed, versus how operation
+     that record resource snapshots are processed.
+    :type timestamp: datetime
+    :param content: The resource snapshot content (in resourceChangeDetails
+     response only).
+    :type content: object
+    """
+
+    _validation = {
+        'timestamp': {'required': True},
+    }
+
+    _attribute_map = {
+        'timestamp': {'key': 'timestamp', 'type': 'iso-8601'},
+        'content': {'key': 'content', 'type': 'object'},
+    }
+
+    def __init__(self, *, timestamp, content=None, **kwargs) -> None:
+        super(ResourceSnapshotData, self).__init__(**kwargs)
+        self.timestamp = timestamp
+        self.content = content
+
+
+class ResourceChangeDataAfterSnapshot(ResourceSnapshotData):
+    """The snapshot after the change.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param timestamp: Required. The time when the snapshot was created.
+     The snapshot timestamp provides an approximation as to when a modification
+     to a resource was detected.  There can be a difference between the actual
+     modification time and the detection time.  This is due to differences in
+     how operations that modify a resource are processed, versus how operation
+     that record resource snapshots are processed.
+    :type timestamp: datetime
+    :param content: The resource snapshot content (in resourceChangeDetails
+     response only).
+    :type content: object
+    """
+
+    _validation = {
+        'timestamp': {'required': True},
+    }
+
+    _attribute_map = {
+        'timestamp': {'key': 'timestamp', 'type': 'iso-8601'},
+        'content': {'key': 'content', 'type': 'object'},
+    }
+
+    def __init__(self, *, timestamp, content=None, **kwargs) -> None:
+        super(ResourceChangeDataAfterSnapshot, self).__init__(timestamp=timestamp, content=content, **kwargs)
+
+
+class ResourceChangeDataBeforeSnapshot(ResourceSnapshotData):
+    """The snapshot before the change.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param timestamp: Required. The time when the snapshot was created.
+     The snapshot timestamp provides an approximation as to when a modification
+     to a resource was detected.  There can be a difference between the actual
+     modification time and the detection time.  This is due to differences in
+     how operations that modify a resource are processed, versus how operation
+     that record resource snapshots are processed.
+    :type timestamp: datetime
+    :param content: The resource snapshot content (in resourceChangeDetails
+     response only).
+    :type content: object
+    """
+
+    _validation = {
+        'timestamp': {'required': True},
+    }
+
+    _attribute_map = {
+        'timestamp': {'key': 'timestamp', 'type': 'iso-8601'},
+        'content': {'key': 'content', 'type': 'object'},
+    }
+
+    def __init__(self, *, timestamp, content=None, **kwargs) -> None:
+        super(ResourceChangeDataBeforeSnapshot, self).__init__(timestamp=timestamp, content=content, **kwargs)
+
+
+class ResourceChangeDetailsRequestParameters(Model):
+    """The parameters for a specific change details request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param resource_id: Required. Specifies the resource for a change details
+     request.
+    :type resource_id: str
+    :param change_id: Required. Specifies the change ID.
+    :type change_id: str
+    """
+
+    _validation = {
+        'resource_id': {'required': True},
+        'change_id': {'required': True},
+    }
+
+    _attribute_map = {
+        'resource_id': {'key': 'resourceId', 'type': 'str'},
+        'change_id': {'key': 'changeId', 'type': 'str'},
+    }
+
+    def __init__(self, *, resource_id: str, change_id: str, **kwargs) -> None:
+        super(ResourceChangeDetailsRequestParameters, self).__init__(**kwargs)
+        self.resource_id = resource_id
+        self.change_id = change_id
+
+
+class ResourceChangeList(Model):
+    """A list of changes associated with a resource over a specific time interval.
+
+    :param changes: The pageable value returned by the operation, i.e. a list
+     of changes to the resource.
+     - The list is ordered from the most recent changes to the least recent
+     changes.
+     - This list will be empty if there were no changes during the requested
+     interval.
+     - The `Before` snapshot timestamp value of the oldest change can be
+     outside of the specified time interval.
+    :type changes: list[~azure.mgmt.resourcegraph.models.ResourceChangeData]
+    :param skip_token: Skip token that encodes the skip information while
+     executing the current request
+    :type skip_token: object
+    """
+
+    _attribute_map = {
+        'changes': {'key': 'changes', 'type': '[ResourceChangeData]'},
+        'skip_token': {'key': '$skipToken', 'type': 'object'},
+    }
+
+    def __init__(self, *, changes=None, skip_token=None, **kwargs) -> None:
+        super(ResourceChangeList, self).__init__(**kwargs)
+        self.changes = changes
+        self.skip_token = skip_token
+
+
+class ResourceChangesRequestParameters(Model):
+    """The parameters for a specific changes request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param resource_id: Required. Specifies the resource for a changes
+     request.
+    :type resource_id: str
+    :param interval: Required. Specifies the date and time interval for a
+     changes request.
+    :type interval:
+     ~azure.mgmt.resourcegraph.models.ResourceChangesRequestParametersInterval
+    :param skip_token: Acts as the continuation token for paged responses.
+    :type skip_token: str
+    :param top: The maximum number of changes the client can accept in a paged
+     response.
+    :type top: int
+    """
+
+    _validation = {
+        'resource_id': {'required': True},
+        'interval': {'required': True},
+        'top': {'maximum': 1000, 'minimum': 1},
+    }
+
+    _attribute_map = {
+        'resource_id': {'key': 'resourceId', 'type': 'str'},
+        'interval': {'key': 'interval', 'type': 'ResourceChangesRequestParametersInterval'},
+        'skip_token': {'key': '$skipToken', 'type': 'str'},
+        'top': {'key': '$top', 'type': 'int'},
+    }
+
+    def __init__(self, *, resource_id: str, interval, skip_token: str=None, top: int=None, **kwargs) -> None:
+        super(ResourceChangesRequestParameters, self).__init__(**kwargs)
+        self.resource_id = resource_id
+        self.interval = interval
+        self.skip_token = skip_token
+        self.top = top
+
+
+class ResourceChangesRequestParametersInterval(DateTimeInterval):
+    """Specifies the date and time interval for a changes request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param start: Required. A datetime indicating the inclusive/closed start
+     of the time interval, i.e. `[`**`start`**`, end)`. Specifying a `start`
+     that occurs chronologically after `end` will result in an error.
+    :type start: datetime
+    :param end: Required. A datetime indicating the exclusive/open end of the
+     time interval, i.e. `[start, `**`end`**`)`. Specifying an `end` that
+     occurs chronologically before `start` will result in an error.
+    :type end: datetime
+    """
+
+    _validation = {
+        'start': {'required': True},
+        'end': {'required': True},
+    }
+
+    _attribute_map = {
+        'start': {'key': 'start', 'type': 'iso-8601'},
+        'end': {'key': 'end', 'type': 'iso-8601'},
+    }
+
+    def __init__(self, *, start, end, **kwargs) -> None:
+        super(ResourceChangesRequestParametersInterval, self).__init__(start=start, end=end, **kwargs)
 
 
 class Table(Model):

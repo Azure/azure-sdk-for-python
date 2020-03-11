@@ -12,12 +12,6 @@
 from enum import Enum
 
 
-class ResultFormat(str, Enum):
-
-    table = "table"
-    object_array = "objectArray"
-
-
 class FacetSortOrder(str, Enum):
 
     asc = "asc"
@@ -37,3 +31,8 @@ class ColumnDataType(str, Enum):
     number = "number"
     boolean = "boolean"
     object_enum = "object"
+
+
+class ResultKind(str, Enum):
+
+    basic = "basic"

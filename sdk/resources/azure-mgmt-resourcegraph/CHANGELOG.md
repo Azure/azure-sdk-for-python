@@ -1,4 +1,16 @@
 # Release History
+## 2.0.1 (2018-09-01-preview)
+
+**Features**
+
+- Added operation ResourceGraphClientOperationsMixin.resource_changes
+- Added operation ResourceGraphClientOperationsMixin.resource_change_details
+- Added operation group GraphQueryOperations
+
+**Breaking changes**
+
+- Model QueryRequestOptions no longer has parameter result_format
+
 
 ## 2.0.0 (2019-06-19)
 
