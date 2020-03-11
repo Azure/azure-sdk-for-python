@@ -1,5 +1,8 @@
 # Change Log azure-ai-textanalytics
 
+## 1.0.0b4 (Unreleased)
+
+
 ## 1.0.0b3 (2020-03-10)
 
 **Breaking changes**

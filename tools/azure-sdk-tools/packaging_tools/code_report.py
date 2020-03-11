@@ -15,7 +15,7 @@ from typing import Dict, Any, Optional
 try:
     # If I'm started as a module __main__
     from .venvtools import create_venv_with_package
-except ModuleNotFoundError:
+except (ModuleNotFoundError, ImportError) as e:
     # If I'm started by my main directly
     from venvtools import create_venv_with_package
 

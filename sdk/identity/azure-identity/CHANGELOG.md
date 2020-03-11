@@ -1,5 +1,8 @@
 # Release History
 
+## 1.4.0b2 (Unreleased)
+
+
 ## 1.4.0b1 (2020-03-10)
 - `DefaultAzureCredential` can now authenticate using the identity logged in to
 the Azure CLI, unless explicitly disabled with a keyword argument:

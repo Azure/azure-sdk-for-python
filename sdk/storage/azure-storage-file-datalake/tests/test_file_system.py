@@ -320,7 +320,7 @@ class FileSystemTest(StorageTestCase):
     @record
     def test_get_root_directory_client(self):
         file_system = self._create_file_system()
-        directory_client = file_system.get_root_directory_client()
+        directory_client = file_system._get_root_directory_client()
 
         acl = 'user::rwx,group::r-x,other::rwx'
         directory_client.set_access_control(acl=acl)

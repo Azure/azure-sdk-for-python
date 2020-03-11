@@ -69,7 +69,7 @@ client = SearchIndexClient(endpoint="<service endpoint>",
 
 ### Client
 
-The Cognitive Search client library provides a [SearchIndexClient](https://aka.ms/azsdk-python-search-searchindexclient) to perform search operations on [batches of documents](#Examples "examples").
+The [Cognitive Search client library](http://azure.github.io/azure-sdk-for-python/ref/Search.html) provides a `SearchIndexClient` to perform search operations on [batches of documents](#Examples "examples").
 It provides both synchronous and asynchronous operations to access a specific use of Cognitive Search indexes, such as querying, suggestions or autocompletion.
 
 
@@ -180,7 +180,7 @@ result =  search_client.search(query="spa", logging_enable=True)
 
 Authenticate the client with a Azure Cognitive Search [API Key Credential](https://docs.microsoft.com/en-us/azure/search/search-security-api-keys):
 
-[sample_authentication.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/search/azure-search/samples/sample_authentication.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/search/azure-search/samples/iasync_samples/sample_authentication_async.py))
+[sample_authentication.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/search/azure-search/samples/sample_authentication.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/search/azure-search/samples/async_samples/sample_authentication_async.py))
 
 Then for common search index operations:
 
