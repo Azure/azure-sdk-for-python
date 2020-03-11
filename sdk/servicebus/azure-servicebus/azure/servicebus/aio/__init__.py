@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-from azure.servicebus.common.errors import (
+from ..common.errors import (
     ServiceBusError,
     ServiceBusResourceNotFound,
     ServiceBusConnectionError,
@@ -17,8 +17,8 @@ from azure.servicebus.common.errors import (
     SessionLockExpired,
     AutoLockRenewFailed,
     AutoLockRenewTimeout)
-from azure.servicebus.common.constants import ReceiveSettleMode, NEXT_AVAILABLE
-from azure.servicebus.common.message import BatchMessage, PeekMessage
+from ..common.constants import ReceiveSettleMode, NEXT_AVAILABLE
+from ..common.message import BatchMessage, PeekMessage
 from .async_message import Message, DeferredMessage
 from .async_utils import AutoLockRenew
 from ._base_handler_async import ServiceBusSharedKeyCredential
