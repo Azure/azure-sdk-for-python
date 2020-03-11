@@ -9,68 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import SDKClient
-from msrest import Configuration, Serializer, Deserializer
-from .version import VERSION
 from msrest.pipeline import ClientRawResponse
-from . import models
+from .. import models
 
 
-class AnomalyDetectorClientConfiguration(Configuration):
-    """Configuration for AnomalyDetectorClient
-    Note that all parameters used to create this instance are saved as instance
-    attributes.
-
-    :param endpoint: Supported Cognitive Services endpoints (protocol and
-     hostname, for example: https://westus2.api.cognitive.microsoft.com).
-    :type endpoint: str
-    :param credentials: Subscription credentials which uniquely identify
-     client subscription.
-    :type credentials: None
-    """
-
-    def __init__(
-            self, endpoint, credentials):
-
-        if endpoint is None:
-            raise ValueError("Parameter 'endpoint' must not be None.")
-        if credentials is None:
-            raise ValueError("Parameter 'credentials' must not be None.")
-        base_url = '{Endpoint}/anomalydetector/v1.0'
-
-        super(AnomalyDetectorClientConfiguration, self).__init__(base_url)
-
-        self.add_user_agent('azure-cognitiveservices-anomalydetector/{}'.format(VERSION))
-
-        self.endpoint = endpoint
-        self.credentials = credentials
-
-
-class AnomalyDetectorClient(SDKClient):
-    """The Anomaly Detector API detects anomalies automatically in time series data. It supports two functionalities, one is for detecting the whole series with model trained by the timeseries, another is detecting last point with model trained by points before. By using this service, business customers can discover incidents and establish a logic flow for root cause analysis.
-
-    :ivar config: Configuration for client.
-    :vartype config: AnomalyDetectorClientConfiguration
-
-    :param endpoint: Supported Cognitive Services endpoints (protocol and
-     hostname, for example: https://westus2.api.cognitive.microsoft.com).
-    :type endpoint: str
-    :param credentials: Subscription credentials which uniquely identify
-     client subscription.
-    :type credentials: None
-    """
-
-    def __init__(
-            self, endpoint, credentials):
-
-        self.config = AnomalyDetectorClientConfiguration(endpoint, credentials)
-        super(AnomalyDetectorClient, self).__init__(self.config.credentials, self.config)
-
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '1.0'
-        self._serialize = Serializer(client_models)
-        self._deserialize = Deserializer(client_models)
-
+class AnomalyDetectorClientOperationsMixin(object):
 
     def entire_detect(
             self, body, custom_headers=None, raw=False, **operation_config):
@@ -124,7 +67,6 @@ class AnomalyDetectorClient(SDKClient):
             raise models.APIErrorException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('EntireDetectResponse', response)
 
@@ -187,7 +129,6 @@ class AnomalyDetectorClient(SDKClient):
             raise models.APIErrorException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('LastDetectResponse', response)
 
@@ -197,3 +138,63 @@ class AnomalyDetectorClient(SDKClient):
 
         return deserialized
     last_detect.metadata = {'url': '/timeseries/last/detect'}
+
+    def change_point_detect(
+            self, body, custom_headers=None, raw=False, **operation_config):
+        """Detect change point for the entire series.
+
+        Evaluate change point score of every series point.
+
+        :param body: Time series points and granularity is needed. Advanced
+         model parameters can also be set in the request if needed.
+        :type body:
+         ~azure.cognitiveservices.anomalydetector.models.ChangePointDetectRequest
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: ChangePointDetectResponse or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.cognitiveservices.anomalydetector.models.ChangePointDetectResponse
+         or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`APIErrorException<azure.cognitiveservices.anomalydetector.models.APIErrorException>`
+        """
+        # Construct URL
+        url = self.change_point_detect.metadata['url']
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        body_content = self._serialize.body(body, 'ChangePointDetectRequest')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.APIErrorException(self._deserialize, response)
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('ChangePointDetectResponse', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    change_point_detect.metadata = {'url': '/timeseries/changePoint/detect'}
