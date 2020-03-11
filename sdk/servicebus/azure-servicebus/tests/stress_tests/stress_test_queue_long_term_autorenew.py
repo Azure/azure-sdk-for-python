@@ -28,7 +28,7 @@ def receive_process_and_complete_message(client, queue_name):
     queue_client = client.get_queue(queue_name)
     lock_renewal = AutoLockRenew(max_workers=4)
     lock_renewal.renew_period = 120
-    with queue_client.get_receiver(keep_alive_interval=60) as queue_receiver:
+    with queue_client.get_receiver() as queue_receiver:
         for message in queue_receiver:
             print("Received message: ", message)
             lock_renewal.register(message, timeout=10800)
