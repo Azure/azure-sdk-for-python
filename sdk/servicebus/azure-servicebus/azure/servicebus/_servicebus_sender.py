@@ -68,6 +68,16 @@ class ServiceBusSender(BaseHandler, SenderMixin):
     :keyword dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
      keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
      Additionally the following keys may also be present: `'username', 'password'`.
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/sync_samples/sample_code_servicebus.py
+            :start-after: [START create_servicebus_sender_sync]
+            :end-before: [END create_servicebus_sender_sync]
+            :language: python
+            :dedent: 4
+            :caption: Create a new instance of the ServiceBusSender.
+
     """
     def __init__(
         self,
@@ -156,6 +166,16 @@ class ServiceBusSender(BaseHandler, SenderMixin):
          keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
          Additionally the following keys may also be present: `'username', 'password'`.
         :rtype: ~azure.servicebus.ServiceBusSenderClient
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sync_samples/sample_code_servicebus.py
+                :start-after: [START create_servicebus_sender_from_conn_str_sync]
+                :end-before: [END create_servicebus_sender_from_conn_str_sync]
+                :language: python
+                :dedent: 4
+                :caption: Create a new instance of the ServiceBusSender from connection string.
+
         """
         constructor_args = cls._from_connection_string(
             conn_str,
@@ -176,6 +196,16 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         :rtype: None
         :raises: ~azure.servicebus.common.errors.MessageSendFailed if the message fails to
          send or ~azure.servicebus.common.errors.OperationTimeoutError if sending times out.
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sync_samples/sample_code_servicebus.py
+                :start-after: [START servicebus_sender_send_sync]
+                :end-before: [END servicebus_sender_send_sync]
+                :language: python
+                :dedent: 4
+                :caption: Send message.
+
         """
         self._do_retryable_operation(
             self._send,

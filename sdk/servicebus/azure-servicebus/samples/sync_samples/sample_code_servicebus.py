@@ -11,7 +11,7 @@ Examples to show basic use case of python azure-servicebus SDK, including:
     - Receive and settle messages
     - Receive and settle deferred messages
 """
-
+import datetime
 from azure.servicebus import Message
 
 
@@ -36,7 +36,7 @@ def example_create_servicebus_client_sync():
             shared_access_key
         )
     )
-    # [END create_servicebus_client_sync]
+    # [END create_sb_client_sync]
     return servicebus_client
 
 
@@ -75,7 +75,7 @@ def example_create_servicebus_sender_sync():
     from azure.servicebus import ServiceBusClient
     servicebus_connection_str = os.environ['SERVICE_BUS_CONNECTION_STR']
     queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
-    servicebus_client = ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str)
+    servicebus_client = ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str, logging_enable=True)
     with servicebus_client:
         queue_sender = servicebus_client.get_queue_sender(queue_name=queue_name)
     # [END create_servicebus_sender_from_sb_client_sync]
@@ -118,7 +118,7 @@ def example_create_servicebus_receiver_sync():
     from azure.servicebus import ServiceBusClient
     servicebus_connection_str = os.environ['SERVICE_BUS_CONNECTION_STR']
     queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
-    servicebus_client = ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str)
+    servicebus_client = ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str, logging_enable=True)
     with servicebus_client:
         queue_receiver = servicebus_client.get_queue_receiver(queue_name=queue_name)
     # [END create_servicebus_receiver_from_sb_client_sync]
@@ -137,13 +137,39 @@ def example_send_and_receive_sync():
         servicebus_sender.send(message)
     # [END servicebus_sender_send_sync]
 
+    # [START send_complex_message]
+    message = Message("Hello World!!")
+    message.session_id = "MySessionID"
+    message.partition_key = "UsingSpecificPartition"
+    message.user_properties = {'data': 'custom_data'}
+    message.time_to_live = datetime.timedelta(seconds=30)
+    # [END send_complex_message]
+
     # [START servicebus_receiver_receive_sync]
     with servicebus_receiver:
-        messages = servicebus_receiver.receive(max_batch_size=10, timeout=5)
+        messages = servicebus_receiver.receive(timeout=5)
         for message in messages:
             print(message)
             message.complete()
     # [END servicebus_receiver_receive_sync]
+
+        # [START receive_complex_message]
+        messages = servicebus_receiver.receive(timeout=5)
+        for message in messages:
+            print("Receiving: {}".format(message))
+            print("Time to live: {}".format(message.time_to_live))
+            print("Sequence number: {}".format(message.sequence_number))
+            print("Enqueue Sequence numger: {}".format(message.enqueue_sequence_number))
+            print("Partition ID: {}".format(message.partition_id))
+            print("Partition Key: {}".format(message.partition_key))
+            print("User Properties: {}".format(message.user_properties))
+            print("Annotations: {}".format(message.annotations))
+            print("Delivery count: {}".format(message.header.delivery_count))
+            print("Message ID: {}".format(message.properties.message_id))
+            print("Locked until: {}".format(message.locked_until))
+            print("Lock Token: {}".format(message.lock_token))
+            print("Enqueued time: {}".format(message.enqueued_time))
+        # [END receive_complex_message]
 
 
 def example_receive_deferred_sync():

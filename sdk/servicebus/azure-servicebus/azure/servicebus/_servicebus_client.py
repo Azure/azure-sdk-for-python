@@ -30,6 +30,16 @@ class ServiceBusClient(object):
     :keyword dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
      keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
      Additionally the following keys may also be present: `'username', 'password'`.
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/sync_samples/sample_code_servicebus.py
+            :start-after: [START create_sb_client_sync]
+            :end-before: [END create_sb_client_sync]
+            :language: python
+            :dedent: 4
+            :caption: Create a new instance of the ServiceBusClient.
+
     """
     def __init__(
         self,
@@ -51,6 +61,7 @@ class ServiceBusClient(object):
     def close(self) -> None:
         """
         Close down the ServiceBus client.
+
         :return: None
         """
 
@@ -73,6 +84,16 @@ class ServiceBusClient(object):
          keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
          Additionally the following keys may also be present: `'username', 'password'`.
         :rtype: ~azure.servicebus.ServiceBusClient
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sync_samples/sample_code_servicebus.py
+                :start-after: [START create_sb_client_from_conn_str_sync]
+                :end-before: [END create_sb_client_from_conn_str_sync]
+                :language: python
+                :dedent: 4
+                :caption: Create a new instance of the ServiceBusClient from connection string.
+
         """
         host, policy, key, _ = _parse_conn_str(conn_str)
         return cls(
@@ -91,6 +112,16 @@ class ServiceBusClient(object):
         :rtype: ~azure.servicebus.ServiceBusSender
         :raises: :class:`ServiceBusConnectionError`
          :class:`ServiceBusAuthorizationError`
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sync_samples/sample_code_servicebus.py
+                :start-after: [START create_servicebus_sender_from_sb_client_sync]
+                :end-before: [END create_servicebus_sender_from_sb_client_sync]
+                :language: python
+                :dedent: 4
+                :caption: Create a new instance of the ServiceBusSender from ServiceBusClient.
+
         """
         sender = ServiceBusSender(
             fully_qualified_namespace=self.fully_qualified_namespace,
@@ -112,6 +143,17 @@ class ServiceBusClient(object):
         :rtype: ~azure.servicebus.ServiceBusReceiver
         :raises: :class:`ServiceBusConnectionError`
          :class:`ServiceBusAuthorizationError`
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sync_samples/sample_code_servicebus.py
+                :start-after: [START create_servicebus_receiver_from_sb_client_sync]
+                :end-before: [END create_servicebus_receiver_from_sb_client_sync]
+                :language: python
+                :dedent: 4
+                :caption: Create a new instance of the ServiceBusReceiver from ServiceBusClient.
+
+
         """
         receiver = ServiceBusReceiver(
             fully_qualified_namespace=self.fully_qualified_namespace,

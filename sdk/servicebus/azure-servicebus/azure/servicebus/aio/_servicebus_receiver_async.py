@@ -56,6 +56,16 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
     :keyword dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
      keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
      Additionally the following keys may also be present: `'username', 'password'`.
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/async_samples/sample_code_servicebus_async.py
+            :start-after: [START create_servicebus_receiver_async]
+            :end-before: [END create_servicebus_receiver_async]
+            :language: python
+            :dedent: 4
+            :caption: Create a new instance of the ServiceBusReceiver.
+
     """
     def __init__(
         self,
@@ -201,6 +211,16 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
          keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
          Additionally the following keys may also be present: `'username', 'password'`.
         :rtype: ~azure.servicebus.aio.ServiceBusReceiver
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_code_servicebus_async.py
+                :start-after: [START create_servicebus_receiver_from_conn_str_async]
+                :end-before: [END create_servicebus_receiver_from_conn_str_async]
+                :language: python
+                :dedent: 4
+                :caption: Create a new instance of the ServiceBusReceiver from connection string.
+
         """
         constructor_args = cls._from_connection_string(
             conn_str,
@@ -246,6 +266,16 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
          until the connection is closed. If specified, an no messages arrive within the
          timeout period, an empty list will be returned.
         :rtype: list[~azure.servicebus.aio.Message]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_code_servicebus_async.py
+                :start-after: [START servicebus_receiver_receive_async]
+                :end-before: [END servicebus_receiver_receive_async]
+                :language: python
+                :dedent: 4
+                :caption: Receive messages from ServiceBus.
+
         """
         return await self._do_retryable_operation(
             self._receive,
@@ -264,6 +294,16 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
         :param list[int] sequence_numbers: A list of the sequence numbers of messages that have been
          deferred.
         :rtype: list[~azure.servicebus.aio.DeferredMessage]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sync_samples/sample_code_servicebus.py
+                :start-after: [START servicebus_receiver_receive_defer_sync]
+                :end-before: [END servicebus_receiver_receive_defer_sync]
+                :language: python
+                :dedent: 4
+                :caption: Receive deferred messages from ServiceBus.
+
         """
         if not sequence_numbers:
             raise ValueError("At least one sequence number must be specified.")

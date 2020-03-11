@@ -14,35 +14,6 @@ from azure.servicebus.common.errors import MessageSettleFailed
 from azure.servicebus.common.constants import DEADLETTERNAME
 
 
-class Message(sync_message.Message):
-    """A Service Bus Message.
-
-    :param body: The data to send in a single message. The maximum size per message is 256 kB.
-    :type body: str or bytes
-    :param encoding: The encoding for string data. Default is UTF-8.
-    :type encoding: str
-
-    .. admonition:: Example:
-        .. literalinclude:: ../samples/sync_samples/test_examples.py
-            :start-after: [START send_complex_message]
-            :end-before: [END send_complex_message]
-            :language: python
-            :dedent: 4
-            :caption: Sending a message with additional properties
-
-        .. literalinclude:: ../samples/sync_samples/test_examples.py
-            :start-after: [START receive_complex_message]
-            :end-before: [END receive_complex_message]
-            :language: python
-            :dedent: 4
-            :caption: Checking the properties on a received message
-    """
-
-    def __init__(self, body, *, encoding='UTF-8', loop=None, **kwargs):
-        self._loop = loop or get_running_loop()
-        super(Message, self).__init__(body, encoding=encoding, **kwargs)
-
-
 class ReceivedMessage(sync_message.ReceivedMessage):
     def __init__(self, message, loop=None):
         self._loop = loop or get_running_loop()

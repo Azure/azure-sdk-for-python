@@ -21,25 +21,19 @@ from azure.servicebus.common.errors import (
 class Message(object):  # pylint: disable=too-many-public-methods,too-many-instance-attributes
     """A Service Bus Message.
 
-    :param body: The data to send in a single message. The maximum size per message is 256 kB.
+    :param body: The data to send in a single message.
     :type body: str or bytes
     :param encoding: The encoding for string data. Default is UTF-8.
     :type encoding: str
 
     .. admonition:: Example:
-        .. literalinclude:: ../samples/sync_samples/test_examples.py
+
+        .. literalinclude:: ../samples/sync_samples/sample_code_servicebus.py
             :start-after: [START send_complex_message]
             :end-before: [END send_complex_message]
             :language: python
             :dedent: 4
             :caption: Sending a message with additional properties
-
-        .. literalinclude:: ../samples/sync_samples/test_examples.py
-            :start-after: [START receive_complex_message]
-            :end-before: [END receive_complex_message]
-            :language: python
-            :dedent: 4
-            :caption: Checking the properties on a received message
 
     """
 
@@ -207,37 +201,6 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
         self.message.annotations[types.AMQPSymbol(self._x_OPT_SCHEDULED_ENQUEUE_TIME)] = schedule_time
 
 
-class BatchMessage(Message):
-    """A batch of messages combined into a single message body.
-
-    The body of the messages in the batch should be supplied by an iterable,
-    such as a generator.
-    If the contents of the iterable exceeds the maximum size of a single message (256 kB),
-    the data will be broken up across multiple messages.
-
-    :param body: The data to send in each message in the batch. The maximum size per message is 256 kB.
-     If data is supplied in excess of this limit, multiple messages will be sent.
-    :type body: Iterable
-    :param encoding: The encoding for string data. Default is UTF-8.
-    :type encoding: str
-
-    .. admonition:: Example:
-        .. literalinclude:: ../samples/sync_samples/test_examples.py
-            :start-after: [START send_batch_message]
-            :end-before: [END send_batch_message]
-            :language: python
-            :dedent: 4
-            :caption: Send a batched message.
-
-    """
-
-    def _build_message(self, body):
-        if body is None:
-            raise ValueError("Message body cannot be None.")
-        self.message = uamqp.BatchMessage(
-            data=body, multi_messages=True, properties=self.properties, header=self.header)
-
-
 class PeekMessage(Message):
     """A preview message.
 
@@ -300,6 +263,18 @@ class PeekMessage(Message):
 
 
 class ReceivedMessage(PeekMessage):
+    """
+    A Service Bus Message received from service side.
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/sync_samples/sample_code_servicebus.py
+            :start-after: [START receive_complex_message]
+            :end-before: [END receive_complex_message]
+            :language: python
+            :dedent: 4
+            :caption: Checking the properties on a received message.
+    """
     def __init__(self, message):
         super(ReceivedMessage, self).__init__(message=message)
 

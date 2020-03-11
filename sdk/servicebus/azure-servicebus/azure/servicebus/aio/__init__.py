@@ -18,18 +18,16 @@ from ..common.errors import (
     AutoLockRenewFailed,
     AutoLockRenewTimeout)
 from ..common.constants import ReceiveSettleMode, NEXT_AVAILABLE
-from ..common.message import BatchMessage, PeekMessage
-from .async_message import Message, DeferredMessage
-from .async_utils import AutoLockRenew
+from ..common.message import PeekMessage, Message
+from .async_message import ReceivedMessage, DeferredMessage
 from ._base_handler_async import ServiceBusSharedKeyCredential
 from ._servicebus_sender_async import ServiceBusSender
 from ._servicebus_receiver_async import ServiceBusReceiver
 from ._servicebus_client_async import ServiceBusClient
 
 __all__ = [
+    'ReceivedMessage',
     'Message',
-    'AutoLockRenew',
-    'BatchMessage',
     'PeekMessage',
     'DeferredMessage',
     'ReceiveSettleMode',

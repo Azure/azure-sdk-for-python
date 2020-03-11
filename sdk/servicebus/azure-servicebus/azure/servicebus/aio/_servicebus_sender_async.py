@@ -8,13 +8,13 @@ from typing import Any, TYPE_CHECKING
 
 from uamqp import SendClientAsync
 
+from ..common.message import Message
 from .._servicebus_sender import SenderMixin
 from ._base_handler_async import BaseHandlerAsync
 from ..common.errors import (
     MessageSendFailed
 )
 from ..common.utils import create_properties
-from .async_message import Message
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -43,6 +43,16 @@ class ServiceBusSender(BaseHandlerAsync, SenderMixin):
     :keyword dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
      keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
      Additionally the following keys may also be present: `'username', 'password'`.
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/async_samples/sample_code_servicebus_async.py
+            :start-after: [START create_servicebus_sender_async]
+            :end-before: [END create_servicebus_sender_async]
+            :language: python
+            :dedent: 4
+            :caption: Create a new instance of the ServiceBusSender.
+
     """
     def __init__(
         self,
@@ -128,6 +138,16 @@ class ServiceBusSender(BaseHandlerAsync, SenderMixin):
          keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
          Additionally the following keys may also be present: `'username', 'password'`.
         :rtype: ~azure.servicebus.aio.ServiceBusSender
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_code_servicebus_async.py
+                :start-after: [START create_servicebus_sender_from_conn_str_async]
+                :end-before: [END create_servicebus_sender_from_conn_str_async]
+                :language: python
+                :dedent: 4
+                :caption: Create a new instance of the ServiceBusSender from connection string.
+
         """
         constructor_args = cls._from_connection_string(
             conn_str,
@@ -148,6 +168,16 @@ class ServiceBusSender(BaseHandlerAsync, SenderMixin):
         :rtype: None
         :raises: ~azure.servicebus.common.errors.MessageSendFailed if the message fails to
          send or ~azure.servicebus.common.errors.OperationTimeoutError if sending times out.
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_code_servicebus_async.py
+                :start-after: [START servicebus_sender_send_async]
+                :end-before: [END servicebus_sender_send_async]
+                :language: python
+                :dedent: 4
+                :caption: Send message.
+
         """
         await self._do_retryable_operation(
             self._send,

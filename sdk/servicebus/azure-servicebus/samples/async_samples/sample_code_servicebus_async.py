@@ -36,7 +36,7 @@ def example_create_servicebus_client_async():
             shared_access_key
         )
     )
-    # [END create_servicebus_client_async]
+    # [END create_sb_client_async]
     return servicebus_client
 
 
