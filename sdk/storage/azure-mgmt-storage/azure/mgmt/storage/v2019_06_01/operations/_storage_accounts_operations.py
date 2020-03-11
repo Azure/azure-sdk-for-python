@@ -553,7 +553,7 @@ class StorageAccountsOperations(object):
         cls = kwargs.pop('cls', None)  # type: ClsType["models.StorageAccountListKeysResult"]
         error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-06-01"
-        expand = None
+        expand = "kerb"
 
         # Construct URL
         url = self.list_keys.metadata['url']

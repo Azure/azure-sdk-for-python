@@ -17,11 +17,9 @@ try:
     from ._models_py3 import BlobRestoreStatus
     from ._models_py3 import BlobServiceItems
     from ._models_py3 import BlobServiceProperties
-    from ._models_py3 import BlobServiceProperties
     from ._models_py3 import ChangeFeed
     from ._models_py3 import CheckNameAvailabilityResult
     from ._models_py3 import CloudErrorBody
-    from ._models_py3 import ContainerProperties
     from ._models_py3 import CorsRule
     from ._models_py3 import CorsRules
     from ._models_py3 import CustomDomain
@@ -33,24 +31,20 @@ try:
     from ._models_py3 import EncryptionScope
     from ._models_py3 import EncryptionScopeKeyVaultProperties
     from ._models_py3 import EncryptionScopeListResult
-    from ._models_py3 import EncryptionScopeProperties
     from ._models_py3 import EncryptionService
     from ._models_py3 import EncryptionServices
     from ._models_py3 import Endpoints
     from ._models_py3 import ErrorResponse
     from ._models_py3 import FileServiceItems
     from ._models_py3 import FileServiceProperties
-    from ._models_py3 import FileServiceProperties
     from ._models_py3 import FileShare
     from ._models_py3 import FileShareItem
     from ._models_py3 import FileShareItems
-    from ._models_py3 import FileShareProperties
     from ._models_py3 import GeoReplicationStats
     from ._models_py3 import IPRule
     from ._models_py3 import Identity
     from ._models_py3 import ImmutabilityPolicy
     from ._models_py3 import ImmutabilityPolicyProperties
-    from ._models_py3 import ImmutabilityPolicyProperty
     from ._models_py3 import KeyVaultProperties
     from ._models_py3 import LeaseContainerRequest
     from ._models_py3 import LeaseContainerResponse
@@ -65,7 +59,6 @@ try:
     from ._models_py3 import ManagementPolicyBaseBlob
     from ._models_py3 import ManagementPolicyDefinition
     from ._models_py3 import ManagementPolicyFilter
-    from ._models_py3 import ManagementPolicyProperties
     from ._models_py3 import ManagementPolicyRule
     from ._models_py3 import ManagementPolicySchema
     from ._models_py3 import ManagementPolicySnapShot
@@ -74,15 +67,11 @@ try:
     from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
     from ._models_py3 import OperationListResult
-    from ._models_py3 import OperationProperties
     from ._models_py3 import PrivateEndpoint
     from ._models_py3 import PrivateEndpointConnection
-    from ._models_py3 import PrivateEndpointConnectionProperties
     from ._models_py3 import PrivateLinkResource
     from ._models_py3 import PrivateLinkResourceListResult
-    from ._models_py3 import PrivateLinkResourceProperties
     from ._models_py3 import PrivateLinkServiceConnectionState
-    from ._models_py3 import ProxyResource
     from ._models_py3 import Resource
     from ._models_py3 import RestorePolicyProperties
     from ._models_py3 import Restriction
@@ -100,9 +89,6 @@ try:
     from ._models_py3 import StorageAccountListKeysResult
     from ._models_py3 import StorageAccountListResult
     from ._models_py3 import StorageAccountMicrosoftEndpoints
-    from ._models_py3 import StorageAccountProperties
-    from ._models_py3 import StorageAccountPropertiesCreateParameters
-    from ._models_py3 import StorageAccountPropertiesUpdateParameters
     from ._models_py3 import StorageAccountRegenerateKeyParameters
     from ._models_py3 import StorageAccountUpdateParameters
     from ._models_py3 import StorageSkuListResult
@@ -124,11 +110,9 @@ except (SyntaxError, ImportError):
     from ._models import BlobRestoreStatus  # type: ignore
     from ._models import BlobServiceItems  # type: ignore
     from ._models import BlobServiceProperties  # type: ignore
-    from ._models import BlobServiceProperties  # type: ignore
     from ._models import ChangeFeed  # type: ignore
     from ._models import CheckNameAvailabilityResult  # type: ignore
     from ._models import CloudErrorBody  # type: ignore
-    from ._models import ContainerProperties  # type: ignore
     from ._models import CorsRule  # type: ignore
     from ._models import CorsRules  # type: ignore
     from ._models import CustomDomain  # type: ignore
@@ -140,24 +124,20 @@ except (SyntaxError, ImportError):
     from ._models import EncryptionScope  # type: ignore
     from ._models import EncryptionScopeKeyVaultProperties  # type: ignore
     from ._models import EncryptionScopeListResult  # type: ignore
-    from ._models import EncryptionScopeProperties  # type: ignore
     from ._models import EncryptionService  # type: ignore
     from ._models import EncryptionServices  # type: ignore
     from ._models import Endpoints  # type: ignore
     from ._models import ErrorResponse  # type: ignore
     from ._models import FileServiceItems  # type: ignore
     from ._models import FileServiceProperties  # type: ignore
-    from ._models import FileServiceProperties  # type: ignore
     from ._models import FileShare  # type: ignore
     from ._models import FileShareItem  # type: ignore
     from ._models import FileShareItems  # type: ignore
-    from ._models import FileShareProperties  # type: ignore
     from ._models import GeoReplicationStats  # type: ignore
     from ._models import IPRule  # type: ignore
     from ._models import Identity  # type: ignore
     from ._models import ImmutabilityPolicy  # type: ignore
     from ._models import ImmutabilityPolicyProperties  # type: ignore
-    from ._models import ImmutabilityPolicyProperty  # type: ignore
     from ._models import KeyVaultProperties  # type: ignore
     from ._models import LeaseContainerRequest  # type: ignore
     from ._models import LeaseContainerResponse  # type: ignore
@@ -172,7 +152,6 @@ except (SyntaxError, ImportError):
     from ._models import ManagementPolicyBaseBlob  # type: ignore
     from ._models import ManagementPolicyDefinition  # type: ignore
     from ._models import ManagementPolicyFilter  # type: ignore
-    from ._models import ManagementPolicyProperties  # type: ignore
     from ._models import ManagementPolicyRule  # type: ignore
     from ._models import ManagementPolicySchema  # type: ignore
     from ._models import ManagementPolicySnapShot  # type: ignore
@@ -181,15 +160,11 @@ except (SyntaxError, ImportError):
     from ._models import Operation  # type: ignore
     from ._models import OperationDisplay  # type: ignore
     from ._models import OperationListResult  # type: ignore
-    from ._models import OperationProperties  # type: ignore
     from ._models import PrivateEndpoint  # type: ignore
     from ._models import PrivateEndpointConnection  # type: ignore
-    from ._models import PrivateEndpointConnectionProperties  # type: ignore
     from ._models import PrivateLinkResource  # type: ignore
     from ._models import PrivateLinkResourceListResult  # type: ignore
-    from ._models import PrivateLinkResourceProperties  # type: ignore
     from ._models import PrivateLinkServiceConnectionState  # type: ignore
-    from ._models import ProxyResource  # type: ignore
     from ._models import Resource  # type: ignore
     from ._models import RestorePolicyProperties  # type: ignore
     from ._models import Restriction  # type: ignore
@@ -207,9 +182,6 @@ except (SyntaxError, ImportError):
     from ._models import StorageAccountListKeysResult  # type: ignore
     from ._models import StorageAccountListResult  # type: ignore
     from ._models import StorageAccountMicrosoftEndpoints  # type: ignore
-    from ._models import StorageAccountProperties  # type: ignore
-    from ._models import StorageAccountPropertiesCreateParameters  # type: ignore
-    from ._models import StorageAccountPropertiesUpdateParameters  # type: ignore
     from ._models import StorageAccountRegenerateKeyParameters  # type: ignore
     from ._models import StorageAccountUpdateParameters  # type: ignore
     from ._models import StorageSkuListResult  # type: ignore
@@ -273,11 +245,9 @@ __all__ = [
     'BlobRestoreStatus',
     'BlobServiceItems',
     'BlobServiceProperties',
-    'BlobServiceProperties',
     'ChangeFeed',
     'CheckNameAvailabilityResult',
     'CloudErrorBody',
-    'ContainerProperties',
     'CorsRule',
     'CorsRules',
     'CustomDomain',
@@ -289,24 +259,20 @@ __all__ = [
     'EncryptionScope',
     'EncryptionScopeKeyVaultProperties',
     'EncryptionScopeListResult',
-    'EncryptionScopeProperties',
     'EncryptionService',
     'EncryptionServices',
     'Endpoints',
     'ErrorResponse',
     'FileServiceItems',
     'FileServiceProperties',
-    'FileServiceProperties',
     'FileShare',
     'FileShareItem',
     'FileShareItems',
-    'FileShareProperties',
     'GeoReplicationStats',
     'IPRule',
     'Identity',
     'ImmutabilityPolicy',
     'ImmutabilityPolicyProperties',
-    'ImmutabilityPolicyProperty',
     'KeyVaultProperties',
     'LeaseContainerRequest',
     'LeaseContainerResponse',
@@ -321,7 +287,6 @@ __all__ = [
     'ManagementPolicyBaseBlob',
     'ManagementPolicyDefinition',
     'ManagementPolicyFilter',
-    'ManagementPolicyProperties',
     'ManagementPolicyRule',
     'ManagementPolicySchema',
     'ManagementPolicySnapShot',
@@ -330,15 +295,11 @@ __all__ = [
     'Operation',
     'OperationDisplay',
     'OperationListResult',
-    'OperationProperties',
     'PrivateEndpoint',
     'PrivateEndpointConnection',
-    'PrivateEndpointConnectionProperties',
     'PrivateLinkResource',
     'PrivateLinkResourceListResult',
-    'PrivateLinkResourceProperties',
     'PrivateLinkServiceConnectionState',
-    'ProxyResource',
     'Resource',
     'RestorePolicyProperties',
     'Restriction',
@@ -356,9 +317,6 @@ __all__ = [
     'StorageAccountListKeysResult',
     'StorageAccountListResult',
     'StorageAccountMicrosoftEndpoints',
-    'StorageAccountProperties',
-    'StorageAccountPropertiesCreateParameters',
-    'StorageAccountPropertiesUpdateParameters',
     'StorageAccountRegenerateKeyParameters',
     'StorageAccountUpdateParameters',
     'StorageSkuListResult',

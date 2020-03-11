@@ -11,32 +11,21 @@ try:
     from ._models_py3 import AzureEntityResource
     from ._models_py3 import BlobContainer
     from ._models_py3 import BlobServiceProperties
-    from ._models_py3 import BlobServiceProperties
     from ._models_py3 import CheckNameAvailabilityResult
-    from ._models_py3 import ContainerProperties
     from ._models_py3 import CorsRule
     from ._models_py3 import CorsRules
-    from ._models_py3 import CustomDomain
     from ._models_py3 import CustomDomain
     from ._models_py3 import DeleteRetentionPolicy
     from ._models_py3 import Dimension
     from ._models_py3 import Encryption
-    from ._models_py3 import Encryption
-    from ._models_py3 import EncryptionService
     from ._models_py3 import EncryptionService
     from ._models_py3 import EncryptionServices
-    from ._models_py3 import EncryptionServices
-    from ._models_py3 import Endpoints
     from ._models_py3 import Endpoints
     from ._models_py3 import GeoReplicationStats
     from ._models_py3 import IPRule
-    from ._models_py3 import IPRule
-    from ._models_py3 import Identity
     from ._models_py3 import Identity
     from ._models_py3 import ImmutabilityPolicy
     from ._models_py3 import ImmutabilityPolicyProperties
-    from ._models_py3 import ImmutabilityPolicyProperty
-    from ._models_py3 import KeyVaultProperties
     from ._models_py3 import KeyVaultProperties
     from ._models_py3 import LeaseContainerRequest
     from ._models_py3 import LeaseContainerResponse
@@ -47,26 +36,18 @@ try:
     from ._models_py3 import ListContainerItems
     from ._models_py3 import ListServiceSasResponse
     from ._models_py3 import ManagementPoliciesRules
-    from ._models_py3 import ManagementPoliciesRules
     from ._models_py3 import ManagementPoliciesRulesSetParameter
     from ._models_py3 import MetricSpecification
-    from ._models_py3 import NetworkRuleSet
     from ._models_py3 import NetworkRuleSet
     from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
     from ._models_py3 import OperationListResult
-    from ._models_py3 import OperationProperties
-    from ._models_py3 import ProxyResource
     from ._models_py3 import Resource
     from ._models_py3 import Restriction
-    from ._models_py3 import Restriction
-    from ._models_py3 import SKUCapability
     from ._models_py3 import SKUCapability
     from ._models_py3 import ServiceSasParameters
     from ._models_py3 import ServiceSpecification
     from ._models_py3 import Sku
-    from ._models_py3 import Sku
-    from ._models_py3 import StorageAccount
     from ._models_py3 import StorageAccount
     from ._models_py3 import StorageAccountCheckNameAvailabilityParameters
     from ._models_py3 import StorageAccountCreateParameters
@@ -74,13 +55,7 @@ try:
     from ._models_py3 import StorageAccountListKeysResult
     from ._models_py3 import StorageAccountListResult
     from ._models_py3 import StorageAccountManagementPolicies
-    from ._models_py3 import StorageAccountManagementPolicies
     from ._models_py3 import StorageAccountManagementPoliciesRulesProperty
-    from ._models_py3 import StorageAccountManagementPoliciesRulesProperty
-    from ._models_py3 import StorageAccountProperties
-    from ._models_py3 import StorageAccountProperties
-    from ._models_py3 import StorageAccountPropertiesCreateParameters
-    from ._models_py3 import StorageAccountPropertiesUpdateParameters
     from ._models_py3 import StorageAccountRegenerateKeyParameters
     from ._models_py3 import StorageAccountUpdateParameters
     from ._models_py3 import StorageSkuListResult
@@ -91,38 +66,26 @@ try:
     from ._models_py3 import UsageListResult
     from ._models_py3 import UsageName
     from ._models_py3 import VirtualNetworkRule
-    from ._models_py3 import VirtualNetworkRule
 except (SyntaxError, ImportError):
     from ._models import AccountSasParameters  # type: ignore
     from ._models import AzureEntityResource  # type: ignore
     from ._models import BlobContainer  # type: ignore
     from ._models import BlobServiceProperties  # type: ignore
-    from ._models import BlobServiceProperties  # type: ignore
     from ._models import CheckNameAvailabilityResult  # type: ignore
-    from ._models import ContainerProperties  # type: ignore
     from ._models import CorsRule  # type: ignore
     from ._models import CorsRules  # type: ignore
-    from ._models import CustomDomain  # type: ignore
     from ._models import CustomDomain  # type: ignore
     from ._models import DeleteRetentionPolicy  # type: ignore
     from ._models import Dimension  # type: ignore
     from ._models import Encryption  # type: ignore
-    from ._models import Encryption  # type: ignore
-    from ._models import EncryptionService  # type: ignore
     from ._models import EncryptionService  # type: ignore
     from ._models import EncryptionServices  # type: ignore
-    from ._models import EncryptionServices  # type: ignore
-    from ._models import Endpoints  # type: ignore
     from ._models import Endpoints  # type: ignore
     from ._models import GeoReplicationStats  # type: ignore
     from ._models import IPRule  # type: ignore
-    from ._models import IPRule  # type: ignore
-    from ._models import Identity  # type: ignore
     from ._models import Identity  # type: ignore
     from ._models import ImmutabilityPolicy  # type: ignore
     from ._models import ImmutabilityPolicyProperties  # type: ignore
-    from ._models import ImmutabilityPolicyProperty  # type: ignore
-    from ._models import KeyVaultProperties  # type: ignore
     from ._models import KeyVaultProperties  # type: ignore
     from ._models import LeaseContainerRequest  # type: ignore
     from ._models import LeaseContainerResponse  # type: ignore
@@ -133,26 +96,18 @@ except (SyntaxError, ImportError):
     from ._models import ListContainerItems  # type: ignore
     from ._models import ListServiceSasResponse  # type: ignore
     from ._models import ManagementPoliciesRules  # type: ignore
-    from ._models import ManagementPoliciesRules  # type: ignore
     from ._models import ManagementPoliciesRulesSetParameter  # type: ignore
     from ._models import MetricSpecification  # type: ignore
-    from ._models import NetworkRuleSet  # type: ignore
     from ._models import NetworkRuleSet  # type: ignore
     from ._models import Operation  # type: ignore
     from ._models import OperationDisplay  # type: ignore
     from ._models import OperationListResult  # type: ignore
-    from ._models import OperationProperties  # type: ignore
-    from ._models import ProxyResource  # type: ignore
     from ._models import Resource  # type: ignore
     from ._models import Restriction  # type: ignore
-    from ._models import Restriction  # type: ignore
-    from ._models import SKUCapability  # type: ignore
     from ._models import SKUCapability  # type: ignore
     from ._models import ServiceSasParameters  # type: ignore
     from ._models import ServiceSpecification  # type: ignore
     from ._models import Sku  # type: ignore
-    from ._models import Sku  # type: ignore
-    from ._models import StorageAccount  # type: ignore
     from ._models import StorageAccount  # type: ignore
     from ._models import StorageAccountCheckNameAvailabilityParameters  # type: ignore
     from ._models import StorageAccountCreateParameters  # type: ignore
@@ -160,13 +115,7 @@ except (SyntaxError, ImportError):
     from ._models import StorageAccountListKeysResult  # type: ignore
     from ._models import StorageAccountListResult  # type: ignore
     from ._models import StorageAccountManagementPolicies  # type: ignore
-    from ._models import StorageAccountManagementPolicies  # type: ignore
     from ._models import StorageAccountManagementPoliciesRulesProperty  # type: ignore
-    from ._models import StorageAccountManagementPoliciesRulesProperty  # type: ignore
-    from ._models import StorageAccountProperties  # type: ignore
-    from ._models import StorageAccountProperties  # type: ignore
-    from ._models import StorageAccountPropertiesCreateParameters  # type: ignore
-    from ._models import StorageAccountPropertiesUpdateParameters  # type: ignore
     from ._models import StorageAccountRegenerateKeyParameters  # type: ignore
     from ._models import StorageAccountUpdateParameters  # type: ignore
     from ._models import StorageSkuListResult  # type: ignore
@@ -176,7 +125,6 @@ except (SyntaxError, ImportError):
     from ._models import Usage  # type: ignore
     from ._models import UsageListResult  # type: ignore
     from ._models import UsageName  # type: ignore
-    from ._models import VirtualNetworkRule  # type: ignore
     from ._models import VirtualNetworkRule  # type: ignore
 
 from ._storage_management_client_enums import (
@@ -215,32 +163,21 @@ __all__ = [
     'AzureEntityResource',
     'BlobContainer',
     'BlobServiceProperties',
-    'BlobServiceProperties',
     'CheckNameAvailabilityResult',
-    'ContainerProperties',
     'CorsRule',
     'CorsRules',
-    'CustomDomain',
     'CustomDomain',
     'DeleteRetentionPolicy',
     'Dimension',
     'Encryption',
-    'Encryption',
-    'EncryptionService',
     'EncryptionService',
     'EncryptionServices',
-    'EncryptionServices',
-    'Endpoints',
     'Endpoints',
     'GeoReplicationStats',
     'IPRule',
-    'IPRule',
-    'Identity',
     'Identity',
     'ImmutabilityPolicy',
     'ImmutabilityPolicyProperties',
-    'ImmutabilityPolicyProperty',
-    'KeyVaultProperties',
     'KeyVaultProperties',
     'LeaseContainerRequest',
     'LeaseContainerResponse',
@@ -251,26 +188,18 @@ __all__ = [
     'ListContainerItems',
     'ListServiceSasResponse',
     'ManagementPoliciesRules',
-    'ManagementPoliciesRules',
     'ManagementPoliciesRulesSetParameter',
     'MetricSpecification',
-    'NetworkRuleSet',
     'NetworkRuleSet',
     'Operation',
     'OperationDisplay',
     'OperationListResult',
-    'OperationProperties',
-    'ProxyResource',
     'Resource',
     'Restriction',
-    'Restriction',
-    'SKUCapability',
     'SKUCapability',
     'ServiceSasParameters',
     'ServiceSpecification',
     'Sku',
-    'Sku',
-    'StorageAccount',
     'StorageAccount',
     'StorageAccountCheckNameAvailabilityParameters',
     'StorageAccountCreateParameters',
@@ -278,13 +207,7 @@ __all__ = [
     'StorageAccountListKeysResult',
     'StorageAccountListResult',
     'StorageAccountManagementPolicies',
-    'StorageAccountManagementPolicies',
     'StorageAccountManagementPoliciesRulesProperty',
-    'StorageAccountManagementPoliciesRulesProperty',
-    'StorageAccountProperties',
-    'StorageAccountProperties',
-    'StorageAccountPropertiesCreateParameters',
-    'StorageAccountPropertiesUpdateParameters',
     'StorageAccountRegenerateKeyParameters',
     'StorageAccountUpdateParameters',
     'StorageSkuListResult',
@@ -294,7 +217,6 @@ __all__ = [
     'Usage',
     'UsageListResult',
     'UsageName',
-    'VirtualNetworkRule',
     'VirtualNetworkRule',
     'AccessTier',
     'AccountStatus',

@@ -19,8 +19,8 @@ class ReasonCode(str, Enum):
     not_available_for_subscription = "NotAvailableForSubscription"
 
 class SkuName(str, Enum):
-    """Gets or sets the sku name. Required for account creation; optional for update. Note that in
-    older versions, sku name was called accountType.
+    """Gets or sets the SKU name. Required for account creation; optional for update. Note that in
+    older versions, SKU name was called accountType.
     """
 
     standard_lrs = "Standard_LRS"
@@ -31,7 +31,7 @@ class SkuName(str, Enum):
     premium_zrs = "Premium_ZRS"
 
 class SkuTier(str, Enum):
-    """Gets the sku tier. This is based on the SKU name.
+    """Gets the SKU tier. This is based on the SKU name.
     """
 
     standard = "Standard"

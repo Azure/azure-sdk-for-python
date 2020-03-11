@@ -11,7 +11,6 @@ try:
     from ._models_py3 import AzureEntityResource
     from ._models_py3 import BlobContainer
     from ._models_py3 import CheckNameAvailabilityResult
-    from ._models_py3 import ContainerProperties
     from ._models_py3 import CustomDomain
     from ._models_py3 import Dimension
     from ._models_py3 import Encryption
@@ -22,7 +21,6 @@ try:
     from ._models_py3 import Identity
     from ._models_py3 import ImmutabilityPolicy
     from ._models_py3 import ImmutabilityPolicyProperties
-    from ._models_py3 import ImmutabilityPolicyProperty
     from ._models_py3 import KeyVaultProperties
     from ._models_py3 import LeaseContainerRequest
     from ._models_py3 import LeaseContainerResponse
@@ -37,8 +35,6 @@ try:
     from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
     from ._models_py3 import OperationListResult
-    from ._models_py3 import OperationProperties
-    from ._models_py3 import ProxyResource
     from ._models_py3 import Resource
     from ._models_py3 import Restriction
     from ._models_py3 import SKUCapability
@@ -51,9 +47,6 @@ try:
     from ._models_py3 import StorageAccountKey
     from ._models_py3 import StorageAccountListKeysResult
     from ._models_py3 import StorageAccountListResult
-    from ._models_py3 import StorageAccountProperties
-    from ._models_py3 import StorageAccountPropertiesCreateParameters
-    from ._models_py3 import StorageAccountPropertiesUpdateParameters
     from ._models_py3 import StorageAccountRegenerateKeyParameters
     from ._models_py3 import StorageAccountUpdateParameters
     from ._models_py3 import StorageSkuListResult
@@ -69,7 +62,6 @@ except (SyntaxError, ImportError):
     from ._models import AzureEntityResource  # type: ignore
     from ._models import BlobContainer  # type: ignore
     from ._models import CheckNameAvailabilityResult  # type: ignore
-    from ._models import ContainerProperties  # type: ignore
     from ._models import CustomDomain  # type: ignore
     from ._models import Dimension  # type: ignore
     from ._models import Encryption  # type: ignore
@@ -80,7 +72,6 @@ except (SyntaxError, ImportError):
     from ._models import Identity  # type: ignore
     from ._models import ImmutabilityPolicy  # type: ignore
     from ._models import ImmutabilityPolicyProperties  # type: ignore
-    from ._models import ImmutabilityPolicyProperty  # type: ignore
     from ._models import KeyVaultProperties  # type: ignore
     from ._models import LeaseContainerRequest  # type: ignore
     from ._models import LeaseContainerResponse  # type: ignore
@@ -95,8 +86,6 @@ except (SyntaxError, ImportError):
     from ._models import Operation  # type: ignore
     from ._models import OperationDisplay  # type: ignore
     from ._models import OperationListResult  # type: ignore
-    from ._models import OperationProperties  # type: ignore
-    from ._models import ProxyResource  # type: ignore
     from ._models import Resource  # type: ignore
     from ._models import Restriction  # type: ignore
     from ._models import SKUCapability  # type: ignore
@@ -109,9 +98,6 @@ except (SyntaxError, ImportError):
     from ._models import StorageAccountKey  # type: ignore
     from ._models import StorageAccountListKeysResult  # type: ignore
     from ._models import StorageAccountListResult  # type: ignore
-    from ._models import StorageAccountProperties  # type: ignore
-    from ._models import StorageAccountPropertiesCreateParameters  # type: ignore
-    from ._models import StorageAccountPropertiesUpdateParameters  # type: ignore
     from ._models import StorageAccountRegenerateKeyParameters  # type: ignore
     from ._models import StorageAccountUpdateParameters  # type: ignore
     from ._models import StorageSkuListResult  # type: ignore
@@ -157,7 +143,6 @@ __all__ = [
     'AzureEntityResource',
     'BlobContainer',
     'CheckNameAvailabilityResult',
-    'ContainerProperties',
     'CustomDomain',
     'Dimension',
     'Encryption',
@@ -168,7 +153,6 @@ __all__ = [
     'Identity',
     'ImmutabilityPolicy',
     'ImmutabilityPolicyProperties',
-    'ImmutabilityPolicyProperty',
     'KeyVaultProperties',
     'LeaseContainerRequest',
     'LeaseContainerResponse',
@@ -183,8 +167,6 @@ __all__ = [
     'Operation',
     'OperationDisplay',
     'OperationListResult',
-    'OperationProperties',
-    'ProxyResource',
     'Resource',
     'Restriction',
     'SKUCapability',
@@ -197,9 +179,6 @@ __all__ = [
     'StorageAccountKey',
     'StorageAccountListKeysResult',
     'StorageAccountListResult',
-    'StorageAccountProperties',
-    'StorageAccountPropertiesCreateParameters',
-    'StorageAccountPropertiesUpdateParameters',
     'StorageAccountRegenerateKeyParameters',
     'StorageAccountUpdateParameters',
     'StorageSkuListResult',

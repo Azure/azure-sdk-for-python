@@ -25,7 +25,6 @@ try:
     from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
     from ._models_py3 import OperationListResult
-    from ._models_py3 import OperationProperties
     from ._models_py3 import Resource
     from ._models_py3 import Restriction
     from ._models_py3 import SKUCapability
@@ -38,9 +37,6 @@ try:
     from ._models_py3 import StorageAccountKey
     from ._models_py3 import StorageAccountListKeysResult
     from ._models_py3 import StorageAccountListResult
-    from ._models_py3 import StorageAccountProperties
-    from ._models_py3 import StorageAccountPropertiesCreateParameters
-    from ._models_py3 import StorageAccountPropertiesUpdateParameters
     from ._models_py3 import StorageAccountRegenerateKeyParameters
     from ._models_py3 import StorageAccountUpdateParameters
     from ._models_py3 import StorageSkuListResult
@@ -67,7 +63,6 @@ except (SyntaxError, ImportError):
     from ._models import Operation  # type: ignore
     from ._models import OperationDisplay  # type: ignore
     from ._models import OperationListResult  # type: ignore
-    from ._models import OperationProperties  # type: ignore
     from ._models import Resource  # type: ignore
     from ._models import Restriction  # type: ignore
     from ._models import SKUCapability  # type: ignore
@@ -80,9 +75,6 @@ except (SyntaxError, ImportError):
     from ._models import StorageAccountKey  # type: ignore
     from ._models import StorageAccountListKeysResult  # type: ignore
     from ._models import StorageAccountListResult  # type: ignore
-    from ._models import StorageAccountProperties  # type: ignore
-    from ._models import StorageAccountPropertiesCreateParameters  # type: ignore
-    from ._models import StorageAccountPropertiesUpdateParameters  # type: ignore
     from ._models import StorageAccountRegenerateKeyParameters  # type: ignore
     from ._models import StorageAccountUpdateParameters  # type: ignore
     from ._models import StorageSkuListResult  # type: ignore
@@ -132,7 +124,6 @@ __all__ = [
     'Operation',
     'OperationDisplay',
     'OperationListResult',
-    'OperationProperties',
     'Resource',
     'Restriction',
     'SKUCapability',
@@ -145,9 +136,6 @@ __all__ = [
     'StorageAccountKey',
     'StorageAccountListKeysResult',
     'StorageAccountListResult',
-    'StorageAccountProperties',
-    'StorageAccountPropertiesCreateParameters',
-    'StorageAccountPropertiesUpdateParameters',
     'StorageAccountRegenerateKeyParameters',
     'StorageAccountUpdateParameters',
     'StorageSkuListResult',
