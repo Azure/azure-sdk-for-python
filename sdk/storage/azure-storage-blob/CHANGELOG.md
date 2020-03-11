@@ -2,7 +2,7 @@
 
 ## 12.3.0 (2020-03-10)
 
-**Breaking changes**
+**New features**
 
 - `stage_block` now propagates the response from the service.
 
