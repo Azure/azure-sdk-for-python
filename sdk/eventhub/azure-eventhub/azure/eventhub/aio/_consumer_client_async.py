@@ -360,6 +360,10 @@ class EventHubConsumerClient(ClientBaseAsync):
          For detailed partition context information, please refer to
          :class:`PartitionContext<azure.eventhub.aio.PartitionContext>`.
         :type on_event: Callable[~azure.eventhub.aio.PartitionContext, ~azure.eventhub.EventData]
+        :keyword float max_wait_time: `on_event` is called with its param `event` being None
+         if no event is received after `max_wait_time` second(s).
+         `on_event` is not called if no event is received and `max_wait_time` is None or 0.
+         Default is None.
         :keyword str partition_id: If specified, the client will receive from this partition only.
          Otherwise the client will receive from all partitions.
         :keyword int owner_level: The priority for an exclusive consumer. An exclusive
@@ -457,6 +461,83 @@ class EventHubConsumerClient(ClientBaseAsync):
             Callable[["PartitionContext", "CloseReason"], Awaitable[None]]
         ] = None
     ) -> None:
+        """Receive events from partition(s) in batches, with optional load-balancing and checkpointing.
+
+        :param on_event_batch: The callback function for handling a batch of received events. The callback takes two
+         parameters: `partition_context` which contains partition context and `event_batch` which is the received
+         events. The callback function should be defined like: `on_event_batch(partition_context, event_batch)`.
+         For detailed partition context information, please refer to
+         :class:`PartitionContext<azure.eventhub.aio.PartitionContext>`.
+        :type on_event_batch: Callable[~azure.eventhub.aio.PartitionContext, List[~azure.eventhub.EventData]]
+        :keyword int max_batch_size: The maximum number of events in a batch passed to callback `on_event_batch`.
+         If the actual received number of events is larger than `max_batch_size`, the received events are divided into
+         batches, with each batch having up to `max_batch_size` events.
+         If fewer than `max_batch_size` events are received, `on_event_batch` is called with the received events.
+         If no events are received for a while, `on_event_batch` may or may not be called
+         depending on the value of `max_wait_time`.
+        :keyword float max_wait_time: `on_event_batch` is called with its param `event_batch` being an empty list
+         if no events are received after `max_wait_time` second(s).
+         `on_event_batch` is not called if no events are received and `max_wait_time` is None or 0.
+         Default is None.
+        :keyword str partition_id: If specified, the client will receive from this partition only.
+         Otherwise the client will receive from all partitions.
+        :keyword int owner_level: The priority for an exclusive consumer. An exclusive
+         consumer will be created if owner_level is set. A consumer with a higher owner_level has higher exclusive
+         priority. The owner level is also know as the 'epoch value' of the consumer.
+        :keyword int prefetch: The number of events to prefetch from the service
+         for processing. Default is 300.
+        :keyword bool track_last_enqueued_event_properties: Indicates whether the consumer should request information
+         on the last-enqueued event on its associated partition, and track that information as events are received.
+         When information about the partitions last-enqueued event is being tracked, each event received from the
+         Event Hubs service will carry metadata about the partition. This results in a small amount of additional
+         network bandwidth consumption that is generally a favorable trade-off when considered against periodically
+         making requests for partition properties using the Event Hub client.
+         It is set to `False` by default.
+        :keyword starting_position: Start receiving from this event position
+         if there is no checkpoint data for a partition. Checkpoint data will be used if available. This can be a
+         a dict with partition ID as the key and position as the value for individual partitions, or a single
+         value for all partitions. The value type can be str, int or datetime.datetime. Also supported are the
+         values "-1" for receiving from the beginning of the stream, and "@latest" for receiving only new events.
+        :paramtype starting_position: str, int, datetime.datetime or dict[str,Any]
+        :keyword starting_position_inclusive: Determine whether the given starting_position is inclusive(>=) or
+         not (>). True for inclusive and False for exclusive. This can be a dict with partition ID as the key and
+         bool as the value indicating whether the starting_position for a specific partition is inclusive or not.
+         This can also be a single bool value for all starting_position. The default value is False.
+        :paramtype starting_position_inclusive: bool or dict[str,bool]
+        :keyword on_error: The callback function that will be called when an error is raised during receiving
+         after retry attempts are exhausted, or during the process of load-balancing.
+         The callback takes two parameters: `partition_context` which contains partition information
+         and `error` being the exception. `partition_context` could be None if the error is raised during
+         the process of load-balance. The callback should be defined like: `on_error(partition_context, error)`.
+         The `on_error` callback will also be called if an unhandled exception is raised during
+         the `on_event` callback.
+        :paramtype on_error: Callable[[~azure.eventhub.aio.PartitionContext, Exception]]
+        :keyword on_partition_initialize: The callback function that will be called after a consumer for a certain
+         partition finishes initialization. It would also be called when a new internal partition consumer is created
+         to take over the receiving process for a failed and closed internal partition consumer.
+         The callback takes a single parameter: `partition_context`
+         which contains the partition information. The callback should be defined
+         like: `on_partition_initialize(partition_context)`.
+        :paramtype on_partition_initialize: Callable[[~azure.eventhub.aio.PartitionContext]]
+        :keyword on_partition_close: The callback function that will be called after a consumer for a certain
+         partition is closed. It would be also called when error is raised during receiving after retry attempts are
+         exhausted. The callback takes two parameters: `partition_context` which contains partition
+         information and `reason` for the close. The callback should be defined like:
+         `on_partition_close(partition_context, reason)`.
+         Please refer to :class:`CloseReason<azure.eventhub.CloseReason>` for the various closing reasons.
+        :paramtype on_partition_close: Callable[[~azure.eventhub.aio.PartitionContext, ~azure.eventhub.CloseReason]]
+        :rtype: None
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_code_eventhub_async.py
+                :start-after: [START eventhub_consumer_client_receive_async]
+                :end-before: [END eventhub_consumer_client_receive_async]
+                :language: python
+                :dedent: 4
+                :caption: Receive events from the EventHub.
+        """
+        assert max_batch_size is None or max_batch_size > 0
         await self._receive(
             on_event_batch,
             batch=True,
