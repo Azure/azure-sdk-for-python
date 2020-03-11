@@ -25,7 +25,6 @@ from azure.servicebus.common.errors import (
 from azure.servicebus.common.constants import ReceiveSettleMode, NEXT_AVAILABLE
 from azure.servicebus.common.message import BatchMessage, PeekMessage
 from .async_message import Message, DeferredMessage
-from .async_client import QueueClient, TopicClient, SubscriptionClient
 from .async_utils import AutoLockRenew
 
 
@@ -35,9 +34,6 @@ __all__ = [
     'BatchMessage',
     'PeekMessage',
     'DeferredMessage',
-    'QueueClient',
-    'TopicClient',
-    'SubscriptionClient',
     'ReceiveSettleMode',
     'NEXT_AVAILABLE',
     'ServiceBusError',
