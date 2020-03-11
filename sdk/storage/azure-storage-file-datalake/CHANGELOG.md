@@ -2,7 +2,6 @@
 
 ## 12.0.0 (2020-03-10)
 **New Feature**
-- Added `get_root_directory_client` sync and async API.
 - Added `set_file_system_access_policy` and `get_file_system_access_policy` APIs on FileSystemClient
 
 **Breaking changes**
