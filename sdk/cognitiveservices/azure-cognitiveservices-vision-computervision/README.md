@@ -60,7 +60,7 @@ pip install azure-cognitiveservices-vision-computervision
 
 Once you create your Computer Vision resource, you need its **region**, and one of its **account keys** to instantiate the client object.
 
-Use these values when you create the instance of the [ComputerVisionAPI][ref_computervisionclient] client object.
+Use these values when you create the instance of the [ComputerVisionClient][ref_computervisionclient] client object.
 
 ### Get credentials
 
@@ -85,10 +85,10 @@ export ACCOUNT_KEY=$(az cognitiveservices account keys list \
 
 ### Create client
 
-Once you've populated the `ACCOUNT_REGION` and `ACCOUNT_KEY` environment variables, you can create the [ComputerVisionAPI][ref_computervisionclient] client object.
+Once you've populated the `ACCOUNT_REGION` and `ACCOUNT_KEY` environment variables, you can create the [ComputerVisionClient][ref_computervisionclient] client object.
 
 ```Python
-from azure.cognitiveservices.vision.computervision import ComputerVisionAPI
+from azure.cognitiveservices.vision.computervision import ComputerVisionClient
 from azure.cognitiveservices.vision.computervision.models import VisualFeatureTypes
 from msrest.authentication import CognitiveServicesCredentials
 
@@ -97,12 +97,15 @@ region = os.environ['ACCOUNT_REGION']
 key = os.environ['ACCOUNT_KEY']
 
 credentials = CognitiveServicesCredentials(key)
-client = ComputerVisionAPI(region, credentials)
+client = ComputerVisionClient(
+    endpoint="https://" + region + ".api.cognitive.microsoft.com/",
+    credentials=credentials
+)
 ```
 
 ## Usage
 
-Once you've initialized a [ComputerVisionAPI][ref_computervisionclient] client object, you can:
+Once you've initialized a [ComputerVisionClient][ref_computervisionclient] client object, you can:
 
 * Analyze an image: You can analyze an image for certain features such as faces, colors, tags.
 * Generate thumbnails: Create a custom JPEG image to use as a thumbnail of the original image.
@@ -238,7 +241,7 @@ image.save('thumbnail.jpg')
 
 ### General
 
-When you interact with the [ComputerVisionAPI][ref_computervisionclient] client object using the Python SDK, the [`ComputerVisionErrorException`][ref_computervision_computervisionerrorexception] class is used to return errors. Errors returned by the service correspond to the same HTTP status codes returned for REST API requests.
+When you interact with the [ComputerVisionClient][ref_computervisionclient] client object using the Python SDK, the [`ComputerVisionErrorException`][ref_computervision_computervisionerrorexception] class is used to return errors. Errors returned by the service correspond to the same HTTP status codes returned for REST API requests.
 
 For example, if you try to analyze an image with an invalid key, a `401` error is returned. In the following snippet, the [error][ref_httpfailure] is handled gracefully by catching the exception and displaying additional information about the error.
 
@@ -264,7 +267,7 @@ except HTTPFailure as e:
 
 ### Handle transient errors with retries
 
-While working with the [ComputerVisionAPI][ref_computervisionclient] client, you might encounter transient failures caused by [rate limits][computervision_request_units] enforced by the service, or other transient problems like network outages. For information about handling these types of failures, see [Retry pattern][azure_pattern_retry] in the Cloud Design Patterns guide, and the related [Circuit Breaker pattern][azure_pattern_circuit_breaker].
+While working with the [ComputerVisionClient][ref_computervisionclient] client, you might encounter transient failures caused by [rate limits][computervision_request_units] enforced by the service, or other transient problems like network outages. For information about handling these types of failures, see [Retry pattern][azure_pattern_retry] in the Cloud Design Patterns guide, and the related [Circuit Breaker pattern][azure_pattern_circuit_breaker].
 
 ## Next steps
 
@@ -293,7 +296,7 @@ For more extensive documentation on the Computer Vision service, see the [Azure 
 [venv]: https://docs.python.org/3/library/venv.html
 [virtualenv]: https://virtualenv.pypa.io
 
-[source_code]: https://github.com/Azure/azure-sdk-for-python/tree/master/azure-cognitiveservices-vision-computervision
+[source_code]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/cognitiveservices/azure-cognitiveservices-vision-computervision
 
 [pypi_computervision]:https://pypi.org/project/azure-cognitiveservices-vision-computervision/
 [pypi_pillow]:https://pypi.org/project/Pillow/
@@ -307,16 +310,16 @@ For more extensive documentation on the Computer Vision service, see the [Azure 
 
 [computervision_docs]: https://docs.microsoft.com/azure/cognitive-services/computer-vision/home
 
-[ref_computervisionclient]: https://docs.microsoft.com/python/api/azure-cognitiveservices-vision-computervision/azure.cognitiveservices.vision.computervision.computervisionapi?view=azure-python
+[ref_computervisionclient]: https://docs.microsoft.com/python/api/azure-cognitiveservices-vision-computervision/azure.cognitiveservices.vision.computervision.computervisionclient?view=azure-python
 
 
-[ref_computervisionclient_analyze_image]: https://docs.microsoft.com/python/api/azure-cognitiveservices-vision-computervision/azure.cognitiveservices.vision.computervision.computervisionapi?view=azure-python#analyze-image-url--visual-features-none--details-none--language--en---custom-headers-none--raw-false----operation-config-
-[ref_computervisionclient_list_models]:https://docs.microsoft.com/python/api/azure-cognitiveservices-vision-computervision/azure.cognitiveservices.vision.computervision.computervisionapi?view=azure-python#list-models-custom-headers-none--raw-false----operation-config-
-[ref_computervisionclient_analyze_image_by_domain]:https://docs.microsoft.com/python/api/azure-cognitiveservices-vision-computervision/azure.cognitiveservices.vision.computervision.computervisionapi?view=azure-python#analyze-image-by-domain-model--url--language--en---custom-headers-none--raw-false----operation-config-
-[ref_computervisionclient_describe_image]:https://docs.microsoft.com/python/api/azure-cognitiveservices-vision-computervision/azure.cognitiveservices.vision.computervision.computervisionapi?view=azure-python#describe-image-url--max-candidates--1---language--en---custom-headers-none--raw-false----operation-config-
-[ref_computervisionclient_recognize_text]:https://docs.microsoft.com/python/api/azure-cognitiveservices-vision-computervision/azure.cognitiveservices.vision.computervision.computervisionapi?view=azure-python#recognize-text-url--mode--custom-headers-none--raw-false----operation-config-
-[ref_computervisionclient_get_text_operation_result]:https://docs.microsoft.com/python/api/azure-cognitiveservices-vision-computervision/azure.cognitiveservices.vision.computervision.computervisionapi?view=azure-python#get-text-operation-result-operation-id--custom-headers-none--raw-false----operation-config-
-[ref_computervisionclient_generate_thumbnail]:https://docs.microsoft.com/python/api/azure-cognitiveservices-vision-computervision/azure.cognitiveservices.vision.computervision.computervisionapi?view=azure-python#generate-thumbnail-width--height--url--smart-cropping-false--custom-headers-none--raw-false--callback-none----operation-config-
+[ref_computervisionclient_analyze_image]: https://docs.microsoft.com/python/api/azure-cognitiveservices-vision-computervision/azure.cognitiveservices.vision.computervision.computervisionclient?view=azure-python#analyze-image-url--visual-features-none--details-none--language--en---custom-headers-none--raw-false----operation-config-
+[ref_computervisionclient_list_models]:https://docs.microsoft.com/python/api/azure-cognitiveservices-vision-computervision/azure.cognitiveservices.vision.computervision.computervisionclient?view=azure-python#list-models-custom-headers-none--raw-false----operation-config-
+[ref_computervisionclient_analyze_image_by_domain]:https://docs.microsoft.com/python/api/azure-cognitiveservices-vision-computervision/azure.cognitiveservices.vision.computervision.computervisionclient?view=azure-python#analyze-image-by-domain-model--url--language--en---custom-headers-none--raw-false----operation-config-
+[ref_computervisionclient_describe_image]:https://docs.microsoft.com/python/api/azure-cognitiveservices-vision-computervision/azure.cognitiveservices.vision.computervision.computervisionclient?view=azure-python#describe-image-url--max-candidates--1---language--en---custom-headers-none--raw-false----operation-config-
+[ref_computervisionclient_recognize_text]:https://docs.microsoft.com/python/api/azure-cognitiveservices-vision-computervision/azure.cognitiveservices.vision.computervision.computervisionclient?view=azure-python#recognize-text-url--mode--custom-headers-none--raw-false----operation-config-
+[ref_computervisionclient_get_text_operation_result]:https://docs.microsoft.com/python/api/azure-cognitiveservices-vision-computervision/azure.cognitiveservices.vision.computervision.computervisionclient?view=azure-python#get-text-operation-result-operation-id--custom-headers-none--raw-false----operation-config-
+[ref_computervisionclient_generate_thumbnail]:https://docs.microsoft.com/python/api/azure-cognitiveservices-vision-computervision/azure.cognitiveservices.vision.computervision.computervisionclient?view=azure-python#generate-thumbnail-width--height--url--smart-cropping-false--custom-headers-none--raw-false--callback-none----operation-config-
 
 
 [ref_computervision_model_visualfeatures]:https://docs.microsoft.com/python/api/azure-cognitiveservices-vision-computervision/azure.cognitiveservices.vision.computervision.models.visualfeaturetypes?view=azure-python
