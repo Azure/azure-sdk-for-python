@@ -1,0 +1,56 @@
+interactions:
+- request:
+    body: '{"location": "westus", "properties": {"storageProfile": {"osDisk": {"osType":
+      "Linux", "osState": "Generalized", "blobUri": "https://mystorageaccount.blob.core.windows.net/inputtestdatadonotdelete/ubuntu.vhd",
+      "caching": "ReadWrite"}}}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '236'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.1 azure-mgmt-compute/8.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_managed_disks_test_create_image_from_blob1cfb14b2/providers/Microsoft.Compute/images/myImage?api-version=2019-03-01
+  response:
+    body:
+      string: "{\r\n  \"error\": {\r\n    \"code\": \"InvalidParameter\",\r\n    \"\
+        message\": \"Required parameter 'hyperVGeneration' is missing (null).\",\r\
+        \n    \"target\": \"hyperVGeneration\"\r\n  }\r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '166'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 16 Sep 2019 03:55:51 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-resource:
+      - Microsoft.Compute/CreateImages3Min;39,Microsoft.Compute/CreateImages30Min;199
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1194'
+    status:
+      code: 400
+      message: Bad Request
+version: 1

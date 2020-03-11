@@ -1,0 +1,26 @@
+.wy-side-nav-search {
+    width: 380px
+}
+
+.wy-side-scroll {
+    width: 400px
+}
+
+.wy-nav-side {
+    width: 380px
+}
+
+.wy-menu-vertical {
+    width: 380px
+}
+
+.wy-nav-content-wrap {
+    margin-left: 380px;
+}
+
+@font-face{
+    font-family:"Roboto Slab";
+    font-style:normal;
+    font-weight:400;
+    src:url("../fonts/RobotoSlab/roboto-slab-v7-regular.eot?#iefix") format("embedded-opentype"),url("../fonts/RobotoSlab/roboto-slab-v7-regular.woff2") format("woff2"),url("../fonts/RobotoSlab/roboto-slab-v7-regular.woff") format("woff"),url("../fonts/RobotoSlab/roboto-slab-v7-regular.ttf") format("truetype")
+}

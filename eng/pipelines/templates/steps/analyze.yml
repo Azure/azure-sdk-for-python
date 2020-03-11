@@ -1,0 +1,72 @@
+parameters:
+  BuildTargetingString: 'azure-*'
+  ServiceDirectory: ''
+
+steps:
+  - task: UsePythonVersion@0
+    displayName: 'Use Python $(PythonVersion)'
+    inputs:
+     versionSpec: '$(PythonVersion)'
+
+  - script: |
+     pip install -r eng/ci_tools.txt
+     ward scan -d $(Build.SourcesDirectory) -c $(Build.SourcesDirectory)/eng/.docsettings.yml
+    displayName: 'Verify Readmes'
+
+  - pwsh: |
+      mkdir "$(Build.ArtifactStagingDirectory)/reports"
+      Copy-Item -Path "$(Build.SourcesDirectory)/eng/common/InterdependencyGraph.html" -Destination "$(Build.ArtifactStagingDirectory)/reports/InterdependencyGraph.html"
+    displayName: 'Populate Reports Staging Folder'
+
+  - task: PythonScript@0
+    displayName: 'Analyze dependencies'
+    inputs:
+     scriptPath: 'scripts/analyze_deps.py'
+     arguments: '--verbose --out "$(Build.ArtifactStagingDirectory)/reports/dependencies.html" --dump "$(Build.ArtifactStagingDirectory)/reports/data.js"'
+
+  - task: PythonScript@0
+    displayName: 'Verify Change Log'
+    inputs:
+     scriptPath: 'scripts/devops_tasks/verify_change_log.py'
+     arguments: '"${{ parameters.BuildTargetingString }}" --service=${{parameters.ServiceDirectory}}'
+
+    # Using --always-succeed so as not to block the build. Once package
+    # target is based on data available per-package the --always-succeed should
+    # be removed so this script can help enforce correct practices
+    # (https://github.com/Azure/azure-sdk-for-python/issues/8697)
+  - script: |
+      cd eng/versioning
+      pip install -r requirements.txt
+      python find_invalid_versions.py --always-succeed --service=${{parameters.ServiceDirectory}}
+    displayName: Find Invalid Versions
+
+  - template: eng/pipelines/templates/scripts/verify-path-length.yml@azure-sdk-tools
+    parameters:
+      SourceDirectory: $(Build.SourcesDirectory)
+
+  - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
+    # ComponentGovernance is currently unable to run on pull requests of public projects. Running on non-PR
+    # builds should be sufficient.
+    condition: and(succeededOrFailed(), ne(variables['Build.Reason'],'PullRequest'))
+    displayName: 'Component Detection'
+
+  - task: PublishBuildArtifacts@1
+    condition: succeededOrFailed()
+    displayName: 'Publish Report Artifacts'
+    inputs:
+     artifactName: reports
+     pathtoPublish: $(Build.ArtifactStagingDirectory)/reports
+
+  - task: PythonScript@0
+    displayName: 'Verify sdist'
+    condition: ne(variables['Skip.VerifySdist'],'true')
+    inputs:
+     scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
+     arguments: '"${{ parameters.BuildTargetingString }}" --service=${{parameters.ServiceDirectory}} --toxenv=verifysdist'
+
+  - task: PythonScript@0
+    displayName: 'Verify whl'
+    condition: ne(variables['Skip.VerifyWhl'],'true')
+    inputs:
+     scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
+     arguments: '"${{ parameters.BuildTargetingString }}" --service=${{parameters.ServiceDirectory}} --toxenv=verifywhl'

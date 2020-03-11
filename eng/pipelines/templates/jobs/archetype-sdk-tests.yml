@@ -1,0 +1,90 @@
+parameters:
+  ServiceDirectory: ''
+  EnvVars: {}
+  MaxParallel: 0
+  BeforeTestSteps: []
+  AfterTestSteps: []
+  BuildTargetingString: 'azure-*'
+  AdditionalTestArgs: ''
+  TestMarkArgument: ''
+  InjectedPackages: ''
+  BuildDocs: true
+  JobName: Test
+  AllocateResourceGroup: 'true'
+  Matrix:
+    Linux_Python35:
+      OSName: 'Linux'
+      OSVmImage: 'ubuntu-16.04'
+      PythonVersion: '3.5'
+    MacOs_Python37:
+      OSName: 'MacOS'
+      OSVmImage: 'macOS-10.15'
+      PythonVersion: '3.7'
+    Windows_Python27:
+      OSName: 'Windows'
+      OSVmImage: 'windows-2019'
+      PythonVersion: '2.7'
+    Linux_PyPy3:
+      OSName: 'Linux'
+      OSVmImage: 'ubuntu-16.04'
+      PythonVersion: 'pypy3'
+    Linux_Python38:
+      OSName: 'Linux'
+      OSVmImage: 'ubuntu-16.04'
+      PythonVersion: '3.8'
+
+jobs:
+  - job: ${{ parameters.JobName }}
+    variables:
+      skipComponentGovernanceDetection: true
+      CoverageArg: --disablecov
+
+    timeoutInMinutes: 120
+    strategy:
+      maxParallel: ${{ parameters.MaxParallel }}
+      matrix: ${{ parameters.Matrix }}
+    continueOnError: false
+
+    pool:
+      vmImage: $(OSVmImage)
+
+    steps:
+      - ${{ if eq(parameters['AllocateResourceGroup'], 'true') }}:
+        - pwsh: |
+            $BaseName = 't' + (New-Guid).ToString('n').Substring(0, 16)
+            $RgName = "rg-${{ parameters.ServiceDirectory }}-$($BaseName)"
+            $ResourceGroupExpiration = (Get-Date).ToUniversalTime().AddHours(24).ToString("o")
+            Write-Host "Creating Resource Group: $($RgName)"
+            Write-Host "##vso[task.setvariable variable=AZURE_RESOURCEGROUP_NAME]$RgName"
+
+            az login --service-principal -u $(provisioner-aad-id) -p $(provisioner-aad-secret) --tenant $(provisioner-aad-tenant)
+            az account set --subscription $(provisioner-subscription)
+
+            az group create --location westus2 --name $RgName --tags DeleteAfter=$ResourceGroupExpiration BuildId='$(Build.BuildId)' BuildJob='$(Agent.JobName)' BuildNumber='$(Build.BuildNumber)' BuildReason='$(Build.Reason)'
+            az group wait --created --resource-group $RgName
+          displayName: Create resource group and environment variable for tests
+
+      - template: ../steps/build-test.yml
+        parameters:
+          BuildTargetingString: ${{ parameters.BuildTargetingString }}
+          ServiceDirectory: ${{ parameters.ServiceDirectory }}
+          CoverageArg: $(CoverageArg)
+          EnvVars:
+            AZURE_RUN_MODE: 'Live' #Record, Playback
+            ${{ insert }}: ${{ parameters.EnvVars }}
+          BeforeTestSteps: ${{ parameters.BeforeTestSteps }}
+          AfterTestSteps: ${{ parameters.AfterTestSteps }}
+          PythonVersion: $(PythonVersion)
+          OSName: $(OSName)
+          ToxTestEnv: "whl"
+          AdditionalTestArgs: ${{ parameters.AdditionalTestArgs }}
+          TestMarkArgument: ${{ parameters.TestMarkArgument }}
+          InjectedPackages: ${{ parameters.InjectedPackages }}
+          BuildDocs: ${{parameters.BuildDocs}}
+
+      - ${{ if eq(parameters['AllocateResourceGroup'], 'true') }}:
+        - pwsh: |
+            az group delete --resource-group $env:AZURE_RESOURCEGROUP_NAME -y --no-wait
+          displayName: Delete resource group
+          condition: ne(variables['AZURE_RESOURCEGROUP_NAME'], '')
+

@@ -1,32 +1,50 @@
-# See for instructions on this file https://help.github.com/articles/about-codeowners/
+# Instructions for CODEOWNERS file format and automatic build failure notifications:
+# https://github.com/Azure/azure-sdk/blob/master/docs/policies/opensource.md#codeowners
 
-* @lmazuel
+###########
+# SDK
+###########
 
-/azure-applicationinsights/ @alexeldeib
-/azure-batch/ @annatisch @matthchr
-/azure-cognitiveservices-vision-customvision/ @areddish
-/azure-keyvault/ @schaabs
-/azure-loganalytics/ @alexeldeib
-/azure-mgmt-batch/ @annatisch @matthchr
-/azure-mgmt-batchai/ @AlexanderYukhanov
-/azure-mgmt-cdn/ @tjprescott
-/azure-mgmt-consumption/ @sandeepnl
-/azure-mgmt-containerinstance/ @samkreter @xizhamsft
-/azure-mgmt-containerregistry/ @djyou 
-/azure-mgmt-containerservice/ @mboersma
-/azure-mgmt-cosmosdb/ @dmakwana
-/azure-mgmt-datafactory/ @hvermis
-/azure-mgmt-datalake-analytics/ @ro-joowan
-/azure-mgmt-datalake-store/ @ro-joowan
-/azure-mgmt-datamigration/ @vchske
-/azure-mgmt-eventgrid/ @kalyanaj
-/azure-mgmt-hdinsight/ @idear1203
-/azure-mgmt-keyvault/ @schaabs
-/azure-mgmt-machinelearningcompute/ @shutchings
-/azure-mgmt-recoveryservices/ @DheerendraRathor
-/azure-mgmt-recoveryservicesbackup/ @DheerendraRathor
-/azure-mgmt-servicefabric/ @QingChenmsft
-/azure-mgmt-sql/ @jaredmoo
-/azure-mgmt-web/ @yugangw-msft
-/azure-servicebus/ @annatisch
-/azure-servicefabric/ @samedder
+# Catch all
+/sdk/ @mayurid
+
+# Core
+/sdk/core/ @lmazuel @xiangyan99 @johanste
+/sdk/core/azure-core/ @xiangyan99 @bryevdv @lmazuel
+
+# Service team
+/sdk/identity/ @chlowell @schaabs
+/sdk/eventhub/ @annatisch @yunhaoling @YijunXieMS
+/sdk/storage/ @zezha-msft @annatisch @rakshith91 @xiafu-msft
+/sdk/applicationinsights/ @alexeldeib
+/sdk/batch/ @bgklein @matthchr @xingwu1
+/sdk/cognitiveservices/azure-cognitiveservices-vision-customvision/ @areddish
+/sdk/keyvault/ @schaabs @chlowell @iscai-msft
+/sdk/loganalytics/ @alexeldeib
+/sdk/consumption/ @sandeepnl
+/sdk/containerinstance/ @samkreter @xizhamsft
+/sdk/containerregistry/ @djyou
+/sdk/containerservice/ @samkreter @zqingqing1 @GaneshaThirumurthi
+/sdk/cosmos/ @shurd
+/sdk/datafactory/ @hvermis
+/sdk/datalake/ @ro-joowan
+/sdk/datadatamigration/ @vchske
+/sdk/eventgrid/ @kalyanaj
+/sdk/hdinsight/ @idear1203
+/sdk/machinelearningcompute/ @shutchings
+/sdk/recoveryservices/ @DheerendraRathor
+/sdk/servicefabric/ @QingChenmsft @samedder
+/sql/sql/ @jaredmoo
+/sdk/servicebus/ @annatisch @yunhaoling @YijunXieMS @KieranBrantnerMagee
+/sdk/synapse/ @aim-for-better @idear1203
+/sdk/textanalytics/ @kristapratico
+
+# Management Plane
+/**/*mgmt*/ @zikalino
+
+###########
+# Eng Sys
+###########
+/eng/   @weshaggard @scbedd @mitchdenny @danieljurek
+/**/tests.yml   @danieljurek
+/**/ci.yml      @mitchdenny

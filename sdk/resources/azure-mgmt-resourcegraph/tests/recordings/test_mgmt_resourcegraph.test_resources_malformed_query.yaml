@@ -1,0 +1,31 @@
+interactions:
+- request:
+    body: 'b''b\''b\\\''b\\\\\\\''{"subscriptions": ["00000000-0000-0000-0000-000000000000"],
+      "query": "project id, location | where where"}\\\\\\\''\\\''\'''''
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['106']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.17134-SP0) requests/2.19.1 msrest/0.5.4
+          msrest_azure/0.4.34 azure-mgmt-resourcegraph/0.6.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: POST
+    uri: https://management.azure.com/providers/Microsoft.ResourceGraph/resources?api-version=2019-04-01
+  response:
+    body: {string: "{\"error\":{\"code\":\"InvalidQuery\",\"message\":\"Query validation
+        error\",\"details\":[{\"code\":\"ParserFailure\",\"message\":\"Parser failure\",\"line\":1,\"characterPositionInLine\":34,\"token\":\"<EOF>\",\"expectedToken\":\"\u0178\"}]}}"}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['232']
+      content-type: [application/json; charset=utf-8]
+      date: ['Wed, 29 Aug 2018 02:47:47 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-tenant-writes: ['1197']
+    status: {code: 400, message: Bad Request}
+version: 1

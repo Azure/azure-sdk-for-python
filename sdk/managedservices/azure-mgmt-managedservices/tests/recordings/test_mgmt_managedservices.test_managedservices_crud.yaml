@@ -1,0 +1,490 @@
+interactions:
+- request:
+    body: '{"properties": {"description": "dpp", "authorizations": [{"principalId":
+      "d6f6c88a-5b7a-455e-ba40-ce146d4d3671", "roleDefinitionId": "acdd72a7-3385-48ef-bd42-f606fba81ae7"}],
+      "registrationDefinitionName": "Registration Test", "managedByTenantId": "bab3375b-6197-4a15-a44b-16c41faa91d7"}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '287'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.7.2 (Windows-10-10.0.18362-SP0) msrest/0.6.8 msrest_azure/0.4.34
+        azure-mgmt-managedservices/1.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ManagedServices/registrationDefinitions/8daec8c7-7567-47ff-9009-f0a4ec429a3c?api-version=2019-06-01
+  response:
+    body:
+      string: '{"properties":{"registrationDefinitionName":"Registration Test","description":"dpp","managedByTenantId":"bab3375b-6197-4a15-a44b-16c41faa91d7","authorizations":[{"principalId":"d6f6c88a-5b7a-455e-ba40-ce146d4d3671","roleDefinitionId":"acdd72a7-3385-48ef-bd42-f606fba81ae7"}],"provisioningState":"Succeeded","managedByTenantName":"Default
+        Directory"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ManagedServices/registrationDefinitions/8daec8c7-7567-47ff-9009-f0a4ec429a3c","type":"Microsoft.ManagedServices/registrationDefinitions","name":"8daec8c7-7567-47ff-9009-f0a4ec429a3c"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '611'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 04 Jul 2019 02:17:49 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1199'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: 'b''{"properties": {"registrationDefinitionId": "subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ManagedServices/registrationDefinitions/8daec8c7-7567-47ff-9009-f0a4ec429a3c"}}'''
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '195'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.7.2 (Windows-10-10.0.18362-SP0) msrest/0.6.8 msrest_azure/0.4.34
+        azure-mgmt-managedservices/1.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ManagedServices/registrationAssignments/c0d5f994-63a1-484d-8c1e-a2ac825efd60?api-version=2019-06-01
+  response:
+    body:
+      string: '{"properties":{"registrationDefinitionId":"subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ManagedServices/registrationDefinitions/8daec8c7-7567-47ff-9009-f0a4ec429a3c","provisioningState":"Accepted"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ManagedServices/registrationAssignments/c0d5f994-63a1-484d-8c1e-a2ac825efd60","type":"Microsoft.ManagedServices/registrationAssignments","name":"c0d5f994-63a1-484d-8c1e-a2ac825efd60"}'
+    headers:
+      azure-asyncoperation:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ManagedServices/operationStatuses/eyJmdWxseVF1YWxpZmllZFJlc291cmNlSWQiOiIvc3Vic2NyaXB0aW9ucy8wMDJiMzQ3Ny1iZmJmLTQ0MDItYjM3Ny02MDAzMTY4Yjc1ZDMvcHJvdmlkZXJzL01pY3Jvc29mdC5NYW5hZ2VkU2VydmljZXMvcmVnaXN0cmF0aW9uQXNzaWdubWVudHMvYzBkNWY5OTQtNjNhMS00ODRkLThjMWUtYTJhYzgyNWVmZDYwIiwiam9iSWQiOiJSZWdpc3RyYXRpb25Bc3NpZ25tZW50UHJvdmlzaW9uaW5nSm9iOjJEU046MkQxN0QzRUU3ODUwMzY3QjE0QTUyMTIyQjAyOEVBQzc4MjoyREMwRDVGOTk0OjNBMkQ2M0ExOjNBMkQ0ODREOjNBMkR8Q0VGM0RERUZFRUEyQUNFQiJ9?api-version=2019-06-01
+      cache-control:
+      - no-cache
+      content-length:
+      - '485'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 04 Jul 2019 02:17:51 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1199'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.2 (Windows-10-10.0.18362-SP0) msrest/0.6.8 msrest_azure/0.4.34
+        azure-mgmt-managedservices/1.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ManagedServices/operationStatuses/eyJmdWxseVF1YWxpZmllZFJlc291cmNlSWQiOiIvc3Vic2NyaXB0aW9ucy8wMDJiMzQ3Ny1iZmJmLTQ0MDItYjM3Ny02MDAzMTY4Yjc1ZDMvcHJvdmlkZXJzL01pY3Jvc29mdC5NYW5hZ2VkU2VydmljZXMvcmVnaXN0cmF0aW9uQXNzaWdubWVudHMvYzBkNWY5OTQtNjNhMS00ODRkLThjMWUtYTJhYzgyNWVmZDYwIiwiam9iSWQiOiJSZWdpc3RyYXRpb25Bc3NpZ25tZW50UHJvdmlzaW9uaW5nSm9iOjJEU046MkQxN0QzRUU3ODUwMzY3QjE0QTUyMTIyQjAyOEVBQzc4MjoyREMwRDVGOTk0OjNBMkQ2M0ExOjNBMkQ0ODREOjNBMkR8Q0VGM0RERUZFRUEyQUNFQiJ9?api-version=2019-06-01
+  response:
+    body:
+      string: '{"status":"Succeeded"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '22'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 04 Jul 2019 02:18:06 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.2 (Windows-10-10.0.18362-SP0) msrest/0.6.8 msrest_azure/0.4.34
+        azure-mgmt-managedservices/1.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ManagedServices/registrationAssignments/c0d5f994-63a1-484d-8c1e-a2ac825efd60?api-version=2019-06-01
+  response:
+    body:
+      string: '{"properties":{"registrationDefinitionId":"subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ManagedServices/registrationDefinitions/8daec8c7-7567-47ff-9009-f0a4ec429a3c","provisioningState":"Succeeded"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ManagedServices/registrationAssignments/c0d5f994-63a1-484d-8c1e-a2ac825efd60","type":"Microsoft.ManagedServices/registrationAssignments","name":"c0d5f994-63a1-484d-8c1e-a2ac825efd60"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '486'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 04 Jul 2019 02:18:07 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.2 (Windows-10-10.0.18362-SP0) msrest/0.6.8 msrest_azure/0.4.34
+        azure-mgmt-managedservices/1.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ManagedServices/registrationDefinitions/8daec8c7-7567-47ff-9009-f0a4ec429a3c?api-version=2019-06-01
+  response:
+    body:
+      string: '{"properties":{"registrationDefinitionName":"Registration Test","description":"dpp","managedByTenantId":"bab3375b-6197-4a15-a44b-16c41faa91d7","authorizations":[{"principalId":"d6f6c88a-5b7a-455e-ba40-ce146d4d3671","roleDefinitionId":"acdd72a7-3385-48ef-bd42-f606fba81ae7"}],"provisioningState":"Succeeded","managedByTenantName":"Default
+        Directory"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ManagedServices/registrationDefinitions/8daec8c7-7567-47ff-9009-f0a4ec429a3c","type":"Microsoft.ManagedServices/registrationDefinitions","name":"8daec8c7-7567-47ff-9009-f0a4ec429a3c"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '611'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 04 Jul 2019 02:18:08 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.2 (Windows-10-10.0.18362-SP0) msrest/0.6.8 msrest_azure/0.4.34
+        azure-mgmt-managedservices/1.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ManagedServices/registrationAssignments/c0d5f994-63a1-484d-8c1e-a2ac825efd60?api-version=2019-06-01
+  response:
+    body:
+      string: '{"properties":{"registrationDefinitionId":"subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ManagedServices/registrationDefinitions/8daec8c7-7567-47ff-9009-f0a4ec429a3c","provisioningState":"Succeeded"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ManagedServices/registrationAssignments/c0d5f994-63a1-484d-8c1e-a2ac825efd60","type":"Microsoft.ManagedServices/registrationAssignments","name":"c0d5f994-63a1-484d-8c1e-a2ac825efd60"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '486'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 04 Jul 2019 02:18:09 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - python/3.7.2 (Windows-10-10.0.18362-SP0) msrest/0.6.8 msrest_azure/0.4.34
+        azure-mgmt-managedservices/1.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: DELETE
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ManagedServices/registrationAssignments/c0d5f994-63a1-484d-8c1e-a2ac825efd60?api-version=2019-06-01
+  response:
+    body:
+      string: ''
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '0'
+      date:
+      - Thu, 04 Jul 2019 02:18:10 GMT
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ManagedServices/operationStatuses/eyJmdWxseVF1YWxpZmllZFJlc291cmNlSWQiOiIvc3Vic2NyaXB0aW9ucy8wMDJiMzQ3Ny1iZmJmLTQ0MDItYjM3Ny02MDAzMTY4Yjc1ZDMvcHJvdmlkZXJzL01pY3Jvc29mdC5NYW5hZ2VkU2VydmljZXMvcmVnaXN0cmF0aW9uQXNzaWdubWVudHMvYzBkNWY5OTQtNjNhMS00ODRkLThjMWUtYTJhYzgyNWVmZDYwIiwiam9iSWQiOiJSZWdpc3RyYXRpb25Bc3NpZ25tZW50RGVwcm92aXNpb25pbmdKb2I6MkRTTjoyRDE3RDNFRTc4NTAzNjdCMTRBNTIxMjJCMDI4RUFDNzgyOjJEQzBENUY5OTQ6M0EyRDYzQTE6M0EyRDQ4NEQ6M0F8NEY3MkVBODVDRDg5NEQyOCJ9?api-version=2019-06-01
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-deletes:
+      - '14997'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.2 (Windows-10-10.0.18362-SP0) msrest/0.6.8 msrest_azure/0.4.34
+        azure-mgmt-managedservices/1.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ManagedServices/operationStatuses/eyJmdWxseVF1YWxpZmllZFJlc291cmNlSWQiOiIvc3Vic2NyaXB0aW9ucy8wMDJiMzQ3Ny1iZmJmLTQ0MDItYjM3Ny02MDAzMTY4Yjc1ZDMvcHJvdmlkZXJzL01pY3Jvc29mdC5NYW5hZ2VkU2VydmljZXMvcmVnaXN0cmF0aW9uQXNzaWdubWVudHMvYzBkNWY5OTQtNjNhMS00ODRkLThjMWUtYTJhYzgyNWVmZDYwIiwiam9iSWQiOiJSZWdpc3RyYXRpb25Bc3NpZ25tZW50RGVwcm92aXNpb25pbmdKb2I6MkRTTjoyRDE3RDNFRTc4NTAzNjdCMTRBNTIxMjJCMDI4RUFDNzgyOjJEQzBENUY5OTQ6M0EyRDYzQTE6M0EyRDQ4NEQ6M0F8NEY3MkVBODVDRDg5NEQyOCJ9?api-version=2019-06-01
+  response:
+    body:
+      string: '{"status":"Succeeded"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '22'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 04 Jul 2019 02:18:25 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - python/3.7.2 (Windows-10-10.0.18362-SP0) msrest/0.6.8 msrest_azure/0.4.34
+        azure-mgmt-managedservices/1.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: DELETE
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ManagedServices/registrationDefinitions/8daec8c7-7567-47ff-9009-f0a4ec429a3c?api-version=2019-06-01
+  response:
+    body:
+      string: ''
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '0'
+      date:
+      - Thu, 04 Jul 2019 02:18:27 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-deletes:
+      - '14999'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.2 (Windows-10-10.0.18362-SP0) msrest/0.6.8 msrest_azure/0.4.34
+        azure-mgmt-managedservices/1.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ManagedServices/registrationAssignments?api-version=2019-06-01
+  response:
+    body:
+      string: '{"value":[]}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '12'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 04 Jul 2019 02:18:27 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.2 (Windows-10-10.0.18362-SP0) msrest/0.6.8 msrest_azure/0.4.34
+        azure-mgmt-managedservices/1.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ManagedServices/registrationDefinitions?api-version=2019-06-01
+  response:
+    body:
+      string: '{"value":[{"properties":{"registrationDefinitionName":"cliredisuutqb6goqwftvakd","managedByTenantId":"bab3375b-6197-4a15-a44b-16c41faa91d7","authorizations":[{"principalId":"d6f6c88a-5b7a-455e-ba40-ce146d4d3671","roleDefinitionId":"acdd72a7-3385-48ef-bd42-f606fba81ae7"}],"provisioningState":"Succeeded","managedByTenantName":"Default
+        Directory"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ManagedServices/registrationDefinitions/0709a568-e9bd-4ca4-b9e1-904bb4c6909a","type":"Microsoft.ManagedServices/registrationDefinitions","name":"0709a568-e9bd-4ca4-b9e1-904bb4c6909a"},{"properties":{"registrationDefinitionName":"name","description":"mydef","managedByTenantId":"bab3375b-6197-4a15-a44b-16c41faa91d7","authorizations":[{"principalId":"d6f6c88a-5b7a-455e-ba40-ce146d4d3671","roleDefinitionId":"acdd72a7-3385-48ef-bd42-f606fba81ae7"}],"provisioningState":"Succeeded","managedByTenantName":"Default
+        Directory"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ManagedServices/registrationDefinitions/08c145ff-8039-4ba3-8b3a-9adc1aca182c","type":"Microsoft.ManagedServices/registrationDefinitions","name":"08c145ff-8039-4ba3-8b3a-9adc1aca182c"},{"properties":{"registrationDefinitionName":"clirediss6fqq6tfq7hzhtk7","managedByTenantId":"bab3375b-6197-4a15-a44b-16c41faa91d7","authorizations":[{"principalId":"d6f6c88a-5b7a-455e-ba40-ce146d4d3671","roleDefinitionId":"acdd72a7-3385-48ef-bd42-f606fba81ae7"}],"provisioningState":"Succeeded","managedByTenantName":"Default
+        Directory"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ManagedServices/registrationDefinitions/491653b2-657e-4ba7-aab9-b6d03de5026a","type":"Microsoft.ManagedServices/registrationDefinitions","name":"491653b2-657e-4ba7-aab9-b6d03de5026a"},{"properties":{"registrationDefinitionName":"rajivnan-Registration
+        Test","description":"dpp","managedByTenantId":"bab3375b-6197-4a15-a44b-16c41faa91d7","authorizations":[{"principalId":"d6f6c88a-5b7a-455e-ba40-ce146d4d3671","roleDefinitionId":"acdd72a7-3385-48ef-bd42-f606fba81ae7"}],"provisioningState":"Succeeded","managedByTenantName":"Default
+        Directory"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ManagedServices/registrationDefinitions/4abd19b9-6156-4b13-866b-6d2dad11706c","type":"Microsoft.ManagedServices/registrationDefinitions","name":"4abd19b9-6156-4b13-866b-6d2dad11706c"},{"properties":{"registrationDefinitionName":"name","description":"mydef","managedByTenantId":"bab3375b-6197-4a15-a44b-16c41faa91d7","authorizations":[{"principalId":"d6f6c88a-5b7a-455e-ba40-ce146d4d3671","roleDefinitionId":"acdd72a7-3385-48ef-bd42-f606fba81ae7"}],"provisioningState":"Succeeded","managedByTenantName":"Default
+        Directory"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ManagedServices/registrationDefinitions/62375e93-2886-4116-9efc-c19a3177f3c8","type":"Microsoft.ManagedServices/registrationDefinitions","name":"62375e93-2886-4116-9efc-c19a3177f3c8"},{"properties":{"registrationDefinitionName":"cliredis7r6wjswfg3ggl4aq","managedByTenantId":"bab3375b-6197-4a15-a44b-16c41faa91d7","authorizations":[{"principalId":"d6f6c88a-5b7a-455e-ba40-ce146d4d3671","roleDefinitionId":"acdd72a7-3385-48ef-bd42-f606fba81ae7"}],"provisioningState":"Succeeded","managedByTenantName":"Default
+        Directory"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ManagedServices/registrationDefinitions/7eddbcf1-0ada-4d80-b3fe-320ab2831a86","type":"Microsoft.ManagedServices/registrationDefinitions","name":"7eddbcf1-0ada-4d80-b3fe-320ab2831a86"},{"properties":{"registrationDefinitionName":"noname","description":"nonnamemydef","managedByTenantId":"bab3375b-6197-4a15-a44b-16c41faa91d7","authorizations":[{"principalId":"d6f6c88a-5b7a-455e-ba40-ce146d4d3671","roleDefinitionId":"acdd72a7-3385-48ef-bd42-f606fba81ae7"}],"provisioningState":"Succeeded","managedByTenantName":"Default
+        Directory"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ManagedServices/registrationDefinitions/81261177-454c-4a10-a445-7b449d293fd8","type":"Microsoft.ManagedServices/registrationDefinitions","name":"81261177-454c-4a10-a445-7b449d293fd8"},{"properties":{"registrationDefinitionName":"cliredisxfnlkfaj7choibwx","managedByTenantId":"bab3375b-6197-4a15-a44b-16c41faa91d7","authorizations":[{"principalId":"d6f6c88a-5b7a-455e-ba40-ce146d4d3671","roleDefinitionId":"acdd72a7-3385-48ef-bd42-f606fba81ae7"}],"provisioningState":"Succeeded","managedByTenantName":"Default
+        Directory"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ManagedServices/registrationDefinitions/81f2df6e-3da5-4626-8fb3-21bc40caa30a","type":"Microsoft.ManagedServices/registrationDefinitions","name":"81f2df6e-3da5-4626-8fb3-21bc40caa30a"},{"properties":{"registrationDefinitionName":"name","description":"mydef","managedByTenantId":"bab3375b-6197-4a15-a44b-16c41faa91d7","authorizations":[{"principalId":"d6f6c88a-5b7a-455e-ba40-ce146d4d3671","roleDefinitionId":"acdd72a7-3385-48ef-bd42-f606fba81ae7"}],"provisioningState":"Succeeded","managedByTenantName":"Default
+        Directory"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ManagedServices/registrationDefinitions/a477c862-c865-4856-8f62-859442d118d4","type":"Microsoft.ManagedServices/registrationDefinitions","name":"a477c862-c865-4856-8f62-859442d118d4"},{"properties":{"registrationDefinitionName":"cliredisu42pcho5qfzeoea4","managedByTenantId":"bab3375b-6197-4a15-a44b-16c41faa91d7","authorizations":[{"principalId":"d6f6c88a-5b7a-455e-ba40-ce146d4d3671","roleDefinitionId":"acdd72a7-3385-48ef-bd42-f606fba81ae7"}],"provisioningState":"Succeeded","managedByTenantName":"Default
+        Directory"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ManagedServices/registrationDefinitions/afee244e-9a4d-41c9-a64d-8d7fc7124717","type":"Microsoft.ManagedServices/registrationDefinitions","name":"afee244e-9a4d-41c9-a64d-8d7fc7124717"},{"properties":{"registrationDefinitionName":"name","description":"mydef","managedByTenantId":"bab3375b-6197-4a15-a44b-16c41faa91d7","authorizations":[{"principalId":"d6f6c88a-5b7a-455e-ba40-ce146d4d3671","roleDefinitionId":"acdd72a7-3385-48ef-bd42-f606fba81ae7"}],"provisioningState":"Succeeded","managedByTenantName":"Default
+        Directory"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ManagedServices/registrationDefinitions/b6519b57-48ab-4c81-a1f8-fd1219401021","type":"Microsoft.ManagedServices/registrationDefinitions","name":"b6519b57-48ab-4c81-a1f8-fd1219401021"},{"properties":{"registrationDefinitionName":"name","description":"mydef","managedByTenantId":"bab3375b-6197-4a15-a44b-16c41faa91d7","authorizations":[{"principalId":"d6f6c88a-5b7a-455e-ba40-ce146d4d3671","roleDefinitionId":"acdd72a7-3385-48ef-bd42-f606fba81ae7"}],"provisioningState":"Succeeded","managedByTenantName":"Default
+        Directory"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ManagedServices/registrationDefinitions/ece4cad8-1ad8-4c55-be0b-eb2950871172","type":"Microsoft.ManagedServices/registrationDefinitions","name":"ece4cad8-1ad8-4c55-be0b-eb2950871172"}]}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '7242'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 04 Jul 2019 02:18:28 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+version: 1

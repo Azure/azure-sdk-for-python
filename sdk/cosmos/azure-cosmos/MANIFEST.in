@@ -1,0 +1,7 @@
+include README.md
+include CHANGELOG.md
+include LICENSE.txt
+include azure/__init__.py
+recursive-include samples *.py
+recursive-include test *.py
+recursive-include doc *.rst

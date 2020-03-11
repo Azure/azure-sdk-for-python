@@ -1,0 +1,7 @@
+psutil
+..
+../../azure-eventhub-checkpointstoreblob
+../../azure-eventhub-checkpointstoreblob-aio
+azure-servicebus
+azure-storage-blob
+azure-identity

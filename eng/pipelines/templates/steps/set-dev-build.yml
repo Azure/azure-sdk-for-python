@@ -1,0 +1,13 @@
+parameters:
+  BuildTargetingString: 'azure-*'
+  ServiceDirectory: ''
+
+steps:
+  - template: tools/daily-dev-build-variable/daily-dev-build-variable.yml@azure-sdk-tools
+
+  - task: PythonScript@0
+    condition: eq(variables['SetDevVersion'],'true')
+    displayName: "Update package versions for dev build"
+    inputs:
+      scriptPath: 'eng/versioning/version_set_dev.py'
+      arguments: '"${{ parameters.BuildTargetingString }}" --service="${{parameters.ServiceDirectory}}" --build-id="$(Build.BuildNumber)"'

@@ -1,0 +1,134 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.4 (Windows-10-10.0.18362-SP0) msrest/0.6.9 msrest_azure/0.4.34
+        azure-mgmt-hybridcompute/2019-08-02-preview Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hybridrptest/providers/Microsoft.HybridCompute/machines/fv-az467iqj4s_e2etest?api-version=2019-08-02-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hybridrptest/providers/Microsoft.HybridCompute/machines/fv-az467iqj4s_e2etest","name":"fv-az467iqj4s_e2etest","location":"eastus2euap","tags":{},"identity":{"type":"SystemAssigned","principalId":"d90ee3ab-550f-4cd9-b73a-d2a0ff91656d","tenantId":"72f988bf-86f1-41af-91ab-2d7cd011db47"},"type":"Microsoft.HybridCompute/machines","properties":{"provisioningState":"Succeeded","agentVersion":"0.1.1908.28001","status":"Disconnected","lastStatusChange":"2019-08-28T19:03:24.7624542","errorDetails":[],"displayName":"fv-az467","machineFqdn":"fv-az467","osName":"windows","osVersion":"10.0.14393","osProfile":{"computerName":"fv-az467"},"vmId":"302ad9fd-d9b3-4719-ad93-07c4589a4c0d","physicalLocation":"","clientPublicKey":"MIIBCgKCAQEArKpKmkpPJtIUKTlmVkex4xe0GEnRiFnSAo/Tgjmym0fPXo9VoiJzZOig+XQRKIjKj1iGjphHE729vAbtoE3KDT28MxWvkEJ5G/x5UddlYsiCz5NLfl5J803z1UZgnLT44f/82a/Qju/t0ezWCFAgUrf8KqM4ZRUXhflLJcO3FCx1pb5T3Aw6V60i5yhTA40mPnFxJyR1r6HpBWh4KKuLR5n6LAzDf8WDl6ZV6eHIwuh6E6j/e0TbNmdU1xYGdHqJrhji1HxX7nRKpDnrmYmzOVJVi097U1+NxGGmP5rlme9QZKpDXf/LAUMZ5uPXQvH6tzvGhyyt9Fcr6EUXYmq2pwIDAQAB"}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1154'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 06 Sep 2019 23:34:02 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - python/3.7.4 (Windows-10-10.0.18362-SP0) msrest/0.6.9 msrest_azure/0.4.34
+        azure-mgmt-hybridcompute/2019-08-02-preview Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: DELETE
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hybridrptest/providers/Microsoft.HybridCompute/machines/fv-az467iqj4s_e2etest?api-version=2019-08-02-preview
+  response:
+    body:
+      string: ''
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '0'
+      content-type:
+      - application/json
+      date:
+      - Fri, 06 Sep 2019 23:34:05 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-deletes:
+      - '14999'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.4 (Windows-10-10.0.18362-SP0) msrest/0.6.9 msrest_azure/0.4.34
+        azure-mgmt-hybridcompute/2019-08-02-preview Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hybridrptest/providers/Microsoft.HybridCompute/machines/fv-az467iqj4s_e2etest?api-version=2019-08-02-preview
+  response:
+    body:
+      string: '{"error":{"code":"ResourceNotFound","message":"The Resource ''Microsoft.HybridCompute/machines/fv-az467iqj4s_e2etest''
+        under resource group ''hybridrptest'' was not found."}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '170'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 06 Sep 2019 23:34:05 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-failure-cause:
+      - gateway
+    status:
+      code: 404
+      message: Not Found
+version: 1

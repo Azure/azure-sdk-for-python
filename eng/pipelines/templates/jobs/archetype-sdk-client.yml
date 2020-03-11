@@ -1,0 +1,203 @@
+parameters:
+  ServiceDirectory: ''
+  BeforePublishSteps: []
+  TestMarkArgument: ''
+  BuildTargetingString: 'azure-*'
+  TestTimeoutInMinutes: 0
+  ToxEnvParallel: '--tenvparallel'
+  InjectedPackages: ''
+  BuildDocs: true
+  TestMatrix:
+    Linux_Python27:
+      OSName: 'Linux'
+      OSVmImage: 'ubuntu-16.04'
+      PythonVersion: '2.7'
+      CoverageArg: ''
+      RunForPR: true
+    Linux_Python35:
+      OSName: 'Linux'
+      OSVmImage: 'ubuntu-16.04'
+      PythonVersion: '3.5'
+      CoverageArg: ''
+      RunForPR: true
+    Linux_Python36:
+      OSName: 'Linux'
+      OSVmImage: 'ubuntu-16.04'
+      PythonVersion: '3.6'
+      CoverageArg: ''
+      RunForPR: false
+    Linux_Python37:
+      OSName: 'Linux'
+      OSVmImage: 'ubuntu-16.04'
+      PythonVersion: '3.7'
+      CoverageArg: ''
+      RunForPR: false
+    Linux_Python38:
+      OSName: 'Linux'
+      OSVmImage: 'ubuntu-16.04'
+      PythonVersion: '3.8'
+      CoverageArg: ''
+      RunForPR: true
+    Windows_Python35:
+      OSName: 'Windows'
+      OSVmImage: 'windows-2019'
+      PythonVersion: '3.5'
+      CoverageArg: ''
+      RunForPR: false
+    MacOS_Python27:
+      OSName: 'MacOS'
+      OSVmImage: 'macOS-10.15'
+      PythonVersion: '2.7'
+      CoverageArg: ''
+      RunForPR: false
+    Linux_pypy3:
+      OSName: 'Linux'
+      OSVmImage: 'ubuntu-16.04'
+      PythonVersion: 'pypy3'
+      CoverageArg: '--disablecov'
+      RunForPR: false
+
+  
+jobs:
+  - job: 'Build'
+    variables:
+    - template: ../variables/globals.yml
+
+    pool:
+      vmImage: 'ubuntu-16.04'
+
+    steps:
+    - template: ../steps/build-artifacts.yml
+      parameters: 
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}
+        BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
+        BuildDocs: ${{ parameters.BuildDocs }}
+
+  - job: 'Analyze'
+    condition: and(succeededOrFailed(), ne(variables['Skip.Analyze'], 'true'))
+    variables:
+    - template: ../variables/globals.yml
+
+    dependsOn:
+      - 'Build'
+
+    pool:
+      vmImage: 'ubuntu-16.04'
+
+    steps:
+    - template: ../steps/analyze.yml
+      parameters: 
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}
+
+  - job: 'Test'
+    condition: and(succeededOrFailed(), ne(variables['Skip.Test'], 'true'))
+    timeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
+    variables:
+    - template: ../variables/globals.yml
+    
+    dependsOn:
+       - 'Build'
+
+    strategy:
+      matrix:
+        ${{ each matrixEntry in parameters.TestMatrix }}:
+          ${{ if or(eq(matrixEntry.value.RunForPR, 'true'), ne(variables['Build.Reason'], 'PullRequest')) }}:
+            ${{ matrixEntry.key }}:
+              ${{ insert }}: ${{ matrixEntry.value }}
+        
+    pool:
+      vmImage: '$(OSVmImage)'
+
+    steps:    
+    - pwsh: |
+        $toxenvvar = "whl,sdist"
+        if (('$(Build.Reason)' -eq 'Schedule') -and ('$(System.TeamProject)' -eq 'internal')) {
+          $toxenvvar = "whl,sdist,depends,latestdependency,minimumdependency"
+        }
+
+        if ('$(Run.DependencyTest)' -eq 'true') {
+          $toxenvvar = "whl,sdist,depends,latestdependency,minimumdependency"
+        }
+        echo "##vso[task.setvariable variable=toxenv]$toxenvvar"
+      displayName: "Set Tox Environment"
+
+    - template: ../steps/build-test.yml
+      parameters:
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        TestMarkArgument: ${{ parameters.TestMarkArgument }}
+        AdditionalTestArgs: '--wheel_dir="$(Build.ArtifactStagingDirectory)"'
+        OSName: $(OSName)
+        CoverageArg: $(CoverageArg)
+        PythonVersion: $(PythonVersion)
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}
+        ToxTestEnv: $(toxenv)
+        ToxEnvParallel: ${{ parameters.ToxEnvParallel }}
+        InjectedPackages: ${{ parameters.InjectedPackages }}
+        BeforeTestSteps: 
+          - task: DownloadPipelineArtifact@0
+            inputs:
+              artifactName: 'artifacts' 
+              targetPath: $(Build.ArtifactStagingDirectory)
+
+          - template: ../steps/set-dev-build.yml
+            parameters:
+              ServiceDirectory: ${{ parameters.ServiceDirectory }}
+              BuildTargetingString: ${{ parameters.BuildTargetingString }}
+
+  - job: 'RunMyPy'
+    condition: and(succeededOrFailed(), ne(variables['Skip.MyPy'], 'true'))
+    displayName: 'Run MyPy'
+    variables:
+    - template: ../variables/globals.yml
+
+    dependsOn:
+      - 'Build'
+
+    pool:
+      vmImage: 'ubuntu-16.04'
+
+    steps:
+    - template: ../steps/run_mypy.yml
+      parameters: 
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}
+        TestMarkArgument: ${{ parameters.TestMarkArgument }}
+
+  - job: 'RunPyLint'
+    condition: and(succeededOrFailed(), ne(variables['Skip.Pylint'], 'true'))
+    displayName: 'Run Pylint'
+    variables:
+    - template: ../variables/globals.yml
+
+    dependsOn:
+      - 'Build'
+
+    pool:
+      vmImage: 'ubuntu-16.04'
+
+    steps:
+    - template: ../steps/run_pylint.yml
+      parameters: 
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}
+        TestMarkArgument: ${{ parameters.TestMarkArgument }}
+
+  - job: 'RunRegression'
+    condition: and(succeededOrFailed(), or(eq(variables['Run.Regression'], 'true'), and(eq(variables['Build.Reason'], 'Schedule'), eq(variables['System.TeamProject'],'internal'))))
+    displayName: 'Run Regression'
+    variables:
+    - template: ../variables/globals.yml
+
+    dependsOn:
+      - 'Build'
+
+    pool:
+      vmImage: 'ubuntu-16.04'
+
+    steps:
+    - template: ../steps/test_regression.yml
+      parameters: 
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}

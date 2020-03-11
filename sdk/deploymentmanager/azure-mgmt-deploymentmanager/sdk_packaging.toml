@@ -1,0 +1,6 @@
+[packaging]
+package_name = "azure-mgmt-deploymentmanager"
+package_pprint_name = "Deployment Manager"
+package_doc_id = ""
+is_stable = false
+is_arm = true

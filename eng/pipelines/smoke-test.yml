@@ -1,0 +1,62 @@
+variables:
+  InstallAsyncRequirements: true
+
+jobs:
+  - job:
+    strategy:
+      matrix:
+        Python_27_Linux:
+          PythonVersion: '2.7'
+          InstallAsyncRequirements: false
+          OSVmImage: ubuntu-18.04
+        Python_37_Linux:
+          PythonVersion: '3.7'
+          OSVmImage: ubuntu-18.04
+        Python_38_Linux:
+          PythonVersion: '3.8'
+          OSVmImage: ubuntu-18.04
+        Python_37_Windows:
+          PythonVersion: '3.7'
+          OSVmImage: windows-2019
+        Python_38_Windows:
+          PythonVersion: '3.8'
+          OSVmImage: windows-2019
+        Python_37_Mac:
+          PythonVersion: '3.7'
+          OSVmImage: macOS-10.15
+        Python_38_Mac:
+          PythonVersion: '3.8'
+          OSVmImage: macOS-10.15
+
+    pool:
+      vmImage: $(OSVmImage)
+
+    steps:
+      - task: UsePythonVersion@0
+        displayName: "Use Python $(PythonVersion)"
+        inputs:
+          versionSpec: $(PythonVersion)
+
+      - script: pip --version
+        displayName: pip --version
+
+      - script: pip install packaging pkginfo
+        displayName: Install requirements for dev tools
+
+      - script: pip install -r ./common/smoketest/requirements.txt
+        displayName: "Install requirements.txt"
+
+      - script: python ./eng/tox/install_dev_build_dependency.py -r ./common/smoketest/requirements.txt
+        displayName: "Install dev dependencies from feed"
+
+      - script: python ./common/smoketest/program.py
+        displayName: "Run Smoke Test"
+        env:
+          AZURE_CLIENT_ID: $(aad-azure-sdk-test-client-id)
+          AZURE_CLIENT_SECRET: $(aad-azure-sdk-test-client-secret)
+          AZURE_TENANT_ID: $(aad-azure-sdk-test-tenant-id)
+          AZURE_PROJECT_URL: $(smoke-tests-key-vault-project-url)
+          EVENT_HUBS_CONNECTION_STRING: $(smoke-tests-event-hubs-connection-string)
+          COSMOS_ENDPOINT: $(smoke-tests-cosmos-endpoint)
+          COSMOS_KEY: $(smoke-tests-cosmos-key)
+          STORAGE_CONNECTION_STRING: $(smoke-tests-storage-connection-string)

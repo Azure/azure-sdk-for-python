@@ -91,6 +91,14 @@
           color: #CC0000;
       }
 
+      .dep_type {
+          border: 1px solid gray;
+          border-radius: 2px;
+          background: lightgray;
+          font-size: 10px;
+          padding: 1px 2px;
+      }
+
       @media only screen and (max-width: 1350px) {
           body, table {
               font-size: 25px;
@@ -133,13 +141,16 @@
         {% endif %}
         {% if frozen %}
         {{ frozen|length }} dependency {{ pluralize(frozen|length,'version was','versions were') }} discovered in the <a href="#lockfile">lockfile</a>.<br/>
+        {% if override_count %}
+        <strong>{{ override_count }} dependency version {{ pluralize(override_count,'override is','overrides are') }} present, causing dependency versions to differ from the version in the lockfile.</strong><br/>
+        {% endif %}
         {% if new_reqs %}
         <strong>{{ new_reqs|length }} {{ pluralize(new_reqs|length,'dependency is','dependencies are') }} missing from the lockfile.</strong><br/>
         {% endif %}
-        {% if changed_reqs %}
-        <strong>{{ changed_reqs|length }} dependency {{ pluralize(changed_reqs|length,'version does','versions do') }} not match the version in the lockfile.</strong><br/>
+        {% if non_overridden_reqs_count %}
+        <strong>{{ non_overridden_reqs_count }} dependency {{ pluralize(non_overridden_reqs_count,'version does','versions do') }} not match the version in the lockfile.</strong><br/>
         {% endif %}
-        {% if not new_reqs and not changed_reqs %}
+        {% if not new_reqs and not non_overridden_reqs_count %}
         All declared dependency versions were validated against those in the lockfile.<br/>
         {% endif %}
         {% else %}
@@ -172,7 +183,11 @@
           <td class="version">{{ requirement if requirement else '(empty)' }}</td>
           <td>
             {% for package_name in packages|sort %}
-            {{ package_name }}<br/>
+            {{ package_name }}
+            {% if dep_name in overrides and requirement in overrides[dep_name] and package_name in overrides[dep_name][requirement] %}
+            <span class="dep_type">override</span>
+            {% endif %}
+            <br/>
             {% endfor %}
           </td>
         </tr>

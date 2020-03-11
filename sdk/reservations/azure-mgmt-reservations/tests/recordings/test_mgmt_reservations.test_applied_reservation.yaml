@@ -1,0 +1,93 @@
+interactions:
+- request:
+    body: grant_type=client_credentials&resource=https%3A%2F%2Fmanagement.core.windows.net%2F&response_type=client_credentials
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '116'
+      Content-Type:
+      - application/x-www-form-urlencoded;charset=UTF-8
+      User-Agent:
+      - python-requests/2.21.0
+    method: POST
+    uri: https://login.windows-ppe.net/3c662abc-ebe5-4a69-bf64-4674b3313ef8/oauth2/token
+  response:
+    body:
+      string: '{"token_type":"Bearer","expires_in":"3600","ext_expires_in":"3600","expires_on":"1556229237","not_before":"1556225337","resource":"https://management.core.windows.net/","access_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6Il9qRE5NaUprakNHaU5TSEsyOS1kN3ZKczVuUSIsImtpZCI6Il9qRE5NaUprakNHaU5TSEsyOS1kN3ZKczVuUSJ9.eyJhdWQiOiJodHRwczovL21hbmFnZW1lbnQuY29yZS53aW5kb3dzLm5ldC8iLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLXBwZS5uZXQvM2M2NjJhYmMtZWJlNS00YTY5LWJmNjQtNDY3NGIzMzEzZWY4LyIsImlhdCI6MTU1NjIyNTMzNywibmJmIjoxNTU2MjI1MzM3LCJleHAiOjE1NTYyMjkyMzcsImFpbyI6IjQyTmdZSkJKdG5aWW9zSnUrV3hoTWNmU2llOUtBQT09IiwiYXBwaWQiOiI0YzBhMDVlNC00MDY0LTQ3ZmUtODc1Zi02YTk3MmY5MzJiNDQiLCJhcHBpZGFjciI6IjEiLCJpZHAiOiJodHRwczovL3N0cy53aW5kb3dzLXBwZS5uZXQvM2M2NjJhYmMtZWJlNS00YTY5LWJmNjQtNDY3NGIzMzEzZWY4LyIsIm9pZCI6IjI2M2JjYThhLTcyOTEtNGRlMy05ODFkLTQ1NWE1MjIzZjYxYyIsInN1YiI6IjI2M2JjYThhLTcyOTEtNGRlMy05ODFkLTQ1NWE1MjIzZjYxYyIsInRpZCI6IjNjNjYyYWJjLWViZTUtNGE2OS1iZjY0LTQ2NzRiMzMxM2VmOCIsInV0aSI6Im9CLWZuanBRd0VPWlkwcVZjZDREQUEiLCJ2ZXIiOiIxLjAifQ.kpr5nGVvAnT7RTJTNYdWKB6EC8l1chOEm3rHLI8CwcEpVvvo2Nsm3NClH6BhdzAiO7H7ohk0EQ6KJBN7PswAoH919knw3VSTJfcWyJCHL10EcwatUuak5jzdQfvnanLrx2EuEwrvgjM3V6ztL51h0v-UsLb9ndkPkPZcU0WAc-THRn7dHAzasYPvb5uV58paouv-xCcxg72HzXpStOXFyN1lkP2N2FWVvF3OUmQ0UypqTqzaxMh4LsnC-okAIfi2a-NspKNujbXn7uWJ7diqaMUjkDDJVFMVHcHVTR8mo7eLM6M9vmjx9ViBGvLTxWpvMXYYoC7QaI7-GjmECaLnsQ"}'
+    headers:
+      cache-control:
+      - no-cache, no-store
+      content-length:
+      - '1365'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 25 Apr 2019 20:53:57 GMT
+      expires:
+      - '-1'
+      p3p:
+      - CP="DSP CUR OTPi IND OTRi ONL FIN"
+      pragma:
+      - no-cache
+      set-cookie:
+      - fpc=ArRuX0Wv2_9OjbZPPfLm2QzYQwh6AQAAAGQVVNQOAAAA; expires=Sat, 25-May-2019
+        20:53:57 GMT; path=/; secure; HttpOnly
+      - stsservicecookie=estsppe; path=/; secure; HttpOnly
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.2 (Windows-10-10.0.17763-SP0) msrest/0.6.6 msrest_azure/0.4.34
+        azure-mgmt-reservations/0.3.2 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: GET
+    uri: https://api-dogfood.resources.windows-int.net/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/appliedReservations?api-version=2019-04-01
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/microsoft.capacity/AppliedReservations/default","type":"Microsoft.Capacity/AppliedReservations","name":"default","properties":{"reservationOrderIds":{"value":["/providers/Microsoft.Capacity/reservationorders/11cc779e-a8f4-4ea9-880e-2e92b970d7cb","/providers/Microsoft.Capacity/reservationorders/0fd2bb5d-5aa5-4c20-8894-d725464e64f8","/providers/Microsoft.Capacity/reservationorders/8f3035d1-bfa2-4d81-a6cc-062b5cece09a","/providers/Microsoft.Capacity/reservationorders/be3573e4-3fed-4b85-8d0b-b153553b9696","/providers/Microsoft.Capacity/reservationorders/86d3f0ad-6cd2-4e3d-a855-eeb5a7a34e5b","/providers/Microsoft.Capacity/reservationorders/9ef186cf-d8cf-4bae-b085-ac632fb3109f","/providers/Microsoft.Capacity/reservationorders/3fca167c-0175-4cff-9ee5-b5ff7dabcb52","/providers/Microsoft.Capacity/reservationorders/0e78e23c-6f29-4db6-bb55-c751f6b7ac56","/providers/Microsoft.Capacity/reservationorders/fc5e889d-4dae-443c-b9a8-52c97fd77a4f","/providers/Microsoft.Capacity/reservationorders/4062cf27-decd-43aa-9673-d5a93263c24a","/providers/Microsoft.Capacity/reservationorders/a4ae747f-e61a-4cb4-8acb-837dad508d48","/providers/Microsoft.Capacity/reservationorders/a18c5eeb-8434-491b-b819-19726fc8899f","/providers/Microsoft.Capacity/reservationorders/cab8e53f-cc1e-4d3a-a5bc-e78517b14256","/providers/Microsoft.Capacity/reservationorders/47d6953a-1812-44d9-8c74-58b28750c394","/providers/Microsoft.Capacity/reservationorders/fc7bfd20-9152-4f42-bb4c-e319c21baad5","/providers/Microsoft.Capacity/reservationorders/4bfe0313-f0d3-4439-a53d-2c70aeada4c6","/providers/Microsoft.Capacity/reservationorders/95531fd1-9d7f-4067-ae88-fc7cfef91d13","/providers/Microsoft.Capacity/reservationorders/091ab380-5a50-46ce-ae26-916ac9578df9","/providers/Microsoft.Capacity/reservationorders/9388788b-3254-4349-9c35-b2b2effed515","/providers/Microsoft.Capacity/reservationorders/edc1ffb8-245c-4329-8c57-3fd2f655370d","/providers/Microsoft.Capacity/reservationorders/053e1cf2-f160-4e82-89d2-a872eee4de8d","/providers/Microsoft.Capacity/reservationorders/63d5e82b-6f10-4987-9be2-d743efd19444","/providers/Microsoft.Capacity/reservationorders/34771af7-7696-4c78-a99a-f3dacb604ce3","/providers/Microsoft.Capacity/reservationorders/a5d97f42-0bbd-446a-8424-1fc279f93103","/providers/Microsoft.Capacity/reservationorders/778da6ca-99fe-4b21-a5d6-1474f03311e1","/providers/Microsoft.Capacity/reservationorders/0832bb7f-6caa-4616-8fb7-c171cb930f1a","/providers/Microsoft.Capacity/reservationorders/6b6b02bd-1718-4368-9dc6-109ce30baf27","/providers/Microsoft.Capacity/reservationorders/61dfc0f8-f187-4d02-96ed-f645ce8eb617","/providers/Microsoft.Capacity/reservationorders/cef3cbc2-1ff1-4c4c-b6d5-3b687ea87a40","/providers/Microsoft.Capacity/reservationorders/b38ac868-be83-4d7d-8df6-a3321fac4e56","/providers/Microsoft.Capacity/reservationorders/92de10e2-a6b7-4056-ace2-ca126f242f12","/providers/Microsoft.Capacity/reservationorders/68ebd7d1-be83-4eaa-9f75-ad1f58d9a9df","/providers/Microsoft.Capacity/reservationorders/4b0a0f43-ea84-46f4-82a3-18c2b0e58f6a","/providers/Microsoft.Capacity/reservationorders/836ad341-6bf8-48ea-a30b-a9bcfa276f55","/providers/Microsoft.Capacity/reservationorders/88e38576-b823-41f6-b128-65ac8da980c2","/providers/Microsoft.Capacity/reservationorders/0452662c-0fb1-4f04-9d97-cdb8722ebe78","/providers/Microsoft.Capacity/reservationorders/491eb731-855e-4bfc-8795-223cc33e00bd","/providers/Microsoft.Capacity/reservationorders/bcc3b518-37f4-422d-8778-f3de9aed97e8","/providers/Microsoft.Capacity/reservationorders/89a0e60c-856c-4ce9-9570-d70e6f400816","/providers/Microsoft.Capacity/reservationorders/f3072c9f-d5b3-454c-8a66-2f343bb0b08d","/providers/Microsoft.Capacity/reservationorders/9d4fcbb1-038f-415a-ac2e-454fc85802a1","/providers/Microsoft.Capacity/reservationorders/6bf53dfa-76c0-451e-ac76-987748b2846d","/providers/Microsoft.Capacity/reservationorders/d69416f8-db72-452b-92f5-eb0624f5cb77","/providers/Microsoft.Capacity/reservationorders/87ea53cb-4bb4-4ad4-8d39-2d505a4d4f5b","/providers/Microsoft.Capacity/reservationorders/49ca2bb5-4e0e-496f-9413-e29d3c3b799a","/providers/Microsoft.Capacity/reservationorders/97d573df-62e7-43f2-b2ad-92b5b798fa76"]}}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '4233'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 25 Apr 2019 20:53:59 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-IIS/8.5
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+version: 1

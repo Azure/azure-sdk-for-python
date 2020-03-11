@@ -1,0 +1,182 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-dfs/12.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      x-ms-client-request-id:
+      - e17c0728-16b1-11ea-ac34-001a7dda7113
+      x-ms-date:
+      - Wed, 04 Dec 2019 16:19:43 GMT
+      x-ms-properties:
+      - ''
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://storagename.dfs.core.windows.net/filesystem1a9514bc/file1a9514bc?resource=file
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Wed, 04 Dec 2019 16:19:42 GMT
+      ETag:
+      - '"0x8D778D5C5E1D782"'
+      Last-Modified:
+      - Wed, 04 Dec 2019 16:19:43 GMT
+      Server:
+      - Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id:
+      - da9cdde4-001f-001f-70be-aafe90000000
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-dfs/12.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      x-ms-client-request-id:
+      - e1c13306-16b1-11ea-8f97-001a7dda7113
+      x-ms-date:
+      - Wed, 04 Dec 2019 16:19:44 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: HEAD
+    uri: https://storagename.blob.core.windows.net/filesystem1a9514bc/file1a9514bc
+  response:
+    body:
+      string: ''
+    headers:
+      Accept-Ranges:
+      - bytes
+      Content-Length:
+      - '0'
+      Content-Type:
+      - application/octet-stream
+      Date:
+      - Wed, 04 Dec 2019 16:19:43 GMT
+      ETag:
+      - '"0x8D778D5C5E1D782"'
+      Last-Modified:
+      - Wed, 04 Dec 2019 16:19:43 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-access-tier:
+      - Hot
+      x-ms-access-tier-inferred:
+      - 'true'
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-creation-time:
+      - Wed, 04 Dec 2019 16:19:43 GMT
+      x-ms-lease-state:
+      - available
+      x-ms-lease-status:
+      - unlocked
+      x-ms-request-id:
+      - 90f47a8a-401e-001e-1ebe-aaa14c000000
+      x-ms-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      If-Unmodified-Since:
+      - Wed, 04 Dec 2019 16:19:43 GMT
+      User-Agent:
+      - azsdk-python-storage-dfs/12.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      x-ms-client-request-id:
+      - e1f365cc-16b1-11ea-9fb1-001a7dda7113
+      x-ms-date:
+      - Wed, 04 Dec 2019 16:19:44 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: DELETE
+    uri: https://storagename.dfs.core.windows.net/filesystem1a9514bc/file1a9514bc?recursive=true
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Wed, 04 Dec 2019 16:19:43 GMT
+      Server:
+      - Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id:
+      - da9cdde5-001f-001f-71be-aafe90000000
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-dfs/12.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      x-ms-client-request-id:
+      - e201e1c6-16b1-11ea-bcaf-001a7dda7113
+      x-ms-date:
+      - Wed, 04 Dec 2019 16:19:44 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: HEAD
+    uri: https://storagename.blob.core.windows.net/filesystem1a9514bc/file1a9514bc
+  response:
+    body:
+      string: ''
+    headers:
+      Date:
+      - Wed, 04 Dec 2019 16:19:43 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      Transfer-Encoding:
+      - chunked
+      x-ms-error-code:
+      - BlobNotFound
+      x-ms-request-id:
+      - 90f47b00-401e-001e-0bbe-aaa14c000000
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 404
+      message: The specified blob does not exist.
+version: 1

@@ -1,0 +1,98 @@
+# --------------------------------------------------------------------------
+#
+# Copyright (c) Microsoft Corporation. All rights reserved.
+#
+# The MIT License (MIT)
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the ""Software""), to
+# deal in the Software without restriction, including without limitation the
+# rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+# sell copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED *AS IS*, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+# IN THE SOFTWARE.
+#
+# --------------------------------------------------------------------------
+from azure.core.pipeline import PipelineRequest, PipelineResponse
+from azure.core.pipeline.policies import SansIOHTTPPolicy
+
+class SyncToken(object):
+    """The sync token structure
+    """
+    def __init__(self, token_id, value, sequence_number):
+        self.token_id = token_id
+        self.value = value
+        self.sequence_number = sequence_number
+
+    def __str__(self):
+        return "{}={}".format(self.token_id, self.value)
+
+    @classmethod
+    def from_sync_token_string(cls, sync_token):
+        try:
+            position = sync_token.index(';sn=')
+            sequence_number = int(sync_token[position+4:])
+            id_value = sync_token[:position]
+            position = id_value.index('=')
+            token_id = id_value[:position]
+            value = id_value[position+1:]
+            return SyncToken(token_id, value, sequence_number)
+        except ValueError:
+            return None
+
+class SyncTokenPolicy(SansIOHTTPPolicy):
+    """A simple policy that enable the given callback
+    with the response.
+
+    :keyword callback raw_response_hook: Callback function. Will be invoked on response.
+    """
+    def __init__(self, **kwargs): # pylint: disable=unused-argument,super-init-not-called
+        self._sync_token_header = "Sync-Token"
+        self._sync_tokens = dict()
+
+    def on_request(self, request): # type: ignore # pylint: disable=arguments-differ
+        # type: (PipelineRequest) -> None
+        """This is executed before sending the request to the next policy.
+
+        :param request: The PipelineRequest object.
+        :type request: ~azure.core.pipeline.PipelineRequest
+        """
+        sync_token_header = ",".join(str(x) for x in self._sync_tokens.values())
+        if sync_token_header:
+            request.http_request.headers.update({self._sync_token_header: sync_token_header})
+
+    def on_response(self, request, response): # type: ignore # pylint: disable=arguments-differ
+        # type: (PipelineRequest, PipelineResponse) -> None
+        """This is executed after the request comes back from the policy.
+
+        :param request: The PipelineRequest object.
+        :type request: ~azure.core.pipeline.PipelineRequest
+        :param response: The PipelineResponse object.
+        :type response: ~azure.core.pipeline.PipelineResponse
+        """
+        sync_token_header = response.http_response.headers.get(self._sync_token_header)
+        if not sync_token_header:
+            return
+        sync_token_strings = sync_token_header.split(',')
+        if not sync_token_strings:
+            return
+        for sync_token_string in sync_token_strings:
+            sync_token = SyncToken.from_sync_token_string(sync_token_string)
+            if not sync_token:
+                continue
+            existing_token = self._sync_tokens.get(sync_token.token_id, None)
+            if not existing_token:
+                self._sync_tokens[sync_token.token_id] = sync_token
+                continue
+            if existing_token.sequence_number < sync_token.sequence_number:
+                self._sync_tokens[sync_token.token_id] = sync_token
