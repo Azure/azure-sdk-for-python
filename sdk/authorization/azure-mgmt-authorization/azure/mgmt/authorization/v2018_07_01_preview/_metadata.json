@@ -1,0 +1,39 @@
+{
+    "chosen_version": "2018-07-01-preview",
+    "total_api_version_list": ["2018-07-01-preview"],
+    "client": {
+        "name": "AuthorizationManagementClient",
+        "filename": "_authorization_management_client.py",
+        "description": "Role based access control provides you a way to apply granular level policy administration down to individual resources or resource groups. These operations enable you to get deny assignments. A deny assignment describes the set of actions on resources that are denied for Azure Active Directory users.",
+        "has_subscription_id": true
+    },
+    "config": {
+        "credential": true,
+        "credential_scopes": ["https://management.azure.com/.default"],
+        "package_version": false,
+        "global_parameters": {
+            "method": {
+                "credential": {
+                    "method_signature": "credential,  # type: \"TokenCredential\"",
+                    "description": "Credential needed for the client to connect to Azure.",
+                    "docstring_type": "azure.core.credentials.TokenCredential",
+                    "required": true
+                },
+                "subscription_id": {
+                    "method_signature": "subscription_id,  # type: str",
+                    "description": "The ID of the target subscription.",
+                    "docstring_type": "str",
+                    "required": true
+                }
+            },
+            "constant": {
+                "api_version": "\"2018-07-01-preview\""
+            }
+        }
+    },
+    "operation_groups": {
+        "deny_assignments": "DenyAssignmentsOperations"
+    },
+    "operation_mixins": {
+    }
+}

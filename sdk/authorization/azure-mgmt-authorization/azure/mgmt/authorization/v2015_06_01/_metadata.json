@@ -1,0 +1,39 @@
+{
+    "chosen_version": "2015-06-01",
+    "total_api_version_list": ["2015-06-01"],
+    "client": {
+        "name": "AuthorizationManagementClient",
+        "filename": "_authorization_management_client.py",
+        "description": "Role based access control provides you a way to apply granular level policy administration down to individual resources or resource groups. These operations enable you to manage role definitions and role assignments. A role definition describes the set of actions that can be performed on resources. A role assignment grants access to Azure Active Directory users.",
+        "has_subscription_id": true
+    },
+    "config": {
+        "credential": true,
+        "credential_scopes": ["https://management.azure.com/.default"],
+        "package_version": false,
+        "global_parameters": {
+            "method": {
+                "credential": {
+                    "method_signature": "credential,  # type: \"TokenCredential\"",
+                    "description": "Credential needed for the client to connect to Azure.",
+                    "docstring_type": "azure.core.credentials.TokenCredential",
+                    "required": true
+                },
+                "subscription_id": {
+                    "method_signature": "subscription_id,  # type: str",
+                    "description": "The ID of the target subscription.",
+                    "docstring_type": "str",
+                    "required": true
+                }
+            },
+            "constant": {
+                "api_version": "\"2015-06-01\""
+            }
+        }
+    },
+    "operation_groups": {
+        "classic_administrators": "ClassicAdministratorsOperations"
+    },
+    "operation_mixins": {
+    }
+}
