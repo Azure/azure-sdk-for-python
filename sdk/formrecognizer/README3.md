@@ -69,6 +69,7 @@ class ExtractedLine:
     text: str
     bounding_box: List[float]
     language: str
+    words: List[ExtractedWord]
 
 class ExtractedWord:
     text: str
@@ -146,6 +147,7 @@ class ExtractedLine:
     text: str
     bounding_box: List[float]
     language: str
+    words: List[ExtractedWord]
 
 class ExtractedWord:
     text: str
@@ -209,7 +211,7 @@ client.begin_labeled_training(
 ) -> LROPoller -> LabeledCustomModel
 
 client.begin_training(
-    source: str, source_prefix_filter: str, include_sub_folders: bool=False, include_keys: bool=True
+    source: str, source_prefix_filter: str, include_sub_folders: bool=False
 ) -> LROPoller -> CustomModel
 
 client.begin_extract_form(form: Union[str, BytesIO], model_id: str) -> LROPoller -> ExtractedForm
@@ -218,7 +220,9 @@ client.list_custom_models() -> ItemPaged[ModelInfo]
 
 client.get_models_summary() -> ModelsSummary
 
-client.get_training_result(model_id: str) -> Union[TrainResult, LabeledTrainResult]
+client.get_custom_model(model_id: str) -> CustomModel
+
+client.get_labeled_custom_model(model_id: str) -> LabeledCustomModel
 
 client.delete_custom_model(model_id: str) -> None
 ```
@@ -309,6 +313,7 @@ class ExtractedLine:
     text: str
     bounding_box: List[float]
     language: str
+    words: List[ExtractedWord]
 
 class ExtractedWord:
     text: str
