@@ -221,7 +221,10 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         while retried_times <= self._config.max_retries:
             mgmt_auth = self._create_auth()
             mgmt_client = AMQPClient(
-                self._mgmt_target, auth=mgmt_auth, debug=self._config.network_tracing
+                self._mgmt_target,
+                auth=mgmt_auth,
+                debug=self._config.network_tracing,
+                http_proxy=self._config.http_proxy
             )
             try:
                 conn = self._conn_manager.get_connection(

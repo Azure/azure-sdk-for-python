@@ -160,7 +160,10 @@ class ClientBaseAsync(ClientBase):
         while retried_times <= self._config.max_retries:
             mgmt_auth = await self._create_auth_async()
             mgmt_client = AMQPClientAsync(
-                self._mgmt_target, auth=mgmt_auth, debug=self._config.network_tracing
+                self._mgmt_target,
+                auth=mgmt_auth,
+                debug=self._config.network_tracing,
+                http_proxy=self._config.http_proxy,
             )
             try:
                 conn = await self._conn_manager_async.get_connection(
