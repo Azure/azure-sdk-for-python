@@ -66,7 +66,6 @@ class FieldValue:
     page_number: int
     elements: List[Union[ExtractedLine, ExtractedWord]]
 
-
 class ExtractedLine:
     text: str
     bounding_box: List[float]
@@ -331,7 +330,7 @@ class FormRecognizerError:
 
 # Analyze ---------------------------------------------------
 class ExtractedForm:
-    fields: List[ExtractedLabel]
+    labels: List[ExtractedLabel]
     tables: List[ExtractedTable]
     page_metadata: List[PageMetadata]
     page_range: List[int]
@@ -426,7 +425,7 @@ for page in result:
     print("Page: {}".format(page.page_number))
     print("Form type ID: {}".format(page.form_type_id))
     for field in page.fields:
-        print("{}: {}".format(field.label.text, field.value.text))
+        print("{}: {}".format(field.name.text, field.value.text))
         print("Confidence: {}".format(field.confidence))
 ```
 
@@ -465,7 +464,7 @@ poller = client.begin_extract_labeled_forms(blob_sas_url, model_id=model.model_i
 result = poller.result()
 
 print("Page range: {}".format(result.page_range))
-for field in result.fields:
+for field in result.labels:
     print("{}: {}".format(field.name, field.value.text))
     print(field.value.bounding_box, field.value.confidence)
 
