@@ -16,7 +16,7 @@ class FormRecognizerApiKeyCredential(object):
     """
     def __init__(self, api_key):
         if not isinstance(api_key, six.string_types):
-            raise TypeError("Please provide the API key as a string.")
+            raise TypeError("Please provide the API key parameter as a string into FormRecognizerApiKeyCredential.")
         self._api_key = api_key
 
     @property

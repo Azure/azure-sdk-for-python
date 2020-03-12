@@ -16,8 +16,8 @@ Receipt and layout are accessed through the `FormRecognizerClient`. The input fo
 string url/path to the image, or as a file stream. The SDK will determine content-type and send the appropriate header. 
 
 Both receipt and layout methods return poller objects which are used to get the result.
-The `begin_extract_receipt` method returns an `ExtractedReceipt` with hardcoded receipt fields.
-The `begin_extract_layout` method returns the extracted tables as a `list[TableCell]`.
+The `begin_extract_receipt` method returns a `List[ExtractedReceipt]` with hardcoded receipt fields.
+The `begin_extract_layout` method returns the extracted layouts as a `List[ExtractedLayoutPage]`.
 
 If the keyword argument `include_text_details=True` is passed in, the `raw_` attributes will be populated with the
 raw OCR result for each value/cell referenced by the `elements`. If the user wishes to retrieve the full
@@ -63,18 +63,22 @@ class FieldValue:
     text: str
     bounding_box: List[float]
     confidence: float
-    raw_fields: List[Union[ExtractedLine, ExtractedWord]]
+    page_number: int
+    elements: List[Union[ExtractedLine, ExtractedWord]]
+
 
 class ExtractedLine:
     text: str
     bounding_box: List[float]
     language: str
+    page_number: int
     words: List[ExtractedWord]
 
 class ExtractedWord:
     text: str
     bounding_box: List[float]
     confidence: float
+    page_number: int
 
 class PageMetadata:
     page_number: int
@@ -130,6 +134,7 @@ class ExtractedTable:
     cells: List[TableCell]
     row_count: int
     column_count: int
+    page_number: int
 
 class TableCell:
     text: str
@@ -141,18 +146,20 @@ class TableCell:
     row_index: int
     row_span: int
     bounding_box: List[float]
-    raw_fields: List[Union[ExtractedLine, ExtractedWord]]
+    elements: List[Union[ExtractedLine, ExtractedWord]]
 
 class ExtractedLine:
     text: str
     bounding_box: List[float]
     language: str
+    page_number: int
     words: List[ExtractedWord]
 
 class ExtractedWord:
     text: str
     bounding_box: List[float]
     confidence: float
+    page_number: int
 
 class PageMetadata:
     page_number: int
@@ -193,12 +200,12 @@ The user can choose to train with or without labels using the methods `begin_lab
 Both methods take as input a blob SAS uri or valid path to the documents to use for training. Each training method 
 will return a poller object which is used to get the training result.
 
-A custom model can be used to analyze forms using the `begin_extract_form` method.
+A custom model can be used to analyze forms using the `begin_extract_forms` or `begin_extract_labeled_forms` method.
 The `model_id` from the training result is passed into the methods, along with the input form to analyze (content-type
 is determined internally). This method also returns a poller object which is used to get the result.
 
 In order for the user to manage their custom models, a few methods are available to list custom models, delete a model,
-get a models summary for the account, or get a training result.
+get a models summary for the account, or get a custom model.
 
 ### Custom Form Client
 ```python
@@ -206,23 +213,28 @@ from azure.ai.formrecognizer import CustomFormClient
 
 client = CustomFormClient(endpoint: str, credential: Union[CognitiveKeyCredential, TokenCredential])
 
+# Train
 client.begin_labeled_training(
     source: str, source_prefix_filter: str, include_sub_folders: bool=False
-) -> LROPoller -> LabeledCustomModel
+) -> LROPoller -> CustomLabeledModel
 
 client.begin_training(
     source: str, source_prefix_filter: str, include_sub_folders: bool=False
 ) -> LROPoller -> CustomModel
 
-client.begin_extract_form(form: Union[str, BytesIO], model_id: str) -> LROPoller -> ExtractedForm
+# Extract
+client.begin_extract_pages(form: Union[str, BytesIO], model_id: str) -> LROPoller -> List[ExtractedPage]
 
+client.begin_extract_labeled_forms(form: Union[str, BytesIO], model_id: str) -> LROPoller -> ExtractedForm
+
+# Manage
 client.list_custom_models() -> ItemPaged[ModelInfo]
 
 client.get_models_summary() -> ModelsSummary
 
 client.get_custom_model(model_id: str) -> CustomModel
 
-client.get_labeled_custom_model(model_id: str) -> LabeledCustomModel
+client.get_custom_labeled_model(model_id: str) -> CustomLabeledModel
 
 client.delete_custom_model(model_id: str) -> None
 ```
@@ -238,10 +250,13 @@ class CustomModel:
     train_result: TrainResult
 
 class TrainResult:
-    form_type_id: int
-    extracted_fields: List[str]
+    extracted_fields: List[FormTypeFields]
     documents: List[TrainingDocumentInfo]
     errors: List[FormRecognizerError]
+
+class FormTypeFields:
+    form_type_id: int
+    fields: List[str]
 
 class TrainingDocumentInfo:
     document_name: str
@@ -252,12 +267,42 @@ class TrainingDocumentInfo:
 class FormRecognizerError:
     code: str
     message: str
+
+# Analyze ---------------------------------------------------
+class ExtractedPage:
+    fields: List[ExtractedField]
+    tables: List[ExtractedTable]
+    page_number: int
+    form_type_id: int
+
+class ExtractedField:
+    name: ExtractedText
+    value: ExtractedText
+    confidence: float
+
+class ExtractedText:
+    text: str
+    bounding_box: List[float]
+    elements: List[Union[ExtractedLine, ExtractedWord]]
+
+class ExtractedLine:
+    text: str
+    bounding_box: List[float]
+    language: str
+    page_number: int
+    words: List[ExtractedWord]
+
+class ExtractedWord:
+    text: str
+    bounding_box: List[float]
+    confidence: float
+    page_number: int
 ```
 
 ### Custom Models Labeled
 ```python
 # Training ---------------------------------------------------
-class LabeledCustomModel:
+class CustomLabeledModel:
     model_id: str
     status: str
     created_on: ~datetime.datetime
@@ -283,42 +328,38 @@ class FieldNames:
 class FormRecognizerError:
     code: str
     message: str
-```
 
-### Custom Extract Form
-```python
 # Analyze ---------------------------------------------------
 class ExtractedForm:
-    page_range: List[int]
-    form_type_id: int
-    pages: List[ExtractedPage]
-
-class ExtractedPage:
-    fields: List[ExtractedField]
+    fields: List[ExtractedLabel]
     tables: List[ExtractedTable]
-    page_number: int
-    page_metadata: PageMetadata
+    page_metadata: List[PageMetadata]
+    page_range: List[int]
 
-class ExtractedField:
-    label: str
-    label_outline: List[float]
-    label_raw_fields: List[Union[ExtractedLine, ExtractedWord]]
-    value: Union[str, int, float, datetime]
-    value_text: str
-    value_outline: List[float]
-    value_raw_fields: List[Union[ExtractedLine, ExtractedWord]]
+class ExtractedLabel:
+    name: str
+    value: LabelValue
+
+class LabelValue:
+    text: str
+    value: Union[int, float, str, datetime]
+    bounding_box: List[float]
     confidence: float
+    page_number: int
+    elements: List[Union[ExtractedLine, ExtractedWord]]
 
 class ExtractedLine:
     text: str
     bounding_box: List[float]
     language: str
+    page_number: int
     words: List[ExtractedWord]
 
 class ExtractedWord:
     text: str
     bounding_box: List[float]
     confidence: float
+    page_number: int
 
 class PageMetadata:
     page_number: int
@@ -328,6 +369,7 @@ class PageMetadata:
     unit: str
     language: str
 ```
+
 
 ### List/Get/Delete Models
 ```python
@@ -377,13 +419,15 @@ print(train_result.extracted_fields)
 
 # Analyze
 blob_sas_url = "xxxxx"  # form to analyze uploaded to blob storage
-poller = client.begin_extract_form(blob_sas_url, model_id=model.model_id)
+poller = client.begin_extract_pages(blob_sas_url, model_id=model.model_id)
 result = poller.result()
 
-for page in result.pages:
+for page in result:
     print("Page: {}".format(page.page_number))
+    print("Form type ID: {}".format(page.form_type_id))
     for field in page.fields:
-        print(field.label, field.value_text)
+        print("{}: {}".format(field.label.text, field.value.text))
+        print("Confidence: {}".format(field.confidence))
 ```
 
 #### Train and Analyze with labels
@@ -417,13 +461,14 @@ for field in train_result.fields:
     print(field.field_name, field.accuracy)
 
 blob_sas_url = "xxxxx"  # form to analyze uploaded to blob storage
-poller = client.begin_extract_form(blob_sas_url, model_id=model.model_id)
+poller = client.begin_extract_labeled_forms(blob_sas_url, model_id=model.model_id)
 result = poller.result()
 
-for page in result.pages:
-    print("Page: {}".format(page.page_number))
-    for field in page.fields:
-        print(field.label, field.value_text)
+print("Page range: {}".format(result.page_range))
+for field in result.fields:
+    print("{}: {}".format(field.name, field.value.text))
+    print(field.value.bounding_box, field.value.confidence)
+
 ```
 
 #### List custom models
@@ -449,23 +494,29 @@ print("Datetime when summary was updated: {}".format(summary.last_updated_on))
 ```
 
 
-#### Get training result with a model ID
+#### Get a custom model with a model ID (e.g. unsupervised)
 ```python
 from azure.ai.formrecognizer import CustomFormClient
 
 client = CustomFormClient(endpoint=endpoint, credential=credential)
-train_result = client.get_training_result(model_id="xxxxx")
+model = client.get_custom_model(model_id="xxxxx")
 
+# Custom model information
+print("Model ID: {}".format(model.model_id))
+print("Status: {}".format(model.status))
+print("Created on: {}".format(model.created_on))
+print("Last updated on: {}".format(model.last_updated_on))
+
+train_result = model.train_result
 for document in train_result.documents:
     print(document.name)
     print(document.status)
     print(document.page_count)
     print(document.errors)
 
-print("Average model accuracy: {}".format(train_result.average_model_accuracy))
-print("Fields extracted/accuracy")
-for field in train_result.fields:
-    print(field.field_name, field.accuracy)
+print("Form type ID: {}".format(train_result.form_type_id))
+print("Extracted fields:")
+print(train_result.extracted_fields)
 ```
 
 
@@ -487,7 +538,7 @@ receipt_image = "https://raw.githubusercontent.com/Azure-Samples/cognitive-servi
 
 def callback(resp):
     raw_response = resp.raw_response  # raw response from service
-    result = resp.raw_ocr_result
+    result = resp.raw_ocr_result[0]
     for page in result.pages:
         print("On page: {}".format(page.page_number))
         for line in page.lines:

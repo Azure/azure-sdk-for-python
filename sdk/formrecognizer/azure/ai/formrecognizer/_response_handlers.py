@@ -9,16 +9,17 @@ from ._models import (
     ExtractedReceipt,
     FieldValue,
     ReceiptItem,
-    ReceiptItemField,
     TableCell,
     ExtractedLayoutPage,
     CustomModel,
     LabeledCustomModel,
     ExtractedPage,
     ExtractedField,
-    ExtractedTable
+    ExtractedTable,
+    PageMetadata,
+    ExtractedForm,
+    ExtractedLabel
 )
-from ._helpers import get_receipt_field_value
 
 
 def prepare_receipt_result(response, include_raw):
@@ -47,7 +48,7 @@ def prepare_receipt_result(response, include_raw):
                     read_result,
                     include_raw
                 ),
-                receipt_items=ReceiptItemField._from_generated(
+                receipt_items=ReceiptItem._from_generated(
                     page.fields.pop("Items", None),
                     response.analyze_result.read_results,
                     include_raw
@@ -82,24 +83,36 @@ def prepare_receipt_result(response, include_raw):
                     read_result,
                     include_raw
                 ),
+                page_range=page.page_range,
+                page_metadata=PageMetadata._from_generated(read_result, page.page_range[0]-1)
             )
         receipt.update(page.fields)  # for any new fields being sent
         receipts.append(receipt)
     return receipts
 
 
+def prepare_tables(page, read_result, include_raw):
+    if page.tables is None:
+        return page.tables
+    return [
+        ExtractedTable(
+            row_count=table.rows,
+            column_count=table.columns,
+            cells=[TableCell._from_generated(cell, read_result, include_raw) for cell in table.cells],
+            page_number=page.page,
+        ) for table in page.tables
+    ]
+
+
 def prepare_layout_result(response, include_raw):
     pages = []
     read_result = response.analyze_result.read_results
-
     for page in response.analyze_result.page_results:
-        result_page = ExtractedLayoutPage(page_number=page.page, tables=[])
-        for table in page.tables:
-            my_table = ExtractedTable(row_count=table.rows, column_count=table.columns, cells=[
-                TableCell._from_generated(cell, read_result, include_raw)
-                for cell in table.cells
-            ])
-            result_page.tables.append(my_table)
+        result_page = ExtractedLayoutPage(
+            page_number=page.page,
+            tables=prepare_tables(page, read_result, include_raw),
+            page_metadata=PageMetadata._from_generated(read_result, page.page-1)
+        )
         pages.append(result_page)
     return pages
 
@@ -112,40 +125,36 @@ def prepare_labeled_training_result(response):
     return LabeledCustomModel._from_generated(response)
 
 
-def prepare_analyze_result(response, include_raw):
+def prepare_unlabeled_result(response, include_raw):
     # FIXME: refactor this function, fix tables
-    pages = []
+    # FIXME: rename include_raw to include_ocr
+    extracted_pages = []
     read_result = response.analyze_result.read_results
 
     for page in response.analyze_result.page_results:
-        try:
-            result_page = ExtractedPage(page_number=page.page, tables=[], fields=[], form_type_id=page.cluster_id)
-        except AttributeError:
-            result_page = ExtractedPage(page_number=page.page, tables=[], fields=[])
+        result_page = ExtractedPage(page_number=page.page, tables=[], fields=[], form_type_id=page.cluster_id)
         if page.tables:
-            for table in page.tables:
-                my_table = [[None for x in range(table.columns)] for y in range(table.rows)]
-                for cell in table.cells:
-                    my_table[cell.row_index][cell.column_index] = \
-                        TableCell._from_generated(cell, read_result, include_raw)
-                result_page.tables.append(Table(my_table))
-        try:
-            if page.key_value_pairs:
-                for item in page.key_value_pairs:
-                    extracted_field = ExtractedField._from_generated(item, read_result, include_raw)
-                    result_page.fields.append(extracted_field)
-            pages.append(result_page)
-        except AttributeError:
-            pass
+            result_page.tables = prepare_tables(page, read_result, include_raw)
+        if page.key_value_pairs:
+            result_page.fields = [ExtractedField._from_generated(item, read_result, include_raw)
+                                  for item in page.key_value_pairs]
+        extracted_pages.append(result_page)
 
-    try:
-        for idx, page in enumerate(response.analyze_result.document_results):
-            if page.fields:
-                pages[idx].fields = [
-                    ExtractedField._from_labeled_generated((label, value), read_result, include_raw)
-                    for label, value
-                    in page.fields.items()
-                ]
-    except AttributeError:
-        pass
-    return pages
+    return extracted_pages
+
+
+def prepare_labeled_result(response, include_raw):
+    read_result = response.analyze_result.read_results
+    page_result = response.analyze_result.page_results
+    document_result = response.analyze_result.document_results[0]
+    return ExtractedForm(
+        page_range=document_result.page_range,
+        page_metadata=PageMetadata._all_pages(read_result),
+        fields=[
+            ExtractedLabel._from_generated((label, value), read_result, include_raw)
+            for label, value
+            in document_result.fields.items()
+        ],
+        tables=[prepare_tables(page, read_result, include_raw) for page in page_result]
+    )
+
