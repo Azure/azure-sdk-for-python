@@ -7,16 +7,17 @@ import datetime
 import logging
 import functools
 import uuid
-from typing import Any, List, TYPE_CHECKING
+from typing import Any, List, TYPE_CHECKING, Optional
 
-from uamqp import ReceiveClient, Source, types
+from uamqp import ReceiveClient, Source, types, constants
 
 from ._base_handler import BaseHandler
 from .common.utils import create_properties
-from .common.message import ReceivedMessage, DeferredMessage
+from .common.message import PeekMessage, ReceivedMessage, DeferredMessage
 from .common.constants import (
     REQUEST_RESPONSE_RECEIVE_BY_SEQUENCE_NUMBER,
     REQUEST_RESPONSE_UPDATE_DISPOSTION_OPERATION,
+    REQUEST_RESPONSE_PEEK_OPERATION,
     ReceiveSettleMode,
     NEXT_AVAILABLE,
     SESSION_LOCKED_UNTIL,
@@ -50,6 +51,7 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
             is_session=bool(self._session_id)
         )
         self._name = "SBReceiver-{}".format(uuid.uuid4())
+        self._last_received_sequenced_number = None
 
     def _build_message(self, received, message_type=ReceivedMessage):
         message = message_type(message=received)
@@ -178,8 +180,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
                 error_policy=self._error_policy,
                 client_name=self._name,
                 auto_complete=False,
-                encoding=self._config.encoding,
-                receive_settle_mode=self._mode.value
+                encoding=self._config.encoding
             )
         else:
             self._handler = ReceiveClient(
@@ -191,9 +192,29 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
                 client_name=self._name,
                 on_attach=self._on_attach_for_session_entity,
                 auto_complete=False,
-                encoding=self._config.encoding,
-                receive_settle_mode=self._mode.value
+                encoding=self._config.encoding
             )
+
+    def _create_uamqp_receiver_handler(self):
+        """This is a temporary patch pending a fix in uAMQP."""
+        # pylint: disable=protected-access
+        self._handler.message_handler = self._handler.receiver_type(
+            self._handler._session,
+            self._handler._remote_address,
+            self._handler._name,
+            on_message_received=self._handler._message_received,
+            name='receiver-link-{}'.format(uuid.uuid4()),
+            debug=self._handler._debug_trace,
+            prefetch=self._handler._prefetch,
+            max_message_size=self._handler._max_message_size,
+            properties=self._handler._link_properties,
+            error_policy=self._handler._error_policy,
+            encoding=self._handler._encoding)
+        if self._mode != ReceiveSettleMode.PeekLock:
+            self._handler.message_handler.send_settle_mode = constants.SenderSettleMode.Settled
+            self._handler.message_handler.receive_settle_mode = constants.ReceiverSettleMode.ReceiveAndDelete
+            self._handler.message_handler._settle_mode = constants.ReceiverSettleMode.ReceiveAndDelete
+        self._handler.message_handler.open()
 
     def _open(self):
         if self._running:
@@ -205,6 +226,9 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         self._create_handler(auth)
         self._handler.open()
         self._message_iter = self._handler.receive_messages_iter()
+        while not self._handler.auth_complete():
+            time.sleep(0.05)
+        self._create_uamqp_receiver_handler()
         while not self._handler.client_ready():
             time.sleep(0.05)
         self._running = True
@@ -384,3 +408,41 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         for m in messages:
             m._receiver = self  # pylint: disable=protected-access
         return messages
+
+    def peek(self, message_count=1, sequence_number=None):
+        # type: (int, Optional[int]) -> list[PeekMessage]
+        """Browse messages currently pending in the queue.
+        Peeked messages are not removed from queue, nor are they locked. They cannot be completed,
+        deferred or dead-lettered.
+        :param int message_count: The maximum number of messages to try and peek. The default
+         value is 1.
+        :param int sequence_number: A message sequence number from which to start browsing messages.
+        :rtype: list[~azure.servicebus.PeekMessage]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sync_samples/sample_code_servicebus.py
+                :start-after: [START servicebus_receiver_receive_peek_sync]
+                :end-before: [END servicebus_receiver_receive_peek_sync]
+                :language: python
+                :dedent: 4
+                :caption: Look at pending messages in the queue.
+
+        """
+        if not sequence_number:
+            sequence_number = self._last_received_sequenced_number or 1
+        if int(message_count) < 1:
+            raise ValueError("count must be 1 or greater.")
+        if int(sequence_number) < 1:
+            raise ValueError("start_from must be 1 or greater.")
+
+        self._open()
+        message = {
+            'from-sequence-number': types.AMQPLong(sequence_number),
+            'message-count': message_count
+        }
+        return self._mgmt_request_response_with_retry(
+            REQUEST_RESPONSE_PEEK_OPERATION,
+            message,
+            mgmt_handlers.peek_op
+        )

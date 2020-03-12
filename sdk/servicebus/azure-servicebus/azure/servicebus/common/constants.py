@@ -45,6 +45,9 @@ CONTAINER_PREFIX = "eventhub.pysdk-"
 JWT_TOKEN_SCOPE = "https://servicebus.azure.net//.default"
 USER_AGENT_PREFIX = "azsdk-python-servicebus"
 
+# event_data.encoded_size < 255, batch encode overhead is 5, >=256, overhead is 8 each
+_BATCH_MESSAGE_OVERHEAD_COST = [5, 8]
+
 
 class ReceiveSettleMode(Enum):
     PeekLock = constants.ReceiverSettleMode.PeekLock

@@ -6,7 +6,7 @@
 # --------------------------------------------------------------------------------------------
 
 """
-Example to show iterator receiving from a Service Bus Queue.
+Example to show browsing messages currently pending in the queue.
 """
 
 # pylint: disable=C0111
@@ -22,8 +22,8 @@ servicebus_client = ServiceBusClient.from_connection_string(conn_str=CONNECTION_
 with servicebus_client:
     receiver = servicebus_client.get_queue_receiver(queue_name=QUEUE_NAME)
     with receiver:
-        for msg in receiver:
+        received_msgs = receiver.peek(message_count=2)
+        for msg in received_msgs:
             print(str(msg))
-            msg.complete()
 
 print("Receive is done.")

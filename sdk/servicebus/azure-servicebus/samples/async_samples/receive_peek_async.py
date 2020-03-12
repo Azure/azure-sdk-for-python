@@ -6,7 +6,7 @@
 # --------------------------------------------------------------------------------------------
 
 """
-Example to show iterator receiving from a Service Bus Queue asynchronously.
+ample to show browsing messages currently pending in the queue asynchronously.
 """
 
 # pylint: disable=C0111
@@ -25,10 +25,9 @@ async def main():
     async with servicebus_client:
         receiver = await servicebus_client.get_queue_receiver(queue_name=QUEUE_NAME)
         async with receiver:
-            async for msg in receiver:
+            received_msgs = await receiver.peek(message_count=2)
+            for msg in received_msgs:
                 print(str(msg))
-                await msg.complete()
-    print("Receive is done.")
 
 loop = asyncio.get_event_loop()
 loop.run_until_complete(main())

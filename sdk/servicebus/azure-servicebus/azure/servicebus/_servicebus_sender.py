@@ -5,12 +5,13 @@
 import logging
 import time
 import uuid
-from typing import Any, TYPE_CHECKING
+from typing import Any, TYPE_CHECKING, Union
 
+import uamqp
 from uamqp import SendClient
 
 from ._base_handler import BaseHandler
-from .common.message import Message
+from .common.message import Message, BatchMessage
 from .common.errors import (
     MessageSendFailed,
     OperationTimeoutError,
@@ -31,6 +32,7 @@ class SenderMixin(object):
         self._entity_uri = "amqps://{}/{}".format(self.fully_qualified_namespace, self._entity_path)
         self._error_policy = _ServiceBusErrorPolicy(max_retries=self._config.retry_total)
         self._name = "SBSender-{}".format(uuid.uuid4())
+        self._max_message_size_on_link = 0
 
     def _set_msg_timeout(self, timeout=None, last_exception=None):
         if not timeout:
@@ -107,6 +109,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 **kwargs
             )
 
+        self._max_message_size_on_link = 0
         self._create_attribute()
 
     def _create_handler(self, auth):
@@ -122,6 +125,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         )
 
     def _open(self):
+        # pylint: disable=protected-access
         if self._running:
             return
         if self._handler:
@@ -133,6 +137,8 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         while not self._handler.client_ready():
             time.sleep(0.05)
         self._running = True
+        self._max_message_size_on_link = self._handler.message_handler._link.peer_max_message_size \
+                                         or uamqp.constants.MAX_MESSAGE_LENGTH_BYTES
 
     def _send(self, message, timeout=None, last_exception=None):
         self._open()
@@ -182,7 +188,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         return cls(**constructor_args)
 
     def send(self, message, message_timeout=None):
-        # type: (Message, float) -> None
+        # type: (Union[Message, BatchMessage], float) -> None
         """Sends message and blocks until acknowledgement is received or operation times out.
 
         :param message: The ServiceBus message to be sent.
@@ -208,4 +214,37 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             timeout=message_timeout,
             require_timeout=True,
             require_last_exception=True
+        )
+
+    def create_batch(self, max_size_in_bytes=None):
+        # type: (int) -> BatchMessage
+        """Create a BatchMessage object with the max size of all content being constrained by max_size_in_bytes.
+        The max_size should be no greater than the max allowed message size defined by the service.
+
+        :param int max_size_in_bytes: The maximum size of bytes data that a BatchMessage object can hold. By
+         default, the value is determined by your Service Bus tier.
+        :rtype: ~azure.servicebus.BatchMessage
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sync_samples/sample_code_servicebus.py
+                :start-after: [START servicebus_sender_create_batch_sync]
+                :end-before: [END servicebus_sender_create_batch_sync]
+                :language: python
+                :dedent: 4
+                :caption: Create BatchMessage object within limited size
+
+        """
+        if not self._max_message_size_on_link:
+            self._open_with_retry()
+
+        if max_size_in_bytes and max_size_in_bytes > self._max_message_size_on_link:
+            raise ValueError(
+                "Max message size: {} is too large, acceptable max batch size is: {} bytes.".format(
+                    max_size_in_bytes, self._max_message_size_on_link
+                )
+            )
+
+        return BatchMessage(
+            max_size_in_bytes=(max_size_in_bytes or self._max_message_size_on_link)
         )
