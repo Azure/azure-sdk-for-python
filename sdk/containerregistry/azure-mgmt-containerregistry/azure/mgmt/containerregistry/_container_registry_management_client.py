@@ -115,6 +115,22 @@ class ContainerRegistryManagementClient(MultiApiClientMixin, SDKClient):
         raise NotImplementedError("APIVersion {} is not available".format(api_version))
 
     @property
+    def agent_pools(self):
+        """Instance depends on the API version:
+
+           * 2019-06-01-preview: :class:`AgentPoolsOperations<azure.mgmt.containerregistry.v2019_06_01_preview.operations.AgentPoolsOperations>`
+           * 2019-12-01-preview: :class:`AgentPoolsOperations<azure.mgmt.containerregistry.v2019_12_01_preview.operations.AgentPoolsOperations>`
+        """
+        api_version = self._get_api_version('agent_pools')
+        if api_version == '2019-06-01-preview':
+            from .v2019_06_01_preview.operations import AgentPoolsOperations as OperationClass
+        elif api_version == '2019-12-01-preview':
+            from .v2019_12_01_preview.operations import AgentPoolsOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
     def build_steps(self):
         """Instance depends on the API version:
 
