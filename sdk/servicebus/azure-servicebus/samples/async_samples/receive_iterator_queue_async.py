@@ -20,15 +20,10 @@ QUEUE_NAME = os.environ["SERVICE_BUS_QUEUE_NAME"]
 
 
 async def main():
-    servicebus_client = ServiceBusClient.from_connection_string(
-        conn_str=CONNECTION_STR
-    )
+    servicebus_client = ServiceBusClient.from_connection_string(conn_str=CONNECTION_STR)
 
     async with servicebus_client:
-        receiver = await servicebus_client.get_queue_receiver(
-            queue_name=QUEUE_NAME
-        )
-
+        receiver = await servicebus_client.get_queue_receiver(queue_name=QUEUE_NAME)
         async with receiver:
             async for msg in receiver:
                 print(str(msg))

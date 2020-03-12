@@ -6,9 +6,10 @@ import logging
 import asyncio
 from typing import Any, TYPE_CHECKING
 
+import uamqp
 from uamqp import SendClientAsync
 
-from ..common.message import Message
+from ..common.message import Message, BatchMessage
 from .._servicebus_sender import SenderMixin
 from ._base_handler_async import BaseHandlerAsync
 from ..common.errors import (
@@ -106,6 +107,8 @@ class ServiceBusSender(BaseHandlerAsync, SenderMixin):
         while not await self._handler.client_ready_async():
             await asyncio.sleep(0.05)
         self._running = True
+        self._max_message_size_on_link = self._handler.message_handler._link.peer_max_message_size \
+                                         or uamqp.constants.MAX_MESSAGE_LENGTH_BYTES
 
     async def _send(self, message, timeout=None, last_exception=None):
         await self._open()
@@ -180,4 +183,37 @@ class ServiceBusSender(BaseHandlerAsync, SenderMixin):
             timeout=message_timeout,
             require_timeout=True,
             require_last_exception=True
+        )
+
+    async def create_batch(self, max_size_in_bytes=None):
+        # type: (int) -> BatchMessage
+        """Create a BatchMessage object with the max size of all content being constrained by max_size_in_bytes.
+        The max_size should be no greater than the max allowed message size defined by the service.
+
+        :param int max_size_in_bytes: The maximum size of bytes data that a BatchMessage object can hold. By
+         default, the value is determined by your Service Bus tier.
+        :rtype: ~azure.servicebus.BatchMessage
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_code_servicebus_async.py
+                :start-after: [START servicebus_sender_create_batch_async]
+                :end-before: [END servicebus_sender_create_batch_async]
+                :language: python
+                :dedent: 4
+                :caption: Create BatchMessage object within limited size
+
+        """
+        if not self._max_message_size_on_link:
+            await self._open_with_retry()
+
+        if max_size_in_bytes and max_size_in_bytes > self._max_message_size_on_link:
+            raise ValueError(
+                "Max message size: {} is too large, acceptable max batch size is: {} bytes.".format(
+                    max_size_in_bytes, self._max_message_size_on_link
+                )
+            )
+
+        return BatchMessage(
+            max_size_in_bytes=(max_size_in_bytes or self._max_message_size_on_link)
         )

@@ -6,12 +6,13 @@
 
 import datetime
 import uuid
+from typing import Optional
 
 import uamqp
 from uamqp import types
 
-from azure.servicebus.common.constants import DEADLETTERNAME
-from azure.servicebus.common.errors import (
+from .constants import DEADLETTERNAME, _BATCH_MESSAGE_OVERHEAD_COST
+from .errors import (
     MessageAlreadySettled,
     MessageSettleFailed,
     MessageLockExpired,
@@ -210,6 +211,77 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
         if not self.message.annotations:
             self.message.annotations = {}
         self.message.annotations[types.AMQPSymbol(self._x_OPT_SCHEDULED_ENQUEUE_TIME)] = schedule_time
+
+
+class BatchMessage(object):
+    """A batch of messages.
+
+    Sending messages in a batch is more performant than sending individual message.
+    BatchMessage helps you create the maximum allowed size batch of `Message` to improve sending performance.
+
+    Use the `add` method to add messages until the maximum batch size limit in bytes has been reached -
+    at which point a `ValueError` will be raised.
+
+    **Please use the create_batch method of ServiceBusSender
+    to create a BatchMessage object instead of instantiating a BatchMessage object directly.**
+
+    :param int max_size_in_bytes: The maximum size of bytes data that a BatchMessage object can hold.
+
+    """
+    def __init__(self, max_size_in_bytes=None):
+        # type: (Optional[int]) -> None
+        self.max_size_in_bytes = max_size_in_bytes or uamqp.constants.MAX_MESSAGE_LENGTH_BYTES
+        self.message = uamqp.BatchMessage(data=[], multi_messages=False, properties=None)
+        self._size = self.message.gather()[0].get_message_encoded_size()
+        self._count = 0
+
+    def __repr__(self):
+        # type: () -> str
+        batch_repr = "max_size_in_bytes={}, message_count={}".format(
+            self.max_size_in_bytes, self._count
+        )
+        return "BatchMessage({})".format(batch_repr)
+
+    def __len__(self):
+        return self._count
+
+    @property
+    def size_in_bytes(self):
+        # type: () -> int
+        """The combined size of the events in the batch, in bytes.
+
+        :rtype: int
+        """
+        return self._size
+
+    def add(self, message):
+        # type: (Message) -> None
+        """
+
+        :param message:
+        :rtype: None
+        :raises: :class:`ValueError`, when exceeding the size limit.
+        """
+        message_size = message.message.get_message_encoded_size()
+
+        # For a BatchMessage, if the encoded_message_size of event_data is < 256, then the overhead cost to encode that
+        # message into the BatchMessage would be 5 bytes, if >= 256, it would be 8 bytes.
+        size_after_add = (
+            self._size
+            + message_size
+            + _BATCH_MESSAGE_OVERHEAD_COST[0 if (message_size < 256) else 1]
+        )
+
+        if size_after_add > self.max_size_in_bytes:
+            raise ValueError(
+                "EventDataBatch has reached its size limit: {}".format(
+                    self.max_size_in_bytes
+                )
+            )
+
+        self.message._body_gen.append(message)  # pylint: disable=protected-access
+        self._size = size_after_add
+        self._count += 1
 
 
 class PeekMessage(Message):
