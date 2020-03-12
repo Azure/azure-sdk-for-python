@@ -34,7 +34,7 @@
 #   virtual_machine_images: 5/5
 #   virtual_machine_extensions: 5/5
 #   virtual_machine_extension_images: 3/3
-#   virtual_machine_scale_sets: 16/21
+#   virtual_machine_scale_sets: 13/21
 #   virtual_machine_scale_set_vms: 1/14
 #   virtual_machine_scale_set_vm_extensions: 0/5
 #   virtual_machine_scale_set_rolling_upgrades: 2/4
@@ -299,6 +299,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
           }
         }
         result = self.mgmt_client.snapshots.create_or_update(resource_group.name, SNAPSHOT_NAME, BODY)
+        result = result.result()
 
         # Create a virtual machine image from a snapshot.[put]
         BODY = {
@@ -2785,6 +2786,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
           }
         }
         result = self.mgmt_client.snapshots.update(resource_group.name, SNAPSHOT_NAME, BODY)
+        result = result.result()
 
         # TODO: dont finish
         # # Update VirtualMachineScaleSet VM extension.[patch]
@@ -2831,8 +2833,11 @@ class MgmtComputeTest(AzureMgmtTestCase):
         result = self.mgmt_client.virtual_machine_scale_set_rolling_upgrades.start_extension_upgrade(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME)
         result = result.result()
 
+        # TODO:msrestazure.azure_exceptions.CloudError: Azure Error: MaxUnhealthyInstancePercentExceededInRollingUpgrade
+        # Message: Rolling Upgrade failed after exceeding the MaxUnhealthyInstancePercent value defined in the RollingUpgradePolicy. 100% of instances are in an unhealthy state after being upgraded - more than the threshold of 20% configured in the RollingUpgradePolicy. The most impactful error is:  Instance found to be unhealthy or unreachable. For details on rolling upgrades, use http://aka.ms/AzureVMSSRollingUpgrade
         # Start vmss os upgrade (TODO: need swagger file)
-        result = self.mgmt_client.virtual_machine_scale_set_rolling_upgrades.start_os_upgrade(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME)
+        # result = self.mgmt_client.virtual_machine_scale_set_rolling_upgrades.start_os_upgrade(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME)
+        # result = result.result()
 
         # Cancel vmss upgrade (TODO: need swagger file)
         # result = self.mgmt_client.virtual_machine_scale_set_rolling_upgrades.cancel(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME)
@@ -3023,6 +3028,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
 
         # Delete virtua machine scale set extension (TODO: need swagger file)
         result = self.mgmt_client.virtual_machine_scale_set_extensions.delete(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME, VMSS_EXTENSION_NAME)
+        result = result.result()
 
         # VirtualMachineScaleSet stop againe.
         result = self.mgmt_client.virtual_machine_scale_sets.power_off(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME)
@@ -3061,6 +3067,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
         # This operation need VM running.
         # Delete virtual machine extension (TODO: need swagger file)
         result = self.mgmt_client.virtual_machine_extensions.delete(resource_group.name, VIRTUAL_MACHINE_NAME,VIRTUAL_MACHINE_EXTENSION_NAME)
+        result = result.result()
 
         # VirtualMachine power off again.
         result = self.mgmt_client.virtual_machines.power_off(resource_group.name, VIRTUAL_MACHINE_NAME)
@@ -3094,6 +3101,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
 
         # Revoke access disk (TODO: need swagger file)
         result = self.mgmt_client.disks.revoke_access(resource_group.name, DISK_NAME)
+        result = result.result()
 
         # Redeploy virtual machine scale set vm (TODO: need swagger file)
         # result = self.mgmt_client.virtual_machine_scale_set_vms.redeploy(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME, INSTANCE_ID)
@@ -3233,12 +3241,14 @@ class MgmtComputeTest(AzureMgmtTestCase):
 
         # Deallocate virtual machine (TODO: need swagger file)
         result = self.mgmt_client.virtual_machines.deallocate(resource_group.name, VIRTUAL_MACHINE_NAME)
+        result = result.result()
 
         # Deallocate virtual machine scale set vm (TODO: need swagger file)
         # result = self.mgmt_client.virtual_machine_scale_set_vms.deallocate(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME, INSTANCE_ID)
 
         # Deallocate virtual machine scale set (TODO: need swagger file)
         result = self.mgmt_client.virtual_machine_scale_sets.deallocate(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME)
+        result = result.result()
 
         # TODO: need finish
         # # Delete VirtualMachineScaleSet VM extension.[delete]
@@ -3255,9 +3265,11 @@ class MgmtComputeTest(AzureMgmtTestCase):
 
         # Delete virtual machine set (TODO: need swagger file)
         result = self.mgmt_client.virtual_machine_scale_sets.delete(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME)
+        result = result.result()
 
         # Delete virtual machine (TODO: need swagger file)
         result = self.mgmt_client.virtual_machines.delete(resource_group.name, VIRTUAL_MACHINE_NAME)
+        result = result.result()
 
         # Delete a gallery Image Version.[delete]
         result = self.mgmt_client.gallery_image_versions.delete(resource_group.name, GALLERY_NAME, IMAGE_NAME, VERSION_NAME)
@@ -3269,6 +3281,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
 
         # Revoke access snapshot (TODO: need swagger file)
         result = self.mgmt_client.snapshots.revoke_access(resource_group.name, SNAPSHOT_NAME)
+        result = result.result()
 
         # Delete snapshot (TODO: need swagger file)
         result = self.mgmt_client.snapshots.delete(resource_group.name, SNAPSHOT_NAME)
@@ -3306,7 +3319,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
         result = self.mgmt_client.disks.delete(resource_group.name, DISK_NAME)
         result = result.result()
 
-        # Delete availability sets (TOODO: need a swagger file)
+        # Delete availability sets (TODO: need a swagger file)
         resout = self.mgmt_client.availability_sets.delete(resource_group.name, AVAILABILITY_SET_NAME)
 
         # Delete a gallery.[delete]
