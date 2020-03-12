@@ -37,11 +37,11 @@ jobs:
         Python_38_Linux (Gov):
           PythonVersion: '3.8'
           OSVmImage: ubuntu-18.04
-          CloudType: public
+          CloudType: gov
         Python_37_Windows (Gov):
           PythonVersion: '3.7'
           OSVmImage: windows-2019
-          CloudType: public
+          CloudType: gov
 
     pool:
       vmImage: $(OSVmImage)

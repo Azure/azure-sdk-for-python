@@ -54,6 +54,7 @@ class EventHubAsync:
             # on_event will close the consumer_client which resumes execution
             on_event=self.on_event,
             on_error=self.on_error,
+            timeout=RECEIVE_TIMEOUT,
             starting_position=STARTING_POSITION
         )
 
