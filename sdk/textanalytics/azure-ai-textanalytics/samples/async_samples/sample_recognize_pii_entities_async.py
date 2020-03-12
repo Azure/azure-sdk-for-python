@@ -50,7 +50,7 @@ class RecognizePiiEntitiesSampleAsync(object):
             for entity in doc.entities:
                 print("Entity: {}".format(entity.text))
                 print("Category: {}".format(entity.category))
-                print("Confidence Score: {}\n".format(entity.score))
+                print("Confidence Score: {}\n".format(entity.confidence_score))
         # [END batch_recognize_pii_entities_async]
 
 

@@ -196,9 +196,9 @@ class CategorizedEntity(DictMixin):
     :param grapheme_length: Length (in Unicode characters) for the entity
         text.
     :type grapheme_length: int
-    :param score: Confidence score between 0 and 1 of the extracted
+    :param confidence_score: Confidence score between 0 and 1 of the extracted
         entity.
-    :type score: float
+    :type confidence_score: float
     """
 
     def __init__(self, **kwargs):
@@ -207,7 +207,7 @@ class CategorizedEntity(DictMixin):
         self.subcategory = kwargs.get('subcategory', None)
         self.grapheme_offset = kwargs.get('grapheme_offset', None)
         self.grapheme_length = kwargs.get('grapheme_length', None)
-        self.score = kwargs.get('score', None)
+        self.confidence_score = kwargs.get('confidence_score', None)
 
     @classmethod
     def _from_generated(cls, entity):
@@ -217,13 +217,13 @@ class CategorizedEntity(DictMixin):
             subcategory=entity.subtype,
             grapheme_offset=entity.offset,
             grapheme_length=entity.length,
-            score=entity.score,
+            confidence_score=entity.score,
         )
 
     def __repr__(self):
         return "CategorizedEntity(text={}, category={}, subcategory={}, grapheme_offset={}, grapheme_length={}, " \
-               "score={})".format(self.text, self.category, self.subcategory, self.grapheme_offset,
-                                  self.grapheme_length, self.score)[:1024]
+               "confidence_score={})".format(self.text, self.category, self.subcategory, self.grapheme_offset,
+                                  self.grapheme_length, self.confidence_score)[:1024]
 
 
 class PiiEntity(DictMixin):
@@ -244,9 +244,9 @@ class PiiEntity(DictMixin):
     :param grapheme_length: Length (in Unicode characters) for the entity
         text.
     :type grapheme_length: int
-    :param score: Confidence score between 0 and 1 of the extracted
+    :param confidence_score: Confidence score between 0 and 1 of the extracted
         entity.
-    :type score: float
+    :type confidence_score: float
     """
 
     def __init__(self, **kwargs):
@@ -255,7 +255,7 @@ class PiiEntity(DictMixin):
         self.subcategory = kwargs.get('subcategory', None)
         self.grapheme_offset = kwargs.get('grapheme_offset', None)
         self.grapheme_length = kwargs.get('grapheme_length', None)
-        self.score = kwargs.get('score', None)
+        self.confidence_score = kwargs.get('confidence_score', None)
 
     @classmethod
     def _from_generated(cls, entity):
@@ -265,13 +265,13 @@ class PiiEntity(DictMixin):
             subcategory=entity.subtype,
             grapheme_offset=entity.offset,
             grapheme_length=entity.length,
-            score=entity.score,
+            confidence_score=entity.score,
         )
 
     def __repr__(self):
         return "PiiEntity(text={}, category={}, subcategory={}, grapheme_offset={}, grapheme_length={}, " \
-               "score={})".format(self.text, self.category, self.subcategory, self.grapheme_offset,
-                                  self.grapheme_length, self.score)[:1024]
+               "confidence_score={})".format(self.text, self.category, self.subcategory, self.grapheme_offset,
+                                  self.grapheme_length, self.confidence_score)[:1024]
 
 
 class TextAnalyticsError(DictMixin):
@@ -574,10 +574,10 @@ class LinkedEntityMatch(DictMixin):
     the confidence score of the prediction and where the entity
     was found in the text.
 
-    :param score: If a well-known item is recognized, a
+    :param confidence_score: If a well-known item is recognized, a
         decimal number denoting the confidence level between 0 and 1 will be
         returned.
-    :type score: float
+    :type confidence_score: float
     :param text: Entity text as appears in the request.
     :type text: str
     :param grapheme_offset: Start position (in Unicode characters) for the
@@ -589,7 +589,7 @@ class LinkedEntityMatch(DictMixin):
     """
 
     def __init__(self, **kwargs):
-        self.score = kwargs.get("score", None)
+        self.confidence_score = kwargs.get("confidence_score", None)
         self.text = kwargs.get("text", None)
         self.grapheme_offset = kwargs.get("grapheme_offset", None)
         self.grapheme_length = kwargs.get("grapheme_length", None)
@@ -597,12 +597,15 @@ class LinkedEntityMatch(DictMixin):
     @classmethod
     def _from_generated(cls, match):
         return cls(
-            score=match.score, text=match.text, grapheme_offset=match.offset, grapheme_length=match.length
+            confidence_score=match.score,
+            text=match.text,
+            grapheme_offset=match.offset,
+            grapheme_length=match.length
         )
 
     def __repr__(self):
-        return "LinkedEntityMatch(score={}, text={}, grapheme_offset={}, grapheme_length={})" \
-            .format(self.score, self.text, self.grapheme_offset, self.grapheme_length)[:1024]
+        return "LinkedEntityMatch(confidence_score={}, text={}, grapheme_offset={}, grapheme_length={})" \
+            .format(self.confidence_score, self.text, self.grapheme_offset, self.grapheme_length)[:1024]
 
 
 class TextDocumentInput(MultiLanguageInput):

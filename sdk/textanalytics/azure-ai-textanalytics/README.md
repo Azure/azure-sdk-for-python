@@ -238,7 +238,7 @@ result = [doc for doc in response if not doc.is_error]
 for doc in result:
     for entity in doc.entities:
         print("Entity: \t", entity.text, "\tCategory: \t", entity.category,
-              "\tConfidence Score: \t", entity.score)
+              "\tConfidence Score: \t", entity.confidence_score)
 ```
 
 The returned response is a heterogeneous list of result and error objects: list[[RecognizeEntitiesResult][recognize_entities_result], [DocumentError][document_error]]
@@ -266,7 +266,7 @@ result = [doc for doc in response if not doc.is_error]
 for doc in result:
     for entity in doc.entities:
         print("Entity: \t", entity.text, "\tCategory: \t", entity.category,
-              "\tConfidence Score: \t", entity.score)
+              "\tConfidence Score: \t", entity.confidence_score)
 ```
 
 The returned response is a heterogeneous list of result and error objects: list[[RecognizePiiEntitiesResult][recognize_pii_entities_result], [DocumentError][document_error]]
@@ -297,7 +297,7 @@ for doc in result:
         print("URL: {}".format(entity.url))
         print("Data Source: {}".format(entity.data_source))
         for match in entity.matches:
-            print("Score: {}".format(match.score))
+            print("Confidence Score: {}".format(match.confidence_score))
             print("Entity as appears in request: {}".format(match.text))
 ```
 
