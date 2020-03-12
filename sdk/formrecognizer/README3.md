@@ -19,9 +19,9 @@ Both receipt and layout methods return poller objects which are used to get the 
 The `begin_extract_receipt` method returns a `List[ExtractedReceipt]` with hardcoded receipt fields.
 The `begin_extract_layout` method returns the extracted layouts as a `List[ExtractedLayoutPage]`.
 
-If the keyword argument `include_text_details=True` is passed in, the `raw_` attributes will be populated with the
-raw OCR result for each value/cell referenced by the `elements`. If the user wishes to retrieve the full
-deserialized raw OCR result, they can get it with the `raw_response_hook` keyword argument. This will additionally 
+If the keyword argument `include_text_details=True` is passed in, the `elements` attribute will be re-hydrated with the
+OCR result for the particular value/cell referenced by the json pointer. If the user wishes to retrieve the full
+deserialized OCR result, they can get it with the `raw_response_hook` keyword argument. This will additionally 
 return the full raw response returned from the service (example at bottom of page).
 
 ### Form Recognizer Client
