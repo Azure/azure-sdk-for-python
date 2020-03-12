@@ -293,8 +293,6 @@ if __name__ == "__main__":
                         help="Override output path.")
     args = parser.parse_args()
 
-    print("XXX " + str(args.output))
-
     logging.basicConfig(level=logging.DEBUG if args.debug else logging.INFO)
 
     main(args.package_name, args.version, args.no_venv, args.pypi, args.last_pypi, args.output)
