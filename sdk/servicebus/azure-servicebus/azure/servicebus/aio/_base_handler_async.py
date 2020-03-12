@@ -21,7 +21,8 @@ from ..common.errors import (
     InvalidHandlerState,
     ServiceBusError,
     ServiceBusConnectionError,
-    ServiceBusAuthorizationError
+    ServiceBusAuthorizationError,
+    MessageSendFailed
 )
 
 if TYPE_CHECKING:
@@ -98,45 +99,36 @@ class BaseHandlerAsync(BaseHandler):
             transport_type=self._config.transport_type,
         )
 
-    async def _reconnect(self):
-        if self._handler:
-            await self._handler.close_async()
-            self._handler = None
-        self._running = False
-        await self._open()
-
     async def _handle_exception(self, exception):
         if isinstance(exception, (errors.LinkDetach, errors.ConnectionClose)):
-            if exception.action and exception.action.retry and self._config.auto_reconnect:
-                _LOGGER.info("Handler detached. Attempting reconnect.")
-                await self._reconnect()
-            elif exception.condition == constants.ErrorCodes.UnauthorizedAccess:
-                _LOGGER.info("Handler detached. Shutting down.")
+            if exception.condition == constants.ErrorCodes.UnauthorizedAccess:
+                _LOGGER.info("Async handler detached. Shutting down.")
                 error = ServiceBusAuthorizationError(str(exception), exception)
-                await self.close(exception=error)
-                raise error
-            else:
-                _LOGGER.info("Handler detached. Shutting down.")
-                error = ServiceBusConnectionError(str(exception), exception)
-                await self.close(exception=error)
-                raise error
-        elif isinstance(exception, errors.MessageHandlerError):
-            if self._config.auto_reconnect:
-                _LOGGER.info("Handler error. Attempting reconnect.")
-                await self._reconnect()
-            else:
-                _LOGGER.info("Handler error. Shutting down.")
-                error = ServiceBusConnectionError(str(exception), exception)
-                await self.close(exception=error)
-                raise error
-        elif isinstance(exception, errors.AMQPConnectionError):
+                await self._close_handler()
+                return error
+            _LOGGER.info("Async handler detached. Shutting down.")
+            error = ServiceBusConnectionError(str(exception), exception)
+            await self._close_handler()
+            return error
+        if isinstance(exception, errors.MessageHandlerError):
+            _LOGGER.info("Async handler error. Shutting down.")
+            error = ServiceBusConnectionError(str(exception), exception)
+            await self._close_handler()
+            return error
+        if isinstance(exception, errors.AMQPConnectionError):
             message = "Failed to open handler: {}".format(exception)
-            raise ServiceBusConnectionError(message, exception)
-        else:
-            _LOGGER.info("Unexpected error occurred (%r). Shutting down.", exception)
-            error = ServiceBusError("Handler failed: {}".format(exception))
-            await self.close(exception=error)
-            raise error
+            await self._close_handler()
+            return ServiceBusConnectionError(message, exception)
+        if isinstance(exception, MessageSendFailed):
+            _LOGGER.info("Message send error (%r)", exception)
+            raise exception
+
+        _LOGGER.info("Unexpected error occurred (%r). Shutting down.", exception)
+        error = exception
+        if not isinstance(exception, ServiceBusError):
+            error = ServiceBusError("Handler failed: {}".format(exception), exception)
+        await self._close_handler()
+        raise error
 
     async def _backoff(
             self,
@@ -145,16 +137,15 @@ class BaseHandlerAsync(BaseHandler):
             timeout=None,
             entity_name=None
     ):
-        # type: (int, Exception, Optional[int], Optional[str]) -> None
         entity_name = entity_name or self._container_id
         backoff = self._config.retry_backoff_factor * 2 ** retried_times
         if backoff <= self._config.retry_backoff_max and (
                 timeout is None or backoff <= timeout
-        ):  # pylint:disable=no-else-return
+        ):
             await asyncio.sleep(backoff)
             _LOGGER.info(
                 "%r has an exception (%r). Retrying...",
-                format(entity_name),
+                entity_name,
                 last_exception,
             )
         else:
@@ -179,14 +170,16 @@ class BaseHandlerAsync(BaseHandler):
                 if require_timeout:
                     kwargs["timeout"] = timeout
                 return await operation(**kwargs)
-            except Exception as exception:
+            except Exception as exception:  # pylint: disable=broad-except
                 last_exception = await self._handle_exception(exception)
+                retried_times += 1
+                if retried_times > max_retries:
+                    break
                 await self._backoff(
                     retried_times=retried_times,
                     last_exception=last_exception,
                     timeout=timeout
                 )
-                retried_times += 1
 
         _LOGGER.info(
             "%r operation has exhausted retry. Last exception: %r.",
@@ -195,7 +188,7 @@ class BaseHandlerAsync(BaseHandler):
         )
         raise last_exception
 
-    async def _mgmt_request_response(self, operation, message, callback, **kwargs):
+    async def _mgmt_request_response(self, mgmt_operation, message, callback, **kwargs):
         if not self._running:
             raise InvalidHandlerState("Client connection is closed.")
 
@@ -208,7 +201,7 @@ class BaseHandlerAsync(BaseHandler):
         try:
             return await self._handler.mgmt_request_async(
                 mgmt_msg,
-                operation,
+                mgmt_operation,
                 op_type=b"entity-mgmt",
                 node=self._mgmt_target.encode(self._config.encoding),
                 timeout=5000,
@@ -216,11 +209,29 @@ class BaseHandlerAsync(BaseHandler):
         except Exception as exp:  # pylint: disable=broad-except
             raise ServiceBusError("Management request failed: {}".format(exp), exp)
 
+    async def _mgmt_request_response_with_retry(self, mgmt_operation, message, callback, **kwargs):
+        return await self._do_retryable_operation(
+            self._mgmt_request_response,
+            mgmt_operation=mgmt_operation,
+            message=message,
+            callback=callback,
+            **kwargs
+        )
+
     @staticmethod
     def _from_connection_string(conn_str, **kwargs):
         kwargs = BaseHandler._from_connection_string(conn_str, **kwargs)
         kwargs["credential"] = ServiceBusSharedKeyCredential(kwargs["credential"].policy, kwargs["credential"].key)
         return kwargs
+
+    async def _open_with_retry(self):
+        return await self._do_retryable_operation(self._open)
+
+    async def _close_handler(self):
+        if self._handler:
+            await self._handler.close_async()
+            self._handler = None
+        self._running = False
 
     async def close(self, exception=None):
         # type: (Exception) -> None
@@ -241,5 +252,5 @@ class BaseHandlerAsync(BaseHandler):
             self._error = ServiceBusError(str(exception))
         else:
             self._error = ServiceBusError("This message handler is now closed.")
-        await self._handler.close_async()
-        self._running = False
+
+        await self._close_handler()

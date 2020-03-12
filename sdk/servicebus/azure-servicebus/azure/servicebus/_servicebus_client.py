@@ -30,6 +30,16 @@ class ServiceBusClient(object):
     :keyword dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
      keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
      Additionally the following keys may also be present: `'username', 'password'`.
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/sync_samples/sample_code_servicebus.py
+            :start-after: [START create_sb_client_sync]
+            :end-before: [END create_sb_client_sync]
+            :language: python
+            :dedent: 4
+            :caption: Create a new instance of the ServiceBusClient.
+
     """
     def __init__(
         self,
@@ -48,8 +58,12 @@ class ServiceBusClient(object):
     def __exit__(self, *args):
         self.close()
 
-    def close(self):
-        pass
+    def close(self) -> None:
+        """
+        Close down the ServiceBus client.
+
+        :return: None
+        """
 
     @classmethod
     def from_connection_string(
@@ -58,6 +72,29 @@ class ServiceBusClient(object):
         **kwargs
     ):
         # type: (str, Any) -> ServiceBusClient
+        """
+        Create a ServiceBusClient from a connection string.
+
+        :param conn_str: The connection string of a Service Bus.
+        :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
+        :keyword transport_type: The type of transport protocol that will be used for communicating with
+         the Service Bus service. Default is `TransportType.Amqp`.
+        :paramtype transport_type: ~azure.servicebus.TransportType
+        :keyword dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
+         keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
+         Additionally the following keys may also be present: `'username', 'password'`.
+        :rtype: ~azure.servicebus.ServiceBusClient
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sync_samples/sample_code_servicebus.py
+                :start-after: [START create_sb_client_from_conn_str_sync]
+                :end-before: [END create_sb_client_from_conn_str_sync]
+                :language: python
+                :dedent: 4
+                :caption: Create a new instance of the ServiceBusClient from connection string.
+
+        """
         host, policy, key, _ = _parse_conn_str(conn_str)
         return cls(
             fully_qualified_namespace=host,
@@ -66,31 +103,64 @@ class ServiceBusClient(object):
         )
 
     def get_queue_sender(self, queue_name, **kwargs):
+        # type: (str, Any) -> ServiceBusSender
         """Get ServiceBusSender for the specific queue.
 
         :param str queue_name: The path of specific Service Bus Queue the client connects to.
         :keyword int retry_total: The total number of attempts to redo a failed operation when an error occurs.
          Default value is 3.
+        :rtype: ~azure.servicebus.ServiceBusSender
+        :raises: :class:`ServiceBusConnectionError`
+         :class:`ServiceBusAuthorizationError`
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sync_samples/sample_code_servicebus.py
+                :start-after: [START create_servicebus_sender_from_sb_client_sync]
+                :end-before: [END create_servicebus_sender_from_sb_client_sync]
+                :language: python
+                :dedent: 4
+                :caption: Create a new instance of the ServiceBusSender from ServiceBusClient.
+
         """
-        return ServiceBusSender(
+        sender = ServiceBusSender(
             fully_qualified_namespace=self.fully_qualified_namespace,
             queue_name=queue_name,
             credential=self._credential,
             logging_enable=self._config.logging_enable,
             **kwargs
         )
+        sender._open_with_retry()  # pylint: disable=protected-access
+        return sender
 
     def get_queue_receiver(self, queue_name, **kwargs):
+        # type: (str, Any) -> ServiceBusReceiver
         """Get ServiceBusReceiver for the specific queue.
 
         :param str queue_name: The path of specific Service Bus Queue the client connects to.
         :keyword int retry_total: The total number of attempts to redo a failed operation when an error occurs.
          Default value is 3.
+        :rtype: ~azure.servicebus.ServiceBusReceiver
+        :raises: :class:`ServiceBusConnectionError`
+         :class:`ServiceBusAuthorizationError`
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sync_samples/sample_code_servicebus.py
+                :start-after: [START create_servicebus_receiver_from_sb_client_sync]
+                :end-before: [END create_servicebus_receiver_from_sb_client_sync]
+                :language: python
+                :dedent: 4
+                :caption: Create a new instance of the ServiceBusReceiver from ServiceBusClient.
+
+
         """
-        return ServiceBusReceiver(
+        receiver = ServiceBusReceiver(
             fully_qualified_namespace=self.fully_qualified_namespace,
             queue_name=queue_name,
             credential=self._credential,
             logging_enable=self._config.logging_enable,
             **kwargs
         )
+        receiver._open_with_retry()  # pylint: disable=protected-access
+        return receiver

@@ -21,25 +21,19 @@ from azure.servicebus.common.errors import (
 class Message(object):  # pylint: disable=too-many-public-methods,too-many-instance-attributes
     """A Service Bus Message.
 
-    :param body: The data to send in a single message. The maximum size per message is 256 kB.
+    :param body: The data to send in a single message.
     :type body: str or bytes
     :param encoding: The encoding for string data. Default is UTF-8.
     :type encoding: str
 
     .. admonition:: Example:
-        .. literalinclude:: ../samples/sync_samples/test_examples.py
+
+        .. literalinclude:: ../samples/sync_samples/sample_code_servicebus.py
             :start-after: [START send_complex_message]
             :end-before: [END send_complex_message]
             :language: python
             :dedent: 4
             :caption: Sending a message with additional properties
-
-        .. literalinclude:: ../samples/sync_samples/test_examples.py
-            :start-after: [START receive_complex_message]
-            :end-before: [END receive_complex_message]
-            :language: python
-            :dedent: 4
-            :caption: Checking the properties on a received message
 
     """
 
@@ -55,7 +49,8 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
 
     def __init__(self, body, encoding='UTF-8', **kwargs):
         subject = kwargs.pop('subject', None)
-        # Although we might normally thread through **kwargs this causes problems as MessageProperties won't absorb spurious args.
+        # Although we might normally thread through **kwargs this causes
+        # problems as MessageProperties won't absorb spurious args.
         self.properties = uamqp.message.MessageProperties(encoding=encoding, subject=subject)
         self.header = uamqp.message.MessageHeader()
         self.received_timestamp = None
@@ -99,6 +94,17 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
             pass
         if hasattr(self._receiver, 'expired') and self._receiver.expired:
             raise SessionLockExpired(inner_exception=self._receiver.auto_renew_error)
+
+    @property
+    def session_id(self):
+        try:
+            return self.properties.group_id.decode('UTF-8')
+        except (AttributeError, UnicodeDecodeError):
+            return self.properties.group_id
+
+    @session_id.setter
+    def session_id(self, value):
+        self.properties.group_id = value
 
     @property
     def annotations(self):
@@ -206,38 +212,6 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
         self.message.annotations[types.AMQPSymbol(self._x_OPT_SCHEDULED_ENQUEUE_TIME)] = schedule_time
 
 
-class BatchMessage(Message):
-    """A batch of messages combined into a single message body.
-
-    The body of the messages in the batch should be supplied by an iterable,
-    such as a generator.
-    If the contents of the iterable exceeds the maximum size of a single message (256 kB),
-    the data will be broken up across multiple messages.
-
-    :param body: The data to send in each message in the batch. The maximum size per message is 256 kB.
-     If data is supplied in excess of this limit, multiple messages will be sent.
-    :type body: Iterable
-    :param encoding: The encoding for string data. Default is UTF-8.
-    :type encoding: str
-
-    .. admonition:: Example:
-        .. literalinclude:: ../samples/sync_samples/test_examples.py
-            :start-after: [START send_batch_message]
-            :end-before: [END send_batch_message]
-            :language: python
-            :dedent: 4
-            :caption: Send a batched message.
-
-    """
-
-    def _build_message(self, body):
-        if body is None:
-            raise ValueError("Message body cannot be None.")
-        else:
-            self.message = uamqp.BatchMessage(
-                data=body, multi_messages=True, properties=self.properties, header=self.header)
-
-
 class PeekMessage(Message):
     """A preview message.
 
@@ -249,13 +223,6 @@ class PeekMessage(Message):
 
     def __init__(self, message):
         super(PeekMessage, self).__init__(None, message=message)
-
-    @property
-    def session_id(self):
-        try:
-            return self.properties.group_id.decode('UTF-8')
-        except (AttributeError, UnicodeDecodeError):
-            return self.properties.group_id
 
     @property
     def settled(self):
@@ -300,6 +267,18 @@ class PeekMessage(Message):
 
 
 class ReceivedMessage(PeekMessage):
+    """
+    A Service Bus Message received from service side.
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/sync_samples/sample_code_servicebus.py
+            :start-after: [START receive_complex_message]
+            :end-before: [END receive_complex_message]
+            :language: python
+            :dedent: 4
+            :caption: Checking the properties on a received message.
+    """
     def __init__(self, message):
         super(ReceivedMessage, self).__init__(message=message)
 
@@ -446,6 +425,30 @@ class DeferredMessage(PeekMessage):
         if not self._receiver:
             raise ValueError("Orphan message had no open connection.")
         super(DeferredMessage, self)._is_live(action)
+
+    def renew_lock(self):
+        """Renew the message lock.
+
+        This will maintain the lock on the message to ensure
+        it is not returned to the queue to be reprocessed. In order to complete (or otherwise settle)
+        the message, the lock must be maintained. Messages received via ReceiveAndDelete mode are not
+        locked, and therefore cannot be renewed. This operation can also be performed as a threaded
+        background task by registering the message with an `azure.servicebus.AutoLockRenew` instance.
+        This operation is only available for non-sessionful messages.
+
+        :raises: TypeError if the message is sessionful.
+        :raises: ~azure.servicebus.common.errors.MessageLockExpired is message lock has already expired.
+        :raises: ~azure.servicebus.common.errors.MessageAlreadySettled is message has already been settled.
+        """
+        if hasattr(self._receiver, 'locked_until'):
+            raise TypeError("Session messages cannot be renewed. Please renew the Session lock instead.")
+        self._is_live('renew')
+        token = self.lock_token
+        if not token:
+            raise ValueError("Unable to renew lock - no lock token found.")
+
+        expiry = self._receiver._renew_locks(token)  # pylint: disable=protected-access
+        self._expiry = datetime.datetime.fromtimestamp(expiry[b'expirations'][0]/1000.0)
 
     @property
     def locked_until(self):

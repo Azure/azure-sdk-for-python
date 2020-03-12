@@ -8,42 +8,13 @@ import datetime
 import functools
 import uuid
 
-from azure.servicebus.common import message
+from azure.servicebus.common import message as sync_message
 from azure.servicebus.common.utils import get_running_loop
 from azure.servicebus.common.errors import MessageSettleFailed
 from azure.servicebus.common.constants import DEADLETTERNAME
 
 
-class Message(message.Message):
-    """A Service Bus Message.
-
-    :param body: The data to send in a single message. The maximum size per message is 256 kB.
-    :type body: str or bytes
-    :param encoding: The encoding for string data. Default is UTF-8.
-    :type encoding: str
-
-    .. admonition:: Example:
-        .. literalinclude:: ../samples/sync_samples/test_examples.py
-            :start-after: [START send_complex_message]
-            :end-before: [END send_complex_message]
-            :language: python
-            :dedent: 4
-            :caption: Sending a message with additional properties
-
-        .. literalinclude:: ../samples/sync_samples/test_examples.py
-            :start-after: [START receive_complex_message]
-            :end-before: [END receive_complex_message]
-            :language: python
-            :dedent: 4
-            :caption: Checking the properties on a received message
-    """
-
-    def __init__(self, body, *, encoding='UTF-8', loop=None, **kwargs):
-        self._loop = loop or get_running_loop()
-        super(Message, self).__init__(body, encoding=encoding, **kwargs)
-
-
-class ReceivedMessage(message.ReceivedMessage):
+class ReceivedMessage(sync_message.ReceivedMessage):
     def __init__(self, message, loop=None):
         self._loop = loop or get_running_loop()
         super(ReceivedMessage, self).__init__(message=message)
@@ -146,7 +117,7 @@ class ReceivedMessage(message.ReceivedMessage):
             raise MessageSettleFailed("defer", e)
 
 
-class DeferredMessage(message.DeferredMessage):
+class DeferredMessage(sync_message.DeferredMessage):
     """A message that has been deferred.
 
     A deferred message can be completed,
@@ -220,6 +191,27 @@ class DeferredMessage(message.DeferredMessage):
         await self._receiver._settle_deferred('abandoned', [self.lock_token])  # pylint: disable=protected-access
         self._settled = True
 
-    async def defer(self):
-        """A DeferredMessage cannot be deferred. Raises `ValueError`."""
-        raise ValueError("Message is already deferred.")
+    async def renew_lock(self):
+        """Renew the message lock.
+
+        This will maintain the lock on the message to ensure
+        it is not returned to the queue to be reprocessed. In order to complete (or otherwise settle)
+        the message, the lock must be maintained. Messages received via ReceiveAndDelete mode are not
+        locked, and therefore cannot be renewed. This operation can also be performed as an asynchronous
+        background task by registering the message with an `azure.servicebus.aio.AutoLockRenew` instance.
+        This operation is only available for non-sessionful messages.
+
+        :raises: TypeError if the message is sessionful.
+        :raises: ~azure.servicebus.common.errors.MessageLockExpired is message lock has already expired.
+        :raises: ~azure.servicebus.common.errors.SessionLockExpired if session lock has already expired.
+        :raises: ~azure.servicebus.common.errors.MessageAlreadySettled is message has already been settled.
+        """
+        if hasattr(self._receiver, 'locked_until'):
+            raise TypeError("Session messages cannot be renewed. Please renew the Session lock instead.")
+        self._is_live('renew')
+        token = self.lock_token
+        if not token:
+            raise ValueError("Unable to renew lock - no lock token found.")
+
+        expiry = await self._receiver._renew_locks(token)  # pylint: disable=protected-access
+        self._expiry = datetime.datetime.fromtimestamp(expiry[b'expirations'][0]/1000.0)

@@ -7,15 +7,13 @@ import functools
 import logging
 import uuid
 import time
-import datetime
 from datetime import timedelta
-from typing import cast, Optional, Tuple, TYPE_CHECKING
+from typing import cast, Optional, Tuple, TYPE_CHECKING, Dict, Any
 
 try:
-    from urlparse import urlparse
     from urllib import quote_plus  # type: ignore
 except ImportError:
-    from urllib.parse import urlparse, quote_plus
+    from urllib.parse import quote_plus
 
 import uamqp
 from uamqp import (
@@ -23,18 +21,15 @@ from uamqp import (
     utils,
     errors,
     constants,
-    Source
 )
 from uamqp.message import MessageProperties
-from .common.message import Message
 from .common._configuration import Configuration
 from .common.errors import (
-    _ServiceBusErrorPolicy,
-    OperationTimeoutError,
     InvalidHandlerState,
     ServiceBusError,
     ServiceBusConnectionError,
-    ServiceBusAuthorizationError
+    ServiceBusAuthorizationError,
+    MessageSendFailed
 )
 from .common.constants import (
 
@@ -118,7 +113,7 @@ class ServiceBusSharedKeyCredential(object):
         return _generate_sas_token(scopes[0], self.policy, self.key)
 
 
-class BaseHandler(object):
+class BaseHandler(object):  # pylint:disable=too-many-instance-attributes
     def __init__(
         self,
         fully_qualified_namespace,
@@ -136,6 +131,7 @@ class BaseHandler(object):
         self._running = False
         self._handler = None
         self._error = None
+        self._auth_uri = None
 
     def __enter__(self):
         return self
@@ -171,51 +167,35 @@ class BaseHandler(object):
             transport_type=self._config.transport_type,
         )
 
-    def _reconnect(self):
-        """Reconnect the handler.
-
-        If the handler was disconnected from the service with
-        a retryable error - attempt to reconnect.
-        This method will be called automatically for most retryable errors.
-        """
-        if self._handler:
-            self._handler.close()
-            self._handler = None
-        self._running = False
-        self._open()
-
     def _handle_exception(self, exception):
         if isinstance(exception, (errors.LinkDetach, errors.ConnectionClose)):
-            if exception.action and exception.action.retry and self._config.auto_reconnect:
-                _LOGGER.info("Handler detached. Attempting reconnect.")
-                self._reconnect()
-            elif exception.condition == constants.ErrorCodes.UnauthorizedAccess:
+            if exception.condition == constants.ErrorCodes.UnauthorizedAccess:
                 _LOGGER.info("Handler detached. Shutting down.")
                 error = ServiceBusAuthorizationError(str(exception), exception)
-                self.close(exception=error)
-                raise error
-            else:
-                _LOGGER.info("Handler detached. Shutting down.")
-                error = ServiceBusConnectionError(str(exception), exception)
-                self.close(exception=error)
-                raise error
-        elif isinstance(exception, errors.MessageHandlerError):
-            if self._config.auto_reconnect:
-                _LOGGER.info("Handler error. Attempting reconnect.")
-                self._reconnect()
-            else:
-                _LOGGER.info("Handler error. Shutting down.")
-                error = ServiceBusConnectionError(str(exception), exception)
-                self.close(exception=error)
-                raise error
-        elif isinstance(exception, errors.AMQPConnectionError):
+                self._close_handler()
+                return error
+            _LOGGER.info("Handler detached. Shutting down.")
+            error = ServiceBusConnectionError(str(exception), exception)
+            self._close_handler()
+            return error
+        if isinstance(exception, errors.MessageHandlerError):
+            _LOGGER.info("Handler error. Shutting down.")
+            error = ServiceBusConnectionError(str(exception), exception)
+            self._close_handler()
+            return error
+        if isinstance(exception, errors.AMQPConnectionError):
             message = "Failed to open handler: {}".format(exception)
-            raise ServiceBusConnectionError(message, exception)
-        else:
-            _LOGGER.info("Unexpected error occurred (%r). Shutting down.", exception)
+            return ServiceBusConnectionError(message, exception)
+        if isinstance(exception, MessageSendFailed):
+            _LOGGER.info("Message send error (%r)", exception)
+            raise exception
+
+        _LOGGER.info("Unexpected error occurred (%r). Shutting down.", exception)
+        error = exception
+        if not isinstance(exception, ServiceBusError):
             error = ServiceBusError("Handler failed: {}".format(exception))
-            self.close(exception=error)
-            raise error
+        self._close_handler()
+        return error
 
     @staticmethod
     def _from_connection_string(conn_str, **kwargs):
@@ -248,7 +228,6 @@ class BaseHandler(object):
         timeout=None,
         entity_name=None
     ):
-        # type: (int, Exception, Optional[int], Optional[str]) -> None
         entity_name = entity_name or self._container_id
         backoff = self._config.retry_backoff_factor * 2 ** retried_times
         if backoff <= self._config.retry_backoff_max and (
@@ -282,14 +261,16 @@ class BaseHandler(object):
                 if require_timeout:
                     kwargs["timeout"] = timeout
                 return operation(**kwargs)
-            except Exception as exception:
+            except Exception as exception:  # pylint: disable=broad-except
                 last_exception = self._handle_exception(exception)
+                retried_times += 1
+                if retried_times > max_retries:
+                    break
                 self._backoff(
                     retried_times=retried_times,
                     last_exception=last_exception,
                     timeout=timeout
                 )
-                retried_times += 1
 
         _LOGGER.info(
             "%r operation has exhausted retry. Last exception: %r.",
@@ -298,7 +279,7 @@ class BaseHandler(object):
         )
         raise last_exception
 
-    def _mgmt_request_response(self, operation, message, callback, **kwargs):
+    def _mgmt_request_response(self, mgmt_operation, message, callback, **kwargs):
         if not self._running:
             raise InvalidHandlerState("Client connection is closed.")
 
@@ -313,7 +294,7 @@ class BaseHandler(object):
         try:
             return self._handler.mgmt_request(
                 mgmt_msg,
-                operation,
+                mgmt_operation,
                 op_type=b"entity-mgmt",
                 node=self._mgmt_target.encode(self._config.encoding),
                 timeout=5000,
@@ -321,6 +302,27 @@ class BaseHandler(object):
             )
         except Exception as exp:  # pylint: disable=broad-except
             raise ServiceBusError("Management request failed: {}".format(exp), exp)
+
+    def _mgmt_request_response_with_retry(self, mgmt_operation, message, callback, **kwargs):
+        return self._do_retryable_operation(
+            self._mgmt_request_response,
+            mgmt_operation=mgmt_operation,
+            message=message,
+            callback=callback,
+            **kwargs
+        )
+
+    def _open(self):  # pylint: disable=no-self-use
+        raise ValueError("Subclass should override the method.")
+
+    def _open_with_retry(self):
+        return self._do_retryable_operation(self._open)
+
+    def _close_handler(self):
+        if self._handler:
+            self._handler.close()
+            self._handler = None
+        self._running = False
 
     def close(self, exception=None):
         # type: (Exception) -> None
@@ -341,5 +343,5 @@ class BaseHandler(object):
             self._error = ServiceBusError(str(exception))
         else:
             self._error = ServiceBusError("This message handler is now closed.")
-        self._handler.close()
-        self._running = False
+
+        self._close_handler()

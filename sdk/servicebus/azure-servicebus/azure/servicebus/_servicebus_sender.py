@@ -48,7 +48,7 @@ class SenderMixin(object):
 
 
 class ServiceBusSender(BaseHandler, SenderMixin):
-    """The ServiceBusSenderClient class defines a high level interface for
+    """The ServiceBusSender class defines a high level interface for
     sending messages to the Azure Service Bus Queue or Topic.
 
     :param str fully_qualified_namespace: The fully qualified host name for the Service Bus namespace.
@@ -68,6 +68,16 @@ class ServiceBusSender(BaseHandler, SenderMixin):
     :keyword dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
      keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
      Additionally the following keys may also be present: `'username', 'password'`.
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/sync_samples/sample_code_servicebus.py
+            :start-after: [START create_servicebus_sender_sync]
+            :end-before: [END create_servicebus_sender_sync]
+            :language: python
+            :dedent: 4
+            :caption: Create a new instance of the ServiceBusSender.
+
     """
     def __init__(
         self,
@@ -116,34 +126,17 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             return
         if self._handler:
             self._handler.close()
-        try:
-            auth = self._create_auth()
-            self._create_handler(auth)
-            self._handler.open()
-            while not self._handler.client_ready():
-                time.sleep(0.05)
-        except Exception as e:  # pylint: disable=broad-except
-            try:
-                self._handle_exception(e)
-            except Exception:
-                self._running = False
-                raise
+
+        auth = self._create_auth()
+        self._create_handler(auth)
+        self._handler.open()
+        while not self._handler.client_ready():
+            time.sleep(0.05)
         self._running = True
 
-    def _reconnect(self):
-        unsent_events = self._handler.pending_messages
-        super(ServiceBusSender, self)._reconnect()
-        try:
-            self._handler.queue_message(*unsent_events)
-            self._handler.wait()
-        except Exception as e:  # pylint: disable=broad-except
-            self._handle_exception(e)
-
-    def _send(self, message, session_id=None, timeout=None, last_exception=None):
+    def _send(self, message, timeout=None, last_exception=None):
         self._open()
         self._set_msg_timeout(timeout, last_exception)
-        if session_id and not message.properties.group_id:
-            message.properties.group_id = session_id
         try:
             self._handler.send_message(message.message)
         except Exception as e:
@@ -156,7 +149,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         **kwargs,
     ):
         # type: (str, Any) -> ServiceBusSender
-        """Create a ServiceBusSenderClient from a connection string.
+        """Create a ServiceBusSender from a connection string.
 
         :param conn_str: The connection string of a Service Bus.
         :keyword str queue_name: The path of specific Service Bus Queue the client connects to.
@@ -171,6 +164,16 @@ class ServiceBusSender(BaseHandler, SenderMixin):
          keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
          Additionally the following keys may also be present: `'username', 'password'`.
         :rtype: ~azure.servicebus.ServiceBusSenderClient
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sync_samples/sample_code_servicebus.py
+                :start-after: [START create_servicebus_sender_from_conn_str_sync]
+                :end-before: [END create_servicebus_sender_from_conn_str_sync]
+                :language: python
+                :dedent: 4
+                :caption: Create a new instance of the ServiceBusSender from connection string.
+
         """
         constructor_args = cls._from_connection_string(
             conn_str,
@@ -178,24 +181,30 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         )
         return cls(**constructor_args)
 
-    def send(self, message, session_id=None, message_timeout=None):
-        # type: (Message, str, float) -> None
+    def send(self, message, message_timeout=None):
+        # type: (Message, float) -> None
         """Sends message and blocks until acknowledgement is received or operation times out.
 
         :param message: The ServiceBus message to be sent.
         :type message: ~azure.servicebus.Message
-        :param session_id: An optional session ID. If supplied this session ID will be
-         applied to every outgoing message sent with this Sender.
-         If an individual message already has a session ID, that will be used instead.
         :param float message_timeout: The maximum wait time to send the event data.
         :rtype: None
         :raises: ~azure.servicebus.common.errors.MessageSendFailed if the message fails to
          send or ~azure.servicebus.common.errors.OperationTimeoutError if sending times out.
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sync_samples/sample_code_servicebus.py
+                :start-after: [START servicebus_sender_send_sync]
+                :end-before: [END servicebus_sender_send_sync]
+                :language: python
+                :dedent: 4
+                :caption: Send message.
+
         """
         self._do_retryable_operation(
             self._send,
             message=message,
-            session_id=session_id,
             timeout=message_timeout,
             require_timeout=True,
             require_last_exception=True

@@ -32,7 +32,7 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
-class ReceiverMixin(object):
+class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
     def _create_attribute(self, **kwargs):
         if kwargs.get("subscription_name"):
             self.subscription_name = kwargs.get("subscription_name")
@@ -47,7 +47,7 @@ class ReceiverMixin(object):
         self._mode = kwargs.get("mode", ReceiveSettleMode.PeekLock)
         self._error_policy = _ServiceBusErrorPolicy(
             max_retries=self._config.retry_total,
-            is_session=(True if self._session_id else False)
+            is_session=bool(self._session_id)
         )
         self._name = "SBReceiver-{}".format(uuid.uuid4())
 
@@ -74,8 +74,8 @@ class ReceiverMixin(object):
             self._session_id = session_filter.decode(self._config.encoding)
 
 
-class ServiceBusReceiver(BaseHandler, ReceiverMixin):
-    """The ServiceBusReceiverClient class defines a high level interface for
+class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-many-instance-attributes
+    """The ServiceBusReceiver class defines a high level interface for
     receiving messages from the Azure Service Bus Queue or Topic Subscription.
 
     :param str fully_qualified_namespace: The fully qualified host name for the Service Bus namespace.
@@ -104,6 +104,16 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):
     :keyword dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
      keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
      Additionally the following keys may also be present: `'username', 'password'`.
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/sync_samples/sample_code_servicebus.py
+            :start-after: [START create_servicebus_receiver_sync]
+            :end-before: [END create_servicebus_receiver_sync]
+            :language: python
+            :dedent: 4
+            :caption: Create a new instance of the ServiceBusReceiver.
+
     """
     def __init__(
         self,
@@ -137,6 +147,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):
                 entity_name=entity_name,
                 **kwargs
             )
+        self._message_iter = None
         self._create_attribute(**kwargs)
 
     def __iter__(self):
@@ -189,19 +200,13 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):
             return
         if self._handler:
             self._handler.close()
-        try:
-            auth = self._create_auth()
-            self._create_handler(auth)
-            self._handler.open()
-            self._message_iter = self._handler.receive_messages_iter()
-            while not self._handler.client_ready():
-                time.sleep(0.05)
-        except Exception as e:  # pylint: disable=broad-except
-            try:
-                self._handle_exception(e)
-            except Exception:
-                self.running = False
-                raise
+
+        auth = self._create_auth()
+        self._create_handler(auth)
+        self._handler.open()
+        self._message_iter = self._handler.receive_messages_iter()
+        while not self._handler.client_ready():
+            time.sleep(0.05)
         self._running = True
 
     def _receive(self, max_batch_size=None, timeout=None):
@@ -226,10 +231,11 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):
             'lock-tokens': types.AMQPArray(lock_tokens)}
         if dead_letter_details:
             message.update(dead_letter_details)
-        return self._mgmt_request_response(
+        return self._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_UPDATE_DISPOSTION_OPERATION,
             message,
-            mgmt_handlers.default)
+            mgmt_handlers.default
+        )
 
     def close(self, exception=None):
         # type: (Exception) -> None
@@ -254,7 +260,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):
         **kwargs,
     ):
         # type: (str, Any) -> ServiceBusReceiver
-        """Create a ServiceBusReceiverClient from a connection string.
+        """Create a ServiceBusReceiver from a connection string.
 
         :param conn_str: The connection string of a Service Bus.
         :keyword str queue_name: The path of specific Service Bus Queue the client connects to.
@@ -278,6 +284,16 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):
          keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
          Additionally the following keys may also be present: `'username', 'password'`.
         :rtype: ~azure.servicebus.ServiceBusReceiverClient
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sync_samples/sample_code_servicebus.py
+                :start-after: [START create_servicebus_receiver_from_conn_str_sync]
+                :end-before: [END create_servicebus_receiver_from_conn_str_sync]
+                :language: python
+                :dedent: 4
+                :caption: Create a new instance of the ServiceBusReceiver from connection string.
+
         """
         constructor_args = cls._from_connection_string(
             conn_str,
@@ -308,6 +324,16 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):
          until the connection is closed. If specified, an no messages arrive within the
          timeout period, an empty list will be returned.
         :rtype: list[~azure.servicebus.Message]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sync_samples/sample_code_servicebus.py
+                :start-after: [START servicebus_receiver_receive_sync]
+                :end-before: [END servicebus_receiver_receive_sync]
+                :language: python
+                :dedent: 4
+                :caption: Receive messages from ServiceBus.
+
         """
         return self._do_retryable_operation(
             self._receive,
@@ -326,6 +352,16 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):
         :param list[int] sequence_numbers: A list of the sequence numbers of messages that have been
          deferred.
         :rtype: list[~azure.servicebus.DeferredMessage]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sync_samples/sample_code_servicebus.py
+                :start-after: [START servicebus_receiver_receive_defer_sync]
+                :end-before: [END servicebus_receiver_receive_defer_sync]
+                :language: python
+                :dedent: 4
+                :caption: Receive deferred messages from ServiceBus.
+
         """
         if not sequence_numbers:
             raise ValueError("At least one sequence number must be specified.")
@@ -340,10 +376,11 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):
             'session-id': self._session_id
         }
         handler = functools.partial(mgmt_handlers.deferred_message_op, mode=receive_mode)
-        messages = self._mgmt_request_response(
+        messages = self._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_RECEIVE_BY_SEQUENCE_NUMBER,
             message,
-            handler)
+            handler
+        )
         for m in messages:
             m._receiver = self  # pylint: disable=protected-access
         return messages

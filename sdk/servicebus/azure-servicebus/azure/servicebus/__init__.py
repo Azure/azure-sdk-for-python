@@ -3,20 +3,18 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
+from uamqp import constants
 
 from ._version import VERSION
 __version__ = VERSION
 
-from uamqp import constants
-from azure.servicebus._servicebus_sender import ServiceBusSender
-from azure.servicebus._servicebus_receiver import ServiceBusReceiver
-from azure.servicebus._servicebus_client import ServiceBusClient
-from azure.servicebus._base_handler import ServiceBusSharedKeyCredential
-from azure.servicebus.common.message import Message, BatchMessage, PeekMessage, DeferredMessage
-from azure.servicebus.servicebus_client import QueueClient, TopicClient, SubscriptionClient
-from azure.servicebus.common.constants import ReceiveSettleMode, NEXT_AVAILABLE
-from azure.servicebus.common.utils import AutoLockRenew
-from azure.servicebus.common.errors import (
+from ._servicebus_client import ServiceBusClient
+from ._servicebus_sender import ServiceBusSender
+from ._servicebus_receiver import ServiceBusReceiver
+from ._base_handler import ServiceBusSharedKeyCredential
+from .common.message import Message, PeekMessage, DeferredMessage
+from .common.constants import ReceiveSettleMode, NEXT_AVAILABLE
+from .common.errors import (
     ServiceBusError,
     ServiceBusResourceNotFound,
     ServiceBusConnectionError,
@@ -31,17 +29,13 @@ from azure.servicebus.common.errors import (
     AutoLockRenewFailed,
     AutoLockRenewTimeout)
 
+
 TransportType = constants.TransportType
 
 __all__ = [
     'Message',
-    'BatchMessage',
     'PeekMessage',
-    'AutoLockRenew',
     'DeferredMessage',
-    'QueueClient',
-    'TopicClient',
-    'SubscriptionClient',
     'ReceiveSettleMode',
     'NEXT_AVAILABLE',
     'ServiceBusError',
