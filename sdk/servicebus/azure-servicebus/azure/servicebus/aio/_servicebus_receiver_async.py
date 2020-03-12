@@ -6,9 +6,10 @@ import asyncio
 import collections
 import functools
 import logging
+import uuid
 from typing import Any, TYPE_CHECKING, List
 
-from uamqp import ReceiveClientAsync, types
+from uamqp import ReceiveClientAsync, types, constants
 
 from ._base_handler_async import BaseHandlerAsync
 from .async_message import ReceivedMessage, DeferredMessage
@@ -16,7 +17,8 @@ from .._servicebus_receiver import ReceiverMixin
 from ..common.utils import create_properties
 from ..common.constants import (
     REQUEST_RESPONSE_UPDATE_DISPOSTION_OPERATION,
-    REQUEST_RESPONSE_RECEIVE_BY_SEQUENCE_NUMBER
+    REQUEST_RESPONSE_RECEIVE_BY_SEQUENCE_NUMBER,
+    ReceiveSettleMode
 )
 from ..common import mgmt_handlers
 
@@ -142,6 +144,28 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
                 receive_settle_mode=self._mode.value
             )
 
+    async def _create_uamqp_receiver_handler(self):
+        """This is a temporary patch pending a fix in uAMQP."""
+        # pylint: disable=protected-access
+        self._handler.message_handler = self._handler.receiver_type(
+            self._handler._session,
+            self._handler._remote_address,
+            self._handler._name,
+            on_message_received=self._handler._message_received,
+            name='receiver-link-{}'.format(uuid.uuid4()),
+            debug=self._handler._debug_trace,
+            prefetch=self._handler._prefetch,
+            max_message_size=self._handler._max_message_size,
+            properties=self._handler._link_properties,
+            error_policy=self._handler._error_policy,
+            encoding=self._handler._encoding,
+            loop=self._handler.loop)
+        if self._mode != ReceiveSettleMode.PeekLock:
+            self._handler.message_handler.send_settle_mode = constants.SenderSettleMode.Settled
+            self._handler.message_handler.receive_settle_mode = constants.ReceiverSettleMode.ReceiveAndDelete
+            self._handler.message_handler._settle_mode = constants.ReceiverSettleMode.ReceiveAndDelete
+        await self._handler.message_handler.open_async()
+
     async def _open(self):
         if self._running:
             return
@@ -151,6 +175,9 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
         self._create_handler(auth)
         await self._handler.open_async()
         self._message_iter = self._handler.receive_messages_iter_async()
+        while not await self._handler.auth_complete_async():
+            await asyncio.sleep(0.05)
+        await self._create_uamqp_receiver_handler()
         while not await self._handler.client_ready_async():
             await asyncio.sleep(0.05)
         self._running = True

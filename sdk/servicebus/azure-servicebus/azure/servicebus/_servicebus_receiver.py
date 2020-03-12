@@ -9,7 +9,7 @@ import functools
 import uuid
 from typing import Any, List, TYPE_CHECKING
 
-from uamqp import ReceiveClient, Source, types
+from uamqp import ReceiveClient, Source, types, constants
 
 from ._base_handler import BaseHandler
 from .common.utils import create_properties
@@ -178,8 +178,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
                 error_policy=self._error_policy,
                 client_name=self._name,
                 auto_complete=False,
-                encoding=self._config.encoding,
-                receive_settle_mode=self._mode.value
+                encoding=self._config.encoding
             )
         else:
             self._handler = ReceiveClient(
@@ -191,9 +190,29 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
                 client_name=self._name,
                 on_attach=self._on_attach_for_session_entity,
                 auto_complete=False,
-                encoding=self._config.encoding,
-                receive_settle_mode=self._mode.value
+                encoding=self._config.encoding
             )
+
+    def _create_uamqp_receiver_handler(self):
+        """This is a temporary patch pending a fix in uAMQP."""
+        # pylint: disable=protected-access
+        self._handler.message_handler = self._handler.receiver_type(
+            self._handler._session,
+            self._handler._remote_address,
+            self._handler._name,
+            on_message_received=self._handler._message_received,
+            name='receiver-link-{}'.format(uuid.uuid4()),
+            debug=self._handler._debug_trace,
+            prefetch=self._handler._prefetch,
+            max_message_size=self._handler._max_message_size,
+            properties=self._handler._link_properties,
+            error_policy=self._handler._error_policy,
+            encoding=self._handler._encoding)
+        if self._mode != ReceiveSettleMode.PeekLock:
+            self._handler.message_handler.send_settle_mode = constants.SenderSettleMode.Settled
+            self._handler.message_handler.receive_settle_mode = constants.ReceiverSettleMode.ReceiveAndDelete
+            self._handler.message_handler._settle_mode = constants.ReceiverSettleMode.ReceiveAndDelete
+        self._handler.message_handler.open()
 
     def _open(self):
         if self._running:
@@ -205,6 +224,9 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         self._create_handler(auth)
         self._handler.open()
         self._message_iter = self._handler.receive_messages_iter()
+        while not self._handler.auth_complete():
+            time.sleep(0.05)
+        self._create_uamqp_receiver_handler()
         while not self._handler.client_ready():
             time.sleep(0.05)
         self._running = True
