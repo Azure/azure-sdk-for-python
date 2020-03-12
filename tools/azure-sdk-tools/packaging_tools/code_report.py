@@ -149,7 +149,7 @@ def merge_report(report_paths):
         merged_report["operations"].update(report_json["operations"])
     return merged_report
 
-def main(input_parameter: str, version: Optional[str] = None, no_venv: bool = False, pypi: bool = False, last_pypi: bool = False):
+def main(input_parameter: str, version: Optional[str] = None, no_venv: bool = False, pypi: bool = False, last_pypi: bool = False, output: str = None):
     package_name, module_name = parse_input(input_parameter)
     path_to_package = resolve_package_directory(package_name)
 
@@ -177,6 +177,8 @@ def main(input_parameter: str, version: Optional[str] = None, no_venv: bool = Fa
                     version,
                     input_parameter
                 ]
+                if output is not None:
+                    args.append("--output=" + output)
                 try:
                     subprocess.check_call(args)
                 except subprocess.CalledProcessError:
@@ -200,7 +202,10 @@ def main(input_parameter: str, version: Optional[str] = None, no_venv: bool = Fa
         if module_for_path:
             output_filename = output_folder / Path(module_for_path+".json")
         else:
-            output_filename = output_folder / Path("report.json")
+            if output is not None:
+                output_filename = output
+            else:
+                output_filename = output_folder / Path("report.json")
 
         with open(output_filename, "w") as fd:
             json.dump(report, fd, indent=2)
@@ -209,7 +214,10 @@ def main(input_parameter: str, version: Optional[str] = None, no_venv: bool = Fa
 
     if len(result) > 1:
         merged_report = merge_report(result)
-        output_filename = output_folder / Path("merged_report.json")
+        if output is not None:
+            output_filename = output
+        else:
+            output_filename = output_folder / Path("merged_report.json")
         with open(output_filename, "w") as fd:
             json.dump(merged_report, fd, indent=2)
             _LOGGER.info(f"Merged report written to {output_filename}")
@@ -280,9 +288,11 @@ if __name__ == "__main__":
     parser.add_argument("--debug",
                         dest="debug", action="store_true",
                         help="Verbosity in DEBUG mode")
-
+    parser.add_argument("--output",
+                        dest="output",
+                        help="Override output path.")
     args = parser.parse_args()
 
     logging.basicConfig(level=logging.DEBUG if args.debug else logging.INFO)
 
-    main(args.package_name, args.version, args.no_venv, args.pypi, args.last_pypi)
+    main(args.package_name, args.version, args.no_venv, args.pypi, args.last_pypi, args.output)
