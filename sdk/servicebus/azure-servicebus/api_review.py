@@ -49,8 +49,6 @@ class ServiceBusSender:
 
     def close(self) -> None:
 
-    def get_properties(self) -> Dict[str, Any]:
-
     def create_batch(
         self,
         max_size_in_bytes : int = None
@@ -59,14 +57,12 @@ class ServiceBusSender:
     def send(
         self,
         message : Union[Message, BatchMessage],
-        session_id : str = None,
         message_timeout : float = None
     ) -> None:
     def schedule(
         self,
         message : Union[Message, BatchMessage],
         schedule_time_utc : datetime,
-        session_id : str = None
     ) -> List[int]:
 
     def cancel_scheduled_messages(self, sequence_number : Union[int, List[int]]) -> None:
@@ -105,8 +101,6 @@ class ServiceBusReceiver:
     def __exit__(self):
 
     def close(self) -> None:
-
-    def get_properties(self) -> Dict[str, any]:
 
     def __iter__(self):
     def __next__(self):
@@ -195,25 +189,6 @@ class ReceivedMessage(Message):
     def dead_letter(self, description : str = None) -> None:
     def abandon(self) -> None:
     def defer(self) -> None:
-
-
-class DeferredMessage(ReceivedMessage):
-    # @properties
-    def settled(self) -> bool:  # read-only
-    def enqueued_time(self) -> datetime:  # read-only
-    def scheduled_enqueue_time(self) -> datetime:  # read-only
-    def sequence_number(self) -> int:  # read-only
-    def partition_id(self) -> str:  # read-only
-    def locked_until(self) -> datetime:  # read-only
-    def expired(self) -> bool:  # read-only
-    def lock_token(self) -> str:  # read-only
-    def session_id(self) -> str:  # read-only
-
-    # methods
-    def renew_lock(self) -> None:
-    def complete(self) -> None:
-    def dead_letter(self, description: str = None) -> None:
-    def abandon(self) -> None:
 
 
 class ReceiveSettleMode:
