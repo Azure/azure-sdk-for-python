@@ -15,12 +15,7 @@ from .utilities import create_random_name, is_text_payload, trim_kwargs_from_tes
 from .recording_processors import RecordingProcessor
 from .exceptions import AzureNameError
 
-_logger = logging.getLogger("preparer")
-_logger.setLevel(logging.WARNING)
-handler = logging.StreamHandler(stream=sys.stdout)
-handler.setFormatter(logging.Formatter('%(asctime)s %(name)-12s %(levelname)-8s %(message)s'))
-_logger.addHandler(handler)
-
+_logger = logging.getLogger(__name__)
 # Core Utility
 
 
@@ -69,9 +64,22 @@ class AbstractPreparer(object):
                     self.resource_random_name = None
                     resource_name = self.random_name
                 except Exception as e:
-                    _logger.error("Failed to create resource: %s \nResponse: %s",
-                        getattr(e, 'inner_exception', e), getattr(e, 'response', None))
-                    raise
+                    msg = "Preparer failure when creating resource {} for test {}: {}".format(
+                                  self.__class__.__name__,
+                                  test_class_instance, 
+                                  e)
+                    while e:
+                        try:
+                            e = e.inner_exception
+                        except AttributeError:
+                            break
+                    try:
+                        msg += "\nDetailed error message: " + str(e.additional_properties['error']['message'])
+                    except AttributeError:
+                        pass
+
+                    _logger.error(msg)
+                    raise Exception(msg)
 
         if parameter_update:
             kwargs.update(parameter_update)
