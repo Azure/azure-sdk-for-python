@@ -17,6 +17,7 @@ from .._servicebus_receiver import ReceiverMixin
 from ..common.utils import create_properties
 from ..common.constants import (
     REQUEST_RESPONSE_UPDATE_DISPOSTION_OPERATION,
+    REQUEST_RESPONSE_PEEK_OPERATION,
     REQUEST_RESPONSE_RECEIVE_BY_SEQUENCE_NUMBER,
     ReceiveSettleMode
 )
@@ -352,3 +353,41 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
         for m in messages:
             m._receiver = self  # pylint: disable=protected-access
         return messages
+
+    async def peek(self, message_count=1, sequence_number=0):
+        """Browse messages currently pending in the queue.
+        Peeked messages are not removed from queue, nor are they locked. They cannot be completed,
+        deferred or dead-lettered.
+        :param int message_count: The maximum number of messages to try and peek. The default
+         value is 1.
+        :param int sequence_number: A message sequence number from which to start browsing messages.
+        :rtype: list[~azure.servicebus.PeekMessage]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_code_servicebus_async.py
+                :start-after: [START receiver_peek_messages_async]
+                :end-before: [END receiver_peek_messages_async]
+                :language: python
+                :dedent: 4
+                :caption: Peek messages in the queue.
+        """
+        if not sequence_number:
+            sequence_number = self._last_received_sequenced_number or 1
+        if int(message_count) < 1:
+            raise ValueError("count must be 1 or greater.")
+        if int(sequence_number) < 1:
+            raise ValueError("start_from must be 1 or greater.")
+
+        await self._open()
+
+        message = {
+            'from-sequence-number': types.AMQPLong(sequence_number),
+            'message-count': message_count
+        }
+
+        return await self._mgmt_request_response(
+            REQUEST_RESPONSE_PEEK_OPERATION,
+            message,
+            mgmt_handlers.peek_op
+        )

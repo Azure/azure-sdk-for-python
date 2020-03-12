@@ -109,6 +109,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 **kwargs
             )
 
+        self._max_message_size_on_link = 0
         self._create_attribute()
 
     def _create_handler(self, auth):

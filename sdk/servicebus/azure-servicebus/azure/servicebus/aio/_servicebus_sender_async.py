@@ -82,6 +82,7 @@ class ServiceBusSender(BaseHandlerAsync, SenderMixin):
                 **kwargs
             )
 
+        self._max_message_size_on_link = 0
         self._create_attribute()
 
     def _create_handler(self, auth):
@@ -97,6 +98,7 @@ class ServiceBusSender(BaseHandlerAsync, SenderMixin):
         )
 
     async def _open(self):
+        # pylint: disable=protected-access
         if self._running:
             return
         if self._handler:

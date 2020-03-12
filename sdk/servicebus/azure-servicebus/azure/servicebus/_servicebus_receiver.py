@@ -7,16 +7,17 @@ import datetime
 import logging
 import functools
 import uuid
-from typing import Any, List, TYPE_CHECKING
+from typing import Any, List, TYPE_CHECKING, Optional
 
 from uamqp import ReceiveClient, Source, types, constants
 
 from ._base_handler import BaseHandler
 from .common.utils import create_properties
-from .common.message import ReceivedMessage, DeferredMessage
+from .common.message import PeekMessage, ReceivedMessage, DeferredMessage
 from .common.constants import (
     REQUEST_RESPONSE_RECEIVE_BY_SEQUENCE_NUMBER,
     REQUEST_RESPONSE_UPDATE_DISPOSTION_OPERATION,
+    REQUEST_RESPONSE_PEEK_OPERATION,
     ReceiveSettleMode,
     NEXT_AVAILABLE,
     SESSION_LOCKED_UNTIL,
@@ -50,6 +51,7 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
             is_session=bool(self._session_id)
         )
         self._name = "SBReceiver-{}".format(uuid.uuid4())
+        self._last_received_sequenced_number = None
 
     def _build_message(self, received, message_type=ReceivedMessage):
         message = message_type(message=received)
@@ -406,3 +408,41 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         for m in messages:
             m._receiver = self  # pylint: disable=protected-access
         return messages
+
+    def peek(self, message_count=1, sequence_number=None):
+        # type: (int, Optional[int]) -> list[PeekMessage]
+        """Browse messages currently pending in the queue.
+        Peeked messages are not removed from queue, nor are they locked. They cannot be completed,
+        deferred or dead-lettered.
+        :param int message_count: The maximum number of messages to try and peek. The default
+         value is 1.
+        :param int sequence_number: A message sequence number from which to start browsing messages.
+        :rtype: list[~azure.servicebus.PeekMessage]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sync_samples/sample_code_servicebus.py
+                :start-after: [START servicebus_receiver_receive_peek_sync]
+                :end-before: [END servicebus_receiver_receive_peek_sync]
+                :language: python
+                :dedent: 4
+                :caption: Look at pending messages in the queue.
+
+        """
+        if not sequence_number:
+            sequence_number = self._last_received_sequenced_number or 1
+        if int(message_count) < 1:
+            raise ValueError("count must be 1 or greater.")
+        if int(sequence_number) < 1:
+            raise ValueError("start_from must be 1 or greater.")
+
+        self._open()
+        message = {
+            'from-sequence-number': types.AMQPLong(sequence_number),
+            'message-count': message_count
+        }
+        return self._mgmt_request_response_with_retry(
+            REQUEST_RESPONSE_PEEK_OPERATION,
+            message,
+            mgmt_handlers.peek_op
+        )
