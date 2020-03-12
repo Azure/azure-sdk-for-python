@@ -24,6 +24,28 @@ class SslEnforcementEnum(str, Enum):
     disabled = "Disabled"
 
 
+class PrivateLinkServiceConnectionStateStatus(str, Enum):
+
+    approved = "Approved"
+    pending = "Pending"
+    rejected = "Rejected"
+    disconnected = "Disconnected"
+
+
+class PrivateLinkServiceConnectionStateActionsRequire(str, Enum):
+
+    none = "None"
+
+
+class PrivateEndpointProvisioningState(str, Enum):
+
+    approving = "Approving"
+    ready = "Ready"
+    dropping = "Dropping"
+    failed = "Failed"
+    rejecting = "Rejecting"
+
+
 class ServerState(str, Enum):
 
     ready = "Ready"
@@ -38,6 +60,12 @@ class GeoRedundantBackup(str, Enum):
 
 
 class StorageAutogrow(str, Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"
+
+
+class PublicNetworkAccessEnum(str, Enum):
 
     enabled = "Enabled"
     disabled = "Disabled"

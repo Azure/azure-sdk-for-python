@@ -1161,6 +1161,15 @@ class Server(TrackedResource):
     :param replica_capacity: The maximum number of replicas that a master
      server can have.
     :type replica_capacity: int
+    :param public_network_access: Whether or not public endpoint access is
+     allowed for this server.  Value is optional but if passed in, must be
+     'Enabled' or 'Disabled'. Possible values include: 'Enabled', 'Disabled'
+    :type public_network_access: str or
+     ~azure.mgmt.rdbms.mariadb.models.PublicNetworkAccessEnum
+    :ivar private_endpoint_connections: List of private endpoint connections
+     on a server
+    :vartype private_endpoint_connections:
+     list[~azure.mgmt.rdbms.mariadb.models.ServerPrivateEndpointConnection]
     """
 
     _validation = {
@@ -1169,6 +1178,7 @@ class Server(TrackedResource):
         'type': {'readonly': True},
         'location': {'required': True},
         'replica_capacity': {'minimum': 0},
+        'private_endpoint_connections': {'readonly': True},
     }
 
     _attribute_map = {
@@ -1188,6 +1198,8 @@ class Server(TrackedResource):
         'replication_role': {'key': 'properties.replicationRole', 'type': 'str'},
         'master_server_id': {'key': 'properties.masterServerId', 'type': 'str'},
         'replica_capacity': {'key': 'properties.replicaCapacity', 'type': 'int'},
+        'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
+        'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[ServerPrivateEndpointConnection]'},
     }
 
     def __init__(self, **kwargs):
@@ -1203,6 +1215,8 @@ class Server(TrackedResource):
         self.replication_role = kwargs.get('replication_role', None)
         self.master_server_id = kwargs.get('master_server_id', None)
         self.replica_capacity = kwargs.get('replica_capacity', None)
+        self.public_network_access = kwargs.get('public_network_access', None)
+        self.private_endpoint_connections = None
 
 
 class ServerForCreate(Model):
@@ -1239,6 +1253,112 @@ class ServerForCreate(Model):
         self.properties = kwargs.get('properties', None)
         self.location = kwargs.get('location', None)
         self.tags = kwargs.get('tags', None)
+
+
+class ServerPrivateEndpointConnection(Model):
+    """A private endpoint connection under a server.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id of the private endpoint connection.
+    :vartype id: str
+    :ivar properties: Private endpoint connection properties
+    :vartype properties:
+     ~azure.mgmt.rdbms.mariadb.models.ServerPrivateEndpointConnectionProperties
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'properties': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'ServerPrivateEndpointConnectionProperties'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ServerPrivateEndpointConnection, self).__init__(**kwargs)
+        self.id = None
+        self.properties = None
+
+
+class ServerPrivateEndpointConnectionProperties(Model):
+    """Properties of a private endpoint connection.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :param private_endpoint: Private endpoint which the connection belongs to.
+    :type private_endpoint:
+     ~azure.mgmt.rdbms.mariadb.models.PrivateEndpointProperty
+    :param private_link_service_connection_state: Connection state of the
+     private endpoint connection.
+    :type private_link_service_connection_state:
+     ~azure.mgmt.rdbms.mariadb.models.ServerPrivateLinkServiceConnectionStateProperty
+    :ivar provisioning_state: State of the private endpoint connection.
+     Possible values include: 'Approving', 'Ready', 'Dropping', 'Failed',
+     'Rejecting'
+    :vartype provisioning_state: str or
+     ~azure.mgmt.rdbms.mariadb.models.PrivateEndpointProvisioningState
+    """
+
+    _validation = {
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'private_endpoint': {'key': 'privateEndpoint', 'type': 'PrivateEndpointProperty'},
+        'private_link_service_connection_state': {'key': 'privateLinkServiceConnectionState', 'type': 'ServerPrivateLinkServiceConnectionStateProperty'},
+        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ServerPrivateEndpointConnectionProperties, self).__init__(**kwargs)
+        self.private_endpoint = kwargs.get('private_endpoint', None)
+        self.private_link_service_connection_state = kwargs.get('private_link_service_connection_state', None)
+        self.provisioning_state = None
+
+
+class ServerPrivateLinkServiceConnectionStateProperty(Model):
+    """ServerPrivateLinkServiceConnectionStateProperty.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param status: Required. The private link service connection status.
+     Possible values include: 'Approved', 'Pending', 'Rejected', 'Disconnected'
+    :type status: str or
+     ~azure.mgmt.rdbms.mariadb.models.PrivateLinkServiceConnectionStateStatus
+    :param description: Required. The private link service connection
+     description.
+    :type description: str
+    :ivar actions_required: The actions required for private link service
+     connection. Possible values include: 'None'
+    :vartype actions_required: str or
+     ~azure.mgmt.rdbms.mariadb.models.PrivateLinkServiceConnectionStateActionsRequire
+    """
+
+    _validation = {
+        'status': {'required': True},
+        'description': {'required': True},
+        'actions_required': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'status': {'key': 'status', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'actions_required': {'key': 'actionsRequired', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ServerPrivateLinkServiceConnectionStateProperty, self).__init__(**kwargs)
+        self.status = kwargs.get('status', None)
+        self.description = kwargs.get('description', None)
+        self.actions_required = None
 
 
 class ServerPropertiesForCreate(Model):

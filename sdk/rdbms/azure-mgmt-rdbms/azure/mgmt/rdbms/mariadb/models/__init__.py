@@ -39,6 +39,9 @@ try:
     from ._models_py3 import Resource
     from ._models_py3 import Server
     from ._models_py3 import ServerForCreate
+    from ._models_py3 import ServerPrivateEndpointConnection
+    from ._models_py3 import ServerPrivateEndpointConnectionProperties
+    from ._models_py3 import ServerPrivateLinkServiceConnectionStateProperty
     from ._models_py3 import ServerPropertiesForCreate
     from ._models_py3 import ServerPropertiesForDefaultCreate
     from ._models_py3 import ServerPropertiesForGeoRestore
@@ -84,6 +87,9 @@ except (SyntaxError, ImportError):
     from ._models import Resource
     from ._models import Server
     from ._models import ServerForCreate
+    from ._models import ServerPrivateEndpointConnection
+    from ._models import ServerPrivateEndpointConnectionProperties
+    from ._models import ServerPrivateLinkServiceConnectionStateProperty
     from ._models import ServerPropertiesForCreate
     from ._models import ServerPropertiesForDefaultCreate
     from ._models import ServerPropertiesForGeoRestore
@@ -116,9 +122,13 @@ from ._paged_models import WaitStatisticPaged
 from ._maria_db_management_client_enums import (
     ServerVersion,
     SslEnforcementEnum,
+    PrivateLinkServiceConnectionStateStatus,
+    PrivateLinkServiceConnectionStateActionsRequire,
+    PrivateEndpointProvisioningState,
     ServerState,
     GeoRedundantBackup,
     StorageAutogrow,
+    PublicNetworkAccessEnum,
     SkuTier,
     VirtualNetworkRuleState,
     OperationOrigin,
@@ -155,6 +165,9 @@ __all__ = [
     'Resource',
     'Server',
     'ServerForCreate',
+    'ServerPrivateEndpointConnection',
+    'ServerPrivateEndpointConnectionProperties',
+    'ServerPrivateLinkServiceConnectionStateProperty',
     'ServerPropertiesForCreate',
     'ServerPropertiesForDefaultCreate',
     'ServerPropertiesForGeoRestore',
@@ -186,9 +199,13 @@ __all__ = [
     'PrivateLinkResourcePaged',
     'ServerVersion',
     'SslEnforcementEnum',
+    'PrivateLinkServiceConnectionStateStatus',
+    'PrivateLinkServiceConnectionStateActionsRequire',
+    'PrivateEndpointProvisioningState',
     'ServerState',
     'GeoRedundantBackup',
     'StorageAutogrow',
+    'PublicNetworkAccessEnum',
     'SkuTier',
     'VirtualNetworkRuleState',
     'OperationOrigin',
