@@ -1,6 +1,9 @@
 # Change Log azure-ai-textanalytics
 
 ## 1.0.0b4 (Unreleased)
+**Breaking changes**
+- `score` attribute has been renamed to `confidence_score` for the `CategorizedEntity`, `LinkedEntityMatch`, and
+`PiiEntity` models
 
 
 ## 1.0.0b3 (2020-03-10)

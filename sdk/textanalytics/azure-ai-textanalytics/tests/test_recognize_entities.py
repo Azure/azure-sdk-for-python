@@ -43,7 +43,7 @@ class TestRecognizeEntities(TextAnalyticsTest):
                 self.assertIsNotNone(entity.category)
                 self.assertIsNotNone(entity.grapheme_offset)
                 self.assertIsNotNone(entity.grapheme_length)
-                self.assertIsNotNone(entity.score)
+                self.assertIsNotNone(entity.confidence_score)
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_all_successful_passing_text_document_input(self, resource_group, location, text_analytics_account, text_analytics_account_key):
@@ -63,7 +63,7 @@ class TestRecognizeEntities(TextAnalyticsTest):
                 self.assertIsNotNone(entity.category)
                 self.assertIsNotNone(entity.grapheme_offset)
                 self.assertIsNotNone(entity.grapheme_length)
-                self.assertIsNotNone(entity.score)
+                self.assertIsNotNone(entity.confidence_score)
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_passing_only_string(self, resource_group, location, text_analytics_account, text_analytics_account_key):
