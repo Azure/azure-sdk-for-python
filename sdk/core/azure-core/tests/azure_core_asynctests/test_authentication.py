@@ -67,7 +67,10 @@ async def test_bearer_policy_token_caching():
         return expected_token
 
     credential = Mock(get_token=get_token)
-    policies = [AsyncBearerTokenCredentialPolicy(credential, "scope"), Mock(send=Mock(get_completed_future()))]
+    policies = [
+        AsyncBearerTokenCredentialPolicy(credential, "scope"),
+        Mock(send=Mock(return_value=get_completed_future())),
+    ]
     pipeline = AsyncPipeline(transport=Mock, policies=policies)
 
     await pipeline.run(HttpRequest("GET", "https://spam.eggs"))
