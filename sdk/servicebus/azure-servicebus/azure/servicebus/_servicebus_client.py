@@ -4,10 +4,13 @@
 # --------------------------------------------------------------------------------------------
 from typing import Any, TYPE_CHECKING
 
+import uamqp
+
 from ._base_handler import _parse_conn_str, ServiceBusSharedKeyCredential
 from ._servicebus_sender import ServiceBusSender
 from ._servicebus_receiver import ServiceBusReceiver
 from .common._configuration import Configuration
+from .common.utils import create_authentication
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -51,12 +54,24 @@ class ServiceBusClient(object):
         self.fully_qualified_namespace = fully_qualified_namespace
         self._credential = credential
         self._config = Configuration(**kwargs)
+        self._connection = None
+        self._auth_uri = "sb://{}".format(self.fully_qualified_namespace)
 
     def __enter__(self):
+        self._create_uamqp_connection()
         return self
 
     def __exit__(self, *args):
         self.close()
+        pass
+
+    def _create_uamqp_connection(self):
+        auth = create_authentication(self)
+        self._connection = uamqp.Connection(
+            hostname=self.fully_qualified_namespace,
+            sasl=auth,
+            debug=self._config.logging_enable
+        )
 
     def close(self) -> None:
         """
@@ -64,6 +79,7 @@ class ServiceBusClient(object):
 
         :return: None
         """
+        self._connection.destroy()
 
     @classmethod
     def from_connection_string(
@@ -128,6 +144,7 @@ class ServiceBusClient(object):
             queue_name=queue_name,
             credential=self._credential,
             logging_enable=self._config.logging_enable,
+            connection=self._connection,
             **kwargs
         )
         sender._open_with_retry()  # pylint: disable=protected-access
@@ -160,6 +177,7 @@ class ServiceBusClient(object):
             queue_name=queue_name,
             credential=self._credential,
             logging_enable=self._config.logging_enable,
+            connection=self._connection,
             **kwargs
         )
         receiver._open_with_retry()  # pylint: disable=protected-access

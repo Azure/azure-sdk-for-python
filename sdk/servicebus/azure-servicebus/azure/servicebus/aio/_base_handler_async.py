@@ -4,19 +4,16 @@
 # --------------------------------------------------------------------------------------------
 import logging
 import asyncio
-import functools
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any
 
 import uamqp
 from uamqp import (
-    authentication,
     constants,
-    errors,
+    errors
 )
 from uamqp.message import MessageProperties
 
 from .._base_handler import BaseHandler, _generate_sas_token
-from ..common.constants import JWT_TOKEN_SCOPE
 from ..common.errors import (
     InvalidHandlerState,
     ServiceBusError,
@@ -70,34 +67,6 @@ class BaseHandlerAsync(BaseHandler):
 
     async def __aexit__(self, *args):
         await self.close()
-
-    async def _create_auth(self):
-        try:
-            # ignore mypy's warning because token_type is Optional
-            token_type = self._credential.token_type    # type: ignore
-        except AttributeError:
-            token_type = b"jwt"
-        if token_type == b"servicebus.windows.net:sastoken":
-            auth = authentication.JWTTokenAsync(
-                self._auth_uri,
-                self._auth_uri,
-                functools.partial(self._credential.get_token, self._auth_uri),
-                token_type=token_type,
-                timeout=self._config.auth_timeout,
-                http_proxy=self._config.http_proxy,
-                transport_type=self._config.transport_type,
-            )
-            await auth.update_token()
-            return auth
-        return authentication.JWTTokenAsync(
-            self._auth_uri,
-            self._auth_uri,
-            functools.partial(self._credential.get_token, JWT_TOKEN_SCOPE),
-            token_type=token_type,
-            timeout=self._config.auth_timeout,
-            http_proxy=self._config.http_proxy,
-            transport_type=self._config.transport_type,
-        )
 
     async def _handle_exception(self, exception):
         if isinstance(exception, (errors.LinkDetach, errors.ConnectionClose)):

@@ -3,7 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 import collections
-import functools
 import logging
 import uuid
 import time
@@ -17,7 +16,6 @@ except ImportError:
 
 import uamqp
 from uamqp import (
-    authentication,
     utils,
     errors,
     constants,
@@ -30,10 +28,6 @@ from .common.errors import (
     ServiceBusConnectionError,
     ServiceBusAuthorizationError,
     MessageSendFailed
-)
-from .common.constants import (
-
-    JWT_TOKEN_SCOPE
 )
 
 if TYPE_CHECKING:
@@ -138,34 +132,6 @@ class BaseHandler(object):  # pylint:disable=too-many-instance-attributes
 
     def __exit__(self, *args):
         self.close()
-
-    def _create_auth(self):
-        try:
-            # ignore mypy's warning because token_type is Optional
-            token_type = self._credential.token_type    # type: ignore
-        except AttributeError:
-            token_type = b"jwt"
-        if token_type == b"servicebus.windows.net:sastoken":
-            auth = authentication.JWTTokenAuth(
-                self._auth_uri,
-                self._auth_uri,
-                functools.partial(self._credential.get_token, self._auth_uri),
-                token_type=token_type,
-                timeout=self._config.auth_timeout,
-                http_proxy=self._config.http_proxy,
-                transport_type=self._config.transport_type,
-            )
-            auth.update_token()
-            return auth
-        return authentication.JWTTokenAuth(
-            self._auth_uri,
-            self._auth_uri,
-            functools.partial(self._credential.get_token, JWT_TOKEN_SCOPE),
-            token_type=token_type,
-            timeout=self._config.auth_timeout,
-            http_proxy=self._config.http_proxy,
-            transport_type=self._config.transport_type,
-        )
 
     def _handle_exception(self, exception):
         if isinstance(exception, (errors.LinkDetach, errors.ConnectionClose)):

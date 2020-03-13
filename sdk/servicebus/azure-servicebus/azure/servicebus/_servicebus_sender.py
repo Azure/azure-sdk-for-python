@@ -17,7 +17,7 @@ from .common.errors import (
     OperationTimeoutError,
     _ServiceBusErrorPolicy
 )
-from .common.utils import create_properties
+from .common.utils import create_properties, create_authentication
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -111,6 +111,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
 
         self._max_message_size_on_link = 0
         self._create_attribute()
+        self._connection = kwargs.get("connection")
 
     def _create_handler(self, auth):
         properties = create_properties()
@@ -131,9 +132,9 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         if self._handler:
             self._handler.close()
 
-        auth = self._create_auth()
+        auth = None if self._connection else create_authentication(self)
         self._create_handler(auth)
-        self._handler.open()
+        self._handler.open(connection=self._connection)
         while not self._handler.client_ready():
             time.sleep(0.05)
         self._running = True

@@ -16,6 +16,7 @@ from ..common.errors import (
     MessageSendFailed
 )
 from ..common.utils import create_properties
+from .async_utils import create_authentication
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -84,6 +85,7 @@ class ServiceBusSender(BaseHandlerAsync, SenderMixin):
 
         self._max_message_size_on_link = 0
         self._create_attribute()
+        self._connection = kwargs.get("connection")
 
     def _create_handler(self, auth):
         properties = create_properties()
@@ -103,9 +105,9 @@ class ServiceBusSender(BaseHandlerAsync, SenderMixin):
             return
         if self._handler:
             await self._handler.close_async()
-        auth = await self._create_auth()
+        auth = None if self._connection else (await create_authentication(self))
         self._create_handler(auth)
-        await self._handler.open_async()
+        await self._handler.open_async(connection=self._connection)
         while not await self._handler.client_ready_async():
             await asyncio.sleep(0.05)
         self._running = True

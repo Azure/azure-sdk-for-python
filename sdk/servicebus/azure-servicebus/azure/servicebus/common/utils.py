@@ -9,14 +9,20 @@ import datetime
 import logging
 import threading
 import time
+import functools
 try:
     from urlparse import urlparse
 except ImportError:
     from urllib.parse import urlparse
 from concurrent.futures import ThreadPoolExecutor
 
+from uamqp import authentication
+
 from azure.servicebus.common.errors import AutoLockRenewFailed, AutoLockRenewTimeout
 from azure.servicebus import __version__ as sdk_version
+from .constants import (
+    JWT_TOKEN_SCOPE
+)
 
 _log = logging.getLogger(__name__)
 
@@ -89,6 +95,36 @@ def renewable_start_time(renewable):
         return renewable.session_start
     except AttributeError:
         raise TypeError("Registered object is not renewable.")
+
+
+def create_authentication(client):
+    # pylint: disable=protected-access
+    try:
+        # ignore mypy's warning because token_type is Optional
+        token_type = client._credential.token_type  # type: ignore
+    except AttributeError:
+        token_type = b"jwt"
+    if token_type == b"servicebus.windows.net:sastoken":
+        auth = authentication.JWTTokenAuth(
+            client._auth_uri,
+            client._auth_uri,
+            functools.partial(client._credential.get_token, client._auth_uri),
+            token_type=token_type,
+            timeout=client._config.auth_timeout,
+            http_proxy=client._config.http_proxy,
+            transport_type=client._config.transport_type,
+        )
+        auth.update_token()
+        return auth
+    return authentication.JWTTokenAuth(
+        client._auth_uri,
+        client._auth_uri,
+        functools.partial(client._credential.get_token, JWT_TOKEN_SCOPE),
+        token_type=token_type,
+        timeout=client._config.auth_timeout,
+        http_proxy=client._config.http_proxy,
+        transport_type=client._config.transport_type,
+    )
 
 
 class AutoLockRenew(object):

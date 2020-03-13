@@ -22,6 +22,7 @@ from ..common.constants import (
     ReceiveSettleMode
 )
 from ..common import mgmt_handlers
+from .async_utils import create_authentication
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -103,6 +104,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
             )
         self._create_attribute(**kwargs)
         self._message_iter = None
+        self._connection = kwargs.get("connection")
 
     async def __anext__(self):
         while True:
@@ -172,9 +174,9 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
             return
         if self._handler:
             await self._handler.close_async()
-        auth = await self._create_auth()
+        auth = None if self._connection else (await create_authentication(self))
         self._create_handler(auth)
-        await self._handler.open_async()
+        await self._handler.open_async(connection=self._connection)
         self._message_iter = self._handler.receive_messages_iter_async()
         while not await self._handler.auth_complete_async():
             await asyncio.sleep(0.05)

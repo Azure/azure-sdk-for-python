@@ -7,12 +7,46 @@
 import asyncio
 import logging
 import datetime
+import functools
+
+from uamqp import authentication
 
 from azure.servicebus.common.utils import renewable_start_time, get_running_loop
 from azure.servicebus.common.errors import AutoLockRenewTimeout, AutoLockRenewFailed
+from ..common.constants import JWT_TOKEN_SCOPE
 
 
 _log = logging.getLogger(__name__)
+
+
+async def create_authentication(client):
+    # pylint: disable=protected-access
+    try:
+        # ignore mypy's warning because token_type is Optional
+        token_type = client._credential.token_type  # type: ignore
+    except AttributeError:
+        token_type = b"jwt"
+    if token_type == b"servicebus.windows.net:sastoken":
+        auth = authentication.JWTTokenAsync(
+            client._auth_uri,
+            client._auth_uri,
+            functools.partial(client._credential.get_token, client._auth_uri),
+            token_type=token_type,
+            timeout=client._config.auth_timeout,
+            http_proxy=client._config.http_proxy,
+            transport_type=client._config.transport_type,
+        )
+        await auth.update_token()
+        return auth
+    return authentication.JWTTokenAsync(
+        client._auth_uri,
+        client._auth_uri,
+        functools.partial(client._credential.get_token, JWT_TOKEN_SCOPE),
+        token_type=token_type,
+        timeout=client._config.auth_timeout,
+        http_proxy=client._config.http_proxy,
+        transport_type=client._config.transport_type,
+    )
 
 
 class AutoLockRenew:

@@ -12,7 +12,7 @@ from typing import Any, List, TYPE_CHECKING, Optional
 from uamqp import ReceiveClient, Source, types, constants
 
 from ._base_handler import BaseHandler
-from .common.utils import create_properties
+from .common.utils import create_properties, create_authentication
 from .common.message import PeekMessage, ReceivedMessage, DeferredMessage
 from .common.constants import (
     REQUEST_RESPONSE_RECEIVE_BY_SEQUENCE_NUMBER,
@@ -151,6 +151,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
             )
         self._message_iter = None
         self._create_attribute(**kwargs)
+        self._connection = kwargs.get("connection")
 
     def __iter__(self):
         return self
@@ -222,9 +223,9 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         if self._handler:
             self._handler.close()
 
-        auth = self._create_auth()
+        auth = None if self._connection else create_authentication(self)
         self._create_handler(auth)
-        self._handler.open()
+        self._handler.open(connection=self._connection)
         self._message_iter = self._handler.receive_messages_iter()
         while not self._handler.auth_complete():
             time.sleep(0.05)
