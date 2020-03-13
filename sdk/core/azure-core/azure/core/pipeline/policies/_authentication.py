@@ -39,7 +39,16 @@ class _BearerTokenCredentialPolicyBase(object):
     @staticmethod
     def _enforce_https(request):
         # type: (PipelineRequest) -> None
-        enforce_https = request.context.options.pop("enforce_https", True)
+
+        # move 'enforce_https' from options to context so it persists
+        # across retries but isn't passed to a transport implementation
+        option = request.context.options.pop("enforce_https", None)
+
+        # True is the default setting; we needn't preserve an explicit opt in to the default behavior
+        if option is False:
+            request.context["enforce_https"] = option
+
+        enforce_https = request.context.get("enforce_https", True)
         if enforce_https and not request.http_request.url.lower().startswith("https"):
             raise ServiceRequestError(
                 "Bearer token authentication is not permitted for non-TLS protected (non-https) URLs."

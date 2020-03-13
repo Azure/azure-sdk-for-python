@@ -8,9 +8,9 @@ import time
 from unittest.mock import Mock
 
 from azure.core.credentials import AccessToken
-from azure.core.exceptions import ServiceRequestError
+from azure.core.exceptions import AzureError, ServiceRequestError
 from azure.core.pipeline import AsyncPipeline
-from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy
+from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy, SansIOHTTPPolicy
 from azure.core.pipeline.transport import HttpRequest
 import pytest
 
@@ -116,3 +116,41 @@ async def test_bearer_policy_optionally_enforces_https():
     await pipeline.run(HttpRequest("GET", "https://secure"), enforce_https=False)
     await pipeline.run(HttpRequest("GET", "https://secure"), enforce_https=True)
     await pipeline.run(HttpRequest("GET", "https://secure"))
+
+
+@pytest.mark.asyncio
+async def test_preserves_enforce_https_opt_out():
+    """The policy should use request context to preserve an opt out from https enforcement"""
+
+    class ContextValidator(SansIOHTTPPolicy):
+        def on_request(self, request):
+            assert "enforce_https" in request.context, "'enforce_https' is not in the request's context"
+
+    get_token = get_completed_future(AccessToken("***", 42))
+    credential = Mock(get_token=lambda *_, **__: get_token)
+    policies = [AsyncBearerTokenCredentialPolicy(credential, "scope"), ContextValidator()]
+    pipeline = AsyncPipeline(transport=Mock(send=lambda *_, **__: get_completed_future()), policies=policies)
+
+    await pipeline.run(HttpRequest("GET", "http://not.secure"), enforce_https=False)
+
+
+@pytest.mark.asyncio
+async def test_context_unmodified_by_default():
+    """When no options for the policy accompany a request, the policy shouldn't add anything to the request context"""
+
+    class ContextValidator(SansIOHTTPPolicy):
+        def on_request(self, request):
+            assert not any(request.context), "the policy shouldn't add to the request's context"
+
+    get_token = get_completed_future(AccessToken("***", 42))
+    credential = Mock(get_token=lambda *_, **__: get_token)
+    policies = [AsyncBearerTokenCredentialPolicy(credential, "scope"), ContextValidator()]
+    pipeline = AsyncPipeline(transport=Mock(send=lambda *_, **__: get_completed_future()), policies=policies)
+
+    await pipeline.run(HttpRequest("GET", "https://secure"))
+
+
+def get_completed_future(result=None):
+    fut = asyncio.Future()
+    fut.set_result(result)
+    return fut

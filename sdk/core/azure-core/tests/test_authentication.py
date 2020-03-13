@@ -9,7 +9,7 @@ import azure.core
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ServiceRequestError
 from azure.core.pipeline import Pipeline
-from azure.core.pipeline.policies import BearerTokenCredentialPolicy
+from azure.core.pipeline.policies import BearerTokenCredentialPolicy, SansIOHTTPPolicy
 from azure.core.pipeline.transport import HttpRequest
 
 import pytest
@@ -98,6 +98,32 @@ def test_bearer_policy_optionally_enforces_https():
     # https requests should always pass
     pipeline.run(HttpRequest("GET", "https://secure"), enforce_https=False)
     pipeline.run(HttpRequest("GET", "https://secure"), enforce_https=True)
+    pipeline.run(HttpRequest("GET", "https://secure"))
+
+
+def test_preserves_enforce_https_opt_out():
+    """The policy should use request context to preserve an opt out from https enforcement"""
+
+    class ContextValidator(SansIOHTTPPolicy):
+        def on_request(self, request):
+            assert "enforce_https" in request.context, "'enforce_https' is not in the request's context"
+
+    policies = [BearerTokenCredentialPolicy(credential=Mock(), scope="scope"), ContextValidator()]
+    pipeline = Pipeline(transport=Mock(), policies=policies)
+
+    pipeline.run(HttpRequest("GET", "http://not.secure"), enforce_https=False)
+
+
+def test_context_unmodified_by_default():
+    """When no options for the policy accompany a request, the policy shouldn't add anything to the request context"""
+
+    class ContextValidator(SansIOHTTPPolicy):
+        def on_request(self, request):
+            assert not any(request.context), "the policy shouldn't add to the request's context"
+
+    policies = [BearerTokenCredentialPolicy(credential=Mock(), scope="scope"), ContextValidator()]
+    pipeline = Pipeline(transport=Mock(), policies=policies)
+
     pipeline.run(HttpRequest("GET", "https://secure"))
 
 
