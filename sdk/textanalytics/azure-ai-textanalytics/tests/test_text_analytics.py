@@ -18,7 +18,7 @@ class TextAnalyticsTest(TestAnalyticsTestCase):
         text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
         response = text_analytics.detect_language(
-            inputs=[{
+            documents=[{
                 'id': 1,
                 'text': 'I had a wonderful experience! The rooms were wonderful and the staff was helpful.'
             }]

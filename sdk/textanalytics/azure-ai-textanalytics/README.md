@@ -138,7 +138,7 @@ The input for each operation is passed as a **list** of documents.
 
 Each document can be passed as a string in the list, e.g.
 ```python
-docs = ["I hated the movie. It was so slow!", "The movie made it into my top ten favorites.", "What a great movie!"]
+documents = ["I hated the movie. It was so slow!", "The movie made it into my top ten favorites.", "What a great movie!"]
 ```
 
 or, if you wish to pass in a per-item document `id` or `language`/`country_hint`, they can be passed as a list of
@@ -147,7 +147,7 @@ or, if you wish to pass in a per-item document `id` or `language`/`country_hint`
 or a dict-like representation of the object:
 
 ```python
-inputs = [
+documents = [
     {"id": "1", "language": "en", "text": "I hated the movie. It was so slow!"},
     {"id": "2", "language": "en", "text": "The movie made it into my top ten favorites."},
     {"id": "3", "language": "en", "text": "What a great movie!"}

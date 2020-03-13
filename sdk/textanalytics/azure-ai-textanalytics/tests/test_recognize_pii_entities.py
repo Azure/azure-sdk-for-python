@@ -150,7 +150,7 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
         text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
         with self.assertRaises(HttpResponseError):
             response = text_analytics.recognize_pii_entities(
-                inputs=["Microsoft was founded by Bill Gates."],
+                documents=["Microsoft was founded by Bill Gates."],
                 model_version="old"
             )
 
@@ -503,7 +503,7 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
             self.assertIsNotNone(response.statistics)
 
         res = text_analytics.recognize_pii_entities(
-            inputs=["Bill Gates is the CEO of Microsoft."],
+            documents=["Bill Gates is the CEO of Microsoft."],
             model_version="latest",
             show_stats=True,
             language="en",
