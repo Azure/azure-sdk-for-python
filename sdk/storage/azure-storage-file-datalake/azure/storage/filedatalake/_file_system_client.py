@@ -700,7 +700,7 @@ class FileSystemClient(StorageAccountHostsMixin):
         file_client.delete_file(**kwargs)
         return file_client
 
-    def get_root_directory_client(self):
+    def _get_root_directory_client(self):
         # type: () -> DataLakeDirectoryClient
         """Get a client to interact with the root directory.
 
