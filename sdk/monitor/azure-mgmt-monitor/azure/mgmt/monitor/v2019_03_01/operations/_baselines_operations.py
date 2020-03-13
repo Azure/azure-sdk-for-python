@@ -69,7 +69,7 @@ class BaselinesOperations(object):
          eq ‘*’ or B = ‘b2’**<br>This is invalid because the logical or
          operator cannot separate two different metadata names.<br>- Return all
          time series where A = a1, B = b1 and C = c1:<br>**$filter=A eq ‘a1’
-         and B eq ‘b1’ and C eq ‘c1’**<br>- Return all time series where A =
+         and B eq ‘b1�� and C eq ‘c1’**<br>- Return all time series where A =
          a1<br>**$filter=A eq ‘a1’ and B eq ‘*’ and C eq ‘*’**.
         :type filter: str
         :param result_type: Allows retrieving only metadata of the baseline.
