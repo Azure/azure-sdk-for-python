@@ -21,8 +21,10 @@ For all packages:<br/>
 
 For a specific package:<br/>
 
-`export PACKAGE=azure-mgmt-servicename`
-`python ./scripts/dev_setup.py -p $PACKAGE`
+```shell
+export PACKAGE=azure-mgmt-servicename
+python ./scripts/dev_setup.py -p $PACKAGE
+```
 
 ## Generate tags for multi-api Swagger Readme
 
@@ -30,7 +32,9 @@ For a specific package:<br/>
 
 ## Generate a package
 
-`python -m packaging_tools.generate_sdk -v -m restapi_path/readme.md`
+```shell
+python -m packaging_tools.generate_sdk -v -m restapi_path/readme.md
+```
 
 Regenerate multi-api client:<br/>
 `python ./scripts/multiapi_init_gen.py azure-mgmt-myservice`
