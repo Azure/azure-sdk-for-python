@@ -133,22 +133,6 @@ class CdnCertificateSourceParameters(Model):
         self.certificate_type = kwargs.get('certificate_type', None)
 
 
-class CdnEndpoint(Model):
-    """Defines the ARM Resource ID for the linked endpoints.
-
-    :param id: ARM Resource ID string.
-    :type id: str
-    """
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(CdnEndpoint, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
-
-
 class CustomDomainHttpsParameters(Model):
     """The JSON object that contains the properties to secure a custom domain.
 
@@ -228,183 +212,6 @@ class CdnManagedHttpsParameters(CustomDomainHttpsParameters):
         super(CdnManagedHttpsParameters, self).__init__(**kwargs)
         self.certificate_source_parameters = kwargs.get('certificate_source_parameters', None)
         self.certificate_source = 'Cdn'
-
-
-class Resource(Model):
-    """The core properties of ARM resources.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar id: Resource ID.
-    :vartype id: str
-    :ivar name: Resource name.
-    :vartype name: str
-    :ivar type: Resource type.
-    :vartype type: str
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(Resource, self).__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-
-
-class TrackedResource(Resource):
-    """The resource model definition for a ARM tracked top level resource.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar id: Resource ID.
-    :vartype id: str
-    :ivar name: Resource name.
-    :vartype name: str
-    :ivar type: Resource type.
-    :vartype type: str
-    :param location: Required. Resource location.
-    :type location: str
-    :param tags: Resource tags.
-    :type tags: dict[str, str]
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-    }
-
-    def __init__(self, **kwargs):
-        super(TrackedResource, self).__init__(**kwargs)
-        self.location = kwargs.get('location', None)
-        self.tags = kwargs.get('tags', None)
-
-
-class CdnWebApplicationFirewallPolicy(TrackedResource):
-    """Defines web application firewall policy for Azure CDN.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar id: Resource ID.
-    :vartype id: str
-    :ivar name: Resource name.
-    :vartype name: str
-    :ivar type: Resource type.
-    :vartype type: str
-    :param location: Required. Resource location.
-    :type location: str
-    :param tags: Resource tags.
-    :type tags: dict[str, str]
-    :param policy_settings: Describes  policySettings for policy
-    :type policy_settings: ~azure.mgmt.cdn.models.PolicySettings
-    :param rate_limit_rules: Describes rate limit rules inside the policy.
-    :type rate_limit_rules: ~azure.mgmt.cdn.models.RateLimitRuleList
-    :param custom_rules: Describes custom rules inside the policy.
-    :type custom_rules: ~azure.mgmt.cdn.models.CustomRuleList
-    :param managed_rules: Describes managed rules inside the policy.
-    :type managed_rules: ~azure.mgmt.cdn.models.ManagedRuleSetList
-    :ivar endpoint_links: Describes Azure CDN endpoints associated with this
-     Web Application Firewall policy.
-    :vartype endpoint_links: list[~azure.mgmt.cdn.models.CdnEndpoint]
-    :ivar provisioning_state: Provisioning state of the
-     WebApplicationFirewallPolicy. Possible values include: 'Creating',
-     'Succeeded', 'Failed'
-    :vartype provisioning_state: str or
-     ~azure.mgmt.cdn.models.ProvisioningState
-    :ivar resource_state: Resource status of the policy. Possible values
-     include: 'Creating', 'Enabling', 'Enabled', 'Disabling', 'Disabled',
-     'Deleting'
-    :vartype resource_state: str or ~azure.mgmt.cdn.models.PolicyResourceState
-    :param etag: Gets a unique read-only string that changes whenever the
-     resource is updated.
-    :type etag: str
-    :param sku: Required. The pricing tier (defines a CDN provider, feature
-     list and rate) of the CdnWebApplicationFirewallPolicy.
-    :type sku: ~azure.mgmt.cdn.models.Sku
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'endpoint_links': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'resource_state': {'readonly': True},
-        'sku': {'required': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'policy_settings': {'key': 'properties.policySettings', 'type': 'PolicySettings'},
-        'rate_limit_rules': {'key': 'properties.rateLimitRules', 'type': 'RateLimitRuleList'},
-        'custom_rules': {'key': 'properties.customRules', 'type': 'CustomRuleList'},
-        'managed_rules': {'key': 'properties.managedRules', 'type': 'ManagedRuleSetList'},
-        'endpoint_links': {'key': 'properties.endpointLinks', 'type': '[CdnEndpoint]'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'resource_state': {'key': 'properties.resourceState', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'sku': {'key': 'sku', 'type': 'Sku'},
-    }
-
-    def __init__(self, **kwargs):
-        super(CdnWebApplicationFirewallPolicy, self).__init__(**kwargs)
-        self.policy_settings = kwargs.get('policy_settings', None)
-        self.rate_limit_rules = kwargs.get('rate_limit_rules', None)
-        self.custom_rules = kwargs.get('custom_rules', None)
-        self.managed_rules = kwargs.get('managed_rules', None)
-        self.endpoint_links = None
-        self.provisioning_state = None
-        self.resource_state = None
-        self.etag = kwargs.get('etag', None)
-        self.sku = kwargs.get('sku', None)
-
-
-class CdnWebApplicationFirewallPolicyPatchParameters(Model):
-    """Properties required to update a CdnWebApplicationFirewallPolicy.
-
-    :param tags: CdnWebApplicationFirewallPolicy tags
-    :type tags: dict[str, str]
-    """
-
-    _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-    }
-
-    def __init__(self, **kwargs):
-        super(CdnWebApplicationFirewallPolicyPatchParameters, self).__init__(**kwargs)
-        self.tags = kwargs.get('tags', None)
 
 
 class CheckNameAvailabilityInput(Model):
@@ -554,6 +361,39 @@ class CookiesMatchConditionParameters(Model):
         self.transforms = kwargs.get('transforms', None)
 
 
+class Resource(Model):
+    """The core properties of ARM resources.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(Resource, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+
+
 class ProxyResource(Resource):
     """The resource model definition for a ARM proxy resource. It will have
     everything other than required location and tags.
@@ -691,68 +531,6 @@ class CustomDomainParameters(Model):
     def __init__(self, **kwargs):
         super(CustomDomainParameters, self).__init__(**kwargs)
         self.host_name = kwargs.get('host_name', None)
-
-
-class CustomRule(Model):
-    """Defines the common attributes for a custom rule that can be included in a
-    waf policy.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param name: Required. Defines the name of the custom rule
-    :type name: str
-    :param enabled_state: Describes if the custom rule is in enabled or
-     disabled state. Defaults to Enabled if not specified. Possible values
-     include: 'Disabled', 'Enabled'
-    :type enabled_state: str or ~azure.mgmt.cdn.models.CustomRuleEnabledState
-    :param priority: Required. Defines in what order this rule be evaluated in
-     the overall list of custom rules
-    :type priority: int
-    :param match_conditions: Required. List of match conditions.
-    :type match_conditions: list[~azure.mgmt.cdn.models.MatchCondition]
-    :param action: Required. Describes what action to be applied when rule
-     matches. Possible values include: 'Allow', 'Block', 'Log', 'Redirect'
-    :type action: str or ~azure.mgmt.cdn.models.ActionType
-    """
-
-    _validation = {
-        'name': {'required': True},
-        'priority': {'required': True, 'maximum': 1000, 'minimum': 0},
-        'match_conditions': {'required': True},
-        'action': {'required': True},
-    }
-
-    _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'enabled_state': {'key': 'enabledState', 'type': 'str'},
-        'priority': {'key': 'priority', 'type': 'int'},
-        'match_conditions': {'key': 'matchConditions', 'type': '[MatchCondition]'},
-        'action': {'key': 'action', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(CustomRule, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.enabled_state = kwargs.get('enabled_state', None)
-        self.priority = kwargs.get('priority', None)
-        self.match_conditions = kwargs.get('match_conditions', None)
-        self.action = kwargs.get('action', None)
-
-
-class CustomRuleList(Model):
-    """Defines contents of custom rules.
-
-    :param rules: List of rules
-    :type rules: list[~azure.mgmt.cdn.models.CustomRule]
-    """
-
-    _attribute_map = {
-        'rules': {'key': 'rules', 'type': '[CustomRule]'},
-    }
-
-    def __init__(self, **kwargs):
-        super(CustomRuleList, self).__init__(**kwargs)
-        self.rules = kwargs.get('rules', None)
 
 
 class DeepCreatedOrigin(Model):
@@ -1437,6 +1215,47 @@ class EdgeNode(ProxyResource):
         self.ip_address_groups = kwargs.get('ip_address_groups', None)
 
 
+class TrackedResource(Resource):
+    """The resource model definition for a ARM tracked top level resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :param location: Required. Resource location.
+    :type location: str
+    :param tags: Resource tags.
+    :type tags: dict[str, str]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'location': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+    }
+
+    def __init__(self, **kwargs):
+        super(TrackedResource, self).__init__(**kwargs)
+        self.location = kwargs.get('location', None)
+        self.tags = kwargs.get('tags', None)
+
+
 class Endpoint(TrackedResource):
     """CDN endpoint is the entity within a CDN profile containing configuration
     information such as origin, protocol, content caching and delivery
@@ -1510,10 +1329,6 @@ class Endpoint(TrackedResource):
      used for an endpoint.
     :type delivery_policy:
      ~azure.mgmt.cdn.models.EndpointPropertiesUpdateParametersDeliveryPolicy
-    :param web_application_firewall_policy_link: Defines the Web Application
-     Firewall policy for the endpoint (if applicable)
-    :type web_application_firewall_policy_link:
-     ~azure.mgmt.cdn.models.EndpointPropertiesUpdateParametersWebApplicationFirewallPolicyLink
     :ivar host_name: The host name of the endpoint structured as
      {endpointName}.{DNSZone}, e.g. contoso.azureedge.net
     :vartype host_name: str
@@ -1557,7 +1372,6 @@ class Endpoint(TrackedResource):
         'probe_path': {'key': 'properties.probePath', 'type': 'str'},
         'geo_filters': {'key': 'properties.geoFilters', 'type': '[GeoFilter]'},
         'delivery_policy': {'key': 'properties.deliveryPolicy', 'type': 'EndpointPropertiesUpdateParametersDeliveryPolicy'},
-        'web_application_firewall_policy_link': {'key': 'properties.webApplicationFirewallPolicyLink', 'type': 'EndpointPropertiesUpdateParametersWebApplicationFirewallPolicyLink'},
         'host_name': {'key': 'properties.hostName', 'type': 'str'},
         'origins': {'key': 'properties.origins', 'type': '[DeepCreatedOrigin]'},
         'resource_state': {'key': 'properties.resourceState', 'type': 'str'},
@@ -1577,7 +1391,6 @@ class Endpoint(TrackedResource):
         self.probe_path = kwargs.get('probe_path', None)
         self.geo_filters = kwargs.get('geo_filters', None)
         self.delivery_policy = kwargs.get('delivery_policy', None)
-        self.web_application_firewall_policy_link = kwargs.get('web_application_firewall_policy_link', None)
         self.host_name = None
         self.origins = kwargs.get('origins', None)
         self.resource_state = None
@@ -1608,23 +1421,6 @@ class EndpointPropertiesUpdateParametersDeliveryPolicy(Model):
         super(EndpointPropertiesUpdateParametersDeliveryPolicy, self).__init__(**kwargs)
         self.description = kwargs.get('description', None)
         self.rules = kwargs.get('rules', None)
-
-
-class EndpointPropertiesUpdateParametersWebApplicationFirewallPolicyLink(Model):
-    """Defines the Web Application Firewall policy for the endpoint (if
-    applicable).
-
-    :param id: Resource ID.
-    :type id: str
-    """
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(EndpointPropertiesUpdateParametersWebApplicationFirewallPolicyLink, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
 
 
 class EndpointUpdateParameters(Model):
@@ -1684,10 +1480,6 @@ class EndpointUpdateParameters(Model):
      used for an endpoint.
     :type delivery_policy:
      ~azure.mgmt.cdn.models.EndpointPropertiesUpdateParametersDeliveryPolicy
-    :param web_application_firewall_policy_link: Defines the Web Application
-     Firewall policy for the endpoint (if applicable)
-    :type web_application_firewall_policy_link:
-     ~azure.mgmt.cdn.models.EndpointPropertiesUpdateParametersWebApplicationFirewallPolicyLink
     """
 
     _attribute_map = {
@@ -1703,7 +1495,6 @@ class EndpointUpdateParameters(Model):
         'probe_path': {'key': 'properties.probePath', 'type': 'str'},
         'geo_filters': {'key': 'properties.geoFilters', 'type': '[GeoFilter]'},
         'delivery_policy': {'key': 'properties.deliveryPolicy', 'type': 'EndpointPropertiesUpdateParametersDeliveryPolicy'},
-        'web_application_firewall_policy_link': {'key': 'properties.webApplicationFirewallPolicyLink', 'type': 'EndpointPropertiesUpdateParametersWebApplicationFirewallPolicyLink'},
     }
 
     def __init__(self, **kwargs):
@@ -1720,7 +1511,6 @@ class EndpointUpdateParameters(Model):
         self.probe_path = kwargs.get('probe_path', None)
         self.geo_filters = kwargs.get('geo_filters', None)
         self.delivery_policy = kwargs.get('delivery_policy', None)
-        self.web_application_firewall_policy_link = kwargs.get('web_application_firewall_policy_link', None)
 
 
 class ErrorResponse(Model):
@@ -2052,292 +1842,6 @@ class LoadParameters(Model):
         self.content_paths = kwargs.get('content_paths', None)
 
 
-class ManagedRuleDefinition(Model):
-    """Describes a managed rule definition.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar rule_id: Identifier for the managed rule.
-    :vartype rule_id: str
-    :ivar description: Describes the functionality of the managed rule.
-    :vartype description: str
-    """
-
-    _validation = {
-        'rule_id': {'readonly': True},
-        'description': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'rule_id': {'key': 'ruleId', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(ManagedRuleDefinition, self).__init__(**kwargs)
-        self.rule_id = None
-        self.description = None
-
-
-class ManagedRuleGroupDefinition(Model):
-    """Describes a managed rule group.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar rule_group_name: Name of the managed rule group.
-    :vartype rule_group_name: str
-    :ivar description: Description of the managed rule group.
-    :vartype description: str
-    :ivar rules: List of rules within the managed rule group.
-    :vartype rules: list[~azure.mgmt.cdn.models.ManagedRuleDefinition]
-    """
-
-    _validation = {
-        'rule_group_name': {'readonly': True},
-        'description': {'readonly': True},
-        'rules': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'rule_group_name': {'key': 'ruleGroupName', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'rules': {'key': 'rules', 'type': '[ManagedRuleDefinition]'},
-    }
-
-    def __init__(self, **kwargs):
-        super(ManagedRuleGroupDefinition, self).__init__(**kwargs)
-        self.rule_group_name = None
-        self.description = None
-        self.rules = None
-
-
-class ManagedRuleGroupOverride(Model):
-    """Defines a managed rule group override setting.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param rule_group_name: Required. Describes the managed rule group within
-     the rule set to override
-    :type rule_group_name: str
-    :param rules: List of rules that will be disabled. If none specified, all
-     rules in the group will be disabled.
-    :type rules: list[~azure.mgmt.cdn.models.ManagedRuleOverride]
-    """
-
-    _validation = {
-        'rule_group_name': {'required': True},
-    }
-
-    _attribute_map = {
-        'rule_group_name': {'key': 'ruleGroupName', 'type': 'str'},
-        'rules': {'key': 'rules', 'type': '[ManagedRuleOverride]'},
-    }
-
-    def __init__(self, **kwargs):
-        super(ManagedRuleGroupOverride, self).__init__(**kwargs)
-        self.rule_group_name = kwargs.get('rule_group_name', None)
-        self.rules = kwargs.get('rules', None)
-
-
-class ManagedRuleOverride(Model):
-    """Defines a managed rule group override setting.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param rule_id: Required. Identifier for the managed rule.
-    :type rule_id: str
-    :param enabled_state: Describes if the managed rule is in enabled or
-     disabled state. Defaults to Disabled if not specified. Possible values
-     include: 'Disabled', 'Enabled'
-    :type enabled_state: str or ~azure.mgmt.cdn.models.ManagedRuleEnabledState
-    :param action: Describes the override action to be applied when rule
-     matches. Possible values include: 'Allow', 'Block', 'Log', 'Redirect'
-    :type action: str or ~azure.mgmt.cdn.models.ActionType
-    """
-
-    _validation = {
-        'rule_id': {'required': True},
-    }
-
-    _attribute_map = {
-        'rule_id': {'key': 'ruleId', 'type': 'str'},
-        'enabled_state': {'key': 'enabledState', 'type': 'str'},
-        'action': {'key': 'action', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(ManagedRuleOverride, self).__init__(**kwargs)
-        self.rule_id = kwargs.get('rule_id', None)
-        self.enabled_state = kwargs.get('enabled_state', None)
-        self.action = kwargs.get('action', None)
-
-
-class ManagedRuleSet(Model):
-    """Defines a managed rule set.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param rule_set_type: Required. Defines the rule set type to use.
-    :type rule_set_type: str
-    :param rule_set_version: Required. Defines the version of the rule set to
-     use.
-    :type rule_set_version: str
-    :param anomaly_score: Verizon only : If the rule set supports anomaly
-     detection mode, this describes the threshold for blocking requests.
-    :type anomaly_score: int
-    :param rule_group_overrides: Defines the rule overrides to apply to the
-     rule set.
-    :type rule_group_overrides:
-     list[~azure.mgmt.cdn.models.ManagedRuleGroupOverride]
-    """
-
-    _validation = {
-        'rule_set_type': {'required': True},
-        'rule_set_version': {'required': True},
-        'anomaly_score': {'maximum': 20, 'minimum': 0},
-    }
-
-    _attribute_map = {
-        'rule_set_type': {'key': 'ruleSetType', 'type': 'str'},
-        'rule_set_version': {'key': 'ruleSetVersion', 'type': 'str'},
-        'anomaly_score': {'key': 'anomalyScore', 'type': 'int'},
-        'rule_group_overrides': {'key': 'ruleGroupOverrides', 'type': '[ManagedRuleGroupOverride]'},
-    }
-
-    def __init__(self, **kwargs):
-        super(ManagedRuleSet, self).__init__(**kwargs)
-        self.rule_set_type = kwargs.get('rule_set_type', None)
-        self.rule_set_version = kwargs.get('rule_set_version', None)
-        self.anomaly_score = kwargs.get('anomaly_score', None)
-        self.rule_group_overrides = kwargs.get('rule_group_overrides', None)
-
-
-class ManagedRuleSetDefinition(Resource):
-    """Describes a managed rule set definition.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar id: Resource ID.
-    :vartype id: str
-    :ivar name: Resource name.
-    :vartype name: str
-    :ivar type: Resource type.
-    :vartype type: str
-    :ivar provisioning_state: Provisioning state of the managed rule set.
-    :vartype provisioning_state: str
-    :ivar rule_set_type: Type of the managed rule set.
-    :vartype rule_set_type: str
-    :ivar rule_set_version: Version of the managed rule set type.
-    :vartype rule_set_version: str
-    :ivar rule_groups: Rule groups of the managed rule set.
-    :vartype rule_groups:
-     list[~azure.mgmt.cdn.models.ManagedRuleGroupDefinition]
-    :param sku: The pricing tier (defines a CDN provider, feature list and
-     rate) of the CdnWebApplicationFirewallPolicy.
-    :type sku: ~azure.mgmt.cdn.models.Sku
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'rule_set_type': {'readonly': True},
-        'rule_set_version': {'readonly': True},
-        'rule_groups': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'rule_set_type': {'key': 'properties.ruleSetType', 'type': 'str'},
-        'rule_set_version': {'key': 'properties.ruleSetVersion', 'type': 'str'},
-        'rule_groups': {'key': 'properties.ruleGroups', 'type': '[ManagedRuleGroupDefinition]'},
-        'sku': {'key': 'sku', 'type': 'Sku'},
-    }
-
-    def __init__(self, **kwargs):
-        super(ManagedRuleSetDefinition, self).__init__(**kwargs)
-        self.provisioning_state = None
-        self.rule_set_type = None
-        self.rule_set_version = None
-        self.rule_groups = None
-        self.sku = kwargs.get('sku', None)
-
-
-class ManagedRuleSetList(Model):
-    """Defines the list of managed rule sets for the policy.
-
-    :param managed_rule_sets: List of rule sets.
-    :type managed_rule_sets: list[~azure.mgmt.cdn.models.ManagedRuleSet]
-    """
-
-    _attribute_map = {
-        'managed_rule_sets': {'key': 'managedRuleSets', 'type': '[ManagedRuleSet]'},
-    }
-
-    def __init__(self, **kwargs):
-        super(ManagedRuleSetList, self).__init__(**kwargs)
-        self.managed_rule_sets = kwargs.get('managed_rule_sets', None)
-
-
-class MatchCondition(Model):
-    """Define match conditions.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param match_variable: Required. Match variable to compare against.
-     Possible values include: 'RemoteAddr', 'Country', 'RequestMethod',
-     'RequestHeader', 'RequestUri', 'QueryString', 'RequestBody', 'Cookies',
-     'PostArgs'
-    :type match_variable: str or ~azure.mgmt.cdn.models.MatchVariable
-    :param selector: Selector can used to match a specific key for
-     QueryString, RequestUri, RequestHeaders or RequestBody.
-    :type selector: str
-    :param operator: Required. Describes operator to be matched. Possible
-     values include: 'Any', 'IPMatch', 'GeoMatch', 'Equal', 'Contains',
-     'LessThan', 'GreaterThan', 'LessThanOrEqual', 'GreaterThanOrEqual',
-     'BeginsWith', 'EndsWith', 'RegEx'
-    :type operator: str or ~azure.mgmt.cdn.models.Operator
-    :param negate_condition: Describes if the result of this condition should
-     be negated.
-    :type negate_condition: bool
-    :param match_value: Required. List of possible match values.
-    :type match_value: list[str]
-    :param transforms: List of transforms.
-    :type transforms: list[str or ~azure.mgmt.cdn.models.TransformType]
-    """
-
-    _validation = {
-        'match_variable': {'required': True},
-        'operator': {'required': True},
-        'match_value': {'required': True},
-    }
-
-    _attribute_map = {
-        'match_variable': {'key': 'matchVariable', 'type': 'str'},
-        'selector': {'key': 'selector', 'type': 'str'},
-        'operator': {'key': 'operator', 'type': 'str'},
-        'negate_condition': {'key': 'negateCondition', 'type': 'bool'},
-        'match_value': {'key': 'matchValue', 'type': '[str]'},
-        'transforms': {'key': 'transforms', 'type': '[str]'},
-    }
-
-    def __init__(self, **kwargs):
-        super(MatchCondition, self).__init__(**kwargs)
-        self.match_variable = kwargs.get('match_variable', None)
-        self.selector = kwargs.get('selector', None)
-        self.operator = kwargs.get('operator', None)
-        self.negate_condition = kwargs.get('negate_condition', None)
-        self.match_value = kwargs.get('match_value', None)
-        self.transforms = kwargs.get('transforms', None)
-
-
 class Operation(Model):
     """CDN REST API operation.
 
@@ -2498,50 +2002,6 @@ class OriginUpdateParameters(Model):
         self.host_name = kwargs.get('host_name', None)
         self.http_port = kwargs.get('http_port', None)
         self.https_port = kwargs.get('https_port', None)
-
-
-class PolicySettings(Model):
-    """Defines contents of a web application firewall global configuration.
-
-    :param enabled_state: describes if the policy is in enabled state or
-     disabled state. Possible values include: 'Disabled', 'Enabled'
-    :type enabled_state: str or ~azure.mgmt.cdn.models.PolicyEnabledState
-    :param mode: Describes if it is in detection mode or prevention mode at
-     policy level. Possible values include: 'Prevention', 'Detection'
-    :type mode: str or ~azure.mgmt.cdn.models.PolicyMode
-    :param default_redirect_url: If action type is redirect, this field
-     represents the default redirect URL for the client.
-    :type default_redirect_url: str
-    :param default_custom_block_response_status_code: If the action type is
-     block, this field defines the default customer overridable http response
-     status code.
-    :type default_custom_block_response_status_code: int
-    :param default_custom_block_response_body: If the action type is block,
-     customer can override the response body. The body must be specified in
-     base64 encoding.
-    :type default_custom_block_response_body: str
-    """
-
-    _validation = {
-        'default_custom_block_response_status_code': {'maximum': 599, 'minimum': 200},
-        'default_custom_block_response_body': {'pattern': r'^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{4})$'},
-    }
-
-    _attribute_map = {
-        'enabled_state': {'key': 'enabledState', 'type': 'str'},
-        'mode': {'key': 'mode', 'type': 'str'},
-        'default_redirect_url': {'key': 'defaultRedirectUrl', 'type': 'str'},
-        'default_custom_block_response_status_code': {'key': 'defaultCustomBlockResponseStatusCode', 'type': 'int'},
-        'default_custom_block_response_body': {'key': 'defaultCustomBlockResponseBody', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(PolicySettings, self).__init__(**kwargs)
-        self.enabled_state = kwargs.get('enabled_state', None)
-        self.mode = kwargs.get('mode', None)
-        self.default_redirect_url = kwargs.get('default_redirect_url', None)
-        self.default_custom_block_response_status_code = kwargs.get('default_custom_block_response_status_code', None)
-        self.default_custom_block_response_body = kwargs.get('default_custom_block_response_body', None)
 
 
 class PostArgsMatchConditionParameters(Model):
@@ -2740,73 +2200,6 @@ class QueryStringMatchConditionParameters(Model):
         self.negate_condition = kwargs.get('negate_condition', None)
         self.match_values = kwargs.get('match_values', None)
         self.transforms = kwargs.get('transforms', None)
-
-
-class RateLimitRule(CustomRule):
-    """Defines a rate limiting rule that can be included in a waf policy.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param name: Required. Defines the name of the custom rule
-    :type name: str
-    :param enabled_state: Describes if the custom rule is in enabled or
-     disabled state. Defaults to Enabled if not specified. Possible values
-     include: 'Disabled', 'Enabled'
-    :type enabled_state: str or ~azure.mgmt.cdn.models.CustomRuleEnabledState
-    :param priority: Required. Defines in what order this rule be evaluated in
-     the overall list of custom rules
-    :type priority: int
-    :param match_conditions: Required. List of match conditions.
-    :type match_conditions: list[~azure.mgmt.cdn.models.MatchCondition]
-    :param action: Required. Describes what action to be applied when rule
-     matches. Possible values include: 'Allow', 'Block', 'Log', 'Redirect'
-    :type action: str or ~azure.mgmt.cdn.models.ActionType
-    :param rate_limit_threshold: Required. Defines rate limit threshold.
-    :type rate_limit_threshold: int
-    :param rate_limit_duration_in_minutes: Required. Defines rate limit
-     duration. Default is 1 minute.
-    :type rate_limit_duration_in_minutes: int
-    """
-
-    _validation = {
-        'name': {'required': True},
-        'priority': {'required': True, 'maximum': 1000, 'minimum': 0},
-        'match_conditions': {'required': True},
-        'action': {'required': True},
-        'rate_limit_threshold': {'required': True, 'minimum': 0},
-        'rate_limit_duration_in_minutes': {'required': True, 'maximum': 60, 'minimum': 0},
-    }
-
-    _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'enabled_state': {'key': 'enabledState', 'type': 'str'},
-        'priority': {'key': 'priority', 'type': 'int'},
-        'match_conditions': {'key': 'matchConditions', 'type': '[MatchCondition]'},
-        'action': {'key': 'action', 'type': 'str'},
-        'rate_limit_threshold': {'key': 'rateLimitThreshold', 'type': 'int'},
-        'rate_limit_duration_in_minutes': {'key': 'rateLimitDurationInMinutes', 'type': 'int'},
-    }
-
-    def __init__(self, **kwargs):
-        super(RateLimitRule, self).__init__(**kwargs)
-        self.rate_limit_threshold = kwargs.get('rate_limit_threshold', None)
-        self.rate_limit_duration_in_minutes = kwargs.get('rate_limit_duration_in_minutes', None)
-
-
-class RateLimitRuleList(Model):
-    """Defines contents of rate limit rules.
-
-    :param rules: List of rules
-    :type rules: list[~azure.mgmt.cdn.models.RateLimitRule]
-    """
-
-    _attribute_map = {
-        'rules': {'key': 'rules', 'type': '[RateLimitRule]'},
-    }
-
-    def __init__(self, **kwargs):
-        super(RateLimitRuleList, self).__init__(**kwargs)
-        self.rules = kwargs.get('rules', None)
 
 
 class RemoteAddressMatchConditionParameters(Model):
