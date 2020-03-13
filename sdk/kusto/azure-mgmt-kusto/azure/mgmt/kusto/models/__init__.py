@@ -42,6 +42,8 @@ try:
     from ._models_py3 import IdentityUserAssignedIdentitiesValue
     from ._models_py3 import IotHubDataConnection
     from ._models_py3 import KeyVaultProperties
+    from ._models_py3 import LanguageExtension
+    from ._models_py3 import LanguageExtensionsList
     from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
     from ._models_py3 import OptimizedAutoscale
@@ -87,6 +89,8 @@ except (SyntaxError, ImportError):
     from ._models import IdentityUserAssignedIdentitiesValue
     from ._models import IotHubDataConnection
     from ._models import KeyVaultProperties
+    from ._models import LanguageExtension
+    from ._models import LanguageExtensionsList
     from ._models import Operation
     from ._models import OperationDisplay
     from ._models import OptimizedAutoscale
@@ -108,11 +112,13 @@ from ._paged_models import DatabasePrincipalAssignmentPaged
 from ._paged_models import DatabasePrincipalPaged
 from ._paged_models import DataConnectionPaged
 from ._paged_models import FollowerDatabaseDefinitionPaged
+from ._paged_models import LanguageExtensionPaged
 from ._paged_models import OperationPaged
 from ._paged_models import SkuDescriptionPaged
 from ._kusto_management_client_enums import (
     State,
     ProvisioningState,
+    LanguageExtensionName,
     AzureSkuName,
     AzureSkuTier,
     AzureScaleType,
@@ -164,6 +170,8 @@ __all__ = [
     'IdentityUserAssignedIdentitiesValue',
     'IotHubDataConnection',
     'KeyVaultProperties',
+    'LanguageExtension',
+    'LanguageExtensionsList',
     'Operation',
     'OperationDisplay',
     'OptimizedAutoscale',
@@ -180,6 +188,7 @@ __all__ = [
     'ClusterPaged',
     'SkuDescriptionPaged',
     'AzureResourceSkuPaged',
+    'LanguageExtensionPaged',
     'ClusterPrincipalAssignmentPaged',
     'DatabasePaged',
     'DatabasePrincipalPaged',
@@ -189,6 +198,7 @@ __all__ = [
     'OperationPaged',
     'State',
     'ProvisioningState',
+    'LanguageExtensionName',
     'AzureSkuName',
     'AzureSkuTier',
     'AzureScaleType',
