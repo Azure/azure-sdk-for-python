@@ -20,9 +20,7 @@ The `begin_extract_receipt` method returns a `List[ExtractedReceipt]` with hardc
 The `begin_extract_layout` method returns the extracted layouts as a `List[ExtractedLayoutPage]`.
 
 If the keyword argument `include_text_details=True` is passed in, the `elements` attribute will be re-hydrated with the
-OCR result for the particular value/cell referenced by the json pointer. If the user wishes to retrieve the full
-deserialized OCR result, they can get it with the `raw_response_hook` keyword argument. This will additionally 
-return the full raw response returned from the service (example at bottom of page).
+OCR result for the particular value/cell referenced by the json pointer.
 
 ### Form Recognizer Client
 ```python
@@ -49,7 +47,7 @@ class ExtractedReceipt(DictMixin):
     total: FieldValue
     transaction_date: FieldValue
     transaction_time: FieldValue
-    page_range: List[int]
+    page_range: PageRange
     page_metadata: PageMetadata
 
 class ReceiptItem:
@@ -78,6 +76,7 @@ class ExtractedWord:
     bounding_box: List[float]
     confidence: float
     page_number: int
+    line: ExtractedLine
 
 class PageMetadata:
     page_number: int
@@ -86,6 +85,9 @@ class PageMetadata:
     height: int
     unit: str
     language: str
+    lines: List[ExtractedLine]
+
+PageRange = collections.namedtuple("PageRange", "first_page last_page")
 ```
 
 ### Receipt Sample
@@ -126,14 +128,13 @@ for item, field_value in r.items():
 ```python
 class ExtractedLayoutPage:
     tables: List[ExtractedTable]
-    page_number: int
     page_metadata: PageMetadata
+    page_number: int
 
 class ExtractedTable: 
     cells: List[TableCell]
     row_count: int
     column_count: int
-    page_number: int
 
 class TableCell:
     text: str
@@ -159,6 +160,7 @@ class ExtractedWord:
     bounding_box: List[float]
     confidence: float
     page_number: int
+    line: ExtractedLine
 
 class PageMetadata:
     page_number: int
@@ -167,6 +169,7 @@ class PageMetadata:
     height: int
     unit: str
     language: str
+    lines: List[ExtractedLine]
 ```
 
 ### Layout Sample
@@ -222,7 +225,7 @@ client.begin_training(
 ) -> LROPoller -> CustomModel
 
 # Extract
-client.begin_extract_pages(form: Union[str, BytesIO], model_id: str) -> LROPoller -> List[ExtractedPage]
+client.begin_extract_forms(form: Union[str, BytesIO], model_id: str) -> LROPoller -> List[ExtractedPage]
 
 client.begin_extract_labeled_forms(form: Union[str, BytesIO], model_id: str) -> LROPoller -> ExtractedForm
 
@@ -249,11 +252,11 @@ class CustomModel:
     train_result: TrainResult
 
 class TrainResult:
-    extracted_fields: List[FormTypeFields]
+    extracted_fields: List[FormFields]
     documents: List[TrainingDocumentInfo]
     errors: List[FormRecognizerError]
 
-class FormTypeFields:
+class FormFields:
     form_type_id: int
     fields: List[str]
 
@@ -271,6 +274,7 @@ class FormRecognizerError:
 class ExtractedPage:
     fields: List[ExtractedField]
     tables: List[ExtractedTable]
+    page_metadata: PageMetadata
     page_number: int
     form_type_id: int
 
@@ -296,6 +300,16 @@ class ExtractedWord:
     bounding_box: List[float]
     confidence: float
     page_number: int
+    line: ExtractedLine
+
+class PageMetadata:
+    page_number: int
+    angle: float
+    width: int
+    height: int
+    unit: str
+    language: str
+    lines: List[ExtractedLine]
 ```
 
 ### Custom Models Labeled
@@ -330,14 +344,14 @@ class FormRecognizerError:
 
 # Analyze ---------------------------------------------------
 class ExtractedForm:
-    labels: List[ExtractedLabel]
-    tables: List[ExtractedTable]
-    page_metadata: List[PageMetadata]
-    page_range: List[int]
+    labels: Dict[str, LabelValue]
+    pages: List[ExtractedFormPage]
+    page_range: PageRange
 
-class ExtractedLabel:
-    name: str
-    value: LabelValue
+class ExtractedFormPage:
+    tables: List[ExtractedTable]
+    page_metadata: PageMetadata
+    page_number: int
 
 class LabelValue:
     text: str
@@ -359,6 +373,7 @@ class ExtractedWord:
     bounding_box: List[float]
     confidence: float
     page_number: int
+    line: ExtractedLine
 
 class PageMetadata:
     page_number: int
@@ -367,6 +382,7 @@ class PageMetadata:
     height: int
     unit: str
     language: str
+    lines: List[ExtractedLine]
 ```
 
 
@@ -418,7 +434,7 @@ print(train_result.extracted_fields)
 
 # Analyze
 blob_sas_url = "xxxxx"  # form to analyze uploaded to blob storage
-poller = client.begin_extract_pages(blob_sas_url, model_id=model.model_id)
+poller = client.begin_extract_forms(blob_sas_url, model_id=model.model_id)
 result = poller.result()
 
 for page in result:
@@ -464,9 +480,9 @@ poller = client.begin_extract_labeled_forms(blob_sas_url, model_id=model.model_i
 result = poller.result()
 
 print("Page range: {}".format(result.page_range))
-for field in result.labels:
-    print("{}: {}".format(field.name, field.value.text))
-    print(field.value.bounding_box, field.value.confidence)
+for field, value in result.labels.items():
+    print("{}: {}".format(field, value.text))
+    print(value.bounding_box, value.confidence)
 
 ```
 
@@ -525,27 +541,4 @@ from azure.ai.formrecognizer import CustomFormClient
 
 client = CustomFormClient(endpoint=endpoint, credential=credential)
 client.delete_custom_model(model_id="xxxxx")
-```
-
-
-#### Extra: Get the read result (raw OCR result) using the response hook keyword argument
-```python
-from azure.ai.formrecognizer import FormRecognizerClient
-
-client = FormRecognizerClient(endpoint=endpoint, credential=credential)
-receipt_image = "https://raw.githubusercontent.com/Azure-Samples/cognitive-services-REST-api-samples/master/curl/form-recognizer/contoso-allinone.jpg"
-
-def callback(resp):
-    raw_response = resp.raw_response  # raw response from service
-    result = resp.raw_ocr_result[0]
-    for page in result.pages:
-        print("On page: {}".format(page.page_number))
-        for line in page.lines:
-            print("Line: {}".format(line.text))
-            for word in line.words:
-                print("Words: {}".format(word.text))
-        
-        
-poller = client.begin_extract_receipt(receipt_image, include_text_details=True, raw_response_hook=callback)
-receipt = poller.result()
 ```
