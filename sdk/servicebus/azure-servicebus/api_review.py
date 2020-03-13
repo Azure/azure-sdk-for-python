@@ -108,8 +108,8 @@ class ServiceBusReceiver:
 
     def peek(
         self,
-        count : int = 1,
-        start_from : int = None
+        message_count : int = 1,
+        sequence_number : int = None
     ) -> List[PeekMessage]:
     def receive_deferred_messages(
         self,
