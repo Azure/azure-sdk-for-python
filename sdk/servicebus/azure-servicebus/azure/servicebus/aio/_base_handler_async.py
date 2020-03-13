@@ -158,6 +158,7 @@ class BaseHandlerAsync(BaseHandler):
         raise last_exception
 
     async def _mgmt_request_response(self, mgmt_operation, message, callback, **kwargs):
+        await self._open()
         if not self._running:
             raise InvalidHandlerState("Client connection is closed.")
 
@@ -192,6 +193,9 @@ class BaseHandlerAsync(BaseHandler):
         kwargs = BaseHandler._from_connection_string(conn_str, **kwargs)
         kwargs["credential"] = ServiceBusSharedKeyCredential(kwargs["credential"].policy, kwargs["credential"].key)
         return kwargs
+
+    async def _open(self):  # pylint: disable=no-self-use
+        raise ValueError("Subclass should override the method.")
 
     async def _open_with_retry(self):
         return await self._do_retryable_operation(self._open)

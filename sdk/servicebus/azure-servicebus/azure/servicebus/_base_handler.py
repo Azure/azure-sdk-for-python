@@ -246,6 +246,7 @@ class BaseHandler(object):  # pylint:disable=too-many-instance-attributes
         raise last_exception
 
     def _mgmt_request_response(self, mgmt_operation, message, callback, **kwargs):
+        self._open()
         if not self._running:
             raise InvalidHandlerState("Client connection is closed.")
 
