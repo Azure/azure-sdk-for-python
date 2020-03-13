@@ -48,7 +48,7 @@ async def test_bearer_policy_send():
         assert request.http_request is expected_request
         return expected_response
 
-    fake_credential = Mock(get_token=asyncio.coroutine(lambda _: AccessToken("", 0)))
+    fake_credential = Mock(get_token=lambda *_, **__: get_completed_future(AccessToken("", 0)))
     policies = [AsyncBearerTokenCredentialPolicy(fake_credential, "scope"), Mock(send=verify_request)]
     response = await AsyncPipeline(transport=Mock(), policies=policies).run(expected_request)
 
@@ -67,7 +67,7 @@ async def test_bearer_policy_token_caching():
         return expected_token
 
     credential = Mock(get_token=get_token)
-    policies = [AsyncBearerTokenCredentialPolicy(credential, "scope"), Mock(send=asyncio.coroutine(lambda _: Mock()))]
+    policies = [AsyncBearerTokenCredentialPolicy(credential, "scope"), Mock(send=Mock(get_completed_future()))]
     pipeline = AsyncPipeline(transport=Mock, policies=policies)
 
     await pipeline.run(HttpRequest("GET", "https://spam.eggs"))
@@ -79,7 +79,7 @@ async def test_bearer_policy_token_caching():
     expired_token = AccessToken("token", time.time())
     get_token_calls = 0
     expected_token = expired_token
-    policies = [AsyncBearerTokenCredentialPolicy(credential, "scope"), Mock(send=asyncio.coroutine(lambda _: Mock()))]
+    policies = [AsyncBearerTokenCredentialPolicy(credential, "scope"), Mock(send=lambda _: get_completed_future())]
     pipeline = AsyncPipeline(transport=Mock(), policies=policies)
 
     await pipeline.run(HttpRequest("GET", "https://spam.eggs"))
@@ -96,9 +96,7 @@ async def test_bearer_policy_optionally_enforces_https():
     async def assert_option_popped(request, **kwargs):
         assert "enforce_https" not in kwargs, "AsyncBearerTokenCredentialPolicy didn't pop the 'enforce_https' option"
 
-    get_token = asyncio.Future()
-    get_token.set_result(AccessToken("***", 42))
-    credential = Mock(get_token=lambda *_, **__: get_token)
+    credential = Mock(get_token=lambda *_, **__: get_completed_future(AccessToken("***", 42)))
     pipeline = AsyncPipeline(
         transport=Mock(send=assert_option_popped), policies=[AsyncBearerTokenCredentialPolicy(credential, "scope")]
     )
