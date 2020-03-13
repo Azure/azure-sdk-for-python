@@ -28,11 +28,48 @@ class SslEnforcementEnum(str, Enum):
     disabled = "Disabled"
 
 
+class MinimalTlsVersionEnum(str, Enum):
+
+    tls1_0 = "TLS1_0"
+    tls1_1 = "TLS1_1"
+    tls1_2 = "TLS1_2"
+    tls_enforcement_disabled = "TLSEnforcementDisabled"
+
+
+class PrivateLinkServiceConnectionStateStatus(str, Enum):
+
+    approved = "Approved"
+    pending = "Pending"
+    rejected = "Rejected"
+    disconnected = "Disconnected"
+
+
+class PrivateLinkServiceConnectionStateActionsRequire(str, Enum):
+
+    none = "None"
+
+
+class PrivateEndpointProvisioningState(str, Enum):
+
+    approving = "Approving"
+    ready = "Ready"
+    dropping = "Dropping"
+    failed = "Failed"
+    rejecting = "Rejecting"
+
+
+class InfrastructureEncryption(str, Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"
+
+
 class ServerState(str, Enum):
 
     ready = "Ready"
     dropping = "Dropping"
     disabled = "Disabled"
+    inaccessible = "Inaccessible"
 
 
 class GeoRedundantBackup(str, Enum):
@@ -47,11 +84,22 @@ class StorageAutogrow(str, Enum):
     disabled = "Disabled"
 
 
+class PublicNetworkAccessEnum(str, Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"
+
+
 class SkuTier(str, Enum):
 
     basic = "Basic"
     general_purpose = "GeneralPurpose"
     memory_optimized = "MemoryOptimized"
+
+
+class IdentityType(str, Enum):
+
+    system_assigned = "SystemAssigned"
 
 
 class VirtualNetworkRuleState(str, Enum):
