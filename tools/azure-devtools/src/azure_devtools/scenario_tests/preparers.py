@@ -75,7 +75,7 @@ class AbstractPreparer(object):
                             break
                     try:
                         msg += "\nDetailed error message: " + str(e.additional_properties['error']['message'])
-                    except AttributeError:
+                    except (AttributeError, KeyError):
                         pass
 
                     _logger.error(msg)
@@ -132,7 +132,15 @@ You must specify use_cache=True in the preparer decorator""".format(test_class_i
             trim_kwargs_from_test_function(fn, trimmed_kwargs)
 
             try:
-                fn(test_class_instance, **trimmed_kwargs)
+                try:
+                    import asyncio
+                    if asyncio.iscoroutinefunction(fn):
+                        loop = asyncio.get_event_loop()
+                        loop.run_until_complete(fn(test_class_instance, **trimmed_kwargs))
+                    else:
+                        fn(test_class_instance, **trimmed_kwargs)
+                except ImportError:
+                    fn(test_class_instance, **trimmed_kwargs)
             finally:              
                 # If we use cache we delay deletion for the end.
                 # This won't guarantee deletion order, but it will guarantee everything delayed
