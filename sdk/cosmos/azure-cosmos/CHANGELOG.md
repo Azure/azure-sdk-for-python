@@ -1,5 +1,10 @@
 # Release History
 
+## 4.0.0 (unreleased)
+
+- Added HttpLoggingPolicy to pipeline to enable passing in a custom logger for request and response headers.
+
+
 ## 4.0.0b6
 
 - Fixed bug in synchronized_request for media APIs.
