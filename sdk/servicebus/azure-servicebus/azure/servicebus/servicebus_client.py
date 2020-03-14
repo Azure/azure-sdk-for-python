@@ -39,6 +39,9 @@ class ServiceBusClient(mixins.ServiceBusMixin):
     :param str host_base: Optional. Live host base URL. Defaults to Public Azure.
     :param str shared_access_key_name: SAS authentication key name.
     :param str shared_access_key_value: SAS authentication key value.
+    :param transport_type: Optional. Underlying transport protocol type (Amqp or AmqpOverWebsocket)
+     Default value is ~uamqp.constants.TransportType.Amqp
+    :type transport_type: ~uamqp.constants.TransportType
     :param int http_request_timeout: Optional. Timeout for the HTTP request, in seconds.
      Default value is 65 seconds.
     :param http_request_session: Optional. Session object to use for HTTP requests.

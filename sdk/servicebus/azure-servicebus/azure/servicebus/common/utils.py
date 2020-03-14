@@ -15,6 +15,8 @@ except ImportError:
     from urllib.parse import urlparse
 from concurrent.futures import ThreadPoolExecutor
 
+from uamqp.constants import TransportType
+
 from azure.servicebus.common.errors import AutoLockRenewFailed, AutoLockRenewTimeout
 from azure.servicebus import __version__ as sdk_version
 
@@ -58,7 +60,12 @@ def parse_conn_str(conn_str):
         elif key.lower() == 'entitypath':
             entity_path = value
         elif key.lower() == 'transporttype':
-            transport_type = value
+            if value.lower() == "amqpoverwebsocket":
+                transport_type = TransportType.AmqpOverWebsocket
+            elif value.lower() == "amqp":
+                transport_type = TransportType.Amqp
+            else:
+                raise ValueError("Invalid value for TransportType in connection string")
     if not all([endpoint, shared_access_key_name, shared_access_key]):
         raise ValueError("Invalid connection string")
     return endpoint, shared_access_key_name, shared_access_key, entity_path, transport_type
