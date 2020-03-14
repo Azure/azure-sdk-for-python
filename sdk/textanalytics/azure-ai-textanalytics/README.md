@@ -189,7 +189,7 @@ The following section provides several code snippets covering some of the most c
 * [Detect Language](#detect-language "Detect language")
 
 ### Analyze sentiment
-Analyze sentiment of text to determine if it's positive, negative, neutral or mixed, including per-sentence sentiment analysis and confidence scores.
+[analyze_sentiment][analyze_sentiment] looks at its input text and determines whether its sentiment is positive, negative, neutral or mixed. It's response includes per-sentence sentiment analysis and confidence scores.
 
 ```python
 from azure.ai.textanalytics import TextAnalyticsClient, TextAnalyticsApiKeyCredential
@@ -219,7 +219,7 @@ The returned response is a heterogeneous list of result and error objects: list[
 Please refer to the service documentation for a conceptual discussion of [sentiment analysis][sentiment_analysis].
 
 ### Recognize entities
-Recognize and categorize entities in text as people, places, organizations, date/time, quantities, percentages, currencies, and more.
+[recognize_entities][recognize_entities] recognizes and categories entities in its input text as people, places, organizations, date/time, quantities, percentages, currencies, and more.
 
 ```python
 from azure.ai.textanalytics import TextAnalyticsClient, TextAnalyticsApiKeyCredential
@@ -238,7 +238,7 @@ result = [doc for doc in response if not doc.is_error]
 for doc in result:
     for entity in doc.entities:
         print("Entity: \t", entity.text, "\tCategory: \t", entity.category,
-              "\tConfidence Score: \t", entity.score)
+              "\tConfidence Score: \t", entity.confidence_score)
 ```
 
 The returned response is a heterogeneous list of result and error objects: list[[RecognizeEntitiesResult][recognize_entities_result], [DocumentError][document_error]]
@@ -247,7 +247,7 @@ Please refer to the service documentation for a conceptual discussion of [named 
 and [supported types][named_entity_categories].
 
 ### Recognize PII entities
-Recognize and categorize Personally Identifiable Information (PII) entities in text, such as
+[recognize_pii_entities][recognize_pii_entities] recognizes and categorizes Personally Identifiable Information (PII) entities in its input text, such as
 Social Security Numbers, bank account information, credit card numbers, and more.
 
 ```python
@@ -266,7 +266,7 @@ result = [doc for doc in response if not doc.is_error]
 for doc in result:
     for entity in doc.entities:
         print("Entity: \t", entity.text, "\tCategory: \t", entity.category,
-              "\tConfidence Score: \t", entity.score)
+              "\tConfidence Score: \t", entity.confidence_score)
 ```
 
 The returned response is a heterogeneous list of result and error objects: list[[RecognizePiiEntitiesResult][recognize_pii_entities_result], [DocumentError][document_error]]
@@ -274,7 +274,7 @@ The returned response is a heterogeneous list of result and error objects: list[
 Please refer to the service documentation for [supported PII entity types][pii_entity_categories].
 
 ### Recognize linked entities
-Recognize and disambiguate the identity of each entity found in text (for example,
+[recognize_linked_entities][recognize_linked_entities] recognizes and disambiguates the identity of each entity found in its input text (for example,
 determining whether an occurrence of the word Mars refers to the planet, or to the
 Roman god of war). Recognized entities are associated with URLs to a well-known knowledge base, like Wikipedia.
 
@@ -297,7 +297,7 @@ for doc in result:
         print("URL: {}".format(entity.url))
         print("Data Source: {}".format(entity.data_source))
         for match in entity.matches:
-            print("Score: {}".format(match.score))
+            print("Confidence Score: {}".format(match.confidence_score))
             print("Entity as appears in request: {}".format(match.text))
 ```
 
@@ -307,7 +307,7 @@ Please refer to the service documentation for a conceptual discussion of [entity
 and [supported types][linked_entities_categories].
 
 ### Extract key phrases
-Extract key phrases in text to determine the main talking points. For example, for the input text "The food was delicious and there were wonderful staff", the API returns: "food" and "wonderful staff".
+[extract_key_phrases][extract_key_phrases] determines the main talking points in its input text. For example, for the input text "The food was delicious and there were wonderful staff", the API returns: "food" and "wonderful staff".
 
 ```python
 from azure.ai.textanalytics import TextAnalyticsClient, TextAnalyticsApiKeyCredential
@@ -332,7 +332,7 @@ The returned response is a heterogeneous list of result and error objects: list[
 Please refer to the service documentation for a conceptual discussion of [key phrase extraction][key_phrase_extraction].
 
 ### Detect language
-Determine the language in text, including the confidence score of the predicted language.
+[detect_language][detect_language] determines the language of its input text, including the confidence score of the predicted language.
 
 ```python
 from azure.ai.textanalytics import TextAnalyticsClient, TextAnalyticsApiKeyCredential
@@ -472,6 +472,13 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [text_document_input]: https://aka.ms/azsdk-python-textanalytics-textdocumentinput
 [detect_language_input]: https://aka.ms/azsdk-python-textanalytics-detectlanguageinput
 [text_analytics_client]: https://aka.ms/azsdk-python-textanalytics-textanalyticsclient
+
+[analyze_sentiment]: https://aka.ms/azsdk-python-textanalytics-analyzesentiment
+[recognize_entities]: https://aka.ms/azsdk-python-textanalytics-recognizeentities
+[recognize_pii_entities]: https://aka.ms/azsdk-python-textanalytics-recognizepiientities
+[recognize_linked_entities]: https://aka.ms/azsdk-python-textanalytics-recognizelinkedentities
+[extract_key_phrases]: https://aka.ms/azsdk-python-textanalytics-extractkeyphrases
+[detect_language]: https://aka.ms/azsdk-python-textanalytics-detectlanguage
 
 [language_detection]: https://docs.microsoft.com/azure/cognitive-services/Text-Analytics/how-tos/text-analytics-how-to-language-detection
 [language_and_regional_support]: https://docs.microsoft.com/azure/cognitive-services/text-analytics/language-support

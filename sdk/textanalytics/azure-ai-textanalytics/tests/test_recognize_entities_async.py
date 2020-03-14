@@ -60,7 +60,7 @@ class TestRecognizeEntities(AsyncTextAnalyticsTest):
                 self.assertIsNotNone(entity.category)
                 self.assertIsNotNone(entity.grapheme_offset)
                 self.assertIsNotNone(entity.grapheme_length)
-                self.assertIsNotNone(entity.score)
+                self.assertIsNotNone(entity.confidence_score)
 
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
@@ -81,7 +81,7 @@ class TestRecognizeEntities(AsyncTextAnalyticsTest):
                 self.assertIsNotNone(entity.category)
                 self.assertIsNotNone(entity.grapheme_offset)
                 self.assertIsNotNone(entity.grapheme_length)
-                self.assertIsNotNone(entity.score)
+                self.assertIsNotNone(entity.confidence_score)
 
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test

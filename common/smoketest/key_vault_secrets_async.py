@@ -14,7 +14,8 @@ class KeyVaultSecrets:
         # * AZURE_CLIENT_ID
         # * AZURE_CLIENT_SECRET
         # * AZURE_TENANT_ID
-        credential = DefaultAzureCredential()
+        authority_host = os.environ.get('AZURE_AUTHORITY_HOST') or KnownAuthorities.AZURE_PUBLIC_CLOUD
+        credential = DefaultAzureCredential(authority=authority_host)
         self.secret_client = SecretClient(
             vault_url=os.environ["AZURE_PROJECT_URL"], credential=credential
         )

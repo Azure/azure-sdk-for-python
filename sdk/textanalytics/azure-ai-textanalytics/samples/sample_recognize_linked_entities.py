@@ -50,7 +50,7 @@ class RecognizeLinkedEntitiesSample(object):
                 print("Url: {}".format(entity.url))
                 print("Data Source: {}".format(entity.data_source))
                 for match in entity.matches:
-                    print("Confidence Score: {}".format(match.score))
+                    print("Confidence Score: {}".format(match.confidence_score))
                     print("Entity as appears in request: {}".format(match.text))
             print("------------------------------------------")
         # [END batch_recognize_linked_entities]

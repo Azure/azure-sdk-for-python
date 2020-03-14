@@ -48,7 +48,7 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
                 self.assertIsNotNone(entity.category)
                 self.assertIsNotNone(entity.grapheme_offset)
                 self.assertIsNotNone(entity.grapheme_length)
-                self.assertIsNotNone(entity.score)
+                self.assertIsNotNone(entity.confidence_score)
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_all_successful_passing_text_document_input(self, resource_group, location, text_analytics_account, text_analytics_account_key):
@@ -75,7 +75,7 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
                 self.assertIsNotNone(entity.category)
                 self.assertIsNotNone(entity.grapheme_offset)
                 self.assertIsNotNone(entity.grapheme_length)
-                self.assertIsNotNone(entity.score)
+                self.assertIsNotNone(entity.confidence_score)
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_length_with_emoji(self, resource_group, location, text_analytics_account, text_analytics_account_key):
