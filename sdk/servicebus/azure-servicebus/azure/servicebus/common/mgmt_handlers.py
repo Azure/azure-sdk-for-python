@@ -6,8 +6,9 @@
 
 import uamqp
 
-from azure.servicebus.common.message import PeekMessage, DeferredMessage
-from azure.servicebus.common.errors import ServiceBusError, MessageLockExpired
+from .message import PeekMessage, ReceivedMessage
+from .errors import ServiceBusError, MessageLockExpired
+from .constants import ReceiveSettleMode
 
 
 def default(status_code, message, description):
@@ -57,7 +58,13 @@ def list_sessions_op(status_code, message, description):
     raise ServiceBusError(error)
 
 
-def deferred_message_op(status_code, message, description, mode=1, message_type=DeferredMessage):
+def deferred_message_op(
+        status_code,
+        message,
+        description,
+        mode=ReceiveSettleMode.PeekLock,
+        message_type=ReceivedMessage
+):
     if status_code == 200:
         parsed = []
         for m in message.get_data()[b'messages']:

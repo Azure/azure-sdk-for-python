@@ -63,7 +63,6 @@ class ServiceBusClient(object):
 
     def __exit__(self, *args):
         self.close()
-        pass
 
     def _create_uamqp_connection(self):
         auth = create_authentication(self)

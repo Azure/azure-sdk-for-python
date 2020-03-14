@@ -19,7 +19,7 @@ from ..common.errors import (
     AutoLockRenewTimeout)
 from ..common.constants import ReceiveSettleMode, NEXT_AVAILABLE
 from ..common.message import PeekMessage, Message, BatchMessage
-from .async_message import ReceivedMessage, DeferredMessage
+from .async_message import ReceivedMessage
 from ._base_handler_async import ServiceBusSharedKeyCredential
 from ._servicebus_sender_async import ServiceBusSender
 from ._servicebus_receiver_async import ServiceBusReceiver
@@ -30,7 +30,6 @@ __all__ = [
     'Message',
     'BatchMessage',
     'PeekMessage',
-    'DeferredMessage',
     'ReceiveSettleMode',
     'NEXT_AVAILABLE',
     'ServiceBusError',

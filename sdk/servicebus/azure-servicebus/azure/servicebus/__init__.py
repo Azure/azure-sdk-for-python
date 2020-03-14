@@ -12,7 +12,7 @@ from ._servicebus_client import ServiceBusClient
 from ._servicebus_sender import ServiceBusSender
 from ._servicebus_receiver import ServiceBusReceiver
 from ._base_handler import ServiceBusSharedKeyCredential
-from .common.message import Message, BatchMessage, PeekMessage, DeferredMessage
+from .common.message import Message, BatchMessage, PeekMessage, ReceivedMessage
 from .common.constants import ReceiveSettleMode, NEXT_AVAILABLE
 from .common.errors import (
     ServiceBusError,
@@ -36,7 +36,7 @@ __all__ = [
     'Message',
     'BatchMessage',
     'PeekMessage',
-    'DeferredMessage',
+    'ReceivedMessage',
     'ReceiveSettleMode',
     'NEXT_AVAILABLE',
     'ServiceBusError',
