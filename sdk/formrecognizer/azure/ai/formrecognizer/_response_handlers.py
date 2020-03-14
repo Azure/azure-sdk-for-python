@@ -4,22 +4,22 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-
+from collections import namedtuple
 from ._models import (
     ExtractedReceipt,
     FieldValue,
     ReceiptItem,
     TableCell,
     ExtractedLayoutPage,
-    CustomModel,
-    LabeledCustomModel,
     ExtractedPage,
     ExtractedField,
     ExtractedTable,
     PageMetadata,
     ExtractedForm,
-    ExtractedLabel
+    LabelValue
 )
+
+PageRange = namedtuple("PageRange", "first_page last_page")
 
 
 def prepare_receipt_result(response, include_raw):
@@ -83,24 +83,23 @@ def prepare_receipt_result(response, include_raw):
                     read_result,
                     include_raw
                 ),
-                page_range=page.page_range,
-                page_metadata=PageMetadata._from_generated(read_result, page.page_range[0]-1)
+                page_range=PageRange(first_page=page.page_range[0], last_page=page.page_range[1]),
+                page_metadata=PageMetadata._from_generated_page_index(read_result, page.page_range[0]-1)
             )
         receipt.update(page.fields)  # for any new fields being sent
         receipts.append(receipt)
     return receipts
 
 
-def prepare_tables(page, read_result, include_raw):
-    if page.tables is None:
-        return page.tables
+def prepare_tables(tables, read_result, include_raw):
+    if tables is None:
+        return tables
     return [
         ExtractedTable(
             row_count=table.rows,
             column_count=table.columns,
             cells=[TableCell._from_generated(cell, read_result, include_raw) for cell in table.cells],
-            page_number=page.page,
-        ) for table in page.tables
+        ) for table in tables
     ]
 
 
@@ -110,23 +109,14 @@ def prepare_layout_result(response, include_raw):
     for page in response.analyze_result.page_results:
         result_page = ExtractedLayoutPage(
             page_number=page.page,
-            tables=prepare_tables(page, read_result, include_raw),
-            page_metadata=PageMetadata._from_generated(read_result, page.page-1)
+            tables=prepare_tables(page.tables, read_result, include_raw),
+            page_metadata=PageMetadata._from_generated_page_index(read_result, page.page-1)
         )
         pages.append(result_page)
     return pages
 
 
-def prepare_training_result(response):
-    return CustomModel._from_generated(response)
-
-
-def prepare_labeled_training_result(response):
-    return LabeledCustomModel._from_generated(response)
-
-
 def prepare_unlabeled_result(response, include_raw):
-    # FIXME: refactor this function, fix tables
     # FIXME: rename include_raw to include_ocr
     extracted_pages = []
     read_result = response.analyze_result.read_results
@@ -134,7 +124,7 @@ def prepare_unlabeled_result(response, include_raw):
     for page in response.analyze_result.page_results:
         result_page = ExtractedPage(page_number=page.page, tables=[], fields=[], form_type_id=page.cluster_id)
         if page.tables:
-            result_page.tables = prepare_tables(page, read_result, include_raw)
+            result_page.tables = prepare_tables(page.tables, read_result, include_raw)
         if page.key_value_pairs:
             result_page.fields = [ExtractedField._from_generated(item, read_result, include_raw)
                                   for item in page.key_value_pairs]
@@ -150,11 +140,11 @@ def prepare_labeled_result(response, include_raw):
     return ExtractedForm(
         page_range=document_result.page_range,
         page_metadata=PageMetadata._all_pages(read_result),
-        fields=[
-            ExtractedLabel._from_generated((label, value), read_result, include_raw)
+        fields={
+            label: LabelValue._from_generated(value, read_result, include_raw)
             for label, value
             in document_result.fields.items()
-        ],
-        tables=[prepare_tables(page, read_result, include_raw) for page in page_result]
+        },
+        tables=[prepare_tables(page.tables, read_result, include_raw) for page in page_result]
     )
 

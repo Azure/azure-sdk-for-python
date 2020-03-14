@@ -4,28 +4,30 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-import re
+from re import findall
 from ._helpers import get_receipt_field_value
 
 
-def get_raw_field(field, raw_result):
-    raw_lines = []
-    lines = set()
+def get_elements(field, ocr_result):
+    elements = []
     try:
         for item in field.elements:
-            nums = [int(s) for s in re.findall(r'\d+', item)]
+            extracted_word = None
+            nums = [int(s) for s in findall(r'\d+', item)]
             read = nums[0]
             line = nums[1]
             if len(nums) == 3:
                 word = nums[2]
-                ocr_word = raw_result[read].lines[line].words[word]
-            ocr_line = raw_result[read].lines[line]
+                ocr_word = ocr_result[read].lines[line].words[word]
+                extracted_word = ExtractedWord._from_generated(ocr_word, page=read+1)
+            ocr_line = ocr_result[read].lines[line]
+            extracted_line = ExtractedLine._from_generated(ocr_line, page=read+1)
 
-            if line not in lines:
-                lines.add(line)
-                extracted_line = ExtractedLine._from_generated(ocr_line)
-                raw_lines.append(extracted_line)
-        return raw_lines
+            if extracted_word:
+                elements.append(extracted_word)
+            else:
+                elements.append(extracted_line)
+        return elements
     except TypeError:
         return None
 
@@ -107,7 +109,7 @@ class FieldValue(object):
         self.bounding_box = kwargs.get("bounding_box", None)
         self.confidence = kwargs.get("confidence", None)
         self.page_number = kwargs.get("page_number", None)
-        self.elements = kwargs.get("raw_field", None)
+        self.elements = kwargs.get("elements", None)
 
     @classmethod
     def _from_generated(cls, field, read_result, include_raw):
@@ -119,7 +121,7 @@ class FieldValue(object):
             bounding_box=field.bounding_box,
             confidence=field.confidence,
             page_number=field.page,
-            elements=get_raw_field(field, read_result) if include_raw else None
+            elements=get_elements(field, read_result) if include_raw else None
         )
 
 
@@ -153,12 +155,13 @@ class ExtractedLine(object):
         self.page_number = kwargs.get("page_number", None)
 
     @classmethod
-    def _from_generated(cls, line):
+    def _from_generated(cls, line, page):
         return cls(
             text=line.text,
             bounding_box=line.bounding_box,
             language=line.language,
-            words=[ExtractedWord._from_generated(word) for word in line.words]
+            page_number=page,
+            words=[ExtractedWord._from_generated(word, page) for word in line.words]
         )
 
 
@@ -170,11 +173,12 @@ class ExtractedWord(object):
         self.page_number = kwargs.get("page_number", None)
 
     @classmethod
-    def _from_generated(cls, word):
+    def _from_generated(cls, word, page):
         return cls(
             text=word.text,
             bounding_box=word.bounding_box,
-            confidence=word.confidence
+            confidence=word.confidence,
+            page_number=page
         )
 
 
@@ -190,7 +194,6 @@ class ExtractedTable(object):
         self.cells = kwargs.get("cells", None)
         self.row_count = kwargs.get("row_count", None)
         self.column_count = kwargs.get("column_count", None)
-        self.page_number = kwargs.get("page_number", None)
 
 
 class TableCell(object):
@@ -218,7 +221,7 @@ class TableCell(object):
             confidence=cell.confidence,
             is_header=cell.is_header or False,
             is_footer=cell.is_footer or False,
-            elements=get_raw_field(cell, read_result) if include_raw else None
+            elements=get_elements(cell, read_result) if include_raw else None
         )
 
 
@@ -306,7 +309,7 @@ class FormRecognizerError(object):
         return []
 
 
-class LabeledCustomModel(object):
+class CustomLabeledModel(object):
     def __init__(self, **kwargs):
         self.model_id = kwargs.get('model_id', None)
         self.status = kwargs.get('status', None)
@@ -390,20 +393,7 @@ class ExtractedText:
         return cls(
             text=field.text,
             bounding_box=field.bounding_box,
-            elements=get_raw_field(field.elements, read_result) if include_raw else None
-        )
-
-
-class ExtractedLabel(object):
-    def __init__(self, **kwargs):
-        self.name = kwargs.get('name', None)
-        self.value = kwargs.get('value', None)
-
-    @classmethod
-    def _from_generated(cls, label, read_result, include_raw):
-        return cls(
-            name=label[0],
-            value=LabelValue._from_generated(label[1], read_result, include_raw)
+            elements=get_elements(field.elements, read_result) if include_raw else None
         )
 
 
@@ -424,7 +414,7 @@ class LabelValue(object):
             bounding_box=label.bounding_box,
             confidence=label.confidence,
             page_number=label.page,
-            elements=get_raw_field(label, read_result) if include_raw else None
+            elements=get_elements(label, read_result) if include_raw else None
         )
 
 
@@ -468,16 +458,18 @@ class PageMetadata(object):
         self.height = kwargs.get('height', None)
         self.unit = kwargs.get('unit', None)
         self.language = kwargs.get('language', None)
+        self.lines = kwargs.get("lines", None)
 
     @classmethod
-    def _from_generated(cls, read_result, page_index):
+    def _from_generated_page_index(cls, read_result, page_index):
         return cls(
             page_number=read_result[page_index].page,
             angle=read_result[page_index].angle,
             width=read_result[page_index].width,
             height=read_result[page_index].height,
             unit=read_result[page_index].unit,
-            language=read_result[page_index].language
+            language=read_result[page_index].language,
+            lines=[ExtractedLine._from_generated(line, page_index+1) for line in read_result[page_index].lines]
         )
 
     @classmethod
@@ -488,7 +480,8 @@ class PageMetadata(object):
             width=page.width,
             height=page.height,
             unit=page.unit,
-            language=page.language
+            language=page.language,
+            lines=[ExtractedLine._from_generated(line, page.page) for line in read_result.lines]
         ) for page in read_result]
 
 
