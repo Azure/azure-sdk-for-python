@@ -1,7 +1,48 @@
 # Release History
 
-## 8.1.1 (2020-03-14)
-- Include Tags in GetSubscription and Deployment APIs
+## 9.0.0 (2020-03-14)
+**Features**
+
+- Model Location has a new parameter metadata
+- Model Location has a new parameter regional_display_name
+- Model Deployment has a new parameter tags
+- Model ScopedDeployment has a new parameter tags
+- Model AliasPathType has a new parameter pattern
+- Model DeploymentPropertiesExtended has a new parameter validated_resources
+- Model DeploymentPropertiesExtended has a new parameter template_hash
+- Model DeploymentPropertiesExtended has a new parameter output_resources
+- Model DeploymentPropertiesExtended has a new parameter error
+- Model DeploymentExtended has a new parameter tags
+- Model Subscription has a new parameter tags
+- Added operation TagsOperations.delete_at_scope
+- Added operation TagsOperations.get_at_scope
+- Added operation TagsOperations.create_or_update_at_scope
+- Added operation TagsOperations.update_at_scope
+- Added operation group DeploymentScriptsOperations
+
+**Breaking changes**
+
+- Operation DeploymentsOperations.create_or_update has a new signature
+- Operation DeploymentsOperations.validate has a new signature
+- Operation DeploymentsOperations.create_or_update_at_scope has a new signature
+- Operation DeploymentsOperations.create_or_update_at_management_group_scope has a new signature
+- Operation DeploymentsOperations.validate_at_management_group_scope has a new signature
+- Operation DeploymentsOperations.create_or_update_at_tenant_scope has a new signature
+- Operation DeploymentsOperations.validate_at_scope has a new signature
+- Operation DeploymentsOperations.validate_at_subscription_scope has a new signature
+- Operation DeploymentsOperations.create_or_update_at_subscription_scope has a new signature
+- Operation DeploymentsOperations.validate_at_tenant_scope has a new signature
+- Model Location no longer has parameter longitude
+- Model Location no longer has parameter latitude
+- Model TagsResource no longer has parameter tags
+- Model TagsResource no longer has parameter location
+- Model DeploymentPropertiesExtended no longer has parameter template
+- Removed operation TagsOperations.resource_get
+- Removed operation TagsOperations.resource_delete
+- Removed operation TagsOperations.resource_update
+- Removed operation TagsOperations.resource_create
+- Model TenantIdDescription has a new signature
+
 
 ## 8.0.1 (2020-02-04)
 
