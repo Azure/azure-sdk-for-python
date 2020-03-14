@@ -1,5 +1,8 @@
 # Release History
 
+## 8.1.1 (2020-03-14)
+- Include Tags in GetSubscription and Deployment APIs
+
 ## 8.0.1 (2020-02-04)
 
 **Bugfixes**
