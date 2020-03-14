@@ -1,5 +1,5 @@
 # Release History
-## 0.11.0 (package-preview-2019-07, package-preview-2019-03, package-2018-12-preview)
+## 0.11.0 (2020-03-14)
   - Add preview version
 
 ## 0.10.0 (2020-01-09)
