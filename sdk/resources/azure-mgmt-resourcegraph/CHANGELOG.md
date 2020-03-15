@@ -1,5 +1,10 @@
 # Release History
 
+## 2.1.0 (2020-03-15)
+**Features**
+
+- Added operation group GraphQueryOperations
+
 ## 2.0.0 (2019-06-19)
 
 **General Breaking changes**
