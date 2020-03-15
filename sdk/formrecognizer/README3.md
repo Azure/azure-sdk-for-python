@@ -345,10 +345,10 @@ class FormRecognizerError:
 # Analyze ---------------------------------------------------
 class ExtractedForm:
     labels: Dict[str, LabelValue]
-    pages: List[ExtractedFormPage]
+    pages: List[ExtractedLayoutPage]
     page_range: PageRange
 
-class ExtractedFormPage:
+class ExtractedLayoutPage:
     tables: List[ExtractedTable]
     page_metadata: PageMetadata
     page_number: int
@@ -491,7 +491,7 @@ for field, value in result.labels.items():
 from azure.ai.formrecognizer import CustomFormClient
 
 client = CustomFormClient(endpoint=endpoint, credential=credential)
-custom_models = list(client.list_custom_models())
+custom_models = client.list_custom_models()
 for model in custom_models:
     print(model.model_id, model.status)
 ```

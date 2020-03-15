@@ -17,7 +17,7 @@ from typing import (  # pylint: disable=unused-import
 from ._generated._form_recognizer_client import FormRecognizerClient as FormRecognizer
 from ._generated.models import TrainRequest, TrainSourceFilter
 from ._base_client import FormRecognizerClientBase
-from ._helpers import get_pipeline_response
+from ._helpers import TrainingPolling
 from ._response_handlers import (
     prepare_receipt_result,
     prepare_layout_result,
@@ -25,6 +25,7 @@ from ._response_handlers import (
     prepare_labeled_result
 )
 from azure.core.polling import LROPoller
+from azure.core.exceptions import HttpResponseError
 from ._generated.models import AnalyzeOperationResult, Model
 from azure.core.polling.base_polling import LROBasePolling
 from ._models import (
@@ -32,6 +33,7 @@ from ._models import (
     ModelsSummary,
     CustomModel,
     CustomLabeledModel,
+    get_pipeline_response
 )
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -79,7 +81,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
 
         def callback(raw_response):
             analyze_result = self._client._deserialize(AnalyzeOperationResult, raw_response)
-            extracted_layout = prepare_layout_result(analyze_result, include_raw=True)
+            extracted_layout = prepare_layout_result(analyze_result, include_ocr=True)
             return extracted_layout
 
         return LROPoller(self._client._client, response, callback, LROBasePolling(timeout=3, **kwargs))
@@ -105,8 +107,8 @@ class FormRecognizerClient(FormRecognizerClientBase):
 
         # FIXME: Don't do this, figure out a way to default to True.
         response.http_response.headers["Location"] = response.http_response.headers["Location"] + "?includeKeys=true"
-
-        return LROPoller(self._client._client, response, callback, LROBasePolling(timeout=3, **kwargs))
+        # return LROPoller(self._client._client, response, callback, LROBasePolling(timeout=3, **kwargs))
+        return LROPoller(self._client._client, response, callback, LROBasePolling(timeout=3, lro_algorithms=[TrainingPolling()], **kwargs))
 
     def begin_labeled_training(self, source, content_type, source_prefix_filter=None, include_sub_folders=False, **kwargs):
 
@@ -128,9 +130,10 @@ class FormRecognizerClient(FormRecognizerClientBase):
             model = self._client._deserialize(Model, raw_response)
             return CustomLabeledModel._from_generated(model)
 
-        return LROPoller(self._client._client, response, callback, LROBasePolling(timeout=3, **kwargs))
+        # return LROPoller(self._client._client, response, callback, LROBasePolling(timeout=3, **kwargs))
+        return LROPoller(self._client._client, response, callback, LROBasePolling(timeout=3, lro_algorithms=[TrainingPolling()], **kwargs))
 
-    def begin_extract_pages(self, form, model_id, content_type, **kwargs):
+    def begin_extract_forms(self, form, model_id, content_type, **kwargs):
         include_text_details = kwargs.pop("include_text_details", False)
 
         if isinstance(form, six.string_types):
@@ -182,18 +185,25 @@ class FormRecognizerClient(FormRecognizerClientBase):
 
     def list_custom_models(self, **kwargs):
         return self._client.list_custom_models(
+            op="full",
             cls=lambda objs: [ModelInfo._from_generated(x) for x in objs],
             **kwargs
         )
 
     def get_models_summary(self, **kwargs):
-        response = self._client.get_custom_models(**kwargs)
+        response = self._client.get_custom_models(op="summary", **kwargs)
         return ModelsSummary._from_generated(response.summary)
 
     def get_custom_model(self, model_id, **kwargs):
         response = self._client.get_custom_model(model_id=model_id, include_keys=True, **kwargs)
-        return CustomModel._from_generated(response)
+        if response.keys:
+            return CustomModel._from_generated(response)
+        raise HttpResponseError(message="Model id '{}' is a labeled model. Call get_custom_labeled_model() "
+                                        "with the model id.".format(model_id))
 
     def get_custom_labeled_model(self, model_id, **kwargs):
         response = self._client.get_custom_model(model_id=model_id, **kwargs)
-        return CustomLabeledModel._from_generated(response)
+        if response.keys is None:
+            return CustomLabeledModel._from_generated(response)
+        raise HttpResponseError(message="Model id '{}' is not a labeled model. Call get_custom_model() "
+                                        "with the model id.".format(model_id))
