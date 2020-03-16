@@ -19,11 +19,12 @@ def autorest_swagger_to_sdk_conf(readme, output_folder):
     _LOGGER.info("Looking for swagger-to-sdk section in {}".format(readme))
     autorest_bin = shutil.which("autorest")
     # --input-file=foo is to workaround a bug where the command is not executed at all if no input-file is found (even if we don't care about input-file here)
-    cmd_line = "{} {} --perform-load=false --swagger-to-sdk --output-artifact=configuration.json --input-file=foo --output-folder={}".format(
+    cmd_line = "{} {} --version=V2 --perform-load=false --swagger-to-sdk --output-artifact=configuration.json --input-file=foo --output-folder={}".format(
         autorest_bin,
         str(readme),
         str(output_folder)
     )
+    _LOGGER.debug("Start: {}".format(cmd_line))
     execute_simple_command(cmd_line.split())
     conf_path = Path(output_folder, "configuration.json")
     with conf_path.open() as fd:
