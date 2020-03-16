@@ -124,8 +124,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             is not specified, the API will default to the latest, non-preview version.
         :keyword bool show_stats: If set to true, response will contain document
             level statistics.
-        :return: The combined list of :class:`~azure.ai.textanalytics.DetectLanguageResults` and
-            :class:`~azure.ai.textanalytics.DocumentErrors` in the order the original documents were
+        :return: The combined list of :class:`~azure.ai.textanalytics.DetectLanguageResult` and
+            :class:`~azure.ai.textanalytics.DocumentError` in the order the original documents were
             passed in.
         :rtype: list[~azure.ai.textanalytics.DetectLanguageResult,
             ~azure.ai.textanalytics.DocumentError]
@@ -188,8 +188,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
         :keyword bool show_stats: If set to true, response will contain document level statistics.
-        :return: The combined list of :class:`~azure.ai.textanalytics.RecognizeEntitiesResults` and
-            :class:`~azure.ai.textanalytics.DocumentErrors` in the order the original documents
+        :return: The combined list of :class:`~azure.ai.textanalytics.RecognizeEntitiesResult` and
+            :class:`~azure.ai.textanalytics.DocumentError` in the order the original documents
             were passed in.
         :rtype: list[~azure.ai.textanalytics.RecognizeEntitiesResult,
             ~azure.ai.textanalytics.DocumentError]
@@ -252,8 +252,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
         :keyword bool show_stats: If set to true, response will contain document level statistics.
-        :return: The combined list of :class:`~azure.ai.textanalytics.RecognizePiiEntitiesResults` and
-            :class:`~azure.ai.textanalytics.DocumentErrors` in the order the original documents were
+        :return: The combined list of :class:`~azure.ai.textanalytics.RecognizePiiEntitiesResult` and
+            :class:`~azure.ai.textanalytics.DocumentError` in the order the original documents were
             passed in.
         :rtype: list[~azure.ai.textanalytics.RecognizePiiEntitiesResult,
             ~azure.ai.textanalytics.DocumentError]
@@ -317,8 +317,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
         :keyword bool show_stats: If set to true, response will contain document level statistics.
-        :return: The combined list of :class:`~azure.ai.textanalytics.RecognizeLinkedEntitiesResults`
-            and :class:`~azure.ai.textanalytics.DocumentErrors` in the order the original documents
+        :return: The combined list of :class:`~azure.ai.textanalytics.RecognizeLinkedEntitiesResult`
+            and :class:`~azure.ai.textanalytics.DocumentError` in the order the original documents
             were passed in.
         :rtype: list[~azure.ai.textanalytics.RecognizeLinkedEntitiesResult,
             ~azure.ai.textanalytics.DocumentError]
@@ -382,8 +382,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
         :keyword bool show_stats: If set to true, response will contain document level statistics.
-        :return: The combined list of :class:`~azure.ai.textanalytics.ExtractKeyPhrasesResults` and
-            :class:`~azure.ai.textanalytics.DocumentErrors` in the order the original documents were
+        :return: The combined list of :class:`~azure.ai.textanalytics.ExtractKeyPhrasesResult` and
+            :class:`~azure.ai.textanalytics.DocumentError` in the order the original documents were
             passed in.
         :rtype: list[~azure.ai.textanalytics.ExtractKeyPhrasesResult,
             ~azure.ai.textanalytics.DocumentError]
@@ -446,8 +446,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
         :keyword bool show_stats: If set to true, response will contain document level statistics.
-        :return: The combined list of :class:`~azure.ai.textanalytics.AnalyzeSentimentResults` and
-            :class:`~azure.ai.textanalytics.DocumentErrors` in the order the original documents were
+        :return: The combined list of :class:`~azure.ai.textanalytics.AnalyzeSentimentResult` and
+            :class:`~azure.ai.textanalytics.DocumentError` in the order the original documents were
             passed in.
         :rtype: list[~azure.ai.textanalytics.AnalyzeSentimentResult,
             ~azure.ai.textanalytics.DocumentError]
