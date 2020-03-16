@@ -99,7 +99,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
     @distributed_trace_async
     async def detect_language(  # type: ignore
         self,
-        inputs: Union[List[str], List[DetectLanguageInput], List[Dict[str, str]]],
+        documents: Union[List[str], List[DetectLanguageInput], List[Dict[str, str]]],
         **kwargs: Any
     ) -> List[Union[DetectLanguageResult, DocumentError]]:
         """Detects Language for a batch of documents.
@@ -111,12 +111,12 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         See https://docs.microsoft.com/azure/cognitive-services/text-analytics/overview#data-limits
         for document length limits, maximum batch size, and supported text encoding.
 
-        :param inputs: The set of documents to process as part of this batch.
+        :param documents: The set of documents to process as part of this batch.
             If you wish to specify the ID and country_hint on a per-item basis you must
             use as input a list[:class:`~azure.ai.textanalytics.DetectLanguageInput`] or a list of
             dict representations of :class:`~azure.ai.textanalytics.DetectLanguageInput`, like
             `{"id": "1", "country_hint": "us", "text": "hello world"}`.
-        :type inputs:
+        :type documents:
             list[str] or list[~azure.ai.textanalytics.DetectLanguageInput]
         :keyword str country_hint: A country hint for the entire batch. Accepts two
             letter country codes specified by ISO 3166-1 alpha-2. Per-document
@@ -145,7 +145,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         """
         country_hint_arg = kwargs.pop("country_hint", None)
         country_hint = country_hint_arg if country_hint_arg is not None else self._default_country_hint
-        docs = _validate_batch_input(inputs, "country_hint", country_hint)
+        docs = _validate_batch_input(documents, "country_hint", country_hint)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
         try:
@@ -162,7 +162,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
     @distributed_trace_async
     async def recognize_entities(  # type: ignore
         self,
-        inputs: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
+        documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
         **kwargs: Any
     ) -> List[Union[RecognizeEntitiesResult, DocumentError]]:
         """Entity Recognition for a batch of documents.
@@ -174,12 +174,12 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         See https://docs.microsoft.com/azure/cognitive-services/text-analytics/overview#data-limits
         for document length limits, maximum batch size, and supported text encoding.
 
-        :param inputs: The set of documents to process as part of this batch.
+        :param documents: The set of documents to process as part of this batch.
             If you wish to specify the ID and language on a per-item basis you must
             use as input a list[:class:`~azure.ai.textanalytics.TextDocumentInput`] or a list of
             dict representations of :class:`~azure.ai.textanalytics.TextDocumentInput`, like
             `{"id": "1", "language": "en", "text": "hello world"}`.
-        :type inputs:
+        :type documents:
             list[str] or list[~azure.ai.textanalytics.TextDocumentInput]
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
@@ -208,7 +208,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         """
         language_arg = kwargs.pop("language", None)
         language = language_arg if language_arg is not None else self._default_language
-        docs = _validate_batch_input(inputs, "language", language)
+        docs = _validate_batch_input(documents, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
         try:
@@ -225,7 +225,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
     @distributed_trace_async
     async def recognize_pii_entities(  # type: ignore
         self,
-        inputs: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
+        documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
         **kwargs: Any
     ) -> List[Union[RecognizePiiEntitiesResult, DocumentError]]:
         """Recognize entities containing personal information for a batch of documents.
@@ -237,12 +237,12 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         See https://docs.microsoft.com/azure/cognitive-services/text-analytics/overview#data-limits
         for document length limits, maximum batch size, and supported text encoding.
 
-        :param inputs: The set of documents to process as part of this batch.
+        :param documents: The set of documents to process as part of this batch.
             If you wish to specify the ID and language on a per-item basis you must
             use as input a list[:class:`~azure.ai.textanalytics.TextDocumentInput`] or a list of
             dict representations of :class:`~azure.ai.textanalytics.TextDocumentInput`, like
             `{"id": "1", "language": "en", "text": "hello world"}`.
-        :type inputs:
+        :type documents:
             list[str] or list[~azure.ai.textanalytics.TextDocumentInput]
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
@@ -271,7 +271,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         """
         language_arg = kwargs.pop("language", None)
         language = language_arg if language_arg is not None else self._default_language
-        docs = _validate_batch_input(inputs, "language", language)
+        docs = _validate_batch_input(documents, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
         try:
@@ -288,7 +288,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
     @distributed_trace_async
     async def recognize_linked_entities(  # type: ignore
         self,
-        inputs: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
+        documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
         **kwargs: Any
     ) -> List[Union[RecognizeLinkedEntitiesResult, DocumentError]]:
         """Recognize linked entities from a well-known knowledge base for a batch of documents.
@@ -301,12 +301,12 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         See https://docs.microsoft.com/azure/cognitive-services/text-analytics/overview#data-limits
         for document length limits, maximum batch size, and supported text encoding.
 
-        :param inputs: The set of documents to process as part of this batch.
+        :param documents: The set of documents to process as part of this batch.
             If you wish to specify the ID and language on a per-item basis you must
             use as input a list[:class:`~azure.ai.textanalytics.TextDocumentInput`] or a list of
             dict representations of :class:`~azure.ai.textanalytics.TextDocumentInput`, like
             `{"id": "1", "language": "en", "text": "hello world"}`.
-        :type inputs:
+        :type documents:
             list[str] or list[~azure.ai.textanalytics.TextDocumentInput]
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
@@ -335,7 +335,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         """
         language_arg = kwargs.pop("language", None)
         language = language_arg if language_arg is not None else self._default_language
-        docs = _validate_batch_input(inputs, "language", language)
+        docs = _validate_batch_input(documents, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
         try:
@@ -352,7 +352,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
     @distributed_trace_async
     async def extract_key_phrases(  # type: ignore
         self,
-        inputs: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
+        documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
         **kwargs: Any
     ) -> List[Union[ExtractKeyPhrasesResult, DocumentError]]:
         """Extract Key Phrases from a batch of documents.
@@ -365,12 +365,12 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         See https://docs.microsoft.com/azure/cognitive-services/text-analytics/overview#data-limits
         for document length limits, maximum batch size, and supported text encoding.
 
-        :param inputs: The set of documents to process as part of this batch.
+        :param documents: The set of documents to process as part of this batch.
             If you wish to specify the ID and language on a per-item basis you must
             use as input a list[:class:`~azure.ai.textanalytics.TextDocumentInput`] or a list of
             dict representations of :class:`~azure.ai.textanalytics.TextDocumentInput`, like
             `{"id": "1", "language": "en", "text": "hello world"}`.
-        :type inputs:
+        :type documents:
             list[str] or list[~azure.ai.textanalytics.TextDocumentInput]
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
@@ -399,7 +399,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         """
         language_arg = kwargs.pop("language", None)
         language = language_arg if language_arg is not None else self._default_language
-        docs = _validate_batch_input(inputs, "language", language)
+        docs = _validate_batch_input(documents, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
         try:
@@ -416,7 +416,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
     @distributed_trace_async
     async def analyze_sentiment(  # type: ignore
         self,
-        inputs: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
+        documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
         **kwargs: Any
     ) -> List[Union[AnalyzeSentimentResult, DocumentError]]:
         """Analyze sentiment for a batch of documents.
@@ -428,12 +428,12 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         See https://docs.microsoft.com/azure/cognitive-services/text-analytics/overview#data-limits
         for document length limits, maximum batch size, and supported text encoding.
 
-        :param inputs: The set of documents to process as part of this batch.
+        :param documents: The set of documents to process as part of this batch.
             If you wish to specify the ID and language on a per-item basis you must
             use as input a list[:class:`~azure.ai.textanalytics.TextDocumentInput`] or a list of
             dict representations of :class:`~azure.ai.textanalytics.TextDocumentInput`, like
             `{"id": "1", "language": "en", "text": "hello world"}`.
-        :type inputs:
+        :type documents:
             list[str] or list[~azure.ai.textanalytics.TextDocumentInput]
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
@@ -462,7 +462,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         """
         language_arg = kwargs.pop("language", None)
         language = language_arg if language_arg is not None else self._default_language
-        docs = _validate_batch_input(inputs, "language", language)
+        docs = _validate_batch_input(documents, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
         try:
