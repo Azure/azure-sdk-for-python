@@ -131,7 +131,10 @@ class StorageLargeBlockBlobTestAsync(AsyncStorageTestCase):
                 'block {0}'.format(i).encode('utf-8'),
                 urandom(LARGE_BLOCK_SIZE),
                 validate_content=True)
-            self.assertIsNone(resp)
+            self.assertIsNotNone(resp)
+            assert 'content_md5' in resp
+            assert 'content_crc64' in resp
+            assert 'request_id' in resp
 
     @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
@@ -148,7 +151,10 @@ class StorageLargeBlockBlobTestAsync(AsyncStorageTestCase):
                 'block {0}'.format(i).encode('utf-8'),
                 stream,
                 length=LARGE_BLOCK_SIZE)
-            self.assertIsNone(resp)
+            self.assertIsNotNone(resp)
+            assert 'content_md5' in resp
+            assert 'content_crc64' in resp
+            assert 'request_id' in resp
 
             # Assert
 
@@ -168,7 +174,10 @@ class StorageLargeBlockBlobTestAsync(AsyncStorageTestCase):
                 stream,
                 length=LARGE_BLOCK_SIZE,
                 validate_content=True)
-            self.assertIsNone(resp)
+            self.assertIsNotNone(resp)
+            assert 'content_md5' in resp
+            assert 'content_crc64' in resp
+            assert 'request_id' in resp
 
         # Assert
 
