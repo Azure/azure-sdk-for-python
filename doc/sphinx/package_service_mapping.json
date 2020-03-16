@@ -861,7 +861,7 @@
     "service_name": "Cosmos",
     "manually_generated": true
   },
-  "azure-search": {
+  "azure-search-documents": {
     "category": "Client",
     "service_name": "Search",
     "manually_generated": true
