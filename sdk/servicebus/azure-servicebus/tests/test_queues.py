@@ -13,7 +13,7 @@ import uuid
 from datetime import datetime, timedelta
 
 from azure.servicebus import ServiceBusClient, AutoLockRenew
-from azure.servicebus.common.message import Message, PeekMessage, DeferredMessage#, BatchMessage
+from azure.servicebus.common.message import Message, PeekMessage, ReceivedMessage#, BatchMessage
 from azure.servicebus.common.constants import ReceiveSettleMode
 from azure.servicebus.common.errors import (
     ServiceBusConnectionError,
@@ -366,7 +366,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 deferred = receiver.receive_deferred_messages(deferred_messages)
                 assert len(deferred) == 10
                 for message in deferred:
-                    assert isinstance(message, DeferredMessage)
+                    assert isinstance(message, ReceivedMessage)
                     #with pytest.raises(ValueError):
                     message.complete() #TODO: BUG: We now allow this?
                 with pytest.raises(ValueError):
@@ -411,7 +411,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 deferred = receiver.receive_deferred_messages(deferred_messages)
                 assert len(deferred) == 10
                 for message in deferred:
-                    assert isinstance(message, DeferredMessage)
+                    assert isinstance(message, ReceivedMessage)
                     assert message.lock_token
                     assert message.locked_until
                     assert message._receiver
@@ -452,7 +452,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 deferred = receiver.receive_deferred_messages(deferred_messages)
                 assert len(deferred) == 10
                 for message in deferred:
-                    assert isinstance(message, DeferredMessage)
+                    assert isinstance(message, ReceivedMessage)
                     message.dead_letter("something")
     
             count = 0
@@ -497,7 +497,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 deferred = receiver.receive_deferred_messages(deferred_messages)
                 assert len(deferred) == 10
                 for message in deferred:
-                    assert isinstance(message, DeferredMessage)
+                    assert isinstance(message, ReceivedMessage)
                     with pytest.raises(MessageAlreadySettled):
                         message.complete()
                 with pytest.raises(ServiceBusError):

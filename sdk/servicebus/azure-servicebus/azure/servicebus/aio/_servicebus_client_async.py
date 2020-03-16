@@ -4,11 +4,14 @@
 # --------------------------------------------------------------------------------------------
 from typing import Any, TYPE_CHECKING
 
+import uamqp
+
 from .._base_handler import _parse_conn_str
 from ._base_handler_async import ServiceBusSharedKeyCredential
 from ._servicebus_sender_async import ServiceBusSender
 from ._servicebus_receiver_async import ServiceBusReceiver
 from ..common._configuration import Configuration
+from .async_utils import create_authentication
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -52,12 +55,23 @@ class ServiceBusClient(object):
         self.fully_qualified_namespace = fully_qualified_namespace
         self._credential = credential
         self._config = Configuration(**kwargs)
+        self._connection = None
+        self._auth_uri = "sb://{}".format(self.fully_qualified_namespace)
 
     async def __aenter__(self):
+        await self._create_uamqp_connection()
         return self
 
     async def __aexit__(self, *args):
         await self.close()
+
+    async def _create_uamqp_connection(self):
+        auth = await create_authentication(self)
+        self._connection = uamqp.ConnectionAsync(
+            hostname=self.fully_qualified_namespace,
+            sasl=auth,
+            debug=self._config.logging_enable
+        )
 
     @classmethod
     def from_connection_string(
@@ -103,6 +117,7 @@ class ServiceBusClient(object):
 
         :return: None
         """
+        await self._connection.destroy_async()
 
     async def get_queue_sender(self, queue_name, **kwargs):
         # type: (str, Any) -> ServiceBusSender
@@ -130,6 +145,7 @@ class ServiceBusClient(object):
             queue_name=queue_name,
             credential=self._credential,
             logging_enable=self._config.logging_enable,
+            connection=self._connection,
             **kwargs
         )
         await sender._open_with_retry()  # pylint: disable=protected-access
@@ -161,6 +177,7 @@ class ServiceBusClient(object):
             queue_name=queue_name,
             credential=self._credential,
             logging_enable=self._config.logging_enable,
+            connection=self._connection,
             **kwargs
         )
         await receiver._open_with_retry()  # pylint: disable=protected-access

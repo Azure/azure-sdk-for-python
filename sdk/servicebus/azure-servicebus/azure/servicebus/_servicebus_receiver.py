@@ -12,8 +12,8 @@ from typing import Any, List, TYPE_CHECKING, Optional
 from uamqp import ReceiveClient, Source, types, constants
 
 from ._base_handler import BaseHandler
-from .common.utils import create_properties
-from .common.message import PeekMessage, ReceivedMessage, DeferredMessage
+from .common.utils import create_properties, create_authentication
+from .common.message import PeekMessage, ReceivedMessage
 from .common.constants import (
     REQUEST_RESPONSE_RECEIVE_BY_SEQUENCE_NUMBER,
     REQUEST_RESPONSE_UPDATE_DISPOSTION_OPERATION,
@@ -55,7 +55,7 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
         self._last_received_sequenced_number = None
 
     def _build_message(self, received, message_type=ReceivedMessage):
-        message = message_type(message=received)
+        message = message_type(message=received, mode=self._mode)
         message._receiver = self  # pylint: disable=protected-access
         self._last_received_sequenced_number = message.sequence_number
         return message
@@ -152,6 +152,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
             )
         self._message_iter = None
         self._create_attribute(**kwargs)
+        self._connection = kwargs.get("connection")
 
     def __iter__(self):
         return self
@@ -227,9 +228,9 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         if self._handler:
             self._handler.close()
 
-        auth = self._create_auth()
+        auth = None if self._connection else create_authentication(self)
         self._create_handler(auth)
-        self._handler.open()
+        self._handler.open(connection=self._connection)
         self._message_iter = self._handler.receive_messages_iter()
         while not self._handler.auth_complete():
             time.sleep(0.05)
@@ -372,7 +373,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         )
 
     def receive_deferred_messages(self, sequence_numbers):
-        # type: (List[int]) -> List[DeferredMessage]
+        # type: (List[int]) -> List[ReceivedMessage]
         """Receive messages that have previously been deferred.
 
         When receiving deferred messages from a partitioned entity, all of the supplied
@@ -380,7 +381,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
 
         :param list[int] sequence_numbers: A list of the sequence numbers of messages that have been
          deferred.
-        :rtype: list[~azure.servicebus.DeferredMessage]
+        :rtype: list[~azure.servicebus.ReceivedMessage]
 
         .. admonition:: Example:
 

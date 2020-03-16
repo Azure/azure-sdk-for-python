@@ -4,20 +4,26 @@
 # --------------------------------------------------------------------------------------------
 import logging
 import time
+import datetime
 import uuid
-from typing import Any, TYPE_CHECKING, Union
+from typing import Any, TYPE_CHECKING, Union, List
 
 import uamqp
-from uamqp import SendClient
+from uamqp import SendClient, types
 
 from ._base_handler import BaseHandler
+from .common import mgmt_handlers
 from .common.message import Message, BatchMessage
 from .common.errors import (
     MessageSendFailed,
     OperationTimeoutError,
     _ServiceBusErrorPolicy
 )
-from .common.utils import create_properties
+from .common.utils import create_properties, create_authentication
+from .common.constants import (
+    REQUEST_RESPONSE_CANCEL_SCHEDULED_MESSAGE_OPERATION,
+    REQUEST_RESPONSE_SCHEDULE_MESSAGE_OPERATION
+)
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -47,6 +53,23 @@ class SenderMixin(object):
             _LOGGER.info("%r send operation timed out. (%r)", self._name, error)
             raise error
         self._handler._msg_timeout = remaining_time * 1000  # type: ignore  # pylint: disable=protected-access
+
+    @classmethod
+    def _build_schedule_request(cls, schedule_time, *messages):
+        request_body = {'messages': []}
+        for message in messages:
+            message.schedule(schedule_time)
+            message_data = {}
+            message_data['message-id'] = message.properties.message_id
+            if message.properties.group_id:
+                message_data['session-id'] = message.properties.group_id
+            if message.partition_key:
+                message_data['partition-key'] = message.partition_key
+            if message.via_partition_key:
+                message_data['via-partition-key'] = message.via_partition_key
+            message_data['message'] = bytearray(message.message.encode_message())
+            request_body['messages'].append(message_data)
+        return request_body
 
 
 class ServiceBusSender(BaseHandler, SenderMixin):
@@ -111,6 +134,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
 
         self._max_message_size_on_link = 0
         self._create_attribute()
+        self._connection = kwargs.get("connection")
 
     def _create_handler(self, auth):
         properties = create_properties()
@@ -131,9 +155,9 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         if self._handler:
             self._handler.close()
 
-        auth = self._create_auth()
+        auth = None if self._connection else create_authentication(self)
         self._create_handler(auth)
-        self._handler.open()
+        self._handler.open(connection=self._connection)
         while not self._handler.client_ready():
             time.sleep(0.05)
         self._running = True
@@ -147,6 +171,66 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             self._handler.send_message(message.message)
         except Exception as e:
             raise MessageSendFailed(e)
+
+    def _schedule(self, message, schedule_time_utc):
+        # type: (Union[Message, BatchMessage], datetime.datetime) -> List[int]
+        """Send Message or BatchMessage to be enqueued at a specific time.
+        Returns a list of the sequence numbers of the enqueued messages.
+        :param message: The messages to schedule.
+        :type message: ~azure.servicebus.Message or ~azure.servicebus.BatchMessage
+        :param schedule_time_utc: The utc date and time to enqueue the messages.
+        :type schedule_time_utc: ~datetime.datetime
+        :rtype: List[int]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sync_samples/sample_code_servicebus.py
+                :start-after: [START scheduling_messages]
+                :end-before: [END scheduling_messages]
+                :language: python
+                :dedent: 4
+                :caption: Schedule a message to be sent in future
+        """
+        self._open()
+        if isinstance(message, BatchMessage):
+            request_body = self._build_schedule_request(schedule_time_utc, *message._messages)
+        else:
+            request_body = self._build_schedule_request(schedule_time_utc, message)
+        return self._mgmt_request_response_with_retry(
+            REQUEST_RESPONSE_SCHEDULE_MESSAGE_OPERATION,
+            request_body,
+            mgmt_handlers.schedule_op
+        )
+
+    def _cancel_scheduled_messages(self, sequence_numbers):
+        # type: (Union[int, List[int]]) -> None
+        """
+        Cancel one or more messages that have previously been scheduled and are still pending.
+
+        :param sequence_numbers: The sequence numbers of the scheduled messages.
+        :type sequence_numbers: int or list[int]
+        :rtype: None
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sync_samples/sample_code_servicebus.py
+                :start-after: [START cancel_scheduled_messages]
+                :end-before: [END cancel_scheduled_messages]
+                :language: python
+                :dedent: 4
+                :caption: Cancelling messages scheduled to be sent in future
+        """
+        self._open()
+        if isinstance(sequence_numbers, int):
+            numbers = [types.AMQPLong(sequence_numbers)]
+        else:
+            numbers = [types.AMQPLong(s) for s in sequence_numbers]
+        request_body = {'sequence-numbers': types.AMQPArray(numbers)}
+        return self._mgmt_request_response_with_retry(
+            REQUEST_RESPONSE_CANCEL_SCHEDULED_MESSAGE_OPERATION,
+            request_body,
+            mgmt_handlers.default
+        )
 
     @classmethod
     def from_connection_string(
