@@ -75,7 +75,7 @@ class AbstractPreparer(object):
                             break
                     try:
                         msg += "\nDetailed error message: " + str(e.additional_properties['error']['message'])
-                    except AttributeError:
+                    except (AttributeError, KeyError):
                         pass
 
                     _logger.error(msg)
