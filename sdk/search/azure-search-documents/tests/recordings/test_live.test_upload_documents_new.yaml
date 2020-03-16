@@ -15,9 +15,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-search/1.0.0b1 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
+      - azsdk-python-search/1.0.0b2 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
       api-key:
-      - B3F793965D255122B93D7D3067205B85
+      - 27498E40CE6D7581778C1EEA658A1629
     method: POST
     uri: https://search3990e7c.search.windows.net/indexes('drgqefsg')/docs/search.index?api-version=2019-05-06-Preview
   response:
@@ -31,9 +31,9 @@ interactions:
       content-type:
       - application/json; odata.metadata=none
       date:
-      - Mon, 09 Mar 2020 21:21:40 GMT
+      - Mon, 16 Mar 2020 17:49:16 GMT
       elapsed-time:
-      - '32'
+      - '192'
       expires:
       - '-1'
       odata-version:
@@ -43,7 +43,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - f772362a-624b-11ea-9360-8c8590507855
+      - 7450927e-67ae-11ea-9335-8c8590507855
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:
@@ -61,9 +61,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-search/1.0.0b1 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
+      - azsdk-python-search/1.0.0b2 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
       api-key:
-      - B3F793965D255122B93D7D3067205B85
+      - 27498E40CE6D7581778C1EEA658A1629
     method: GET
     uri: https://search3990e7c.search.windows.net/indexes('drgqefsg')/docs/$count?api-version=2019-05-06-Preview
   response:
@@ -77,9 +77,9 @@ interactions:
       content-type:
       - text/plain
       date:
-      - Mon, 09 Mar 2020 21:21:43 GMT
+      - Mon, 16 Mar 2020 17:49:19 GMT
       elapsed-time:
-      - '5'
+      - '45'
       expires:
       - '-1'
       odata-version:
@@ -89,7 +89,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - f95a616a-624b-11ea-9360-8c8590507855
+      - 7651a590-67ae-11ea-9335-8c8590507855
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:
@@ -107,9 +107,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-search/1.0.0b1 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
+      - azsdk-python-search/1.0.0b2 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
       api-key:
-      - B3F793965D255122B93D7D3067205B85
+      - 27498E40CE6D7581778C1EEA658A1629
     method: GET
     uri: https://search3990e7c.search.windows.net/indexes('drgqefsg')/docs('1000')?api-version=2019-05-06-Preview
   response:
@@ -123,9 +123,9 @@ interactions:
       content-type:
       - application/json; odata.metadata=none
       date:
-      - Mon, 09 Mar 2020 21:21:43 GMT
+      - Mon, 16 Mar 2020 17:49:19 GMT
       elapsed-time:
-      - '9'
+      - '14'
       expires:
       - '-1'
       odata-version:
@@ -135,7 +135,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - f96250c8-624b-11ea-9360-8c8590507855
+      - 7663227a-67ae-11ea-9335-8c8590507855
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:
@@ -153,9 +153,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-search/1.0.0b1 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
+      - azsdk-python-search/1.0.0b2 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
       api-key:
-      - B3F793965D255122B93D7D3067205B85
+      - 27498E40CE6D7581778C1EEA658A1629
     method: GET
     uri: https://search3990e7c.search.windows.net/indexes('drgqefsg')/docs('1001')?api-version=2019-05-06-Preview
   response:
@@ -169,9 +169,9 @@ interactions:
       content-type:
       - application/json; odata.metadata=none
       date:
-      - Mon, 09 Mar 2020 21:21:43 GMT
+      - Mon, 16 Mar 2020 17:49:19 GMT
       elapsed-time:
-      - '4'
+      - '5'
       expires:
       - '-1'
       odata-version:
@@ -181,7 +181,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - f96a7046-624b-11ea-9360-8c8590507855
+      - 766e3ea8-67ae-11ea-9335-8c8590507855
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:
