@@ -248,7 +248,6 @@ class EventHubConsumerClient(ClientBaseAsync):
             *,
             max_batch_size: int = None,
             max_wait_time: float = 3,
-            enable_callback_when_no_event: bool = False,
             partition_id: Optional[str] = None,
             owner_level: Optional[int] = None,
             prefetch: int = 300,
@@ -360,9 +359,9 @@ class EventHubConsumerClient(ClientBaseAsync):
          For detailed partition context information, please refer to
          :class:`PartitionContext<azure.eventhub.aio.PartitionContext>`.
         :type on_event: Callable[~azure.eventhub.aio.PartitionContext, ~azure.eventhub.EventData]
-        :keyword float max_wait_time: `on_event` is called with its param `event` being None
-         if no event is received after `max_wait_time` second(s).
-         `on_event` is not called if no event is received and `max_wait_time` is None or 0.
+        :keyword float max_wait_time: `on_event` is called with its param `event` being `None`
+         if `max_wait_time` is not None nor 0 and if no event has been received after `max_wait_time` second(s)
+         since `on_event` is last called.
          Default is None.
         :keyword str partition_id: If specified, the client will receive from this partition only.
          Otherwise the client will receive from all partitions.
@@ -425,6 +424,7 @@ class EventHubConsumerClient(ClientBaseAsync):
         await self._receive(
             on_event,
             batch=False,
+            max_batch_size=1,
             max_wait_time=max_wait_time,
             partition_id=partition_id,
             owner_level=owner_level,
@@ -441,8 +441,8 @@ class EventHubConsumerClient(ClientBaseAsync):
         self,
         on_event_batch: Callable[["PartitionContext", List["EventData"]], Awaitable[None]],
         *,
-        max_batch_size: int = 300,
-        max_wait_time: float = 3,
+        max_batch_size: Optional[int] = 300,
+        max_wait_time: Optional[float] = None,
         partition_id: Optional[str] = None,
         owner_level: Optional[int] = None,
         prefetch: int = 300,
@@ -464,20 +464,20 @@ class EventHubConsumerClient(ClientBaseAsync):
         """Receive events from partition(s) in batches, with optional load-balancing and checkpointing.
 
         :param on_event_batch: The callback function for handling a batch of received events. The callback takes two
-         parameters: `partition_context` which contains partition context and `event_batch` which is the received
+         parameters: `partition_context` which contains partition context and `event_batch`, which is the received
          events. The callback function should be defined like: `on_event_batch(partition_context, event_batch)`.
+         `event_batch` could be an empty list if `max_wait_time` is not None nor 0 and no event is received
+         after `max_wait_time`.
          For detailed partition context information, please refer to
          :class:`PartitionContext<azure.eventhub.aio.PartitionContext>`.
         :type on_event_batch: Callable[~azure.eventhub.aio.PartitionContext, List[~azure.eventhub.EventData]]
         :keyword int max_batch_size: The maximum number of events in a batch passed to callback `on_event_batch`.
          If the actual received number of events is larger than `max_batch_size`, the received events are divided into
-         batches, with each batch having up to `max_batch_size` events.
-         If fewer than `max_batch_size` events are received, `on_event_batch` is called with the received events.
-         If no events are received for a while, `on_event_batch` may or may not be called
-         depending on the value of `max_wait_time`.
-        :keyword float max_wait_time: `on_event_batch` is called with its param `event_batch` being an empty list
-         if no events are received after `max_wait_time` second(s).
-         `on_event_batch` is not called if no events are received and `max_wait_time` is None or 0.
+         batches and call the callback for each batch with up to `max_batch_size` events.
+        :keyword float max_wait_time: Call the callback `on_event_batch` if it has taken `max_wait_time` to fill the
+         event batch or if the event batch has been filled up with `max_batch_size` events before
+         reaching `max_wait_time` since the last batch of events are processed by the callback.
+         If 'max_wait_time' is None or 0, `on_event_batch` is immediately called once there are events received.
          Default is None.
         :keyword str partition_id: If specified, the client will receive from this partition only.
          Otherwise the client will receive from all partitions.

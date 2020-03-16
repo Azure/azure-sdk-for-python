@@ -172,16 +172,16 @@ class EventHubConsumer(
         max_retries = (
             self._client._config.max_retries  # pylint:disable=protected-access
         )
-        fetched = False  # ensure one trip when max_wait_time is very small
+        has_not_fetched_once = True  # ensure one trip when max_wait_time is very small
         deadline = time.time() + (max_wait_time or 0)  # max_wait_time can be None
-        while len(self._message_buffer) == 0 and \
-                (time.time() < deadline or fetched is False):
+        while len(self._message_buffer) < max_batch_size and \
+                (time.time() < deadline or has_not_fetched_once):
             retried_times = 0
-            fetched = True
+            has_not_fetched_once = False
             while retried_times <= max_retries:
                 try:
                     await self._open()
-                    await cast(ReceiveClientAsync, self._handler).do_work_async()
+                    await cast(ReceiveClientAsync, self._handler).do_work_async()  # uamqp sleeps 0.05 if none received
                     break
                 except asyncio.CancelledError:  # pylint: disable=try-except-raise
                     raise
