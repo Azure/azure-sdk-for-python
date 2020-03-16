@@ -3,7 +3,6 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import json
-import asyncio
 
 from .client_credential import ClientSecretCredential
 from azure.core.exceptions import ClientAuthenticationError
