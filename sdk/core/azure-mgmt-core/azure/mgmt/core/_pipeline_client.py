@@ -48,7 +48,7 @@ class ARMPipelineClient(PipelineClient):
                 raise ValueError(
                     "Current implementation requires to pass 'config' if you don't pass 'policies'"
                 )
-            kwargs["policies"] = self._default_policies(kwargs["config"])
+            kwargs["policies"] = self._default_policies(**kwargs)
         super(ARMPipelineClient, self).__init__(base_url, **kwargs)
 
     @staticmethod
