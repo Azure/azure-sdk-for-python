@@ -11,7 +11,7 @@ try:
     from ._models_py3 import DataTableCell
     from ._models_py3 import DocumentResult
     from ._models_py3 import ErrorInformation
-    from ._models_py3 import ErrorResponse, ErrorResponseException
+    from ._models_py3 import ErrorResponse
     from ._models_py3 import FieldValue
     from ._models_py3 import FormFieldsReport
     from ._models_py3 import KeyValueElement
@@ -37,7 +37,7 @@ except (SyntaxError, ImportError):
     from ._models import DataTableCell  # type: ignore
     from ._models import DocumentResult  # type: ignore
     from ._models import ErrorInformation  # type: ignore
-    from ._models import ErrorResponse, ErrorResponseException  # type: ignore
+    from ._models import ErrorResponse  # type: ignore
     from ._models import FieldValue  # type: ignore
     from ._models import FormFieldsReport  # type: ignore
     from ._models import KeyValueElement  # type: ignore
@@ -76,7 +76,7 @@ __all__ = [
     'DataTableCell',
     'DocumentResult',
     'ErrorInformation',
-    'ErrorResponse', 'ErrorResponseException',
+    'ErrorResponse',
     'FieldValue',
     'FormFieldsReport',
     'KeyValueElement',

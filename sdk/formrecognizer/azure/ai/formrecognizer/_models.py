@@ -183,7 +183,7 @@ class ExtractedLine(object):
             bounding_box=line.bounding_box,
             language=line.language,
             page_number=page,
-            words=[ExtractedWord._from_generated(word, page) for word in line.words]
+            words=[ExtractedWord._from_generated(word, page) for word in line.words or []]
         )
 
 
@@ -223,7 +223,7 @@ class PageMetadata(object):
             height=read_result[page_index].height,
             unit=read_result[page_index].unit,
             language=read_result[page_index].language,
-            lines=[ExtractedLine._from_generated(line, page_index+1) for line in read_result[page_index].lines]
+            lines=[ExtractedLine._from_generated(line, page_index+1) for line in read_result[page_index].lines or []]
         )
 
     @classmethod
@@ -235,7 +235,7 @@ class PageMetadata(object):
             height=page.height,
             unit=page.unit,
             language=page.language,
-            lines=[ExtractedLine._from_generated(line, page.page) for line in read_result.lines]
+            lines=[ExtractedLine._from_generated(line, page.page) for line in read_result.lines or []]
         ) for page in read_result]
 
 
@@ -312,7 +312,7 @@ class TrainResult(object):
         if train:
             return cls(
                 extracted_fields=FormFields._from_generated(keys),
-                documents=[TrainingDocumentInfo._from_generated(doc) for doc in train.training_documents],
+                documents=[TrainingDocumentInfo._from_generated(doc) for doc in train.training_documents or []],
                 training_errors=FormRecognizerError._from_generated(train.errors)
             )
         return train
@@ -398,7 +398,7 @@ class LabeledTrainResult(object):
     def _from_generated(cls, train):
         if train:
             return cls(
-                documents=[TrainingDocumentInfo._from_generated(doc) for doc in train.training_documents],
+                documents=[TrainingDocumentInfo._from_generated(doc) for doc in train.training_documents or []],
                 fields=FieldNames._from_generated(train.fields),
                 average_model_accuracy=train.average_model_accuracy,
                 training_errors=FormRecognizerError._from_generated(train.errors)
@@ -477,6 +477,8 @@ class LabelValue(object):
 
     @classmethod
     def _from_generated(cls, label, read_result, include_ocr):
+        if label is None:
+            return label
         return cls(
             text=label.text,
             value=get_field_value(label),

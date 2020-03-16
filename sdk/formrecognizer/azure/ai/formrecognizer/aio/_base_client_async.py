@@ -5,26 +5,25 @@
 # ------------------------------------
 
 from azure.core.configuration import Configuration
-from azure.core.pipeline import Pipeline
-from azure.core.pipeline.transport import RequestsTransport
+from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.policies import (
     UserAgentPolicy,
     HeadersPolicy,
     RequestIdPolicy,
     ProxyPolicy,
     NetworkTraceLoggingPolicy,
-    RetryPolicy,
-    RedirectPolicy,
-    BearerTokenCredentialPolicy,
+    AsyncRetryPolicy,
+    AsyncRedirectPolicy,
+    AsyncBearerTokenCredentialPolicy,
     DistributedTracingPolicy,
     HttpLoggingPolicy,
     ContentDecodePolicy
 )
-from ._policies import CognitiveServicesCredentialPolicy
-from ._user_agent import USER_AGENT
+from .._policies import CognitiveServicesCredentialPolicy
+from .._user_agent import USER_AGENT
 
 
-class FormRecognizerClientBase(object):
+class AsyncFormRecognizerClientBase(object):
     def __init__(self, credential, **kwargs):
         self._pipeline = self._create_pipeline(credential, **kwargs)
 
@@ -33,7 +32,7 @@ class FormRecognizerClientBase(object):
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
         if hasattr(credential, "get_token"):
-            credential_policy = BearerTokenCredentialPolicy(
+            credential_policy = AsyncBearerTokenCredentialPolicy(
                 credential, "https://cognitiveservices.azure.com/.default"
             )
         elif hasattr(credential, "api_key"):
@@ -45,7 +44,11 @@ class FormRecognizerClientBase(object):
         config = self._create_configuration(**kwargs)
         config.transport = kwargs.get("transport")  # type: ignore
         if not config.transport:
-            config.transport = RequestsTransport(**kwargs)
+            try:
+                from azure.core.pipeline.transport import AioHttpTransport
+            except ImportError:
+                raise ImportError("Unable to create async transport. Please check aiohttp is installed.")
+            config.transport = AioHttpTransport(**kwargs)
 
         policies = [
             config.headers_policy,
@@ -60,7 +63,7 @@ class FormRecognizerClientBase(object):
             DistributedTracingPolicy(**kwargs),
             HttpLoggingPolicy(**kwargs),
         ]
-        return Pipeline(config.transport, policies=policies)
+        return AsyncPipeline(config.transport, policies=policies)
 
     def _create_configuration(self, **kwargs):  # pylint: disable=no-self-use
         config = Configuration(**kwargs)
@@ -69,14 +72,14 @@ class FormRecognizerClientBase(object):
         config.headers_policy = kwargs.get("headers_policy") or HeadersPolicy(**kwargs)
         config.proxy_policy = kwargs.get("proxy_policy") or ProxyPolicy(**kwargs)
         config.logging_policy = kwargs.get("logging_policy") or NetworkTraceLoggingPolicy(**kwargs)
-        config.retry_policy = kwargs.get("retry_policy") or RetryPolicy(**kwargs)
-        config.redirect_policy = kwargs.get("redirect_policy") or RedirectPolicy(**kwargs)
+        config.retry_policy = kwargs.get("retry_policy") or AsyncRetryPolicy(**kwargs)
+        config.redirect_policy = kwargs.get("redirect_policy") or AsyncRedirectPolicy(**kwargs)
 
         return config
 
-    def __enter__(self):
-        self._client.__enter__()  # pylint:disable=no-member
+    async def __aenter__(self):
+        await self._client.__aenter__()  # pylint: disable=no-member
         return self
 
-    def __exit__(self, *args):
-        self._client.__exit__(*args)  # pylint:disable=no-member
+    async def __aexit__(self, *args):
+        await self._client.__aexit__(*args)  # pylint: disable=no-member
