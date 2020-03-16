@@ -180,7 +180,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         policies = [
             HeadersPolicy(**kwargs),
             ProxyPolicy(proxies=proxies),
-            UserAgentPolicy(base_user_agent=_utils.get_user_agent(), **kwargs),
+            UserAgentPolicy(base_user_agent=_utils.get_user_agent(self.connection_policy), **kwargs),
             ContentDecodePolicy(),
             retry_policy,
             CustomHookPolicy(**kwargs),

@@ -25,12 +25,15 @@
 import platform
 import re
 from ._version import VERSION
+from .documents import ConnectionPolicy
 
-
-def get_user_agent():
+def get_user_agent(
+        connection_policy  # type: ConnectionPolicy
+):
     os_name = safe_user_agent_header(platform.platform())
     python_version = safe_user_agent_header(platform.python_version())
-    user_agent = "azsdk-python-cosmos/{} Python/{} ({})".format(VERSION, python_version, os_name)
+    user_agent_suffix = connection_policy.UserAgentSuffix[0:128]
+    user_agent = "azsdk-python-cosmos/{} Python/{} ({}){}".format(VERSION, python_version, os_name, user_agent_suffix)
     return user_agent
 
 

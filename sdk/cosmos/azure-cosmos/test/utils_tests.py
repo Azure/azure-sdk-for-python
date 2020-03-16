@@ -23,6 +23,7 @@ import unittest
 import pytest
 import azure.cosmos
 import azure.cosmos._utils as _utils
+from azure.cosmos.documents import ConnectionPolicy
 import platform
 import test_config
 
@@ -34,7 +35,8 @@ class UtilsTests(unittest.TestCase):
     """
 
     def test_user_agent(self):
-        user_agent = _utils.get_user_agent()
+        connection_policy = ConnectionPolicy()
+        user_agent = _utils.get_user_agent(connection_policy)
 
         expected_user_agent = "azsdk-python-cosmos/{} Python/{} ({})".format(
             azure.cosmos.__version__,
@@ -42,6 +44,20 @@ class UtilsTests(unittest.TestCase):
             platform.platform()
         )
         self.assertEqual(user_agent, expected_user_agent)   
+
+    def test_user_agent_with_suffix(self):
+        user_agent_suffix = "sample app"
+        connection_policy = ConnectionPolicy()
+        connection_policy.UserAgentSuffix = user_agent_suffix
+        user_agent = _utils.get_user_agent(connection_policy)
+
+        expected_user_agent = "azsdk-python-cosmos/{} Python/{} ({}){}".format(
+            azure.cosmos.__version__,
+            platform.python_version(),
+            platform.platform(),
+            user_agent_suffix
+        )
+        self.assertEqual(user_agent, expected_user_agent)
 
     def test_connection_string(self):
         client = azure.cosmos.CosmosClient.from_connection_string(test_config._test_config.connection_str)

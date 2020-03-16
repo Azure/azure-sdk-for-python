@@ -355,7 +355,10 @@ class ConnectionPolicy(object):  # pylint: disable=too-many-instance-attributes
     :ivar ConnectionRetryConfiguration:
         Retry Configuration to be used for connection retries.
     :vartype ConnectionRetryConfiguration:
-        int or azure.cosmos.ConnectionRetryPolicy or urllib3.util.retry
+        int or azure.cosmos.ConnectionRetryPolicy or urllib3.util.
+    :ivar string UserAgentSuffix:
+        The value to be appended to the user-agent header, used for monitoring purposes.
+
     """
 
     __defaultRequestTimeout = 60000  # milliseconds
@@ -371,6 +374,7 @@ class ConnectionPolicy(object):  # pylint: disable=too-many-instance-attributes
         self.DisableSSLVerification = False
         self.UseMultipleWriteLocations = False
         self.ConnectionRetryConfiguration = None
+        self.UserAgentSuffix = ""
 
 
 class _OperationType(object):
