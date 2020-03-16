@@ -14,9 +14,8 @@ from datetime import datetime, timedelta
 
 from azure.servicebus.aio import (
     ServiceBusClient,
-    QueueClient,
     Message,
-    BatchMessage,
+    #BatchMessage,
     DeferredMessage,
     AutoLockRenew)
 from azure.servicebus.common.message import PeekMessage

@@ -61,6 +61,7 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
         self._encoding = encoding
         self._expiry = None
         self._receiver = None
+        self.session_id = kwargs.get("session_id", None)
         if 'message' in kwargs:
             self.message = kwargs['message']
             self._annotations = self.message.annotations

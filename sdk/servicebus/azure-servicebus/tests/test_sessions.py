@@ -13,8 +13,8 @@ import time
 import uuid
 from datetime import datetime, timedelta
 
-from azure.servicebus import ServiceBusClient, QueueClient, AutoLockRenew
-from azure.servicebus.common.message import Message, PeekMessage, BatchMessage, DeferredMessage
+from azure.servicebus import ServiceBusClient, AutoLockRenew
+from azure.servicebus.common.message import Message, PeekMessage, DeferredMessage#, BatchMessage
 from azure.servicebus.common.constants import ReceiveSettleMode, NEXT_AVAILABLE
 from azure.servicebus.common.errors import (
     ServiceBusError,

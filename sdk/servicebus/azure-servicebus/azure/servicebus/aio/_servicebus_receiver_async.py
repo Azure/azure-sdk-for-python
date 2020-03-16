@@ -129,7 +129,8 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
                 client_name=self._name,
                 auto_complete=False,
                 encoding=self._config.encoding,
-                receive_settle_mode=self._mode.value
+                receive_settle_mode=self._mode.value,
+                timeout=self._idle_timeout * 1000 if self._idle_timeout else 0
             )
         else:
             self._handler = ReceiveClientAsync(
@@ -142,7 +143,8 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
                 on_attach=self._on_attach_for_session_entity,
                 auto_complete=False,
                 encoding=self._config.encoding,
-                receive_settle_mode=self._mode.value
+                receive_settle_mode=self._mode.value,
+                timeout=self._idle_timeout * 1000 if self._idle_timeout else 0
             )
 
     async def _create_uamqp_receiver_handler(self):
@@ -188,7 +190,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
         wrapped_batch = []
         max_batch_size = max_batch_size or self._handler._prefetch  # pylint: disable=protected-access
 
-        timeout_ms = 1000 * timeout if timeout else 0
+        timeout_ms = 1000 * timeout if timeout else (1000 * self._idle_timeout if self._idle_timeout else 0)
         batch = await self._handler.receive_message_batch_async(
             max_batch_size=max_batch_size,
             timeout=timeout_ms)
@@ -391,3 +393,10 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
             message,
             mgmt_handlers.peek_op
         )
+
+    async def _renew_locks(self, *lock_tokens):
+        message = {'lock-tokens': types.AMQPArray(lock_tokens)}
+        return await self._mgmt_request_response(
+            REQUEST_RESPONSE_RENEWLOCK_OPERATION,
+            message,
+            mgmt_handlers.lock_renew_op)

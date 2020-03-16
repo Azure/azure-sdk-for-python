@@ -345,3 +345,12 @@ class BaseHandler(object):  # pylint:disable=too-many-instance-attributes
             self._error = ServiceBusError("This message handler is now closed.")
 
         self._close_handler()
+
+    def reconnect(self):
+        """Reconnect the handler.
+
+        If the handler was disconnected from the service with
+        a retryable error, attempt to reconnect.
+        """
+        self.close()
+        self._open()

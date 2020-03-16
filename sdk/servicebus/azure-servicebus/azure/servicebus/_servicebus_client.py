@@ -140,6 +140,8 @@ class ServiceBusClient(object):
         :param str queue_name: The path of specific Service Bus Queue the client connects to.
         :keyword int retry_total: The total number of attempts to redo a failed operation when an error occurs.
          Default value is 3.
+        :param int idle_timeout: The timeout in seconds between received messages after which the receiver will
+         automatically shutdown. The default value is 0, meaning no timeout.
         :rtype: ~azure.servicebus.ServiceBusReceiver
         :raises: :class:`ServiceBusConnectionError`
          :class:`ServiceBusAuthorizationError`
