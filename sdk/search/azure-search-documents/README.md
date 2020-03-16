@@ -2,11 +2,11 @@
 
 Azure Cognitive Search is a fully managed cloud search service that provides a rich search experience to custom applications.
 
-[Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/search/azure-search) |
-[Package (PyPI)](https://pypi.org/project/azure-search/) |
+[Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/search/azure-search-documents) |
+[Package (PyPI)](https://pypi.org/project/azure-search-documents/) |
 [API reference documentation](https://aka.ms/azsdk-python-search-ref-docs) |
 [Product documentation](https://docs.microsoft.com/en-us/azure/search/search-what-is-azure-search) |
-[Samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/search/azure-search/samples)
+[Samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/search/azure-search-documents/samples)
 
 ## Getting started
 
@@ -32,7 +32,7 @@ The above creates a resource with the "Standard" pricing tier. See [choosing a p
 Install the Azure Cognitive Search client library for Python with [pip](https://pypi.org/project/pip/):
 
 ```bash
-pip install azure-search --pre
+pip install azure-search-documents --pre
 ```
 
 ### Create an Azure Cognitive Search service
@@ -180,23 +180,23 @@ result =  search_client.search(query="spa", logging_enable=True)
 
 Authenticate the client with a Azure Cognitive Search [API Key Credential](https://docs.microsoft.com/en-us/azure/search/search-security-api-keys):
 
-[sample_authentication.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/search/azure-search/samples/sample_authentication.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/search/azure-search/samples/async_samples/sample_authentication_async.py))
+[sample_authentication.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/search/azure-search-documents/samples/sample_authentication.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/search/azure-search-documents/samples/async_samples/sample_authentication_async.py))
 
 Then for common search index operations:
 
-* Get a document by key: [sample_get_document.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/search/azure-search/samples/sample_get_document.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/search/azure-search/samples/async_samples/sample_get_document_async.py))
+* Get a document by key: [sample_get_document.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/search/azure-search-documents/samples/sample_get_document.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/search/azure-search-documents/samples/async_samples/sample_get_document_async.py))
 
-* Perform a simple text query: [sample_simple_query.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/search/azure-search/samples/sample_simple_query.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/search/azure-search/samples/async_samples/sample_simple_query_async.py))
+* Perform a simple text query: [sample_simple_query.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/search/azure-search-documents/samples/sample_simple_query.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/search/azure-search-documents/samples/async_samples/sample_simple_query_async.py))
 
-* Perform a filtered query: [sample_filter_query.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/search/azure-search/samples/sample_filter_query.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/search/azure-search/samples/async_samples/sample_filter_query_async.py))
+* Perform a filtered query: [sample_filter_query.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/search/azure-search-documents/samples/sample_filter_query.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/search/azure-search-documents/samples/async_samples/sample_filter_query_async.py))
 
-* Perform a faceted query: [sample_facet_query.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/search/azure-search/samples/sample_facet_query.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/search/azure-search/samples/async_samples/sample_facet_query_async.py))
+* Perform a faceted query: [sample_facet_query.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/search/azure-search-documents/samples/sample_facet_query.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/search/azure-search-documents/samples/async_samples/sample_facet_query_async.py))
 
-* Get auto-completions: [sample_autocomplete.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/search/azure-search/samples/sample_autocomplete.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/search/azure-search/samples/async_samples/sample_autocomplete_async.py))
+* Get auto-completions: [sample_autocomplete.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/search/azure-search-documents/samples/sample_autocomplete.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/search/azure-search-documents/samples/async_samples/sample_autocomplete_async.py))
 
-* Get search suggestions: [sample_suggestions.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/search/azure-search/samples/sample_suggestions.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/search/azure-search/samples/async_samples/sample_suggestions_async.py))
+* Get search suggestions: [sample_suggestions.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/search/azure-search-documents/samples/sample_suggestions.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/search/azure-search-documents/samples/async_samples/sample_suggestions_async.py))
 
-* Perform basic document updates: [sample_crud_operations.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/search/azure-search/samples/sample_crud_operations.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/search/azure-search/samples/async_samples/sample_crud_operations_async.py))
+* Perform basic document updates: [sample_crud_operations.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/search/azure-search-documents/samples/sample_crud_operations.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/search/azure-search-documents/samples/async_samples/sample_crud_operations_async.py))
 
 ### Additional documentation
 
@@ -216,7 +216,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 
 <!-- LINKS -->
 
-![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fsdk%2Fsearch%2Fazure-search%2FREADME.png)
+![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fsdk%2Fsearch%2Fazure-search-documents%2FREADME.png)
 
 [azure_cli]: https://docs.microsoft.com/cli/azure
 [azure_core]: ../../core/azure-core/README.md

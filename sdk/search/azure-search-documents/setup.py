@@ -13,7 +13,7 @@ import re
 from setuptools import setup, find_packages
 
 # Change the PACKAGE_NAME only to change folder and different name
-PACKAGE_NAME = "azure-search"
+PACKAGE_NAME = "azure-search-documents"
 PACKAGE_PPRINT_NAME = "Azure Cognitive Search"
 
 # a-b-c => a/b/c
@@ -54,7 +54,7 @@ setup(
     license='MIT License',
     author='Microsoft Corporation',
     author_email='ascl@microsoft.com',
-    url='https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/search/azure-search',
+    url='https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/search/azure-search-documents',
     classifiers=[
         "Development Status :: 4 - Beta",
         'Programming Language :: Python',
