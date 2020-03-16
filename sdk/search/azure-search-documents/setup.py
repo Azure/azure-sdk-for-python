@@ -79,7 +79,7 @@ setup(
         "msrest>=0.6.10",
     ],
     extras_require={
-        ":python_version<'3.0'": ['futures', 'azure-nspkg'],
+        ":python_version<'3.0'": ['futures', 'azure-search-nspkg'],
         ":python_version<'3.4'": ['enum34>=1.0.4'],
         ":python_version<'3.5'": ["typing"]
     },
