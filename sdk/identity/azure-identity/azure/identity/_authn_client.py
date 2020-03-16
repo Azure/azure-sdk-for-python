@@ -5,6 +5,7 @@
 import abc
 import calendar
 import time
+import os
 
 from msal import TokenCache
 
@@ -22,7 +23,7 @@ from azure.core.pipeline.policies import (
     UserAgentPolicy,
 )
 from azure.core.pipeline.transport import RequestsTransport, HttpRequest
-from ._constants import AZURE_CLI_CLIENT_ID, KnownAuthorities
+from ._constants import AZURE_CLI_CLIENT_ID, KnownAuthorities, EnvironmentVariables
 from ._internal.user_agent import USER_AGENT
 
 try:
@@ -61,7 +62,9 @@ class AuthnClientBase(ABC):
         else:
             if not tenant:
                 raise ValueError("'tenant' is required")
-            authority = authority or KnownAuthorities.AZURE_PUBLIC_CLOUD
+            if not authority:
+                authority = os.environ.get(
+                    EnvironmentVariables.AZURE_AUTHORITY_HOST, KnownAuthorities.AZURE_PUBLIC_CLOUD)
             self._auth_url = "https://" + "/".join((authority.strip("/"), tenant.strip("/"), "oauth2/v2.0/token"))
         self._cache = kwargs.get("cache") or TokenCache()  # type: TokenCache
 

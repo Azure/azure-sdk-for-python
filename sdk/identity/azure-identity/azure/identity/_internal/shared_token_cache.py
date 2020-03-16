@@ -8,8 +8,9 @@ import sys
 
 from msal import TokenCache
 
-from .. import CredentialUnavailableError
-from .._constants import KnownAuthorities
+from azure.core.exceptions import ClientAuthenticationError
+from .._constants import KnownAuthorities, EnvironmentVariables
+
 
 try:
     ABC = abc.ABC
@@ -86,7 +87,8 @@ class SharedTokenCacheBase(ABC):
     def __init__(self, username=None, **kwargs):  # pylint:disable=unused-argument
         # type: (Optional[str], **Any) -> None
 
-        self._authority = kwargs.pop("authority", None) or KnownAuthorities.AZURE_PUBLIC_CLOUD
+        self._authority = kwargs.pop("authority", None) or os.environ.get(
+            EnvironmentVariables.AZURE_AUTHORITY_HOST, KnownAuthorities.AZURE_PUBLIC_CLOUD)
         self._authority_aliases = KNOWN_ALIASES.get(self._authority) or frozenset((self._authority,))
         self._username = username
         self._tenant_id = kwargs.pop("tenant_id", None)

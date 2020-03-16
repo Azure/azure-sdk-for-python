@@ -7,6 +7,7 @@ This entails monkeypatching MSAL's OAuth client with an adapter substituting an 
 """
 import abc
 import time
+import os
 
 import msal
 from azure.core.credentials import AccessToken
@@ -14,7 +15,7 @@ from azure.core.exceptions import ClientAuthenticationError
 
 from .exception_wrapper import wrap_exceptions
 from .msal_transport_adapter import MsalTransportAdapter
-from .._constants import KnownAuthorities
+from .._constants import KnownAuthorities, EnvironmentVariables
 
 try:
     ABC = abc.ABC
@@ -37,7 +38,8 @@ class MsalCredential(ABC):
     def __init__(self, client_id, client_credential=None, **kwargs):
         # type: (str, Optional[Union[str, Mapping[str, str]]], **Any) -> None
         tenant_id = kwargs.pop("tenant_id", "organizations")
-        authority = kwargs.pop("authority", KnownAuthorities.AZURE_PUBLIC_CLOUD)
+        authority = kwargs.pop("authority", None) or os.environ.get(
+            EnvironmentVariables.AZURE_AUTHORITY_HOST, KnownAuthorities.AZURE_PUBLIC_CLOUD)
         self._base_url = "https://" + "/".join((authority.strip("/"), tenant_id.strip("/")))
         self._client_credential = client_credential
         self._client_id = client_id

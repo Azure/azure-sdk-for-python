@@ -6,6 +6,7 @@ import abc
 import copy
 import functools
 import time
+import os
 
 try:
     from typing import TYPE_CHECKING
@@ -17,7 +18,7 @@ from msal.oauth2cli.oauth2 import Client
 
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
-from .._constants import KnownAuthorities
+from .._constants import KnownAuthorities, EnvironmentVariables
 
 try:
     ABC = abc.ABC
@@ -34,7 +35,8 @@ class AadClientBase(ABC):
 
     def __init__(self, tenant_id, client_id, cache=None, **kwargs):
         # type: (str, str, Optional[TokenCache], **Any) -> None
-        authority = kwargs.pop("authority", KnownAuthorities.AZURE_PUBLIC_CLOUD)
+        authority = kwargs.pop("authority", None) or os.environ.get(
+            EnvironmentVariables.AZURE_AUTHORITY_HOST, KnownAuthorities.AZURE_PUBLIC_CLOUD)
         if authority[-1] == "/":
             authority = authority[:-1]
         token_endpoint = "https://" + "/".join((authority, tenant_id, "oauth2/v2.0/token"))
