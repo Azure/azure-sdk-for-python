@@ -19,7 +19,7 @@ SCHEMA = open(join(CWD, "hotel_schema.json")).read()
 BATCH = json.load(open(join(CWD, "hotel_small.json")))
 
 from azure.core.exceptions import HttpResponseError
-from azure.search import (
+from azure.search.documents import (
     AutocompleteQuery,
     SearchIndexClient,
     SearchApiKeyCredential,

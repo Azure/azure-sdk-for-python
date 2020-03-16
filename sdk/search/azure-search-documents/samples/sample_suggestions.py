@@ -28,7 +28,7 @@ key = os.getenv("AZURE_SEARCH_API_KEY")
 
 def suggest_query():
     # [START suggest_query]
-    from azure.search import SearchApiKeyCredential, SearchIndexClient, SuggestQuery
+    from azure.search.documents import SearchApiKeyCredential, SearchIndexClient, SuggestQuery
 
     search_client = SearchIndexClient(service_endpoint, index_name, SearchApiKeyCredential(key))
 

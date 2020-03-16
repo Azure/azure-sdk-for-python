@@ -11,7 +11,7 @@ FILE: sample_authentication.py
 DESCRIPTION:
     This sample demonstrates how to authenticate with the Azure Congnitive Search
     service with an API key. See more details about authentication here:
-    https://docs.microsoft.com/en-us/azure/search/search-security-api-keys
+    https://docs.microsoft.com/en-us/azure.search.documents/search-security-api-keys
 USAGE:
     python sample_authentication.py
 
@@ -25,7 +25,7 @@ import os
 
 def authentication_with_api_key_credential():
     # [START create_search_client_with_key]
-    from azure.search import SearchApiKeyCredential, SearchIndexClient
+    from azure.search.documents import SearchApiKeyCredential, SearchIndexClient
     service_endpoint = os.getenv("AZURE_SEARCH_SERVICE_ENDPOINT")
     index_name = os.getenv("AZURE_SEARCH_INDEX_NAME")
     key = os.getenv("AZURE_SEARCH_API_KEY")

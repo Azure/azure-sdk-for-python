@@ -28,7 +28,7 @@ key = os.getenv("AZURE_SEARCH_API_KEY")
 
 def filter_query():
     # [START facet_query]
-    from azure.search import SearchApiKeyCredential, SearchIndexClient, SearchQuery
+    from azure.search.documents import SearchApiKeyCredential, SearchIndexClient, SearchQuery
 
     search_client = SearchIndexClient(service_endpoint, index_name, SearchApiKeyCredential(key))
 

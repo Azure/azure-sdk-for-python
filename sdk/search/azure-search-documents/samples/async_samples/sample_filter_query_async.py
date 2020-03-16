@@ -30,8 +30,8 @@ key = os.getenv("AZURE_SEARCH_API_KEY")
 
 async def filter_query():
     # [START filter_query_async]
-    from azure.search.aio import SearchIndexClient
-    from azure.search import SearchApiKeyCredential, SearchQuery
+    from azure.search.documents.aio import SearchIndexClient
+    from azure.search.documents import SearchApiKeyCredential, SearchQuery
 
     search_client = SearchIndexClient(service_endpoint, index_name, SearchApiKeyCredential(key))
 

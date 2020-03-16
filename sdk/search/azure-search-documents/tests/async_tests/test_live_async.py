@@ -23,8 +23,8 @@ SCHEMA = open(join(CWD, "..", "hotel_schema.json")).read()
 BATCH = json.load(open(join(CWD, "..", "hotel_small.json")))
 
 from azure.core.exceptions import HttpResponseError
-from azure.search import AutocompleteQuery, SearchApiKeyCredential, SearchQuery, SuggestQuery
-from azure.search.aio import SearchIndexClient
+from azure.search.documents import AutocompleteQuery, SearchApiKeyCredential, SearchQuery, SuggestQuery
+from azure.search.documents.aio import SearchIndexClient
 
 
 def await_prepared_test(test_fn):

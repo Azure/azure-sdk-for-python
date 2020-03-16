@@ -28,7 +28,7 @@ key = os.getenv("AZURE_SEARCH_API_KEY")
 
 def simple_text_query():
     # [START simple_query]
-    from azure.search import SearchApiKeyCredential, SearchIndexClient
+    from azure.search.documents import SearchApiKeyCredential, SearchIndexClient
 
     search_client = SearchIndexClient(service_endpoint, index_name, SearchApiKeyCredential(key))
 

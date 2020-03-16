@@ -5,7 +5,7 @@
 
 import pytest
 
-from azure.search import SearchApiKeyCredential
+from azure.search.documents import SearchApiKeyCredential
 
 BAD_KEYS = (10, 10.2, None, dict(), set(), list())
 
