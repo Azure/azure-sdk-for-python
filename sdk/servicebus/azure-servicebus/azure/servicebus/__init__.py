@@ -12,9 +12,9 @@ from ._servicebus_client import ServiceBusClient
 from ._servicebus_sender import ServiceBusSender
 from ._servicebus_receiver import ServiceBusReceiver
 from ._base_handler import ServiceBusSharedKeyCredential
-from .common.message import Message, BatchMessage, PeekMessage, ReceivedMessage
-from .common.constants import ReceiveSettleMode, NEXT_AVAILABLE
-from .common.errors import (
+from ._common.message import Message, BatchMessage, PeekMessage, ReceivedMessage
+from ._common.constants import ReceiveSettleMode, NEXT_AVAILABLE
+from ._common.errors import (
     ServiceBusError,
     ServiceBusResourceNotFound,
     ServiceBusConnectionError,

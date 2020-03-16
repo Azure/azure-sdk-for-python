@@ -11,9 +11,9 @@ import functools
 
 from uamqp import authentication
 
-from azure.servicebus.common.utils import renewable_start_time, get_running_loop
-from azure.servicebus.common.errors import AutoLockRenewTimeout, AutoLockRenewFailed
-from ..common.constants import JWT_TOKEN_SCOPE
+from .._common.utils import renewable_start_time, get_running_loop
+from .._common.errors import AutoLockRenewTimeout, AutoLockRenewFailed
+from .._common.constants import JWT_TOKEN_SCOPE
 
 
 _log = logging.getLogger(__name__)

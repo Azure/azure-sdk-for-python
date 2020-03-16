@@ -18,8 +18,8 @@ from concurrent.futures import ThreadPoolExecutor
 
 from uamqp import authentication
 
-from azure.servicebus.common.errors import AutoLockRenewFailed, AutoLockRenewTimeout
-from azure.servicebus import __version__ as sdk_version
+from .errors import AutoLockRenewFailed, AutoLockRenewTimeout
+from .._version import VERSION as sdk_version
 from .constants import (
     JWT_TOKEN_SCOPE
 )

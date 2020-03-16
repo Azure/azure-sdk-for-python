@@ -14,14 +14,14 @@ from uamqp import ReceiveClientAsync, types, constants
 from ._base_handler_async import BaseHandlerAsync
 from .async_message import ReceivedMessage
 from .._servicebus_receiver import ReceiverMixin
-from ..common.utils import create_properties
-from ..common.constants import (
+from .._common.utils import create_properties
+from .._common.constants import (
     REQUEST_RESPONSE_UPDATE_DISPOSTION_OPERATION,
     REQUEST_RESPONSE_PEEK_OPERATION,
     REQUEST_RESPONSE_RECEIVE_BY_SEQUENCE_NUMBER,
     ReceiveSettleMode
 )
-from ..common import mgmt_handlers
+from .._common import mgmt_handlers
 from .async_utils import create_authentication
 
 if TYPE_CHECKING:

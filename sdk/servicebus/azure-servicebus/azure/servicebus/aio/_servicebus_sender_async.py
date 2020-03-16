@@ -4,27 +4,27 @@
 # --------------------------------------------------------------------------------------------
 import logging
 import asyncio
-import datetime
 from typing import Any, TYPE_CHECKING, Union, List
 
 import uamqp
 from uamqp import SendClientAsync, types
 
-from ..common.message import Message, BatchMessage
+from .._common.message import Message, BatchMessage
 from .._servicebus_sender import SenderMixin
 from ._base_handler_async import BaseHandlerAsync
-from ..common.errors import (
+from .._common.errors import (
     MessageSendFailed
 )
-from ..common.constants import (
+from .._common.constants import (
     REQUEST_RESPONSE_SCHEDULE_MESSAGE_OPERATION,
     REQUEST_RESPONSE_CANCEL_SCHEDULED_MESSAGE_OPERATION
 )
-from ..common import mgmt_handlers
-from ..common.utils import create_properties
+from .._common import mgmt_handlers
+from .._common.utils import create_properties
 from .async_utils import create_authentication
 
 if TYPE_CHECKING:
+    import datetime
     from azure.core.credentials import TokenCredential
 
 _LOGGER = logging.getLogger(__name__)
@@ -147,6 +147,7 @@ class ServiceBusSender(BaseHandlerAsync, SenderMixin):
                 :dedent: 4
                 :caption: Schedule a message to be sent in future
         """
+        # pylint: disable=protected-access
         await self._open()
         if isinstance(message, BatchMessage):
             request_body = self._build_schedule_request(schedule_time_utc, *message._messages)

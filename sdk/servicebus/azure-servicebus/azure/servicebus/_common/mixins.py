@@ -18,13 +18,13 @@ from uamqp import Source
 
 import azure.common
 import azure.servicebus
-from azure.servicebus.common.constants import (
+from .constants import (
     NEXT_AVAILABLE,
     SESSION_LOCKED_UNTIL,
     DATETIMEOFFSET_EPOCH,
     SESSION_FILTER)
-from azure.servicebus.common.utils import parse_conn_str, build_uri
-from azure.servicebus.common.errors import (
+from .utils import parse_conn_str, build_uri
+from .errors import (
     ServiceBusConnectionError,
     ServiceBusResourceNotFound)
 from azure.servicebus.control_client import ServiceBusService

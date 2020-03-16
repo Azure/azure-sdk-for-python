@@ -12,9 +12,9 @@ from typing import Any, List, TYPE_CHECKING, Optional
 from uamqp import ReceiveClient, Source, types, constants
 
 from ._base_handler import BaseHandler
-from .common.utils import create_properties, create_authentication
-from .common.message import PeekMessage, ReceivedMessage
-from .common.constants import (
+from ._common.utils import create_properties, create_authentication
+from ._common.message import PeekMessage, ReceivedMessage
+from ._common.constants import (
     REQUEST_RESPONSE_RECEIVE_BY_SEQUENCE_NUMBER,
     REQUEST_RESPONSE_UPDATE_DISPOSTION_OPERATION,
     REQUEST_RESPONSE_PEEK_OPERATION,
@@ -24,8 +24,8 @@ from .common.constants import (
     DATETIMEOFFSET_EPOCH,
     SESSION_FILTER,
 )
-from .common.errors import _ServiceBusErrorPolicy
-from .common import mgmt_handlers
+from ._common.errors import _ServiceBusErrorPolicy
+from ._common import mgmt_handlers
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential

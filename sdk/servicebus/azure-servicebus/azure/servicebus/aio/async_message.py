@@ -7,15 +7,16 @@
 import datetime
 import uuid
 
-from ..common import message as sync_message
-from ..common.constants import (
+from .._common import message as sync_message
+from .._common.constants import (
     SETTLEMENT_ABANDON,
     SETTLEMENT_COMPLETE,
     SETTLEMENT_DEFER,
     SETTLEMENT_DEADLETTER,
-    ReceiveSettleMode
+    ReceiveSettleMode,
+    _X_OPT_LOCK_TOKEN
 )
-from ..common.utils import get_running_loop
+from .._common.utils import get_running_loop
 
 
 class ReceivedMessage(sync_message.ReceivedMessage):
@@ -35,7 +36,7 @@ class ReceivedMessage(sync_message.ReceivedMessage):
             return uuid.UUID(bytes_le=self.message.delivery_tag)
         delivery_annotations = self.message.delivery_annotations
         if delivery_annotations:
-            return delivery_annotations.get(self._x_OPT_LOCK_TOKEN)
+            return delivery_annotations.get(_X_OPT_LOCK_TOKEN)
         return None
 
     @property

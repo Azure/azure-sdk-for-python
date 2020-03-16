@@ -21,8 +21,8 @@ from uamqp import (
     constants,
 )
 from uamqp.message import MessageProperties
-from .common._configuration import Configuration
-from .common.errors import (
+from ._common._configuration import Configuration
+from ._common.errors import (
     InvalidHandlerState,
     ServiceBusError,
     ServiceBusConnectionError,

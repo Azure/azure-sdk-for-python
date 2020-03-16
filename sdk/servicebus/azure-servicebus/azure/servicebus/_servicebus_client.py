@@ -9,8 +9,8 @@ import uamqp
 from ._base_handler import _parse_conn_str, ServiceBusSharedKeyCredential
 from ._servicebus_sender import ServiceBusSender
 from ._servicebus_receiver import ServiceBusReceiver
-from .common._configuration import Configuration
-from .common.utils import create_authentication
+from ._common._configuration import Configuration
+from ._common.utils import create_authentication
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential

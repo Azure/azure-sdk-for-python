@@ -14,7 +14,7 @@ from uamqp import (
 from uamqp.message import MessageProperties
 
 from .._base_handler import BaseHandler, _generate_sas_token
-from ..common.errors import (
+from .._common.errors import (
     InvalidHandlerState,
     ServiceBusError,
     ServiceBusConnectionError,

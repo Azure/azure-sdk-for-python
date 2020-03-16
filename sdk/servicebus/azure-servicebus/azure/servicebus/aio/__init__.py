@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-from ..common.errors import (
+from .._common.errors import (
     ServiceBusError,
     ServiceBusResourceNotFound,
     ServiceBusConnectionError,
@@ -17,8 +17,8 @@ from ..common.errors import (
     SessionLockExpired,
     AutoLockRenewFailed,
     AutoLockRenewTimeout)
-from ..common.constants import ReceiveSettleMode, NEXT_AVAILABLE
-from ..common.message import PeekMessage, Message, BatchMessage
+from .._common.constants import ReceiveSettleMode, NEXT_AVAILABLE
+from .._common.message import PeekMessage, Message, BatchMessage
 from .async_message import ReceivedMessage
 from ._base_handler_async import ServiceBusSharedKeyCredential
 from ._servicebus_sender_async import ServiceBusSender

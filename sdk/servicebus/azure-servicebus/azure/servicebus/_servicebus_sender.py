@@ -4,7 +4,6 @@
 # --------------------------------------------------------------------------------------------
 import logging
 import time
-import datetime
 import uuid
 from typing import Any, TYPE_CHECKING, Union, List
 
@@ -12,20 +11,21 @@ import uamqp
 from uamqp import SendClient, types
 
 from ._base_handler import BaseHandler
-from .common import mgmt_handlers
-from .common.message import Message, BatchMessage
-from .common.errors import (
+from ._common import mgmt_handlers
+from ._common.message import Message, BatchMessage
+from ._common.errors import (
     MessageSendFailed,
     OperationTimeoutError,
     _ServiceBusErrorPolicy
 )
-from .common.utils import create_properties, create_authentication
-from .common.constants import (
+from ._common.utils import create_properties, create_authentication
+from ._common.constants import (
     REQUEST_RESPONSE_CANCEL_SCHEDULED_MESSAGE_OPERATION,
     REQUEST_RESPONSE_SCHEDULE_MESSAGE_OPERATION
 )
 
 if TYPE_CHECKING:
+    import datetime
     from azure.core.credentials import TokenCredential
 
 _LOGGER = logging.getLogger(__name__)
@@ -191,6 +191,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 :dedent: 4
                 :caption: Schedule a message to be sent in future
         """
+        # pylint: disable=protected-access
         self._open()
         if isinstance(message, BatchMessage):
             request_body = self._build_schedule_request(schedule_time_utc, *message._messages)

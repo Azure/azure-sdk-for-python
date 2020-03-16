@@ -10,7 +10,7 @@ from .._base_handler import _parse_conn_str
 from ._base_handler_async import ServiceBusSharedKeyCredential
 from ._servicebus_sender_async import ServiceBusSender
 from ._servicebus_receiver_async import ServiceBusReceiver
-from ..common._configuration import Configuration
+from .._common._configuration import Configuration
 from .async_utils import create_authentication
 
 if TYPE_CHECKING:
