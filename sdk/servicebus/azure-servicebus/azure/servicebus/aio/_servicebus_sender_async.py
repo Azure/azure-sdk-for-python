@@ -4,10 +4,11 @@
 # --------------------------------------------------------------------------------------------
 import logging
 import asyncio
-from typing import Any, TYPE_CHECKING
+import datetime
+from typing import Any, TYPE_CHECKING, Union, List
 
 import uamqp
-from uamqp import SendClientAsync
+from uamqp import SendClientAsync, types
 
 from ..common.message import Message, BatchMessage
 from .._servicebus_sender import SenderMixin
@@ -15,6 +16,11 @@ from ._base_handler_async import BaseHandlerAsync
 from ..common.errors import (
     MessageSendFailed
 )
+from ..common.constants import (
+    REQUEST_RESPONSE_SCHEDULE_MESSAGE_OPERATION,
+    REQUEST_RESPONSE_CANCEL_SCHEDULED_MESSAGE_OPERATION
+)
+from ..common import mgmt_handlers
 from ..common.utils import create_properties
 from .async_utils import create_authentication
 
@@ -121,6 +127,66 @@ class ServiceBusSender(BaseHandlerAsync, SenderMixin):
             await self._handler.send_message_async(message.message)
         except Exception as e:
             raise MessageSendFailed(e)
+
+    async def _schedule(self, message, schedule_time_utc):
+        # type: (Union[Message, BatchMessage], datetime.datetime) -> List[int]
+        """Send Message or BatchMessage to be enqueued at a specific time.
+        Returns a list of the sequence numbers of the enqueued messages.
+        :param message: The messages to schedule.
+        :type message: ~azure.servicebus.Message or ~azure.servicebus.BatchMessage
+        :param schedule_time_utc: The utc date and time to enqueue the messages.
+        :type schedule_time_utc: ~datetime.datetime
+        :rtype: List[int]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_code_servicebus_async.py
+                :start-after: [START scheduling_messages_async]
+                :end-before: [END scheduling_messages_async]
+                :language: python
+                :dedent: 4
+                :caption: Schedule a message to be sent in future
+        """
+        await self._open()
+        if isinstance(message, BatchMessage):
+            request_body = self._build_schedule_request(schedule_time_utc, *message._messages)
+        else:
+            request_body = self._build_schedule_request(schedule_time_utc, message)
+        return await self._mgmt_request_response_with_retry(
+            REQUEST_RESPONSE_SCHEDULE_MESSAGE_OPERATION,
+            request_body,
+            mgmt_handlers.schedule_op
+        )
+
+    async def _cancel_scheduled_messages(self, sequence_numbers):
+        # type: (Union[int, List[int]]) -> None
+        """
+        Cancel one or more messages that have previously been scheduled and are still pending.
+
+        :param sequence_numbers: he sequence numbers of the scheduled messages.
+        :type sequence_numbers: int or list[int]
+        :rtype: None
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_code_servicebus_async.py
+                :start-after: [START cancel_scheduled_messages_async]
+                :end-before: [END cancel_scheduled_messages_async]
+                :language: python
+                :dedent: 4
+                :caption: Cancelling messages scheduled to be sent in future
+        """
+        await self._open()
+        if isinstance(sequence_numbers, int):
+            numbers = [types.AMQPLong(sequence_numbers)]
+        else:
+            numbers = [types.AMQPLong(s) for s in sequence_numbers]
+        request_body = {'sequence-numbers': types.AMQPArray(numbers)}
+        return await self._mgmt_request_response_with_retry(
+            REQUEST_RESPONSE_CANCEL_SCHEDULED_MESSAGE_OPERATION,
+            request_body,
+            mgmt_handlers.default
+        )
 
     @classmethod
     def from_connection_string(

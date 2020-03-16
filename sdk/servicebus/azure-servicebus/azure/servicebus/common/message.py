@@ -17,7 +17,16 @@ from .constants import (
     SETTLEMENT_COMPLETE,
     SETTLEMENT_DEFER,
     SETTLEMENT_DEADLETTER,
-    ReceiveSettleMode
+    ReceiveSettleMode,
+    _X_OPT_ENQUEUED_TIME,
+    _X_OPT_SEQUENCE_NUMBER,
+    _X_OPT_ENQUEUE_SEQUENCE_NUMBER,
+    _X_OPT_PARTITION_ID,
+    _X_OPT_PARTITION_KEY,
+    _X_OPT_VIA_PARTITION_KEY,
+    _X_OPT_LOCKED_UNTIL,
+    _X_OPT_LOCK_TOKEN,
+    _X_OPT_SCHEDULED_ENQUEUE_TIME
 )
 from .errors import (
     MessageAlreadySettled,
@@ -44,16 +53,6 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
             :caption: Sending a message with additional properties
 
     """
-
-    _X_OPT_ENQUEUED_TIME = b'x-opt-enqueued-time'
-    _X_OPT_SEQUENCE_NUMBER = b'x-opt-sequence-number'
-    _X_OPT_ENQUEUE_SEQUENCE_NUMBER = b'x-opt-enqueue-sequence-number'
-    _X_OPT_PARTITION_ID = b'x-opt-partition-id'
-    _X_OPT_PARTITION_KEY = b'x-opt-partition-key'
-    _X_OPT_VIA_PARTITION_KEY = b'x-opt-via-partition-key'
-    _X_OPT_LOCKED_UNTIL = b'x-opt-locked-until'
-    _x_OPT_LOCK_TOKEN = b'x-opt-lock-token'
-    _x_OPT_SCHEDULED_ENQUEUE_TIME = b'x-opt-scheduled-enqueue-time'
 
     def __init__(self, body, encoding='UTF-8', **kwargs):
         subject = kwargs.pop('subject', None)
@@ -139,38 +138,38 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
     @property
     def enqueue_sequence_number(self):
         if self.message.annotations:
-            return self.message.annotations.get(self._X_OPT_ENQUEUE_SEQUENCE_NUMBER)
+            return self.message.annotations.get(_X_OPT_ENQUEUE_SEQUENCE_NUMBER)
         return None
 
     @enqueue_sequence_number.setter
     def enqueue_sequence_number(self, value):
         if not self.message.annotations:
             self.message.annotations = {}
-        self.message.annotations[types.AMQPSymbol(self._X_OPT_ENQUEUE_SEQUENCE_NUMBER)] = value
+        self.message.annotations[types.AMQPSymbol(_X_OPT_ENQUEUE_SEQUENCE_NUMBER)] = value
 
     @property
     def partition_key(self):
         if self.message.annotations:
-            return self.message.annotations.get(self._X_OPT_PARTITION_KEY)
+            return self.message.annotations.get(_X_OPT_PARTITION_KEY)
         return None
 
     @partition_key.setter
     def partition_key(self, value):
         if not self.message.annotations:
             self.message.annotations = {}
-        self.message.annotations[types.AMQPSymbol(self._X_OPT_PARTITION_KEY)] = value
+        self.message.annotations[types.AMQPSymbol(_X_OPT_PARTITION_KEY)] = value
 
     @property
     def via_partition_key(self):
         if self.message.annotations:
-            return self.message.annotations.get(self._X_OPT_VIA_PARTITION_KEY)
+            return self.message.annotations.get(_X_OPT_VIA_PARTITION_KEY)
         return None
 
     @via_partition_key.setter
     def via_partition_key(self, value):
         if not self.message.annotations:
             self.message.annotations = {}
-        self.message.annotations[types.AMQPSymbol(self._X_OPT_VIA_PARTITION_KEY)] = value
+        self.message.annotations[types.AMQPSymbol(_X_OPT_VIA_PARTITION_KEY)] = value
 
     @property
     def time_to_live(self):
@@ -205,7 +204,7 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
             self.properties.message_id = str(uuid.uuid4())
         if not self.message.annotations:
             self.message.annotations = {}
-        self.message.annotations[types.AMQPSymbol(self._x_OPT_SCHEDULED_ENQUEUE_TIME)] = schedule_time
+        self.message.annotations[types.AMQPSymbol(_X_OPT_SCHEDULED_ENQUEUE_TIME)] = schedule_time
 
 
 class BatchMessage(object):
@@ -229,6 +228,7 @@ class BatchMessage(object):
         self.message = uamqp.BatchMessage(data=[], multi_messages=False, properties=None)
         self._size = self.message.gather()[0].get_message_encoded_size()
         self._count = 0
+        self._messages = []
 
     def __repr__(self):
         # type: () -> str
@@ -277,6 +277,7 @@ class BatchMessage(object):
         self.message._body_gen.append(message)  # pylint: disable=protected-access
         self._size = size_after_add
         self._count += 1
+        self._messages.append(message)
 
 
 class PeekMessage(Message):
@@ -305,13 +306,13 @@ class PeekMessage(Message):
     @property
     def partition_id(self):
         if self.message.annotations:
-            return self.message.annotations.get(self._X_OPT_PARTITION_ID)
+            return self.message.annotations.get(_X_OPT_PARTITION_ID)
         return None
 
     @property
     def enqueued_time(self):
         if self.message.annotations:
-            timestamp = self.message.annotations.get(self._X_OPT_ENQUEUED_TIME)
+            timestamp = self.message.annotations.get(_X_OPT_ENQUEUED_TIME)
             if timestamp:
                 in_seconds = timestamp/1000.0
                 return datetime.datetime.utcfromtimestamp(in_seconds)
@@ -320,7 +321,7 @@ class PeekMessage(Message):
     @property
     def scheduled_enqueue_time(self):
         if self.message.annotations:
-            timestamp = self.message.annotations.get(self._x_OPT_SCHEDULED_ENQUEUE_TIME)
+            timestamp = self.message.annotations.get(_X_OPT_SCHEDULED_ENQUEUE_TIME)
             if timestamp:
                 in_seconds = timestamp/1000.0
                 return datetime.datetime.utcfromtimestamp(in_seconds)
@@ -329,7 +330,7 @@ class PeekMessage(Message):
     @property
     def sequence_number(self):
         if self.message.annotations:
-            return self.message.annotations.get(self._X_OPT_SEQUENCE_NUMBER)
+            return self.message.annotations.get(_X_OPT_SEQUENCE_NUMBER)
         return None
 
 
@@ -389,8 +390,8 @@ class ReceivedMessage(PeekMessage):
             return None
         if self._expiry:
             return self._expiry
-        if self.message.annotations and self._X_OPT_LOCKED_UNTIL in self.message.annotations:
-            expiry_in_seconds = self.message.annotations[self._X_OPT_LOCKED_UNTIL]/1000
+        if self.message.annotations and _X_OPT_LOCKED_UNTIL in self.message.annotations:
+            expiry_in_seconds = self.message.annotations[_X_OPT_LOCKED_UNTIL]/1000
             self._expiry = datetime.datetime.fromtimestamp(expiry_in_seconds)
         return self._expiry
 
@@ -404,7 +405,7 @@ class ReceivedMessage(PeekMessage):
 
         delivery_annotations = self.message.delivery_annotations
         if delivery_annotations:
-            return delivery_annotations.get(self._x_OPT_LOCK_TOKEN)
+            return delivery_annotations.get(_X_OPT_LOCK_TOKEN)
         return None
 
     def complete(self):

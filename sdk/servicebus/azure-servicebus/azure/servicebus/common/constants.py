@@ -53,6 +53,17 @@ USER_AGENT_PREFIX = "azsdk-python-servicebus"
 # event_data.encoded_size < 255, batch encode overhead is 5, >=256, overhead is 8 each
 _BATCH_MESSAGE_OVERHEAD_COST = [5, 8]
 
+# Message annotation keys
+_X_OPT_ENQUEUED_TIME = b'x-opt-enqueued-time'
+_X_OPT_SEQUENCE_NUMBER = b'x-opt-sequence-number'
+_X_OPT_ENQUEUE_SEQUENCE_NUMBER = b'x-opt-enqueue-sequence-number'
+_X_OPT_PARTITION_ID = b'x-opt-partition-id'
+_X_OPT_PARTITION_KEY = b'x-opt-partition-key'
+_X_OPT_VIA_PARTITION_KEY = b'x-opt-via-partition-key'
+_X_OPT_LOCKED_UNTIL = b'x-opt-locked-until'
+_X_OPT_LOCK_TOKEN = b'x-opt-lock-token'
+_X_OPT_SCHEDULED_ENQUEUE_TIME = b'x-opt-scheduled-enqueue-time'
+
 
 class ReceiveSettleMode(Enum):
     PeekLock = constants.ReceiverSettleMode.PeekLock
