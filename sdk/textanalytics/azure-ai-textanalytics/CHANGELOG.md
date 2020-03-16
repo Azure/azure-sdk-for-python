@@ -2,6 +2,9 @@
 
 ## 1.0.0b4 (Unreleased)
 
+**Breaking changes**
+- All input parameters `inputs` have been renamed to `documents`
+
 
 ## 1.0.0b3 (2020-03-10)
 
