@@ -7,20 +7,12 @@
 import sys
 from setuptools import setup
 
-# azure v0.x is not compatible with this package
-# azure v0.x used to have a __version__ attribute (newer versions don't)
-try:
-    import azure
-
-    try:
-        ver = azure.__version__
-        raise Exception(
-            "This package is incompatible with azure=={}. ".format(ver) + 'Uninstall it with "pip uninstall azure".'
-        )
-    except AttributeError:
-        pass
-except ImportError:
-    pass
+PACKAGES = []
+# Do an empty package on Python 3 and not python_requires, since not everybody is ready
+# https://github.com/Azure/azure-sdk-for-python/issues/3447
+# https://github.com/Azure/azure-sdk-for-python/issues/3481
+if sys.version_info[0] < 3:
+    PACKAGES = ['azure.search']
 
 setup(
     name="azure-search-nspkg",
@@ -41,9 +33,10 @@ setup(
         "Programming Language :: Python :: 3.5",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
         "License :: OSI Approved :: MIT License",
     ],
     zip_safe=False,
-    packages=["azure.search"],
+    packages=PACKAGES,
     install_requires=["azure-nspkg>=3.0.0"],
 )
