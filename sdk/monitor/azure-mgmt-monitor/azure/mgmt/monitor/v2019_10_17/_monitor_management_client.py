@@ -12,7 +12,7 @@
 from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 
-from ._configuration import MonitorClientConfiguration
+from ._configuration import MonitorManagementClientConfiguration
 from .operations import PrivateLinkScopesOperations
 from .operations import PrivateLinkScopeOperationStatusOperations
 from .operations import PrivateLinkResourcesOperations
@@ -21,11 +21,11 @@ from .operations import PrivateLinkScopedResourcesOperations
 from . import models
 
 
-class MonitorClient(SDKClient):
+class MonitorManagementClient(SDKClient):
     """Monitor Management Client
 
     :ivar config: Configuration for client.
-    :vartype config: MonitorClientConfiguration
+    :vartype config: MonitorManagementClientConfiguration
 
     :ivar private_link_scopes: PrivateLinkScopes operations
     :vartype private_link_scopes: azure.mgmt.monitor.v2019_10_17.operations.PrivateLinkScopesOperations
@@ -49,8 +49,8 @@ class MonitorClient(SDKClient):
     def __init__(
             self, credentials, subscription_id, base_url=None):
 
-        self.config = MonitorClientConfiguration(credentials, subscription_id, base_url)
-        super(MonitorClient, self).__init__(self.config.credentials, self.config)
+        self.config = MonitorManagementClientConfiguration(credentials, subscription_id, base_url)
+        super(MonitorManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = '2019-10-17-preview'

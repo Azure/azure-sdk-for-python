@@ -13,8 +13,8 @@ from msrestazure import AzureConfiguration
 from .version import VERSION
 
 
-class MonitorClientConfiguration(AzureConfiguration):
-    """Configuration for MonitorClient
+class MonitorManagementClientConfiguration(AzureConfiguration):
+    """Configuration for MonitorManagementClient
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
@@ -36,7 +36,7 @@ class MonitorClientConfiguration(AzureConfiguration):
         if not base_url:
             base_url = 'https://management.azure.com'
 
-        super(MonitorClientConfiguration, self).__init__(base_url)
+        super(MonitorManagementClientConfiguration, self).__init__(base_url)
 
         # Starting Autorest.Python 4.0.64, make connection pool activated by default
         self.keep_alive = True
