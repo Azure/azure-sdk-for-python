@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-from .._common.errors import (
+from ..exceptions import (
     ServiceBusError,
     ServiceBusResourceNotFound,
     ServiceBusConnectionError,

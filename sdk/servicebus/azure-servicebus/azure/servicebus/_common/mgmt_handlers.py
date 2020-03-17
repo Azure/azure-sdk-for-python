@@ -7,7 +7,7 @@
 import uamqp
 
 from .message import PeekMessage, ReceivedMessage
-from .errors import ServiceBusError, MessageLockExpired
+from ..exceptions import ServiceBusError, MessageLockExpired
 from .constants import ReceiveSettleMode
 
 

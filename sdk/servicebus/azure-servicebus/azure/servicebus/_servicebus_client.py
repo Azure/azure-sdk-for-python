@@ -20,7 +20,7 @@ class ServiceBusClient(object):
     """The ServiceBusClient class defines a high level interface for
     getting ServiceBusSender and ServiceBusReceiver.
 
-    :param str fully_qualified_namespace: The fully qualified host name for the Service Bus namespace.
+    :ivar str fully_qualified_namespace: The fully qualified host name for the Service Bus namespace.
      The namespace format is: `<yournamespace>.servicebus.windows.net`.
     :param ~azure.core.credentials.TokenCredential credential: The credential object used for authentication which
      implements a particular interface for getting tokens. It accepts
@@ -74,7 +74,7 @@ class ServiceBusClient(object):
 
     def close(self) -> None:
         """
-        Close down the ServiceBus client.
+        Close down the ServiceBus client and the underlying connection.
 
         :return: None
         """
@@ -90,7 +90,7 @@ class ServiceBusClient(object):
         """
         Create a ServiceBusClient from a connection string.
 
-        :param conn_str: The connection string of a Service Bus.
+        :param str conn_str: The connection string of a Service Bus.
         :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
         :keyword transport_type: The type of transport protocol that will be used for communicating with
          the Service Bus service. Default is `TransportType.Amqp`.

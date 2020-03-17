@@ -20,11 +20,12 @@ from uamqp import (
 )
 from uamqp.message import MessageProperties
 from ._common._configuration import Configuration
-from ._common.errors import (
+from .exceptions import (
     InvalidHandlerState,
     ServiceBusError,
     _create_servicebus_exception
 )
+from ._common.utils import create_properties
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -120,8 +121,8 @@ class BaseHandler(object):  # pylint:disable=too-many-instance-attributes
         self._idle_timeout = kwargs.get("idle_timeout", None)
         self._running = False
         self._handler = None
-        self._error = None
         self._auth_uri = None
+        self._properties = create_properties()
 
     def __enter__(self):
         return self
@@ -262,24 +263,14 @@ class BaseHandler(object):  # pylint:disable=too-many-instance-attributes
             self._handler = None
         self._running = False
 
-    def close(self, exception=None):
-        # type: (Exception) -> None
-        """Close down the handler connection.
+    def close(self):
+        # type: () -> None
+        """Close down the handler links (and connection if the handler uses a separate connection).
 
-        If the handler has already closed, this operation will do nothing. An optional exception can be passed in to
-        indicate that the handler was shutdown due to error.
+        If the handler has already closed, this operation will do nothing.
 
-        :param Exception exception: An optional exception if the handler is closing
-         due to an error.
         :rtype: None
         """
-        if self._error:
+        if not self._running:
             return
-        if isinstance(exception, ServiceBusError):
-            self._error = exception
-        elif exception:
-            self._error = ServiceBusError(str(exception))
-        else:
-            self._error = ServiceBusError("This message handler is now closed.")
-
         self._close_handler()

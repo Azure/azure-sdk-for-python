@@ -12,7 +12,7 @@ import functools
 from uamqp import authentication
 
 from .._common.utils import renewable_start_time, get_running_loop
-from .._common.errors import AutoLockRenewTimeout, AutoLockRenewFailed
+from ..exceptions import AutoLockRenewTimeout, AutoLockRenewFailed
 from .._common.constants import JWT_TOKEN_SCOPE
 
 

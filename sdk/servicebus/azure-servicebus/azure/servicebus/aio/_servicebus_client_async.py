@@ -21,7 +21,7 @@ class ServiceBusClient(object):
     """The ServiceBusClient class defines a high level interface for
     getting ServiceBusSender and ServiceBusReceiver.
 
-    :param str fully_qualified_namespace: The fully qualified host name for the Service Bus namespace.
+    :ivar str fully_qualified_namespace: The fully qualified host name for the Service Bus namespace.
      The namespace format is: `<yournamespace>.servicebus.windows.net`.
     :param ~azure.core.credentials.TokenCredential credential: The credential object used for authentication which
      implements a particular interface for getting tokens. It accepts

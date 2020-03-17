@@ -13,12 +13,12 @@ from uamqp import SendClient, types
 from ._base_handler import BaseHandler
 from ._common import mgmt_handlers
 from ._common.message import Message, BatchMessage
-from ._common.errors import (
+from .exceptions import (
     MessageSendFailed,
     OperationTimeoutError,
     _ServiceBusErrorPolicy
 )
-from ._common.utils import create_properties, create_authentication
+from ._common.utils import create_authentication
 from ._common.constants import (
     REQUEST_RESPONSE_CANCEL_SCHEDULED_MESSAGE_OPERATION,
     REQUEST_RESPONSE_SCHEDULE_MESSAGE_OPERATION
@@ -33,12 +33,12 @@ _LOGGER = logging.getLogger(__name__)
 
 class SenderMixin(object):
     def _create_attribute(self):
-        self._entity_path = self._entity_name
-        self._auth_uri = "sb://{}/{}".format(self.fully_qualified_namespace, self._entity_path)
-        self._entity_uri = "amqps://{}/{}".format(self.fully_qualified_namespace, self._entity_path)
+        self._auth_uri = "sb://{}/{}".format(self.fully_qualified_namespace, self._entity_name)
+        self._entity_uri = "amqps://{}/{}".format(self.fully_qualified_namespace, self._entity_name)
         self._error_policy = _ServiceBusErrorPolicy(max_retries=self._config.retry_total)
         self._name = "SBSender-{}".format(uuid.uuid4())
         self._max_message_size_on_link = 0
+        self.entity_name = self._entity_name
 
     def _set_msg_timeout(self, timeout=None, last_exception=None):
         if not timeout:
@@ -76,7 +76,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
     """The ServiceBusSender class defines a high level interface for
     sending messages to the Azure Service Bus Queue or Topic.
 
-    :param str fully_qualified_namespace: The fully qualified host name for the Service Bus namespace.
+    :ivar str fully_qualified_namespace: The fully qualified host name for the Service Bus namespace.
      The namespace format is: `<yournamespace>.servicebus.windows.net`.
     :param ~azure.core.credentials.TokenCredential credential: The credential object used for authentication which
      implements a particular interface for getting tokens. It accepts
@@ -137,12 +137,11 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         self._connection = kwargs.get("connection")
 
     def _create_handler(self, auth):
-        properties = create_properties()
         self._handler = SendClient(
             self._entity_uri,
             auth=auth,
             debug=self._config.logging_enable,
-            properties=properties,
+            properties=self._properties,
             error_policy=self._error_policy,
             client_name=self._name,
             encoding=self._config.encoding

@@ -14,7 +14,7 @@ from ._servicebus_receiver import ServiceBusReceiver
 from ._base_handler import ServiceBusSharedKeyCredential
 from ._common.message import Message, BatchMessage, PeekMessage, ReceivedMessage
 from ._common.constants import ReceiveSettleMode, NEXT_AVAILABLE
-from ._common.errors import (
+from .exceptions import (
     ServiceBusError,
     ServiceBusResourceNotFound,
     ServiceBusConnectionError,

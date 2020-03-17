@@ -18,7 +18,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 from uamqp import authentication
 
-from .errors import AutoLockRenewFailed, AutoLockRenewTimeout
+from ..exceptions import AutoLockRenewFailed, AutoLockRenewTimeout
 from .._version import VERSION as sdk_version
 from .constants import (
     JWT_TOKEN_SCOPE

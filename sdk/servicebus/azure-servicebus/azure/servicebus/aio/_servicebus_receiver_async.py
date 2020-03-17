@@ -6,15 +6,14 @@ import asyncio
 import collections
 import functools
 import logging
-import uuid
 from typing import Any, TYPE_CHECKING, List
 
-from uamqp import ReceiveClientAsync, types, constants
+from uamqp import ReceiveClientAsync, types
+from uamqp.constants import SenderSettleMode
 
 from ._base_handler_async import BaseHandlerAsync
 from .async_message import ReceivedMessage
 from .._servicebus_receiver import ReceiverMixin
-from .._common.utils import create_properties
 from .._common.constants import (
     REQUEST_RESPONSE_UPDATE_DISPOSTION_OPERATION,
     REQUEST_RESPONSE_PEEK_OPERATION,
@@ -34,7 +33,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
     """The ServiceBusReceiver class defines a high level interface for
     receiving messages from the Azure Service Bus Queue or Topic Subscription.
 
-    :param str fully_qualified_namespace: The fully qualified host name for the Service Bus namespace.
+    :ivar str fully_qualified_namespace: The fully qualified host name for the Service Bus namespace.
      The namespace format is: `<yournamespace>.servicebus.windows.net`.
     :param ~azure.core.credentials.TokenCredential credential: The credential object used for authentication which
      implements a particular interface for getting tokens. It accepts
@@ -43,7 +42,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
     :keyword str queue_name: The path of specific Service Bus Queue the client connects to.
     :keyword str topic_name: The path of specific Service Bus Topic which contains the Subscription
      the client connects to.
-    :keyword str subscription: The path of specific Service Bus Subscription under the
+    :keyword str subscription_name: The path of specific Service Bus Subscription under the
      specified Topic the client connects to.
     :keyword mode: The mode with which messages will be retrieved from the entity. The two options
      are PeekLock and ReceiveAndDelete. Messages received with PeekLock must be settled within a given
@@ -109,7 +108,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
     async def __anext__(self):
         while True:
             try:
-                await self._open()
+                await self._open_with_retry()
                 uamqp_message = await self._message_iter.__anext__()
                 message = self._build_message(uamqp_message, ReceivedMessage)
                 return message
@@ -120,41 +119,19 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
                 await self._handle_exception(e)
 
     def _create_handler(self, auth):
-        properties = create_properties()
         self._handler = ReceiveClientAsync(
             self._get_source_for_session_entity() if self._session_id else self._entity_uri,
             auth=auth,
             debug=self._config.logging_enable,
-            properties=properties,
+            properties=self._properties,
             error_policy=self._error_policy,
             client_name=self._name,
             on_attach=self._on_attach_for_session_entity if self._session_id else None,
             auto_complete=False,
             encoding=self._config.encoding,
-            receive_settle_mode=self._mode.value
+            receive_settle_mode=self._mode.value,
+            send_settle_mode=SenderSettleMode.Settled if self._mode == ReceiveSettleMode.ReceiveAndDelete else None
         )
-
-    async def _create_uamqp_receiver_handler(self):
-        """This is a temporary patch pending a fix in uAMQP."""
-        # pylint: disable=protected-access
-        self._handler.message_handler = self._handler.receiver_type(
-            self._handler._session,
-            self._handler._remote_address,
-            self._handler._name,
-            on_message_received=self._handler._message_received,
-            name='receiver-link-{}'.format(uuid.uuid4()),
-            debug=self._handler._debug_trace,
-            prefetch=self._handler._prefetch,
-            max_message_size=self._handler._max_message_size,
-            properties=self._handler._link_properties,
-            error_policy=self._handler._error_policy,
-            encoding=self._handler._encoding,
-            loop=self._handler.loop)
-        if self._mode != ReceiveSettleMode.PeekLock:
-            self._handler.message_handler.send_settle_mode = constants.SenderSettleMode.Settled
-            self._handler.message_handler.receive_settle_mode = constants.ReceiverSettleMode.ReceiveAndDelete
-            self._handler.message_handler._settle_mode = constants.ReceiverSettleMode.ReceiveAndDelete
-        await self._handler.message_handler.open_async()
 
     async def _open(self):
         if self._running:
@@ -165,9 +142,6 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
         self._create_handler(auth)
         await self._handler.open_async(connection=self._connection)
         self._message_iter = self._handler.receive_messages_iter_async()
-        while not await self._handler.auth_complete_async():
-            await asyncio.sleep(0.05)
-        await self._create_uamqp_receiver_handler()
         while not await self._handler.client_ready_async():
             await asyncio.sleep(0.05)
         self._running = True
@@ -181,7 +155,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
             max_batch_size=max_batch_size,
             timeout=timeout_ms)
 
-        return [self._build_message(message) for message in batch]
+        return [self._build_message(message, ReceivedMessage) for message in batch]
 
     async def _settle_deferred(self, settlement, lock_tokens, dead_letter_details=None):
         message = {
@@ -206,7 +180,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
         :keyword str queue_name: The path of specific Service Bus Queue the client connects to.
         :keyword str topic_name: The path of specific Service Bus Topic which contains the Subscription
          the client connects to.
-        :keyword str subscription: The path of specific Service Bus Subscription under the
+        :keyword str subscription_name: The path of specific Service Bus Subscription under the
          specified Topic the client connects to.
         :keyword mode: The mode with which messages will be retrieved from the entity. The two options
          are PeekLock and ReceiveAndDelete. Messages received with PeekLock must be settled within a given
@@ -246,20 +220,17 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
             raise ValueError("Subscription name is missing for the topic. Please specify subscription_name.")
         return cls(**constructor_args)
 
-    async def close(self, exception=None):
-        """Close down the handler connection.
+    async def close(self):
+        """Close down the handler links (and connection if the handler uses a separate connection).
 
-        If the handler has already closed, this operation will do nothing. An optional exception can be passed in to
-        indicate that the handler was shutdown due to error.
+        If the handler has already closed, this operation will do nothing.
 
-        :param Exception exception: An optional exception if the handler is closing
-         due to an error.
         :rtype: None
         """
         if not self._running:
             return
         self._running = False
-        await super(ServiceBusReceiver, self).close(exception=exception)
+        await super(ServiceBusReceiver, self).close()
 
     async def receive(self, max_batch_size=None, timeout=None):
         # type: (int, float) -> List[ReceivedMessage]
@@ -371,7 +342,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
             'message-count': message_count
         }
 
-        return await self._mgmt_request_response(
+        return await self._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_PEEK_OPERATION,
             message,
             mgmt_handlers.peek_op

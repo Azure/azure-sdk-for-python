@@ -10,7 +10,7 @@ import uamqp
 from uamqp.message import MessageProperties
 
 from .._base_handler import BaseHandler, _generate_sas_token
-from .._common.errors import (
+from ..exceptions import (
     InvalidHandlerState,
     ServiceBusError,
     _create_servicebus_exception
@@ -174,24 +174,16 @@ class BaseHandlerAsync(BaseHandler):
             self._handler = None
         self._running = False
 
-    async def close(self, exception=None):
-        # type: (Exception) -> None
+    async def close(self):
+        # type: () -> None
         """Close down the handler connection.
 
         If the handler has already closed, this operation will do nothing. An optional exception can be passed in to
         indicate that the handler was shutdown due to error.
 
-        :param Exception exception: An optional exception if the handler is closing
-         due to an error.
         :rtype: None
         """
-        if self._error:
+        if not self._running:
             return
-        if isinstance(exception, ServiceBusError):
-            self._error = exception
-        elif exception:
-            self._error = ServiceBusError(str(exception))
-        else:
-            self._error = ServiceBusError("This message handler is now closed.")
-
+        self._running = False
         await self._close_handler()

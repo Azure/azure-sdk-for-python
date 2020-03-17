@@ -24,7 +24,7 @@ from .constants import (
     DATETIMEOFFSET_EPOCH,
     SESSION_FILTER)
 from .utils import parse_conn_str, build_uri
-from .errors import (
+from ..exceptions import (
     ServiceBusConnectionError,
     ServiceBusResourceNotFound)
 from azure.servicebus.control_client import ServiceBusService

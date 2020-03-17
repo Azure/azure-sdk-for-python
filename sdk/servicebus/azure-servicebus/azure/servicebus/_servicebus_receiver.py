@@ -9,10 +9,11 @@ import functools
 import uuid
 from typing import Any, List, TYPE_CHECKING, Optional
 
-from uamqp import ReceiveClient, Source, types, constants
+from uamqp import ReceiveClient, Source, types
+from uamqp.constants import SenderSettleMode
 
 from ._base_handler import BaseHandler
-from ._common.utils import create_properties, create_authentication
+from ._common.utils import create_authentication
 from ._common.message import PeekMessage, ReceivedMessage
 from ._common.constants import (
     REQUEST_RESPONSE_RECEIVE_BY_SEQUENCE_NUMBER,
@@ -24,7 +25,7 @@ from ._common.constants import (
     DATETIMEOFFSET_EPOCH,
     SESSION_FILTER,
 )
-from ._common.errors import _ServiceBusErrorPolicy
+from .exceptions import _ServiceBusErrorPolicy
 from ._common import mgmt_handlers
 
 if TYPE_CHECKING:
@@ -36,15 +37,15 @@ _LOGGER = logging.getLogger(__name__)
 class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
     def _create_attribute(self, **kwargs):
         if kwargs.get("subscription_name"):
-            self.subscription_name = kwargs.get("subscription_name")
+            self._subscription_name = kwargs.get("subscription_name")
             self._is_subscription = True
-            self._entity_path = self._entity_name + "/Subscriptions/" + self.subscription_name
+            self.entity_path = self._entity_name + "/Subscriptions/" + self._subscription_name
         else:
-            self._entity_path = self._entity_name
+            self.entity_path = self._entity_name
 
         self._session_id = kwargs.get("session_id")
-        self._auth_uri = "sb://{}/{}".format(self.fully_qualified_namespace, self._entity_path)
-        self._entity_uri = "amqps://{}/{}".format(self.fully_qualified_namespace, self._entity_path)
+        self._auth_uri = "sb://{}/{}".format(self.fully_qualified_namespace, self.entity_path)
+        self._entity_uri = "amqps://{}/{}".format(self.fully_qualified_namespace, self.entity_path)
         self._mode = kwargs.get("mode", ReceiveSettleMode.PeekLock)
         self._error_policy = _ServiceBusErrorPolicy(
             max_retries=self._config.retry_total,
@@ -80,7 +81,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
     """The ServiceBusReceiver class defines a high level interface for
     receiving messages from the Azure Service Bus Queue or Topic Subscription.
 
-    :param str fully_qualified_namespace: The fully qualified host name for the Service Bus namespace.
+    :ivar str fully_qualified_namespace: The fully qualified host name for the Service Bus namespace.
      The namespace format is: `<yournamespace>.servicebus.windows.net`.
     :param ~azure.core.credentials.TokenCredential credential: The credential object used for authentication which
      implements a particular interface for getting tokens. It accepts
@@ -89,7 +90,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
     :keyword str queue_name: The path of specific Service Bus Queue the client connects to.
     :keyword str topic_name: The path of specific Service Bus Topic which contains the Subscription
      the client connects to.
-    :keyword str subscription: The path of specific Service Bus Subscription under the
+    :keyword str subscription_name: The path of specific Service Bus Subscription under the
      specified Topic the client connects to.
     :keyword mode: The mode with which messages will be retrieved from the entity. The two options
      are PeekLock and ReceiveAndDelete. Messages received with PeekLock must be settled within a given
@@ -159,11 +160,12 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
     def __next__(self):
         while True:
             try:
-                self._open()
+                self._open_with_retry()
                 uamqp_message = next(self._message_iter)
                 message = self._build_message(uamqp_message)
                 return message
             except StopIteration:
+                self.close()
                 raise
             except Exception as e:  # pylint: disable=broad-except
                 self._handle_exception(e)
@@ -171,39 +173,19 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
     next = __next__  # for python2.7
 
     def _create_handler(self, auth):
-        properties = create_properties()
         self._handler = ReceiveClient(
             self._get_source_for_session_entity() if self._session_id else self._entity_uri,
             auth=auth,
             debug=self._config.logging_enable,
-            properties=properties,
+            properties=self._properties,
             error_policy=self._error_policy,
             client_name=self._name,
             on_attach=self._on_attach_for_session_entity if self._session_id else None,
             auto_complete=False,
-            encoding=self._config.encoding
+            encoding=self._config.encoding,
+            receive_settle_mode=self._mode.value,
+            send_settle_mode=SenderSettleMode.Settled if self._mode == ReceiveSettleMode.ReceiveAndDelete else None
         )
-
-    def _create_uamqp_receiver_handler(self):
-        """This is a temporary patch pending a fix in uAMQP."""
-        # pylint: disable=protected-access
-        self._handler.message_handler = self._handler.receiver_type(
-            self._handler._session,
-            self._handler._remote_address,
-            self._handler._name,
-            on_message_received=self._handler._message_received,
-            name='receiver-link-{}'.format(uuid.uuid4()),
-            debug=self._handler._debug_trace,
-            prefetch=self._handler._prefetch,
-            max_message_size=self._handler._max_message_size,
-            properties=self._handler._link_properties,
-            error_policy=self._handler._error_policy,
-            encoding=self._handler._encoding)
-        if self._mode != ReceiveSettleMode.PeekLock:
-            self._handler.message_handler.send_settle_mode = constants.SenderSettleMode.Settled
-            self._handler.message_handler.receive_settle_mode = constants.ReceiverSettleMode.ReceiveAndDelete
-            self._handler.message_handler._settle_mode = constants.ReceiverSettleMode.ReceiveAndDelete
-        self._handler.message_handler.open()
 
     def _open(self):
         if self._running:
@@ -215,9 +197,6 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         self._create_handler(auth)
         self._handler.open(connection=self._connection)
         self._message_iter = self._handler.receive_messages_iter()
-        while not self._handler.auth_complete():
-            time.sleep(0.05)
-        self._create_uamqp_receiver_handler()
         while not self._handler.client_ready():
             time.sleep(0.05)
         self._running = True
@@ -246,22 +225,6 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
             mgmt_handlers.default
         )
 
-    def close(self, exception=None):
-        # type: (Exception) -> None
-        """Close down the handler connection.
-
-        If the handler has already closed, this operation will do nothing. An optional exception can be passed in to
-        indicate that the handler was shutdown due to error.
-
-        :param Exception exception: An optional exception if the handler is closing
-         due to an error.
-        :rtype: None
-        """
-        if not self._running:
-            return
-        self._running = False
-        super(ServiceBusReceiver, self).close(exception=exception)
-
     @classmethod
     def from_connection_string(
         cls,
@@ -275,7 +238,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         :keyword str queue_name: The path of specific Service Bus Queue the client connects to.
         :keyword str topic_name: The path of specific Service Bus Topic which contains the Subscription
          the client connects to.
-        :keyword str subscription: The path of specific Service Bus Subscription under the
+        :keyword str subscription_name: The path of specific Service Bus Subscription under the
          specified Topic the client connects to.
         :keyword mode: The mode with which messages will be retrieved from the entity. The two options
          are PeekLock and ReceiveAndDelete. Messages received with PeekLock must be settled within a given

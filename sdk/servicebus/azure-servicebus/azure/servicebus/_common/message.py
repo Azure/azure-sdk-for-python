@@ -28,7 +28,7 @@ from .constants import (
     _X_OPT_LOCK_TOKEN,
     _X_OPT_SCHEDULED_ENQUEUE_TIME
 )
-from .errors import (
+from ..exceptions import (
     MessageAlreadySettled,
     MessageLockExpired,
     SessionLockExpired
