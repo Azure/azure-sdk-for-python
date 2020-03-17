@@ -48,7 +48,7 @@ class FeatureClient(FeatureClientOperationsMixin, MultiApiClientMixin, _SDKClien
     """
 
     DEFAULT_API_VERSION = '2015-12-01'
-    _PROFILE_TAG = "azure.mgmt.resource.FeatureClient"
+    _PROFILE_TAG = "azure.mgmt.resource.features.FeatureClient"
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
             None: DEFAULT_API_VERSION,
@@ -76,7 +76,7 @@ class FeatureClient(FeatureClientOperationsMixin, MultiApiClientMixin, _SDKClien
     def models(cls, api_version=DEFAULT_API_VERSION):
         """Module depends on the API version:
 
-           * 2015-12-01: :mod:`v2015_12_01.models<azure.mgmt.resource.v2015_12_01.models>`
+           * 2015-12-01: :mod:`v2015_12_01.models<azure.mgmt.resource.features.v2015_12_01.models>`
         """
         if api_version == '2015-12-01':
             from .v2015_12_01 import models
@@ -87,7 +87,7 @@ class FeatureClient(FeatureClientOperationsMixin, MultiApiClientMixin, _SDKClien
     def features(self):
         """Instance depends on the API version:
 
-           * 2015-12-01: :class:`FeaturesOperations<azure.mgmt.resource.v2015_12_01.operations.FeaturesOperations>`
+           * 2015-12-01: :class:`FeaturesOperations<azure.mgmt.resource.features.v2015_12_01.operations.FeaturesOperations>`
         """
         api_version = self._get_api_version('features')
         if api_version == '2015-12-01':
