@@ -6,7 +6,7 @@
 ###########
 
 # Catch all
-/sdk/ @mayurid
+/sdk/ @mayurid @lmazuel
 
 # Core
 /sdk/core/ @lmazuel @xiangyan99 @johanste
