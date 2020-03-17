@@ -8,7 +8,9 @@
 # Changes may cause incorrect behavior and will be lost if the code is
 # regenerated.
 # --------------------------------------------------------------------------
-from .version import VERSION
 
+from .runtime_operations import RuntimeOperations
 
-__version__ = VERSION
+__all__ = [
+    'RuntimeOperations',
+]
