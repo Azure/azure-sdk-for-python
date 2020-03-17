@@ -1,5 +1,19 @@
 # Release History
 
+## 9.0.0 (2020-03-17)
+
+**Features**
+
+- Model OpenShiftManagedClusterMasterPoolProfile has a new parameter api_properties
+- Model OpenShiftManagedCluster has a new parameter refresh_cluster
+- Model NetworkProfile has a new parameter management_subnet_cidr
+
+**Breaking changes**
+
+- Model OpenShiftManagedClusterMasterPoolProfile no longer has parameter name
+- Model OpenShiftManagedClusterMasterPoolProfile no longer has parameter os_type
+- Model NetworkProfile no longer has parameter peer_vnet_id
+
 ## 8.3.0 (2020-02-14)
 
 **Features**
