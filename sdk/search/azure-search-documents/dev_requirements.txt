@@ -1,6 +1,6 @@
 -e ../../../tools/azure-devtools
 -e ../../../tools/azure-sdk-tools
 ../../core/azure-core
-../azure-search-nspkg
+../azure-search-nspk; python < '3.0'
 aiohttp>=3.0; python_version >= '3.5'
 pytest
