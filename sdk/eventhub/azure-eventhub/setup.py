@@ -74,6 +74,6 @@ setup(
     extras_require={
         ":python_version<'3.0'": ['azure-nspkg'],
         ":python_version<'3.5'": ["typing"],
-        ":python_version='3.5.3'": ["typing-extensions"],
+        ":python_version<'3.5.4'": ["typing-extensions"],
     }
 )
