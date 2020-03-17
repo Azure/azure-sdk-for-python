@@ -172,29 +172,17 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
 
     def _create_handler(self, auth):
         properties = create_properties()
-        if not self._session_id:
-            self._handler = ReceiveClient(
-                self._entity_uri,
-                auth=auth,
-                debug=self._config.logging_enable,
-                properties=properties,
-                error_policy=self._error_policy,
-                client_name=self._name,
-                auto_complete=False,
-                encoding=self._config.encoding
-            )
-        else:
-            self._handler = ReceiveClient(
-                self._get_source_for_session_entity(),
-                auth=auth,
-                debug=self._config.logging_enable,
-                properties=properties,
-                error_policy=self._error_policy,
-                client_name=self._name,
-                on_attach=self._on_attach_for_session_entity,
-                auto_complete=False,
-                encoding=self._config.encoding
-            )
+        self._handler = ReceiveClient(
+            self._get_source_for_session_entity() if self._session_id else self._entity_uri,
+            auth=auth,
+            debug=self._config.logging_enable,
+            properties=properties,
+            error_policy=self._error_policy,
+            client_name=self._name,
+            on_attach=self._on_attach_for_session_entity if self._session_id else None,
+            auto_complete=False,
+            encoding=self._config.encoding
+        )
 
     def _create_uamqp_receiver_handler(self):
         """This is a temporary patch pending a fix in uAMQP."""
@@ -236,7 +224,6 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
 
     def _receive(self, max_batch_size=None, timeout=None):
         self._open()
-        wrapped_batch = []
         max_batch_size = max_batch_size or self._handler._prefetch  # pylint: disable=protected-access
 
         timeout_ms = 1000 * timeout if timeout else 0
@@ -244,11 +231,8 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
             max_batch_size=max_batch_size,
             timeout=timeout_ms
         )
-        for received in batch:
-            message = self._build_message(received)
-            wrapped_batch.append(message)
 
-        return wrapped_batch
+        return [self._build_message(message) for message in batch]
 
     def _settle_deferred(self, settlement, lock_tokens, dead_letter_details=None):
         message = {

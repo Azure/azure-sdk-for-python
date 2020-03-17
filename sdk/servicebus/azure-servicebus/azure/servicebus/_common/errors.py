@@ -60,6 +60,44 @@ def _error_handler(error):
     return errors.ErrorAction(retry=True)
 
 
+def _create_servicebus_exception(logger, exception):
+    if isinstance(exception, MessageSendFailed):
+        logger.info("Message send error (%r)", exception)
+        raise exception
+
+    if isinstance(exception, (errors.LinkDetach, errors.ConnectionClose)):
+        logger.info("Handler detached due to exception: (%r).", exception)
+        if exception.condition == constants.ErrorCodes.UnauthorizedAccess:
+            error = ServiceBusAuthorizationError(str(exception), exception)
+        else:
+            error = ServiceBusConnectionError(str(exception), exception)
+    elif isinstance(exception, errors.MessageHandlerError):
+        logger.info("Handler error: (%r).", exception)
+        error = ServiceBusConnectionError(str(exception), exception)
+    elif isinstance(exception, errors.AMQPConnectionError):
+        logger.info("Failed to open handler: (%r).", exception)
+        message = "Failed to open handler: {}.".format(exception)
+        error = ServiceBusConnectionError(message, exception)
+    else:
+        logger.info("Unexpected error occurred (%r). Shutting down.", exception)
+        error = exception
+        if not isinstance(exception, ServiceBusError):
+            error = ServiceBusError("Handler failed: {}.".format(exception))
+
+    error_need_raise = False
+    try:
+        err_condition = exception.condition
+        if err_condition in _NO_RETRY_ERRORS:
+            error_need_raise = True
+    except AttributeError:
+        pass
+
+    if error_need_raise:
+        raise error
+
+    return error
+
+
 class _ServiceBusErrorPolicy(errors.ErrorPolicy):
 
     def __init__(self, max_retries=3, is_session=False):

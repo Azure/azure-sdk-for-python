@@ -7,19 +7,13 @@ import asyncio
 from typing import TYPE_CHECKING, Any
 
 import uamqp
-from uamqp import (
-    constants,
-    errors
-)
 from uamqp.message import MessageProperties
 
 from .._base_handler import BaseHandler, _generate_sas_token
 from .._common.errors import (
     InvalidHandlerState,
     ServiceBusError,
-    ServiceBusConnectionError,
-    ServiceBusAuthorizationError,
-    MessageSendFailed
+    _create_servicebus_exception
 )
 
 if TYPE_CHECKING:
@@ -69,35 +63,9 @@ class BaseHandlerAsync(BaseHandler):
         await self.close()
 
     async def _handle_exception(self, exception):
-        if isinstance(exception, (errors.LinkDetach, errors.ConnectionClose)):
-            if exception.condition == constants.ErrorCodes.UnauthorizedAccess:
-                _LOGGER.info("Async handler detached. Shutting down.")
-                error = ServiceBusAuthorizationError(str(exception), exception)
-                await self._close_handler()
-                return error
-            _LOGGER.info("Async handler detached. Shutting down.")
-            error = ServiceBusConnectionError(str(exception), exception)
-            await self._close_handler()
-            return error
-        if isinstance(exception, errors.MessageHandlerError):
-            _LOGGER.info("Async handler error. Shutting down.")
-            error = ServiceBusConnectionError(str(exception), exception)
-            await self._close_handler()
-            return error
-        if isinstance(exception, errors.AMQPConnectionError):
-            message = "Failed to open handler: {}".format(exception)
-            await self._close_handler()
-            return ServiceBusConnectionError(message, exception)
-        if isinstance(exception, MessageSendFailed):
-            _LOGGER.info("Message send error (%r)", exception)
-            raise exception
-
-        _LOGGER.info("Unexpected error occurred (%r). Shutting down.", exception)
-        error = exception
-        if not isinstance(exception, ServiceBusError):
-            error = ServiceBusError("Handler failed: {}".format(exception), exception)
+        error = _create_servicebus_exception(_LOGGER, exception)
         await self._close_handler()
-        raise error
+        return error
 
     async def _backoff(
             self,

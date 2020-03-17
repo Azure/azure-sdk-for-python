@@ -22,7 +22,7 @@ from .._common.constants import (
     ReceiveSettleMode
 )
 from .._common import mgmt_handlers
-from .async_utils import create_authentication
+from ._async_utils import create_authentication
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -121,31 +121,18 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
 
     def _create_handler(self, auth):
         properties = create_properties()
-        if not self._session_id:
-            self._handler = ReceiveClientAsync(
-                self._entity_uri,
-                auth=auth,
-                debug=self._config.logging_enable,
-                properties=properties,
-                error_policy=self._error_policy,
-                client_name=self._name,
-                auto_complete=False,
-                encoding=self._config.encoding,
-                receive_settle_mode=self._mode.value
-            )
-        else:
-            self._handler = ReceiveClientAsync(
-                self._get_source_for_session_entity(),
-                auth=auth,
-                debug=self._config.logging_enable,
-                properties=properties,
-                error_policy=self._error_policy,
-                client_name=self._name,
-                on_attach=self._on_attach_for_session_entity,
-                auto_complete=False,
-                encoding=self._config.encoding,
-                receive_settle_mode=self._mode.value
-            )
+        self._handler = ReceiveClientAsync(
+            self._get_source_for_session_entity() if self._session_id else self._entity_uri,
+            auth=auth,
+            debug=self._config.logging_enable,
+            properties=properties,
+            error_policy=self._error_policy,
+            client_name=self._name,
+            on_attach=self._on_attach_for_session_entity if self._session_id else None,
+            auto_complete=False,
+            encoding=self._config.encoding,
+            receive_settle_mode=self._mode.value
+        )
 
     async def _create_uamqp_receiver_handler(self):
         """This is a temporary patch pending a fix in uAMQP."""
@@ -187,18 +174,14 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
 
     async def _receive(self, max_batch_size=None, timeout=None):
         await self._open()
-        wrapped_batch = []
         max_batch_size = max_batch_size or self._handler._prefetch  # pylint: disable=protected-access
 
         timeout_ms = 1000 * timeout if timeout else 0
         batch = await self._handler.receive_message_batch_async(
             max_batch_size=max_batch_size,
             timeout=timeout_ms)
-        for received in batch:
-            message = self._build_message(received, ReceivedMessage)
-            wrapped_batch.append(message)
 
-        return wrapped_batch
+        return [self._build_message(message) for message in batch]
 
     async def _settle_deferred(self, settlement, lock_tokens, dead_letter_details=None):
         message = {

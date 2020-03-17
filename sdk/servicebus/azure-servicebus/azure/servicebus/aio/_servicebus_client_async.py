@@ -11,7 +11,7 @@ from ._base_handler_async import ServiceBusSharedKeyCredential
 from ._servicebus_sender_async import ServiceBusSender
 from ._servicebus_receiver_async import ServiceBusReceiver
 from .._common._configuration import Configuration
-from .async_utils import create_authentication
+from ._async_utils import create_authentication
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential

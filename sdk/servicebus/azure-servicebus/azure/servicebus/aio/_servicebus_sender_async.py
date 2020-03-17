@@ -21,7 +21,7 @@ from .._common.constants import (
 )
 from .._common import mgmt_handlers
 from .._common.utils import create_properties
-from .async_utils import create_authentication
+from ._async_utils import create_authentication
 
 if TYPE_CHECKING:
     import datetime
