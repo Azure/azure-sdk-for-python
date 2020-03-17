@@ -12,7 +12,6 @@
 try:
     from ._models_py3 import ARMProxyResource
     from ._models_py3 import ARMResourceProperties
-    from ._models_py3 import AutopilotSettingsResource
     from ._models_py3 import AutoUpgradePolicyResource
     from ._models_py3 import AzureEntityResource
     from ._models_py3 import Capability
@@ -74,6 +73,9 @@ try:
     from ._models_py3 import MongoIndex
     from ._models_py3 import MongoIndexKeys
     from ._models_py3 import MongoIndexOptions
+    from ._models_py3 import NotebookWorkspace
+    from ._models_py3 import NotebookWorkspaceConnectionInfoResult
+    from ._models_py3 import NotebookWorkspaceCreateUpdateParameters
     from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
     from ._models_py3 import PartitionMetric
@@ -84,6 +86,7 @@ try:
     from ._models_py3 import PrivateEndpointProperty
     from ._models_py3 import PrivateLinkResource
     from ._models_py3 import PrivateLinkServiceConnectionStateProperty
+    from ._models_py3 import ProvisionedThroughputSettingsResource
     from ._models_py3 import ProxyResource
     from ._models_py3 import RegionForOnlineOffline
     from ._models_py3 import Resource
@@ -125,7 +128,6 @@ try:
 except (SyntaxError, ImportError):
     from ._models import ARMProxyResource
     from ._models import ARMResourceProperties
-    from ._models import AutopilotSettingsResource
     from ._models import AutoUpgradePolicyResource
     from ._models import AzureEntityResource
     from ._models import Capability
@@ -187,6 +189,9 @@ except (SyntaxError, ImportError):
     from ._models import MongoIndex
     from ._models import MongoIndexKeys
     from ._models import MongoIndexOptions
+    from ._models import NotebookWorkspace
+    from ._models import NotebookWorkspaceConnectionInfoResult
+    from ._models import NotebookWorkspaceCreateUpdateParameters
     from ._models import Operation
     from ._models import OperationDisplay
     from ._models import PartitionMetric
@@ -197,6 +202,7 @@ except (SyntaxError, ImportError):
     from ._models import PrivateEndpointProperty
     from ._models import PrivateLinkResource
     from ._models import PrivateLinkServiceConnectionStateProperty
+    from ._models import ProvisionedThroughputSettingsResource
     from ._models import ProxyResource
     from ._models import RegionForOnlineOffline
     from ._models import Resource
@@ -244,6 +250,7 @@ from ._paged_models import MetricDefinitionPaged
 from ._paged_models import MetricPaged
 from ._paged_models import MongoDBCollectionGetResultsPaged
 from ._paged_models import MongoDBDatabaseGetResultsPaged
+from ._paged_models import NotebookWorkspacePaged
 from ._paged_models import OperationPaged
 from ._paged_models import PartitionMetricPaged
 from ._paged_models import PartitionUsagePaged
@@ -279,7 +286,6 @@ from ._cosmos_db_management_client_enums import (
 __all__ = [
     'ARMProxyResource',
     'ARMResourceProperties',
-    'AutopilotSettingsResource',
     'AutoUpgradePolicyResource',
     'AzureEntityResource',
     'Capability',
@@ -341,6 +347,9 @@ __all__ = [
     'MongoIndex',
     'MongoIndexKeys',
     'MongoIndexOptions',
+    'NotebookWorkspace',
+    'NotebookWorkspaceConnectionInfoResult',
+    'NotebookWorkspaceCreateUpdateParameters',
     'Operation',
     'OperationDisplay',
     'PartitionMetric',
@@ -351,6 +360,7 @@ __all__ = [
     'PrivateEndpointProperty',
     'PrivateLinkResource',
     'PrivateLinkServiceConnectionStateProperty',
+    'ProvisionedThroughputSettingsResource',
     'ProxyResource',
     'RegionForOnlineOffline',
     'Resource',
@@ -409,6 +419,7 @@ __all__ = [
     'CassandraTableGetResultsPaged',
     'GremlinDatabaseGetResultsPaged',
     'GremlinGraphGetResultsPaged',
+    'NotebookWorkspacePaged',
     'PrivateLinkResourcePaged',
     'PrivateEndpointConnectionPaged',
     'DatabaseAccountKind',
