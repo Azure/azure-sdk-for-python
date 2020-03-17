@@ -61,7 +61,7 @@ class AuthFileCredential(object):
         tenant_id = auth_data.get('tenantId')
         active_directory_endpoint_url = auth_data.get('activeDirectoryEndpointUrl')
 
-        if any(x is None for x in (client_id, client_secret, tenant_id, active_directory_endpoint_url)):
+        if not all((client_id, client_secret, tenant_id, active_directory_endpoint_url)):
             raise ClientAuthenticationError("Malformed Azure SDK Auth file. The file should contain "
                 "'clientId', 'clientSecret', 'tenantId' and 'activeDirectoryEndpointUrl' values.")
         
