@@ -2,7 +2,7 @@
 
 ## 0.11.0 (2020-03-17)
 
-  - Preview versions 2018-12-01-preview, 2019-03-22-preview, 2019-07-01-preview included
+  - Preview API versions 2018-12-01-preview, 2019-03-22-preview, 2019-07-01-preview included
 
 ## 0.10.0 (2020-01-09)
 
