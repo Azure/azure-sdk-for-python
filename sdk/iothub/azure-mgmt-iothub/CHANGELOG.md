@@ -1,5 +1,7 @@
 # Release History
+
 ## 0.11.0 (2020-03-14)
+
   - Add preview version
 
 ## 0.10.0 (2020-01-09)
