@@ -9,7 +9,7 @@ import unittest
 
 from collections import namedtuple
 
-from msrestazure.azure_exceptions import CloudError
+from azure.core.exceptions import ResourceNotFoundError
 
 import azure.mgmt.compute
 import azure.mgmt.network.models
@@ -41,7 +41,7 @@ class MgmtManagedDisksTest(AzureMgmtTestCase):
         '''Create an empty Managed Disk.'''
         DiskCreateOption = self.compute_client.disks.models.DiskCreateOption
 
-        async_creation = self.compute_client.disks.create_or_update(
+        async_creation = self.compute_client.disks.begin_create_or_update(
             resource_group.name,
             'my_disk_name',
             {
@@ -59,7 +59,7 @@ class MgmtManagedDisksTest(AzureMgmtTestCase):
         '''Create an empty Managed Disk.'''
         DiskCreateOption = self.compute_client.disks.models.DiskCreateOption
 
-        async_creation = self.compute_client.disks.create_or_update(
+        async_creation = self.compute_client.disks.begin_create_or_update(
             resource_group.name,
             'my_disk_name',
             {
@@ -72,7 +72,7 @@ class MgmtManagedDisksTest(AzureMgmtTestCase):
         )
         disk_resource = async_creation.result()
 
-        grant_access_poller = self.compute_client.disks.grant_access(
+        grant_access_poller = self.compute_client.disks.begin_grant_access(
             resource_group.name,
             'my_disk_name',
             'Read',
@@ -86,7 +86,7 @@ class MgmtManagedDisksTest(AzureMgmtTestCase):
         '''Create a Managed Disk from Blob Storage.'''
         DiskCreateOption = self.compute_client.disks.models.DiskCreateOption
 
-        async_creation = self.compute_client.disks.create_or_update(
+        async_creation = self.compute_client.disks.begin_create_or_update(
             resource_group.name,
             'my_disk_name',
             {
@@ -105,7 +105,7 @@ class MgmtManagedDisksTest(AzureMgmtTestCase):
         DiskCreateOption = self.compute_client.disks.models.DiskCreateOption
 
         # Out of sample, the initial creation
-        async_creation = self.compute_client.disks.create_or_update(
+        async_creation = self.compute_client.disks.begin_create_or_update(
             resource_group.name,
             'myImageDisk',
             {
@@ -123,7 +123,7 @@ class MgmtManagedDisksTest(AzureMgmtTestCase):
         # You can also build the id yourself: '<...id...>/Microsoft.Compute/disks/mdvm1_OsDisk_1_<guid>'
         managed_disk = self.compute_client.disks.get(resource_group.name, 'myImageDisk')
 
-        async_creation = self.compute_client.disks.create_or_update(
+        async_creation = self.compute_client.disks.begin_create_or_update(
             resource_group.name,
             'my_disk_name',
             {
@@ -169,7 +169,7 @@ class MgmtManagedDisksTest(AzureMgmtTestCase):
         )
 
         # Create VM test
-        result_create = self.compute_client.virtual_machines.create_or_update(
+        result_create = self.compute_client.virtual_machines.begin_create_or_update(
             resource_group.name,
             names.vm,
             params_create,
@@ -178,7 +178,7 @@ class MgmtManagedDisksTest(AzureMgmtTestCase):
         self.assertEqual(vm_result.name, names.vm)
 
         # Attach a new disk
-        async_creation = self.compute_client.disks.create_or_update(
+        async_creation = self.compute_client.disks.begin_create_or_update(
             resource_group.name,
             'mySecondDisk',
             {
@@ -199,7 +199,7 @@ class MgmtManagedDisksTest(AzureMgmtTestCase):
                 'id': disk_resource.id
             }
         })
-        result_create = self.compute_client.virtual_machines.create_or_update(
+        result_create = self.compute_client.virtual_machines.begin_create_or_update(
             resource_group.name,
             names.vm,
             vm_result,
@@ -212,7 +212,7 @@ class MgmtManagedDisksTest(AzureMgmtTestCase):
         '''Resizing a Managed Disk'''
         # Out of sample, the initial creation
         disks_models = self.compute_client.disks.models
-        async_creation = self.compute_client.disks.create_or_update(
+        async_creation = self.compute_client.disks.begin_create_or_update(
             resource_group.name,
             'myDisk',
             {
@@ -228,7 +228,7 @@ class MgmtManagedDisksTest(AzureMgmtTestCase):
         # Sample from here
         managed_disk = self.compute_client.disks.get(resource_group.name, 'myDisk')
         managed_disk.disk_size_gb = 25
-        async_update = self.compute_client.disks.create_or_update(
+        async_update = self.compute_client.disks.begin_create_or_update(
             resource_group.name,
             'myDisk',
             managed_disk
@@ -240,7 +240,7 @@ class MgmtManagedDisksTest(AzureMgmtTestCase):
         '''Change account type of a Managed Disk'''
         # Out of sample, the initial creation
         DiskCreateOption = self.compute_client.disks.models.DiskCreateOption
-        async_creation = self.compute_client.disks.create_or_update(
+        async_creation = self.compute_client.disks.begin_create_or_update(
             resource_group.name,
             'myDisk',
             {
@@ -257,7 +257,7 @@ class MgmtManagedDisksTest(AzureMgmtTestCase):
         StorageAccountTypes = self.compute_client.disks.models.DiskStorageAccountTypes
         managed_disk = self.compute_client.disks.get(resource_group.name, 'myDisk')
         managed_disk.account_type = StorageAccountTypes.standard_lrs
-        async_update = self.compute_client.disks.create_or_update(
+        async_update = self.compute_client.disks.begin_create_or_update(
             resource_group.name,
             'myDisk',
             managed_disk
@@ -266,7 +266,7 @@ class MgmtManagedDisksTest(AzureMgmtTestCase):
 
     @ResourceGroupPreparer()
     def _test_create_image_from_blob(self, resource_group, location):
-        async_create_image = self.compute_client.images.create_or_update(
+        async_create_image = self.compute_client.images.begin_create_or_update(
             resource_group.name,
             'myImage',
             {
@@ -288,7 +288,7 @@ class MgmtManagedDisksTest(AzureMgmtTestCase):
     def test_create_snapshot(self, resource_group, location):
         # Out of sample, the initial creation
         DiskCreateOption = self.compute_client.disks.models.DiskCreateOption
-        async_creation = self.compute_client.disks.create_or_update(
+        async_creation = self.compute_client.disks.begin_create_or_update(
             resource_group.name,
             'myDisk',
             {
@@ -303,7 +303,7 @@ class MgmtManagedDisksTest(AzureMgmtTestCase):
 
         # Sample from here
         managed_disk = self.compute_client.disks.get(resource_group.name, 'myDisk')
-        async_snapshot_creation = self.compute_client.snapshots.create_or_update(
+        async_snapshot_creation = self.compute_client.snapshots.begin_create_or_update(
                 resource_group.name,
                 'mySnapshot',
                 {
@@ -370,7 +370,7 @@ class MgmtManagedDisksTest(AzureMgmtTestCase):
         }
 
         # Create VMSS test
-        result_create = self.compute_client.virtual_machine_scale_sets.create_or_update(
+        result_create = self.compute_client.virtual_machine_scale_sets.begin_create_or_update(
             resource_group.name,
             names.vm,
             vmss_parameters,
@@ -384,9 +384,9 @@ class MgmtManagedDisksTest(AzureMgmtTestCase):
         self.assertEqual(len(disks), 0)
 
     def test_list_disks_fake(self):
-        with self.assertRaises(CloudError) as cm:
+        with self.assertRaises(ResourceNotFoundError) as err:
             list(self.compute_client.disks.list_by_resource_group("fakename"))
-        self.assertIn("Resource group 'fakename' could not be found", cm.exception.message)
+        self.assertIn("Resource group 'fakename' could not be found", err.exception.message)
 
     def get_resource_names(self, base):
         return ComputeResourceNames(
@@ -412,7 +412,7 @@ class MgmtManagedDisksTest(AzureMgmtTestCase):
                 ),
             ],
         )
-        azure_operation_poller = self.network_client.virtual_networks.create_or_update(
+        azure_operation_poller = self.network_client.virtual_networks.begin_create_or_update(
             resource_group_name,
             network_name,
             params_create,

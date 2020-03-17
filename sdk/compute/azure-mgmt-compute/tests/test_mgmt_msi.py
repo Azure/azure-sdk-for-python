@@ -81,7 +81,7 @@ class MgmtMSIComputeTest(AzureMgmtTestCase):
         )
 
         # Create VM
-        result_create = self.compute_client.virtual_machines.create_or_update(
+        result_create = self.compute_client.virtual_machines.begin_create_or_update(
             resource_group.name,
             names.vm,
             params_create,
@@ -127,7 +127,7 @@ class MgmtMSIComputeTest(AzureMgmtTestCase):
         #     settings={'port': 50342}, # Default port that should be used
         #     protected_settings={},
         # )
-        # result_create = self.compute_client.virtual_machine_extensions.create_or_update(
+        # result_create = self.compute_client.virtual_machine_extensions.begin_create_or_update(
         #     resource_group.name,
         #     names.vm,
         #     ext_name,

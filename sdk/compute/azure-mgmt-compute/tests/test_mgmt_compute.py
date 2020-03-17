@@ -31,8 +31,8 @@ class MgmtComputeTest(AzureMgmtTestCase):
             azure.mgmt.compute.ComputeManagementClient
         )
 
-        self.linux_img_ref_id = "/" + self.compute_client.config.subscription_id + "/services/images/b4590d9e3ed742e4a1d46e5424aa335e__sles12-azure-guest-priority.x86-64-0.4.3-build1.1"
-        self.windows_img_ref_id = "/" + self.compute_client.config.subscription_id + "/services/images/a699494373c04fc0bc8f2bb1389d6106__Windows-Server-2012-Datacenter-201503.01-en.us-127GB.vhd"
+        self.linux_img_ref_id = "/" + self.compute_client._config.subscription_id + "/services/images/b4590d9e3ed742e4a1d46e5424aa335e__sles12-azure-guest-priority.x86-64-0.4.3-build1.1"
+        self.windows_img_ref_id = "/" + self.compute_client._config.subscription_id + "/services/images/a699494373c04fc0bc8f2bb1389d6106__Windows-Server-2012-Datacenter-201503.01-en.us-127GB.vhd"
         if not self.is_playback():
             self.storage_client = self.create_mgmt_client(
                 azure.mgmt.storage.StorageManagementClient
@@ -193,7 +193,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
         )
 
         # Create VM test
-        result_create = self.compute_client.virtual_machines.create_or_update(
+        result_create = self.compute_client.virtual_machines.begin_create_or_update(
             resource_group.name,
             names.vm,
             params_create,
@@ -204,7 +204,8 @@ class MgmtComputeTest(AzureMgmtTestCase):
         # Get by name
         result_get = self.compute_client.virtual_machines.get(
             resource_group.name,
-            names.vm
+            names.vm,
+            expand=None
         )
         self.assertEqual(result_get.name, names.vm)
         self.assertIsNone(result_get.instance_view)
@@ -212,25 +213,24 @@ class MgmtComputeTest(AzureMgmtTestCase):
         # Get instanceView
         result_iv = self.compute_client.virtual_machines.get(
             resource_group.name,
-            names.vm,
-            expand=virtual_machines_models.InstanceViewTypes.instance_view
+            names.vm
         )
         self.assertTrue(result_iv.instance_view)
 
         # Deallocate
-        async_vm_deallocate = self.compute_client.virtual_machines.deallocate(resource_group.name, names.vm)
+        async_vm_deallocate = self.compute_client.virtual_machines.begin_deallocate(resource_group.name, names.vm)
         async_vm_deallocate.wait()
 
         # Start VM
-        async_vm_start =self.compute_client.virtual_machines.start(resource_group.name, names.vm)
+        async_vm_start =self.compute_client.virtual_machines.begin_start(resource_group.name, names.vm)
         async_vm_start.wait()
 
         # Restart VM
-        async_vm_restart = self.compute_client.virtual_machines.restart(resource_group.name, names.vm)
+        async_vm_restart = self.compute_client.virtual_machines.begin_restart(resource_group.name, names.vm)
         async_vm_restart.wait()
 
         # Stop VM
-        async_vm_stop = self.compute_client.virtual_machines.power_off(resource_group.name, names.vm)
+        async_vm_stop = self.compute_client.virtual_machines.begin_power_off(resource_group.name, names.vm)
         async_vm_stop.wait()
 
         # List in resouce group
@@ -238,7 +238,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
         self.assertEqual(len(vms_rg), 1)
 
         # Delete
-        async_vm_delete = self.compute_client.virtual_machines.delete(resource_group.name, names.vm)
+        async_vm_delete = self.compute_client.virtual_machines.begin_delete(resource_group.name, names.vm)
         async_vm_delete.wait()
 
     @ResourceGroupPreparer()
@@ -273,7 +273,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
         )
 
         # Create VM test
-        result_create = self.compute_client.virtual_machines.create_or_update(
+        result_create = self.compute_client.virtual_machines.begin_create_or_update(
             resource_group.name,
             names.vm,
             params_create,
@@ -282,14 +282,14 @@ class MgmtComputeTest(AzureMgmtTestCase):
         self.assertEqual(vm_result.name, names.vm)
 
         # Deallocate
-        async_vm_deallocate = self.compute_client.virtual_machines.deallocate(resource_group.name, names.vm)
+        async_vm_deallocate = self.compute_client.virtual_machines.begin_deallocate(resource_group.name, names.vm)
         async_vm_deallocate.wait()
 
         # Generalize (possible because deallocated)
         self.compute_client.virtual_machines.generalize(resource_group.name, names.vm)
 
         # Capture VM (VM must be generalized before)
-        async_capture = self.compute_client.virtual_machines.capture(
+        async_capture = self.compute_client.virtual_machines.begin_capture(
             resource_group.name,
             names.vm,
             {
@@ -334,7 +334,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
             storage_profile=storage_profile,
         )
 
-        result_create = self.compute_client.virtual_machines.create_or_update(
+        result_create = self.compute_client.virtual_machines.begin_create_or_update(
             resource_group.name,
             names.vm,
             params_create,
@@ -350,7 +350,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
             settings={},
             protected_settings={},
         )
-        result_create = self.compute_client.virtual_machine_extensions.create_or_update(
+        result_create = self.compute_client.virtual_machine_extensions.begin_create_or_update(
             resource_group.name,
             names.vm,
             ext_name,
@@ -365,7 +365,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
         )
         self.assertEqual(result_get.name, ext_name)
 
-        result_delete = self.compute_client.virtual_machine_extensions.delete(
+        result_delete = self.compute_client.virtual_machine_extensions.begin_delete(
             resource_group.name,
             names.vm,
             ext_name,
@@ -469,9 +469,9 @@ class MgmtComputeTest(AzureMgmtTestCase):
             platform_update_domain_count=4,
             tags={
                 'tag1': 'value1',
-            },
+            }
         )
-        result_create = self.compute_client.availability_sets.create_or_update(
+        result_create = self.compute_client.availability_sets.begin_create_or_update(
             resource_group.name,
             availability_set_name,
             params_create,
@@ -503,7 +503,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
         )
         result_list_sizes = list(result_list_sizes)
 
-        self.compute_client.availability_sets.delete(
+        self.compute_client.availability_sets.begin_delete(
             resource_group.name,
             availability_set_name,
         )
