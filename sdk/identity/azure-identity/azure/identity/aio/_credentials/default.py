@@ -51,8 +51,6 @@ class DefaultAzureCredential(ChainedTokenCredential):
         Defaults to the value of environment variable AZURE_TENANT_ID, if any.
     """
 
-    UNAVAILABLE_MSG = "DefaultAzureCredential failed to retrieve a token from the included credentials."
-
     def __init__(self, **kwargs):
         authority = kwargs.pop("authority", None) or KnownAuthorities.AZURE_PUBLIC_CLOUD
 
@@ -96,6 +94,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
           `message` attribute listing each authentication attempt and its error message.
         """
 <<<<<<< HEAD
+<<<<<<< HEAD
         if self._successful_credential:
             return await self._successful_credential.get_token(*scopes, **kwargs)
 
@@ -113,3 +112,6 @@ to learn what options DefaultAzureCredential supports""".format(
 =======
         return await super(DefaultAzureCredential, self).get_token(*scopes, **kwargs)
 >>>>>>> update error message
+=======
+        return await super().get_token(*scopes, **kwargs)  # pylint:disable=useless-super-delegation
+>>>>>>> remove public var for error message
