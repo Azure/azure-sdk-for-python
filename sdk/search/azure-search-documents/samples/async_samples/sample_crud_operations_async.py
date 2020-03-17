@@ -61,13 +61,13 @@ async def delete_document():
     print("Delete new document succeeded: {}".format(result[0].succeeded))
     # [END delete_document_async]
 
+async def main():
+    await upload_document()
+    await merge_document()
+    await delete_document()
+    await search_client.close()
+
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
-    loop.run_until_complete(asyncio.gather(
-        upload_document(),
-        merge_document(),
-        delete_document(),
-    ))
-    loop.run_until_complete(search_client.close())
+    loop.run_until_complete(main())
     loop.close()
-
