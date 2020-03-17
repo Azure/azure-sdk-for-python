@@ -1,5 +1,7 @@
 # Release History
-## 4.0.0rc1 (2020-04-01)
+
+## 3.0.0rc5 (2020-04-01)
+
 **Features**
 
 - Model Domain has a new parameter public_network_access
@@ -37,7 +39,6 @@
 - Model DomainUpdateParameters no longer has parameter allow_traffic_from_all_ips
 - Model TopicUpdateParameters no longer has parameter allow_traffic_from_all_ips
 - Model Topic no longer has parameter allow_traffic_from_all_ips
-
 
 ## 3.0.0rc4 (2020-01-17)
 
