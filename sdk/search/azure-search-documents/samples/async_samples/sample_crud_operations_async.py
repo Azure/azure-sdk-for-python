@@ -68,5 +68,6 @@ if __name__ == '__main__':
         merge_document(),
         delete_document(),
     ))
-    asyncio.run(search_client.close())
+    loop.run_until_complete(search_client.close())
+    loop.close()
 
