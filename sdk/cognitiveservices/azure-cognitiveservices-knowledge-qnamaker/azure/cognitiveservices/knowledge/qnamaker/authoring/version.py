@@ -8,7 +8,6 @@
 # Changes may cause incorrect behavior and will be lost if the code is
 # regenerated.
 # --------------------------------------------------------------------------
-from ._version import VERSION
 
+VERSION = "4.0"
 
-__version__ = VERSION

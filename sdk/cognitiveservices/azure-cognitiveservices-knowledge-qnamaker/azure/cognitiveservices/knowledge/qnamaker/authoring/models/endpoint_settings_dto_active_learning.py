@@ -8,7 +8,20 @@
 # Changes may cause incorrect behavior and will be lost if the code is
 # regenerated.
 # --------------------------------------------------------------------------
-from ._version import VERSION
+
+from .active_learning_settings_dto import ActiveLearningSettingsDTO
 
 
-__version__ = VERSION
+class EndpointSettingsDTOActiveLearning(ActiveLearningSettingsDTO):
+    """Active Learning settings of the endpoint.
+
+    :param enable: True/False string providing Active Learning
+    :type enable: str
+    """
+
+    _attribute_map = {
+        'enable': {'key': 'enable', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(EndpointSettingsDTOActiveLearning, self).__init__(**kwargs)
