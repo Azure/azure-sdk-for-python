@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .endpoint_settings_operations import EndpointSettingsOperations
-from .endpoint_keys_operations import EndpointKeysOperations
-from .alterations_operations import AlterationsOperations
-from .knowledgebase_operations import KnowledgebaseOperations
-from .operations import Operations
+from ._endpoint_settings_operations import EndpointSettingsOperations
+from ._endpoint_keys_operations import EndpointKeysOperations
+from ._alterations_operations import AlterationsOperations
+from ._knowledgebase_operations import KnowledgebaseOperations
+from ._operations import Operations
 
 __all__ = [
     'EndpointSettingsOperations',
