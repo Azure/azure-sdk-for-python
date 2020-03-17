@@ -38,7 +38,7 @@ class UtilsTests(unittest.TestCase):
         connection_policy = ConnectionPolicy()
         user_agent = _utils.get_user_agent(connection_policy)
 
-        expected_user_agent = "azsdk-python-cosmos/{} Python/{} ({})".format(
+        expected_user_agent = "azsdk-python-cosmos/{} Python/{} ({}) ".format(
             azure.cosmos.__version__,
             platform.python_version(),
             platform.platform()
@@ -51,7 +51,7 @@ class UtilsTests(unittest.TestCase):
         connection_policy.UserAgentSuffix = user_agent_suffix
         user_agent = _utils.get_user_agent(connection_policy)
 
-        expected_user_agent = "azsdk-python-cosmos/{} Python/{} ({}){}".format(
+        expected_user_agent = "azsdk-python-cosmos/{} Python/{} ({}) {}".format(
             azure.cosmos.__version__,
             platform.python_version(),
             platform.platform(),
