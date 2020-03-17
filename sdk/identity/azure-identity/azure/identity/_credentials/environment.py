@@ -8,6 +8,7 @@ from azure.core.exceptions import ClientAuthenticationError
 from .._constants import EnvironmentVariables
 from .client_credential import CertificateCredential, ClientSecretCredential
 from .user import UsernamePasswordCredential
+from .auth_file import AuthFileCredential
 
 
 try:
@@ -46,6 +47,9 @@ class EnvironmentCredential:
       - **AZURE_TENANT_ID**: (optional) ID of the service principal's tenant. Also called its 'directory' ID.
         If not provided, defaults to the 'organizations' tenant, which supports only Azure Active Directory work or
         school accounts.
+
+    Azure Auth File:
+      - **AZURE_AUTH_LOCATION**: the full path to an Azure Auth File 
     """
 
     def __init__(self, **kwargs):
@@ -74,6 +78,9 @@ class EnvironmentCredential:
                 tenant=os.environ.get(EnvironmentVariables.AZURE_TENANT_ID),  # optional for username/password auth
                 **kwargs
             )
+        elif os.environ.get(EnvironmentVariables.AZURE_AUTH_LOCATION):
+            self._credential = AuthFileCredential(EnvironmentVariables.AZURE_AUTH_LOCATION)
+
 
     def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
         # type: (*str, **Any) -> AccessToken
