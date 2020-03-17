@@ -4,7 +4,6 @@
 # -----------------------------------------------------------------------------------
 
 from typing import Dict, Optional, Any, TYPE_CHECKING
-import time
 import logging
 from .checkpoint_store import CheckpointStore
 from ..._utils import get_last_enqueued_event_properties

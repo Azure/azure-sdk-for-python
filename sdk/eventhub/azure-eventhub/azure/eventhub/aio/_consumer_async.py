@@ -6,12 +6,17 @@ import time
 import asyncio
 import uuid
 import logging
-from typing import TYPE_CHECKING, Callable, Awaitable, cast, Dict, Optional, Deque
+from collections import deque
+from typing import TYPE_CHECKING, Callable, Awaitable, cast, Dict, Optional, Union, List
+
+try:
+    from typing import Deque
+except ImportError:
+    from typing_extensions import Deque  # for Python 3.5.3
 
 import uamqp
 from uamqp import errors, types, utils
 from uamqp import ReceiveClientAsync, Source
-from collections import deque
 
 from ._client_base_async import ConsumerProducerMixin
 from .._common import EventData
@@ -80,7 +85,7 @@ class EventHubConsumer(
 
         self._on_event_received = kwargs[
             "on_event_received"
-        ]  # type: Callable[[EventData], Awaitable[None]]
+        ]  # type: Callable[[Union[Optional[EventData], List[EventData]]], Awaitable[None]]
         self._loop = kwargs.get("loop", None)
         self._client = client
         self._source = source
@@ -208,7 +213,7 @@ class EventHubConsumer(
         if self._message_buffer:
             while self._message_buffer:
                 if batch:
-                    events_for_callback = []
+                    events_for_callback = []  # type: List[EventData]
                     for _ in range(min(max_batch_size, len(self._message_buffer))):
                         events_for_callback.append(self._next_message_in_buffer())
                     await self._on_event_received(events_for_callback)

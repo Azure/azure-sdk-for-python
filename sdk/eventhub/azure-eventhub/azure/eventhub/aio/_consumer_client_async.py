@@ -246,8 +246,8 @@ class EventHubConsumerClient(ClientBaseAsync):
             on_event,
             batch=False,
             *,
-            max_batch_size: int = None,
-            max_wait_time: float = 3,
+            max_batch_size: int = 300,
+            max_wait_time: Optional[float] = 3,
             partition_id: Optional[str] = None,
             owner_level: Optional[int] = None,
             prefetch: int = 300,
@@ -330,9 +330,9 @@ class EventHubConsumerClient(ClientBaseAsync):
 
     async def receive(
         self,
-        on_event: Callable[["PartitionContext", "EventData"], Awaitable[None]],
+        on_event: Callable[["PartitionContext", Optional["EventData"]], Awaitable[None]],
         *,
-        max_wait_time: Optional[int] = None,
+        max_wait_time: Optional[float] = None,
         partition_id: Optional[str] = None,
         owner_level: Optional[int] = None,
         prefetch: int = 300,
@@ -359,9 +359,8 @@ class EventHubConsumerClient(ClientBaseAsync):
          For detailed partition context information, please refer to
          :class:`PartitionContext<azure.eventhub.aio.PartitionContext>`.
         :type on_event: Callable[~azure.eventhub.aio.PartitionContext, ~azure.eventhub.EventData]
-        :keyword float max_wait_time: `on_event` is called with its param `event` being `None`
-         if `max_wait_time` is not None nor 0 and if no event has been received after `max_wait_time` second(s)
-         since `on_event` is last called.
+        :keyword float max_wait_time: If it's None or 0, `on_event` is never called when no events are received.
+         Otherwise, `on_event` is called wiht param event being `None` every max_wait_time when no events are received.
          Default is None.
         :keyword str partition_id: If specified, the client will receive from this partition only.
          Otherwise the client will receive from all partitions.
@@ -441,7 +440,7 @@ class EventHubConsumerClient(ClientBaseAsync):
         self,
         on_event_batch: Callable[["PartitionContext", List["EventData"]], Awaitable[None]],
         *,
-        max_batch_size: Optional[int] = 300,
+        max_batch_size: int = 300,
         max_wait_time: Optional[float] = None,
         partition_id: Optional[str] = None,
         owner_level: Optional[int] = None,

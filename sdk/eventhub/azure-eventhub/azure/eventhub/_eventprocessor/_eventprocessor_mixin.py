@@ -7,6 +7,7 @@ from datetime import datetime
 from contextlib import contextmanager
 from typing import (
     Union,
+    List,
     Iterable,
     Dict,
     Callable,
@@ -79,7 +80,7 @@ class EventProcessorMixin(object):
         partition_id,  # type: str
         initial_event_position,  # type: Union[str, int, datetime]
         initial_event_position_inclusive,  # type: bool
-        on_event_received,  # type: Callable[[EventData], None]
+        on_event_received,  # type: Callable[[Union[Optional[EventData], List[EventData]]], None]
         **kwargs  # type: Any
     ):
         # type: (...) -> Union[EventHubConsumer, EventHubConsumerAsync]

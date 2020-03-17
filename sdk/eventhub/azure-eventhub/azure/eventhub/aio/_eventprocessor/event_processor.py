@@ -8,6 +8,7 @@ from typing import (
     Callable,
     Any,
     Union,
+    List,
     TYPE_CHECKING,
     Optional,
     Iterable,
@@ -49,7 +50,7 @@ class EventProcessor(
         self,
         eventhub_client: "EventHubConsumerClient",
         consumer_group: str,
-        event_handler: Callable[[PartitionContext, EventData], Awaitable[None]],
+        event_handler: Callable[[PartitionContext, Union[Optional[EventData], List[EventData]]], Awaitable[None]],
         *,
         batch: Optional[bool] = False,
         max_batch_size: Optional[int] = 300,
@@ -206,17 +207,19 @@ class EventProcessor(
                 await self._process_error(partition_context, err)
 
     async def _on_event_received(
-        self, partition_context: PartitionContext, event: Union[EventData, Iterable[EventData]]
+        self, partition_context: PartitionContext, event: Union[Optional[EventData], List[EventData]]
     ) -> None:
-        with self._context(event):
-            if event:
-                partition_context._last_received_event = (  # pylint: disable=protected-access
-                    event[-1] if self._batch else event
-                )
-            else:
-                partition_context._last_received_event = None
+        if event:
+            # pylint: disable=protected-access
+            with self._context(event):
+                if event:
+                    partition_context._last_received_event = (
+                        event[-1] if isinstance(event, List) else event
+                    )
+                else:
+                    partition_context._last_received_event = None
 
-            await self._event_handler(partition_context, event)
+                await self._event_handler(partition_context, event)
 
     async def _close_consumer(self, partition_context):
         partition_id = partition_context.partition_id
@@ -243,7 +246,7 @@ class EventProcessor(
             ) = self.get_init_event_position(partition_id, checkpoint)
             if partition_id in self._partition_contexts:
                 partition_context = self._partition_contexts[partition_id]
-                partition_context._last_received_event = None
+                partition_context._last_received_event = None  # pylint:disable=protected-access
             else:
                 partition_context = PartitionContext(
                     self._namespace,
