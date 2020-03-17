@@ -1,6 +1,7 @@
 # Release History
 
-## 3.1.0 (2020-03-14)
+## 4.0.0 (2020-03-14)
+
 **Features**
 
 - Model ResourceRecommendationBase has a new parameter resource_metadata
@@ -8,7 +9,6 @@
 **Breaking changes**
 
 - Model ConfigData has a new signature
-
 
 ## 3.0.0 (2019-10-24)
 
