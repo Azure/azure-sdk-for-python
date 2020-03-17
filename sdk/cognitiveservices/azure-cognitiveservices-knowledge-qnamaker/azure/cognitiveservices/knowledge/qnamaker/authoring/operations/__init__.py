@@ -8,7 +8,17 @@
 # Changes may cause incorrect behavior and will be lost if the code is
 # regenerated.
 # --------------------------------------------------------------------------
-from .version import VERSION
 
+from .endpoint_settings_operations import EndpointSettingsOperations
+from .endpoint_keys_operations import EndpointKeysOperations
+from .alterations_operations import AlterationsOperations
+from .knowledgebase_operations import KnowledgebaseOperations
+from .operations import Operations
 
-__version__ = VERSION
+__all__ = [
+    'EndpointSettingsOperations',
+    'EndpointKeysOperations',
+    'AlterationsOperations',
+    'KnowledgebaseOperations',
+    'Operations',
+]

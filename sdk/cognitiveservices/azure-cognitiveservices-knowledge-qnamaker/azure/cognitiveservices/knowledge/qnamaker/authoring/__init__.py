@@ -8,7 +8,11 @@
 # Changes may cause incorrect behavior and will be lost if the code is
 # regenerated.
 # --------------------------------------------------------------------------
+
+from .qn_amaker_client import QnAMakerClient
 from .version import VERSION
 
+__all__ = ['QnAMakerClient']
 
 __version__ = VERSION
+
