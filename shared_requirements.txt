@@ -82,6 +82,7 @@ azure-mgmt-trafficmanager~=0.50.0
 azure-mgmt-web~=0.35.0
 azure-nspkg
 azure-keyvault-nspkg
+azure-search-nspkg
 azure-security-nspkg
 azure-servicebus~=0.21.1
 azure-servicefabric~=6.3.0.0
@@ -137,4 +138,4 @@ opentelemetry-api==0.4a0
 #override azure-eventhub uamqp<2.0,>=1.2.5
 #override azure-appconfiguration msrest>=0.6.10
 #override azure-servicebus uamqp>=1.2.5,<2.0.0
-#override azure-search msrest>=0.6.10
+#override azure-search-documents msrest>=0.6.10
