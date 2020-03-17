@@ -13,21 +13,18 @@ from msrest import Serializer, Deserializer
 
 class FeatureClientOperationsMixin(object):
 
+    def list_operations(
+        self,
+        **kwargs  # type: Any
+    ):
+    """Lists all of the available Microsoft.Features REST API operations.
 
-    def list_operations(self, custom_headers=None, raw=False, **operation_config):
-        """Lists all of the available Microsoft.Features REST API operations.
+    :keyword callable cls: A custom type or function that will be passed the direct response
+    :return: OperationListResult or the result of cls(response)
+    :rtype: ~azure.mgmt.resource.features.v2015_12_01.models.OperationListResult
+    :raises: ~azure.core.exceptions.HttpResponseError
+    """
 
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of Operation
-        :rtype:
-         ~azure.mgmt.resource.features.v2015_12_01.models.OperationPaged[~azure.mgmt.resource.features.v2015_12_01.models.Operation]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        
-        """
         api_version = self._get_api_version('list_operations')
         if api_version == '2015-12-01':
             from .v2015_12_01.operations import FeatureClientOperationsMixin as OperationClass
@@ -39,4 +36,4 @@ class FeatureClientOperationsMixin(object):
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         mixin_instance.api_version = api_version
-        return mixin_instance.list_operations(custom_headers, raw, **operation_config)
+        return mixin_instance.list_operations(**kwargs)
