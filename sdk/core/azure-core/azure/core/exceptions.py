@@ -74,15 +74,18 @@ def raise_with_traceback(exception, *args, **kwargs):
         raise error
 
 
-def map_error(status_code, response, error_map):
+def map_error(status_code, response, error_map, **kwargs):
     if not error_map:
         return
     error_type = error_map.get(status_code)
     if not error_type:
+        default_error = kwargs.pop("default_error", None)
+        if default_error:
+            error = default_error(response=response)
+            raise error
         return
     error = error_type(response=response)
     raise error
-
 
 class ODataV4Format(object):
     """Class to describe OData V4 error format.
