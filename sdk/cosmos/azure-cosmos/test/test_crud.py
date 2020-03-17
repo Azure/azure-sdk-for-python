@@ -159,11 +159,11 @@ class CRUDTests(unittest.TestCase):
 
         database_proxy = self.client.create_database_if_not_exists(id=database_id, offer_throughput=10000)
         self.assertEqual(database_id, database_proxy.id)
-        self.assertEquals(10000, database_proxy.read_offer().offer_throughput)
+        self.assertEqual(10000, database_proxy.read_offer().offer_throughput)
 
         database_proxy = self.client.create_database_if_not_exists(id=database_id, offer_throughput=9000)
         self.assertEqual(database_id, database_proxy.id)
-        self.assertEquals(10000, database_proxy.read_offer().offer_throughput)
+        self.assertEqual(10000, database_proxy.read_offer().offer_throughput)
 
         self.client.delete_database(database_id)
 
@@ -1926,6 +1926,7 @@ class CRUDTests(unittest.TestCase):
             ]
         }
 
+        custom_logger = logging.getLogger("CustomLogger")
         created_container = db.create_container(
             id='composite_index_spatial_index' + str(uuid.uuid4()),
             indexing_policy=indexing_policy,
@@ -1933,9 +1934,10 @@ class CRUDTests(unittest.TestCase):
             headers={"Foo":"bar"},
             user_agent="blah",
             user_agent_overwrite=True,
-            logging_enable=True
+            logging_enable=True,
+            logger=custom_logger,
         )
-        created_properties = created_container.read()
+        created_properties = created_container.read(logger=custom_logger)
         read_indexing_policy = created_properties['indexingPolicy']
 
         if 'localhost' in self.host or '127.0.0.1' in self.host:  # TODO: Differing result between live and emulator
