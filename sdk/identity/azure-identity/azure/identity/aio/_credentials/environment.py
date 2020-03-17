@@ -72,6 +72,8 @@ class EnvironmentCredential(AsyncCredentialBase):
         :raises ~azure.identity.CredentialUnavailableError: environment variable configuration is incomplete
         """
         if not self._credential:
-            raise CredentialUnavailableError(message="EnvironmentCredential authentication unavailable. "
-                                                 "Environment variables are not fully configured.")
+            message = (
+                "EnvironmentCredential authentication unavailable. Environment variables are not fully configured."
+            )
+            raise CredentialUnavailableError(message=message)
         return await self._credential.get_token(*scopes, **kwargs)
