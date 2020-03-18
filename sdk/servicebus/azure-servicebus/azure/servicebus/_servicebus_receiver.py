@@ -7,7 +7,8 @@ import datetime
 import logging
 import functools
 import uuid
-from typing import Any, List, TYPE_CHECKING, Optional
+import six
+from typing import Any, List, TYPE_CHECKING, Optional, Union
 
 from uamqp import ReceiveClient, Source, types
 from uamqp.constants import SenderSettleMode
@@ -16,6 +17,9 @@ from ._base_handler import BaseHandler
 from ._common.utils import create_authentication
 from ._common.message import PeekMessage, ReceivedMessage
 from ._common.constants import (
+    REQUEST_RESPONSE_GET_SESSION_STATE_OPERATION,
+    REQUEST_RESPONSE_SET_SESSION_STATE_OPERATION,
+    REQUEST_RESPONSE_RENEW_SESSION_LOCK_OPERATION,
     REQUEST_RESPONSE_RECEIVE_BY_SEQUENCE_NUMBER,
     REQUEST_RESPONSE_UPDATE_DISPOSTION_OPERATION,
     REQUEST_RESPONSE_PEEK_OPERATION,
@@ -33,6 +37,115 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 _LOGGER = logging.getLogger(__name__)
+
+
+class ServiceBusSession(object):
+    """
+    The ServiceBusSession is used for manage session states and lock renewal.
+
+    **Please use the instance variable `session` on the ServiceBusReceiver to get the corresponding ServiceBusSession
+    object linked with the receiver instead of instantiating a ServiceBusSession object directly.**
+    """
+    def __init__(self, session_id, receiver, encoding="UTF-8"):
+        self._session_id = session_id
+        self._receiver = receiver
+        self._encoding = encoding
+        self._locked_until = None
+
+    def get_session_state(self):
+        # type: () -> str
+        """Get the session state.
+
+        Returns None if no state has been set.
+
+        :rtype: str
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sync_samples/sample_code_servicebus.py
+                :start-after: [START get_session_state]
+                :end-before: [END get_session_state]
+                :language: python
+                :dedent: 4
+                :caption: Get the session state
+        """
+        response = self._receiver._mgmt_request_response_with_retry(  # pylint: disable=protected-access
+            REQUEST_RESPONSE_GET_SESSION_STATE_OPERATION,
+            {'session-id': self.session_id},
+            mgmt_handlers.default
+        )
+        session_state = response.get(b'session-state')
+        if isinstance(session_state, six.binary_type):
+            session_state = session_state.decode('UTF-8')
+        return session_state
+
+    def set_session_state(self, state):
+        # type: (Union[str, bytes, bytearray]) -> None
+        """Set the session state.
+
+        :param state: The state value.
+        :type state: str, bytes or bytearray
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sync_samples/sample_code_servicebus.py
+                :start-after: [START set_session_state]
+                :end-before: [END set_session_state]
+                :language: python
+                :dedent: 4
+                :caption: Set the session state
+        """
+        state = state.encode(self._encoding) if isinstance(state, six.text_type) else state
+        return self._receiver._mgmt_request_response_with_retry(  # pylint: disable=protected-access
+            REQUEST_RESPONSE_SET_SESSION_STATE_OPERATION,
+            {'session-id': self.session_id, 'session-state': bytearray(state)},
+            mgmt_handlers.default
+        )
+
+    def renew_lock(self):
+        # type: () -> None
+        """Renew the session lock.
+
+        This operation must be performed periodically in order to retain a lock on the
+        session to continue message processing.
+        Once the lock is lost the connection will be closed. This operation can
+        also be performed as a threaded background task by registering the session
+        with an `azure.servicebus.AutoLockRenew` instance.
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sync_samples/sample_code_servicebus.py
+                :start-after: [START renew_lock]
+                :end-before: [END renew_lock]
+                :language: python
+                :dedent: 4
+                :caption: Renew the session lock before it expires
+        """
+        expiry = self._receiver._mgmt_request_response_with_retry(  # pylint: disable=protected-access
+            REQUEST_RESPONSE_RENEW_SESSION_LOCK_OPERATION,
+            {'session-id': self.session_id},
+            mgmt_handlers.default
+        )
+        self._locked_until = datetime.datetime.fromtimestamp(expiry[b'expiration']/1000.0)
+
+    @property
+    def session_id(self):
+        # type: () -> str
+        """
+        Session id of the current session.
+
+        :rtype: str
+        """
+        return self._session_id
+
+    @property
+    def expired(self):
+        # type: () -> bool
+        """Whether the receivers lock on a particular session has expired.
+
+        :rtype: bool
+        """
+        return bool(self._locked_until and self._locked_until <= datetime.datetime.now())
 
 
 class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
@@ -54,6 +167,7 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
         )
         self._name = "SBReceiver-{}".format(uuid.uuid4())
         self._last_received_sequenced_number = None
+        self._session = None
 
     def _build_message(self, received, message_type=ReceivedMessage):
         message = message_type(message=received, mode=self._mode)
@@ -202,6 +316,9 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
             time.sleep(0.05)
         self._running = True
 
+        if self._session_id:
+            self._session = ServiceBusSession(self._session_id, self, self._config.encoding)
+
     def _receive(self, max_batch_size=None, timeout=None):
         self._open()
         max_batch_size = max_batch_size or self._handler._prefetch  # pylint: disable=protected-access
@@ -238,6 +355,18 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
             message,
             mgmt_handlers.lock_renew_op
         )
+
+    @property
+    def session(self):
+        # type: ()->ServiceBusSession
+        """
+        Get the ServiceBusSession object linked with the receiver.
+
+        :rtype: ~azure.servicebus.ServiceBusSession
+        """
+        if not self._session_id:
+            raise TypeError("Session is only available to session-enabled entities.")
+        return self._session
 
     @classmethod
     def from_connection_string(

@@ -6,15 +6,20 @@ import asyncio
 import collections
 import functools
 import logging
-from typing import Any, TYPE_CHECKING, List
+import six
+import datetime
+from typing import Any, TYPE_CHECKING, List, Union
 
 from uamqp import ReceiveClientAsync, types
 from uamqp.constants import SenderSettleMode
 
 from ._base_handler_async import BaseHandlerAsync
 from .async_message import ReceivedMessage
-from .._servicebus_receiver import ReceiverMixin
+from .._servicebus_receiver import ReceiverMixin, ServiceBusSession as BaseSession
 from .._common.constants import (
+    REQUEST_RESPONSE_GET_SESSION_STATE_OPERATION,
+    REQUEST_RESPONSE_SET_SESSION_STATE_OPERATION,
+    REQUEST_RESPONSE_RENEW_SESSION_LOCK_OPERATION,
     REQUEST_RESPONSE_UPDATE_DISPOSTION_OPERATION,
     REQUEST_RESPONSE_PEEK_OPERATION,
     REQUEST_RESPONSE_RECEIVE_BY_SEQUENCE_NUMBER,
@@ -28,6 +33,91 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 _LOGGER = logging.getLogger(__name__)
+
+
+class ServiceBusSession(BaseSession):
+    """
+    The ServiceBusSession is used for manage session states and lock renewal.
+
+    **Please use the instance variable `session` on the ServiceBusReceiver to get the corresponding ServiceBusSession
+    object linked with the receiver instead of instantiating a ServiceBusSession object directly.**
+    """
+
+    async def get_session_state(self):
+        # type: () -> str
+        """Get the session state.
+
+        Returns None if no state has been set.
+
+        :rtype: str
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_code_servicebus_async.py
+                :start-after: [START get_session_state_async]
+                :end-before: [END get_session_state_async]
+                :language: python
+                :dedent: 4
+                :caption: Get the session state
+        """
+        response = await self._receiver._mgmt_request_response_with_retry(  # pylint: disable=protected-access
+            REQUEST_RESPONSE_GET_SESSION_STATE_OPERATION,
+            {'session-id': self.session_id},
+            mgmt_handlers.default
+        )
+        session_state = response.get(b'session-state')
+        if isinstance(session_state, six.binary_type):
+            session_state = session_state.decode('UTF-8')
+        return session_state
+
+    async def set_session_state(self, state):
+        # type: (Union[str, bytes, bytearray]) -> None
+        """Set the session state.
+
+        :param state: The state value.
+        :type state: str, bytes or bytearray
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_code_servicebus_async.py
+                :start-after: [START set_session_state_async]
+                :end-before: [END set_session_state_async]
+                :language: python
+                :dedent: 4
+                :caption: Set the session state
+        """
+        state = state.encode(self._encoding) if isinstance(state, six.text_type) else state
+        return await self._receiver._mgmt_request_response_with_retry(  # pylint: disable=protected-access
+            REQUEST_RESPONSE_SET_SESSION_STATE_OPERATION,
+            {'session-id': self.session_id, 'session-state': bytearray(state)},
+            mgmt_handlers.default
+        )
+
+    async def renew_lock(self):
+        # type: () -> None
+        """Renew the session lock.
+
+        This operation must be performed periodically in order to retain a lock on the
+        session to continue message processing.
+        Once the lock is lost the connection will be closed. This operation can
+        also be performed as a threaded background task by registering the session
+        with an `azure.servicebus.aio.AutoLockRenew` instance.
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_code_servicebus_async.py
+                :start-after: [START session_renew_lock_async]
+                :end-before: [END session_renew_lock_async]
+                :language: python
+                :dedent: 4
+                :caption: Renew the session lock before it expires
+        """
+        expiry = await self._receiver._mgmt_request_response_with_retry(  # pylint: disable=protected-access
+            REQUEST_RESPONSE_RENEW_SESSION_LOCK_OPERATION,
+            {'session-id': self.session_id},
+            mgmt_handlers.default
+        )
+        self._locked_until = datetime.datetime.fromtimestamp(expiry[b'expiration']/1000.0)
 
 
 class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, ReceiverMixin):
@@ -147,6 +237,9 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
             await asyncio.sleep(0.05)
         self._running = True
 
+        if self._session_id:
+            self._session = ServiceBusSession(self._session_id, self, self._config.encoding)
+
     async def _receive(self, max_batch_size=None, timeout=None):
         await self._open()
         max_batch_size = max_batch_size or self._handler._prefetch  # pylint: disable=protected-access
@@ -181,6 +274,18 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
             message,
             mgmt_handlers.lock_renew_op
         )
+
+    @property
+    def session(self):
+        # type: ()->ServiceBusSession
+        """
+        Get the ServiceBusSession object linked with the receiver.
+
+        :rtype: ~azure.servicebus.aio.ServiceBusSession
+        """
+        if not self._session_id:
+            raise TypeError("Session is only available to session-enabled entities.")
+        return self._session
 
     @classmethod
     def from_connection_string(
