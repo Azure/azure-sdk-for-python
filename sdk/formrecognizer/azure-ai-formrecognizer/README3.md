@@ -16,8 +16,8 @@ Receipt and layout are accessed through the `FormRecognizerClient`. The input fo
 string url, or as a file stream. The SDK will determine content-type and send the appropriate header. 
 
 Both receipt and layout methods return poller objects which are used to get the result.
-The `begin_extract_receipt` method returns a `List[ExtractedReceipt]` with hardcoded receipt fields.
-The `begin_extract_layout` method returns the extracted layouts as a `List[ExtractedLayoutPage]`.
+The `begin_extract_receipts` method returns a `List[ExtractedReceipt]` with hardcoded receipt fields.
+The `begin_extract_layouts` method returns the extracted layouts as a `List[ExtractedLayoutPage]`.
 
 If the keyword argument `include_text_details=True` is passed in, the `elements` attribute will be re-hydrated with the
 OCR result for the particular value/cell referenced by the json pointer and the `lines` attribute on PageMetadata
@@ -29,9 +29,9 @@ from azure.ai.formrecognizer import FormRecognizerClient
 
 client = FormRecognizerClient(endpoint: str, credential: Union[CognitiveKeyCredential, TokenCredential])
 
-client.begin_extract_receipt(form: Union[str, BytesIO], **kwargs) -> LROPoller -> List[ExtractedReceipt]
+client.begin_extract_receipts(form: Union[str, BytesIO], **kwargs) -> LROPoller -> List[ExtractedReceipt]
 
-client.begin_extract_layout(form: Union[str, BytesIO], **kwargs) -> LROPoller -> List[ExtractedLayoutPage]
+client.begin_extract_layouts(form: Union[str, BytesIO], **kwargs) -> LROPoller -> List[ExtractedLayoutPage]
 ```
 
 ### Receipt Models
@@ -111,7 +111,7 @@ from azure.ai.formrecognizer import FormRecognizerClient
 client = FormRecognizerClient(endpoint, credential)
 
 receipt_image = "https://raw.githubusercontent.com/Azure-Samples/cognitive-services-REST-api-samples/master/curl/form-recognizer/contoso-allinone.jpg"
-poller = client.begin_extract_receipt(receipt_image)
+poller = client.begin_extract_receipts(receipt_image)
 receipts = poller.result()
 r = receipts[0].fields
 
@@ -192,7 +192,7 @@ from azure.ai.formrecognizer import FormRecognizerClient
 client = FormRecognizerClient(endpoint, credential)
 
 table_image = "https://www.traveldailymedia.com/assets/2020/01/Table2.png"
-poller = client.begin_extract_layout(table_image)
+poller = client.begin_extract_layouts(table_image)
 result = poller.result()
 
 table = result[0].tables[0] # page 1, table 1
@@ -257,10 +257,10 @@ class CustomModel:
     status: ModelStatus
     created_on: ~datetime.datetime
     last_updated_on: ~datetime.datetime
+    extracted_fields: List[FormFields]
     train_result: TrainResult
 
 class TrainResult:
-    extracted_fields: List[FormFields]
     documents: List[TrainingDocumentInfo]
     errors: List[FormRecognizerError]
 
@@ -336,11 +336,11 @@ class CustomLabeledModel:
     status: ModelStatus
     created_on: ~datetime.datetime
     last_updated_on: ~datetime.datetime
-    train_result: LabeledTrainResult
-
-class LabeledTrainResult:
     fields: List[FieldInfo]
     average_model_accuracy: float
+    train_result: TrainResult
+
+class TrainResult:
     documents: List[TrainingDocumentInfo]
     errors: List[FormRecognizerError]
 
