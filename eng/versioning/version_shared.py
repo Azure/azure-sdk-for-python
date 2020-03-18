@@ -23,6 +23,8 @@ sys.path.append(common_task_path)
 from common_tasks import process_glob_string, run_check_call
 
 VERSION_PY = "_version.py"
+# Auto generated code has version maintained in version.py. 
+# We need to handle this old file name until generated code creates _version.py for all packages
 OLD_VERSION_PY = "version.py"
 VERSION_REGEX = r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]'
 VERSION_STRING = 'VERSION = "%s"'
