@@ -28,12 +28,13 @@ from ._version import VERSION
 
 __version__ = VERSION
 
+from ._credential import SearchApiKeyCredential
+
 from ._index import (
     AutocompleteQuery,
     IndexAction,
     IndexDocumentsBatch,
     IndexingResult,
-    SearchApiKeyCredential,
     SearchIndexClient,
     SearchQuery,
     SearchItemPaged,
