@@ -17,6 +17,15 @@ import pytest
 
 
 @pytest.mark.asyncio
+async def test_no_scopes():
+    """The credential should raise ValueError when get_token is called with no scopes"""
+
+    credential = ClientSecretCredential("tenant-id", "client-id", "client-secret")
+    with pytest.raises(ValueError):
+        await credential.get_token()
+
+
+@pytest.mark.asyncio
 async def test_close():
     transport = AsyncMockTransport()
     credential = ClientSecretCredential("tenant-id", "client-id", "client-secret", transport=transport)
