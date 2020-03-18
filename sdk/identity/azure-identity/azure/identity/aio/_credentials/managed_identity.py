@@ -119,7 +119,7 @@ class ImdsCredential(_AsyncManagedIdentityBase):
             raise CredentialUnavailableError(message="IMDS endpoint unavailable")
 
         if len(scopes) != 1:
-            raise ValueError("this credential supports one scope per request")
+            raise ValueError("This credential requires exactly one scope per token request.")
 
         token = self._client.get_cached_token(scopes)
         if not token:
@@ -155,7 +155,7 @@ class MsiCredential(_AsyncManagedIdentityBase):
             raise CredentialUnavailableError(message="MSI endpoint unavailable")
 
         if len(scopes) != 1:
-            raise ValueError("this credential supports only one scope per request")
+            raise ValueError("This credential requires exactly one scope per token request.")
 
         token = self._client.get_cached_token(scopes)
         if not token:
