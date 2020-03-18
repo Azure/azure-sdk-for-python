@@ -1,5 +1,31 @@
 # Release History
 
+## 8.1.1 (2020-03-30)
+**Features**
+
+- Model Application has a new parameter ui_definition_uri
+- Model ApplicationPatchable has a new parameter ui_definition_uri
+- Model TenantIdDescription has a new parameter display_name
+- Model TenantIdDescription has a new parameter domains
+
+**Breaking changes**
+
+- Operation DeploymentsOperations.create_or_update_at_management_group_scope has a new signature
+- Operation DeploymentsOperations.validate_at_management_group_scope has a new signature
+- Operation DeploymentsOperations.create_or_update_at_tenant_scope has a new signature
+- Operation DeploymentsOperations.validate_at_tenant_scope has a new signature
+- Model PolicySetDefinition no longer has parameter policy_definition_groups
+- Model Subscription no longer has parameter managed_by_tenants
+- Model DeploymentValidateResult no longer has parameter error
+- Removed operation DeploymentsOperations.what_if
+- Removed operation DeploymentsOperations.what_if_at_subscription_scope
+- Removed operation TagsOperations.resource_delete
+- Removed operation TagsOperations.resource_create
+- Removed operation TagsOperations.resource_update
+- Removed operation TagsOperations.resource_get
+- Removed operation PolicyAssignmentsOperations.list_for_management_group
+- Model PolicyDefinitionReference has a new signature
+
 ## 8.0.1 (2020-02-04)
 
 **Bugfixes**
