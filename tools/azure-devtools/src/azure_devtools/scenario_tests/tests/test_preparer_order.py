@@ -121,6 +121,3 @@ def test_cached_preparer_parent_cache_keying():
     AbstractPreparer._perform_pending_deletes()
     # The key here is to observe that changing a parent preparer means the child preparers can't utilize a cache from a cache-stack not including that parent.
     assert traces == ['create A', 'create C', 'create C', 'remove C', 'create PARENT', 'create A', 'create C', 'remove C', 'remove A', 'remove PARENT', 'remove C', 'remove A']
-
-if __name__ == '__main__':
-    test_cached_preparer_parent_cache_keying()
