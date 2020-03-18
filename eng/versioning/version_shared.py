@@ -23,6 +23,7 @@ sys.path.append(common_task_path)
 from common_tasks import process_glob_string, run_check_call
 
 VERSION_PY = "_version.py"
+OLD_VERSION_PY = "version.py"
 VERSION_REGEX = r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]'
 VERSION_STRING = 'VERSION = "%s"'
 
@@ -80,6 +81,8 @@ def get_version_py(setup_py_location):
     for root, _, files in os.walk(azure_root_path):
         if(VERSION_PY in files):
             return path.join(root, VERSION_PY)
+        elif (OLD_VERSION_PY in files):
+            return path.join(root, OLD_VERSION_PY)
 
 def set_version_py(setup_py_location, new_version):
     version_py_location = get_version_py(setup_py_location)
