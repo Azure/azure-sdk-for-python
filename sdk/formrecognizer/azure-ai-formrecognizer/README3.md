@@ -36,12 +36,7 @@ client.begin_extract_layout(form: Union[str, BytesIO], **kwargs) -> LROPoller ->
 
 ### Receipt Models
 ```python
-class ExtractedReceipt:
-    fields: ReceiptFields
-    page_range: PageRange
-    pages: List[PageMetadata]
-
-class ReceiptFields(DictMixin):
+class ExtractedReceipt(DictMixin):
     receipt_items: List[ReceiptItem]
     merchant_address: FieldValue
     merchant_name: FieldValue
@@ -53,6 +48,8 @@ class ReceiptFields(DictMixin):
     total: FieldValue
     transaction_date: FieldValue
     transaction_time: FieldValue
+    page_range: PageRange
+    pages: List[PageMetadata]
 
 class ReceiptItem:
     name: FieldValue
@@ -417,7 +414,7 @@ class PageMetadata:
 ```python
 class ModelInfo:
     model_id: str
-    status: str
+    status: ModelStatus
     created_on: ~datetime.datetime
     last_updated_on: ~datetime.datetime
 
