@@ -153,7 +153,12 @@ class SearchIndexClientTest(AzureMgmtTestCase):
         query.select("hotelName", "category", "description")
 
         results = client.search(query=query)
-        assert results.get_facets() == {'category': [{'value': 'Budget', 'count': 4}, {'value': 'Luxury', 'count': 1}]}
+        assert results.get_facets() == {
+            "category": [
+                {"value": "Budget", "count": 4},
+                {"value": "Luxury", "count": 1},
+            ]
+        }
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
@@ -205,9 +210,7 @@ class SearchIndexClientTest(AzureMgmtTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
-    def test_upload_documents_existing(
-        self, api_key, endpoint, index_name, **kwargs
-    ):
+    def test_upload_documents_existing(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexClient(
             endpoint, index_name, SearchApiKeyCredential(api_key)
         )
@@ -221,9 +224,7 @@ class SearchIndexClientTest(AzureMgmtTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
-    def test_delete_documents_existing(
-        self, api_key, endpoint, index_name, **kwargs
-    ):
+    def test_delete_documents_existing(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexClient(
             endpoint, index_name, SearchApiKeyCredential(api_key)
         )
@@ -244,9 +245,7 @@ class SearchIndexClientTest(AzureMgmtTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
-    def test_delete_documents_missing(
-        self, api_key, endpoint, index_name, **kwargs
-    ):
+    def test_delete_documents_missing(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexClient(
             endpoint, index_name, SearchApiKeyCredential(api_key)
         )
@@ -267,9 +266,7 @@ class SearchIndexClientTest(AzureMgmtTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
-    def test_merge_documents_existing(
-        self, api_key, endpoint, index_name, **kwargs
-    ):
+    def test_merge_documents_existing(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexClient(
             endpoint, index_name, SearchApiKeyCredential(api_key)
         )
@@ -315,9 +312,7 @@ class SearchIndexClientTest(AzureMgmtTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
-    def test_merge_or_upload_documents(
-        self, api_key, endpoint, index_name, **kwargs
-    ):
+    def test_merge_or_upload_documents(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexClient(
             endpoint, index_name, SearchApiKeyCredential(api_key)
         )
