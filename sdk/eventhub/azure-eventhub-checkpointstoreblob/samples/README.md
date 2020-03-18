@@ -14,8 +14,8 @@ These sample programs show how to use the sync Python client libraries for Azure
 
 | **File Name**                                                | **Description**                                                                                                                                                  |
 | ------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [receive_events_using_checkpoint_store_async.py](./receive_events_using_checkpoint_store_async.py)        | Demonstrates how to use the async BlobCheckpointStore with EventHubConsumerClient to process events from all partitions of a consumer group in an Event Hubs instance. |
-| [receive_events_using_checkpoint_store_storage_api_version_async.py][./receive_events_using_checkpoint_store_storage_api_version_async.py] | Demonstrates how to use a specific Azure Storage Blobs API version with BlobCheckpointStore.                                                                     |
+| [receive_events_using_checkpoint_store.py](./receive_events_using_checkpoint_store.py)        | Demonstrates how to use the async BlobCheckpointStore with EventHubConsumerClient to process events from all partitions of a consumer group in an Event Hubs instance. |
+| [receive_events_using_checkpoint_store_storage_api_version.py](./receive_events_using_checkpoint_store_storage_api_version.py) | Demonstrates how to use a specific Azure Storage Blobs API version with BlobCheckpointStore.                                                                     |
 
 ## Prerequisites
 - Python2.7, Python 3.5.3 or later.
@@ -38,7 +38,7 @@ pip install azure-eventhub-checkpointstoreblob
 
 1. Open a terminal window and `cd` to the directory that the samples are saved in.
 2. Set the environment variables specified in the sample file you wish to run.
-3. Follow the usage described in the file, e.g. `python send.py`.
+3. Follow the usage described in the file.
 
 ## Next steps
 
