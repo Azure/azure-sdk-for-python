@@ -106,25 +106,4 @@ class DefaultAzureCredential(ChainedTokenCredential):
         :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The exception has a
           `message` attribute listing each authentication attempt and its error message.
         """
-<<<<<<< HEAD
-<<<<<<< HEAD
-        if self._successful_credential:
-            return self._successful_credential.get_token(*scopes, **kwargs)
-
-        try:
-            return super(DefaultAzureCredential, self).get_token(*scopes, **kwargs)
-        except ClientAuthenticationError as e:
-            raise ClientAuthenticationError(
-                message="""
-{}\n\nPlease visit the documentation at
-https://aka.ms/python-sdk-identity#defaultazurecredential
-to learn what options DefaultAzureCredential supports""".format(
-                    e.message
-                )
-            )
-=======
-        return super(DefaultAzureCredential, self).get_token(*scopes, **kwargs)
->>>>>>> update error message
-=======
-        return super().get_token(*scopes, **kwargs)  # pylint:disable=useless-super-delegation
->>>>>>> remove public var for error message
+        return super(DefaultAzureCredential, self).get_token(*scopes, **kwargs)  # pylint:disable=useless-super-delegation
