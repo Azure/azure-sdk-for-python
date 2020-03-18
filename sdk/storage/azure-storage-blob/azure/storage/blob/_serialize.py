@@ -18,7 +18,9 @@ from ._generated.models import (
 
 _SUPPORTED_API_VERSIONS = [
     '2019-02-02',
-    '2019-07-07'
+    '2019-07-07',
+    '2019-10-10',
+    '2019-12-12',
 ]
 
 

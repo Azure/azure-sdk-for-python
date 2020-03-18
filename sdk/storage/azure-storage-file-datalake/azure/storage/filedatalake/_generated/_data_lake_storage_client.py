@@ -25,11 +25,11 @@ class DataLakeStorageClient(object):
 
 
     :ivar service: Service operations
-    :vartype service: azure.storage.file.datalake.operations.ServiceOperations
+    :vartype service: azure.storage.filedatalake.operations.ServiceOperations
     :ivar file_system: FileSystem operations
-    :vartype file_system: azure.storage.file.datalake.operations.FileSystemOperations
+    :vartype file_system: azure.storage.filedatalake.operations.FileSystemOperations
     :ivar path: Path operations
-    :vartype path: azure.storage.file.datalake.operations.PathOperations
+    :vartype path: azure.storage.filedatalake.operations.PathOperations
 
     :param url: The URL of the service account, container, or blob that is the
      targe of the desired operation.
@@ -47,7 +47,7 @@ class DataLakeStorageClient(object):
         self._client = PipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2018-11-09'
+        self.api_version = '2019-12-12'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
@@ -58,6 +58,8 @@ class DataLakeStorageClient(object):
         self.path = PathOperations(
             self._client, self._config, self._serialize, self._deserialize)
 
+    def close(self):
+        self._client.close()
     def __enter__(self):
         self._client.__enter__()
         return self
