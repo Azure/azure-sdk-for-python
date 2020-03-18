@@ -173,7 +173,7 @@ class EventHubConsumer(
         self._last_received_event = event_data
         return event_data
 
-    async def receive(self, batch, max_batch_size, max_wait_time) -> None:
+    async def receive(self, batch=False, max_batch_size=300, max_wait_time=None) -> None:
         max_retries = (
             self._client._config.max_retries  # pylint:disable=protected-access
         )
