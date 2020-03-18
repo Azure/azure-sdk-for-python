@@ -378,7 +378,7 @@ class ReceivedMessage(PeekMessage):
 
     @property
     def expired(self):
-        if hasattr(self._receiver, 'locked_until'):
+        if hasattr(self._receiver, '_session_id'):
             raise TypeError("Session messages do not expire. Please use the Session expiry instead.")
         if self.locked_until and self.locked_until <= datetime.datetime.now():
             return True
@@ -386,7 +386,7 @@ class ReceivedMessage(PeekMessage):
 
     @property
     def locked_until(self):
-        if hasattr(self._receiver, 'locked_until') or self.settled:
+        if hasattr(self._receiver, '_session_id') or self.settled:
             return None
         if self._expiry:
             return self._expiry
@@ -397,7 +397,7 @@ class ReceivedMessage(PeekMessage):
 
     @property
     def lock_token(self):
-        if hasattr(self._receiver, 'locked_until') or self.settled:
+        if self.settled:
             return None
 
         if hasattr(self.message, 'delivery_tag') and self.message.delivery_tag:
@@ -419,7 +419,7 @@ class ReceivedMessage(PeekMessage):
         :raises: ~azure.servicebus.common.errors.MessageSettleFailed if message settle operation fails.
         """
         self._is_live('complete')
-        self._receiver._settle_deferred(SETTLEMENT_COMPLETE, [self.lock_token])  # pylint: disable=protected-access
+        self._receiver._settle_message(SETTLEMENT_COMPLETE, [self.lock_token])  # pylint: disable=protected-access
         self._settled = True
 
     def dead_letter(self, description=None):
@@ -442,7 +442,7 @@ class ReceivedMessage(PeekMessage):
         details = {
             'deadletter-reason': str(description) if description else "",
             'deadletter-description': str(description) if description else ""}
-        self._receiver._settle_deferred(  # pylint: disable=protected-access
+        self._receiver._settle_message(  # pylint: disable=protected-access
             SETTLEMENT_DEADLETTER, [self.lock_token], dead_letter_details=details)
         self._settled = True
 
@@ -457,7 +457,7 @@ class ReceivedMessage(PeekMessage):
         :raises: ~azure.servicebus.common.errors.MessageSettleFailed if message settle operation fails.
         """
         self._is_live('abandon')
-        self._receiver._settle_deferred(SETTLEMENT_ABANDON, [self.lock_token])  # pylint: disable=protected-access
+        self._receiver._settle_message(SETTLEMENT_ABANDON, [self.lock_token])  # pylint: disable=protected-access
         self._settled = True
 
     def defer(self):
@@ -472,7 +472,7 @@ class ReceivedMessage(PeekMessage):
         :raises: ~azure.servicebus.common.errors.MessageSettleFailed if message settle operation fails.
         """
         self._is_live('defer')
-        self._receiver._settle_deferred(SETTLEMENT_DEFER, [self.lock_token])  # pylint: disable=protected-access
+        self._receiver._settle_message(SETTLEMENT_DEFER, [self.lock_token])  # pylint: disable=protected-access
         self._settled = True
 
     def renew_lock(self):
@@ -489,7 +489,7 @@ class ReceivedMessage(PeekMessage):
         :raises: ~azure.servicebus.common.errors.MessageLockExpired is message lock has already expired.
         :raises: ~azure.servicebus.common.errors.MessageAlreadySettled is message has already been settled.
         """
-        if hasattr(self._receiver, 'locked_until'):
+        if hasattr(self._receiver, '_session_id'):
             raise TypeError("Session messages cannot be renewed. Please renew the Session lock instead.")
         self._is_live('renew')
         token = self.lock_token

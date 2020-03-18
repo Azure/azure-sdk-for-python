@@ -24,6 +24,7 @@ from ._common.constants import (
     SESSION_LOCKED_UNTIL,
     DATETIMEOFFSET_EPOCH,
     SESSION_FILTER,
+    REQUEST_RESPONSE_RENEWLOCK_OPERATION
 )
 from .exceptions import _ServiceBusErrorPolicy
 from ._common import mgmt_handlers
@@ -213,16 +214,29 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
 
         return [self._build_message(message) for message in batch]
 
-    def _settle_deferred(self, settlement, lock_tokens, dead_letter_details=None):
+    def _settle_message(self, settlement, lock_tokens, dead_letter_details=None):
         message = {
             'disposition-status': settlement,
-            'lock-tokens': types.AMQPArray(lock_tokens)}
+            'lock-tokens': types.AMQPArray(lock_tokens)
+        }
+
+        if self._session_id:
+            message["session-id"] = self._session_id
         if dead_letter_details:
             message.update(dead_letter_details)
+
         return self._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_UPDATE_DISPOSTION_OPERATION,
             message,
             mgmt_handlers.default
+        )
+
+    def _renew_locks(self, *lock_tokens):
+        message = {'lock-tokens': types.AMQPArray(lock_tokens)}
+        return self._mgmt_request_response_with_retry(
+            REQUEST_RESPONSE_RENEWLOCK_OPERATION,
+            message,
+            mgmt_handlers.lock_renew_op
         )
 
     @classmethod
@@ -345,8 +359,11 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         message = {
             'sequence-numbers': types.AMQPArray([types.AMQPLong(s) for s in sequence_numbers]),
             'receiver-settle-mode': types.AMQPuInt(receive_mode),
-            'session-id': self._session_id
         }
+
+        if self._session_id:
+            message["session-id"] = self._session_id
+
         handler = functools.partial(mgmt_handlers.deferred_message_op, mode=receive_mode)
         messages = self._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_RECEIVE_BY_SEQUENCE_NUMBER,
@@ -389,6 +406,10 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
             'from-sequence-number': types.AMQPLong(sequence_number),
             'message-count': message_count
         }
+
+        if self._session_id:
+            message["session-id"] = self._session_id
+
         return self._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_PEEK_OPERATION,
             message,

@@ -18,6 +18,7 @@ from .._common.constants import (
     REQUEST_RESPONSE_UPDATE_DISPOSTION_OPERATION,
     REQUEST_RESPONSE_PEEK_OPERATION,
     REQUEST_RESPONSE_RECEIVE_BY_SEQUENCE_NUMBER,
+    REQUEST_RESPONSE_RENEWLOCK_OPERATION,
     ReceiveSettleMode
 )
 from .._common import mgmt_handlers
@@ -157,16 +158,29 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
 
         return [self._build_message(message, ReceivedMessage) for message in batch]
 
-    async def _settle_deferred(self, settlement, lock_tokens, dead_letter_details=None):
+    async def _settle_message(self, settlement, lock_tokens, dead_letter_details=None):
         message = {
             'disposition-status': settlement,
             'lock-tokens': types.AMQPArray(lock_tokens)}
+
+        if self._session_id:
+            message["session-id"] = self._session_id
         if dead_letter_details:
             message.update(dead_letter_details)
+
         return await self._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_UPDATE_DISPOSTION_OPERATION,
             message,
-            mgmt_handlers.default)
+            mgmt_handlers.default
+        )
+
+    async def _renew_locks(self, *lock_tokens):
+        message = {'lock-tokens': types.AMQPArray(lock_tokens)}
+        return await self._mgmt_request_response_with_retry(
+            REQUEST_RESPONSE_RENEWLOCK_OPERATION,
+            message,
+            mgmt_handlers.lock_renew_op
+        )
 
     @classmethod
     def from_connection_string(
