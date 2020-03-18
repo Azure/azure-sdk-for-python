@@ -121,6 +121,41 @@ class SearchIndexClientTestAsync(AzureMgmtTestCase):
     @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     @await_prepared_test
+    async def test_get_search_counts(self, api_key, endpoint, index_name, **kwargs):
+        client = SearchIndexClient(
+            endpoint, index_name, SearchApiKeyCredential(api_key)
+        )
+
+        query = SearchQuery(search_text="hotel")
+        results = await client.search(query=query)
+        assert await results.get_count() is None
+
+        query = SearchQuery(search_text="hotel", include_total_result_count=True)
+        results = await client.search(query=query)
+        assert await results.get_count() == 7
+
+
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
+    @await_prepared_test
+    async def test_get_search_coverage(self, api_key, endpoint, index_name, **kwargs):
+        client = SearchIndexClient(
+            endpoint, index_name, SearchApiKeyCredential(api_key)
+        )
+
+        query = SearchQuery(search_text="hotel")
+        results = await client.search(query=query)
+        assert await results.get_coverage() is None
+
+        query = SearchQuery(search_text="hotel", minimum_coverage=50.0)
+        results = await client.search(query=query)
+        cov = await results.get_coverage()
+        assert isinstance(cov, float)
+        assert cov >= 50.0
+
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
+    @await_prepared_test
     async def test_get_search_facets_none(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexClient(
             endpoint, index_name, SearchApiKeyCredential(api_key)
