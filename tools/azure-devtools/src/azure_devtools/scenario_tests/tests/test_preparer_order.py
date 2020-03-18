@@ -91,7 +91,8 @@ def test_cached_preparer_order():
     AbstractPreparer._perform_pending_deletes()
 
     assert len(traces) == 8
-    # we're technically relying on an implementation detail (for earlier versions of python, this is now a feature)
+    # we're technically relying on an implementation detail (for earlier versions of python
+    # dicts did not guarantee ordering by insertion order, later versions do)
     # to order removal by relying on dict ordering.
     assert traces[5] == 'remove C'
     assert traces[6] == 'remove B'
