@@ -13,7 +13,7 @@ import time
 import uuid
 from datetime import datetime, timedelta
 
-from azure.servicebus.aio import ServiceBusClient, Message, DeferredMessage, AutoLockRenew
+from azure.servicebus.aio import ServiceBusClient, Message, ReceivedMessage, AutoLockRenew
 from azure.servicebus.common.message import PeekMessage
 from azure.servicebus.common.constants import ReceiveSettleMode, NEXT_AVAILABLE
 from azure.servicebus.common.errors import (
@@ -260,7 +260,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
             deferred = await session.receive_deferred_messages(deferred_messages)
             assert len(deferred) == 10
             for message in deferred:
-                assert isinstance(message, DeferredMessage)
+                assert isinstance(message, ReceivedMessage)
                 assert message.lock_token
                 assert not message.locked_until
                 assert message._receiver
@@ -303,7 +303,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
             deferred = await session.receive_deferred_messages(deferred_messages)
             assert len(deferred) == 10
             for message in deferred:
-                assert isinstance(message, DeferredMessage)
+                assert isinstance(message, ReceivedMessage)
                 await message.dead_letter("something")
 
         count = 0
@@ -350,7 +350,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
             deferred = await session.receive_deferred_messages(deferred_messages, mode=ReceiveSettleMode.ReceiveAndDelete)
             assert len(deferred) == 10
             for message in deferred:
-                assert isinstance(message, DeferredMessage)
+                assert isinstance(message, ReceivedMessage)
                 with pytest.raises(MessageAlreadySettled):
                     await message.complete()
             with pytest.raises(ServiceBusError):

@@ -16,7 +16,7 @@ from azure.servicebus.aio import (
     ServiceBusClient,
     Message,
     #BatchMessage,
-    DeferredMessage,
+    ReceivedMessage,
     AutoLockRenew)
 from azure.servicebus.common.message import PeekMessage
 from azure.servicebus.common.constants import ReceiveSettleMode
@@ -366,7 +366,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
         deferred = await queue_client.receive_deferred_messages(deferred_messages, mode=ReceiveSettleMode.PeekLock)
         assert len(deferred) == 10
         for message in deferred:
-            assert isinstance(message, DeferredMessage)
+            assert isinstance(message, ReceivedMessage)
             with pytest.raises(ValueError):
                 await message.complete()
         with pytest.raises(ValueError):
@@ -408,7 +408,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             deferred = await session.receive_deferred_messages(deferred_messages)
             assert len(deferred) == 10
             for message in deferred:
-                assert isinstance(message, DeferredMessage)
+                assert isinstance(message, ReceivedMessage)
                 assert message.lock_token
                 assert message.locked_until
                 assert message._receiver
@@ -448,7 +448,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             deferred = await session.receive_deferred_messages(deferred_messages)
             assert len(deferred) == 10
             for message in deferred:
-                assert isinstance(message, DeferredMessage)
+                assert isinstance(message, ReceivedMessage)
                 await message.dead_letter("something")
 
         count = 0
@@ -493,7 +493,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             deferred = await receiver.receive_deferred_messages(deferred_messages, mode=ReceiveSettleMode.ReceiveAndDelete)
             assert len(deferred) == 10
             for message in deferred:
-                assert isinstance(message, DeferredMessage)
+                assert isinstance(message, ReceivedMessage)
                 with pytest.raises(MessageAlreadySettled):
                     await message.complete()
             with pytest.raises(ServiceBusError):
