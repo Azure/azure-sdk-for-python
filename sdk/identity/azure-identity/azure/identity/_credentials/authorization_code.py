@@ -42,13 +42,13 @@ class AuthorizationCodeCredential(object):
         # type: (*str, **Any) -> AccessToken
         """Request an access token for `scopes`.
 
+        .. note:: This method is called by Azure SDK clients. It isn't intended for use in application code.
+
         The first time this method is called, the credential will redeem its authorization code. On subsequent calls
         the credential will return a cached access token or redeem a refresh token, if it acquired a refresh token upon
         redeeming the authorization code.
 
-        .. note:: This method is called by Azure SDK clients. It isn't intended for use in application code.
-
-        :param str scopes: desired scopes for the access token
+        :param str scopes: desired scopes for the access token. This method requires at least one scope.
         :rtype: :class:`azure.core.credentials.AccessToken`
         :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The error's ``message``
           attribute gives a reason. Any error response from Azure Active Directory is available as the error's
