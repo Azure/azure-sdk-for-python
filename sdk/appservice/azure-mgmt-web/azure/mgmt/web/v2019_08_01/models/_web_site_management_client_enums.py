@@ -576,6 +576,23 @@ class SiteRuntimeState(str, Enum):
     unknown = "UNKNOWN"
 
 
+class BuildStatus(str, Enum):
+
+    waiting_for_deployment = "WaitingForDeployment"
+    uploading = "Uploading"
+    deploying = "Deploying"
+    ready = "Ready"
+    failed = "Failed"
+    deleting = "Deleting"
+    detached = "Detached"
+
+
+class TriggerTypes(str, Enum):
+
+    http_trigger = "HttpTrigger"
+    unknown = "Unknown"
+
+
 class SkuName(str, Enum):
 
     free = "Free"
