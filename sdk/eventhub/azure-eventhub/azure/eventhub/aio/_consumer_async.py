@@ -9,11 +9,6 @@ import logging
 from collections import deque
 from typing import TYPE_CHECKING, Callable, Awaitable, cast, Dict, Optional, Union, List
 
-try:
-    from typing import Deque
-except ImportError:
-    from typing_extensions import Deque  # for Python 3.5.3
-
 import uamqp
 from uamqp import errors, types, utils
 from uamqp import ReceiveClientAsync, Source
@@ -25,6 +20,7 @@ from .._utils import create_properties, trace_link_message, event_position_selec
 from .._constants import EPOCH_SYMBOL, TIMEOUT_SYMBOL, RECEIVER_RUNTIME_METRIC_SYMBOL
 
 if TYPE_CHECKING:
+    from typing import Deque
     from uamqp.authentication import JWTTokenAsync
     from ._consumer_client_async import EventHubConsumerClient
 
