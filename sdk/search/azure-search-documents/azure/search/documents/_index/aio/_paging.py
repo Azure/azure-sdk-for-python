@@ -63,6 +63,21 @@ class AsyncSearchItemPaged(AsyncItemPaged[ReturnType]):
         return await self._first_iterator_instance().get_count()
 
 
+# The pylint error silenced below seems spurious, as the inner wrapper does, in
+# fact, become a method of the class when it is applied.
+def _ensure_response(f):
+    # pylint:disable=protected-access
+    async def wrapper(self, *args, **kw):
+        if self._current_page is None:
+            self._response = await self._get_next(self.continuation_token)
+            self.continuation_token, self._current_page = await self._extract_data(
+                self._response
+            )
+        return await f(self, *args, **kw)
+
+    return wrapper
+
+
 class AsyncSearchPageIterator(AsyncPageIterator[ReturnType]):
     def __init__(self, client, initial_query, kwargs, continuation_token=None):
         super(AsyncSearchPageIterator, self).__init__(
@@ -91,16 +106,6 @@ class AsyncSearchPageIterator(AsyncPageIterator[ReturnType]):
         continuation_token = pack_continuation_token(response)
         results = [convert_search_result(r) for r in response.results]
         return continuation_token, results
-
-    def _ensure_response(f):
-        async def wrapper(self, *args, **kw):
-            if self._current_page is None:
-                self._response = await self._get_next(self.continuation_token)
-                self.continuation_token, self._current_page = await self._extract_data(
-                    self._response
-                )
-            return await f(self, *args, **kw)
-        return wrapper
 
     @_ensure_response
     async def get_facets(self):
