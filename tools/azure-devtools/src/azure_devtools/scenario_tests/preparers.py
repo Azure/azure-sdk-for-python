@@ -199,7 +199,7 @@ You must specify use_cache=True in the preparer decorator""".format(test_class_i
     @classmethod
     def _perform_pending_deletes(cls):
         _logger.debug("Perform all delayed resource removal.")
-        for resource_name, kwargs, preparer in [e for e in cls._resource_cache.values()]:
+        for resource_name, kwargs, preparer in reversed([e for e in cls._resource_cache.values()]):
             try:
                 _logger.debug("Performing delayed delete for: %s %s", preparer, resource_name)
                 preparer.remove_resource_with_record_override(resource_name, **kwargs)
