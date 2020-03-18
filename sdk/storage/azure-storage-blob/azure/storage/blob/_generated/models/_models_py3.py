@@ -186,6 +186,10 @@ class BlobItem(Model):
     :type deleted: bool
     :param snapshot: Required.
     :type snapshot: str
+    :param version_id:
+    :type version_id: str
+    :param is_current_version:
+    :type is_current_version: bool
     :param properties: Required.
     :type properties: ~azure.storage.blob.models.BlobProperties
     :param metadata:
@@ -203,6 +207,8 @@ class BlobItem(Model):
         'name': {'key': 'Name', 'type': 'str', 'xml': {'name': 'Name'}},
         'deleted': {'key': 'Deleted', 'type': 'bool', 'xml': {'name': 'Deleted'}},
         'snapshot': {'key': 'Snapshot', 'type': 'str', 'xml': {'name': 'Snapshot'}},
+        'version_id': {'key': 'VersionId', 'type': 'str', 'xml': {'name': 'VersionId'}},
+        'is_current_version': {'key': 'IsCurrentVersion', 'type': 'bool', 'xml': {'name': 'IsCurrentVersion'}},
         'properties': {'key': 'Properties', 'type': 'BlobProperties', 'xml': {'name': 'Properties'}},
         'metadata': {'key': 'Metadata', 'type': 'BlobMetadata', 'xml': {'name': 'Metadata'}},
     }
@@ -210,11 +216,13 @@ class BlobItem(Model):
         'name': 'Blob'
     }
 
-    def __init__(self, *, name: str, deleted: bool, snapshot: str, properties, metadata=None, **kwargs) -> None:
+    def __init__(self, *, name: str, deleted: bool, snapshot: str, properties, version_id: str=None, is_current_version: bool=None, metadata=None, **kwargs) -> None:
         super(BlobItem, self).__init__(**kwargs)
         self.name = name
         self.deleted = deleted
         self.snapshot = snapshot
+        self.version_id = version_id
+        self.is_current_version = is_current_version
         self.properties = properties
         self.metadata = metadata
 
@@ -824,6 +832,51 @@ class DataLakeStorageErrorError(Model):
         self.message = message
 
 
+class DelimitedTextConfiguration(Model):
+    """delimited text configuration.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param column_separator: Required. column separator
+    :type column_separator: str
+    :param field_quote: Required. field quote
+    :type field_quote: str
+    :param record_separator: Required. record separator
+    :type record_separator: str
+    :param escape_char: Required. escape char
+    :type escape_char: str
+    :param has_headers: Required. has headers
+    :type has_headers: str
+    """
+
+    _validation = {
+        'column_separator': {'required': True},
+        'field_quote': {'required': True},
+        'record_separator': {'required': True},
+        'escape_char': {'required': True},
+        'has_headers': {'required': True},
+    }
+
+    _attribute_map = {
+        'column_separator': {'key': 'ColumnSeparator', 'type': 'str', 'xml': {'name': 'ColumnSeparator'}},
+        'field_quote': {'key': 'FieldQuote', 'type': 'str', 'xml': {'name': 'FieldQuote'}},
+        'record_separator': {'key': 'RecordSeparator', 'type': 'str', 'xml': {'name': 'RecordSeparator'}},
+        'escape_char': {'key': 'EscapeChar', 'type': 'str', 'xml': {'name': 'EscapeChar'}},
+        'has_headers': {'key': 'HasHeaders', 'type': 'str', 'xml': {'name': 'HasHeaders'}},
+    }
+    _xml_map = {
+        'name': 'DelimitedTextConfiguration'
+    }
+
+    def __init__(self, *, column_separator: str, field_quote: str, record_separator: str, escape_char: str, has_headers: str, **kwargs) -> None:
+        super(DelimitedTextConfiguration, self).__init__(**kwargs)
+        self.column_separator = column_separator
+        self.field_quote = field_quote
+        self.record_separator = record_separator
+        self.escape_char = escape_char
+        self.has_headers = has_headers
+
+
 class DirectoryHttpHeaders(Model):
     """Additional parameters for a set of operations, such as: Directory_create,
     Directory_rename, Blob_rename.
@@ -890,6 +943,31 @@ class GeoReplication(Model):
         super(GeoReplication, self).__init__(**kwargs)
         self.status = status
         self.last_sync_time = last_sync_time
+
+
+class JsonTextConfiguration(Model):
+    """json text configuration.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param record_separator: Required. record separator
+    :type record_separator: str
+    """
+
+    _validation = {
+        'record_separator': {'required': True},
+    }
+
+    _attribute_map = {
+        'record_separator': {'key': 'RecordSeparator', 'type': 'str', 'xml': {'name': 'RecordSeparator'}},
+    }
+    _xml_map = {
+        'name': 'JsonTextConfiguration'
+    }
+
+    def __init__(self, *, record_separator: str, **kwargs) -> None:
+        super(JsonTextConfiguration, self).__init__(**kwargs)
+        self.record_separator = record_separator
 
 
 class KeyInfo(Model):
@@ -1264,6 +1342,109 @@ class PageRange(Model):
         super(PageRange, self).__init__(**kwargs)
         self.start = start
         self.end = end
+
+
+class QueryRequest(Model):
+    """the quick query body.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar query_type: Required. the query type. Default value: "SQL" .
+    :vartype query_type: str
+    :param expression: Required. a query statement
+    :type expression: str
+    :param input_serialization:
+    :type input_serialization:
+     ~azure.storage.blob.models.QuickQuerySerialization
+    :param output_serialization:
+    :type output_serialization:
+     ~azure.storage.blob.models.QuickQuerySerialization
+    """
+
+    _validation = {
+        'query_type': {'required': True, 'constant': True},
+        'expression': {'required': True},
+    }
+
+    _attribute_map = {
+        'query_type': {'key': 'QueryType', 'type': 'str', 'xml': {'name': 'QueryType'}},
+        'expression': {'key': 'Expression', 'type': 'str', 'xml': {'name': 'Expression'}},
+        'input_serialization': {'key': 'InputSerialization', 'type': 'QuickQuerySerialization', 'xml': {'name': 'InputSerialization'}},
+        'output_serialization': {'key': 'OutputSerialization', 'type': 'QuickQuerySerialization', 'xml': {'name': 'OutputSerialization'}},
+    }
+    _xml_map = {
+        'name': 'QueryRequest'
+    }
+
+    query_type = "SQL"
+
+    def __init__(self, *, expression: str, input_serialization=None, output_serialization=None, **kwargs) -> None:
+        super(QueryRequest, self).__init__(**kwargs)
+        self.expression = expression
+        self.input_serialization = input_serialization
+        self.output_serialization = output_serialization
+
+
+class QuickQueryFormat(Model):
+    """QuickQueryFormat.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param quick_query_type: Required. Possible values include: 'delimited',
+     'json'
+    :type quick_query_type: str or ~azure.storage.blob.models.QuickQueryType
+    :param delimited_text_configuration:
+    :type delimited_text_configuration:
+     ~azure.storage.blob.models.DelimitedTextConfiguration
+    :param json_text_configuration:
+    :type json_text_configuration:
+     ~azure.storage.blob.models.JsonTextConfiguration
+    """
+
+    _validation = {
+        'quick_query_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'quick_query_type': {'key': 'QuickQueryType', 'type': 'QuickQueryType', 'xml': {'name': 'QuickQueryType'}},
+        'delimited_text_configuration': {'key': 'DelimitedTextConfiguration', 'type': 'DelimitedTextConfiguration', 'xml': {'name': 'DelimitedTextConfiguration'}},
+        'json_text_configuration': {'key': 'JsonTextConfiguration', 'type': 'JsonTextConfiguration', 'xml': {'name': 'JsonTextConfiguration'}},
+    }
+    _xml_map = {
+    }
+
+    def __init__(self, *, quick_query_type, delimited_text_configuration=None, json_text_configuration=None, **kwargs) -> None:
+        super(QuickQueryFormat, self).__init__(**kwargs)
+        self.quick_query_type = quick_query_type
+        self.delimited_text_configuration = delimited_text_configuration
+        self.json_text_configuration = json_text_configuration
+
+
+class QuickQuerySerialization(Model):
+    """QuickQuerySerialization.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param format: Required.
+    :type format: ~azure.storage.blob.models.QuickQueryFormat
+    """
+
+    _validation = {
+        'format': {'required': True},
+    }
+
+    _attribute_map = {
+        'format': {'key': 'Format', 'type': 'QuickQueryFormat', 'xml': {'name': 'Format'}},
+    }
+    _xml_map = {
+    }
+
+    def __init__(self, *, format, **kwargs) -> None:
+        super(QuickQuerySerialization, self).__init__(**kwargs)
+        self.format = format
 
 
 class RetentionPolicy(Model):
