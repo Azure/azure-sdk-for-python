@@ -13,14 +13,15 @@ or by providing a token credential from `azure.identity` to use Azure Active Dir
 ## Receipt and Layout
 
 Receipt and layout are accessed through the `FormRecognizerClient`. The input form or document can be passed as a 
-string url/path to the image, or as a file stream. The SDK will determine content-type and send the appropriate header. 
+string url, or as a file stream. The SDK will determine content-type and send the appropriate header. 
 
 Both receipt and layout methods return poller objects which are used to get the result.
 The `begin_extract_receipt` method returns a `List[ExtractedReceipt]` with hardcoded receipt fields.
 The `begin_extract_layout` method returns the extracted layouts as a `List[ExtractedLayoutPage]`.
 
 If the keyword argument `include_text_details=True` is passed in, the `elements` attribute will be re-hydrated with the
-OCR result for the particular value/cell referenced by the json pointer.
+OCR result for the particular value/cell referenced by the json pointer and the `lines` attribute on PageMetadata
+will be populated with the OCR lines on the page.
 
 ### Form Recognizer Client
 ```python
@@ -35,20 +36,23 @@ client.begin_extract_layout(form: Union[str, BytesIO], **kwargs) -> LROPoller ->
 
 ### Receipt Models
 ```python
-class ExtractedReceipt(DictMixin):
+class ExtractedReceipt:
+    fields: ReceiptFields
+    page_range: PageRange
+    pages: List[PageMetadata]
+
+class ReceiptFields(DictMixin):
     receipt_items: List[ReceiptItem]
     merchant_address: FieldValue
     merchant_name: FieldValue
     merchant_phone_number: FieldValue
-    receipt_type: FieldValue
+    receipt_type: ReceiptType
     subtotal: FieldValue
     tax: FieldValue
     tip: FieldValue
     total: FieldValue
     transaction_date: FieldValue
     transaction_time: FieldValue
-    page_range: PageRange
-    page_metadata: PageMetadata
 
 class ReceiptItem:
     name: FieldValue
@@ -59,21 +63,24 @@ class ReceiptItem:
 class FieldValue:
     value: Union[str, float, int, datetime]
     text: str
-    bounding_box: List[float]
+    bounding_box: BoundingBox
     confidence: float
     page_number: int
     elements: List[Union[ExtractedLine, ExtractedWord]]
 
+class ReceiptType:
+    type: str
+    confidence: float
+
 class ExtractedLine:
     text: str
-    bounding_box: List[float]
-    language: str
+    bounding_box: BoundingBox
     page_number: int
     words: List[ExtractedWord]
 
 class ExtractedWord:
     text: str
-    bounding_box: List[float]
+    bounding_box: BoundingBox
     confidence: float
     page_number: int
     line: ExtractedLine
@@ -81,12 +88,22 @@ class ExtractedWord:
 class PageMetadata:
     page_number: int
     angle: float
-    width: int
-    height: int
-    unit: str
-    language: str
+    width: float
+    height: float
+    unit: LengthUnit
     lines: List[ExtractedLine]
 
+class LengthUnit(str, Enum):
+    pixel = "pixel"
+    inch = "inch"
+
+class BoundingBox:
+    top_left: Point(x, y)
+    top_right: Point(x, y)
+    bottom_right: Point(x, y)
+    bottom_left: Point(x, y)
+
+Point = collections.namedtuple("Point", "x y")
 PageRange = collections.namedtuple("PageRange", "first_page last_page")
 ```
 
@@ -98,8 +115,8 @@ client = FormRecognizerClient(endpoint, credential)
 
 receipt_image = "https://raw.githubusercontent.com/Azure-Samples/cognitive-services-REST-api-samples/master/curl/form-recognizer/contoso-allinone.jpg"
 poller = client.begin_extract_receipt(receipt_image)
-receipt = poller.result()
-r = receipt[0]
+receipts = poller.result()
+r = receipts[0].fields
 
 print("Receipt contained the following values with confidences: ")
 print("ReceiptType: {}, confidence: {}").format(r.receipt_type.value, r.receipt_type.confidence)
@@ -145,19 +162,18 @@ class TableCell:
     is_header: bool
     row_index: int
     row_span: int
-    bounding_box: List[float]
+    bounding_box: BoundingBox
     elements: List[Union[ExtractedLine, ExtractedWord]]
 
 class ExtractedLine:
     text: str
-    bounding_box: List[float]
-    language: str
+    bounding_box: BoundingBox
     page_number: int
     words: List[ExtractedWord]
 
 class ExtractedWord:
     text: str
-    bounding_box: List[float]
+    bounding_box: BoundingBox
     confidence: float
     page_number: int
     line: ExtractedLine
@@ -165,17 +181,15 @@ class ExtractedWord:
 class PageMetadata:
     page_number: int
     angle: float
-    width: int
-    height: int
-    unit: str
-    language: str
+    width: float
+    height: float
+    unit: LengthUnit
     lines: List[ExtractedLine]
 ```
 
 ### Layout Sample
 
 ```python
-import pandas as pd
 from azure.ai.formrecognizer import FormRecognizerClient
 
 client = FormRecognizerClient(endpoint, credential)
@@ -185,12 +199,9 @@ poller = client.begin_extract_layout(table_image)
 result = poller.result()
 
 table = result[0].tables[0] # page 1, table 1
-my_table = [[None for x in range(table.column_count)] for y in range(table.row_count)]
 for cell in table.cells:
-    my_table[cell.row_index][cell.column_index] = cell.text
-
-dftable = pd.DataFrame(my_table)
-print(dftable.to_markdown())
+    print(cell.text)
+    print(cell.confidence)
 ```
 
 ## Custom
@@ -199,7 +210,7 @@ The `CustomFormClient` provides all the operations necessary for training a cust
 custom model, and managing a user's custom models on their account.
 
 The user can choose to train with or without labels using the methods `begin_labeled_training` or `begin_training`. 
-Both methods take as input a blob SAS uri or valid path to the documents to use for training. Each training method 
+Both methods take as input a blob SAS URI to the documents to use for training. Each training method 
 will return a poller object which is used to get the training result.
 
 A custom model can be used to analyze forms using the `begin_extract_forms` or `begin_extract_labeled_forms` method.
@@ -217,17 +228,17 @@ client = CustomFormClient(endpoint: str, credential: Union[CognitiveKeyCredentia
 
 # Train
 client.begin_labeled_training(
-    source: str, source_prefix_filter: str, include_sub_folders: bool=False
+    source: str, source_prefix_filter: str="", include_sub_folders: bool=False
 ) -> LROPoller -> CustomLabeledModel
 
 client.begin_training(
-    source: str, source_prefix_filter: str, include_sub_folders: bool=False
+    source: str, source_prefix_filter: str="", include_sub_folders: bool=False
 ) -> LROPoller -> CustomModel
 
 # Extract
 client.begin_extract_forms(form: Union[str, BytesIO], model_id: str) -> LROPoller -> List[ExtractedPage]
 
-client.begin_extract_labeled_forms(form: Union[str, BytesIO], model_id: str) -> LROPoller -> ExtractedForm
+client.begin_extract_labeled_forms(form: Union[str, BytesIO], model_id: str) -> LROPoller -> List[ExtractedForm]
 
 # Manage
 client.list_custom_models() -> ItemPaged[ModelInfo]
@@ -246,7 +257,7 @@ client.delete_custom_model(model_id: str) -> None
 # Training ---------------------------------------------------
 class CustomModel:
     model_id: str
-    status: str
+    status: ModelStatus
     created_on: ~datetime.datetime
     last_updated_on: ~datetime.datetime
     train_result: TrainResult
@@ -262,13 +273,23 @@ class FormFields:
 
 class TrainingDocumentInfo:
     document_name: str
-    status: str
+    status: TrainStatus
     page_count: int
     errors: List[FormRecognizerError]
 
 class FormRecognizerError:
     code: str
     message: str
+
+class TrainStatus(str, Enum):
+    succeeded = "succeeded"
+    partially_succeeded = "partiallySucceeded"
+    failed = "failed"
+
+class ModelStatus(str, Enum):
+    creating = "creating"
+    ready = "ready"
+    invalid = "invalid"
 
 # Analyze ---------------------------------------------------
 class ExtractedPage:
@@ -285,19 +306,18 @@ class ExtractedField:
 
 class ExtractedText:
     text: str
-    bounding_box: List[float]
+    bounding_box: BoundingBox
     elements: List[Union[ExtractedLine, ExtractedWord]]
 
 class ExtractedLine:
     text: str
-    bounding_box: List[float]
-    language: str
+    bounding_box: BoundingBox
     page_number: int
     words: List[ExtractedWord]
 
 class ExtractedWord:
     text: str
-    bounding_box: List[float]
+    bounding_box: BoundingBox
     confidence: float
     page_number: int
     line: ExtractedLine
@@ -305,10 +325,9 @@ class ExtractedWord:
 class PageMetadata:
     page_number: int
     angle: float
-    width: int
-    height: int
-    unit: str
-    language: str
+    width: float
+    height: float
+    unit: LengthUnit
     lines: List[ExtractedLine]
 ```
 
@@ -317,24 +336,24 @@ class PageMetadata:
 # Training ---------------------------------------------------
 class CustomLabeledModel:
     model_id: str
-    status: str
+    status: ModelStatus
     created_on: ~datetime.datetime
     last_updated_on: ~datetime.datetime
     train_result: LabeledTrainResult
 
 class LabeledTrainResult:
-    fields: List[FieldNames]
+    fields: List[FieldInfo]
     average_model_accuracy: float
     documents: List[TrainingDocumentInfo]
     errors: List[FormRecognizerError]
 
 class TrainingDocumentInfo:
     document_name: str
-    status: str
+    status: TrainStatus
     page_count: int
     errors: List[FormRecognizerError]
 
-class FieldNames:
+class FieldInfo:
     field_name: str
     accuracy: float
 
@@ -342,9 +361,19 @@ class FormRecognizerError:
     code: str
     message: str
 
+class TrainStatus(str, Enum):
+    succeeded = "succeeded"
+    partially_succeeded = "partiallySucceeded"
+    failed = "failed"
+
+class ModelStatus(str, Enum):
+    creating = "creating"
+    ready = "ready"
+    invalid = "invalid"
+
 # Analyze ---------------------------------------------------
 class ExtractedForm:
-    labels: Dict[str, LabelValue]
+    fields: Dict[str, FieldValue]
     pages: List[ExtractedLayoutPage]
     page_range: PageRange
 
@@ -353,24 +382,23 @@ class ExtractedLayoutPage:
     page_metadata: PageMetadata
     page_number: int
 
-class LabelValue:
+class FieldValue:
     text: str
     value: Union[int, float, str, datetime]
-    bounding_box: List[float]
+    bounding_box: BoundingBox
     confidence: float
     page_number: int
     elements: List[Union[ExtractedLine, ExtractedWord]]
 
 class ExtractedLine:
     text: str
-    bounding_box: List[float]
-    language: str
+    bounding_box: BoundingBox
     page_number: int
     words: List[ExtractedWord]
 
 class ExtractedWord:
     text: str
-    bounding_box: List[float]
+    bounding_box: BoundingBox
     confidence: float
     page_number: int
     line: ExtractedLine
@@ -378,10 +406,9 @@ class ExtractedWord:
 class PageMetadata:
     page_number: int
     angle: float
-    width: int
-    height: int
-    unit: str
-    language: str
+    width: float
+    height: float
+    unit: LengthUnit
     lines: List[ExtractedLine]
 ```
 
@@ -428,9 +455,10 @@ for document in train_result.documents:
     print(document.page_count)
     print(document.errors)
 
-print("Form type ID: {}".format(train_result.form_type_id))
 print("Extracted fields:")
-print(train_result.extracted_fields)
+for item in train_result.extracted_fields:
+    print(item.form_type_id)
+    print(item.fields) # list of fields
 
 # Analyze
 blob_sas_url = "xxxxx"  # form to analyze uploaded to blob storage
@@ -479,10 +507,10 @@ blob_sas_url = "xxxxx"  # form to analyze uploaded to blob storage
 poller = client.begin_extract_labeled_forms(blob_sas_url, model_id=model.model_id)
 result = poller.result()
 
-print("Page range: {}".format(result.page_range))
-for field, value in result.labels.items():
-    print("{}: {}".format(field, value.text))
-    print(value.bounding_box, value.confidence)
+print("Page range: {}".format(result[0].page_range))
+for label, field in result[0].fields.items():
+    print("{}: {}".format(label, field.text))
+    print(field.bounding_box, field.confidence)
 
 ```
 
@@ -509,7 +537,7 @@ print("Datetime when summary was updated: {}".format(summary.last_updated_on))
 ```
 
 
-#### Get a custom model with a model ID (e.g. unsupervised)
+#### Get a custom model with a model ID (unsupervised)
 ```python
 from azure.ai.formrecognizer import CustomFormClient
 
@@ -523,15 +551,44 @@ print("Created on: {}".format(model.created_on))
 print("Last updated on: {}".format(model.last_updated_on))
 
 train_result = model.train_result
-for document in train_result.documents:
-    print(document.name)
-    print(document.status)
-    print(document.page_count)
-    print(document.errors)
+for doc in train_result.documents:
+    print(doc.document_name)
+    print(doc.status)
+    print(doc.page_count)
+    print(doc.errors)
 
-print("Form type ID: {}".format(train_result.form_type_id))
 print("Extracted fields:")
-print(train_result.extracted_fields)
+for item in train_result.extracted_fields:
+    print(item.form_type_id)
+    print(item.fields) # list of fields
+```
+
+
+#### Get a custom labeled model with a model ID (supervised)
+```python
+from azure.ai.formrecognizer import CustomFormClient
+
+client = CustomFormClient(endpoint=endpoint, credential=credential)
+model = client.get_custom_labeled_model(model_id="xxxxx")
+
+# Custom model information
+print("Model ID: {}".format(model.model_id))
+print("Status: {}".format(model.status))
+print("Created on: {}".format(model.created_on))
+print("Last updated on: {}".format(model.last_updated_on))
+
+# Training result information
+train_result = model.train_result
+for doc in train_result.documents:
+    print(doc.document_name)
+    print(doc.status)
+    print(doc.page_count)
+    print(doc.errors)
+
+print("Average model accuracy: {}".format(train_result.average_model_accuracy))
+print("Fields extracted/accuracy")
+for field in train_result.fields:
+    print(field.field_name, field.accuracy)
 ```
 
 
