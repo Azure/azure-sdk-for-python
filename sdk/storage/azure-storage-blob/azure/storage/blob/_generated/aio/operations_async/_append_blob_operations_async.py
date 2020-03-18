@@ -200,6 +200,7 @@ class AppendBlobOperations:
                 'x-ms-client-request-id': self._deserialize('str', response.headers.get('x-ms-client-request-id')),
                 'x-ms-request-id': self._deserialize('str', response.headers.get('x-ms-request-id')),
                 'x-ms-version': self._deserialize('str', response.headers.get('x-ms-version')),
+                'x-ms-version-id': self._deserialize('str', response.headers.get('x-ms-version-id')),
                 'Date': self._deserialize('rfc-1123', response.headers.get('Date')),
                 'x-ms-request-server-encrypted': self._deserialize('bool', response.headers.get('x-ms-request-server-encrypted')),
                 'x-ms-encryption-key-sha256': self._deserialize('str', response.headers.get('x-ms-encryption-key-sha256')),

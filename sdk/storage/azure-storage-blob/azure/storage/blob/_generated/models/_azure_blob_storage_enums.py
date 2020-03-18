@@ -200,6 +200,12 @@ class GeoReplicationStatusType(str, Enum):
     unavailable = "unavailable"
 
 
+class QuickQueryType(str, Enum):
+
+    delimited = "delimited"
+    json = "json"
+
+
 class AccessTierRequired(str, Enum):
 
     p4 = "P4"

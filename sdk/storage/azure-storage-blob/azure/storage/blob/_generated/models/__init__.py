@@ -31,8 +31,10 @@ try:
     from ._models_py3 import CpkScopeInfo
     from ._models_py3 import DataLakeStorageError, DataLakeStorageErrorException
     from ._models_py3 import DataLakeStorageErrorError
+    from ._models_py3 import DelimitedTextConfiguration
     from ._models_py3 import DirectoryHttpHeaders
     from ._models_py3 import GeoReplication
+    from ._models_py3 import JsonTextConfiguration
     from ._models_py3 import KeyInfo
     from ._models_py3 import LeaseAccessConditions
     from ._models_py3 import ListBlobsFlatSegmentResponse
@@ -43,6 +45,9 @@ try:
     from ._models_py3 import ModifiedAccessConditions
     from ._models_py3 import PageList
     from ._models_py3 import PageRange
+    from ._models_py3 import QueryRequest
+    from ._models_py3 import QuickQueryFormat
+    from ._models_py3 import QuickQuerySerialization
     from ._models_py3 import RetentionPolicy
     from ._models_py3 import SequenceNumberAccessConditions
     from ._models_py3 import SignedIdentifier
@@ -74,8 +79,10 @@ except (SyntaxError, ImportError):
     from ._models import CpkScopeInfo
     from ._models import DataLakeStorageError, DataLakeStorageErrorException
     from ._models import DataLakeStorageErrorError
+    from ._models import DelimitedTextConfiguration
     from ._models import DirectoryHttpHeaders
     from ._models import GeoReplication
+    from ._models import JsonTextConfiguration
     from ._models import KeyInfo
     from ._models import LeaseAccessConditions
     from ._models import ListBlobsFlatSegmentResponse
@@ -86,6 +93,9 @@ except (SyntaxError, ImportError):
     from ._models import ModifiedAccessConditions
     from ._models import PageList
     from ._models import PageRange
+    from ._models import QueryRequest
+    from ._models import QuickQueryFormat
+    from ._models import QuickQuerySerialization
     from ._models import RetentionPolicy
     from ._models import SequenceNumberAccessConditions
     from ._models import SignedIdentifier
@@ -115,6 +125,7 @@ from ._azure_blob_storage_enums import (
     PathRenameMode,
     PremiumPageBlobAccessTier,
     PublicAccessType,
+    QuickQueryType,
     RehydratePriority,
     SequenceNumberActionType,
     SkuName,
@@ -144,8 +155,10 @@ __all__ = [
     'CpkScopeInfo',
     'DataLakeStorageError', 'DataLakeStorageErrorException',
     'DataLakeStorageErrorError',
+    'DelimitedTextConfiguration',
     'DirectoryHttpHeaders',
     'GeoReplication',
+    'JsonTextConfiguration',
     'KeyInfo',
     'LeaseAccessConditions',
     'ListBlobsFlatSegmentResponse',
@@ -156,6 +169,9 @@ __all__ = [
     'ModifiedAccessConditions',
     'PageList',
     'PageRange',
+    'QueryRequest',
+    'QuickQueryFormat',
+    'QuickQuerySerialization',
     'RetentionPolicy',
     'SequenceNumberAccessConditions',
     'SignedIdentifier',
@@ -175,6 +191,7 @@ __all__ = [
     'BlobType',
     'StorageErrorCode',
     'GeoReplicationStatusType',
+    'QuickQueryType',
     'AccessTierRequired',
     'AccessTierOptional',
     'PremiumPageBlobAccessTier',
