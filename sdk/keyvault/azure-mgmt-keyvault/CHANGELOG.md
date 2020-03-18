@@ -1,4 +1,12 @@
 # Release History
+## 2.2.1 (2020-03-31)
+
+**Features**
+
+- Model VaultProperties has a new parameter enable_rbac_authorization
+- Model VaultProperties has a new parameter soft_delete_retention_in_days
+- Model VaultPatchProperties has a new parameter enable_rbac_authorization
+- Model VaultPatchProperties has a new parameter soft_delete_retention_in_days
 
 ## 2.1.1 (2020-02-07)
 
