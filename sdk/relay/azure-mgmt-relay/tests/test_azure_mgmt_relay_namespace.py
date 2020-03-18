@@ -37,8 +37,11 @@ class MgmtRelayNamespaceTest(AzureMgmtTestCase):
         getnamespaceresponse = self.relay_client.namespaces.get(resource_group_name, namespace_name)
         self.assertEqual(getnamespaceresponse.name, namespace_name)
 
-        # Get the List of Namespaces under the resourceGroup - list_by_resource_group
+        # Update a Namespace
+        namespaceparameter={'tags': {'tag1':'value1', 'tag2':'value2'}}
+        updatenamespace = self.relay_client.namespaces.update(resource_group_name, namespace_name, namespaceparameter)
 
+        # Get the List of Namespaces under the resourceGroup - list_by_resource_group
         listbyresourcegroupresponse = list(self.relay_client.namespaces.list_by_resource_group(resource_group_name, False, False))
         self.assertGreater(len(listbyresourcegroupresponse), 0, "No Namespace returned, List is empty")
         self.assertEqual(listbyresourcegroupresponse[0].name, namespace_name, "Created namespace not found - ListByResourgroup")
