@@ -67,7 +67,7 @@ class FileSystemOperations:
         :return: None or the result of cls(response)
         :rtype: None
         :raises:
-         :class:`StorageErrorException<azure.storage.file.datalake.models.StorageErrorException>`
+         :class:`StorageErrorException<azure.storage.filedatalake.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
         # Construct URL
@@ -144,13 +144,13 @@ class FileSystemOperations:
         :param modified_access_conditions: Additional parameters for the
          operation
         :type modified_access_conditions:
-         ~azure.storage.file.datalake.models.ModifiedAccessConditions
+         ~azure.storage.filedatalake.models.ModifiedAccessConditions
         :param callable cls: A custom type or function that will be passed the
          direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises:
-         :class:`StorageErrorException<azure.storage.file.datalake.models.StorageErrorException>`
+         :class:`StorageErrorException<azure.storage.filedatalake.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
         if_modified_since = None
@@ -226,7 +226,7 @@ class FileSystemOperations:
         :return: None or the result of cls(response)
         :rtype: None
         :raises:
-         :class:`StorageErrorException<azure.storage.file.datalake.models.StorageErrorException>`
+         :class:`StorageErrorException<azure.storage.filedatalake.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
         # Construct URL
@@ -298,13 +298,13 @@ class FileSystemOperations:
         :param modified_access_conditions: Additional parameters for the
          operation
         :type modified_access_conditions:
-         ~azure.storage.file.datalake.models.ModifiedAccessConditions
+         ~azure.storage.filedatalake.models.ModifiedAccessConditions
         :param callable cls: A custom type or function that will be passed the
          direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises:
-         :class:`StorageErrorException<azure.storage.file.datalake.models.StorageErrorException>`
+         :class:`StorageErrorException<azure.storage.filedatalake.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
         if_modified_since = None
@@ -398,9 +398,9 @@ class FileSystemOperations:
         :param callable cls: A custom type or function that will be passed the
          direct response
         :return: PathList or the result of cls(response)
-        :rtype: ~azure.storage.file.datalake.models.PathList
+        :rtype: ~azure.storage.filedatalake.models.PathList
         :raises:
-         :class:`StorageErrorException<azure.storage.file.datalake.models.StorageErrorException>`
+         :class:`StorageErrorException<azure.storage.filedatalake.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
         # Construct URL
