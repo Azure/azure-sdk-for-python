@@ -64,6 +64,37 @@ class SearchItemPaged(ItemPaged[ReturnType]):
         """
         return self._first_iterator_instance().get_facets()
 
+    def get_coverage(self):
+        # type: () -> float
+        """Return the covereage percentage, if `minimum_coverage` was
+        specificied for the query.
+
+        """
+        return self._first_iterator_instance().get_coverage()
+
+    def get_count(self):
+        # type: () -> float
+        """Return the count of results if `include_total_result_count` was
+        set for the query.
+
+        """
+        return self._first_iterator_instance().get_count()
+
+
+# The pylint error silenced below seems spurious, as the inner wrapper does, in
+# fact, become a method of the class when it is applied.
+def _ensure_response(f):
+    # pylint:disable=protected-access
+    def wrapper(self, *args, **kw):
+        if self._current_page is None:
+            self._response = self._get_next(self.continuation_token)
+            self.continuation_token, self._current_page = self._extract_data(
+                self._response
+            )
+        return f(self, *args, **kw)
+
+    return wrapper
+
 
 class SearchPageIterator(PageIterator):
     def __init__(self, client, initial_query, kwargs, continuation_token=None):
@@ -89,18 +120,20 @@ class SearchPageIterator(PageIterator):
 
     def _extract_data_cb(self, response):  # pylint:disable=no-self-use
         continuation_token = pack_continuation_token(response)
-        facets = response.facets
-        if facets is not None:
-            self._facets = {k: [x.as_dict() for x in v] for k, v in facets.items()}
-
         results = [convert_search_result(r) for r in response.results]
-
         return continuation_token, results
 
+    @_ensure_response
     def get_facets(self):
-        if self._current_page is None:
-            self._response = self._get_next(self.continuation_token)
-            self.continuation_token, self._current_page = self._extract_data(
-                self._response
-            )
+        facets = self._response.facets
+        if facets is not None and self._facets is None:
+            self._facets = {k: [x.as_dict() for x in v] for k, v in facets.items()}
         return self._facets
+
+    @_ensure_response
+    def get_coverage(self):
+        return self._response.coverage
+
+    @_ensure_response
+    def get_count(self):
+        return self._response.count
