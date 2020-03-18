@@ -41,7 +41,7 @@ class BlobOperations:
         self.x_ms_copy_action = "abort"
         self.restype = "account"
 
-    async def download(self, snapshot=None, timeout=None, range=None, range_get_content_md5=None, range_get_content_crc64=None, request_id=None, lease_access_conditions=None, cpk_info=None, modified_access_conditions=None, *, cls=None, **kwargs):
+    async def download(self, snapshot=None, version_id=None, timeout=None, range=None, range_get_content_md5=None, range_get_content_crc64=None, request_id=None, lease_access_conditions=None, cpk_info=None, modified_access_conditions=None, *, cls=None, **kwargs):
         """The Download operation reads or downloads a blob from the system,
         including its metadata and properties. You can also call Download to
         read a snapshot.
@@ -52,6 +52,10 @@ class BlobOperations:
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/creating-a-snapshot-of-a-blob">Creating
          a Snapshot of a Blob.</a>
         :type snapshot: str
+        :param version_id: The version id parameter is an opaque DateTime
+         value that, when present, specifies the version of the blob to delete.
+         It for service version 2019_10_10 and newer.
+        :type version_id: str
         :param timeout: The timeout parameter is expressed in seconds. For
          more information, see <a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
@@ -126,6 +130,8 @@ class BlobOperations:
         query_parameters = {}
         if snapshot is not None:
             query_parameters['snapshot'] = self._serialize.query("snapshot", snapshot, 'str')
+        if version_id is not None:
+            query_parameters['versionid'] = self._serialize.query("version_id", version_id, 'str')
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
 
@@ -253,7 +259,7 @@ class BlobOperations:
         return deserialized
     download.metadata = {'url': '/{containerName}/{blob}'}
 
-    async def get_properties(self, snapshot=None, timeout=None, request_id=None, lease_access_conditions=None, cpk_info=None, modified_access_conditions=None, *, cls=None, **kwargs):
+    async def get_properties(self, snapshot=None, version_id=None, timeout=None, request_id=None, lease_access_conditions=None, cpk_info=None, modified_access_conditions=None, *, cls=None, **kwargs):
         """The Get Properties operation returns all user-defined metadata,
         standard HTTP properties, and system properties for the blob. It does
         not return the content of the blob.
@@ -264,6 +270,10 @@ class BlobOperations:
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/creating-a-snapshot-of-a-blob">Creating
          a Snapshot of a Blob.</a>
         :type snapshot: str
+        :param version_id: The version id parameter is an opaque DateTime
+         value that, when present, specifies the version of the blob to delete.
+         It for service version 2019_10_10 and newer.
+        :type version_id: str
         :param timeout: The timeout parameter is expressed in seconds. For
          more information, see <a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
@@ -327,6 +337,8 @@ class BlobOperations:
         query_parameters = {}
         if snapshot is not None:
             query_parameters['snapshot'] = self._serialize.query("snapshot", snapshot, 'str')
+        if version_id is not None:
+            query_parameters['versionid'] = self._serialize.query("version_id", version_id, 'str')
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
 
@@ -405,7 +417,7 @@ class BlobOperations:
             return cls(response, None, response_headers)
     get_properties.metadata = {'url': '/{containerName}/{blob}'}
 
-    async def delete(self, snapshot=None, timeout=None, delete_snapshots=None, request_id=None, lease_access_conditions=None, modified_access_conditions=None, *, cls=None, **kwargs):
+    async def delete(self, snapshot=None, version_id=None, timeout=None, delete_snapshots=None, request_id=None, lease_access_conditions=None, modified_access_conditions=None, *, cls=None, **kwargs):
         """If the storage account's soft delete feature is disabled then, when a
         blob is deleted, it is permanently removed from the storage account. If
         the storage account's soft delete feature is enabled, then, when a blob
@@ -428,6 +440,10 @@ class BlobOperations:
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/creating-a-snapshot-of-a-blob">Creating
          a Snapshot of a Blob.</a>
         :type snapshot: str
+        :param version_id: The version id parameter is an opaque DateTime
+         value that, when present, specifies the version of the blob to delete.
+         It for service version 2019_10_10 and newer.
+        :type version_id: str
         :param timeout: The timeout parameter is expressed in seconds. For
          more information, see <a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
@@ -487,6 +503,8 @@ class BlobOperations:
         query_parameters = {}
         if snapshot is not None:
             query_parameters['snapshot'] = self._serialize.query("snapshot", snapshot, 'str')
+        if version_id is not None:
+            query_parameters['versionid'] = self._serialize.query("version_id", version_id, 'str')
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
 
@@ -1147,7 +1165,7 @@ class BlobOperations:
             return cls(response, None, response_headers)
     set_http_headers.metadata = {'url': '/{containerName}/{blob}'}
 
-    async def set_metadata(self, timeout=None, metadata=None, request_id=None, lease_access_conditions=None, cpk_info=None, cpk_scope_info=None, modified_access_conditions=None, *, cls=None, **kwargs):
+    async def set_metadata(self, timeout=None, metadata=None, request_id=None, version_id=None, lease_access_conditions=None, cpk_info=None, cpk_scope_info=None, modified_access_conditions=None, *, cls=None, **kwargs):
         """The Set Blob Metadata operation sets user-defined metadata for the
         specified blob as one or more name-value pairs.
 
@@ -1170,6 +1188,10 @@ class BlobOperations:
          KB character limit that is recorded in the analytics logs when storage
          analytics logging is enabled.
         :type request_id: str
+        :param version_id: The version id parameter is an opaque DateTime
+         value that, when present, specifies the version of the blob to delete.
+         It for service version 2019_10_10 and newer.
+        :type version_id: str
         :param lease_access_conditions: Additional parameters for the
          operation
         :type lease_access_conditions:
@@ -1232,6 +1254,8 @@ class BlobOperations:
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
         query_parameters['comp'] = self._serialize.query("comp", comp, 'str')
+        if version_id is not None:
+            query_parameters['versionid'] = self._serialize.query("version_id", version_id, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -1912,6 +1936,7 @@ class BlobOperations:
                 'x-ms-client-request-id': self._deserialize('str', response.headers.get('x-ms-client-request-id')),
                 'x-ms-request-id': self._deserialize('str', response.headers.get('x-ms-request-id')),
                 'x-ms-version': self._deserialize('str', response.headers.get('x-ms-version')),
+                'x-ms-version-id': self._deserialize('str', response.headers.get('x-ms-version-id')),
                 'Date': self._deserialize('rfc-1123', response.headers.get('Date')),
                 'x-ms-request-server-encrypted': self._deserialize('bool', response.headers.get('x-ms-request-server-encrypted')),
                 'x-ms-error-code': self._deserialize('str', response.headers.get('x-ms-error-code')),
@@ -2064,6 +2089,7 @@ class BlobOperations:
                 'x-ms-client-request-id': self._deserialize('str', response.headers.get('x-ms-client-request-id')),
                 'x-ms-request-id': self._deserialize('str', response.headers.get('x-ms-request-id')),
                 'x-ms-version': self._deserialize('str', response.headers.get('x-ms-version')),
+                'x-ms-version-id': self._deserialize('str', response.headers.get('x-ms-version-id')),
                 'Date': self._deserialize('rfc-1123', response.headers.get('Date')),
                 'x-ms-copy-id': self._deserialize('str', response.headers.get('x-ms-copy-id')),
                 'x-ms-copy-status': self._deserialize(models.CopyStatusType, response.headers.get('x-ms-copy-status')),
@@ -2441,3 +2467,209 @@ class BlobOperations:
             }
             return cls(response, None, response_headers)
     get_account_info.metadata = {'url': '/{containerName}/{blob}'}
+
+    async def quick_query(self, query_request=None, snapshot=None, timeout=None, request_id=None, lease_access_conditions=None, cpk_info=None, modified_access_conditions=None, *, cls=None, **kwargs):
+        """The QuickQuery operation enables users to select/project on blob data
+        by providing simple query expressions.
+
+        :param query_request: the query request
+        :type query_request: ~azure.storage.blob.models.QueryRequest
+        :param snapshot: The snapshot parameter is an opaque DateTime value
+         that, when present, specifies the blob snapshot to retrieve. For more
+         information on working with blob snapshots, see <a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/creating-a-snapshot-of-a-blob">Creating
+         a Snapshot of a Blob.</a>
+        :type snapshot: str
+        :param timeout: The timeout parameter is expressed in seconds. For
+         more information, see <a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>
+        :type timeout: int
+        :param request_id: Provides a client-generated, opaque value with a 1
+         KB character limit that is recorded in the analytics logs when storage
+         analytics logging is enabled.
+        :type request_id: str
+        :param lease_access_conditions: Additional parameters for the
+         operation
+        :type lease_access_conditions:
+         ~azure.storage.blob.models.LeaseAccessConditions
+        :param cpk_info: Additional parameters for the operation
+        :type cpk_info: ~azure.storage.blob.models.CpkInfo
+        :param modified_access_conditions: Additional parameters for the
+         operation
+        :type modified_access_conditions:
+         ~azure.storage.blob.models.ModifiedAccessConditions
+        :param callable cls: A custom type or function that will be passed the
+         direct response
+        :return: object or the result of cls(response)
+        :rtype: Generator
+        :raises:
+         :class:`StorageErrorException<azure.storage.blob.models.StorageErrorException>`
+        """
+        error_map = kwargs.pop('error_map', None)
+        lease_id = None
+        if lease_access_conditions is not None:
+            lease_id = lease_access_conditions.lease_id
+        encryption_key = None
+        if cpk_info is not None:
+            encryption_key = cpk_info.encryption_key
+        encryption_key_sha256 = None
+        if cpk_info is not None:
+            encryption_key_sha256 = cpk_info.encryption_key_sha256
+        encryption_algorithm = None
+        if cpk_info is not None:
+            encryption_algorithm = cpk_info.encryption_algorithm
+        if_modified_since = None
+        if modified_access_conditions is not None:
+            if_modified_since = modified_access_conditions.if_modified_since
+        if_unmodified_since = None
+        if modified_access_conditions is not None:
+            if_unmodified_since = modified_access_conditions.if_unmodified_since
+        if_match = None
+        if modified_access_conditions is not None:
+            if_match = modified_access_conditions.if_match
+        if_none_match = None
+        if modified_access_conditions is not None:
+            if_none_match = modified_access_conditions.if_none_match
+
+        comp = "query"
+
+        # Construct URL
+        url = self.quick_query.metadata['url']
+        path_format_arguments = {
+            'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        if snapshot is not None:
+            query_parameters['snapshot'] = self._serialize.query("snapshot", snapshot, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
+        query_parameters['comp'] = self._serialize.query("comp", comp, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/xml'
+        header_parameters['Content-Type'] = 'application/xml; charset=utf-8'
+        header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
+        if request_id is not None:
+            header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id", request_id, 'str')
+        if lease_id is not None:
+            header_parameters['x-ms-lease-id'] = self._serialize.header("lease_id", lease_id, 'str')
+        if encryption_key is not None:
+            header_parameters['x-ms-encryption-key'] = self._serialize.header("encryption_key", encryption_key, 'str')
+        if encryption_key_sha256 is not None:
+            header_parameters['x-ms-encryption-key-sha256'] = self._serialize.header("encryption_key_sha256", encryption_key_sha256, 'str')
+        if encryption_algorithm is not None:
+            header_parameters['x-ms-encryption-algorithm'] = self._serialize.header("encryption_algorithm", encryption_algorithm, 'EncryptionAlgorithmType')
+        if if_modified_since is not None:
+            header_parameters['If-Modified-Since'] = self._serialize.header("if_modified_since", if_modified_since, 'rfc-1123')
+        if if_unmodified_since is not None:
+            header_parameters['If-Unmodified-Since'] = self._serialize.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
+        if if_match is not None:
+            header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
+        if if_none_match is not None:
+            header_parameters['If-None-Match'] = self._serialize.header("if_none_match", if_none_match, 'str')
+
+        # Construct body
+        if query_request is not None:
+            body_content = self._serialize.body(query_request, 'QueryRequest')
+        else:
+            body_content = None
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        pipeline_response = await self._client._pipeline.run(request, stream=True, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 206]:
+            await response.load_body()
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise models.StorageErrorException(response, self._deserialize)
+
+        header_dict = {}
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = response.stream_download(self._client._pipeline)
+            header_dict = {
+                'Last-Modified': self._deserialize('rfc-1123', response.headers.get('Last-Modified')),
+                'x-ms-meta': self._deserialize('{str}', response.headers.get('x-ms-meta')),
+                'Content-Length': self._deserialize('long', response.headers.get('Content-Length')),
+                'Content-Type': self._deserialize('str', response.headers.get('Content-Type')),
+                'Content-Range': self._deserialize('str', response.headers.get('Content-Range')),
+                'ETag': self._deserialize('str', response.headers.get('ETag')),
+                'Content-MD5': self._deserialize('bytearray', response.headers.get('Content-MD5')),
+                'Content-Encoding': self._deserialize('str', response.headers.get('Content-Encoding')),
+                'Cache-Control': self._deserialize('str', response.headers.get('Cache-Control')),
+                'Content-Disposition': self._deserialize('str', response.headers.get('Content-Disposition')),
+                'Content-Language': self._deserialize('str', response.headers.get('Content-Language')),
+                'x-ms-blob-sequence-number': self._deserialize('long', response.headers.get('x-ms-blob-sequence-number')),
+                'x-ms-blob-type': self._deserialize(models.BlobType, response.headers.get('x-ms-blob-type')),
+                'x-ms-copy-completion-time': self._deserialize('rfc-1123', response.headers.get('x-ms-copy-completion-time')),
+                'x-ms-copy-status-description': self._deserialize('str', response.headers.get('x-ms-copy-status-description')),
+                'x-ms-copy-id': self._deserialize('str', response.headers.get('x-ms-copy-id')),
+                'x-ms-copy-progress': self._deserialize('str', response.headers.get('x-ms-copy-progress')),
+                'x-ms-copy-source': self._deserialize('str', response.headers.get('x-ms-copy-source')),
+                'x-ms-copy-status': self._deserialize(models.CopyStatusType, response.headers.get('x-ms-copy-status')),
+                'x-ms-lease-duration': self._deserialize(models.LeaseDurationType, response.headers.get('x-ms-lease-duration')),
+                'x-ms-lease-state': self._deserialize(models.LeaseStateType, response.headers.get('x-ms-lease-state')),
+                'x-ms-lease-status': self._deserialize(models.LeaseStatusType, response.headers.get('x-ms-lease-status')),
+                'x-ms-client-request-id': self._deserialize('str', response.headers.get('x-ms-client-request-id')),
+                'x-ms-request-id': self._deserialize('str', response.headers.get('x-ms-request-id')),
+                'x-ms-version': self._deserialize('str', response.headers.get('x-ms-version')),
+                'Accept-Ranges': self._deserialize('str', response.headers.get('Accept-Ranges')),
+                'Date': self._deserialize('rfc-1123', response.headers.get('Date')),
+                'x-ms-blob-committed-block-count': self._deserialize('int', response.headers.get('x-ms-blob-committed-block-count')),
+                'x-ms-server-encrypted': self._deserialize('bool', response.headers.get('x-ms-server-encrypted')),
+                'x-ms-encryption-key-sha256': self._deserialize('str', response.headers.get('x-ms-encryption-key-sha256')),
+                'x-ms-encryption-scope': self._deserialize('str', response.headers.get('x-ms-encryption-scope')),
+                'x-ms-blob-content-md5': self._deserialize('bytearray', response.headers.get('x-ms-blob-content-md5')),
+                'x-ms-content-crc64': self._deserialize('bytearray', response.headers.get('x-ms-content-crc64')),
+                'x-ms-error-code': self._deserialize('str', response.headers.get('x-ms-error-code')),
+            }
+        if response.status_code == 206:
+            deserialized = response.stream_download(self._client._pipeline)
+            header_dict = {
+                'Last-Modified': self._deserialize('rfc-1123', response.headers.get('Last-Modified')),
+                'x-ms-meta': self._deserialize('{str}', response.headers.get('x-ms-meta')),
+                'Content-Length': self._deserialize('long', response.headers.get('Content-Length')),
+                'Content-Type': self._deserialize('str', response.headers.get('Content-Type')),
+                'Content-Range': self._deserialize('str', response.headers.get('Content-Range')),
+                'ETag': self._deserialize('str', response.headers.get('ETag')),
+                'Content-MD5': self._deserialize('bytearray', response.headers.get('Content-MD5')),
+                'Content-Encoding': self._deserialize('str', response.headers.get('Content-Encoding')),
+                'Cache-Control': self._deserialize('str', response.headers.get('Cache-Control')),
+                'Content-Disposition': self._deserialize('str', response.headers.get('Content-Disposition')),
+                'Content-Language': self._deserialize('str', response.headers.get('Content-Language')),
+                'x-ms-blob-sequence-number': self._deserialize('long', response.headers.get('x-ms-blob-sequence-number')),
+                'x-ms-blob-type': self._deserialize(models.BlobType, response.headers.get('x-ms-blob-type')),
+                'x-ms-copy-completion-time': self._deserialize('rfc-1123', response.headers.get('x-ms-copy-completion-time')),
+                'x-ms-copy-status-description': self._deserialize('str', response.headers.get('x-ms-copy-status-description')),
+                'x-ms-copy-id': self._deserialize('str', response.headers.get('x-ms-copy-id')),
+                'x-ms-copy-progress': self._deserialize('str', response.headers.get('x-ms-copy-progress')),
+                'x-ms-copy-source': self._deserialize('str', response.headers.get('x-ms-copy-source')),
+                'x-ms-copy-status': self._deserialize(models.CopyStatusType, response.headers.get('x-ms-copy-status')),
+                'x-ms-lease-duration': self._deserialize(models.LeaseDurationType, response.headers.get('x-ms-lease-duration')),
+                'x-ms-lease-state': self._deserialize(models.LeaseStateType, response.headers.get('x-ms-lease-state')),
+                'x-ms-lease-status': self._deserialize(models.LeaseStatusType, response.headers.get('x-ms-lease-status')),
+                'x-ms-client-request-id': self._deserialize('str', response.headers.get('x-ms-client-request-id')),
+                'x-ms-request-id': self._deserialize('str', response.headers.get('x-ms-request-id')),
+                'x-ms-version': self._deserialize('str', response.headers.get('x-ms-version')),
+                'Accept-Ranges': self._deserialize('str', response.headers.get('Accept-Ranges')),
+                'Date': self._deserialize('rfc-1123', response.headers.get('Date')),
+                'x-ms-blob-committed-block-count': self._deserialize('int', response.headers.get('x-ms-blob-committed-block-count')),
+                'x-ms-server-encrypted': self._deserialize('bool', response.headers.get('x-ms-server-encrypted')),
+                'x-ms-encryption-key-sha256': self._deserialize('str', response.headers.get('x-ms-encryption-key-sha256')),
+                'x-ms-encryption-scope': self._deserialize('str', response.headers.get('x-ms-encryption-scope')),
+                'x-ms-blob-content-md5': self._deserialize('bytearray', response.headers.get('x-ms-blob-content-md5')),
+                'x-ms-content-crc64': self._deserialize('bytearray', response.headers.get('x-ms-content-crc64')),
+                'x-ms-error-code': self._deserialize('str', response.headers.get('x-ms-error-code')),
+            }
+
+        if cls:
+            return cls(response, deserialized, header_dict)
+
+        return deserialized
+    quick_query.metadata = {'url': '/{containerName}/{blob}'}

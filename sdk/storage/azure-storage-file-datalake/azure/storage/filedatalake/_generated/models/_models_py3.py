@@ -13,6 +13,30 @@ from msrest.serialization import Model
 from azure.core.exceptions import HttpResponseError
 
 
+class AclFailedEntry(Model):
+    """AclFailedEntry.
+
+    :param name:
+    :type name: str
+    :param type:
+    :type type: str
+    :param error_message:
+    :type error_message: str
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'error_message': {'key': 'errorMessage', 'type': 'str'},
+    }
+
+    def __init__(self, *, name: str=None, type: str=None, error_message: str=None, **kwargs) -> None:
+        super(AclFailedEntry, self).__init__(**kwargs)
+        self.name = name
+        self.type = type
+        self.error_message = error_message
+
+
 class FileSystem(Model):
     """FileSystem.
 
@@ -41,7 +65,7 @@ class FileSystemList(Model):
     """FileSystemList.
 
     :param filesystems:
-    :type filesystems: list[~azure.storage.file.datalake.models.FileSystem]
+    :type filesystems: list[~azure.storage.filedatalake.models.FileSystem]
     """
 
     _attribute_map = {
@@ -201,7 +225,7 @@ class PathList(Model):
     """PathList.
 
     :param paths:
-    :type paths: list[~azure.storage.file.datalake.models.Path]
+    :type paths: list[~azure.storage.filedatalake.models.Path]
     """
 
     _attribute_map = {
@@ -211,6 +235,35 @@ class PathList(Model):
     def __init__(self, *, paths=None, **kwargs) -> None:
         super(PathList, self).__init__(**kwargs)
         self.paths = paths
+
+
+class SetAccessControlRecursiveResponse(Model):
+    """SetAccessControlRecursiveResponse.
+
+    :param directories_successful:
+    :type directories_successful: int
+    :param files_successful:
+    :type files_successful: int
+    :param failure_count:
+    :type failure_count: int
+    :param failed_entries:
+    :type failed_entries:
+     list[~azure.storage.filedatalake.models.AclFailedEntry]
+    """
+
+    _attribute_map = {
+        'directories_successful': {'key': 'directoriesSuccessful', 'type': 'int'},
+        'files_successful': {'key': 'filesSuccessful', 'type': 'int'},
+        'failure_count': {'key': 'failureCount', 'type': 'int'},
+        'failed_entries': {'key': 'failedEntries', 'type': '[AclFailedEntry]'},
+    }
+
+    def __init__(self, *, directories_successful: int=None, files_successful: int=None, failure_count: int=None, failed_entries=None, **kwargs) -> None:
+        super(SetAccessControlRecursiveResponse, self).__init__(**kwargs)
+        self.directories_successful = directories_successful
+        self.files_successful = files_successful
+        self.failure_count = failure_count
+        self.failed_entries = failed_entries
 
 
 class SourceModifiedAccessConditions(Model):
@@ -249,7 +302,7 @@ class StorageError(Model):
     """StorageError.
 
     :param error: The service error response object.
-    :type error: ~azure.storage.file.datalake.models.StorageErrorError
+    :type error: ~azure.storage.filedatalake.models.StorageErrorError
     """
 
     _attribute_map = {

@@ -13,6 +13,30 @@ from msrest.serialization import Model
 from azure.core.exceptions import HttpResponseError
 
 
+class AclFailedEntry(Model):
+    """AclFailedEntry.
+
+    :param name:
+    :type name: str
+    :param type:
+    :type type: str
+    :param error_message:
+    :type error_message: str
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'error_message': {'key': 'errorMessage', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(AclFailedEntry, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.type = kwargs.get('type', None)
+        self.error_message = kwargs.get('error_message', None)
+
+
 class FileSystem(Model):
     """FileSystem.
 
@@ -41,7 +65,7 @@ class FileSystemList(Model):
     """FileSystemList.
 
     :param filesystems:
-    :type filesystems: list[~azure.storage.file.datalake.models.FileSystem]
+    :type filesystems: list[~azure.storage.filedatalake.models.FileSystem]
     """
 
     _attribute_map = {
@@ -127,7 +151,7 @@ class Path(Model):
         'name': {'key': 'name', 'type': 'str'},
         'is_directory': {'key': 'isDirectory', 'type': 'bool'},
         'last_modified': {'key': 'lastModified', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
+        'e_tag': {'key': 'eTag', 'type': 'str'},
         'content_length': {'key': 'contentLength', 'type': 'long'},
         'owner': {'key': 'owner', 'type': 'str'},
         'group': {'key': 'group', 'type': 'str'},
@@ -139,7 +163,7 @@ class Path(Model):
         self.name = kwargs.get('name', None)
         self.is_directory = kwargs.get('is_directory', False)
         self.last_modified = kwargs.get('last_modified', None)
-        self.etag = kwargs.get('etag', None)
+        self.e_tag = kwargs.get('e_tag', None)
         self.content_length = kwargs.get('content_length', None)
         self.owner = kwargs.get('owner', None)
         self.group = kwargs.get('group', None)
@@ -201,7 +225,7 @@ class PathList(Model):
     """PathList.
 
     :param paths:
-    :type paths: list[~azure.storage.file.datalake.models.Path]
+    :type paths: list[~azure.storage.filedatalake.models.Path]
     """
 
     _attribute_map = {
@@ -211,6 +235,35 @@ class PathList(Model):
     def __init__(self, **kwargs):
         super(PathList, self).__init__(**kwargs)
         self.paths = kwargs.get('paths', None)
+
+
+class SetAccessControlRecursiveResponse(Model):
+    """SetAccessControlRecursiveResponse.
+
+    :param directories_successful:
+    :type directories_successful: int
+    :param files_successful:
+    :type files_successful: int
+    :param failure_count:
+    :type failure_count: int
+    :param failed_entries:
+    :type failed_entries:
+     list[~azure.storage.filedatalake.models.AclFailedEntry]
+    """
+
+    _attribute_map = {
+        'directories_successful': {'key': 'directoriesSuccessful', 'type': 'int'},
+        'files_successful': {'key': 'filesSuccessful', 'type': 'int'},
+        'failure_count': {'key': 'failureCount', 'type': 'int'},
+        'failed_entries': {'key': 'failedEntries', 'type': '[AclFailedEntry]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(SetAccessControlRecursiveResponse, self).__init__(**kwargs)
+        self.directories_successful = kwargs.get('directories_successful', None)
+        self.files_successful = kwargs.get('files_successful', None)
+        self.failure_count = kwargs.get('failure_count', None)
+        self.failed_entries = kwargs.get('failed_entries', None)
 
 
 class SourceModifiedAccessConditions(Model):
@@ -249,7 +302,7 @@ class StorageError(Model):
     """StorageError.
 
     :param error: The service error response object.
-    :type error: ~azure.storage.file.datalake.models.StorageErrorError
+    :type error: ~azure.storage.filedatalake.models.StorageErrorError
     """
 
     _attribute_map = {
