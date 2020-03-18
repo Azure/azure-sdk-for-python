@@ -42,6 +42,8 @@ from ._index import (
     odata,
 )
 
+from ._service import SearchServiceClient
+
 __all__ = (
     "AutocompleteQuery",
     "IndexAction",
@@ -51,6 +53,7 @@ __all__ = (
     "SearchIndexClient",
     "SearchItemPaged",
     "SearchQuery",
+    "SearchServiceClient",
     "SuggestQuery",
     "odata",
 )
