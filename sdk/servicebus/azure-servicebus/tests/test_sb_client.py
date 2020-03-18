@@ -14,7 +14,7 @@ from datetime import datetime, timedelta
 from azure.common import AzureHttpError, AzureConflictHttpError
 from azure.mgmt.servicebus.models import AccessRights
 from azure.servicebus import ServiceBusClient, ServiceBusSharedKeyCredential
-from azure.servicebus.common.message import Message, PeekMessage#, BatchMessage
+from azure.servicebus.common.message import Message, PeekMessage
 from azure.servicebus.common.constants import ReceiveSettleMode
 from azure.servicebus.common.errors import (
     ServiceBusError,

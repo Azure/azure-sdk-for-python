@@ -13,7 +13,7 @@ import uuid
 from datetime import datetime, timedelta
 
 from azure.servicebus import ServiceBusClient, AutoLockRenew
-from azure.servicebus.common.message import Message, PeekMessage, ReceivedMessage#, BatchMessage
+from azure.servicebus.common.message import Message, PeekMessage, ReceivedMessage, BatchMessage
 from azure.servicebus.common.constants import ReceiveSettleMode
 from azure.servicebus.common.errors import (
     ServiceBusConnectionError,
@@ -1063,11 +1063,13 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                             
             def message_content():
                 for i in range(5):
-                    yield "Message no. {}".format(i)
+                    yield Message("Message no. {}".format(i))
     
     
             with sb_client.get_queue_sender(servicebus_queue.name) as sender:
-                message = BatchMessage(message_content())
+                message = BatchMessage()
+                for each in message_content():
+                    message.add(each)
                 sender.send(message)
     
             with sb_client.get_queue_receiver(servicebus_queue.name) as receiver:
