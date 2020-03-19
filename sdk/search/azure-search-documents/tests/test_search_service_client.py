@@ -20,7 +20,7 @@ class TestSearchServiceClient(object):
         client = SearchServiceClient("endpoint", CREDENTIAL)
         assert client._client._config.headers_policy.headers == {
             "api-key": "test_api_key",
-            "Accept": "application/json;odata.metadata=none",
+            "Accept": "application/json;odata.metadata=minimal",
         }
 
     def test_repr(self):
