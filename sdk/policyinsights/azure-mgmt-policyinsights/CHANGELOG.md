@@ -4,11 +4,11 @@
 
 **Features**
 
-- Model PolicyState has a new parameter policy_set_definition_version
-- Model PolicyState has a new parameter policy_definition_version
-- Model PolicyState has a new parameter policy_assignment_version
-- Added operation PolicyStatesOperations.trigger_subscription_evaluation
-- Added operation PolicyStatesOperations.trigger_resource_group_evaluation
+  - Model PolicyState has a new parameter policy_set_definition_version
+  - Model PolicyState has a new parameter policy_definition_version
+  - Model PolicyState has a new parameter policy_assignment_version
+  - Added operation PolicyStatesOperations.trigger_subscription_evaluation
+  - Added operation PolicyStatesOperations.trigger_resource_group_evaluation
 
 ## 0.4.0 (2019-12-31)
 
