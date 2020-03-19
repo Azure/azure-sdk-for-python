@@ -54,6 +54,8 @@ class AuthorizationCodeCredential(object):
           attribute gives a reason. Any error response from Azure Active Directory is available as the error's
           ``response`` attribute.
         """
+        if not scopes:
+            raise ValueError("'get_token' requires at least one scope")
 
         if self._authorization_code:
             token = self._client.obtain_token_by_authorization_code(

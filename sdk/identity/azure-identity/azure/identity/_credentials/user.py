@@ -72,6 +72,8 @@ class DeviceCodeCredential(PublicClientCredential):
           attribute gives a reason. Any error response from Azure Active Directory is available as the error's
           ``response`` attribute.
         """
+        if not scopes:
+            raise ValueError("'get_token' requires at least one scope")
 
         # MSAL requires scopes be a list
         scopes = list(scopes)  # type: ignore
@@ -154,6 +156,8 @@ class UsernamePasswordCredential(PublicClientCredential):
           attribute gives a reason. Any error response from Azure Active Directory is available as the error's
           ``response`` attribute.
         """
+        if not scopes:
+            raise ValueError("'get_token' requires at least one scope")
 
         # MSAL requires scopes be a list
         scopes = list(scopes)  # type: ignore

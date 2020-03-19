@@ -66,6 +66,9 @@ class InteractiveBrowserCredential(PublicClientCredential):
           attribute gives a reason. Any error response from Azure Active Directory is available as the error's
           ``response`` attribute.
         """
+        if not scopes:
+            raise ValueError("'get_token' requires at least one scope")
+
         return self._get_token_from_cache(scopes, **kwargs) or self._get_token_by_auth_code(scopes, **kwargs)
 
     def _get_token_from_cache(self, scopes, **kwargs):

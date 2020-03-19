@@ -58,6 +58,8 @@ class SharedTokenCacheCredential(SharedTokenCacheBase, AsyncCredentialBase):
           attribute gives a reason. Any error response from Azure Active Directory is available as the error's
           ``response`` attribute.
         """
+        if not scopes:
+            raise ValueError("'get_token' requires at least one scope")
 
         if not self._client:
             raise CredentialUnavailableError(message="Shared token cache unavailable")

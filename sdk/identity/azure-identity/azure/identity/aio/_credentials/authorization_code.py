@@ -70,6 +70,8 @@ class AuthorizationCodeCredential(AsyncCredentialBase):
         :keyword loop: An event loop on which to schedule network I/O. If not provided, the currently running
             loop will be used.
         """
+        if not scopes:
+            raise ValueError("'get_token' requires at least one scope")
 
         if self._authorization_code:
             loop = kwargs.pop("loop", None) or asyncio.get_event_loop()

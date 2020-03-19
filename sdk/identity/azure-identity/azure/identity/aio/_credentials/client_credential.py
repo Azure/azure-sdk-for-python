@@ -49,6 +49,9 @@ class ClientSecretCredential(ClientSecretCredentialBase, AsyncCredentialBase):
           attribute gives a reason. Any error response from Azure Active Directory is available as the error's
           ``response`` attribute.
         """
+        if not scopes:
+            raise ValueError("'get_token' requires at least one scope")
+
         token = self._client.get_cached_token(scopes)
         if not token:
             data = dict(self._form_data, scope=" ".join(scopes))
@@ -91,6 +94,9 @@ class CertificateCredential(CertificateCredentialBase, AsyncCredentialBase):
           attribute gives a reason. Any error response from Azure Active Directory is available as the error's
           ``response`` attribute.
         """
+        if not scopes:
+            raise ValueError("'get_token' requires at least one scope")
+
         token = self._client.get_cached_token(scopes)
         if not token:
             data = self._get_request_data(*scopes)
