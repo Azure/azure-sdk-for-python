@@ -37,7 +37,7 @@
 /sql/sql/ @jaredmoo
 /sdk/servicebus/ @annatisch @yunhaoling @YijunXieMS @KieranBrantnerMagee
 /sdk/synapse/ @aim-for-better @idear1203
-/sdk/textanalytics/ @kristapratico
+/sdk/textanalytics/ @kristapratico @iscai-msft
 
 # Management Plane
 /**/*mgmt*/ @zikalino
