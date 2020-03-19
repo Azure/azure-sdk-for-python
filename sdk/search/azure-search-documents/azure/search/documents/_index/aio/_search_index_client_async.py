@@ -19,7 +19,7 @@ from ..._version import VERSION
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
     from typing import Any, Union
-    from .._credential import SearchApiKeyCredential
+    from ... import SearchApiKeyCredential
 
 
 class SearchIndexClient(object):
@@ -33,7 +33,6 @@ class SearchIndexClient(object):
     :type credential: SearchApiKeyCredential
 
     .. admonition:: Example:
-
         .. literalinclude:: ../samples/async_samples/sample_authentication_async.py
             :start-after: [START create_search_client_with_key_async]
             :end-before: [END create_search_client_with_key_async]
