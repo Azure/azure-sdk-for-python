@@ -4,6 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
+from azure.core.exceptions import HttpResponseError
 from ._models import (
     ExtractedReceipt,
     FieldValue,
@@ -15,11 +16,24 @@ from ._models import (
     ExtractedTable,
     PageMetadata,
     ExtractedForm,
-    LabelValue,
-    PageRange
+    PageRange,
+    ReceiptType
 )
-# FIXME: what if page, read, or doc result is None?
+# FIXME: what if page, read, or doc result is None or []?
 # FIXME: ExtractedWord does not have reference to Line yet
+
+
+def get_content_type(form):
+    if len(form) > 3 and form[0] == 0x25 and form[1] == 0x50 and form[2] == 0x44 and form[3] == 0x46:
+        return "application/pdf"
+    if len(form) > 2 and form[0] == 0xFF and form[1] == 0xD8 and form[2] == 0xFF:
+        return "image/jpeg"
+    if len(form) > 3 and form[0] == 0x89 and form[1] == 0x50 and form[2] == 0x4E and form[3] == 0x47:
+        return "image/png"
+    if len(form) > 3 and ((form[0] == 0x49 and form[1] == 0x49 and form[2] == 0x2A and form[3] == 0x0)  # little-endian
+            or (form[0] == 0x4D and form[1] == 0x4D and form[2] == 0x0 and form[3] == 0x2A)):  # big-endian
+        return "image/tiff"
+    raise HttpResponseError("Content type could not be auto-detected. Please pass the content_type keyword argument.")
 
 
 def prepare_receipt_result(response, include_ocr):
@@ -43,10 +57,8 @@ def prepare_receipt_result(response, include_ocr):
                     read_result,
                     include_ocr
                 ),
-                receipt_type=FieldValue._from_generated(
-                    page.fields.pop("ReceiptType", None),
-                    read_result,
-                    include_ocr
+                receipt_type=ReceiptType._from_generated(
+                    page.fields.pop("ReceiptType", None)
                 ),
                 receipt_items=ReceiptItem._from_generated(
                     page.fields.pop("Items", None),
@@ -140,7 +152,7 @@ def prepare_labeled_result(response, include_ocr):
     return ExtractedForm(
         page_range=PageRange(first_page=document_result.page_range[0], last_page=document_result.page_range[1]),
         fields={
-            label: LabelValue._from_generated(value, read_result, include_ocr)
+            label: FieldValue._from_generated(value, read_result, include_ocr)
             for label, value
             in document_result.fields.items()
         },

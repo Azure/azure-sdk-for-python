@@ -6,6 +6,8 @@
 
 import six
 
+#FIXME: switch out with azure.core API key credential type when it is ready
+
 
 class FormRecognizerApiKeyCredential(object):
     """Credential type used for authenticating the client
