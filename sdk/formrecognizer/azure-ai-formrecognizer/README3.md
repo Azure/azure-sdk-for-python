@@ -36,7 +36,7 @@ client.begin_extract_layouts(form: Union[str, BytesIO], **kwargs) -> LROPoller -
 
 ### Receipt Models
 ```python
-class ExtractedReceipt(DictMixin):
+class ExtractedReceipt:
     receipt_items: List[ReceiptItem]
     merchant_address: FieldValue
     merchant_name: FieldValue
@@ -48,6 +48,7 @@ class ExtractedReceipt(DictMixin):
     total: FieldValue
     transaction_date: FieldValue
     transaction_time: FieldValue
+    fields: Dict[str, FieldValue]
     page_range: PageRange
     pages: List[PageMetadata]
 
@@ -113,7 +114,7 @@ client = FormRecognizerClient(endpoint, credential)
 receipt_image = "https://raw.githubusercontent.com/Azure-Samples/cognitive-services-REST-api-samples/master/curl/form-recognizer/contoso-allinone.jpg"
 poller = client.begin_extract_receipts(receipt_image)
 receipts = poller.result()
-r = receipts[0].fields
+r = receipts[0]
 
 print("Receipt contained the following values with confidences: ")
 print("ReceiptType: {}, confidence: {}").format(r.receipt_type.value, r.receipt_type.confidence)
@@ -133,7 +134,7 @@ print("Tip: {}, confidence: {}").format(r.tip.value, r.tip.confidence)
 print("Total: {}, confidence: {}").format(r.total.value, r.total.confidence)
 
 # Access as a dictionary
-for item, field_value in r.items():
+for item, field_value in r.fields.items():
     print(item, field_value.value, field_value.text, field_value.confidence, field_value.bounding_box)
 ```
 
@@ -149,6 +150,7 @@ class ExtractedTable:
     cells: List[TableCell]
     row_count: int
     column_count: int
+    page_number: int
 
 class TableCell:
     text: str
@@ -371,13 +373,9 @@ class ModelStatus(str, Enum):
 # Analyze ---------------------------------------------------
 class ExtractedForm:
     fields: Dict[str, FieldValue]
-    pages: List[ExtractedLayoutPage]
-    page_range: PageRange
-
-class ExtractedLayoutPage:
     tables: List[ExtractedTable]
-    page_metadata: PageMetadata
-    page_number: int
+    page_metadata: List[PageMetadata]
+    page_range: PageRange
 
 class FieldValue:
     text: str
