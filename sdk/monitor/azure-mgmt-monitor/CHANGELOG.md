@@ -1,5 +1,24 @@
 # Release History
 
+## 0.8.0 (2020-03-14)
+
+**Features**
+
+- Model DiagnosticSettingsResource has a new parameter log_analytics_destination_type
+- Model ProxyResource has a new parameter tags
+- Model MetricAlertAction has a new parameter web_hook_properties
+- Added operation group PrivateEndpointConnectionsOperations
+- Added operation group PrivateLinkScopedResourcesOperations
+- Added operation group PrivateLinkScopeOperationStatusOperations
+- Added operation group PrivateLinkResourcesOperations
+- Added operation group PrivateLinkScopesOperations
+
+**Breaking changes**
+
+- Model MetricAlertAction no longer has parameter webhook_properties
+- Model ErrorResponse has a new signature
+
+
 ## 0.7.0 (2019-06-24)
 
 This package now support profiles as parameter for sovereign cloud
