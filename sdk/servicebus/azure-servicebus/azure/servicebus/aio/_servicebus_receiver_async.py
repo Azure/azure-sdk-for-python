@@ -200,15 +200,16 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
     async def __anext__(self):
         while True:
             try:
-                await self._open_with_retry()
-                uamqp_message = await self._message_iter.__anext__()
-                message = self._build_message(uamqp_message, ReceivedMessage)
-                return message
+                return await self._do_retryable_operation(self._iter_next)
             except StopAsyncIteration:
                 await self.close()
                 raise
-            except Exception as e:  # pylint: disable=broad-except
-                await self._handle_exception(e)
+
+    async def _iter_next(self):
+        await self._open()
+        uamqp_message = await self._message_iter.__anext__()
+        message = self._build_message(uamqp_message, ReceivedMessage)
+        return message
 
     def _create_handler(self, auth):
         self._handler = ReceiveClientAsync(

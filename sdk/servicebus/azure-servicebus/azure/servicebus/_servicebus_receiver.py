@@ -275,17 +275,18 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
     def __next__(self):
         while True:
             try:
-                self._open_with_retry()
-                uamqp_message = next(self._message_iter)
-                message = self._build_message(uamqp_message)
-                return message
+                return self._do_retryable_operation(self._iter_next)
             except StopIteration:
                 self.close()
                 raise
-            except Exception as e:  # pylint: disable=broad-except
-                self._handle_exception(e)
 
     next = __next__  # for python2.7
+
+    def _iter_next(self):
+        self._open()
+        uamqp_message = next(self._message_iter)
+        message = self._build_message(uamqp_message)
+        return message
 
     def _create_handler(self, auth):
         self._handler = ReceiveClient(

@@ -199,6 +199,8 @@ class BaseHandler(object):  # pylint:disable=too-many-instance-attributes
                 if require_timeout:
                     kwargs["timeout"] = timeout
                 return operation(**kwargs)
+            except StopIteration:
+                raise
             except Exception as exception:  # pylint: disable=broad-except
                 last_exception = self._handle_exception(exception)
                 retried_times += 1
