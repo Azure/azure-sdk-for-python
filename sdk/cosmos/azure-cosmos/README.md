@@ -162,7 +162,7 @@ for item in container.query_items(query='SELECT * FROM products p WHERE p.produc
     container.delete_item(item, partition_key='Pager')
 ```
 
-> NOTE: If you are using partitioned collection, the value of the `partitionKey` in the example code above, should be set to the value of the partition key for this particular item, not the name of the partition key column in your collection.
+> NOTE: If you are using partitioned collection, the value of the `partitionKey` in the example code above, should be set to the value of the partition key for this particular item, not the name of the partition key column in your collection. This holds true for both point reads and deletes.
 
 ### Query the database
 
