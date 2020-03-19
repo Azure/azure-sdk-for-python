@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .automation_client import AutomationClient
-from .version import VERSION
+from ._configuration import AutomationClientConfiguration
+from ._automation_client import AutomationClient
+__all__ = ['AutomationClient', 'AutomationClientConfiguration']
 
-__all__ = ['AutomationClient']
+from .version import VERSION
 
 __version__ = VERSION
 
