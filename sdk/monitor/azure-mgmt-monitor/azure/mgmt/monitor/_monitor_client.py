@@ -14,11 +14,11 @@ from msrest import Serializer, Deserializer
 
 from azure.profiles import KnownProfiles, ProfileDefinition
 from azure.profiles.multiapiclient import MultiApiClientMixin
-from ._configuration import MonitorManagementClientConfiguration
+from ._configuration import MonitorClientConfiguration
 
 
 
-class MonitorManagementClient(MultiApiClientMixin, SDKClient):
+class MonitorClient(MultiApiClientMixin, SDKClient):
     """Monitor Management Client
 
     This ready contains multiple API versions, to help you deal with all Azure clouds
@@ -30,7 +30,7 @@ class MonitorManagementClient(MultiApiClientMixin, SDKClient):
     group is not described in the profile.
 
     :ivar config: Configuration for client.
-    :vartype config: MonitorManagementClientConfiguration
+    :vartype config: MonitorClientConfiguration
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -47,7 +47,7 @@ class MonitorManagementClient(MultiApiClientMixin, SDKClient):
     """
 
     DEFAULT_API_VERSION = '2019-10-17-preview'
-    _PROFILE_TAG = "azure.mgmt.monitor.MonitorManagementClient"
+    _PROFILE_TAG = "azure.mgmt.monitor.MonitorClient"
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
             None: DEFAULT_API_VERSION,
@@ -81,8 +81,8 @@ class MonitorManagementClient(MultiApiClientMixin, SDKClient):
     )
 
     def __init__(self, credentials, subscription_id, api_version=None, base_url=None, profile=KnownProfiles.default):
-        self.config = MonitorManagementClientConfiguration(credentials, subscription_id, base_url)
-        super(MonitorManagementClient, self).__init__(
+        self.config = MonitorClientConfiguration(credentials, subscription_id, base_url)
+        super(MonitorClient, self).__init__(
             credentials,
             self.config,
             api_version=api_version,

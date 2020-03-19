@@ -131,17 +131,22 @@ class DiagnosticSettingsResource(ProxyOnlyResource):
     :param event_hub_name: The name of the event hub. If none is specified,
      the default event hub will be selected.
     :type event_hub_name: str
-    :param metrics: the list of metric settings.
+    :param metrics: The list of metric settings.
     :type metrics:
      list[~azure.mgmt.monitor.v2017_05_01_preview.models.MetricSettings]
-    :param logs: the list of logs settings.
+    :param logs: The list of logs settings.
     :type logs:
      list[~azure.mgmt.monitor.v2017_05_01_preview.models.LogSettings]
-    :param workspace_id: The workspace ID (resource ID of a Log Analytics
-     workspace) for a Log Analytics workspace to which you would like to send
-     Diagnostic Logs. Example:
+    :param workspace_id: The full ARM resource ID of the Log Analytics
+     workspace to which you would like to send Diagnostic Logs. Example:
      /subscriptions/4b9e8510-67ab-4e9a-95a9-e2f1e570ea9c/resourceGroups/insights-integration/providers/Microsoft.OperationalInsights/workspaces/viruela2
     :type workspace_id: str
+    :param log_analytics_destination_type: A string indicating whether the
+     export to Log Analytics should use the default destination type, i.e.
+     AzureDiagnostics, or use a destination type constructed as follows:
+     <normalized service identity>_<normalized category name>. Possible values
+     are: Dedicated and null (null is default.)
+    :type log_analytics_destination_type: str
     """
 
     _validation = {
@@ -161,9 +166,10 @@ class DiagnosticSettingsResource(ProxyOnlyResource):
         'metrics': {'key': 'properties.metrics', 'type': '[MetricSettings]'},
         'logs': {'key': 'properties.logs', 'type': '[LogSettings]'},
         'workspace_id': {'key': 'properties.workspaceId', 'type': 'str'},
+        'log_analytics_destination_type': {'key': 'properties.logAnalyticsDestinationType', 'type': 'str'},
     }
 
-    def __init__(self, *, storage_account_id: str=None, service_bus_rule_id: str=None, event_hub_authorization_rule_id: str=None, event_hub_name: str=None, metrics=None, logs=None, workspace_id: str=None, **kwargs) -> None:
+    def __init__(self, *, storage_account_id: str=None, service_bus_rule_id: str=None, event_hub_authorization_rule_id: str=None, event_hub_name: str=None, metrics=None, logs=None, workspace_id: str=None, log_analytics_destination_type: str=None, **kwargs) -> None:
         super(DiagnosticSettingsResource, self).__init__(**kwargs)
         self.storage_account_id = storage_account_id
         self.service_bus_rule_id = service_bus_rule_id
@@ -172,6 +178,7 @@ class DiagnosticSettingsResource(ProxyOnlyResource):
         self.metrics = metrics
         self.logs = logs
         self.workspace_id = workspace_id
+        self.log_analytics_destination_type = log_analytics_destination_type
 
 
 class DiagnosticSettingsResourceCollection(Model):
