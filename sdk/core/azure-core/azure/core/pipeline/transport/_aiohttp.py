@@ -35,7 +35,7 @@ from requests.exceptions import (
     StreamConsumedError)
 
 from azure.core.configuration import ConnectionConfiguration
-from azure.core.exceptions import ServiceRequestError, ServiceResponseError, AzureError
+from azure.core.exceptions import ServiceRequestError, ServiceResponseError
 from azure.core.pipeline import Pipeline
 
 from ._base import HttpRequest
@@ -158,7 +158,6 @@ class AioHttpTransport(AsyncHttpTransport):
                     config['proxy'] = proxies[protocol]
                     break
 
-        error = None  # type: Optional[AzureError]
         response = None
         config['ssl'] = self._build_ssl_config(
             cert=config.pop('connection_cert', self.connection_config.cert),
@@ -186,12 +185,12 @@ class AioHttpTransport(AsyncHttpTransport):
             response = AioHttpTransportResponse(request, result, self.connection_config.data_block_size)
             if not stream_response:
                 await response.load_body()
-        except aiohttp.client_exceptions.ClientConnectorError as err:
-            error = ServiceRequestError(err, error=err)
+        except aiohttp.client_exceptions.ClientResponseError as err:
+            raise ServiceResponseError(err, error=err) from err
+        except aiohttp.client_exceptions.ClientError as err:
+            raise ServiceRequestError(err, error=err) from err
         except asyncio.TimeoutError as err:
-            error = ServiceResponseError(err, error=err)
-        if error:
-            raise error
+            raise ServiceResponseError(err, error=err) from err
         return response
 
 

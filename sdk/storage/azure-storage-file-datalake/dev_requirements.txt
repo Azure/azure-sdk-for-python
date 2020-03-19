@@ -1,0 +1,6 @@
+-e ../../../tools/azure-devtools
+-e ../../../tools/azure-sdk-tools
+../../core/azure-core
+../azure-storage-blob
+-e ../../identity/azure-identity
+pytest

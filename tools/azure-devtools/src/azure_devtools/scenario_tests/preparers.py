@@ -9,9 +9,11 @@ import functools
 from .base import ReplayableTest
 from .utilities import create_random_name, is_text_payload, trim_kwargs_from_test_function
 from .recording_processors import RecordingProcessor
+from .exceptions import AzureNameError
 
 
 # Core Utility
+
 
 class AbstractPreparer(object):
     def __init__(self, name_prefix, name_len, disable_recording=False):
@@ -23,26 +25,42 @@ class AbstractPreparer(object):
         self.live_test = False
         self.disable_recording = disable_recording
 
+    def _prepare_create_resource(self, test_class_instance, **kwargs):
+        self.live_test = not isinstance(test_class_instance, ReplayableTest)
+        self.test_class_instance = test_class_instance
+
+        if self.live_test or test_class_instance.in_recording:
+            resource_name = self.random_name
+            if not self.live_test and isinstance(self, RecordingProcessor):
+                test_class_instance.recording_processors.append(self)
+        else:
+            resource_name = self.moniker
+
+        with self.override_disable_recording():
+            retries = 4
+            for i in range(retries):
+                try:
+                    parameter_update = self.create_resource(
+                        resource_name,
+                        **kwargs
+                    )
+                    break
+                except AzureNameError:
+                    if i == retries - 1:
+                        raise
+                    self.resource_random_name = None
+                    resource_name = self.random_name
+
+        if parameter_update:
+            kwargs.update(parameter_update)
+
+        return resource_name, kwargs
+
+
     def __call__(self, fn):
         def _preparer_wrapper(test_class_instance, **kwargs):
-            self.live_test = not isinstance(test_class_instance, ReplayableTest)
-            self.test_class_instance = test_class_instance
 
-            if self.live_test or test_class_instance.in_recording:
-                resource_name = self.random_name
-                if not self.live_test and isinstance(self, RecordingProcessor):
-                    test_class_instance.recording_processors.append(self)
-            else:
-                resource_name = self.moniker
-
-            with self.override_disable_recording():
-                parameter_update = self.create_resource(
-                    resource_name,
-                    **kwargs
-                )
-
-            if parameter_update:
-                kwargs.update(parameter_update)
+            resource_name, kwargs = self._prepare_create_resource(test_class_instance, **kwargs)
 
             trim_kwargs_from_test_function(fn, kwargs)
 

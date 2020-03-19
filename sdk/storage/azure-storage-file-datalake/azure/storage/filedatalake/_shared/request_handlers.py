@@ -15,7 +15,6 @@ from io import (SEEK_END, SEEK_SET, UnsupportedOperation)
 
 import isodate
 
-from azure.core.configuration import Configuration
 from azure.core.exceptions import raise_with_traceback
 
 
@@ -66,7 +65,12 @@ def get_length(data):
         except (AttributeError, UnsupportedOperation):
             pass
         else:
-            return fstat(fileno).st_size
+            try:
+                return fstat(fileno).st_size
+            except OSError:
+                # Not a valid fileno, may be possible requests returned
+                # a socket number?
+                pass
 
         # If the stream is seekable and tell() is implemented, calculate the stream size.
         try:

@@ -158,6 +158,28 @@ class StorageErrorCode(str, Enum):
     share_has_snapshots = "ShareHasSnapshots"
     container_quota_downgrade_not_allowed = "ContainerQuotaDowngradeNotAllowed"
 
+    # DataLake values
+    content_length_must_be_zero = 'ContentLengthMustBeZero'
+    path_already_exists = 'PathAlreadyExists'
+    invalid_flush_position = 'InvalidFlushPosition'
+    invalid_property_name = 'InvalidPropertyName'
+    invalid_source_uri = 'InvalidSourceUri'
+    unsupported_rest_version = 'UnsupportedRestVersion'
+    file_system_not_found = 'FilesystemNotFound'
+    path_not_found = 'PathNotFound'
+    rename_destination_parent_path_not_found = 'RenameDestinationParentPathNotFound'
+    source_path_not_found = 'SourcePathNotFound'
+    destination_path_is_being_deleted = 'DestinationPathIsBeingDeleted'
+    file_system_already_exists = 'FilesystemAlreadyExists'
+    file_system_being_deleted = 'FilesystemBeingDeleted'
+    invalid_destination_path = 'InvalidDestinationPath'
+    invalid_rename_source_path = 'InvalidRenameSourcePath'
+    invalid_source_or_destination_resource_type = 'InvalidSourceOrDestinationResourceType'
+    lease_is_already_broken = 'LeaseIsAlreadyBroken'
+    lease_name_mismatch = 'LeaseNameMismatch'
+    path_conflict = 'PathConflict'
+    source_path_is_being_deleted = 'SourcePathIsBeingDeleted'
+
 
 class DictMixin(object):
 

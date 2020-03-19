@@ -7,7 +7,6 @@ import json
 import os
 import time
 from unittest.mock import Mock, patch
-import uuid
 
 import pytest
 from azure.core.credentials import AccessToken
@@ -22,73 +21,8 @@ from azure.identity.aio import (
 from azure.identity.aio._credentials.managed_identity import ImdsCredential
 from azure.identity._constants import EnvironmentVariables
 
-from helpers import mock_response, Request, async_validating_transport
-
-
-@pytest.mark.asyncio
-async def test_client_secret_credential_cache():
-    expired = "this token's expired"
-    now = int(time.time())
-    expired_on = now - 3600
-    expired_token = AccessToken(expired, expired_on)
-    token_payload = {
-        "access_token": expired,
-        "expires_in": 0,
-        "ext_expires_in": 0,
-        "expires_on": expired_on,
-        "not_before": now,
-        "token_type": "Bearer",
-    }
-    mock_send = Mock(return_value=mock_response(json_payload=token_payload))
-    transport = Mock(send=asyncio.coroutine(mock_send))
-    scope = "scope"
-
-    credential = ClientSecretCredential("tenant-id", "client-id", "secret", transport=transport)
-
-    # get_token initially returns the expired token because the credential
-    # doesn't check whether tokens it receives from the service have expired
-    token = await credential.get_token(scope)
-    assert token == expired_token
-
-    access_token = "new token"
-    token_payload["access_token"] = access_token
-    token_payload["expires_on"] = now + 3600
-    valid_token = AccessToken(access_token, now + 3600)
-
-    # second call should observe the cached token has expired, and request another
-    token = await credential.get_token(scope)
-    assert token == valid_token
-    assert mock_send.call_count == 2
-
-
-@pytest.mark.asyncio
-async def test_client_secret_credential():
-    client_id = "fake-client-id"
-    secret = "fake-client-secret"
-    tenant_id = "fake-tenant-id"
-    access_token = "***"
-
-    transport = async_validating_transport(
-        requests=[Request(url_substring=tenant_id, required_data={"client_id": client_id, "client_secret": secret})],
-        responses=[
-            mock_response(
-                json_payload={
-                    "token_type": "Bearer",
-                    "expires_in": 42,
-                    "ext_expires_in": 42,
-                    "access_token": access_token,
-                }
-            )
-        ],
-    )
-
-    token = await ClientSecretCredential(
-        tenant_id=tenant_id, client_id=client_id, client_secret=secret, transport=transport
-    ).get_token("scope")
-
-    # not validating expires_on because doing so requires monkeypatching time, and this is tested elsewhere
-    assert token.token == access_token
-
+from helpers import mock_response, Request
+from helpers_async import async_validating_transport, wrap_in_future
 
 @pytest.mark.asyncio
 async def test_client_secret_environment_credential():
@@ -150,7 +84,7 @@ async def test_chain_attempts_all_credentials():
     credentials = [
         Mock(get_token=Mock(wraps=raise_authn_error)),
         Mock(get_token=Mock(wraps=raise_authn_error)),
-        Mock(get_token=asyncio.coroutine(lambda _: expected_token)),
+        Mock(get_token=wrap_in_future(lambda _: expected_token)),
     ]
 
     token = await ChainedTokenCredential(*credentials).get_token("scope")
@@ -163,7 +97,7 @@ async def test_chain_attempts_all_credentials():
 @pytest.mark.asyncio
 async def test_chain_returns_first_token():
     expected_token = Mock()
-    first_credential = Mock(get_token=asyncio.coroutine(lambda _: expected_token))
+    first_credential = Mock(get_token=wrap_in_future(lambda _: expected_token))
     second_credential = Mock(get_token=Mock())
 
     aggregate = ChainedTokenCredential(first_credential, second_credential)
@@ -196,7 +130,7 @@ async def test_imds_credential_cache():
     )
     mock_send = Mock(return_value=mock_response)
 
-    credential = ImdsCredential(transport=Mock(send=asyncio.coroutine(mock_send)))
+    credential = ImdsCredential(transport=Mock(send=wrap_in_future(mock_send)))
     token = await credential.get_token(scope)
     assert token.token == expired
     assert mock_send.call_count == 2  # first request was probing for endpoint availability
@@ -232,7 +166,7 @@ async def test_imds_credential_retries():
         mock_response.status_code = status_code
         try:
             await ImdsCredential(
-                transport=Mock(send=asyncio.coroutine(mock_send), sleep=asyncio.coroutine(lambda _: None))
+                transport=Mock(send=wrap_in_future(mock_send), sleep=wrap_in_future(lambda _: None))
             ).get_token("scope")
         except ClientAuthenticationError:
             pass

@@ -26,7 +26,6 @@ from .operations import DatabasesOperations
 from .operations import ElasticPoolsOperations
 from .operations import RecommendedElasticPoolsOperations
 from .operations import ReplicationLinksOperations
-from .operations import ServerAzureADAdministratorsOperations
 from .operations import ServerCommunicationLinksOperations
 from .operations import ServiceObjectivesOperations
 from .operations import ElasticPoolActivitiesOperations
@@ -77,7 +76,6 @@ from .operations import SensitivityLabelsOperations
 from .operations import ManagedInstanceAdministratorsOperations
 from .operations import DatabaseOperations
 from .operations import ElasticPoolOperations
-from .operations import CapabilitiesOperations
 from .operations import DatabaseVulnerabilityAssessmentScansOperations
 from .operations import ManagedDatabaseVulnerabilityAssessmentRuleBaselinesOperations
 from .operations import ManagedDatabaseVulnerabilityAssessmentScansOperations
@@ -99,6 +97,10 @@ from .operations import ManagedDatabaseRestoreDetailsOperations
 from .operations import ManagedDatabasesOperations
 from .operations import PrivateEndpointConnectionsOperations
 from .operations import PrivateLinkResourcesOperations
+from .operations import ServerAzureADAdministratorsOperations
+from .operations import CapabilitiesOperations
+from .operations import WorkloadGroupsOperations
+from .operations import WorkloadClassifiersOperations
 from . import models
 
 
@@ -134,8 +136,6 @@ class SqlManagementClient(SDKClient):
     :vartype recommended_elastic_pools: azure.mgmt.sql.operations.RecommendedElasticPoolsOperations
     :ivar replication_links: ReplicationLinks operations
     :vartype replication_links: azure.mgmt.sql.operations.ReplicationLinksOperations
-    :ivar server_azure_ad_administrators: ServerAzureADAdministrators operations
-    :vartype server_azure_ad_administrators: azure.mgmt.sql.operations.ServerAzureADAdministratorsOperations
     :ivar server_communication_links: ServerCommunicationLinks operations
     :vartype server_communication_links: azure.mgmt.sql.operations.ServerCommunicationLinksOperations
     :ivar service_objectives: ServiceObjectives operations
@@ -236,8 +236,6 @@ class SqlManagementClient(SDKClient):
     :vartype database_operations: azure.mgmt.sql.operations.DatabaseOperations
     :ivar elastic_pool_operations: ElasticPoolOperations operations
     :vartype elastic_pool_operations: azure.mgmt.sql.operations.ElasticPoolOperations
-    :ivar capabilities: Capabilities operations
-    :vartype capabilities: azure.mgmt.sql.operations.CapabilitiesOperations
     :ivar database_vulnerability_assessment_scans: DatabaseVulnerabilityAssessmentScans operations
     :vartype database_vulnerability_assessment_scans: azure.mgmt.sql.operations.DatabaseVulnerabilityAssessmentScansOperations
     :ivar managed_database_vulnerability_assessment_rule_baselines: ManagedDatabaseVulnerabilityAssessmentRuleBaselines operations
@@ -280,6 +278,14 @@ class SqlManagementClient(SDKClient):
     :vartype private_endpoint_connections: azure.mgmt.sql.operations.PrivateEndpointConnectionsOperations
     :ivar private_link_resources: PrivateLinkResources operations
     :vartype private_link_resources: azure.mgmt.sql.operations.PrivateLinkResourcesOperations
+    :ivar server_azure_ad_administrators: ServerAzureADAdministrators operations
+    :vartype server_azure_ad_administrators: azure.mgmt.sql.operations.ServerAzureADAdministratorsOperations
+    :ivar capabilities: Capabilities operations
+    :vartype capabilities: azure.mgmt.sql.operations.CapabilitiesOperations
+    :ivar workload_groups: WorkloadGroups operations
+    :vartype workload_groups: azure.mgmt.sql.operations.WorkloadGroupsOperations
+    :ivar workload_classifiers: WorkloadClassifiers operations
+    :vartype workload_classifiers: azure.mgmt.sql.operations.WorkloadClassifiersOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -325,8 +331,6 @@ class SqlManagementClient(SDKClient):
         self.recommended_elastic_pools = RecommendedElasticPoolsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.replication_links = ReplicationLinksOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.server_azure_ad_administrators = ServerAzureADAdministratorsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.server_communication_links = ServerCommunicationLinksOperations(
             self._client, self.config, self._serialize, self._deserialize)
@@ -428,8 +432,6 @@ class SqlManagementClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.elastic_pool_operations = ElasticPoolOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.capabilities = CapabilitiesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
         self.database_vulnerability_assessment_scans = DatabaseVulnerabilityAssessmentScansOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.managed_database_vulnerability_assessment_rule_baselines = ManagedDatabaseVulnerabilityAssessmentRuleBaselinesOperations(
@@ -471,4 +473,12 @@ class SqlManagementClient(SDKClient):
         self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.private_link_resources = PrivateLinkResourcesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.server_azure_ad_administrators = ServerAzureADAdministratorsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.capabilities = CapabilitiesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.workload_groups = WorkloadGroupsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.workload_classifiers = WorkloadClassifiersOperations(
             self._client, self.config, self._serialize, self._deserialize)

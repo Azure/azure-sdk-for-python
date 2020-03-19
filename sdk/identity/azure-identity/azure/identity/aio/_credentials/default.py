@@ -4,12 +4,18 @@
 # ------------------------------------
 import logging
 import os
+from typing import TYPE_CHECKING
+
+from azure.core.exceptions import ClientAuthenticationError
 
 from ..._constants import EnvironmentVariables, KnownAuthorities
 from .chained import ChainedTokenCredential
 from .environment import EnvironmentCredential
 from .managed_identity import ManagedIdentityCredential
 from .shared_cache import SharedTokenCacheCredential
+
+if TYPE_CHECKING:
+    from typing import Any
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -73,3 +79,24 @@ class DefaultAzureCredential(ChainedTokenCredential):
                 _LOGGER.info("Shared token cache is unavailable: '%s'", ex)
 
         super().__init__(*credentials)
+
+    async def get_token(self, *scopes: str, **kwargs: "Any"):
+        """Asynchronously request an access token for `scopes`.
+
+        .. note:: This method is called by Azure SDK clients. It isn't intended for use in application code.
+
+        :param str scopes: desired scopes for the token
+        :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The exception has a
+          `message` attribute listing each authentication attempt and its error message.
+        """
+        try:
+            return await super(DefaultAzureCredential, self).get_token(*scopes, **kwargs)
+        except ClientAuthenticationError as e:
+            raise ClientAuthenticationError(
+                message="""
+{}\n\nPlease visit the documentation at
+https://aka.ms/python-sdk-identity#defaultazurecredential
+to learn what options DefaultAzureCredential supports""".format(
+                    e.message
+                )
+            )

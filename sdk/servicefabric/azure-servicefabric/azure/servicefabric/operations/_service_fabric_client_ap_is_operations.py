@@ -2563,6 +2563,194 @@ class ServiceFabricClientAPIsOperationsMixin(object):
             return client_raw_response
     restart_node.metadata = {'url': '/Nodes/{nodeName}/$/Restart'}
 
+    def remove_configuration_overrides(
+            self, node_name, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Removes configuration overrides on the specified node.
+
+        This api allows removing all existing configuration overrides on
+        specified node.
+
+        :param node_name: The name of the node.
+        :type node_name: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "7.0"
+
+        # Construct URL
+        url = self.remove_configuration_overrides.metadata['url']
+        path_format_arguments = {
+            'nodeName': self._serialize.url("node_name", node_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    remove_configuration_overrides.metadata = {'url': '/Nodes/{nodeName}/$/RemoveConfigurationOverrides'}
+
+    def get_configuration_overrides(
+            self, node_name, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Gets the list of configuration overrides on the specified node.
+
+        This api allows getting all existing configuration overrides on the
+        specified node.
+
+        :param node_name: The name of the node.
+        :type node_name: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: list or ClientRawResponse if raw=true
+        :rtype: list[~azure.servicefabric.models.ConfigParameterOverride] or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "7.0"
+
+        # Construct URL
+        url = self.get_configuration_overrides.metadata['url']
+        path_format_arguments = {
+            'nodeName': self._serialize.url("node_name", node_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('[ConfigParameterOverride]', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_configuration_overrides.metadata = {'url': '/Nodes/{nodeName}/$/GetConfigurationOverrides'}
+
+    def add_configuration_parameter_overrides(
+            self, node_name, config_parameter_override_list, force=None, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Adds the list of configuration overrides on the specified node.
+
+        This api allows adding all existing configuration overrides on the
+        specified node.
+
+        :param node_name: The name of the node.
+        :type node_name: str
+        :param config_parameter_override_list: Description for adding list of
+         configuration overrides.
+        :type config_parameter_override_list:
+         list[~azure.servicefabric.models.ConfigParameterOverride]
+        :param force: Force adding configuration overrides on specified nodes.
+        :type force: bool
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "7.0"
+
+        # Construct URL
+        url = self.add_configuration_parameter_overrides.metadata['url']
+        path_format_arguments = {
+            'nodeName': self._serialize.url("node_name", node_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if force is not None:
+            query_parameters['Force'] = self._serialize.query("force", force, 'bool')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        body_content = self._serialize.body(config_parameter_override_list, '[ConfigParameterOverride]')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    add_configuration_parameter_overrides.metadata = {'url': '/Nodes/{nodeName}/$/AddConfigurationParameterOverrides'}
+
     def get_application_type_info_list(
             self, application_type_definition_kind_filter=0, exclude_application_parameters=False, continuation_token=None, max_results=0, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Gets the list of application types in the Service Fabric cluster.
@@ -11245,6 +11433,65 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         return deserialized
     get_image_store_folder_size.metadata = {'url': '/ImageStore/{contentPath}/$/FolderSize'}
+
+    def get_image_store_info(
+            self, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Gets the overall ImageStore information.
+
+        Returns information about the primary ImageStore replica, such as disk
+        capacity and available disk space at the node it is on, and several
+        categories of the ImageStore's file system usage.
+
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: ImageStoreInfo or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.ImageStoreInfo or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.5"
+
+        # Construct URL
+        url = self.get_image_store_info.metadata['url']
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('ImageStoreInfo', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_image_store_info.metadata = {'url': '/ImageStore/$/Info'}
 
     def invoke_infrastructure_command(
             self, command, service_id=None, timeout=60, custom_headers=None, raw=False, **operation_config):

@@ -51,6 +51,12 @@ class Reason(str, Enum):
     already_exists = "AlreadyExists"
 
 
+class KeyType(str, Enum):
+
+    service = "Service"
+    account = "Account"
+
+
 class KeySource(str, Enum):
 
     microsoft_storage = "Microsoft.Storage"
@@ -102,6 +108,12 @@ class LargeFileSharesState(str, Enum):
 
     disabled = "Disabled"
     enabled = "Enabled"
+
+
+class RoutingChoice(str, Enum):
+
+    microsoft_routing = "MicrosoftRouting"
+    internet_routing = "InternetRouting"
 
 
 class GeoReplicationStatus(str, Enum):

@@ -3,6 +3,17 @@
 Release History
 ===============
 
+0.10.0 (2020-01-09)
++++++++++++++++++++
+
+**Features**
+
+- Support for multi-api
+
+**Breaking changes**
+
+- Model IotHubProperties no longer has parameter device_streams
+
 0.9.0 (2019-10-09)
 ++++++++++++++++++
 

@@ -187,6 +187,7 @@ Several DataLake Storage Python SDK samples are available to you in the SDK's Gi
 
 ### Additional documentation
 
+Table for [ADLS Gen1 to ADLS Gen2 API Mapping](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/storage/azure-storage-file-datalake/GEN1_GEN2_MAPPING.md)  
 For more extensive REST documentation on Data Lake Storage Gen2, see the [Data Lake Storage Gen2 documentation](https://docs.microsoft.com/en-us/rest/api/storageservices/datalakestoragegen2/filesystem) on docs.microsoft.com.
 
 

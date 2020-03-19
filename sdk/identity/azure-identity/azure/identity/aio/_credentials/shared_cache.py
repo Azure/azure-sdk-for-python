@@ -9,6 +9,7 @@ from ..._constants import AZURE_CLI_CLIENT_ID
 from ..._internal.shared_token_cache import NO_TOKEN, SharedTokenCacheBase
 from .._internal.aad_client import AadClient
 from .._internal.exception_wrapper import wrap_exceptions
+from .base import AsyncCredentialBase
 
 if TYPE_CHECKING:
     from typing import Any
@@ -16,13 +17,24 @@ if TYPE_CHECKING:
     from ..._internal.aad_client import AadClientBase
 
 
-class SharedTokenCacheCredential(SharedTokenCacheBase):
+class SharedTokenCacheCredential(SharedTokenCacheBase, AsyncCredentialBase):
     """Authenticates using tokens in the local cache shared between Microsoft applications.
 
     :param str username:
         Username (typically an email address) of the user to authenticate as. This is required because the local cache
         may contain tokens for multiple identities.
     """
+
+    async def __aenter__(self):
+        if self._client:
+            await self._client.__aenter__()
+        return self
+
+    async def close(self):
+        """Close the credential's transport session."""
+
+        if self._client:
+            await self._client.__aexit__()
 
     @wrap_exceptions
     async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":  # pylint:disable=unused-argument

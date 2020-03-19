@@ -5,6 +5,12 @@
 #--------------------------------------------------------------------------
 
 import os.path
+import time
+try:
+    from azure.core.credentials import AccessToken
+except ImportError:
+    AccessToken = None
+
 
 def get_cli_profile():
     """Return a CLI profile class.
@@ -28,6 +34,50 @@ def get_cli_profile():
     ACCOUNT.load(os.path.join(azure_folder, 'azureProfile.json'))
     return Profile(storage=ACCOUNT)
 
+
+class _CliCredentials(object):
+    """A wrapper of CLI credentials type that implements the azure-core credential protocol AND
+    the msrestazure protocol.
+
+    :param cli_profile: The CLI profile instance
+    :param resource: The resource to use in "msrestazure" mode (ignored otherwise)
+    """
+
+    _DEFAULT_PREFIX = "/.default"
+
+    def __init__(self, cli_profile, resource):
+        if AccessToken is None:  # import failed
+            raise ImportError("You need to install 'azure-core' to use this feature")
+        self._profile = cli_profile
+        self._resource = resource
+        self._cred_dict = {}
+
+    def _get_cred(self, resource):
+        if not resource in self._cred_dict:
+            credentials, _, _ = self._profile.get_login_credentials(resource=resource)
+            self._cred_dict[resource] = credentials
+        return self._cred_dict[resource]
+
+    def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
+
+        if len(scopes) != 1:
+            raise ValueError("Multiple scopes are not supported: {}".format(scopes))
+        scope = scopes[0]
+        if scope.endswith(self._DEFAULT_PREFIX):
+            resource = scope[:-len(self._DEFAULT_PREFIX)]
+        else:
+            resource = scope
+
+        credentials = self._get_cred(resource)
+        _, token, fulltoken = credentials._token_retriever()  # pylint:disable=protected-access
+
+        return AccessToken(token, int(fulltoken['expiresIn'] + time.time()))
+
+    def signed_session(self, session=None):
+        credentials = self._get_cred(self._resource)
+        return credentials.signed_session(session)
+
+
 def get_azure_cli_credentials(resource=None, with_tenant=False):
     """Return Credentials and default SubscriptionID of current loaded profile of the CLI.
 
@@ -46,6 +96,7 @@ def get_azure_cli_credentials(resource=None, with_tenant=False):
     """
     profile = get_cli_profile()
     cred, subscription_id, tenant_id = profile.get_login_credentials(resource=resource)
+    cred = _CliCredentials(profile, resource)
     if with_tenant:
         return cred, subscription_id, tenant_id
     else:

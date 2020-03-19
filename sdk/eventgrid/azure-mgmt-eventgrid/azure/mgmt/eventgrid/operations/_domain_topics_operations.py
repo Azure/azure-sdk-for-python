@@ -27,7 +27,7 @@ class DomainTopicsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. Constant value: "2020-01-01-preview".
+    :ivar api_version: Version of the API to be used with the client request. Constant value: "2020-04-01-preview".
     """
 
     models = models
@@ -37,7 +37,7 @@ class DomainTopicsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2020-01-01-preview"
+        self.api_version = "2020-04-01-preview"
 
         self.config = config
 
@@ -50,9 +50,9 @@ class DomainTopicsOperations(object):
         :param resource_group_name: The name of the resource group within the
          user's subscription.
         :type resource_group_name: str
-        :param domain_name: Name of the domain
+        :param domain_name: Name of the domain.
         :type domain_name: str
-        :param domain_topic_name: Name of the topic
+        :param domain_topic_name: Name of the topic.
         :type domain_topic_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -165,9 +165,9 @@ class DomainTopicsOperations(object):
         :param resource_group_name: The name of the resource group within the
          user's subscription.
         :type resource_group_name: str
-        :param domain_name: Name of the domain
+        :param domain_name: Name of the domain.
         :type domain_name: str
-        :param domain_topic_name: Name of the domain topic
+        :param domain_topic_name: Name of the domain topic.
         :type domain_topic_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
@@ -257,9 +257,9 @@ class DomainTopicsOperations(object):
         :param resource_group_name: The name of the resource group within the
          user's subscription.
         :type resource_group_name: str
-        :param domain_name: Name of the domain
+        :param domain_name: Name of the domain.
         :type domain_name: str
-        :param domain_topic_name: Name of the domain topic
+        :param domain_topic_name: Name of the domain topic.
         :type domain_topic_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the

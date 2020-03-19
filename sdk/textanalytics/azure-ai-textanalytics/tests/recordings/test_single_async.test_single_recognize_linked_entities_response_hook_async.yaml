@@ -1,0 +1,43 @@
+interactions:
+- request:
+    body: '{"documents": [{"id": "0", "text": "Microsoft was founded by Bill Gates."}]}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '76'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - azsdk-python-core/1.1.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0) azsdk-python-azure-cognitiveservices-language-textanalytics/3.0.0b1
+      X-BingApis-SDK-Client:
+      - Python-SDK
+    method: POST
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/entities/linking?model-version=latest&showStats=true
+  response:
+    body:
+      string: '{"statistics":{"documentsCount":1,"validDocumentsCount":1,"erroneousDocumentsCount":0,"transactionsCount":1},"documents":[{"id":"0","statistics":{"charactersCount":36,"transactionsCount":1},"entities":[{"name":"Bill
+        Gates","matches":[{"text":"Bill Gates","offset":25,"length":10,"score":0.23098251518339441}],"language":"en","id":"Bill
+        Gates","url":"https://en.wikipedia.org/wiki/Bill_Gates","dataSource":"Wikipedia"},{"name":"Microsoft","matches":[{"text":"Microsoft","offset":0,"length":9,"score":0.18758846618202618}],"language":"en","id":"Microsoft","url":"https://en.wikipedia.org/wiki/Microsoft","dataSource":"Wikipedia"}]}],"errors":[],"modelVersion":"2019-10-01"}'
+    headers:
+      apim-request-id: 939b7593-0f6e-40b1-b9ab-05589b956d0b
+      content-type: application/json; charset=utf-8
+      csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=1
+      date: Thu, 21 Nov 2019 01:30:51 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-aml-ta-request-id: 1dfbef19-02db-47da-81a6-bb547363bd0e
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '10'
+    status:
+      code: 200
+      message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - westus2.api.cognitive.microsoft.com
+        - //text/analytics/v3.0-preview.1/entities/linking
+        - model-version=latest&showStats=true
+        - ''
+version: 1

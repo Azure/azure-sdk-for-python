@@ -1885,12 +1885,14 @@ class CRUDTests(unittest.TestCase):
                     "types": [
                         "Point",
                         "LineString",
-                        "Polygon"
+                        "Polygon",
+                        "MultiPolygon"
                     ]
                 },
                 {
                     "path": "/path1/*",
                     "types": [
+                        "Point",
                         "LineString",
                         "Polygon",
                         "MultiPolygon"

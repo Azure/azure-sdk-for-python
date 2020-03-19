@@ -40,7 +40,8 @@ MANAGEMENT_PACKAGE_IDENTIFIERS = [
     "mgmt",
     "azure-cognitiveservices",
     "azure-servicefabric",
-    "nspkg"
+    "nspkg",
+    "azure-keyvault"
 ]
 NON_MANAGEMENT_CODE_5_ALLOWED = [
     "azure-keyvault"

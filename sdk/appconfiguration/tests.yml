@@ -14,4 +14,8 @@ jobs:
       ServiceDirectory: appconfiguration
       EnvVars:
         APP_CONFIG_CONNECTION: $(python-appconfiguration-connection-string)
+        APP_CONFIG_ENDPOINT: $(python-appconfiguration-endpoint-string)
+        AZURE_CLIENT_ID: $(aad-azure-sdk-test-client-id)
+        AZURE_CLIENT_SECRET: $(aad-azure-sdk-test-client-secret)
+        AZURE_TENANT_ID: $(aad-azure-sdk-test-tenant-id)
         TEST_MODE: 'RunLiveNoRecord'

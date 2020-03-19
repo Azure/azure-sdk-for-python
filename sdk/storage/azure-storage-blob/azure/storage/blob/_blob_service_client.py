@@ -28,11 +28,8 @@ from ._generated import AzureBlobStorage
 from ._generated.models import StorageErrorException, StorageServiceProperties, KeyInfo
 from ._container_client import ContainerClient
 from ._blob_client import BlobClient
-from ._models import (
-    ContainerPropertiesPaged,
-    service_stats_deserialize,
-    service_properties_deserialize
-)
+from ._models import ContainerPropertiesPaged
+from ._deserialize import service_stats_deserialize, service_properties_deserialize
 
 if TYPE_CHECKING:
     from datetime import datetime

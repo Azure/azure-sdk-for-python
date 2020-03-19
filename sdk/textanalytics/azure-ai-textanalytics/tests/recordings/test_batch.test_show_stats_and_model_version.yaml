@@ -1,0 +1,48 @@
+interactions:
+- request:
+    body: '{"documents": [{"id": "56", "text": ":)"}, {"id": "0", "text": ":("}, {"id":
+      "22", "text": ""}, {"id": "19", "text": ":P"}, {"id": "1", "text": ":D"}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '151'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - azsdk-python-core/1.1.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0) azsdk-python-textanalyticsclient/3.0.0b1
+      X-BingApis-SDK-Client:
+      - Python-SDK
+    method: POST
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/sentiment?model-version=latest&showStats=true
+  response:
+    body:
+      string: '{"statistics":{"documentsCount":5,"validDocumentsCount":4,"erroneousDocumentsCount":1,"transactionsCount":4},"documents":[{"id":"56","sentiment":"positive","statistics":{"charactersCount":2,"transactionsCount":1},"documentScores":{"positive":0.89192992448806763,"neutral":0.0956294015049934,"negative":0.012440700083971},"sentences":[{"sentiment":"positive","sentenceScores":{"positive":0.89192992448806763,"neutral":0.0956294015049934,"negative":0.012440700083971},"offset":0,"length":2}]},{"id":"0","sentiment":"negative","statistics":{"charactersCount":2,"transactionsCount":1},"documentScores":{"positive":0.0032547216396779,"neutral":0.0184039268642664,"negative":0.97834134101867676},"sentences":[{"sentiment":"negative","sentenceScores":{"positive":0.0032547216396779,"neutral":0.0184039268642664,"negative":0.97834134101867676},"offset":0,"length":2}]},{"id":"19","sentiment":"neutral","statistics":{"charactersCount":2,"transactionsCount":1},"documentScores":{"positive":0.29791706800460821,"neutral":0.666125476360321,"negative":0.035957433283329},"sentences":[{"sentiment":"neutral","sentenceScores":{"positive":0.29791706800460821,"neutral":0.666125476360321,"negative":0.035957433283329},"offset":0,"length":2}]},{"id":"1","sentiment":"positive","statistics":{"charactersCount":2,"transactionsCount":1},"documentScores":{"positive":0.8919297456741333,"neutral":0.0956295132637024,"negative":0.0124407093971968},"sentences":[{"sentiment":"positive","sentenceScores":{"positive":0.8919297456741333,"neutral":0.0956295132637024,"negative":0.0124407093971968},"offset":0,"length":2}]}],"errors":[{"id":"22","error":{"code":"InvalidArgument","innerError":{"code":"InvalidDocument","message":"Document
+        text is empty."},"message":"Invalid document in request."}}],"modelVersion":"2019-10-01"}'
+    headers:
+      apim-request-id:
+      - 2ba82b46-86e5-4927-a789-90a03335c99c
+      content-type:
+      - application/json; charset=utf-8
+      csp-billing-usage:
+      - CognitiveServices.TextAnalytics.BatchScoring=4
+      date:
+      - Mon, 18 Nov 2019 19:53:37 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-aml-ta-request-id:
+      - b6c7c99b-ce5c-4ca5-8fbb-ea6f388688f6
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '81'
+    status:
+      code: 200
+      message: OK
+version: 1

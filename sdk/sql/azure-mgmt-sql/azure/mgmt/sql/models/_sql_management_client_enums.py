@@ -514,37 +514,6 @@ class ManagementOperationState(str, Enum):
     cancelled = "Cancelled"
 
 
-class MaxSizeUnit(str, Enum):
-
-    megabytes = "Megabytes"
-    gigabytes = "Gigabytes"
-    terabytes = "Terabytes"
-    petabytes = "Petabytes"
-
-
-class LogSizeUnit(str, Enum):
-
-    megabytes = "Megabytes"
-    gigabytes = "Gigabytes"
-    terabytes = "Terabytes"
-    petabytes = "Petabytes"
-    percent = "Percent"
-
-
-class CapabilityStatus(str, Enum):
-
-    visible = "Visible"
-    available = "Available"
-    default = "Default"
-    disabled = "Disabled"
-
-
-class PerformanceLevelUnit(str, Enum):
-
-    dtu = "DTU"
-    vcores = "VCores"
-
-
 class CreateMode(str, Enum):
 
     default = "Default"
@@ -686,6 +655,42 @@ class ManagedDatabaseCreateMode(str, Enum):
     recovery = "Recovery"
 
 
+class MaxSizeUnit(str, Enum):
+
+    megabytes = "Megabytes"
+    gigabytes = "Gigabytes"
+    terabytes = "Terabytes"
+    petabytes = "Petabytes"
+
+
+class LogSizeUnit(str, Enum):
+
+    megabytes = "Megabytes"
+    gigabytes = "Gigabytes"
+    terabytes = "Terabytes"
+    petabytes = "Petabytes"
+    percent = "Percent"
+
+
+class CapabilityStatus(str, Enum):
+
+    visible = "Visible"
+    available = "Available"
+    default = "Default"
+    disabled = "Disabled"
+
+
+class PerformanceLevelUnit(str, Enum):
+
+    dtu = "DTU"
+    vcores = "VCores"
+
+
+class PauseDelayTimeUnit(str, Enum):
+
+    minutes = "Minutes"
+
+
 class LongTermRetentionDatabaseState(str, Enum):
 
     all = "All"
@@ -705,14 +710,16 @@ class SensitivityLabelSource(str, Enum):
     recommended = "recommended"
 
 
+class ReplicaType(str, Enum):
+
+    primary = "Primary"
+    readable_secondary = "ReadableSecondary"
+
+
 class CapabilityGroup(str, Enum):
 
     supported_editions = "supportedEditions"
     supported_elastic_pool_editions = "supportedElasticPoolEditions"
     supported_managed_instance_versions = "supportedManagedInstanceVersions"
-
-
-class ReplicaType(str, Enum):
-
-    primary = "Primary"
-    readable_secondary = "ReadableSecondary"
+    supported_instance_pool_editions = "supportedInstancePoolEditions"
+    supported_managed_instance_editions = "supportedManagedInstanceEditions"

@@ -20,7 +20,7 @@ Azure file shares can be used to:
 Install the Azure Storage File Share client library for Python with [pip](https://pypi.org/project/pip/):
 
 ```bash
-pip install azure-storage-file-share --pre
+pip install azure-storage-file-share
 ```
 
 ### Create a storage account

@@ -113,7 +113,7 @@ class Request:
                     add_discrepancy("user-agent", "contains " + expected_value, actual_value)
             elif actual_value != expected_value:
                 add_discrepancy(header, expected_value, actual_value)
-
+                
         for field, expected_value in self.required_data.items():
             actual_value = request.body.get(field)
             if actual_value != expected_value:

@@ -3,6 +3,19 @@
 Release History
 ===============
 
+0.8.0 (2020-01-12)
+++++++++++++++++++
+
+**Features**
+
+- Model Volume has a new parameter is_restoring
+- Model ReplicationObject has a new parameter remote_volume_region
+- Added operation VolumesOperations.delete_replication
+- Added operation VolumesOperations.break_replication
+- Added operation VolumesOperations.resync_replication
+- Added operation VolumesOperations.authorize_replication
+- Added operation VolumesOperations.replication_status_method
+
 0.7.0 (2019-11-12)
 ++++++++++++++++++
 

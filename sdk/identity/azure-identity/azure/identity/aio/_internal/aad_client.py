@@ -19,8 +19,19 @@ if TYPE_CHECKING:
 
 
 class AadClient(AadClientBase):
-    # pylint:disable=arguments-differ
+    async def __aenter__(self):
+        await self._client.session.__aenter__()
+        return self
 
+    async def __aexit__(self, *args):
+        await self.close()
+
+    async def close(self) -> None:
+        """Close the client's transport session."""
+
+        await self._client.session.__aexit__()
+
+    # pylint:disable=arguments-differ
     def obtain_token_by_authorization_code(
         self, *args: "Any", loop: "asyncio.AbstractEventLoop" = None, **kwargs: "Any"
     ) -> "AccessToken":

@@ -4,6 +4,7 @@
 # --------------------------------------------------------------------------------------------
 
 from ._version import VERSION
+
 __version__ = VERSION
 
 from ._blobstoragecs import BlobCheckpointStore

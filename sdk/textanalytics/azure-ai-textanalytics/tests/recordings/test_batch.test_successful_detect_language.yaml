@@ -1,0 +1,50 @@
+interactions:
+- request:
+    body: '{"documents": [{"id": "1", "text": "I should take my cat to the veterinarian.",
+      "countryHint": "US"}, {"id": "2", "text": "Este es un document escrito en Espa\u00f1ol.",
+      "countryHint": "US"}, {"id": "3", "text": "\u732b\u306f\u5e78\u305b", "countryHint":
+      "US"}, {"id": "4", "text": "Fahrt nach Stuttgart und dann zum Hotel zu Fu.",
+      "countryHint": "US"}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '354'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - azsdk-python-core/1.1.1 Python/3.7.3 (Windows-10-10.0.18362-SP0) azsdk-python-azure-cognitiveservices-language-textanalytics/3.0.0b1
+      X-BingApis-SDK-Client:
+      - Python-SDK
+    method: POST
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/languages?showStats=true
+  response:
+    body:
+      string: '{"statistics":{"documentsCount":4,"validDocumentsCount":4,"erroneousDocumentsCount":0,"transactionsCount":4},"documents":[{"id":"1","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}],"statistics":{"charactersCount":41,"transactionsCount":1}},{"id":"2","detectedLanguages":[{"name":"Spanish","iso6391Name":"es","score":1.0}],"statistics":{"charactersCount":39,"transactionsCount":1}},{"id":"3","detectedLanguages":[{"name":"Japanese","iso6391Name":"ja","score":1.0}],"statistics":{"charactersCount":4,"transactionsCount":1}},{"id":"4","detectedLanguages":[{"name":"German","iso6391Name":"de","score":1.0}],"statistics":{"charactersCount":46,"transactionsCount":1}}],"errors":[],"modelVersion":"2019-10-01"}'
+    headers:
+      apim-request-id:
+      - ea11419e-11d5-4aa1-9fe0-3a86ecbc329c
+      content-type:
+      - application/json; charset=utf-8
+      csp-billing-usage:
+      - CognitiveServices.TextAnalytics.BatchScoring=4
+      date:
+      - Wed, 04 Dec 2019 21:48:27 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-aml-ta-request-id:
+      - ff6d2d1b-2626-41d5-9cfd-43ea20ab5574
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '8'
+    status:
+      code: 200
+      message: OK
+version: 1

@@ -13,12 +13,12 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
-        msrest_azure/0.4.34 azure-mgmt-cdn/2.0.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-cdn/4.1.0rc1 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: POST
-    uri: https://management.azure.com/providers/Microsoft.Cdn/checkNameAvailability?api-version=2019-04-15
+    uri: https://management.azure.com/providers/Microsoft.Cdn/checkNameAvailability?api-version=2019-06-15-preview
   response:
     body:
       string: "{\r\n  \"nameAvailable\":true,\"reason\":null,\"message\":null\r\n}"
@@ -30,7 +30,7 @@ interactions:
       content-type:
       - application/json; odata.metadata=minimal
       date:
-      - Mon, 25 Nov 2019 08:43:44 GMT
+      - Sat, 18 Jan 2020 12:31:33 GMT
       expires:
       - '-1'
       odata-version:

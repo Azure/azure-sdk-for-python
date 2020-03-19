@@ -69,6 +69,30 @@ def test_distributed_tracing_policy_solo():
     assert network_span.attributes.get("http.status_code") == 504
 
 
+def test_distributed_tracing_policy_attributes():
+    """Test policy with no other policy and happy path"""
+    settings.tracing_implementation.set_value(FakeSpan)
+    with FakeSpan(name="parent") as root_span:
+        policy = DistributedTracingPolicy(tracing_attributes={
+            'myattr': 'myvalue'
+        })
+
+        request = HttpRequest("GET", "http://127.0.0.1/temp?query=query")
+
+        pipeline_request = PipelineRequest(request, PipelineContext(None))
+        policy.on_request(pipeline_request)
+
+        response = HttpResponse(request, None)
+        response.headers = request.headers
+        response.status_code = 202
+
+        policy.on_response(pipeline_request, PipelineResponse(request, response, PipelineContext(None)))
+
+    # Check on_response
+    network_span = root_span.children[0]
+    assert network_span.attributes.get("myattr") == "myvalue"
+
+
 def test_distributed_tracing_policy_badurl(caplog):
     """Test policy with a bad url that will throw, and be sure policy ignores it"""
     settings.tracing_implementation.set_value(FakeSpan)

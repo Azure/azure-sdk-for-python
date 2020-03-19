@@ -1,0 +1,59 @@
+interactions:
+- request:
+    body: '{"documents": [{"id": "1", "text": "Microsoft was founded by Bill Gates
+      and Paul Allen on April 4, 1975.", "language": "en"}, {"id": "2", "text": "Microsoft
+      fue fundado por Bill Gates y Paul Allen el 4 de abril de 1975.", "language":
+      "es"}, {"id": "3", "text": "Microsoft wurde am 4. April 1975 von Bill Gates
+      und Paul Allen gegr\u00fcndet.", "language": "de"}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '362'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - azsdk-python-core/1.1.1 Python/3.7.3 (Windows-10-10.0.18362-SP0) azsdk-python-azure-cognitiveservices-language-textanalytics/3.0.0b1
+      X-BingApis-SDK-Client:
+      - Python-SDK
+    method: POST
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/entities/recognition/general?showStats=true
+  response:
+    body:
+      string: '{"statistics":{"documentsCount":3,"validDocumentsCount":3,"erroneousDocumentsCount":0,"transactionsCount":3},"documents":[{"id":"1","statistics":{"charactersCount":68,"transactionsCount":1},"entities":[{"text":"Microsoft","type":"Organization","offset":0,"length":9,"score":1.0},{"text":"Bill
+        Gates","type":"Person","offset":25,"length":10,"score":0.999755859375},{"text":"Paul
+        Allen","type":"Person","offset":40,"length":10,"score":0.99876481294631958},{"text":"April
+        4, 1975","type":"DateTime","subtype":"Date","offset":54,"length":13,"score":0.8}]},{"id":"2","statistics":{"charactersCount":72,"transactionsCount":1},"entities":[{"text":"Microsoft","type":"Organization","offset":0,"length":9,"score":0.99482542276382446},{"text":"Bill
+        Gates","type":"Person","offset":26,"length":10,"score":0.99993896484375},{"text":"Paul
+        Allen","type":"Person","offset":39,"length":10,"score":0.99963384866714478},{"text":"4
+        de abril de 1975","type":"DateTime","subtype":"Date","offset":53,"length":18,"score":0.8}]},{"id":"3","statistics":{"charactersCount":73,"transactionsCount":1},"entities":[{"text":"Microsoft","type":"Organization","offset":0,"length":9,"score":0.999847412109375},{"text":"4.
+        April 1975","type":"DateTime","subtype":"Date","offset":19,"length":13,"score":0.8},{"text":"Bill
+        Gates","type":"Person","offset":37,"length":10,"score":0.99951183795928955},{"text":"Paul
+        Allen","type":"Person","offset":52,"length":10,"score":0.99981689453125}]}],"errors":[],"modelVersion":"2019-10-01"}'
+    headers:
+      apim-request-id:
+      - 9226def1-8ba4-419f-8826-25ef35fd9cdd
+      content-type:
+      - application/json; charset=utf-8
+      csp-billing-usage:
+      - CognitiveServices.TextAnalytics.BatchScoring=3
+      date:
+      - Thu, 05 Dec 2019 01:42:48 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-aml-ta-request-id:
+      - 62742469-a264-465e-a4f8-77d23f9f13db
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '3974'
+    status:
+      code: 200
+      message: OK
+version: 1

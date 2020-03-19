@@ -5407,13 +5407,13 @@ class ExpressRouteCircuit(Resource):
     :type sku: ~azure.mgmt.network.v2019_09_01.models.ExpressRouteCircuitSku
     :param allow_classic_operations: Allow classic operations.
     :type allow_classic_operations: bool
-    :ivar circuit_provisioning_state: The CircuitProvisioningState state of
+    :param circuit_provisioning_state: The CircuitProvisioningState state of
      the resource.
-    :vartype circuit_provisioning_state: str
-    :ivar service_provider_provisioning_state: The
+    :type circuit_provisioning_state: str
+    :param service_provider_provisioning_state: The
      ServiceProviderProvisioningState state of the resource. Possible values
      include: 'NotProvisioned', 'Provisioning', 'Provisioned', 'Deprovisioning'
-    :vartype service_provider_provisioning_state: str or
+    :type service_provider_provisioning_state: str or
      ~azure.mgmt.network.v2019_09_01.models.ServiceProviderProvisioningState
     :param authorizations: The list of authorizations.
     :type authorizations:
@@ -5421,8 +5421,8 @@ class ExpressRouteCircuit(Resource):
     :param peerings: The list of peerings.
     :type peerings:
      list[~azure.mgmt.network.v2019_09_01.models.ExpressRouteCircuitPeering]
-    :ivar service_key: The ServiceKey.
-    :vartype service_key: str
+    :param service_key: The ServiceKey.
+    :type service_key: str
     :param service_provider_notes: The ServiceProviderNotes.
     :type service_provider_notes: str
     :param service_provider_properties: The ServiceProviderProperties.
@@ -5445,8 +5445,8 @@ class ExpressRouteCircuit(Resource):
      ~azure.mgmt.network.v2019_09_01.models.ProvisioningState
     :param gateway_manager_etag: The GatewayManager Etag.
     :type gateway_manager_etag: str
-    :ivar global_reach_enabled: Flag denoting Global reach status.
-    :vartype global_reach_enabled: bool
+    :param global_reach_enabled: Flag denoting Global reach status.
+    :type global_reach_enabled: bool
     :ivar etag: A unique read-only string that changes whenever the resource
      is updated.
     :vartype etag: str
@@ -5455,12 +5455,8 @@ class ExpressRouteCircuit(Resource):
     _validation = {
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'circuit_provisioning_state': {'readonly': True},
-        'service_provider_provisioning_state': {'readonly': True},
-        'service_key': {'readonly': True},
         'stag': {'readonly': True},
         'provisioning_state': {'readonly': True},
-        'global_reach_enabled': {'readonly': True},
         'etag': {'readonly': True},
     }
 
@@ -5492,11 +5488,11 @@ class ExpressRouteCircuit(Resource):
         super(ExpressRouteCircuit, self).__init__(**kwargs)
         self.sku = kwargs.get('sku', None)
         self.allow_classic_operations = kwargs.get('allow_classic_operations', None)
-        self.circuit_provisioning_state = None
-        self.service_provider_provisioning_state = None
+        self.circuit_provisioning_state = kwargs.get('circuit_provisioning_state', None)
+        self.service_provider_provisioning_state = kwargs.get('service_provider_provisioning_state', None)
         self.authorizations = kwargs.get('authorizations', None)
         self.peerings = kwargs.get('peerings', None)
-        self.service_key = None
+        self.service_key = kwargs.get('service_key', None)
         self.service_provider_notes = kwargs.get('service_provider_notes', None)
         self.service_provider_properties = kwargs.get('service_provider_properties', None)
         self.express_route_port = kwargs.get('express_route_port', None)
@@ -5504,7 +5500,7 @@ class ExpressRouteCircuit(Resource):
         self.stag = None
         self.provisioning_state = None
         self.gateway_manager_etag = kwargs.get('gateway_manager_etag', None)
-        self.global_reach_enabled = None
+        self.global_reach_enabled = kwargs.get('global_reach_enabled', None)
         self.etag = None
 
 
@@ -5544,11 +5540,11 @@ class ExpressRouteCircuitAuthorization(SubResource):
 
     :param id: Resource ID.
     :type id: str
-    :ivar authorization_key: The authorization key.
-    :vartype authorization_key: str
-    :ivar authorization_use_status: The authorization use status. Possible
+    :param authorization_key: The authorization key.
+    :type authorization_key: str
+    :param authorization_use_status: The authorization use status. Possible
      values include: 'Available', 'InUse'
-    :vartype authorization_use_status: str or
+    :type authorization_use_status: str or
      ~azure.mgmt.network.v2019_09_01.models.AuthorizationUseStatus
     :ivar provisioning_state: The provisioning state of the authorization
      resource. Possible values include: 'Succeeded', 'Updating', 'Deleting',
@@ -5566,8 +5562,6 @@ class ExpressRouteCircuitAuthorization(SubResource):
     """
 
     _validation = {
-        'authorization_key': {'readonly': True},
-        'authorization_use_status': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'etag': {'readonly': True},
         'type': {'readonly': True},
@@ -5585,8 +5579,8 @@ class ExpressRouteCircuitAuthorization(SubResource):
 
     def __init__(self, **kwargs):
         super(ExpressRouteCircuitAuthorization, self).__init__(**kwargs)
-        self.authorization_key = None
-        self.authorization_use_status = None
+        self.authorization_key = kwargs.get('authorization_key', None)
+        self.authorization_use_status = kwargs.get('authorization_use_status', None)
         self.provisioning_state = None
         self.name = kwargs.get('name', None)
         self.etag = None
@@ -5614,9 +5608,9 @@ class ExpressRouteCircuitConnection(SubResource):
     :type address_prefix: str
     :param authorization_key: The authorization key.
     :type authorization_key: str
-    :ivar circuit_connection_status: Express Route Circuit connection state.
+    :param circuit_connection_status: Express Route Circuit connection state.
      Possible values include: 'Connected', 'Connecting', 'Disconnected'
-    :vartype circuit_connection_status: str or
+    :type circuit_connection_status: str or
      ~azure.mgmt.network.v2019_09_01.models.CircuitConnectionStatus
     :ivar provisioning_state: The provisioning state of the express route
      circuit connection resource. Possible values include: 'Succeeded',
@@ -5634,7 +5628,6 @@ class ExpressRouteCircuitConnection(SubResource):
     """
 
     _validation = {
-        'circuit_connection_status': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'etag': {'readonly': True},
         'type': {'readonly': True},
@@ -5659,7 +5652,7 @@ class ExpressRouteCircuitConnection(SubResource):
         self.peer_express_route_circuit_peering = kwargs.get('peer_express_route_circuit_peering', None)
         self.address_prefix = kwargs.get('address_prefix', None)
         self.authorization_key = kwargs.get('authorization_key', None)
-        self.circuit_connection_status = None
+        self.circuit_connection_status = kwargs.get('circuit_connection_status', None)
         self.provisioning_state = None
         self.name = kwargs.get('name', None)
         self.etag = None
@@ -5682,18 +5675,18 @@ class ExpressRouteCircuitPeering(SubResource):
      'Enabled'
     :type state: str or
      ~azure.mgmt.network.v2019_09_01.models.ExpressRoutePeeringState
-    :ivar azure_asn: The Azure ASN.
-    :vartype azure_asn: int
+    :param azure_asn: The Azure ASN.
+    :type azure_asn: int
     :param peer_asn: The peer ASN.
     :type peer_asn: long
     :param primary_peer_address_prefix: The primary address prefix.
     :type primary_peer_address_prefix: str
     :param secondary_peer_address_prefix: The secondary address prefix.
     :type secondary_peer_address_prefix: str
-    :ivar primary_azure_port: The primary port.
-    :vartype primary_azure_port: str
-    :ivar secondary_azure_port: The secondary port.
-    :vartype secondary_azure_port: str
+    :param primary_azure_port: The primary port.
+    :type primary_azure_port: str
+    :param secondary_azure_port: The secondary port.
+    :type secondary_azure_port: str
     :param shared_key: The shared key.
     :type shared_key: str
     :param vlan_id: The VLAN ID.
@@ -5721,9 +5714,9 @@ class ExpressRouteCircuitPeering(SubResource):
     :param express_route_connection: The ExpressRoute connection.
     :type express_route_connection:
      ~azure.mgmt.network.v2019_09_01.models.ExpressRouteConnectionId
-    :ivar connections: The list of circuit connections associated with Azure
+    :param connections: The list of circuit connections associated with Azure
      Private Peering for this circuit.
-    :vartype connections:
+    :type connections:
      list[~azure.mgmt.network.v2019_09_01.models.ExpressRouteCircuitConnection]
     :ivar peered_connections: The list of peered circuit connections
      associated with Azure Private Peering for this circuit.
@@ -5740,13 +5733,9 @@ class ExpressRouteCircuitPeering(SubResource):
     """
 
     _validation = {
-        'azure_asn': {'readonly': True},
         'peer_asn': {'maximum': 4294967295, 'minimum': 1},
-        'primary_azure_port': {'readonly': True},
-        'secondary_azure_port': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'last_modified_by': {'readonly': True},
-        'connections': {'readonly': True},
         'peered_connections': {'readonly': True},
         'etag': {'readonly': True},
         'type': {'readonly': True},
@@ -5783,12 +5772,12 @@ class ExpressRouteCircuitPeering(SubResource):
         super(ExpressRouteCircuitPeering, self).__init__(**kwargs)
         self.peering_type = kwargs.get('peering_type', None)
         self.state = kwargs.get('state', None)
-        self.azure_asn = None
+        self.azure_asn = kwargs.get('azure_asn', None)
         self.peer_asn = kwargs.get('peer_asn', None)
         self.primary_peer_address_prefix = kwargs.get('primary_peer_address_prefix', None)
         self.secondary_peer_address_prefix = kwargs.get('secondary_peer_address_prefix', None)
-        self.primary_azure_port = None
-        self.secondary_azure_port = None
+        self.primary_azure_port = kwargs.get('primary_azure_port', None)
+        self.secondary_azure_port = kwargs.get('secondary_azure_port', None)
         self.shared_key = kwargs.get('shared_key', None)
         self.vlan_id = kwargs.get('vlan_id', None)
         self.microsoft_peering_config = kwargs.get('microsoft_peering_config', None)
@@ -5799,7 +5788,7 @@ class ExpressRouteCircuitPeering(SubResource):
         self.route_filter = kwargs.get('route_filter', None)
         self.ipv6_peering_config = kwargs.get('ipv6_peering_config', None)
         self.express_route_connection = kwargs.get('express_route_connection', None)
-        self.connections = None
+        self.connections = kwargs.get('connections', None)
         self.peered_connections = None
         self.name = kwargs.get('name', None)
         self.etag = None

@@ -11,13 +11,9 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-      content-type:
-      - application/xml; charset=utf-8
-      x-ms-client-request-id:
-      - a733941c-d9a9-11e9-98d8-001a7dda7113
+      - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 18 Sep 2019 00:17:08 GMT
+      - Wed, 15 Jan 2020 23:54:55 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -25,20 +21,18 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidResourceName</Code><Message>The
-        specifed resource name contains invalid characters.\nRequestId:37cf9eae-201a-001f-56b6-6de0f0000000\nTime:2019-09-18T00:17:08.9868654Z</Message></Error>"
+        specifed resource name contains invalid characters.\nRequestId:f0febb2e-001a-0031-56ff-cbb942000000\nTime:2020-01-15T23:54:55.5804157Z</Message></Error>"
     headers:
-      Content-Length:
+      content-length:
       - '243'
-      Content-Type:
+      content-type:
       - application/xml
-      Date:
-      - Wed, 18 Sep 2019 00:17:08 GMT
-      Server:
+      date:
+      - Wed, 15 Jan 2020 23:54:54 GMT
+      server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
       - InvalidResourceName
-      x-ms-request-id:
-      - 37cf9eae-201a-001f-56b6-6de0f0000000
       x-ms-version:
       - '2019-02-02'
     status:
@@ -54,13 +48,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-      content-type:
-      - application/xml; charset=utf-8
-      x-ms-client-request-id:
-      - a74b888a-d9a9-11e9-8ff4-001a7dda7113
+      - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 18 Sep 2019 00:17:09 GMT
+      - Wed, 15 Jan 2020 23:54:55 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
@@ -71,16 +61,16 @@ interactions:
         ServiceEndpoint=\"https://storagename.file.core.windows.net/\"><Shares /><NextMarker
         /></EnumerationResults>"
     headers:
-      Content-Type:
+      content-type:
       - application/xml
-      Date:
-      - Wed, 18 Sep 2019 00:17:08 GMT
-      Server:
+      date:
+      - Wed, 15 Jan 2020 23:54:54 GMT
+      server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      Transfer-Encoding:
+      transfer-encoding:
       - chunked
-      x-ms-request-id:
-      - 37cf9eaf-201a-001f-57b6-6de0f0000000
+      vary:
+      - Origin
       x-ms-version:
       - '2019-02-02'
     status:

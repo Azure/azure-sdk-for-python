@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .web_operations import WebOperations
+from ._web_operations import WebOperations
 
 __all__ = [
     'WebOperations',

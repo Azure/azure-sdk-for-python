@@ -23,7 +23,7 @@ from common_tasks import process_glob_string
 
 VERSION_PY = "_version.py"
 VERSION_REGEX = r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]'
-VERSION_STRING = "VERSION = '%s'"
+VERSION_STRING = 'VERSION = "%s"'
 
 DEV_STATUS_REGEX = r'(classifiers=\[(\s)*)(["\']Development Status :: .*["\'])'
 

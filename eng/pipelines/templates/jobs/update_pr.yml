@@ -1,0 +1,29 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- master
+
+variables:
+  skipComponentGovernanceDetection: true
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+- task: UsePythonVersion@0
+  displayName: 'Use Python 3.7'
+  inputs:
+    versionSpec: 3.7
+
+- script: |
+    python3 -m pip install azure-devtools[ci_tools]>=1.1.0
+    python3 -m pip install -e "git+https://github.com/Azure/azure-sdk-for-python#subdirectory=tools/azure-sdk-tools&egg=azure-sdk-tools"
+  displayName: 'Install Azure SDK tools'
+
+- script: python3  -m packaging_tools.update_pr -v --pr-number $(System.PullRequest.PullRequestNumber) --repo $(Build.Repository.Name)
+  displayName: 'Update packaging of PR'
+  env:
+    GH_TOKEN: $(python-mgmt-update-pr-token)

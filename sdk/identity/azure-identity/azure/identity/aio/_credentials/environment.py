@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING
 from azure.core.exceptions import ClientAuthenticationError
 from ..._constants import EnvironmentVariables
 from .client_credential import CertificateCredential, ClientSecretCredential
+from .base import AsyncCredentialBase
 from .auth_file import AuthFileCredential
 
 if TYPE_CHECKING:
@@ -15,7 +16,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import AccessToken
 
 
-class EnvironmentCredential:
+class EnvironmentCredential(AsyncCredentialBase):
     """A credential configured by environment variables.
 
     This credential is capable of authenticating as a service principal using a client secret or a certificate, or as
@@ -55,6 +56,17 @@ class EnvironmentCredential:
             )
         elif os.environ.get(EnvironmentVariables.AZURE_AUTH_LOCATION):
             self._credential = AuthFileCredential(EnvironmentVariables.AZURE_AUTH_LOCATION)
+
+    async def __aenter__(self):
+        if self._credential:
+            await self._credential.__aenter__()
+        return self
+
+    async def close(self):
+        """Close the credential's transport session."""
+
+        if self._credential:
+            await self._credential.__aexit__()
 
     async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":
         """Asynchronously request an access token for `scopes`.

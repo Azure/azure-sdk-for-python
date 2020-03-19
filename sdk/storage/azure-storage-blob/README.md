@@ -67,39 +67,7 @@ az storage account show -n my-storage-account-name -g my-resource-group --query 
 #### Types of credentials
 The `credential` parameter may be provided in a number of different forms, depending on the type of
 [authorization](https://docs.microsoft.com/azure/storage/common/storage-auth) you wish to use:
-1. To use a [shared access signature (SAS) token](https://docs.microsoft.com/azure/storage/common/storage-sas-overview),
-   provide the token as a string. If your account URL includes the SAS token, omit the credential parameter.
-   You can generate a SAS token from the Azure Portal under "Shared access signature" or use one of the `generate_sas()`
-   functions to create a sas token for the storage account, container, or blob:
-
-    ```python
-    from datetime import datetime, timedelta
-    from azure.storage.blob import BlobServiceClient, generate_account_sas, ResourceTypes, AccountSasPermissions
-    
-    sas_token = generate_account_sas(
-        account_name="<storage-account-name>",
-        account_key="<account-access-key>",
-        resource_types=ResourceTypes(service=True),
-        permission=AccountSasPermissions(read=True),
-        expiry=datetime.utcnow() + timedelta(hours=1)
-    )
-    
-    blob_service_client = BlobServiceClient(account_url="https://<my_account_name>.blob.core.windows.net", credential=sas_token)
-    ```
-
-2. To use a storage account [shared key](https://docs.microsoft.com/rest/api/storageservices/authenticate-with-shared-key/)
-   (aka account key or access key), provide the key as a string. This can be found in the Azure Portal under the "Access Keys" 
-   section or by running the following Azure CLI command:
-
-    ```az storage account keys list -g MyResourceGroup -n MyStorageAccount```
-    
-    Use the key as the credential parameter to authenticate the client:
-    ```python
-    from azure.storage.blob import BlobServiceClient
-    service = BlobServiceClient(account_url="https://<my_account_name>.blob.core.windows.net", credential="<account_access_key>")
-    ```
-
-3. To use an [Azure Active Directory (AAD) token credential](https://docs.microsoft.com/azure/storage/common/storage-auth-aad),
+1. To use an [Azure Active Directory (AAD) token credential](https://docs.microsoft.com/azure/storage/common/storage-auth-aad),
    provide an instance of the desired credential type obtained from the
    [azure-identity](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity#credentials) library.
    For example, [DefaultAzureCredential](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity#defaultazurecredential)
@@ -122,6 +90,38 @@ The `credential` parameter may be provided in a number of different forms, depen
             account_url="https://<my_account_name>.blob.core.windows.net",
             credential=token_credential
         )
+    ```
+
+2. To use a [shared access signature (SAS) token](https://docs.microsoft.com/azure/storage/common/storage-sas-overview),
+   provide the token as a string. If your account URL includes the SAS token, omit the credential parameter.
+   You can generate a SAS token from the Azure Portal under "Shared access signature" or use one of the `generate_sas()`
+   functions to create a sas token for the storage account, container, or blob:
+
+    ```python
+    from datetime import datetime, timedelta
+    from azure.storage.blob import BlobServiceClient, generate_account_sas, ResourceTypes, AccountSasPermissions
+    
+    sas_token = generate_account_sas(
+        account_name="<storage-account-name>",
+        account_key="<account-access-key>",
+        resource_types=ResourceTypes(service=True),
+        permission=AccountSasPermissions(read=True),
+        expiry=datetime.utcnow() + timedelta(hours=1)
+    )
+    
+    blob_service_client = BlobServiceClient(account_url="https://<my_account_name>.blob.core.windows.net", credential=sas_token)
+    ```
+
+3. To use a storage account [shared key](https://docs.microsoft.com/rest/api/storageservices/authenticate-with-shared-key/)
+   (aka account key or access key), provide the key as a string. This can be found in the Azure Portal under the "Access Keys" 
+   section or by running the following Azure CLI command:
+
+    ```az storage account keys list -g MyResourceGroup -n MyStorageAccount```
+
+    Use the key as the credential parameter to authenticate the client:
+    ```python
+    from azure.storage.blob import BlobServiceClient
+    service = BlobServiceClient(account_url="https://<my_account_name>.blob.core.windows.net", credential="<account_access_key>")
     ```
    
 4. To use [anonymous public read access](https://docs.microsoft.com/azure/storage/blobs/storage-manage-access-to-resources),
@@ -191,6 +191,29 @@ The following sections provide several code snippets covering some of the most c
 * [Uploading a blob](#uploading-a-blob "Uploading a blob")
 * [Downloading a blob](#downloading-a-blob "Downloading a blob")
 * [Enumerating blobs](#enumerating-blobs "Enumerating blobs")
+
+Note that a container must be created before to upload or download a blob.
+
+### Create a container
+
+Create a container from where you can upload or download blobs.
+```python
+from azure.storage.blob import ContainerClient
+
+container_client = ContainerClient.from_connection_string(conn_str="<connection_string>", container_name="my_container")
+
+container_client.create_container()
+```
+
+Use the async client to upload a blob
+
+```python
+from azure.storage.blob.aio import ContainerClient
+
+container_client = ContainerClient.from_connection_string(conn_str="<connection_string>", container_name="my_container")
+
+await container_client.create_container()
+```
 
 ### Uploading a blob
 Upload a blob to your container
@@ -326,6 +349,9 @@ All Blob service operations will throw a `StorageErrorException` on failure with
 Get started with our [Blob samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/samples).
 
 Several Storage Blobs Python SDK samples are available to you in the SDK's GitHub repository. These samples provide example code for additional scenarios commonly encountered while working with Storage Blobs:
+
+* [blob_samples_container_access_policy.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/samples/blob_samples_container_access_policy.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/samples/blob_samples_container_access_policy_async.py)) - Examples to set Access policies:
+    * Set up Access Policy for container
 
 * [blob_samples_hello_world.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/samples/blob_samples_hello_world.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/samples/blob_samples_hello_world_async.py)) - Examples for common Storage Blob tasks:
     * Set up a container

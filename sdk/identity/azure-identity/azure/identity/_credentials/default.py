@@ -14,6 +14,15 @@ from .environment import EnvironmentCredential
 from .managed_identity import ManagedIdentityCredential
 from .shared_cache import SharedTokenCacheCredential
 
+try:
+    from typing import TYPE_CHECKING
+except ImportError:
+    TYPE_CHECKING = False
+
+if TYPE_CHECKING:
+    from typing import Any
+    from azure.core.credentials import AccessToken
+
 _LOGGER = logging.getLogger(__name__)
 
 
@@ -83,12 +92,21 @@ class DefaultAzureCredential(ChainedTokenCredential):
         super(DefaultAzureCredential, self).__init__(*credentials)
 
     def get_token(self, *scopes, **kwargs):
+        # type: (*str, **Any) -> AccessToken
+        """Request an access token for `scopes`.
+
+        .. note:: This method is called by Azure SDK clients. It isn't intended for use in application code.
+
+        :param str scopes: desired scopes for the token
+        :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The exception has a
+          `message` attribute listing each authentication attempt and its error message.
+        """
         try:
             return super(DefaultAzureCredential, self).get_token(*scopes, **kwargs)
         except ClientAuthenticationError as e:
             raise ClientAuthenticationError(
                 message="""
-{}\n\nPlease visit the Azure identity Python SDK docs at
+{}\n\nPlease visit the documentation at
 https://aka.ms/python-sdk-identity#defaultazurecredential
 to learn what options DefaultAzureCredential supports""".format(
                     e.message

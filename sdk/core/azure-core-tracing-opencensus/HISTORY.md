@@ -1,15 +1,18 @@
 
 # Release History
 
--------------------
+## 1.0.0b5 (2019-01-14)
 
-## 2019-XX-XX Version 1.0.0
+### Bugfix
+
+- Fix context passing for multi-threading
+- Don't fail on unknown span type, but maps to PRODUCER or UNSPECIFIED
 
 ### Features
 
 - Implement new "change_context" API
 
-## 2019-10-07 Version 1.0.0b4
+## 1.0.0b4 (2019-10-07)
 
 ### Features
 

@@ -1,0 +1,45 @@
+interactions:
+- request:
+    body: '{"documents": [{"id": "0", "text": ""}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '40'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - azsdk-python-core/1.1.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0) azsdk-python-textanalyticsclient/3.0.0b1
+      X-BingApis-SDK-Client:
+      - Python-SDK
+    method: POST
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/entities/recognition/pii?showStats=false
+  response:
+    body:
+      string: '{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","innerError":{"code":"InvalidDocument","message":"Document
+        text is empty."},"message":"Invalid document in request."}}],"modelVersion":"2019-10-01"}'
+    headers:
+      apim-request-id:
+      - 40766344-8097-4c06-859a-75b371e5cd2b
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 18 Nov 2019 17:12:23 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-aml-ta-request-id:
+      - 5a75de6e-e60f-4c1f-a7ed-d3cb1522e899
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '17'
+    status:
+      code: 200
+      message: OK
+version: 1

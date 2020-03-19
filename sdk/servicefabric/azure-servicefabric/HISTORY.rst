@@ -3,6 +3,47 @@
 Release History
 ===============
 
+7.0.0.0 (2019-12-13)
+++++++++++++++++++++
+
+This is re-release of 6.6.0.0 to match the actual API version used internally
+
+6.6.0.0 (2019-12-07)
+++++++++++++++++++++
+
+**Features**
+
+- Model StartClusterUpgradeDescription has a new parameter instance_close_delay_duration_in_seconds
+- Model Setting has a new parameter type
+- Model ApplicationUpgradeDescription has a new parameter instance_close_delay_duration_in_seconds
+- Model HealthEvent has a new parameter health_report_id
+- Model HealthInformation has a new parameter health_report_id
+- Model StatelessServiceDescription has a new parameter flags
+- Model StatelessServiceDescription has a new parameter min_instance_count
+- Model StatelessServiceDescription has a new parameter min_instance_percentage
+- Model StatelessServiceDescription has a new parameter instance_close_delay_duration_seconds
+- Model StatefulServiceDescription has a new parameter service_placement_time_limit_seconds
+- Model ImageRegistryCredential has a new parameter password_type
+- Model ContainerCodePackageProperties has a new parameter liveness_probe
+- Model ContainerCodePackageProperties has a new parameter readiness_probe
+- Model ServiceResourceDescription has a new parameter execution_policy
+- Model ServiceResourceDescription has a new parameter dns_name
+- Model StatefulServiceUpdateDescription has a new parameter service_placement_time_limit_seconds
+- Model EnvironmentVariable has a new parameter type
+- Model StatelessServicePartitionInfo has a new parameter min_instance_percentage
+- Model StatelessServicePartitionInfo has a new parameter min_instance_count
+- Model RollingUpgradeUpdateDescription has a new parameter instance_close_delay_duration_in_seconds
+- Model ServiceProperties has a new parameter execution_policy
+- Model ServiceProperties has a new parameter dns_name
+- Model StatelessServiceUpdateDescription has a new parameter min_instance_percentage
+- Model StatelessServiceUpdateDescription has a new parameter min_instance_count
+- Model StatelessServiceUpdateDescription has a new parameter instance_close_delay_duration_seconds
+- Added operation MeshApplicationOperations.get_upgrade_progress
+- Added operation ServiceFabricClientAPIsOperationsMixin.remove_configuration_overrides
+- Added operation ServiceFabricClientAPIsOperationsMixin.get_image_store_info
+- Added operation ServiceFabricClientAPIsOperationsMixin.get_configuration_overrides
+- Added operation ServiceFabricClientAPIsOperationsMixin.add_configuration_parameter_overrides
+
 6.5.0.0 (2019-06-17)
 ++++++++++++++++++++
 

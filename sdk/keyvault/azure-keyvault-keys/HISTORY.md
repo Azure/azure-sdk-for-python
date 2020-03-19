@@ -2,6 +2,12 @@
 
 ## 4.1.0b1 Unreleased
 
+- Challenge authentication policy preserves request options
+([#8999](https://github.com/Azure/azure-sdk-for-python/pull/8999))
+- Updated `msrest` requirement to >=0.6.0
+- Challenge authentication policy requires TLS
+([#9457](https://github.com/Azure/azure-sdk-for-python/pull/9457))
+
 
 ## 2019-10-31 4.0.0
 ### Breaking changes:

@@ -174,20 +174,8 @@ class StorageTestCase(unittest.TestCase):
 
     def _get_shared_key_credential(self):
         return {
-            "account_name": self.settings.STORAGE_ACCOUNT_NAME,
-            "account_key": self.settings.STORAGE_ACCOUNT_KEY
-        }
-
-    def _get_premium_shared_key_credential(self):
-        return {
-            "account_name": self.settings.PREMIUM_STORAGE_ACCOUNT_NAME,
-            "account_key": self.settings.PREMIUM_STORAGE_ACCOUNT_KEY
-        }
-
-    def _get_remote_shared_key_credential(self):
-        return {
-            "account_name": self.settings.REMOTE_STORAGE_ACCOUNT_NAME,
-            "account_key": self.settings.REMOTE_STORAGE_ACCOUNT_KEY
+            "account_name": self.settings.STORAGE_DATA_LAKE_ACCOUNT_NAME,
+            "account_key": self.settings.STORAGE_DATA_LAKE_ACCOUNT_KEY
         }
 
     def _get_account_url(self):
@@ -199,19 +187,7 @@ class StorageTestCase(unittest.TestCase):
     def _get_oauth_account_url(self):
         return "{}://{}.blob.core.windows.net".format(
             self.settings.PROTOCOL,
-            self.settings.OAUTH_STORAGE_ACCOUNT_NAME
-        )
-
-    def _get_premium_account_url(self):
-        return "{}://{}.blob.core.windows.net".format(
-            self.settings.PROTOCOL,
-            self.settings.PREMIUM_STORAGE_ACCOUNT_NAME
-        )
-
-    def _get_remote_account_url(self):
-        return "{}://{}.blob.core.windows.net".format(
-            self.settings.PROTOCOL,
-            self.settings.REMOTE_STORAGE_ACCOUNT_NAME
+            self.settings.STORAGE_DATA_LAKE_ACCOUNT_NAME
         )
 
     def _create_storage_service(self, service_class, settings, **kwargs):
@@ -361,8 +337,6 @@ class StorageTestCase(unittest.TestCase):
         old_to_new_dict = {
             self.settings.STORAGE_DATA_LAKE_ACCOUNT_NAME: self.fake_settings.STORAGE_DATA_LAKE_ACCOUNT_NAME,
             self.settings.STORAGE_DATA_LAKE_ACCOUNT_KEY: self.fake_settings.STORAGE_DATA_LAKE_ACCOUNT_KEY,
-            self.settings.OAUTH_STORAGE_ACCOUNT_NAME: self.fake_settings.OAUTH_STORAGE_ACCOUNT_NAME,
-            self.settings.OAUTH_STORAGE_ACCOUNT_KEY: self.fake_settings.OAUTH_STORAGE_ACCOUNT_KEY,
             self.settings.ACTIVE_DIRECTORY_APPLICATION_ID: self.fake_settings.ACTIVE_DIRECTORY_APPLICATION_ID,
             self.settings.ACTIVE_DIRECTORY_APPLICATION_SECRET: self.fake_settings.ACTIVE_DIRECTORY_APPLICATION_SECRET,
             self.settings.ACTIVE_DIRECTORY_TENANT_ID: self.fake_settings.ACTIVE_DIRECTORY_TENANT_ID,
@@ -415,9 +389,9 @@ class StorageTestCase(unittest.TestCase):
         from azure.identity import ClientSecretCredential
 
         return ClientSecretCredential(
+            self.settings.ACTIVE_DIRECTORY_TENANT_ID,
             self.settings.ACTIVE_DIRECTORY_APPLICATION_ID,
             self.settings.ACTIVE_DIRECTORY_APPLICATION_SECRET,
-            self.settings.ACTIVE_DIRECTORY_TENANT_ID
         )
 
     def generate_fake_token(self):

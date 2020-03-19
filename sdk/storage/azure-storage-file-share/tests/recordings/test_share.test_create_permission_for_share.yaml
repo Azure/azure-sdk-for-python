@@ -11,13 +11,9 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-      content-type:
-      - application/xml; charset=utf-8
-      x-ms-client-request-id:
-      - 9994b62e-d9a9-11e9-ad7d-001a7dda7113
+      - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 18 Sep 2019 00:16:46 GMT
+      - Wed, 15 Jan 2020 23:53:35 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -26,18 +22,16 @@ interactions:
     body:
       string: ''
     headers:
-      Content-Length:
+      content-length:
       - '0'
-      Date:
-      - Wed, 18 Sep 2019 00:16:46 GMT
-      ETag:
-      - '"0x8D73BCD7DE7566D"'
-      Last-Modified:
-      - Wed, 18 Sep 2019 00:16:46 GMT
-      Server:
+      date:
+      - Wed, 15 Jan 2020 23:53:35 GMT
+      etag:
+      - '"0x8D79A1622CF6EFB"'
+      last-modified:
+      - Wed, 15 Jan 2020 23:53:36 GMT
+      server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id:
-      - cd4bfb4b-701a-003d-3eb6-6d25ef000000
       x-ms-version:
       - '2019-02-02'
     status:
@@ -57,11 +51,9 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-      x-ms-client-request-id:
-      - 99c3b0de-d9a9-11e9-9017-001a7dda7113
+      - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 18 Sep 2019 00:16:46 GMT
+      - Wed, 15 Jan 2020 23:53:36 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -70,16 +62,14 @@ interactions:
     body:
       string: ''
     headers:
-      Date:
-      - Wed, 18 Sep 2019 00:16:46 GMT
-      Server:
+      date:
+      - Wed, 15 Jan 2020 23:53:35 GMT
+      server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      Transfer-Encoding:
+      transfer-encoding:
       - chunked
       x-ms-file-permission-key:
-      - 4000846001707203423*10394889115079208622
-      x-ms-request-id:
-      - cd4bfb50-701a-003d-41b6-6d25ef000000
+      - 4617849409034312170*16704459309046467611
       x-ms-version:
       - '2019-02-02'
     status:
@@ -95,15 +85,11 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-      content-type:
-      - application/xml; charset=utf-8
-      x-ms-client-request-id:
-      - 99d0d89e-d9a9-11e9-b3d9-001a7dda7113
+      - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 18 Sep 2019 00:16:46 GMT
+      - Wed, 15 Jan 2020 23:53:36 GMT
       x-ms-file-permission-key:
-      - 4000846001707203423*10394889115079208622
+      - 4617849409034312170*16704459309046467611
       x-ms-version:
       - '2019-02-02'
     method: GET
@@ -112,14 +98,14 @@ interactions:
     body:
       string: '{"permission":"O:S-1-5-21-2127521184-1604012920-1887927527-21560751G:S-1-5-21-2127521184-1604012920-1887927527-513D:AI(A;;FA;;;SY)(A;;FA;;;BA)(A;;0x1200a9;;;S-1-5-21-397955417-626881126-188441444-3053964)S:NO_ACCESS_CONTROL"}'
     headers:
-      Content-Length:
+      content-length:
       - '225'
-      Date:
-      - Wed, 18 Sep 2019 00:16:47 GMT
-      Server:
+      date:
+      - Wed, 15 Jan 2020 23:53:35 GMT
+      server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id:
-      - cd4bfb55-701a-003d-46b6-6d25ef000000
+      vary:
+      - Origin
       x-ms-version:
       - '2019-02-02'
     status:
@@ -139,11 +125,9 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-      x-ms-client-request-id:
-      - 9a690538-d9a9-11e9-a37a-001a7dda7113
+      - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 18 Sep 2019 00:16:47 GMT
+      - Wed, 15 Jan 2020 23:53:36 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -152,16 +136,14 @@ interactions:
     body:
       string: ''
     headers:
-      Date:
-      - Wed, 18 Sep 2019 00:16:47 GMT
-      Server:
+      date:
+      - Wed, 15 Jan 2020 23:53:35 GMT
+      server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      Transfer-Encoding:
+      transfer-encoding:
       - chunked
       x-ms-file-permission-key:
-      - 4000846001707203423*10394889115079208622
-      x-ms-request-id:
-      - cd4bfb6d-701a-003d-5eb6-6d25ef000000
+      - 4617849409034312170*16704459309046467611
       x-ms-version:
       - '2019-02-02'
     status:

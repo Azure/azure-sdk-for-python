@@ -7,7 +7,7 @@ import logging
 from collections import defaultdict
 import asyncio
 from azure.eventhub.exceptions import OwnershipLostError  # type: ignore
-from azure.eventhub.aio import CheckpointStore  # pylint: disable=no-name-in-module
+from azure.eventhub.aio import CheckpointStore  # type: ignore  # pylint: disable=no-name-in-module
 from azure.core.exceptions import ResourceModifiedError, ResourceExistsError  # type: ignore
 from azure.storage.blob.aio import ContainerClient, BlobClient  # type: ignore
 
@@ -32,16 +32,19 @@ class BlobCheckpointStore(CheckpointStore):
         shared access key, or an instance of a TokenCredentials class from azure.identity.
         If the URL already has a SAS token, specifying an explicit credential will take priority.
     """
+
     def __init__(self, blob_account_url, container_name, *, credential=None, **kwargs):
         # type(str, str, Optional[Any], Any) -> None
-        container_client = kwargs.pop('container_client', None)
+        container_client = kwargs.pop("container_client", None)
         self._container_client = container_client or ContainerClient(
             blob_account_url, container_name, credential=credential, **kwargs
         )
         self._cached_blob_clients = defaultdict()  # type: Dict[str, BlobClient]
 
     @classmethod
-    def from_connection_string(cls, conn_str, container_name, *, credential=None, **kwargs):
+    def from_connection_string(
+        cls, conn_str, container_name, *, credential=None, **kwargs
+    ):
         # type: (str, str, Optional[Any], str) -> BlobCheckpointStore
         """Create BlobCheckpointStore from a storage connection string.
 
@@ -58,10 +61,7 @@ class BlobCheckpointStore(CheckpointStore):
             Credentials provided here will take precedence over those in the connection string.
         """
         container_client = ContainerClient.from_connection_string(
-            conn_str,
-            container_name,
-            credential=credential,
-            **kwargs
+            conn_str, container_name, credential=credential, **kwargs
         )
         return cls(None, None, container_client=container_client)
 
@@ -79,38 +79,40 @@ class BlobCheckpointStore(CheckpointStore):
             self._cached_blob_clients[blob_name] = result
         return result
 
-    async def _upload_ownership(self, ownership: Dict[str, Any], metadata: Dict[str, str]) -> None:
+    async def _upload_ownership(
+        self, ownership: Dict[str, Any], metadata: Dict[str, str]
+    ) -> None:
         etag = ownership.get("etag")
         if etag:
             etag_match = {"if_match": etag}
         else:
-            etag_match = {"if_none_match": '*'}
+            etag_match = {"if_none_match": "*"}
         blob_name = "{}/{}/{}/ownership/{}".format(
             ownership["fully_qualified_namespace"],
             ownership["eventhub_name"],
             ownership["consumer_group"],
-            ownership["partition_id"])
+            ownership["partition_id"],
+        )
         blob_name = blob_name.lower()
         uploaded_blob_properties = await self._get_blob_client(blob_name).upload_blob(
-            data=UPLOAD_DATA,
-            overwrite=True,
-            metadata=metadata,
-            **etag_match
+            data=UPLOAD_DATA, overwrite=True, metadata=metadata, **etag_match
         )
         ownership["etag"] = uploaded_blob_properties["etag"]
-        ownership["last_modified_time"] = uploaded_blob_properties["last_modified"].timestamp()
+        ownership["last_modified_time"] = uploaded_blob_properties[
+            "last_modified"
+        ].timestamp()
         ownership.update(metadata)
 
-    async def list_ownership(self, fully_qualified_namespace: str, eventhub_name: str, consumer_group: str) \
-            -> Iterable[Dict[str, Any]]:
+    async def list_ownership(
+        self, fully_qualified_namespace: str, eventhub_name: str, consumer_group: str
+    ) -> Iterable[Dict[str, Any]]:
         try:
             blob_prefix = "{}/{}/{}/ownership".format(
-                fully_qualified_namespace,
-                eventhub_name,
-                consumer_group)
+                fully_qualified_namespace, eventhub_name, consumer_group
+            )
             blobs = self._container_client.list_blobs(
-                name_starts_with=blob_prefix.lower(),
-                include=['metadata'])
+                name_starts_with=blob_prefix.lower(), include=["metadata"]
+            )
             result = []
             async for blob in blobs:
                 ownership = {
@@ -120,7 +122,9 @@ class BlobCheckpointStore(CheckpointStore):
                     "partition_id": blob.name.split("/")[-1],
                     "owner_id": blob.metadata["ownerid"],
                     "etag": blob.etag,
-                    "last_modified_time": blob.last_modified.timestamp() if blob.last_modified else None
+                    "last_modified_time": blob.last_modified.timestamp()
+                    if blob.last_modified
+                    else None,
                 }
                 result.append(ownership)
             return result
@@ -128,7 +132,11 @@ class BlobCheckpointStore(CheckpointStore):
             logger.warning(
                 "An exception occurred during list_ownership for "
                 "namespace %r eventhub %r consumer group %r. "
-                "Exception is %r", fully_qualified_namespace, eventhub_name, consumer_group, error
+                "Exception is %r",
+                fully_qualified_namespace,
+                eventhub_name,
+                consumer_group,
+                error,
             )
             raise
 
@@ -146,7 +154,11 @@ class BlobCheckpointStore(CheckpointStore):
             logger.info(
                 "EventProcessor instance %r of namespace %r eventhub %r consumer group %r "
                 "lost ownership to partition %r",
-                owner_id, namespace, eventhub_name, consumer_group, partition_id
+                owner_id,
+                namespace,
+                eventhub_name,
+                consumer_group,
+                partition_id,
             )
             raise OwnershipLostError()
         except Exception as error:  # pylint:disable=broad-except
@@ -154,42 +166,52 @@ class BlobCheckpointStore(CheckpointStore):
                 "An exception occurred when EventProcessor instance %r claim_ownership for "
                 "namespace %r eventhub %r consumer group %r partition %r. "
                 "The ownership is now lost. Exception "
-                "is %r", owner_id, namespace, eventhub_name, consumer_group, partition_id, error
+                "is %r",
+                owner_id,
+                namespace,
+                eventhub_name,
+                consumer_group,
+                partition_id,
+                error,
             )
             return ownership  # Keep the ownership if an unexpected error happens
 
-    async def claim_ownership(self, ownership_list: Iterable[Dict[str, Any]]) -> Iterable[Dict[str, Any]]:
+    async def claim_ownership(
+        self, ownership_list: Iterable[Dict[str, Any]]
+    ) -> Iterable[Dict[str, Any]]:
         results = await asyncio.gather(
             *[self._claim_one_partition(x) for x in ownership_list],
             return_exceptions=True
         )
-        return [ownership for ownership in results if not isinstance(ownership, Exception)]
+        return [
+            ownership for ownership in results if not isinstance(ownership, Exception)
+        ]
 
     async def update_checkpoint(self, checkpoint: Dict[str, Any]) -> None:
         metadata = {
-            "offset": str(checkpoint['offset']),
-            "sequencenumber": str(checkpoint['sequence_number']),
+            "offset": str(checkpoint["offset"]),
+            "sequencenumber": str(checkpoint["sequence_number"]),
         }
         blob_name = "{}/{}/{}/checkpoint/{}".format(
-            checkpoint['fully_qualified_namespace'],
-            checkpoint['eventhub_name'],
-            checkpoint['consumer_group'],
-            checkpoint['partition_id'])
+            checkpoint["fully_qualified_namespace"],
+            checkpoint["eventhub_name"],
+            checkpoint["consumer_group"],
+            checkpoint["partition_id"],
+        )
         blob_name = blob_name.lower()
         await self._get_blob_client(blob_name).upload_blob(
-            data=UPLOAD_DATA,
-            overwrite=True,
-            metadata=metadata
+            data=UPLOAD_DATA, overwrite=True, metadata=metadata
         )
 
-    async def list_checkpoints(self, fully_qualified_namespace, eventhub_name, consumer_group):
+    async def list_checkpoints(
+        self, fully_qualified_namespace, eventhub_name, consumer_group
+    ):
         blob_prefix = "{}/{}/{}/checkpoint".format(
-            fully_qualified_namespace,
-            eventhub_name,
-            consumer_group)
+            fully_qualified_namespace, eventhub_name, consumer_group
+        )
         blobs = self._container_client.list_blobs(
-            name_starts_with=blob_prefix.lower(),
-            include=['metadata'])
+            name_starts_with=blob_prefix.lower(), include=["metadata"]
+        )
         result = []
         async for blob in blobs:
             metadata = blob.metadata
@@ -199,7 +221,7 @@ class BlobCheckpointStore(CheckpointStore):
                 "consumer_group": consumer_group,
                 "partition_id": blob.name.split("/")[-1],
                 "offset": str(metadata["offset"]),
-                "sequence_number": int(metadata["sequencenumber"])
+                "sequence_number": int(metadata["sequencenumber"]),
             }
             result.append(checkpoint)
         return result

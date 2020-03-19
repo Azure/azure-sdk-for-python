@@ -15,6 +15,19 @@ if TYPE_CHECKING:
     from azure.core.credentials import AccessToken, TokenCredential
 
 
+def _get_error_message(history):
+    attempts = []
+    for credential, error in history:
+        if error:
+            attempts.append("{}: {}".format(credential.__class__.__name__, error))
+        else:
+            attempts.append(credential.__class__.__name__)
+    return """No credential in this chain provided a token.
+Attempted credentials:\n\t{}""".format(
+        "\n\t".join(attempts)
+    )
+
+
 class ChainedTokenCredential(object):
     """A sequence of credentials that is itself a credential.
 
@@ -48,16 +61,5 @@ class ChainedTokenCredential(object):
                 history.append((credential, ex.message))
             except Exception as ex:  # pylint: disable=broad-except
                 history.append((credential, str(ex)))
-        error_message = self._get_error_message(history)
+        error_message = _get_error_message(history)
         raise ClientAuthenticationError(message=error_message)
-
-    @staticmethod
-    def _get_error_message(history):
-        attempts = []
-        for credential, error in history:
-            if error:
-                attempts.append("{}: {}".format(credential.__class__.__name__, error))
-            else:
-                attempts.append(credential.__class__.__name__)
-        return """No credential in this chain provided a token.
-Attempted credentials:\n\t{}""".format("\n\t".join(attempts))

@@ -1,0 +1,49 @@
+interactions:
+- request:
+    body: '{"documents": [{"id": "0", "text": "This was the best day of my life.",
+      "language": ""}, {"id": "1", "text": "I did not like the hotel we stayed it.
+      It was too expensive.", "language": ""}, {"id": "2", "text": "The restaurant
+      was not as good as I hoped.", "language": ""}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '273'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - azsdk-python-core/1.1.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0) azsdk-python-azure-cognitiveservices-language-textanalytics/3.0.0b1
+      X-BingApis-SDK-Client:
+      - Python-SDK
+    method: POST
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/sentiment?showStats=false
+  response:
+    body:
+      string: '{"documents":[{"id":"0","sentiment":"positive","documentScores":{"positive":0.99987530708312988,"neutral":0.0001034481538227,"negative":2.12214763451E-05},"sentences":[{"sentiment":"positive","sentenceScores":{"positive":0.99987530708312988,"neutral":0.0001034481538227,"negative":2.12214763451E-05},"offset":0,"length":33}]},{"id":"1","sentiment":"negative","documentScores":{"positive":0.0094401380047202,"neutral":0.20717787742614749,"negative":0.78338205814361572},"sentences":[{"sentiment":"negative","sentenceScores":{"positive":0.0186765640974045,"neutral":0.41426122188568121,"negative":0.567062258720398},"offset":0,"length":38},{"sentiment":"negative","sentenceScores":{"positive":0.0002037113154074,"neutral":9.45370848058E-05,"negative":0.99970179796218872},"offset":39,"length":21}]},{"id":"2","sentiment":"negative","documentScores":{"positive":0.0053936247713864,"neutral":0.0011164888273925,"negative":0.99348998069763184},"sentences":[{"sentiment":"negative","sentenceScores":{"positive":0.0053936247713864,"neutral":0.0011164888273925,"negative":0.99348998069763184},"offset":0,"length":42}]}],"errors":[],"modelVersion":"2019-10-01"}'
+    headers:
+      apim-request-id:
+      - 0590e673-1b8b-4406-a23b-0e99d8e449d6
+      content-type:
+      - application/json; charset=utf-8
+      csp-billing-usage:
+      - CognitiveServices.TextAnalytics.BatchScoring=3
+      date:
+      - Mon, 02 Dec 2019 22:27:12 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-aml-ta-request-id:
+      - 5a6dcb5f-78b3-4c5a-9e3b-8f5cc4306310
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '73'
+    status:
+      code: 200
+      message: OK
+version: 1

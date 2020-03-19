@@ -43,7 +43,6 @@ import sys
 
 from azure.storage.blob import BlobServiceClient
 
-# I should be able to import this directly from azure.storage.blob
 from azure.storage.blob._models import BlobPrefix
 
 try:
@@ -60,7 +59,6 @@ def walk_container(client, container):
 
     def walk_blob_hierarchy(prefix=""):
         nonlocal depth
-        # if I try to include=['snapshots'] here, I get an error that delimiter and snapshots are mutually exclusive
         for item in container_client.walk_blobs(name_starts_with=prefix):
             short_name = item.name[len(prefix):]
             if isinstance(item, BlobPrefix):
@@ -70,8 +68,6 @@ def walk_container(client, container):
                 depth -= 1
             else:
                 message = 'B: ' + separator * depth + short_name
-                # because delimiter and snapshots are mutually exclusive, the only way for me to check for the presence
-                # of snapshots is to re-query for each blob. This is very inefficient.
                 results = list(container_client.list_blobs(name_starts_with=item.name, include=['snapshots']))
                 num_snapshots = len(results) - 1
                 if num_snapshots:

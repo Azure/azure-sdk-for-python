@@ -6,9 +6,12 @@
 import time
 
 from azure.core.credentials import AccessToken
+from azure.core.exceptions import ServiceRequestError
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.policies import BearerTokenCredentialPolicy
 from azure.core.pipeline.transport import HttpRequest
+
+import pytest
 
 try:
     from unittest.mock import Mock
@@ -69,3 +72,10 @@ def test_bearer_policy_token_caching():
 
     pipeline.run(HttpRequest("GET", "https://spam.eggs"))
     assert credential.get_token.call_count == 2  # token expired -> policy should call get_token
+
+
+def test_bearer_policy_enforces_tls():
+    credential = Mock()
+    pipeline = Pipeline(transport=Mock(), policies=[BearerTokenCredentialPolicy(credential, "scope")])
+    with pytest.raises(ServiceRequestError):
+        pipeline.run(HttpRequest("GET", "http://not.secure"))

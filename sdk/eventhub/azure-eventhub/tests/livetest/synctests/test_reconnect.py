@@ -94,7 +94,7 @@ def test_receive_connection_idle_timeout_and_reconnect_sync(connstr_senders):
     def on_event_received(event):
         on_event_received.event = event
     with client:
-        consumer = client._create_consumer("$default", "0", "-1", on_event_received=on_event_received)
+        consumer = client._create_consumer("$default", "0", "-1", on_event_received)
         with consumer:
             consumer._open()
             time.sleep(11)

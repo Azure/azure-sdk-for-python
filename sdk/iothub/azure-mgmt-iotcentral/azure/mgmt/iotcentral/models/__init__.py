@@ -10,45 +10,50 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .app_sku_info_py3 import AppSkuInfo
-    from .app_py3 import App
-    from .app_patch_py3 import AppPatch
-    from .resource_py3 import Resource
-    from .error_response_body_py3 import ErrorResponseBody
-    from .error_details_py3 import ErrorDetails, ErrorDetailsException
-    from .operation_display_py3 import OperationDisplay
-    from .operation_py3 import Operation
-    from .operation_inputs_py3 import OperationInputs
-    from .app_availability_info_py3 import AppAvailabilityInfo
+    from ._models_py3 import App
+    from ._models_py3 import AppAvailabilityInfo
+    from ._models_py3 import AppPatch
+    from ._models_py3 import AppSkuInfo
+    from ._models_py3 import AppTemplate
+    from ._models_py3 import ErrorDetails, ErrorDetailsException
+    from ._models_py3 import ErrorResponseBody
+    from ._models_py3 import Operation
+    from ._models_py3 import OperationDisplay
+    from ._models_py3 import OperationInputs
+    from ._models_py3 import Resource
 except (SyntaxError, ImportError):
-    from .app_sku_info import AppSkuInfo
-    from .app import App
-    from .app_patch import AppPatch
-    from .resource import Resource
-    from .error_response_body import ErrorResponseBody
-    from .error_details import ErrorDetails, ErrorDetailsException
-    from .operation_display import OperationDisplay
-    from .operation import Operation
-    from .operation_inputs import OperationInputs
-    from .app_availability_info import AppAvailabilityInfo
-from .app_paged import AppPaged
-from .operation_paged import OperationPaged
-from .iot_central_client_enums import (
+    from ._models import App
+    from ._models import AppAvailabilityInfo
+    from ._models import AppPatch
+    from ._models import AppSkuInfo
+    from ._models import AppTemplate
+    from ._models import ErrorDetails, ErrorDetailsException
+    from ._models import ErrorResponseBody
+    from ._models import Operation
+    from ._models import OperationDisplay
+    from ._models import OperationInputs
+    from ._models import Resource
+from ._paged_models import AppPaged
+from ._paged_models import AppTemplatePaged
+from ._paged_models import OperationPaged
+from ._iot_central_client_enums import (
     AppSku,
 )
 
 __all__ = [
-    'AppSkuInfo',
     'App',
-    'AppPatch',
-    'Resource',
-    'ErrorResponseBody',
-    'ErrorDetails', 'ErrorDetailsException',
-    'OperationDisplay',
-    'Operation',
-    'OperationInputs',
     'AppAvailabilityInfo',
+    'AppPatch',
+    'AppSkuInfo',
+    'AppTemplate',
+    'ErrorDetails', 'ErrorDetailsException',
+    'ErrorResponseBody',
+    'Operation',
+    'OperationDisplay',
+    'OperationInputs',
+    'Resource',
     'AppPaged',
+    'AppTemplatePaged',
     'OperationPaged',
     'AppSku',
 ]

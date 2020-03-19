@@ -3,6 +3,16 @@
 Release History
 ===============
 
+4.1.0rc1 (2020-01-18)
++++++++++++++++++++++
+
+**Features**
+
+- Model Endpoint has a new parameter web_application_firewall_policy_link
+- Model EndpointUpdateParameters has a new parameter web_application_firewall_policy_link
+- Added operation group PoliciesOperations
+- Added operation group ManagedRuleSetsOperations
+
 4.0.0 (2019-11-25)
 ++++++++++++++++++
 

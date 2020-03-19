@@ -3,9 +3,30 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
+from typing import TYPE_CHECKING
 from threading import Lock
 from enum import Enum
-from uamqp import Connection, TransportType, c_uamqp  # type: ignore
+
+from uamqp import Connection, TransportType, c_uamqp
+
+if TYPE_CHECKING:
+    from uamqp.authentication import JWTTokenAuth
+
+    try:
+        from typing_extensions import Protocol
+    except ImportError:
+        Protocol = object  # type: ignore
+
+    class ConnectionManager(Protocol):
+        def get_connection(self, host, auth):
+            # type: (str, 'JWTTokenAuth') -> Connection
+            pass
+
+        def close_connection(self):
+            pass
+
+        def reset_connection_if_broken(self):
+            pass
 
 
 class _ConnectionMode(Enum):
@@ -13,7 +34,7 @@ class _ConnectionMode(Enum):
     SeparateConnection = 2
 
 
-class _SharedConnectionManager(object):  #pylint:disable=too-many-instance-attributes
+class _SharedConnectionManager(object):  # pylint:disable=too-many-instance-attributes
     def __init__(self, **kwargs):
         self._lock = Lock()
         self._conn = None  # type: Connection
@@ -23,15 +44,17 @@ class _SharedConnectionManager(object):  #pylint:disable=too-many-instance-attri
         self._error_policy = kwargs.get("error_policy")
         self._properties = kwargs.get("properties")
         self._encoding = kwargs.get("encoding") or "UTF-8"
-        self._transport_type = kwargs.get('transport_type') or TransportType.Amqp
-        self._http_proxy = kwargs.get('http_proxy')
+        self._transport_type = kwargs.get("transport_type") or TransportType.Amqp
+        self._http_proxy = kwargs.get("http_proxy")
         self._max_frame_size = kwargs.get("max_frame_size")
         self._channel_max = kwargs.get("channel_max")
         self._idle_timeout = kwargs.get("idle_timeout")
-        self._remote_idle_timeout_empty_frame_send_ratio = kwargs.get("remote_idle_timeout_empty_frame_send_ratio")
+        self._remote_idle_timeout_empty_frame_send_ratio = kwargs.get(
+            "remote_idle_timeout_empty_frame_send_ratio"
+        )
 
     def get_connection(self, host, auth):
-        # type: (...) -> Connection
+        # type: (str, JWTTokenAuth) -> Connection
         with self._lock:
             if self._conn is None:
                 self._conn = Connection(
@@ -45,16 +68,19 @@ class _SharedConnectionManager(object):  #pylint:disable=too-many-instance-attri
                     remote_idle_timeout_empty_frame_send_ratio=self._remote_idle_timeout_empty_frame_send_ratio,
                     error_policy=self._error_policy,
                     debug=self._debug,
-                    encoding=self._encoding)
+                    encoding=self._encoding,
+                )
             return self._conn
 
     def close_connection(self):
+        # type: () -> None
         with self._lock:
             if self._conn:
                 self._conn.destroy()
             self._conn = None
 
     def reset_connection_if_broken(self):
+        # type: () -> None
         with self._lock:
             if self._conn and self._conn._state in (  # pylint:disable=protected-access
                 c_uamqp.ConnectionState.CLOSE_RCVD,  # pylint:disable=c-extension-no-member
@@ -70,16 +96,20 @@ class _SeparateConnectionManager(object):
         pass
 
     def get_connection(self, host, auth):  # pylint:disable=unused-argument, no-self-use
+        # type: (str, JWTTokenAuth) -> None
         return None
 
     def close_connection(self):
+        # type: () -> None
         pass
 
     def reset_connection_if_broken(self):
+        # type: () -> None
         pass
 
 
 def get_connection_manager(**kwargs):
+    # type: (...) -> 'ConnectionManager'
     connection_mode = kwargs.get("connection_mode", _ConnectionMode.SeparateConnection)
     if connection_mode == _ConnectionMode.ShareConnection:
         return _SharedConnectionManager(**kwargs)

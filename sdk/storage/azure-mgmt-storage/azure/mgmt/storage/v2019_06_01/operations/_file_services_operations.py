@@ -106,7 +106,7 @@ class FileServicesOperations(object):
     list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/fileServices'}
 
     def set_service_properties(
-            self, resource_group_name, account_name, cors=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, account_name, cors=None, share_delete_retention_policy=None, custom_headers=None, raw=False, **operation_config):
         """Sets the properties of file services in storage accounts, including
         CORS (Cross-Origin Resource Sharing) rules. .
 
@@ -122,6 +122,10 @@ class FileServicesOperations(object):
          elements are included in the request body, all CORS rules will be
          deleted, and CORS will be disabled for the File service.
         :type cors: ~azure.mgmt.storage.v2019_06_01.models.CorsRules
+        :param share_delete_retention_policy: The file service properties for
+         share soft delete.
+        :type share_delete_retention_policy:
+         ~azure.mgmt.storage.v2019_06_01.models.DeleteRetentionPolicy
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -132,7 +136,7 @@ class FileServicesOperations(object):
          or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        parameters = models.FileServiceProperties(cors=cors)
+        parameters = models.FileServiceProperties(cors=cors, share_delete_retention_policy=share_delete_retention_policy)
 
         # Construct URL
         url = self.set_service_properties.metadata['url']

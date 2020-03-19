@@ -13,9 +13,9 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - azsdk-python-keyvault-keys/4.0.0 Python/3.7.4 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-keyvault-keys/4.1.0b1 Python/3.5.4 (Windows-10-10.0.18362-SP0)
     method: POST
-    uri: https://vault458ad70cc720a00f12.vault.azure.net/keys/rsa-key-name/create?api-version=7.0
+    uri: https://vaultname.vault.azure.net/keys/rsa-key-name/create?api-version=7.0
   response:
     body:
       string: '{"error":{"code":"Unauthorized","message":"Request is missing a Bearer
@@ -28,7 +28,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 30 Oct 2019 23:21:35 GMT
+      - Fri, 06 Dec 2019 23:56:43 GMT
       expires:
       - '-1'
       pragma:
@@ -49,14 +49,14 @@ interactions:
       x-ms-keyvault-region:
       - westus
       x-ms-keyvault-service-version:
-      - 1.1.0.879
+      - 1.1.0.883
       x-powered-by:
       - ASP.NET
     status:
       code: 401
       message: Unauthorized
 - request:
-    body: '{"kty": "RSA", "key_size": 2048}'
+    body: '{"key_size": 2048, "kty": "RSA"}'
     headers:
       Accept:
       - application/json
@@ -69,21 +69,21 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - azsdk-python-keyvault-keys/4.0.0 Python/3.7.4 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-keyvault-keys/4.1.0b1 Python/3.5.4 (Windows-10-10.0.18362-SP0)
     method: POST
-    uri: https://vault458ad70cc720a00f12.vault.azure.net/keys/rsa-key-name/create?api-version=7.0
+    uri: https://vaultname.vault.azure.net/keys/rsa-key-name/create?api-version=7.0
   response:
     body:
-      string: '{"key":{"kid":"https://vault458ad70cc720a00f12.vault.azure.net/keys/rsa-key-name/4dfc7a55a40d4904ac86898143bed87e","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"zNj-bDL4EHc6vpD6zC-miQkuqA5TmiHe-dk9RA-BRxwfioYeA81RVeGgbgv77dxoFrlGjDDkfdaYoi_PMvBS8ADp-luADPAvIa26uF8dhpWwuGr00Le5wpr0qlxVWd-61K9jvA5HTdwpijLg7L0fbuEYSL-c7p_R1Ff0ko8qXM7tAMK7lRj6GnvV0b4_HopdCOW13gEc_JrEutTvL-glx7FxqVMy4BuJ8K-neVa00r_StHdB68SiM1AQiT7PNFLuYWqmZFH9oZu_D8S7jR8jjxqCVbdxyQBNqmFEb9T3LoufDB1YFQtI39PGyl5hdh2k93NpVFY-h3vF7TqBG5tN5w","e":"AQAB"},"attributes":{"enabled":true,"created":1572477695,"updated":1572477695,"recoveryLevel":"Purgeable"}}'
+      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/rsa-key-name/6e203ffe42324e328464aad3edb541e7","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"tMnSHkxd_7q_K7wiYdBNohBfEBxSglseKc4lEMERpMoZb8-tKzF8K5k9gzasxpzuoy1Ax56Qp7KLhRdX7C999YG6u-Yp9XGec-Xn759YhOAC7X8xdXv7EwGh0SnNJQ-sDugL4cRDhVS9nP0sTV1ESmZUf_7n4J8JWf6wKEvQNPq7iAH5qeTN0bcbCrptIfrFmEYplbyGjc6N74G61BaTiPuMDSEhghik7-u-BUsQc9WozT3TK9Q8aNClqEMkLJUkZi7Twamddr2Pz7F0rjbxPD_YGGeTt1kNYqw-ph1Uj0ZomXJv9GX8-iVi1k5dGV7Rf8wsnI32-D5CUCljQOGWHw","e":"AQAB"},"attributes":{"enabled":true,"created":1575676605,"updated":1575676605,"recoveryLevel":"Purgeable"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '658'
+      - '659'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 30 Oct 2019 23:21:36 GMT
+      - Fri, 06 Dec 2019 23:56:44 GMT
       expires:
       - '-1'
       pragma:
@@ -101,7 +101,7 @@ interactions:
       x-ms-keyvault-region:
       - westus
       x-ms-keyvault-service-version:
-      - 1.1.0.879
+      - 1.1.0.883
       x-powered-by:
       - ASP.NET
     status:

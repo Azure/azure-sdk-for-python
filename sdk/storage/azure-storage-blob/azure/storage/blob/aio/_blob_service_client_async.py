@@ -26,11 +26,8 @@ from .._generated.models import StorageErrorException, StorageServiceProperties,
 from .._blob_service_client import BlobServiceClient as BlobServiceClientBase
 from ._container_client_async import ContainerClient
 from ._blob_client_async import BlobClient
-from .._models import (
-    ContainerProperties,
-    service_stats_deserialize,
-    service_properties_deserialize,
-)
+from .._models import ContainerProperties
+from .._deserialize import service_stats_deserialize, service_properties_deserialize
 from ._models import ContainerPropertiesPaged
 
 if TYPE_CHECKING:

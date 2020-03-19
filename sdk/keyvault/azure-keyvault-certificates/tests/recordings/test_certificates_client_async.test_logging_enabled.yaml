@@ -2,88 +2,46 @@ interactions:
 - request:
     body: null
     headers:
-      Accept:
-      - application/json
-      Content-Length:
-      - '0'
-      Content-Type:
-      - application/json; charset=utf-8
-      User-Agent:
-      - azsdk-python-keyvault-certificates/4.0.0b5 Python/3.7.4 (Windows-10-10.0.18362-SP0)
+      Accept: [application/json]
+      Content-Length: ['0']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [azsdk-python-keyvault-certificates/4.0.0b6 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: PUT
-    uri: https://vault458ad70cc721a814cf.vault.azure.net/certificates/issuers/cert-name?api-version=7.0
+    uri: https://vaultname.vault.azure.net/certificates/issuers/cert-name?api-version=7.0
   response:
-    body:
-      string: '{"error":{"code":"Unauthorized","message":"Request is missing a Bearer
-        or PoP token."}}'
-    headers:
-      cache-control: no-cache
-      content-length: '87'
-      content-type: application/json; charset=utf-8
-      date: Thu, 31 Oct 2019 16:48:30 GMT
-      expires: '-1'
-      pragma: no-cache
-      server: Microsoft-IIS/10.0
-      strict-transport-security: max-age=31536000;includeSubDomains
-      www-authenticate: Bearer authorization="https://login.windows.net/72f988bf-86f1-41af-91ab-2d7cd011db47",
-        resource="https://vault.azure.net"
-      x-aspnet-version: 4.0.30319
-      x-content-type-options: nosniff
-      x-ms-keyvault-network-info: addr=131.107.160.72;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.0.879
-      x-powered-by: ASP.NET
-    status:
-      code: 401
-      message: Unauthorized
+    body: {string: '{"error":{"code":"Unauthorized","message":"Request is missing
+        a Bearer or PoP token."}}'}
+    headers: {cache-control: no-cache, content-length: '87', content-type: application/json;
+        charset=utf-8, date: 'Fri, 06 Dec 2019 23:58:31 GMT', expires: '-1', pragma: no-cache,
+      server: Microsoft-IIS/10.0, strict-transport-security: max-age=31536000;includeSubDomains,
+      www-authenticate: 'Bearer authorization="https://login.windows.net/72f988bf-86f1-41af-91ab-2d7cd011db47",
+        resource="https://vault.azure.net"', x-aspnet-version: 4.0.30319, x-content-type-options: nosniff,
+      x-ms-keyvault-network-info: addr=131.107.160.72;act_addr_fam=InterNetwork;,
+      x-ms-keyvault-region: westus, x-ms-keyvault-service-version: 1.1.0.883, x-powered-by: ASP.NET}
+    status: {code: 401, message: Unauthorized}
     url: !!python/object/new:yarl.URL
       state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - vault458ad70cc721a814cf.vault.azure.net
-        - /certificates/issuers/cert-name
-        - api-version=7.0
-        - ''
+      - !!python/object/new:urllib.parse.SplitResult [https, c5rkjn6utaxf4fxwwlq6dnus.vault.azure.net,
+        /certificates/issuers/cert-name, api-version=7.0, '']
 - request:
     body: '{"provider": "Test"}'
     headers:
-      Accept:
-      - application/json
-      Content-Length:
-      - '20'
-      Content-Type:
-      - application/json; charset=utf-8
-      User-Agent:
-      - azsdk-python-keyvault-certificates/4.0.0b5 Python/3.7.4 (Windows-10-10.0.18362-SP0)
+      Accept: [application/json]
+      Content-Length: ['20']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [azsdk-python-keyvault-certificates/4.0.0b6 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: PUT
-    uri: https://vault458ad70cc721a814cf.vault.azure.net/certificates/issuers/cert-name?api-version=7.0
+    uri: https://vaultname.vault.azure.net/certificates/issuers/cert-name?api-version=7.0
   response:
-    body:
-      string: '{"id":"https://vault458ad70cc721a814cf.vault.azure.net/certificates/issuers/cert-name","provider":"Test","attributes":{"enabled":true,"created":1572540511,"updated":1572540511}}'
-    headers:
-      cache-control: no-cache
-      content-length: '177'
-      content-type: application/json; charset=utf-8
-      date: Thu, 31 Oct 2019 16:48:30 GMT
-      expires: '-1'
-      pragma: no-cache
-      server: Microsoft-IIS/10.0
-      strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
-      x-content-type-options: nosniff
-      x-ms-keyvault-network-info: addr=131.107.160.72;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.0.879
-      x-powered-by: ASP.NET
-    status:
-      code: 200
-      message: OK
+    body: {string: '{"id":"https://vaultname.vault.azure.net/certificates/issuers/cert-name","provider":"Test","attributes":{"enabled":true,"created":1575676712,"updated":1575676712}}'}
+    headers: {cache-control: no-cache, content-length: '178', content-type: application/json;
+        charset=utf-8, date: 'Fri, 06 Dec 2019 23:58:31 GMT', expires: '-1', pragma: no-cache,
+      server: Microsoft-IIS/10.0, strict-transport-security: max-age=31536000;includeSubDomains,
+      x-aspnet-version: 4.0.30319, x-content-type-options: nosniff, x-ms-keyvault-network-info: addr=131.107.160.72;act_addr_fam=InterNetwork;,
+      x-ms-keyvault-region: westus, x-ms-keyvault-service-version: 1.1.0.883, x-powered-by: ASP.NET}
+    status: {code: 200, message: OK}
     url: !!python/object/new:yarl.URL
       state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - vault458ad70cc721a814cf.vault.azure.net
-        - /certificates/issuers/cert-name
-        - api-version=7.0
-        - ''
+      - !!python/object/new:urllib.parse.SplitResult [https, c5rkjn6utaxf4fxwwlq6dnus.vault.azure.net,
+        /certificates/issuers/cert-name, api-version=7.0, '']
 version: 1

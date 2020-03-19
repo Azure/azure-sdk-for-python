@@ -8,14 +8,48 @@ interactions:
       - gzip, deflate
       Connection:
       - keep-alive
+      Content-Length:
+      - '0'
       User-Agent:
-      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-      content-type:
-      - application/xml; charset=utf-8
-      x-ms-client-request-id:
-      - e839cd52-d9a6-11e9-be06-001a7dda7113
+      - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Tue, 17 Sep 2019 23:57:29 GMT
+      - Wed, 15 Jan 2020 23:47:32 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://storagename.file.core.windows.net/utsharebd5b0c5c?restype=share
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Wed, 15 Jan 2020 23:47:32 GMT
+      etag:
+      - '"0x8D79A154A56EE2E"'
+      last-modified:
+      - Wed, 15 Jan 2020 23:47:32 GMT
+      server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Wed, 15 Jan 2020 23:47:32 GMT
       x-ms-version:
       - '2019-02-02'
     method: HEAD
@@ -24,16 +58,14 @@ interactions:
     body:
       string: ''
     headers:
-      Date:
-      - Tue, 17 Sep 2019 23:57:28 GMT
-      Server:
+      date:
+      - Wed, 15 Jan 2020 23:47:33 GMT
+      server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      Transfer-Encoding:
+      transfer-encoding:
       - chunked
       x-ms-error-code:
       - ParentNotFound
-      x-ms-request-id:
-      - 00b6d6fe-701a-00bb-20b3-6de956000000
       x-ms-version:
       - '2019-02-02'
     status:

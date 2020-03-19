@@ -56,16 +56,6 @@ from azure.core.pipeline.policies import (
     HTTPPolicy,
 )
 
-def test_user_agent():
-
-    with mock.patch.dict('os.environ', {'AZURE_HTTP_USER_AGENT': "mytools"}):
-        policy = UserAgentPolicy(None)
-        assert policy.user_agent.endswith("mytools")
-
-        request = HttpRequest('GET', 'http://127.0.0.1/')
-        policy.on_request(PipelineRequest(request, PipelineContext(None)))
-        assert request.headers["user-agent"].endswith("mytools")
-
 def test_request_history():
     class Non_deep_copiable(object):
         def __deepcopy__(self, memodict={}):

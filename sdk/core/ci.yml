@@ -15,13 +15,13 @@ trigger:
   branches:
     include:
     - master
-    - feature/*
     - hotfix/*
     - release/*
     - restapi*
   paths:
     include:
     - sdk/core/
+    - eng/
 
 pr:
   branches:
@@ -34,6 +34,7 @@ pr:
   paths:
     include:
     - sdk/core/
+    - eng/
 
 stages:
 - template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
@@ -44,3 +45,7 @@ stages:
       safeName: azurecore
     - name: azure_core_tracing_opencensus
       safeName: azurecorecoretracingopencensus
+    - name: azure_core_tracing_opentelemetry
+      safeName: azurecorecoretracingtelemetry
+    - name: azure_common
+      safeName: azurecommon

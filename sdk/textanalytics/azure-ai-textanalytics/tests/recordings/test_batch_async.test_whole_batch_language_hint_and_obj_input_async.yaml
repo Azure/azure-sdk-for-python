@@ -1,0 +1,44 @@
+interactions:
+- request:
+    body: '{"documents": [{"id": "1", "text": "I should take my cat to the veterinarian.",
+      "language": "de"}, {"id": "2", "text": "Este es un document escrito en Espa\u00f1ol.",
+      "language": "de"}, {"id": "3", "text": "\u732b\u306f\u5e78\u305b", "language":
+      "de"}]}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '253'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - azsdk-python-core/1.1.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0) azsdk-python-azure-cognitiveservices-language-textanalytics/3.0.0b1
+      X-BingApis-SDK-Client:
+      - Python-SDK
+    method: POST
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/sentiment?showStats=false
+  response:
+    body:
+      string: '{"documents":[{"id":"1","sentiment":"neutral","documentScores":{"positive":0.1462094038724899,"neutral":0.81414568424224854,"negative":0.03964489325881},"sentences":[{"sentiment":"neutral","sentenceScores":{"positive":0.1462094038724899,"neutral":0.81414568424224854,"negative":0.03964489325881},"offset":0,"length":41}]},{"id":"2","sentiment":"neutral","documentScores":{"positive":0.38023647665977478,"neutral":0.48034805059432978,"negative":0.139415442943573},"sentences":[{"sentiment":"neutral","sentenceScores":{"positive":0.38023647665977478,"neutral":0.48034805059432978,"negative":0.139415442943573},"offset":0,"length":39}]},{"id":"3","sentiment":"neutral","documentScores":{"positive":0.14529238641262049,"neutral":0.79295969009399414,"negative":0.0617478676140308},"sentences":[{"sentiment":"neutral","sentenceScores":{"positive":0.14529238641262049,"neutral":0.79295969009399414,"negative":0.0617478676140308},"offset":0,"length":4}]}],"errors":[],"modelVersion":"2019-10-01"}'
+    headers:
+      apim-request-id: 2337e82e-53a9-4732-8eb1-ef1439c26d4a
+      content-type: application/json; charset=utf-8
+      csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
+      date: Mon, 02 Dec 2019 23:24:53 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-aml-ta-request-id: dce991c8-fca2-4de4-b23b-390dc9af35a5
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '381'
+    status:
+      code: 200
+      message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - westus2.api.cognitive.microsoft.com
+        - //text/analytics/v3.0-preview.1/sentiment
+        - showStats=false
+        - ''
+version: 1

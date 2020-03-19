@@ -3,6 +3,11 @@
 Release History
 ===============
 
+1.1.24 (2019-12-18)
++++++++++++++++++++
+
+- get_client_from_cli_profile now supports KV 4.x, Storage 12.x, AppConfig and all packages based on azure-core
+
 1.1.23 (2019-06-24)
 +++++++++++++++++++
 

@@ -1,0 +1,128 @@
+interactions:
+- request:
+    body: '{"documents": [{"id": "1", "text": "I will go to the park.", "language":
+      "es"}, {"id": "2", "text": "I did not like the hotel we stayed it.", "language":
+      "es"}, {"id": "3", "text": "The restaurant had really good food.", "language":
+      "es"}]}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '240'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - azsdk-python-core/1.1.1 Python/3.7.3 (Windows-10-10.0.18362-SP0) azsdk-python-azure-ai-textanalytics/1.0.0b1
+      X-BingApis-SDK-Client:
+      - Python-SDK
+    method: POST
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/sentiment?showStats=false
+  response:
+    body:
+      string: '{"documents":[{"id":"1","sentiment":"neutral","documentScores":{"positive":0.0428669080138206,"neutral":0.95032024383544922,"negative":0.0068128970451653},"sentences":[{"sentiment":"neutral","sentenceScores":{"positive":0.0428669080138206,"neutral":0.95032024383544922,"negative":0.0068128970451653},"offset":0,"length":22}]},{"id":"2","sentiment":"neutral","documentScores":{"positive":0.0058890758082271,"neutral":0.5477135181427002,"negative":0.446397453546524},"sentences":[{"sentiment":"neutral","sentenceScores":{"positive":0.0058890758082271,"neutral":0.5477135181427002,"negative":0.446397453546524},"offset":0,"length":38}]},{"id":"3","sentiment":"positive","documentScores":{"positive":0.9730033278465271,"neutral":0.0187891311943531,"negative":0.0082076098769903},"sentences":[{"sentiment":"positive","sentenceScores":{"positive":0.9730033278465271,"neutral":0.0187891311943531,"negative":0.0082076098769903},"offset":0,"length":36}]}],"errors":[],"modelVersion":"2019-10-01"}'
+    headers:
+      apim-request-id: 0e784bb8-5bb9-48b4-b1e2-7aeb0c12ed34
+      content-type: application/json; charset=utf-8
+      csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
+      date: Mon, 30 Dec 2019 22:40:56 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-aml-ta-request-id: caadedf3-2812-4a78-8dd9-5b4fe9201c0b
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '92'
+    status:
+      code: 200
+      message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - westus2.api.cognitive.microsoft.com
+        - //text/analytics/v3.0-preview.1/sentiment
+        - showStats=false
+        - ''
+- request:
+    body: '{"documents": [{"id": "1", "text": "I will go to the park.", "language":
+      "en"}, {"id": "2", "text": "I did not like the hotel we stayed it.", "language":
+      "en"}, {"id": "3", "text": "The restaurant had really good food.", "language":
+      "en"}]}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '240'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - azsdk-python-core/1.1.1 Python/3.7.3 (Windows-10-10.0.18362-SP0) azsdk-python-azure-ai-textanalytics/1.0.0b1
+      X-BingApis-SDK-Client:
+      - Python-SDK
+    method: POST
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/sentiment?showStats=false
+  response:
+    body:
+      string: '{"documents":[{"id":"1","sentiment":"neutral","documentScores":{"positive":0.088280625641346,"neutral":0.8992583155632019,"negative":0.012460995465517},"sentences":[{"sentiment":"neutral","sentenceScores":{"positive":0.088280625641346,"neutral":0.8992583155632019,"negative":0.012460995465517},"offset":0,"length":22}]},{"id":"2","sentiment":"negative","documentScores":{"positive":0.0186765696853399,"neutral":0.41426131129264832,"negative":0.56706219911575317},"sentences":[{"sentiment":"negative","sentenceScores":{"positive":0.0186765696853399,"neutral":0.41426131129264832,"negative":0.56706219911575317},"offset":0,"length":38}]},{"id":"3","sentiment":"positive","documentScores":{"positive":0.99868422746658325,"neutral":0.0004790813545696,"negative":0.0008366378606297},"sentences":[{"sentiment":"positive","sentenceScores":{"positive":0.99868422746658325,"neutral":0.0004790813545696,"negative":0.0008366378606297},"offset":0,"length":36}]}],"errors":[],"modelVersion":"2019-10-01"}'
+    headers:
+      apim-request-id: c6eed374-d6ba-4cb2-aaed-12135a6f7f5d
+      content-type: application/json; charset=utf-8
+      csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
+      date: Mon, 30 Dec 2019 22:40:56 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-aml-ta-request-id: 7de55cc4-2ece-4626-8619-0073b61dc8b1
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '83'
+    status:
+      code: 200
+      message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - westus2.api.cognitive.microsoft.com
+        - //text/analytics/v3.0-preview.1/sentiment
+        - showStats=false
+        - ''
+- request:
+    body: '{"documents": [{"id": "1", "text": "I will go to the park.", "language":
+      "es"}, {"id": "2", "text": "I did not like the hotel we stayed it.", "language":
+      "es"}, {"id": "3", "text": "The restaurant had really good food.", "language":
+      "es"}]}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '240'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - azsdk-python-core/1.1.1 Python/3.7.3 (Windows-10-10.0.18362-SP0) azsdk-python-azure-ai-textanalytics/1.0.0b1
+      X-BingApis-SDK-Client:
+      - Python-SDK
+    method: POST
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/sentiment?showStats=false
+  response:
+    body:
+      string: '{"documents":[{"id":"1","sentiment":"neutral","documentScores":{"positive":0.0428669080138206,"neutral":0.95032024383544922,"negative":0.0068128970451653},"sentences":[{"sentiment":"neutral","sentenceScores":{"positive":0.0428669080138206,"neutral":0.95032024383544922,"negative":0.0068128970451653},"offset":0,"length":22}]},{"id":"2","sentiment":"neutral","documentScores":{"positive":0.0058890758082271,"neutral":0.5477135181427002,"negative":0.446397453546524},"sentences":[{"sentiment":"neutral","sentenceScores":{"positive":0.0058890758082271,"neutral":0.5477135181427002,"negative":0.446397453546524},"offset":0,"length":38}]},{"id":"3","sentiment":"positive","documentScores":{"positive":0.9730033278465271,"neutral":0.0187891311943531,"negative":0.0082076098769903},"sentences":[{"sentiment":"positive","sentenceScores":{"positive":0.9730033278465271,"neutral":0.0187891311943531,"negative":0.0082076098769903},"offset":0,"length":36}]}],"errors":[],"modelVersion":"2019-10-01"}'
+    headers:
+      apim-request-id: 760f2cc6-a135-46ce-9a0a-650ee6300ef0
+      content-type: application/json; charset=utf-8
+      csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
+      date: Mon, 30 Dec 2019 22:40:56 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-aml-ta-request-id: b805b623-1a79-485b-963d-7a516de9caf3
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '82'
+    status:
+      code: 200
+      message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - westus2.api.cognitive.microsoft.com
+        - //text/analytics/v3.0-preview.1/sentiment
+        - showStats=false
+        - ''
+version: 1

@@ -1,0 +1,43 @@
+interactions:
+- request:
+    body: '{"documents": [{"id": "0", "text": "I was unhappy with the food at the
+      restaurant.", "language": "English"}]}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '109'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - azsdk-python-core/1.1.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0) azsdk-python-azure-cognitiveservices-language-textanalytics/3.0.0b1
+      X-BingApis-SDK-Client:
+      - Python-SDK
+    method: POST
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/sentiment?showStats=false
+  response:
+    body:
+      string: '{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","innerError":{"code":"UnsupportedLanguageCode","message":"Supplied
+        language not supported. Pass in one of: de,en,es,fr,it,ja,nl,pt-PT,zh-Hans,zh-Hant"},"message":"Invalid
+        Language Code."}}],"modelVersion":"2019-10-01"}'
+    headers:
+      apim-request-id: 29ec21a3-f884-4a26-bc69-d726c1f9714d
+      content-type: application/json; charset=utf-8
+      date: Thu, 21 Nov 2019 01:16:28 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-aml-ta-request-id: 30295b79-a042-4e9c-9aea-0fc257d3181f
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '7'
+    status:
+      code: 200
+      message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - westus2.api.cognitive.microsoft.com
+        - //text/analytics/v3.0-preview.1/sentiment
+        - showStats=false
+        - ''
+version: 1

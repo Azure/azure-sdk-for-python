@@ -473,6 +473,26 @@ class CapabilitiesResult(Model):
         self.quota = kwargs.get('quota', None)
 
 
+class ClientGroupInfo(Model):
+    """The information of AAD security group.
+
+    :param group_name: The AAD security group name.
+    :type group_name: str
+    :param group_id: The AAD security group id.
+    :type group_id: str
+    """
+
+    _attribute_map = {
+        'group_name': {'key': 'groupName', 'type': 'str'},
+        'group_id': {'key': 'groupId', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ClientGroupInfo, self).__init__(**kwargs)
+        self.group_name = kwargs.get('group_name', None)
+        self.group_id = kwargs.get('group_id', None)
+
+
 class CloudError(Model):
     """CloudError.
     """
@@ -625,6 +645,9 @@ class ClusterCreateProperties(Model):
     :type tier: str or ~azure.mgmt.hdinsight.models.Tier
     :param cluster_definition: The cluster definition.
     :type cluster_definition: ~azure.mgmt.hdinsight.models.ClusterDefinition
+    :param kafka_rest_properties: The cluster kafka rest proxy configuration.
+    :type kafka_rest_properties:
+     ~azure.mgmt.hdinsight.models.KafkaRestProperties
     :param security_profile: The security profile.
     :type security_profile: ~azure.mgmt.hdinsight.models.SecurityProfile
     :param compute_profile: The compute profile.
@@ -634,6 +657,8 @@ class ClusterCreateProperties(Model):
     :param disk_encryption_properties: The disk encryption properties.
     :type disk_encryption_properties:
      ~azure.mgmt.hdinsight.models.DiskEncryptionProperties
+    :param min_supported_tls_version: The minimal supported tls version.
+    :type min_supported_tls_version: str
     """
 
     _attribute_map = {
@@ -641,10 +666,12 @@ class ClusterCreateProperties(Model):
         'os_type': {'key': 'osType', 'type': 'OSType'},
         'tier': {'key': 'tier', 'type': 'Tier'},
         'cluster_definition': {'key': 'clusterDefinition', 'type': 'ClusterDefinition'},
+        'kafka_rest_properties': {'key': 'kafkaRestProperties', 'type': 'KafkaRestProperties'},
         'security_profile': {'key': 'securityProfile', 'type': 'SecurityProfile'},
         'compute_profile': {'key': 'computeProfile', 'type': 'ComputeProfile'},
         'storage_profile': {'key': 'storageProfile', 'type': 'StorageProfile'},
         'disk_encryption_properties': {'key': 'diskEncryptionProperties', 'type': 'DiskEncryptionProperties'},
+        'min_supported_tls_version': {'key': 'minSupportedTlsVersion', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -653,10 +680,12 @@ class ClusterCreateProperties(Model):
         self.os_type = kwargs.get('os_type', None)
         self.tier = kwargs.get('tier', None)
         self.cluster_definition = kwargs.get('cluster_definition', None)
+        self.kafka_rest_properties = kwargs.get('kafka_rest_properties', None)
         self.security_profile = kwargs.get('security_profile', None)
         self.compute_profile = kwargs.get('compute_profile', None)
         self.storage_profile = kwargs.get('storage_profile', None)
         self.disk_encryption_properties = kwargs.get('disk_encryption_properties', None)
+        self.min_supported_tls_version = kwargs.get('min_supported_tls_version', None)
 
 
 class ClusterDefinition(Model):
@@ -729,6 +758,9 @@ class ClusterGetProperties(Model):
     :type tier: str or ~azure.mgmt.hdinsight.models.Tier
     :param cluster_definition: Required. The cluster definition.
     :type cluster_definition: ~azure.mgmt.hdinsight.models.ClusterDefinition
+    :param kafka_rest_properties: The cluster kafka rest proxy configuration.
+    :type kafka_rest_properties:
+     ~azure.mgmt.hdinsight.models.KafkaRestProperties
     :param security_profile: The security profile.
     :type security_profile: ~azure.mgmt.hdinsight.models.SecurityProfile
     :param compute_profile: The compute profile.
@@ -752,6 +784,8 @@ class ClusterGetProperties(Model):
     :param disk_encryption_properties: The disk encryption properties.
     :type disk_encryption_properties:
      ~azure.mgmt.hdinsight.models.DiskEncryptionProperties
+    :param min_supported_tls_version: The minimal supported tls version.
+    :type min_supported_tls_version: str
     """
 
     _validation = {
@@ -763,6 +797,7 @@ class ClusterGetProperties(Model):
         'os_type': {'key': 'osType', 'type': 'OSType'},
         'tier': {'key': 'tier', 'type': 'Tier'},
         'cluster_definition': {'key': 'clusterDefinition', 'type': 'ClusterDefinition'},
+        'kafka_rest_properties': {'key': 'kafkaRestProperties', 'type': 'KafkaRestProperties'},
         'security_profile': {'key': 'securityProfile', 'type': 'SecurityProfile'},
         'compute_profile': {'key': 'computeProfile', 'type': 'ComputeProfile'},
         'provisioning_state': {'key': 'provisioningState', 'type': 'HDInsightClusterProvisioningState'},
@@ -772,6 +807,7 @@ class ClusterGetProperties(Model):
         'errors': {'key': 'errors', 'type': '[Errors]'},
         'connectivity_endpoints': {'key': 'connectivityEndpoints', 'type': '[ConnectivityEndpoint]'},
         'disk_encryption_properties': {'key': 'diskEncryptionProperties', 'type': 'DiskEncryptionProperties'},
+        'min_supported_tls_version': {'key': 'minSupportedTlsVersion', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -780,6 +816,7 @@ class ClusterGetProperties(Model):
         self.os_type = kwargs.get('os_type', None)
         self.tier = kwargs.get('tier', None)
         self.cluster_definition = kwargs.get('cluster_definition', None)
+        self.kafka_rest_properties = kwargs.get('kafka_rest_properties', None)
         self.security_profile = kwargs.get('security_profile', None)
         self.compute_profile = kwargs.get('compute_profile', None)
         self.provisioning_state = kwargs.get('provisioning_state', None)
@@ -789,6 +826,7 @@ class ClusterGetProperties(Model):
         self.errors = kwargs.get('errors', None)
         self.connectivity_endpoints = kwargs.get('connectivity_endpoints', None)
         self.disk_encryption_properties = kwargs.get('disk_encryption_properties', None)
+        self.min_supported_tls_version = kwargs.get('min_supported_tls_version', None)
 
 
 class ClusterIdentity(Model):
@@ -1282,6 +1320,23 @@ class HardwareProfile(Model):
     def __init__(self, **kwargs):
         super(HardwareProfile, self).__init__(**kwargs)
         self.vm_size = kwargs.get('vm_size', None)
+
+
+class KafkaRestProperties(Model):
+    """The kafka rest proxy configuration which contains AAD security group
+    information.
+
+    :param client_group_info: The information of AAD security group.
+    :type client_group_info: ~azure.mgmt.hdinsight.models.ClientGroupInfo
+    """
+
+    _attribute_map = {
+        'client_group_info': {'key': 'clientGroupInfo', 'type': 'ClientGroupInfo'},
+    }
+
+    def __init__(self, **kwargs):
+        super(KafkaRestProperties, self).__init__(**kwargs)
+        self.client_group_info = kwargs.get('client_group_info', None)
 
 
 class LinuxOperatingSystemProfile(Model):
@@ -1855,7 +1910,7 @@ class StorageAccount(Model):
      specified for WASB storage accounts.
     :type container: str
     :param file_system: The filesystem, only to be specified for Azure Data
-     Lake Storage type Gen 2.
+     Lake Storage Gen 2.
     :type file_system: str
     :param key: The storage account access key.
     :type key: str

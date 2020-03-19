@@ -213,6 +213,24 @@ async transport, such as [aiohttp](https://pypi.org/project/aiohttp/). See
 [azure-core documentation](../../core/azure-core/README.md#transport)
 for more information.
 
+Async credentials should be closed when they're no longer needed. Each async
+credential is an async context manager and defines an async `close` method. For
+example:
+
+```py
+from azure.identity.aio import DefaultAzureCredential
+
+# call close when the credential is no longer needed
+credential = DefaultAzureCredential()
+...
+await credential.close()
+
+# alternatively, use the credential as an async context manager
+credential = DefaultAzureCredential()
+async with credential:
+  ...
+```
+
 This example demonstrates authenticating the asynchronous `SecretClient` from
 [azure-keyvault-secrets][azure_keyvault_secrets] with an asynchronous
 credential.
