@@ -39,7 +39,7 @@ from azure.core.tracing.ext.opentelemetry_span import OpenTelemetrySpan
 settings.tracing_implementation = OpenTelemetrySpan
 
 # Example of Azure Monitor exporter, but you can use anything OpenTelemetry supports
-from opentelemetry.ext.azure_monitor import AzureMonitorSpanExporter
+from azure_monitor import AzureMonitorSpanExporter
 exporter = AzureMonitorSpanExporter(
     instrumentation_key="uuid of the instrumentation key (see your Azure Monitor account)"
 )
@@ -54,9 +54,9 @@ from opentelemetry.sdk.trace.export import SimpleExportSpanProcessor
 # Simple console exporter
 exporter = ConsoleSpanExporter()
 
-trace.set_preferred_tracer_implementation(lambda T: TracerSource())
+trace.set_preferred_tracer_source_implementation(lambda T: TracerSource())
 tracer = trace.get_tracer(__name__)
-tracer.tracer_source().add_span_processor(
+trace.tracer_source().add_span_processor(
     SimpleExportSpanProcessor(exporter)
 )
 
@@ -69,7 +69,7 @@ with tracer.start_as_current_span(name="MyApplication"):
     client.create_container('mycontainer')  # Call will be traced
 ```
 
-Azure Exporter can be found in the package `opentelemetry-azure-monitor-exporter`
+Azure Exporter can be found in the [package](https://github.com/microsoft/opentelemetry-exporters-python) `opentelemetry-azure-monitor-exporter`
 
 
 ## Troubleshooting
