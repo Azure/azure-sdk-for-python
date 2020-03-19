@@ -6,9 +6,9 @@ import asyncio
 import collections
 import functools
 import logging
-import six
 import datetime
 from typing import Any, TYPE_CHECKING, List, Union
+import six
 
 from uamqp import ReceiveClientAsync, types
 from uamqp.constants import SenderSettleMode
@@ -192,8 +192,9 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
                 entity_name=str(entity_name),
                 **kwargs
             )
-        self._create_attribute(**kwargs)
         self._message_iter = None
+        self._session = None
+        self._create_attribute(**kwargs)
         self._connection = kwargs.get("connection")
 
     async def __anext__(self):
@@ -231,6 +232,8 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
             await self._handler.close_async()
         auth = None if self._connection else (await create_authentication(self))
         self._create_handler(auth)
+        if self._connection:
+            self._try_reset_link_error_in_session()
         await self._handler.open_async(connection=self._connection)
         self._message_iter = self._handler.receive_messages_iter_async()
         while not await self._handler.client_ready_async():

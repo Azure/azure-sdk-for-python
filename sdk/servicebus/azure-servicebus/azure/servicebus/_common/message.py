@@ -378,7 +378,7 @@ class ReceivedMessage(PeekMessage):
 
     @property
     def expired(self):
-        if hasattr(self._receiver, '_session_id'):
+        if self._receiver._session_id:  # pylint: disable=protected-access
             raise TypeError("Session messages do not expire. Please use the Session expiry instead.")
         if self.locked_until and self.locked_until <= datetime.datetime.now():
             return True
@@ -386,7 +386,7 @@ class ReceivedMessage(PeekMessage):
 
     @property
     def locked_until(self):
-        if hasattr(self._receiver, '_session_id') or self.settled:
+        if self._receiver._session_id or self.settled:  # pylint: disable=protected-access
             return None
         if self._expiry:
             return self._expiry
@@ -489,7 +489,7 @@ class ReceivedMessage(PeekMessage):
         :raises: ~azure.servicebus.common.errors.MessageLockExpired is message lock has already expired.
         :raises: ~azure.servicebus.common.errors.MessageAlreadySettled is message has already been settled.
         """
-        if hasattr(self._receiver, '_session_id'):
+        if self._receiver._session_id:  # pylint: disable=protected-access
             raise TypeError("Session messages cannot be renewed. Please renew the Session lock instead.")
         self._is_live('renew')
         token = self.lock_token

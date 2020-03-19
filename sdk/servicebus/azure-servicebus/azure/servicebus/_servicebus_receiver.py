@@ -7,8 +7,8 @@ import datetime
 import logging
 import functools
 import uuid
-import six
 from typing import Any, List, TYPE_CHECKING, Optional, Union
+import six
 
 from uamqp import ReceiveClient, Source, types
 from uamqp.constants import SenderSettleMode
@@ -167,7 +167,6 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
         )
         self._name = "SBReceiver-{}".format(uuid.uuid4())
         self._last_received_sequenced_number = None
-        self._session = None
 
     def _build_message(self, received, message_type=ReceivedMessage):
         message = message_type(message=received, mode=self._mode)
@@ -266,6 +265,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
                 **kwargs
             )
         self._message_iter = None
+        self._session = None
         self._create_attribute(**kwargs)
         self._connection = kwargs.get("connection")
 
@@ -310,6 +310,8 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
 
         auth = None if self._connection else create_authentication(self)
         self._create_handler(auth)
+        if self._connection:
+            self._try_reset_link_error_in_session()
         self._handler.open(connection=self._connection)
         self._message_iter = self._handler.receive_messages_iter()
         while not self._handler.client_ready():

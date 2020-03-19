@@ -263,6 +263,13 @@ class BaseHandler(object):  # pylint:disable=too-many-instance-attributes
             self._handler = None
         self._running = False
 
+    def _try_reset_link_error_in_session(self):
+        # Patch for uamqp.Session not cleaning up _link_error
+        try:
+            self._handler._connection.auth._session._link_error = None
+        except AttributeError:
+            pass
+
     def close(self):
         # type: () -> None
         """Close down the handler links (and connection if the handler uses a separate connection).

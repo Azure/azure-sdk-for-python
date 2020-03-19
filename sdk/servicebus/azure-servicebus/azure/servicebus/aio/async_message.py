@@ -117,7 +117,7 @@ class ReceivedMessage(sync_message.ReceivedMessage):
         :raises: ~azure.servicebus.common.errors.SessionLockExpired if session lock has already expired.
         :raises: ~azure.servicebus.common.errors.MessageAlreadySettled is message has already been settled.
         """
-        if hasattr(self._receiver, '_session_id'):
+        if self._receiver._session_id:  # pylint: disable=protected-access
             raise TypeError("Session messages cannot be renewed. Please renew the Session lock instead.")
         self._is_live('renew')
         token = self.lock_token
