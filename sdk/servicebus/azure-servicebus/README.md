@@ -29,7 +29,9 @@ To use this package, you must have:
 * Azure Service Bus - [Namespace and management credentials][service_bus_namespace]
 * Python 2.7, 3.5, 3.6, 3.7 or 3.8 - [Install Python][python]
 
-If you need an azure service bus namespace and do not wish to use the graphical portal UI, you can use the Azure CLI via [Cloud Shell][cloud_shell_bash], or Azure CLI run locally, to create one with this Azure CLI command:
+
+If you need an azure service bus namespace, you can create it via the [Azure Portal][azure_namespace_creation].
+If you do not wish to use the graphical portal UI, you can use the Azure CLI via [Cloud Shell][cloud_shell_bash], or Azure CLI run locally, to create one with this Azure CLI command:
 
 ```Bash
 az servicebus namespace create --resource-group <resource-group-name> --name <servicebus-namespace-name> --location <servicebus-namespace-location>
@@ -84,7 +86,7 @@ The following sections provide several code snippets covering some of the most c
 
 * [Send a message to a queue](#send-to-a-queue)
 * [Receive a message from a queue](#receive-from-a-queue)
-* [Deadletter a message on receipt](#deadletter-a-message)
+* [Defer a message on receipt](#defer-a-message)
 
 
 ### Send to a queue
@@ -121,10 +123,11 @@ with ServiceBusClient.from_connection_string(connstr) as client:
             msg.complete()
 ```
 
-### Deadletter a message
+### Defer a message
 
 When receiving from a queue, you have multiple actions you can take on the messages you receive.  Where the prior example completes a message,
-permanently removing it from the queue and marking as complete, this example demonstrates how to send the message to the dead letter queue:
+permanently removing it from the queue and marking as complete, this example demonstrates how to defer the message, sending it back to the queue
+such that it must now be received via sequence number:
 
 ```Python
 from azure.servicebus import ServiceBusClient
@@ -136,7 +139,7 @@ with ServiceBusClient.from_connection_string(connstr) as client:
     with client.get_queue_receiver(queue_name) as receiver:
         for msg in receiver:
             print(str(msg))
-            msg.dead_letter()
+            msg.defer()
 ```
 
 ## Troubleshooting
@@ -191,3 +194,4 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 [queue_concept]: https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-messaging-overview#queues
 [topic_concept]: https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-messaging-overview#topics
 [subscription_concept]: https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-queues-topics-subscriptions#topics-and-subscriptions
+[azure_namespace_creation]: https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-create-namespace-portal

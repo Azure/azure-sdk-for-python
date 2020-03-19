@@ -47,7 +47,7 @@ semantics with the sender or receiver lifetime.
 ## Migration samples
 
 * [Receiving events](#migrating-code-from-queueclient-and-receiver-to-servicebusreceiver-for-receiving-events)
-* [Receiving events with checkpointing](#migrating-code-from-queueclient-and-sender-to-servicebussender-for-sending-events)
+* [Sending events](#migrating-code-from-queueclient-and-sender-to-servicebussender-for-sending-events)
 
 ### Migrating code from `QueueClient` and `Receiver` to `ServiceBusReceiver` for receiving events
 
@@ -82,8 +82,7 @@ Becomes this in V1:
 ```python
 with ServiceBusClient.from_connection_string(conn_str=CONNECTION_STR) as client:
 
-    receiver = client.get_queue_receiver(queue_name=QUEUE_NAME)
-    with receiver:
+    with client.get_queue_receiver(queue_name=QUEUE_NAME) as receiver:
         batch = receiver.receive(max_batch_size=10, timeout=5)
         for message in batch:
             print("Message: {}".format(message))
@@ -111,16 +110,30 @@ client = ServiceBusClient.from_connection_string(CONNECTION_STR)
 
 queue_client = client.get_queue(queue)
 with queue_client.get_sender() as sender:
+    # Send one at a time.
     for i in range(100):
         message = Message("Sample message no. {}".format(i))
         sender.send(message)
+
+    # Send as a batch.
+    messages_to_batch = [Message("Batch message no. {}".format(i)) for i in range(10)]
+    batch = BatchMessage(messages_to_batch)
+    sender.send(batch)
 ```
 
 In V1:
 ```python
 with ServiceBusClient.from_connection_string(conn_str=CONNECTION_STR) as client:
 
-    sender = client.get_queue_sender(queue_name=QUEUE_NAME)
-    with sender:
-        sender.send(batch_message)
+    with client.get_queue_sender(queue_name=QUEUE_NAME) as sender:
+        # Sending one at a time.
+        for i in range(100):
+            message = Message("Sample message no. {}".format(i))
+            sender.send(message)
+
+        # Send as a batch
+        batch = new BatchMessage()
+        for i in range(10):
+            batch.add(Message("Batch message no. {}".format(i)))
+        sender.send(batch)
 ```
