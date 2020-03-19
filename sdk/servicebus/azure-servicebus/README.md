@@ -11,7 +11,7 @@ Use the Service Bus client library for Python to communicate between application
 * Send and receive messages within your Service Bus channels.
 * Utilize message locks, sessions, and dead letter functionality to implement complex messaging patterns.
 
-[Source code](./) | [Package (PyPi)](pypi) | [API reference documentation](api_docs) | [Product documentation](product_docs) | [Samples](./samples) | (Changelog)[./CHANGELOG.md]
+[Source code](./) | [Package (PyPi)][pypi] | [API reference documentation][api_docs] | [Product documentation][product_docs] | [Samples](./samples) | [Changelog](./CHANGELOG.md)
 
 ## Getting started
 
@@ -23,7 +23,7 @@ Install the Azure Service Bus client library for Python with [pip][pip]:
 pip install azure-servicebus --pre
 ```
 
-**Prerequisites**: 
+### Prerequisites: 
 To use this package, you must have:
 * Azure subscription - [Create a free account][azure_sub]
 * Azure Service Bus - [Namespace and management credentials][service_bus_namespace]
@@ -70,11 +70,11 @@ Note: client can be initialized without a context manager, but must be manually 
 
 Once you've initialized a `ServiceBusClient`, you can interact with the primary resource types within a Service Bus Namespace, of which multiple can exist and on which actual message transmission takes place, the namespace often serving as an application container:
 
-* Queue: Allows for Sending and Receiving of messages, ordered first-in-first-out.  Often used for point-to-point communication.
+* [Queue][queue_concept]: Allows for Sending and Receiving of messages, ordered first-in-first-out.  Often used for point-to-point communication.
 
-* Topic: As opposed to Queues, Topics are better suited to publish/subscribe scenarios.  A topic can be sent to, but requires a subscription, of which there can be multiple in parallel, to consume from.
+* [Topic][topic_concept]: As opposed to Queues, Topics are better suited to publish/subscribe scenarios.  A topic can be sent to, but requires a subscription, of which there can be multiple in parallel, to consume from.
 
-* Subscription: The mechanism to consume from a Topic.  Each subscription is independent, and receaves a copy of each message sent to the topic.  Rules and Filters can be used to tailor which messages are received by a specific subscription.
+* [Subscription][subscription_concept]: The mechanism to consume from a Topic.  Each subscription is independent, and receaves a copy of each message sent to the topic.  Rules and Filters can be used to tailor which messages are received by a specific subscription.
 
 For more information about these resources, see [What is Azure Service Bus?][service_bus_overview].
 
@@ -92,10 +92,16 @@ The following sections provide several code snippets covering some of the most c
 This example sends a message to a queue that is assumed to already exist, created via the azure portal or az commands.
 
 ```Python
-with client.get_queue_sender(queue_name):
+from azure.servicebus import ServiceBusClient
 
-    message = Message("Single message")
-    queue_sender.send(message)
+import os
+connstr = os.environ['SERVICE_BUS_CONN_STR']
+
+with ServiceBusClient.from_connection_string(connstr) as client:
+    with client.get_queue_sender(queue_name):
+
+        message = Message("Single message")
+        queue_sender.send(message)
 ```
 
 ### Receive from a queue
@@ -103,10 +109,16 @@ with client.get_queue_sender(queue_name):
 To receive from a queue, you can either perform a one-off receive via "receiver.receive()" or receive persistently as follows:
 
 ```Python
-with client.get_queue_receiver(queue_name) as receiver:
-    for msg in receiver:
-        print(str(msg))
-        msg.complete()
+from azure.servicebus import ServiceBusClient
+
+import os
+connstr = os.environ['SERVICE_BUS_CONN_STR']
+
+with ServiceBusClient.from_connection_string(connstr) as client:
+    with client.get_queue_receiver(queue_name) as receiver:
+        for msg in receiver:
+            print(str(msg))
+            msg.complete()
 ```
 
 ### Deadletter a message
@@ -115,11 +127,25 @@ When receiving from a queue, you have multiple actions you can take on the messa
 permanently removing it from the queue and marking as complete, this example demonstrates how to send the message to the dead letter queue:
 
 ```Python
-with client.get_queue_receiver(queue_name) as receiver:
-    for msg in receiver:
-        print(str(msg))
-        msg.dead_letter()
+from azure.servicebus import ServiceBusClient
+
+import os
+connstr = os.environ['SERVICE_BUS_CONN_STR']
+
+with ServiceBusClient.from_connection_string(connstr) as client:
+    with client.get_queue_receiver(queue_name) as receiver:
+        for msg in receiver:
+            print(str(msg))
+            msg.dead_letter()
 ```
+
+## Troubleshooting
+
+### Logging
+
+- Enable `azure.servicebus` logger to collect traces from the library.
+- Enable `uamqp` logger to collect traces from the underlying uAMQP library.
+- Enable AMQP frame level trace by setting `logging_enable=True` when creating the client.
 
 ## Next steps
 
@@ -130,12 +156,6 @@ Please find further examples in the [samples](./samples) directory demonstrating
 ### Additional documentation
 
 For more extensive documentation on the Service Bus service, see the [Service Bus DB documentation][service_bus_docs] on docs.microsoft.com.
-
-### Logging
-
-- Enable `azure.servicebus` logger to collect traces from the library.
-- Enable `uamqp` logger to collect traces from the underlying uAMQP library.
-- Enable AMQP frame level trace by setting `logging_enable=True` when creating the client.
 
 ## Contributing
 
@@ -168,3 +188,6 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 [service_bus_overview]: https://docs.microsoft.com/azure/service-bus-messaging/service-bus-messaging-overview
 [queue_status_codes]: https://docs.microsoft.com/rest/api/servicebus/create-queue#response-codes
 [service_bus_docs]: https://docs.microsoft.com/azure/service-bus/
+[queue_concept]: https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-messaging-overview#queues
+[topic_concept]: https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-messaging-overview#topics
+[subscription_concept]: https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-queues-topics-subscriptions#topics-and-subscriptions
