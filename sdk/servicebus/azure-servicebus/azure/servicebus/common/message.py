@@ -232,8 +232,9 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
 
     @property
     def lock_token(self):
-        if hasattr(self._receiver, 'locked_until') or self.settled:
+        if self.settled:
             return None
+
         if hasattr(self.message, 'delivery_tag') and self.message.delivery_tag:
             return uuid.UUID(bytes_le=self.message.delivery_tag)
 
