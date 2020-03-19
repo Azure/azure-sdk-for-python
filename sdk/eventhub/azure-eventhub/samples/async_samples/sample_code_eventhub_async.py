@@ -122,6 +122,24 @@ async def example_eventhub_async_send_and_receive():
                 starting_position="-1",  # "-1" is from the beginning of the partition.
             )
         # [END eventhub_consumer_client_receive_async]
+
+        # [START eventhub_consumer_client_receive_batch_async]
+        logger = logging.getLogger("azure.eventhub")
+
+        async def on_event_batch(partition_context, event_batch):
+            # Put your code here.
+            # If the operation is i/o intensive, async will have better performance.
+            logger.info(
+                "{} events received from partition: {}".format(len(event_batch), partition_context.partition_id)
+            )
+
+        async with consumer:
+            await consumer.receive(
+                on_event_batch=on_event_batch,
+                starting_position="-1",  # "-1" is from the beginning of the partition.
+            )
+        # [END eventhub_consumer_client_receive_batch_async]
+
     finally:
         pass
 

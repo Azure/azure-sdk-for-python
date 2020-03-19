@@ -530,8 +530,8 @@ class EventHubConsumerClient(ClientBaseAsync):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/async_samples/sample_code_eventhub_async.py
-                :start-after: [START eventhub_consumer_client_receive_async]
-                :end-before: [END eventhub_consumer_client_receive_async]
+                :start-after: [START eventhub_consumer_client_receive_batch_async]
+                :end-before: [END eventhub_consumer_client_receive_batch_async]
                 :language: python
                 :dedent: 4
                 :caption: Receive events from the EventHub.
