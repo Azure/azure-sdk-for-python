@@ -40,7 +40,7 @@ class SearchServiceClient(object):
         headers_policy = HeadersPolicy(
             {
                 "api-key": credential.api_key,
-                "Accept": "application/json;odata.metadata=none",
+                "Accept": "application/json;odata.metadata=minimal",
             }
         )
 
