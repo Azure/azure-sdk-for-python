@@ -25,7 +25,6 @@ stages:
                 deploy:
                   steps:
                     - checkout: none
-                    - template: ../../tools/clone-buildtools/clone-buildtools.yml
                     - pwsh: |
                         Get-ChildItem $(Pipeline.Workspace)/${{parameters.ArtifactName}}
                         New-Item -Type Directory -Name ${{artifact.safeName}} -Path $(Pipeline.Workspace)
@@ -35,11 +34,13 @@ stages:
                         Copy-Item $(Pipeline.Workspace)/${{parameters.ArtifactName}}/$underscorePrefix-[0-9]*.[0-9]*.[0-9]* $(Pipeline.Workspace)/${{artifact.safeName}}
                         Get-ChildItem $(Pipeline.Workspace)/${{artifact.safeName}}
                       displayName: Stage artifacts
-                    - pwsh: |
-                        $(Pipeline.Workspace)/azure-sdk-build-tools/scripts/create-tags-and-git-release.ps1 -artifactLocation $(Pipeline.Workspace)/${{artifact.safeName}} -packageRepository PyPI -releaseSha $(Build.SourceVersion) -repoId $(Build.Repository.Name) -workingDirectory $(System.DefaultWorkingDirectory)
-                      displayName: 'Verify Package Tags and Create Git Releases'
-                      env:
-                        GH_TOKEN: $(azuresdk-github-pat)
+                    - template: ../../../common/pipelines/templates/steps/create-tags-and-git-release.yml
+                      parameters:
+                        ArtifactLocation: $(Pipeline.Workspace)/${{artifact.safeName}}
+                        PackageRepository: PyPI
+                        ReleaseSha: $(Build.SourceVersion)
+                        RepoId: Azure/azure-sdk-for-python
+                        WorkingDirectory: $(System.DefaultWorkingDirectory)
 
           - ${{if ne(artifact.options.skipPublishPackage, 'true')}}:
             - deployment: PublishPackage
@@ -94,6 +95,7 @@ stages:
               displayName: Publish Docs to GitHubIO Blob Storage
               condition: and(succeeded(), ne(variables['Skip.PublishDocs'], 'true'))
               environment: githubio
+              dependsOn: PublishPackage
 
               pool:
                 vmImage: windows-2019
@@ -102,8 +104,7 @@ stages:
                 runOnce:
                   deploy:
                     steps:
-                      - checkout: none
-                      - template: ../../tools/clone-buildtools/clone-buildtools.yml
+                      - checkout: self
                       - pwsh: |
                           Get-ChildItem $(Pipeline.Workspace)/${{parameters.DocArtifact}}
                           New-Item -Type Directory -Name ${{artifact.safeName}} -Path $(Pipeline.Workspace)
@@ -114,20 +115,21 @@ stages:
                           Get-ChildItem -Recurse $(Pipeline.Workspace)/${{artifact.safeName}}
                         workingDirectory: $(Pipeline.Workspace)
                         displayName: Output Visible Artifacts
-                      - template: ../../tools/generic-blob-upload/publish-blobs.yml
+                      - template: ../../../common/pipelines/templates/steps/publish-blobs.yml
                         parameters:
                           FolderForUpload: '$(Pipeline.Workspace)/${{artifact.safeName}}'
                           BlobSASKey: '$(azure-sdk-docs-prod-sas)'
                           BlobName: '$(azure-sdk-docs-prod-blob-name)'
                           TargetLanguage: 'python'
                           # we override the regular script path because we have cloned the build tools repo as a separate artifact.
-                          ScriptPath: '$(Pipeline.Workspace)/azure-sdk-build-tools/scripts/copy-docs-to-blobstorage.ps1'
+                          ScriptPath: 'eng/common/scripts/copy-docs-to-blobstorage.ps1'
 
           - ${{if ne(artifact.options.skipUpdatePackageVersion, 'true')}}:
             - deployment: UpdatePackageVersion
               displayName: "Update Package Version"
               condition: and(succeeded(), ne(variables['Skip.UpdatePackageVersion'], 'true'))
               environment: github
+              dependsOn: PublishPackage
 
               pool:
                 vmImage: ubuntu-16.04
@@ -146,8 +148,7 @@ stages:
                         inputs:
                           scriptPath: 'eng/versioning/version_increment.py'
                           arguments: '--package-name ${{ artifact.name }}'
-                      - template: ../../tools/clone-buildtools/clone-buildtools.yml
-                      - template: ../steps/create-pull-request.yml
+                      - template: ../../../common/pipelines/templates/steps/create-pull-request.yml
                         parameters:
                           RepoName: azure-sdk-for-python
                           PRBranchName: increment-package-version-${{ parameters.ServiceDirectory }}-$(Build.BuildId)
