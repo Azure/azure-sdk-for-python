@@ -23,7 +23,12 @@ SCHEMA = open(join(CWD, "..", "hotel_schema.json")).read()
 BATCH = json.load(open(join(CWD, "..", "hotel_small.json")))
 
 from azure.core.exceptions import HttpResponseError
-from azure.search.documents import AutocompleteQuery, SearchApiKeyCredential, SearchQuery, SuggestQuery
+from azure.search.documents import (
+    AutocompleteQuery,
+    SearchApiKeyCredential,
+    SearchQuery,
+    SuggestQuery,
+)
 from azure.search.documents.aio import SearchIndexClient
 
 
@@ -40,12 +45,14 @@ def await_prepared_test(test_fn):
 
     return run
 
-class SearchIndexClientTestAsync(AzureMgmtTestCase):
 
+class SearchIndexClientTestAsync(AzureMgmtTestCase):
     @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     @await_prepared_test
-    async def test_async_get_document_count(self, api_key, endpoint, index_name, **kwargs):
+    async def test_async_get_document_count(
+        self, api_key, endpoint, index_name, **kwargs
+    ):
         client = SearchIndexClient(
             endpoint, index_name, SearchApiKeyCredential(api_key)
         )
@@ -62,7 +69,7 @@ class SearchIndexClientTestAsync(AzureMgmtTestCase):
         async with client:
             for hotel_id in range(1, 11):
                 result = await client.get_document(key=str(hotel_id))
-                expected = BATCH['value'][hotel_id-1]
+                expected = BATCH["value"][hotel_id - 1]
                 assert result.get("hotelId") == expected.get("hotelId")
                 assert result.get("hotelName") == expected.get("hotelName")
                 assert result.get("description") == expected.get("description")
@@ -113,10 +120,18 @@ class SearchIndexClientTestAsync(AzureMgmtTestCase):
             results = []
             async for x in await client.search(query=query):
                 results.append(x)
-            assert [x['hotelName'] for x in results] == sorted([x['hotelName'] for x in results], reverse=True)
-            expected = {"category", "hotelName", "description", "@search.score", "@search.highlights"}
+            assert [x["hotelName"] for x in results] == sorted(
+                [x["hotelName"] for x in results], reverse=True
+            )
+            expected = {
+                "category",
+                "hotelName",
+                "description",
+                "@search.score",
+                "@search.highlights",
+            }
             assert all(set(x) == expected for x in results)
-            assert all(x['category'] == "Budget" for x in results)
+            assert all(x["category"] == "Budget" for x in results)
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
@@ -133,7 +148,6 @@ class SearchIndexClientTestAsync(AzureMgmtTestCase):
         query = SearchQuery(search_text="hotel", include_total_result_count=True)
         results = await client.search(query=query)
         assert await results.get_count() == 7
-
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
@@ -156,7 +170,9 @@ class SearchIndexClientTestAsync(AzureMgmtTestCase):
     @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     @await_prepared_test
-    async def test_get_search_facets_none(self, api_key, endpoint, index_name, **kwargs):
+    async def test_get_search_facets_none(
+        self, api_key, endpoint, index_name, **kwargs
+    ):
         client = SearchIndexClient(
             endpoint, index_name, SearchApiKeyCredential(api_key)
         )
@@ -171,7 +187,9 @@ class SearchIndexClientTestAsync(AzureMgmtTestCase):
     @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     @await_prepared_test
-    async def test_get_search_facets_result(self, api_key, endpoint, index_name, **kwargs):
+    async def test_get_search_facets_result(
+        self, api_key, endpoint, index_name, **kwargs
+    ):
         client = SearchIndexClient(
             endpoint, index_name, SearchApiKeyCredential(api_key)
         )
@@ -181,7 +199,12 @@ class SearchIndexClientTestAsync(AzureMgmtTestCase):
 
         async with client:
             results = await client.search(query=query)
-            assert await results.get_facets() == {'category': [{'value': 'Budget', 'count': 4}, {'value': 'Luxury', 'count': 1}]}
+            assert await results.get_facets() == {
+                "category": [
+                    {"value": "Budget", "count": 4},
+                    {"value": "Luxury", "count": 1},
+                ]
+            }
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
@@ -193,7 +216,7 @@ class SearchIndexClientTestAsync(AzureMgmtTestCase):
         async with client:
             query = AutocompleteQuery(search_text="mot", suggester_name="sg")
             results = await client.autocomplete(query=query)
-            assert results == [{'text': 'motel', 'query_plus_text': 'motel'}]
+            assert results == [{"text": "motel", "query_plus_text": "motel"}]
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
@@ -206,8 +229,8 @@ class SearchIndexClientTestAsync(AzureMgmtTestCase):
             query = SuggestQuery(search_text="mot", suggester_name="sg")
             results = await client.suggest(query=query)
             assert results == [
-                {'hotelId': '2', 'text': 'Cheapest hotel in town. Infact, a motel.'},
-                {'hotelId': '9', 'text': 'Secret Point Motel'},
+                {"hotelId": "2", "text": "Cheapest hotel in town. Infact, a motel."},
+                {"hotelId": "9", "text": "Secret Point Motel"},
             ]
 
     @ResourceGroupPreparer(random_name_enabled=True)
@@ -217,18 +240,10 @@ class SearchIndexClientTestAsync(AzureMgmtTestCase):
         client = SearchIndexClient(
             endpoint, index_name, SearchApiKeyCredential(api_key)
         )
-        DOCUMENTS = [{
-            'hotelId': '1000',
-            'rating': 5,
-            'rooms': [],
-            'hotelName': 'Azure Inn',
-        },
-        {
-            'hotelId': '1001',
-            'rating': 4,
-            'rooms': [],
-            'hotelName': 'Redmond Hotel',
-        }]
+        DOCUMENTS = [
+            {"hotelId": "1000", "rating": 5, "rooms": [], "hotelName": "Azure Inn"},
+            {"hotelId": "1001", "rating": 4, "rooms": [], "hotelName": "Redmond Hotel"},
+        ]
 
         async with client:
             results = await client.upload_documents(DOCUMENTS)
@@ -240,31 +255,25 @@ class SearchIndexClientTestAsync(AzureMgmtTestCase):
 
             assert await client.get_document_count() == 12
             for doc in DOCUMENTS:
-                result = await client.get_document(key=doc['hotelId'])
-                assert result['hotelId'] == doc['hotelId']
-                assert result['hotelName'] == doc['hotelName']
-                assert result['rating'] == doc['rating']
-                assert result['rooms'] == doc['rooms']
+                result = await client.get_document(key=doc["hotelId"])
+                assert result["hotelId"] == doc["hotelId"]
+                assert result["hotelName"] == doc["hotelName"]
+                assert result["rating"] == doc["rating"]
+                assert result["rooms"] == doc["rooms"]
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     @await_prepared_test
-    async def test_upload_documents_existing(self, api_key, endpoint, index_name, **kwargs):
+    async def test_upload_documents_existing(
+        self, api_key, endpoint, index_name, **kwargs
+    ):
         client = SearchIndexClient(
             endpoint, index_name, SearchApiKeyCredential(api_key)
         )
-        DOCUMENTS = [{
-            'hotelId': '1000',
-            'rating': 5,
-            'rooms': [],
-            'hotelName': 'Azure Inn',
-        },
-        {
-            'hotelId': '3',
-            'rating': 4,
-            'rooms': [],
-            'hotelName': 'Redmond Hotel',
-        }]
+        DOCUMENTS = [
+            {"hotelId": "1000", "rating": 5, "rooms": [], "hotelName": "Azure Inn"},
+            {"hotelId": "3", "rating": 4, "rooms": [], "hotelName": "Redmond Hotel"},
+        ]
         async with client:
             results = await client.upload_documents(DOCUMENTS)
             assert len(results) == 2
@@ -273,12 +282,16 @@ class SearchIndexClientTestAsync(AzureMgmtTestCase):
     @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     @await_prepared_test
-    async def test_delete_documents_existing(self, api_key, endpoint, index_name, **kwargs):
+    async def test_delete_documents_existing(
+        self, api_key, endpoint, index_name, **kwargs
+    ):
         client = SearchIndexClient(
             endpoint, index_name, SearchApiKeyCredential(api_key)
         )
         async with client:
-            results = await client.delete_documents([{"hotelId": "3"}, {"hotelId": "4"}])
+            results = await client.delete_documents(
+                [{"hotelId": "3"}, {"hotelId": "4"}]
+            )
             assert len(results) == 2
             assert set(x.status_code for x in results) == {200}
 
@@ -296,12 +309,16 @@ class SearchIndexClientTestAsync(AzureMgmtTestCase):
     @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     @await_prepared_test
-    async def test_delete_documents_missing(self, api_key, endpoint, index_name, **kwargs):
+    async def test_delete_documents_missing(
+        self, api_key, endpoint, index_name, **kwargs
+    ):
         client = SearchIndexClient(
             endpoint, index_name, SearchApiKeyCredential(api_key)
         )
         async with client:
-            results = await client.delete_documents([{"hotelId": "1000"}, {"hotelId": "4"}])
+            results = await client.delete_documents(
+                [{"hotelId": "1000"}, {"hotelId": "4"}]
+            )
             assert len(results) == 2
             assert set(x.status_code for x in results) == {200}
 
@@ -319,12 +336,16 @@ class SearchIndexClientTestAsync(AzureMgmtTestCase):
     @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     @await_prepared_test
-    async def test_merge_documents_existing(self, api_key, endpoint, index_name, **kwargs):
+    async def test_merge_documents_existing(
+        self, api_key, endpoint, index_name, **kwargs
+    ):
         client = SearchIndexClient(
             endpoint, index_name, SearchApiKeyCredential(api_key)
         )
         async with client:
-            results = await client.merge_documents([{"hotelId": "3", "rating": 1}, {"hotelId": "4", "rating": 2}])
+            results = await client.merge_documents(
+                [{"hotelId": "3", "rating": 1}, {"hotelId": "4", "rating": 2}]
+            )
             assert len(results) == 2
             assert set(x.status_code for x in results) == {200}
 
@@ -342,12 +363,16 @@ class SearchIndexClientTestAsync(AzureMgmtTestCase):
     @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     @await_prepared_test
-    async def test_merge_documents_missing(self, api_key, endpoint, index_name, **kwargs):
+    async def test_merge_documents_missing(
+        self, api_key, endpoint, index_name, **kwargs
+    ):
         client = SearchIndexClient(
             endpoint, index_name, SearchApiKeyCredential(api_key)
         )
         async with client:
-            results = await client.merge_documents([{"hotelId": "1000", "rating": 1}, {"hotelId": "4", "rating": 2}])
+            results = await client.merge_documents(
+                [{"hotelId": "1000", "rating": 1}, {"hotelId": "4", "rating": 2}]
+            )
             assert len(results) == 2
             assert set(x.status_code for x in results) == {200, 404}
 
@@ -365,12 +390,16 @@ class SearchIndexClientTestAsync(AzureMgmtTestCase):
     @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     @await_prepared_test
-    async def test_merge_or_upload_documents(self, api_key, endpoint, index_name, **kwargs):
+    async def test_merge_or_upload_documents(
+        self, api_key, endpoint, index_name, **kwargs
+    ):
         client = SearchIndexClient(
             endpoint, index_name, SearchApiKeyCredential(api_key)
         )
         async with client:
-            results = await client.merge_or_upload_documents([{"hotelId": "1000", "rating": 1}, {"hotelId": "4", "rating": 2}])
+            results = await client.merge_or_upload_documents(
+                [{"hotelId": "1000", "rating": 1}, {"hotelId": "4", "rating": 2}]
+            )
             assert len(results) == 2
             assert set(x.status_code for x in results) == {200, 201}
 

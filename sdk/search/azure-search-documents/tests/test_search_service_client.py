@@ -14,13 +14,6 @@ from azure.search.documents import SearchApiKeyCredential, SearchServiceClient
 
 CREDENTIAL = SearchApiKeyCredential(api_key="test_api_key")
 
-CRUD_METHOD_NAMES = [
-    "upload_documents",
-    "delete_documents",
-    "merge_documents",
-    "merge_or_upload_documents",
-]
-
 
 class TestSearchServiceClient(object):
     def test_init(self):
