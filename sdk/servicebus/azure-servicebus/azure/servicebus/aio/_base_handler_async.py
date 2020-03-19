@@ -107,6 +107,8 @@ class BaseHandlerAsync(BaseHandler):
                 if require_timeout:
                     kwargs["timeout"] = timeout
                 return await operation(**kwargs)
+            except StopAsyncIteration:
+                raise
             except Exception as exception:  # pylint: disable=broad-except
                 last_exception = await self._handle_exception(exception)
                 retried_times += 1

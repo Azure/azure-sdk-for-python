@@ -156,6 +156,8 @@ class ServiceBusSender(BaseHandler, SenderMixin):
 
         auth = None if self._connection else create_authentication(self)
         self._create_handler(auth)
+        if self._connection:
+            self._try_reset_link_error_in_session()
         self._handler.open(connection=self._connection)
         while not self._handler.client_ready():
             time.sleep(0.05)
