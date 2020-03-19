@@ -1,5 +1,21 @@
 # Release History
 
+## 3.0.0 (2020-03-20)
+
+**Breaking changes**
+
+- Removed operation group AdvisorsOperations
+- Removed operation group MariaDBManagementClientOperationsMixin
+- Removed operation group TopQueryStatisticsOperations
+- Removed operation group PrivateLinkResourcesOperations
+- Removed operation group PrivateEndpointConnectionsOperations
+- Removed operation group QueryTextsOperations
+- Removed operation group LocationBasedRecommendedActionSessionsOperationStatusOperations
+- Removed operation group RecommendedActionsOperations
+- Removed operation group LocationBasedRecommendedActionSessionsResultOperations
+- Removed operation group WaitStatisticsOperations
+- Removed operation group MySQLManagementClientOperationsMixin
+
 ## 2.0.0 (2020-02-21)
 
 **Features**

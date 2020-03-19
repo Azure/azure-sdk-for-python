@@ -31,8 +31,13 @@ try:
     from ._models_py3 import PrivateLinkServiceConnectionStateProperty
     from ._models_py3 import ProxyResource
     from ._models_py3 import Resource
+    from ._models_py3 import ResourceIdentity
     from ._models_py3 import Server
+    from ._models_py3 import ServerAdministratorResource
     from ._models_py3 import ServerForCreate
+    from ._models_py3 import ServerPrivateEndpointConnection
+    from ._models_py3 import ServerPrivateEndpointConnectionProperties
+    from ._models_py3 import ServerPrivateLinkServiceConnectionStateProperty
     from ._models_py3 import ServerPropertiesForCreate
     from ._models_py3 import ServerPropertiesForDefaultCreate
     from ._models_py3 import ServerPropertiesForGeoRestore
@@ -67,8 +72,13 @@ except (SyntaxError, ImportError):
     from ._models import PrivateLinkServiceConnectionStateProperty
     from ._models import ProxyResource
     from ._models import Resource
+    from ._models import ResourceIdentity
     from ._models import Server
+    from ._models import ServerAdministratorResource
     from ._models import ServerForCreate
+    from ._models import ServerPrivateEndpointConnection
+    from ._models import ServerPrivateEndpointConnectionProperties
+    from ._models import ServerPrivateLinkServiceConnectionStateProperty
     from ._models import ServerPropertiesForCreate
     from ._models import ServerPropertiesForDefaultCreate
     from ._models import ServerPropertiesForGeoRestore
@@ -88,15 +98,23 @@ from ._paged_models import LogFilePaged
 from ._paged_models import PerformanceTierPropertiesPaged
 from ._paged_models import PrivateEndpointConnectionPaged
 from ._paged_models import PrivateLinkResourcePaged
+from ._paged_models import ServerAdministratorResourcePaged
 from ._paged_models import ServerPaged
 from ._paged_models import VirtualNetworkRulePaged
 from ._postgre_sql_management_client_enums import (
     ServerVersion,
     SslEnforcementEnum,
+    MinimalTlsVersionEnum,
+    InfrastructureEncryption,
+    PublicNetworkAccessEnum,
+    PrivateLinkServiceConnectionStateStatus,
+    PrivateLinkServiceConnectionStateActionsRequire,
+    PrivateEndpointProvisioningState,
     ServerState,
     GeoRedundantBackup,
     StorageAutogrow,
     SkuTier,
+    IdentityType,
     VirtualNetworkRuleState,
     OperationOrigin,
     ServerSecurityAlertPolicyState,
@@ -124,8 +142,13 @@ __all__ = [
     'PrivateLinkServiceConnectionStateProperty',
     'ProxyResource',
     'Resource',
+    'ResourceIdentity',
     'Server',
+    'ServerAdministratorResource',
     'ServerForCreate',
+    'ServerPrivateEndpointConnection',
+    'ServerPrivateEndpointConnectionProperties',
+    'ServerPrivateLinkServiceConnectionStateProperty',
     'ServerPropertiesForCreate',
     'ServerPropertiesForDefaultCreate',
     'ServerPropertiesForGeoRestore',
@@ -144,15 +167,23 @@ __all__ = [
     'DatabasePaged',
     'ConfigurationPaged',
     'LogFilePaged',
+    'ServerAdministratorResourcePaged',
     'PerformanceTierPropertiesPaged',
     'PrivateEndpointConnectionPaged',
     'PrivateLinkResourcePaged',
     'ServerVersion',
     'SslEnforcementEnum',
+    'MinimalTlsVersionEnum',
+    'InfrastructureEncryption',
+    'PublicNetworkAccessEnum',
+    'PrivateLinkServiceConnectionStateStatus',
+    'PrivateLinkServiceConnectionStateActionsRequire',
+    'PrivateEndpointProvisioningState',
     'ServerState',
     'GeoRedundantBackup',
     'StorageAutogrow',
     'SkuTier',
+    'IdentityType',
     'VirtualNetworkRuleState',
     'OperationOrigin',
     'ServerSecurityAlertPolicyState',

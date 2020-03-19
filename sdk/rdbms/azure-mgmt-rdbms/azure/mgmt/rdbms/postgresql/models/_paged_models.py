@@ -90,6 +90,19 @@ class LogFilePaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(LogFilePaged, self).__init__(*args, **kwargs)
+class ServerAdministratorResourcePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`ServerAdministratorResource <azure.mgmt.rdbms.postgresql.models.ServerAdministratorResource>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ServerAdministratorResource]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ServerAdministratorResourcePaged, self).__init__(*args, **kwargs)
 class PerformanceTierPropertiesPaged(Paged):
     """
     A paging container for iterating over a list of :class:`PerformanceTierProperties <azure.mgmt.rdbms.postgresql.models.PerformanceTierProperties>` object
