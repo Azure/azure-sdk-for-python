@@ -1509,18 +1509,34 @@ class IPRule(Model):
 class KeyVaultProperties(Model):
     """Properties of key vault.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     :param key_name: The name of KeyVault key.
     :type key_name: str
     :param key_version: The version of KeyVault key.
     :type key_version: str
     :param key_vault_uri: The Uri of KeyVault.
     :type key_vault_uri: str
+    :ivar current_versioned_key_identifier: The object identifier of the
+     current versioned Key Vault Key in use.
+    :vartype current_versioned_key_identifier: str
+    :ivar last_key_rotation_timestamp: Timestamp of last rotation of the Key
+     Vault Key.
+    :vartype last_key_rotation_timestamp: datetime
     """
+
+    _validation = {
+        'current_versioned_key_identifier': {'readonly': True},
+        'last_key_rotation_timestamp': {'readonly': True},
+    }
 
     _attribute_map = {
         'key_name': {'key': 'keyname', 'type': 'str'},
         'key_version': {'key': 'keyversion', 'type': 'str'},
         'key_vault_uri': {'key': 'keyvaulturi', 'type': 'str'},
+        'current_versioned_key_identifier': {'key': 'currentVersionedKeyIdentifier', 'type': 'str'},
+        'last_key_rotation_timestamp': {'key': 'lastKeyRotationTimestamp', 'type': 'iso-8601'},
     }
 
     def __init__(self, **kwargs):
@@ -1528,6 +1544,8 @@ class KeyVaultProperties(Model):
         self.key_name = kwargs.get('key_name', None)
         self.key_version = kwargs.get('key_version', None)
         self.key_vault_uri = kwargs.get('key_vault_uri', None)
+        self.current_versioned_key_identifier = None
+        self.last_key_rotation_timestamp = None
 
 
 class LeaseContainerRequest(Model):
