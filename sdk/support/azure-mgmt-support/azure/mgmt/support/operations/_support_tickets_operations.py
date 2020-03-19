@@ -26,7 +26,7 @@ class SupportTicketsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Api version. Constant value: "2019-05-01-preview".
+    :ivar api_version: Api version. Constant value: "2020-04-01".
     """
 
     models = models
@@ -36,7 +36,7 @@ class SupportTicketsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-05-01-preview"
+        self.api_version = "2020-04-01"
 
         self.config = config
 
@@ -109,24 +109,23 @@ class SupportTicketsOperations(object):
 
     def list(
             self, top=None, filter=None, custom_headers=None, raw=False, **operation_config):
-        """Lists all the support tickets for an Azure subscription. <br/><br/>You
-        can also filter the support tickets by <i>Status</i> or
-        <i>CreatedDate</i> using the $filter parameter. Output will be a paged
-        result with <i>nextLink</i>, using which you can retrieve the next set
-        of support tickets. <br/><br/>Support ticket data is available for 12
-        months after ticket creation. If a ticket was created more than 12
-        months ago, a request for data might cause an error.
+        """Lists all the support tickets for an Azure subscription. You can also
+        filter the support tickets by _Status_ or _CreatedDate_ using the
+        $filter parameter. Output will be a paged result with _nextLink_, using
+        which you can retrieve the next set of support tickets.
+        <br/><br/>Support ticket data is available for 12 months after ticket
+        creation. If a ticket was created more than 12 months ago, a request
+        for data might cause an error.
 
         :param top: The number of values to return in the collection. Default
          is 25 and max is 100.
         :type top: int
         :param filter: The filter to apply on the operation. We support 'odata
-         v4.0' filter semantics. <a target='_blank'
-         href='https://docs.microsoft.com/odata/concepts/queryoptions-overview'>Learn
-         more</a> <br/><i>Status</i> filter can only be used with 'eq'
-         operator. For <i>CreatedDate</i> filter, the supported operators are
-         'gt' and 'ge'. When using both filters, combine them using the logical
-         'AND'.
+         v4.0' filter semantics. [Learn
+         more](https://docs.microsoft.com/odata/concepts/queryoptions-overview).
+         _Status_ filter can only be used with 'eq' operator. For _CreatedDate_
+         filter, the supported operators are 'gt' and 'ge'. When using both
+         filters, combine them using the logical 'AND'.
         :type filter: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -195,10 +194,9 @@ class SupportTicketsOperations(object):
 
     def get(
             self, support_ticket_name, custom_headers=None, raw=False, **operation_config):
-        """Gets details for a specific support ticket in an Azure subscription.
-        <br/><br/>Support ticket data is available for 12 months after ticket
-        creation. If a ticket was created more than 12 months ago, a request
-        for data might cause an error.
+        """Get ticket details for an Azure subscription. Support ticket data is
+        available for 12 months after ticket creation. If a ticket was created
+        more than 12 months ago, a request for data might cause an error.
 
         :param support_ticket_name: Support ticket name
         :type support_ticket_name: str
@@ -254,22 +252,22 @@ class SupportTicketsOperations(object):
     get.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Support/supportTickets/{supportTicketName}'}
 
     def update(
-            self, support_ticket_name, severity=None, contact_details=None, custom_headers=None, raw=False, **operation_config):
-        """This API allows you to update the severity level or your contact
-        information in the support ticket. <br/><br/> Note: The severity levels
-        cannot be changed if a support ticket is actively being worked upon by
-        an Azure support engineer. In such a case, contact your support
-        engineer to request severity update by adding a new communication using
-        the Communications API.
+            self, support_ticket_name, update_support_ticket, custom_headers=None, raw=False, **operation_config):
+        """This API allows you to update the severity level, ticket status, and
+        your contact information in the support ticket.<br/><br/>Note: The
+        severity levels cannot be changed if a support ticket is actively being
+        worked upon by an Azure support engineer. In such a case, contact your
+        support engineer to request severity update by adding a new
+        communication using the Communications API.<br/><br/>Changing the
+        ticket status to _closed_ is allowed only on an unassigned case. When
+        an engineer is actively working on the ticket, send your ticket closure
+        request by sending a note to your engineer.
 
         :param support_ticket_name: Support ticket name
         :type support_ticket_name: str
-        :param severity: Severity level. Possible values include: 'minimal',
-         'moderate', 'critical'
-        :type severity: str or ~azure.mgmt.support.models.SeverityLevel
-        :param contact_details: Contact details to be updated on the support
-         ticket.
-        :type contact_details: ~azure.mgmt.support.models.UpdateContactProfile
+        :param update_support_ticket: UpdateSupportTicket object
+        :type update_support_ticket:
+         ~azure.mgmt.support.models.UpdateSupportTicket
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -281,8 +279,6 @@ class SupportTicketsOperations(object):
         :raises:
          :class:`ExceptionResponseException<azure.mgmt.support.models.ExceptionResponseException>`
         """
-        update_support_ticket = models.UpdateSupportTicket(severity=severity, contact_details=contact_details)
-
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {
@@ -376,18 +372,29 @@ class SupportTicketsOperations(object):
 
     def create(
             self, support_ticket_name, create_support_ticket_parameters, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Creates a new support ticket for Quota increase, Technical, Billing,
-        and Subscription Management issues for the specified subscription.
-        <br/><br/>A paid technical support plan is required to create a support
-        ticket using this API. <a href='https://aka.ms/supportticketAPI'>Learn
-        more</a> <br/><br/> Use the Services API to map the right Service Id to
-        the issue type. For example: For billing tickets set *serviceId* to
-        *'/providers/Microsoft.Support/services/517f2da6-78fd-0498-4e22-ad26996b1dfc'*.
-        <br/> For Technical issues, the Service id will map to the Azure
-        service you want to raise a support ticket for. <br/><br/>Always call
-        the Services and ProblemClassifications API to get the most recent set
-        of services and problem categories required for support ticket
-        creation.
+        """Creates a new support ticket for Subscription and Service limits
+        (Quota), Technical, Billing, and Subscription Management issues for the
+        specified subscription. Learn the
+        [prerequisites](https://aka.ms/supportAPI) required to create a support
+        ticket.<br/><br/>Always call the Services and ProblemClassifications
+        API to get the most recent set of services and problem categories
+        required for support ticket creation.<br/><br/>Adding attachments are
+        not currently supported via the API. To add a file to an existing
+        support ticket, visit the [Manage support
+        ticket](https://portal.azure.com/#blade/Microsoft_Azure_Support/HelpAndSupportBlade/managesupportrequest)
+        page in the Azure portal, select the support ticket, and use the file
+        upload control to add a new file.<br/><br/>Providing consent to share
+        diagnostic information with Azure support is currently not supported
+        via the API. Azure support engineer, working on your ticket, will reach
+        out to you for consent if your issue requires gathering diagnostic
+        information from your Azure resources.<br/><br/>**Creating a support
+        ticket for on-behalf-of**: Include _x-ms-authorization-auxiliary_
+        header to provide an auxiliary token as per
+        [this](https://docs.microsoft.com/azure/azure-resource-manager/management/authenticate-multi-tenant).
+        The primary token will be from the tenant for whom a support ticket is
+        being raised against the subscription, i.e. Cloud solution provider
+        (CSP) customer tenant. The auxiliary token will be from the Cloud
+        solution provider (CSP) partner tenant.
 
         :param support_ticket_name: Support ticket name.
         :type support_ticket_name: str

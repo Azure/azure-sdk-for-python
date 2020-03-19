@@ -196,9 +196,9 @@ class CategorizedEntity(DictMixin):
     :param grapheme_length: Length (in Unicode characters) for the entity
         text.
     :type grapheme_length: int
-    :param score: Confidence score between 0 and 1 of the extracted
+    :param confidence_score: Confidence score between 0 and 1 of the extracted
         entity.
-    :type score: float
+    :type confidence_score: float
     """
 
     def __init__(self, **kwargs):
@@ -207,7 +207,7 @@ class CategorizedEntity(DictMixin):
         self.subcategory = kwargs.get('subcategory', None)
         self.grapheme_offset = kwargs.get('grapheme_offset', None)
         self.grapheme_length = kwargs.get('grapheme_length', None)
-        self.score = kwargs.get('score', None)
+        self.confidence_score = kwargs.get('confidence_score', None)
 
     @classmethod
     def _from_generated(cls, entity):
@@ -217,13 +217,13 @@ class CategorizedEntity(DictMixin):
             subcategory=entity.subtype,
             grapheme_offset=entity.offset,
             grapheme_length=entity.length,
-            score=entity.score,
+            confidence_score=entity.score,
         )
 
     def __repr__(self):
         return "CategorizedEntity(text={}, category={}, subcategory={}, grapheme_offset={}, grapheme_length={}, " \
-               "score={})".format(self.text, self.category, self.subcategory, self.grapheme_offset,
-                                  self.grapheme_length, self.score)[:1024]
+               "confidence_score={})".format(self.text, self.category, self.subcategory, self.grapheme_offset,
+                                  self.grapheme_length, self.confidence_score)[:1024]
 
 
 class PiiEntity(DictMixin):
@@ -244,9 +244,9 @@ class PiiEntity(DictMixin):
     :param grapheme_length: Length (in Unicode characters) for the entity
         text.
     :type grapheme_length: int
-    :param score: Confidence score between 0 and 1 of the extracted
+    :param confidence_score: Confidence score between 0 and 1 of the extracted
         entity.
-    :type score: float
+    :type confidence_score: float
     """
 
     def __init__(self, **kwargs):
@@ -255,7 +255,7 @@ class PiiEntity(DictMixin):
         self.subcategory = kwargs.get('subcategory', None)
         self.grapheme_offset = kwargs.get('grapheme_offset', None)
         self.grapheme_length = kwargs.get('grapheme_length', None)
-        self.score = kwargs.get('score', None)
+        self.confidence_score = kwargs.get('confidence_score', None)
 
     @classmethod
     def _from_generated(cls, entity):
@@ -265,13 +265,13 @@ class PiiEntity(DictMixin):
             subcategory=entity.subtype,
             grapheme_offset=entity.offset,
             grapheme_length=entity.length,
-            score=entity.score,
+            confidence_score=entity.score,
         )
 
     def __repr__(self):
         return "PiiEntity(text={}, category={}, subcategory={}, grapheme_offset={}, grapheme_length={}, " \
-               "score={})".format(self.text, self.category, self.subcategory, self.grapheme_offset,
-                                  self.grapheme_length, self.score)[:1024]
+               "confidence_score={})".format(self.text, self.category, self.subcategory, self.grapheme_offset,
+                                  self.grapheme_length, self.confidence_score)[:1024]
 
 
 class TextAnalyticsError(DictMixin):
@@ -396,7 +396,7 @@ class AnalyzeSentimentResult(DictMixin):
     :param confidence_scores: Document level sentiment confidence
         scores between 0 and 1 for each sentiment label.
     :type confidence_scores:
-        ~azure.ai.textanalytics.SentimentConfidenceScorePerLabel
+        ~azure.ai.textanalytics.SentimentConfidenceScores
     :param sentences: Sentence level sentiment analysis.
     :type sentences:
         list[~azure.ai.textanalytics.SentenceSentiment]
@@ -422,16 +422,16 @@ class TextDocumentStatistics(DictMixin):
     """TextDocumentStatistics contains information about
     the document payload.
 
-    :param character_count: Number of text elements recognized in
+    :param grapheme_count: Number of text elements recognized in
         the document.
-    :type character_count: int
+    :type grapheme_count: int
     :param transaction_count: Number of transactions for the
         document.
     :type transaction_count: int
     """
 
     def __init__(self, **kwargs):
-        self.character_count = kwargs.get("character_count", None)
+        self.grapheme_count = kwargs.get("grapheme_count", None)
         self.transaction_count = kwargs.get("transaction_count", None)
 
     @classmethod
@@ -439,13 +439,13 @@ class TextDocumentStatistics(DictMixin):
         if stats is None:
             return None
         return cls(
-            character_count=stats.characters_count,
+            grapheme_count=stats.characters_count,
             transaction_count=stats.transactions_count,
         )
 
     def __repr__(self):
-        return "TextDocumentStatistics(character_count={}, transaction_count={})" \
-            .format(self.character_count, self.transaction_count)[:1024]
+        return "TextDocumentStatistics(grapheme_count={}, transaction_count={})" \
+            .format(self.grapheme_count, self.transaction_count)[:1024]
 
 
 class DocumentError(DictMixin):
@@ -574,10 +574,10 @@ class LinkedEntityMatch(DictMixin):
     the confidence score of the prediction and where the entity
     was found in the text.
 
-    :param score: If a well-known item is recognized, a
+    :param confidence_score: If a well-known item is recognized, a
         decimal number denoting the confidence level between 0 and 1 will be
         returned.
-    :type score: float
+    :type confidence_score: float
     :param text: Entity text as appears in the request.
     :type text: str
     :param grapheme_offset: Start position (in Unicode characters) for the
@@ -589,7 +589,7 @@ class LinkedEntityMatch(DictMixin):
     """
 
     def __init__(self, **kwargs):
-        self.score = kwargs.get("score", None)
+        self.confidence_score = kwargs.get("confidence_score", None)
         self.text = kwargs.get("text", None)
         self.grapheme_offset = kwargs.get("grapheme_offset", None)
         self.grapheme_length = kwargs.get("grapheme_length", None)
@@ -597,12 +597,15 @@ class LinkedEntityMatch(DictMixin):
     @classmethod
     def _from_generated(cls, match):
         return cls(
-            score=match.score, text=match.text, grapheme_offset=match.offset, grapheme_length=match.length
+            confidence_score=match.score,
+            text=match.text,
+            grapheme_offset=match.offset,
+            grapheme_length=match.length
         )
 
     def __repr__(self):
-        return "LinkedEntityMatch(score={}, text={}, grapheme_offset={}, grapheme_length={})" \
-            .format(self.score, self.text, self.grapheme_offset, self.grapheme_length)[:1024]
+        return "LinkedEntityMatch(confidence_score={}, text={}, grapheme_offset={}, grapheme_length={})" \
+            .format(self.confidence_score, self.text, self.grapheme_offset, self.grapheme_length)[:1024]
 
 
 class TextDocumentInput(MultiLanguageInput):
@@ -679,7 +682,7 @@ class SentenceSentiment(DictMixin):
     :param confidence_scores: The sentiment confidence score between 0
         and 1 for the sentence for all labels.
     :type confidence_scores:
-        ~azure.ai.textanalytics.SentimentConfidenceScorePerLabel
+        ~azure.ai.textanalytics.SentimentConfidenceScores
     :param grapheme_offset: The sentence offset from the start of the
         document.
     :type grapheme_offset: int
@@ -700,7 +703,7 @@ class SentenceSentiment(DictMixin):
     def _from_generated(cls, sentence):
         return cls(
             sentiment=sentence.sentiment.value,
-            confidence_scores=SentimentConfidenceScorePerLabel._from_generated(sentence.sentence_scores),  # pylint: disable=protected-access
+            confidence_scores=SentimentConfidenceScores._from_generated(sentence.sentence_scores),  # pylint: disable=protected-access
             grapheme_offset=sentence.offset,
             grapheme_length=sentence.length,
             warnings=sentence.warnings,
@@ -712,9 +715,9 @@ class SentenceSentiment(DictMixin):
                                      self.grapheme_length, self.warnings)[:1024]
 
 
-class SentimentConfidenceScorePerLabel(DictMixin):
-    """The confidence scores (Softmax scores) between 0 and 1 across all sentiment
-    labels: positive, neutral, negative. Higher values indicate higher confidence.
+class SentimentConfidenceScores(DictMixin):
+    """The confidence scores (Softmax scores) between 0 and 1.
+    Higher values indicate higher confidence.
 
     :param positive: Positive score.
     :type positive: float
@@ -738,5 +741,5 @@ class SentimentConfidenceScorePerLabel(DictMixin):
         )
 
     def __repr__(self):
-        return "SentimentConfidenceScorePerLabel(positive={}, neutral={}, negative={})" \
+        return "SentimentConfidenceScores(positive={}, neutral={}, negative={})" \
             .format(self.positive, self.neutral, self.negative)[:1024]

@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
+from ._download_async import StorageStreamDownloader
 from .._shared.policies_async import ExponentialRetry, LinearRetry
 from ._data_lake_file_client_async import DataLakeFileClient
 from ._data_lake_directory_client_async import DataLakeDirectoryClient
@@ -19,4 +20,5 @@ __all__ = [
     'DataLakeLeaseClient',
     'ExponentialRetry',
     'LinearRetry',
+    'StorageStreamDownloader'
 ]

@@ -1,5 +1,21 @@
 # Release History
 
+## 3.0.0rc10 (2020-03-11)
+
+**Features**
+
+- Model FileTaskRunRequest has a new parameter agent_pool_name
+- Model RunRequest has a new parameter agent_pool_name
+- Model RunFilter has a new parameter agent_pool_name
+- Model DockerBuildRequest has a new parameter agent_pool_name
+- Model TaskRunRequest has a new parameter agent_pool_name
+- Model EncodedTaskRunRequest has a new parameter agent_pool_name
+- Model TaskUpdateParameters has a new parameter agent_pool_name
+- Model Run has a new parameter agent_pool_name
+- Model Task has a new parameter agent_pool_name
+- Added operation TaskRunsOperations.get_details
+- Added operation group AgentPoolsOperations
+
 ## 3.0.0rc9 (2020-03-02)
 
 **Features**

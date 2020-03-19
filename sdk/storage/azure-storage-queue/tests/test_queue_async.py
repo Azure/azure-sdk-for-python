@@ -525,6 +525,8 @@ class StorageQueueTestAsync(AsyncStorageTestCase):
             pop_receipt=list_result1.pop_receipt,
             visibility_timeout=0,
             content=u'new text')
+        self.assertEqual(u'new text', message.content)
+
         messages = []
         async for m in queue_client.receive_messages():
             messages.append(m)
@@ -664,6 +666,7 @@ class StorageQueueTestAsync(AsyncStorageTestCase):
             credential=token,
         )
         result = await service.send_message(u'addedmessage')
+        self.assertEqual(u'addedmessage', result.content)
 
         # Assert
         messages = []

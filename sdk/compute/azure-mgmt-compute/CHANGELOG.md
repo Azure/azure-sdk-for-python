@@ -1,5 +1,15 @@
 # Release History
 
+## 11.1.0 (2020-03-09)
+
+**Features**
+
+- Operation VirtualMachineImagesOperations.list has a new parameter $expand
+
+**Bugfixes**
+
+- remove not-working $filter in Operation VirtualMachineImagesOperations.list
+
 ## 11.0.0 (2020-02-27)
 
 **Features**

@@ -45,6 +45,8 @@ stages:
     Artifacts:
     - name: azure_core
       safeName: azurecore
+    - name: azure_mgmt_core
+      safeName: azuremgmtcore
     - name: azure_core_tracing_opencensus
       safeName: azurecorecoretracingopencensus
     - name: azure_core_tracing_opentelemetry

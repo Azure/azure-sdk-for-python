@@ -16,21 +16,13 @@ from azure.core.exceptions import HttpResponseError
 class AccessPolicy(Model):
     """An Access policy.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param start: Required. the date-time the policy is active
+    :param start: the date-time the policy is active
     :type start: str
-    :param expiry: Required. the date-time the policy expires
+    :param expiry: the date-time the policy expires
     :type expiry: str
-    :param permission: Required. the permissions for the acl policy
+    :param permission: the permissions for the acl policy
     :type permission: str
     """
-
-    _validation = {
-        'start': {'required': True},
-        'expiry': {'required': True},
-        'permission': {'required': True},
-    }
 
     _attribute_map = {
         'start': {'key': 'Start', 'type': 'str', 'xml': {'name': 'Start'}},
@@ -40,7 +32,7 @@ class AccessPolicy(Model):
     _xml_map = {
     }
 
-    def __init__(self, *, start: str, expiry: str, permission: str, **kwargs) -> None:
+    def __init__(self, *, start: str=None, expiry: str=None, permission: str=None, **kwargs) -> None:
         super(AccessPolicy, self).__init__(**kwargs)
         self.start = start
         self.expiry = expiry
@@ -547,23 +539,23 @@ class ContainerCpkScopeInfo(Model):
      Specifies the default encryption scope to set on the container and use for
      all future writes.
     :type default_encryption_scope: str
-    :param deny_encryption_scope_override: Optional.  Version 2019-07-07 and
-     newer.  If true, prevents any request from specifying a different
+    :param prevent_encryption_scope_override: Optional.  Version 2019-07-07
+     and newer.  If true, prevents any request from specifying a different
      encryption scope than the scope set on the container.
-    :type deny_encryption_scope_override: bool
+    :type prevent_encryption_scope_override: bool
     """
 
     _attribute_map = {
         'default_encryption_scope': {'key': '', 'type': 'str', 'xml': {'name': 'default_encryption_scope'}},
-        'deny_encryption_scope_override': {'key': '', 'type': 'bool', 'xml': {'name': 'deny_encryption_scope_override'}},
+        'prevent_encryption_scope_override': {'key': '', 'type': 'bool', 'xml': {'name': 'prevent_encryption_scope_override'}},
     }
     _xml_map = {
     }
 
-    def __init__(self, *, default_encryption_scope: str=None, deny_encryption_scope_override: bool=None, **kwargs) -> None:
+    def __init__(self, *, default_encryption_scope: str=None, prevent_encryption_scope_override: bool=None, **kwargs) -> None:
         super(ContainerCpkScopeInfo, self).__init__(**kwargs)
         self.default_encryption_scope = default_encryption_scope
-        self.deny_encryption_scope_override = deny_encryption_scope_override
+        self.prevent_encryption_scope_override = prevent_encryption_scope_override
 
 
 class ContainerItem(Model):
@@ -624,8 +616,8 @@ class ContainerProperties(Model):
     :type has_legal_hold: bool
     :param default_encryption_scope:
     :type default_encryption_scope: str
-    :param deny_encryption_scope_override:
-    :type deny_encryption_scope_override: bool
+    :param prevent_encryption_scope_override:
+    :type prevent_encryption_scope_override: bool
     """
 
     _validation = {
@@ -643,12 +635,12 @@ class ContainerProperties(Model):
         'has_immutability_policy': {'key': 'HasImmutabilityPolicy', 'type': 'bool', 'xml': {'name': 'HasImmutabilityPolicy'}},
         'has_legal_hold': {'key': 'HasLegalHold', 'type': 'bool', 'xml': {'name': 'HasLegalHold'}},
         'default_encryption_scope': {'key': 'DefaultEncryptionScope', 'type': 'str', 'xml': {'name': 'DefaultEncryptionScope'}},
-        'deny_encryption_scope_override': {'key': 'DenyEncryptionScopeOverride', 'type': 'bool', 'xml': {'name': 'DenyEncryptionScopeOverride'}},
+        'prevent_encryption_scope_override': {'key': 'DenyEncryptionScopeOverride', 'type': 'bool', 'xml': {'name': 'DenyEncryptionScopeOverride'}},
     }
     _xml_map = {
     }
 
-    def __init__(self, *, last_modified, etag: str, lease_status=None, lease_state=None, lease_duration=None, public_access=None, has_immutability_policy: bool=None, has_legal_hold: bool=None, default_encryption_scope: str=None, deny_encryption_scope_override: bool=None, **kwargs) -> None:
+    def __init__(self, *, last_modified, etag: str, lease_status=None, lease_state=None, lease_duration=None, public_access=None, has_immutability_policy: bool=None, has_legal_hold: bool=None, default_encryption_scope: str=None, prevent_encryption_scope_override: bool=None, **kwargs) -> None:
         super(ContainerProperties, self).__init__(**kwargs)
         self.last_modified = last_modified
         self.etag = etag
@@ -659,7 +651,7 @@ class ContainerProperties(Model):
         self.has_immutability_policy = has_immutability_policy
         self.has_legal_hold = has_legal_hold
         self.default_encryption_scope = default_encryption_scope
-        self.deny_encryption_scope_override = deny_encryption_scope_override
+        self.prevent_encryption_scope_override = prevent_encryption_scope_override
 
 
 class CorsRule(Model):

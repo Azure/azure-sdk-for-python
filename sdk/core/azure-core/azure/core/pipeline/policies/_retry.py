@@ -39,7 +39,9 @@ from azure.core.exceptions import (
     AzureError,
     ClientAuthenticationError,
     ServiceResponseError,
-    ServiceRequestError
+    ServiceRequestError,
+    ServiceRequestTimeoutError,
+    ServiceResponseTimeoutError,
 )
 
 from ._base import HTTPPolicy, RequestHistory
@@ -80,6 +82,8 @@ class RetryPolicy(HTTPPolicy):
 
     :keyword RetryMode retry_mode: Fixed or exponential delay between attemps, default is exponential.
 
+    :keyword int timeout: Timeout setting for the operation in seconds, default is 604800s (7 days).
+
     .. admonition:: Example:
 
         .. literalinclude:: ../samples/test_example_sync.py
@@ -89,6 +93,8 @@ class RetryPolicy(HTTPPolicy):
             :dedent: 4
             :caption: Configuring a retry policy.
     """
+
+    # pylint: disable=too-many-instance-attributes
 
     #: Maximum backoff time.
     BACKOFF_MAX = 120
@@ -103,6 +109,7 @@ class RetryPolicy(HTTPPolicy):
         self.backoff_factor = kwargs.pop('retry_backoff_factor', 0.8)
         self.backoff_max = kwargs.pop('retry_backoff_max', self.BACKOFF_MAX)
         self.retry_mode = kwargs.pop('retry_mode', RetryMode.Exponential)
+        self.timeout = kwargs.pop('timeout', 604800)
 
         retry_codes = self._RETRY_CODES
         status_codes = kwargs.pop('retry_on_status_codes', [])
@@ -132,6 +139,7 @@ class RetryPolicy(HTTPPolicy):
             'backoff': options.pop("retry_backoff_factor", self.backoff_factor),
             'max_backoff': options.pop("retry_backoff_max", self.BACKOFF_MAX),
             'methods': options.pop("retry_on_methods", self._method_whitelist),
+            'timeout': options.pop("timeout", self.timeout),
             'history': []
         }
 
@@ -377,19 +385,19 @@ class RetryPolicy(HTTPPolicy):
         if retry_settings['history']:
             context['history'] = retry_settings['history']
 
-    def send(self, request):
-        """Sends the PipelineRequest object to the next policy. Uses retry settings if necessary.
+    def _configure_timeout(self, request, absolute_timeout, is_response_error):
+        if absolute_timeout <= 0:
+            if is_response_error:
+                raise ServiceResponseTimeoutError('Response timeout')
+            raise ServiceRequestTimeoutError('Request timeout')
+        connection_timeout = request.context.options.get('connection_timeout')
+        if connection_timeout:
+            req_timeout = min(connection_timeout, absolute_timeout)
+        else:
+            req_timeout = absolute_timeout
+        request.context.options['connection_timeout'] = req_timeout
 
-        :param request: The PipelineRequest object
-        :type request: ~azure.core.pipeline.PipelineRequest
-        :return: Returns the PipelineResponse or raises error if maximum retries exceeded.
-        :rtype: ~azure.core.pipeline.PipelineResponse
-        :raises: ~azure.core.exceptions.AzureError if maximum retries exceeded.
-        :raises: ~azure.core.exceptions.ClientAuthenticationError if authentication
-        """
-        retry_active = True
-        response = None
-        retry_settings = self.configure_retries(request.context.options)
+    def _configure_positions(self, request, retry_settings):
         body_position = None
         file_positions = None
         if request.http_request.body and hasattr(request.http_request.body, 'read'):
@@ -413,13 +421,34 @@ class RetryPolicy(HTTPPolicy):
         retry_settings['body_position'] = body_position
         retry_settings['file_positions'] = file_positions
 
+    def send(self, request):
+        """Sends the PipelineRequest object to the next policy. Uses retry settings if necessary.
+
+        :param request: The PipelineRequest object
+        :type request: ~azure.core.pipeline.PipelineRequest
+        :return: Returns the PipelineResponse or raises error if maximum retries exceeded.
+        :rtype: ~azure.core.pipeline.PipelineResponse
+        :raises: ~azure.core.exceptions.AzureError if maximum retries exceeded.
+        :raises: ~azure.core.exceptions.ClientAuthenticationError if authentication
+        """
+        retry_active = True
+        response = None
+        retry_settings = self.configure_retries(request.context.options)
+        self._configure_positions(request, retry_settings)
+
+        absolute_timeout = retry_settings['timeout']
+        is_response_error = True
+
         while retry_active:
             try:
+                start_time = time.time()
+                self._configure_timeout(request, absolute_timeout, is_response_error)
                 response = self.next.send(request)
                 if self.is_retry(retry_settings, response):
                     retry_active = self.increment(retry_settings, response=response)
                     if retry_active:
                         self.sleep(retry_settings, request.context.transport, response=response)
+                        is_response_error = True
                         continue
                 break
             except ClientAuthenticationError:  # pylint:disable=try-except-raise
@@ -431,8 +460,16 @@ class RetryPolicy(HTTPPolicy):
                     retry_active = self.increment(retry_settings, response=request, error=err)
                     if retry_active:
                         self.sleep(retry_settings, request.context.transport)
+                        if isinstance(err, ServiceRequestError):
+                            is_response_error = False
+                        else:
+                            is_response_error = True
                         continue
                 raise err
+            finally:
+                end_time = time.time()
+                if absolute_timeout:
+                    absolute_timeout -= (end_time - start_time)
 
         self.update_context(response.context, retry_settings)
         return response

@@ -37,3 +37,8 @@ class ColumnDataType(str, Enum):
     number = "number"
     boolean = "boolean"
     object_enum = "object"
+
+
+class ResultKind(str, Enum):
+
+    basic = "basic"

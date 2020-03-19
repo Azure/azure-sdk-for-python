@@ -114,11 +114,11 @@ jobs:
     - pwsh: |
         $toxenvvar = "whl,sdist"
         if (('$(Build.Reason)' -eq 'Schedule') -and ('$(System.TeamProject)' -eq 'internal')) {
-          $toxenvvar = "whl,sdist,depends"
+          $toxenvvar = "whl,sdist,depends,latestdependency,minimumdependency"
         }
 
-        if ('$(Run.ImportTest)' -eq 'true') {
-          $toxenvvar = "whl,sdist,depends"
+        if ('$(Run.DependencyTest)' -eq 'true') {
+          $toxenvvar = "whl,sdist,depends,latestdependency,minimumdependency"
         }
         echo "##vso[task.setvariable variable=toxenv]$toxenvvar"
       displayName: "Set Tox Environment"

@@ -7,7 +7,7 @@ from __future__ import unicode_literals
 import uuid
 import logging
 from collections import deque
-from typing import TYPE_CHECKING, Callable, Dict, Optional, Any, Deque
+from typing import TYPE_CHECKING, Callable, Dict, Optional, Any
 
 import uamqp
 from uamqp import types, errors, utils
@@ -120,7 +120,7 @@ class EventHubConsumer(
         self._track_last_enqueued_event_properties = (
             track_last_enqueued_event_properties
         )
-        self._message_buffer = deque()  # type: Deque[uamqp.Message]
+        self._message_buffer = deque()  # type: ignore
         self._last_received_event = None  # type: Optional[EventData]
 
     def _create_handler(self, auth):

@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 import asyncio
 import functools
+from azure_devtools.scenario_tests.utilities import trim_kwargs_from_test_function
 from azure.core.credentials import AccessToken
 from testcase import TextAnalyticsTest
 
@@ -31,6 +32,7 @@ class AsyncTextAnalyticsTest(TextAnalyticsTest):
 
         @functools.wraps(test_fn)
         def run(test_class_instance, *args, **kwargs):
+            trim_kwargs_from_test_function(test_fn, kwargs)
             loop = asyncio.get_event_loop()
             return loop.run_until_complete(test_fn(test_class_instance, **kwargs))
 
