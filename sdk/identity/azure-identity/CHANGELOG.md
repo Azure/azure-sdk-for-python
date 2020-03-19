@@ -5,7 +5,7 @@
 raising an error when none is passed. Although `get_token()` may sometimes
 have succeeded in prior versions, it couldn't do so consistently because its
 behavior was undefined, and dependened on the credential's type and internal
-state. ([#10366](https://github.com/Azure/azure-sdk-for-python/pull/10366))
+state. ([#10243](https://github.com/Azure/azure-sdk-for-python/pull/10243))
 
 
 ## 1.4.0b1 (2020-03-10)
