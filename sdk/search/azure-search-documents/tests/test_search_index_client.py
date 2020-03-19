@@ -43,7 +43,6 @@ CRUD_METHOD_MAP = dict(
     zip(CRUD_METHOD_NAMES, ["upload", "delete", "merge", "mergeOrUpload"])
 )
 
-ENDPOINT = "https://"
 
 class Test_odata(object):
     def test_const(self):
