@@ -12,7 +12,7 @@ from ..._version import SDK_MONIKER
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
-    from typing import Any, Union
+    from typing import Any, List, Union
     from ... import SearchApiKeyCredential
 
 
@@ -50,6 +50,57 @@ class SearchServiceClient(HeadersMixin):
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = await self._client.get_service_statistics(**kwargs)
         return result.as_dict()
+
+    ### Index Operations
+
+    @distributed_trace_async
+    async def list_indexes(self, **kwargs):
+        # type: (**Any) -> List[dict]
+        """List the indexes in an Azure Search service.
+
+        """
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        result = await self._client.indexes.list(**kwargs)
+        return result.as_dict()["indexes"]
+
+    @distributed_trace_async
+    async def get_index(self, index_name, **kwargs):
+        # type: (str, **Any) -> dict
+        """
+
+        :param index_name: The name of the index to retrieve.
+        :type index_name: str
+
+        """
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        result = await self._client.indexes.get(index_name, **kwargs)
+        return result.as_dict()
+
+    @distributed_trace_async
+    async def get_index_statistics(self, index_name, **kwargs):
+        # type: (str, **Any) -> dict
+        """Returns statistics for the given index, including a document count
+        and storage usage.
+
+        :param index_name: The name of the index to retrieve.
+        :type index_name: str
+
+        """
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        result = await self._client.indexes.get_statistics(index_name, **kwargs)
+        return result.as_dict()
+
+    @distributed_trace_async
+    async def delete_index(self, index_name, **kwargs):
+        # type: (str, **Any) -> None
+        """Deletes a search index and all the documents it contains.
+
+        :param index_name: The name of the index to retrieve.
+        :type index_name: str
+
+        """
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        await self._client.indexes.delete(index_name, **kwargs)
 
     async def close(self):
         # type: () -> None

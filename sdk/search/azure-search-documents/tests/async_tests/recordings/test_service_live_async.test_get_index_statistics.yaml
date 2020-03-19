@@ -1,0 +1,34 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json;odata.metadata=minimal
+      User-Agent:
+      - azsdk-python-search-documents/1.0.0b2 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
+      api-key:
+      - 231E770EE22B9F63996692BC0B230733
+    method: GET
+    uri: https://searchfabb144b.search.windows.net/indexes('drgqefsg')/search.stats?api-version=2019-05-06-Preview
+  response:
+    body:
+      string: '{"@odata.context":"https://searchfabb144b.search.windows.net/$metadata#Microsoft.Azure.Search.V2019_05_06_Preview.IndexStatistics","documentCount":0,"storageSize":0}'
+    headers:
+      cache-control: no-cache
+      content-encoding: gzip
+      content-length: '263'
+      content-type: application/json; odata.metadata=minimal
+      date: Tue, 24 Mar 2020 22:49:49 GMT
+      elapsed-time: '47'
+      expires: '-1'
+      odata-version: '4.0'
+      pragma: no-cache
+      preference-applied: odata.include-annotations="*"
+      request-id: c47acd04-6e21-11ea-833a-8c8590507855
+      strict-transport-security: max-age=15724800; includeSubDomains
+      vary: Accept-Encoding
+    status:
+      code: 200
+      message: OK
+    url: https://searchfabb144b.search.windows.net/indexes('drgqefsg')/search.stats?api-version=2019-05-06-Preview
+version: 1

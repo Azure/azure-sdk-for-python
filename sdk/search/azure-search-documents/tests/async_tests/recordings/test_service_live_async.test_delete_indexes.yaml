@@ -1,0 +1,60 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json;odata.metadata=minimal
+      User-Agent:
+      - azsdk-python-search-documents/1.0.0b2 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
+      api-key:
+      - 69AC69D7771D43E85C056A1738272D0A
+    method: DELETE
+    uri: https://search86db11ac.search.windows.net/indexes('drgqefsg')?api-version=2019-05-06-Preview
+  response:
+    body:
+      string: ''
+    headers:
+      cache-control: no-cache
+      date: Tue, 24 Mar 2020 22:07:54 GMT
+      elapsed-time: '981'
+      expires: '-1'
+      pragma: no-cache
+      request-id: e8822b62-6e1b-11ea-9972-8c8590507855
+      strict-transport-security: max-age=15724800; includeSubDomains
+    status:
+      code: 204
+      message: No Content
+    url: https://search86db11ac.search.windows.net/indexes('drgqefsg')?api-version=2019-05-06-Preview
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json;odata.metadata=minimal
+      User-Agent:
+      - azsdk-python-search-documents/1.0.0b2 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
+      api-key:
+      - 69AC69D7771D43E85C056A1738272D0A
+    method: GET
+    uri: https://search86db11ac.search.windows.net/indexes?api-version=2019-05-06-Preview
+  response:
+    body:
+      string: '{"@odata.context":"https://search86db11ac.search.windows.net/$metadata#indexes","value":[]}'
+    headers:
+      cache-control: no-cache
+      content-encoding: gzip
+      content-length: '199'
+      content-type: application/json; odata.metadata=minimal
+      date: Tue, 24 Mar 2020 22:07:59 GMT
+      elapsed-time: '35'
+      expires: '-1'
+      odata-version: '4.0'
+      pragma: no-cache
+      preference-applied: odata.include-annotations="*"
+      request-id: ec25fb90-6e1b-11ea-9972-8c8590507855
+      strict-transport-security: max-age=15724800; includeSubDomains
+      vary: Accept-Encoding
+    status:
+      code: 200
+      message: OK
+    url: https://search86db11ac.search.windows.net/indexes?api-version=2019-05-06-Preview
+version: 1
