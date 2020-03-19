@@ -32,6 +32,13 @@ class SearchIndexClient(object):
     :param credential: A credential to authorize search client requests
     :type credential: SearchApiKeyCredential
 
+    .. admonition:: Example:
+        .. literalinclude:: ../samples/async_samples/sample_authentication_async.py
+            :start-after: [START create_search_client_with_key_async]
+            :end-before: [END create_search_client_with_key_async]
+            :language: python
+            :dedent: 4
+            :caption: Creating the SearchIndexClient with an API key.
     """
 
     def __init__(self, endpoint, index_name, credential, **kwargs):
