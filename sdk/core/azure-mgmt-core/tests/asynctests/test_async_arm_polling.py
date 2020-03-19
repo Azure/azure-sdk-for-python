@@ -45,13 +45,14 @@ from azure.core import AsyncPipelineClient
 from azure.core.pipeline import PipelineResponse, AsyncPipeline
 from azure.core.pipeline.transport import AsyncioRequestsTransportResponse, AsyncHttpTransport
 
+from azure.core.polling.base_polling import (
+    LongRunningOperation,
+    BadStatus,
+)
 from azure.mgmt.core.polling.async_arm_polling import (
     AsyncARMPolling,
 )
-from azure.mgmt.core.polling.arm_polling import (
-    LongRunningOperation,
-    BadStatus
-)
+
 
 class SimpleResource:
     """An implementation of Python 3 SimpleNamespace.

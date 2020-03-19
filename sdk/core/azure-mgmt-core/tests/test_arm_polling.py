@@ -46,10 +46,12 @@ from azure.core import PipelineClient
 from azure.core.pipeline import PipelineResponse, Pipeline
 from azure.core.pipeline.transport import RequestsTransportResponse, HttpTransport
 
-from azure.mgmt.core.polling.arm_polling import (
+from azure.core.polling.base_polling import (
     LongRunningOperation,
+    BadStatus,
+)
+from azure.mgmt.core.polling.arm_polling import (
     ARMPolling,
-    BadStatus
 )
 
 class SimpleResource:
