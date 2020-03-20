@@ -1,5 +1,15 @@
 # Release History
 
+## 4.2.0b2 (Unreleased)
+
+
+## 4.2.0b1 (2020-03-10)
+- Support for Key Vault API version 7.1-preview
+([#10124](https://github.com/Azure/azure-sdk-for-python/pull/10124))
+  - Added `import_key` to `KeyOperation`
+  - Added `recoverable_days` to `CertificateProperties`
+  - Added `ApiVersion` enum identifying Key Vault versions supported by this package
+
 ## 4.1.0 (2020-03-10)
 - `KeyClient` instances have a `close` method which closes opened sockets. Used
 as a context manager, a `KeyClient` closes opened sockets on exit.

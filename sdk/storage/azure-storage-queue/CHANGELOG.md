@@ -1,6 +1,6 @@
 # Release History
 
-## 12.1.1 (Unreleased)
+## 12.1.1 (2020-03-10)
 
 **Fixes**
 - Responses are always decoded as UTF8

@@ -172,7 +172,7 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
         text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
         with self.assertRaises(HttpResponseError):
             response = await text_analytics.detect_language(
-                inputs=["Microsoft was founded by Bill Gates."],
+                documents=["Microsoft was founded by Bill Gates."],
                 model_version="old"
             )
 
@@ -193,7 +193,7 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
         docs = [
             {"id": "1", "text": "Microsoft was founded by Bill Gates and Paul Allen."},
             TextDocumentInput(id="2", text="I did not like the hotel we stayed at. It was too expensive."),
-            u"You cannot mix string input with the above inputs"
+            u"You cannot mix string input with the above documents"
         ]
         with self.assertRaises(TypeError):
             response = await text_analytics.detect_language(docs)
@@ -491,8 +491,8 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
         try:
             result = await text_analytics.detect_language(docs, model_version="bad")
         except HttpResponseError as err:
-            self.assertEqual(err.error_code, "InvalidRequest")
-            self.assertIsNotNone(err.message)
+            self.assertEqual(err.error.code, "InvalidRequest")
+            self.assertIsNotNone(err.error.message)
 
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
@@ -519,8 +519,8 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
         try:
             result = await text_analytics.detect_language(docs)
         except HttpResponseError as err:
-            self.assertEqual(err.error_code, "MissingInputRecords")
-            self.assertIsNotNone(err.message)
+            self.assertEqual(err.error.code, "MissingInputRecords")
+            self.assertIsNotNone(err.error.message)
 
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
@@ -532,8 +532,8 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
         try:
             result = await text_analytics.detect_language(docs)
         except HttpResponseError as err:
-            self.assertEqual(err.error_code, "InvalidDocument")
-            self.assertIsNotNone(err.message)
+            self.assertEqual(err.error.code, "InvalidDocument")
+            self.assertIsNotNone(err.error.message)
 
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
@@ -545,8 +545,8 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
         try:
             response = await text_analytics.detect_language(docs)
         except HttpResponseError as err:
-            self.assertEqual(err.error_code, "InvalidDocumentBatch")
-            self.assertIsNotNone(err.message)
+            self.assertEqual(err.error.code, "InvalidDocumentBatch")
+            self.assertIsNotNone(err.error.message)
 
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
@@ -579,10 +579,10 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
         # test DetectLanguageInput
         result2 = await text_analytics.detect_language(documents2, raw_response_hook=callback)
         # test per-operation
-        result3 = await text_analytics.detect_language(inputs=["this is written in english"], country_hint="none", raw_response_hook=callback)
+        result3 = await text_analytics.detect_language(documents=["this is written in english"], country_hint="none", raw_response_hook=callback)
         # test client default
         new_client = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key), default_country_hint="none")
-        result4 = await new_client.detect_language(inputs=["this is written in english"], raw_response_hook=callback)
+        result4 = await new_client.detect_language(documents=["this is written in english"], raw_response_hook=callback)
 
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
@@ -596,7 +596,7 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
             self.assertIsNotNone(response.statistics)
 
         res = await text_analytics.detect_language(
-            inputs=["this is written in english"],
+            documents=["this is written in english"],
             model_version="latest",
             show_stats=True,
             country_hint="ES",

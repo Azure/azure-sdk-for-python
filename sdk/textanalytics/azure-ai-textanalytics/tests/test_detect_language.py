@@ -149,7 +149,7 @@ class TestDetectLanguage(TextAnalyticsTest):
         text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
         with self.assertRaises(HttpResponseError):
             response = text_analytics.detect_language(
-                inputs=["Microsoft was founded by Bill Gates."],
+                documents=["Microsoft was founded by Bill Gates."],
                 model_version="old"
             )
 
@@ -450,8 +450,8 @@ class TestDetectLanguage(TextAnalyticsTest):
         try:
             result = text_analytics.detect_language(docs, model_version="bad")
         except HttpResponseError as err:
-            self.assertEqual(err.error_code, "InvalidRequest")
-            self.assertIsNotNone(err.message)
+            self.assertEqual(err.error.code, "InvalidRequest")
+            self.assertIsNotNone(err.error.message)
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_document_errors(self, resource_group, location, text_analytics_account, text_analytics_account_key):
@@ -476,8 +476,8 @@ class TestDetectLanguage(TextAnalyticsTest):
         try:
             result = text_analytics.detect_language(docs)
         except HttpResponseError as err:
-            self.assertEqual(err.error_code, "MissingInputRecords")
-            self.assertIsNotNone(err.message)
+            self.assertEqual(err.error.code, "MissingInputRecords")
+            self.assertIsNotNone(err.error.message)
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_duplicate_ids_error(self, resource_group, location, text_analytics_account, text_analytics_account_key):
@@ -489,8 +489,8 @@ class TestDetectLanguage(TextAnalyticsTest):
         try:
             result = text_analytics.detect_language(docs)
         except HttpResponseError as err:
-            self.assertEqual(err.error_code, "InvalidDocument")
-            self.assertIsNotNone(err.message)
+            self.assertEqual(err.error.code, "InvalidDocument")
+            self.assertIsNotNone(err.error.message)
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_batch_size_over_limit_error(self, resource_group, location, text_analytics_account, text_analytics_account_key):
@@ -501,8 +501,8 @@ class TestDetectLanguage(TextAnalyticsTest):
         try:
             response = text_analytics.detect_language(docs)
         except HttpResponseError as err:
-            self.assertEqual(err.error_code, "InvalidDocumentBatch")
-            self.assertIsNotNone(err.message)
+            self.assertEqual(err.error.code, "InvalidDocumentBatch")
+            self.assertIsNotNone(err.error.message)
 
     @GlobalTextAnalyticsAccountPreparer()
     @pytest.mark.skip(reason="Service bug returns invalidDocument here. Unskip after v3.0-preview.2")
@@ -533,10 +533,10 @@ class TestDetectLanguage(TextAnalyticsTest):
         # test DetectLanguageInput
         result2 = text_analytics.detect_language(documents2, raw_response_hook=callback)
         # test per-operation
-        result3 = text_analytics.detect_language(inputs=["this is written in english"], country_hint="none", raw_response_hook=callback)
+        result3 = text_analytics.detect_language(documents=["this is written in english"], country_hint="none", raw_response_hook=callback)
         # test client default
         new_client = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key), default_country_hint="none")
-        result4 = new_client.detect_language(inputs=["this is written in english"], raw_response_hook=callback)
+        result4 = new_client.detect_language(documents=["this is written in english"], raw_response_hook=callback)
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_country_hint_kwarg(self, resource_group, location, text_analytics_account, text_analytics_account_key):
@@ -549,7 +549,7 @@ class TestDetectLanguage(TextAnalyticsTest):
             self.assertIsNotNone(response.statistics)
 
         res = text_analytics.detect_language(
-            inputs=["this is written in english"],
+            documents=["this is written in english"],
             model_version="latest",
             show_stats=True,
             country_hint="ES",

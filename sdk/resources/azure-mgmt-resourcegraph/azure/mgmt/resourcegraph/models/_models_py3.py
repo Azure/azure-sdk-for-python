@@ -114,6 +114,30 @@ class ErrorDetails(Model):
         self.message = message
 
 
+class ErrorFieldContract(Model):
+    """Error Field contract.
+
+    :param code: Property level error code.
+    :type code: str
+    :param message: Human-readable representation of property-level error.
+    :type message: str
+    :param target: Property name.
+    :type target: str
+    """
+
+    _attribute_map = {
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+        'target': {'key': 'target', 'type': 'str'},
+    }
+
+    def __init__(self, *, code: str=None, message: str=None, target: str=None, **kwargs) -> None:
+        super(ErrorFieldContract, self).__init__(**kwargs)
+        self.code = code
+        self.message = message
+        self.target = target
+
+
 class ErrorResponse(Model):
     """Error response.
 
@@ -323,6 +347,181 @@ class FacetResult(Facet):
         self.count = count
         self.data = data
         self.result_type = 'FacetResult'
+
+
+class GraphQueryError(Model):
+    """Error message body that will indicate why the operation failed.
+
+    :param code: Service-defined error code. This code serves as a sub-status
+     for the HTTP error code specified in the response.
+    :type code: str
+    :param message: Human-readable representation of the error.
+    :type message: str
+    :param details: The list of invalid fields send in request, in case of
+     validation error.
+    :type details: list[~azure.mgmt.resourcegraph.models.ErrorFieldContract]
+    """
+
+    _attribute_map = {
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+        'details': {'key': 'details', 'type': '[ErrorFieldContract]'},
+    }
+
+    def __init__(self, *, code: str=None, message: str=None, details=None, **kwargs) -> None:
+        super(GraphQueryError, self).__init__(**kwargs)
+        self.code = code
+        self.message = message
+        self.details = details
+
+
+class GraphQueryErrorException(HttpOperationError):
+    """Server responsed with exception of type: 'GraphQueryError'.
+
+    :param deserialize: A deserializer
+    :param response: Server response to be deserialized.
+    """
+
+    def __init__(self, deserialize, response, *args):
+
+        super(GraphQueryErrorException, self).__init__(deserialize, response, 'GraphQueryError', *args)
+
+
+class Resource(Model):
+    """An azure resource object.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Azure resource Id
+    :vartype id: str
+    :ivar name: Azure resource name. This is GUID value. The display name
+     should be assigned within properties field.
+    :vartype name: str
+    :ivar type: Azure resource type
+    :vartype type: str
+    :param e_tag: This will be used to handle Optimistic Concurrency. If not
+     present, it will always overwrite the existing resource without checking
+     conflict.
+    :type e_tag: str
+    :param tags: Resource tags
+    :type tags: dict[str, str]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'e_tag': {'key': 'eTag', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+    }
+
+    def __init__(self, *, e_tag: str=None, tags=None, **kwargs) -> None:
+        super(Resource, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+        self.e_tag = e_tag
+        self.tags = tags
+
+
+class GraphQueryResource(Resource):
+    """Graph Query entity definition.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Azure resource Id
+    :vartype id: str
+    :ivar name: Azure resource name. This is GUID value. The display name
+     should be assigned within properties field.
+    :vartype name: str
+    :ivar type: Azure resource type
+    :vartype type: str
+    :param e_tag: This will be used to handle Optimistic Concurrency. If not
+     present, it will always overwrite the existing resource without checking
+     conflict.
+    :type e_tag: str
+    :param tags: Resource tags
+    :type tags: dict[str, str]
+    :ivar time_modified: Date and time in UTC of the last modification that
+     was made to this graph query definition.
+    :vartype time_modified: datetime
+    :param description: The description of a graph query.
+    :type description: str
+    :param query: Required. KQL query that will be graph.
+    :type query: str
+    :ivar result_kind: Enum indicating a type of graph query. Possible values
+     include: 'basic'
+    :vartype result_kind: str or ~azure.mgmt.resourcegraph.models.ResultKind
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'time_modified': {'readonly': True},
+        'query': {'required': True},
+        'result_kind': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'e_tag': {'key': 'eTag', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'time_modified': {'key': 'properties.timeModified', 'type': 'iso-8601'},
+        'description': {'key': 'properties.description', 'type': 'str'},
+        'query': {'key': 'properties.query', 'type': 'str'},
+        'result_kind': {'key': 'properties.resultKind', 'type': 'str'},
+    }
+
+    def __init__(self, *, query: str, e_tag: str=None, tags=None, description: str=None, **kwargs) -> None:
+        super(GraphQueryResource, self).__init__(e_tag=e_tag, tags=tags, **kwargs)
+        self.time_modified = None
+        self.description = description
+        self.query = query
+        self.result_kind = None
+
+
+class GraphQueryUpdateParameters(Model):
+    """The parameters that can be provided when updating workbook properties
+    properties.
+
+    :param tags: Resource tags
+    :type tags: dict[str, str]
+    :param e_tag: This will be used to handle Optimistic Concurrency. If not
+     present, it will always overwrite the existing resource without checking
+     conflict.
+    :type e_tag: str
+    :param description: The description of a graph query.
+    :type description: str
+    :param query: KQL query that will be graph.
+    :type query: str
+    """
+
+    _attribute_map = {
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'e_tag': {'key': 'eTag', 'type': 'str'},
+        'description': {'key': 'properties.description', 'type': 'str'},
+        'query': {'key': 'properties.query', 'type': 'str'},
+    }
+
+    def __init__(self, *, tags=None, e_tag: str=None, description: str=None, query: str=None, **kwargs) -> None:
+        super(GraphQueryUpdateParameters, self).__init__(**kwargs)
+        self.tags = tags
+        self.e_tag = e_tag
+        self.description = description
+        self.query = query
 
 
 class Operation(Model):

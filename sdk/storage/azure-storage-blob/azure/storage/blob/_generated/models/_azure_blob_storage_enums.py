@@ -167,6 +167,7 @@ class StorageErrorCode(str, Enum):
     lease_not_present_with_container_operation = "LeaseNotPresentWithContainerOperation"
     lease_not_present_with_lease_operation = "LeaseNotPresentWithLeaseOperation"
     max_blob_size_condition_not_met = "MaxBlobSizeConditionNotMet"
+    no_authentication_information = "NoAuthenticationInformation"
     no_pending_copy_operation = "NoPendingCopyOperation"
     operation_not_allowed_on_incremental_copy_blob = "OperationNotAllowedOnIncrementalCopyBlob"
     pending_copy_operation = "PendingCopyOperation"

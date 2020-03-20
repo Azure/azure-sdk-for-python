@@ -1,12 +1,14 @@
 # Release History
 
-## 12.0.0 (Unreleased)
+## 12.0.0 (2020-03-10)
 **New Feature**
-- Added `get_root_directory_client` sync and async API.
 - Added `set_file_system_access_policy` and `get_file_system_access_policy` APIs on FileSystemClient
 
 **Breaking changes**
+- For `generate_file_system_sas`, `generate_directory_sas`, `generate_file_sas` APIs, `account_key` and `user_delegation_key` are merged into one parameter called `credential`.
 - Rename `rename_destination` to `new_name` for rename_directory and rename_file APIs
+- Rename `read_file` to `download_file`. The return type is changed to `StorageStreamDownloader` with which user can do `readinto()` and `readall()` 
+- `metadata` is a required parameter for FileSystemClient, DataLakeFileClient and DataLakeDirectoryClient  `set_*_metadata` APIs. 
 
 **Notes**
 - The `StorageUserAgentPolicy` is now replaced with the `UserAgentPolicy` from azure-core. With this, the custom user agents are now added as a prefix instead of being appended.

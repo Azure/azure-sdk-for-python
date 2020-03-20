@@ -12,6 +12,9 @@
 try:
     from ._models_py3 import ActiveDirectoryObject
     from ._models_py3 import Actor
+    from ._models_py3 import AgentPool
+    from ._models_py3 import AgentPoolQueueStatus
+    from ._models_py3 import AgentPoolUpdateParameters
     from ._models_py3 import AgentProperties
     from ._models_py3 import Argument
     from ._models_py3 import AuthInfo
@@ -125,6 +128,9 @@ try:
 except (SyntaxError, ImportError):
     from ._models import ActiveDirectoryObject
     from ._models import Actor
+    from ._models import AgentPool
+    from ._models import AgentPoolQueueStatus
+    from ._models import AgentPoolUpdateParameters
     from ._models import AgentProperties
     from ._models import Argument
     from ._models import AuthInfo
@@ -235,6 +241,7 @@ except (SyntaxError, ImportError):
     from ._models import Webhook
     from ._models import WebhookCreateParameters
     from ._models import WebhookUpdateParameters
+from ._paged_models import AgentPoolPaged
 from ._paged_models import EventPaged
 from ._paged_models import OperationDefinitionPaged
 from ._paged_models import PrivateEndpointConnectionPaged
@@ -264,9 +271,9 @@ from ._container_registry_management_client_enums import (
     RegistryUsageUnit,
     WebhookStatus,
     WebhookAction,
+    OS,
     RunStatus,
     RunType,
-    OS,
     Architecture,
     Variant,
     TaskStatus,
@@ -287,6 +294,9 @@ from ._container_registry_management_client_enums import (
 __all__ = [
     'ActiveDirectoryObject',
     'Actor',
+    'AgentPool',
+    'AgentPoolQueueStatus',
+    'AgentPoolUpdateParameters',
     'AgentProperties',
     'Argument',
     'AuthInfo',
@@ -404,6 +414,7 @@ __all__ = [
     'ReplicationPaged',
     'WebhookPaged',
     'EventPaged',
+    'AgentPoolPaged',
     'RunPaged',
     'TaskRunPaged',
     'TaskPaged',
@@ -425,9 +436,9 @@ __all__ = [
     'RegistryUsageUnit',
     'WebhookStatus',
     'WebhookAction',
+    'OS',
     'RunStatus',
     'RunType',
-    'OS',
     'Architecture',
     'Variant',
     'TaskStatus',

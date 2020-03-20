@@ -1,5 +1,118 @@
 # Release History
 
+## 0.10.0 (2020-03-10)
+
+**Features**
+
+- Model SqlSource has a new parameter isolation_level
+- Model SqlSource has a new parameter additional_columns
+- Model SapHanaSource has a new parameter additional_columns
+- Model SalesforceMarketingCloudSource has a new parameter additional_columns
+- Model Db2Source has a new parameter additional_columns
+- Model DynamicsAXSource has a new parameter additional_columns
+- Model MicrosoftAccessSource has a new parameter additional_columns
+- Model AzureMySqlSource has a new parameter additional_columns
+- Model CouchbaseSource has a new parameter additional_columns
+- Model CassandraSource has a new parameter additional_columns
+- Model NetezzaSource has a new parameter additional_columns
+- Model CopyActivity has a new parameter validate_data_consistency
+- Model CopyActivity has a new parameter log_storage_settings
+- Model CopyActivity has a new parameter skip_error_file
+- Model JsonSource has a new parameter additional_columns
+- Model AmazonRedshiftSource has a new parameter additional_columns
+- Model SapEccSource has a new parameter additional_columns
+- Model TabularSource has a new parameter additional_columns
+- Model AvroSource has a new parameter additional_columns
+- Model DocumentDbCollectionSource has a new parameter additional_columns
+- Model SalesforceLinkedService has a new parameter api_version
+- Model SybaseSource has a new parameter additional_columns
+- Model AzureFileStorageReadSettings has a new parameter file_list_path
+- Model SapBwSource has a new parameter additional_columns
+- Model MariaDBSource has a new parameter additional_columns
+- Model CosmosDbMongoDbApiSource has a new parameter additional_columns
+- Model SqlDWSource has a new parameter additional_columns
+- Model ConcurSource has a new parameter additional_columns
+- Model MongoDbSource has a new parameter additional_columns
+- Model AzureSqlSource has a new parameter additional_columns
+- Model DynamicsCrmSource has a new parameter additional_columns
+- Model JiraSource has a new parameter additional_columns
+- Model SftpReadSettings has a new parameter file_list_path
+- Model HiveSource has a new parameter additional_columns
+- Model OdbcSource has a new parameter additional_columns
+- Model SalesforceServiceCloudLinkedService has a new parameter api_version
+- Model AzureBlobStorageReadSettings has a new parameter file_list_path
+- Model AzureTableSource has a new parameter additional_columns
+- Model PaypalSource has a new parameter additional_columns
+- Model RelationalSource has a new parameter additional_columns
+- Model HBaseSource has a new parameter additional_columns
+- Model GoogleCloudStorageReadSettings has a new parameter file_list_path
+- Model HubspotSource has a new parameter additional_columns
+- Model ResponsysSource has a new parameter additional_columns
+- Model CommonDataServiceForAppsSource has a new parameter additional_columns
+- Model WebSource has a new parameter additional_columns
+- Model Db2LinkedService has a new parameter connection_string
+- Model QuickBooksSource has a new parameter additional_columns
+- Model FtpReadSettings has a new parameter file_list_path
+- Model AzureBlobFSReadSettings has a new parameter file_list_path
+- Model SparkSource has a new parameter additional_columns
+- Model MagentoSource has a new parameter additional_columns
+- Model DrillSource has a new parameter additional_columns
+- Model AzureMariaDBSource has a new parameter additional_columns
+- Model FileServerReadSettings has a new parameter file_list_path
+- Model TeradataSource has a new parameter additional_columns
+- Model MarketoSource has a new parameter additional_columns
+- Model CosmosDbSqlApiSource has a new parameter additional_columns
+- Model AzureDataLakeStoreReadSettings has a new parameter file_list_path
+- Model OracleSource has a new parameter additional_columns
+- Model VerticaSource has a new parameter additional_columns
+- Model PhoenixSource has a new parameter additional_columns
+- Model ParquetSource has a new parameter additional_columns
+- Model GoogleAdWordsSource has a new parameter additional_columns
+- Model SapTableSource has a new parameter additional_columns
+- Model FileSystemSource has a new parameter additional_columns
+- Model AzureDataLakeStoreWriteSettings has a new parameter expiry_date_time
+- Model PrestoSource has a new parameter additional_columns
+- Model MongoDbV2Source has a new parameter additional_columns
+- Model AzurePostgreSqlSource has a new parameter additional_columns
+- Model PostgreSqlSource has a new parameter additional_columns
+- Model SquareSource has a new parameter additional_columns
+- Model DelimitedTextSource has a new parameter additional_columns
+- Model SftpWriteSettings has a new parameter use_temp_file_rename
+- Model ZohoSource has a new parameter additional_columns
+- Model OracleServiceCloudSource has a new parameter additional_columns
+- Model HdfsReadSettings has a new parameter file_list_path
+- Model DynamicsSource has a new parameter additional_columns
+- Model GoogleBigQuerySource has a new parameter additional_columns
+- Model ShopifySource has a new parameter additional_columns
+- Model OrcSource has a new parameter additional_columns
+- Model AmazonS3ReadSettings has a new parameter file_list_path
+- Model EloquaSource has a new parameter additional_columns
+- Model ServiceNowSource has a new parameter additional_columns
+- Model SalesforceSource has a new parameter additional_columns
+- Model ImpalaSource has a new parameter additional_columns
+- Model RestSource has a new parameter additional_columns
+- Model SqlMISource has a new parameter additional_columns
+- Model SapCloudForCustomerSource has a new parameter additional_columns
+- Model GreenplumSource has a new parameter additional_columns
+- Model SqlServerSource has a new parameter additional_columns
+- Model AzureDataExplorerSource has a new parameter additional_columns
+- Model SalesforceServiceCloudSource has a new parameter additional_columns
+- Model AmazonMWSSource has a new parameter additional_columns
+- Model ODataSource has a new parameter additional_columns
+- Model SapOpenHubSource has a new parameter additional_columns
+- Model InformixSource has a new parameter additional_columns
+- Model MySqlSource has a new parameter additional_columns
+- Model XeroSource has a new parameter additional_columns
+- Added operation TriggersOperations.query_by_factory
+
+**Breaking changes**
+
+- Parameter parent_trigger of model RerunTumblingWindowTrigger is now required
+- Operation PipelinesOperations.create_run has a new signature
+- Model RerunTumblingWindowTrigger no longer has parameter max_concurrency
+- Model RerunTumblingWindowTrigger has a new required parameter rerun_concurrency
+- Removed operation group RerunTriggersOperations
+
 ## 0.9.0 (2020-02-07)
 
 **Features**

@@ -333,6 +333,24 @@ class AppendBlobChunkUploader(_ChunkUploader):  # pylint: disable=abstract-metho
             )
 
 
+class DataLakeFileChunkUploader(_ChunkUploader):  # pylint: disable=abstract-method
+
+    def _upload_chunk(self, chunk_offset, chunk_data):
+        # avoid uploading the empty pages
+        self.response_headers = self.service.append_data(
+            body=chunk_data,
+            position=chunk_offset,
+            content_length=len(chunk_data),
+            cls=return_response_headers,
+            data_stream_total=self.total_size,
+            upload_stream_current=self.progress_total,
+            **self.request_options
+        )
+
+        if not self.parallel and self.request_options.get('modified_access_conditions'):
+            self.request_options['modified_access_conditions'].if_match = self.response_headers['etag']
+
+
 class FileChunkUploader(_ChunkUploader):  # pylint: disable=abstract-method
 
     def _upload_chunk(self, chunk_offset, chunk_data):

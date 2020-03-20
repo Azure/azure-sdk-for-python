@@ -65,7 +65,7 @@ class TestRecognizePIIEntities(AsyncTextAnalyticsTest):
                 self.assertIsNotNone(entity.category)
                 self.assertIsNotNone(entity.grapheme_offset)
                 self.assertIsNotNone(entity.grapheme_length)
-                self.assertIsNotNone(entity.score)
+                self.assertIsNotNone(entity.confidence_score)
 
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
@@ -93,7 +93,7 @@ class TestRecognizePIIEntities(AsyncTextAnalyticsTest):
                 self.assertIsNotNone(entity.category)
                 self.assertIsNotNone(entity.grapheme_offset)
                 self.assertIsNotNone(entity.grapheme_length)
-                self.assertIsNotNone(entity.score)
+                self.assertIsNotNone(entity.confidence_score)
 
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
@@ -175,7 +175,7 @@ class TestRecognizePIIEntities(AsyncTextAnalyticsTest):
         text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
         with self.assertRaises(HttpResponseError):
             response = await text_analytics.recognize_pii_entities(
-                inputs=["Microsoft was founded by Bill Gates."],
+                documents=["Microsoft was founded by Bill Gates."],
                 model_version="old"
             )
 
@@ -478,8 +478,8 @@ class TestRecognizePIIEntities(AsyncTextAnalyticsTest):
         try:
             result = await text_analytics.recognize_pii_entities(docs, model_version="bad")
         except HttpResponseError as err:
-            self.assertEqual(err.error_code, "InvalidRequest")
-            self.assertIsNotNone(err.message)
+            self.assertEqual(err.error.code, "InvalidRequest")
+            self.assertIsNotNone(err.error.message)
 
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
@@ -509,8 +509,8 @@ class TestRecognizePIIEntities(AsyncTextAnalyticsTest):
         try:
             result = await text_analytics.recognize_pii_entities(docs)
         except HttpResponseError as err:
-            self.assertEqual(err.error_code, "MissingInputRecords")
-            self.assertIsNotNone(err.message)
+            self.assertEqual(err.error.code, "MissingInputRecords")
+            self.assertIsNotNone(err.error.message)
 
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
@@ -522,8 +522,8 @@ class TestRecognizePIIEntities(AsyncTextAnalyticsTest):
         try:
             result = await text_analytics.recognize_pii_entities(docs)
         except HttpResponseError as err:
-            self.assertEqual(err.error_code, "InvalidDocument")
-            self.assertIsNotNone(err.message)
+            self.assertEqual(err.error.code, "InvalidDocument")
+            self.assertIsNotNone(err.error.message)
 
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
@@ -534,8 +534,8 @@ class TestRecognizePIIEntities(AsyncTextAnalyticsTest):
         try:
             response = await text_analytics.recognize_pii_entities(docs)
         except HttpResponseError as err:
-            self.assertEqual(err.error_code, "InvalidDocumentBatch")
-            self.assertIsNotNone(err.message)
+            self.assertEqual(err.error.code, "InvalidDocumentBatch")
+            self.assertIsNotNone(err.error.message)
 
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
@@ -549,7 +549,7 @@ class TestRecognizePIIEntities(AsyncTextAnalyticsTest):
             self.assertIsNotNone(response.statistics)
 
         res = await text_analytics.recognize_pii_entities(
-            inputs=["Bill Gates is the CEO of Microsoft."],
+            documents=["Bill Gates is the CEO of Microsoft."],
             model_version="latest",
             show_stats=True,
             language="en",
