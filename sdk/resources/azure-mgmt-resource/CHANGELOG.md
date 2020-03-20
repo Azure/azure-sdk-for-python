@@ -1,6 +1,7 @@
 # Release History
 
 ## 9.0.0 (2020-03-14)
+
 **Features**
 
 - Model Location has a new parameter metadata
@@ -42,7 +43,6 @@
 - Removed operation TagsOperations.resource_update
 - Removed operation TagsOperations.resource_create
 - Model TenantIdDescription has a new signature
-
 
 ## 8.0.1 (2020-02-04)
 
