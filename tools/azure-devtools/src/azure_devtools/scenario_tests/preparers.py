@@ -139,7 +139,7 @@ You must specify use_cache=True in the preparer decorator""".format(test_class_i
                         loop.run_until_complete(fn(test_class_instance, **trimmed_kwargs))
                     else:
                         fn(test_class_instance, **trimmed_kwargs)
-                except ImportError:
+                except (ImportError, SyntaxError): # ImportError for if asyncio isn't available, syntaxerror on some versions of 2.7
                     fn(test_class_instance, **trimmed_kwargs)
             finally:              
                 # If we use cache we delay deletion for the end.
