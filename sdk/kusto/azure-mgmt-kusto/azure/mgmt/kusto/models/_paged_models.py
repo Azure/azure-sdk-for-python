@@ -64,6 +64,19 @@ class AzureResourceSkuPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(AzureResourceSkuPaged, self).__init__(*args, **kwargs)
+class LanguageExtensionPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`LanguageExtension <azure.mgmt.kusto.models.LanguageExtension>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[LanguageExtension]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(LanguageExtensionPaged, self).__init__(*args, **kwargs)
 class ClusterPrincipalAssignmentPaged(Paged):
     """
     A paging container for iterating over a list of :class:`ClusterPrincipalAssignment <azure.mgmt.kusto.models.ClusterPrincipalAssignment>` object
