@@ -15,14 +15,14 @@ except ImportError:
     from urllib.parse import quote_plus
 
 import uamqp
-from uamqp import (
-    utils,
-)
+from uamqp import utils
 from uamqp.message import MessageProperties
+
 from ._common._configuration import Configuration
 from .exceptions import (
     InvalidHandlerState,
     ServiceBusError,
+    ServiceBusAuthorizationError,
     _create_servicebus_exception
 )
 from ._common.utils import create_properties
@@ -150,8 +150,10 @@ class BaseHandler(object):  # pylint:disable=too-many-instance-attributes
 
         entity_in_kwargs = queue_name or topic_name
         if entity_in_conn_str and entity_in_kwargs and (entity_in_conn_str != entity_in_kwargs):
-            raise ValueError("Entity names do not match, the entity name in connection string is {}; the"
-                             " entity name in parameter is {}.".format(entity_in_conn_str, entity_in_kwargs))
+            raise ServiceBusAuthorizationError(
+                "Entity names do not match, the entity name in connection string is {};"
+                " the entity name in parameter is {}.".format(entity_in_conn_str, entity_in_kwargs)
+            )
 
         kwargs["fully_qualified_namespace"] = host
         kwargs["entity_name"] = entity_in_conn_str or entity_in_kwargs

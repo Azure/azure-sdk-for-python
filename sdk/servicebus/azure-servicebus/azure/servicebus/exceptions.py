@@ -65,7 +65,10 @@ def _create_servicebus_exception(logger, exception):
         logger.info("Message send error (%r)", exception)
         raise exception
 
-    if isinstance(exception, (errors.LinkDetach, errors.ConnectionClose)):
+    if isinstance(exception, errors.AuthenticationException):
+        logger.info("Authentication failed due to exception: (%r).", exception)
+        error = ServiceBusAuthorizationError(str(exception), exception)
+    elif isinstance(exception, (errors.LinkDetach, errors.ConnectionClose)):
         logger.info("Handler detached due to exception: (%r).", exception)
         if exception.condition == constants.ErrorCodes.UnauthorizedAccess:
             error = ServiceBusAuthorizationError(str(exception), exception)
