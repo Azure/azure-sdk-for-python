@@ -21,6 +21,8 @@ from .. import models
 class VaultsOperations(object):
     """VaultsOperations operations.
 
+    You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
+
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -100,7 +102,6 @@ class VaultsOperations(object):
             raise exp
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('Vault', response)
         if response.status_code == 201:
@@ -178,7 +179,6 @@ class VaultsOperations(object):
             raise exp
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('Vault', response)
         if response.status_code == 201:
@@ -237,7 +237,7 @@ class VaultsOperations(object):
         request = self._client.delete(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 204]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
@@ -301,7 +301,6 @@ class VaultsOperations(object):
             raise exp
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('Vault', response)
 
@@ -381,7 +380,6 @@ class VaultsOperations(object):
             raise exp
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('VaultAccessPolicyParameters', response)
         if response.status_code == 201:
@@ -416,8 +414,7 @@ class VaultsOperations(object):
         """
         api_version = "2016-10-01"
 
-        def internal_paging(next_link=None, raw=False):
-
+        def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
                 url = self.list_by_resource_group.metadata['url']
@@ -449,6 +446,11 @@ class VaultsOperations(object):
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
@@ -459,12 +461,10 @@ class VaultsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.VaultPaged(internal_paging, self._deserialize.dependencies)
-
+        header_dict = None
         if raw:
             header_dict = {}
-            client_raw_response = models.VaultPaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
+        deserialized = models.VaultPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
     list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.KeyVault/vaults'}
@@ -488,8 +488,7 @@ class VaultsOperations(object):
         """
         api_version = "2016-10-01"
 
-        def internal_paging(next_link=None, raw=False):
-
+        def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
                 url = self.list_by_subscription.metadata['url']
@@ -520,6 +519,11 @@ class VaultsOperations(object):
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
@@ -530,12 +534,10 @@ class VaultsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.VaultPaged(internal_paging, self._deserialize.dependencies)
-
+        header_dict = None
         if raw:
             header_dict = {}
-            client_raw_response = models.VaultPaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
+        deserialized = models.VaultPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
     list_by_subscription.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.KeyVault/vaults'}
@@ -556,8 +558,7 @@ class VaultsOperations(object):
         """
         api_version = "2016-10-01"
 
-        def internal_paging(next_link=None, raw=False):
-
+        def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
                 url = self.list_deleted.metadata['url']
@@ -586,6 +587,11 @@ class VaultsOperations(object):
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
@@ -596,12 +602,10 @@ class VaultsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.DeletedVaultPaged(internal_paging, self._deserialize.dependencies)
-
+        header_dict = None
         if raw:
             header_dict = {}
-            client_raw_response = models.DeletedVaultPaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
+        deserialized = models.DeletedVaultPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
     list_deleted.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.KeyVault/deletedVaults'}
@@ -659,7 +663,6 @@ class VaultsOperations(object):
             raise exp
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('DeletedVault', response)
 
@@ -771,8 +774,7 @@ class VaultsOperations(object):
         """
         api_version = "2015-11-01"
 
-        def internal_paging(next_link=None, raw=False):
-
+        def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
                 url = self.list.metadata['url']
@@ -804,6 +806,11 @@ class VaultsOperations(object):
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
@@ -814,12 +821,10 @@ class VaultsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.ResourcePaged(internal_paging, self._deserialize.dependencies)
-
+        header_dict = None
         if raw:
             header_dict = {}
-            client_raw_response = models.ResourcePaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
+        deserialized = models.ResourcePaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
     list.metadata = {'url': '/subscriptions/{subscriptionId}/resources'}
@@ -880,7 +885,6 @@ class VaultsOperations(object):
             raise exp
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('CheckNameAvailabilityResult', response)
 
