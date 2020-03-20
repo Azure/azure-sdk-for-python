@@ -74,20 +74,20 @@ class FormRecognizerClient(FormRecognizerClientBase):
             content_type = content_type or "application/json"
         elif content_type is None:
             content_type = get_content_type(form)
-        response = self._client.analyze_receipt_async(
-            file_stream=form,
-            content_type=content_type,
-            include_text_details=include_text_details,
-            cls=get_pipeline_response,
-            **kwargs
-        )
 
-        def callback(raw_response):
+        def callback(raw_response, _, headers):
             analyze_result = self._client._deserialize(AnalyzeOperationResult, raw_response)
             extracted_receipt = prepare_receipt_result(analyze_result, include_text_details)
             return extracted_receipt
 
-        return LROPoller(self._client._client, response, callback, LROBasePolling(timeout=POLLING_INTERVAL, **kwargs))
+        return self._client.begin_analyze_receipt_async(
+            file_stream=form,
+            content_type=content_type,
+            include_text_details=include_text_details,
+            cls=callback,
+            polling=LROBasePolling(timeout=POLLING_INTERVAL, **kwargs),
+            **kwargs
+        )
 
     @distributed_trace
     def begin_extract_layouts(self, form, **kwargs):
@@ -112,16 +112,15 @@ class FormRecognizerClient(FormRecognizerClientBase):
         elif content_type is None:
             content_type = get_content_type(form)
 
-        response = self._client.analyze_layout_async(
-            file_stream=form,
-            content_type=content_type,
-            cls=get_pipeline_response,
-            **kwargs
-        )
-
-        def callback(raw_response):
+        def callback(raw_response, _, headers):
             analyze_result = self._client._deserialize(AnalyzeOperationResult, raw_response)
             extracted_layout = prepare_layout_result(analyze_result, include_elements=True)
             return extracted_layout
 
-        return LROPoller(self._client._client, response, callback, LROBasePolling(timeout=POLLING_INTERVAL, **kwargs))
+        return self._client.begin_analyze_layout_async(
+            file_stream=form,
+            content_type=content_type,
+            cls=callback,
+            polling=LROBasePolling(timeout=POLLING_INTERVAL, **kwargs),
+            **kwargs
+        )

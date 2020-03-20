@@ -167,16 +167,7 @@ class CustomFormClient(FormRecognizerClientBase):
         elif content_type is None:
             content_type = get_content_type(form)
 
-        response = self._client.analyze_with_custom_model(
-            file_stream=form,
-            model_id=model_id,
-            include_text_details=include_text_details,
-            content_type=content_type,
-            cls=get_pipeline_response,
-            **kwargs
-        )
-
-        def callback(raw_response):
+        def callback(raw_response, _, headers):
             extracted_form = self._client._deserialize(AnalyzeOperationResult, raw_response)
             if extracted_form.analyze_result.document_results:
                 raise HttpResponseError("Cannot call begin_extract_forms() with the ID of a model trained with "
@@ -184,7 +175,15 @@ class CustomFormClient(FormRecognizerClientBase):
             form_result = prepare_unlabeled_result(extracted_form, include_text_details)
             return form_result
 
-        return LROPoller(self._client._client, response, callback, LROBasePolling(timeout=POLLING_INTERVAL, **kwargs))
+        return self._client.begin_analyze_with_custom_model(
+            file_stream=form,
+            model_id=model_id,
+            include_text_details=include_text_details,
+            content_type=content_type,
+            cls=callback,
+            polling=LROBasePolling(timeout=POLLING_INTERVAL, **kwargs),
+            **kwargs
+        )
 
     @distributed_trace
     def begin_extract_labeled_forms(self, form, model_id, **kwargs):
@@ -209,16 +208,7 @@ class CustomFormClient(FormRecognizerClientBase):
         elif content_type is None:
             content_type = get_content_type(form)
 
-        response = self._client.analyze_with_custom_model(
-            file_stream=form,
-            model_id=model_id,
-            include_text_details=include_text_details,
-            content_type=content_type,
-            cls=get_pipeline_response,
-            **kwargs
-        )
-
-        def callback(raw_response):
+        def callback(raw_response, _, headers):
             extracted_form = self._client._deserialize(AnalyzeOperationResult, raw_response)
             if not extracted_form.analyze_result.document_results:
                 raise HttpResponseError("Cannot call begin_extract_labeled_forms() with the ID of a model trained "
@@ -226,7 +216,15 @@ class CustomFormClient(FormRecognizerClientBase):
             form_result = prepare_labeled_result(extracted_form, include_text_details)
             return form_result
 
-        return LROPoller(self._client._client, response, callback, LROBasePolling(timeout=POLLING_INTERVAL, **kwargs))
+        return self._client.begin_analyze_with_custom_model(
+            file_stream=form,
+            model_id=model_id,
+            include_text_details=include_text_details,
+            content_type=content_type,
+            cls=callback,
+            polling=LROBasePolling(timeout=POLLING_INTERVAL, **kwargs),
+            **kwargs
+        )
 
     @distributed_trace
     def delete_custom_model(self, model_id, **kwargs):

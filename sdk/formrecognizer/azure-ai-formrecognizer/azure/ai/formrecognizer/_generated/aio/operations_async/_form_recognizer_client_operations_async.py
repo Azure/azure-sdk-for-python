@@ -10,6 +10,7 @@ from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
+from azure.core.polling import AsyncNoPolling, AsyncPollingMethod, async_poller
 
 from ... import models
 
@@ -178,34 +179,18 @@ class FormRecognizerClientOperationsMixin:
 
     delete_custom_model.metadata = {'url': '/custom/models/{modelId}'}
 
-    async def analyze_with_custom_model(
+    async def _analyze_with_custom_model_initial(
         self,
         model_id: str,
         include_text_details: Optional[bool] = False,
         file_stream: Optional[Union[str, "models.SourcePath"]] = None,
         **kwargs
     ) -> None:
-        """Extract key-value pairs, tables, and semantic values from a given document. The input document must be of one of the supported content types - 'application/pdf', 'image/jpeg', 'image/png' or 'image/tiff'. Alternatively, use 'application/json' type to specify the location (Uri or local path) of the document to be analyzed.
-
-        Analyze Form.
-
-        :param model_id: Model identifier.
-        :type model_id: str
-        :param include_text_details: Include text lines and element references in the result.
-        :type include_text_details: bool
-        :param file_stream: .json, .pdf, .jpg, .png or .tiff type file stream.
-        :type file_stream: str, ~azure.ai.formrecognizer.models.SourcePath
-        :keyword str content_type: Media type of the body sent to the API.
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None or the result of cls(response)
-        :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
 
         # Construct URL
-        url = self.analyze_with_custom_model.metadata['url']
+        url = self._analyze_with_custom_model_initial.metadata['url']
         path_format_arguments = {
             'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
             'modelId': self._serialize.url("model_id", model_id, 'str'),
@@ -251,6 +236,56 @@ class FormRecognizerClientOperationsMixin:
         if cls:
           return cls(pipeline_response, None, response_headers)
 
+    _analyze_with_custom_model_initial.metadata = {'url': '/custom/models/{modelId}/analyze'}
+
+    async def analyze_with_custom_model(
+        self,
+        model_id: str,
+        include_text_details: Optional[bool] = False,
+        file_stream: Optional[Union[str, "models.SourcePath"]] = None,
+        **kwargs
+    ) -> None:
+        """Extract key-value pairs, tables, and semantic values from a given document. The input document must be of one of the supported content types - 'application/pdf', 'image/jpeg', 'image/png' or 'image/tiff'. Alternatively, use 'application/json' type to specify the location (Uri or local path) of the document to be analyzed.
+
+        Analyze Form.
+
+        :param model_id: Model identifier.
+        :type model_id: str
+        :param include_text_details: Include text lines and element references in the result.
+        :type include_text_details: bool
+        :param file_stream: .json, .pdf, .jpg, .png or .tiff type file stream.
+        :type file_stream: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        polling = kwargs.pop('polling', False)  # type: Union[bool, AsyncPollingMethod]
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        raw_result = await self._analyze_with_custom_model_initial(
+            model_id=model_id,
+            include_text_details=include_text_details,
+            file_stream=file_stream,
+            cls=lambda x,y,z: x,
+            **kwargs
+        )
+
+        def get_long_running_output(pipeline_response):
+            if cls:
+                return cls(pipeline_response, None, {})
+
+        lro_delay = kwargs.get(
+            'polling_interval',
+            self._config.polling_interval
+        )
+        if polling is True: raise ValueError("polling being True is not valid because no default polling implemetation has been defined.")
+        elif polling is False: polling_method = AsyncNoPolling()
+        else: polling_method = polling
+        return await async_poller(self._client, raw_result, get_long_running_output, polling_method)
     analyze_with_custom_model.metadata = {'url': '/custom/models/{modelId}/analyze'}
 
     async def get_analyze_form_result(
@@ -309,31 +344,17 @@ class FormRecognizerClientOperationsMixin:
         return deserialized
     get_analyze_form_result.metadata = {'url': '/custom/models/{modelId}/analyzeResults/{resultId}'}
 
-    async def analyze_receipt_async(
+    async def _analyze_receipt_async_initial(
         self,
         include_text_details: Optional[bool] = False,
         file_stream: Optional[Union[str, "models.SourcePath"]] = None,
         **kwargs
     ) -> None:
-        """Extract field text and semantic values from a given receipt document. The input document must be of one of the supported content types - 'application/pdf', 'image/jpeg', 'image/png' or 'image/tiff'. Alternatively, use 'application/json' type to specify the location (Uri or local path) of the document to be analyzed.
-
-        Analyze Receipt.
-
-        :param include_text_details: Include text lines and element references in the result.
-        :type include_text_details: bool
-        :param file_stream: .json, .pdf, .jpg, .png or .tiff type file stream.
-        :type file_stream: str, ~azure.ai.formrecognizer.models.SourcePath
-        :keyword str content_type: Media type of the body sent to the API.
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None or the result of cls(response)
-        :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
 
         # Construct URL
-        url = self.analyze_receipt_async.metadata['url']
+        url = self._analyze_receipt_async_initial.metadata['url']
         path_format_arguments = {
             'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
@@ -378,6 +399,52 @@ class FormRecognizerClientOperationsMixin:
         if cls:
           return cls(pipeline_response, None, response_headers)
 
+    _analyze_receipt_async_initial.metadata = {'url': '/prebuilt/receipt/analyze'}
+
+    async def analyze_receipt_async(
+        self,
+        include_text_details: Optional[bool] = False,
+        file_stream: Optional[Union[str, "models.SourcePath"]] = None,
+        **kwargs
+    ) -> None:
+        """Extract field text and semantic values from a given receipt document. The input document must be of one of the supported content types - 'application/pdf', 'image/jpeg', 'image/png' or 'image/tiff'. Alternatively, use 'application/json' type to specify the location (Uri or local path) of the document to be analyzed.
+
+        Analyze Receipt.
+
+        :param include_text_details: Include text lines and element references in the result.
+        :type include_text_details: bool
+        :param file_stream: .json, .pdf, .jpg, .png or .tiff type file stream.
+        :type file_stream: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        polling = kwargs.pop('polling', False)  # type: Union[bool, AsyncPollingMethod]
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        raw_result = await self._analyze_receipt_async_initial(
+            include_text_details=include_text_details,
+            file_stream=file_stream,
+            cls=lambda x,y,z: x,
+            **kwargs
+        )
+
+        def get_long_running_output(pipeline_response):
+            if cls:
+                return cls(pipeline_response, None, {})
+
+        lro_delay = kwargs.get(
+            'polling_interval',
+            self._config.polling_interval
+        )
+        if polling is True: raise ValueError("polling being True is not valid because no default polling implemetation has been defined.")
+        elif polling is False: polling_method = AsyncNoPolling()
+        else: polling_method = polling
+        return await async_poller(self._client, raw_result, get_long_running_output, polling_method)
     analyze_receipt_async.metadata = {'url': '/prebuilt/receipt/analyze'}
 
     async def get_analyze_receipt_result(
@@ -432,28 +499,16 @@ class FormRecognizerClientOperationsMixin:
         return deserialized
     get_analyze_receipt_result.metadata = {'url': '/prebuilt/receipt/analyzeResults/{resultId}'}
 
-    async def analyze_layout_async(
+    async def _analyze_layout_async_initial(
         self,
         file_stream: Optional[Union[str, "models.SourcePath"]] = None,
         **kwargs
     ) -> None:
-        """Extract text and layout information from a given document. The input document must be of one of the supported content types - 'application/pdf', 'image/jpeg', 'image/png' or 'image/tiff'. Alternatively, use 'application/json' type to specify the location (Uri or local path) of the document to be analyzed.
-
-        Analyze Layout.
-
-        :param file_stream: .json, .pdf, .jpg, .png or .tiff type file stream.
-        :type file_stream: str, ~azure.ai.formrecognizer.models.SourcePath
-        :keyword str content_type: Media type of the body sent to the API.
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None or the result of cls(response)
-        :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
 
         # Construct URL
-        url = self.analyze_layout_async.metadata['url']
+        url = self._analyze_layout_async_initial.metadata['url']
         path_format_arguments = {
             'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
@@ -496,6 +551,48 @@ class FormRecognizerClientOperationsMixin:
         if cls:
           return cls(pipeline_response, None, response_headers)
 
+    _analyze_layout_async_initial.metadata = {'url': '/layout/analyze'}
+
+    async def analyze_layout_async(
+        self,
+        file_stream: Optional[Union[str, "models.SourcePath"]] = None,
+        **kwargs
+    ) -> None:
+        """Extract text and layout information from a given document. The input document must be of one of the supported content types - 'application/pdf', 'image/jpeg', 'image/png' or 'image/tiff'. Alternatively, use 'application/json' type to specify the location (Uri or local path) of the document to be analyzed.
+
+        Analyze Layout.
+
+        :param file_stream: .json, .pdf, .jpg, .png or .tiff type file stream.
+        :type file_stream: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        polling = kwargs.pop('polling', False)  # type: Union[bool, AsyncPollingMethod]
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        raw_result = await self._analyze_layout_async_initial(
+            file_stream=file_stream,
+            cls=lambda x,y,z: x,
+            **kwargs
+        )
+
+        def get_long_running_output(pipeline_response):
+            if cls:
+                return cls(pipeline_response, None, {})
+
+        lro_delay = kwargs.get(
+            'polling_interval',
+            self._config.polling_interval
+        )
+        if polling is True: raise ValueError("polling being True is not valid because no default polling implemetation has been defined.")
+        elif polling is False: polling_method = AsyncNoPolling()
+        else: polling_method = polling
+        return await async_poller(self._client, raw_result, get_long_running_output, polling_method)
     analyze_layout_async.metadata = {'url': '/layout/analyze'}
 
     async def get_analyze_layout_result(

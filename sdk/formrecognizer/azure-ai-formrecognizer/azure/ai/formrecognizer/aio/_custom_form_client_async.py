@@ -180,16 +180,7 @@ class CustomFormClient(AsyncFormRecognizerClientBase):
         elif content_type is None:
             content_type = get_content_type(form)
 
-        response = await self._client.analyze_with_custom_model(
-            file_stream=form,
-            model_id=model_id,
-            include_text_details=include_text_details,
-            content_type=content_type,
-            cls=get_pipeline_response,
-            **kwargs
-        )
-
-        def callback(raw_response):
+        def callback(raw_response, _, headers):
             extracted_form = self._client._deserialize(AnalyzeOperationResult, raw_response)
             if extracted_form.analyze_result.document_results:
                 raise HttpResponseError("Cannot call begin_extract_forms() with the ID of a model trained with "
@@ -197,11 +188,14 @@ class CustomFormClient(AsyncFormRecognizerClientBase):
             form_result = prepare_unlabeled_result(extracted_form, include_text_details)
             return form_result
 
-        return await async_poller(
-            self._client._client,
-            response,
-            callback,
-            AsyncLROBasePolling(timeout=POLLING_INTERVAL, **kwargs)
+        return await self._client.analyze_with_custom_model(
+            file_stream=form,
+            model_id=model_id,
+            include_text_details=include_text_details,
+            content_type=content_type,
+            cls=callback,
+            polling=AsyncLROBasePolling(timeout=POLLING_INTERVAL, **kwargs),
+            **kwargs
         )
 
     @distributed_trace_async
@@ -228,16 +222,7 @@ class CustomFormClient(AsyncFormRecognizerClientBase):
         elif content_type is None:
             content_type = get_content_type(form)
 
-        response = await self._client.analyze_with_custom_model(
-            file_stream=form,
-            model_id=model_id,
-            include_text_details=include_text_details,
-            content_type=content_type,
-            cls=get_pipeline_response,
-            **kwargs
-        )
-
-        def callback(raw_response):
+        def callback(raw_response, _, headers):
             extracted_form = self._client._deserialize(AnalyzeOperationResult, raw_response)
             if not extracted_form.analyze_result.document_results:
                 raise HttpResponseError("Cannot call begin_extract_labeled_forms() with the ID of a model trained "
@@ -245,11 +230,14 @@ class CustomFormClient(AsyncFormRecognizerClientBase):
             form_result = prepare_labeled_result(extracted_form, include_text_details)
             return form_result
 
-        return await async_poller(
-            self._client._client,
-            response,
-            callback,
-            AsyncLROBasePolling(timeout=POLLING_INTERVAL, **kwargs)
+        return await self._client.analyze_with_custom_model(
+            file_stream=form,
+            model_id=model_id,
+            include_text_details=include_text_details,
+            content_type=content_type,
+            cls=callback,
+            polling=AsyncLROBasePolling(timeout=POLLING_INTERVAL, **kwargs),
+            **kwargs
         )
 
     @distributed_trace_async
