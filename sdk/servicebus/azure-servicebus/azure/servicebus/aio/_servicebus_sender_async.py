@@ -4,27 +4,26 @@
 # --------------------------------------------------------------------------------------------
 import logging
 import asyncio
-import datetime
 from typing import Any, TYPE_CHECKING, Union, List
 
 import uamqp
 from uamqp import SendClientAsync, types
 
-from ..common.message import Message, BatchMessage
+from .._common.message import Message, BatchMessage
 from .._servicebus_sender import SenderMixin
 from ._base_handler_async import BaseHandlerAsync
-from ..common.errors import (
+from ..exceptions import (
     MessageSendFailed
 )
-from ..common.constants import (
+from .._common.constants import (
     REQUEST_RESPONSE_SCHEDULE_MESSAGE_OPERATION,
     REQUEST_RESPONSE_CANCEL_SCHEDULED_MESSAGE_OPERATION
 )
-from ..common import mgmt_handlers
-from ..common.utils import create_properties
-from .async_utils import create_authentication
+from .._common import mgmt_handlers
+from ._async_utils import create_authentication
 
 if TYPE_CHECKING:
+    import datetime
     from azure.core.credentials import TokenCredential
 
 _LOGGER = logging.getLogger(__name__)
@@ -34,7 +33,7 @@ class ServiceBusSender(BaseHandlerAsync, SenderMixin):
     """The ServiceBusSender class defines a high level interface for
     sending messages to the Azure Service Bus Queue or Topic.
 
-    :param str fully_qualified_namespace: The fully qualified host name for the Service Bus namespace.
+    :ivar str fully_qualified_namespace: The fully qualified host name for the Service Bus namespace.
      The namespace format is: `<yournamespace>.servicebus.windows.net`.
     :param ~azure.core.credentials.TokenCredential credential: The credential object used for authentication which
      implements a particular interface for getting tokens. It accepts
@@ -94,12 +93,11 @@ class ServiceBusSender(BaseHandlerAsync, SenderMixin):
         self._connection = kwargs.get("connection")
 
     def _create_handler(self, auth):
-        properties = create_properties()
         self._handler = SendClientAsync(
             self._entity_uri,
             auth=auth,
             debug=self._config.logging_enable,
-            properties=properties,
+            properties=self._properties,
             error_policy=self._error_policy,
             client_name=self._name,
             encoding=self._config.encoding
@@ -113,6 +111,8 @@ class ServiceBusSender(BaseHandlerAsync, SenderMixin):
             await self._handler.close_async()
         auth = None if self._connection else (await create_authentication(self))
         self._create_handler(auth)
+        if self._connection:
+            self._try_reset_link_error_in_session()
         await self._handler.open_async(connection=self._connection)
         while not await self._handler.client_ready_async():
             await asyncio.sleep(0.05)
@@ -147,6 +147,7 @@ class ServiceBusSender(BaseHandlerAsync, SenderMixin):
                 :dedent: 4
                 :caption: Schedule a message to be sent in future
         """
+        # pylint: disable=protected-access
         await self._open()
         if isinstance(message, BatchMessage):
             request_body = self._build_schedule_request(schedule_time_utc, *message._messages)

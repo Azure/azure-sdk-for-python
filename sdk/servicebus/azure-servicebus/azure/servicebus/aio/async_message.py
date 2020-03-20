@@ -7,15 +7,16 @@
 import datetime
 import uuid
 
-from ..common import message as sync_message
-from ..common.constants import (
+from .._common import message as sync_message
+from .._common.constants import (
     SETTLEMENT_ABANDON,
     SETTLEMENT_COMPLETE,
     SETTLEMENT_DEFER,
     SETTLEMENT_DEADLETTER,
-    ReceiveSettleMode
+    ReceiveSettleMode,
+    _X_OPT_LOCK_TOKEN
 )
-from ..common.utils import get_running_loop
+from .._common.utils import get_running_loop
 
 
 class ReceivedMessage(sync_message.ReceivedMessage):
@@ -35,7 +36,7 @@ class ReceivedMessage(sync_message.ReceivedMessage):
             return uuid.UUID(bytes_le=self.message.delivery_tag)
         delivery_annotations = self.message.delivery_annotations
         if delivery_annotations:
-            return delivery_annotations.get(self._x_OPT_LOCK_TOKEN)
+            return delivery_annotations.get(_X_OPT_LOCK_TOKEN)
         return None
 
     @property
@@ -53,7 +54,7 @@ class ReceivedMessage(sync_message.ReceivedMessage):
         :raises: ~azure.servicebus.common.errors.MessageSettleFailed if message settle operation fails.
         """
         self._is_live('complete')
-        await self._receiver._settle_deferred(SETTLEMENT_COMPLETE, [self.lock_token])  # pylint: disable=protected-access
+        await self._receiver._settle_message(SETTLEMENT_COMPLETE, [self.lock_token])  # pylint: disable=protected-access
         self._settled = True
 
     async def dead_letter(self, description=None):
@@ -75,7 +76,7 @@ class ReceivedMessage(sync_message.ReceivedMessage):
         details = {
             'deadletter-reason': str(description) if description else "",
             'deadletter-description': str(description) if description else ""}
-        await self._receiver._settle_deferred(  # pylint: disable=protected-access
+        await self._receiver._settle_message(  # pylint: disable=protected-access
             SETTLEMENT_DEADLETTER, [self.lock_token], dead_letter_details=details)
         self._settled = True
 
@@ -87,7 +88,7 @@ class ReceivedMessage(sync_message.ReceivedMessage):
         :raises: ~azure.servicebus.common.errors.MessageSettleFailed if message settle operation fails.
         """
         self._is_live('abandon')
-        await self._receiver._settle_deferred(SETTLEMENT_ABANDON, [self.lock_token])  # pylint: disable=protected-access
+        await self._receiver._settle_message(SETTLEMENT_ABANDON, [self.lock_token])  # pylint: disable=protected-access
         self._settled = True
 
     async def defer(self):
@@ -98,7 +99,7 @@ class ReceivedMessage(sync_message.ReceivedMessage):
         :raises: ~azure.servicebus.common.errors.MessageSettleFailed if message settle operation fails.
         """
         self._is_live('defer')
-        await self._receiver._settle_deferred(SETTLEMENT_DEFER, [self.lock_token])  # pylint: disable=protected-access
+        await self._receiver._settle_message(SETTLEMENT_DEFER, [self.lock_token])  # pylint: disable=protected-access
         self._settled = True
 
     async def renew_lock(self):
@@ -116,7 +117,7 @@ class ReceivedMessage(sync_message.ReceivedMessage):
         :raises: ~azure.servicebus.common.errors.SessionLockExpired if session lock has already expired.
         :raises: ~azure.servicebus.common.errors.MessageAlreadySettled is message has already been settled.
         """
-        if hasattr(self._receiver, 'locked_until'):
+        if self._receiver._session_id:  # pylint: disable=protected-access
             raise TypeError("Session messages cannot be renewed. Please renew the Session lock instead.")
         self._is_live('renew')
         token = self.lock_token

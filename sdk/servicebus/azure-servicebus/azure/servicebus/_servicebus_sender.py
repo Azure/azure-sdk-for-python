@@ -4,7 +4,6 @@
 # --------------------------------------------------------------------------------------------
 import logging
 import time
-import datetime
 import uuid
 from typing import Any, TYPE_CHECKING, Union, List
 
@@ -12,20 +11,21 @@ import uamqp
 from uamqp import SendClient, types
 
 from ._base_handler import BaseHandler
-from .common import mgmt_handlers
-from .common.message import Message, BatchMessage
-from .common.errors import (
+from ._common import mgmt_handlers
+from ._common.message import Message, BatchMessage
+from .exceptions import (
     MessageSendFailed,
     OperationTimeoutError,
     _ServiceBusErrorPolicy
 )
-from .common.utils import create_properties, create_authentication
-from .common.constants import (
+from ._common.utils import create_authentication
+from ._common.constants import (
     REQUEST_RESPONSE_CANCEL_SCHEDULED_MESSAGE_OPERATION,
     REQUEST_RESPONSE_SCHEDULE_MESSAGE_OPERATION
 )
 
 if TYPE_CHECKING:
+    import datetime
     from azure.core.credentials import TokenCredential
 
 _LOGGER = logging.getLogger(__name__)
@@ -33,12 +33,12 @@ _LOGGER = logging.getLogger(__name__)
 
 class SenderMixin(object):
     def _create_attribute(self):
-        self._entity_path = self._entity_name
-        self._auth_uri = "sb://{}/{}".format(self.fully_qualified_namespace, self._entity_path)
-        self._entity_uri = "amqps://{}/{}".format(self.fully_qualified_namespace, self._entity_path)
+        self._auth_uri = "sb://{}/{}".format(self.fully_qualified_namespace, self._entity_name)
+        self._entity_uri = "amqps://{}/{}".format(self.fully_qualified_namespace, self._entity_name)
         self._error_policy = _ServiceBusErrorPolicy(max_retries=self._config.retry_total)
         self._name = "SBSender-{}".format(uuid.uuid4())
         self._max_message_size_on_link = 0
+        self.entity_name = self._entity_name
 
     def _set_msg_timeout(self, timeout=None, last_exception=None):
         if not timeout:
@@ -76,7 +76,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
     """The ServiceBusSender class defines a high level interface for
     sending messages to the Azure Service Bus Queue or Topic.
 
-    :param str fully_qualified_namespace: The fully qualified host name for the Service Bus namespace.
+    :ivar str fully_qualified_namespace: The fully qualified host name for the Service Bus namespace.
      The namespace format is: `<yournamespace>.servicebus.windows.net`.
     :param ~azure.core.credentials.TokenCredential credential: The credential object used for authentication which
      implements a particular interface for getting tokens. It accepts
@@ -137,12 +137,11 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         self._connection = kwargs.get("connection")
 
     def _create_handler(self, auth):
-        properties = create_properties()
         self._handler = SendClient(
             self._entity_uri,
             auth=auth,
             debug=self._config.logging_enable,
-            properties=properties,
+            properties=self._properties,
             error_policy=self._error_policy,
             client_name=self._name,
             encoding=self._config.encoding
@@ -157,6 +156,8 @@ class ServiceBusSender(BaseHandler, SenderMixin):
 
         auth = None if self._connection else create_authentication(self)
         self._create_handler(auth)
+        if self._connection:
+            self._try_reset_link_error_in_session()
         self._handler.open(connection=self._connection)
         while not self._handler.client_ready():
             time.sleep(0.05)
@@ -191,6 +192,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 :dedent: 4
                 :caption: Schedule a message to be sent in future
         """
+        # pylint: disable=protected-access
         self._open()
         if isinstance(message, BatchMessage):
             request_body = self._build_schedule_request(schedule_time_utc, *message._messages)

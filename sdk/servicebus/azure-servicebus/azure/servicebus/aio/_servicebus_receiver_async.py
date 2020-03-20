@@ -6,23 +6,28 @@ import asyncio
 import collections
 import functools
 import logging
-import uuid
-from typing import Any, TYPE_CHECKING, List
+import datetime
+from typing import Any, TYPE_CHECKING, List, Union
+import six
 
-from uamqp import ReceiveClientAsync, types, constants
+from uamqp import ReceiveClientAsync, types
+from uamqp.constants import SenderSettleMode
 
 from ._base_handler_async import BaseHandlerAsync
 from .async_message import ReceivedMessage
-from .._servicebus_receiver import ReceiverMixin
-from ..common.utils import create_properties
-from ..common.constants import (
+from .._servicebus_receiver import ReceiverMixin, ServiceBusSession as BaseSession
+from .._common.constants import (
+    REQUEST_RESPONSE_GET_SESSION_STATE_OPERATION,
+    REQUEST_RESPONSE_SET_SESSION_STATE_OPERATION,
+    REQUEST_RESPONSE_RENEW_SESSION_LOCK_OPERATION,
     REQUEST_RESPONSE_UPDATE_DISPOSTION_OPERATION,
     REQUEST_RESPONSE_PEEK_OPERATION,
     REQUEST_RESPONSE_RECEIVE_BY_SEQUENCE_NUMBER,
+    REQUEST_RESPONSE_RENEWLOCK_OPERATION,
     ReceiveSettleMode
 )
-from ..common import mgmt_handlers
-from .async_utils import create_authentication
+from .._common import mgmt_handlers
+from ._async_utils import create_authentication
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -30,11 +35,96 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
+class ServiceBusSession(BaseSession):
+    """
+    The ServiceBusSession is used for manage session states and lock renewal.
+
+    **Please use the instance variable `session` on the ServiceBusReceiver to get the corresponding ServiceBusSession
+    object linked with the receiver instead of instantiating a ServiceBusSession object directly.**
+    """
+
+    async def get_session_state(self):
+        # type: () -> str
+        """Get the session state.
+
+        Returns None if no state has been set.
+
+        :rtype: str
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_code_servicebus_async.py
+                :start-after: [START get_session_state_async]
+                :end-before: [END get_session_state_async]
+                :language: python
+                :dedent: 4
+                :caption: Get the session state
+        """
+        response = await self._receiver._mgmt_request_response_with_retry(  # pylint: disable=protected-access
+            REQUEST_RESPONSE_GET_SESSION_STATE_OPERATION,
+            {'session-id': self.session_id},
+            mgmt_handlers.default
+        )
+        session_state = response.get(b'session-state')
+        if isinstance(session_state, six.binary_type):
+            session_state = session_state.decode('UTF-8')
+        return session_state
+
+    async def set_session_state(self, state):
+        # type: (Union[str, bytes, bytearray]) -> None
+        """Set the session state.
+
+        :param state: The state value.
+        :type state: str, bytes or bytearray
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_code_servicebus_async.py
+                :start-after: [START set_session_state_async]
+                :end-before: [END set_session_state_async]
+                :language: python
+                :dedent: 4
+                :caption: Set the session state
+        """
+        state = state.encode(self._encoding) if isinstance(state, six.text_type) else state
+        return await self._receiver._mgmt_request_response_with_retry(  # pylint: disable=protected-access
+            REQUEST_RESPONSE_SET_SESSION_STATE_OPERATION,
+            {'session-id': self.session_id, 'session-state': bytearray(state)},
+            mgmt_handlers.default
+        )
+
+    async def renew_lock(self):
+        # type: () -> None
+        """Renew the session lock.
+
+        This operation must be performed periodically in order to retain a lock on the
+        session to continue message processing.
+        Once the lock is lost the connection will be closed. This operation can
+        also be performed as a threaded background task by registering the session
+        with an `azure.servicebus.aio.AutoLockRenew` instance.
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_code_servicebus_async.py
+                :start-after: [START session_renew_lock_async]
+                :end-before: [END session_renew_lock_async]
+                :language: python
+                :dedent: 4
+                :caption: Renew the session lock before it expires
+        """
+        expiry = await self._receiver._mgmt_request_response_with_retry(  # pylint: disable=protected-access
+            REQUEST_RESPONSE_RENEW_SESSION_LOCK_OPERATION,
+            {'session-id': self.session_id},
+            mgmt_handlers.default
+        )
+        self._locked_until = datetime.datetime.fromtimestamp(expiry[b'expiration']/1000.0)
+
+
 class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, ReceiverMixin):
     """The ServiceBusReceiver class defines a high level interface for
     receiving messages from the Azure Service Bus Queue or Topic Subscription.
 
-    :param str fully_qualified_namespace: The fully qualified host name for the Service Bus namespace.
+    :ivar str fully_qualified_namespace: The fully qualified host name for the Service Bus namespace.
      The namespace format is: `<yournamespace>.servicebus.windows.net`.
     :param ~azure.core.credentials.TokenCredential credential: The credential object used for authentication which
      implements a particular interface for getting tokens. It accepts
@@ -43,7 +133,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
     :keyword str queue_name: The path of specific Service Bus Queue the client connects to.
     :keyword str topic_name: The path of specific Service Bus Topic which contains the Subscription
      the client connects to.
-    :keyword str subscription: The path of specific Service Bus Subscription under the
+    :keyword str subscription_name: The path of specific Service Bus Subscription under the
      specified Topic the client connects to.
     :keyword mode: The mode with which messages will be retrieved from the entity. The two options
      are PeekLock and ReceiveAndDelete. Messages received with PeekLock must be settled within a given
@@ -102,74 +192,40 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
                 entity_name=str(entity_name),
                 **kwargs
             )
-        self._create_attribute(**kwargs)
         self._message_iter = None
+        self._session = None
+        self._create_attribute(**kwargs)
         self._connection = kwargs.get("connection")
 
     async def __anext__(self):
         while True:
             try:
-                await self._open()
-                uamqp_message = await self._message_iter.__anext__()
-                message = self._build_message(uamqp_message, ReceivedMessage)
-                return message
+                return await self._do_retryable_operation(self._iter_next)
             except StopAsyncIteration:
                 await self.close()
                 raise
-            except Exception as e:  # pylint: disable=broad-except
-                await self._handle_exception(e)
+
+    async def _iter_next(self):
+        await self._open()
+        uamqp_message = await self._message_iter.__anext__()
+        message = self._build_message(uamqp_message, ReceivedMessage)
+        return message
 
     def _create_handler(self, auth):
-        properties = create_properties()
-        if not self._session_id:
-            self._handler = ReceiveClientAsync(
-                self._entity_uri,
-                auth=auth,
-                debug=self._config.logging_enable,
-                properties=properties,
-                error_policy=self._error_policy,
-                client_name=self._name,
-                auto_complete=False,
-                encoding=self._config.encoding,
-                receive_settle_mode=self._mode.value,
-                timeout=self._idle_timeout * 1000 if self._idle_timeout else 0
-            )
-        else:
-            self._handler = ReceiveClientAsync(
-                self._get_source_for_session_entity(),
-                auth=auth,
-                debug=self._config.logging_enable,
-                properties=properties,
-                error_policy=self._error_policy,
-                client_name=self._name,
-                on_attach=self._on_attach_for_session_entity,
-                auto_complete=False,
-                encoding=self._config.encoding,
-                receive_settle_mode=self._mode.value,
-                timeout=self._idle_timeout * 1000 if self._idle_timeout else 0
-            )
-
-    async def _create_uamqp_receiver_handler(self):
-        """This is a temporary patch pending a fix in uAMQP."""
-        # pylint: disable=protected-access
-        self._handler.message_handler = self._handler.receiver_type(
-            self._handler._session,
-            self._handler._remote_address,
-            self._handler._name,
-            on_message_received=self._handler._message_received,
-            name='receiver-link-{}'.format(uuid.uuid4()),
-            debug=self._handler._debug_trace,
-            prefetch=self._handler._prefetch,
-            max_message_size=self._handler._max_message_size,
-            properties=self._handler._link_properties,
-            error_policy=self._handler._error_policy,
-            encoding=self._handler._encoding,
-            loop=self._handler.loop)
-        if self._mode != ReceiveSettleMode.PeekLock:
-            self._handler.message_handler.send_settle_mode = constants.SenderSettleMode.Settled
-            self._handler.message_handler.receive_settle_mode = constants.ReceiverSettleMode.ReceiveAndDelete
-            self._handler.message_handler._settle_mode = constants.ReceiverSettleMode.ReceiveAndDelete
-        await self._handler.message_handler.open_async()
+        self._handler = ReceiveClientAsync(
+            self._get_source_for_session_entity() if self._session_id else self._entity_uri,
+            auth=auth,
+            debug=self._config.logging_enable,
+            properties=self._properties,
+            error_policy=self._error_policy,
+            client_name=self._name,
+            on_attach=self._on_attach_for_session_entity if self._session_id else None,
+            auto_complete=False,
+            encoding=self._config.encoding,
+            receive_settle_mode=self._mode.value,
+            send_settle_mode=SenderSettleMode.Settled if self._mode == ReceiveSettleMode.ReceiveAndDelete else None,
+            timeout=self._idle_timeout * 1000 if self._idle_timeout else 0
+        )
 
     async def _open(self):
         if self._running:
@@ -178,40 +234,63 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
             await self._handler.close_async()
         auth = None if self._connection else (await create_authentication(self))
         self._create_handler(auth)
+        if self._connection:
+            self._try_reset_link_error_in_session()
         await self._handler.open_async(connection=self._connection)
         self._message_iter = self._handler.receive_messages_iter_async()
-        while not await self._handler.auth_complete_async():
-            await asyncio.sleep(0.05)
-        await self._create_uamqp_receiver_handler()
         while not await self._handler.client_ready_async():
             await asyncio.sleep(0.05)
         self._running = True
 
+        if self._session_id:
+            self._session = ServiceBusSession(self._session_id, self, self._config.encoding)
+
     async def _receive(self, max_batch_size=None, timeout=None):
         await self._open()
-        wrapped_batch = []
         max_batch_size = max_batch_size or self._handler._prefetch  # pylint: disable=protected-access
 
         timeout_ms = 1000 * timeout if timeout else (1000 * self._idle_timeout if self._idle_timeout else 0)
         batch = await self._handler.receive_message_batch_async(
             max_batch_size=max_batch_size,
             timeout=timeout_ms)
-        for received in batch:
-            message = self._build_message(received, ReceivedMessage)
-            wrapped_batch.append(message)
 
-        return wrapped_batch
+        return [self._build_message(message, ReceivedMessage) for message in batch]
 
-    async def _settle_deferred(self, settlement, lock_tokens, dead_letter_details=None):
+    async def _settle_message(self, settlement, lock_tokens, dead_letter_details=None):
         message = {
             'disposition-status': settlement,
             'lock-tokens': types.AMQPArray(lock_tokens)}
+
+        if self._session_id:
+            message["session-id"] = self._session_id
         if dead_letter_details:
             message.update(dead_letter_details)
+
         return await self._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_UPDATE_DISPOSTION_OPERATION,
             message,
-            mgmt_handlers.default)
+            mgmt_handlers.default
+        )
+
+    async def _renew_locks(self, *lock_tokens):
+        message = {'lock-tokens': types.AMQPArray(lock_tokens)}
+        return await self._mgmt_request_response_with_retry(
+            REQUEST_RESPONSE_RENEWLOCK_OPERATION,
+            message,
+            mgmt_handlers.lock_renew_op
+        )
+
+    @property
+    def session(self):
+        # type: ()->ServiceBusSession
+        """
+        Get the ServiceBusSession object linked with the receiver.
+
+        :rtype: ~azure.servicebus.aio.ServiceBusSession
+        """
+        if not self._session_id:
+            raise TypeError("Session is only available to session-enabled entities.")
+        return self._session
 
     @classmethod
     def from_connection_string(
@@ -225,7 +304,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
         :keyword str queue_name: The path of specific Service Bus Queue the client connects to.
         :keyword str topic_name: The path of specific Service Bus Topic which contains the Subscription
          the client connects to.
-        :keyword str subscription: The path of specific Service Bus Subscription under the
+        :keyword str subscription_name: The path of specific Service Bus Subscription under the
          specified Topic the client connects to.
         :keyword mode: The mode with which messages will be retrieved from the entity. The two options
          are PeekLock and ReceiveAndDelete. Messages received with PeekLock must be settled within a given
@@ -265,20 +344,17 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
             raise ValueError("Subscription name is missing for the topic. Please specify subscription_name.")
         return cls(**constructor_args)
 
-    async def close(self, exception=None):
-        """Close down the handler connection.
+    async def close(self):
+        """Close down the handler links (and connection if the handler uses a separate connection).
 
-        If the handler has already closed, this operation will do nothing. An optional exception can be passed in to
-        indicate that the handler was shutdown due to error.
+        If the handler has already closed, this operation will do nothing.
 
-        :param Exception exception: An optional exception if the handler is closing
-         due to an error.
         :rtype: None
         """
         if not self._running:
             return
         self._running = False
-        await super(ServiceBusReceiver, self).close(exception=exception)
+        await super(ServiceBusReceiver, self).close()
 
     async def receive(self, max_batch_size=None, timeout=None):
         # type: (int, float) -> List[ReceivedMessage]
@@ -390,7 +466,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
             'message-count': message_count
         }
 
-        return await self._mgmt_request_response(
+        return await self._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_PEEK_OPERATION,
             message,
             mgmt_handlers.peek_op

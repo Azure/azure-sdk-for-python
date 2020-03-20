@@ -17,18 +17,15 @@ except ImportError:
 import uamqp
 from uamqp import (
     utils,
-    errors,
-    constants,
 )
 from uamqp.message import MessageProperties
-from .common._configuration import Configuration
-from .common.errors import (
+from ._common._configuration import Configuration
+from .exceptions import (
     InvalidHandlerState,
     ServiceBusError,
-    ServiceBusConnectionError,
-    ServiceBusAuthorizationError,
-    MessageSendFailed
+    _create_servicebus_exception
 )
+from ._common.utils import create_properties
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -124,8 +121,8 @@ class BaseHandler(object):  # pylint:disable=too-many-instance-attributes
         self._idle_timeout = kwargs.get("idle_timeout", None)
         self._running = False
         self._handler = None
-        self._error = None
         self._auth_uri = None
+        self._properties = create_properties()
 
     def __enter__(self):
         return self
@@ -134,32 +131,7 @@ class BaseHandler(object):  # pylint:disable=too-many-instance-attributes
         self.close()
 
     def _handle_exception(self, exception):
-        if isinstance(exception, (errors.LinkDetach, errors.ConnectionClose)):
-            if exception.condition == constants.ErrorCodes.UnauthorizedAccess:
-                _LOGGER.info("Handler detached. Shutting down.")
-                error = ServiceBusAuthorizationError(str(exception), exception)
-                self._close_handler()
-                return error
-            _LOGGER.info("Handler detached. Shutting down.")
-            error = ServiceBusConnectionError(str(exception), exception)
-            self._close_handler()
-            return error
-        if isinstance(exception, errors.MessageHandlerError):
-            _LOGGER.info("Handler error. Shutting down.")
-            error = ServiceBusConnectionError(str(exception), exception)
-            self._close_handler()
-            return error
-        if isinstance(exception, errors.AMQPConnectionError):
-            message = "Failed to open handler: {}".format(exception)
-            return ServiceBusConnectionError(message, exception)
-        if isinstance(exception, MessageSendFailed):
-            _LOGGER.info("Message send error (%r)", exception)
-            raise exception
-
-        _LOGGER.info("Unexpected error occurred (%r). Shutting down.", exception)
-        error = exception
-        if not isinstance(exception, ServiceBusError):
-            error = ServiceBusError("Handler failed: {}".format(exception))
+        error = _create_servicebus_exception(_LOGGER, exception)
         self._close_handler()
         return error
 
@@ -170,11 +142,11 @@ class BaseHandler(object):  # pylint:disable=too-many-instance-attributes
         queue_name = kwargs.get("queue_name")
         topic_name = kwargs.get("topic_name")
         if not (queue_name or topic_name or entity_in_conn_str):
-            raise ValueError("Queue/Topic name is missing. Please specify queue_name/topic_name"
+            raise ValueError("Entity name is missing. Please specify `queue_name` or `topic_name`"
                              " or use a connection string including the entity information.")
 
         if queue_name and topic_name:
-            raise ValueError("Queue/Topic name can not be specified simultaneously.")
+            raise ValueError("`queue_name` and `topic_name` can not be specified simultaneously.")
 
         entity_in_kwargs = queue_name or topic_name
         if entity_in_conn_str and entity_in_kwargs and (entity_in_conn_str != entity_in_kwargs):
@@ -227,6 +199,8 @@ class BaseHandler(object):  # pylint:disable=too-many-instance-attributes
                 if require_timeout:
                     kwargs["timeout"] = timeout
                 return operation(**kwargs)
+            except StopIteration:
+                raise
             except Exception as exception:  # pylint: disable=broad-except
                 last_exception = self._handle_exception(exception)
                 retried_times += 1
@@ -291,26 +265,23 @@ class BaseHandler(object):  # pylint:disable=too-many-instance-attributes
             self._handler = None
         self._running = False
 
-    def close(self, exception=None):
-        # type: (Exception) -> None
-        """Close down the handler connection.
+    def _try_reset_link_error_in_session(self):
+        # Patch for uamqp.Session not cleaning up _link_error
+        try:
+            self._handler._connection.auth._session._link_error = None
+        except AttributeError:
+            pass
 
-        If the handler has already closed, this operation will do nothing. An optional exception can be passed in to
-        indicate that the handler was shutdown due to error.
+    def close(self):
+        # type: () -> None
+        """Close down the handler links (and connection if the handler uses a separate connection).
 
-        :param Exception exception: An optional exception if the handler is closing
-         due to an error.
+        If the handler has already closed, this operation will do nothing.
+
         :rtype: None
         """
-        if self._error:
+        if not self._running:
             return
-        if isinstance(exception, ServiceBusError):
-            self._error = exception
-        elif exception:
-            self._error = ServiceBusError(str(exception))
-        else:
-            self._error = ServiceBusError("This message handler is now closed.")
-
         self._close_handler()
 
     def reconnect(self):

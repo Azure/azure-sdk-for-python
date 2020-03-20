@@ -7,14 +7,19 @@ import datetime
 import logging
 import functools
 import uuid
-from typing import Any, List, TYPE_CHECKING, Optional
+from typing import Any, List, TYPE_CHECKING, Optional, Union
+import six
 
-from uamqp import ReceiveClient, Source, types, constants
+from uamqp import ReceiveClient, Source, types
+from uamqp.constants import SenderSettleMode
 
 from ._base_handler import BaseHandler
-from .common.utils import create_properties, create_authentication
-from .common.message import PeekMessage, ReceivedMessage
-from .common.constants import (
+from ._common.utils import create_authentication
+from ._common.message import PeekMessage, ReceivedMessage
+from ._common.constants import (
+    REQUEST_RESPONSE_GET_SESSION_STATE_OPERATION,
+    REQUEST_RESPONSE_SET_SESSION_STATE_OPERATION,
+    REQUEST_RESPONSE_RENEW_SESSION_LOCK_OPERATION,
     REQUEST_RESPONSE_RECEIVE_BY_SEQUENCE_NUMBER,
     REQUEST_RESPONSE_UPDATE_DISPOSTION_OPERATION,
     REQUEST_RESPONSE_RENEWLOCK_OPERATION,
@@ -24,9 +29,10 @@ from .common.constants import (
     SESSION_LOCKED_UNTIL,
     DATETIMEOFFSET_EPOCH,
     SESSION_FILTER,
+    REQUEST_RESPONSE_RENEWLOCK_OPERATION
 )
-from .common.errors import _ServiceBusErrorPolicy
-from .common import mgmt_handlers
+from .exceptions import _ServiceBusErrorPolicy
+from ._common import mgmt_handlers
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -34,18 +40,127 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
+class ServiceBusSession(object):
+    """
+    The ServiceBusSession is used for manage session states and lock renewal.
+
+    **Please use the instance variable `session` on the ServiceBusReceiver to get the corresponding ServiceBusSession
+    object linked with the receiver instead of instantiating a ServiceBusSession object directly.**
+    """
+    def __init__(self, session_id, receiver, encoding="UTF-8"):
+        self._session_id = session_id
+        self._receiver = receiver
+        self._encoding = encoding
+        self._locked_until = None
+
+    def get_session_state(self):
+        # type: () -> str
+        """Get the session state.
+
+        Returns None if no state has been set.
+
+        :rtype: str
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sync_samples/sample_code_servicebus.py
+                :start-after: [START get_session_state]
+                :end-before: [END get_session_state]
+                :language: python
+                :dedent: 4
+                :caption: Get the session state
+        """
+        response = self._receiver._mgmt_request_response_with_retry(  # pylint: disable=protected-access
+            REQUEST_RESPONSE_GET_SESSION_STATE_OPERATION,
+            {'session-id': self.session_id},
+            mgmt_handlers.default
+        )
+        session_state = response.get(b'session-state')
+        if isinstance(session_state, six.binary_type):
+            session_state = session_state.decode('UTF-8')
+        return session_state
+
+    def set_session_state(self, state):
+        # type: (Union[str, bytes, bytearray]) -> None
+        """Set the session state.
+
+        :param state: The state value.
+        :type state: str, bytes or bytearray
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sync_samples/sample_code_servicebus.py
+                :start-after: [START set_session_state]
+                :end-before: [END set_session_state]
+                :language: python
+                :dedent: 4
+                :caption: Set the session state
+        """
+        state = state.encode(self._encoding) if isinstance(state, six.text_type) else state
+        return self._receiver._mgmt_request_response_with_retry(  # pylint: disable=protected-access
+            REQUEST_RESPONSE_SET_SESSION_STATE_OPERATION,
+            {'session-id': self.session_id, 'session-state': bytearray(state)},
+            mgmt_handlers.default
+        )
+
+    def renew_lock(self):
+        # type: () -> None
+        """Renew the session lock.
+
+        This operation must be performed periodically in order to retain a lock on the
+        session to continue message processing.
+        Once the lock is lost the connection will be closed. This operation can
+        also be performed as a threaded background task by registering the session
+        with an `azure.servicebus.AutoLockRenew` instance.
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sync_samples/sample_code_servicebus.py
+                :start-after: [START renew_lock]
+                :end-before: [END renew_lock]
+                :language: python
+                :dedent: 4
+                :caption: Renew the session lock before it expires
+        """
+        expiry = self._receiver._mgmt_request_response_with_retry(  # pylint: disable=protected-access
+            REQUEST_RESPONSE_RENEW_SESSION_LOCK_OPERATION,
+            {'session-id': self.session_id},
+            mgmt_handlers.default
+        )
+        self._locked_until = datetime.datetime.fromtimestamp(expiry[b'expiration']/1000.0)
+
+    @property
+    def session_id(self):
+        # type: () -> str
+        """
+        Session id of the current session.
+
+        :rtype: str
+        """
+        return self._session_id
+
+    @property
+    def expired(self):
+        # type: () -> bool
+        """Whether the receivers lock on a particular session has expired.
+
+        :rtype: bool
+        """
+        return bool(self._locked_until and self._locked_until <= datetime.datetime.now())
+
+
 class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
     def _create_attribute(self, **kwargs):
         if kwargs.get("subscription_name"):
-            self.subscription_name = kwargs.get("subscription_name")
+            self._subscription_name = kwargs.get("subscription_name")
             self._is_subscription = True
-            self._entity_path = self._entity_name + "/Subscriptions/" + self.subscription_name
+            self.entity_path = self._entity_name + "/Subscriptions/" + self._subscription_name
         else:
-            self._entity_path = self._entity_name
+            self.entity_path = self._entity_name
 
         self._session_id = kwargs.get("session_id")
-        self._auth_uri = "sb://{}/{}".format(self.fully_qualified_namespace, self._entity_path)
-        self._entity_uri = "amqps://{}/{}".format(self.fully_qualified_namespace, self._entity_path)
+        self._auth_uri = "sb://{}/{}".format(self.fully_qualified_namespace, self.entity_path)
+        self._entity_uri = "amqps://{}/{}".format(self.fully_qualified_namespace, self.entity_path)
         self._mode = kwargs.get("mode", ReceiveSettleMode.PeekLock)
         self._error_policy = _ServiceBusErrorPolicy(
             max_retries=self._config.retry_total,
@@ -81,7 +196,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
     """The ServiceBusReceiver class defines a high level interface for
     receiving messages from the Azure Service Bus Queue or Topic Subscription.
 
-    :param str fully_qualified_namespace: The fully qualified host name for the Service Bus namespace.
+    :ivar str fully_qualified_namespace: The fully qualified host name for the Service Bus namespace.
      The namespace format is: `<yournamespace>.servicebus.windows.net`.
     :param ~azure.core.credentials.TokenCredential credential: The credential object used for authentication which
      implements a particular interface for getting tokens. It accepts
@@ -90,7 +205,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
     :keyword str queue_name: The path of specific Service Bus Queue the client connects to.
     :keyword str topic_name: The path of specific Service Bus Topic which contains the Subscription
      the client connects to.
-    :keyword str subscription: The path of specific Service Bus Subscription under the
+    :keyword str subscription_name: The path of specific Service Bus Subscription under the
      specified Topic the client connects to.
     :keyword mode: The mode with which messages will be retrieved from the entity. The two options
      are PeekLock and ReceiveAndDelete. Messages received with PeekLock must be settled within a given
@@ -151,6 +266,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
                 **kwargs
             )
         self._message_iter = None
+        self._session = None
         self._create_attribute(**kwargs)
         self._connection = kwargs.get("connection")
 
@@ -160,67 +276,34 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
     def __next__(self):
         while True:
             try:
-                self._open()
-                uamqp_message = next(self._message_iter)
-                message = self._build_message(uamqp_message)
-                return message
+                return self._do_retryable_operation(self._iter_next)
             except StopIteration:
+                self.close()
                 raise
-            except Exception as e:  # pylint: disable=broad-except
-                self._handle_exception(e)
 
     next = __next__  # for python2.7
 
-    def _create_handler(self, auth):
-        properties = create_properties()
-        if not self._session_id:
-            self._handler = ReceiveClient(
-                self._entity_uri,
-                auth=auth,
-                debug=self._config.logging_enable,
-                properties=properties,
-                error_policy=self._error_policy,
-                client_name=self._name,
-                auto_complete=False,
-                encoding=self._config.encoding,
-                receive_settle_mode=self._mode.value,
-                timeout=self._idle_timeout * 1000 if self._idle_timeout else 0
-            )
-        else:
-            self._handler = ReceiveClient(
-                self._get_source_for_session_entity(),
-                auth=auth,
-                debug=self._config.logging_enable,
-                properties=properties,
-                error_policy=self._error_policy,
-                client_name=self._name,
-                on_attach=self._on_attach_for_session_entity,
-                auto_complete=False,
-                encoding=self._config.encoding,
-                receive_settle_mode=self._mode.value,
-                timeout=self._idle_timeout * 1000 if self._idle_timeout else 0
-            )
+    def _iter_next(self):
+        self._open()
+        uamqp_message = next(self._message_iter)
+        message = self._build_message(uamqp_message)
+        return message
 
-    def _create_uamqp_receiver_handler(self):
-        """This is a temporary patch pending a fix in uAMQP."""
-        # pylint: disable=protected-access
-        self._handler.message_handler = self._handler.receiver_type(
-            self._handler._session,
-            self._handler._remote_address,
-            self._handler._name,
-            on_message_received=self._handler._message_received,
-            name='receiver-link-{}'.format(uuid.uuid4()),
-            debug=self._handler._debug_trace,
-            prefetch=self._handler._prefetch,
-            max_message_size=self._handler._max_message_size,
-            properties=self._handler._link_properties,
-            error_policy=self._handler._error_policy,
-            encoding=self._handler._encoding)
-        if self._mode != ReceiveSettleMode.PeekLock:
-            self._handler.message_handler.send_settle_mode = constants.SenderSettleMode.Settled
-            self._handler.message_handler.receive_settle_mode = constants.ReceiverSettleMode.ReceiveAndDelete
-            self._handler.message_handler._settle_mode = constants.ReceiverSettleMode.ReceiveAndDelete
-        self._handler.message_handler.open()
+    def _create_handler(self, auth):
+        self._handler = ReceiveClient(
+            self._get_source_for_session_entity() if self._session_id else self._entity_uri,
+            auth=auth,
+            debug=self._config.logging_enable,
+            properties=self._properties,
+            error_policy=self._error_policy,
+            client_name=self._name,
+            on_attach=self._on_attach_for_session_entity if self._session_id else None,
+            auto_complete=False,
+            encoding=self._config.encoding,
+            receive_settle_mode=self._mode.value,
+            send_settle_mode=SenderSettleMode.Settled if self._mode == ReceiveSettleMode.ReceiveAndDelete else None,
+            timeout=self._idle_timeout * 1000 if self._idle_timeout else 0
+        )
 
     def _open(self):
         if self._running:
@@ -230,18 +313,19 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
 
         auth = None if self._connection else create_authentication(self)
         self._create_handler(auth)
+        if self._connection:
+            self._try_reset_link_error_in_session()
         self._handler.open(connection=self._connection)
         self._message_iter = self._handler.receive_messages_iter()
-        while not self._handler.auth_complete():
-            time.sleep(0.05)
-        self._create_uamqp_receiver_handler()
         while not self._handler.client_ready():
             time.sleep(0.05)
         self._running = True
 
+        if self._session_id:
+            self._session = ServiceBusSession(self._session_id, self, self._config.encoding)
+
     def _receive(self, max_batch_size=None, timeout=None):
         self._open()
-        wrapped_batch = []
         max_batch_size = max_batch_size or self._handler._prefetch  # pylint: disable=protected-access
 
         timeout_ms = 1000 * timeout if timeout else (1000 * self._idle_timeout if self._idle_timeout else 0)
@@ -249,39 +333,45 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
             max_batch_size=max_batch_size,
             timeout=timeout_ms
         )
-        for received in batch:
-            message = self._build_message(received)
-            wrapped_batch.append(message)
 
-        return wrapped_batch
+        return [self._build_message(message) for message in batch]
 
-    def _settle_deferred(self, settlement, lock_tokens, dead_letter_details=None):
+    def _settle_message(self, settlement, lock_tokens, dead_letter_details=None):
         message = {
             'disposition-status': settlement,
-            'lock-tokens': types.AMQPArray(lock_tokens)}
+            'lock-tokens': types.AMQPArray(lock_tokens)
+        }
+
+        if self._session_id:
+            message["session-id"] = self._session_id
         if dead_letter_details:
             message.update(dead_letter_details)
+
         return self._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_UPDATE_DISPOSTION_OPERATION,
             message,
             mgmt_handlers.default
         )
 
-    def close(self, exception=None):
-        # type: (Exception) -> None
-        """Close down the handler connection.
+    def _renew_locks(self, *lock_tokens):
+        message = {'lock-tokens': types.AMQPArray(lock_tokens)}
+        return self._mgmt_request_response_with_retry(
+            REQUEST_RESPONSE_RENEWLOCK_OPERATION,
+            message,
+            mgmt_handlers.lock_renew_op
+        )
 
-        If the handler has already closed, this operation will do nothing. An optional exception can be passed in to
-        indicate that the handler was shutdown due to error.
-
-        :param Exception exception: An optional exception if the handler is closing
-         due to an error.
-        :rtype: None
+    @property
+    def session(self):
+        # type: ()->ServiceBusSession
         """
-        if not self._running:
-            return
-        self._running = False
-        super(ServiceBusReceiver, self).close(exception=exception)
+        Get the ServiceBusSession object linked with the receiver.
+
+        :rtype: ~azure.servicebus.ServiceBusSession
+        """
+        if not self._session_id:
+            raise TypeError("Session is only available to session-enabled entities.")
+        return self._session
 
     @classmethod
     def from_connection_string(
@@ -296,7 +386,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         :keyword str queue_name: The path of specific Service Bus Queue the client connects to.
         :keyword str topic_name: The path of specific Service Bus Topic which contains the Subscription
          the client connects to.
-        :keyword str subscription: The path of specific Service Bus Subscription under the
+        :keyword str subscription_name: The path of specific Service Bus Subscription under the
          specified Topic the client connects to.
         :keyword mode: The mode with which messages will be retrieved from the entity. The two options
          are PeekLock and ReceiveAndDelete. Messages received with PeekLock must be settled within a given
@@ -403,8 +493,11 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         message = {
             'sequence-numbers': types.AMQPArray([types.AMQPLong(s) for s in sequence_numbers]),
             'receiver-settle-mode': types.AMQPuInt(receive_mode),
-            'session-id': self._session_id
         }
+
+        if self._session_id:
+            message["session-id"] = self._session_id
+
         handler = functools.partial(mgmt_handlers.deferred_message_op, mode=receive_mode)
         messages = self._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_RECEIVE_BY_SEQUENCE_NUMBER,
@@ -447,6 +540,10 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
             'from-sequence-number': types.AMQPLong(sequence_number),
             'message-count': message_count
         }
+
+        if self._session_id:
+            message["session-id"] = self._session_id
+
         return self._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_PEEK_OPERATION,
             message,
