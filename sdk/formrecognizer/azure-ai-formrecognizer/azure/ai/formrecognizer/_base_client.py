@@ -18,7 +18,8 @@ from azure.core.pipeline.policies import (
     BearerTokenCredentialPolicy,
     DistributedTracingPolicy,
     HttpLoggingPolicy,
-    ContentDecodePolicy
+    ContentDecodePolicy,
+    CustomHookPolicy
 )
 from ._policies import CognitiveServicesCredentialPolicy
 from ._user_agent import USER_AGENT
@@ -57,6 +58,7 @@ class FormRecognizerClientBase(object):
             credential_policy,
             ContentDecodePolicy(**kwargs),
             config.logging_policy,
+            config.custom_hook_policy,
             DistributedTracingPolicy(**kwargs),
             HttpLoggingPolicy(**kwargs),
         ]
@@ -71,6 +73,7 @@ class FormRecognizerClientBase(object):
         config.logging_policy = kwargs.get("logging_policy") or NetworkTraceLoggingPolicy(**kwargs)
         config.retry_policy = kwargs.get("retry_policy") or RetryPolicy(**kwargs)
         config.redirect_policy = kwargs.get("redirect_policy") or RedirectPolicy(**kwargs)
+        config.custom_hook_policy = kwargs.get('custom_hook_policy') or CustomHookPolicy(**kwargs)
 
         return config
 

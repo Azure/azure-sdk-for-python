@@ -6,30 +6,12 @@
 
 from re import findall
 from collections import namedtuple
-from datetime import date, time
 from enum import Enum
+from ._helpers import get_field_value
+
 
 PageRange = namedtuple("PageRange", "first_page last_page")
 Point = namedtuple("Point", "x y")
-
-
-def get_pipeline_response(pipeline_response, _, response_headers):
-    return pipeline_response
-
-
-def get_field_value(field):
-    if field is None:
-        return field
-
-    if field.value_time:
-        hour, minutes, seconds = field.value_time.split(":")
-        return time(int(hour), int(minutes), int(seconds))
-    if field.value_date:
-        year, month, day = field.value_date.split("-")
-        return date(int(year), int(month), int(day))
-
-    # FIXME: find field value refactor
-    return field.value_integer or field.value_number or field.value_phone_number or field.value_string
 
 
 def get_elements(field, ocr_result):
@@ -428,7 +410,7 @@ class ExtractedField(object):
         )
 
 
-class ExtractedText:
+class ExtractedText(object):
     def __init__(self, **kwargs):
         self.text = kwargs.get('text', None)
         self.bounding_box = kwargs.get('bounding_box', None)

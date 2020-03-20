@@ -11,44 +11,65 @@ from typing import (  # pylint: disable=unused-import
     Any,
     List,
     Dict,
+    IO,
     TYPE_CHECKING,
 )
-
+from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.core.polling import async_poller
+from azure.core.polling.async_base_polling import AsyncLROBasePolling
 from .._generated.aio._form_recognizer_client_async import FormRecognizerClient as FormRecognizer
-from .._generated.models import TrainRequest, TrainSourceFilter
 from ._base_client_async import AsyncFormRecognizerClientBase
 from .._response_handlers import (
     prepare_receipt_result,
-    prepare_layout_result,
-    prepare_unlabeled_result,
-    prepare_labeled_result,
-    get_content_type
+    prepare_layout_result
 )
-from azure.core.polling import async_poller
-from azure.core.polling.async_base_polling import AsyncLROBasePolling
-from azure.core.exceptions import HttpResponseError
-from .._generated.models import AnalyzeOperationResult, Model
-from .._models import (
-    ModelInfo,
-    ModelsSummary,
-    CustomModel,
-    CustomLabeledModel,
-    get_pipeline_response
-)
+from .._generated.models import AnalyzeOperationResult
+from .._helpers import get_pipeline_response, get_content_type, POLLING_INTERVAL
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
+    from .._credential import FormRecognizerApiKeyCredential
+    from .._models import (
+        ExtractedReceipt,
+        ExtractedLayoutPage
+    )
 
 
 class FormRecognizerClient(AsyncFormRecognizerClientBase):
+    """FormRecognizerClient.
 
+    :param str endpoint: Supported Cognitive Services endpoints (protocol and hostname,
+        for example: https://westus2.api.cognitive.microsoft.com).
+    :param credential: Credentials needed for the client to connect to Azure.
+        This can be the an instance of FormRecognizerApiKeyCredential if using an API key
+        or a token credential from azure.identity.
+    :type credential: ~azure.ai.formrecognizer.FormRecognizerApiKeyCredential
+        or ~azure.core.credentials.TokenCredential
+    """
 
     def __init__(self, endpoint, credential, **kwargs):
+        # type: (str, Union[FormRecognizerApiKeyCredential, TokenCredential], Any) -> None
         super(FormRecognizerClient, self).__init__(credential=credential, **kwargs)
         self._client = FormRecognizer(
             endpoint=endpoint, credential=credential, pipeline=self._pipeline
         )
 
+    @distributed_trace_async
     async def begin_extract_receipts(self, form, **kwargs):
+        # type: (Union[str, IO[bytes]], Any) -> List[ExtractedReceipt]
+        """Extract field text and semantic values from a given receipt document.
+        The input document must be of one of the supported content types - 'application/pdf',
+        'image/jpeg', 'image/png' or 'image/tiff'. Alternatively, use 'application/json'
+        type to specify the location (Uri) of the document to be analyzed.
+
+        :param form: .json, .pdf, .jpg, .png or .tiff type file stream.
+        :type form: str or file stream
+        :keyword bool include_text_details: Include text lines and element references in the result.
+        :keyword str content_type: Media type of the body sent to the API.
+        :return: LROPoller
+        :rtype: ~azure.core.polling.LROPoller
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+
         include_text_details = kwargs.pop("include_text_details", False)
         content_type = kwargs.pop("content_type", None)
 
@@ -71,9 +92,29 @@ class FormRecognizerClient(AsyncFormRecognizerClientBase):
             extracted_receipt = prepare_receipt_result(analyze_result, include_text_details)
             return extracted_receipt
 
-        return await async_poller(self._client._client, response, callback, AsyncLROBasePolling(timeout=3, **kwargs))
+        return await async_poller(
+            self._client._client,
+            response,
+            callback,
+            AsyncLROBasePolling(timeout=POLLING_INTERVAL, **kwargs)
+        )
 
+    @distributed_trace_async
     async def begin_extract_layouts(self, form, **kwargs):
+        # type: (Union[str, IO[bytes]], Any) -> List[ExtractedLayoutPage]
+        """Extract text and layout information from a given document.
+        The input document must be of one of the supported content types - 'application/pdf',
+        'image/jpeg', 'image/png' or 'image/tiff'. Alternatively, use 'application/json'
+        type to specify the location (Uri) of the document to be analyzed.
+
+        :param form: .json, .pdf, .jpg, .png or .tiff type file stream.
+        :type form: str or file stream
+        :keyword str content_type: Media type of the body sent to the API.
+        :return: No
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+
         content_type = kwargs.pop("content_type", None)
 
         if isinstance(form, six.string_types):
@@ -94,4 +135,9 @@ class FormRecognizerClient(AsyncFormRecognizerClientBase):
             extracted_layout = prepare_layout_result(analyze_result, include_elements=True)
             return extracted_layout
 
-        return await async_poller(self._client._client, response, callback, AsyncLROBasePolling(timeout=3, **kwargs))
+        return await async_poller(
+            self._client._client,
+            response,
+            callback,
+            AsyncLROBasePolling(timeout=POLLING_INTERVAL, **kwargs)
+        )
