@@ -10,7 +10,6 @@
 # --------------------------------------------------------------------------
 
 from msrest.serialization import Model
-from msrest.exceptions import HttpOperationError
 
 
 class AccessPolicyEntry(Model):
@@ -31,7 +30,7 @@ class AccessPolicyEntry(Model):
     :type application_id: str
     :param permissions: Required. Permissions the identity has for keys,
      secrets and certificates.
-    :type permissions: ~azure.mgmt.keyvault.v2019_09_01.models.Permissions
+    :type permissions: ~azure.mgmt.keyvault.v2016_10_01.models.Permissions
     """
 
     _validation = {
@@ -68,7 +67,7 @@ class CheckNameAvailabilityResult(Model):
     :ivar reason: The reason that a vault name could not be used. The Reason
      element is only returned if NameAvailable is false. Possible values
      include: 'AccountNameInvalid', 'AlreadyExists'
-    :vartype reason: str or ~azure.mgmt.keyvault.v2019_09_01.models.Reason
+    :vartype reason: str or ~azure.mgmt.keyvault.v2016_10_01.models.Reason
     :ivar message: An error message explaining the Reason value in more
      detail.
     :vartype message: str
@@ -94,53 +93,11 @@ class CheckNameAvailabilityResult(Model):
 
 
 class CloudError(Model):
-    """An error response from Key Vault resource provider.
-
-    :param error:
-    :type error: ~azure.mgmt.keyvault.v2019_09_01.models.CloudErrorBody
+    """CloudError.
     """
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'CloudErrorBody'},
     }
-
-    def __init__(self, *, error=None, **kwargs) -> None:
-        super(CloudError, self).__init__(**kwargs)
-        self.error = error
-
-
-class CloudErrorException(HttpOperationError):
-    """Server responsed with exception of type: 'CloudError'.
-
-    :param deserialize: A deserializer
-    :param response: Server response to be deserialized.
-    """
-
-    def __init__(self, deserialize, response, *args):
-
-        super(CloudErrorException, self).__init__(deserialize, response, 'CloudError', *args)
-
-
-class CloudErrorBody(Model):
-    """An error response from Key Vault resource provider.
-
-    :param code: Error code. This is a mnemonic that can be consumed
-     programmatically.
-    :type code: str
-    :param message: User friendly error message. The message is typically
-     localized and may vary with service version.
-    :type message: str
-    """
-
-    _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-    }
-
-    def __init__(self, *, code: str=None, message: str=None, **kwargs) -> None:
-        super(CloudErrorBody, self).__init__(**kwargs)
-        self.code = code
-        self.message = message
 
 
 class DeletedVault(Model):
@@ -157,7 +114,7 @@ class DeletedVault(Model):
     :vartype type: str
     :param properties: Properties of the vault
     :type properties:
-     ~azure.mgmt.keyvault.v2019_09_01.models.DeletedVaultProperties
+     ~azure.mgmt.keyvault.v2016_10_01.models.DeletedVaultProperties
     """
 
     _validation = {
@@ -224,31 +181,6 @@ class DeletedVaultProperties(Model):
         self.tags = None
 
 
-class IPRule(Model):
-    """A rule governing the accessibility of a vault from a specific ip address or
-    ip range.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param value: Required. An IPv4 address range in CIDR notation, such as
-     '124.56.78.91' (simple IP address) or '124.56.78.0/24' (all addresses that
-     start with 124.56.78).
-    :type value: str
-    """
-
-    _validation = {
-        'value': {'required': True},
-    }
-
-    _attribute_map = {
-        'value': {'key': 'value', 'type': 'str'},
-    }
-
-    def __init__(self, *, value: str, **kwargs) -> None:
-        super(IPRule, self).__init__(**kwargs)
-        self.value = value
-
-
 class LogSpecification(Model):
     """Log specification of operation.
 
@@ -273,54 +205,19 @@ class LogSpecification(Model):
         self.blob_duration = blob_duration
 
 
-class NetworkRuleSet(Model):
-    """A set of rules governing the network accessibility of a vault.
-
-    :param bypass: Tells what traffic can bypass network rules. This can be
-     'AzureServices' or 'None'.  If not specified the default is
-     'AzureServices'. Possible values include: 'AzureServices', 'None'
-    :type bypass: str or
-     ~azure.mgmt.keyvault.v2019_09_01.models.NetworkRuleBypassOptions
-    :param default_action: The default action when no rule from ipRules and
-     from virtualNetworkRules match. This is only used after the bypass
-     property has been evaluated. Possible values include: 'Allow', 'Deny'
-    :type default_action: str or
-     ~azure.mgmt.keyvault.v2019_09_01.models.NetworkRuleAction
-    :param ip_rules: The list of IP address rules.
-    :type ip_rules: list[~azure.mgmt.keyvault.v2019_09_01.models.IPRule]
-    :param virtual_network_rules: The list of virtual network rules.
-    :type virtual_network_rules:
-     list[~azure.mgmt.keyvault.v2019_09_01.models.VirtualNetworkRule]
-    """
-
-    _attribute_map = {
-        'bypass': {'key': 'bypass', 'type': 'str'},
-        'default_action': {'key': 'defaultAction', 'type': 'str'},
-        'ip_rules': {'key': 'ipRules', 'type': '[IPRule]'},
-        'virtual_network_rules': {'key': 'virtualNetworkRules', 'type': '[VirtualNetworkRule]'},
-    }
-
-    def __init__(self, *, bypass=None, default_action=None, ip_rules=None, virtual_network_rules=None, **kwargs) -> None:
-        super(NetworkRuleSet, self).__init__(**kwargs)
-        self.bypass = bypass
-        self.default_action = default_action
-        self.ip_rules = ip_rules
-        self.virtual_network_rules = virtual_network_rules
-
-
 class Operation(Model):
     """Key Vault REST API operation definition.
 
     :param name: Operation name: {provider}/{resource}/{operation}
     :type name: str
     :param display: Display metadata associated with the operation.
-    :type display: ~azure.mgmt.keyvault.v2019_09_01.models.OperationDisplay
+    :type display: ~azure.mgmt.keyvault.v2016_10_01.models.OperationDisplay
     :param origin: The origin of operations.
     :type origin: str
     :param service_specification: One property of operation, include metric
      specifications.
     :type service_specification:
-     ~azure.mgmt.keyvault.v2019_09_01.models.ServiceSpecification
+     ~azure.mgmt.keyvault.v2016_10_01.models.ServiceSpecification
     """
 
     _attribute_map = {
@@ -371,16 +268,16 @@ class Permissions(Model):
 
     :param keys: Permissions to keys
     :type keys: list[str or
-     ~azure.mgmt.keyvault.v2019_09_01.models.KeyPermissions]
+     ~azure.mgmt.keyvault.v2016_10_01.models.KeyPermissions]
     :param secrets: Permissions to secrets
     :type secrets: list[str or
-     ~azure.mgmt.keyvault.v2019_09_01.models.SecretPermissions]
+     ~azure.mgmt.keyvault.v2016_10_01.models.SecretPermissions]
     :param certificates: Permissions to certificates
     :type certificates: list[str or
-     ~azure.mgmt.keyvault.v2019_09_01.models.CertificatePermissions]
+     ~azure.mgmt.keyvault.v2016_10_01.models.CertificatePermissions]
     :param storage: Permissions to storage accounts
     :type storage: list[str or
-     ~azure.mgmt.keyvault.v2019_09_01.models.StoragePermissions]
+     ~azure.mgmt.keyvault.v2016_10_01.models.StoragePermissions]
     """
 
     _attribute_map = {
@@ -398,53 +295,32 @@ class Permissions(Model):
         self.storage = storage
 
 
-class PrivateEndpoint(Model):
-    """Private endpoint object properties.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar id: Full identifier of the private endpoint resource.
-    :vartype id: str
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs) -> None:
-        super(PrivateEndpoint, self).__init__(**kwargs)
-        self.id = None
-
-
 class Resource(Model):
     """Key Vault resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified identifier of the key vault resource.
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: The Azure Resource Manager resource ID for the key vault.
     :vartype id: str
-    :ivar name: Name of the key vault resource.
+    :ivar name: The name of the key vault.
     :vartype name: str
-    :ivar type: Resource type of the key vault resource.
+    :ivar type: The resource type of the key vault.
     :vartype type: str
-    :ivar location: Azure location of the key vault resource.
-    :vartype location: str
-    :ivar tags: Tags assigned to the key vault resource.
-    :vartype tags: dict[str, str]
+    :param location: Required. The supported Azure location where the key
+     vault should be created.
+    :type location: str
+    :param tags: The tags that will be assigned to the key vault.
+    :type tags: dict[str, str]
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'readonly': True},
-        'tags': {'readonly': True},
+        'location': {'required': True},
     }
 
     _attribute_map = {
@@ -455,198 +331,13 @@ class Resource(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, *, location: str, tags=None, **kwargs) -> None:
         super(Resource, self).__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
-        self.location = None
-        self.tags = None
-
-
-class PrivateEndpointConnection(Resource):
-    """Private endpoint connection resource.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar id: Fully qualified identifier of the key vault resource.
-    :vartype id: str
-    :ivar name: Name of the key vault resource.
-    :vartype name: str
-    :ivar type: Resource type of the key vault resource.
-    :vartype type: str
-    :ivar location: Azure location of the key vault resource.
-    :vartype location: str
-    :ivar tags: Tags assigned to the key vault resource.
-    :vartype tags: dict[str, str]
-    :param private_endpoint: Properties of the private endpoint object.
-    :type private_endpoint:
-     ~azure.mgmt.keyvault.v2019_09_01.models.PrivateEndpoint
-    :param private_link_service_connection_state: Approval state of the
-     private link connection.
-    :type private_link_service_connection_state:
-     ~azure.mgmt.keyvault.v2019_09_01.models.PrivateLinkServiceConnectionState
-    :param provisioning_state: Provisioning state of the private endpoint
-     connection. Possible values include: 'Succeeded', 'Creating', 'Updating',
-     'Deleting', 'Failed', 'Disconnected'
-    :type provisioning_state: str or
-     ~azure.mgmt.keyvault.v2019_09_01.models.PrivateEndpointConnectionProvisioningState
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'readonly': True},
-        'tags': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'private_endpoint': {'key': 'properties.privateEndpoint', 'type': 'PrivateEndpoint'},
-        'private_link_service_connection_state': {'key': 'properties.privateLinkServiceConnectionState', 'type': 'PrivateLinkServiceConnectionState'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-    }
-
-    def __init__(self, *, private_endpoint=None, private_link_service_connection_state=None, provisioning_state=None, **kwargs) -> None:
-        super(PrivateEndpointConnection, self).__init__(**kwargs)
-        self.private_endpoint = private_endpoint
-        self.private_link_service_connection_state = private_link_service_connection_state
-        self.provisioning_state = provisioning_state
-
-
-class PrivateEndpointConnectionItem(Model):
-    """Private endpoint connection item.
-
-    :param private_endpoint: Properties of the private endpoint object.
-    :type private_endpoint:
-     ~azure.mgmt.keyvault.v2019_09_01.models.PrivateEndpoint
-    :param private_link_service_connection_state: Approval state of the
-     private link connection.
-    :type private_link_service_connection_state:
-     ~azure.mgmt.keyvault.v2019_09_01.models.PrivateLinkServiceConnectionState
-    :param provisioning_state: Provisioning state of the private endpoint
-     connection. Possible values include: 'Succeeded', 'Creating', 'Updating',
-     'Deleting', 'Failed', 'Disconnected'
-    :type provisioning_state: str or
-     ~azure.mgmt.keyvault.v2019_09_01.models.PrivateEndpointConnectionProvisioningState
-    """
-
-    _attribute_map = {
-        'private_endpoint': {'key': 'properties.privateEndpoint', 'type': 'PrivateEndpoint'},
-        'private_link_service_connection_state': {'key': 'properties.privateLinkServiceConnectionState', 'type': 'PrivateLinkServiceConnectionState'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-    }
-
-    def __init__(self, *, private_endpoint=None, private_link_service_connection_state=None, provisioning_state=None, **kwargs) -> None:
-        super(PrivateEndpointConnectionItem, self).__init__(**kwargs)
-        self.private_endpoint = private_endpoint
-        self.private_link_service_connection_state = private_link_service_connection_state
-        self.provisioning_state = provisioning_state
-
-
-class PrivateLinkResource(Resource):
-    """A private link resource.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar id: Fully qualified identifier of the key vault resource.
-    :vartype id: str
-    :ivar name: Name of the key vault resource.
-    :vartype name: str
-    :ivar type: Resource type of the key vault resource.
-    :vartype type: str
-    :ivar location: Azure location of the key vault resource.
-    :vartype location: str
-    :ivar tags: Tags assigned to the key vault resource.
-    :vartype tags: dict[str, str]
-    :ivar group_id: Group identifier of private link resource.
-    :vartype group_id: str
-    :ivar required_members: Required member names of private link resource.
-    :vartype required_members: list[str]
-    :param required_zone_names: Required DNS zone names of the the private
-     link resource.
-    :type required_zone_names: list[str]
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'readonly': True},
-        'tags': {'readonly': True},
-        'group_id': {'readonly': True},
-        'required_members': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'group_id': {'key': 'properties.groupId', 'type': 'str'},
-        'required_members': {'key': 'properties.requiredMembers', 'type': '[str]'},
-        'required_zone_names': {'key': 'properties.requiredZoneNames', 'type': '[str]'},
-    }
-
-    def __init__(self, *, required_zone_names=None, **kwargs) -> None:
-        super(PrivateLinkResource, self).__init__(**kwargs)
-        self.group_id = None
-        self.required_members = None
-        self.required_zone_names = required_zone_names
-
-
-class PrivateLinkResourceListResult(Model):
-    """A list of private link resources.
-
-    :param value: Array of private link resources
-    :type value:
-     list[~azure.mgmt.keyvault.v2019_09_01.models.PrivateLinkResource]
-    """
-
-    _attribute_map = {
-        'value': {'key': 'value', 'type': '[PrivateLinkResource]'},
-    }
-
-    def __init__(self, *, value=None, **kwargs) -> None:
-        super(PrivateLinkResourceListResult, self).__init__(**kwargs)
-        self.value = value
-
-
-class PrivateLinkServiceConnectionState(Model):
-    """An object that represents the approval state of the private link
-    connection.
-
-    :param status: Indicates whether the connection has been approved,
-     rejected or removed by the key vault owner. Possible values include:
-     'Pending', 'Approved', 'Rejected', 'Disconnected'
-    :type status: str or
-     ~azure.mgmt.keyvault.v2019_09_01.models.PrivateEndpointServiceConnectionStatus
-    :param description: The reason for approval or rejection.
-    :type description: str
-    :param action_required: A message indicating if changes on the service
-     provider require any updates on the consumer.
-    :type action_required: str
-    """
-
-    _attribute_map = {
-        'status': {'key': 'status', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'action_required': {'key': 'actionRequired', 'type': 'str'},
-    }
-
-    def __init__(self, *, status=None, description: str=None, action_required: str=None, **kwargs) -> None:
-        super(PrivateLinkServiceConnectionState, self).__init__(**kwargs)
-        self.status = status
-        self.description = description
-        self.action_required = action_required
+        self.location = location
+        self.tags = tags
 
 
 class ServiceSpecification(Model):
@@ -654,7 +345,7 @@ class ServiceSpecification(Model):
 
     :param log_specifications: Log specifications of operation.
     :type log_specifications:
-     list[~azure.mgmt.keyvault.v2019_09_01.models.LogSpecification]
+     list[~azure.mgmt.keyvault.v2016_10_01.models.LogSpecification]
     """
 
     _attribute_map = {
@@ -679,7 +370,7 @@ class Sku(Model):
     :param name: Required. SKU name to specify whether the key vault is a
      standard vault or a premium vault. Possible values include: 'standard',
      'premium'
-    :type name: str or ~azure.mgmt.keyvault.v2019_09_01.models.SkuName
+    :type name: str or ~azure.mgmt.keyvault.v2016_10_01.models.SkuName
     """
 
     _validation = {
@@ -699,7 +390,7 @@ class Sku(Model):
         self.name = name
 
 
-class Vault(Model):
+class Vault(Resource):
     """Resource information with extended details.
 
     Variables are only populated by the server, and will be ignored when
@@ -707,24 +398,26 @@ class Vault(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified identifier of the key vault resource.
+    :ivar id: The Azure Resource Manager resource ID for the key vault.
     :vartype id: str
-    :ivar name: Name of the key vault resource.
+    :ivar name: The name of the key vault.
     :vartype name: str
-    :ivar type: Resource type of the key vault resource.
+    :ivar type: The resource type of the key vault.
     :vartype type: str
-    :param location: Azure location of the key vault resource.
+    :param location: Required. The supported Azure location where the key
+     vault should be created.
     :type location: str
-    :param tags: Tags assigned to the key vault resource.
+    :param tags: The tags that will be assigned to the key vault.
     :type tags: dict[str, str]
     :param properties: Required. Properties of the vault
-    :type properties: ~azure.mgmt.keyvault.v2019_09_01.models.VaultProperties
+    :type properties: ~azure.mgmt.keyvault.v2016_10_01.models.VaultProperties
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'location': {'required': True},
         'properties': {'required': True},
     }
 
@@ -737,13 +430,8 @@ class Vault(Model):
         'properties': {'key': 'properties', 'type': 'VaultProperties'},
     }
 
-    def __init__(self, *, properties, location: str=None, tags=None, **kwargs) -> None:
-        super(Vault, self).__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.location = location
-        self.tags = tags
+    def __init__(self, *, location: str, properties, tags=None, **kwargs) -> None:
+        super(Vault, self).__init__(location=location, tags=tags, **kwargs)
         self.properties = properties
 
 
@@ -765,7 +453,7 @@ class VaultAccessPolicyParameters(Model):
     :vartype location: str
     :param properties: Required. Properties of the access policy
     :type properties:
-     ~azure.mgmt.keyvault.v2019_09_01.models.VaultAccessPolicyProperties
+     ~azure.mgmt.keyvault.v2016_10_01.models.VaultAccessPolicyProperties
     """
 
     _validation = {
@@ -802,7 +490,7 @@ class VaultAccessPolicyProperties(Model):
      access to the key vault. All identities in the array must use the same
      tenant ID as the key vault's tenant ID.
     :type access_policies:
-     list[~azure.mgmt.keyvault.v2019_09_01.models.AccessPolicyEntry]
+     list[~azure.mgmt.keyvault.v2016_10_01.models.AccessPolicyEntry]
     """
 
     _validation = {
@@ -861,7 +549,7 @@ class VaultCreateOrUpdateParameters(Model):
     :param tags: The tags that will be assigned to the key vault.
     :type tags: dict[str, str]
     :param properties: Required. Properties of the vault
-    :type properties: ~azure.mgmt.keyvault.v2019_09_01.models.VaultProperties
+    :type properties: ~azure.mgmt.keyvault.v2016_10_01.models.VaultProperties
     """
 
     _validation = {
@@ -889,7 +577,7 @@ class VaultPatchParameters(Model):
     :type tags: dict[str, str]
     :param properties: Properties of the vault
     :type properties:
-     ~azure.mgmt.keyvault.v2019_09_01.models.VaultPatchProperties
+     ~azure.mgmt.keyvault.v2016_10_01.models.VaultPatchProperties
     """
 
     _attribute_map = {
@@ -910,12 +598,12 @@ class VaultPatchProperties(Model):
      for authenticating requests to the key vault.
     :type tenant_id: str
     :param sku: SKU details
-    :type sku: ~azure.mgmt.keyvault.v2019_09_01.models.Sku
+    :type sku: ~azure.mgmt.keyvault.v2016_10_01.models.Sku
     :param access_policies: An array of 0 to 16 identities that have access to
      the key vault. All identities in the array must use the same tenant ID as
      the key vault's tenant ID.
     :type access_policies:
-     list[~azure.mgmt.keyvault.v2019_09_01.models.AccessPolicyEntry]
+     list[~azure.mgmt.keyvault.v2016_10_01.models.AccessPolicyEntry]
     :param enabled_for_deployment: Property to specify whether Azure Virtual
      Machines are permitted to retrieve certificates stored as secrets from the
      key vault.
@@ -927,37 +615,19 @@ class VaultPatchProperties(Model):
     :param enabled_for_template_deployment: Property to specify whether Azure
      Resource Manager is permitted to retrieve secrets from the key vault.
     :type enabled_for_template_deployment: bool
-    :param enable_soft_delete: Property to specify whether the 'soft delete'
-     functionality is enabled for this key vault. Once set to true, it cannot
-     be reverted to false.
+    :param enable_soft_delete: Property specifying whether recoverable
+     deletion ('soft' delete) is enabled for this key vault. The property may
+     not be set to false.
     :type enable_soft_delete: bool
-    :param enable_rbac_authorization: Property that controls how data actions
-     are authorized. When true, the key vault will use Role Based Access
-     Control (RBAC) for authorization of data actions, and the access policies
-     specified in vault properties will be  ignored (warning: this is a preview
-     feature). When false, the key vault will use the access policies specified
-     in vault properties, and any policy stored on Azure Resource Manager will
-     be ignored. If null or not specified, the value of this property will not
-     change.
-    :type enable_rbac_authorization: bool
-    :param soft_delete_retention_in_days: softDelete data retention days. It
-     accepts >=7 and <=90.
-    :type soft_delete_retention_in_days: int
     :param create_mode: The vault's create mode to indicate whether the vault
      need to be recovered or not. Possible values include: 'recover', 'default'
     :type create_mode: str or
-     ~azure.mgmt.keyvault.v2019_09_01.models.CreateMode
+     ~azure.mgmt.keyvault.v2016_10_01.models.CreateMode
     :param enable_purge_protection: Property specifying whether protection
-     against purge is enabled for this vault. Setting this property to true
-     activates protection against purge for this vault and its content - only
-     the Key Vault service may initiate a hard, irrecoverable deletion. The
-     setting is effective only if soft delete is also enabled. Enabling this
-     functionality is irreversible - that is, the property does not accept
-     false as its value.
+     against purge is enabled for this vault; it is only effective if soft
+     delete is also enabled. Once activated, the property may no longer be
+     reset to false.
     :type enable_purge_protection: bool
-    :param network_acls: A collection of rules governing the accessibility of
-     the vault from specific network locations.
-    :type network_acls: ~azure.mgmt.keyvault.v2019_09_01.models.NetworkRuleSet
     """
 
     _attribute_map = {
@@ -968,14 +638,11 @@ class VaultPatchProperties(Model):
         'enabled_for_disk_encryption': {'key': 'enabledForDiskEncryption', 'type': 'bool'},
         'enabled_for_template_deployment': {'key': 'enabledForTemplateDeployment', 'type': 'bool'},
         'enable_soft_delete': {'key': 'enableSoftDelete', 'type': 'bool'},
-        'enable_rbac_authorization': {'key': 'enableRbacAuthorization', 'type': 'bool'},
-        'soft_delete_retention_in_days': {'key': 'softDeleteRetentionInDays', 'type': 'int'},
         'create_mode': {'key': 'createMode', 'type': 'CreateMode'},
         'enable_purge_protection': {'key': 'enablePurgeProtection', 'type': 'bool'},
-        'network_acls': {'key': 'networkAcls', 'type': 'NetworkRuleSet'},
     }
 
-    def __init__(self, *, tenant_id: str=None, sku=None, access_policies=None, enabled_for_deployment: bool=None, enabled_for_disk_encryption: bool=None, enabled_for_template_deployment: bool=None, enable_soft_delete: bool=None, enable_rbac_authorization: bool=None, soft_delete_retention_in_days: int=None, create_mode=None, enable_purge_protection: bool=None, network_acls=None, **kwargs) -> None:
+    def __init__(self, *, tenant_id: str=None, sku=None, access_policies=None, enabled_for_deployment: bool=None, enabled_for_disk_encryption: bool=None, enabled_for_template_deployment: bool=None, enable_soft_delete: bool=None, create_mode=None, enable_purge_protection: bool=None, **kwargs) -> None:
         super(VaultPatchProperties, self).__init__(**kwargs)
         self.tenant_id = tenant_id
         self.sku = sku
@@ -984,18 +651,12 @@ class VaultPatchProperties(Model):
         self.enabled_for_disk_encryption = enabled_for_disk_encryption
         self.enabled_for_template_deployment = enabled_for_template_deployment
         self.enable_soft_delete = enable_soft_delete
-        self.enable_rbac_authorization = enable_rbac_authorization
-        self.soft_delete_retention_in_days = soft_delete_retention_in_days
         self.create_mode = create_mode
         self.enable_purge_protection = enable_purge_protection
-        self.network_acls = network_acls
 
 
 class VaultProperties(Model):
     """Properties of the vault.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -1003,13 +664,13 @@ class VaultProperties(Model):
      should be used for authenticating requests to the key vault.
     :type tenant_id: str
     :param sku: Required. SKU details
-    :type sku: ~azure.mgmt.keyvault.v2019_09_01.models.Sku
+    :type sku: ~azure.mgmt.keyvault.v2016_10_01.models.Sku
     :param access_policies: An array of 0 to 16 identities that have access to
      the key vault. All identities in the array must use the same tenant ID as
      the key vault's tenant ID. When `createMode` is set to `recover`, access
      policies are not required. Otherwise, access policies are required.
     :type access_policies:
-     list[~azure.mgmt.keyvault.v2019_09_01.models.AccessPolicyEntry]
+     list[~azure.mgmt.keyvault.v2016_10_01.models.AccessPolicyEntry]
     :param vault_uri: The URI of the vault for performing operations on keys
      and secrets.
     :type vault_uri: str
@@ -1024,29 +685,16 @@ class VaultProperties(Model):
     :param enabled_for_template_deployment: Property to specify whether Azure
      Resource Manager is permitted to retrieve secrets from the key vault.
     :type enabled_for_template_deployment: bool
-    :param enable_soft_delete: Property to specify whether the 'soft delete'
-     functionality is enabled for this key vault. If it's not set to any
-     value(true or false) when creating new key vault, it will be set to true
-     by default. Once set to true, it cannot be reverted to false. Default
-     value: True .
+    :param enable_soft_delete: Property specifying whether recoverable
+     deletion is enabled for this key vault. Setting this property to true
+     activates the soft delete feature, whereby vaults or vault entities can be
+     recovered after deletion. Enabling this functionality is irreversible -
+     that is, the property does not accept false as its value.
     :type enable_soft_delete: bool
-    :param soft_delete_retention_in_days: softDelete data retention days. It
-     accepts >=7 and <=90. Default value: 90 .
-    :type soft_delete_retention_in_days: int
-    :param enable_rbac_authorization: Property that controls how data actions
-     are authorized. When true, the key vault will use Role Based Access
-     Control (RBAC) for authorization of data actions, and the access policies
-     specified in vault properties will be  ignored (warning: this is a preview
-     feature). When false, the key vault will use the access policies specified
-     in vault properties, and any policy stored on Azure Resource Manager will
-     be ignored. If null or not specified, the vault is created with the
-     default value of false. Note that management actions are always authorized
-     with RBAC. Default value: False .
-    :type enable_rbac_authorization: bool
     :param create_mode: The vault's create mode to indicate whether the vault
      need to be recovered or not. Possible values include: 'recover', 'default'
     :type create_mode: str or
-     ~azure.mgmt.keyvault.v2019_09_01.models.CreateMode
+     ~azure.mgmt.keyvault.v2016_10_01.models.CreateMode
     :param enable_purge_protection: Property specifying whether protection
      against purge is enabled for this vault. Setting this property to true
      activates protection against purge for this vault and its content - only
@@ -1055,19 +703,11 @@ class VaultProperties(Model):
      functionality is irreversible - that is, the property does not accept
      false as its value.
     :type enable_purge_protection: bool
-    :param network_acls: Rules governing the accessibility of the key vault
-     from specific network locations.
-    :type network_acls: ~azure.mgmt.keyvault.v2019_09_01.models.NetworkRuleSet
-    :ivar private_endpoint_connections: List of private endpoint connections
-     associated with the key vault.
-    :vartype private_endpoint_connections:
-     list[~azure.mgmt.keyvault.v2019_09_01.models.PrivateEndpointConnectionItem]
     """
 
     _validation = {
         'tenant_id': {'required': True},
         'sku': {'required': True},
-        'private_endpoint_connections': {'readonly': True},
     }
 
     _attribute_map = {
@@ -1079,15 +719,11 @@ class VaultProperties(Model):
         'enabled_for_disk_encryption': {'key': 'enabledForDiskEncryption', 'type': 'bool'},
         'enabled_for_template_deployment': {'key': 'enabledForTemplateDeployment', 'type': 'bool'},
         'enable_soft_delete': {'key': 'enableSoftDelete', 'type': 'bool'},
-        'soft_delete_retention_in_days': {'key': 'softDeleteRetentionInDays', 'type': 'int'},
-        'enable_rbac_authorization': {'key': 'enableRbacAuthorization', 'type': 'bool'},
         'create_mode': {'key': 'createMode', 'type': 'CreateMode'},
         'enable_purge_protection': {'key': 'enablePurgeProtection', 'type': 'bool'},
-        'network_acls': {'key': 'networkAcls', 'type': 'NetworkRuleSet'},
-        'private_endpoint_connections': {'key': 'privateEndpointConnections', 'type': '[PrivateEndpointConnectionItem]'},
     }
 
-    def __init__(self, *, tenant_id: str, sku, access_policies=None, vault_uri: str=None, enabled_for_deployment: bool=None, enabled_for_disk_encryption: bool=None, enabled_for_template_deployment: bool=None, enable_soft_delete: bool=True, soft_delete_retention_in_days: int=90, enable_rbac_authorization: bool=False, create_mode=None, enable_purge_protection: bool=None, network_acls=None, **kwargs) -> None:
+    def __init__(self, *, tenant_id: str, sku, access_policies=None, vault_uri: str=None, enabled_for_deployment: bool=None, enabled_for_disk_encryption: bool=None, enabled_for_template_deployment: bool=None, enable_soft_delete: bool=None, create_mode=None, enable_purge_protection: bool=None, **kwargs) -> None:
         super(VaultProperties, self).__init__(**kwargs)
         self.tenant_id = tenant_id
         self.sku = sku
@@ -1097,33 +733,5 @@ class VaultProperties(Model):
         self.enabled_for_disk_encryption = enabled_for_disk_encryption
         self.enabled_for_template_deployment = enabled_for_template_deployment
         self.enable_soft_delete = enable_soft_delete
-        self.soft_delete_retention_in_days = soft_delete_retention_in_days
-        self.enable_rbac_authorization = enable_rbac_authorization
         self.create_mode = create_mode
         self.enable_purge_protection = enable_purge_protection
-        self.network_acls = network_acls
-        self.private_endpoint_connections = None
-
-
-class VirtualNetworkRule(Model):
-    """A rule governing the accessibility of a vault from a specific virtual
-    network.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param id: Required. Full resource id of a vnet subnet, such as
-     '/subscriptions/subid/resourceGroups/rg1/providers/Microsoft.Network/virtualNetworks/test-vnet/subnets/subnet1'.
-    :type id: str
-    """
-
-    _validation = {
-        'id': {'required': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-    }
-
-    def __init__(self, *, id: str, **kwargs) -> None:
-        super(VirtualNetworkRule, self).__init__(**kwargs)
-        self.id = id
