@@ -1,3 +1,19 @@
+#!/usr/bin/env python
+
+# --------------------------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for license information.
+# --------------------------------------------------------------------------------------------
+
+"""
+The following sample can be used if the environment you are targeting supports a different version of Storage Blob
+SDK than those typically available on Azure. For example, if you are running Event Hubs on an Azure Stack Hub version
+2002, the highest available version for the Storage service is version 2017-11-09. In this case, you will need to
+specify param api_version to 2017-11-09 when creating the BlobCheckpointStore. For more information on the Azure Storage
+service versions supported on Azure Stack Hub, please refer to
+<a href=docs.microsoft.com/azure-stack/user/azure-stack-acs-differences>Azure Stack Hub Documentation</a>
+"""
+
 import os
 from azure.eventhub import EventHubConsumerClient
 from azure.eventhub.extensions.checkpointstoreblob import BlobCheckpointStore
