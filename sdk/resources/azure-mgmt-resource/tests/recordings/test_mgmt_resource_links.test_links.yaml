@@ -13,8 +13,8 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-resource/8.0.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-5.0.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-resource/9.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
@@ -33,7 +33,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 04 Feb 2020 04:15:16 GMT
+      - Fri, 20 Mar 2020 02:56:08 GMT
       expires:
       - '-1'
       pragma:
@@ -50,15 +50,15 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-resource:
-      - Microsoft.Compute/PutVM3Min;238,Microsoft.Compute/PutVM30Min;1192
+      - Microsoft.Compute/PutVM3Min;238,Microsoft.Compute/PutVM30Min;1198
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1197'
+      - '1199'
     status:
       code: 200
       message: OK
 - request:
-    body: 'b''b\''{"properties": {"targetId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_links_test_links7650e8a/providers/Microsoft.Compute/availabilitySets/pytestavset7650e8a",
-      "notes": "Testing links"}}\'''''
+    body: 'b''{"properties": {"targetId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_links_test_links7650e8a/providers/Microsoft.Compute/availabilitySets/pytestavset7650e8a",
+      "notes": "Testing links"}}'''
     headers:
       Accept:
       - application/json
@@ -71,8 +71,8 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-resource/8.0.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-5.0.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-resource/9.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
@@ -89,7 +89,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 04 Feb 2020 04:15:17 GMT
+      - Fri, 20 Mar 2020 02:56:08 GMT
       expires:
       - '-1'
       pragma:
@@ -113,8 +113,8 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-resource/8.0.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-5.0.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-resource/9.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
@@ -131,7 +131,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 04 Feb 2020 04:15:27 GMT
+      - Fri, 20 Mar 2020 02:56:18 GMT
       expires:
       - '-1'
       pragma:
@@ -157,8 +157,8 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-resource/8.0.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-5.0.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-resource/9.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
@@ -175,7 +175,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 04 Feb 2020 04:15:27 GMT
+      - Fri, 20 Mar 2020 02:56:18 GMT
       expires:
       - '-1'
       pragma:
@@ -201,8 +201,8 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-resource/8.0.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-5.0.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-resource/9.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
@@ -219,7 +219,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 04 Feb 2020 04:15:27 GMT
+      - Fri, 20 Mar 2020 02:56:18 GMT
       expires:
       - '-1'
       pragma:
@@ -245,8 +245,8 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-resource/8.0.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-5.0.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-resource/9.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
@@ -263,7 +263,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 04 Feb 2020 04:15:27 GMT
+      - Fri, 20 Mar 2020 02:56:18 GMT
       expires:
       - '-1'
       pragma:
@@ -291,8 +291,8 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-resource/8.0.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-5.0.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-resource/9.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: DELETE
@@ -306,7 +306,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 04 Feb 2020 04:15:28 GMT
+      - Fri, 20 Mar 2020 02:56:18 GMT
       expires:
       - '-1'
       pragma:
