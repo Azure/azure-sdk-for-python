@@ -13,9 +13,9 @@ import uuid
 from datetime import datetime, timedelta
 
 from azure.servicebus import ServiceBusClient, AutoLockRenew
-from azure.servicebus.common.message import Message, PeekMessage, ReceivedMessage, BatchMessage
-from azure.servicebus.common.constants import ReceiveSettleMode
-from azure.servicebus.common.errors import (
+from azure.servicebus._common.message import Message, PeekMessage, ReceivedMessage, BatchMessage
+from azure.servicebus._common.constants import ReceiveSettleMode
+from azure.servicebus.exceptions import (
     ServiceBusConnectionError,
     ServiceBusError,
     MessageLockExpired,

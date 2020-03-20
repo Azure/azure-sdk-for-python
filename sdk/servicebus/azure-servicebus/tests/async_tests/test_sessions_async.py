@@ -14,9 +14,9 @@ import uuid
 from datetime import datetime, timedelta
 
 from azure.servicebus.aio import ServiceBusClient, Message, ReceivedMessage, AutoLockRenew
-from azure.servicebus.common.message import PeekMessage
-from azure.servicebus.common.constants import ReceiveSettleMode, NEXT_AVAILABLE
-from azure.servicebus.common.errors import (
+from azure.servicebus._common.message import PeekMessage
+from azure.servicebus._common.constants import ReceiveSettleMode, NEXT_AVAILABLE
+from azure.servicebus.exceptions import (
     ServiceBusError,
     NoActiveSession,
     SessionLockExpired,

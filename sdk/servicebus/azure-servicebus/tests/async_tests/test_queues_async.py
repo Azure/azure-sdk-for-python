@@ -18,9 +18,9 @@ from azure.servicebus.aio import (
     #BatchMessage,
     ReceivedMessage,
     AutoLockRenew)
-from azure.servicebus.common.message import PeekMessage
-from azure.servicebus.common.constants import ReceiveSettleMode
-from azure.servicebus.common.errors import (
+from azure.servicebus._common.message import PeekMessage
+from azure.servicebus._common.constants import ReceiveSettleMode
+from azure.servicebus.exceptions import (
     ServiceBusError,
     MessageLockExpired,
     InvalidHandlerState,

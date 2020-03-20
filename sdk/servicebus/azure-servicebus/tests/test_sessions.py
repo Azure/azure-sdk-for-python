@@ -14,9 +14,9 @@ import uuid
 from datetime import datetime, timedelta
 
 from azure.servicebus import ServiceBusClient, AutoLockRenew
-from azure.servicebus.common.message import Message, PeekMessage, ReceivedMessage
-from azure.servicebus.common.constants import ReceiveSettleMode, NEXT_AVAILABLE
-from azure.servicebus.common.errors import (
+from azure.servicebus._common.message import Message, PeekMessage, ReceivedMessage
+from azure.servicebus._common.constants import ReceiveSettleMode, NEXT_AVAILABLE
+from azure.servicebus.exceptions import (
     ServiceBusConnectionError,
     ServiceBusError,
     NoActiveSession,
@@ -128,7 +128,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
     @RandomNameResourceGroupPreparer()
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
-    def test_session_by_session_client_conn_str_receive_handler_with_stop_TESTTEST(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+    def test_session_by_session_client_conn_str_receive_handler_with_stop(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
         with ServiceBusClient.from_connection_string(
             servicebus_namespace_connection_string, debug=False) as sb_client:
 
@@ -864,15 +864,15 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
     @RandomNameResourceGroupPreparer(name_prefix='servicebustest')
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
-    def test_session_by_session_client_conn_str_receive_handler_peeklock_abandon(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+    def test_session_by_session_client_conn_str_receive_handler_peeklock_abandon_TESTTEST(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
         with ServiceBusClient.from_connection_string(
             servicebus_namespace_connection_string, debug=False) as sb_client:
 
             session_id = str(uuid.uuid4())
             with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                 for i in range(3):
-                    message = Message("Handler message no. {}".format(i))
-                    sender.send(message, session_id=session_id)
+                    message = Message("Handler message no. {}".format(i), session_id=session_id)
+                    sender.send(message)
 
             with sb_client.get_queue_receiver(servicebus_queue.name, session_id=session_id) as receiver:
                 message = receiver.next()

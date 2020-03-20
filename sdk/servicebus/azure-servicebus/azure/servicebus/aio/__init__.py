@@ -17,9 +17,9 @@ from ..exceptions import (
     SessionLockExpired,
     AutoLockRenewFailed,
     AutoLockRenewTimeout)
-from ..common.constants import ReceiveSettleMode, NEXT_AVAILABLE
-from ..common.message import PeekMessage, Message, BatchMessage
-from ..common.utils import AutoLockRenew
+from .._common.constants import ReceiveSettleMode, NEXT_AVAILABLE
+from .._common.message import PeekMessage, Message, BatchMessage
+from .._common.utils import AutoLockRenew
 from .async_message import ReceivedMessage
 from ._base_handler_async import ServiceBusSharedKeyCredential
 from ._servicebus_sender_async import ServiceBusSender

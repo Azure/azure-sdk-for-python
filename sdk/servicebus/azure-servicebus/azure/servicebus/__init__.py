@@ -14,6 +14,7 @@ from ._servicebus_receiver import ServiceBusReceiver
 from ._base_handler import ServiceBusSharedKeyCredential
 from ._common.message import Message, BatchMessage, PeekMessage, ReceivedMessage
 from ._common.constants import ReceiveSettleMode, NEXT_AVAILABLE
+from ._common.utils import AutoLockRenew
 from .exceptions import (
     ServiceBusError,
     ServiceBusResourceNotFound,
