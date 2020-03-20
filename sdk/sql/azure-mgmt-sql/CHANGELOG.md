@@ -1,5 +1,10 @@
 # Release History
 
+# 0.18.0 (2020-03-31)
+**Features**
+
+- Added operation group ManagedInstanceOperations
+
 # 0.17.0 (2020-03-02)
 
 **Features**

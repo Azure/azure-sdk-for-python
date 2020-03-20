@@ -99,6 +99,7 @@ from ._workload_classifiers_operations import WorkloadClassifiersOperations
 from ._managed_database_restore_details_operations import ManagedDatabaseRestoreDetailsOperations
 from ._managed_databases_operations import ManagedDatabasesOperations
 from ._server_azure_ad_administrators_operations import ServerAzureADAdministratorsOperations
+from ._managed_instance_operations import ManagedInstanceOperations
 
 __all__ = [
     'RecoverableDatabasesOperations',
@@ -191,4 +192,5 @@ __all__ = [
     'ManagedDatabaseRestoreDetailsOperations',
     'ManagedDatabasesOperations',
     'ServerAzureADAdministratorsOperations',
+    'ManagedInstanceOperations',
 ]
