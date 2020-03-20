@@ -13,14 +13,15 @@ or by providing a token credential from `azure.identity` to use Azure Active Dir
 ## Receipt and Layout
 
 Receipt and layout are accessed through the `FormRecognizerClient`. The input form or document can be passed as a 
-string url/path to the image, or as a file stream. The SDK will determine content-type and send the appropriate header. 
+string url, or as a file stream. The SDK will determine content-type and send the appropriate header. 
 
 Both receipt and layout methods return poller objects which are used to get the result.
-The `begin_extract_receipt` method returns a `List[ExtractedReceipt]` with hardcoded receipt fields.
-The `begin_extract_layout` method returns the extracted layouts as a `List[ExtractedLayoutPage]`.
+The `begin_extract_receipts` method returns a `List[ExtractedReceipt]` with hardcoded receipt fields.
+The `begin_extract_layouts` method returns the extracted layouts as a `List[ExtractedLayoutPage]`.
 
 If the keyword argument `include_text_details=True` is passed in, the `elements` attribute will be re-hydrated with the
-OCR result for the particular value/cell referenced by the json pointer.
+OCR result for the particular value/cell referenced by the json pointer and the `lines` attribute on PageMetadata
+will be populated with the OCR lines on the page.
 
 ### Form Recognizer Client
 ```python
@@ -28,27 +29,28 @@ from azure.ai.formrecognizer import FormRecognizerClient
 
 client = FormRecognizerClient(endpoint: str, credential: Union[CognitiveKeyCredential, TokenCredential])
 
-client.begin_extract_receipt(form: Union[str, BytesIO], **kwargs) -> LROPoller -> List[ExtractedReceipt]
+client.begin_extract_receipts(form: Union[str, BytesIO], **kwargs) -> LROPoller -> List[ExtractedReceipt]
 
-client.begin_extract_layout(form: Union[str, BytesIO], **kwargs) -> LROPoller -> List[ExtractedLayoutPage]
+client.begin_extract_layouts(form: Union[str, BytesIO], **kwargs) -> LROPoller -> List[ExtractedLayoutPage]
 ```
 
 ### Receipt Models
 ```python
-class ExtractedReceipt(DictMixin):
+class ExtractedReceipt:
     receipt_items: List[ReceiptItem]
     merchant_address: FieldValue
     merchant_name: FieldValue
     merchant_phone_number: FieldValue
-    receipt_type: FieldValue
+    receipt_type: ReceiptType
     subtotal: FieldValue
     tax: FieldValue
     tip: FieldValue
     total: FieldValue
     transaction_date: FieldValue
     transaction_time: FieldValue
+    fields: Dict[str, FieldValue]
     page_range: PageRange
-    page_metadata: PageMetadata
+    page_metadata: List[PageMetadata]
 
 class ReceiptItem:
     name: FieldValue
@@ -59,21 +61,24 @@ class ReceiptItem:
 class FieldValue:
     value: Union[str, float, int, datetime]
     text: str
-    bounding_box: List[float]
+    bounding_box: BoundingBox
     confidence: float
     page_number: int
     elements: List[Union[ExtractedLine, ExtractedWord]]
 
+class ReceiptType:
+    type: str
+    confidence: float
+
 class ExtractedLine:
     text: str
-    bounding_box: List[float]
-    language: str
+    bounding_box: BoundingBox
     page_number: int
     words: List[ExtractedWord]
 
 class ExtractedWord:
     text: str
-    bounding_box: List[float]
+    bounding_box: BoundingBox
     confidence: float
     page_number: int
     line: ExtractedLine
@@ -81,12 +86,22 @@ class ExtractedWord:
 class PageMetadata:
     page_number: int
     angle: float
-    width: int
-    height: int
-    unit: str
-    language: str
+    width: float
+    height: float
+    unit: LengthUnit
     lines: List[ExtractedLine]
 
+class LengthUnit(str, Enum):
+    pixel = "pixel"
+    inch = "inch"
+
+class BoundingBox:
+    top_left: Point(x, y)
+    top_right: Point(x, y)
+    bottom_right: Point(x, y)
+    bottom_left: Point(x, y)
+
+Point = collections.namedtuple("Point", "x y")
 PageRange = collections.namedtuple("PageRange", "first_page last_page")
 ```
 
@@ -97,29 +112,30 @@ from azure.ai.formrecognizer import FormRecognizerClient
 client = FormRecognizerClient(endpoint, credential)
 
 receipt_image = "https://raw.githubusercontent.com/Azure-Samples/cognitive-services-REST-api-samples/master/curl/form-recognizer/contoso-allinone.jpg"
-poller = client.begin_extract_receipt(receipt_image)
-receipt = poller.result()
-r = receipt[0]
+poller = client.begin_extract_receipts(receipt_image)
+receipts = poller.result()
+r = receipts[0]
 
 print("Receipt contained the following values with confidences: ")
-print("ReceiptType: {}, confidence: {}").format(r.receipt_type.value, r.receipt_type.confidence)
-print("MerchantName: {}, confidence: {}").format(r.merchant_name.value, r.merchant_name.confidence)
-print("MerchantAddress: {}, confidence: {}").format(r.merchant_address.value, r.merchant_address.confidence)
-print("MerchantPhoneNumber: {}, confidence: {}").format(r.merchant_phone_number.value, r.merchant_phone_number.confidence)
-print("TransactionDate: {}, confidence: {}").format(r.transaction_date.value, r.transaction_date.confidence)
-print("TransactionTime: {}, confidence: {}").format(r.transaction_time.value, r.transaction_time.confidence)
+print("ReceiptType: {}, confidence: {}".format(r.receipt_type.type, r.receipt_type.confidence))
+print("MerchantName: {}, confidence: {}".format(r.merchant_name.value, r.merchant_name.confidence))
+print("MerchantAddress: {}, confidence: {}".format(r.merchant_address.value, r.merchant_address.confidence))
+print("MerchantPhoneNumber: {}, confidence: {}".format(r.merchant_phone_number.value,
+                                                        r.merchant_phone_number.confidence))
+print("TransactionDate: {}, confidence: {}".format(r.transaction_date.value, r.transaction_date.confidence))
+print("TransactionTime: {}, confidence: {}".format(r.transaction_time.value, r.transaction_time.confidence))
 for item in r.receipt_items:
-    print("Item Name: {}, confidence: {}").format(item.name.value, item.name.confidence)
-    print("Item Quantity: {}, confidence: {}").format(item.quantity.value, item.quantity.confidence)
-    print("Item Price: {}, confidence: {}").format(item.item_price.value, item.item_price.confidence)
-    print("Total Price: {}, confidence: {}").format(item.total_price.value, item.total_price.confidence)
-print("Subtotal: {}, confidence: {}").format(r.subtotal.value, r.subtotal.confidence)
-print("Tax: {}, confidence: {}").format(r.tax.value, r.tax.confidence)
-print("Tip: {}, confidence: {}").format(r.tip.value, r.tip.confidence)
-print("Total: {}, confidence: {}").format(r.total.value, r.total.confidence)
+    print("Item Name: {}, confidence: {}".format(item.name.value, item.name.confidence))
+    print("Item Quantity: {}, confidence: {}".format(item.quantity.value, item.quantity.confidence))
+    print("Item Price: {}, confidence: {}".format(item.item_price.value, item.item_price.confidence))
+    print("Total Price: {}, confidence: {}".format(item.total_price.value, item.total_price.confidence))
+print("Subtotal: {}, confidence: {}".format(r.subtotal.value, r.subtotal.confidence))
+print("Tax: {}, confidence: {}".format(r.tax.value, r.tax.confidence))
+print("Tip: {}, confidence: {}".format(r.tip.value, r.tip.confidence))
+print("Total: {}, confidence: {}".format(r.total.value, r.total.confidence))
 
 # Access as a dictionary
-for item, field_value in r.items():
+for item, field_value in r.fields.items():
     print(item, field_value.value, field_value.text, field_value.confidence, field_value.bounding_box)
 ```
 
@@ -135,6 +151,7 @@ class ExtractedTable:
     cells: List[TableCell]
     row_count: int
     column_count: int
+    page_number: int
 
 class TableCell:
     text: str
@@ -145,19 +162,18 @@ class TableCell:
     is_header: bool
     row_index: int
     row_span: int
-    bounding_box: List[float]
+    bounding_box: BoundingBox
     elements: List[Union[ExtractedLine, ExtractedWord]]
 
 class ExtractedLine:
     text: str
-    bounding_box: List[float]
-    language: str
+    bounding_box: BoundingBox
     page_number: int
     words: List[ExtractedWord]
 
 class ExtractedWord:
     text: str
-    bounding_box: List[float]
+    bounding_box: BoundingBox
     confidence: float
     page_number: int
     line: ExtractedLine
@@ -165,32 +181,27 @@ class ExtractedWord:
 class PageMetadata:
     page_number: int
     angle: float
-    width: int
-    height: int
-    unit: str
-    language: str
+    width: float
+    height: float
+    unit: LengthUnit
     lines: List[ExtractedLine]
 ```
 
 ### Layout Sample
 
 ```python
-import pandas as pd
 from azure.ai.formrecognizer import FormRecognizerClient
 
 client = FormRecognizerClient(endpoint, credential)
 
 table_image = "https://www.traveldailymedia.com/assets/2020/01/Table2.png"
-poller = client.begin_extract_layout(table_image)
+poller = client.begin_extract_layouts(table_image)
 result = poller.result()
 
 table = result[0].tables[0] # page 1, table 1
-my_table = [[None for x in range(table.column_count)] for y in range(table.row_count)]
 for cell in table.cells:
-    my_table[cell.row_index][cell.column_index] = cell.text
-
-dftable = pd.DataFrame(my_table)
-print(dftable.to_markdown())
+    print(cell.text)
+    print(cell.bounding_box)
 ```
 
 ## Custom
@@ -199,10 +210,10 @@ The `CustomFormClient` provides all the operations necessary for training a cust
 custom model, and managing a user's custom models on their account.
 
 The user can choose to train with or without labels using the methods `begin_labeled_training` or `begin_training`. 
-Both methods take as input a blob SAS uri or valid path to the documents to use for training. Each training method 
+Both methods take as input a blob SAS URI to the documents to use for training. Each training method 
 will return a poller object which is used to get the training result.
 
-A custom model can be used to analyze forms using the `begin_extract_forms` or `begin_extract_labeled_forms` method.
+A custom model can be used to analyze forms using the `begin_extract_form_pages` or `begin_extract_labeled_forms` method.
 The `model_id` from the training result is passed into the methods, along with the input form to analyze (content-type
 is determined internally). This method also returns a poller object which is used to get the result.
 
@@ -217,17 +228,17 @@ client = CustomFormClient(endpoint: str, credential: Union[CognitiveKeyCredentia
 
 # Train
 client.begin_labeled_training(
-    source: str, source_prefix_filter: str, include_sub_folders: bool=False
+    source: str, source_prefix_filter: str="", include_sub_folders: bool=False
 ) -> LROPoller -> CustomLabeledModel
 
 client.begin_training(
-    source: str, source_prefix_filter: str, include_sub_folders: bool=False
+    source: str, source_prefix_filter: str="", include_sub_folders: bool=False
 ) -> LROPoller -> CustomModel
 
 # Extract
-client.begin_extract_forms(form: Union[str, BytesIO], model_id: str) -> LROPoller -> List[ExtractedPage]
+client.begin_extract_form_pages(form: Union[str, BytesIO], model_id: str) -> LROPoller -> List[ExtractedPage]
 
-client.begin_extract_labeled_forms(form: Union[str, BytesIO], model_id: str) -> LROPoller -> ExtractedForm
+client.begin_extract_labeled_forms(form: Union[str, BytesIO], model_id: str) -> LROPoller -> List[ExtractedLabeledForm]
 
 # Manage
 client.list_custom_models() -> ItemPaged[ModelInfo]
@@ -246,13 +257,13 @@ client.delete_custom_model(model_id: str) -> None
 # Training ---------------------------------------------------
 class CustomModel:
     model_id: str
-    status: str
+    status: ModelStatus
     created_on: ~datetime.datetime
     last_updated_on: ~datetime.datetime
-    train_result: TrainResult
-
-class TrainResult:
     extracted_fields: List[FormFields]
+    training_info: TrainingInfo
+
+class TrainingInfo:
     documents: List[TrainingDocumentInfo]
     errors: List[FormRecognizerError]
 
@@ -262,13 +273,23 @@ class FormFields:
 
 class TrainingDocumentInfo:
     document_name: str
-    status: str
+    status: TrainStatus
     page_count: int
     errors: List[FormRecognizerError]
 
 class FormRecognizerError:
     code: str
     message: str
+
+class TrainStatus(str, Enum):
+    succeeded = "succeeded"
+    partially_succeeded = "partiallySucceeded"
+    failed = "failed"
+
+class ModelStatus(str, Enum):
+    creating = "creating"
+    ready = "ready"
+    invalid = "invalid"
 
 # Analyze ---------------------------------------------------
 class ExtractedPage:
@@ -285,19 +306,18 @@ class ExtractedField:
 
 class ExtractedText:
     text: str
-    bounding_box: List[float]
+    bounding_box: BoundingBox
     elements: List[Union[ExtractedLine, ExtractedWord]]
 
 class ExtractedLine:
     text: str
-    bounding_box: List[float]
-    language: str
+    bounding_box: BoundingBox
     page_number: int
     words: List[ExtractedWord]
 
 class ExtractedWord:
     text: str
-    bounding_box: List[float]
+    bounding_box: BoundingBox
     confidence: float
     page_number: int
     line: ExtractedLine
@@ -305,10 +325,9 @@ class ExtractedWord:
 class PageMetadata:
     page_number: int
     angle: float
-    width: int
-    height: int
-    unit: str
-    language: str
+    width: float
+    height: float
+    unit: LengthUnit
     lines: List[ExtractedLine]
 ```
 
@@ -317,24 +336,24 @@ class PageMetadata:
 # Training ---------------------------------------------------
 class CustomLabeledModel:
     model_id: str
-    status: str
+    status: ModelStatus
     created_on: ~datetime.datetime
     last_updated_on: ~datetime.datetime
-    train_result: LabeledTrainResult
-
-class LabeledTrainResult:
-    fields: List[FieldNames]
+    fields: List[FieldInfo]
     average_model_accuracy: float
+    training_info: TrainingInfo
+
+class TrainingInfo:
     documents: List[TrainingDocumentInfo]
     errors: List[FormRecognizerError]
 
 class TrainingDocumentInfo:
     document_name: str
-    status: str
+    status: TrainStatus
     page_count: int
     errors: List[FormRecognizerError]
 
-class FieldNames:
+class FieldInfo:
     field_name: str
     accuracy: float
 
@@ -342,35 +361,40 @@ class FormRecognizerError:
     code: str
     message: str
 
+class TrainStatus(str, Enum):
+    succeeded = "succeeded"
+    partially_succeeded = "partiallySucceeded"
+    failed = "failed"
+
+class ModelStatus(str, Enum):
+    creating = "creating"
+    ready = "ready"
+    invalid = "invalid"
+
 # Analyze ---------------------------------------------------
-class ExtractedForm:
-    labels: Dict[str, LabelValue]
-    pages: List[ExtractedFormPage]
+class ExtractedLabeledForm:
+    fields: Dict[str, FieldValue]
+    tables: List[ExtractedTable]
+    page_metadata: List[PageMetadata]
     page_range: PageRange
 
-class ExtractedFormPage:
-    tables: List[ExtractedTable]
-    page_metadata: PageMetadata
-    page_number: int
-
-class LabelValue:
+class FieldValue:
     text: str
     value: Union[int, float, str, datetime]
-    bounding_box: List[float]
+    bounding_box: BoundingBox
     confidence: float
     page_number: int
     elements: List[Union[ExtractedLine, ExtractedWord]]
 
 class ExtractedLine:
     text: str
-    bounding_box: List[float]
-    language: str
+    bounding_box: BoundingBox
     page_number: int
     words: List[ExtractedWord]
 
 class ExtractedWord:
     text: str
-    bounding_box: List[float]
+    bounding_box: BoundingBox
     confidence: float
     page_number: int
     line: ExtractedLine
@@ -378,10 +402,9 @@ class ExtractedWord:
 class PageMetadata:
     page_number: int
     angle: float
-    width: int
-    height: int
-    unit: str
-    language: str
+    width: float
+    height: float
+    unit: LengthUnit
     lines: List[ExtractedLine]
 ```
 
@@ -390,7 +413,7 @@ class PageMetadata:
 ```python
 class ModelInfo:
     model_id: str
-    status: str
+    status: ModelStatus
     created_on: ~datetime.datetime
     last_updated_on: ~datetime.datetime
 
@@ -420,21 +443,22 @@ print("Status: {}".format(model.status))
 print("Created on: {}".format(model.created_on))
 print("Last updated on: {}".format(model.last_updated_on))
 
-# Training result information
-train_result = model.train_result
-for document in train_result.documents:
-    print(document.name)
-    print(document.status)
-    print(document.page_count)
-    print(document.errors)
-
-print("Form type ID: {}".format(train_result.form_type_id))
 print("Extracted fields:")
-print(train_result.extracted_fields)
+for item in model.extracted_fields:
+    print(item.form_type_id)
+    print(item.fields) # list of fields
+
+# Training result information
+training_info = model.training_info
+for doc in training_info.documents:
+    print(doc.document_name)
+    print(doc.status)
+    print(doc.page_count)
+    print(doc.errors)
 
 # Analyze
 blob_sas_url = "xxxxx"  # form to analyze uploaded to blob storage
-poller = client.begin_extract_forms(blob_sas_url, model_id=model.model_id)
+poller = client.begin_extract_form_pages(blob_sas_url, model_id=model.model_id)
 result = poller.result()
 
 for page in result:
@@ -462,28 +486,28 @@ print("Status: {}".format(model.status))
 print("Created on: {}".format(model.created_on))
 print("Last updated on: {}".format(model.last_updated_on))
 
-# Training result information
-train_result = model.train_result
-for document in train_result.documents:
-    print(document.name)
-    print(document.status)
-    print(document.page_count)
-    print(document.errors)
-
-print("Average model accuracy: {}".format(train_result.average_model_accuracy))
+print("Average model accuracy: {}".format(model.average_model_accuracy))
 print("Fields extracted/accuracy")
-for field in train_result.fields:
+for field in model.fields:
     print(field.field_name, field.accuracy)
+
+# Training result information
+training_info = model.training_info
+for doc in training_info.documents:
+    print(doc.document_name)
+    print(doc.status)
+    print(doc.page_count)
+    print(doc.errors)
 
 blob_sas_url = "xxxxx"  # form to analyze uploaded to blob storage
 poller = client.begin_extract_labeled_forms(blob_sas_url, model_id=model.model_id)
 result = poller.result()
 
-print("Page range: {}".format(result.page_range))
-for field, value in result.labels.items():
-    print("{}: {}".format(field, value.text))
-    print(value.bounding_box, value.confidence)
-
+for form in result:
+    print("Page range: {}".format(form.page_range))
+    for field, value in form.fields.items():
+        print("{}: {}".format(field, value.text))
+        print(value.bounding_box, value.confidence)
 ```
 
 #### List custom models
@@ -491,7 +515,7 @@ for field, value in result.labels.items():
 from azure.ai.formrecognizer import CustomFormClient
 
 client = CustomFormClient(endpoint=endpoint, credential=credential)
-custom_models = list(client.list_custom_models())
+custom_models = client.list_custom_models()
 for model in custom_models:
     print(model.model_id, model.status)
 ```
@@ -509,29 +533,55 @@ print("Datetime when summary was updated: {}".format(summary.last_updated_on))
 ```
 
 
-#### Get a custom model with a model ID (e.g. unsupervised)
+#### Get a custom model with a model ID (unsupervised)
 ```python
 from azure.ai.formrecognizer import CustomFormClient
 
 client = CustomFormClient(endpoint=endpoint, credential=credential)
 model = client.get_custom_model(model_id="xxxxx")
 
-# Custom model information
 print("Model ID: {}".format(model.model_id))
 print("Status: {}".format(model.status))
 print("Created on: {}".format(model.created_on))
 print("Last updated on: {}".format(model.last_updated_on))
 
-train_result = model.train_result
-for document in train_result.documents:
-    print(document.name)
-    print(document.status)
-    print(document.page_count)
-    print(document.errors)
-
-print("Form type ID: {}".format(train_result.form_type_id))
 print("Extracted fields:")
-print(train_result.extracted_fields)
+for item in model.extracted_fields:
+    print(item.form_type_id)
+    print(item.fields) # list of fields
+
+training_info = model.training_info
+for doc in training_info.documents:
+    print(doc.document_name)
+    print(doc.status)
+    print(doc.page_count)
+    print(doc.errors)
+```
+
+
+#### Get a custom labeled model with a model ID (supervised)
+```python
+from azure.ai.formrecognizer import CustomFormClient
+
+client = CustomFormClient(endpoint=endpoint, credential=credential)
+model = client.get_custom_labeled_model(model_id="xxxxx")
+
+print("Model ID: {}".format(model.model_id))
+print("Status: {}".format(model.status))
+print("Created on: {}".format(model.created_on))
+print("Last updated on: {}".format(model.last_updated_on))
+
+print("Average model accuracy: {}".format(model.average_model_accuracy))
+print("Fields extracted/accuracy")
+for field in model.fields:
+    print(field.field_name, field.accuracy)
+
+training_info = model.training_info
+for doc in training_info.documents:
+    print(doc.document_name)
+    print(doc.status)
+    print(doc.page_count)
+    print(doc.errors)
 ```
 
 
