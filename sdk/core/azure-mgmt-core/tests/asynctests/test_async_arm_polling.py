@@ -115,8 +115,15 @@ def async_pipeline_client_builder():
     return create_client
 
 
+@pytest.fixture
+def deserialization_cb():
+    def cb(pipeline_response):
+        return json.loads(pipeline_response.http_response.text())
+    return cb
+
+
 @pytest.mark.asyncio
-async def test_post(async_pipeline_client_builder):
+async def test_post(async_pipeline_client_builder, deserialization_cb):
 
         # Test POST LRO with both Location and Azure-AsyncOperation
 
@@ -151,9 +158,6 @@ async def test_post(async_pipeline_client_builder):
 
         client = async_pipeline_client_builder(send)
 
-        def deserialization_cb(pipeline_response):
-            return json.loads(pipeline_response.http_response.text())
-
         # Test 1, LRO options with Location final state
         poll = async_poller(
             client,
@@ -172,14 +176,14 @@ async def test_post(async_pipeline_client_builder):
         result = await poll
         assert result['status'] == 'Succeeded'
 
-        # Test 3, backward compat (no options, means "azure-async-operation")
+        # Test 3, "do the right thing" and use Location by default
         poll = async_poller(
             client,
             initial_response,
             deserialization_cb,
             AsyncARMPolling(0))
         result = await poll
-        assert result['status'] == 'Succeeded'
+        assert result['location_result'] == True
 
         # Test 4, location has no body
 
@@ -326,15 +330,18 @@ class TestArmPolling(object):
             resource = SimpleResource(**body)
         return resource
 
+    @staticmethod
+    def mock_deserialization_no_body(pipeline_response):
+        """Use this mock when you don't expect a return (last body irrelevant)
+        """
+        return None
+
 @pytest.mark.asyncio
 async def test_long_running_put():
     #TODO: Test custom header field
 
     # Test throw on non LRO related status code
     response = TestArmPolling.mock_send('PUT', 1000, {})
-    op = LongRunningOperation(response, lambda x:None)
-    with pytest.raises(BadStatus):
-        op.set_initial_status(response)
     with pytest.raises(HttpResponseError):
         await async_poller(CLIENT, response,
             TestArmPolling.mock_outputs,
@@ -490,7 +497,7 @@ async def test_long_running_delete():
     )
     polling_method = AsyncARMPolling(0)
     poll = await async_poller(CLIENT, response,
-        TestArmPolling.mock_outputs,
+        TestArmPolling.mock_deserialization_no_body,
         polling_method)
     assert poll is None
     assert polling_method._pipeline_response.http_response.internal_response.randomFieldFromPollAsyncOpHeader is None
@@ -505,9 +512,8 @@ async def test_long_running_post():
         body={'properties':{'provisioningState': 'Succeeded'}})
     polling_method = AsyncARMPolling(0)
     poll = await async_poller(CLIENT, response,
-        TestArmPolling.mock_outputs,
+        TestArmPolling.mock_deserialization_no_body,
         polling_method)
-    #self.assertIsNone(poll)
     assert polling_method._pipeline_response.http_response.internal_response.randomFieldFromPollAsyncOpHeader is None
 
     # Test polling from azure-asyncoperation header
@@ -517,9 +523,8 @@ async def test_long_running_post():
         body={'properties':{'provisioningState': 'Succeeded'}})
     polling_method = AsyncARMPolling(0)
     poll = await async_poller(CLIENT, response,
-        TestArmPolling.mock_outputs,
+        TestArmPolling.mock_deserialization_no_body,
         polling_method)
-    #self.assertIsNone(poll)
     assert polling_method._pipeline_response.http_response.internal_response.randomFieldFromPollAsyncOpHeader is None
 
     # Test polling from location header
