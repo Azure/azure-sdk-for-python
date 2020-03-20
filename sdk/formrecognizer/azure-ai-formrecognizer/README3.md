@@ -50,7 +50,7 @@ class ExtractedReceipt:
     transaction_time: FieldValue
     fields: Dict[str, FieldValue]
     page_range: PageRange
-    pages: List[PageMetadata]
+    page_metadata: List[PageMetadata]
 
 class ReceiptItem:
     name: FieldValue
@@ -117,21 +117,22 @@ receipts = poller.result()
 r = receipts[0]
 
 print("Receipt contained the following values with confidences: ")
-print("ReceiptType: {}, confidence: {}").format(r.receipt_type.value, r.receipt_type.confidence)
-print("MerchantName: {}, confidence: {}").format(r.merchant_name.value, r.merchant_name.confidence)
-print("MerchantAddress: {}, confidence: {}").format(r.merchant_address.value, r.merchant_address.confidence)
-print("MerchantPhoneNumber: {}, confidence: {}").format(r.merchant_phone_number.value, r.merchant_phone_number.confidence)
-print("TransactionDate: {}, confidence: {}").format(r.transaction_date.value, r.transaction_date.confidence)
-print("TransactionTime: {}, confidence: {}").format(r.transaction_time.value, r.transaction_time.confidence)
+print("ReceiptType: {}, confidence: {}".format(r.receipt_type.type, r.receipt_type.confidence))
+print("MerchantName: {}, confidence: {}".format(r.merchant_name.value, r.merchant_name.confidence))
+print("MerchantAddress: {}, confidence: {}".format(r.merchant_address.value, r.merchant_address.confidence))
+print("MerchantPhoneNumber: {}, confidence: {}".format(r.merchant_phone_number.value,
+                                                        r.merchant_phone_number.confidence))
+print("TransactionDate: {}, confidence: {}".format(r.transaction_date.value, r.transaction_date.confidence))
+print("TransactionTime: {}, confidence: {}".format(r.transaction_time.value, r.transaction_time.confidence))
 for item in r.receipt_items:
-    print("Item Name: {}, confidence: {}").format(item.name.value, item.name.confidence)
-    print("Item Quantity: {}, confidence: {}").format(item.quantity.value, item.quantity.confidence)
-    print("Item Price: {}, confidence: {}").format(item.item_price.value, item.item_price.confidence)
-    print("Total Price: {}, confidence: {}").format(item.total_price.value, item.total_price.confidence)
-print("Subtotal: {}, confidence: {}").format(r.subtotal.value, r.subtotal.confidence)
-print("Tax: {}, confidence: {}").format(r.tax.value, r.tax.confidence)
-print("Tip: {}, confidence: {}").format(r.tip.value, r.tip.confidence)
-print("Total: {}, confidence: {}").format(r.total.value, r.total.confidence)
+    print("Item Name: {}, confidence: {}".format(item.name.value, item.name.confidence))
+    print("Item Quantity: {}, confidence: {}".format(item.quantity.value, item.quantity.confidence))
+    print("Item Price: {}, confidence: {}".format(item.item_price.value, item.item_price.confidence))
+    print("Total Price: {}, confidence: {}".format(item.total_price.value, item.total_price.confidence))
+print("Subtotal: {}, confidence: {}".format(r.subtotal.value, r.subtotal.confidence))
+print("Tax: {}, confidence: {}".format(r.tax.value, r.tax.confidence))
+print("Tip: {}, confidence: {}".format(r.tip.value, r.tip.confidence))
+print("Total: {}, confidence: {}".format(r.total.value, r.total.confidence))
 
 # Access as a dictionary
 for item, field_value in r.fields.items():
@@ -200,7 +201,7 @@ result = poller.result()
 table = result[0].tables[0] # page 1, table 1
 for cell in table.cells:
     print(cell.text)
-    print(cell.confidence)
+    print(cell.bounding_box)
 ```
 
 ## Custom
@@ -212,7 +213,7 @@ The user can choose to train with or without labels using the methods `begin_lab
 Both methods take as input a blob SAS URI to the documents to use for training. Each training method 
 will return a poller object which is used to get the training result.
 
-A custom model can be used to analyze forms using the `begin_extract_forms` or `begin_extract_labeled_forms` method.
+A custom model can be used to analyze forms using the `begin_extract_form_pages` or `begin_extract_labeled_forms` method.
 The `model_id` from the training result is passed into the methods, along with the input form to analyze (content-type
 is determined internally). This method also returns a poller object which is used to get the result.
 
@@ -235,9 +236,9 @@ client.begin_training(
 ) -> LROPoller -> CustomModel
 
 # Extract
-client.begin_extract_forms(form: Union[str, BytesIO], model_id: str) -> LROPoller -> List[ExtractedPage]
+client.begin_extract_form_pages(form: Union[str, BytesIO], model_id: str) -> LROPoller -> List[ExtractedPage]
 
-client.begin_extract_labeled_forms(form: Union[str, BytesIO], model_id: str) -> LROPoller -> List[ExtractedForm]
+client.begin_extract_labeled_forms(form: Union[str, BytesIO], model_id: str) -> LROPoller -> List[ExtractedLabeledForm]
 
 # Manage
 client.list_custom_models() -> ItemPaged[ModelInfo]
@@ -260,9 +261,9 @@ class CustomModel:
     created_on: ~datetime.datetime
     last_updated_on: ~datetime.datetime
     extracted_fields: List[FormFields]
-    train_result: TrainResult
+    training_info: TrainingInfo
 
-class TrainResult:
+class TrainingInfo:
     documents: List[TrainingDocumentInfo]
     errors: List[FormRecognizerError]
 
@@ -340,9 +341,9 @@ class CustomLabeledModel:
     last_updated_on: ~datetime.datetime
     fields: List[FieldInfo]
     average_model_accuracy: float
-    train_result: TrainResult
+    training_info: TrainingInfo
 
-class TrainResult:
+class TrainingInfo:
     documents: List[TrainingDocumentInfo]
     errors: List[FormRecognizerError]
 
@@ -371,7 +372,7 @@ class ModelStatus(str, Enum):
     invalid = "invalid"
 
 # Analyze ---------------------------------------------------
-class ExtractedForm:
+class ExtractedLabeledForm:
     fields: Dict[str, FieldValue]
     tables: List[ExtractedTable]
     page_metadata: List[PageMetadata]
@@ -442,22 +443,22 @@ print("Status: {}".format(model.status))
 print("Created on: {}".format(model.created_on))
 print("Last updated on: {}".format(model.last_updated_on))
 
-# Training result information
-train_result = model.train_result
-for document in train_result.documents:
-    print(document.name)
-    print(document.status)
-    print(document.page_count)
-    print(document.errors)
-
 print("Extracted fields:")
-for item in train_result.extracted_fields:
+for item in model.extracted_fields:
     print(item.form_type_id)
     print(item.fields) # list of fields
 
+# Training result information
+training_info = model.training_info
+for doc in training_info.documents:
+    print(doc.document_name)
+    print(doc.status)
+    print(doc.page_count)
+    print(doc.errors)
+
 # Analyze
 blob_sas_url = "xxxxx"  # form to analyze uploaded to blob storage
-poller = client.begin_extract_forms(blob_sas_url, model_id=model.model_id)
+poller = client.begin_extract_form_pages(blob_sas_url, model_id=model.model_id)
 result = poller.result()
 
 for page in result:
@@ -485,28 +486,28 @@ print("Status: {}".format(model.status))
 print("Created on: {}".format(model.created_on))
 print("Last updated on: {}".format(model.last_updated_on))
 
-# Training result information
-train_result = model.train_result
-for document in train_result.documents:
-    print(document.name)
-    print(document.status)
-    print(document.page_count)
-    print(document.errors)
-
-print("Average model accuracy: {}".format(train_result.average_model_accuracy))
+print("Average model accuracy: {}".format(model.average_model_accuracy))
 print("Fields extracted/accuracy")
-for field in train_result.fields:
+for field in model.fields:
     print(field.field_name, field.accuracy)
+
+# Training result information
+training_info = model.training_info
+for doc in training_info.documents:
+    print(doc.document_name)
+    print(doc.status)
+    print(doc.page_count)
+    print(doc.errors)
 
 blob_sas_url = "xxxxx"  # form to analyze uploaded to blob storage
 poller = client.begin_extract_labeled_forms(blob_sas_url, model_id=model.model_id)
-result = poller.result()
+forms = poller.result()
 
-print("Page range: {}".format(result[0].page_range))
-for label, field in result[0].fields.items():
-    print("{}: {}".format(label, field.text))
-    print(field.bounding_box, field.confidence)
-
+for form in forms:
+    print("Page range: {}".format(form.page_range))
+    for label, field in form.fields.items():
+        print("{}: {}".format(label, field.text))
+        print(field.bounding_box, field.confidence)
 ```
 
 #### List custom models
@@ -539,23 +540,22 @@ from azure.ai.formrecognizer import CustomFormClient
 client = CustomFormClient(endpoint=endpoint, credential=credential)
 model = client.get_custom_model(model_id="xxxxx")
 
-# Custom model information
 print("Model ID: {}".format(model.model_id))
 print("Status: {}".format(model.status))
 print("Created on: {}".format(model.created_on))
 print("Last updated on: {}".format(model.last_updated_on))
 
-train_result = model.train_result
-for doc in train_result.documents:
+print("Extracted fields:")
+for item in model.extracted_fields:
+    print(item.form_type_id)
+    print(item.fields) # list of fields
+
+training_info = model.training_info
+for doc in training_info.documents:
     print(doc.document_name)
     print(doc.status)
     print(doc.page_count)
     print(doc.errors)
-
-print("Extracted fields:")
-for item in train_result.extracted_fields:
-    print(item.form_type_id)
-    print(item.fields) # list of fields
 ```
 
 
@@ -566,24 +566,22 @@ from azure.ai.formrecognizer import CustomFormClient
 client = CustomFormClient(endpoint=endpoint, credential=credential)
 model = client.get_custom_labeled_model(model_id="xxxxx")
 
-# Custom model information
 print("Model ID: {}".format(model.model_id))
 print("Status: {}".format(model.status))
 print("Created on: {}".format(model.created_on))
 print("Last updated on: {}".format(model.last_updated_on))
 
-# Training result information
-train_result = model.train_result
-for doc in train_result.documents:
+print("Average model accuracy: {}".format(model.average_model_accuracy))
+print("Fields extracted/accuracy")
+for field in model.fields:
+    print(field.field_name, field.accuracy)
+
+training_info = model.training_info
+for doc in training_info.documents:
     print(doc.document_name)
     print(doc.status)
     print(doc.page_count)
     print(doc.errors)
-
-print("Average model accuracy: {}".format(train_result.average_model_accuracy))
-print("Fields extracted/accuracy")
-for field in train_result.fields:
-    print(field.field_name, field.accuracy)
 ```
 
 

@@ -56,57 +56,6 @@ def get_elements(field, ocr_result):
         return None
 
 
-class DictMixin(object):
-
-    def __setitem__(self, key, item):
-        self.__dict__[key] = item
-
-    def __getitem__(self, key):
-        return self.__dict__[key]
-
-    def __repr__(self):
-        return str(self)
-
-    def __len__(self):
-        return len(self.keys())
-
-    def __delitem__(self, key):
-        self.__dict__[key] = None
-
-    def __eq__(self, other):
-        """Compare objects by comparing all attributes."""
-        if isinstance(other, self.__class__):
-            return self.__dict__ == other.__dict__
-        return False
-
-    def __ne__(self, other):
-        """Compare objects by comparing all attributes."""
-        return not self.__eq__(other)
-
-    def __str__(self):
-        return str({k: v for k, v in self.__dict__.items() if not k.startswith('_')})
-
-    def has_key(self, k):
-        return k in self.__dict__
-
-    def update(self, *args, **kwargs):
-        return self.__dict__.update(*args, **kwargs)
-
-    def keys(self):
-        return [k for k in self.__dict__ if not k.startswith('_')]
-
-    def values(self):
-        return [v for k, v in self.__dict__.items() if not k.startswith('_')]
-
-    def items(self):
-        return [(k, v) for k, v in self.__dict__.items() if not k.startswith('_')]
-
-    def get(self, key, default=None):
-        if key in self.__dict__:
-            return self.__dict__[key]
-        return default
-
-
 class LengthUnit(str, Enum):
     """The unit used by the width, height and boundingBox properties. For images, the unit is "pixel".
     For PDF, the unit is "inch".
@@ -147,7 +96,7 @@ class BoundingBox:
         )
 
 
-class ExtractedReceipt(DictMixin):
+class ExtractedReceipt(object):
 
     def __init__(self, **kwargs):
         self.merchant_address = kwargs.get("merchant_address", None)
@@ -161,12 +110,9 @@ class ExtractedReceipt(DictMixin):
         self.total = kwargs.get("total", None)
         self.transaction_date = kwargs.get("transaction_date", None)
         self.transaction_time = kwargs.get("transaction_time", None)
+        self.fields = kwargs.get("fields", None)
         self.page_range = kwargs.get("page_range", None)
         self.page_metadata = kwargs.get("page_metadata", None)
-
-    def items(self):
-        return [(k, v) for k, v in self.__dict__.items() if
-                (not k.startswith('_') and not k.startswith("page_") and not k.startswith("receipt_"))]
 
 
 class FieldValue(object):
@@ -180,7 +126,7 @@ class FieldValue(object):
         self.elements = kwargs.get("elements", None)
 
     @classmethod
-    def _from_generated(cls, field, read_result, include_ocr):
+    def _from_generated(cls, field, elements):
         if field is None:
             return field
         return cls(
@@ -189,7 +135,7 @@ class FieldValue(object):
             bounding_box=BoundingBox._from_generated(field.bounding_box),
             confidence=field.confidence,
             page_number=field.page,
-            elements=get_elements(field, read_result) if include_ocr else None
+            elements=get_elements(field, elements) if elements else None
         )
 
 
@@ -214,14 +160,14 @@ class ReceiptItem(object):
         self.total_price = kwargs.get("total_price", None)
 
     @classmethod
-    def _from_generated(cls, items, read_result, include_ocr):
+    def _from_generated(cls, items, elements):
         try:
             receipt_item = items.value_array
             return [cls(
-                name=FieldValue._from_generated(item.value_object.get("Name"), read_result, include_ocr),
-                quantity=FieldValue._from_generated(item.value_object.get("Quantity"), read_result, include_ocr),
-                item_price=FieldValue._from_generated(item.value_object.get("Price"), read_result, include_ocr),
-                total_price=FieldValue._from_generated(item.value_object.get("TotalPrice"), read_result, include_ocr),
+                name=FieldValue._from_generated(item.value_object.get("Name"), elements),
+                quantity=FieldValue._from_generated(item.value_object.get("Quantity"), elements),
+                item_price=FieldValue._from_generated(item.value_object.get("Price"), elements),
+                total_price=FieldValue._from_generated(item.value_object.get("TotalPrice"), elements),
             ) for item in receipt_item]
         except AttributeError:
             return None
@@ -282,15 +228,14 @@ class PageMetadata(object):
         )
 
     @classmethod
-    def _all_pages(cls, read_result):
+    def _from_generated(cls, read_result):
         return [cls(
             page_number=page.page,
             angle=page.angle,
             width=page.width,
             height=page.height,
-            unit=page.unit,
-            language=page.language,
-            lines=[ExtractedLine._from_generated(line, page.page) for line in read_result.lines or []]
+            unit=LengthUnit(page.unit),
+            lines=[ExtractedLine._from_generated(line, page.page) for line in page.lines or []]
         ) for page in read_result]
 
 
@@ -306,6 +251,7 @@ class ExtractedTable(object):
         self.cells = kwargs.get("cells", None)
         self.row_count = kwargs.get("row_count", None)
         self.column_count = kwargs.get("column_count", None)
+        self.page_number = kwargs.get("page_number", None)
 
 
 class TableCell(object):
@@ -322,7 +268,7 @@ class TableCell(object):
         self.elements = kwargs.get('elements', None)
 
     @classmethod
-    def _from_generated(cls, cell, read_result, include_ocr):
+    def _from_generated(cls, cell, elements):
         return cls(
             text=cell.text,
             row_index=cell.row_index,
@@ -333,7 +279,7 @@ class TableCell(object):
             confidence=cell.confidence,
             is_header=cell.is_header or False,
             is_footer=cell.is_footer or False,
-            elements=get_elements(cell, read_result) if include_ocr else None
+            elements=get_elements(cell, elements) if elements else None
         )
 
 
@@ -343,7 +289,8 @@ class CustomModel(object):
         self.status = kwargs.get('status', None)
         self.created_on = kwargs.get('created_on', None)
         self.last_updated_on = kwargs.get('last_updated_on', None)
-        self.train_result = kwargs.get('train_result', None)
+        self.extracted_fields = kwargs.get("extracted_fields", None)
+        self.training_info = kwargs.get('training_info', None)
 
     @classmethod
     def _from_generated(cls, model):
@@ -352,25 +299,23 @@ class CustomModel(object):
             status=ModelStatus(model.model_info.status),
             created_on=model.model_info.created_date_time,
             last_updated_on=model.model_info.last_updated_date_time,
-            train_result=TrainResult._from_generated(model.train_result, model.keys)
+            extracted_fields=FormFields._from_generated(model.keys),
+            training_info=TrainingInfo._from_generated(model.train_result)
         )
 
 
-class TrainResult(object):
+class TrainingInfo(object):
     def __init__(self, **kwargs):
-        self.extracted_fields = kwargs.get("extracted_fields", None)
         self.documents = kwargs.get('documents', None)
         self.training_errors = kwargs.get('training_errors', None)
 
     @classmethod
-    def _from_generated(cls, train, keys):
+    def _from_generated(cls, train):
         if train:
             return cls(
-                extracted_fields=FormFields._from_generated(keys),
                 documents=[TrainingDocumentInfo._from_generated(doc) for doc in train.training_documents or []],
                 training_errors=FormRecognizerError._from_generated(train.errors)
             )
-        return train
 
 
 class FormFields(object):
@@ -420,7 +365,6 @@ class FormRecognizerError(object):
                 code=error.code,
                 message=error.message
             ) for error in err]
-        return err
 
 
 class CustomLabeledModel(object):
@@ -429,7 +373,9 @@ class CustomLabeledModel(object):
         self.status = kwargs.get('status', None)
         self.created_on = kwargs.get('created_on', None)
         self.last_updated_on = kwargs.get('last_updated_on', None)
-        self.train_result = kwargs.get('train_result', None)
+        self.fields = kwargs.get('fields', None)
+        self.average_model_accuracy = kwargs.get('average_model_accuracy', None)
+        self.training_info = kwargs.get('training_info', None)
 
     @classmethod
     def _from_generated(cls, model):
@@ -438,27 +384,10 @@ class CustomLabeledModel(object):
             status=ModelStatus(model.model_info.status),
             created_on=model.model_info.created_date_time,
             last_updated_on=model.model_info.last_updated_date_time,
-            train_result=LabeledTrainResult._from_generated(model.train_result)
+            fields=FieldInfo._from_generated(model.train_result.fields),
+            average_model_accuracy=model.train_result.average_model_accuracy,
+            training_info=TrainingInfo._from_generated(model.train_result)
         )
-
-
-class LabeledTrainResult(object):
-    def __init__(self, **kwargs):
-        self.documents = kwargs.get('documents', None)
-        self.fields = kwargs.get('fields', None)
-        self.average_model_accuracy = kwargs.get('average_model_accuracy', None)
-        self.training_errors = kwargs.get('training_errors', None)
-
-    @classmethod
-    def _from_generated(cls, train):
-        if train:
-            return cls(
-                documents=[TrainingDocumentInfo._from_generated(doc) for doc in train.training_documents or []],
-                fields=FieldInfo._from_generated(train.fields),
-                average_model_accuracy=train.average_model_accuracy,
-                training_errors=FormRecognizerError._from_generated(train.errors)
-            )
-        return train
 
 
 class FieldInfo(object):
@@ -491,10 +420,10 @@ class ExtractedField(object):
         self.confidence = kwargs.get('confidence', None)
 
     @classmethod
-    def _from_generated(cls, field, read_result, include_ocr):
+    def _from_generated(cls, field, elements):
         return cls(
-            name=ExtractedText._from_generated(field.key, read_result, include_ocr),
-            value=ExtractedText._from_generated(field.value, read_result, include_ocr),
+            name=ExtractedText._from_generated(field.key, elements),
+            value=ExtractedText._from_generated(field.value, elements),
             confidence=field.confidence
         )
 
@@ -506,19 +435,20 @@ class ExtractedText:
         self.elements = kwargs.get('elements', None)
 
     @classmethod
-    def _from_generated(cls, field, read_result, include_ocr):
+    def _from_generated(cls, field, elements):
         return cls(
             text=field.text,
             bounding_box=BoundingBox._from_generated(field.bounding_box),
-            elements=get_elements(field.elements, read_result) if include_ocr else None
+            elements=get_elements(field.elements, elements) if elements else None
         )
 
 
-class ExtractedForm(object):
+class ExtractedLabeledForm(object):
     def __init__(self, **kwargs):
         self.fields = kwargs.get('fields', None)
         self.page_range = kwargs.get('page_range', None)
-        self.pages = kwargs.get('pages', None)
+        self.tables = kwargs.get('tables', None)
+        self.page_metadata = kwargs.get("page_metadata", None)
 
 
 class ModelInfo(object):
