@@ -118,7 +118,7 @@ class ImdsCredential(_AsyncManagedIdentityBase):
                 self._endpoint_available = False
 
         if not self._endpoint_available:
-            message = "ManagedIdentityCredential authentication unavailable. IMDS endpoint unavailable."
+            message = "ManagedIdentityCredential authentication unavailable, no managed identity endpoint found."
             raise CredentialUnavailableError(message=message)
 
         if len(scopes) != 1:
@@ -157,7 +157,7 @@ class MsiCredential(_AsyncManagedIdentityBase):
         :raises ~azure.identity.CredentialUnavailableError: the MSI endpoint is unavailable
         """
         if not self._endpoint:
-            message = "ManagedIdentityCredential authentication unavailable. MSI endpoint unavailable."
+            message = "ManagedIdentityCredential authentication unavailable, no managed identity endpoint found."
             raise CredentialUnavailableError(message=message)
 
         if len(scopes) != 1:
