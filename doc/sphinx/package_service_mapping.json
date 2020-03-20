@@ -866,6 +866,11 @@
     "service_name": "Search",
     "manually_generated": true
   },
+  "azure-search": {
+    "category": "Client",
+    "service_name": "Search",
+    "manually_generated": true
+  },
   "azure-keyvault-keys": {
     "category": "Client",
     "service_name": "Keyvault",
