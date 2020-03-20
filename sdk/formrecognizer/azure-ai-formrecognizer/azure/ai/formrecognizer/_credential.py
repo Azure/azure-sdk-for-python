@@ -13,8 +13,7 @@ class FormRecognizerApiKeyCredential(object):
     """Credential type used for authenticating the client
     with an API key.
 
-    :param str api_key: The API key to your Text Analytics
-        or Cognitive Services account.
+    :param str api_key: The API key to your Form Recognizer resource.
     """
     def __init__(self, api_key):
         if not isinstance(api_key, six.string_types):
@@ -33,7 +32,6 @@ class FormRecognizerApiKeyCredential(object):
         This is intended to be used when you've regenerated your service API key
         and want to update long-lived clients.
 
-        :param str key: The API key to your Text Analytics
-            or Cognitive Services account.
+        :param str key: The API key to your Form Recognizer resource.
         """
         self._api_key = key
