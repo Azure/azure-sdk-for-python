@@ -24,7 +24,7 @@ class ProblemClassificationsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Api version. Constant value: "2020-04-01".
+    :ivar api_version: API version. Constant value: "2020-04-01".
     """
 
     models = models
@@ -46,7 +46,7 @@ class ProblemClassificationsOperations(object):
         you always have the most recent set of service and problem
         classification Ids.
 
-        :param service_name: Name of Azure service for which the problem
+        :param service_name: Name of the Azure service for which the problem
          classifications need to be retrieved.
         :type service_name: str
         :param dict custom_headers: headers that will be added to the request
@@ -114,7 +114,7 @@ class ProblemClassificationsOperations(object):
             self, service_name, problem_classification_name, custom_headers=None, raw=False, **operation_config):
         """Get problem classification details for a specific Azure service.
 
-        :param service_name: Name of Azure service available for support.
+        :param service_name: Name of the Azure service available for support.
         :type service_name: str
         :param problem_classification_name: Name of problem classification.
         :type problem_classification_name: str
