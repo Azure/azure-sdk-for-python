@@ -211,8 +211,66 @@ class EventHubConsumerClient(ClientBase):
         )
         return cls(**constructor_args)
 
-    def receive(self, on_event, **kwargs):
+    def _receive(self, on_event, **kwargs):
         #  type: (Callable[[PartitionContext, EventData], None], Any) -> None
+        partition_id = kwargs.get("partition_id")
+        with self._lock:
+            error = None  # type: Optional[str]
+            if (self._consumer_group, ALL_PARTITIONS) in self._event_processors:
+                error = (
+                    "This consumer client is already receiving events "
+                    "from all partitions for consumer group {}.".format(
+                        self._consumer_group
+                    )
+                )
+            elif partition_id is None and any(
+                x[0] == self._consumer_group for x in self._event_processors
+            ):
+                error = (
+                    "This consumer client is already receiving events "
+                    "for consumer group {}.".format(self._consumer_group)
+                )
+            elif (self._consumer_group, partition_id) in self._event_processors:
+                error = (
+                    "This consumer client is already receiving events "
+                    "from partition {} for consumer group {}. ".format(
+                        partition_id, self._consumer_group
+                    )
+                )
+            if error:
+                _LOGGER.warning(error)
+                raise ValueError(error)
+
+            initial_event_position = kwargs.pop("starting_position", "@latest")
+            initial_event_position_inclusive = kwargs.pop(
+                "starting_position_inclusive", False
+            )
+            event_processor = EventProcessor(
+                self,
+                self._consumer_group,
+                on_event,
+                checkpoint_store=self._checkpoint_store,
+                load_balancing_interval=self._load_balancing_interval,
+                initial_event_position=initial_event_position,
+                initial_event_position_inclusive=initial_event_position_inclusive,
+                **kwargs
+            )
+            self._event_processors[
+                (self._consumer_group, partition_id or ALL_PARTITIONS)
+            ] = event_processor
+        try:
+            event_processor.start()
+        finally:
+            event_processor.stop()
+            with self._lock:
+                try:
+                    del self._event_processors[
+                        (self._consumer_group, partition_id or ALL_PARTITIONS)
+                    ]
+                except KeyError:
+                    pass
+
+    def receive(self, on_event, **kwargs):
         """Receive events from partition(s), with optional load-balancing and checkpointing.
 
         :param on_event: The callback function for handling a received event. The callback takes two
@@ -280,62 +338,11 @@ class EventHubConsumerClient(ClientBase):
                 :dedent: 4
                 :caption: Receive events from the EventHub.
         """
-        partition_id = kwargs.get("partition_id")
-        with self._lock:
-            error = None  # type: Optional[str]
-            if (self._consumer_group, ALL_PARTITIONS) in self._event_processors:
-                error = (
-                    "This consumer client is already receiving events "
-                    "from all partitions for consumer group {}.".format(
-                        self._consumer_group
-                    )
-                )
-            elif partition_id is None and any(
-                x[0] == self._consumer_group for x in self._event_processors
-            ):
-                error = (
-                    "This consumer client is already receiving events "
-                    "for consumer group {}.".format(self._consumer_group)
-                )
-            elif (self._consumer_group, partition_id) in self._event_processors:
-                error = (
-                    "This consumer client is already receiving events "
-                    "from partition {} for consumer group {}. ".format(
-                        partition_id, self._consumer_group
-                    )
-                )
-            if error:
-                _LOGGER.warning(error)
-                raise ValueError(error)
 
-            initial_event_position = kwargs.pop("starting_position", "@latest")
-            initial_event_position_inclusive = kwargs.pop(
-                "starting_position_inclusive", False
-            )
-            event_processor = EventProcessor(
-                self,
-                self._consumer_group,
-                on_event,
-                checkpoint_store=self._checkpoint_store,
-                load_balancing_interval=self._load_balancing_interval,
-                initial_event_position=initial_event_position,
-                initial_event_position_inclusive=initial_event_position_inclusive,
-                **kwargs
-            )
-            self._event_processors[
-                (self._consumer_group, partition_id or ALL_PARTITIONS)
-            ] = event_processor
-        try:
-            event_processor.start()
-        finally:
-            event_processor.stop()
-            with self._lock:
-                try:
-                    del self._event_processors[
-                        (self._consumer_group, partition_id or ALL_PARTITIONS)
-                    ]
-                except KeyError:
-                    pass
+        self._receive(on_event, batch=False, max_batch_size=1, **kwargs)
+
+    def receive_batch(self, on_event_batch, **kwargs):
+        self._receive(on_event_batch, batch=True, **kwargs)
 
     def get_eventhub_properties(self):
         # type:() -> Dict[str, Any]

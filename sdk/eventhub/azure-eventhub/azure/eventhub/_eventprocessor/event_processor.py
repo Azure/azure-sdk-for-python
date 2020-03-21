@@ -61,6 +61,9 @@ class EventProcessor(
         )
         self._eventhub_name = eventhub_client.eventhub_name
         self._event_handler = on_event
+        self._batch = kwargs.get("batch") or False
+        self._max_batch_size = kwargs.get("max_batch_size") or 300
+        self._max_wait_time = kwargs.get("max_wait_time")
         self._partition_id = kwargs.get("partition_id", None)  # type: Optional[str]
         self._error_handler = kwargs.get(
             "on_error", None
@@ -146,6 +149,27 @@ class EventProcessor(
                         partition_id
                     )
 
+    def _initialize_partition_consumer(self, partition_id):
+        if self._partition_initialize_handler:
+            try:
+                self._partition_initialize_handler(self._partition_contexts[partition_id])
+            except Exception as err:  # pylint:disable=broad-except
+                _LOGGER.warning(
+                    "EventProcessor instance %r of eventhub %r partition %r consumer group %r. "
+                    "An error occurred while running on_partition_initialize. The exception is %r.",
+                    self._id,
+                    self._partition_contexts[partition_id].eventhub_name,
+                    self._partition_contexts[partition_id].partition_id,
+                    self._partition_contexts[partition_id].consumer_group,
+                    err,
+                )
+                self._process_error(self._partition_contexts[partition_id], err)
+        _LOGGER.info(
+            "EventProcessor %r has claimed partition %r",
+            self._id,
+            partition_id
+        )
+
     def _create_tasks_for_claimed_ownership(self, claimed_partitions, checkpoints=None):
         # type: (Iterable[str], Optional[Dict[str, Dict[str, Any]]]) -> None
         with self._lock:
@@ -185,25 +209,7 @@ class EventProcessor(
                             event_received_callback,
                         ),
                     )
-                    if self._partition_initialize_handler:
-                        try:
-                            self._partition_initialize_handler(self._partition_contexts[partition_id])
-                        except Exception as err:  # pylint:disable=broad-except
-                            _LOGGER.warning(
-                                "EventProcessor instance %r of eventhub %r partition %r consumer group %r. "
-                                "An error occurred while running on_partition_initialize. The exception is %r.",
-                                self._id,
-                                self._partition_contexts[partition_id].eventhub_name,
-                                self._partition_contexts[partition_id].partition_id,
-                                self._partition_contexts[partition_id].consumer_group,
-                                err,
-                            )
-                            self._process_error(self._partition_contexts[partition_id], err)
-                    _LOGGER.info(
-                        "EventProcessor %r has claimed partition %r",
-                        self._id,
-                        partition_id
-                    )
+                    self._initialize_partition_consumer(partition_id)
 
     def _on_event_received(self, partition_context, event):
         # type: (PartitionContext, EventData) -> None
@@ -308,6 +314,24 @@ class EventProcessor(
 
         self._ownership_manager.release_ownership(partition_id)
 
+    def _do_receive(self, partition_id, consumer):
+        try:
+            consumer.receive(self._batch, self._max_batch_size, self._max_wait_time)
+        except Exception as error:  # pylint:disable=broad-except
+            _LOGGER.warning(
+                "EventProcessor instance %r of eventhub %r partition %r consumer group %r. "
+                "An error occurred while receiving. The exception is %r.",
+                self._id,
+                self._partition_contexts[partition_id].eventhub_name,
+                self._partition_contexts[partition_id].partition_id,
+                self._partition_contexts[partition_id].consumer_group,
+                error,
+            )
+            self._process_error(self._partition_contexts[partition_id], error)
+            self._close_consumer(
+                partition_id, consumer, CloseReason.OWNERSHIP_LOST
+            )
+
     def start(self):
         # type: () -> None
         if self._running:
@@ -328,22 +352,7 @@ class EventProcessor(
                     )
                     continue
 
-                try:
-                    consumer.receive()
-                except Exception as error:  # pylint:disable=broad-except
-                    _LOGGER.warning(
-                        "EventProcessor instance %r of eventhub %r partition %r consumer group %r. "
-                        "An error occurred while receiving. The exception is %r.",
-                        self._id,
-                        self._partition_contexts[partition_id].eventhub_name,
-                        self._partition_contexts[partition_id].partition_id,
-                        self._partition_contexts[partition_id].consumer_group,
-                        error,
-                    )
-                    self._process_error(self._partition_contexts[partition_id], error)
-                    self._close_consumer(
-                        partition_id, consumer, CloseReason.OWNERSHIP_LOST
-                    )
+                self._do_receive(partition_id, consumer)
 
         with self._lock:
             for partition_id, consumer in list(self._consumers.items()):
