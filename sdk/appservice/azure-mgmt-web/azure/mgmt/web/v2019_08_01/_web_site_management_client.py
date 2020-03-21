@@ -25,6 +25,7 @@ from .operations import DiagnosticsOperations
 from .operations import ProviderOperations
 from .operations import RecommendationsOperations
 from .operations import WebAppsOperations
+from .operations import StaticSitesOperations
 from .operations import AppServiceEnvironmentsOperations
 from .operations import AppServicePlansOperations
 from .operations import ResourceHealthMetadataOperations
@@ -59,6 +60,8 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, SDKClient)
     :vartype recommendations: azure.mgmt.web.v2019_08_01.operations.RecommendationsOperations
     :ivar web_apps: WebApps operations
     :vartype web_apps: azure.mgmt.web.v2019_08_01.operations.WebAppsOperations
+    :ivar static_sites: StaticSites operations
+    :vartype static_sites: azure.mgmt.web.v2019_08_01.operations.StaticSitesOperations
     :ivar app_service_environments: AppServiceEnvironments operations
     :vartype app_service_environments: azure.mgmt.web.v2019_08_01.operations.AppServiceEnvironmentsOperations
     :ivar app_service_plans: AppServicePlans operations
@@ -107,6 +110,8 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, SDKClient)
         self.recommendations = RecommendationsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.web_apps = WebAppsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.static_sites = StaticSitesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.app_service_environments = AppServiceEnvironmentsOperations(
             self._client, self.config, self._serialize, self._deserialize)
