@@ -13,7 +13,7 @@ from io import SEEK_SET, UnsupportedOperation
 import logging
 import uuid
 import types
-from typing import Any, TYPE_CHECKING
+from typing import Any, cast, TYPE_CHECKING
 from wsgiref.handlers import format_date_time
 try:
     from urllib.parse import (
@@ -29,7 +29,7 @@ except ImportError:
         parse_qsl,
         urlunparse,
     )
-
+from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.policies import (
     HeadersPolicy,
     SansIOHTTPPolicy,
@@ -42,12 +42,13 @@ from azure.core.exceptions import AzureError, ServiceRequestError, ServiceRespon
 from .models import LocationMode
 
 try:
+    # https://github.com/python/typing/issues/208
     _unicode_type = unicode # type: ignore
 except NameError:
     _unicode_type = str
 
 if TYPE_CHECKING:
-    from azure.core.pipeline import PipelineRequest, PipelineResponse
+    from azure.core.pipeline import PipelineRequest
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -121,7 +122,7 @@ class StorageHeadersPolicy(HeadersPolicy):
     request_id_header_name = 'x-ms-client-request-id'
 
     def on_request(self, request):
-        # type: (PipelineRequest, Any) -> None
+        # type: (PipelineRequest) -> None
         super(StorageHeadersPolicy, self).on_request(request)
         current_time = format_date_time(time())
         request.http_request.headers['x-ms-date'] = current_time
@@ -152,7 +153,7 @@ class StorageHosts(SansIOHTTPPolicy):
         super(StorageHosts, self).__init__()
 
     def on_request(self, request):
-        # type: (PipelineRequest, Any) -> None
+        # type: (PipelineRequest) -> None
         request.context.options['hosts'] = self.hosts
         parsed_url = urlparse(request.http_request.url)
 
@@ -185,7 +186,7 @@ class StorageLoggingPolicy(NetworkTraceLoggingPolicy):
     """
 
     def on_request(self, request):
-        # type: (PipelineRequest, Any) -> None
+        # type: (PipelineRequest) -> None
         http_request = request.http_request
         options = request.context.options
         if options.pop("logging_enable", self.enable_http_logger):
@@ -225,7 +226,7 @@ class StorageLoggingPolicy(NetworkTraceLoggingPolicy):
                 _LOGGER.debug("Failed to log request: %r", err)
 
     def on_response(self, request, response):
-        # type: (PipelineRequest, PipelineResponse, Any) -> None
+        # type: (PipelineRequest, PipelineResponse) -> None
         if response.context.pop("logging_enable", self.enable_http_logger):
             if not _LOGGER.isEnabledFor(logging.DEBUG):
                 return
@@ -264,7 +265,7 @@ class StorageRequestHook(SansIOHTTPPolicy):
         super(StorageRequestHook, self).__init__()
 
     def on_request(self, request):
-        # type: (PipelineRequest, **Any) -> PipelineResponse
+        # type: (PipelineRequest) -> None
         request_callback = request.context.options.pop('raw_request_hook', self._request_callback)
         if request_callback:
             request_callback(request)
@@ -306,7 +307,7 @@ class StorageResponseHook(HTTPPolicy):
         if response_callback:
             response_callback(response)
             request.context['response_callback'] = response_callback
-        return response
+        return cast(PipelineResponse, response)
 
 
 class StorageContentValidation(SansIOHTTPPolicy):
@@ -343,7 +344,7 @@ class StorageContentValidation(SansIOHTTPPolicy):
         return md5.digest()
 
     def on_request(self, request):
-        # type: (PipelineRequest, Any) -> None
+        # type: (PipelineRequest) -> None
         validate_content = request.context.options.pop('validate_content', False)
         if validate_content and request.http_request.method != 'GET':
             computed_md5 = encode_base64(StorageContentValidation.get_content_md5(request.http_request.data))

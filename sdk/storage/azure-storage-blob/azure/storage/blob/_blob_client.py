@@ -5,29 +5,20 @@
 # --------------------------------------------------------------------------
 # pylint: disable=too-many-lines,no-self-use
 
-from io import BytesIO
 from typing import (  # pylint: disable=unused-import
-    Union, Optional, Any, IO, Iterable, AnyStr, Dict, List, Tuple,
+    Union, Optional, Any, IO, Iterable, AnyStr, Dict, List, Tuple, cast,
     TYPE_CHECKING
 )
 try:
-    from urllib.parse import urlparse, quote, unquote
+    from urllib.parse import urlparse, unquote
 except ImportError:
     from urlparse import urlparse # type: ignore
-    from urllib2 import quote, unquote # type: ignore
+    from urllib2 import unquote # type: ignore
 
-import six
 from azure.core.tracing.decorator import distributed_trace
 
-from ._shared import encode_base64
-from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
-from ._shared.encryption import generate_blob_encryption_data
-from ._shared.uploads import IterStreamer
-from ._shared.request_handlers import (
-    add_metadata_headers, get_length, read_length,
-    validate_and_format_range_headers)
+from ._shared.base_client import parse_connection_str, parse_query
 from ._shared.response_handlers import return_response_headers, process_storage_error
-from ._generated import AzureBlobStorage, VERSION
 from ._generated.models import ( # pylint: disable=unused-import
     DeleteSnapshotsOptionType,
     BlobHTTPHeaders,
@@ -37,22 +28,21 @@ from ._generated.models import ( # pylint: disable=unused-import
     StorageErrorException,
     UserDelegationKey,
     CpkInfo)
-from ._serialize import get_modify_conditions, get_source_conditions, get_cpk_scope_info, get_api_version
-from ._deserialize import get_page_ranges_result, deserialize_blob_properties, deserialize_blob_stream
+from ._serialize import get_modify_conditions
+from ._deserialize import get_page_ranges_result, deserialize_blob_properties
 from ._upload_helpers import (
     upload_block_blob,
     upload_append_blob,
     upload_page_blob)
-from ._models import BlobType, BlobBlock
+from ._models import BlobType, BlobBlock, BlobProperties
 from ._download import StorageStreamDownloader
 from ._lease import BlobLeaseClient, get_access_conditions
-
+from ._blob_client_base import BlobClientBase
 if TYPE_CHECKING:
     from datetime import datetime
     from ._generated.models import BlockList
     from ._models import (  # pylint: disable=unused-import
         ContainerProperties,
-        BlobProperties,
         BlobSasPermissions,
         ContentSettings,
         PremiumPageBlobTier,
@@ -65,7 +55,7 @@ _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION = (
     ' for this method.')
 
 
-class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-methods
+class BlobClient(BlobClientBase):  # pylint: disable=too-many-public-methods
     """A client to interact with a specific blob, although that blob may not yet exist.
 
     :param str account_url:
@@ -122,55 +112,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             :dedent: 8
             :caption: Creating the BlobClient from a SAS URL to a blob.
     """
-    def __init__(
-            self, account_url,  # type: str
-            container_name,  # type: str
-            blob_name,  # type: str
-            snapshot=None,  # type: Optional[Union[str, Dict[str, Any]]]
-            credential=None,  # type: Optional[Any]
-            **kwargs  # type: Any
-        ):
-        # type: (...) -> None
-        try:
-            if not account_url.lower().startswith('http'):
-                account_url = "https://" + account_url
-        except AttributeError:
-            raise ValueError("Account URL must be a string.")
-        parsed_url = urlparse(account_url.rstrip('/'))
-
-        if not (container_name and blob_name):
-            raise ValueError("Please specify a container name and blob name.")
-        if not parsed_url.netloc:
-            raise ValueError("Invalid URL: {}".format(account_url))
-
-        path_snapshot, sas_token = parse_query(parsed_url.query)
-
-        self.container_name = container_name
-        self.blob_name = blob_name
-        try:
-            self.snapshot = snapshot.snapshot # type: ignore
-        except AttributeError:
-            try:
-                self.snapshot = snapshot['snapshot'] # type: ignore
-            except TypeError:
-                self.snapshot = snapshot or path_snapshot
-
-        self._query_str, credential = self._format_query_string(sas_token, credential, snapshot=self.snapshot)
-        super(BlobClient, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)
-        self._client = AzureBlobStorage(self.url, pipeline=self._pipeline)
-        self._client._config.version = get_api_version(kwargs, VERSION)  # pylint: disable=protected-access
-
-    def _format_url(self, hostname):
-        container_name = self.container_name
-        if isinstance(container_name, six.text_type):
-            container_name = container_name.encode('UTF-8')
-        return "{}://{}/{}/{}{}".format(
-            self.scheme,
-            hostname,
-            quote(container_name),
-            quote(self.blob_name, safe='~/'),
-            self._query_str)
-
     @classmethod
     def from_blob_url(cls, blob_url, credential=None, snapshot=None, **kwargs):
         # type: (str, Optional[Any], Optional[Union[str, Dict[str, Any]]], Any) -> BlobClient
@@ -217,14 +158,13 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             raise ValueError("Invalid URL. Provide a blob_url with a valid blob and container name.")
 
         path_snapshot, _ = parse_query(parsed_url.query)
-        if snapshot:
-            try:
-                path_snapshot = snapshot.snapshot # type: ignore
-            except AttributeError:
-                try:
-                    path_snapshot = snapshot['snapshot'] # type: ignore
-                except TypeError:
-                    path_snapshot = snapshot
+        try:
+            path_snapshot = snapshot.snapshot # type: ignore
+        except AttributeError:
+            if isinstance(snapshot, Dict):
+                path_snapshot = snapshot['snapshot']
+            else:
+                path_snapshot = snapshot
 
         return cls(
             account_url, container_name=container_name, blob_name=blob_name,
@@ -289,95 +229,10 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :rtype: dict(str, str)
         """
         try:
-            return self._client.blob.get_account_info(cls=return_response_headers, **kwargs) # type: ignore
+            ret_val = self._client.blob.get_account_info(cls=return_response_headers, **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
-
-    def _upload_blob_options(  # pylint:disable=too-many-statements
-            self, data,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
-            blob_type=BlobType.BlockBlob,  # type: Union[str, BlobType]
-            length=None,  # type: Optional[int]
-            metadata=None,  # type: Optional[Dict[str, str]]
-            **kwargs
-        ):
-        # type: (...) -> Dict[str, Any]
-        if self.require_encryption and not self.key_encryption_key:
-            raise ValueError("Encryption required but no key was provided.")
-        encryption_options = {
-            'required': self.require_encryption,
-            'key': self.key_encryption_key,
-            'resolver': self.key_resolver_function,
-        }
-        if self.key_encryption_key is not None:
-            cek, iv, encryption_data = generate_blob_encryption_data(self.key_encryption_key)
-            encryption_options['cek'] = cek
-            encryption_options['vector'] = iv
-            encryption_options['data'] = encryption_data
-
-        encoding = kwargs.pop('encoding', 'UTF-8')
-        if isinstance(data, six.text_type):
-            data = data.encode(encoding) # type: ignore
-        if length is None:
-            length = get_length(data)
-        if isinstance(data, bytes):
-            data = data[:length]
-
-        if isinstance(data, bytes):
-            stream = BytesIO(data)
-        elif hasattr(data, 'read'):
-            stream = data
-        elif hasattr(data, '__iter__'):
-            stream = IterStreamer(data, encoding=encoding)
-        else:
-            raise TypeError("Unsupported data type: {}".format(type(data)))
-
-        validate_content = kwargs.pop('validate_content', False)
-        content_settings = kwargs.pop('content_settings', None)
-        overwrite = kwargs.pop('overwrite', False)
-        max_concurrency = kwargs.pop('max_concurrency', 1)
-        cpk = kwargs.pop('cpk', None)
-        cpk_info = None
-        if cpk:
-            if self.scheme.lower() != 'https':
-                raise ValueError("Customer provided encryption key must be used over HTTPS.")
-            cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
-                               encryption_algorithm=cpk.algorithm)
-        kwargs['cpk_info'] = cpk_info
-
-        headers = kwargs.pop('headers', {})
-        headers.update(add_metadata_headers(metadata))
-        kwargs['lease_access_conditions'] = get_access_conditions(kwargs.pop('lease', None))
-        kwargs['modified_access_conditions'] = get_modify_conditions(kwargs)
-        kwargs['cpk_scope_info'] = get_cpk_scope_info(kwargs)
-        if content_settings:
-            kwargs['blob_headers'] = BlobHTTPHeaders(
-                blob_cache_control=content_settings.cache_control,
-                blob_content_type=content_settings.content_type,
-                blob_content_md5=bytearray(content_settings.content_md5) if content_settings.content_md5 else None,
-                blob_content_encoding=content_settings.content_encoding,
-                blob_content_language=content_settings.content_language,
-                blob_content_disposition=content_settings.content_disposition
-            )
-        kwargs['stream'] = stream
-        kwargs['length'] = length
-        kwargs['overwrite'] = overwrite
-        kwargs['headers'] = headers
-        kwargs['validate_content'] = validate_content
-        kwargs['blob_settings'] = self._config
-        kwargs['max_concurrency'] = max_concurrency
-        kwargs['encryption_options'] = encryption_options
-        if blob_type == BlobType.BlockBlob:
-            kwargs['client'] = self._client.block_blob
-            kwargs['data'] = data
-        elif blob_type == BlobType.PageBlob:
-            kwargs['client'] = self._client.page_blob
-        elif blob_type == BlobType.AppendBlob:
-            if self.require_encryption or (self.key_encryption_key is not None):
-                raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
-            kwargs['client'] = self._client.append_blob
-        else:
-            raise ValueError("Unsupported BlobType: {}".format(blob_type))
-        return kwargs
+        return cast(Dict, ret_val)
 
     @distributed_trace
     def upload_blob(  # pylint: disable=too-many-locals
@@ -387,7 +242,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             metadata=None,  # type: Optional[Dict[str, str]]
             **kwargs
         ):
-        # type: (...) -> Any
+        # type: (...) -> Dict[str, Any]
         """Creates a new blob from a data source with automatic chunking.
 
         :param data: The blob data to upload.
@@ -493,53 +348,10 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             metadata=metadata,
             **kwargs)
         if blob_type == BlobType.BlockBlob:
-            return upload_block_blob(**options)
+            return cast(Dict, upload_block_blob(**options))
         if blob_type == BlobType.PageBlob:
-            return upload_page_blob(**options)
-        return upload_append_blob(**options)
-
-    def _download_blob_options(self, offset=None, length=None, **kwargs):
-        # type: (Optional[int], Optional[int], **Any) -> Dict[str, Any]
-        if self.require_encryption and not self.key_encryption_key:
-            raise ValueError("Encryption required but no key was provided.")
-        if length is not None and offset is None:
-            raise ValueError("Offset value must not be None if length is set.")
-        if length is not None:
-            length = offset + length - 1  # Service actually uses an end-range inclusive index
-
-        validate_content = kwargs.pop('validate_content', False)
-        access_conditions = get_access_conditions(kwargs.pop('lease', None))
-        mod_conditions = get_modify_conditions(kwargs)
-
-        cpk = kwargs.pop('cpk', None)
-        cpk_info = None
-        if cpk:
-            if self.scheme.lower() != 'https':
-                raise ValueError("Customer provided encryption key must be used over HTTPS.")
-            cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
-                               encryption_algorithm=cpk.algorithm)
-
-        options = {
-            'clients': self._client,
-            'config': self._config,
-            'start_range': offset,
-            'end_range': length,
-            'validate_content': validate_content,
-            'encryption_options': {
-                'required': self.require_encryption,
-                'key': self.key_encryption_key,
-                'resolver': self.key_resolver_function},
-            'lease_access_conditions': access_conditions,
-            'modified_access_conditions': mod_conditions,
-            'cpk_info': cpk_info,
-            'cls': deserialize_blob_stream,
-            'max_concurrency':kwargs.pop('max_concurrency', 1),
-            'encoding': kwargs.pop('encoding', None),
-            'timeout': kwargs.pop('timeout', None),
-            'name': self.blob_name,
-            'container': self.container_name}
-        options.update(kwargs)
-        return options
+            return cast(Dict, upload_page_blob(**options))
+        return cast(Dict, upload_append_blob(**options))
 
     @distributed_trace
     def download_blob(self, offset=None, length=None, **kwargs):
@@ -615,29 +427,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             length=length,
             **kwargs)
         return StorageStreamDownloader(**options)
-
-    @staticmethod
-    def _generic_delete_blob_options(delete_snapshots=False, **kwargs):
-        # type: (bool, **Any) -> Dict[str, Any]
-        access_conditions = get_access_conditions(kwargs.pop('lease', None))
-        mod_conditions = get_modify_conditions(kwargs)
-        if delete_snapshots:
-            delete_snapshots = DeleteSnapshotsOptionType(delete_snapshots)
-        options = {
-            'timeout': kwargs.pop('timeout', None),
-            'delete_snapshots': delete_snapshots or None,
-            'lease_access_conditions': access_conditions,
-            'modified_access_conditions': mod_conditions}
-        options.update(kwargs)
-        return options
-
-    def _delete_blob_options(self, delete_snapshots=False, **kwargs):
-        # type: (bool, **Any) -> Dict[str, Any]
-        if self.snapshot and delete_snapshots:
-            raise ValueError("The delete_snapshots option cannot be used with a specific snapshot.")
-        options = self._generic_delete_blob_options(delete_snapshots, **kwargs)
-        options['snapshot'] = self.snapshot
-        return options
 
     @distributed_trace
     def delete_blob(self, delete_snapshots=False, **kwargs):
@@ -795,30 +584,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             process_storage_error(error)
         blob_props.name = self.blob_name
         blob_props.container = self.container_name
-        return blob_props # type: ignore
-
-    def _set_http_headers_options(self, content_settings=None, **kwargs):
-        # type: (Optional[ContentSettings], **Any) -> Dict[str, Any]
-        access_conditions = get_access_conditions(kwargs.pop('lease', None))
-        mod_conditions = get_modify_conditions(kwargs)
-        blob_headers = None
-        if content_settings:
-            blob_headers = BlobHTTPHeaders(
-                blob_cache_control=content_settings.cache_control,
-                blob_content_type=content_settings.content_type,
-                blob_content_md5=bytearray(content_settings.content_md5) if content_settings.content_md5 else None,
-                blob_content_encoding=content_settings.content_encoding,
-                blob_content_language=content_settings.content_language,
-                blob_content_disposition=content_settings.content_disposition
-            )
-        options = {
-            'timeout': kwargs.pop('timeout', None),
-            'blob_http_headers': blob_headers,
-            'lease_access_conditions': access_conditions,
-            'modified_access_conditions': mod_conditions,
-            'cls': return_response_headers}
-        options.update(kwargs)
-        return options
+        return cast(BlobProperties, blob_props)
 
     @distributed_trace
     def set_http_headers(self, content_settings=None, **kwargs):
@@ -858,35 +624,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         """
         options = self._set_http_headers_options(content_settings=content_settings, **kwargs)
         try:
-            return self._client.blob.set_http_headers(**options) # type: ignore
+            self._client.blob.set_http_headers(**options)
         except StorageErrorException as error:
             process_storage_error(error)
-
-    def _set_blob_metadata_options(self, metadata=None, **kwargs):
-        # type: (Optional[Dict[str, str]], **Any) -> Dict[str, Any]
-        headers = kwargs.pop('headers', {})
-        headers.update(add_metadata_headers(metadata))
-        access_conditions = get_access_conditions(kwargs.pop('lease', None))
-        mod_conditions = get_modify_conditions(kwargs)
-        cpk_scope_info = get_cpk_scope_info(kwargs)
-
-        cpk = kwargs.pop('cpk', None)
-        cpk_info = None
-        if cpk:
-            if self.scheme.lower() != 'https':
-                raise ValueError("Customer provided encryption key must be used over HTTPS.")
-            cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
-                               encryption_algorithm=cpk.algorithm)
-        options = {
-            'timeout': kwargs.pop('timeout', None),
-            'lease_access_conditions': access_conditions,
-            'modified_access_conditions': mod_conditions,
-            'cpk_scope_info': cpk_scope_info,
-            'cpk_info': cpk_info,
-            'cls': return_response_headers,
-            'headers': headers}
-        options.update(kwargs)
-        return options
 
     @distributed_trace
     def set_blob_metadata(self, metadata=None, **kwargs):
@@ -938,67 +678,13 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         """
         options = self._set_blob_metadata_options(metadata=metadata, **kwargs)
         try:
-            return self._client.blob.set_metadata(**options)  # type: ignore
+            ret_val = self._client.blob.set_metadata(**options)
         except StorageErrorException as error:
             process_storage_error(error)
-
-    def _create_page_blob_options(  # type: ignore
-            self, size,  # type: int
-            content_settings=None,  # type: Optional[ContentSettings]
-            metadata=None, # type: Optional[Dict[str, str]]
-            premium_page_blob_tier=None,  # type: Optional[Union[str, PremiumPageBlobTier]]
-            **kwargs
-        ):
-        # type: (...) -> Dict[str, Any]
-        if self.require_encryption or (self.key_encryption_key is not None):
-            raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
-        headers = kwargs.pop('headers', {})
-        headers.update(add_metadata_headers(metadata))
-        access_conditions = get_access_conditions(kwargs.pop('lease', None))
-        mod_conditions = get_modify_conditions(kwargs)
-        cpk_scope_info = get_cpk_scope_info(kwargs)
-        blob_headers = None
-        if content_settings:
-            blob_headers = BlobHTTPHeaders(
-                blob_cache_control=content_settings.cache_control,
-                blob_content_type=content_settings.content_type,
-                blob_content_md5=bytearray(content_settings.content_md5) if content_settings.content_md5 else None,
-                blob_content_encoding=content_settings.content_encoding,
-                blob_content_language=content_settings.content_language,
-                blob_content_disposition=content_settings.content_disposition
-            )
-
-        sequence_number = kwargs.pop('sequence_number', None)
-        cpk = kwargs.pop('cpk', None)
-        cpk_info = None
-        if cpk:
-            if self.scheme.lower() != 'https':
-                raise ValueError("Customer provided encryption key must be used over HTTPS.")
-            cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
-                               encryption_algorithm=cpk.algorithm)
-
-        if premium_page_blob_tier:
-            try:
-                headers['x-ms-access-tier'] = premium_page_blob_tier.value  # type: ignore
-            except AttributeError:
-                headers['x-ms-access-tier'] = premium_page_blob_tier  # type: ignore
-        options = {
-            'content_length': 0,
-            'blob_content_length': size,
-            'blob_sequence_number': sequence_number,
-            'blob_http_headers': blob_headers,
-            'timeout': kwargs.pop('timeout', None),
-            'lease_access_conditions': access_conditions,
-            'modified_access_conditions': mod_conditions,
-            'cpk_scope_info': cpk_scope_info,
-            'cpk_info': cpk_info,
-            'cls': return_response_headers,
-            'headers': headers}
-        options.update(kwargs)
-        return options
+        return cast(Dict, ret_val)
 
     @distributed_trace
-    def create_page_blob(  # type: ignore
+    def create_page_blob(
             self, size,  # type: int
             content_settings=None,  # type: Optional[ContentSettings]
             metadata=None, # type: Optional[Dict[str, str]]
@@ -1071,50 +757,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             premium_page_blob_tier=premium_page_blob_tier,
             **kwargs)
         try:
-            return self._client.page_blob.create(**options) # type: ignore
+            ret_val = self._client.page_blob.create(**options)
         except StorageErrorException as error:
+            ret_val = None
             process_storage_error(error)
-
-    def _create_append_blob_options(self, content_settings=None, metadata=None, **kwargs):
-        # type: (Optional[ContentSettings], Optional[Dict[str, str]], **Any) -> Dict[str, Any]
-        if self.require_encryption or (self.key_encryption_key is not None):
-            raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
-        headers = kwargs.pop('headers', {})
-        headers.update(add_metadata_headers(metadata))
-        access_conditions = get_access_conditions(kwargs.pop('lease', None))
-        mod_conditions = get_modify_conditions(kwargs)
-        cpk_scope_info = get_cpk_scope_info(kwargs)
-        blob_headers = None
-        if content_settings:
-            blob_headers = BlobHTTPHeaders(
-                blob_cache_control=content_settings.cache_control,
-                blob_content_type=content_settings.content_type,
-                blob_content_md5=bytearray(content_settings.content_md5) if content_settings.content_md5 else None,
-                blob_content_encoding=content_settings.content_encoding,
-                blob_content_language=content_settings.content_language,
-                blob_content_disposition=content_settings.content_disposition
-            )
-
-        cpk = kwargs.pop('cpk', None)
-        cpk_info = None
-        if cpk:
-            if self.scheme.lower() != 'https':
-                raise ValueError("Customer provided encryption key must be used over HTTPS.")
-            cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
-                               encryption_algorithm=cpk.algorithm)
-
-        options = {
-            'content_length': 0,
-            'blob_http_headers': blob_headers,
-            'timeout': kwargs.pop('timeout', None),
-            'lease_access_conditions': access_conditions,
-            'modified_access_conditions': mod_conditions,
-            'cpk_scope_info': cpk_scope_info,
-            'cpk_info': cpk_info,
-            'cls': return_response_headers,
-            'headers': headers}
-        options.update(kwargs)
-        return options
+        return cast(Dict, ret_val)
 
     @distributed_trace
     def create_append_blob(self, content_settings=None, metadata=None, **kwargs):
@@ -1171,35 +818,10 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             metadata=metadata,
             **kwargs)
         try:
-            return self._client.append_blob.create(**options) # type: ignore
+            ret_val = self._client.append_blob.create(**options)
         except StorageErrorException as error:
             process_storage_error(error)
-
-    def _create_snapshot_options(self, metadata=None, **kwargs):
-        # type: (Optional[Dict[str, str]], **Any) -> Dict[str, Any]
-        headers = kwargs.pop('headers', {})
-        headers.update(add_metadata_headers(metadata))
-        access_conditions = get_access_conditions(kwargs.pop('lease', None))
-        mod_conditions = get_modify_conditions(kwargs)
-        cpk_scope_info = get_cpk_scope_info(kwargs)
-        cpk = kwargs.pop('cpk', None)
-        cpk_info = None
-        if cpk:
-            if self.scheme.lower() != 'https':
-                raise ValueError("Customer provided encryption key must be used over HTTPS.")
-            cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
-                               encryption_algorithm=cpk.algorithm)
-
-        options = {
-            'timeout': kwargs.pop('timeout', None),
-            'lease_access_conditions': access_conditions,
-            'modified_access_conditions': mod_conditions,
-            'cpk_scope_info': cpk_scope_info,
-            'cpk_info': cpk_info,
-            'cls': return_response_headers,
-            'headers': headers}
-        options.update(kwargs)
-        return options
+        return cast(Dict, ret_val)
 
     @distributed_trace
     def create_snapshot(self, metadata=None, **kwargs):
@@ -1267,43 +889,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         """
         options = self._create_snapshot_options(metadata=metadata, **kwargs)
         try:
-            return self._client.blob.create_snapshot(**options) # type: ignore
+            ret_val = self._client.blob.create_snapshot(**options)
         except StorageErrorException as error:
+            ret_val = None
             process_storage_error(error)
-
-    def _start_copy_from_url_options(self, source_url, metadata=None, incremental_copy=False, **kwargs):
-        # type: (str, Optional[Dict[str, str]], bool, **Any) -> Dict[str, Any]
-        headers = kwargs.pop('headers', {})
-        headers.update(add_metadata_headers(metadata))
-        if 'source_lease' in kwargs:
-            source_lease = kwargs.pop('source_lease')
-            try:
-                headers['x-ms-source-lease-id'] = source_lease.id # type: str
-            except AttributeError:
-                headers['x-ms-source-lease-id'] = source_lease
-
-        tier = kwargs.pop('premium_page_blob_tier', None) or kwargs.pop('standard_blob_tier', None)
-
-        if kwargs.get('requires_sync'):
-            headers['x-ms-requires-sync'] = str(kwargs.pop('requires_sync'))
-
-        timeout = kwargs.pop('timeout', None)
-        dest_mod_conditions = get_modify_conditions(kwargs)
-        options = {
-            'copy_source': source_url,
-            'timeout': timeout,
-            'modified_access_conditions': dest_mod_conditions,
-            'headers': headers,
-            'cls': return_response_headers,
-        }
-        if not incremental_copy:
-            source_mod_conditions = get_source_conditions(kwargs)
-            dest_access_conditions = get_access_conditions(kwargs.pop('destination_lease', None))
-            options['source_modified_access_conditions'] = source_mod_conditions
-            options['lease_access_conditions'] = dest_access_conditions
-            options['tier'] = tier.value if tier else None
-        options.update(kwargs)
-        return options
+        return cast(Dict, ret_val)
 
     @distributed_trace
     def start_copy_from_url(self, source_url, metadata=None, incremental_copy=False, **kwargs):
@@ -1443,27 +1033,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             **kwargs)
         try:
             if incremental_copy:
-                return self._client.page_blob.copy_incremental(**options)
-            return self._client.blob.start_copy_from_url(**options)
+                ret_val = self._client.page_blob.copy_incremental(**options)
+            ret_val = self._client.blob.start_copy_from_url(**options)
         except StorageErrorException as error:
             process_storage_error(error)
-
-    def _abort_copy_options(self, copy_id, **kwargs):
-        # type: (Union[str, Dict[str, Any], BlobProperties], **Any) -> Dict[str, Any]
-        access_conditions = get_access_conditions(kwargs.pop('lease', None))
-        try:
-            copy_id = copy_id.copy.id
-        except AttributeError:
-            try:
-                copy_id = copy_id['copy_id']
-            except TypeError:
-                pass
-        options = {
-            'copy_id': copy_id,
-            'lease_access_conditions': access_conditions,
-            'timeout': kwargs.pop('timeout', None)}
-        options.update(kwargs)
-        return options
+        return cast(Dict, ret_val)
 
     @distributed_trace
     def abort_copy(self, copy_id, **kwargs):
@@ -1542,7 +1116,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 :dedent: 8
                 :caption: Acquiring a lease on a blob.
         """
-        lease = BlobLeaseClient(self, lease_id=lease_id) # type: ignore
+        lease = BlobLeaseClient(self, lease_id=lease_id)
         lease.acquire(lease_duration=lease_duration, **kwargs)
         return lease
 
@@ -1583,51 +1157,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
-
-    def _stage_block_options(
-            self, block_id,  # type: str
-            data,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
-            length=None,  # type: Optional[int]
-            **kwargs
-        ):
-        # type: (...) -> Dict[str, Any]
-        if self.require_encryption or (self.key_encryption_key is not None):
-            raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
-        block_id = encode_base64(str(block_id))
-        if isinstance(data, six.text_type):
-            data = data.encode(kwargs.pop('encoding', 'UTF-8'))  # type: ignore
-        access_conditions = get_access_conditions(kwargs.pop('lease', None))
-        if length is None:
-            length = get_length(data)
-            if length is None:
-                length, data = read_length(data)
-        if isinstance(data, bytes):
-            data = data[:length]
-
-        validate_content = kwargs.pop('validate_content', False)
-        cpk_scope_info = get_cpk_scope_info(kwargs)
-        cpk = kwargs.pop('cpk', None)
-        cpk_info = None
-        if cpk:
-            if self.scheme.lower() != 'https':
-                raise ValueError("Customer provided encryption key must be used over HTTPS.")
-            cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
-                               encryption_algorithm=cpk.algorithm)
-
-        options = {
-            'block_id': block_id,
-            'content_length': length,
-            'body': data,
-            'transactional_content_md5': None,
-            'timeout': kwargs.pop('timeout', None),
-            'lease_access_conditions': access_conditions,
-            'validate_content': validate_content,
-            'cpk_scope_info': cpk_scope_info,
-            'cpk_info': cpk_info,
-            'cls': return_response_headers,
-        }
-        options.update(kwargs)
-        return options
 
     @distributed_trace
     def stage_block(
@@ -1684,51 +1213,10 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             length=length,
             **kwargs)
         try:
-            return self._client.block_blob.stage_block(**options)
+            ret_val = self._client.block_blob.stage_block(**options)
         except StorageErrorException as error:
             process_storage_error(error)
-
-    def _stage_block_from_url_options(
-            self, block_id,  # type: str
-            source_url,  # type: str
-            source_offset=None,  # type: Optional[int]
-            source_length=None,  # type: Optional[int]
-            source_content_md5=None,  # type: Optional[Union[bytes, bytearray]]
-            **kwargs
-        ):
-        # type: (...) -> Dict[str, Any]
-        if source_length is not None and source_offset is None:
-            raise ValueError("Source offset value must not be None if length is set.")
-        if source_length is not None:
-            source_length = source_offset + source_length - 1
-        block_id = encode_base64(str(block_id))
-        access_conditions = get_access_conditions(kwargs.pop('lease', None))
-        range_header = None
-        if source_offset is not None:
-            range_header, _ = validate_and_format_range_headers(source_offset, source_length)
-
-        cpk_scope_info = get_cpk_scope_info(kwargs)
-        cpk = kwargs.pop('cpk', None)
-        cpk_info = None
-        if cpk:
-            if self.scheme.lower() != 'https':
-                raise ValueError("Customer provided encryption key must be used over HTTPS.")
-            cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
-                               encryption_algorithm=cpk.algorithm)
-        options = {
-            'block_id': block_id,
-            'content_length': 0,
-            'source_url': source_url,
-            'source_range': range_header,
-            'source_content_md5': bytearray(source_content_md5) if source_content_md5 else None,
-            'timeout': kwargs.pop('timeout', None),
-            'lease_access_conditions': access_conditions,
-            'cpk_scope_info': cpk_scope_info,
-            'cpk_info': cpk_info,
-            'cls': return_response_headers,
-        }
-        options.update(kwargs)
-        return options
+        return cast(Dict, ret_val)
 
     @distributed_trace
     def stage_block_from_url(
@@ -1785,19 +1273,10 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             source_content_md5=source_content_md5,
             **kwargs)
         try:
-            return self._client.block_blob.stage_block_from_url(**options)
+            ret_val = self._client.block_blob.stage_block_from_url(**options)
         except StorageErrorException as error:
             process_storage_error(error)
-
-    def _get_block_list_result(self, blocks):
-        # type: (BlockList) -> Tuple[List[BlobBlock], List[BlobBlock]]
-        committed = [] # type: List
-        uncommitted = [] # type: List
-        if blocks.committed_blocks:
-            committed = [BlobBlock._from_generated(b) for b in blocks.committed_blocks]  # pylint: disable=protected-access
-        if blocks.uncommitted_blocks:
-            uncommitted = [BlobBlock._from_generated(b) for b in blocks.uncommitted_blocks]  # pylint: disable=protected-access
-        return committed, uncommitted
+        return cast(Dict, ret_val)
 
     @distributed_trace
     def get_block_list(self, block_list_type="committed", **kwargs):
@@ -1830,71 +1309,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             process_storage_error(error)
         return self._get_block_list_result(blocks)
 
-    def _commit_block_list_options( # type: ignore
-            self, block_list,  # type: List[BlobBlock]
-            content_settings=None,  # type: Optional[ContentSettings]
-            metadata=None,  # type: Optional[Dict[str, str]]
-            **kwargs
-        ):
-        # type: (...) -> Dict[str, Any]
-        if self.require_encryption or (self.key_encryption_key is not None):
-            raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
-        block_lookup = BlockLookupList(committed=[], uncommitted=[], latest=[])
-        for block in block_list:
-            try:
-                if block.state.value == 'committed':
-                    block_lookup.committed.append(encode_base64(str(block.id)))
-                elif block.state.value == 'uncommitted':
-                    block_lookup.uncommitted.append(encode_base64(str(block.id)))
-                else:
-                    block_lookup.latest.append(encode_base64(str(block.id)))
-            except AttributeError:
-                block_lookup.latest.append(encode_base64(str(block)))
-        headers = kwargs.pop('headers', {})
-        headers.update(add_metadata_headers(metadata))
-        blob_headers = None
-        access_conditions = get_access_conditions(kwargs.pop('lease', None))
-        mod_conditions = get_modify_conditions(kwargs)
-        if content_settings:
-            blob_headers = BlobHTTPHeaders(
-                blob_cache_control=content_settings.cache_control,
-                blob_content_type=content_settings.content_type,
-                blob_content_md5=bytearray(content_settings.content_md5) if content_settings.content_md5 else None,
-                blob_content_encoding=content_settings.content_encoding,
-                blob_content_language=content_settings.content_language,
-                blob_content_disposition=content_settings.content_disposition
-            )
-
-        validate_content = kwargs.pop('validate_content', False)
-        cpk_scope_info = get_cpk_scope_info(kwargs)
-        cpk = kwargs.pop('cpk', None)
-        cpk_info = None
-        if cpk:
-            if self.scheme.lower() != 'https':
-                raise ValueError("Customer provided encryption key must be used over HTTPS.")
-            cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
-                               encryption_algorithm=cpk.algorithm)
-
-        tier = kwargs.pop('standard_blob_tier', None)
-
-        options = {
-            'blocks': block_lookup,
-            'blob_http_headers': blob_headers,
-            'lease_access_conditions': access_conditions,
-            'timeout': kwargs.pop('timeout', None),
-            'modified_access_conditions': mod_conditions,
-            'cls': return_response_headers,
-            'validate_content': validate_content,
-            'cpk_scope_info': cpk_scope_info,
-            'cpk_info': cpk_info,
-            'tier': tier.value if tier else None,
-            'headers': headers
-        }
-        options.update(kwargs)
-        return options
-
     @distributed_trace
-    def commit_block_list( # type: ignore
+    def commit_block_list(
             self, block_list,  # type: List[BlobBlock]
             content_settings=None,  # type: Optional[ContentSettings]
             metadata=None,  # type: Optional[Dict[str, str]]
@@ -1967,9 +1383,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             metadata=metadata,
             **kwargs)
         try:
-            return self._client.block_blob.commit_block_list(**options) # type: ignore
+            ret_val = self._client.block_blob.commit_block_list(**options)
         except StorageErrorException as error:
+            ret_val = None
             process_storage_error(error)
+        return cast(Dict, ret_val)
 
     @distributed_trace
     def set_premium_page_blob_tier(self, premium_page_blob_tier, **kwargs):
@@ -2003,41 +1421,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         except StorageErrorException as error:
             process_storage_error(error)
 
-    def _get_page_ranges_options( # type: ignore
-            self, offset=None, # type: Optional[int]
-            length=None, # type: Optional[int]
-            previous_snapshot_diff=None,  # type: Optional[Union[str, Dict[str, Any]]]
-            **kwargs
-        ):
-        # type: (...) -> Dict[str, Any]
-        access_conditions = get_access_conditions(kwargs.pop('lease', None))
-        mod_conditions = get_modify_conditions(kwargs)
-        if length is not None and offset is None:
-            raise ValueError("Offset value must not be None if length is set.")
-        if length is not None:
-            length = offset + length - 1  # Reformat to an inclusive range index
-        page_range, _ = validate_and_format_range_headers(
-            offset, length, start_range_required=False, end_range_required=False, align_to_page=True
-        )
-        options = {
-            'snapshot': self.snapshot,
-            'lease_access_conditions': access_conditions,
-            'modified_access_conditions': mod_conditions,
-            'timeout': kwargs.pop('timeout', None),
-            'range': page_range}
-        if previous_snapshot_diff:
-            try:
-                options['prevsnapshot'] = previous_snapshot_diff.snapshot # type: ignore
-            except AttributeError:
-                try:
-                    options['prevsnapshot'] = previous_snapshot_diff['snapshot'] # type: ignore
-                except TypeError:
-                    options['prevsnapshot'] = previous_snapshot_diff
-        options.update(kwargs)
-        return options
-
     @distributed_trace
-    def get_page_ranges( # type: ignore
+    def get_page_ranges(
             self, offset=None, # type: Optional[int]
             length=None, # type: Optional[int]
             previous_snapshot_diff=None,  # type: Optional[Union[str, Dict[str, Any]]]
@@ -2180,22 +1565,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             process_storage_error(error)
         return get_page_ranges_result(ranges)
 
-    def _set_sequence_number_options(self, sequence_number_action, sequence_number=None, **kwargs):
-        # type: (Union[str, SequenceNumberAction], Optional[str], **Any) -> Dict[str, Any]
-        access_conditions = get_access_conditions(kwargs.pop('lease', None))
-        mod_conditions = get_modify_conditions(kwargs)
-        if sequence_number_action is None:
-            raise ValueError("A sequence number action must be specified")
-        options = {
-            'sequence_number_action': sequence_number_action,
-            'timeout': kwargs.pop('timeout', None),
-            'blob_sequence_number': sequence_number,
-            'lease_access_conditions': access_conditions,
-            'modified_access_conditions': mod_conditions,
-            'cls': return_response_headers}
-        options.update(kwargs)
-        return options
-
     @distributed_trace
     def set_sequence_number(self, sequence_number_action, sequence_number=None, **kwargs):
         # type: (Union[str, SequenceNumberAction], Optional[str], **Any) -> Dict[str, Union[str, datetime]]
@@ -2237,33 +1606,10 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         options = self._set_sequence_number_options(
             sequence_number_action, sequence_number=sequence_number, **kwargs)
         try:
-            return self._client.page_blob.update_sequence_number(**options) # type: ignore
+            return cast(Dict, self._client.page_blob.update_sequence_number(**options))
         except StorageErrorException as error:
             process_storage_error(error)
-
-    def _resize_blob_options(self, size, **kwargs):
-        # type: (int, **Any) -> Dict[str, Any]
-        access_conditions = get_access_conditions(kwargs.pop('lease', None))
-        mod_conditions = get_modify_conditions(kwargs)
-        if size is None:
-            raise ValueError("A content length must be specified for a Page Blob.")
-
-        cpk = kwargs.pop('cpk', None)
-        cpk_info = None
-        if cpk:
-            if self.scheme.lower() != 'https':
-                raise ValueError("Customer provided encryption key must be used over HTTPS.")
-            cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
-                               encryption_algorithm=cpk.algorithm)
-        options = {
-            'blob_content_length': size,
-            'timeout': kwargs.pop('timeout', None),
-            'lease_access_conditions': access_conditions,
-            'modified_access_conditions': mod_conditions,
-            'cpk_info': cpk_info,
-            'cls': return_response_headers}
-        options.update(kwargs)
-        return options
+        return cast(Dict, None)
 
     @distributed_trace
     def resize_blob(self, size, **kwargs):
@@ -2308,62 +1654,13 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         """
         options = self._resize_blob_options(size, **kwargs)
         try:
-            return self._client.page_blob.resize(**options) # type: ignore
+            return cast(Dict, self._client.page_blob.resize(**options))
         except StorageErrorException as error:
             process_storage_error(error)
-
-    def _upload_page_options( # type: ignore
-            self, page,  # type: bytes
-            offset,  # type: int
-            length,  # type: int
-            **kwargs
-        ):
-        # type: (...) -> Dict[str, Any]
-        if isinstance(page, six.text_type):
-            page = page.encode(kwargs.pop('encoding', 'UTF-8'))
-        if self.require_encryption or (self.key_encryption_key is not None):
-            raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
-
-        if offset is None or offset % 512 != 0:
-            raise ValueError("offset must be an integer that aligns with 512 page size")
-        if length is None or length % 512 != 0:
-            raise ValueError("length must be an integer that aligns with 512 page size")
-        end_range = offset + length - 1  # Reformat to an inclusive range index
-        content_range = 'bytes={0}-{1}'.format(offset, end_range) # type: ignore
-        access_conditions = get_access_conditions(kwargs.pop('lease', None))
-        seq_conditions = SequenceNumberAccessConditions(
-            if_sequence_number_less_than_or_equal_to=kwargs.pop('if_sequence_number_lte', None),
-            if_sequence_number_less_than=kwargs.pop('if_sequence_number_lt', None),
-            if_sequence_number_equal_to=kwargs.pop('if_sequence_number_eq', None)
-        )
-        mod_conditions = get_modify_conditions(kwargs)
-        cpk_scope_info = get_cpk_scope_info(kwargs)
-        validate_content = kwargs.pop('validate_content', False)
-        cpk = kwargs.pop('cpk', None)
-        cpk_info = None
-        if cpk:
-            if self.scheme.lower() != 'https':
-                raise ValueError("Customer provided encryption key must be used over HTTPS.")
-            cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
-                               encryption_algorithm=cpk.algorithm)
-        options = {
-            'body': page[:length],
-            'content_length': length,
-            'transactional_content_md5': None,
-            'timeout': kwargs.pop('timeout', None),
-            'range': content_range,
-            'lease_access_conditions': access_conditions,
-            'sequence_number_access_conditions': seq_conditions,
-            'modified_access_conditions': mod_conditions,
-            'validate_content': validate_content,
-            'cpk_scope_info': cpk_scope_info,
-            'cpk_info': cpk_info,
-            'cls': return_response_headers}
-        options.update(kwargs)
-        return options
+        return cast(Dict, None)
 
     @distributed_trace
-    def upload_page( # type: ignore
+    def upload_page(
             self, page,  # type: bytes
             offset,  # type: int
             length,  # type: int
@@ -2447,68 +1744,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             length=length,
             **kwargs)
         try:
-            return self._client.page_blob.upload_pages(**options) # type: ignore
+            ret_val = self._client.page_blob.upload_pages(**options)
         except StorageErrorException as error:
+            ret_val = None
             process_storage_error(error)
-
-    def _upload_pages_from_url_options(  # type: ignore
-            self, source_url,  # type: str
-            offset,  # type: int
-            length,  # type: int
-            source_offset,  # type: int
-            **kwargs
-    ):
-        # type: (...) -> Dict[str, Any]
-        if self.require_encryption or (self.key_encryption_key is not None):
-            raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
-
-        # TODO: extract the code to a method format_range
-        if offset is None or offset % 512 != 0:
-            raise ValueError("offset must be an integer that aligns with 512 page size")
-        if length is None or length % 512 != 0:
-            raise ValueError("length must be an integer that aligns with 512 page size")
-        if source_offset is None or offset % 512 != 0:
-            raise ValueError("source_offset must be an integer that aligns with 512 page size")
-
-        # Format range
-        end_range = offset + length - 1
-        destination_range = 'bytes={0}-{1}'.format(offset, end_range)
-        source_range = 'bytes={0}-{1}'.format(source_offset, source_offset + length - 1)  # should subtract 1 here?
-
-        seq_conditions = SequenceNumberAccessConditions(
-            if_sequence_number_less_than_or_equal_to=kwargs.pop('if_sequence_number_lte', None),
-            if_sequence_number_less_than=kwargs.pop('if_sequence_number_lt', None),
-            if_sequence_number_equal_to=kwargs.pop('if_sequence_number_eq', None)
-        )
-        access_conditions = get_access_conditions(kwargs.pop('lease', None))
-        mod_conditions = get_modify_conditions(kwargs)
-        source_mod_conditions = get_source_conditions(kwargs)
-        cpk_scope_info = get_cpk_scope_info(kwargs)
-        source_content_md5 = kwargs.pop('source_content_md5', None)
-        cpk = kwargs.pop('cpk', None)
-        cpk_info = None
-        if cpk:
-            if self.scheme.lower() != 'https':
-                raise ValueError("Customer provided encryption key must be used over HTTPS.")
-            cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
-                               encryption_algorithm=cpk.algorithm)
-
-        options = {
-            'source_url': source_url,
-            'content_length': 0,
-            'source_range': source_range,
-            'range': destination_range,
-            'source_content_md5': bytearray(source_content_md5) if source_content_md5 else None,
-            'timeout': kwargs.pop('timeout', None),
-            'lease_access_conditions': access_conditions,
-            'sequence_number_access_conditions': seq_conditions,
-            'modified_access_conditions': mod_conditions,
-            'source_modified_access_conditions': source_mod_conditions,
-            'cpk_scope_info': cpk_scope_info,
-            'cpk_info': cpk_info,
-            'cls': return_response_headers}
-        options.update(kwargs)
-        return options
+        return cast(Dict, ret_val)
 
     @distributed_trace
     def upload_pages_from_url(self, source_url,  # type: str
@@ -2611,47 +1851,10 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             **kwargs
         )
         try:
-            return self._client.page_blob.upload_pages_from_url(**options)  # type: ignore
+            return cast(Dict, self._client.page_blob.upload_pages_from_url(**options))
         except StorageErrorException as error:
             process_storage_error(error)
-
-    def _clear_page_options(self, offset, length, **kwargs):
-        # type: (int, int, **Any) -> Dict[str, Any]
-        if self.require_encryption or (self.key_encryption_key is not None):
-            raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
-        access_conditions = get_access_conditions(kwargs.pop('lease', None))
-        seq_conditions = SequenceNumberAccessConditions(
-            if_sequence_number_less_than_or_equal_to=kwargs.pop('if_sequence_number_lte', None),
-            if_sequence_number_less_than=kwargs.pop('if_sequence_number_lt', None),
-            if_sequence_number_equal_to=kwargs.pop('if_sequence_number_eq', None)
-        )
-        mod_conditions = get_modify_conditions(kwargs)
-        if offset is None or offset % 512 != 0:
-            raise ValueError("offset must be an integer that aligns with 512 page size")
-        if length is None or length % 512 != 0:
-            raise ValueError("length must be an integer that aligns with 512 page size")
-        end_range = length + offset - 1  # Reformat to an inclusive range index
-        content_range = 'bytes={0}-{1}'.format(offset, end_range)
-
-        cpk = kwargs.pop('cpk', None)
-        cpk_info = None
-        if cpk:
-            if self.scheme.lower() != 'https':
-                raise ValueError("Customer provided encryption key must be used over HTTPS.")
-            cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
-                               encryption_algorithm=cpk.algorithm)
-
-        options = {
-            'content_length': 0,
-            'timeout': kwargs.pop('timeout', None),
-            'range': content_range,
-            'lease_access_conditions': access_conditions,
-            'sequence_number_access_conditions': seq_conditions,
-            'modified_access_conditions': mod_conditions,
-            'cpk_info': cpk_info,
-            'cls': return_response_headers}
-        options.update(kwargs)
-        return options
+        return cast(Dict, None)
 
     @distributed_trace
     def clear_page(self, offset, length, **kwargs):
@@ -2710,66 +1913,13 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         """
         options = self._clear_page_options(offset, length, **kwargs)
         try:
-            return self._client.page_blob.clear_pages(**options)  # type: ignore
+            return cast(Dict, self._client.page_blob.clear_pages(**options))
         except StorageErrorException as error:
             process_storage_error(error)
-
-    def _append_block_options( # type: ignore
-            self, data,  # type: Union[AnyStr, Iterable[AnyStr], IO[AnyStr]]
-            length=None,  # type: Optional[int]
-            **kwargs
-        ):
-        # type: (...) -> Dict[str, Any]
-        if self.require_encryption or (self.key_encryption_key is not None):
-            raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
-
-        if isinstance(data, six.text_type):
-            data = data.encode(kwargs.pop('encoding', 'UTF-8')) # type: ignore
-        if length is None:
-            length = get_length(data)
-            if length is None:
-                length, data = read_length(data)
-        if length == 0:
-            return {}
-        if isinstance(data, bytes):
-            data = data[:length]
-
-        appendpos_condition = kwargs.pop('appendpos_condition', None)
-        maxsize_condition = kwargs.pop('maxsize_condition', None)
-        validate_content = kwargs.pop('validate_content', False)
-        append_conditions = None
-        if maxsize_condition or appendpos_condition is not None:
-            append_conditions = AppendPositionAccessConditions(
-                max_size=maxsize_condition,
-                append_position=appendpos_condition
-            )
-        access_conditions = get_access_conditions(kwargs.pop('lease', None))
-        mod_conditions = get_modify_conditions(kwargs)
-        cpk_scope_info = get_cpk_scope_info(kwargs)
-        cpk = kwargs.pop('cpk', None)
-        cpk_info = None
-        if cpk:
-            if self.scheme.lower() != 'https':
-                raise ValueError("Customer provided encryption key must be used over HTTPS.")
-            cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
-                               encryption_algorithm=cpk.algorithm)
-        options = {
-            'body': data,
-            'content_length': length,
-            'timeout': kwargs.pop('timeout', None),
-            'transactional_content_md5': None,
-            'lease_access_conditions': access_conditions,
-            'append_position_access_conditions': append_conditions,
-            'modified_access_conditions': mod_conditions,
-            'validate_content': validate_content,
-            'cpk_scope_info': cpk_scope_info,
-            'cpk_info': cpk_info,
-            'cls': return_response_headers}
-        options.update(kwargs)
-        return options
+        return cast(Dict, None)
 
     @distributed_trace
-    def append_block( # type: ignore
+    def append_block(
             self, data,  # type: Union[AnyStr, Iterable[AnyStr], IO[AnyStr]]
             length=None,  # type: Optional[int]
             **kwargs
@@ -2843,73 +1993,16 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :rtype: dict(str, Any)
         """
         options = self._append_block_options(
-            data,
+            cast(Iterable, data),
             length=length,
             **kwargs
         )
         try:
-            return self._client.append_blob.append_block(**options) # type: ignore
+            ret_val = self._client.append_blob.append_block(**options)
         except StorageErrorException as error:
+            ret_val = None
             process_storage_error(error)
-
-    def _append_block_from_url_options(  # type: ignore
-            self, copy_source_url,  # type: str
-            source_offset=None,  # type: Optional[int]
-            source_length=None,  # type: Optional[int]
-            **kwargs
-    ):
-        # type: (...) -> Dict[str, Any]
-        if self.require_encryption or (self.key_encryption_key is not None):
-            raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
-
-        # If end range is provided, start range must be provided
-        if source_length is not None and source_offset is None:
-            raise ValueError("source_offset should also be specified if source_length is specified")
-        # Format based on whether length is present
-        source_range = None
-        if source_length is not None:
-            end_range = source_offset + source_length - 1
-            source_range = 'bytes={0}-{1}'.format(source_offset, end_range)
-        elif source_offset is not None:
-            source_range = "bytes={0}-".format(source_offset)
-
-        appendpos_condition = kwargs.pop('appendpos_condition', None)
-        maxsize_condition = kwargs.pop('maxsize_condition', None)
-        source_content_md5 = kwargs.pop('source_content_md5', None)
-        append_conditions = None
-        if maxsize_condition or appendpos_condition is not None:
-            append_conditions = AppendPositionAccessConditions(
-                max_size=maxsize_condition,
-                append_position=appendpos_condition
-            )
-        access_conditions = get_access_conditions(kwargs.pop('lease', None))
-        mod_conditions = get_modify_conditions(kwargs)
-        source_mod_conditions = get_source_conditions(kwargs)
-        cpk_scope_info = get_cpk_scope_info(kwargs)
-        cpk = kwargs.pop('cpk', None)
-        cpk_info = None
-        if cpk:
-            if self.scheme.lower() != 'https':
-                raise ValueError("Customer provided encryption key must be used over HTTPS.")
-            cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
-                               encryption_algorithm=cpk.algorithm)
-
-        options = {
-            'source_url': copy_source_url,
-            'content_length': 0,
-            'source_range': source_range,
-            'source_content_md5': source_content_md5,
-            'transactional_content_md5': None,
-            'lease_access_conditions': access_conditions,
-            'append_position_access_conditions': append_conditions,
-            'modified_access_conditions': mod_conditions,
-            'source_modified_access_conditions': source_mod_conditions,
-            'cpk_scope_info': cpk_scope_info,
-            'cpk_info': cpk_info,
-            'cls': return_response_headers,
-            'timeout': kwargs.pop('timeout', None)}
-        options.update(kwargs)
-        return options
+        return cast(Dict, ret_val)
 
     @distributed_trace
     def append_block_from_url(self, copy_source_url,  # type: str
@@ -3003,6 +2096,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             **kwargs
         )
         try:
-            return self._client.append_blob.append_block_from_url(**options) # type: ignore
+            ret_val = self._client.append_blob.append_block_from_url(**options)
         except StorageErrorException as error:
+            ret_val = None
             process_storage_error(error)
+        return cast(Dict, ret_val)

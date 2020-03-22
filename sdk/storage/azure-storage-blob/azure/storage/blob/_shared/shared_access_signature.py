@@ -94,6 +94,7 @@ class SharedAccessSignature(object):
 
     def generate_account(self, services, resource_types, permission, expiry, start=None,
                          ip=None, protocol=None):
+        # type: (...) -> str
         '''
         Generates a shared access signature for the account.
         Use the returned signature with the sas_token parameter of the service
@@ -206,4 +207,5 @@ class _SharedAccessHelper(object):
                         sign_string(account_key, string_to_sign))
 
     def get_token(self):
+        # type: () -> str
         return '&'.join(['{0}={1}'.format(n, url_quote(v)) for n, v in self.query_dict.items() if v is not None])

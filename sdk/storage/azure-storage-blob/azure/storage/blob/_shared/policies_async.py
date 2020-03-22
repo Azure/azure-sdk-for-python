@@ -7,15 +7,16 @@
 import asyncio
 import random
 import logging
-from typing import Any, TYPE_CHECKING
+from typing import cast, TYPE_CHECKING
 
+from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.policies import AsyncHTTPPolicy
 from azure.core.exceptions import AzureError
 
 from .policies import is_retry, StorageRetryPolicy
 
 if TYPE_CHECKING:
-    from azure.core.pipeline import PipelineRequest, PipelineResponse
+    from azure.core.pipeline import PipelineRequest
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -52,7 +53,8 @@ class AsyncStorageResponseHook(AsyncHTTPPolicy):
         response_callback = request.context.get('response_callback') or \
             request.context.options.pop('raw_response_hook', self._response_callback)
 
-        response = await self.next.send(request)
+        if self.next is not None:
+            response = await self.next.send(request)
         await response.http_response.load_body()
 
         will_retry = is_retry(response, request.context.options.get('mode'))
@@ -76,7 +78,7 @@ class AsyncStorageResponseHook(AsyncHTTPPolicy):
             else:
                 response_callback(response)
             request.context['response_callback'] = response_callback
-        return response
+        return cast(PipelineResponse, response)
 
 class AsyncStorageRetryPolicy(StorageRetryPolicy):
     """

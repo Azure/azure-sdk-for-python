@@ -21,7 +21,7 @@ except ImportError:
 try:
     from azure.core.pipeline.transport import AioHttpTransport
 except ImportError:
-    AioHttpTransport = None
+    AioHttpTransport = None # type: ignore
 
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline.policies import SansIOHTTPPolicy

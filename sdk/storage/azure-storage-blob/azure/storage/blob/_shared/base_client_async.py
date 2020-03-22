@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 from typing import (  # pylint: disable=unused-import
-    Union, Optional, Any, Iterable, Dict, List, Type, Tuple,
+    Union, Optional, Any, Iterable, Dict, List, Type, Tuple, cast,
     TYPE_CHECKING
 )
 import logging
@@ -14,6 +14,7 @@ from azure.core.async_paging import AsyncList
 from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline.policies import (
     ContentDecodePolicy,
+    BearerTokenCredentialPolicy,
     AsyncBearerTokenCredentialPolicy,
     AsyncRedirectPolicy,
     DistributedTracingPolicy,
@@ -40,6 +41,7 @@ if TYPE_CHECKING:
     from azure.core.pipeline import Pipeline
     from azure.core.pipeline.transport import HttpRequest
     from azure.core.configuration import Configuration
+T = Optional[Union[BearerTokenCredentialPolicy, SharedKeyCredentialPolicy]]
 _LOGGER = logging.getLogger(__name__)
 
 
@@ -66,25 +68,25 @@ class AsyncStorageAccountHostsMixin(object):
 
     def _create_pipeline(self, credential, **kwargs):
         # type: (Any, **Any) -> Tuple[Configuration, Pipeline]
-        self._credential_policy = None
+        self._credential_policy = None # type: T
         if hasattr(credential, 'get_token'):
-            self._credential_policy = AsyncBearerTokenCredentialPolicy(credential, STORAGE_OAUTH_SCOPE)
+            self._credential_policy = cast(T, AsyncBearerTokenCredentialPolicy(credential, STORAGE_OAUTH_SCOPE))
         elif isinstance(credential, SharedKeyCredentialPolicy):
-            self._credential_policy = credential
+            self._credential_policy = cast(T, credential)
         elif credential is not None:
             raise TypeError("Unsupported credential: {}".format(credential))
         config = kwargs.get('_configuration') or create_configuration(**kwargs)
         if kwargs.get('_pipeline'):
             return config, kwargs['_pipeline']
-        config.transport = kwargs.get('transport')  # type: ignore
+        _transport = kwargs.get("transport")
         kwargs.setdefault("connection_timeout", CONNECTION_TIMEOUT)
         kwargs.setdefault("read_timeout", READ_TIMEOUT)
-        if not config.transport:
+        if not _transport:
             try:
                 from azure.core.pipeline.transport import AioHttpTransport
             except ImportError:
                 raise ImportError("Unable to create async transport. Please check aiohttp is installed.")
-            config.transport = AioHttpTransport(**kwargs)
+            _transport = AioHttpTransport(**kwargs)
         policies = [
             QueueMessagePolicy(),
             config.headers_policy,
@@ -102,10 +104,10 @@ class AsyncStorageAccountHostsMixin(object):
             DistributedTracingPolicy(**kwargs),
             HttpLoggingPolicy(**kwargs),
         ]
-        return config, AsyncPipeline(config.transport, policies=policies)
+        return config, AsyncPipeline(_transport, policies=policies)
 
     async def _batch_send(
-        self, *reqs: 'HttpRequest',
+        self, *reqs,
         **kwargs
     ):
         """Given a series of request, do a Storage batch call.

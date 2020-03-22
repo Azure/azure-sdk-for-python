@@ -6,7 +6,7 @@
 
 import os
 
-from typing import Union, Iterable, AnyStr, IO, Any, Dict  # pylint: disable=unused-import
+from typing import Union, Iterable, AnyStr, IO, Any, Dict, cast  # pylint: disable=unused-import
 from ._version import VERSION
 from ._blob_client import BlobClient
 from ._container_client import ContainerClient
@@ -101,7 +101,7 @@ def upload_blob_to_url(
     :rtype: dict(str, Any)
     """
     with BlobClient.from_blob_url(blob_url, credential=credential) as client:
-        return client.upload_blob(data=data, blob_type=BlobType.BlockBlob, **kwargs)
+        return cast(Dict, client.upload_blob(data=data, blob_type=BlobType.BlockBlob, **kwargs))
 
 
 def _download_to_stream(client, handle, **kwargs):
