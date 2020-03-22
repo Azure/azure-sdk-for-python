@@ -5,6 +5,9 @@
 # --------------------------------------------------------------------------
 
 import os
+from typing import ( # pylint: disable=unused-import
+    Dict, Any, Union, Iterable, AnyStr, IO, cast
+)
 
 from .._models import BlobType
 from .._shared.policies_async import ExponentialRetry, LinearRetry
@@ -14,13 +17,12 @@ from ._blob_service_client_async import BlobServiceClient
 from ._lease_async import BlobLeaseClient
 from ._download_async import StorageStreamDownloader
 
-
 async def upload_blob_to_url(
         blob_url,  # type: str
         data,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
         credential=None,  # type: Any
         **kwargs):
-    # type: (...) -> dict[str, Any]
+    # type: (...) -> Dict[str, Any]
     """Upload data to a given URL
 
     The data will be uploaded as a block blob.
@@ -61,7 +63,7 @@ async def upload_blob_to_url(
     :rtype: dict(str, Any)
     """
     async with BlobClient.from_blob_url(blob_url, credential=credential) as client:
-        return await client.upload_blob(data=data, blob_type=BlobType.BlockBlob, **kwargs)
+        return cast(Dict, await client.upload_blob(data=data, blob_type=BlobType.BlockBlob, **kwargs))
 
 
 async def _download_to_stream(client, handle, **kwargs):
