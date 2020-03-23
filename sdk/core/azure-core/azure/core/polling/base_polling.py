@@ -190,9 +190,9 @@ class OperationResourcePolling(LongRunningOperation):
         self._operation_location_header = operation_location_header
 
         # Store the initial URLs
-        self.async_url = None
-        self.location_url = None
-        self.request = None
+        self._async_url = None
+        self._location_url = None
+        self._request = None
 
     def can_poll(self, pipeline_response):
         """Answer if this polling method could be used.
@@ -203,7 +203,7 @@ class OperationResourcePolling(LongRunningOperation):
     def get_polling_url(self):
         """Return the polling URL.
         """
-        return self.async_url
+        return self._async_url
 
     def get_final_get_url(self, pipeline_response):
         # type: (PipelineResponseType) -> Optional[str]
@@ -219,11 +219,11 @@ class OperationResourcePolling(LongRunningOperation):
             if resource_location:
                 return resource_location
 
-        if self.request.method in {"PUT", "PATCH"}:
-            return self.request.url
+        if self._request.method in {"PUT", "PATCH"}:
+            return self._request.url
 
-        if self.request.method == "POST" and self.location_url:
-            return self.location_url
+        if self._request.method == "POST" and self._location_url:
+            return self._location_url
 
         return None
 
@@ -233,12 +233,12 @@ class OperationResourcePolling(LongRunningOperation):
 
         :param azure.core.pipeline.PipelineResponse response: initial REST call response.
         """
-        self.request = pipeline_response.http_response.request
+        self._request = pipeline_response.http_response.request
         response = pipeline_response.http_response
 
         self._set_async_url_if_present(response)
 
-        if response.status_code in {200, 201, 202, 204} and self.async_url:
+        if response.status_code in {200, 201, 202, 204} and self._async_url:
             return "InProgress"
         raise OperationFailed("Operation failed or canceled")
 
@@ -246,11 +246,11 @@ class OperationResourcePolling(LongRunningOperation):
         # type: (ResponseType) -> None
         async_url = response.headers.get(self._operation_location_header)
         if async_url:
-            self.async_url = async_url
+            self._async_url = async_url
 
         location_url = response.headers.get("location")
         if location_url:
-            self.location_url = location_url
+            self._location_url = location_url
 
     def get_status(self, pipeline_response):
         # type: (PipelineResponseType) -> str
@@ -277,7 +277,7 @@ class LocationPolling(LongRunningOperation):
     """
 
     def __init__(self):
-        self.location_url = None
+        self._location_url = None
 
     def can_poll(self, pipeline_response):
         # type: (PipelineResponseType) -> bool
@@ -289,7 +289,7 @@ class LocationPolling(LongRunningOperation):
     def get_polling_url(self):
         """Return the polling URL.
         """
-        return self.location_url
+        return self._location_url
 
     def get_final_get_url(self, pipeline_response):
         # type: (PipelineResponseType) -> Optional[str]
@@ -307,9 +307,9 @@ class LocationPolling(LongRunningOperation):
         """
         response = pipeline_response.http_response
 
-        self.location_url = response.headers["location"]
+        self._location_url = response.headers["location"]
 
-        if response.status_code in {200, 201, 202, 204} and self.location_url:
+        if response.status_code in {200, 201, 202, 204} and self._location_url:
             return "InProgress"
         raise OperationFailed("Operation failed or canceled")
 
@@ -322,7 +322,7 @@ class LocationPolling(LongRunningOperation):
         """
         response = pipeline_response.http_response
         if "location" in response.headers:
-            self.location_url = response.headers["location"]
+            self._location_url = response.headers["location"]
 
         return "InProgress" if response.status_code == 202 else "Succeeded"
 
