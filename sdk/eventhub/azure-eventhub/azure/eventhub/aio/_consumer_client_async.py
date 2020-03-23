@@ -358,7 +358,7 @@ class EventHubConsumerClient(ClientBaseAsync):
          The callback function should be defined like: `on_event(partition_context, event)`.
          For detailed partition context information, please refer to
          :class:`PartitionContext<azure.eventhub.aio.PartitionContext>`.
-        :type on_event: Callable[~azure.eventhub.aio.PartitionContext, ~azure.eventhub.EventData]
+        :type on_event: Callable[~azure.eventhub.aio.PartitionContext, Optional[~azure.eventhub.EventData]]
         :keyword float max_wait_time: The maximum interval in seconds that the event processor will wait before calling
          the callback. If no events are received within this interval, the `on_event` callback will be called with
          `None`.
