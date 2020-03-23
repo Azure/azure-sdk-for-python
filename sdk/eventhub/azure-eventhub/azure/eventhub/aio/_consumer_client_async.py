@@ -247,7 +247,7 @@ class EventHubConsumerClient(ClientBaseAsync):
             batch=False,
             *,
             max_batch_size: int = 300,
-            max_wait_time: Optional[float] = 3,
+            max_wait_time: Optional[float] = None,
             partition_id: Optional[str] = None,
             owner_level: Optional[int] = None,
             prefetch: int = 300,
@@ -536,7 +536,8 @@ class EventHubConsumerClient(ClientBaseAsync):
                 :dedent: 4
                 :caption: Receive events from the EventHub.
         """
-        assert max_batch_size is None or max_batch_size > 0
+        if max_batch_size is None or max_batch_size <= 0:
+            raise ValueError("max_batch_size must be larger than 0")
         await self._receive(
             on_event_batch,
             batch=True,
