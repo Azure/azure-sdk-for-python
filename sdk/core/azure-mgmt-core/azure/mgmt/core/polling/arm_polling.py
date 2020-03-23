@@ -72,7 +72,7 @@ class AzureAsyncOperationPolling(OperationResourcePolling):
             operation_location_header="azure-asyncoperation"
         )
 
-        self.lro_options = lro_options or {}
+        self._lro_options = lro_options or {}
 
     def get_final_get_url(self, pipeline_response):
         # type: (PipelineResponseType) -> Optional[str]
@@ -81,9 +81,9 @@ class AzureAsyncOperationPolling(OperationResourcePolling):
         :rtype: str
         """
         if (
-            self.lro_options.get(_LroOption.FINAL_STATE_VIA)
+            self._lro_options.get(_LroOption.FINAL_STATE_VIA)
             == _FinalStateViaOption.AZURE_ASYNC_OPERATION_FINAL_STATE
-            and self.request.method == "POST"
+            and self._request.method == "POST"
         ):
             return None
         return super(AzureAsyncOperationPolling, self).get_final_get_url(
@@ -98,7 +98,7 @@ class BodyContentPolling(LongRunningOperation):
     """
 
     def __init__(self):
-        self.initial_response = None
+        self._initial_response = None
 
     def can_poll(self, pipeline_response):
         # type: (PipelineResponseType) -> bool
@@ -111,7 +111,7 @@ class BodyContentPolling(LongRunningOperation):
         # type: () -> str
         """Return the polling URL.
         """
-        return self.initial_response.http_response.request.url
+        return self._initial_response.http_response.request.url
 
     def get_final_get_url(self, pipeline_response):
         # type: (PipelineResponseType) -> Optional[str]
@@ -127,7 +127,7 @@ class BodyContentPolling(LongRunningOperation):
 
         :param azure.core.pipeline.PipelineResponse response: initial REST call response.
         """
-        self.initial_response = pipeline_response
+        self._initial_response = pipeline_response
         response = pipeline_response.http_response
 
         if response.status_code == 202:
