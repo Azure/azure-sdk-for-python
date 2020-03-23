@@ -49,7 +49,7 @@ class EventProcessor(
         self,
         eventhub_client,  # type: EventHubConsumerClient
         consumer_group,  # type: str
-        on_event,  # type: Callable[[PartitionContext, EventData], None]
+        on_event,  # type: Callable[[PartitionContext, Union[Optional[EventData], List[EventData]]], None]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -215,13 +215,13 @@ class EventProcessor(
     def _on_event_received(self, partition_context, event):
         # type: (PartitionContext, Union[Optional[EventData], List[EventData]]) -> None
         if event:
-            partition_context._last_received_event = (
+            partition_context._last_received_event = (  # pylint:disable=protected-access
                 event[-1] if isinstance(event, List) else event
             )
             with self._context(event):
                 self._event_handler(partition_context, event)
         else:
-            partition_context._last_received_event = None
+            partition_context._last_received_event = None  # pylint:disable=protected-access
             self._event_handler(partition_context, event)
 
     def _load_balancing(self):

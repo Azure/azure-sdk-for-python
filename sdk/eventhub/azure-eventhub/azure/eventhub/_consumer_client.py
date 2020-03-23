@@ -270,6 +270,7 @@ class EventHubConsumerClient(ClientBase):
                     pass
 
     def receive(self, on_event, **kwargs):
+        # type: (Callable[["PartitionContext", Optional["EventData"]], None], Any) -> None
         """Receive events from partition(s), with optional load-balancing and checkpointing.
 
         :param on_event: The callback function for handling a received event. The callback takes two
@@ -345,6 +346,7 @@ class EventHubConsumerClient(ClientBase):
         self._receive(on_event, batch=False, max_batch_size=1, **kwargs)
 
     def receive_batch(self, on_event_batch, **kwargs):
+        # type: (Callable[["PartitionContext", List["EventData"]], None], Any) -> None
         """Receive events from partition(s), with optional load-balancing and checkpointing.
 
         :param on_event: The callback function for handling a received event. The callback takes two

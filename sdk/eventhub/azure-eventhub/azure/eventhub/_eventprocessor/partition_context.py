@@ -67,17 +67,18 @@ class PartitionContext(object):
          sequence number information used for checkpoint.
         :rtype: None
         """
-        checkpoint_event = event or self._last_received_event
-        if checkpoint_event:
-            checkpoint = {
-                "fully_qualified_namespace": self.fully_qualified_namespace,
-                "eventhub_name": self.eventhub_name,
-                "consumer_group": self.consumer_group,
-                "partition_id": self.partition_id,
-                "offset": checkpoint_event.offset,
-                "sequence_number": checkpoint_event.sequence_number,
-            }
-            self._checkpoint_store.update_checkpoint(checkpoint)
+        if self._checkpoint_store:
+            checkpoint_event = event or self._last_received_event
+            if checkpoint_event:
+                checkpoint = {
+                    "fully_qualified_namespace": self.fully_qualified_namespace,
+                    "eventhub_name": self.eventhub_name,
+                    "consumer_group": self.consumer_group,
+                    "partition_id": self.partition_id,
+                    "offset": checkpoint_event.offset,
+                    "sequence_number": checkpoint_event.sequence_number,
+                }
+                self._checkpoint_store.update_checkpoint(checkpoint)
         else:
             _LOGGER.warning(
                 "namespace %r, eventhub %r, consumer_group %r, partition_id %r "
