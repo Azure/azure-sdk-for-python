@@ -182,6 +182,7 @@ class EventProcessor(
                 if partition_id not in self._consumers:
                     if partition_id in self._partition_contexts:
                         partition_context = self._partition_contexts[partition_id]
+                        partition_context._last_received_event = None  # pylint:disable=protected-access
                     else:
                         partition_context = PartitionContext(
                             self._namespace,
@@ -212,13 +213,15 @@ class EventProcessor(
                     self._initialize_partition_consumer(partition_id)
 
     def _on_event_received(self, partition_context, event):
-        # type: (PartitionContext, EventData) -> None
-        with self._context(event):
-            if self._track_last_enqueued_event_properties:
-                partition_context._last_received_event = (  # pylint: disable=protected-access
-                    event
-                )
-            self._event_handler(partition_context, event)
+        # type: (PartitionContext, Union[Optional[EventData], List[EventData]]) -> None
+        if event:
+            partition_context._last_received_event = (
+                event[-1] if isinstance(event, List) else event
+            )
+            with self._context(event):
+                self._event_handler(partition_context, event)
+        else:
+            partition_context._last_received_event = None
 
     def _load_balancing(self):
         # type: () -> None
