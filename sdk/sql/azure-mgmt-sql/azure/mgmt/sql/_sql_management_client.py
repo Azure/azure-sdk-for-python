@@ -103,6 +103,7 @@ from .operations import WorkloadClassifiersOperations
 from .operations import ManagedDatabaseRestoreDetailsOperations
 from .operations import ManagedDatabasesOperations
 from .operations import ServerAzureADAdministratorsOperations
+from .operations import ManagedInstanceOperations
 from . import models
 
 
@@ -292,6 +293,8 @@ class SqlManagementClient(SDKClient):
     :vartype managed_databases: azure.mgmt.sql.operations.ManagedDatabasesOperations
     :ivar server_azure_ad_administrators: ServerAzureADAdministrators operations
     :vartype server_azure_ad_administrators: azure.mgmt.sql.operations.ServerAzureADAdministratorsOperations
+    :ivar managed_instance_operations: ManagedInstanceOperations operations
+    :vartype managed_instance_operations: azure.mgmt.sql.operations.ManagedInstanceOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -491,4 +494,6 @@ class SqlManagementClient(SDKClient):
         self.managed_databases = ManagedDatabasesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.server_azure_ad_administrators = ServerAzureADAdministratorsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.managed_instance_operations = ManagedInstanceOperations(
             self._client, self.config, self._serialize, self._deserialize)
