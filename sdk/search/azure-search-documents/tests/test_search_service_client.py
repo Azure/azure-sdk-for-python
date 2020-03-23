@@ -18,8 +18,21 @@ CREDENTIAL = SearchApiKeyCredential(api_key="test_api_key")
 class TestSearchServiceClient(object):
     def test_init(self):
         client = SearchServiceClient("endpoint", CREDENTIAL)
-        assert client._client._config.headers_policy.headers == {
+        assert client._headers == {
             "api-key": "test_api_key",
+            "Accept": "application/json;odata.metadata=minimal",
+        }
+
+    def test_credential_roll(self):
+        credential = SearchApiKeyCredential(api_key="old_api_key")
+        client = SearchServiceClient("endpoint", credential)
+        assert client._headers == {
+            "api-key": "old_api_key",
+            "Accept": "application/json;odata.metadata=minimal",
+        }
+        credential.update_key("new_api_key")
+        assert client._headers == {
+            "api-key": "new_api_key",
             "Accept": "application/json;odata.metadata=minimal",
         }
 
@@ -37,4 +50,4 @@ class TestSearchServiceClient(object):
         client.get_service_statistics()
         assert mock_get_stats.called
         assert mock_get_stats.call_args[0] == ()
-        assert mock_get_stats.call_args[1] == {}
+        assert mock_get_stats.call_args[1] == {"headers": client._headers}

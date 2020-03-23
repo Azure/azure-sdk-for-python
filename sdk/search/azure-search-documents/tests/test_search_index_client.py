@@ -69,8 +69,21 @@ class Test_odata(object):
 class TestSearchIndexClient(object):
     def test_init(self):
         client = SearchIndexClient("endpoint", "index name", CREDENTIAL)
-        assert client._client._config.headers_policy.headers == {
+        assert client._headers == {
             "api-key": "test_api_key",
+            "Accept": "application/json;odata.metadata=none",
+        }
+
+    def test_credential_roll(self):
+        credential = SearchApiKeyCredential(api_key="old_api_key")
+        client = SearchIndexClient("endpoint", "index name", credential)
+        assert client._headers == {
+            "api-key": "old_api_key",
+            "Accept": "application/json;odata.metadata=none",
+        }
+        credential.update_key("new_api_key")
+        assert client._headers == {
+            "api-key": "new_api_key",
             "Accept": "application/json;odata.metadata=none",
         }
 
@@ -98,14 +111,20 @@ class TestSearchIndexClient(object):
         client.get_document("some_key")
         assert mock_get.called
         assert mock_get.call_args[0] == ()
-        assert mock_get.call_args[1] == {"key": "some_key", "selected_fields": None}
+        assert len(mock_get.call_args[1]) == 3
+        assert mock_get.call_args[1]["headers"] == client._headers
+        assert mock_get.call_args[1]["key"] == "some_key"
+        assert mock_get.call_args[1]["selected_fields"] == None
 
         mock_get.reset()
 
         client.get_document("some_key", selected_fields="foo")
         assert mock_get.called
         assert mock_get.call_args[0] == ()
-        assert mock_get.call_args[1] == {"key": "some_key", "selected_fields": "foo"}
+        assert len(mock_get.call_args[1]) == 3
+        assert mock_get.call_args[1]["headers"] == client._headers
+        assert mock_get.call_args[1]["key"] == "some_key"
+        assert mock_get.call_args[1]["selected_fields"] == "foo"
 
     @pytest.mark.parametrize(
         "query", ["search text", SearchQuery(search_text="search text")], ids=repr
@@ -147,6 +166,7 @@ class TestSearchIndexClient(object):
         )
         assert mock_suggest_post.called
         assert mock_suggest_post.call_args[0] == ()
+        assert mock_suggest_post.call_args[1]["headers"] == client._headers
         assert (
             mock_suggest_post.call_args[1]["suggest_request"].search_text
             == "search text"
@@ -170,6 +190,7 @@ class TestSearchIndexClient(object):
         )
         assert mock_autocomplete_post.called
         assert mock_autocomplete_post.call_args[0] == ()
+        assert mock_autocomplete_post.call_args[1]["headers"] == client._headers
         assert (
             mock_autocomplete_post.call_args[1]["autocomplete_request"].search_text
             == "search text"
@@ -207,7 +228,8 @@ class TestSearchIndexClient(object):
                 for action in batch.actions
             )
             assert [action.additional_properties for action in batch.actions] == arg
-            assert mock_index_documents.call_args[1] == {"extra": "foo"}
+            assert mock_index_documents.call_args[1]["headers"] == client._headers
+            assert mock_index_documents.call_args[1]["extra"] == "foo"
 
     @mock.patch(
         "azure.search.documents._index._generated.operations._documents_operations.DocumentsOperations.index"
@@ -224,7 +246,8 @@ class TestSearchIndexClient(object):
         client.index_documents(batch, extra="foo")
         assert mock_index.called
         assert mock_index.call_args[0] == ()
-        assert len(mock_index.call_args[1]) == 2
+        assert len(mock_index.call_args[1]) == 3
+        assert mock_index.call_args[1]["headers"] == client._headers
         assert mock_index.call_args[1]["extra"] == "foo"
         index_documents = mock_index.call_args[1]["batch"]
         assert isinstance(index_documents, IndexBatch)

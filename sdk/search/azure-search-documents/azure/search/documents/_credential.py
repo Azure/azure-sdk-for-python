@@ -39,3 +39,10 @@ class SearchApiKeyCredential(object):
         :param str key: The API key to your Azure search account.
         """
         self._api_key = key
+
+
+class HeadersMixin(object):
+    @property
+    def _headers(self):
+        # type() -> dict
+        return {"api-key": self._credential.api_key, "Accept": self._ODATA_ACCEPT}
