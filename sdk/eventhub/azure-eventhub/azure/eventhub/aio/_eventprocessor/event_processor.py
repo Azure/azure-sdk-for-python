@@ -210,13 +210,13 @@ class EventProcessor(
         self, partition_context: PartitionContext, event: Union[Optional[EventData], List[EventData]]
     ) -> None:
         if event:
-            partition_context._last_received_event = (
+            partition_context._last_received_event = (  # pylint:disable=protected-access
                 event[-1] if isinstance(event, List) else event
             )
             with self._context(event):
                 await self._event_handler(partition_context, event)
         else:
-            partition_context._last_received_event = None
+            partition_context._last_received_event = None  # pylint:disable=protected-access
             await self._event_handler(partition_context, event)
 
     async def _close_consumer(self, partition_context):
