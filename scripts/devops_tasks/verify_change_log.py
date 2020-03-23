@@ -59,9 +59,9 @@ def verify_packages(targeted_packages):
         # Parse setup.py using common helper method to get version and package name
         pkg_name, version, _, _ = parse_setup(package)
 
-        # Skip management packages
-        # Skipping azure-servicefabric due to non-standard version format(e.g. 7.0.0.0) for the package
+        # Skip management packages and any explicitly excluded packages
         if "-mgmt" in pkg_name or pkg_name in NON_STANDARD_CHANGE_LOG_PACKAGES:
+            logging.info("Skipping {} due to known exclusion in change log verification".format(pkg_name))
             continue
 
         if not find_change_log(package, version):
