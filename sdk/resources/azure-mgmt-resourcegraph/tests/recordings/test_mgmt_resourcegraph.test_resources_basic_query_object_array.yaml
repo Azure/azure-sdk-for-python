@@ -22,16 +22,16 @@ interactions:
     uri: https://management.azure.com/providers/Microsoft.ResourceGraph/resources?api-version=2019-04-01
   response:
     body:
-      string: '{"totalRecords":2,"count":2,"data":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cli_test_databoxtxiwrvbtjgrx2npfru76uyoc6b6isd5hdsfn6ktdumkor4a27iy7xdzticf/providers/Microsoft.DataBox/jobs/jobtztsdrfw6z6wivsqbc5nc","tags":{},"properties":{"status":"DeviceOrdered","startTime":"2020-03-03T05:09:10.31Z","isCancellableWithoutFee":true,"deliveryInfo":{"scheduledDateTime":"0001-01-01T00:00:00Z"},"deliveryType":"NonScheduled","isPrepareToShipEnabled":false,"isShippingAddressEditable":true,"isDeletable":false,"isCancellable":true}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cli_test_databoxfatz7bwdvcwrgcw2s4nsrtqd5ekrtasz7ku5i7nfauwkmrc77zvqzofjqfj/providers/Microsoft.DataBox/jobs/job5kora4cnpnjusyrkcnwe2","tags":{},"properties":{"status":"DeviceOrdered","isCancellableWithoutFee":true,"deliveryInfo":{"scheduledDateTime":"0001-01-01T00:00:00Z"},"deliveryType":"NonScheduled","startTime":"2020-03-03T05:54:49.925Z","isPrepareToShipEnabled":false,"isShippingAddressEditable":true,"isDeletable":false,"isCancellable":true}}],"facets":[],"resultTruncated":"false"}'
+      string: '{"totalRecords":2,"count":2,"data":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cli_test_databoxgkhum4fgqffqfxfk2rxguyav7ee36zsnxb3hziamsre5gkdlyz56ani4l23/providers/Microsoft.DataBox/jobs/joblmlobzq6gap36m4h2suwq","tags":{},"properties":{"status":"DeviceOrdered","startTime":"2020-03-03T05:52:09.212Z","isCancellable":true,"isDeletable":false,"isShippingAddressEditable":true,"isPrepareToShipEnabled":false,"deliveryType":"NonScheduled","deliveryInfo":{"scheduledDateTime":"0001-01-01T00:00:00Z"},"isCancellableWithoutFee":true}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cli_test_mixed_realitygv2l3elh76a7brm66drgektfyzfsijxog6smmqzg6dnn2r7ofuf6c/providers/Microsoft.MixedReality/spatialAnchorsAccounts/MyAccount","tags":null,"properties":null}],"facets":[],"resultTruncated":"false"}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '1124'
+      - '848'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 23 Mar 2020 19:01:52 GMT
+      - Mon, 23 Mar 2020 19:28:32 GMT
       expires:
       - '-1'
       pragma:
