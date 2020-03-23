@@ -261,6 +261,12 @@ class AzureFirewallSkuTier(str, Enum):
     standard = "Standard"
 
 
+class BastionConnectProtocol(str, Enum):
+
+    ssh = "SSH"
+    rdp = "RDP"
+
+
 class DdosCustomPolicyProtocol(str, Enum):
 
     tcp = "Tcp"
