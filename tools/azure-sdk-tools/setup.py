@@ -15,7 +15,7 @@ DEPENDENCIES = [
     'pytest-cov',
     'pytest>=3.5.1',
     # 'azure-devtools>=0.4.1' override by packaging needs
-    'readme_renderer',
+    'readme_renderer>=24.0',
     # 'azure-storage-file<2.0',
     'azure-storage-common<1.4.1',
     'pyopenssl',
