@@ -15,13 +15,15 @@ import logging
 
 from common_tasks import process_glob_string, parse_setup, run_check_call
 
-excluded_packages = ["azure"]
 
 logging.getLogger().setLevel(logging.INFO)
 
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
 psscript = os.path.join(root_dir, "scripts", "devops_tasks", "find_change_log.ps1")
 
+# Service fabric change log name is History.md and as per the discussion with language team this should not be renamed to CHANGELOG.md
+# This script looks for "CHANGELOG.md" and fails if it is not found in package
+NON_STANDARD_CHANGE_LOG_PACKAGES = ["azure-servicefabric",]
 
 def find_change_log(targeted_package, version):
     # Execute powershell script to find a matching version in change log
@@ -58,7 +60,7 @@ def verify_packages(targeted_packages):
         pkg_name, version, _, _ = parse_setup(package)
 
         # Skip management packages
-        if "-mgmt" in pkg_name or pkg_name in excluded_packages:
+        if "-mgmt" in pkg_name or pkg_name in NON_STANDARD_CHANGE_LOG_PACKAGES:
             continue
 
         if not find_change_log(package, version):
