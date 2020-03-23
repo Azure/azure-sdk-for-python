@@ -27,10 +27,8 @@ import abc
 import json
 from typing import TYPE_CHECKING, Optional, Any, Union
 
-from azure.core.exceptions import DecodeError
-from azure.core.polling import PollingMethod
-
-from ..exceptions import HttpResponseError
+from ..exceptions import HttpResponseError, DecodeError
+from . import PollingMethod
 
 if TYPE_CHECKING:
     from azure.core.pipeline import PipelineResponse
