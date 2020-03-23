@@ -111,9 +111,9 @@ class ServiceBusSender(BaseHandlerAsync, SenderMixin):
             await self._handler.close_async()
         auth = None if self._connection else (await create_authentication(self))
         self._create_handler(auth)
+        await self._handler.open_async(connection=self._connection)
         if self._connection:
             self._try_reset_link_error_in_session()
-        await self._handler.open_async(connection=self._connection)
         while not await self._handler.client_ready_async():
             await asyncio.sleep(0.05)
         self._running = True
