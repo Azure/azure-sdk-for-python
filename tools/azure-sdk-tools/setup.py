@@ -13,6 +13,7 @@ DEPENDENCIES = [
     'json-delta>=2.0',
     # Tests
     'pytest-cov',
+	'bleach>=3.1.1',
     'pytest>=3.5.1',
     # 'azure-devtools>=0.4.1' override by packaging needs
     'readme_renderer',
