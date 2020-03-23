@@ -60,6 +60,7 @@ def verify_packages(targeted_packages):
         pkg_name, version, _, _ = parse_setup(package)
 
         # Skip management packages
+        # Skipping azure-servicefabric due to non-standard version format(e.g. 7.0.0.0) for the package
         if "-mgmt" in pkg_name or pkg_name in NON_STANDARD_CHANGE_LOG_PACKAGES:
             continue
 
