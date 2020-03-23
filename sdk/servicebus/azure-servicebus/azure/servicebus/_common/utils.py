@@ -92,7 +92,7 @@ def renewable_start_time(renewable):
     except AttributeError:
         pass
     try:
-        return renewable.session_start
+        return renewable._session_start
     except AttributeError:
         raise TypeError("Registered object is not renewable.")
 

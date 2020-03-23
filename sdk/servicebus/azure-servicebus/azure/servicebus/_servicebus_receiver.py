@@ -52,6 +52,8 @@ class ServiceBusSession(object):
         self._receiver = receiver
         self._encoding = encoding
         self._locked_until = None
+        self._session_start = None
+
 
     def get_session_state(self):
         # type: () -> str
@@ -183,11 +185,12 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
 
     def _on_attach_for_session_entity(self, source, target, properties, error):  # pylint: disable=unused-argument
         if str(source) == self._entity_uri:
-            self._session_start = datetime.datetime.now()
+            # This has to live on the session object so that autorenew has access to it.
+            self.session._session_start = datetime.datetime.now()
             expiry_in_seconds = properties.get(SESSION_LOCKED_UNTIL)
             if expiry_in_seconds:
                 expiry_in_seconds = (expiry_in_seconds - DATETIMEOFFSET_EPOCH)/10000000
-                self._locked_until = datetime.datetime.fromtimestamp(expiry_in_seconds)
+                self.session._locked_until = datetime.datetime.fromtimestamp(expiry_in_seconds)
             session_filter = source.get_filter(name=SESSION_FILTER)
             self._session_id = session_filter.decode(self._config.encoding)
 
@@ -269,6 +272,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         self._session = None
         self._create_attribute(**kwargs)
         self._connection = kwargs.get("connection")
+        self._prefetch = kwargs.get("prefetch")
 
     def __iter__(self):
         return self
@@ -302,7 +306,8 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
             encoding=self._config.encoding,
             receive_settle_mode=self._mode.value,
             send_settle_mode=SenderSettleMode.Settled if self._mode == ReceiveSettleMode.ReceiveAndDelete else None,
-            timeout=self._idle_timeout * 1000 if self._idle_timeout else 0
+            timeout=self._idle_timeout * 1000 if self._idle_timeout else 0,
+            prefetch=self._prefetch
         )
 
     def _open(self):
