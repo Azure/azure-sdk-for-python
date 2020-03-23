@@ -73,6 +73,17 @@ def raise_with_traceback(exception, *args, **kwargs):
         error.__traceback__ = exc_traceback
         raise error
 
+class ErrorMap(object):
+    def __init__(self, custom_error_map=None, **kwargs):
+        self._custom_error_map = custom_error_map
+        self._default_error = kwargs.pop("default_error", None)
+
+    def get(self, key, value=None):  # pylint:disable=unused-argument
+        ret = self._custom_error_map.get(key)
+        if ret:
+            return ret
+        if self._default_error:
+            return self._default_error
 
 def map_error(status_code, response, error_map):
     if not error_map:
