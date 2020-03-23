@@ -359,9 +359,10 @@ class EventHubConsumerClient(ClientBaseAsync):
          For detailed partition context information, please refer to
          :class:`PartitionContext<azure.eventhub.aio.PartitionContext>`.
         :type on_event: Callable[~azure.eventhub.aio.PartitionContext, ~azure.eventhub.EventData]
-        :keyword float max_wait_time: If it's None or 0, `on_event` is never called when no events are received.
-         Otherwise, `on_event` is called wiht param event being `None` every max_wait_time when no events are received.
-         Default is None.
+        :keyword float max_wait_time: The maximum interval in seconds that the event processor will wait before calling
+         the callback. If no events are received within this interval, the `on_event` callback will be called with
+         `None`.
+         If this value is set to `None` or 0 (the default), the callback will not be called until an event is received.
         :keyword str partition_id: If specified, the client will receive from this partition only.
          Otherwise the client will receive from all partitions.
         :keyword int owner_level: The priority for an exclusive consumer. An exclusive
@@ -473,11 +474,11 @@ class EventHubConsumerClient(ClientBaseAsync):
         :keyword int max_batch_size: The maximum number of events in a batch passed to callback `on_event_batch`.
          If the actual received number of events is larger than `max_batch_size`, the received events are divided into
          batches and call the callback for each batch with up to `max_batch_size` events.
-        :keyword float max_wait_time: Call the callback `on_event_batch` if it has taken `max_wait_time` to fill the
-         event batch or if the event batch has been filled up with `max_batch_size` events before
-         reaching `max_wait_time` since the last batch of events are processed by the callback.
-         If 'max_wait_time' is None or 0, `on_event_batch` is immediately called once there are events received.
-         Default is None.
+        :keyword float max_wait_time: The maximum interval in seconds that the event processor will wait before
+         calling the callback.
+         If no events are received within this interval, the `on_event_batch` callback will be called
+         with an empty list.
+         If this value is set to `None` or 0 (the default), the callback will not be called until events are received.
         :keyword str partition_id: If specified, the client will receive from this partition only.
          Otherwise the client will receive from all partitions.
         :keyword int owner_level: The priority for an exclusive consumer. An exclusive
