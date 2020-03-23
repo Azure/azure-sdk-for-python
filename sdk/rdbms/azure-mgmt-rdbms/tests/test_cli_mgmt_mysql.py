@@ -121,26 +121,26 @@ class MgmtMySQLTest(AzureMgmtTestCase):
         result = result.result()
 
         # Create a database as a point in time restore[put]
-        point_in_time = dt.datetime.now(tz=UTC()).isoformat()
-        BODY = {
-          "location": "eastus",
-          "properties":{
-            "restore_point_in_time": point_in_time,
-            "create_mode": "PointInTimeRestore",
-            "source_server_id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.DBforMySQL/servers/" + SERVER_NAME + ""
-          },
-          "sku": {
-            "name": "GP_Gen5_2",
-            "tier": "GeneralPurpose",
-            "family": "Gen5",
-            "capacity": "2"
-          },
-          "tags": {
-            "elastic_server": "1"
-          }
-        }
-        result = self.mgmt_client.servers.create(resource_group.name, SERVER_POINT_NAME, BODY)
-        result = result.result()
+        #point_in_time = (dt.datetime.now(tz=UTC()) - dt.timedelta(minutes=1)).isoformat()
+        #BODY = {
+        #  "location": "eastus",
+        #  "properties":{
+        #    "restore_point_in_time": point_in_time,
+        #    "create_mode": "PointInTimeRestore",
+        #    "source_server_id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.DBforMySQL/servers/" + SERVER_NAME + ""
+        #  },
+        #  "sku": {
+        #    "name": "GP_Gen5_2",
+        #    "tier": "GeneralPurpose",
+        #    "family": "Gen5",
+        #    "capacity": "2"
+        #  },
+        #  "tags": {
+        #    "elastic_server": "1"
+        #  }
+        #}
+        #result = self.mgmt_client.servers.create(resource_group.name, SERVER_POINT_NAME, BODY)
+        #result = result.result()
 
         # DatabaseCreate[put]
         BODY = {

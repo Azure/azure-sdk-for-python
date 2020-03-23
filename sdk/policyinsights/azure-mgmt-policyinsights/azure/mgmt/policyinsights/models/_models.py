@@ -660,6 +660,9 @@ class PolicyMetadata(Model):
 class PolicyState(Model):
     """Policy state record.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -738,7 +741,20 @@ class PolicyState(Model):
      ~azure.mgmt.policyinsights.models.PolicyEvaluationDetails
     :param policy_definition_group_names: Policy definition group names.
     :type policy_definition_group_names: list[str]
+    :ivar policy_definition_version: Evaluated policy definition version.
+    :vartype policy_definition_version: str
+    :ivar policy_set_definition_version: Evaluated policy set definition
+     version.
+    :vartype policy_set_definition_version: str
+    :ivar policy_assignment_version: Evaluated policy assignment version.
+    :vartype policy_assignment_version: str
     """
+
+    _validation = {
+        'policy_definition_version': {'readonly': True},
+        'policy_set_definition_version': {'readonly': True},
+        'policy_assignment_version': {'readonly': True},
+    }
 
     _attribute_map = {
         'additional_properties': {'key': '', 'type': '{object}'},
@@ -772,6 +788,9 @@ class PolicyState(Model):
         'compliance_state': {'key': 'complianceState', 'type': 'str'},
         'policy_evaluation_details': {'key': 'policyEvaluationDetails', 'type': 'PolicyEvaluationDetails'},
         'policy_definition_group_names': {'key': 'policyDefinitionGroupNames', 'type': '[str]'},
+        'policy_definition_version': {'key': 'policyDefinitionVersion', 'type': 'str'},
+        'policy_set_definition_version': {'key': 'policySetDefinitionVersion', 'type': 'str'},
+        'policy_assignment_version': {'key': 'policyAssignmentVersion', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -807,6 +826,9 @@ class PolicyState(Model):
         self.compliance_state = kwargs.get('compliance_state', None)
         self.policy_evaluation_details = kwargs.get('policy_evaluation_details', None)
         self.policy_definition_group_names = kwargs.get('policy_definition_group_names', None)
+        self.policy_definition_version = None
+        self.policy_set_definition_version = None
+        self.policy_assignment_version = None
 
 
 class PolicyStatesQueryResults(Model):

@@ -263,7 +263,11 @@ class AzureSku(Model):
      'Standard_DS13_v2+1TB_PS', 'Standard_DS13_v2+2TB_PS',
      'Standard_DS14_v2+3TB_PS', 'Standard_DS14_v2+4TB_PS', 'Standard_D13_v2',
      'Standard_D14_v2', 'Standard_L8s', 'Standard_L16s', 'Standard_D11_v2',
-     'Standard_D12_v2', 'Standard_L4s', 'Dev(No SLA)_Standard_D11_v2'
+     'Standard_D12_v2', 'Standard_L4s', 'Dev(No SLA)_Standard_D11_v2',
+     'Standard_E2a_v4', 'Standard_E4a_v4', 'Standard_E8a_v4',
+     'Standard_E16a_v4', 'Standard_E8as_v4+1TB_PS', 'Standard_E8as_v4+2TB_PS',
+     'Standard_E16as_v4+3TB_PS', 'Standard_E16as_v4+4TB_PS', 'Dev(No
+     SLA)_Standard_E2a_v4'
     :type name: str or ~azure.mgmt.kusto.models.AzureSkuName
     :param capacity: The number of instances of the cluster.
     :type capacity: int
@@ -511,6 +515,11 @@ class Cluster(TrackedResource):
     :param key_vault_properties: KeyVault properties for the cluster
      encryption.
     :type key_vault_properties: ~azure.mgmt.kusto.models.KeyVaultProperties
+    :param enable_purge: A boolean value that indicates if the purge
+     operations are enabled. Default value: False .
+    :type enable_purge: bool
+    :param language_extensions: List of the cluster's language extensions.
+    :type language_extensions: ~azure.mgmt.kusto.models.LanguageExtensionsList
     """
 
     _validation = {
@@ -546,9 +555,11 @@ class Cluster(TrackedResource):
         'enable_streaming_ingest': {'key': 'properties.enableStreamingIngest', 'type': 'bool'},
         'virtual_network_configuration': {'key': 'properties.virtualNetworkConfiguration', 'type': 'VirtualNetworkConfiguration'},
         'key_vault_properties': {'key': 'properties.keyVaultProperties', 'type': 'KeyVaultProperties'},
+        'enable_purge': {'key': 'properties.enablePurge', 'type': 'bool'},
+        'language_extensions': {'key': 'properties.languageExtensions', 'type': 'LanguageExtensionsList'},
     }
 
-    def __init__(self, *, location: str, sku, tags=None, zones=None, identity=None, trusted_external_tenants=None, optimized_autoscale=None, enable_disk_encryption: bool=None, enable_streaming_ingest: bool=False, virtual_network_configuration=None, key_vault_properties=None, **kwargs) -> None:
+    def __init__(self, *, location: str, sku, tags=None, zones=None, identity=None, trusted_external_tenants=None, optimized_autoscale=None, enable_disk_encryption: bool=None, enable_streaming_ingest: bool=False, virtual_network_configuration=None, key_vault_properties=None, enable_purge: bool=False, language_extensions=None, **kwargs) -> None:
         super(Cluster, self).__init__(tags=tags, location=location, **kwargs)
         self.sku = sku
         self.zones = zones
@@ -564,6 +575,8 @@ class Cluster(TrackedResource):
         self.enable_streaming_ingest = enable_streaming_ingest
         self.virtual_network_configuration = virtual_network_configuration
         self.key_vault_properties = key_vault_properties
+        self.enable_purge = enable_purge
+        self.language_extensions = language_extensions
 
 
 class ClusterCheckNameRequest(Model):
@@ -759,6 +772,11 @@ class ClusterUpdate(Resource):
     :param key_vault_properties: KeyVault properties for the cluster
      encryption.
     :type key_vault_properties: ~azure.mgmt.kusto.models.KeyVaultProperties
+    :param enable_purge: A boolean value that indicates if the purge
+     operations are enabled. Default value: False .
+    :type enable_purge: bool
+    :param language_extensions: List of the cluster's language extensions.
+    :type language_extensions: ~azure.mgmt.kusto.models.LanguageExtensionsList
     """
 
     _validation = {
@@ -791,9 +809,11 @@ class ClusterUpdate(Resource):
         'enable_streaming_ingest': {'key': 'properties.enableStreamingIngest', 'type': 'bool'},
         'virtual_network_configuration': {'key': 'properties.virtualNetworkConfiguration', 'type': 'VirtualNetworkConfiguration'},
         'key_vault_properties': {'key': 'properties.keyVaultProperties', 'type': 'KeyVaultProperties'},
+        'enable_purge': {'key': 'properties.enablePurge', 'type': 'bool'},
+        'language_extensions': {'key': 'properties.languageExtensions', 'type': 'LanguageExtensionsList'},
     }
 
-    def __init__(self, *, tags=None, location: str=None, sku=None, identity=None, trusted_external_tenants=None, optimized_autoscale=None, enable_disk_encryption: bool=None, enable_streaming_ingest: bool=False, virtual_network_configuration=None, key_vault_properties=None, **kwargs) -> None:
+    def __init__(self, *, tags=None, location: str=None, sku=None, identity=None, trusted_external_tenants=None, optimized_autoscale=None, enable_disk_encryption: bool=None, enable_streaming_ingest: bool=False, virtual_network_configuration=None, key_vault_properties=None, enable_purge: bool=False, language_extensions=None, **kwargs) -> None:
         super(ClusterUpdate, self).__init__(**kwargs)
         self.tags = tags
         self.location = location
@@ -810,6 +830,8 @@ class ClusterUpdate(Resource):
         self.enable_streaming_ingest = enable_streaming_ingest
         self.virtual_network_configuration = virtual_network_configuration
         self.key_vault_properties = key_vault_properties
+        self.enable_purge = enable_purge
+        self.language_extensions = language_extensions
 
 
 class Database(ProxyResource):
@@ -1605,6 +1627,40 @@ class KeyVaultProperties(Model):
         self.key_name = key_name
         self.key_version = key_version
         self.key_vault_uri = key_vault_uri
+
+
+class LanguageExtension(Model):
+    """The language extension object.
+
+    :param language_extension_name: The language extension name. Possible
+     values include: 'PYTHON', 'R'
+    :type language_extension_name: str or
+     ~azure.mgmt.kusto.models.LanguageExtensionName
+    """
+
+    _attribute_map = {
+        'language_extension_name': {'key': 'languageExtensionName', 'type': 'str'},
+    }
+
+    def __init__(self, *, language_extension_name=None, **kwargs) -> None:
+        super(LanguageExtension, self).__init__(**kwargs)
+        self.language_extension_name = language_extension_name
+
+
+class LanguageExtensionsList(Model):
+    """The list of language extension objects.
+
+    :param value: The list of language extensions.
+    :type value: list[~azure.mgmt.kusto.models.LanguageExtension]
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[LanguageExtension]'},
+    }
+
+    def __init__(self, *, value=None, **kwargs) -> None:
+        super(LanguageExtensionsList, self).__init__(**kwargs)
+        self.value = value
 
 
 class Operation(Model):

@@ -1,5 +1,27 @@
 # Release History
 
+## 0.45.0 (2020-03-20)
+
+**Features**
+
+  - Added operation WebAppsOperations.list_host_keys
+  - Added operation WebAppsOperations.sync_functions
+  - Added operation WebAppsOperations.list_function_keys_slot
+  - Added operation WebAppsOperations.sync_functions_slot
+  - Added operation WebAppsOperations.delete_function_secret
+  - Added operation WebAppsOperations.delete_host_secret_slot
+  - Added operation WebAppsOperations.list_host_keys_slot
+  - Added operation WebAppsOperations.delete_function_secret_slot
+  - Added operation WebAppsOperations.create_or_update_host_secret
+  - Added operation WebAppsOperations.list_sync_status
+  - Added operation WebAppsOperations.list_sync_status_slot
+  - Added operation WebAppsOperations.create_or_update_function_secret_slot
+  - Added operation WebAppsOperations.list_function_keys
+  - Added operation WebAppsOperations.create_or_update_host_secret_slot
+  - Added operation WebAppsOperations.create_or_update_function_secret
+  - Added operation WebAppsOperations.delete_host_secret
+  - Added operation group StaticSitesOperations
+
 ## 0.44.0 (2019-11-08)
 
 **Features**
