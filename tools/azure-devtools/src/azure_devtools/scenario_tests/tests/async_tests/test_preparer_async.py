@@ -45,6 +45,5 @@ def test_preparer_async_handling():
     suite.addTest(_AsyncTestClassSample('example_async_test'))
     unittest.TextTestRunner().run(suite)
 
-    print(traces)
     assert len(traces) == 10
     assert traces == ['create A', 'create B', 'ran sync', 'remove B', 'remove A', 'create A', 'create B', 'ran async', 'remove B', 'remove A']
