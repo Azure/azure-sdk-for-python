@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING
 from azure.core.pipeline.policies import HeadersPolicy
 from azure.core.tracing.decorator_async import distributed_trace_async
 from .._generated.aio import SearchServiceClient as _SearchServiceClient
-from ..._version import VERSION
+from ..._version import SDK_MONIKER
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
@@ -40,7 +40,7 @@ class SearchServiceClient(object):
         self._client = _SearchServiceClient(
             endpoint=endpoint,
             headers_policy=headers_policy,
-            sdk_moniker="search/{}".format(VERSION),
+            sdk_moniker=SDK_MONIKER,
             **kwargs
         )  # type: _SearchServiceClient
 

@@ -14,7 +14,7 @@ from ._generated.models import IndexBatch, IndexingResult
 from ._index_documents_batch import IndexDocumentsBatch
 from ._paging import SearchItemPaged, SearchPageIterator
 from ._queries import AutocompleteQuery, SearchQuery, SuggestQuery
-from .._version import VERSION
+from .._version import SDK_MONIKER
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
@@ -86,7 +86,7 @@ class SearchIndexClient(object):
             endpoint=endpoint,
             index_name=index_name,
             headers_policy=headers_policy,
-            sdk_moniker="search/{}".format(VERSION),
+            sdk_moniker=SDK_MONIKER,
             **kwargs
         )  # type: _SearchIndexClient
 
