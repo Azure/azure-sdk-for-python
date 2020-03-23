@@ -29,6 +29,7 @@ CLASSIFIERS = [
 DEPENDENCIES = [
     'ConfigArgParse>=0.12.0',
     'six>=1.10.0',
+    'pyyaml>=5.2',
     'vcrpy==3.0.0'
 ]
 
