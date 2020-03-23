@@ -1,5 +1,26 @@
 # Release History
 
+## 0.9.0 (2020-03-23)
+
+**Features**
+
+- Model ActiveDirectory has a new parameter site
+- Added operation VolumesOperations.revert
+
+**Breaking changes**
+
+- Operation SnapshotsOperations.update has a new signature
+- Operation SnapshotsOperations.update has a new signature
+- Operation SnapshotsOperations.create has a new signature
+- Model Snapshot no longer has parameter tags
+- Model MountTarget no longer has parameter subnet
+- Model MountTarget no longer has parameter netmask
+- Model MountTarget no longer has parameter provisioning_state
+- Model MountTarget no longer has parameter end_ip
+- Model MountTarget no longer has parameter start_ip
+- Model MountTarget no longer has parameter gateway
+- Removed operation group MountTargetsOperations
+
 ## 0.8.0 (2020-01-12)
 
 **Features**
