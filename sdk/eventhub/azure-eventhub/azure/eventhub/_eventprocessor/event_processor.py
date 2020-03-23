@@ -222,6 +222,7 @@ class EventProcessor(
                 self._event_handler(partition_context, event)
         else:
             partition_context._last_received_event = None
+            self._event_handler(partition_context, event)
 
     def _load_balancing(self):
         # type: () -> None
