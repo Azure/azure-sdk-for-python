@@ -35,12 +35,14 @@ class ResourceGraphClientOperationsMixin(object):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.resourcegraph.models.ErrorResponseException>`
         """
+        api_version = "2019-04-01"
+
         # Construct URL
         url = self.resources.metadata['url']
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
         header_parameters = {}

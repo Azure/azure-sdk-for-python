@@ -1,18 +1,27 @@
 # Release History
 
+## 2.2.0 (2020-03-20)
+
+**Features**
+
+  - Model VaultProperties has a new parameter enable_rbac_authorization
+  - Model VaultProperties has a new parameter soft_delete_retention_in_days
+  - Model VaultPatchProperties has a new parameter enable_rbac_authorization
+  - Model VaultPatchProperties has a new parameter soft_delete_retention_in_days
+
 ## 2.1.1 (2020-02-07)
 
 **Bugfixes**
 
-- Fixed multi-API client issues
+  - Fixed multi-API client issues
 
 ## 2.1.0 (2020-01-30)
 
 **Features**
 
-- Model VaultProperties has a new parameter private_endpoint_connections
-- Added operation group PrivateEndpointConnectionsOperations
-- Added operation group PrivateLinkResourcesOperations
+  - Model VaultProperties has a new parameter private_endpoint_connections
+  - Added operation group PrivateEndpointConnectionsOperations
+  - Added operation group PrivateLinkResourcesOperations
 
 ## 2.0.0 (2019-06-18)
 
