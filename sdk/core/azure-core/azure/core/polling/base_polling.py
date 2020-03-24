@@ -151,6 +151,7 @@ class LongRunningOperation(ABC):
 
     @abc.abstractmethod
     def get_polling_url(self):
+        # type: () -> str
         """Return the polling URL.
         """
         raise NotImplementedError()
@@ -201,6 +202,7 @@ class OperationResourcePolling(LongRunningOperation):
         return self._operation_location_header in response.headers
 
     def get_polling_url(self):
+        # type: () -> str
         """Return the polling URL.
         """
         return self._async_url
@@ -244,9 +246,7 @@ class OperationResourcePolling(LongRunningOperation):
 
     def _set_async_url_if_present(self, response):
         # type: (ResponseType) -> None
-        async_url = response.headers.get(self._operation_location_header)
-        if async_url:
-            self._async_url = async_url
+        self._async_url = response.headers[self._operation_location_header]
 
         location_url = response.headers.get("location")
         if location_url:
@@ -287,6 +287,7 @@ class LocationPolling(LongRunningOperation):
         return "location" in response.headers
 
     def get_polling_url(self):
+        # type: () -> str
         """Return the polling URL.
         """
         return self._location_url
@@ -339,6 +340,7 @@ class StatusCheckPolling(LongRunningOperation):
         return True
 
     def get_polling_url(self):
+        # type: () -> str
         """Return the polling URL.
         """
         raise ValueError("This polling doesn't support polling")
