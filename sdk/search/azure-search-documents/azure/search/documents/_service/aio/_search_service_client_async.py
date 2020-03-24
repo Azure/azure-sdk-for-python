@@ -5,9 +5,9 @@
 # --------------------------------------------------------------------------
 from typing import TYPE_CHECKING
 
-from azure.core.pipeline.policies import HeadersPolicy
 from azure.core.tracing.decorator_async import distributed_trace_async
 from .._generated.aio import SearchServiceClient as _SearchServiceClient
+from ..._credential import HeadersMixin
 from ..._version import SDK_MONIKER
 
 if TYPE_CHECKING:
@@ -16,7 +16,7 @@ if TYPE_CHECKING:
     from ... import SearchApiKeyCredential
 
 
-class SearchServiceClient(object):
+class SearchServiceClient(HeadersMixin):
     """A client to interact with an existing Azure search service.
 
     :param endpoint: The URL endpoint of an Azure search service
@@ -26,22 +26,15 @@ class SearchServiceClient(object):
 
     """
 
+    _ODATA_ACCEPT = "application/json;odata.metadata=minimal"  # type: str
+
     def __init__(self, endpoint, credential, **kwargs):
         # type: (str, SearchApiKeyCredential, **Any) -> None
 
-        headers_policy = HeadersPolicy(
-            {
-                "api-key": credential.api_key,
-                "Accept": "application/json;odata.metadata=minimal",
-            }
-        )
-
         self._endpoint = endpoint  # type: str
+        self._credential = credential  # type: SearchApiKeyCredential
         self._client = _SearchServiceClient(
-            endpoint=endpoint,
-            headers_policy=headers_policy,
-            sdk_moniker=SDK_MONIKER,
-            **kwargs
+            endpoint=endpoint, sdk_moniker=SDK_MONIKER, **kwargs
         )  # type: _SearchServiceClient
 
     def __repr__(self):
@@ -54,6 +47,7 @@ class SearchServiceClient(object):
         """Get service level statistics for a search service.
 
         """
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = await self._client.get_service_statistics(**kwargs)
         return result.as_dict()
 

@@ -4,7 +4,12 @@
 # license information.
 # --------------------------------------------------------------------------
 
+from typing import TYPE_CHECKING
+
 import six
+
+if TYPE_CHECKING:
+    from typing import Optional
 
 
 class SearchApiKeyCredential(object):
@@ -39,3 +44,17 @@ class SearchApiKeyCredential(object):
         :param str key: The API key to your Azure search account.
         """
         self._api_key = key
+
+
+class HeadersMixin(object):
+    @property
+    def _headers(self):
+        # type() -> dict
+        return {"api-key": self._credential.api_key, "Accept": self._ODATA_ACCEPT}
+
+    def _merge_client_headers(self, headers):
+        # type(Optional[dict]) -> dict
+        headers = headers or {}
+        combined = self._headers
+        combined.update(headers)
+        return combined

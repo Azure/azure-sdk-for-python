@@ -7,13 +7,13 @@ from typing import cast, List, TYPE_CHECKING
 
 import six
 
-from azure.core.pipeline.policies import HeadersPolicy
 from azure.core.tracing.decorator import distributed_trace
 from ._generated import SearchIndexClient as _SearchIndexClient
 from ._generated.models import IndexBatch, IndexingResult
 from ._index_documents_batch import IndexDocumentsBatch
 from ._paging import SearchItemPaged, SearchPageIterator
 from ._queries import AutocompleteQuery, SearchQuery, SuggestQuery
+from .._credential import HeadersMixin
 from .._version import SDK_MONIKER
 
 if TYPE_CHECKING:
@@ -50,7 +50,7 @@ def odata(statement, **kwargs):
     return statement.format(**kw)
 
 
-class SearchIndexClient(object):
+class SearchIndexClient(HeadersMixin):
     """A client to interact with an existing Azure search index.
 
     :param endpoint: The URL endpoint of an Azure search service
@@ -70,24 +70,16 @@ class SearchIndexClient(object):
             :caption: Creating the SearchIndexClient with an API key.
     """
 
+    _ODATA_ACCEPT = "application/json;odata.metadata=none"  # type: str
+
     def __init__(self, endpoint, index_name, credential, **kwargs):
         # type: (str, str, SearchApiKeyCredential, **Any) -> None
 
-        headers_policy = HeadersPolicy(
-            {
-                "api-key": credential.api_key,
-                "Accept": "application/json;odata.metadata=none",
-            }
-        )
-
         self._endpoint = endpoint  # type: str
         self._index_name = index_name  # type: str
+        self._credential = credential  # type: SearchApiKeyCredential
         self._client = _SearchIndexClient(
-            endpoint=endpoint,
-            index_name=index_name,
-            headers_policy=headers_policy,
-            sdk_moniker=SDK_MONIKER,
-            **kwargs
+            endpoint=endpoint, index_name=index_name, sdk_moniker=SDK_MONIKER, **kwargs
         )  # type: _SearchIndexClient
 
     def __repr__(self):
@@ -110,6 +102,7 @@ class SearchIndexClient(object):
 
         :rtype: int
         """
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         return int(self._client.documents.count(**kwargs))
 
     @distributed_trace
@@ -132,6 +125,7 @@ class SearchIndexClient(object):
                 :dedent: 4
                 :caption: Get a specific document from the search index.
         """
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = self._client.documents.get(
             key=key, selected_fields=selected_fields, **kwargs
         )
@@ -182,6 +176,7 @@ class SearchIndexClient(object):
                 )
             )
 
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         return SearchItemPaged(
             self._client, query, kwargs, page_iterator_class=SearchPageIterator
         )
@@ -209,6 +204,7 @@ class SearchIndexClient(object):
                 "Expected a SuggestQuery for 'query', but got {}".format(repr(query))
             )
 
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         response = self._client.documents.suggest_post(
             suggest_request=query.request, **kwargs
         )
@@ -240,6 +236,7 @@ class SearchIndexClient(object):
                 )
             )
 
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         response = self._client.documents.autocomplete_post(
             autocomplete_request=query.request, **kwargs
         )
@@ -269,6 +266,8 @@ class SearchIndexClient(object):
         """
         batch = IndexDocumentsBatch()
         batch.add_upload_documents(documents)
+
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         results = self.index_documents(batch, **kwargs)
         return cast(List[IndexingResult], results)
 
@@ -300,6 +299,8 @@ class SearchIndexClient(object):
         """
         batch = IndexDocumentsBatch()
         batch.add_delete_documents(documents)
+
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         results = self.index_documents(batch, **kwargs)
         return cast(List[IndexingResult], results)
 
@@ -327,6 +328,8 @@ class SearchIndexClient(object):
         """
         batch = IndexDocumentsBatch()
         batch.add_merge_documents(documents)
+
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         results = self.index_documents(batch, **kwargs)
         return cast(List[IndexingResult], results)
 
@@ -345,6 +348,8 @@ class SearchIndexClient(object):
         """
         batch = IndexDocumentsBatch()
         batch.add_merge_or_upload_documents(documents)
+
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         results = self.index_documents(batch, **kwargs)
         return cast(List[IndexingResult], results)
 
@@ -358,6 +363,8 @@ class SearchIndexClient(object):
         :rtype:  List[IndexingResult]
         """
         index_documents = IndexBatch(actions=batch.actions)
+
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         batch_response = self._client.documents.index(batch=index_documents, **kwargs)
         return cast(List[IndexingResult], batch_response.results)
 
