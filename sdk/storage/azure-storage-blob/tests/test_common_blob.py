@@ -1491,6 +1491,7 @@ class StorageCommonBlobTest(StorageTestCase):
         result = service.get_service_properties()
         self.assertIsNotNone(result)
 
+    @pytest.mark.skipif(sys.version_info < (3, 0), reason="Batch not supported on Python 2.7")
     @GlobalStorageAccountPreparer()
     def test_token_credential_with_batch_operation(self, resource_group, location, storage_account, storage_account_key):   
         # Setup
