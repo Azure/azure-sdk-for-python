@@ -2,15 +2,26 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline.policies import ContentDecodePolicy, SansIOHTTPPolicy
 from azure.identity import UsernamePasswordCredential
 from azure.identity._internal.user_agent import USER_AGENT
+import pytest
+
 from helpers import build_aad_response, get_discovery_response, mock_response, Request, validating_transport
 
 try:
     from unittest.mock import Mock
 except ImportError:  # python < 3.3
     from mock import Mock  # type: ignore
+
+
+def test_no_scopes():
+    """The credential should raise when get_token is called with no scopes"""
+
+    credential = UsernamePasswordCredential("client-id", "username", "password")
+    with pytest.raises(ClientAuthenticationError):
+        credential.get_token()
 
 
 def test_policies_configurable():

@@ -28,6 +28,14 @@ CERT_PASSWORD = "password"
 BOTH_CERTS = ((CERT_PATH, None), (CERT_WITH_PASSWORD_PATH, CERT_PASSWORD))
 
 
+def test_no_scopes():
+    """The credential should raise ValueError when get_token is called with no scopes"""
+
+    credential = CertificateCredential("tenant-id", "client-id", CERT_PATH)
+    with pytest.raises(ValueError):
+        credential.get_token()
+
+
 def test_policies_configurable():
     policy = Mock(spec_set=SansIOHTTPPolicy, on_request=Mock())
 
