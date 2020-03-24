@@ -215,7 +215,7 @@ class EventHubConsumer(
                     await self._on_event_received(events_for_callback)
                 else:
                     await self._on_event_received(self._next_message_in_buffer())
-        elif max_batch_size:
+        elif max_wait_time:
             if batch:
                 await self._on_event_received([])
             else:
