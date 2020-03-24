@@ -17,7 +17,7 @@ from typing import (  # pylint: disable=unused-import
 )
 import six
 from azure.core.tracing.decorator_async import distributed_trace_async
-from azure.core.polling.async_base_polling import AsyncLROBasePolling
+from azure.core.polling.async_base_polling import AsyncLROBasePolling  # pylint: disable=no-name-in-module,import-error
 from .._generated.aio._form_recognizer_client_async import FormRecognizerClient as FormRecognizer
 from ._base_client_async import AsyncFormRecognizerClientBase
 from .._response_handlers import (

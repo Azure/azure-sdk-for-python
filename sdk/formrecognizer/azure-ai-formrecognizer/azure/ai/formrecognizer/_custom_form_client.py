@@ -19,7 +19,7 @@ from typing import (  # pylint: disable=unused-import
 import six
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.polling import LROPoller
-from azure.core.polling.base_polling import LROBasePolling
+from azure.core.polling.base_polling import LROBasePolling  # pylint: disable=no-name-in-module,import-error
 from azure.core.exceptions import HttpResponseError
 from ._generated.models import AnalyzeOperationResult, Model
 from ._generated._form_recognizer_client import FormRecognizerClient as FormRecognizer
