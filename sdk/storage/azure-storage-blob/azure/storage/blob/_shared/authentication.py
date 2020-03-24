@@ -21,7 +21,7 @@ except ImportError:
 try:
     from azure.core.pipeline.transport import AioHttpTransport
 except ImportError:
-    pass
+    AioHttpTransport = None
 
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
@@ -76,9 +76,8 @@ class SharedKeyCredentialPolicy(SansIOHTTPPolicy):
     def _get_canonicalized_resource(self, request):
         uri_path = urlparse(request.http_request.url).path
         try:
-            aiohttp_transport = AioHttpTransport or None
-            if isinstance(request.context.transport, aiohttp_transport) or \
-                isinstance(getattr(request.context.transport, "_transport", None), aiohttp_transport):
+            if isinstance(request.context.transport, AioHttpTransport) or \
+                isinstance(getattr(request.context.transport, "_transport", None), AioHttpTransport):
                 uri_path = URL(uri_path)
                 return '/' + self.account_name + str(uri_path)
         except TypeError:

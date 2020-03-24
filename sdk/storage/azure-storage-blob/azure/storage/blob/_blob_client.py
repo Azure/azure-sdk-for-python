@@ -7,7 +7,7 @@
 
 from io import BytesIO
 from typing import (  # pylint: disable=unused-import
-    Union, Optional, Any, IO, Iterable, AnyStr, Dict, List, Tuple,
+    Union, Optional, Any, IO, Iterable, AnyStr, Dict, List, Tuple, cast,
     TYPE_CHECKING
 )
 try:
@@ -292,6 +292,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             return self._client.blob.get_account_info(cls=return_response_headers, **kwargs) # type: ignore
         except StorageErrorException as error:
             process_storage_error(error)
+        return cast(Dict, None)
 
     def _upload_blob_options(  # pylint:disable=too-many-statements
             self, data,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
@@ -502,9 +503,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         # type: (Optional[int], Optional[int], **Any) -> Dict[str, Any]
         if self.require_encryption and not self.key_encryption_key:
             raise ValueError("Encryption required but no key was provided.")
-        if length is not None and offset is None:
-            raise ValueError("Offset value must not be None if length is set.")
         if length is not None:
+            if offset is None:
+                raise ValueError("Offset value must not be None if length is set.")
             length = offset + length - 1  # Service actually uses an end-range inclusive index
 
         validate_content = kwargs.pop('validate_content', False)
@@ -622,7 +623,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         mod_conditions = get_modify_conditions(kwargs)
         if delete_snapshots:
-            delete_snapshots = DeleteSnapshotsOptionType(delete_snapshots)
+            delete_snapshots = cast(bool, DeleteSnapshotsOptionType(delete_snapshots))
         options = {
             'timeout': kwargs.pop('timeout', None),
             'delete_snapshots': delete_snapshots or None,
@@ -941,6 +942,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             return self._client.blob.set_metadata(**options)  # type: ignore
         except StorageErrorException as error:
             process_storage_error(error)
+        return cast(Dict, None)
 
     def _create_page_blob_options(  # type: ignore
             self, size,  # type: int
@@ -1174,6 +1176,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             return self._client.append_blob.create(**options) # type: ignore
         except StorageErrorException as error:
             process_storage_error(error)
+        return cast(Dict, None)
 
     def _create_snapshot_options(self, metadata=None, **kwargs):
         # type: (Optional[Dict[str, str]], **Any) -> Dict[str, Any]
@@ -1270,6 +1273,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             return self._client.blob.create_snapshot(**options) # type: ignore
         except StorageErrorException as error:
             process_storage_error(error)
+        return cast(Dict, None)
 
     def _start_copy_from_url_options(self, source_url, metadata=None, incremental_copy=False, **kwargs):
         # type: (str, Optional[Dict[str, str]], bool, **Any) -> Dict[str, Any]
@@ -1278,7 +1282,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         if 'source_lease' in kwargs:
             source_lease = kwargs.pop('source_lease')
             try:
-                headers['x-ms-source-lease-id'] = source_lease.id # type: str
+                headers['x-ms-source-lease-id'] = source_lease.id
             except AttributeError:
                 headers['x-ms-source-lease-id'] = source_lease
 
@@ -1443,19 +1447,20 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             **kwargs)
         try:
             if incremental_copy:
-                return self._client.page_blob.copy_incremental(**options)
-            return self._client.blob.start_copy_from_url(**options)
+                return cast(Dict, self._client.page_blob.copy_incremental(**options))
+            return cast(Dict, self._client.blob.start_copy_from_url(**options))
         except StorageErrorException as error:
             process_storage_error(error)
+        return cast(Dict, None)
 
     def _abort_copy_options(self, copy_id, **kwargs):
         # type: (Union[str, Dict[str, Any], BlobProperties], **Any) -> Dict[str, Any]
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         try:
-            copy_id = copy_id.copy.id
+            copy_id = cast(BlobProperties, copy_id.copy.id)
         except AttributeError:
             try:
-                copy_id = copy_id['copy_id']
+                copy_id = cast(Dict, copy_id['copy_id'])
             except TypeError:
                 pass
         options = {
@@ -1687,6 +1692,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             return self._client.block_blob.stage_block(**options)
         except StorageErrorException as error:
             process_storage_error(error)
+        return cast(Dict, None)
 
     def _stage_block_from_url_options(
             self, block_id,  # type: str
@@ -1697,9 +1703,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             **kwargs
         ):
         # type: (...) -> Dict[str, Any]
-        if source_length is not None and source_offset is None:
-            raise ValueError("Source offset value must not be None if length is set.")
         if source_length is not None:
+            if source_offset is None:
+                raise ValueError("Source offset value must not be None if length is set.")
             source_length = source_offset + source_length - 1
         block_id = encode_base64(str(block_id))
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
@@ -1785,9 +1791,10 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             source_content_md5=source_content_md5,
             **kwargs)
         try:
-            return self._client.block_blob.stage_block_from_url(**options)
+            return cast(Dict, self._client.block_blob.stage_block_from_url(**options))
         except StorageErrorException as error:
             process_storage_error(error)
+        return cast(Dict, None)
 
     def _get_block_list_result(self, blocks):
         # type: (BlockList) -> Tuple[List[BlobBlock], List[BlobBlock]]
