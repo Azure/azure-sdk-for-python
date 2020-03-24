@@ -49,7 +49,8 @@ async def test_send_with_long_interval_async(live_eventhub, sleep):
     receiver = uamqp.ReceiveClient(source, auth=sas_auth, debug=False, timeout=10000, prefetch=10)
     try:
         receiver.open()
-        received.extend([EventData._from_message(x) for x in receiver.receive_message_batch(max_batch_size=2, timeout=10000)])
+        received.extend([EventData._from_message(x) for x in receiver.receive_message_batch(max_batch_size=1, timeout=5000)])
+        received.extend([EventData._from_message(x) for x in receiver.receive_message_batch(max_batch_size=1, timeout=5000)])
     finally:
         receiver.close()
 
