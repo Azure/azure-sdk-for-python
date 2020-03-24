@@ -25,7 +25,7 @@ class RecommendationMetadataOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The version of the API to be used with the client request. Constant value: "2017-04-19".
+    :ivar api_version: The version of the API to be used with the client request. Constant value: "2020-01-01".
     """
 
     models = models
@@ -35,7 +35,7 @@ class RecommendationMetadataOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-04-19"
+        self.api_version = "2020-01-01"
 
         self.config = config
 

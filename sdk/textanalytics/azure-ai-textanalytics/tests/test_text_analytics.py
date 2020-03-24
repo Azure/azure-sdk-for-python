@@ -18,7 +18,7 @@ class TextAnalyticsTest(TestAnalyticsTestCase):
         text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
         response = text_analytics.detect_language(
-            inputs=[{
+            documents=[{
                 'id': 1,
                 'text': 'I had a wonderful experience! The rooms were wonderful and the staff was helpful.'
             }]
@@ -29,12 +29,13 @@ class TextAnalyticsTest(TestAnalyticsTestCase):
     def test_repr(self):
         detected_language = _models.DetectedLanguage(name="English", iso6391_name="en", score=1.0)
 
-        categorized_entity = _models.CategorizedEntity(text="Bill Gates", category="Person", subcategory="Age", offset=0,
-                                                       length=8, score=0.899)
+        categorized_entity = _models.CategorizedEntity(text="Bill Gates", category="Person", subcategory="Age",
+                                                       grapheme_offset=0, grapheme_length=8, confidence_score=0.899)
 
-        pii_entity = _models.PiiEntity(text="555-55-5555", category="SSN", subcategory=None, offset=0, length=8, score=0.899)
+        pii_entity = _models.PiiEntity(text="555-55-5555", category="SSN", subcategory=None, grapheme_offset=0,
+                                       grapheme_length=8, confidence_score=0.899)
 
-        text_document_statistics = _models.TextDocumentStatistics(character_count=14, transaction_count=18)
+        text_document_statistics = _models.TextDocumentStatistics(grapheme_count=14, transaction_count=18)
 
         recognize_entities_result = _models.RecognizeEntitiesResult(
             id="1",
@@ -68,7 +69,8 @@ class TextAnalyticsTest(TestAnalyticsTestCase):
                 id="1", key_phrases=["dog", "cat", "bird"], statistics=text_document_statistics, is_error=False
             )
 
-        linked_entity_match = _models.LinkedEntityMatch(score=0.999, text="Bill Gates", offset=0, length=8)
+        linked_entity_match = _models.LinkedEntityMatch(confidence_score=0.999, text="Bill Gates", grapheme_offset=0,
+                                                        grapheme_length=8)
 
         linked_entity = _models.LinkedEntity(
             name="Bill Gates",
@@ -84,13 +86,13 @@ class TextAnalyticsTest(TestAnalyticsTestCase):
             )
 
         sentiment_confidence_score_per_label = \
-            _models.SentimentConfidenceScorePerLabel(positive=0.99, neutral=0.05, negative=0.02)
+            _models.SentimentConfidenceScores(positive=0.99, neutral=0.05, negative=0.02)
 
         sentence_sentiment = _models.SentenceSentiment(
             sentiment="neutral",
             confidence_scores=sentiment_confidence_score_per_label,
-            offset=0,
-            length=10,
+            grapheme_offset=0,
+            grapheme_length=10,
             warnings=["sentence was too short to find sentiment"]
         )
 
@@ -117,49 +119,54 @@ class TextAnalyticsTest(TestAnalyticsTestCase):
         )
 
         self.assertEqual("DetectedLanguage(name=English, iso6391_name=en, score=1.0)", repr(detected_language))
-        self.assertEqual("CategorizedEntity(text=Bill Gates, category=Person, subcategory=Age, offset=0, length=8, score=0.899)",
+        self.assertEqual("CategorizedEntity(text=Bill Gates, category=Person, subcategory=Age, grapheme_offset=0, "
+                         "grapheme_length=8, confidence_score=0.899)",
                          repr(categorized_entity))
-        self.assertEqual("PiiEntity(text=555-55-5555, category=SSN, subcategory=None, offset=0, length=8, score=0.899)",
-                         repr(pii_entity))
-        self.assertEqual("TextDocumentStatistics(character_count=14, transaction_count=18)",
+        self.assertEqual("PiiEntity(text=555-55-5555, category=SSN, subcategory=None, grapheme_offset=0, "
+                         "grapheme_length=8, confidence_score=0.899)", repr(pii_entity))
+        self.assertEqual("TextDocumentStatistics(grapheme_count=14, transaction_count=18)",
                          repr(text_document_statistics))
         self.assertEqual("RecognizeEntitiesResult(id=1, entities=[CategorizedEntity(text=Bill Gates, category=Person, "
-                         "subcategory=Age, offset=0, length=8, score=0.899)], "
-                         "statistics=TextDocumentStatistics(character_count=14, transaction_count=18), "
+                         "subcategory=Age, grapheme_offset=0, grapheme_length=8, confidence_score=0.899)], "
+                         "statistics=TextDocumentStatistics(grapheme_count=14, transaction_count=18), "
                          "is_error=False)", repr(recognize_entities_result))
         self.assertEqual("RecognizePiiEntitiesResult(id=1, entities=[PiiEntity(text=555-55-5555, category=SSN, "
-                         "subcategory=None, offset=0, length=8, score=0.899)], "
-                         "statistics=TextDocumentStatistics(character_count=14, transaction_count=18), "
+                         "subcategory=None, grapheme_offset=0, grapheme_length=8, confidence_score=0.899)], "
+                         "statistics=TextDocumentStatistics(grapheme_count=14, transaction_count=18), "
                          "is_error=False)", repr(recognize_pii_entities_result))
         self.assertEqual("DetectLanguageResult(id=1, primary_language=DetectedLanguage(name=English, "
-                         "iso6391_name=en, score=1.0), statistics=TextDocumentStatistics(character_count=14, "
+                         "iso6391_name=en, score=1.0), statistics=TextDocumentStatistics(grapheme_count=14, "
                          "transaction_count=18), is_error=False)", repr(detect_language_result))
         self.assertEqual("TextAnalyticsError(code=invalidRequest, message=The request is invalid, target=request)",
                          repr(text_analytics_error))
         self.assertEqual("ExtractKeyPhrasesResult(id=1, key_phrases=['dog', 'cat', 'bird'], statistics="
-                         "TextDocumentStatistics(character_count=14, transaction_count=18), is_error=False)",
+                         "TextDocumentStatistics(grapheme_count=14, transaction_count=18), is_error=False)",
                          repr(extract_key_phrases_result))
-        self.assertEqual("LinkedEntityMatch(score=0.999, text=Bill Gates, offset=0, length=8)", repr(linked_entity_match))
-        self.assertEqual("LinkedEntity(name=Bill Gates, matches=[LinkedEntityMatch(score=0.999, text=Bill Gates, "
-                         "offset=0, length=8), LinkedEntityMatch(score=0.999, text=Bill Gates, offset=0, length=8)], "
-                         "language=English, data_source_entity_id=Bill Gates, "
+        self.assertEqual("LinkedEntityMatch(confidence_score=0.999, text=Bill Gates, grapheme_offset=0, grapheme_length=8)",
+                         repr(linked_entity_match))
+        self.assertEqual("LinkedEntity(name=Bill Gates, matches=[LinkedEntityMatch(confidence_score=0.999, text=Bill Gates, "
+                         "grapheme_offset=0, grapheme_length=8), LinkedEntityMatch(confidence_score=0.999, text=Bill Gates, "
+                         "grapheme_offset=0, grapheme_length=8)], language=English, data_source_entity_id=Bill Gates, "
                          "url=https://en.wikipedia.org/wiki/Bill_Gates, data_source=wikipedia)", repr(linked_entity))
         self.assertEqual("RecognizeLinkedEntitiesResult(id=1, entities=[LinkedEntity(name=Bill Gates, "
-                         "matches=[LinkedEntityMatch(score=0.999, text=Bill Gates, offset=0, length=8), "
-                         "LinkedEntityMatch(score=0.999, text=Bill Gates, offset=0, length=8)], language=English, "
-                         "data_source_entity_id=Bill Gates, url=https://en.wikipedia.org/wiki/Bill_Gates, "
-                         "data_source=wikipedia)], statistics=TextDocumentStatistics(character_count=14, "
+                         "matches=[LinkedEntityMatch(confidence_score=0.999, text=Bill Gates, grapheme_offset=0, "
+                         "grapheme_length=8), LinkedEntityMatch(confidence_score=0.999, text=Bill Gates, grapheme_offset=0, "
+                         "grapheme_length=8)], language=English, data_source_entity_id=Bill Gates, "
+                         "url=https://en.wikipedia.org/wiki/Bill_Gates, data_source=wikipedia)], "
+                         "statistics=TextDocumentStatistics(grapheme_count=14, "
                          "transaction_count=18), is_error=False)", repr(recognize_linked_entities_result))
-        self.assertEqual("SentimentConfidenceScorePerLabel(positive=0.99, neutral=0.05, negative=0.02)",
+        self.assertEqual("SentimentConfidenceScores(positive=0.99, neutral=0.05, negative=0.02)",
                          repr(sentiment_confidence_score_per_label))
-        self.assertEqual("SentenceSentiment(sentiment=neutral, confidence_scores=SentimentConfidenceScorePerLabel("
-                         "positive=0.99, neutral=0.05, negative=0.02), offset=0, length=10, warnings="
+        self.assertEqual("SentenceSentiment(sentiment=neutral, confidence_scores=SentimentConfidenceScores("
+                         "positive=0.99, neutral=0.05, negative=0.02), grapheme_offset=0, grapheme_length=10, warnings="
                          "['sentence was too short to find sentiment'])", repr(sentence_sentiment))
         self.assertEqual("AnalyzeSentimentResult(id=1, sentiment=positive, statistics=TextDocumentStatistics("
-                         "character_count=14, transaction_count=18), confidence_scores=SentimentConfidenceScorePerLabel"
-                         "(positive=0.99, neutral=0.05, negative=0.02), sentences=[SentenceSentiment(sentiment=neutral, "
-                         "confidence_scores=SentimentConfidenceScorePerLabel(positive=0.99, neutral=0.05, negative=0.02), "
-                         "offset=0, length=10, warnings=['sentence was too short to find sentiment'])], is_error=False)",
+                         "grapheme_count=14, transaction_count=18), confidence_scores=SentimentConfidenceScores"
+                         "(positive=0.99, neutral=0.05, negative=0.02), "
+                         "sentences=[SentenceSentiment(sentiment=neutral, confidence_scores="
+                         "SentimentConfidenceScores(positive=0.99, neutral=0.05, negative=0.02), "
+                         "grapheme_offset=0, grapheme_length=10, "
+                         "warnings=['sentence was too short to find sentiment'])], is_error=False)",
                          repr(analyze_sentiment_result))
         self.assertEqual("DocumentError(id=1, error=TextAnalyticsError(code=invalidRequest, "
                          "message=The request is invalid, target=request), is_error=True)", repr(document_error))

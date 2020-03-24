@@ -9,7 +9,9 @@ import asyncio
 from azure.eventhub.exceptions import OwnershipLostError  # type: ignore
 from azure.eventhub.aio import CheckpointStore  # type: ignore  # pylint: disable=no-name-in-module
 from azure.core.exceptions import ResourceModifiedError, ResourceExistsError  # type: ignore
-from azure.storage.blob.aio import ContainerClient, BlobClient  # type: ignore
+from ._vendor.storage.blob.aio import ContainerClient, BlobClient
+from ._vendor.storage.blob._shared.base_client import parse_connection_str
+
 
 logger = logging.getLogger(__name__)
 UPLOAD_DATA = ""
@@ -31,21 +33,33 @@ class BlobCheckpointStore(CheckpointStore):
         account URL already has a SAS token. The value can be a SAS token string, an account
         shared access key, or an instance of a TokenCredentials class from azure.identity.
         If the URL already has a SAS token, specifying an explicit credential will take priority.
+    :keyword str api_version:
+            The Storage API version to use for requests. Default value is '2019-07-07'.
+    :keyword str secondary_hostname:
+        The hostname of the secondary endpoint.
     """
 
     def __init__(self, blob_account_url, container_name, *, credential=None, **kwargs):
         # type(str, str, Optional[Any], Any) -> None
-        container_client = kwargs.pop("container_client", None)
-        self._container_client = container_client or ContainerClient(
-            blob_account_url, container_name, credential=credential, **kwargs
-        )
+        self._container_client = kwargs.pop("container_client", None)
+        if not self._container_client:
+            api_version = kwargs.pop("api_version", None)
+            if api_version:
+                headers = kwargs.get("headers")
+                if headers:
+                    headers["x-ms-version"] = api_version
+                else:
+                    kwargs["headers"] = {"x-ms-version": api_version}
+            self._container_client = ContainerClient(
+                blob_account_url, container_name, credential=credential, **kwargs
+            )
         self._cached_blob_clients = defaultdict()  # type: Dict[str, BlobClient]
 
     @classmethod
     def from_connection_string(
         cls, conn_str, container_name, *, credential=None, **kwargs
     ):
-        # type: (str, str, Optional[Any], str) -> BlobCheckpointStore
+        # type: (str, str, Any, Optional[Any], Any) -> BlobCheckpointStore
         """Create BlobCheckpointStore from a storage connection string.
 
         :param str conn_str:
@@ -59,11 +73,18 @@ class BlobCheckpointStore(CheckpointStore):
             access key values. The value can be a SAS token string, an account shared access
             key, or an instance of a TokenCredentials class from azure.identity.
             Credentials provided here will take precedence over those in the connection string.
+        :keyword str api_version:
+            The Storage API version to use for requests. Default value is '2019-07-07'.
+        :keyword str secondary_hostname:
+            The hostname of the secondary endpoint.
+        :returns: A blob checkpoint store.
+        :rtype: ~azure.eventhub.extensions.checkpointstoreblobaio.BlobCheckpointStore
         """
-        container_client = ContainerClient.from_connection_string(
-            conn_str, container_name, credential=credential, **kwargs
-        )
-        return cls(None, None, container_client=container_client)
+        account_url, secondary, credential = parse_connection_str(conn_str, credential, 'blob')
+        if 'secondary_hostname' not in kwargs:
+            kwargs['secondary_hostname'] = secondary
+
+        return cls(account_url, container_name, credential=credential, **kwargs)
 
     async def __aenter__(self):
         await self._container_client.__aenter__()

@@ -320,8 +320,8 @@ class VirtualMachineScaleSetScaleInRules(str, Enum):
 
 class OperatingSystemStateTypes(str, Enum):
 
-    generalized = "Generalized"
-    specialized = "Specialized"
+    generalized = "Generalized"  #: Generalized image. Needs to be provisioned during deployment time.
+    specialized = "Specialized"  #: Specialized image. Contains already provisioned OS Disk.
 
 
 class IPVersion(str, Enum):

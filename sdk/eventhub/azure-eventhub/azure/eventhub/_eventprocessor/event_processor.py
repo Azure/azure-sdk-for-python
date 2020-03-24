@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
+import random
 import uuid
 import logging
 import time
@@ -224,6 +225,8 @@ class EventProcessor(
 
         """
         while self._running:
+            random_jitter = self._load_balancing_interval * random.random() * 0.2
+            load_balancing_interval = self._load_balancing_interval + random_jitter
             try:
                 claimed_partition_ids = self._ownership_manager.claim_ownership()
                 if claimed_partition_ids:
@@ -266,11 +269,11 @@ class EventProcessor(
                     self._eventhub_name,
                     self._consumer_group,
                     err,
-                    self._load_balancing_interval
+                    load_balancing_interval
                 )
                 self._process_error(None, err)  # type: ignore
 
-            time.sleep(self._load_balancing_interval)
+            time.sleep(load_balancing_interval)
 
     def _close_consumer(self, partition_id, consumer, reason):
         # type: (str, EventHubConsumer, CloseReason) -> None

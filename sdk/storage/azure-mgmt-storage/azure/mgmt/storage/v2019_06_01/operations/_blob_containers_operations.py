@@ -603,7 +603,7 @@ class BlobContainersOperations(object):
     clear_legal_hold.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobServices/default/containers/{containerName}/clearLegalHold'}
 
     def create_or_update_immutability_policy(
-            self, resource_group_name, account_name, container_name, immutability_period_since_creation_in_days, if_match=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, account_name, container_name, if_match=None, immutability_period_since_creation_in_days=None, allow_protected_append_writes=None, custom_headers=None, raw=False, **operation_config):
         """Creates or updates an unlocked immutability policy. ETag in If-Match is
         honored if given but not required for this operation.
 
@@ -620,15 +620,22 @@ class BlobContainersOperations(object):
          (-) only. Every dash (-) character must be immediately preceded and
          followed by a letter or number.
         :type container_name: str
-        :param immutability_period_since_creation_in_days: The immutability
-         period for the blobs in the container since the policy creation, in
-         days.
-        :type immutability_period_since_creation_in_days: int
         :param if_match: The entity state (ETag) version of the immutability
          policy to update. A value of "*" can be used to apply the operation
          only if the immutability policy already exists. If omitted, this
          operation will always be applied.
         :type if_match: str
+        :param immutability_period_since_creation_in_days: The immutability
+         period for the blobs in the container since the policy creation, in
+         days.
+        :type immutability_period_since_creation_in_days: int
+        :param allow_protected_append_writes: This property can only be
+         changed for unlocked time-based retention policies. When enabled, new
+         blocks can be written to an append blob while maintaining immutability
+         protection and compliance. Only new blocks can be added and any
+         existing blocks cannot be modified or deleted. This property cannot be
+         changed with ExtendImmutabilityPolicy API
+        :type allow_protected_append_writes: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -640,8 +647,8 @@ class BlobContainersOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         parameters = None
-        if immutability_period_since_creation_in_days is not None:
-            parameters = models.ImmutabilityPolicy(immutability_period_since_creation_in_days=immutability_period_since_creation_in_days)
+        if immutability_period_since_creation_in_days is not None or allow_protected_append_writes is not None:
+            parameters = models.ImmutabilityPolicy(immutability_period_since_creation_in_days=immutability_period_since_creation_in_days, allow_protected_append_writes=allow_protected_append_writes)
 
         # Construct URL
         url = self.create_or_update_immutability_policy.metadata['url']
@@ -959,7 +966,7 @@ class BlobContainersOperations(object):
     lock_immutability_policy.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobServices/default/containers/{containerName}/immutabilityPolicies/default/lock'}
 
     def extend_immutability_policy(
-            self, resource_group_name, account_name, container_name, if_match, immutability_period_since_creation_in_days, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, account_name, container_name, if_match, immutability_period_since_creation_in_days=None, allow_protected_append_writes=None, custom_headers=None, raw=False, **operation_config):
         """Extends the immutabilityPeriodSinceCreationInDays of a locked
         immutabilityPolicy. The only action allowed on a Locked policy will be
         this action. ETag in If-Match is required for this operation.
@@ -986,6 +993,13 @@ class BlobContainersOperations(object):
          period for the blobs in the container since the policy creation, in
          days.
         :type immutability_period_since_creation_in_days: int
+        :param allow_protected_append_writes: This property can only be
+         changed for unlocked time-based retention policies. When enabled, new
+         blocks can be written to an append blob while maintaining immutability
+         protection and compliance. Only new blocks can be added and any
+         existing blocks cannot be modified or deleted. This property cannot be
+         changed with ExtendImmutabilityPolicy API
+        :type allow_protected_append_writes: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -997,8 +1011,8 @@ class BlobContainersOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         parameters = None
-        if immutability_period_since_creation_in_days is not None:
-            parameters = models.ImmutabilityPolicy(immutability_period_since_creation_in_days=immutability_period_since_creation_in_days)
+        if immutability_period_since_creation_in_days is not None or allow_protected_append_writes is not None:
+            parameters = models.ImmutabilityPolicy(immutability_period_since_creation_in_days=immutability_period_since_creation_in_days, allow_protected_append_writes=allow_protected_append_writes)
 
         # Construct URL
         url = self.extend_immutability_policy.metadata['url']

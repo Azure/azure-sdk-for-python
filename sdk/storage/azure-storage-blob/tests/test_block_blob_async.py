@@ -110,10 +110,28 @@ class StorageBlockBlobTestAsync(AsyncStorageTestCase):
 
         # Act
         for i in range(5):
-            resp = await blob.stage_block(i, 'block {0}'.format(i).encode('utf-8'))
-            self.assertIsNone(resp)
+            headers = await blob.stage_block(i, 'block {0}'.format(i).encode('utf-8'))
+            self.assertIn('content_crc64', headers)
 
         # Assert
+
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_put_block_with_response(self, resource_group, location, storage_account, storage_account_key):
+        await self._setup(storage_account.name, storage_account_key)
+        # Arrange
+        def return_response(resp, _, headers):
+            return (resp, headers)
+
+        blob = await self._create_blob()
+
+        # Act
+        resp, headers = await blob.stage_block(0, 'block 0', cls=return_response)
+
+        # Assert
+        self.assertEqual(201, resp.status_code)
+        self.assertIn('x-ms-content-crc64', headers)
+
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_put_block_unicode(self, resource_group, location, storage_account, storage_account_key):
@@ -122,8 +140,8 @@ class StorageBlockBlobTestAsync(AsyncStorageTestCase):
         blob = await self._create_blob()
 
         # Act
-        resp = await blob.stage_block('1', u'啊齄丂狛狜')
-        self.assertIsNone(resp)
+        headers = await blob.stage_block('1', u'啊齄丂狛狜')
+        self.assertIn('content_crc64', headers)
 
         # Assert
 

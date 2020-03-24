@@ -6,6 +6,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import unittest
+from datetime import datetime, timedelta
 
 from azure.core.exceptions import ResourceNotFoundError
 
@@ -18,6 +19,8 @@ from testcase import (
 )
 
 # ------------------------------------------------------------------------------
+from azure.storage.filedatalake import AccessPolicy, FileSystemSasPermissions
+
 TEST_FILE_SYSTEM_PREFIX = 'filesystem'
 # ------------------------------------------------------------------------------
 
@@ -78,6 +81,29 @@ class FileSystemTest(StorageTestCase):
         meta = file_system_client.get_file_system_properties().metadata
         self.assertTrue(created)
         self.assertDictEqual(meta, metadata)
+
+    @record
+    def test_set_file_system_acl(self):
+        # Act
+        file_system = self._create_file_system()
+        access_policy = AccessPolicy(permission=FileSystemSasPermissions(read=True),
+                                     expiry=datetime.utcnow() + timedelta(hours=1),
+                                     start=datetime.utcnow())
+        signed_identifier1 = {'testid': access_policy}
+        response = file_system.set_file_system_access_policy(signed_identifier1, public_access=PublicAccess.FileSystem)
+
+        self.assertIsNotNone(response.get('etag'))
+        self.assertIsNotNone(response.get('last_modified'))
+        acl1 = file_system.get_file_system_access_policy()
+        self.assertIsNotNone(acl1['public_access'])
+        self.assertEqual(len(acl1['signed_identifiers']), 1)
+
+        # If set signed identifier without specifying the access policy then it will be default to None
+        signed_identifier2 = {'testid': access_policy, 'test2': access_policy}
+        file_system.set_file_system_access_policy(signed_identifier2)
+        acl2 = file_system.get_file_system_access_policy()
+        self.assertIsNone(acl2['public_access'])
+        self.assertEqual(len(acl2['signed_identifiers']), 2)
 
     @record
     def test_list_file_systemss(self):
@@ -290,6 +316,18 @@ class FileSystemTest(StorageTestCase):
         self.assertEqual(len(paths), 3)
         self.assertEqual(paths[0].name, "dir1")
         self.assertEqual(paths[2].is_directory, False)
+
+    @record
+    def test_get_root_directory_client(self):
+        file_system = self._create_file_system()
+        directory_client = file_system._get_root_directory_client()
+
+        acl = 'user::rwx,group::r-x,other::rwx'
+        directory_client.set_access_control(acl=acl)
+        access_control = directory_client.get_access_control()
+
+        self.assertEqual(acl, access_control['acl'])
+
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':
     unittest.main()

@@ -103,19 +103,6 @@ class TriggerResourcePaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(TriggerResourcePaged, self).__init__(*args, **kwargs)
-class RerunTriggerResourcePaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`RerunTriggerResource <azure.mgmt.datafactory.models.RerunTriggerResource>` object
-    """
-
-    _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[RerunTriggerResource]'}
-    }
-
-    def __init__(self, *args, **kwargs):
-
-        super(RerunTriggerResourcePaged, self).__init__(*args, **kwargs)
 class DataFlowResourcePaged(Paged):
     """
     A paging container for iterating over a list of :class:`DataFlowResource <azure.mgmt.datafactory.models.DataFlowResource>` object

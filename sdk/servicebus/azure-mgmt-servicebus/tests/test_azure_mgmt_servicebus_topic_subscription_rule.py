@@ -30,7 +30,7 @@ class MgmtServiceBusTest(AzureMgmtTestCase):
         resource_group_name = resource_group.name  # "ardsouza-resourcemovetest-group2"
 
         # Create a Namespace
-        namespace_name = "testingpythontestcaserule"
+        namespace_name = self.get_replayable_random_resource_name("testingpythontestcaserule")
 
         namespaceparameter = SBNamespace(location=location, tags={'tag1': 'value1', 'tag2': 'value2'}, sku=SBSku(name=SkuName.standard))
         creatednamespace = self.servicebus_client.namespaces.create_or_update(resource_group_name, namespace_name, namespaceparameter).result()
@@ -42,7 +42,7 @@ class MgmtServiceBusTest(AzureMgmtTestCase):
             continue
 
         # Create a Topic
-        topic_name = "testingpythonsdktopic"
+        topic_name = self.get_replayable_random_resource_name("testingpythonsdktopic")
         createtopicresponse = self.servicebus_client.topics.create_or_update(resource_group_name, namespace_name, topic_name, SBTopic())
         self.assertEqual(createtopicresponse.name, topic_name)
 
@@ -51,7 +51,7 @@ class MgmtServiceBusTest(AzureMgmtTestCase):
         self.assertEqual(gettopicresponse.name, topic_name)
 
         # Create subscription
-        subscription_name = "testingpythonsdksubscription"
+        subscription_name = self.get_replayable_random_resource_name("testingpythonsdksubscription")
         createsubscriptionresponse =self.servicebus_client.subscriptions.create_or_update(resource_group_name, namespace_name, topic_name, subscription_name, SBSubscription())
         self.assertEqual(createsubscriptionresponse.name, subscription_name)
 
@@ -60,7 +60,7 @@ class MgmtServiceBusTest(AzureMgmtTestCase):
         self.assertEqual(getsubscriptionresponse.name, subscription_name)
 
         # create rule
-        rule_name = "testingpythonsdkrule"
+        rule_name = self.get_replayable_random_resource_name("testingpythonsdkrule")
         createruleresponse = self.servicebus_client.rules.create_or_update(resource_group_name, namespace_name, topic_name, subscription_name, rule_name, Rule())
         self.assertEqual(createruleresponse.name, rule_name)
 

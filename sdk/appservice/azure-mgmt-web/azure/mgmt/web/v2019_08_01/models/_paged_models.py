@@ -558,6 +558,71 @@ class WebJobPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(WebJobPaged, self).__init__(*args, **kwargs)
+class StaticSiteARMResourcePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`StaticSiteARMResource <azure.mgmt.web.v2019_08_01.models.StaticSiteARMResource>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[StaticSiteARMResource]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(StaticSiteARMResourcePaged, self).__init__(*args, **kwargs)
+class StaticSiteUserARMResourcePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`StaticSiteUserARMResource <azure.mgmt.web.v2019_08_01.models.StaticSiteUserARMResource>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[StaticSiteUserARMResource]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(StaticSiteUserARMResourcePaged, self).__init__(*args, **kwargs)
+class StaticSiteBuildARMResourcePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`StaticSiteBuildARMResource <azure.mgmt.web.v2019_08_01.models.StaticSiteBuildARMResource>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[StaticSiteBuildARMResource]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(StaticSiteBuildARMResourcePaged, self).__init__(*args, **kwargs)
+class StaticSiteFunctionOverviewARMResourcePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`StaticSiteFunctionOverviewARMResource <azure.mgmt.web.v2019_08_01.models.StaticSiteFunctionOverviewARMResource>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[StaticSiteFunctionOverviewARMResource]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(StaticSiteFunctionOverviewARMResourcePaged, self).__init__(*args, **kwargs)
+class StaticSiteCustomDomainOverviewARMResourcePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`StaticSiteCustomDomainOverviewARMResource <azure.mgmt.web.v2019_08_01.models.StaticSiteCustomDomainOverviewARMResource>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[StaticSiteCustomDomainOverviewARMResource]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(StaticSiteCustomDomainOverviewARMResourcePaged, self).__init__(*args, **kwargs)
 class AppServiceEnvironmentResourcePaged(Paged):
     """
     A paging container for iterating over a list of :class:`AppServiceEnvironmentResource <azure.mgmt.web.v2019_08_01.models.AppServiceEnvironmentResource>` object

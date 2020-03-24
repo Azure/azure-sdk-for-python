@@ -17,8 +17,8 @@ USAGE:
     python sample_detect_language_async.py
 
     Set the environment variables with your own values before running the sample:
-    1) AZURE_TEXT_ANALYTICS_ENDPOINT - the endpoint to your cognitive services resource.
-    2) AZURE_TEXT_ANALYTICS_KEY - your text analytics subscription key
+    1) AZURE_TEXT_ANALYTICS_ENDPOINT - the endpoint to your Cognitive Services resource.
+    2) AZURE_TEXT_ANALYTICS_KEY - your Text Analytics subscription key
 """
 
 import os
@@ -39,7 +39,7 @@ class DetectLanguageSampleAsync(object):
             "This document is written in English.",
             "Este es un document escrito en Español.",
             "这是一个用中文写的文件",
-            "Dies ist ein Dokument in englischer Sprache.",
+            "Dies ist ein Dokument in deutsche Sprache.",
             "Detta är ett dokument skrivet på engelska."
         ]
         async with text_analytics_client:
@@ -55,46 +55,10 @@ class DetectLanguageSampleAsync(object):
                 print(doc.id, doc.error)
         # [END batch_detect_language_async]
 
-    async def alternative_scenario_detect_language_async(self):
-        """This sample demonstrates how to retrieve batch statistics, the
-        model version used, and the raw response returned from the service.
-
-        It additionally shows an alternative way to pass in the input documents
-        using a list[DetectLanguageInput] and supplying your own IDs and country hints along
-        with the text.
-        """
-        from azure.ai.textanalytics.aio import TextAnalyticsClient
-        from azure.ai.textanalytics import TextAnalyticsApiKeyCredential
-        text_analytics_client = TextAnalyticsClient(endpoint=self.endpoint, credential=TextAnalyticsApiKeyCredential(self.key))
-
-        documents = [
-            {"id": "0", "country_hint": "US", "text": "This is a document written in English."},
-            {"id": "1", "country_hint": "MX", "text": "Este es un document escrito en Español."},
-            {"id": "2", "country_hint": "CN", "text": "这是一个用中文写的文件"},
-            {"id": "3", "country_hint": "DE", "text": "Dies ist ein Dokument in englischer Sprache."},
-            {"id": "4", "country_hint": "SE",  "text": "Detta är ett dokument skrivet på engelska."}
-        ]
-
-        extras = []
-
-        def callback(resp):
-            extras.append(resp.statistics)
-            extras.append(resp.model_version)
-            extras.append(resp.raw_response)
-
-        async with text_analytics_client:
-            result = await text_analytics_client.detect_language(
-                documents,
-                show_stats=True,
-                model_version="latest",
-                response_hook=callback
-            )
-
 
 async def main():
     sample = DetectLanguageSampleAsync()
     await sample.detect_language_async()
-    await sample.alternative_scenario_detect_language_async()
 
 
 if __name__ == '__main__':

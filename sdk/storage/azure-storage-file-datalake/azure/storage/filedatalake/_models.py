@@ -14,6 +14,7 @@ from azure.storage.blob import ResourceTypes as BlobResourceTypes
 from azure.storage.blob import UserDelegationKey as BlobUserDelegationKey
 from azure.storage.blob import ContentSettings as BlobContentSettings
 from azure.storage.blob import ContainerSasPermissions, BlobSasPermissions
+from azure.storage.blob import AccessPolicy as BlobAccessPolicy
 from azure.storage.blob._generated.models import StorageErrorException
 from azure.storage.blob._models import ContainerPropertiesPaged
 from ._deserialize import return_headers_and_deserialized_path_list
@@ -116,7 +117,7 @@ class DirectoryProperties(DictMixin):
     :ivar str etag: The ETag contains a value that you can use to perform operations
         conditionally.
     :ivar bool deleted: if the current directory marked as deleted
-    :ivar dict metadata: Name-value pairs associated with the blob as metadata.
+    :ivar dict metadata: Name-value pairs associated with the directory as metadata.
     :ivar ~azure.storage.filedatalake.LeaseProperties lease:
         Stores all the lease information for the directory.
     :ivar ~datetime.datetime last_modified:
@@ -163,7 +164,7 @@ class FileProperties(DictMixin):
     :ivar str etag: The ETag contains a value that you can use to perform operations
         conditionally.
     :ivar bool deleted: if the current file marked as deleted
-    :ivar dict metadata: Name-value pairs associated with the blob as metadata.
+    :ivar dict metadata: Name-value pairs associated with the file as metadata.
     :ivar ~azure.storage.filedatalake.LeaseProperties lease:
         Stores all the lease information for the file.
     :ivar ~datetime.datetime last_modified:
@@ -220,7 +221,7 @@ class PathProperties(object):
          read, write, or execute permission.  The sticky bit is also supported.
          Both symbolic (rwxrw-rw-) and 4-digit octal notation (e.g. 0766) are
          supported.
-    :ivar datetime last_modified:  A datetime object representing the last time the blob was modified.
+    :ivar datetime last_modified:  A datetime object representing the last time the directory/file was modified.
     :ivar bool is_directory: is the path a directory or not.
     :ivar str etag: The ETag contains a value that you can use to perform operations
         conditionally.
@@ -355,18 +356,31 @@ class ContentSettings(BlobContentSettings):
         If the content_md5 has been set for the file, this response
         header is stored so that the client can check for message content
         integrity.
+    :keyword str content_type:
+        The content type specified for the file or directory. If no content type was
+        specified, the default content type is application/octet-stream.
+    :keyword str content_encoding:
+        If the content_encoding has previously been set
+        for the file, that value is stored.
+    :keyword str content_language:
+        If the content_language has previously been set
+        for the file, that value is stored.
+    :keyword str content_disposition:
+        content_disposition conveys additional information about how to
+        process the response payload, and also can be used to attach
+        additional metadata. If content_disposition has previously been set
+        for the file, that value is stored.
+    :keyword str cache_control:
+        If the cache_control has previously been set for
+        the file, that value is stored.
+    :keyword str content_md5:
+        If the content_md5 has been set for the file, this response
+        header is stored so that the client can check for message content
+        integrity.
     """
     def __init__(
-            self, content_type=None, content_encoding=None,
-            content_language=None, content_disposition=None,
-            cache_control=None, content_md5=None, **kwargs):
+            self, **kwargs):
         super(ContentSettings, self).__init__(
-            content_type=content_type,
-            content_encoding=content_encoding,
-            content_language=content_language,
-            content_disposition=content_disposition,
-            cache_control=cache_control,
-            content_md5=content_md5,
             **kwargs
         )
 
@@ -443,6 +457,55 @@ class FileSasPermissions(BlobSasPermissions):
         )
 
 
+class AccessPolicy(BlobAccessPolicy):
+    """Access Policy class used by the set and get access policy methods in each service.
+
+    A stored access policy can specify the start time, expiry time, and
+    permissions for the Shared Access Signatures with which it's associated.
+    Depending on how you want to control access to your resource, you can
+    specify all of these parameters within the stored access policy, and omit
+    them from the URL for the Shared Access Signature. Doing so permits you to
+    modify the associated signature's behavior at any time, as well as to revoke
+    it. Or you can specify one or more of the access policy parameters within
+    the stored access policy, and the others on the URL. Finally, you can
+    specify all of the parameters on the URL. In this case, you can use the
+    stored access policy to revoke the signature, but not to modify its behavior.
+
+    Together the Shared Access Signature and the stored access policy must
+    include all fields required to authenticate the signature. If any required
+    fields are missing, the request will fail. Likewise, if a field is specified
+    both in the Shared Access Signature URL and in the stored access policy, the
+    request will fail with status code 400 (Bad Request).
+
+    :param permission:
+        The permissions associated with the shared access signature. The
+        user is restricted to operations allowed by the permissions.
+        Required unless an id is given referencing a stored access policy
+        which contains this field. This field must be omitted if it has been
+        specified in an associated stored access policy.
+    :type permission: str or ~azure.storage.datalake.FileSystemSasPermissions
+    :param expiry:
+        The time at which the shared access signature becomes invalid.
+        Required unless an id is given referencing a stored access policy
+        which contains this field. This field must be omitted if it has
+        been specified in an associated stored access policy. Azure will always
+        convert values to UTC. If a date is passed in without timezone info, it
+        is assumed to be UTC.
+    :type expiry: ~datetime.datetime or str
+    :keyword start:
+        The time at which the shared access signature becomes valid. If
+        omitted, start time for this call is assumed to be the time when the
+        storage service receives the request. Azure will always convert values
+        to UTC. If a date is passed in without timezone info, it is assumed to
+        be UTC.
+    :paramtype start: ~datetime.datetime or str
+    """
+    def __init__(self, permission=None, expiry=None, **kwargs):
+        super(AccessPolicy, self).__init__(
+            permission=permission, expiry=expiry, start=kwargs.pop('start', None)
+        )
+
+
 class ResourceTypes(BlobResourceTypes):
     """
     Specifies the resource types that are accessible with the account SAS.
@@ -484,19 +547,22 @@ class UserDelegationKey(BlobUserDelegationKey):
     :ivar str value:
         The user delegation key.
     """
-    def _init(self):
-        super(UserDelegationKey, self).__init__()
+    @classmethod
+    def _from_generated(cls, generated):
+        delegation_key = cls()
+        delegation_key.signed_oid = generated.signed_oid
+        delegation_key.signed_tid = generated.signed_tid
+        delegation_key.signed_start = generated.signed_start
+        delegation_key.signed_expiry = generated.signed_expiry
+        delegation_key.signed_service = generated.signed_service
+        delegation_key.signed_version = generated.signed_version
+        delegation_key.value = generated.value
+        return delegation_key
 
 
 class PublicAccess(str, Enum):
     """
     Specifies whether data in the file system may be accessed publicly and the level of access.
-    """
-
-    OFF = 'off'
-    """
-    Specifies that there is no public read access for both the file systems and files within the file system.
-    Clients cannot enumerate the file systems within the storage account as well as the files within the file system.
     """
 
     File = 'blob'
@@ -519,8 +585,7 @@ class PublicAccess(str, Enum):
             return cls.File
         elif public_access == "container":
             return cls.FileSystem
-        elif public_access == "off":
-            return cls.OFF
+
         return None
 
 
