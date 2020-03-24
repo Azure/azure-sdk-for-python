@@ -4,7 +4,12 @@
 # license information.
 # --------------------------------------------------------------------------
 
+from typing import TYPE_CHECKING
+
 import six
+
+if TYPE_CHECKING:
+    from typing import Optional
 
 
 class SearchApiKeyCredential(object):
@@ -44,10 +49,11 @@ class SearchApiKeyCredential(object):
 class HeadersMixin(object):
     @property
     def _headers(self):
+        # type() -> dict
         return {"api-key": self._credential.api_key, "Accept": self._ODATA_ACCEPT}
 
     def _merge_client_headers(self, headers):
-        # type() -> dict
+        # type(Optional[dict]) -> dict
         headers = headers or {}
         combined = self._headers
         combined.update(headers)
