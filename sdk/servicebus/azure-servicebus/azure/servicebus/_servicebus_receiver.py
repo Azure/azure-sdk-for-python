@@ -495,13 +495,13 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
             receive_mode = int(self._mode)
         message = {
             'sequence-numbers': types.AMQPArray([types.AMQPLong(s) for s in sequence_numbers]),
-            'receiver-settle-mode': types.AMQPuInt(receive_mode),
+            'receiver-settle-mode': types.AMQPuInt(receive_mode)
         }
 
         if self._session_id:
             message["session-id"] = self._session_id
 
-        handler = functools.partial(mgmt_handlers.deferred_message_op, mode=receive_mode)
+        handler = functools.partial(mgmt_handlers.deferred_message_op, mode=self._mode)
         messages = self._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_RECEIVE_BY_SEQUENCE_NUMBER,
             message,
