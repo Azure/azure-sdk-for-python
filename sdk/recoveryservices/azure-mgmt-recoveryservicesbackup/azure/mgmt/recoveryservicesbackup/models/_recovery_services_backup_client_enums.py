@@ -12,6 +12,31 @@
 from enum import Enum
 
 
+class OperationStatusValues(str, Enum):
+
+    invalid = "Invalid"
+    in_progress = "InProgress"
+    succeeded = "Succeeded"
+    failed = "Failed"
+    canceled = "Canceled"
+
+
+class ProvisioningState(str, Enum):
+
+    succeeded = "Succeeded"
+    deleting = "Deleting"
+    failed = "Failed"
+    pending = "Pending"
+
+
+class PrivateEndpointConnectionStatus(str, Enum):
+
+    pending = "Pending"
+    approved = "Approved"
+    rejected = "Rejected"
+    disconnected = "Disconnected"
+
+
 class ProtectionState(str, Enum):
 
     invalid = "Invalid"
@@ -534,12 +559,3 @@ class BackupItemType(str, Enum):
     azure_file_share = "AzureFileShare"
     sap_hana_database = "SAPHanaDatabase"
     sap_ase_database = "SAPAseDatabase"
-
-
-class OperationStatusValues(str, Enum):
-
-    invalid = "Invalid"
-    in_progress = "InProgress"
-    succeeded = "Succeeded"
-    failed = "Failed"
-    canceled = "Canceled"
