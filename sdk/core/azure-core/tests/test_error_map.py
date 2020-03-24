@@ -36,7 +36,7 @@ from azure.core.pipeline.transport import (
 )
 
 def test_error_map():
-    request = HttpRequest("GET", "https://bing.com")
+    request = HttpRequest("GET", "")
     response = HttpResponse(request, None)
     error_map = {
         404: ResourceNotFoundError
@@ -45,7 +45,7 @@ def test_error_map():
         map_error(404, response, error_map)
 
 def test_error_map_no_default():
-    request = HttpRequest("GET", "https://bing.com")
+    request = HttpRequest("GET", "")
     response = HttpResponse(request, None)
     error_map = ErrorMap({
         404: ResourceNotFoundError
@@ -54,10 +54,17 @@ def test_error_map_no_default():
         map_error(404, response, error_map)
 
 def test_error_map_with_default():
-    request = HttpRequest("GET", "https://bing.com")
+    request = HttpRequest("GET", "")
     response = HttpResponse(request, None)
     error_map = ErrorMap({
         404: ResourceNotFoundError
     }, default_error=ResourceExistsError)
+    with pytest.raises(ResourceExistsError):
+        map_error(401, response, error_map)
+
+def test_only_default():
+    request = HttpRequest("GET", "")
+    response = HttpResponse(request, None)
+    error_map = ErrorMap(default_error=ResourceExistsError)
     with pytest.raises(ResourceExistsError):
         map_error(401, response, error_map)
