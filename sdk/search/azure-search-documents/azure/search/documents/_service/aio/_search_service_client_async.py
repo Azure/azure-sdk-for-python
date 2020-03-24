@@ -47,7 +47,7 @@ class SearchServiceClient(HeadersMixin):
         """Get service level statistics for a search service.
 
         """
-        kwargs.setdefault("headers", self._headers)
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = await self._client.get_service_statistics(**kwargs)
         return result.as_dict()
 

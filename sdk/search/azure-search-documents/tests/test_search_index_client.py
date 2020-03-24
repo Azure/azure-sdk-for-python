@@ -87,6 +87,18 @@ class TestSearchIndexClient(object):
             "Accept": "application/json;odata.metadata=none",
         }
 
+    def test_headers_merge(self):
+        credential = SearchApiKeyCredential(api_key="test_api_key")
+        client = SearchIndexClient("endpoint", "index name", credential)
+        orig = {"foo": "bar"}
+        result = client._merge_client_headers(orig)
+        assert result is not orig
+        assert result == {
+            "api-key": "test_api_key",
+            "Accept": "application/json;odata.metadata=none",
+            "foo": "bar",
+        }
+
     def test_repr(self):
         client = SearchIndexClient("endpoint", "index name", CREDENTIAL)
         assert repr(client) == "<SearchIndexClient [endpoint={}, index={}]>".format(
@@ -101,12 +113,14 @@ class TestSearchIndexClient(object):
         client.get_document_count()
         assert mock_count.called
         assert mock_count.call_args[0] == ()
-        assert mock_count.call_args[1] == {}
+        assert len(mock_count.call_args[1]) == 1
+        assert mock_count.call_args[1]["headers"] == client._headers
+
 
     @mock.patch(
         "azure.search.documents._index._generated.operations._documents_operations.DocumentsOperations.get"
     )
-    def test_get_document_count(self, mock_get):
+    def test_get_document(self, mock_get):
         client = SearchIndexClient("endpoint", "index name", CREDENTIAL)
         client.get_document("some_key")
         assert mock_get.called

@@ -44,5 +44,11 @@ class SearchApiKeyCredential(object):
 class HeadersMixin(object):
     @property
     def _headers(self):
-        # type() -> dict
         return {"api-key": self._credential.api_key, "Accept": self._ODATA_ACCEPT}
+
+    def _merge_client_headers(self, headers):
+        # type() -> dict
+        headers = headers or {}
+        combined = self._headers
+        combined.update(headers)
+        return combined

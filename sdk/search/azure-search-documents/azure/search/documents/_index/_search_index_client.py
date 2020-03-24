@@ -102,7 +102,7 @@ class SearchIndexClient(HeadersMixin):
 
         :rtype: int
         """
-        kwargs.setdefault("headers", self._headers)
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         return int(self._client.documents.count(**kwargs))
 
     @distributed_trace
@@ -125,7 +125,7 @@ class SearchIndexClient(HeadersMixin):
                 :dedent: 4
                 :caption: Get a specific document from the search index.
         """
-        kwargs.setdefault("headers", self._headers)
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = self._client.documents.get(
             key=key, selected_fields=selected_fields, **kwargs
         )
@@ -176,7 +176,7 @@ class SearchIndexClient(HeadersMixin):
                 )
             )
 
-        kwargs.setdefault("headers", self._headers)
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         return SearchItemPaged(
             self._client, query, kwargs, page_iterator_class=SearchPageIterator
         )
@@ -204,7 +204,7 @@ class SearchIndexClient(HeadersMixin):
                 "Expected a SuggestQuery for 'query', but got {}".format(repr(query))
             )
 
-        kwargs.setdefault("headers", self._headers)
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         response = self._client.documents.suggest_post(
             suggest_request=query.request, **kwargs
         )
@@ -236,7 +236,7 @@ class SearchIndexClient(HeadersMixin):
                 )
             )
 
-        kwargs.setdefault("headers", self._headers)
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         response = self._client.documents.autocomplete_post(
             autocomplete_request=query.request, **kwargs
         )
@@ -267,7 +267,7 @@ class SearchIndexClient(HeadersMixin):
         batch = IndexDocumentsBatch()
         batch.add_upload_documents(documents)
 
-        kwargs.setdefault("headers", self._headers)
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         results = self.index_documents(batch, **kwargs)
         return cast(List[IndexingResult], results)
 
@@ -300,7 +300,7 @@ class SearchIndexClient(HeadersMixin):
         batch = IndexDocumentsBatch()
         batch.add_delete_documents(documents)
 
-        kwargs.setdefault("headers", self._headers)
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         results = self.index_documents(batch, **kwargs)
         return cast(List[IndexingResult], results)
 
@@ -329,7 +329,7 @@ class SearchIndexClient(HeadersMixin):
         batch = IndexDocumentsBatch()
         batch.add_merge_documents(documents)
 
-        kwargs.setdefault("headers", self._headers)
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         results = self.index_documents(batch, **kwargs)
         return cast(List[IndexingResult], results)
 
@@ -349,7 +349,7 @@ class SearchIndexClient(HeadersMixin):
         batch = IndexDocumentsBatch()
         batch.add_merge_or_upload_documents(documents)
 
-        kwargs.setdefault("headers", self._headers)
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         results = self.index_documents(batch, **kwargs)
         return cast(List[IndexingResult], results)
 
@@ -364,7 +364,7 @@ class SearchIndexClient(HeadersMixin):
         """
         index_documents = IndexBatch(actions=batch.actions)
 
-        kwargs.setdefault("headers", self._headers)
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         batch_response = self._client.documents.index(batch=index_documents, **kwargs)
         return cast(List[IndexingResult], batch_response.results)
 
