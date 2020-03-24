@@ -14,7 +14,7 @@ interactions:
     body:
       string: ''
     headers:
-      content-length: '0'
+      Content-Length: '0'
       date: Wed, 15 Jan 2020 23:52:51 GMT
       etag: '"0x8D79A1608540AA5"'
       last-modified: Wed, 15 Jan 2020 23:52:51 GMT
@@ -54,7 +54,7 @@ interactions:
     body:
       string: ''
     headers:
-      content-length: '0'
+      Content-Length: '0'
       date: Wed, 15 Jan 2020 23:52:51 GMT
       etag: '"0x8D79A16085E0888"'
       last-modified: Wed, 15 Jan 2020 23:52:51 GMT
@@ -106,7 +106,7 @@ interactions:
     body:
       string: ''
     headers:
-      content-length: '0'
+      Content-Length: '0'
       date: Wed, 15 Jan 2020 23:52:51 GMT
       etag: '"0x8D79A160877D686"'
       last-modified: Wed, 15 Jan 2020 23:52:51 GMT
@@ -154,7 +154,7 @@ interactions:
     body:
       string: ''
     headers:
-      content-length: '0'
+      Content-Length: '0'
       content-md5: uKHXKnfsrxcvqdhaQZ9EcQ==
       date: Wed, 15 Jan 2020 23:52:51 GMT
       etag: '"0x8D79A16088C9A99"'
@@ -200,7 +200,7 @@ interactions:
     body:
       string: ''
     headers:
-      content-length: '0'
+      Content-Length: '0'
       date: Wed, 15 Jan 2020 23:52:51 GMT
       etag: '"0x8D79A1608A704F6"'
       last-modified: Wed, 15 Jan 2020 23:52:52 GMT
@@ -245,8 +245,8 @@ interactions:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidRange</Code><Message>The
         range specified is invalid for the current size of the resource.\nRequestId:44f58b14-801a-004d-0dfe-cb2477000000\nTime:2020-01-15T23:52:52.1892169Z</Message></Error>"
     headers:
-      content-length: '249'
-      content-range: bytes */0
+      Content-Length: '249'
+      Content-Range: bytes */0
       content-type: application/xml
       date: Wed, 15 Jan 2020 23:52:51 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
@@ -282,7 +282,7 @@ interactions:
       string: ''
     headers:
       accept-ranges: bytes
-      content-length: '0'
+      Content-Length: '0'
       content-type: application/octet-stream
       date: Wed, 15 Jan 2020 23:52:51 GMT
       etag: '"0x8D79A1608A704F6"'

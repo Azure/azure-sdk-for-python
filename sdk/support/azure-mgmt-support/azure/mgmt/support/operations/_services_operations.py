@@ -24,7 +24,7 @@ class ServicesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Api version. Constant value: "2019-05-01-preview".
+    :ivar api_version: Api version. Constant value: "2020-04-01".
     """
 
     models = models
@@ -34,26 +34,21 @@ class ServicesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-05-01-preview"
+        self.api_version = "2020-04-01"
 
         self.config = config
 
     def list(
             self, custom_headers=None, raw=False, **operation_config):
-        """Lists all the Azure services available for support ticket creation.
-        Here are the Service Ids for **Billing**, **Subscription Management**,
-        and **Service and subscription limits (Quotas)** issues:
-        <br/><table><tr><td><u>Issue type</u></td><td><u>Service
-        Id</u></td></tr><tr><td>Billing</td><td>'/providers/Microsoft.Support/services/517f2da6-78fd-0498-4e22-ad26996b1dfc'</td></tr><tr><td>Subscription
-        Management</td><td>'/providers/Microsoft.Support/services/f3dc5421-79ef-1efa-41a5-42bf3cbb52c6'</td></tr><tr><td>Quota</td><td>'/providers/Microsoft.Support/services/06bfd9d3-516b-d5c6-5802-169c800dec89'</td></tr></table>
-        <br/><br/> For **Technical** issues, select the Service Id that maps to
-        the Azure service/product as displayed in the **Services** drop-down
-        list on the Azure portal's <a target='_blank'
-        href='https://portal.azure.com/#blade/Microsoft_Azure_Support/HelpAndSupportBlade/overview'>New
-        support request</a> page. <br/><br/> Always use the service and it's
-        corresponding problem classification(s) obtained programmatically for
-        support ticket creation. This practice ensures that you always have the
-        most recent set of service and problem classification Ids.
+        """Lists all the Azure services available for support ticket creation. For
+        **Technical** issues, select the Service Id that maps to the Azure
+        service/product as displayed in the **Services** drop-down list on the
+        Azure portal's [New support
+        request](https://portal.azure.com/#blade/Microsoft_Azure_Support/HelpAndSupportBlade/overview)
+        page. Always use the service and it's corresponding problem
+        classification(s) obtained programmatically for support ticket
+        creation. This practice ensures that you always have the most recent
+        set of service and problem classification Ids.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

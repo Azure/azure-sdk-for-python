@@ -24,7 +24,6 @@ class FileOperations(object):
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
     :ivar x_ms_type: Dummy constant parameter, file type can only be file. Constant value: "file".
-    :ivar x_ms_write: Only update is supported: - Update: Writes the bytes downloaded from the source url into the specified range. Constant value: "update".
     :ivar x_ms_copy_action: . Constant value: "abort".
     """
 
@@ -38,10 +37,9 @@ class FileOperations(object):
 
         self._config = config
         self.x_ms_type = "file"
-        self.x_ms_write = "update"
         self.x_ms_copy_action = "abort"
 
-    def create(self, file_content_length, file_attributes="none", file_creation_time="now", file_last_write_time="now", timeout=None, metadata=None, file_permission="inherit", file_permission_key=None, file_http_headers=None, cls=None, **kwargs):
+    def create(self, file_content_length, file_attributes="none", file_creation_time="now", file_last_write_time="now", timeout=None, metadata=None, file_permission="inherit", file_permission_key=None, file_http_headers=None, lease_access_conditions=None, cls=None, **kwargs):
         """Creates a new file or replaces a file. Note it only initializes the
         file with no content.
 
@@ -80,6 +78,10 @@ class FileOperations(object):
         :param file_http_headers: Additional parameters for the operation
         :type file_http_headers:
          ~azure.storage.fileshare.models.FileHTTPHeaders
+        :param lease_access_conditions: Additional parameters for the
+         operation
+        :type lease_access_conditions:
+         ~azure.storage.fileshare.models.LeaseAccessConditions
         :param callable cls: A custom type or function that will be passed the
          direct response
         :return: None or the result of cls(response)
@@ -106,6 +108,9 @@ class FileOperations(object):
         file_content_disposition = None
         if file_http_headers is not None:
             file_content_disposition = file_http_headers.file_content_disposition
+        lease_id = None
+        if lease_access_conditions is not None:
+            lease_id = lease_access_conditions.lease_id
 
         # Construct URL
         url = self.create.metadata['url']
@@ -145,6 +150,8 @@ class FileOperations(object):
             header_parameters['x-ms-content-md5'] = self._serialize.header("file_content_md5", file_content_md5, 'bytearray')
         if file_content_disposition is not None:
             header_parameters['x-ms-content-disposition'] = self._serialize.header("file_content_disposition", file_content_disposition, 'str')
+        if lease_id is not None:
+            header_parameters['x-ms-lease-id'] = self._serialize.header("lease_id", lease_id, 'str')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters)
@@ -175,7 +182,7 @@ class FileOperations(object):
             return cls(response, None, response_headers)
     create.metadata = {'url': '/{shareName}/{directory}/{fileName}'}
 
-    def download(self, timeout=None, range=None, range_get_content_md5=None, cls=None, **kwargs):
+    def download(self, timeout=None, range=None, range_get_content_md5=None, lease_access_conditions=None, cls=None, **kwargs):
         """Reads or downloads a file from the system, including its metadata and
         properties.
 
@@ -191,6 +198,10 @@ class FileOperations(object):
          hash for the range, as long as the range is less than or equal to 4 MB
          in size.
         :type range_get_content_md5: bool
+        :param lease_access_conditions: Additional parameters for the
+         operation
+        :type lease_access_conditions:
+         ~azure.storage.fileshare.models.LeaseAccessConditions
         :param callable cls: A custom type or function that will be passed the
          direct response
         :return: object or the result of cls(response)
@@ -199,6 +210,10 @@ class FileOperations(object):
          :class:`StorageErrorException<azure.storage.fileshare.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
+        lease_id = None
+        if lease_access_conditions is not None:
+            lease_id = lease_access_conditions.lease_id
+
         # Construct URL
         url = self.download.metadata['url']
         path_format_arguments = {
@@ -219,6 +234,8 @@ class FileOperations(object):
             header_parameters['x-ms-range'] = self._serialize.header("range", range, 'str')
         if range_get_content_md5 is not None:
             header_parameters['x-ms-range-get-content-md5'] = self._serialize.header("range_get_content_md5", range_get_content_md5, 'bool')
+        if lease_id is not None:
+            header_parameters['x-ms-lease-id'] = self._serialize.header("lease_id", lease_id, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
@@ -264,6 +281,9 @@ class FileOperations(object):
                 'x-ms-file-permission-key': self._deserialize('str', response.headers.get('x-ms-file-permission-key')),
                 'x-ms-file-id': self._deserialize('str', response.headers.get('x-ms-file-id')),
                 'x-ms-file-parent-id': self._deserialize('str', response.headers.get('x-ms-file-parent-id')),
+                'x-ms-lease-duration': self._deserialize(models.LeaseDurationType, response.headers.get('x-ms-lease-duration')),
+                'x-ms-lease-state': self._deserialize(models.LeaseStateType, response.headers.get('x-ms-lease-state')),
+                'x-ms-lease-status': self._deserialize(models.LeaseStatusType, response.headers.get('x-ms-lease-status')),
                 'x-ms-error-code': self._deserialize('str', response.headers.get('x-ms-error-code')),
             }
         if response.status_code == 206:
@@ -299,6 +319,9 @@ class FileOperations(object):
                 'x-ms-file-permission-key': self._deserialize('str', response.headers.get('x-ms-file-permission-key')),
                 'x-ms-file-id': self._deserialize('str', response.headers.get('x-ms-file-id')),
                 'x-ms-file-parent-id': self._deserialize('str', response.headers.get('x-ms-file-parent-id')),
+                'x-ms-lease-duration': self._deserialize(models.LeaseDurationType, response.headers.get('x-ms-lease-duration')),
+                'x-ms-lease-state': self._deserialize(models.LeaseStateType, response.headers.get('x-ms-lease-state')),
+                'x-ms-lease-status': self._deserialize(models.LeaseStatusType, response.headers.get('x-ms-lease-status')),
                 'x-ms-error-code': self._deserialize('str', response.headers.get('x-ms-error-code')),
             }
 
@@ -308,7 +331,7 @@ class FileOperations(object):
         return deserialized
     download.metadata = {'url': '/{shareName}/{directory}/{fileName}'}
 
-    def get_properties(self, sharesnapshot=None, timeout=None, cls=None, **kwargs):
+    def get_properties(self, sharesnapshot=None, timeout=None, lease_access_conditions=None, cls=None, **kwargs):
         """Returns all user-defined metadata, standard HTTP properties, and system
         properties for the file. It does not return the content of the file.
 
@@ -320,6 +343,10 @@ class FileOperations(object):
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
          Timeouts for File Service Operations.</a>
         :type timeout: int
+        :param lease_access_conditions: Additional parameters for the
+         operation
+        :type lease_access_conditions:
+         ~azure.storage.fileshare.models.LeaseAccessConditions
         :param callable cls: A custom type or function that will be passed the
          direct response
         :return: None or the result of cls(response)
@@ -328,6 +355,10 @@ class FileOperations(object):
          :class:`StorageErrorException<azure.storage.fileshare.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
+        lease_id = None
+        if lease_access_conditions is not None:
+            lease_id = lease_access_conditions.lease_id
+
         # Construct URL
         url = self.get_properties.metadata['url']
         path_format_arguments = {
@@ -345,6 +376,8 @@ class FileOperations(object):
         # Construct headers
         header_parameters = {}
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
+        if lease_id is not None:
+            header_parameters['x-ms-lease-id'] = self._serialize.header("lease_id", lease_id, 'str')
 
         # Construct and send request
         request = self._client.head(url, query_parameters, header_parameters)
@@ -385,12 +418,15 @@ class FileOperations(object):
                 'x-ms-file-permission-key': self._deserialize('str', response.headers.get('x-ms-file-permission-key')),
                 'x-ms-file-id': self._deserialize('str', response.headers.get('x-ms-file-id')),
                 'x-ms-file-parent-id': self._deserialize('str', response.headers.get('x-ms-file-parent-id')),
+                'x-ms-lease-duration': self._deserialize(models.LeaseDurationType, response.headers.get('x-ms-lease-duration')),
+                'x-ms-lease-state': self._deserialize(models.LeaseStateType, response.headers.get('x-ms-lease-state')),
+                'x-ms-lease-status': self._deserialize(models.LeaseStatusType, response.headers.get('x-ms-lease-status')),
                 'x-ms-error-code': self._deserialize('str', response.headers.get('x-ms-error-code')),
             }
             return cls(response, None, response_headers)
     get_properties.metadata = {'url': '/{shareName}/{directory}/{fileName}'}
 
-    def delete(self, timeout=None, cls=None, **kwargs):
+    def delete(self, timeout=None, lease_access_conditions=None, cls=None, **kwargs):
         """removes the file from the storage account.
 
         :param timeout: The timeout parameter is expressed in seconds. For
@@ -398,6 +434,10 @@ class FileOperations(object):
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
          Timeouts for File Service Operations.</a>
         :type timeout: int
+        :param lease_access_conditions: Additional parameters for the
+         operation
+        :type lease_access_conditions:
+         ~azure.storage.fileshare.models.LeaseAccessConditions
         :param callable cls: A custom type or function that will be passed the
          direct response
         :return: None or the result of cls(response)
@@ -406,6 +446,10 @@ class FileOperations(object):
          :class:`StorageErrorException<azure.storage.fileshare.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
+        lease_id = None
+        if lease_access_conditions is not None:
+            lease_id = lease_access_conditions.lease_id
+
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
@@ -421,6 +465,8 @@ class FileOperations(object):
         # Construct headers
         header_parameters = {}
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
+        if lease_id is not None:
+            header_parameters['x-ms-lease-id'] = self._serialize.header("lease_id", lease_id, 'str')
 
         # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
@@ -441,7 +487,7 @@ class FileOperations(object):
             return cls(response, None, response_headers)
     delete.metadata = {'url': '/{shareName}/{directory}/{fileName}'}
 
-    def set_http_headers(self, file_attributes="none", file_creation_time="now", file_last_write_time="now", timeout=None, file_content_length=None, file_permission="inherit", file_permission_key=None, file_http_headers=None, cls=None, **kwargs):
+    def set_http_headers(self, file_attributes="none", file_creation_time="now", file_last_write_time="now", timeout=None, file_content_length=None, file_permission="inherit", file_permission_key=None, file_http_headers=None, lease_access_conditions=None, cls=None, **kwargs):
         """Sets HTTP headers on the file.
 
         :param file_attributes: If specified, the provided file attributes
@@ -477,6 +523,10 @@ class FileOperations(object):
         :param file_http_headers: Additional parameters for the operation
         :type file_http_headers:
          ~azure.storage.fileshare.models.FileHTTPHeaders
+        :param lease_access_conditions: Additional parameters for the
+         operation
+        :type lease_access_conditions:
+         ~azure.storage.fileshare.models.LeaseAccessConditions
         :param callable cls: A custom type or function that will be passed the
          direct response
         :return: None or the result of cls(response)
@@ -503,6 +553,9 @@ class FileOperations(object):
         file_content_disposition = None
         if file_http_headers is not None:
             file_content_disposition = file_http_headers.file_content_disposition
+        lease_id = None
+        if lease_access_conditions is not None:
+            lease_id = lease_access_conditions.lease_id
 
         comp = "properties"
 
@@ -543,6 +596,8 @@ class FileOperations(object):
             header_parameters['x-ms-content-md5'] = self._serialize.header("file_content_md5", file_content_md5, 'bytearray')
         if file_content_disposition is not None:
             header_parameters['x-ms-content-disposition'] = self._serialize.header("file_content_disposition", file_content_disposition, 'str')
+        if lease_id is not None:
+            header_parameters['x-ms-lease-id'] = self._serialize.header("lease_id", lease_id, 'str')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters)
@@ -573,7 +628,7 @@ class FileOperations(object):
             return cls(response, None, response_headers)
     set_http_headers.metadata = {'url': '/{shareName}/{directory}/{fileName}'}
 
-    def set_metadata(self, timeout=None, metadata=None, cls=None, **kwargs):
+    def set_metadata(self, timeout=None, metadata=None, lease_access_conditions=None, cls=None, **kwargs):
         """Updates user-defined metadata for the specified file.
 
         :param timeout: The timeout parameter is expressed in seconds. For
@@ -584,6 +639,10 @@ class FileOperations(object):
         :param metadata: A name-value pair to associate with a file storage
          object.
         :type metadata: str
+        :param lease_access_conditions: Additional parameters for the
+         operation
+        :type lease_access_conditions:
+         ~azure.storage.fileshare.models.LeaseAccessConditions
         :param callable cls: A custom type or function that will be passed the
          direct response
         :return: None or the result of cls(response)
@@ -592,6 +651,10 @@ class FileOperations(object):
          :class:`StorageErrorException<azure.storage.fileshare.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
+        lease_id = None
+        if lease_access_conditions is not None:
+            lease_id = lease_access_conditions.lease_id
+
         comp = "metadata"
 
         # Construct URL
@@ -612,6 +675,8 @@ class FileOperations(object):
         if metadata is not None:
             header_parameters['x-ms-meta'] = self._serialize.header("metadata", metadata, 'str')
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
+        if lease_id is not None:
+            header_parameters['x-ms-lease-id'] = self._serialize.header("lease_id", lease_id, 'str')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters)
@@ -634,7 +699,311 @@ class FileOperations(object):
             return cls(response, None, response_headers)
     set_metadata.metadata = {'url': '/{shareName}/{directory}/{fileName}'}
 
-    def upload_range(self, range, content_length, file_range_write="update", optionalbody=None, timeout=None, content_md5=None, cls=None, **kwargs):
+    def acquire_lease(self, timeout=None, duration=None, proposed_lease_id=None, request_id=None, cls=None, **kwargs):
+        """[Update] The Lease File operation establishes and manages a lock on a
+        file for write and delete operations.
+
+        :param timeout: The timeout parameter is expressed in seconds. For
+         more information, see <a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         Timeouts for File Service Operations.</a>
+        :type timeout: int
+        :param duration: Specifies the duration of the lease, in seconds, or
+         negative one (-1) for a lease that never expires. A non-infinite lease
+         can be between 15 and 60 seconds. A lease duration cannot be changed
+         using renew or change.
+        :type duration: int
+        :param proposed_lease_id: Proposed lease ID, in a GUID string format.
+         The File service returns 400 (Invalid request) if the proposed lease
+         ID is not in the correct format. See Guid Constructor (String) for a
+         list of valid GUID string formats.
+        :type proposed_lease_id: str
+        :param request_id: Provides a client-generated, opaque value with a 1
+         KB character limit that is recorded in the analytics logs when storage
+         analytics logging is enabled.
+        :type request_id: str
+        :param callable cls: A custom type or function that will be passed the
+         direct response
+        :return: None or the result of cls(response)
+        :rtype: None
+        :raises:
+         :class:`StorageErrorException<azure.storage.fileshare.models.StorageErrorException>`
+        """
+        error_map = kwargs.pop('error_map', None)
+        comp = "lease"
+        action = "acquire"
+
+        # Construct URL
+        url = self.acquire_lease.metadata['url']
+        path_format_arguments = {
+            'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
+        query_parameters['comp'] = self._serialize.query("comp", comp, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        if duration is not None:
+            header_parameters['x-ms-lease-duration'] = self._serialize.header("duration", duration, 'int')
+        if proposed_lease_id is not None:
+            header_parameters['x-ms-proposed-lease-id'] = self._serialize.header("proposed_lease_id", proposed_lease_id, 'str')
+        header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
+        if request_id is not None:
+            header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id", request_id, 'str')
+        header_parameters['x-ms-lease-action'] = self._serialize.header("action", action, 'str')
+
+        # Construct and send request
+        request = self._client.put(url, query_parameters, header_parameters)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [201]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise models.StorageErrorException(response, self._deserialize)
+
+        if cls:
+            response_headers = {
+                'ETag': self._deserialize('str', response.headers.get('ETag')),
+                'Last-Modified': self._deserialize('rfc-1123', response.headers.get('Last-Modified')),
+                'x-ms-lease-id': self._deserialize('str', response.headers.get('x-ms-lease-id')),
+                'x-ms-client-request-id': self._deserialize('str', response.headers.get('x-ms-client-request-id')),
+                'x-ms-request-id': self._deserialize('str', response.headers.get('x-ms-request-id')),
+                'x-ms-version': self._deserialize('str', response.headers.get('x-ms-version')),
+                'Date': self._deserialize('rfc-1123', response.headers.get('Date')),
+                'x-ms-error-code': self._deserialize('str', response.headers.get('x-ms-error-code')),
+            }
+            return cls(response, None, response_headers)
+    acquire_lease.metadata = {'url': '/{shareName}/{directory}/{fileName}'}
+
+    def release_lease(self, lease_id, timeout=None, request_id=None, cls=None, **kwargs):
+        """[Update] The Lease File operation establishes and manages a lock on a
+        file for write and delete operations.
+
+        :param lease_id: Specifies the current lease ID on the resource.
+        :type lease_id: str
+        :param timeout: The timeout parameter is expressed in seconds. For
+         more information, see <a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         Timeouts for File Service Operations.</a>
+        :type timeout: int
+        :param request_id: Provides a client-generated, opaque value with a 1
+         KB character limit that is recorded in the analytics logs when storage
+         analytics logging is enabled.
+        :type request_id: str
+        :param callable cls: A custom type or function that will be passed the
+         direct response
+        :return: None or the result of cls(response)
+        :rtype: None
+        :raises:
+         :class:`StorageErrorException<azure.storage.fileshare.models.StorageErrorException>`
+        """
+        error_map = kwargs.pop('error_map', None)
+        comp = "lease"
+        action = "release"
+
+        # Construct URL
+        url = self.release_lease.metadata['url']
+        path_format_arguments = {
+            'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
+        query_parameters['comp'] = self._serialize.query("comp", comp, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['x-ms-lease-id'] = self._serialize.header("lease_id", lease_id, 'str')
+        header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
+        if request_id is not None:
+            header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id", request_id, 'str')
+        header_parameters['x-ms-lease-action'] = self._serialize.header("action", action, 'str')
+
+        # Construct and send request
+        request = self._client.put(url, query_parameters, header_parameters)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise models.StorageErrorException(response, self._deserialize)
+
+        if cls:
+            response_headers = {
+                'ETag': self._deserialize('str', response.headers.get('ETag')),
+                'Last-Modified': self._deserialize('rfc-1123', response.headers.get('Last-Modified')),
+                'x-ms-client-request-id': self._deserialize('str', response.headers.get('x-ms-client-request-id')),
+                'x-ms-request-id': self._deserialize('str', response.headers.get('x-ms-request-id')),
+                'x-ms-version': self._deserialize('str', response.headers.get('x-ms-version')),
+                'Date': self._deserialize('rfc-1123', response.headers.get('Date')),
+                'x-ms-error-code': self._deserialize('str', response.headers.get('x-ms-error-code')),
+            }
+            return cls(response, None, response_headers)
+    release_lease.metadata = {'url': '/{shareName}/{directory}/{fileName}'}
+
+    def change_lease(self, lease_id, timeout=None, proposed_lease_id=None, request_id=None, cls=None, **kwargs):
+        """[Update] The Lease File operation establishes and manages a lock on a
+        file for write and delete operations.
+
+        :param lease_id: Specifies the current lease ID on the resource.
+        :type lease_id: str
+        :param timeout: The timeout parameter is expressed in seconds. For
+         more information, see <a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         Timeouts for File Service Operations.</a>
+        :type timeout: int
+        :param proposed_lease_id: Proposed lease ID, in a GUID string format.
+         The File service returns 400 (Invalid request) if the proposed lease
+         ID is not in the correct format. See Guid Constructor (String) for a
+         list of valid GUID string formats.
+        :type proposed_lease_id: str
+        :param request_id: Provides a client-generated, opaque value with a 1
+         KB character limit that is recorded in the analytics logs when storage
+         analytics logging is enabled.
+        :type request_id: str
+        :param callable cls: A custom type or function that will be passed the
+         direct response
+        :return: None or the result of cls(response)
+        :rtype: None
+        :raises:
+         :class:`StorageErrorException<azure.storage.fileshare.models.StorageErrorException>`
+        """
+        error_map = kwargs.pop('error_map', None)
+        comp = "lease"
+        action = "change"
+
+        # Construct URL
+        url = self.change_lease.metadata['url']
+        path_format_arguments = {
+            'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
+        query_parameters['comp'] = self._serialize.query("comp", comp, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['x-ms-lease-id'] = self._serialize.header("lease_id", lease_id, 'str')
+        if proposed_lease_id is not None:
+            header_parameters['x-ms-proposed-lease-id'] = self._serialize.header("proposed_lease_id", proposed_lease_id, 'str')
+        header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
+        if request_id is not None:
+            header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id", request_id, 'str')
+        header_parameters['x-ms-lease-action'] = self._serialize.header("action", action, 'str')
+
+        # Construct and send request
+        request = self._client.put(url, query_parameters, header_parameters)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise models.StorageErrorException(response, self._deserialize)
+
+        if cls:
+            response_headers = {
+                'ETag': self._deserialize('str', response.headers.get('ETag')),
+                'Last-Modified': self._deserialize('rfc-1123', response.headers.get('Last-Modified')),
+                'x-ms-lease-id': self._deserialize('str', response.headers.get('x-ms-lease-id')),
+                'x-ms-client-request-id': self._deserialize('str', response.headers.get('x-ms-client-request-id')),
+                'x-ms-request-id': self._deserialize('str', response.headers.get('x-ms-request-id')),
+                'x-ms-version': self._deserialize('str', response.headers.get('x-ms-version')),
+                'Date': self._deserialize('rfc-1123', response.headers.get('Date')),
+                'x-ms-error-code': self._deserialize('str', response.headers.get('x-ms-error-code')),
+            }
+            return cls(response, None, response_headers)
+    change_lease.metadata = {'url': '/{shareName}/{directory}/{fileName}'}
+
+    def break_lease(self, timeout=None, request_id=None, lease_access_conditions=None, cls=None, **kwargs):
+        """[Update] The Lease File operation establishes and manages a lock on a
+        file for write and delete operations.
+
+        :param timeout: The timeout parameter is expressed in seconds. For
+         more information, see <a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         Timeouts for File Service Operations.</a>
+        :type timeout: int
+        :param request_id: Provides a client-generated, opaque value with a 1
+         KB character limit that is recorded in the analytics logs when storage
+         analytics logging is enabled.
+        :type request_id: str
+        :param lease_access_conditions: Additional parameters for the
+         operation
+        :type lease_access_conditions:
+         ~azure.storage.fileshare.models.LeaseAccessConditions
+        :param callable cls: A custom type or function that will be passed the
+         direct response
+        :return: None or the result of cls(response)
+        :rtype: None
+        :raises:
+         :class:`StorageErrorException<azure.storage.fileshare.models.StorageErrorException>`
+        """
+        error_map = kwargs.pop('error_map', None)
+        lease_id = None
+        if lease_access_conditions is not None:
+            lease_id = lease_access_conditions.lease_id
+
+        comp = "lease"
+        action = "break"
+
+        # Construct URL
+        url = self.break_lease.metadata['url']
+        path_format_arguments = {
+            'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
+        query_parameters['comp'] = self._serialize.query("comp", comp, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
+        if request_id is not None:
+            header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id", request_id, 'str')
+        header_parameters['x-ms-lease-action'] = self._serialize.header("action", action, 'str')
+        if lease_id is not None:
+            header_parameters['x-ms-lease-id'] = self._serialize.header("lease_id", lease_id, 'str')
+
+        # Construct and send request
+        request = self._client.put(url, query_parameters, header_parameters)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise models.StorageErrorException(response, self._deserialize)
+
+        if cls:
+            response_headers = {
+                'ETag': self._deserialize('str', response.headers.get('ETag')),
+                'Last-Modified': self._deserialize('rfc-1123', response.headers.get('Last-Modified')),
+                'x-ms-lease-id': self._deserialize('str', response.headers.get('x-ms-lease-id')),
+                'x-ms-client-request-id': self._deserialize('str', response.headers.get('x-ms-client-request-id')),
+                'x-ms-request-id': self._deserialize('str', response.headers.get('x-ms-request-id')),
+                'x-ms-version': self._deserialize('str', response.headers.get('x-ms-version')),
+                'Date': self._deserialize('rfc-1123', response.headers.get('Date')),
+                'x-ms-error-code': self._deserialize('str', response.headers.get('x-ms-error-code')),
+            }
+            return cls(response, None, response_headers)
+    break_lease.metadata = {'url': '/{shareName}/{directory}/{fileName}'}
+
+    def upload_range(self, range, content_length, file_range_write="update", optionalbody=None, timeout=None, content_md5=None, lease_access_conditions=None, cls=None, **kwargs):
         """Upload a range of bytes to a file.
 
         :param range: Specifies the range of bytes to be written. Both the
@@ -673,6 +1042,10 @@ class FileOperations(object):
          the two hashes do not match, the operation will fail with error code
          400 (Bad Request).
         :type content_md5: bytearray
+        :param lease_access_conditions: Additional parameters for the
+         operation
+        :type lease_access_conditions:
+         ~azure.storage.fileshare.models.LeaseAccessConditions
         :param callable cls: A custom type or function that will be passed the
          direct response
         :return: None or the result of cls(response)
@@ -681,6 +1054,10 @@ class FileOperations(object):
          :class:`StorageErrorException<azure.storage.fileshare.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
+        lease_id = None
+        if lease_access_conditions is not None:
+            lease_id = lease_access_conditions.lease_id
+
         comp = "range"
 
         # Construct URL
@@ -700,11 +1077,13 @@ class FileOperations(object):
         header_parameters = {}
         header_parameters['Content-Type'] = 'application/octet-stream'
         header_parameters['x-ms-range'] = self._serialize.header("range", range, 'str')
-        header_parameters['x-ms-write'] = self._serialize.header("self.x_ms_write", self.x_ms_write, 'FileRangeWriteType')
+        header_parameters['x-ms-write'] = self._serialize.header("file_range_write", file_range_write, 'FileRangeWriteType')
         header_parameters['Content-Length'] = self._serialize.header("content_length", content_length, 'long')
         if content_md5 is not None:
             header_parameters['Content-MD5'] = self._serialize.header("content_md5", content_md5, 'bytearray')
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
+        if lease_id is not None:
+            header_parameters['x-ms-lease-id'] = self._serialize.header("lease_id", lease_id, 'str')
 
         # Construct body
 
@@ -731,7 +1110,7 @@ class FileOperations(object):
             return cls(response, None, response_headers)
     upload_range.metadata = {'url': '/{shareName}/{directory}/{fileName}'}
 
-    def upload_range_from_url(self, range, copy_source, content_length, timeout=None, source_range=None, source_content_crc64=None, source_modified_access_conditions=None, cls=None, **kwargs):
+    def upload_range_from_url(self, range, copy_source, content_length, timeout=None, source_range=None, source_content_crc64=None, source_modified_access_conditions=None, lease_access_conditions=None, cls=None, **kwargs):
         """Upload a range of bytes to a file where the contents are read from a
         URL.
 
@@ -765,6 +1144,10 @@ class FileOperations(object):
          the operation
         :type source_modified_access_conditions:
          ~azure.storage.fileshare.models.SourceModifiedAccessConditions
+        :param lease_access_conditions: Additional parameters for the
+         operation
+        :type lease_access_conditions:
+         ~azure.storage.fileshare.models.LeaseAccessConditions
         :param callable cls: A custom type or function that will be passed the
          direct response
         :return: None or the result of cls(response)
@@ -779,6 +1162,9 @@ class FileOperations(object):
         source_if_none_match_crc64 = None
         if source_modified_access_conditions is not None:
             source_if_none_match_crc64 = source_modified_access_conditions.source_if_none_match_crc64
+        lease_id = None
+        if lease_access_conditions is not None:
+            lease_id = lease_access_conditions.lease_id
 
         comp = "range"
 
@@ -801,7 +1187,7 @@ class FileOperations(object):
         header_parameters['x-ms-copy-source'] = self._serialize.header("copy_source", copy_source, 'str')
         if source_range is not None:
             header_parameters['x-ms-source-range'] = self._serialize.header("source_range", source_range, 'str')
-        header_parameters['x-ms-write'] = self._serialize.header("self.x_ms_write", self.x_ms_write, 'str')
+        header_parameters['x-ms-write'] = self._serialize.header("self._config.file_range_write_from_url", self._config.file_range_write_from_url, 'str')
         header_parameters['Content-Length'] = self._serialize.header("content_length", content_length, 'long')
         if source_content_crc64 is not None:
             header_parameters['x-ms-source-content-crc64'] = self._serialize.header("source_content_crc64", source_content_crc64, 'bytearray')
@@ -810,6 +1196,8 @@ class FileOperations(object):
             header_parameters['x-ms-source-if-match-crc64'] = self._serialize.header("source_if_match_crc64", source_if_match_crc64, 'bytearray')
         if source_if_none_match_crc64 is not None:
             header_parameters['x-ms-source-if-none-match-crc64'] = self._serialize.header("source_if_none_match_crc64", source_if_none_match_crc64, 'bytearray')
+        if lease_id is not None:
+            header_parameters['x-ms-lease-id'] = self._serialize.header("lease_id", lease_id, 'str')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters)
@@ -834,7 +1222,7 @@ class FileOperations(object):
             return cls(response, None, response_headers)
     upload_range_from_url.metadata = {'url': '/{shareName}/{directory}/{fileName}'}
 
-    def get_range_list(self, sharesnapshot=None, timeout=None, range=None, cls=None, **kwargs):
+    def get_range_list(self, sharesnapshot=None, timeout=None, range=None, lease_access_conditions=None, cls=None, **kwargs):
         """Returns the list of valid ranges for a file.
 
         :param sharesnapshot: The snapshot parameter is an opaque DateTime
@@ -848,6 +1236,10 @@ class FileOperations(object):
         :param range: Specifies the range of bytes over which to list ranges,
          inclusively.
         :type range: str
+        :param lease_access_conditions: Additional parameters for the
+         operation
+        :type lease_access_conditions:
+         ~azure.storage.fileshare.models.LeaseAccessConditions
         :param callable cls: A custom type or function that will be passed the
          direct response
         :return: list or the result of cls(response)
@@ -856,6 +1248,10 @@ class FileOperations(object):
          :class:`StorageErrorException<azure.storage.fileshare.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
+        lease_id = None
+        if lease_access_conditions is not None:
+            lease_id = lease_access_conditions.lease_id
+
         comp = "rangelist"
 
         # Construct URL
@@ -879,6 +1275,8 @@ class FileOperations(object):
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if range is not None:
             header_parameters['x-ms-range'] = self._serialize.header("range", range, 'str')
+        if lease_id is not None:
+            header_parameters['x-ms-lease-id'] = self._serialize.header("lease_id", lease_id, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
@@ -909,7 +1307,7 @@ class FileOperations(object):
         return deserialized
     get_range_list.metadata = {'url': '/{shareName}/{directory}/{fileName}'}
 
-    def start_copy(self, copy_source, timeout=None, metadata=None, cls=None, **kwargs):
+    def start_copy(self, copy_source, timeout=None, metadata=None, file_permission="inherit", file_permission_key=None, copy_file_smb_info=None, lease_access_conditions=None, cls=None, **kwargs):
         """Copies a blob or file to a destination file within the storage account.
 
         :param copy_source: Specifies the URL of the source file or blob, up
@@ -930,6 +1328,24 @@ class FileOperations(object):
         :param metadata: A name-value pair to associate with a file storage
          object.
         :type metadata: str
+        :param file_permission: If specified the permission (security
+         descriptor) shall be set for the directory/file. This header can be
+         used if Permission size is <= 8KB, else x-ms-file-permission-key
+         header shall be used. Default value: Inherit. If SDDL is specified as
+         input, it must have owner, group and dacl. Note: Only one of the
+         x-ms-file-permission or x-ms-file-permission-key should be specified.
+        :type file_permission: str
+        :param file_permission_key: Key of the permission to be set for the
+         directory/file. Note: Only one of the x-ms-file-permission or
+         x-ms-file-permission-key should be specified.
+        :type file_permission_key: str
+        :param copy_file_smb_info: Additional parameters for the operation
+        :type copy_file_smb_info:
+         ~azure.storage.fileshare.models.CopyFileSmbInfo
+        :param lease_access_conditions: Additional parameters for the
+         operation
+        :type lease_access_conditions:
+         ~azure.storage.fileshare.models.LeaseAccessConditions
         :param callable cls: A custom type or function that will be passed the
          direct response
         :return: None or the result of cls(response)
@@ -938,6 +1354,28 @@ class FileOperations(object):
          :class:`StorageErrorException<azure.storage.fileshare.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
+        file_permission_copy_mode = None
+        if copy_file_smb_info is not None:
+            file_permission_copy_mode = copy_file_smb_info.file_permission_copy_mode
+        ignore_read_only = None
+        if copy_file_smb_info is not None:
+            ignore_read_only = copy_file_smb_info.ignore_read_only
+        file_attributes = None
+        if copy_file_smb_info is not None:
+            file_attributes = copy_file_smb_info.file_attributes
+        file_creation_time = None
+        if copy_file_smb_info is not None:
+            file_creation_time = copy_file_smb_info.file_creation_time
+        file_last_write_time = None
+        if copy_file_smb_info is not None:
+            file_last_write_time = copy_file_smb_info.file_last_write_time
+        set_archive_attribute = None
+        if copy_file_smb_info is not None:
+            set_archive_attribute = copy_file_smb_info.set_archive_attribute
+        lease_id = None
+        if lease_access_conditions is not None:
+            lease_id = lease_access_conditions.lease_id
+
         # Construct URL
         url = self.start_copy.metadata['url']
         path_format_arguments = {
@@ -956,6 +1394,24 @@ class FileOperations(object):
         if metadata is not None:
             header_parameters['x-ms-meta'] = self._serialize.header("metadata", metadata, 'str')
         header_parameters['x-ms-copy-source'] = self._serialize.header("copy_source", copy_source, 'str')
+        if file_permission is not None:
+            header_parameters['x-ms-file-permission'] = self._serialize.header("file_permission", file_permission, 'str')
+        if file_permission_key is not None:
+            header_parameters['x-ms-file-permission-key'] = self._serialize.header("file_permission_key", file_permission_key, 'str')
+        if file_permission_copy_mode is not None:
+            header_parameters['x-ms-file-permission-copy-mode'] = self._serialize.header("file_permission_copy_mode", file_permission_copy_mode, 'PermissionCopyModeType')
+        if ignore_read_only is not None:
+            header_parameters['x-ms-file-copy-ignore-read-only'] = self._serialize.header("ignore_read_only", ignore_read_only, 'bool')
+        if file_attributes is not None:
+            header_parameters['x-ms-file-attributes'] = self._serialize.header("file_attributes", file_attributes, 'str')
+        if file_creation_time is not None:
+            header_parameters['x-ms-file-creation-time'] = self._serialize.header("file_creation_time", file_creation_time, 'str')
+        if file_last_write_time is not None:
+            header_parameters['x-ms-file-last-write-time'] = self._serialize.header("file_last_write_time", file_last_write_time, 'str')
+        if set_archive_attribute is not None:
+            header_parameters['x-ms-file-copy-set-archive'] = self._serialize.header("set_archive_attribute", set_archive_attribute, 'bool')
+        if lease_id is not None:
+            header_parameters['x-ms-lease-id'] = self._serialize.header("lease_id", lease_id, 'str')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters)
@@ -980,7 +1436,7 @@ class FileOperations(object):
             return cls(response, None, response_headers)
     start_copy.metadata = {'url': '/{shareName}/{directory}/{fileName}'}
 
-    def abort_copy(self, copy_id, timeout=None, cls=None, **kwargs):
+    def abort_copy(self, copy_id, timeout=None, lease_access_conditions=None, cls=None, **kwargs):
         """Aborts a pending Copy File operation, and leaves a destination file
         with zero length and full metadata.
 
@@ -992,6 +1448,10 @@ class FileOperations(object):
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
          Timeouts for File Service Operations.</a>
         :type timeout: int
+        :param lease_access_conditions: Additional parameters for the
+         operation
+        :type lease_access_conditions:
+         ~azure.storage.fileshare.models.LeaseAccessConditions
         :param callable cls: A custom type or function that will be passed the
          direct response
         :return: None or the result of cls(response)
@@ -1000,6 +1460,10 @@ class FileOperations(object):
          :class:`StorageErrorException<azure.storage.fileshare.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
+        lease_id = None
+        if lease_access_conditions is not None:
+            lease_id = lease_access_conditions.lease_id
+
         comp = "copy"
 
         # Construct URL
@@ -1020,6 +1484,8 @@ class FileOperations(object):
         header_parameters = {}
         header_parameters['x-ms-copy-action'] = self._serialize.header("self.x_ms_copy_action", self.x_ms_copy_action, 'str')
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
+        if lease_id is not None:
+            header_parameters['x-ms-lease-id'] = self._serialize.header("lease_id", lease_id, 'str')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters)
@@ -1192,6 +1658,7 @@ class FileOperations(object):
                 'Date': self._deserialize('rfc-1123', response.headers.get('Date')),
                 'x-ms-marker': self._deserialize('str', response.headers.get('x-ms-marker')),
                 'x-ms-number-of-handles-closed': self._deserialize('int', response.headers.get('x-ms-number-of-handles-closed')),
+                'x-ms-number-of-handles-failed': self._deserialize('int', response.headers.get('x-ms-number-of-handles-failed')),
                 'x-ms-error-code': self._deserialize('str', response.headers.get('x-ms-error-code')),
             }
             return cls(response, None, response_headers)

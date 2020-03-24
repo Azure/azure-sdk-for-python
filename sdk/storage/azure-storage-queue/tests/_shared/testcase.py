@@ -225,6 +225,9 @@ class StorageTestCase(AzureMgmtTestCase):
             if _is_string(item):
                 if item == item_name:
                     return
+            elif isinstance(item, dict):
+                if item_name == item['name']:
+                    return
             elif item.name == item_name:
                 return
             elif hasattr(item, 'snapshot') and item.snapshot == item_name:

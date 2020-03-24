@@ -111,7 +111,7 @@ class VirtualMachineImagesOperations(object):
     get.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Compute/locations/{location}/publishers/{publisherName}/artifacttypes/vmimage/offers/{offer}/skus/{skus}/versions/{version}'}
 
     def list(
-            self, location, publisher_name, offer, skus, filter=None, top=None, orderby=None, custom_headers=None, raw=False, **operation_config):
+            self, location, publisher_name, offer, skus, expand=None, top=None, orderby=None, custom_headers=None, raw=False, **operation_config):
         """Gets a list of all virtual machine image versions for the specified
         location, publisher, offer, and SKU.
 
@@ -123,8 +123,8 @@ class VirtualMachineImagesOperations(object):
         :type offer: str
         :param skus: A valid image SKU.
         :type skus: str
-        :param filter: The filter to apply on the operation.
-        :type filter: str
+        :param expand: The expand expression to apply on the operation.
+        :type expand: str
         :param top:
         :type top: int
         :param orderby:
@@ -153,8 +153,8 @@ class VirtualMachineImagesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        if filter is not None:
-            query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+        if expand is not None:
+            query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
         if top is not None:
             query_parameters['$top'] = self._serialize.query("top", top, 'int')
         if orderby is not None:

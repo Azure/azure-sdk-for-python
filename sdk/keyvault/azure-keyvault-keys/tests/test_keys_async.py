@@ -11,13 +11,17 @@ import logging
 import json
 
 from azure.core.exceptions import ResourceNotFoundError
-from devtools_testutils import ResourceGroupPreparer, KeyVaultPreparer
-from keys_async_preparer import AsyncVaultClientPreparer
-from keys_async_test_case import AsyncKeyVaultTestCase
-
 from azure.keyvault.keys import JsonWebKey
+from azure.keyvault.keys.aio import KeyClient
+from devtools_testutils import ResourceGroupPreparer, KeyVaultPreparer
+from _shared.preparer_async import KeyVaultClientPreparer as _KeyVaultClientPreparer
+from _shared.test_case_async import KeyVaultTestCase
 
 from dateutil import parser as date_parse
+
+
+# pre-apply the client_cls positional argument so it needn't be explicitly passed below
+KeyVaultClientPreparer = functools.partial(_KeyVaultClientPreparer, KeyClient)
 
 
 # used for logging tests
@@ -25,10 +29,12 @@ class MockHandler(logging.Handler):
     def __init__(self):
         super(MockHandler, self).__init__()
         self.messages = []
+
     def emit(self, record):
         self.messages.append(record)
 
-class KeyVaultKeyTest(AsyncKeyVaultTestCase):
+
+class KeyVaultKeyTest(KeyVaultTestCase):
     def _assert_jwks_equal(self, jwk1, jwk2):
         assert jwk1.kid == jwk2.kid
         assert jwk1.kty == jwk2.kty
@@ -164,11 +170,10 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @AsyncVaultClientPreparer()
-    @AsyncKeyVaultTestCase.await_prepared_test
-    async def test_key_crud_operations(self, vault_client, **kwargs):
-        self.assertIsNotNone(vault_client)
-        client = vault_client.keys
+    @KeyVaultClientPreparer()
+    @KeyVaultTestCase.await_prepared_test
+    async def test_key_crud_operations(self, client, **kwargs):
+        self.assertIsNotNone(client)
 
         # create ec key
         await self._create_ec_key(client, key_name="crud-ec-key", hsm=True)
@@ -215,11 +220,10 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @AsyncVaultClientPreparer()
-    @AsyncKeyVaultTestCase.await_prepared_test
-    async def test_key_list(self, vault_client, **kwargs):
-        self.assertIsNotNone(vault_client)
-        client = vault_client.keys
+    @KeyVaultClientPreparer()
+    @KeyVaultTestCase.await_prepared_test
+    async def test_key_list(self, client, **kwargs):
+        self.assertIsNotNone(client)
 
         max_keys = self.list_test_size
         expected = {}
@@ -240,11 +244,10 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @AsyncVaultClientPreparer()
-    @AsyncKeyVaultTestCase.await_prepared_test
-    async def test_list_versions(self, vault_client, **kwargs):
-        self.assertIsNotNone(vault_client)
-        client = vault_client.keys
+    @KeyVaultClientPreparer()
+    @KeyVaultTestCase.await_prepared_test
+    async def test_list_versions(self, client, **kwargs):
+        self.assertIsNotNone(client)
         key_name = self.get_resource_name("testKey")
 
         max_keys = self.list_test_size
@@ -267,11 +270,10 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @AsyncVaultClientPreparer()
-    @AsyncKeyVaultTestCase.await_prepared_test
-    async def test_list_deleted_keys(self, vault_client, **kwargs):
-        self.assertIsNotNone(vault_client)
-        client = vault_client.keys
+    @KeyVaultClientPreparer()
+    @KeyVaultTestCase.await_prepared_test
+    async def test_list_deleted_keys(self, client, **kwargs):
+        self.assertIsNotNone(client)
         key_name = self.get_resource_name("sec")
         key_type = "RSA"
         expected = {}
@@ -300,11 +302,10 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer(enable_soft_delete=False)
-    @AsyncVaultClientPreparer()
-    @AsyncKeyVaultTestCase.await_prepared_test
-    async def test_backup_restore(self, vault_client, **kwargs):
-        self.assertIsNotNone(vault_client)
-        client = vault_client.keys
+    @KeyVaultClientPreparer()
+    @KeyVaultTestCase.await_prepared_test
+    async def test_backup_restore(self, client, **kwargs):
+        self.assertIsNotNone(client)
         key_name = self.get_resource_name("keybak")
         key_type = "RSA"
 
@@ -326,11 +327,10 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @AsyncVaultClientPreparer()
-    @AsyncKeyVaultTestCase.await_prepared_test
-    async def test_recover(self, vault_client, **kwargs):
-        self.assertIsNotNone(vault_client)
-        client = vault_client.keys
+    @KeyVaultClientPreparer()
+    @KeyVaultTestCase.await_prepared_test
+    async def test_recover(self, client, **kwargs):
+        self.assertIsNotNone(client)
         keys = {}
 
         # create keys
@@ -358,11 +358,10 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @AsyncVaultClientPreparer()
-    @AsyncKeyVaultTestCase.await_prepared_test
-    async def test_purge(self, vault_client, **kwargs):
-        self.assertIsNotNone(vault_client)
-        client = vault_client.keys
+    @KeyVaultClientPreparer()
+    @KeyVaultTestCase.await_prepared_test
+    async def test_purge(self, client, **kwargs):
+        self.assertIsNotNone(client)
 
         keys = {}
 
@@ -381,23 +380,22 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @AsyncVaultClientPreparer(client_kwargs={'logging_enable': True})
-    @AsyncKeyVaultTestCase.await_prepared_test
-    async def test_logging_enabled(self, vault_client, **kwargs):
-        client = vault_client.keys
+    @KeyVaultClientPreparer(client_kwargs={"logging_enable": True})
+    @KeyVaultTestCase.await_prepared_test
+    async def test_logging_enabled(self, client, **kwargs):
         mock_handler = MockHandler()
 
-        logger = logging.getLogger('azure')
+        logger = logging.getLogger("azure")
         logger.addHandler(mock_handler)
         logger.setLevel(logging.DEBUG)
 
         await client.create_rsa_key("rsa-key-name", size=2048)
 
         for message in mock_handler.messages:
-            if message.levelname == 'DEBUG' and message.funcName == 'on_request':
+            if message.levelname == "DEBUG" and message.funcName == "on_request":
                 try:
                     body = json.loads(message.message)
-                    if body['kty'] == 'RSA':
+                    if body["kty"] == "RSA":
                         return
                 except (ValueError, KeyError):
                     # this means the message is not JSON or has no kty property
@@ -407,20 +405,19 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @AsyncVaultClientPreparer()
-    @AsyncKeyVaultTestCase.await_prepared_test
-    async def test_logging_disabled(self, vault_client, **kwargs):
-        client = vault_client.keys
+    @KeyVaultClientPreparer()
+    @KeyVaultTestCase.await_prepared_test
+    async def test_logging_disabled(self, client, **kwargs):
         mock_handler = MockHandler()
 
-        logger = logging.getLogger('azure')
+        logger = logging.getLogger("azure")
         logger.addHandler(mock_handler)
         logger.setLevel(logging.DEBUG)
 
         await client.create_rsa_key("rsa-key-name", size=2048)
 
         for message in mock_handler.messages:
-            if message.levelname == 'DEBUG' and message.funcName == 'on_request':
+            if message.levelname == "DEBUG" and message.funcName == "on_request":
                 try:
                     body = json.loads(message.message)
                     assert body["kty"] != "RSA", "Client request body was logged"

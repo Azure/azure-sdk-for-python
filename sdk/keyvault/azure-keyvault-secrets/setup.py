@@ -58,7 +58,7 @@ setup(
     author_email="azurekeyvault@microsoft.com",
     url="https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-secrets",
     classifiers=[
-        "Development Status :: 5 - Production/Stable",
+        "Development Status :: 4 - Beta",
         "Programming Language :: Python",
         "Programming Language :: Python :: 2",
         "Programming Language :: Python :: 2.7",
@@ -79,7 +79,7 @@ setup(
             "azure.keyvault",
         ]
     ),
-    install_requires=["azure-core<2.0.0,>=1.2.1", "azure-common~=1.1", "msrest>=0.6.0"],
+    install_requires=["azure-core<2.0.0,>=1.2.1", "msrest>=0.6.0"],
     extras_require={
         ":python_version<'3.0'": ["azure-keyvault-nspkg"],
         ":python_version<'3.4'": ["enum34>=1.0.4"],

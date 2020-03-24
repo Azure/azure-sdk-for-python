@@ -13,7 +13,6 @@ from io import SEEK_SET, UnsupportedOperation
 import logging
 import uuid
 import types
-import platform
 from typing import Any, TYPE_CHECKING
 from wsgiref.handlers import format_date_time
 try:
@@ -40,7 +39,6 @@ from azure.core.pipeline.policies import (
 )
 from azure.core.exceptions import AzureError, ServiceRequestError, ServiceResponseError
 
-from .._version import VERSION
 from .models import LocationMode
 
 try:
@@ -257,32 +255,6 @@ class StorageLoggingPolicy(NetworkTraceLoggingPolicy):
                         _LOGGER.debug(response.http_response.text())
             except Exception as err:  # pylint: disable=broad-except
                 _LOGGER.debug("Failed to log response: %s", repr(err))
-
-
-class StorageUserAgentPolicy(SansIOHTTPPolicy):
-
-    _USERAGENT = "User-Agent"
-
-    def __init__(self, **kwargs):
-        self._application = kwargs.pop('user_agent', None)
-        storage_sdk = kwargs.pop('storage_sdk')
-        self._user_agent = "azsdk-python-storage-{}/{} Python/{} ({})".format(
-            storage_sdk,
-            VERSION,
-            platform.python_version(),
-            platform.platform())
-        super(StorageUserAgentPolicy, self).__init__()
-
-    def on_request(self, request):
-        existing = request.http_request.headers.get(self._USERAGENT, "")
-        app_string = request.context.options.pop('user_agent', None) or self._application
-        if app_string:
-            request.http_request.headers[self._USERAGENT] = "{} {}".format(
-                app_string, self._user_agent)
-        else:
-            request.http_request.headers[self._USERAGENT] = self._user_agent
-        if existing:
-            request.http_request.headers[self._USERAGENT] += " " + existing
 
 
 class StorageRequestHook(SansIOHTTPPolicy):

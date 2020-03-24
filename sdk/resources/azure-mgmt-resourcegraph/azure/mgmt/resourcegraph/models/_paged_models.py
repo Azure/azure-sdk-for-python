@@ -25,3 +25,16 @@ class OperationPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(OperationPaged, self).__init__(*args, **kwargs)
+class GraphQueryResourcePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`GraphQueryResource <azure.mgmt.resourcegraph.models.GraphQueryResource>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[GraphQueryResource]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(GraphQueryResourcePaged, self).__init__(*args, **kwargs)

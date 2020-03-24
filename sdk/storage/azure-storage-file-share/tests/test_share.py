@@ -27,10 +27,11 @@ from azure.storage.fileshare import (
 
 from azure.storage.fileshare._generated.models import DeleteSnapshotsOptionType, ListSharesIncludeType
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
-from _shared.filetestcase import (
-    FileTestCase,
+from _shared.testcase import (
+    StorageTestCase,
     LogCaptured,
-    GlobalStorageAccountPreparer
+    GlobalStorageAccountPreparer,
+    GlobalResourceGroupPreparer
 )
 
 # ------------------------------------------------------------------------------
@@ -39,9 +40,9 @@ TEST_SHARE_PREFIX = 'share'
 
 # ------------------------------------------------------------------------------
 
-class StorageShareTest(FileTestCase):
+class StorageShareTest(StorageTestCase):
     def _setup(self, storage_account, storage_account_key):
-        file_url = self.get_file_url(storage_account.name)
+        file_url = self.account_url(storage_account, "file")
         credentials = storage_account_key
         self.fsc = ShareServiceClient(account_url=file_url, credential=credentials)
         self.test_shares = []
@@ -113,7 +114,7 @@ class StorageShareTest(FileTestCase):
 
         share_props = share.get_share_properties()
         snapshot_client = ShareClient(
-            self.get_file_url(storage_account.name),
+            self.account_url(storage_account, "file"),
             share_name=share.share_name,
             snapshot=snapshot,
             credential=storage_account_key
@@ -155,7 +156,7 @@ class StorageShareTest(FileTestCase):
             share.delete_share()
 
         snapshot_client = ShareClient(
-            self.get_file_url(storage_account.name),
+            self.account_url(storage_account, "file"),
             share_name=share.share_name,
             snapshot=snapshot,
             credential=storage_account_key
@@ -298,6 +299,25 @@ class StorageShareTest(FileTestCase):
         self.assertGreaterEqual(len(shares), 1)
         self.assertIsNotNone(shares[0])
         self.assertNamedItemInContainer(shares, share.share_name)
+        self._delete_shares()
+
+    @GlobalResourceGroupPreparer()
+    @StorageAccountPreparer(random_name_enabled=True, sku='premium_LRS', name_prefix='pyacrstorage', kind='FileStorage')
+    def test_list_shares_no_options_for_premium_account(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
+        share = self._create_share()
+
+        # Act
+        shares = list(self.fsc.list_shares())
+
+        # Assert
+        self.assertIsNotNone(shares)
+        self.assertGreaterEqual(len(shares), 1)
+        self.assertIsNotNone(shares[0])
+        self.assertIsNotNone(shares[0].provisioned_iops)
+        self.assertIsNotNone(shares[0].provisioned_ingress_mbps)
+        self.assertIsNotNone(shares[0].provisioned_egress_mbps)
+        self.assertIsNotNone(shares[0].next_allowed_quota_downgrade_time)
         self._delete_shares()
 
     @GlobalStorageAccountPreparer()
@@ -443,6 +463,24 @@ class StorageShareTest(FileTestCase):
         # Assert
         self.assertIsNotNone(props)
         self.assertEqual(props.quota, 1)
+        self._delete_shares()
+
+    @GlobalResourceGroupPreparer()
+    @StorageAccountPreparer(random_name_enabled=True, sku='premium_LRS', name_prefix='pyacrstorage', kind='FileStorage')
+    def test_get_share_properties_for_premium_account(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
+        share = self._create_share()
+
+        # Act
+        props = share.get_share_properties()
+
+        # Assert
+        self.assertIsNotNone(props)
+        self.assertIsNotNone(props.quota)
+        self.assertIsNotNone(props.provisioned_iops)
+        self.assertIsNotNone(props.provisioned_ingress_mbps)
+        self.assertIsNotNone(props.provisioned_egress_mbps)
+        self.assertIsNotNone(props.next_allowed_quota_downgrade_time)
         self._delete_shares()
 
     @GlobalStorageAccountPreparer()
@@ -733,7 +771,7 @@ class StorageShareTest(FileTestCase):
             permission=ShareSasPermissions(read=True),
         )
         sas_client = ShareFileClient(
-            self.get_file_url(storage_account.name),
+            self.account_url(storage_account, "file"),
             share_name=share.share_name,
             file_path=dir_name + '/' + file_name,
             credential=token,
@@ -772,7 +810,7 @@ class StorageShareTest(FileTestCase):
             return
         self._setup(storage_account, storage_account_key)
         transport = RequestsTransport()
-        url = self.get_file_url(storage_account.name)
+        url = self.account_url(storage_account, "file")
         credential = storage_account_key
         prefix = TEST_SHARE_PREFIX
         share_name = self.get_resource_name(prefix)

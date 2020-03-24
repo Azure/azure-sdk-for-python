@@ -14,7 +14,7 @@ interactions:
     body:
       string: ''
     headers:
-      content-length: '0'
+      Content-Length: '0'
       date: Wed, 15 Jan 2020 23:53:32 GMT
       etag: '"0x8D79A1620F9D51C"'
       last-modified: Wed, 15 Jan 2020 23:53:32 GMT
@@ -54,7 +54,7 @@ interactions:
     body:
       string: ''
     headers:
-      content-length: '0'
+      Content-Length: '0'
       date: Wed, 15 Jan 2020 23:53:32 GMT
       etag: '"0x8D79A1621022679"'
       last-modified: Wed, 15 Jan 2020 23:53:32 GMT
@@ -106,7 +106,7 @@ interactions:
     body:
       string: ''
     headers:
-      content-length: '0'
+      Content-Length: '0'
       date: Wed, 15 Jan 2020 23:53:32 GMT
       etag: '"0x8D79A16211BCD62"'
       last-modified: Wed, 15 Jan 2020 23:53:33 GMT
@@ -154,7 +154,7 @@ interactions:
     body:
       string: ''
     headers:
-      content-length: '0'
+      Content-Length: '0'
       content-md5: uKHXKnfsrxcvqdhaQZ9EcQ==
       date: Wed, 15 Jan 2020 23:53:33 GMT
       etag: '"0x8D79A16212FA6F4"'
@@ -193,8 +193,8 @@ interactions:
       string: a
     headers:
       accept-ranges: bytes
-      content-length: '1'
-      content-range: bytes 0-0/65541
+      Content-Length: '1'
+      Content-Range: bytes 0-0/65541
       content-type: application/octet-stream
       date: Wed, 15 Jan 2020 23:53:32 GMT
       etag: '"0x8D79A16212FA6F4"'

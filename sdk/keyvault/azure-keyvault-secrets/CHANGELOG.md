@@ -1,5 +1,21 @@
 # Release History
 
+## 4.2.0b2 (Unreleased)
+
+
+## 4.2.0b1 (2020-03-10)
+- Support for Key Vault API version 7.1-preview
+([#10124](https://github.com/Azure/azure-sdk-for-python/pull/10124))
+  - Added `recoverable_days` to `CertificateProperties`
+  - Added `ApiVersion` enum identifying Key Vault versions supported by this package
+
+## 4.1.0 (2020-03-10)
+- `SecretClient` instances have a `close` method which closes opened sockets.
+Used as a context manager, a `SecretClient` closes opened sockets on exit.
+([#9906](https://github.com/Azure/azure-sdk-for-python/pull/9906))
+- Pollers no longer sleep after operation completion
+([#9991](https://github.com/Azure/azure-sdk-for-python/pull/9991))
+
 ## 4.0.1 (2020-02-11)
 - `azure.keyvault.secrets` defines `__version__`
 - Challenge authentication policy preserves request options

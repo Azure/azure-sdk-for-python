@@ -31,9 +31,10 @@ from azure.storage.fileshare.aio import (
 )
 from azure.storage.fileshare._generated.models import DeleteSnapshotsOptionType, ListSharesIncludeType
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
-from _shared.filetestcase import (
+from _shared.testcase import (
     LogCaptured,
-    GlobalStorageAccountPreparer
+    GlobalStorageAccountPreparer,
+    GlobalResourceGroupPreparer
 )
 from _shared.asynctestcase import AsyncStorageTestCase
 
@@ -57,7 +58,7 @@ class AiohttpTestTransport(AioHttpTransport):
 
 class StorageShareTest(AsyncStorageTestCase):
     def _setup(self, storage_account, storage_account_key):
-        file_url = self.get_file_url(storage_account.name)
+        file_url = self.account_url(storage_account, "file")
         credentials = storage_account_key
         self.fsc = ShareServiceClient(account_url=file_url, credential=credentials, transport=AiohttpTestTransport())
         self.test_shares = []
@@ -133,7 +134,7 @@ class StorageShareTest(AsyncStorageTestCase):
 
         share_props = await share.get_share_properties()
         snapshot_client = ShareClient(
-            self.get_file_url(storage_account.name),
+            self.account_url(storage_account, "file"),
             share_name=share.share_name,
             snapshot=snapshot,
             credential=storage_account_key
@@ -178,7 +179,7 @@ class StorageShareTest(AsyncStorageTestCase):
             await share.delete_share()
 
         snapshot_client = ShareClient(
-            self.get_file_url(storage_account.name),
+            self.account_url(storage_account, "file"),
             share_name=share.share_name,
             snapshot=snapshot,
             credential=storage_account_key
@@ -335,6 +336,30 @@ class StorageShareTest(AsyncStorageTestCase):
         self.assertNamedItemInContainer(shares, share.share_name)
         await self._delete_shares(share.share_name)
 
+    @pytest.mark.live_test_only
+    @GlobalResourceGroupPreparer()
+    @StorageAccountPreparer(random_name_enabled=True, sku='premium_LRS', name_prefix='pyacrstorage', kind='FileStorage')
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_list_shares_no_options_for_premium_account_async(self, resource_group, location, storage_account, storage_account_key):
+        # TODO: add recordings to this test
+        self._setup(storage_account, storage_account_key)
+        share = await self._create_share()
+
+        # Act
+        shares = []
+        async for s in self.fsc.list_shares():
+            shares.append(s)
+
+        # Assert
+        self.assertIsNotNone(shares)
+        self.assertGreaterEqual(len(shares), 1)
+        self.assertIsNotNone(shares[0])
+        self.assertIsNotNone(shares[0].provisioned_iops)
+        self.assertIsNotNone(shares[0].provisioned_ingress_mbps)
+        self.assertIsNotNone(shares[0].provisioned_egress_mbps)
+        self.assertIsNotNone(shares[0].next_allowed_quota_downgrade_time)
+        await self._delete_shares(share.share_name)
+
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_list_shares_with_snapshot_async(self, resource_group, location, storage_account, storage_account_key):
@@ -449,7 +474,6 @@ class StorageShareTest(AsyncStorageTestCase):
         md = props.metadata
         self.assertDictEqual(md, metadata)
         await self._delete_shares(share.share_name)
-        await self._delete_shares(share.share_name)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -499,6 +523,25 @@ class StorageShareTest(AsyncStorageTestCase):
         self.assertIsNotNone(props)
         self.assertEqual(props.quota, 1)
         await self._delete_shares(share.share_name)
+
+    @GlobalResourceGroupPreparer()
+    @StorageAccountPreparer(random_name_enabled=True, sku='premium_LRS', name_prefix='pyacrstorage', kind='FileStorage')
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_get_share_properties_for_premium_account_async(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
+        share = await self._create_share()
+
+        # Act
+        props = await share.get_share_properties()
+
+        # Assert
+        self.assertIsNotNone(props)
+        self.assertIsNotNone(props.quota)
+        self.assertIsNotNone(props.quota)
+        self.assertIsNotNone(props.provisioned_iops)
+        self.assertIsNotNone(props.provisioned_ingress_mbps)
+        self.assertIsNotNone(props.provisioned_egress_mbps)
+        self.assertIsNotNone(props.next_allowed_quota_downgrade_time)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -815,7 +858,7 @@ class StorageShareTest(AsyncStorageTestCase):
             permission=ShareSasPermissions(read=True),
         )
         sas_client = ShareFileClient(
-            self.get_file_url(storage_account.name),
+            self.account_url(storage_account, "file"),
             share_name=share.share_name,
             file_path=dir_name + '/' + file_name,
             credential=token,
@@ -856,7 +899,7 @@ class StorageShareTest(AsyncStorageTestCase):
             return
         self._setup(storage_account, storage_account_key)
         transport = AioHttpTransport()
-        url = self.get_file_url(storage_account.name)
+        url = self.account_url(storage_account, "file")
         credential = storage_account_key
         prefix = TEST_SHARE_PREFIX
         share_name = self.get_resource_name(prefix)

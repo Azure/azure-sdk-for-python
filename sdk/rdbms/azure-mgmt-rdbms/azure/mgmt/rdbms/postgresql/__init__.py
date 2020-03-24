@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .postgre_sql_management_client import PostgreSQLManagementClient
-from .version import VERSION
+from ._configuration import PostgreSQLManagementClientConfiguration
+from ._postgre_sql_management_client import PostgreSQLManagementClient
+__all__ = ['PostgreSQLManagementClient', 'PostgreSQLManagementClientConfiguration']
 
-__all__ = ['PostgreSQLManagementClient']
+from .version import VERSION
 
 __version__ = VERSION
 

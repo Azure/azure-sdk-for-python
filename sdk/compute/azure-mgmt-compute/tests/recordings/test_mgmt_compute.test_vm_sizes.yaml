@@ -9,8 +9,8 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
-        msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-compute/11.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
@@ -19,13 +19,13 @@ interactions:
     body:
       string: "{\r\n  \"value\": [\r\n    {\r\n      \"name\": \"Standard_B1ls\",\r\
         \n      \"numberOfCores\": 1,\r\n      \"osDiskSizeInMB\": 1047552,\r\n  \
-        \    \"resourceDiskSizeInMB\": 1024,\r\n      \"memoryInMB\": 512,\r\n   \
+        \    \"resourceDiskSizeInMB\": 4096,\r\n      \"memoryInMB\": 512,\r\n   \
         \   \"maxDataDiskCount\": 2\r\n    },\r\n    {\r\n      \"name\": \"Standard_B1ms\"\
         ,\r\n      \"numberOfCores\": 1,\r\n      \"osDiskSizeInMB\": 1047552,\r\n\
         \      \"resourceDiskSizeInMB\": 4096,\r\n      \"memoryInMB\": 2048,\r\n\
         \      \"maxDataDiskCount\": 2\r\n    },\r\n    {\r\n      \"name\": \"Standard_B1s\"\
         ,\r\n      \"numberOfCores\": 1,\r\n      \"osDiskSizeInMB\": 1047552,\r\n\
-        \      \"resourceDiskSizeInMB\": 2048,\r\n      \"memoryInMB\": 1024,\r\n\
+        \      \"resourceDiskSizeInMB\": 4096,\r\n      \"memoryInMB\": 1024,\r\n\
         \      \"maxDataDiskCount\": 2\r\n    },\r\n    {\r\n      \"name\": \"Standard_B2ms\"\
         ,\r\n      \"numberOfCores\": 2,\r\n      \"osDiskSizeInMB\": 1047552,\r\n\
         \      \"resourceDiskSizeInMB\": 16384,\r\n      \"memoryInMB\": 8192,\r\n\
@@ -296,7 +296,7 @@ interactions:
         : 204800,\r\n      \"memoryInMB\": 32768,\r\n      \"maxDataDiskCount\": 16\r\
         \n    },\r\n    {\r\n      \"name\": \"Standard_D16_v3\",\r\n      \"numberOfCores\"\
         : 16,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\"\
-        : 409600,\r\n      \"memoryInMB\": 65636,\r\n      \"maxDataDiskCount\": 32\r\
+        : 409600,\r\n      \"memoryInMB\": 65536,\r\n      \"maxDataDiskCount\": 32\r\
         \n    },\r\n    {\r\n      \"name\": \"Standard_D32_v3\",\r\n      \"numberOfCores\"\
         : 32,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\"\
         : 819200,\r\n      \"memoryInMB\": 131072,\r\n      \"maxDataDiskCount\":\
@@ -601,7 +601,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 22 Oct 2019 06:39:35 GMT
+      - Thu, 27 Feb 2020 18:11:40 GMT
       expires:
       - '-1'
       pragma:

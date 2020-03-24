@@ -5,11 +5,10 @@
 # ------------------------------------
 
 import json
-from azure.core.pipeline.policies import ContentDecodePolicy
 from azure.core.exceptions import (
     HttpResponseError,
     ClientAuthenticationError,
-    DecodeError,
+    ODataV4Format
 )
 from ._models import (
     RecognizeEntitiesResult,
@@ -24,47 +23,30 @@ from ._models import (
     DetectLanguageResult,
     DetectedLanguage,
     DocumentError,
-    SentimentScorePerLabel,
+    SentimentConfidenceScores,
     TextAnalyticsError,
     PiiEntity
 )
 
 
+class CSODataV4Format(ODataV4Format):
+    INNERERROR_LABEL = "innerError"  # Service plans to fix casing ("innererror") to reflect ODataV4 error spec
+
+    def __init__(self, odata_error):
+        try:
+            if odata_error["error"]["innerError"]:
+                super(CSODataV4Format, self).__init__(odata_error["error"]["innerError"])
+        except KeyError:
+            super(CSODataV4Format, self).__init__(odata_error)
+
+
 def process_batch_error(error):
-    """Raise detailed error message for HttpResponseErrors
+    """Raise detailed error message.
     """
     raise_error = HttpResponseError
     if error.status_code == 401:
         raise_error = ClientAuthenticationError
-    error_message = error.message
-    error_code = error.status_code
-    error_body, error_target = None, None
-
-    try:
-        error_body = ContentDecodePolicy.deserialize_from_http_generics(error.response)
-    except DecodeError:
-        pass
-
-    try:
-        if error_body is not None:
-            error_resp = error_body["error"]
-            if "innerError" in error_resp:
-                error_resp = error_resp["innerError"]
-
-            error_message = error_resp["message"]
-            error_code = error_resp["code"]
-            error_target = error_resp.get("target", None)
-            if error_target:
-                error_message += "\nErrorCode:{}\nTarget:{}".format(error_code, error_target)
-            else:
-                error_message += "\nErrorCode:{}".format(error_code)
-    except KeyError:
-        raise HttpResponseError(message="There was an unknown error with the request.")
-
-    error = raise_error(message=error_message, response=error.response)
-    error.error_code = error_code
-    error.target = error_target
-    raise error
+    raise raise_error(response=error.response, error_format=CSODataV4Format)
 
 
 def order_results(response, combined):
@@ -149,6 +131,6 @@ def sentiment_result(sentiment):
         id=sentiment.id,
         sentiment=sentiment.sentiment.value,
         statistics=TextDocumentStatistics._from_generated(sentiment.statistics),  # pylint: disable=protected-access
-        sentiment_scores=SentimentScorePerLabel._from_generated(sentiment.document_scores),  # pylint: disable=protected-access
+        confidence_scores=SentimentConfidenceScores._from_generated(sentiment.document_scores),  # pylint: disable=protected-access
         sentences=[SentenceSentiment._from_generated(s) for s in sentiment.sentences],  # pylint: disable=protected-access
     )

@@ -19,7 +19,7 @@ from azure.core.tracing.decorator import distributed_trace
 from ._shared.models import LocationMode
 from ._shared.base_client import StorageAccountHostsMixin, TransportWrapper, parse_connection_str, parse_query
 from ._shared.response_handlers import process_storage_error
-from ._generated import AzureQueueStorage
+from ._generated import AzureQueueStorage, VERSION
 from ._generated.models import StorageServiceProperties, StorageErrorException
 
 from ._models import (
@@ -58,6 +58,9 @@ class QueueServiceClient(StorageAccountHostsMixin):
         The credentials with which to authenticate. This is optional if the
         account URL already has a SAS token. The value can be a SAS token string, an account
         shared access key, or an instance of a TokenCredentials class from azure.identity.
+    :keyword str api_version:
+        The Storage API version to use for requests. Default value is '2019-07-07'.
+        Setting to an older version may result in reduced feature compatibility.
     :keyword str secondary_hostname:
         The hostname of the secondary endpoint.
 
@@ -99,6 +102,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
         self._query_str, credential = self._format_query_string(sas_token, credential)
         super(QueueServiceClient, self).__init__(parsed_url, service='queue', credential=credential, **kwargs)
         self._client = AzureQueueStorage(self.url, pipeline=self._pipeline)
+        self._client._config.version = kwargs.get('api_version', VERSION)  # pylint: disable=protected-access
 
     def _format_url(self, hostname):
         """Format the endpoint URL according to the current location
@@ -417,5 +421,5 @@ class QueueServiceClient(StorageAccountHostsMixin):
         return QueueClient(
             self.url, queue_name=queue_name, credential=self.credential,
             key_resolver_function=self.key_resolver_function, require_encryption=self.require_encryption,
-            key_encryption_key=self.key_encryption_key, _pipeline=_pipeline, _configuration=self._config,
-            _location_mode=self._location_mode, _hosts=self._hosts, **kwargs)
+            key_encryption_key=self.key_encryption_key, api_version=self.api_version, _pipeline=_pipeline,
+            _configuration=self._config, _location_mode=self._location_mode, _hosts=self._hosts, **kwargs)

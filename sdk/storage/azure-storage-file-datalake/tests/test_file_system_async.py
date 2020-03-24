@@ -7,13 +7,14 @@
 # --------------------------------------------------------------------------
 import unittest
 import asyncio
-
+from datetime import datetime, timedelta
 from azure.core.exceptions import ResourceNotFoundError
 
 from azure.core import MatchConditions
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
 
+from azure.storage.filedatalake import AccessPolicy
 from azure.storage.filedatalake.aio import DataLakeServiceClient
 from azure.storage.filedatalake import PublicAccess
 from testcase import (
@@ -22,6 +23,8 @@ from testcase import (
 )
 
 # ------------------------------------------------------------------------------
+from azure.storage.filedatalake import FileSystemSasPermissions
+
 TEST_FILE_SYSTEM_PREFIX = 'filesystem'
 
 
@@ -181,6 +184,34 @@ class FileSystemTest(StorageTestCase):
     def test_list_file_systems_with_include_metadata_async(self):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_list_file_systems_with_include_metadata_async())
+
+    async def _test_set_file_system_acl_async(self):
+        # Act
+        file_system = await self._create_file_system()
+        access_policy = AccessPolicy(permission=FileSystemSasPermissions(read=True),
+                                     expiry=datetime.utcnow() + timedelta(hours=1),
+                                     start=datetime.utcnow())
+        signed_identifier1 = {'testid': access_policy}
+        response = await file_system.set_file_system_access_policy(signed_identifier1, public_access=PublicAccess.FileSystem)
+
+        self.assertIsNotNone(response.get('etag'))
+        self.assertIsNotNone(response.get('last_modified'))
+
+        acl1 = await file_system.get_file_system_access_policy()
+        self.assertIsNotNone(acl1['public_access'])
+        self.assertEqual(len(acl1['signed_identifiers']), 1)
+
+        # If set signed identifier without specifying the access policy then it will be default to None
+        signed_identifier2 = {'testid': access_policy, 'test2': access_policy}
+        await file_system.set_file_system_access_policy(signed_identifier2)
+        acl2 = await file_system.get_file_system_access_policy()
+        self.assertIsNone(acl2['public_access'])
+        self.assertEqual(len(acl2['signed_identifiers']), 2)
+
+    @record
+    def test_set_file_system_acl_async(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_set_file_system_acl_async())
 
     async def _test_list_file_systems_by_page_async(self):
         # Arrange
@@ -396,6 +427,21 @@ class FileSystemTest(StorageTestCase):
     def test_create_file_from_file_system_client_async(self):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_file_from_file_system_client_async())
+
+    async def _test_get_root_directory_client(self):
+        file_system = await self._create_file_system()
+        directory_client = file_system._get_root_directory_client()
+
+        acl = 'user::rwx,group::r-x,other::rwx'
+        await directory_client.set_access_control(acl=acl)
+        access_control = await directory_client.get_access_control()
+
+        self.assertEqual(acl, access_control['acl'])
+
+    @record
+    def test_get_root_directory_client_async(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_get_root_directory_client())
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':

@@ -254,7 +254,7 @@ interactions:
       - world
       x-ms-meta-number:
       - '42'
-      x-ms-meta-up:
+      x-ms-meta-UP:
       - UPval
       x-ms-server-encrypted:
       - 'true'

@@ -13,6 +13,7 @@ from uamqp.message import Message, MessageProperties
 from uamqp import authentication
 from uamqp import constants, errors
 
+from azure.servicebus.common.constants import ASSOCIATEDLINKPROPERTYNAME
 from azure.servicebus.common.utils import create_properties, get_running_loop
 from azure.servicebus.common.errors import (
     _ServiceBusErrorPolicy,
@@ -74,12 +75,18 @@ class BaseHandler:  # pylint: disable=too-many-instance-attributes
         if not self.running:
             raise InvalidHandlerState("Client connection is closed.")
 
+        try:
+            application_properties = {ASSOCIATEDLINKPROPERTYNAME:self._handler.message_handler.name}
+        except AttributeError:
+            application_properties = {}
+
         mgmt_msg = Message(
             body=message,
             properties=MessageProperties(
                 reply_to=self.mgmt_target,
                 encoding=self.encoding,
-                **kwargs))
+                **kwargs),
+            application_properties=application_properties)
         try:
             return await self._handler.mgmt_request_async(
                 mgmt_msg,
@@ -146,8 +153,8 @@ class BaseHandler:  # pylint: disable=too-many-instance-attributes
 
         .. note:: This operation is not thread-safe.
 
-        Example:
-            .. literalinclude:: ../examples/async_examples/test_examples_async.py
+        .. admonition:: Example:
+            .. literalinclude:: ../samples/async_samples/test_examples_async.py
                 :start-after: [START open_close_sender_directly]
                 :end-before: [END open_close_sender_directly]
                 :language: python
@@ -184,8 +191,8 @@ class BaseHandler:  # pylint: disable=too-many-instance-attributes
          due to an error.
         :type exception: Exception
 
-        Example:
-            .. literalinclude:: ../examples/async_examples/test_examples_async.py
+        .. admonition:: Example:
+            .. literalinclude:: ../samples/async_samples/test_examples_async.py
                 :start-after: [START open_close_sender_directly]
                 :end-before: [END open_close_sender_directly]
                 :language: python

@@ -14,7 +14,7 @@ interactions:
     body:
       string: ''
     headers:
-      content-length: '0'
+      Content-Length: '0'
       date: Wed, 15 Jan 2020 23:53:21 GMT
       etag: '"0x8D79A161A6D6CAF"'
       last-modified: Wed, 15 Jan 2020 23:53:21 GMT
@@ -54,7 +54,7 @@ interactions:
     body:
       string: ''
     headers:
-      content-length: '0'
+      Content-Length: '0'
       date: Wed, 15 Jan 2020 23:53:21 GMT
       etag: '"0x8D79A161A7721A3"'
       last-modified: Wed, 15 Jan 2020 23:53:22 GMT
@@ -106,7 +106,7 @@ interactions:
     body:
       string: ''
     headers:
-      content-length: '0'
+      Content-Length: '0'
       date: Wed, 15 Jan 2020 23:53:21 GMT
       etag: '"0x8D79A161A92EBCC"'
       last-modified: Wed, 15 Jan 2020 23:53:22 GMT
@@ -154,7 +154,7 @@ interactions:
     body:
       string: ''
     headers:
-      content-length: '0'
+      Content-Length: '0'
       content-md5: uKHXKnfsrxcvqdhaQZ9EcQ==
       date: Wed, 15 Jan 2020 23:53:21 GMT
       etag: '"0x8D79A161AA89A70"'
@@ -200,7 +200,7 @@ interactions:
     body:
       string: ''
     headers:
-      content-length: '0'
+      Content-Length: '0'
       date: Wed, 15 Jan 2020 23:53:21 GMT
       etag: '"0x8D79A161AC17DF6"'
       last-modified: Wed, 15 Jan 2020 23:53:22 GMT
@@ -666,7 +666,7 @@ interactions:
     body:
       string: ''
     headers:
-      content-length: '0'
+      Content-Length: '0'
       content-md5: eHWkSQCBSUOlqL9F5vvqvA==
       date: Wed, 15 Jan 2020 23:53:22 GMT
       etag: '"0x8D79A161AD09BD6"'
@@ -1134,8 +1134,8 @@ interactions:
         world hello python hello world world world python hello hello py'
     headers:
       accept-ranges: bytes
-      content-length: '32768'
-      content-range: bytes 0-32767/32772
+      Content-Length: '32768'
+      Content-Range: bytes 0-32767/32772
       content-type: application/octet-stream
       date: Wed, 15 Jan 2020 23:53:22 GMT
       etag: '"0x8D79A161AD09BD6"'
@@ -1185,8 +1185,8 @@ interactions:
       string: thon
     headers:
       accept-ranges: bytes
-      content-length: '4'
-      content-range: bytes 32768-32771/32772
+      Content-Length: '4'
+      Content-Range: bytes 32768-32771/32772
       content-type: application/octet-stream
       date: Wed, 15 Jan 2020 23:53:22 GMT
       etag: '"0x8D79A161AD09BD6"'

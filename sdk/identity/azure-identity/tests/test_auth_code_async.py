@@ -17,6 +17,15 @@ from helpers_async import async_validating_transport, AsyncMockTransport, wrap_i
 
 
 @pytest.mark.asyncio
+async def test_no_scopes():
+    """The credential should raise ValueError when get_token is called with no scopes"""
+
+    credential = AuthorizationCodeCredential("tenant-id", "client-id", "auth-code", "http://localhost")
+    with pytest.raises(ValueError):
+        await credential.get_token()
+
+
+@pytest.mark.asyncio
 async def test_policies_configurable():
     policy = Mock(spec_set=SansIOHTTPPolicy, on_request=Mock())
 

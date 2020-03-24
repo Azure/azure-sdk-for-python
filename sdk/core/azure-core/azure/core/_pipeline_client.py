@@ -28,7 +28,9 @@ import logging
 from .configuration import Configuration
 from .pipeline import Pipeline
 from .pipeline.transport._base import PipelineClientBase
-from .pipeline.policies import ContentDecodePolicy, DistributedTracingPolicy, HttpLoggingPolicy
+from .pipeline.policies import (
+    ContentDecodePolicy, DistributedTracingPolicy, HttpLoggingPolicy, RequestIdPolicy
+)
 from .pipeline.transport import RequestsTransport
 
 try:
@@ -101,10 +103,11 @@ class PipelineClient(PipelineClientBase):
 
         if policies is None:  # [] is a valid policy list
             policies = [
+                RequestIdPolicy(**kwargs),
                 config.headers_policy,
                 config.user_agent_policy,
                 config.proxy_policy,
-                ContentDecodePolicy(),
+                ContentDecodePolicy(**kwargs),
                 config.redirect_policy,
                 config.retry_policy,
                 config.authentication_policy,

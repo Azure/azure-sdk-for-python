@@ -21,7 +21,7 @@ if TYPE_CHECKING:
     from azure.core.configuration import Configuration
 
 
-class ManagedIdentityCredential(object):
+class ManagedIdentityCredential(AsyncCredentialBase):
     """Authenticates with an Azure managed identity in any hosting environment which supports managed identities.
 
     See the Azure Active Directory documentation for more information about managed identities:
@@ -30,35 +30,35 @@ class ManagedIdentityCredential(object):
     :keyword str client_id: ID of a user-assigned identity. Leave unspecified to use a system-assigned identity.
     """
 
-    def __new__(cls, *args, **kwargs):
-        if os.environ.get(EnvironmentVariables.MSI_ENDPOINT):
-            return MsiCredential(*args, **kwargs)
-        return ImdsCredential(*args, **kwargs)
-
-    # the below methods are never called, because ManagedIdentityCredential can't be instantiated;
-    # they exist so tooling gets accurate signatures for Imds- and MsiCredential
     def __init__(self, **kwargs: "Any") -> None:
-        pass
+        self._credential = None
+        if os.environ.get(EnvironmentVariables.MSI_ENDPOINT):
+            self._credential = MsiCredential(**kwargs)
+        else:
+            self._credential = ImdsCredential(**kwargs)
 
     async def __aenter__(self):
-        pass
-
-    async def __aexit__(self, *args):
-        pass
+        if self._credential:
+            await self._credential.__aenter__()
+        return self
 
     async def close(self):
         """Close the credential's transport session."""
+        if self._credential:
+            await self._credential.__aexit__()
 
-    async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":  # pylint:disable=unused-argument
+    async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":
         """Asynchronously request an access token for `scopes`.
 
         .. note:: This method is called by Azure SDK clients. It isn't intended for use in application code.
 
-        :param str scopes: desired scopes for the token
+        :param str scopes: desired scope for the access token. This credential allows only one scope per request.
         :rtype: :class:`azure.core.credentials.AccessToken`
         :raises ~azure.identity.CredentialUnavailableError: managed identity isn't available in the hosting environment
         """
-        return AccessToken()
+        if not self._credential:
+            raise CredentialUnavailableError(message="No managed identity endpoint found.")
+        return await self._credential.get_token(*scopes, **kwargs)
 
 
 class _AsyncManagedIdentityBase(_ManagedIdentityBase, AsyncCredentialBase):
@@ -97,7 +97,9 @@ class ImdsCredential(_AsyncManagedIdentityBase):
     async def get_token(self, *scopes: str, **kwargs: "Any") -> AccessToken:  # pylint:disable=unused-argument
         """Asynchronously request an access token for `scopes`.
 
-        :param str scopes: desired scopes for the token
+        .. note:: This method is called by Azure SDK clients. It isn't intended for use in application code.
+
+        :param str scopes: desired scope for the access token. This credential allows only one scope per request.
         :rtype: :class:`azure.core.credentials.AccessToken`
         :raises ~azure.identity.CredentialUnavailableError: the IMDS endpoint is unreachable
         """
@@ -119,7 +121,7 @@ class ImdsCredential(_AsyncManagedIdentityBase):
             raise CredentialUnavailableError(message="IMDS endpoint unavailable")
 
         if len(scopes) != 1:
-            raise ValueError("this credential supports one scope per request")
+            raise ValueError("This credential requires exactly one scope per token request.")
 
         token = self._client.get_cached_token(scopes)
         if not token:
@@ -147,7 +149,9 @@ class MsiCredential(_AsyncManagedIdentityBase):
     async def get_token(self, *scopes: str, **kwargs: "Any") -> AccessToken:  # pylint:disable=unused-argument
         """Asynchronously request an access token for `scopes`.
 
-        :param str scopes: desired scopes for the token
+        .. note:: This method is called by Azure SDK clients. It isn't intended for use in application code.
+
+        :param str scopes: desired scope for the access token. This credential allows only one scope per request.
         :rtype: :class:`azure.core.credentials.AccessToken`
         :raises ~azure.identity.CredentialUnavailableError: the MSI endpoint is unavailable
         """
@@ -155,7 +159,7 @@ class MsiCredential(_AsyncManagedIdentityBase):
             raise CredentialUnavailableError(message="MSI endpoint unavailable")
 
         if len(scopes) != 1:
-            raise ValueError("this credential supports only one scope per request")
+            raise ValueError("This credential requires exactly one scope per token request.")
 
         token = self._client.get_cached_token(scopes)
         if not token:

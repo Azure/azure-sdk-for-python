@@ -23,6 +23,7 @@ from .._queue_service_client import QueueServiceClient as QueueServiceClientBase
 from .._shared.models import LocationMode
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper
 from .._shared.response_handlers import process_storage_error
+from .._generated.version import VERSION
 from .._generated.aio import AzureQueueStorage
 from .._generated.models import StorageServiceProperties, StorageErrorException
 
@@ -61,6 +62,9 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
         The credentials with which to authenticate. This is optional if the
         account URL already has a SAS token. The value can be a SAS token string, an account
         shared access key, or an instance of a TokenCredentials class from azure.identity.
+    :keyword str api_version:
+        The Storage API version to use for requests. Default value is '2019-07-07'.
+        Setting to an older version may result in reduced feature compatibility.
     :keyword str secondary_hostname:
         The hostname of the secondary endpoint.
 
@@ -95,6 +99,7 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
             loop=loop,
             **kwargs)
         self._client = AzureQueueStorage(url=self.url, pipeline=self._pipeline, loop=loop) # type: ignore
+        self._client._config.version = kwargs.get('api_version', VERSION)  # pylint: disable=protected-access
         self._loop = loop
 
     @distributed_trace_async
@@ -374,5 +379,6 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
         return QueueClient(
             self.url, queue_name=queue_name, credential=self.credential,
             key_resolver_function=self.key_resolver_function, require_encryption=self.require_encryption,
-            key_encryption_key=self.key_encryption_key, _pipeline=_pipeline, _configuration=self._config,
-            _location_mode=self._location_mode, _hosts=self._hosts, loop=self._loop, **kwargs)
+            key_encryption_key=self.key_encryption_key, api_version=self.api_version, _pipeline=_pipeline,
+            _configuration=self._config, _location_mode=self._location_mode,
+            _hosts=self._hosts, loop=self._loop, **kwargs)

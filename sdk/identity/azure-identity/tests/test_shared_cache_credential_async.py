@@ -25,6 +25,15 @@ from test_shared_cache_credential import get_account_event, populated_cache
 
 
 @pytest.mark.asyncio
+async def test_no_scopes():
+    """The credential should raise when get_token is called with no scopes"""
+
+    credential = SharedTokenCacheCredential(_cache=TokenCache())
+    with pytest.raises(ClientAuthenticationError):
+        await credential.get_token()
+
+
+@pytest.mark.asyncio
 async def test_close():
     transport = AsyncMockTransport()
     credential = SharedTokenCacheCredential(

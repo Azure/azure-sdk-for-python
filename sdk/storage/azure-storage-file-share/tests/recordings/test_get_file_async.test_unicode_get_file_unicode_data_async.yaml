@@ -14,7 +14,7 @@ interactions:
     body:
       string: ''
     headers:
-      content-length: '0'
+      Content-Length: '0'
       date: Wed, 15 Jan 2020 23:53:34 GMT
       etag: '"0x8D79A1622133B59"'
       last-modified: Wed, 15 Jan 2020 23:53:34 GMT
@@ -54,7 +54,7 @@ interactions:
     body:
       string: ''
     headers:
-      content-length: '0'
+      Content-Length: '0'
       date: Wed, 15 Jan 2020 23:53:34 GMT
       etag: '"0x8D79A16221D163B"'
       last-modified: Wed, 15 Jan 2020 23:53:34 GMT
@@ -106,7 +106,7 @@ interactions:
     body:
       string: ''
     headers:
-      content-length: '0'
+      Content-Length: '0'
       date: Wed, 15 Jan 2020 23:53:34 GMT
       etag: '"0x8D79A16223CFFCA"'
       last-modified: Wed, 15 Jan 2020 23:53:35 GMT
@@ -154,7 +154,7 @@ interactions:
     body:
       string: ''
     headers:
-      content-length: '0'
+      Content-Length: '0'
       content-md5: uKHXKnfsrxcvqdhaQZ9EcQ==
       date: Wed, 15 Jan 2020 23:53:34 GMT
       etag: '"0x8D79A162250D950"'
@@ -200,7 +200,7 @@ interactions:
     body:
       string: ''
     headers:
-      content-length: '0'
+      Content-Length: '0'
       date: Wed, 15 Jan 2020 23:53:34 GMT
       etag: '"0x8D79A16226C554B"'
       last-modified: Wed, 15 Jan 2020 23:53:35 GMT
@@ -248,7 +248,7 @@ interactions:
     body:
       string: ''
     headers:
-      content-length: '0'
+      Content-Length: '0'
       content-md5: aFkhSeVIRnJoB2MmKjC25w==
       date: Wed, 15 Jan 2020 23:53:34 GMT
       etag: '"0x8D79A1622749416"'
@@ -287,8 +287,8 @@ interactions:
       string: "hello world\u554A\u9F44\u4E02\u72DB\u72DC"
     headers:
       accept-ranges: bytes
-      content-length: '26'
-      content-range: bytes 0-25/26
+      Content-Length: '26'
+      Content-Range: bytes 0-25/26
       content-type: application/octet-stream
       date: Wed, 15 Jan 2020 23:53:34 GMT
       etag: '"0x8D79A1622749416"'

@@ -22,6 +22,7 @@ from .._generated.aio import AzureFileStorage
 from .._generated.models import StorageErrorException, StorageServiceProperties
 from .._generated.version import VERSION
 from .._share_service_client import ShareServiceClient as ShareServiceClientBase
+from .._serialize import get_api_version
 from ._share_client_async import ShareClient
 from ._models import SharePropertiesPaged
 from .._models import service_properties_deserialize
@@ -52,6 +53,12 @@ class ShareServiceClient(AsyncStorageAccountHostsMixin, ShareServiceClientBase):
         The credential with which to authenticate. This is optional if the
         account URL already has a SAS token. The value can be a SAS token string or an account
         shared access key.
+    :keyword str api_version:
+        The Storage API version to use for requests. Default value is '2019-07-07'.
+        Setting to an older version may result in reduced feature compatibility.
+
+        .. versionadded:: 12.1.0
+
     :keyword str secondary_hostname:
         The hostname of the secondary endpoint.
     :keyword loop:
@@ -81,6 +88,7 @@ class ShareServiceClient(AsyncStorageAccountHostsMixin, ShareServiceClientBase):
             loop=loop,
             **kwargs)
         self._client = AzureFileStorage(version=VERSION, url=self.url, pipeline=self._pipeline, loop=loop)
+        self._client._config.version = get_api_version(kwargs, VERSION)  # pylint: disable=protected-access
         self._loop = loop
 
     @distributed_trace_async
@@ -314,5 +322,6 @@ class ShareServiceClient(AsyncStorageAccountHostsMixin, ShareServiceClientBase):
             policies=self._pipeline._impl_policies # pylint: disable = protected-access
         )
         return ShareClient(
-            self.url, share_name=share_name, snapshot=snapshot, credential=self.credential, _hosts=self._hosts,
-            _configuration=self._config, _pipeline=_pipeline, _location_mode=self._location_mode, loop=self._loop)
+            self.url, share_name=share_name, snapshot=snapshot, credential=self.credential,
+            api_version=self.api_version, _hosts=self._hosts, _configuration=self._config,
+            _pipeline=_pipeline, _location_mode=self._location_mode, loop=self._loop)

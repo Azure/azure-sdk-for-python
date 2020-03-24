@@ -1,6 +1,28 @@
 # Release History
 
-## 12.1.1 (Unreleased)
+## 12.3.1 (Unreleased)
+
+
+## 12.3.0 (2020-03-10)
+
+**New features**
+
+- `stage_block` now propagates the response from the service.
+
+**Fixes**
+- Fixed a bug where a new transport is being passed in the `get_blob_client` method instead
+of using the existing one in the `ContainerClient`.
+
+**Notes**
+- The `StorageUserAgentPolicy` is now replaced with the `UserAgentPolicy` from azure-core. With this, the custom user agents are now added as a prefix instead of being appended.
+
+
+## 12.2.0
+
+**New features**
+- Added support for the 2019-07-07 service version, and added `api_version` parameter to clients.
+- Added support for encryption scopes that that could be used to encrypt blob content.
+- Added `get_page_range_diff_for_managed_disk` API which returns the list of valid page ranges diff between a snapshot and managed disk or another snapshot.
 
 **Fixes**
 - Responses are always decoded as UTF8

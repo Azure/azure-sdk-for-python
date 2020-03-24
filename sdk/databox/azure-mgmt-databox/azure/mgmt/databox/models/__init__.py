@@ -19,6 +19,9 @@ try:
     from ._models_py3 import ContactDetails
     from ._models_py3 import CopyLogDetails
     from ._models_py3 import CopyProgress
+    from ._models_py3 import CreateJobValidations
+    from ._models_py3 import CreateOrderLimitForSubscriptionValidationRequest
+    from ._models_py3 import CreateOrderLimitForSubscriptionValidationResponseProperties
     from ._models_py3 import DataBoxAccountCopyLogDetails
     from ._models_py3 import DataBoxDiskCopyLogDetails
     from ._models_py3 import DataBoxDiskCopyProgress
@@ -30,13 +33,20 @@ try:
     from ._models_py3 import DataBoxHeavySecret
     from ._models_py3 import DataBoxJobDetails
     from ._models_py3 import DataboxJobSecrets
+    from ._models_py3 import DataBoxScheduleAvailabilityRequest
     from ._models_py3 import DataBoxSecret
+    from ._models_py3 import DataDestinationDetailsValidationRequest
+    from ._models_py3 import DataDestinationDetailsValidationResponseProperties
+    from ._models_py3 import DcAccessSecurityCode
     from ._models_py3 import DestinationAccountDetails
     from ._models_py3 import DestinationManagedDiskDetails
     from ._models_py3 import DestinationStorageAccountDetails
     from ._models_py3 import DestinationToServiceLocationMap
+    from ._models_py3 import DiskScheduleAvailabilityRequest
     from ._models_py3 import DiskSecret
     from ._models_py3 import Error
+    from ._models_py3 import HeavyScheduleAvailabilityRequest
+    from ._models_py3 import JobDeliveryInfo
     from ._models_py3 import JobDetails
     from ._models_py3 import JobErrorDetails
     from ._models_py3 import JobResource
@@ -48,18 +58,36 @@ try:
     from ._models_py3 import OperationDisplay
     from ._models_py3 import PackageShippingDetails
     from ._models_py3 import Preferences
+    from ._models_py3 import PreferencesValidationRequest
+    from ._models_py3 import PreferencesValidationResponseProperties
+    from ._models_py3 import RegionConfigurationRequest
+    from ._models_py3 import RegionConfigurationResponse
     from ._models_py3 import Resource
+    from ._models_py3 import ScheduleAvailabilityRequest
+    from ._models_py3 import ScheduleAvailabilityResponse
     from ._models_py3 import ShareCredentialDetails
     from ._models_py3 import ShipmentPickUpRequest
     from ._models_py3 import ShipmentPickUpResponse
     from ._models_py3 import ShippingAddress
     from ._models_py3 import Sku
+    from ._models_py3 import SkuAvailabilityValidationRequest
+    from ._models_py3 import SkuAvailabilityValidationResponseProperties
     from ._models_py3 import SkuCapacity
     from ._models_py3 import SkuCost
     from ._models_py3 import SkuInformation
+    from ._models_py3 import SubscriptionIsAllowedToCreateJobValidationRequest
+    from ._models_py3 import SubscriptionIsAllowedToCreateJobValidationResponseProperties
+    from ._models_py3 import TransportAvailabilityDetails
+    from ._models_py3 import TransportAvailabilityRequest
+    from ._models_py3 import TransportAvailabilityResponse
+    from ._models_py3 import TransportPreferences
     from ._models_py3 import UnencryptedCredentials
     from ._models_py3 import UpdateJobDetails
     from ._models_py3 import ValidateAddress
+    from ._models_py3 import ValidationInputRequest
+    from ._models_py3 import ValidationInputResponse
+    from ._models_py3 import ValidationRequest
+    from ._models_py3 import ValidationResponse
 except (SyntaxError, ImportError):
     from ._models import AccountCredentialDetails
     from ._models import AddressValidationOutput
@@ -70,6 +98,9 @@ except (SyntaxError, ImportError):
     from ._models import ContactDetails
     from ._models import CopyLogDetails
     from ._models import CopyProgress
+    from ._models import CreateJobValidations
+    from ._models import CreateOrderLimitForSubscriptionValidationRequest
+    from ._models import CreateOrderLimitForSubscriptionValidationResponseProperties
     from ._models import DataBoxAccountCopyLogDetails
     from ._models import DataBoxDiskCopyLogDetails
     from ._models import DataBoxDiskCopyProgress
@@ -81,13 +112,20 @@ except (SyntaxError, ImportError):
     from ._models import DataBoxHeavySecret
     from ._models import DataBoxJobDetails
     from ._models import DataboxJobSecrets
+    from ._models import DataBoxScheduleAvailabilityRequest
     from ._models import DataBoxSecret
+    from ._models import DataDestinationDetailsValidationRequest
+    from ._models import DataDestinationDetailsValidationResponseProperties
+    from ._models import DcAccessSecurityCode
     from ._models import DestinationAccountDetails
     from ._models import DestinationManagedDiskDetails
     from ._models import DestinationStorageAccountDetails
     from ._models import DestinationToServiceLocationMap
+    from ._models import DiskScheduleAvailabilityRequest
     from ._models import DiskSecret
     from ._models import Error
+    from ._models import HeavyScheduleAvailabilityRequest
+    from ._models import JobDeliveryInfo
     from ._models import JobDetails
     from ._models import JobErrorDetails
     from ._models import JobResource
@@ -99,23 +137,42 @@ except (SyntaxError, ImportError):
     from ._models import OperationDisplay
     from ._models import PackageShippingDetails
     from ._models import Preferences
+    from ._models import PreferencesValidationRequest
+    from ._models import PreferencesValidationResponseProperties
+    from ._models import RegionConfigurationRequest
+    from ._models import RegionConfigurationResponse
     from ._models import Resource
+    from ._models import ScheduleAvailabilityRequest
+    from ._models import ScheduleAvailabilityResponse
     from ._models import ShareCredentialDetails
     from ._models import ShipmentPickUpRequest
     from ._models import ShipmentPickUpResponse
     from ._models import ShippingAddress
     from ._models import Sku
+    from ._models import SkuAvailabilityValidationRequest
+    from ._models import SkuAvailabilityValidationResponseProperties
     from ._models import SkuCapacity
     from ._models import SkuCost
     from ._models import SkuInformation
+    from ._models import SubscriptionIsAllowedToCreateJobValidationRequest
+    from ._models import SubscriptionIsAllowedToCreateJobValidationResponseProperties
+    from ._models import TransportAvailabilityDetails
+    from ._models import TransportAvailabilityRequest
+    from ._models import TransportAvailabilityResponse
+    from ._models import TransportPreferences
     from ._models import UnencryptedCredentials
     from ._models import UpdateJobDetails
     from ._models import ValidateAddress
+    from ._models import ValidationInputRequest
+    from ._models import ValidationInputResponse
+    from ._models import ValidationRequest
+    from ._models import ValidationResponse
 from ._paged_models import JobResourcePaged
 from ._paged_models import OperationPaged
 from ._paged_models import SkuInformationPaged
 from ._paged_models import UnencryptedCredentialsPaged
 from ._data_box_management_client_enums import (
+    DataDestinationType,
     ShareDestinationFormatType,
     AccessProtocol,
     AddressValidationStatus,
@@ -123,9 +180,13 @@ from ._data_box_management_client_enums import (
     SkuName,
     SkuDisabledReason,
     NotificationStageName,
+    ValidationStatus,
     CopyStatus,
     StageName,
     StageStatus,
+    TransportShipmentTypes,
+    JobDeliveryType,
+    OverallValidationStatus,
 )
 
 __all__ = [
@@ -138,6 +199,9 @@ __all__ = [
     'ContactDetails',
     'CopyLogDetails',
     'CopyProgress',
+    'CreateJobValidations',
+    'CreateOrderLimitForSubscriptionValidationRequest',
+    'CreateOrderLimitForSubscriptionValidationResponseProperties',
     'DataBoxAccountCopyLogDetails',
     'DataBoxDiskCopyLogDetails',
     'DataBoxDiskCopyProgress',
@@ -149,13 +213,20 @@ __all__ = [
     'DataBoxHeavySecret',
     'DataBoxJobDetails',
     'DataboxJobSecrets',
+    'DataBoxScheduleAvailabilityRequest',
     'DataBoxSecret',
+    'DataDestinationDetailsValidationRequest',
+    'DataDestinationDetailsValidationResponseProperties',
+    'DcAccessSecurityCode',
     'DestinationAccountDetails',
     'DestinationManagedDiskDetails',
     'DestinationStorageAccountDetails',
     'DestinationToServiceLocationMap',
+    'DiskScheduleAvailabilityRequest',
     'DiskSecret',
     'Error',
+    'HeavyScheduleAvailabilityRequest',
+    'JobDeliveryInfo',
     'JobDetails',
     'JobErrorDetails',
     'JobResource',
@@ -167,22 +238,41 @@ __all__ = [
     'OperationDisplay',
     'PackageShippingDetails',
     'Preferences',
+    'PreferencesValidationRequest',
+    'PreferencesValidationResponseProperties',
+    'RegionConfigurationRequest',
+    'RegionConfigurationResponse',
     'Resource',
+    'ScheduleAvailabilityRequest',
+    'ScheduleAvailabilityResponse',
     'ShareCredentialDetails',
     'ShipmentPickUpRequest',
     'ShipmentPickUpResponse',
     'ShippingAddress',
     'Sku',
+    'SkuAvailabilityValidationRequest',
+    'SkuAvailabilityValidationResponseProperties',
     'SkuCapacity',
     'SkuCost',
     'SkuInformation',
+    'SubscriptionIsAllowedToCreateJobValidationRequest',
+    'SubscriptionIsAllowedToCreateJobValidationResponseProperties',
+    'TransportAvailabilityDetails',
+    'TransportAvailabilityRequest',
+    'TransportAvailabilityResponse',
+    'TransportPreferences',
     'UnencryptedCredentials',
     'UpdateJobDetails',
     'ValidateAddress',
+    'ValidationInputRequest',
+    'ValidationInputResponse',
+    'ValidationRequest',
+    'ValidationResponse',
     'OperationPaged',
     'JobResourcePaged',
     'UnencryptedCredentialsPaged',
     'SkuInformationPaged',
+    'DataDestinationType',
     'ShareDestinationFormatType',
     'AccessProtocol',
     'AddressValidationStatus',
@@ -190,7 +280,11 @@ __all__ = [
     'SkuName',
     'SkuDisabledReason',
     'NotificationStageName',
+    'ValidationStatus',
     'CopyStatus',
     'StageName',
     'StageStatus',
+    'TransportShipmentTypes',
+    'JobDeliveryType',
+    'OverallValidationStatus',
 ]

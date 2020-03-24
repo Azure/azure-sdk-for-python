@@ -3,11 +3,11 @@ interactions:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-file-share/12.1.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Wed, 15 Jan 2020 23:50:40 GMT
+      - Wed, 12 Feb 2020 19:23:16 GMT
       x-ms-version:
-      - '2019-02-02'
+      - '2019-07-07'
     method: PUT
     uri: https://storagename.file.core.windows.net/utshare3f51905?restype=share
   response:
@@ -15,11 +15,11 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Wed, 15 Jan 2020 23:50:39 GMT
-      etag: '"0x8D79A15BA3DC0AF"'
-      last-modified: Wed, 15 Jan 2020 23:50:40 GMT
+      date: Wed, 12 Feb 2020 19:23:15 GMT
+      etag: '"0x8D7AFF102AE8BD8"'
+      last-modified: Wed, 12 Feb 2020 19:23:16 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-version: '2019-02-02'
+      x-ms-version: '2019-07-07'
     status:
       code: 201
       message: Created
@@ -27,7 +27,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - pyacrstorage43x4qoc3y4bx.file.core.windows.net
+        - pyacrstorageepk37kc36v76.file.core.windows.net
         - /utshare3f51905
         - restype=share
         - ''
@@ -35,11 +35,11 @@ interactions:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-file-share/12.1.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-content-length:
       - '1024'
       x-ms-date:
-      - Wed, 15 Jan 2020 23:50:40 GMT
+      - Wed, 12 Feb 2020 19:23:16 GMT
       x-ms-file-attributes:
       - none
       x-ms-file-creation-time:
@@ -51,20 +51,20 @@ interactions:
       x-ms-type:
       - file
       x-ms-version:
-      - '2019-02-02'
+      - '2019-07-07'
     method: PUT
     uri: https://storagename.file.core.windows.net/utshare3f51905/file3f51905
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>FileInvalidPermission</Code><Message>The
-        specified file permission is not valid.\nRequestId:bf9fc93d-701a-0071-02fe-cb90ac000000\nTime:2020-01-15T23:50:40.7554105Z</Message></Error>"
+        specified file permission is not valid.\nRequestId:3fb4d56b-201a-004a-15d9-e1b650000000\nTime:2020-02-12T19:23:16.4442032Z</Message></Error>"
     headers:
       content-length: '233'
       content-type: application/xml
-      date: Wed, 15 Jan 2020 23:50:40 GMT
+      date: Wed, 12 Feb 2020 19:23:16 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code: FileInvalidPermission
-      x-ms-version: '2019-02-02'
+      x-ms-version: '2019-07-07'
     status:
       code: 400
       message: The specified file permission is not valid.
@@ -72,7 +72,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - pyacrstorage43x4qoc3y4bx.file.core.windows.net
+        - pyacrstorageepk37kc36v76.file.core.windows.net
         - /utshare3f51905/file3f51905
         - ''
         - ''

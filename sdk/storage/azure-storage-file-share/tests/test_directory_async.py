@@ -16,7 +16,7 @@ from azure.storage.fileshare import StorageErrorCode
 from azure.storage.fileshare.aio import ShareServiceClient
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 
-from _shared.filetestcase import (
+from _shared.testcase import (
     LogCaptured,
     GlobalStorageAccountPreparer
 )
@@ -37,8 +37,8 @@ class AiohttpTestTransport(AioHttpTransport):
 
 class StorageDirectoryTest(AsyncStorageTestCase):
     # --Helpers-----------------------------------------------------------------
-    async def _setup(self,storage_account, storage_account_key):
-        url = self.get_file_url(storage_account.name)
+    async def _setup(self, storage_account, storage_account_key):
+        url = self.account_url(storage_account, "file")
         credential = storage_account_key
         self.fsc = ShareServiceClient(url, credential=credential, transport=AiohttpTestTransport())
         self.share_name = self.get_resource_name('utshare')
@@ -574,10 +574,6 @@ class StorageDirectoryTest(AsyncStorageTestCase):
         self.assertIsNotNone(props)
         self.assertIsNotNone(props.etag)
         self.assertIsNotNone(props.last_modified)
-
-        if self.is_file_encryption_enabled():
-            self.assertTrue(props.server_encrypted)
-        else:
-            self.assertFalse(props.server_encrypted)
+        self.assertTrue(props.server_encrypted)
 
 # ------------------------------------------------------------------------------

@@ -1,5 +1,37 @@
 # Release History
 
+## 9.0.0 (2020-03-24)
+
+**Features**
+
+  - Model ManagedClusterAgentPoolProfile has a new parameter mode
+  - Model ManagedCluster has a new parameter sku
+  - Model OpenShiftManagedCluster has a new parameter refresh_cluster
+  - Model ManagedClusterAADProfile has a new parameter admin_group_object_ids
+  - Model ManagedClusterAADProfile has a new parameter managed
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter mode
+  - Model OpenShiftManagedClusterMasterPoolProfile has a new parameter api_properties
+  - Model ManagedClusterPropertiesAutoScalerProfile has a new parameter balance_similar_node_groups
+  - Model NetworkProfile has a new parameter management_subnet_cidr
+  - Model AgentPool has a new parameter mode
+
+**Breaking changes**
+
+  - Model OpenShiftManagedClusterMasterPoolProfile no longer has parameter name
+  - Model OpenShiftManagedClusterMasterPoolProfile no longer has parameter os_type
+  - Model NetworkProfile no longer has parameter peer_vnet_id
+
+## 8.3.0 (2020-02-14)
+
+**Features**
+
+  - Model ManagedCluster has a new parameter auto_scaler_profile
+  - Model ManagedClusterAgentPoolProfile has a new parameter spot_max_price
+  - Model AgentPool has a new parameter spot_max_price
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter spot_max_price
+  - Model ContainerServiceNetworkProfile has a new parameter network_mode
+  - Added operation ManagedClustersOperations.list_cluster_monitoring_user_credentials
+
 ## 8.2.0 (2020-01-07)
 
 **Features**

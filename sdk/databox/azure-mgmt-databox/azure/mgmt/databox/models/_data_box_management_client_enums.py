@@ -12,10 +12,16 @@
 from enum import Enum
 
 
+class DataDestinationType(str, Enum):
+
+    storage_account = "StorageAccount"  #: Storage Accounts .
+    managed_disk = "ManagedDisk"  #: Azure Managed disk storage.
+
+
 class ShareDestinationFormatType(str, Enum):
 
     unknown_type = "UnknownType"  #: Unknown format.
-    hcs = "HCS"  #: StorSimple data format.
+    hcs = "HCS"  #: Storsimple data format.
     block_blob = "BlockBlob"  #: Azure storage block blob format.
     page_blob = "PageBlob"  #: Azure storage page blob format.
     azure_file = "AzureFile"  #: Azure storage file format.
@@ -44,9 +50,9 @@ class AddressType(str, Enum):
 
 class SkuName(str, Enum):
 
-    data_box = "DataBox"  #: DataBox.
-    data_box_disk = "DataBoxDisk"  #: DataBoxDisk.
-    data_box_heavy = "DataBoxHeavy"  #: DataBoxHeavy.
+    data_box = "DataBox"  #: Databox.
+    data_box_disk = "DataBoxDisk"  #: DataboxDisk.
+    data_box_heavy = "DataBoxHeavy"  #: DataboxHeavy.
 
 
 class SkuDisabledReason(str, Enum):
@@ -69,6 +75,13 @@ class NotificationStageName(str, Enum):
     data_copy = "DataCopy"  #: Notification at data copy started stage.
 
 
+class ValidationStatus(str, Enum):
+
+    valid = "Valid"  #: Validation is successful
+    invalid = "Invalid"  #: Validation is not successful
+    skipped = "Skipped"  #: Validation is skipped
+
+
 class CopyStatus(str, Enum):
 
     not_started = "NotStarted"  #: Data copy hasn't started yet.
@@ -77,6 +90,11 @@ class CopyStatus(str, Enum):
     completed_with_errors = "CompletedWithErrors"  #: Data copy completed with errors.
     failed = "Failed"  #: Data copy failed. No data was copied.
     not_returned = "NotReturned"  #: No copy triggered as device was not returned.
+    hardware_error = "HardwareError"  #: The Device has hit hardware issues.
+    device_formatted = "DeviceFormatted"  #: Data copy failed. The Device was formatted by user.
+    device_metadata_modified = "DeviceMetadataModified"  #: Data copy failed. Device metadata was modified by user.
+    storage_account_not_accessible = "StorageAccountNotAccessible"  #: Data copy failed. Storage Account was not accessible during copy.
+    unsupported_data = "UnsupportedData"  #: Data copy failed. The Device data content is not supported.
 
 
 class StageName(str, Enum):
@@ -94,6 +112,9 @@ class StageName(str, Enum):
     failed_issue_reported_at_customer = "Failed_IssueReportedAtCustomer"  #: Order has failed due to issue reported by user.
     failed_issue_detected_at_azure_dc = "Failed_IssueDetectedAtAzureDC"  #: Order has failed due to issue detected at azure datacenter.
     aborted = "Aborted"  #: Order has been aborted.
+    completed_with_warnings = "CompletedWithWarnings"  #: Order has completed with warnings.
+    ready_to_dispatch_from_azure_dc = "ReadyToDispatchFromAzureDC"  #: Device is ready to be handed to customer from Azure DC.
+    ready_to_receive_at_azure_dc = "ReadyToReceiveAtAzureDC"  #: Device can be dropped off at Azure DC.
 
 
 class StageStatus(str, Enum):
@@ -105,3 +126,22 @@ class StageStatus(str, Enum):
     cancelled = "Cancelled"  #: Stage has been cancelled.
     cancelling = "Cancelling"  #: Stage is cancelling.
     succeeded_with_errors = "SucceededWithErrors"  #: Stage has succeeded with errors.
+
+
+class TransportShipmentTypes(str, Enum):
+
+    customer_managed = "CustomerManaged"  #: Shipment Logistics is handled by the customer.
+    microsoft_managed = "MicrosoftManaged"  #: Shipment Logistics is handled by Microsoft.
+
+
+class JobDeliveryType(str, Enum):
+
+    non_scheduled = "NonScheduled"  #: Non Scheduled job.
+    scheduled = "Scheduled"  #: Scheduled job.
+
+
+class OverallValidationStatus(str, Enum):
+
+    all_valid_to_proceed = "AllValidToProceed"  #: Every input request is valid.
+    inputs_revisit_required = "InputsRevisitRequired"  #: Some input requests are not valid.
+    certain_input_validations_skipped = "CertainInputValidationsSkipped"  #: Certain input validations skipped.

@@ -11,14 +11,13 @@ jobs:
   - template: ../../eng/pipelines/templates/jobs/archetype-sdk-tests.yml
     parameters:
       ServiceDirectory: servicebus
+      TestTimeoutInMinutes: 300
       EnvVars:
-        SERVICE_BUS_HOSTNAME: $(python-sb-livetest-service-bus-hostname)
-        SERVICE_BUS_SAS_POLICY: $(python-sb-livetest-service-sas-policy)
-        SERVICE_BUS_SAS_KEY: $(python-sb-livetest-service-sas-key)
-        SERVICE_BUS_CONNECTION_STR: $(python-sb-livetest-service-connection-str)
-        SERVICE_BUS_CONNECTION_STR_RO: $(python-sb-livetest-service-connection-str-ro)
-        SERVICE_BUS_CONNECTION_STR_WO: $(python-sb-livetest-service-connection-str-wo)
-        SERVICE_BUS_CONNECTION_STR_ENTITY: $(python-sb-livetest-service-connection-entity)
+        AZURE_SUBSCRIPTION_ID: $(azure-subscription-id)
+        AZURE_TENANT_ID: $(aad-azure-sdk-test-tenant-id)
+        AZURE_CLIENT_ID: $(aad-azure-sdk-test-client-id)
+        AZURE_CLIENT_SECRET: $(aad-azure-sdk-test-client-secret)
+        AZURE_TEST_RUN_LIVE: 'true'
       Matrix:
         Linux_Python35:
           OSName: 'Linux'
@@ -26,7 +25,7 @@ jobs:
           PythonVersion: '3.5'
         MacOs_Python37:
           OSName: 'MacOS'
-          OSVmImage: 'macOS-10.14'
+          OSVmImage: 'macOS-10.15'
           PythonVersion: '3.7'
         Windows_Python27:
           OSName: 'Windows'

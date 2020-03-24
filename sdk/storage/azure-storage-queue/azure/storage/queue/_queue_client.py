@@ -26,7 +26,7 @@ from ._shared.response_handlers import (
     return_headers_and_deserialized)
 from ._message_encoding import NoEncodePolicy, NoDecodePolicy
 from ._deserialize import deserialize_queue_properties, deserialize_queue_creation
-from ._generated import AzureQueueStorage
+from ._generated import AzureQueueStorage, VERSION
 from ._generated.models import StorageErrorException, SignedIdentifier
 from ._generated.models import QueueMessage as GenQueueMessage
 from ._models import QueueMessage, AccessPolicy, MessagesPaged
@@ -49,12 +49,15 @@ class QueueClient(StorageAccountHostsMixin):
         The credentials with which to authenticate. This is optional if the
         account URL already has a SAS token. The value can be a SAS token string, an account
         shared access key, or an instance of a TokenCredentials class from azure.identity.
+    :keyword str api_version:
+        The Storage API version to use for requests. Default value is '2019-07-07'.
+        Setting to an older version may result in reduced feature compatibility.
     :keyword str secondary_hostname:
         The hostname of the secondary endpoint.
-    :keyword encode_policy: The encoding policy to use on outgoing messages.
+    :keyword message_encode_policy: The encoding policy to use on outgoing messages.
         Default is not to encode messages. Other options include :class:`TextBase64EncodePolicy`,
         :class:`BinaryBase64EncodePolicy` or `None`.
-    :keyword decode_policy: The decoding policy to use on incoming messages.
+    :keyword message_decode_policy: The decoding policy to use on incoming messages.
         Default value is not to decode messages. Other options include :class:`TextBase64DecodePolicy`,
         :class:`BinaryBase64DecodePolicy` or `None`.
 
@@ -96,6 +99,7 @@ class QueueClient(StorageAccountHostsMixin):
         self._config.message_encode_policy = kwargs.get('message_encode_policy', None) or NoEncodePolicy()
         self._config.message_decode_policy = kwargs.get('message_decode_policy', None) or NoDecodePolicy()
         self._client = AzureQueueStorage(self.url, pipeline=self._pipeline)
+        self._client._config.version = kwargs.get('api_version', VERSION)  # pylint: disable=protected-access
 
     def _format_url(self, hostname):
         """Format the endpoint URL according to the current location
@@ -457,8 +461,8 @@ class QueueClient(StorageAccountHostsMixin):
             require_encryption=self.require_encryption,
             key_encryption_key=self.key_encryption_key,
             resolver=self.key_resolver_function)
-        content = self._config.message_encode_policy(content)
-        new_message = GenQueueMessage(message_text=content)
+        encoded_content = self._config.message_encode_policy(content)
+        new_message = GenQueueMessage(message_text=encoded_content)
 
         try:
             enqueued = self._client.messages.enqueue(
@@ -467,7 +471,7 @@ class QueueClient(StorageAccountHostsMixin):
                 message_time_to_live=time_to_live,
                 timeout=timeout,
                 **kwargs)
-            queue_message = QueueMessage(content=new_message.message_text)
+            queue_message = QueueMessage(content=content)
             queue_message.id = enqueued[0].message_id
             queue_message.inserted_on = enqueued[0].insertion_time
             queue_message.expires_on = enqueued[0].expiration_time
@@ -610,8 +614,8 @@ class QueueClient(StorageAccountHostsMixin):
                 self.require_encryption,
                 self.key_encryption_key,
                 self.key_resolver_function)
-            message_text = self._config.message_encode_policy(message_text)
-            updated = GenQueueMessage(message_text=message_text)
+            encoded_message_text = self._config.message_encode_policy(message_text)
+            updated = GenQueueMessage(message_text=encoded_message_text)
         else:
             updated = None # type: ignore
         try:

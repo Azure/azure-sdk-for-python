@@ -19,9 +19,11 @@ from common_tasks import (
     run_check_call,
     parse_require,
     install_package_from_whl,
-    filter_dev_requirements
+    filter_dev_requirements,
+    find_packages_missing_on_pypi,
+    find_whl
 )
-from git_helper import get_release_tag, checkout_code_repo, clone_repo
+from git_helper import get_release_tag, git_checkout_tag, git_checkout_branch, clone_repo
 from pip._internal.operations import freeze
 
 AZURE_GLOB_STRING = "azure*"
@@ -86,18 +88,6 @@ class RegressionContext:
     def initialize(self, dep_pkg_root_path):
         self.dep_pkg_root_path = dep_pkg_root_path
         self.venv.clear_venv()
-        # install test tools requirements outside virtual environment to access pypi_tools package
-        run_check_call(
-            [
-                sys.executable,
-                "-m",
-                "pip",
-                "install",
-                "-r",
-                test_tools_req_file,
-            ],
-            self.package_root_path
-        )
 
     def deinitialize(self, dep_pkg_root_path):
         # This function can be used to reset code repo to master branch
@@ -114,12 +104,14 @@ class RegressionTest:
     def run(self):
         pkg_name = self.context.package_name
         if pkg_name in self.package_dependency_dict:
-            dep_packages = self.package_dependency_dict[pkg_name]
             logging.info("Running regression test for {}".format(pkg_name))
-            logging.info(
-                "Dependent packages for [{0}]: {1}".format(pkg_name, dep_packages)
-            )
+            self.whl_path = find_whl(pkg_name, self.context.pkg_version, self.context.whl_directory)
+            if find_packages_missing_on_pypi(self.whl_path):
+                logging.error("Required packages are not available on PyPI. Skipping regression test")
+                exit(0)
 
+            dep_packages = self.package_dependency_dict[pkg_name]
+            logging.info("Dependent packages for [{0}]: {1}".format(pkg_name, dep_packages))
             for dep_pkg_path in dep_packages:
                 dep_pkg_name, _, _, _ = parse_setup(dep_pkg_path)
                 logging.info(
@@ -144,18 +136,19 @@ class RegressionTest:
         self.context.initialize(dep_pkg_path)
 
         # find GA released tags for package and run test using that code base
-        dep_pkg_name, _, _, _ = parse_setup(dep_pkg_path)
+        dep_pkg_name, version, _, _ = parse_setup(dep_pkg_path)
         release_tag = get_release_tag(dep_pkg_name, self.context.is_latest_depend_test)
         if not release_tag:
-            logging.error(
-                "Release tag is not avaiable. Skipping package {} from test".format(
-                    dep_pkg_name
-                )
-            )
+            logging.error("Release tag is not available. Skipping package {} from test".format(dep_pkg_name))
             return
 
-        # Get code repo with released tag of dependent package
-        checkout_code_repo(release_tag, dep_pkg_path)
+        test_branch_name = "{0}_tests".format(release_tag)
+        try:
+            git_checkout_branch(test_branch_name, dep_pkg_path)
+        except:
+            # If git checkout failed for "tests" branch then checkout branch with release tag
+            logging.info("Failed to checkout branch {}. Checking out release tagged git repo".format(test_branch_name))
+            git_checkout_tag(release_tag, dep_pkg_path)
 
         try:
             # install packages required to run tests
@@ -168,13 +161,12 @@ class RegressionTest:
                     "-r",
                     test_tools_req_file,
                 ],
-                self.context.package_root_path,
+                dep_pkg_path
             )
+
             # Install pre-built whl for current package
             install_package_from_whl(
-                self.context.package_name,
-                self.context.pkg_version,
-                self.context.whl_directory,
+                self.whl_path,
                 self.context.temp_path,
                 self.context.venv.python_executable,
             )
@@ -224,9 +216,13 @@ class RegressionTest:
         working_dir = self.context.package_root_path
         temp_dir = self.context.temp_path
 
-        # install dev requirement but skip already installed package which is being tested
+        list_to_exclude = [pkg_to_exclude,]
+        installed_pkgs = [p.split('==')[0] for p in list(freeze.freeze(paths=self.context.venv.lib_paths)) if p.startswith('azure-')]
+        logging.info("Installed azure sdk packages:{}".format(installed_pkgs))
+        list_to_exclude.extend(installed_pkgs)
+        # install dev requirement but skip already installed package which is being tested or present in dev requirement
         filtered_dev_req_path = filter_dev_requirements(
-            dependent_pkg_path, [pkg_to_exclude,], dependent_pkg_path
+            dependent_pkg_path, list_to_exclude, dependent_pkg_path
         )
 
         if filtered_dev_req_path:

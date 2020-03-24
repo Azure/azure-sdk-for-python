@@ -17,8 +17,8 @@ from azure.storage.fileshare import (
 )
 
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
-from _shared.filetestcase import (
-    FileTestCase,
+from _shared.testcase import (
+    StorageTestCase,
     LogCaptured,
     GlobalStorageAccountPreparer
 )
@@ -27,9 +27,9 @@ from _shared.filetestcase import (
 # ------------------------------------------------------------------------------
 
 
-class FileServicePropertiesTest(FileTestCase):
+class FileServicePropertiesTest(StorageTestCase):
     def _setup(self, storage_account, storage_account_key):
-        url = self.get_file_url(storage_account.name)
+        url = self.account_url(storage_account, "file")
         credential = storage_account_key
         self.fsc = ShareServiceClient(url, credential=credential)
 

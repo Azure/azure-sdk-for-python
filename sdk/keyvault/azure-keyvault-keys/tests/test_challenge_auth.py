@@ -24,7 +24,7 @@ from azure.keyvault.keys._shared import ChallengeAuthPolicy, HttpChallenge, Http
 
 import pytest
 
-from keys_helpers import mock_response, Request, validating_transport
+from _shared.helpers import mock_response, Request, validating_transport
 
 
 def empty_challenge_cache(fn):

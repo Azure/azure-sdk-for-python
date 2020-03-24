@@ -12,7 +12,7 @@ from azure.core.polling import PollingMethod, LROPoller, NoPolling
 from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
 
 try:
-    from urlparse import urlparse # type: ignore # pylint: disable=unused-import
+    from urlparse import urlparse  # type: ignore # pylint: disable=unused-import
 except ImportError:
     from urllib.parse import urlparse
 
@@ -61,8 +61,8 @@ class KeyVaultOperationPoller(LROPoller):
         if not self._polling_method.finished():
             self._done = threading.Event()
             self._thread = threading.Thread(
-                target=with_current_context(self._start),
-                name="KeyVaultOperationPoller({})".format(uuid.uuid4()))
+                target=with_current_context(self._start), name="KeyVaultOperationPoller({})".format(uuid.uuid4())
+            )
             self._thread.daemon = True
             self._thread.start()
 
@@ -72,29 +72,39 @@ class KeyVaultOperationPoller(LROPoller):
         try:
             # Let's handle possible None in forgiveness here
             raise self._exception  # type: ignore
-        except TypeError: # Was None
+        except TypeError:  # Was None
             pass
 
-class RecoverDeletedPollingMethod(PollingMethod):
-    def __init__(self, command, final_resource, initial_status, finished_status, interval=2):
+
+class DeleteRecoverPollingMethod(PollingMethod):
+    """Poller for deleting resources, and recovering deleted resources, in vaults with soft-delete enabled.
+
+    This works by polling for the existence of the deleted or recovered resource. When a resource is deleted, Key Vault
+    immediately removes it from its collection. However, the resource will not immediately appear in the deleted
+    collection. Key Vault will therefore respond 404 to GET requests for the deleted resource; when it responds 2xx,
+    the resource exists in the deleted collection i.e. its deletion is complete.
+
+    Similarly, while recovering a deleted resource, Key Vault will respond 404 to GET requests for the non-deleted
+    resource; when it responds 2xx, the resource exists in the non-deleted collection, i.e. its recovery is complete.
+    """
+    def __init__(self, command, final_resource, finished, interval=2):
         self._command = command
         self._resource = final_resource
         self._polling_interval = interval
-        self._status = initial_status
-        self._finished_status = finished_status
+        self._finished = finished
 
     def _update_status(self):
         # type: () -> None
         try:
             self._command()
-            self._status = self._finished_status
+            self._finished = True
         except ResourceNotFoundError:
             pass
         except HttpResponseError as e:
             # If we are polling on get_deleted_* and we don't have get permissions, we will get
             # ResourceNotFoundError until the resource is recovered, at which point we'll get a 403.
             if e.status_code == 403:
-                self._status = self._finished_status
+                self._finished = True
             else:
                 raise
 
@@ -106,14 +116,15 @@ class RecoverDeletedPollingMethod(PollingMethod):
         try:
             while not self.finished():
                 self._update_status()
-                time.sleep(self._polling_interval)
+                if not self.finished():
+                    time.sleep(self._polling_interval)
         except Exception as e:
             logger.warning(str(e))
             raise
 
     def finished(self):
         # type: () -> bool
-        return self._status == self._finished_status
+        return self._finished
 
     def resource(self):
         # type: () -> Any
@@ -121,20 +132,4 @@ class RecoverDeletedPollingMethod(PollingMethod):
 
     def status(self):
         # type: () -> str
-        return self._status
-
-
-class DeletePollingMethod(RecoverDeletedPollingMethod):
-    def __init__(self, command, final_resource, initial_status, finished_status, sd_disabled, interval=2):
-        self._sd_disabled = sd_disabled
-        super(DeletePollingMethod, self).__init__(
-            command=command,
-            final_resource=final_resource,
-            initial_status=initial_status,
-            finished_status=finished_status,
-            interval=interval
-        )
-
-    def finished(self):
-        # type: () -> bool
-        return self._sd_disabled or self._status == self._finished_status
+        return "finished" if self._finished else "polling"
