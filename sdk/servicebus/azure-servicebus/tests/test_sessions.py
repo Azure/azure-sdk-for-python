@@ -932,7 +932,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                 message = Message("Handler message no. {}".format(i))
                 sender.send(message)
 
-        with queue_client.get_receiver(session=session_id) as receiver:
+        with queue_client.get_receiver(session=session_id, prefetch=0) as receiver:
             message = receiver.next()
             assert message.sequence_number == 1
             message.abandon()

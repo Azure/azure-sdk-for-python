@@ -865,10 +865,10 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     messages.append(message)
                     assert not message.expired
                     renewer.register(message, timeout=60)
-                    print("Registered lock renew thread", message.locked_until, datetime.now())
                     time.sleep(50)
                     print("Finished first sleep", message.locked_until)
                     assert not message.expired
+                    time.sleep((message.locked_until - datetime.now()).total_seconds() + 1)
                     time.sleep(25)
                     print("Finished second sleep", message.locked_until, datetime.now())
                     assert message.expired
