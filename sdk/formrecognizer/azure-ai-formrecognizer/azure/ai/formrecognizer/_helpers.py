@@ -10,7 +10,7 @@ from azure.core.exceptions import HttpResponseError
 POLLING_INTERVAL = 1
 
 
-def get_pipeline_response(pipeline_response, _, response_headers):
+def get_pipeline_response(pipeline_response, _, response_headers):  # pylint: disable=unused-argument
     return pipeline_response
 
 
@@ -36,7 +36,8 @@ def get_content_type(form):
             return "image/jpeg"
         if form[0] == 0x89 and form[1] == 0x50 and form[2] == 0x4E and form[3] == 0x47:
             return "image/png"
-        if ((form[0] == 0x49 and form[1] == 0x49 and form[2] == 0x2A and form[3] == 0x0)  # little-endian
-                or (form[0] == 0x4D and form[1] == 0x4D and form[2] == 0x0 and form[3] == 0x2A)):  # big-endian
+        if form[0] == 0x49 and form[1] == 0x49 and form[2] == 0x2A and form[3] == 0x0:  # little-endian
+            return "image/tiff"
+        if form[0] == 0x4D and form[1] == 0x4D and form[2] == 0x0 and form[3] == 0x2A:  # big-endian
             return "image/tiff"
     raise HttpResponseError("Content type could not be auto-detected. Please pass the content_type keyword argument.")

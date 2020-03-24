@@ -4,6 +4,8 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
+# pylint: disable=protected-access
+
 from re import findall
 from collections import namedtuple
 from enum import Enum
@@ -78,7 +80,7 @@ class BoundingBox:
         )
 
 
-class ExtractedReceipt(object):
+class ExtractedReceipt(object):  # pylint: disable=too-many-instance-attributes
 
     def __init__(self, **kwargs):
         self.merchant_address = kwargs.get("merchant_address", None)
@@ -301,6 +303,7 @@ class TrainingInfo(object):
                 documents=[TrainingDocumentInfo._from_generated(doc) for doc in train.training_documents or []],
                 training_errors=FormRecognizerError._from_generated(train.errors)
             )
+        return train
 
 
 class FormFields(object):
@@ -350,6 +353,7 @@ class FormRecognizerError(object):
                 code=error.code,
                 message=error.message
             ) for error in err]
+        return err
 
 
 class CustomLabeledModel(object):
@@ -387,6 +391,7 @@ class FieldInfo(object):
                 field_name=field.field_name,
                 accuracy=field.accuracy
             ) for field in fields]
+        return fields
 
 
 class ExtractedPage(object):

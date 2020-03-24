@@ -4,7 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from azure.core.pipeline.policies import SansIOHTTPPolicy, ContentDecodePolicy
+from azure.core.pipeline.policies import SansIOHTTPPolicy
 
 
 class CognitiveServicesCredentialPolicy(SansIOHTTPPolicy):

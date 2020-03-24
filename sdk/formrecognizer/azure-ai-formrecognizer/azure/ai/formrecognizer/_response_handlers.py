@@ -4,6 +4,8 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
+# pylint: disable=protected-access
+
 from ._models import (
     ExtractedReceipt,
     FieldValue,

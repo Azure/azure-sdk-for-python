@@ -4,7 +4,8 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-import six
+# pylint: disable=protected-access
+
 from typing import (  # pylint: disable=unused-import
     Union,
     Optional,
@@ -14,8 +15,8 @@ from typing import (  # pylint: disable=unused-import
     IO,
     TYPE_CHECKING,
 )
+import six
 from azure.core.tracing.decorator_async import distributed_trace_async
-from azure.core.polling import async_poller
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
 from .._generated.aio._form_recognizer_client_async import FormRecognizerClient as FormRecognizer
 from ._base_client_async import AsyncFormRecognizerClientBase
@@ -24,7 +25,7 @@ from .._response_handlers import (
     prepare_layout_result
 )
 from .._generated.models import AnalyzeOperationResult
-from .._helpers import get_pipeline_response, get_content_type, POLLING_INTERVAL
+from .._helpers import get_content_type, POLLING_INTERVAL
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
     from .._credential import FormRecognizerApiKeyCredential
@@ -80,7 +81,7 @@ class FormRecognizerClient(AsyncFormRecognizerClientBase):
             content_type = get_content_type(form)
 
 
-        def callback(raw_response, _, headers):
+        def callback(raw_response, _, headers):  # pylint: disable=unused-argument
             analyze_result = self._client._deserialize(AnalyzeOperationResult, raw_response)
             extracted_receipt = prepare_receipt_result(analyze_result, include_text_details)
             return extracted_receipt
@@ -118,7 +119,7 @@ class FormRecognizerClient(AsyncFormRecognizerClientBase):
         elif content_type is None:
             content_type = get_content_type(form)
 
-        def callback(raw_response, _, headers):
+        def callback(raw_response, _, headers):  # pylint: disable=unused-argument
             analyze_result = self._client._deserialize(AnalyzeOperationResult, raw_response)
             extracted_layout = prepare_layout_result(analyze_result, include_elements=True)
             return extracted_layout

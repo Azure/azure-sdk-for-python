@@ -4,7 +4,8 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-import six
+# pylint: disable=protected-access
+
 from typing import (  # pylint: disable=unused-import
     Union,
     Optional,
@@ -15,13 +16,12 @@ from typing import (  # pylint: disable=unused-import
     Iterable,
     TYPE_CHECKING,
 )
-
+import six
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.polling import LROPoller
+from azure.core.polling.base_polling import LROBasePolling
 from azure.core.exceptions import HttpResponseError
 from ._generated.models import AnalyzeOperationResult, Model
-from azure.core.polling.base_polling import LROBasePolling
-
 from ._generated._form_recognizer_client import FormRecognizerClient as FormRecognizer
 from ._generated.models import TrainRequest, TrainSourceFilter
 from ._base_client import FormRecognizerClientBase
@@ -167,7 +167,7 @@ class CustomFormClient(FormRecognizerClientBase):
         elif content_type is None:
             content_type = get_content_type(form)
 
-        def callback(raw_response, _, headers):
+        def callback(raw_response, _, headers):  # pylint: disable=unused-argument
             extracted_form = self._client._deserialize(AnalyzeOperationResult, raw_response)
             if extracted_form.analyze_result.document_results:
                 raise HttpResponseError("Cannot call begin_extract_forms() with the ID of a model trained with "
@@ -208,7 +208,7 @@ class CustomFormClient(FormRecognizerClientBase):
         elif content_type is None:
             content_type = get_content_type(form)
 
-        def callback(raw_response, _, headers):
+        def callback(raw_response, _, headers):  # pylint: disable=unused-argument
             extracted_form = self._client._deserialize(AnalyzeOperationResult, raw_response)
             if not extracted_form.analyze_result.document_results:
                 raise HttpResponseError("Cannot call begin_extract_labeled_forms() with the ID of a model trained "
