@@ -30,9 +30,9 @@ class AzureCliCredential(AsyncCredentialBase):
 
         .. note:: This method is called by Azure SDK clients. It isn't intended for use in application code.
 
-        Only one scope is supported per request. This credential won't cache tokens. Every call invokes the Azure CLI.
+        This credential won't cache tokens. Every call invokes the Azure CLI.
 
-        :param str scopes: desired scopes for the token. Only **one** scope is supported per call.
+        :param str scopes: desired scope for the access token. This credential allows only one scope per request.
         :rtype: :class:`azure.core.credentials.AccessToken`
 
         :raises ~azure.identity.CredentialUnavailableError: the credential was unable to invoke the Azure CLI.

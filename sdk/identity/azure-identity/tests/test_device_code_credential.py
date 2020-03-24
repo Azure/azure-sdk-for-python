@@ -18,6 +18,14 @@ except ImportError:  # python < 3.3
     from mock import Mock  # type: ignore
 
 
+def test_no_scopes():
+    """The credential should raise when get_token is called with no scopes"""
+
+    credential = DeviceCodeCredential("client_id")
+    with pytest.raises(ClientAuthenticationError):
+        credential.get_token()
+
+
 def test_policies_configurable():
     policy = Mock(spec_set=SansIOHTTPPolicy, on_request=Mock())
 
