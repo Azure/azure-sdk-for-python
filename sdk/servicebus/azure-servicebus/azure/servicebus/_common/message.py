@@ -40,8 +40,9 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
 
     :param body: The data to send in a single message.
     :type body: str or bytes
-    :param encoding: The encoding for string data. Default is UTF-8.
-    :type encoding: str
+    :param str encoding: The encoding for string data. Default is UTF-8.
+    :keyword session_id: An optional session ID for the message to be sent.
+    :paramtype session_id: str or ~uuid.Guid
 
     .. admonition:: Example:
 
@@ -67,6 +68,7 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
         self._encoding = encoding
         self._expiry = None
         self._receiver = None
+        self.session_id = kwargs.get("session_id", None)
         if 'message' in kwargs:
             self.message = kwargs['message']
             self._annotations = self.message.annotations
