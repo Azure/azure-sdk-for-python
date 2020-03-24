@@ -17,6 +17,7 @@ from .._common.constants import (
     _X_OPT_LOCK_TOKEN
 )
 from .._common.utils import get_running_loop
+from ..exceptions import MessageSettleFailed
 
 
 class ReceivedMessage(sync_message.ReceivedMessage):
@@ -53,8 +54,12 @@ class ReceivedMessage(sync_message.ReceivedMessage):
         :raises: ~azure.servicebus.common.errors.SessionLockExpired if session lock has already expired.
         :raises: ~azure.servicebus.common.errors.MessageSettleFailed if message settle operation fails.
         """
+        # pylint: disable=protected-access
         self._is_live('complete')
-        await self._receiver._settle_message(SETTLEMENT_COMPLETE, [self.lock_token])  # pylint: disable=protected-access
+        try:
+            await self._receiver._settle_message(SETTLEMENT_COMPLETE, [self.lock_token])
+        except Exception as e:
+            raise MessageSettleFailed("complete", e)
         self._settled = True
 
     async def dead_letter(self, description=None):
@@ -72,12 +77,19 @@ class ReceivedMessage(sync_message.ReceivedMessage):
         :raises: ~azure.servicebus.common.errors.MessageLockExpired if message lock has already expired.
         :raises: ~azure.servicebus.common.errors.MessageSettleFailed if message settle operation fails.
         """
+        # pylint: disable=protected-access
         self._is_live('dead-letter')
         details = {
             'deadletter-reason': str(description) if description else "",
             'deadletter-description': str(description) if description else ""}
-        await self._receiver._settle_message(  # pylint: disable=protected-access
-            SETTLEMENT_DEADLETTER, [self.lock_token], dead_letter_details=details)
+        try:
+            await self._receiver._settle_message(
+                SETTLEMENT_DEADLETTER,
+                [self.lock_token],
+                dead_letter_details=details
+            )
+        except Exception as e:
+            raise MessageSettleFailed("reject", e)
         self._settled = True
 
     async def abandon(self):
@@ -87,8 +99,12 @@ class ReceivedMessage(sync_message.ReceivedMessage):
         :raises: ~azure.servicebus.common.errors.MessageLockExpired if message lock has already expired.
         :raises: ~azure.servicebus.common.errors.MessageSettleFailed if message settle operation fails.
         """
+        # pylint: disable=protected-access
         self._is_live('abandon')
-        await self._receiver._settle_message(SETTLEMENT_ABANDON, [self.lock_token])  # pylint: disable=protected-access
+        try:
+            await self._receiver._settle_message(SETTLEMENT_ABANDON, [self.lock_token])
+        except Exception as e:
+            raise MessageSettleFailed("abandon", e)
         self._settled = True
 
     async def defer(self):
@@ -98,8 +114,12 @@ class ReceivedMessage(sync_message.ReceivedMessage):
         :raises: ~azure.servicebus.common.errors.MessageLockExpired if message lock has already expired.
         :raises: ~azure.servicebus.common.errors.MessageSettleFailed if message settle operation fails.
         """
+        # pylint: disable=protected-access
         self._is_live('defer')
-        await self._receiver._settle_message(SETTLEMENT_DEFER, [self.lock_token])  # pylint: disable=protected-access
+        try:
+            await self._receiver._settle_message(SETTLEMENT_DEFER, [self.lock_token])
+        except Exception as e:
+            raise MessageSettleFailed("defer", e)
         self._settled = True
 
     async def renew_lock(self):

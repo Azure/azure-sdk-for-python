@@ -50,7 +50,9 @@ class ServiceBusSession(object):
         self._session_id = session_id
         self._receiver = receiver
         self._encoding = encoding
+        self._session_start = None
         self._locked_until = None
+        self.auto_renew_error = None
 
     def get_session_state(self):
         # type: () -> str
@@ -181,12 +183,13 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
         return source
 
     def _on_attach_for_session_entity(self, source, target, properties, error):  # pylint: disable=unused-argument
+        # pylint: disable=protected-access
         if str(source) == self._entity_uri:
-            self._session_start = datetime.datetime.now()
+            self._session._session_start = datetime.datetime.now()
             expiry_in_seconds = properties.get(SESSION_LOCKED_UNTIL)
             if expiry_in_seconds:
                 expiry_in_seconds = (expiry_in_seconds - DATETIMEOFFSET_EPOCH)/10000000
-                self._locked_until = datetime.datetime.fromtimestamp(expiry_in_seconds)
+                self._session._locked_until = datetime.datetime.fromtimestamp(expiry_in_seconds)
             session_filter = source.get_filter(name=SESSION_FILTER)
             self._session_id = session_filter.decode(self._config.encoding)
             self._session._session_id = self._session_id
