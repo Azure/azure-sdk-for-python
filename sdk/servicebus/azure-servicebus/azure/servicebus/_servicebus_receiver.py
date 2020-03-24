@@ -206,6 +206,8 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
      the client connects to.
     :keyword str subscription_name: The path of specific Service Bus Subscription under the
      specified Topic the client connects to.
+    :keyword float idle_timeout: The timeout in seconds between received messages after which the receiver will
+     automatically shutdown. The default value is 0, meaning no timeout.
     :keyword mode: The mode with which messages will be retrieved from the entity. The two options
      are PeekLock and ReceiveAndDelete. Messages received with PeekLock must be settled within a given
      lock period before they will be removed from the queue. Messages received with ReceiveAndDelete
@@ -300,7 +302,8 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
             auto_complete=False,
             encoding=self._config.encoding,
             receive_settle_mode=self._mode.value,
-            send_settle_mode=SenderSettleMode.Settled if self._mode == ReceiveSettleMode.ReceiveAndDelete else None
+            send_settle_mode=SenderSettleMode.Settled if self._mode == ReceiveSettleMode.ReceiveAndDelete else None,
+            timeout=self._config.idle_timeout * 1000 if self._config.idle_timeout else 0
         )
 
     def _open(self):
@@ -326,7 +329,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         self._open()
         max_batch_size = max_batch_size or self._handler._prefetch  # pylint: disable=protected-access
 
-        timeout_ms = 1000 * timeout if timeout else 0
+        timeout_ms = 1000 * (timeout or self._config.idle_timeout) if (timeout or self._config.idle_timeout) else 0
         batch = self._handler.receive_message_batch(
             max_batch_size=max_batch_size,
             timeout=timeout_ms
@@ -392,6 +395,8 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
          will be immediately removed from the queue, and cannot be subsequently rejected or re-received if
          the client fails to process the message. The default mode is PeekLock.
         :paramtype mode: ~azure.servicebus.ReceiveSettleMode
+        :keyword float idle_timeout: The timeout in seconds between received messages after which the receiver will
+         automatically shutdown. The default value is 0, meaning no timeout.
         :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
         :keyword int retry_total: The total number of attempts to redo a failed operation when an error occurs.
          Default value is 3.

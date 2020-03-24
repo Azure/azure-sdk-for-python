@@ -118,7 +118,6 @@ class BaseHandler(object):  # pylint:disable=too-many-instance-attributes
         self._credential = credential
         self._container_id = "servicebus.pysdk-" + str(uuid.uuid4())[:8]
         self._config = Configuration(**kwargs)
-        self._idle_timeout = kwargs.get("idle_timeout", None)
         self._running = False
         self._handler = None
         self._auth_uri = None

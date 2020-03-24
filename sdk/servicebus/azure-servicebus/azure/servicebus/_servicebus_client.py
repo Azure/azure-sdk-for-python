@@ -169,6 +169,14 @@ class ServiceBusClient(object):
         """Get ServiceBusReceiver for the specific queue.
 
         :param str queue_name: The path of specific Service Bus Queue the client connects to.
+        :keyword mode: The mode with which messages will be retrieved from the entity. The two options
+         are PeekLock and ReceiveAndDelete. Messages received with PeekLock must be settled within a given
+         lock period before they will be removed from the queue. Messages received with ReceiveAndDelete
+         will be immediately removed from the queue, and cannot be subsequently rejected or re-received if
+         the client fails to process the message. The default mode is PeekLock.
+        :paramtype mode: ~azure.servicebus.ReceiveSettleMode
+        :keyword float idle_timeout: The timeout in seconds between received messages after which the receiver will
+         automatically shutdown. The default value is 0, meaning no timeout.
         :keyword int retry_total: The total number of attempts to redo a failed operation when an error occurs.
          Default value is 3.
         :rtype: ~azure.servicebus.ServiceBusReceiver
