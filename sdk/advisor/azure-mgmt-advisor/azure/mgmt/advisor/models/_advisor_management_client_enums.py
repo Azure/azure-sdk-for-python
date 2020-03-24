@@ -17,6 +17,14 @@ class Scenario(str, Enum):
     alerts = "Alerts"
 
 
+class CpuThreshold(str, Enum):
+
+    five = "5"
+    one_zero = "10"
+    one_five = "15"
+    two_zero = "20"
+
+
 class Category(str, Enum):
 
     high_availability = "HighAvailability"
@@ -24,6 +32,12 @@ class Category(str, Enum):
     performance = "Performance"
     cost = "Cost"
     operational_excellence = "OperationalExcellence"
+
+
+class DigestConfigState(str, Enum):
+
+    active = "Active"
+    disabled = "Disabled"
 
 
 class Impact(str, Enum):

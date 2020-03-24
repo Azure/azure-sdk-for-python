@@ -54,7 +54,7 @@ class ChainedTokenCredential(object):
 
         .. note:: This method is called by Azure SDK clients. It isn't intended for use in application code.
 
-        :param str scopes: desired scopes for the token
+        :param str scopes: desired scopes for the access token. This method requires at least one scope.
         :raises ~azure.core.exceptions.ClientAuthenticationError: no credential in the chain provided a token
         """
         history = []

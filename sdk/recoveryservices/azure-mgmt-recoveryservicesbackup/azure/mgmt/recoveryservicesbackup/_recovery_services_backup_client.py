@@ -13,6 +13,8 @@ from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 
 from ._configuration import RecoveryServicesBackupClientConfiguration
+from .operations import RecoveryServicesBackupClientOperationsMixin
+from .operations import PrivateEndpointConnectionOperations
 from .operations import BackupResourceVaultConfigsOperations
 from .operations import ProtectedItemsOperations
 from .operations import ProtectedItemOperationResultsOperations
@@ -54,12 +56,14 @@ from .operations import Operations
 from . import models
 
 
-class RecoveryServicesBackupClient(SDKClient):
+class RecoveryServicesBackupClient(RecoveryServicesBackupClientOperationsMixin, SDKClient):
     """Open API 2.0 Specs for Azure RecoveryServices Backup service
 
     :ivar config: Configuration for client.
     :vartype config: RecoveryServicesBackupClientConfiguration
 
+    :ivar private_endpoint_connection: PrivateEndpointConnection operations
+    :vartype private_endpoint_connection: azure.mgmt.recoveryservicesbackup.operations.PrivateEndpointConnectionOperations
     :ivar backup_resource_vault_configs: BackupResourceVaultConfigs operations
     :vartype backup_resource_vault_configs: azure.mgmt.recoveryservicesbackup.operations.BackupResourceVaultConfigsOperations
     :ivar protected_items: ProtectedItems operations
@@ -155,6 +159,8 @@ class RecoveryServicesBackupClient(SDKClient):
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
+        self.private_endpoint_connection = PrivateEndpointConnectionOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.backup_resource_vault_configs = BackupResourceVaultConfigsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.protected_items = ProtectedItemsOperations(

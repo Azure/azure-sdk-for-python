@@ -60,6 +60,7 @@ from ._microsoft_support_enums import (
     PreferredContactMethod,
     CommunicationType,
     CommunicationDirection,
+    Status,
 )
 
 __all__ = [
@@ -92,4 +93,5 @@ __all__ = [
     'PreferredContactMethod',
     'CommunicationType',
     'CommunicationDirection',
+    'Status',
 ]

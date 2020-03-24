@@ -105,7 +105,8 @@ class CommunicationDetails(Model):
      include: 'inbound', 'outbound'
     :vartype communication_direction: str or
      ~azure.mgmt.support.models.CommunicationDirection
-    :param sender: Email address of the sender
+    :param sender: Email address of the sender. This property is required if
+     called by a service principal
     :type sender: str
     :param subject: Required. Subject of the communication
     :type subject: str
@@ -174,22 +175,21 @@ class ContactProfile(Model):
      method is phone.
     :type phone_number: str
     :param preferred_time_zone: Required. Time zone of the user. This is the
-     name of the time zone from <a  target='_blank'
-     href='https://support.microsoft.com/en-us/help/973627/microsoft-time-zone-index-values'>Microsoft
-     Time Zone Index Values</a>.
+     name of the time zone from [Microsoft Time Zone Index
+     Values](https://support.microsoft.com/help/973627/microsoft-time-zone-index-values).
     :type preferred_time_zone: str
     :param country: Required. Country of the user. This is the ISO 3166-1
      alpha-3 code.
     :type country: str
     :param preferred_support_language: Required. Preferred language of support
      from Azure. Support languages vary based on the severity you choose for
-     your support ticket. Learn more at <a  target='_blank'
-     href='https://azure.microsoft.com/support/plans/response/'>Azure Severity
-     and responsiveness</a>. Use the standard language-country code. Valid
-     values are 'en-us' for English, 'zh-hans' for Chinese, 'es-es' for
-     Spanish, 'fr-fr' for French, 'ja-jp' for Japanese, 'ko-kr' for Korean,
-     'ru-ru' for Russian, 'pt-br' for Portuguese, 'it-it' for Italian, 'zh-tw'
-     for Chinese and 'de-de' for German.
+     your support ticket. Learn more at [Azure Severity and
+     responsiveness](https://azure.microsoft.com/support/plans/response). Use
+     the standard language-country code. Valid values are 'en-us' for English,
+     'zh-hans' for Chinese, 'es-es' for Spanish, 'fr-fr' for French, 'ja-jp'
+     for Japanese, 'ko-kr' for Korean, 'ru-ru' for Russian, 'pt-br' for
+     Portuguese, 'it-it' for Italian, 'zh-tw' for Chinese and 'de-de' for
+     German.
     :type preferred_support_language: str
     """
 
@@ -382,9 +382,8 @@ class QuotaChangeRequest(Model):
 class QuotaTicketDetails(Model):
     """Additional set of information required for quota increase support ticket
     for certain quota types, e.g.: Virtual machine cores. Get complete details
-    about Quota payload support request along with examples at <a target=''
-    href='https://aka.ms/supportrpquotarequestpayload'>Support quota
-    request</a>.
+    about Quota payload support request along with examples at [Support quota
+    request](https://aka.ms/supportrpquotarequestpayload).
 
     :param quota_change_request_sub_type: Required for certain quota types
      when there is a sub type that you are requesting quota increase for.
@@ -425,6 +424,8 @@ class Service(Model):
     :vartype type: str
     :param display_name: Localized name of Azure service
     :type display_name: str
+    :param resource_types: ARM Resource types
+    :type resource_types: list[str]
     """
 
     _validation = {
@@ -438,6 +439,7 @@ class Service(Model):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
+        'resource_types': {'key': 'properties.resourceTypes', 'type': '[str]'},
     }
 
     def __init__(self, **kwargs):
@@ -446,6 +448,7 @@ class Service(Model):
         self.name = None
         self.type = None
         self.display_name = kwargs.get('display_name', None)
+        self.resource_types = kwargs.get('resource_types', None)
 
 
 class ServiceError(Model):
@@ -604,13 +607,13 @@ class SupportTicketDetails(Model):
     :vartype problem_classification_display_name: str
     :param severity: Required. A value that indicates the urgency of the case,
      which in turn determines the response time according to the service level
-     agreement of the technical support plan you have with Azure. Possible
-     values include: 'minimal', 'moderate', 'critical'
+     agreement of the technical support plan you have with Azure. Note:
+     'Highest critical impact' severity is reserved only to our Premium
+     customers. Possible values include: 'minimal', 'moderate', 'critical',
+     'highestcriticalimpact'
     :type severity: str or ~azure.mgmt.support.models.SeverityLevel
     :ivar enrollment_id: Enrollment ID associated with the support ticket.
     :vartype enrollment_id: str
-    :ivar production_outage: Indicates if this issue is a production outage.
-    :vartype production_outage: bool
     :param require24_x7_response: Indicates if this requires a 24x7 response
      from Azure.
     :type require24_x7_response: bool
@@ -663,7 +666,6 @@ class SupportTicketDetails(Model):
         'problem_classification_display_name': {'readonly': True},
         'severity': {'required': True},
         'enrollment_id': {'readonly': True},
-        'production_outage': {'readonly': True},
         'contact_details': {'required': True},
         'support_plan_type': {'readonly': True},
         'title': {'required': True},
@@ -684,7 +686,6 @@ class SupportTicketDetails(Model):
         'problem_classification_display_name': {'key': 'properties.problemClassificationDisplayName', 'type': 'str'},
         'severity': {'key': 'properties.severity', 'type': 'str'},
         'enrollment_id': {'key': 'properties.enrollmentId', 'type': 'str'},
-        'production_outage': {'key': 'properties.productionOutage', 'type': 'bool'},
         'require24_x7_response': {'key': 'properties.require24X7Response', 'type': 'bool'},
         'contact_details': {'key': 'properties.contactDetails', 'type': 'ContactProfile'},
         'service_level_agreement': {'key': 'properties.serviceLevelAgreement', 'type': 'ServiceLevelAgreement'},
@@ -712,7 +713,6 @@ class SupportTicketDetails(Model):
         self.problem_classification_display_name = None
         self.severity = kwargs.get('severity', None)
         self.enrollment_id = None
-        self.production_outage = None
         self.require24_x7_response = kwargs.get('require24_x7_response', None)
         self.contact_details = kwargs.get('contact_details', None)
         self.service_level_agreement = kwargs.get('service_level_agreement', None)
@@ -767,21 +767,20 @@ class UpdateContactProfile(Model):
      method is phone.
     :type phone_number: str
     :param preferred_time_zone: Time zone of the user. This is the name of the
-     time zone from <a  target='_blank'
-     href='https://support.microsoft.com/en-us/help/973627/microsoft-time-zone-index-values'>Microsoft
-     Time Zone Index Values</a>.
+     time zone from [Microsoft Time Zone Index
+     Values](https://support.microsoft.com/en-us/help/973627/microsoft-time-zone-index-values).
     :type preferred_time_zone: str
     :param country: Country of the user. This is the ISO 3166-1 alpha-3 code.
     :type country: str
     :param preferred_support_language: Preferred language of support from
      Azure. Support languages vary based on the severity you choose for your
-     support ticket. Learn more at <a  target='_blank'
-     href='https://azure.microsoft.com/support/plans/response/'>Azure Severity
-     and responsiveness</a>. Use the standard language-country code. Valid
-     values are 'en-us' for English, 'zh-hans' for Chinese, 'es-es' for
-     Spanish, 'fr-fr' for French, 'ja-jp' for Japanese, 'ko-kr' for Korean,
-     'ru-ru' for Russian, 'pt-br' for Portuguese, 'it-it' for Italian, 'zh-tw'
-     for Chinese and 'de-de' for German.
+     support ticket. Learn more at [Azure Severity and
+     responsiveness](https://azure.microsoft.com/support/plans/response/). Use
+     the standard language-country code. Valid values are 'en-us' for English,
+     'zh-hans' for Chinese, 'es-es' for Spanish, 'fr-fr' for French, 'ja-jp'
+     for Japanese, 'ko-kr' for Korean, 'ru-ru' for Russian, 'pt-br' for
+     Portuguese, 'it-it' for Italian, 'zh-tw' for Chinese and 'de-de' for
+     German.
     :type preferred_support_language: str
     """
 
@@ -811,11 +810,14 @@ class UpdateContactProfile(Model):
 
 
 class UpdateSupportTicket(Model):
-    """Updates severity and contact details in the support ticket.
+    """Updates severity, ticket status and contact details in the support ticket.
 
     :param severity: Severity level. Possible values include: 'minimal',
-     'moderate', 'critical'
+     'moderate', 'critical', 'highestcriticalimpact'
     :type severity: str or ~azure.mgmt.support.models.SeverityLevel
+    :param status: Status to be updated on the ticket. Possible values
+     include: 'open', 'closed'
+    :type status: str or ~azure.mgmt.support.models.Status
     :param contact_details: Contact details to be updated on the support
      ticket.
     :type contact_details: ~azure.mgmt.support.models.UpdateContactProfile
@@ -823,10 +825,12 @@ class UpdateSupportTicket(Model):
 
     _attribute_map = {
         'severity': {'key': 'severity', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
         'contact_details': {'key': 'contactDetails', 'type': 'UpdateContactProfile'},
     }
 
     def __init__(self, **kwargs):
         super(UpdateSupportTicket, self).__init__(**kwargs)
         self.severity = kwargs.get('severity', None)
+        self.status = kwargs.get('status', None)
         self.contact_details = kwargs.get('contact_details', None)

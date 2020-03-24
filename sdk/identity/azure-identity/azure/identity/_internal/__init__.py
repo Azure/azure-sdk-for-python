@@ -14,7 +14,7 @@ def _scopes_to_resource(*scopes):
     """Convert an AADv2 scope to an AADv1 resource"""
 
     if len(scopes) != 1:
-        raise ValueError("This credential supports only one scope per token request")
+        raise ValueError("This credential requires exactly one scope per token request.")
 
     resource = scopes[0]
     if resource.endswith("/.default"):

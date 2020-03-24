@@ -15,13 +15,15 @@ import logging
 
 from common_tasks import process_glob_string, parse_setup, run_check_call
 
-excluded_packages = ["azure"]
 
 logging.getLogger().setLevel(logging.INFO)
 
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
 psscript = os.path.join(root_dir, "scripts", "devops_tasks", "find_change_log.ps1")
 
+# Service fabric change log has non standard versioning for e.g 7.0.0.0
+# Verify change log should skip this package since this script looks for standard version format of x.y.z
+NON_STANDARD_CHANGE_LOG_PACKAGES = ["azure-servicefabric",]
 
 def find_change_log(targeted_package, version):
     # Execute powershell script to find a matching version in change log
@@ -57,8 +59,9 @@ def verify_packages(targeted_packages):
         # Parse setup.py using common helper method to get version and package name
         pkg_name, version, _, _ = parse_setup(package)
 
-        # Skip management packages
-        if "-mgmt" in pkg_name or pkg_name in excluded_packages:
+        # Skip management packages and any explicitly excluded packages
+        if "-mgmt" in pkg_name or pkg_name in NON_STANDARD_CHANGE_LOG_PACKAGES:
+            logging.info("Skipping {} due to known exclusion in change log verification".format(pkg_name))
             continue
 
         if not find_change_log(package, version):

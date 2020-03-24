@@ -24,6 +24,14 @@ except ImportError:  # python < 3.3
 from helpers import build_aad_response, build_id_token, mock_response, Request, validating_transport
 
 
+def test_no_scopes():
+    """The credential should raise when get_token is called with no scopes"""
+
+    credential = SharedTokenCacheCredential(_cache=TokenCache())
+    with pytest.raises(ClientAuthenticationError):
+        credential.get_token()
+
+
 def test_policies_configurable():
     policy = Mock(spec_set=SansIOHTTPPolicy, on_request=Mock())
 

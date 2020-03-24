@@ -17,3 +17,27 @@ class ReceiverStatus(str, Enum):
     not_specified = "NotSpecified"
     enabled = "Enabled"
     disabled = "Disabled"
+
+
+class Operator(str, Enum):
+
+    equals = "Equals"
+    not_equals = "NotEquals"
+    greater_than = "GreaterThan"
+    greater_than_or_equal = "GreaterThanOrEqual"
+    less_than = "LessThan"
+    less_than_or_equal = "LessThanOrEqual"
+
+
+class DynamicThresholdOperator(str, Enum):
+
+    greater_than = "GreaterThan"
+    less_than = "LessThan"
+    greater_or_less_than = "GreaterOrLessThan"
+
+
+class DynamicThresholdSensitivity(str, Enum):
+
+    low = "Low"
+    medium = "Medium"
+    high = "High"
