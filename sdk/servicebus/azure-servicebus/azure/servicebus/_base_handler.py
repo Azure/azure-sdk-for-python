@@ -130,8 +130,12 @@ class BaseHandler(object):  # pylint:disable=too-many-instance-attributes
         self.close()
 
     def _handle_exception(self, exception):
-        error = _create_servicebus_exception(_LOGGER, exception)
-        self._close_handler()
+        error, error_need_close_handler, error_need_raise = _create_servicebus_exception(_LOGGER, exception, self)
+        if error_need_close_handler:
+            self._close_handler()
+        if error_need_raise:
+            raise error
+
         return error
 
     @staticmethod

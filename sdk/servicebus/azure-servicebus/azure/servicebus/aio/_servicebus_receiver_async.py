@@ -195,9 +195,10 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
                 **kwargs
             )
         self._message_iter = None
-        self._session = None
+        self._session_id = None
         self._create_attribute(**kwargs)
         self._connection = kwargs.get("connection")
+        self._session = ServiceBusSession(self._session_id, self, self._config.encoding) if self._session_id else None
 
     async def __anext__(self):
         while True:
@@ -243,9 +244,6 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
         while not await self._handler.client_ready_async():
             await asyncio.sleep(0.05)
         self._running = True
-
-        if self._session_id:
-            self._session = ServiceBusSession(self._session_id, self, self._config.encoding)
 
     async def _receive(self, max_batch_size=None, timeout=None):
         await self._open()

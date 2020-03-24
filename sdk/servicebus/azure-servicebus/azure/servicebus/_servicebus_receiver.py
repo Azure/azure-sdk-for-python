@@ -189,6 +189,7 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
                 self._locked_until = datetime.datetime.fromtimestamp(expiry_in_seconds)
             session_filter = source.get_filter(name=SESSION_FILTER)
             self._session_id = session_filter.decode(self._config.encoding)
+            self._session._session_id = self._session_id
 
 
 class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-many-instance-attributes
@@ -267,9 +268,9 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
                 **kwargs
             )
         self._message_iter = None
-        self._session = None
         self._create_attribute(**kwargs)
         self._connection = kwargs.get("connection")
+        self._session = ServiceBusSession(self._session_id, self, self._config.encoding) if self._session_id else None
 
     def __iter__(self):
         return self
@@ -321,9 +322,6 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         while not self._handler.client_ready():
             time.sleep(0.05)
         self._running = True
-
-        if self._session_id:
-            self._session = ServiceBusSession(self._session_id, self, self._config.encoding)
 
     def _receive(self, max_batch_size=None, timeout=None):
         self._open()
