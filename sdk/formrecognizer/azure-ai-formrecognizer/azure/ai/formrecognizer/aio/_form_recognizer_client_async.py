@@ -8,10 +8,8 @@
 
 from typing import (  # pylint: disable=unused-import
     Union,
-    Optional,
     Any,
     List,
-    Dict,
     IO,
     TYPE_CHECKING,
 )
@@ -27,7 +25,7 @@ from .._response_handlers import (
 from .._generated.models import AnalyzeOperationResult
 from .._helpers import get_content_type, POLLING_INTERVAL
 if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential
+    from azure.core.credentials_async import AsyncTokenCredential
     from .._credential import FormRecognizerApiKeyCredential
     from .._models import (
         ExtractedReceipt,
@@ -44,19 +42,22 @@ class FormRecognizerClient(AsyncFormRecognizerClientBase):
         This can be the an instance of FormRecognizerApiKeyCredential if using an API key
         or a token credential from azure.identity.
     :type credential: ~azure.ai.formrecognizer.FormRecognizerApiKeyCredential
-        or ~azure.core.credentials.TokenCredential
+        or ~azure.core.credentials_async.AsyncTokenCredential
     """
 
-    def __init__(self, endpoint, credential, **kwargs):
-        # type: (str, Union[FormRecognizerApiKeyCredential, TokenCredential], Any) -> None
+    def __init__(
+            self,
+            endpoint: str,
+            credential: Union["FormRecognizerApiKeyCredential", "AsyncTokenCredential"],
+            **kwargs: Any
+    ) -> None:
         super(FormRecognizerClient, self).__init__(credential=credential, **kwargs)
         self._client = FormRecognizer(
             endpoint=endpoint, credential=credential, pipeline=self._pipeline
         )
 
     @distributed_trace_async
-    async def begin_extract_receipts(self, form, **kwargs):
-        # type: (Union[str, IO[bytes]], Any) -> List[ExtractedReceipt]
+    async def begin_extract_receipts(self, form: Union[str, IO[bytes]], **kwargs: Any) -> List[ExtractedReceipt]:
         """Extract field text and semantic values from a given receipt document.
         The input document must be of one of the supported content types - 'application/pdf',
         'image/jpeg', 'image/png' or 'image/tiff'. Alternatively, use 'application/json'
@@ -96,8 +97,7 @@ class FormRecognizerClient(AsyncFormRecognizerClientBase):
         )
 
     @distributed_trace_async
-    async def begin_extract_layouts(self, form, **kwargs):
-        # type: (Union[str, IO[bytes]], Any) -> List[ExtractedLayoutPage]
+    async def begin_extract_layouts(self, form: Union[str, IO[bytes]], **kwargs: Any) -> List[ExtractedLayoutPage]:
         """Extract text and layout information from a given document.
         The input document must be of one of the supported content types - 'application/pdf',
         'image/jpeg', 'image/png' or 'image/tiff'. Alternatively, use 'application/json'

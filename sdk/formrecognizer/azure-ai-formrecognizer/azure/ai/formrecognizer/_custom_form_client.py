@@ -10,8 +10,6 @@ from typing import (  # pylint: disable=unused-import
     Union,
     Optional,
     Any,
-    List,
-    Dict,
     IO,
     Iterable,
     TYPE_CHECKING,
@@ -62,7 +60,7 @@ class CustomFormClient(FormRecognizerClientBase):
 
     @distributed_trace
     def begin_training(self, source, source_prefix_filter="", include_sub_folders=False, **kwargs):
-        # type: (str, str, bool, Any) -> LROPoller
+        # type: (str, Optional[str], Optional[bool], Any) -> LROPoller
         """Create and train a custom model. The request must include a source parameter that is an
         externally accessible Azure storage blob container Uri (preferably a Shared Access Signature Uri).
         Models are trained using documents that are of the following content type - 'application/pdf',
@@ -104,7 +102,7 @@ class CustomFormClient(FormRecognizerClientBase):
 
     @distributed_trace
     def begin_labeled_training(self, source, source_prefix_filter="", include_sub_folders=False, **kwargs):
-        # type: (str, str, bool, Any) -> LROPoller
+        # type: (str, Optional[str], Optional[bool], Any) -> LROPoller
         """Create and train a custom model with labels. The request must include a source parameter that is an
         externally accessible Azure storage blob container Uri (preferably a Shared Access Signature Uri).
         Models are trained using documents that are of the following content type - 'application/pdf',

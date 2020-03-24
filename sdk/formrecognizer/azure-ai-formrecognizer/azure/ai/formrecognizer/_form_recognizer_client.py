@@ -8,10 +8,7 @@
 
 from typing import (  # pylint: disable=unused-import
     Union,
-    Optional,
     Any,
-    List,
-    Dict,
     IO,
     TYPE_CHECKING,
 )

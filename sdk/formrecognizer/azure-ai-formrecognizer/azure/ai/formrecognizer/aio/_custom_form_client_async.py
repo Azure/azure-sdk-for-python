@@ -11,7 +11,6 @@ from typing import (  # pylint: disable=unused-import
     Optional,
     Any,
     List,
-    Dict,
     IO,
     Iterable,
     TYPE_CHECKING,
@@ -38,7 +37,7 @@ from .._models import (
     CustomLabeledModel,
 )
 if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential
+    from azure.core.credentials_async import AsyncTokenCredential
     from .._credential import FormRecognizerApiKeyCredential
     from .._models import (
         ExtractedPage,
@@ -58,16 +57,25 @@ class CustomFormClient(AsyncFormRecognizerClientBase):
         or ~azure.core.credentials.TokenCredential
     """
 
-    def __init__(self, endpoint, credential, **kwargs):
-        # type: (str, Union[FormRecognizerApiKeyCredential, TokenCredential], Any) -> None
+    def __init__(
+            self,
+            endpoint: str,
+            credential: Union["FormRecognizerApiKeyCredential", "AsyncTokenCredential"],
+            **kwargs: Any
+    ) -> None:
         super(CustomFormClient, self).__init__(credential=credential, **kwargs)
         self._client = FormRecognizer(
             endpoint=endpoint, credential=credential, pipeline=self._pipeline
         )
 
     @distributed_trace_async
-    async def begin_training(self, source, source_prefix_filter=None, include_sub_folders=False, **kwargs):
-        # type: (str, str, bool, Any) -> CustomModel
+    async def begin_training(
+            self,
+            source: str,
+            source_prefix_filter: Optional[str] = "",
+            include_sub_folders: Optional[bool] = False,
+            **kwargs: Any
+    ) -> CustomModel:
         """Create and train a custom model. The request must include a source parameter that is an
         externally accessible Azure storage blob container Uri (preferably a Shared Access Signature Uri).
         Models are trained using documents that are of the following content type - 'application/pdf',
@@ -111,8 +119,13 @@ class CustomFormClient(AsyncFormRecognizerClientBase):
         )
 
     @distributed_trace_async
-    async def begin_labeled_training(self, source, source_prefix_filter=None, include_sub_folders=False, **kwargs):
-        # type: (str, str, bool, Any) -> CustomLabeledModel
+    async def begin_labeled_training(
+            self,
+            source,
+            source_prefix_filter: Optional[str] = "",
+            include_sub_folders: Optional[bool] = False,
+            **kwargs: Any
+    ) -> CustomLabeledModel:
         """Create and train a custom model with labels. The request must include a source parameter that is an
         externally accessible Azure storage blob container Uri (preferably a Shared Access Signature Uri).
         Models are trained using documents that are of the following content type - 'application/pdf',
@@ -157,8 +170,12 @@ class CustomFormClient(AsyncFormRecognizerClientBase):
         )
 
     @distributed_trace_async
-    async def begin_extract_form_pages(self, form, model_id, **kwargs):
-        # type: (Union[str, IO[bytes]], str, Any) -> List[ExtractedPage]
+    async def begin_extract_form_pages(
+            self,
+            form: Union[str, IO[bytes]],
+            model_id: str,
+            **kwargs: Any
+    ) -> List[ExtractedPage]:
         """Analyze Form.
 
         :param form: .json, .pdf, .jpg, .png or .tiff type file stream.
@@ -199,8 +216,12 @@ class CustomFormClient(AsyncFormRecognizerClientBase):
         )
 
     @distributed_trace_async
-    async def begin_extract_labeled_forms(self, form, model_id, **kwargs):
-        # type: (Union[str, IO[bytes]], str, Any) -> List[ExtractedLabeledForm]
+    async def begin_extract_labeled_forms(
+            self,
+            form: Union[str, IO[bytes]],
+            model_id: str,
+            **kwargs: Any
+    ) -> List[ExtractedLabeledForm]:
         """Analyze Form.
 
         :param form: .json, .pdf, .jpg, .png or .tiff type file stream.
@@ -241,8 +262,7 @@ class CustomFormClient(AsyncFormRecognizerClientBase):
         )
 
     @distributed_trace_async
-    async def delete_custom_model(self, model_id, **kwargs):
-        # type: (str, Any) -> None
+    async def delete_custom_model(self, model_id: str, **kwargs: Any) -> None:
         """Mark model for deletion. Model artifacts will be permanently removed within a predetermined period.
 
         Delete Custom Model.
@@ -258,8 +278,7 @@ class CustomFormClient(AsyncFormRecognizerClientBase):
         )
 
     @distributed_trace
-    def list_custom_models(self, **kwargs):
-        # type: (Any) -> Iterable[ModelInfo]
+    def list_custom_models(self, **kwargs: Any) -> Iterable[ModelInfo]:
         """List Custom Models.
 
         :return: AsyncItemPaged[~azure.ai.formrecognizer.ModelInfo]
@@ -271,8 +290,7 @@ class CustomFormClient(AsyncFormRecognizerClientBase):
         )
 
     @distributed_trace_async
-    async def get_models_summary(self, **kwargs):
-        # type: (Any) -> ModelsSummary
+    async def get_models_summary(self, **kwargs: Any) -> ModelsSummary:
         """Get information about all custom models.
 
         :return: Summary of models on account - count, limit, last updated.
@@ -283,8 +301,7 @@ class CustomFormClient(AsyncFormRecognizerClientBase):
         return ModelsSummary._from_generated(response.summary)
 
     @distributed_trace_async
-    async def get_custom_model(self, model_id, **kwargs):
-        # type: (str, Any) -> CustomModel
+    async def get_custom_model(self, model_id: str, **kwargs: Any) -> CustomModel:
         """Get detailed information about a custom model.
 
         :param str model_id: Model identifier.
@@ -299,8 +316,7 @@ class CustomFormClient(AsyncFormRecognizerClientBase):
                                         "Call get_custom_labeled_model() with the model id.".format(model_id))
 
     @distributed_trace_async
-    async def get_custom_labeled_model(self, model_id, **kwargs):
-        # type: (str, Any) -> CustomLabeledModel
+    async def get_custom_labeled_model(self, model_id: str, **kwargs: Any) -> CustomLabeledModel:
         """Get detailed information about a custom labeled model.
 
         :param str model_id: Model identifier.
