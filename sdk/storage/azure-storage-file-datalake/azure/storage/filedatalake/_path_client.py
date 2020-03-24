@@ -100,7 +100,7 @@ class PathClient(StorageAccountHostsMixin):
             self.scheme,
             hostname,
             quote(file_system_name),
-            quote(self.path_name, safe='~'),
+            quote(self.path_name, safe='~/'),
             self._query_str)
 
     def _create_path_options(self, resource_type, content_settings=None, metadata=None, **kwargs):
