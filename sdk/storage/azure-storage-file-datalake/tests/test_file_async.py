@@ -277,7 +277,7 @@ class FileTest(StorageTestCase):
         await directory_client.create_directory()
 
         file_client = directory_client.get_file_client('filename')
-        data = self.get_random_bytes(400*1024) * 1024
+        data = self.get_random_bytes(400*1024)
         await file_client.upload_data(data, overwrite=True, max_concurrency=5)
 
         downloaded_data = await (await file_client.download_file()).readall()
