@@ -13,7 +13,7 @@ from ._configuration import BatchServiceClientConfiguration
 from ._batch_service_client import BatchServiceClient
 __all__ = ['BatchServiceClient', 'BatchServiceClientConfiguration']
 
-from .version import VERSION
+from ._version import VERSION
 
 __version__ = VERSION
 
