@@ -234,7 +234,7 @@ class FileTest(StorageTestCase):
         directory_client.create_directory()
 
         file_client = directory_client.get_file_client('filename')
-        data = self.get_random_bytes(200*1024) * 1024
+        data = self.get_random_bytes(200*1024)
         file_client.upload_data(data, overwrite=True, max_concurrency=3)
 
         downloaded_data = file_client.download_file().readall()
