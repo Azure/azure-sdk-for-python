@@ -50,16 +50,6 @@ class ModelStatus(str, Enum):
     ready = "ready"
     invalid = "invalid"
 
-class Enum1(str, Enum):
-
-    full = "full"
-    summary = "summary"
-
-class Enum2(str, Enum):
-
-    full = "full"
-    summary = "summary"
-
 class OperationStatus(str, Enum):
     """Status of the queued operation.
     """

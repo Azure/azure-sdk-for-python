@@ -603,7 +603,7 @@ class ModelsSummary(msrest.serialization.Model):
 
     :param count: Required. Current count of trained custom models.
     :type count: int
-    :param limit: Required. Max number of models that can be trained for this subscription.
+    :param limit: Required. Max number of models that can be trained for this account.
     :type limit: int
     :param last_updated_date_time: Required. Date and time (UTC) when the summary was last updated.
     :type last_updated_date_time: ~datetime.datetime

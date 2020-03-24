@@ -661,7 +661,6 @@ class FormRecognizerClientOperationsMixin(object):
 
     def list_custom_models(
         self,
-        op="full",  # type: Optional[Union[str, "models.Enum1"]]
         **kwargs  # type: Any
     ):
         # type: (...) -> "models.Models"
@@ -669,8 +668,6 @@ class FormRecognizerClientOperationsMixin(object):
 
         List Custom Models.
 
-        :param op: Specify whether to return summary or full list of models.
-        :type op: str or ~azure.ai.formrecognizer.models.Enum1
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Models or the result of cls(response)
         :rtype: ~azure.ai.formrecognizer.models.Models
@@ -678,6 +675,7 @@ class FormRecognizerClientOperationsMixin(object):
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.Models"]
         error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
+        op = "full"
 
         def prepare_request(next_link=None):
             if not next_link:
@@ -696,8 +694,7 @@ class FormRecognizerClientOperationsMixin(object):
 
             # Construct parameters
             query_parameters = {}  # type: Dict[str, Any]
-            if op is not None:
-                query_parameters['op'] = self._serialize.query("op", op, 'str')
+            query_parameters['op'] = self._serialize.query("op", op, 'str')
 
             # Construct headers
             header_parameters = {}  # type: Dict[str, Any]
@@ -734,7 +731,6 @@ class FormRecognizerClientOperationsMixin(object):
 
     def get_custom_models(
         self,
-        op="summary",  # type: Optional[Union[str, "models.Enum2"]]
         **kwargs  # type: Any
     ):
         # type: (...) -> "models.Models"
@@ -742,8 +738,6 @@ class FormRecognizerClientOperationsMixin(object):
 
         Get Custom Models.
 
-        :param op: Specify whether to return summary or full list of models.
-        :type op: str or ~azure.ai.formrecognizer.models.Enum2
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Models or the result of cls(response)
         :rtype: ~azure.ai.formrecognizer.models.Models
@@ -751,6 +745,7 @@ class FormRecognizerClientOperationsMixin(object):
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.Models"]
         error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
+        op = "summary"
 
         # Construct URL
         url = self.get_custom_models.metadata['url']
@@ -761,8 +756,7 @@ class FormRecognizerClientOperationsMixin(object):
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        if op is not None:
-            query_parameters['op'] = self._serialize.query("op", op, 'str')
+        query_parameters['op'] = self._serialize.query("op", op, 'str')
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]

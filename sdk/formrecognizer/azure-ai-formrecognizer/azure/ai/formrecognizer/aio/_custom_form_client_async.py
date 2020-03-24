@@ -18,6 +18,7 @@ from typing import (  # pylint: disable=unused-import
 from azure.core.polling import async_poller
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
 from azure.core.exceptions import HttpResponseError
+from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from .._generated.aio._form_recognizer_client_async import FormRecognizerClient as FormRecognizer
 from .._generated.models import TrainRequest, TrainSourceFilter
@@ -257,7 +258,7 @@ class CustomFormClient(AsyncFormRecognizerClientBase):
             **kwargs
         )
 
-    @distributed_trace_async
+    @distributed_trace
     def list_custom_models(self, **kwargs):
         # type: (Any) -> Iterable[ModelInfo]
         """List Custom Models.
@@ -266,7 +267,6 @@ class CustomFormClient(AsyncFormRecognizerClientBase):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         return self._client.list_custom_models(
-            op="full",
             cls=lambda objs: [ModelInfo._from_generated(x) for x in objs],
             **kwargs
         )
@@ -280,7 +280,7 @@ class CustomFormClient(AsyncFormRecognizerClientBase):
         :rtype: ~azure.ai.formrecognizer.ModelsSummary
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        response = await self._client.get_custom_models(op="summary", **kwargs)
+        response = await self._client.get_custom_models(**kwargs)
         return ModelsSummary._from_generated(response.summary)
 
     @distributed_trace_async

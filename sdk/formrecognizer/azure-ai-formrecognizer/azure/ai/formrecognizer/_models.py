@@ -111,6 +111,9 @@ class FieldValue(object):
     def _from_generated(cls, field, elements):
         if field is None:
             return field
+        if field.value_array:
+            return [{field: FieldValue._from_generated(value, elements)
+                    for field, value in obj.value_object.items()} for obj in field.value_array]
         return cls(
             value=get_field_value(field),
             text=field.text,

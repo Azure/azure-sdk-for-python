@@ -252,7 +252,6 @@ class CustomFormClient(FormRecognizerClientBase):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         return self._client.list_custom_models(
-            op="full",
             cls=lambda objs: [ModelInfo._from_generated(x) for x in objs],
             **kwargs
         )
@@ -266,7 +265,7 @@ class CustomFormClient(FormRecognizerClientBase):
         :rtype: ~azure.ai.formrecognizer.ModelsSummary
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        response = self._client.get_custom_models(op="summary", **kwargs)
+        response = self._client.get_custom_models(**kwargs)
         return ModelsSummary._from_generated(response.summary)
 
     @distributed_trace
