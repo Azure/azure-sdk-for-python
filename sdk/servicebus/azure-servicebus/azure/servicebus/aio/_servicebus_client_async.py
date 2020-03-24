@@ -62,9 +62,12 @@ class ServiceBusClient(object):
         self._auth_uri = "sb://{}".format(self.fully_qualified_namespace)
         if self._entity_name:
             self._auth_uri = "{}/{}".format(self._auth_uri, self._entity_name)
+        # Internal flag for switching whether to apply connection sharing, pending fix in uamqp library
+        self._connection_sharing = False
 
     async def __aenter__(self):
-        await self._create_uamqp_connection()
+        if self._connection_sharing:
+            await self._create_uamqp_connection()
         return self
 
     async def __aexit__(self, *args):
@@ -125,7 +128,8 @@ class ServiceBusClient(object):
 
         :return: None
         """
-        await self._connection.destroy_async()
+        if self._connection_sharing:
+            await self._connection.destroy_async()
 
     async def get_queue_sender(self, queue_name, **kwargs):
         # type: (str, Any) -> ServiceBusSender

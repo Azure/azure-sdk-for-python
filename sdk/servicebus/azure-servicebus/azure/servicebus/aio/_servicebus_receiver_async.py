@@ -238,8 +238,6 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
         auth = None if self._connection else (await create_authentication(self))
         self._create_handler(auth)
         await self._handler.open_async(connection=self._connection)
-        if self._connection:
-            self._try_reset_link_error_in_session()
         self._message_iter = self._handler.receive_messages_iter_async()
         while not await self._handler.client_ready_async():
             await asyncio.sleep(0.05)
