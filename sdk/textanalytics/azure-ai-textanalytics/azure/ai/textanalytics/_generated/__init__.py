@@ -12,7 +12,7 @@
 from ._text_analytics_client import TextAnalyticsClient
 __all__ = ['TextAnalyticsClient']
 
-from ._version import VERSION
+from .version import VERSION
 
 __version__ = VERSION
 

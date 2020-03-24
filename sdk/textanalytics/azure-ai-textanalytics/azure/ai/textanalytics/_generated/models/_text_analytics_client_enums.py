@@ -33,6 +33,12 @@ class InnerErrorCodeValue(str, Enum):
     invalid_country_hint = "invalidCountryHint"
 
 
+class WarningCodeValue(str, Enum):
+
+    long_words_in_document = "LongWordsInDocument"
+    document_truncated = "DocumentTruncated"
+
+
 class DocumentSentimentValue(str, Enum):
 
     positive = "positive"

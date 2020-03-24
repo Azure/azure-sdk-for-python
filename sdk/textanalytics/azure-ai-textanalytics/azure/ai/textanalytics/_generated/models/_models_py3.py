@@ -24,28 +24,29 @@ class DetectedLanguage(Model):
     :param iso6391_name: Required. A two letter representation of the detected
      language according to the ISO 639-1 standard (e.g. en, fr).
     :type iso6391_name: str
-    :param score: Required. A confidence score between 0 and 1. Scores close
-     to 1 indicate 100% certainty that the identified language is true.
-    :type score: float
+    :param confidence_score: Required. A confidence score between 0 and 1.
+     Scores close to 1 indicate 100% certainty that the identified language is
+     true.
+    :type confidence_score: float
     """
 
     _validation = {
         'name': {'required': True},
         'iso6391_name': {'required': True},
-        'score': {'required': True},
+        'confidence_score': {'required': True},
     }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'iso6391_name': {'key': 'iso6391Name', 'type': 'str'},
-        'score': {'key': 'score', 'type': 'float'},
+        'confidence_score': {'key': 'confidenceScore', 'type': 'float'},
     }
 
-    def __init__(self, *, name: str, iso6391_name: str, score: float, **kwargs) -> None:
+    def __init__(self, *, name: str, iso6391_name: str, confidence_score: float, **kwargs) -> None:
         super(DetectedLanguage, self).__init__(**kwargs)
         self.name = name
         self.iso6391_name = iso6391_name
-        self.score = score
+        self.confidence_score = confidence_score
 
 
 class DocumentEntities(Model):
@@ -57,6 +58,8 @@ class DocumentEntities(Model):
     :type id: str
     :param entities: Required. Recognized entities in the document.
     :type entities: list[~azure.ai.textanalytics.models.Entity]
+    :param warnings: Required. Warnings encountered while processing document.
+    :type warnings: list[~azure.ai.textanalytics.models.TextAnalyticsWarning]
     :param statistics: if showStats=true was specified in the request this
      field will contain information about the document payload.
     :type statistics: ~azure.ai.textanalytics.models.DocumentStatistics
@@ -65,18 +68,21 @@ class DocumentEntities(Model):
     _validation = {
         'id': {'required': True},
         'entities': {'required': True},
+        'warnings': {'required': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'entities': {'key': 'entities', 'type': '[Entity]'},
+        'warnings': {'key': 'warnings', 'type': '[TextAnalyticsWarning]'},
         'statistics': {'key': 'statistics', 'type': 'DocumentStatistics'},
     }
 
-    def __init__(self, *, id: str, entities, statistics=None, **kwargs) -> None:
+    def __init__(self, *, id: str, entities, warnings, statistics=None, **kwargs) -> None:
         super(DocumentEntities, self).__init__(**kwargs)
         self.id = id
         self.entities = entities
+        self.warnings = warnings
         self.statistics = statistics
 
 
@@ -118,6 +124,8 @@ class DocumentKeyPhrases(Model):
      The number of key phrases returned is proportional to the number of words
      in the input document.
     :type key_phrases: list[str]
+    :param warnings: Required. Warnings encountered while processing document.
+    :type warnings: list[~azure.ai.textanalytics.models.TextAnalyticsWarning]
     :param statistics: if showStats=true was specified in the request this
      field will contain information about the document payload.
     :type statistics: ~azure.ai.textanalytics.models.DocumentStatistics
@@ -126,18 +134,21 @@ class DocumentKeyPhrases(Model):
     _validation = {
         'id': {'required': True},
         'key_phrases': {'required': True},
+        'warnings': {'required': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'key_phrases': {'key': 'keyPhrases', 'type': '[str]'},
+        'warnings': {'key': 'warnings', 'type': '[TextAnalyticsWarning]'},
         'statistics': {'key': 'statistics', 'type': 'DocumentStatistics'},
     }
 
-    def __init__(self, *, id: str, key_phrases, statistics=None, **kwargs) -> None:
+    def __init__(self, *, id: str, key_phrases, warnings, statistics=None, **kwargs) -> None:
         super(DocumentKeyPhrases, self).__init__(**kwargs)
         self.id = id
         self.key_phrases = key_phrases
+        self.warnings = warnings
         self.statistics = statistics
 
 
@@ -151,6 +162,8 @@ class DocumentLanguage(Model):
     :param detected_languages: Required. A list of extracted languages.
     :type detected_languages:
      list[~azure.ai.textanalytics.models.DetectedLanguage]
+    :param warnings: Required. Warnings encountered while processing document.
+    :type warnings: list[~azure.ai.textanalytics.models.TextAnalyticsWarning]
     :param statistics: if showStats=true was specified in the request this
      field will contain information about the document payload.
     :type statistics: ~azure.ai.textanalytics.models.DocumentStatistics
@@ -159,18 +172,21 @@ class DocumentLanguage(Model):
     _validation = {
         'id': {'required': True},
         'detected_languages': {'required': True},
+        'warnings': {'required': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'detected_languages': {'key': 'detectedLanguages', 'type': '[DetectedLanguage]'},
+        'warnings': {'key': 'warnings', 'type': '[TextAnalyticsWarning]'},
         'statistics': {'key': 'statistics', 'type': 'DocumentStatistics'},
     }
 
-    def __init__(self, *, id: str, detected_languages, statistics=None, **kwargs) -> None:
+    def __init__(self, *, id: str, detected_languages, warnings, statistics=None, **kwargs) -> None:
         super(DocumentLanguage, self).__init__(**kwargs)
         self.id = id
         self.detected_languages = detected_languages
+        self.warnings = warnings
         self.statistics = statistics
 
 
@@ -183,6 +199,8 @@ class DocumentLinkedEntities(Model):
     :type id: str
     :param entities: Required. Recognized well-known entities in the document.
     :type entities: list[~azure.ai.textanalytics.models.LinkedEntity]
+    :param warnings: Required. Warnings encountered while processing document.
+    :type warnings: list[~azure.ai.textanalytics.models.TextAnalyticsWarning]
     :param statistics: if showStats=true was specified in the request this
      field will contain information about the document payload.
     :type statistics: ~azure.ai.textanalytics.models.DocumentStatistics
@@ -191,18 +209,21 @@ class DocumentLinkedEntities(Model):
     _validation = {
         'id': {'required': True},
         'entities': {'required': True},
+        'warnings': {'required': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'entities': {'key': 'entities', 'type': '[LinkedEntity]'},
+        'warnings': {'key': 'warnings', 'type': '[TextAnalyticsWarning]'},
         'statistics': {'key': 'statistics', 'type': 'DocumentStatistics'},
     }
 
-    def __init__(self, *, id: str, entities, statistics=None, **kwargs) -> None:
+    def __init__(self, *, id: str, entities, warnings, statistics=None, **kwargs) -> None:
         super(DocumentLinkedEntities, self).__init__(**kwargs)
         self.id = id
         self.entities = entities
+        self.warnings = warnings
         self.statistics = statistics
 
 
@@ -220,36 +241,41 @@ class DocumentSentiment(Model):
      ~azure.ai.textanalytics.models.DocumentSentimentValue
     :param statistics:
     :type statistics: ~azure.ai.textanalytics.models.DocumentStatistics
-    :param document_scores: Required. Document level sentiment confidence
+    :param confidence_scores: Required. Document level sentiment confidence
      scores between 0 and 1 for each sentiment class.
-    :type document_scores:
+    :type confidence_scores:
      ~azure.ai.textanalytics.models.SentimentConfidenceScorePerLabel
     :param sentences: Required. Sentence level sentiment analysis.
     :type sentences: list[~azure.ai.textanalytics.models.SentenceSentiment]
+    :param warnings: Required. Warnings encountered while processing document.
+    :type warnings: list[~azure.ai.textanalytics.models.TextAnalyticsWarning]
     """
 
     _validation = {
         'id': {'required': True},
         'sentiment': {'required': True},
-        'document_scores': {'required': True},
+        'confidence_scores': {'required': True},
         'sentences': {'required': True},
+        'warnings': {'required': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'sentiment': {'key': 'sentiment', 'type': 'DocumentSentimentValue'},
         'statistics': {'key': 'statistics', 'type': 'DocumentStatistics'},
-        'document_scores': {'key': 'documentScores', 'type': 'SentimentConfidenceScorePerLabel'},
+        'confidence_scores': {'key': 'confidenceScores', 'type': 'SentimentConfidenceScorePerLabel'},
         'sentences': {'key': 'sentences', 'type': '[SentenceSentiment]'},
+        'warnings': {'key': 'warnings', 'type': '[TextAnalyticsWarning]'},
     }
 
-    def __init__(self, *, id: str, sentiment, document_scores, sentences, statistics=None, **kwargs) -> None:
+    def __init__(self, *, id: str, sentiment, confidence_scores, sentences, warnings, statistics=None, **kwargs) -> None:
         super(DocumentSentiment, self).__init__(**kwargs)
         self.id = id
         self.sentiment = sentiment
         self.statistics = statistics
-        self.document_scores = document_scores
+        self.confidence_scores = confidence_scores
         self.sentences = sentences
+        self.warnings = warnings
 
 
 class DocumentStatistics(Model):
@@ -326,46 +352,47 @@ class Entity(Model):
 
     :param text: Required. Entity text as appears in the request.
     :type text: str
-    :param type: Required. Entity type, such as Person/Location/Org/SSN etc
-    :type type: str
-    :param subtype: Entity sub type, such as Age/Year/TimeRange etc
-    :type subtype: str
+    :param category: Required. Entity type, such as Person/Location/Org/SSN
+     etc
+    :type category: str
+    :param subcategory: Entity sub type, such as Age/Year/TimeRange etc
+    :type subcategory: str
     :param offset: Required. Start position (in Unicode characters) for the
      entity text.
     :type offset: int
     :param length: Required. Length (in Unicode characters) for the entity
      text.
     :type length: int
-    :param score: Required. Confidence score between 0 and 1 of the extracted
-     entity.
-    :type score: float
+    :param confidence_score: Required. Confidence score between 0 and 1 of the
+     extracted entity.
+    :type confidence_score: float
     """
 
     _validation = {
         'text': {'required': True},
-        'type': {'required': True},
+        'category': {'required': True},
         'offset': {'required': True},
         'length': {'required': True},
-        'score': {'required': True},
+        'confidence_score': {'required': True},
     }
 
     _attribute_map = {
         'text': {'key': 'text', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'subtype': {'key': 'subtype', 'type': 'str'},
+        'category': {'key': 'category', 'type': 'str'},
+        'subcategory': {'key': 'subcategory', 'type': 'str'},
         'offset': {'key': 'offset', 'type': 'int'},
         'length': {'key': 'length', 'type': 'int'},
-        'score': {'key': 'score', 'type': 'float'},
+        'confidence_score': {'key': 'confidenceScore', 'type': 'float'},
     }
 
-    def __init__(self, *, text: str, type: str, offset: int, length: int, score: float, subtype: str=None, **kwargs) -> None:
+    def __init__(self, *, text: str, category: str, offset: int, length: int, confidence_score: float, subcategory: str=None, **kwargs) -> None:
         super(Entity, self).__init__(**kwargs)
         self.text = text
-        self.type = type
-        self.subtype = subtype
+        self.category = category
+        self.subcategory = subcategory
         self.offset = offset
         self.length = length
-        self.score = score
+        self.confidence_score = confidence_score
 
 
 class EntityLinkingResult(Model):
@@ -422,8 +449,8 @@ class InnerError(Model):
     :type details: dict[str, str]
     :param target: Error target.
     :type target: str
-    :param inner_error: Inner error contains more specific information.
-    :type inner_error: ~azure.ai.textanalytics.models.InnerError
+    :param innererror: Inner error contains more specific information.
+    :type innererror: ~azure.ai.textanalytics.models.InnerError
     """
 
     _validation = {
@@ -436,16 +463,16 @@ class InnerError(Model):
         'message': {'key': 'message', 'type': 'str'},
         'details': {'key': 'details', 'type': '{str}'},
         'target': {'key': 'target', 'type': 'str'},
-        'inner_error': {'key': 'innerError', 'type': 'InnerError'},
+        'innererror': {'key': 'innererror', 'type': 'InnerError'},
     }
 
-    def __init__(self, *, code, message: str, details=None, target: str=None, inner_error=None, **kwargs) -> None:
+    def __init__(self, *, code, message: str, details=None, target: str=None, innererror=None, **kwargs) -> None:
         super(InnerError, self).__init__(**kwargs)
         self.code = code
         self.message = message
         self.details = details
         self.target = target
-        self.inner_error = inner_error
+        self.innererror = innererror
 
 
 class KeyPhraseResult(Model):
@@ -629,9 +656,10 @@ class Match(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param score: Required. If a well-known item is recognized, a decimal
-     number denoting the confidence level between 0 and 1 will be returned.
-    :type score: float
+    :param confidence_score: Required. If a well-known item is recognized, a
+     decimal number denoting the confidence level between 0 and 1 will be
+     returned.
+    :type confidence_score: float
     :param text: Required. Entity text as appears in the request.
     :type text: str
     :param offset: Required. Start position (in Unicode characters) for the
@@ -643,22 +671,22 @@ class Match(Model):
     """
 
     _validation = {
-        'score': {'required': True},
+        'confidence_score': {'required': True},
         'text': {'required': True},
         'offset': {'required': True},
         'length': {'required': True},
     }
 
     _attribute_map = {
-        'score': {'key': 'score', 'type': 'float'},
+        'confidence_score': {'key': 'confidenceScore', 'type': 'float'},
         'text': {'key': 'text', 'type': 'str'},
         'offset': {'key': 'offset', 'type': 'int'},
         'length': {'key': 'length', 'type': 'int'},
     }
 
-    def __init__(self, *, score: float, text: str, offset: int, length: int, **kwargs) -> None:
+    def __init__(self, *, confidence_score: float, text: str, offset: int, length: int, **kwargs) -> None:
         super(Match, self).__init__(**kwargs)
-        self.score = score
+        self.confidence_score = confidence_score
         self.text = text
         self.offset = offset
         self.length = length
@@ -767,45 +795,45 @@ class SentenceSentiment(Model):
 
     All required parameters must be populated in order to send to Azure.
 
+    :param text: The sentence text.
+    :type text: str
     :param sentiment: Required. The predicted Sentiment for the sentence.
      Possible values include: 'positive', 'neutral', 'negative'
     :type sentiment: str or
      ~azure.ai.textanalytics.models.SentenceSentimentValue
-    :param sentence_scores: Required. The sentiment confidence score between 0
-     and 1 for the sentence for all classes.
-    :type sentence_scores:
+    :param confidence_scores: Required. The sentiment confidence score between
+     0 and 1 for the sentence for all classes.
+    :type confidence_scores:
      ~azure.ai.textanalytics.models.SentimentConfidenceScorePerLabel
     :param offset: Required. The sentence offset from the start of the
      document.
     :type offset: int
     :param length: Required. The length of the sentence by Unicode standard.
     :type length: int
-    :param warnings: The warnings generated for the sentence.
-    :type warnings: list[str]
     """
 
     _validation = {
         'sentiment': {'required': True},
-        'sentence_scores': {'required': True},
+        'confidence_scores': {'required': True},
         'offset': {'required': True},
         'length': {'required': True},
     }
 
     _attribute_map = {
+        'text': {'key': 'text', 'type': 'str'},
         'sentiment': {'key': 'sentiment', 'type': 'SentenceSentimentValue'},
-        'sentence_scores': {'key': 'sentenceScores', 'type': 'SentimentConfidenceScorePerLabel'},
+        'confidence_scores': {'key': 'confidenceScores', 'type': 'SentimentConfidenceScorePerLabel'},
         'offset': {'key': 'offset', 'type': 'int'},
         'length': {'key': 'length', 'type': 'int'},
-        'warnings': {'key': 'warnings', 'type': '[str]'},
     }
 
-    def __init__(self, *, sentiment, sentence_scores, offset: int, length: int, warnings=None, **kwargs) -> None:
+    def __init__(self, *, sentiment, confidence_scores, offset: int, length: int, text: str=None, **kwargs) -> None:
         super(SentenceSentiment, self).__init__(**kwargs)
+        self.text = text
         self.sentiment = sentiment
-        self.sentence_scores = sentence_scores
+        self.confidence_scores = confidence_scores
         self.offset = offset
         self.length = length
-        self.warnings = warnings
 
 
 class SentimentConfidenceScorePerLabel(Model):
@@ -891,8 +919,8 @@ class TextAnalyticsError(Model):
     :type message: str
     :param target: Error target.
     :type target: str
-    :param inner_error: Inner error contains more specific information.
-    :type inner_error: ~azure.ai.textanalytics.models.InnerError
+    :param innererror: Inner error contains more specific information.
+    :type innererror: ~azure.ai.textanalytics.models.InnerError
     :param details: Details about specific errors that led to this reported
      error.
     :type details: list[~azure.ai.textanalytics.models.TextAnalyticsError]
@@ -907,16 +935,16 @@ class TextAnalyticsError(Model):
         'code': {'key': 'code', 'type': 'ErrorCodeValue'},
         'message': {'key': 'message', 'type': 'str'},
         'target': {'key': 'target', 'type': 'str'},
-        'inner_error': {'key': 'innerError', 'type': 'InnerError'},
+        'innererror': {'key': 'innererror', 'type': 'InnerError'},
         'details': {'key': 'details', 'type': '[TextAnalyticsError]'},
     }
 
-    def __init__(self, *, code, message: str, target: str=None, inner_error=None, details=None, **kwargs) -> None:
+    def __init__(self, *, code, message: str, target: str=None, innererror=None, details=None, **kwargs) -> None:
         super(TextAnalyticsError, self).__init__(**kwargs)
         self.code = code
         self.message = message
         self.target = target
-        self.inner_error = inner_error
+        self.innererror = innererror
         self.details = details
 
 
@@ -934,3 +962,35 @@ class TextAnalyticsErrorException(HttpResponseError):
       if self.error is None:
           self.error = deserialize.dependencies[model_name]()
       super(TextAnalyticsErrorException, self).__init__(response=response)
+
+
+class TextAnalyticsWarning(Model):
+    """TextAnalyticsWarning.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param code: Required. Error code. Possible values include:
+     'LongWordsInDocument', 'DocumentTruncated'
+    :type code: str or ~azure.ai.textanalytics.models.WarningCodeValue
+    :param message: Required. Warning message.
+    :type message: str
+    :param target_ref: A JSON pointer reference indicating the target object.
+    :type target_ref: str
+    """
+
+    _validation = {
+        'code': {'required': True},
+        'message': {'required': True},
+    }
+
+    _attribute_map = {
+        'code': {'key': 'code', 'type': 'WarningCodeValue'},
+        'message': {'key': 'message', 'type': 'str'},
+        'target_ref': {'key': 'targetRef', 'type': 'str'},
+    }
+
+    def __init__(self, *, code, message: str, target_ref: str=None, **kwargs) -> None:
+        super(TextAnalyticsWarning, self).__init__(**kwargs)
+        self.code = code
+        self.message = message
+        self.target_ref = target_ref
