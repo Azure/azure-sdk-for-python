@@ -30,6 +30,19 @@ class WhatIfResultFormat(str, Enum):
     full_resource_payloads = "FullResourcePayloads"
 
 
+class AliasPatternType(str, Enum):
+
+    not_specified = "NotSpecified"  #: NotSpecified is not allowed.
+    extract = "Extract"  #: Extract is the only allowed value.
+
+
+class AliasType(str, Enum):
+
+    not_specified = "NotSpecified"  #: Alias type is unknown (same as not providing alias type).
+    plain_text = "PlainText"  #: Alias value is not secret.
+    mask = "Mask"  #: Alias value is secret.
+
+
 class ResourceIdentityType(str, Enum):
 
     system_assigned = "SystemAssigned"
