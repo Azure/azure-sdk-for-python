@@ -151,6 +151,15 @@ class ServiceBusSession(object):
         """
         return bool(self._locked_until and self._locked_until <= datetime.datetime.now())
 
+    @property
+    def locked_until(self):
+        # type: () -> datetime
+        """The time at which this session's lock will expire.
+
+        :rtype: datetime
+        """
+        return self._locked_until
+
 
 class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
     def _create_attribute(self, **kwargs):
