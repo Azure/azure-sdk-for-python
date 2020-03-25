@@ -37,6 +37,7 @@ import logging
 import os
 import time
 import copy
+import uuid
 
 try:
     binary_type = str
@@ -271,6 +272,36 @@ class HttpRequest(object):
                 pass
             return (data_name, data, "application/octet-stream")
         return (None, cast(str, data))
+    
+    def _calculate_changesets(self):
+        # type: () -> Tuple[Dict[int, Optional[str]], List[int]]
+        """Convert the changeset ranges into start/end indexes."""
+        changesets = self.multipart_mixed_info[3]  # type: List[Union[Tuple[int, int, str], Tuple[int, int]]]
+        start = {}
+        end = []
+        validate_indexes = []
+        for changeset in changesets:
+            try:
+                start_index, end_index, boundary = changeset
+            except ValueError:
+                start_index, end_index = changeset
+                boundary = None
+            validate_indexes.extend(list(range(start_index, end_index + 1)))
+            start[start_index] = boundary
+            end.append(end_index)
+        if len(validate_indexes) != len(set(validate_indexes)):
+            raise ValueError("Changesets must not overlap.")
+        return start, end
+
+    def _add_message_part(self, index, message, request):
+        # type: (int, Message, HttpRequest) -> None
+        """Add each request to the message batch."""
+        part_message = Message()
+        part_message.add_header("Content-Type", "application/http")
+        part_message.add_header("Content-Transfer-Encoding", "binary")
+        part_message.add_header("Content-ID", str(index))
+        part_message.set_payload(request.serialize())
+        message.attach(part_message)
 
     def format_parameters(self, params):
         # type: (Dict[str, str]) -> None
@@ -377,13 +408,19 @@ class HttpRequest(object):
 
         :keyword list[SansIOHTTPPolicy] policies: SansIOPolicy to apply at preparation time
         :keyword str boundary: Optional boundary
-
+        :keyword changesets: Optional list of tuples marking the change sets within the request list.
+         Each tuple should contain two integers: the start and inclusive-end indexes of each change set
+         within the request list. Optionally, the tuple can also contain a changeset boundary string.
+         Any request that fall outside the changeset ranges will be added to the batch normally.
+         Change set ranges must not overlap.
+        :paramtype changesets: List[Union[Tuple[int, int, str], Tuple[int, int]]]
         :param requests: HttpRequests object
         """
         self.multipart_mixed_info = (
             requests,
             kwargs.pop("policies", []),
-            kwargs.pop("boundary", []),
+            kwargs.pop("boundary", None),
+            kwargs.pop("changesets", [])
         )
 
     def prepare_multipart_body(self):
@@ -398,21 +435,27 @@ class HttpRequest(object):
         if not self.multipart_mixed_info:
             return
 
-        requests = self.multipart_mixed_info[0]  # type: List[HttpRequest]
         boundary = self.multipart_mixed_info[2]  # type: Optional[str]
+        requests = self.multipart_mixed_info[0]  # type: List[HttpRequest]
+        start_changeset, end_changeset = self._calculate_changesets()
 
         # Update the main request with the body
         main_message = Message()
         main_message.add_header("Content-Type", "multipart/mixed")
         if boundary:
             main_message.set_boundary(boundary)
-        for i, req in enumerate(requests):
-            part_message = Message()
-            part_message.add_header("Content-Type", "application/http")
-            part_message.add_header("Content-Transfer-Encoding", "binary")
-            part_message.add_header("Content-ID", str(i))
-            part_message.set_payload(req.serialize())
-            main_message.attach(part_message)
+
+        working_message = main_message
+        for index, request in enumerate(requests):
+            if index in start_changeset:
+                working_message = Message()
+                working_message.add_header("Content-Type", "multipart/mixed")
+                if start_changeset[index]:
+                    working_message.set_boundary(start_changeset[index])
+            self._add_message_part(index, working_message, request)
+            if index in end_changeset:
+                main_message.attach(working_message)
+                working_message = main_message
 
         try:
             from email.policy import HTTP
@@ -482,6 +525,32 @@ class _HttpResponseBase(object):
             encoding = "utf-8-sig"
         return self.body().decode(encoding)
 
+    def _decode_parts(self, message, http_response_type, requests):
+        # type: (Message, Type[_HttpResponseBase], List[HttpRequest]) -> Iterator[HttpResponse]
+        """Rebuild an HTTP response from pure string."""
+        responses = []
+        offset = 0
+        for index, raw_reponse in enumerate(message.get_payload()):
+            content_type = raw_reponse.get_content_type()
+            if content_type == "application/http":
+                responses.append(
+                    _deserialize_response(
+                        raw_reponse.get_payload(decode=True),
+                        requests[index],
+                        http_response_type=http_response_type,
+                    )
+                )
+            elif content_type == "multipart/mixed":
+                # The message batch contains one or more change sets
+                changeset_responses = self._decode_parts(raw_reponse, http_response_type, requests[offset:])
+                offset += len(changeset_responses)
+                responses.extend(changeset_responses)
+            else:
+                raise ValueError(
+                    "Multipart doesn't support part other than application/http for now"
+                )
+        return responses
+
     def _get_raw_parts(self, http_response_type=None):
         # type (Optional[Type[_HttpResponseBase]]) -> Iterator[HttpResponse]
         """Assuming this body is multipart, return the iterator or parts.
@@ -500,26 +569,9 @@ class _HttpResponseBase(object):
             + b"\r\n\r\n"
             + body_as_bytes
         )
-
         message = message_parser(http_body)  # type: Message
-
-        # Rebuild an HTTP response from pure string
         requests = self.request.multipart_mixed_info[0]  # type: List[HttpRequest]
-        responses = []
-        for request, raw_reponse in zip(requests, message.get_payload()):
-            if raw_reponse.get_content_type() == "application/http":
-                responses.append(
-                    _deserialize_response(
-                        raw_reponse.get_payload(decode=True),
-                        request,
-                        http_response_type=http_response_type,
-                    )
-                )
-            else:
-                raise ValueError(
-                    "Multipart doesn't support part other than application/http for now"
-                )
-        return responses
+        return self._decode_parts(message, http_response_type, requests)
 
 
 class HttpResponse(_HttpResponseBase):  # pylint: disable=abstract-method

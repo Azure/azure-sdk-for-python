@@ -258,6 +258,358 @@ def test_multipart_send_with_context():
     )
 
 
+@pytest.mark.skipif(sys.version_info < (3, 0), reason="Multipart serialization not supported on 2.7")
+def test_multipart_send_with_one_changeset():
+
+    transport = mock.MagicMock(spec=HttpTransport)
+
+    header_policy = HeadersPolicy({
+        'x-ms-date': 'Thu, 14 Jun 2018 16:46:54 GMT'
+    })
+
+    requests = [
+        HttpRequest("DELETE", "/container0/blob0"),
+        HttpRequest("DELETE", "/container1/blob1")
+    ]
+
+    request = HttpRequest("POST", "http://account.blob.core.windows.net/?comp=batch")
+    request.set_multipart_mixed(
+        *requests,
+        policies=[header_policy],
+        boundary="batch_357de4f7-6d0b-4e02-8cd2-6361411a9525",
+        changesets=[(0, 1, "changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525")]
+    )
+
+    with Pipeline(transport) as pipeline:
+        pipeline.run(request)
+
+    assert request.body == (
+        b'--batch_357de4f7-6d0b-4e02-8cd2-6361411a9525\r\n'
+        b'Content-Type: multipart/mixed; boundary="changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525"\r\n'
+        b'\r\n'
+        b'--changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525\r\n'
+        b'Content-Type: application/http\r\n'
+        b'Content-Transfer-Encoding: binary\r\n'
+        b'Content-ID: 0\r\n'
+        b'\r\n'
+        b'DELETE /container0/blob0 HTTP/1.1\r\n'
+        b'x-ms-date: Thu, 14 Jun 2018 16:46:54 GMT\r\n'
+        b'\r\n'
+        b'\r\n'
+        b'--changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525\r\n'
+        b'Content-Type: application/http\r\n'
+        b'Content-Transfer-Encoding: binary\r\n'
+        b'Content-ID: 1\r\n'
+        b'\r\n'
+        b'DELETE /container1/blob1 HTTP/1.1\r\n'
+        b'x-ms-date: Thu, 14 Jun 2018 16:46:54 GMT\r\n'
+        b'\r\n'
+        b'\r\n'
+        b'--changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525--\r\n'
+        b'\r\n'
+        b'--batch_357de4f7-6d0b-4e02-8cd2-6361411a9525--\r\n'
+    )
+
+
+@pytest.mark.skipif(sys.version_info < (3, 0), reason="Multipart serialization not supported on 2.7")
+def test_multipart_send_with_multiple_changesets():
+
+    transport = mock.MagicMock(spec=HttpTransport)
+
+    header_policy = HeadersPolicy({
+        'x-ms-date': 'Thu, 14 Jun 2018 16:46:54 GMT'
+    })
+
+    requests = [
+        HttpRequest("DELETE", "/container0/blob0"),
+        HttpRequest("DELETE", "/container1/blob1"),
+        HttpRequest("DELETE", "/container2/blob2"),
+        HttpRequest("DELETE", "/container3/blob3")
+    ]
+
+    request = HttpRequest("POST", "http://account.blob.core.windows.net/?comp=batch")
+    request.set_multipart_mixed(
+        *requests,
+        policies=[header_policy],
+        boundary="batch_357de4f7-6d0b-4e02-8cd2-6361411a9525",
+        changesets=[
+            (0, 1, "changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525"),
+            (2, 3, "changeset_8b9e487e-a353-4dcb-a6f4-0688191e0314")]
+    )
+
+    with Pipeline(transport) as pipeline:
+        pipeline.run(request)
+
+    assert request.body == (
+        b'--batch_357de4f7-6d0b-4e02-8cd2-6361411a9525\r\n'
+        b'Content-Type: multipart/mixed; boundary="changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525"\r\n'
+        b'\r\n'
+        b'--changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525\r\n'
+        b'Content-Type: application/http\r\n'
+        b'Content-Transfer-Encoding: binary\r\n'
+        b'Content-ID: 0\r\n'
+        b'\r\n'
+        b'DELETE /container0/blob0 HTTP/1.1\r\n'
+        b'x-ms-date: Thu, 14 Jun 2018 16:46:54 GMT\r\n'
+        b'\r\n'
+        b'\r\n'
+        b'--changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525\r\n'
+        b'Content-Type: application/http\r\n'
+        b'Content-Transfer-Encoding: binary\r\n'
+        b'Content-ID: 1\r\n'
+        b'\r\n'
+        b'DELETE /container1/blob1 HTTP/1.1\r\n'
+        b'x-ms-date: Thu, 14 Jun 2018 16:46:54 GMT\r\n'
+        b'\r\n'
+        b'\r\n'
+        b'--changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525--\r\n'
+        b'\r\n'
+        b'--batch_357de4f7-6d0b-4e02-8cd2-6361411a9525\r\n'
+        b'Content-Type: multipart/mixed; boundary="changeset_8b9e487e-a353-4dcb-a6f4-0688191e0314"\r\n'
+        b'\r\n'
+        b'--changeset_8b9e487e-a353-4dcb-a6f4-0688191e0314\r\n'
+        b'Content-Type: application/http\r\n'
+        b'Content-Transfer-Encoding: binary\r\n'
+        b'Content-ID: 2\r\n'
+        b'\r\n'
+        b'DELETE /container2/blob2 HTTP/1.1\r\n'
+        b'x-ms-date: Thu, 14 Jun 2018 16:46:54 GMT\r\n'
+        b'\r\n'
+        b'\r\n'
+        b'--changeset_8b9e487e-a353-4dcb-a6f4-0688191e0314\r\n'
+        b'Content-Type: application/http\r\n'
+        b'Content-Transfer-Encoding: binary\r\n'
+        b'Content-ID: 3\r\n'
+        b'\r\n'
+        b'DELETE /container3/blob3 HTTP/1.1\r\n'
+        b'x-ms-date: Thu, 14 Jun 2018 16:46:54 GMT\r\n'
+        b'\r\n'
+        b'\r\n'
+        b'--changeset_8b9e487e-a353-4dcb-a6f4-0688191e0314--\r\n'
+        b'\r\n'
+        b'--batch_357de4f7-6d0b-4e02-8cd2-6361411a9525--\r\n'
+    )
+
+
+@pytest.mark.skipif(sys.version_info < (3, 0), reason="Multipart serialization not supported on 2.7")
+def test_multipart_send_with_combination_changeset_first():
+
+    transport = mock.MagicMock(spec=HttpTransport)
+
+    header_policy = HeadersPolicy({
+        'x-ms-date': 'Thu, 14 Jun 2018 16:46:54 GMT'
+    })
+
+    requests = [
+        HttpRequest("DELETE", "/container0/blob0"),
+        HttpRequest("DELETE", "/container1/blob1"),
+        HttpRequest("DELETE", "/container2/blob2")
+    ]
+
+    request = HttpRequest("POST", "http://account.blob.core.windows.net/?comp=batch")
+    request.set_multipart_mixed(
+        *requests,
+        policies=[header_policy],
+        boundary="batch_357de4f7-6d0b-4e02-8cd2-6361411a9525",
+        changesets=[(0, 1, "changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525")]
+    )
+
+    with Pipeline(transport) as pipeline:
+        pipeline.run(request)
+
+    assert request.body == (
+        b'--batch_357de4f7-6d0b-4e02-8cd2-6361411a9525\r\n'
+        b'Content-Type: multipart/mixed; boundary="changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525"\r\n'
+        b'\r\n'
+        b'--changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525\r\n'
+        b'Content-Type: application/http\r\n'
+        b'Content-Transfer-Encoding: binary\r\n'
+        b'Content-ID: 0\r\n'
+        b'\r\n'
+        b'DELETE /container0/blob0 HTTP/1.1\r\n'
+        b'x-ms-date: Thu, 14 Jun 2018 16:46:54 GMT\r\n'
+        b'\r\n'
+        b'\r\n'
+        b'--changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525\r\n'
+        b'Content-Type: application/http\r\n'
+        b'Content-Transfer-Encoding: binary\r\n'
+        b'Content-ID: 1\r\n'
+        b'\r\n'
+        b'DELETE /container1/blob1 HTTP/1.1\r\n'
+        b'x-ms-date: Thu, 14 Jun 2018 16:46:54 GMT\r\n'
+        b'\r\n'
+        b'\r\n'
+        b'--changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525--\r\n'
+        b'\r\n'
+        b'--batch_357de4f7-6d0b-4e02-8cd2-6361411a9525\r\n'
+        b'Content-Type: application/http\r\n'
+        b'Content-Transfer-Encoding: binary\r\n'
+        b'Content-ID: 2\r\n'
+        b'\r\n'
+        b'DELETE /container2/blob2 HTTP/1.1\r\n'
+        b'x-ms-date: Thu, 14 Jun 2018 16:46:54 GMT\r\n'
+        b'\r\n'
+        b'\r\n'
+        b'--batch_357de4f7-6d0b-4e02-8cd2-6361411a9525--\r\n'
+    )
+
+@pytest.mark.skipif(sys.version_info < (3, 0), reason="Multipart serialization not supported on 2.7")
+def test_multipart_send_with_combination_changeset_last():
+
+    transport = mock.MagicMock(spec=HttpTransport)
+
+    header_policy = HeadersPolicy({
+        'x-ms-date': 'Thu, 14 Jun 2018 16:46:54 GMT'
+    })
+
+    requests = [
+        HttpRequest("DELETE", "/container0/blob0"),
+        HttpRequest("DELETE", "/container1/blob1"),
+        HttpRequest("DELETE", "/container2/blob2")
+    ]
+
+    request = HttpRequest("POST", "http://account.blob.core.windows.net/?comp=batch")
+    request.set_multipart_mixed(
+        *requests,
+        policies=[header_policy],
+        boundary="batch_357de4f7-6d0b-4e02-8cd2-6361411a9525",
+        changesets=[(1, 2, "changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525")]
+    )
+
+    with Pipeline(transport) as pipeline:
+        pipeline.run(request)
+
+    assert request.body == (
+        b'--batch_357de4f7-6d0b-4e02-8cd2-6361411a9525\r\n'
+        b'Content-Type: application/http\r\n'
+        b'Content-Transfer-Encoding: binary\r\n'
+        b'Content-ID: 0\r\n'
+        b'\r\n'
+        b'DELETE /container0/blob0 HTTP/1.1\r\n'
+        b'x-ms-date: Thu, 14 Jun 2018 16:46:54 GMT\r\n'
+        b'\r\n'
+        b'\r\n'
+        b'--batch_357de4f7-6d0b-4e02-8cd2-6361411a9525\r\n'
+        b'Content-Type: multipart/mixed; boundary="changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525"\r\n'
+        b'\r\n'
+        b'--changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525\r\n'
+        b'Content-Type: application/http\r\n'
+        b'Content-Transfer-Encoding: binary\r\n'
+        b'Content-ID: 1\r\n'
+        b'\r\n'
+        b'DELETE /container1/blob1 HTTP/1.1\r\n'
+        b'x-ms-date: Thu, 14 Jun 2018 16:46:54 GMT\r\n'
+        b'\r\n'
+        b'\r\n'
+        b'--changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525\r\n'
+        b'Content-Type: application/http\r\n'
+        b'Content-Transfer-Encoding: binary\r\n'
+        b'Content-ID: 2\r\n'
+        b'\r\n'
+        b'DELETE /container2/blob2 HTTP/1.1\r\n'
+        b'x-ms-date: Thu, 14 Jun 2018 16:46:54 GMT\r\n'
+        b'\r\n'
+        b'\r\n'
+        b'--changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525--\r\n'
+        b'\r\n'
+        b'--batch_357de4f7-6d0b-4e02-8cd2-6361411a9525--\r\n'
+    )
+
+@pytest.mark.skipif(sys.version_info < (3, 0), reason="Multipart serialization not supported on 2.7")
+def test_multipart_send_with_combination_changeset_middle():
+
+    transport = mock.MagicMock(spec=HttpTransport)
+
+    header_policy = HeadersPolicy({
+        'x-ms-date': 'Thu, 14 Jun 2018 16:46:54 GMT'
+    })
+
+    requests = [
+        HttpRequest("DELETE", "/container0/blob0"),
+        HttpRequest("DELETE", "/container1/blob1"),
+        HttpRequest("DELETE", "/container2/blob2")
+    ]
+
+    request = HttpRequest("POST", "http://account.blob.core.windows.net/?comp=batch")
+    request.set_multipart_mixed(
+        *requests,
+        policies=[header_policy],
+        boundary="batch_357de4f7-6d0b-4e02-8cd2-6361411a9525",
+        changesets=[(1, 1, "changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525")]
+    )
+
+    with Pipeline(transport) as pipeline:
+        pipeline.run(request)
+
+    assert request.body == (
+        b'--batch_357de4f7-6d0b-4e02-8cd2-6361411a9525\r\n'
+        b'Content-Type: application/http\r\n'
+        b'Content-Transfer-Encoding: binary\r\n'
+        b'Content-ID: 0\r\n'
+        b'\r\n'
+        b'DELETE /container0/blob0 HTTP/1.1\r\n'
+        b'x-ms-date: Thu, 14 Jun 2018 16:46:54 GMT\r\n'
+        b'\r\n'
+        b'\r\n'
+        b'--batch_357de4f7-6d0b-4e02-8cd2-6361411a9525\r\n'
+        b'Content-Type: multipart/mixed; boundary="changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525"\r\n'
+        b'\r\n'
+        b'--changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525\r\n'
+        b'Content-Type: application/http\r\n'
+        b'Content-Transfer-Encoding: binary\r\n'
+        b'Content-ID: 1\r\n'
+        b'\r\n'
+        b'DELETE /container1/blob1 HTTP/1.1\r\n'
+        b'x-ms-date: Thu, 14 Jun 2018 16:46:54 GMT\r\n'
+        b'\r\n'
+        b'\r\n'
+        b'--changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525--\r\n'
+        b'\r\n'
+        b'--batch_357de4f7-6d0b-4e02-8cd2-6361411a9525\r\n'
+        b'Content-Type: application/http\r\n'
+        b'Content-Transfer-Encoding: binary\r\n'
+        b'Content-ID: 2\r\n'
+        b'\r\n'
+        b'DELETE /container2/blob2 HTTP/1.1\r\n'
+        b'x-ms-date: Thu, 14 Jun 2018 16:46:54 GMT\r\n'
+        b'\r\n'
+        b'\r\n'
+        b'--batch_357de4f7-6d0b-4e02-8cd2-6361411a9525--\r\n'
+    )
+
+
+@pytest.mark.skipif(sys.version_info < (3, 0), reason="Multipart serialization not supported on 2.7")
+def test_multipart_send_with_changeset_overlap():
+
+    transport = mock.MagicMock(spec=HttpTransport)
+
+    header_policy = HeadersPolicy({
+        'x-ms-date': 'Thu, 14 Jun 2018 16:46:54 GMT'
+    })
+
+    requests = [
+        HttpRequest("DELETE", "/container0/blob0"),
+        HttpRequest("DELETE", "/container1/blob1"),
+        HttpRequest("DELETE", "/container2/blob2")
+    ]
+
+    request = HttpRequest("POST", "http://account.blob.core.windows.net/?comp=batch")
+    request.set_multipart_mixed(
+        *requests,
+        policies=[header_policy],
+        boundary="batch_357de4f7-6d0b-4e02-8cd2-6361411a9525",
+        changesets=[
+            (0, 2, "changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525"),
+            (1, 2, "changeset_8b9e487e-a353-4dcb-a6f4-0688191e0314")]
+    )
+
+    with Pipeline(transport) as pipeline:
+        with pytest.raises(ValueError) as e:
+            pipeline.run(request)
+
+    assert str(e.value) == "Changesets must not overlap."
+
+
 def test_multipart_receive():
 
     class MockResponse(HttpResponse):
