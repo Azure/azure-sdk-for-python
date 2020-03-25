@@ -72,14 +72,17 @@ class BaseHandler(object):  # pylint: disable=too-many-instance-attributes
             encoding=self.encoding,
             **self.handler_kwargs)
 
-    def _mgmt_request_response(self, operation, message, callback, **kwargs):
+    def _mgmt_request_response(self, operation, message, callback, keep_alive_associated_link=True, **kwargs):
         if not self.running:
             raise InvalidHandlerState("Client connection is closed.")
 
-        try:
-            application_properties = {ASSOCIATEDLINKPROPERTYNAME:self._handler.message_handler.name}
-        except AttributeError:
-            application_properties = {}
+        application_properties = {}
+        # Some mgmt calls do not support an associated link name.  Most do, however, so on by default.
+        if keep_alive_associated_link:
+            try:
+                application_properties = {ASSOCIATEDLINKPROPERTYNAME:self._handler.message_handler.name}
+            except AttributeError:
+                pass
 
         mgmt_msg = Message(
             body=message,

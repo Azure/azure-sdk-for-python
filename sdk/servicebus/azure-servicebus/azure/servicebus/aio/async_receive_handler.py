@@ -694,4 +694,5 @@ class SessionReceiver(Receiver, mixins.SessionMixin):
         return await self._mgmt_request_response(
             REQUEST_RESPONSE_GET_MESSAGE_SESSIONS_OPERATION,
             message,
-            mgmt_handlers.list_sessions_op)
+            mgmt_handlers.list_sessions_op,
+            keep_alive_associated_link=False)
