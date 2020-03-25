@@ -87,6 +87,9 @@ async def test_send_non_ascii_async(connstr_receivers):
         batch.add(EventData(json.dumps({"foo": u"漢字"})))
         await client.send_batch(batch)
     await asyncio.sleep(1)
+    # receive_message_batch() returns immediately once it receives any messages before the max_batch_size
+    # and timeout reach. Could be 1, 2, or any number between 1 and max_batch_size.
+    # So call it twice to ensure the two events are received.
     partition_0 = [EventData._from_message(x) for x in receivers[0].receive_message_batch(timeout=5000)] + \
                   [EventData._from_message(x) for x in receivers[0].receive_message_batch(timeout=5000)]
 
