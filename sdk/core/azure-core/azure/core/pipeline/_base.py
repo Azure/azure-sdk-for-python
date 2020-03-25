@@ -157,8 +157,8 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
         self._transport.__exit__(*exc_details)
 
     @staticmethod
-    def _prepare_multipart_mixed_request(request):
-        # type: (HTTPRequestType) -> None
+    def _prepare_multipart_mixed_request(request, **kwargs):
+        # type: (HTTPRequestType, Any) -> None
         """Will execute the multipart policies.
 
         Does nothing if "set_multipart_mixed" was never called.
@@ -174,7 +174,7 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
         import concurrent.futures
 
         def prepare_requests(req):
-            context = PipelineContext(None)
+            context = PipelineContext(None, **kwargs)
             pipeline_request = PipelineRequest(req, context)
             for policy in policies:
                 _await_result(policy.on_request, pipeline_request)
@@ -194,7 +194,8 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
         :return: The PipelineResponse object
         :rtype: ~azure.core.pipeline.PipelineResponse
         """
-        self._prepare_multipart_mixed_request(request)
+        multipart_options = kwargs.pop("multipart_options", None) or {}
+        self._prepare_multipart_mixed_request(request, **multipart_options)
         request.prepare_multipart_body()  # type: ignore
         context = PipelineContext(self._transport, **kwargs)
         pipeline_request = PipelineRequest(

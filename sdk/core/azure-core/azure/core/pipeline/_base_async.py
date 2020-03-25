@@ -168,8 +168,8 @@ class AsyncPipeline(
     async def __aexit__(self, *exc_details):  # pylint: disable=arguments-differ
         await self._transport.__aexit__(*exc_details)
 
-    async def _prepare_multipart_mixed_request(self, request):
-        # type: (HTTPRequestType) -> None
+    async def _prepare_multipart_mixed_request(self, request, **kwargs):
+        # type: (HTTPRequestType, Any) -> None
         """Will execute the multipart policies.
 
         Does nothing if "set_multipart_mixed" was never called.
@@ -182,7 +182,7 @@ class AsyncPipeline(
         policies = multipart_mixed_info[1]  # type: List[SansIOHTTPPolicy]
 
         async def prepare_requests(req):
-            context = PipelineContext(None)
+            context = PipelineContext(None, **kwargs)
             pipeline_request = PipelineRequest(req, context)
             for policy in policies:
                 await _await_result(policy.on_request, pipeline_request)
@@ -201,7 +201,8 @@ class AsyncPipeline(
         :return: The PipelineResponse object.
         :rtype: ~azure.core.pipeline.PipelineResponse
         """
-        await self._prepare_multipart_mixed_request(request)
+        multipart_options = kwargs.pop("multipart_options", None) or {}
+        await self._prepare_multipart_mixed_request(request, **multipart_options)
         request.prepare_multipart_body()  # type: ignore
         context = PipelineContext(self._transport, **kwargs)
         pipeline_request = PipelineRequest(request, context)
