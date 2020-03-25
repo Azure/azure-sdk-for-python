@@ -4054,7 +4054,7 @@ class OSProfile(Model):
      customData property** <br><br> This property cannot be updated after the
      VM is created. <br><br> customData is passed to the VM to be saved as a
      file, for more information see [Custom Data on Azure
-     VMs](https://azure.microsoft.com/en-us/blog/custom-data-and-cloud-init-on-windows-azure/)
+     VMs](https://docs.microsoft.com/azure/virtual-machines/custom-data)
      <br><br> For using cloud-init for your Linux VM, see [Using cloud-init to
      customize a Linux VM during
      creation](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-using-cloud-init?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json)
