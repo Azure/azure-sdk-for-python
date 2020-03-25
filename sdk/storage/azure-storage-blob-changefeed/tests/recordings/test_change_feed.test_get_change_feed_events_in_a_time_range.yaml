@@ -1,0 +1,566 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-blob/12.3.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      x-ms-date:
+      - Fri, 24 Apr 2020 23:11:38 GMT
+      x-ms-version:
+      - '2019-10-10'
+    method: GET
+    uri: https://storagename.blob.core.windows.net/%24blobchangefeed?prefix=idx%2Fsegments%2F&restype=container&comp=list
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
+        ServiceEndpoint=\"https://storagename.blob.core.windows.net/\" ContainerName=\"%24blobchangefeed\"><Prefix>idx/segments/</Prefix><Blobs><Blob><Name>idx/segments/1601/01/01/0000/meta.json</Name><Properties><Creation-Time>Fri,
+        01 Nov 2019 17:53:18 GMT</Creation-Time><Last-Modified>Fri, 01 Nov 2019 17:53:18
+        GMT</Last-Modified><Etag>0x8D75EF461013A17</Etag><Content-Length>432</Content-Length><Content-Type>application/json</Content-Type><Content-Encoding
+        /><Content-Language /><Content-CRC64 /><Content-MD5>78ixXvWSLvsvateoWIq1gw==</Content-MD5><Cache-Control
+        /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><ServerEncrypted>true</ServerEncrypted></Properties></Blob><Blob><Name>idx/segments/2019/11/01/1700/meta.json</Name><Properties><Creation-Time>Fri,
+        01 Nov 2019 17:54:18 GMT</Creation-Time><Last-Modified>Thu, 16 Jan 2020 23:16:21
+        GMT</Last-Modified><Etag>0x8D79ADA1931901C</Etag><Content-Length>432</Content-Length><Content-Type>application/json</Content-Type><Content-Encoding
+        /><Content-Language /><Content-CRC64 /><Content-MD5>3CfmPL0bg9DmacixhHlI5Q==</Content-MD5><Cache-Control
+        /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><ServerEncrypted>true</ServerEncrypted></Properties></Blob><Blob><Name>idx/segments/2020/01/16/2300/meta.json</Name><Properties><Creation-Time>Thu,
+        16 Jan 2020 23:16:21 GMT</Creation-Time><Last-Modified>Mon, 02 Mar 2020 23:40:40
+        GMT</Last-Modified><Etag>0x8D7BF031E1B1184</Etag><Content-Length>432</Content-Length><Content-Type>application/json</Content-Type><Content-Encoding
+        /><Content-Language /><Content-CRC64 /><Content-MD5>MqfF8F0HsFw0eznJFwjGSQ==</Content-MD5><Cache-Control
+        /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><ServerEncrypted>true</ServerEncrypted></Properties></Blob><Blob><Name>idx/segments/2020/03/02/2300/meta.json</Name><Properties><Creation-Time>Mon,
+        02 Mar 2020 23:40:40 GMT</Creation-Time><Last-Modified>Tue, 03 Mar 2020 00:44:03
+        GMT</Last-Modified><Etag>0x8D7BF0BF89EA573</Etag><Content-Length>432</Content-Length><Content-Type>application/json</Content-Type><Content-Encoding
+        /><Content-Language /><Content-CRC64 /><Content-MD5>qxN87weZd1OytKuBWY2I1Q==</Content-MD5><Cache-Control
+        /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><ServerEncrypted>true</ServerEncrypted></Properties></Blob><Blob><Name>idx/segments/2020/03/03/0000/meta.json</Name><Properties><Creation-Time>Tue,
+        03 Mar 2020 00:44:03 GMT</Creation-Time><Last-Modified>Tue, 03 Mar 2020 18:23:23
+        GMT</Last-Modified><Etag>0x8D7BF9FF5B8A419</Etag><Content-Length>432</Content-Length><Content-Type>application/json</Content-Type><Content-Encoding
+        /><Content-Language /><Content-CRC64 /><Content-MD5>FlhWLFCLsCCELR78toP1+Q==</Content-MD5><Cache-Control
+        /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><ServerEncrypted>true</ServerEncrypted></Properties></Blob><Blob><Name>idx/segments/2020/03/03/1800/meta.json</Name><Properties><Creation-Time>Tue,
+        03 Mar 2020 18:23:23 GMT</Creation-Time><Last-Modified>Tue, 03 Mar 2020 20:26:12
+        GMT</Last-Modified><Etag>0x8D7BFB11D9DDDF2</Etag><Content-Length>432</Content-Length><Content-Type>application/json</Content-Type><Content-Encoding
+        /><Content-Language /><Content-CRC64 /><Content-MD5>GLM5h+nvu1taR1RhT1MjhA==</Content-MD5><Cache-Control
+        /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><ServerEncrypted>true</ServerEncrypted></Properties></Blob><Blob><Name>idx/segments/2020/03/03/2000/meta.json</Name><Properties><Creation-Time>Tue,
+        03 Mar 2020 20:26:12 GMT</Creation-Time><Last-Modified>Tue, 03 Mar 2020 22:34:31
+        GMT</Last-Modified><Etag>0x8D7BFC30AE556C2</Etag><Content-Length>432</Content-Length><Content-Type>application/json</Content-Type><Content-Encoding
+        /><Content-Language /><Content-CRC64 /><Content-MD5>ELWZc1g+zLIJ2Wg/UxszIg==</Content-MD5><Cache-Control
+        /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><ServerEncrypted>true</ServerEncrypted></Properties></Blob><Blob><Name>idx/segments/2020/03/03/2200/meta.json</Name><Properties><Creation-Time>Tue,
+        03 Mar 2020 22:34:31 GMT</Creation-Time><Last-Modified>Thu, 05 Mar 2020 17:41:17
+        GMT</Last-Modified><Etag>0x8D7C12C68B2C67E</Etag><Content-Length>432</Content-Length><Content-Type>application/json</Content-Type><Content-Encoding
+        /><Content-Language /><Content-CRC64 /><Content-MD5>VUn3+8y4BXpM0QS+eU0cKA==</Content-MD5><Cache-Control
+        /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><ServerEncrypted>true</ServerEncrypted></Properties></Blob><Blob><Name>idx/segments/2020/03/05/1700/meta.json</Name><Properties><Creation-Time>Thu,
+        05 Mar 2020 17:41:17 GMT</Creation-Time><Last-Modified>Thu, 12 Mar 2020 22:50:43
+        GMT</Last-Modified><Etag>0x8D7C6D7CBA8FA0E</Etag><Content-Length>432</Content-Length><Content-Type>application/json</Content-Type><Content-Encoding
+        /><Content-Language /><Content-CRC64 /><Content-MD5>yxUHh1NSA6TCHGo7t1xfsw==</Content-MD5><Cache-Control
+        /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><ServerEncrypted>true</ServerEncrypted></Properties></Blob><Blob><Name>idx/segments/2020/03/12/2200/meta.json</Name><Properties><Creation-Time>Thu,
+        12 Mar 2020 22:50:43 GMT</Creation-Time><Last-Modified>Thu, 19 Mar 2020 22:38:46
+        GMT</Last-Modified><Etag>0x8D7CC56491AC88C</Etag><Content-Length>432</Content-Length><Content-Type>application/json</Content-Type><Content-Encoding
+        /><Content-Language /><Content-CRC64 /><Content-MD5>xE0gGy2VxfEMu8lgtcnzAw==</Content-MD5><Cache-Control
+        /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><ServerEncrypted>true</ServerEncrypted></Properties></Blob><Blob><Name>idx/segments/2020/03/19/2200/meta.json</Name><Properties><Creation-Time>Thu,
+        19 Mar 2020 22:38:46 GMT</Creation-Time><Last-Modified>Mon, 23 Mar 2020 22:02:10
+        GMT</Last-Modified><Etag>0x8D7CF75D6189DCC</Etag><Content-Length>432</Content-Length><Content-Type>application/json</Content-Type><Content-Encoding
+        /><Content-Language /><Content-CRC64 /><Content-MD5>4bt0ufjEipMLZQTYSKOjBw==</Content-MD5><Cache-Control
+        /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><ServerEncrypted>true</ServerEncrypted></Properties></Blob><Blob><Name>idx/segments/2020/03/23/2200/meta.json</Name><Properties><Creation-Time>Mon,
+        23 Mar 2020 22:02:10 GMT</Creation-Time><Last-Modified>Tue, 24 Mar 2020 23:56:45
+        GMT</Last-Modified><Etag>0x8D7D04F0205D533</Etag><Content-Length>432</Content-Length><Content-Type>application/json</Content-Type><Content-Encoding
+        /><Content-Language /><Content-CRC64 /><Content-MD5>moEoHkPnxDcoDmpW1vlPNA==</Content-MD5><Cache-Control
+        /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><ServerEncrypted>true</ServerEncrypted></Properties></Blob><Blob><Name>idx/segments/2020/03/24/2300/meta.json</Name><Properties><Creation-Time>Tue,
+        24 Mar 2020 23:56:45 GMT</Creation-Time><Last-Modified>Wed, 25 Mar 2020 00:17:01
+        GMT</Last-Modified><Etag>0x8D7D051D6C096D4</Etag><Content-Length>432</Content-Length><Content-Type>application/json</Content-Type><Content-Encoding
+        /><Content-Language /><Content-CRC64 /><Content-MD5>IbyBJhTvEq6rrzQ7IV7D9g==</Content-MD5><Cache-Control
+        /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><ServerEncrypted>true</ServerEncrypted></Properties></Blob><Blob><Name>idx/segments/2020/03/25/0000/meta.json</Name><Properties><Creation-Time>Wed,
+        25 Mar 2020 00:17:00 GMT</Creation-Time><Last-Modified>Wed, 25 Mar 2020 02:26:53
+        GMT</Last-Modified><Etag>0x8D7D063FB4DC1DA</Etag><Content-Length>432</Content-Length><Content-Type>application/json</Content-Type><Content-Encoding
+        /><Content-Language /><Content-CRC64 /><Content-MD5>o82NVu3IR0ZwxQYltDyzSQ==</Content-MD5><Cache-Control
+        /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><ServerEncrypted>true</ServerEncrypted></Properties></Blob><Blob><Name>idx/segments/2020/03/25/0200/meta.json</Name><Properties><Creation-Time>Wed,
+        25 Mar 2020 02:26:53 GMT</Creation-Time><Last-Modified>Wed, 25 Mar 2020 04:22:13
+        GMT</Last-Modified><Etag>0x8D7D07417CD33DC</Etag><Content-Length>432</Content-Length><Content-Type>application/json</Content-Type><Content-Encoding
+        /><Content-Language /><Content-CRC64 /><Content-MD5>g8SaHrOjI4fXSOblpzDfdQ==</Content-MD5><Cache-Control
+        /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><ServerEncrypted>true</ServerEncrypted></Properties></Blob><Blob><Name>idx/segments/2020/03/25/0400/meta.json</Name><Properties><Creation-Time>Wed,
+        25 Mar 2020 04:22:12 GMT</Creation-Time><Last-Modified>Wed, 25 Mar 2020 05:09:08
+        GMT</Last-Modified><Etag>0x8D7D07AA5FD869C</Etag><Content-Length>432</Content-Length><Content-Type>application/json</Content-Type><Content-Encoding
+        /><Content-Language /><Content-CRC64 /><Content-MD5>ZU4IdP6LJF00hQ+iPYqh8A==</Content-MD5><Cache-Control
+        /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><ServerEncrypted>true</ServerEncrypted></Properties></Blob><Blob><Name>idx/segments/2020/03/25/0500/meta.json</Name><Properties><Creation-Time>Wed,
+        25 Mar 2020 05:09:08 GMT</Creation-Time><Last-Modified>Wed, 25 Mar 2020 19:11:50
+        GMT</Last-Modified><Etag>0x8D7D0F05F7F256E</Etag><Content-Length>432</Content-Length><Content-Type>application/json</Content-Type><Content-Encoding
+        /><Content-Language /><Content-CRC64 /><Content-MD5>oSMMLexsq1Wkqtau4LTDRw==</Content-MD5><Cache-Control
+        /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><ServerEncrypted>true</ServerEncrypted></Properties></Blob><Blob><Name>idx/segments/2020/03/25/1900/meta.json</Name><Properties><Creation-Time>Wed,
+        25 Mar 2020 19:11:50 GMT</Creation-Time><Last-Modified>Thu, 26 Mar 2020 03:53:38
+        GMT</Last-Modified><Etag>0x8D7D139442A557D</Etag><Content-Length>432</Content-Length><Content-Type>application/json</Content-Type><Content-Encoding
+        /><Content-Language /><Content-CRC64 /><Content-MD5>GThYjyb1trLvC5svCdG9tQ==</Content-MD5><Cache-Control
+        /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><ServerEncrypted>true</ServerEncrypted></Properties></Blob><Blob><Name>idx/segments/2020/03/26/0300/meta.json</Name><Properties><Creation-Time>Thu,
+        26 Mar 2020 03:53:38 GMT</Creation-Time><Last-Modified>Thu, 26 Mar 2020 05:11:19
+        GMT</Last-Modified><Etag>0x8D7D1441E35C585</Etag><Content-Length>432</Content-Length><Content-Type>application/json</Content-Type><Content-Encoding
+        /><Content-Language /><Content-CRC64 /><Content-MD5>y1vgZeaiF5plBkMp+Zbs8A==</Content-MD5><Cache-Control
+        /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><ServerEncrypted>true</ServerEncrypted></Properties></Blob><Blob><Name>idx/segments/2020/03/26/0500/meta.json</Name><Properties><Creation-Time>Thu,
+        26 Mar 2020 05:11:18 GMT</Creation-Time><Last-Modified>Thu, 26 Mar 2020 06:08:44
+        GMT</Last-Modified><Etag>0x8D7D14C23D6E444</Etag><Content-Length>432</Content-Length><Content-Type>application/json</Content-Type><Content-Encoding
+        /><Content-Language /><Content-CRC64 /><Content-MD5>QfbzX8hGxKELss5QgaN9mg==</Content-MD5><Cache-Control
+        /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><ServerEncrypted>true</ServerEncrypted></Properties></Blob><Blob><Name>idx/segments/2020/03/26/0600/meta.json</Name><Properties><Creation-Time>Thu,
+        26 Mar 2020 06:08:44 GMT</Creation-Time><Last-Modified>Thu, 26 Mar 2020 07:14:24
+        GMT</Last-Modified><Etag>0x8D7D1555067D32F</Etag><Content-Length>432</Content-Length><Content-Type>application/json</Content-Type><Content-Encoding
+        /><Content-Language /><Content-CRC64 /><Content-MD5>n2tw68uQV9SlIIQfuPTWDg==</Content-MD5><Cache-Control
+        /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><ServerEncrypted>true</ServerEncrypted></Properties></Blob><Blob><Name>idx/segments/2020/03/26/0700/meta.json</Name><Properties><Creation-Time>Thu,
+        26 Mar 2020 07:14:24 GMT</Creation-Time><Last-Modified>Thu, 26 Mar 2020 20:21:27
+        GMT</Last-Modified><Etag>0x8D7D1C3438B455C</Etag><Content-Length>432</Content-Length><Content-Type>application/json</Content-Type><Content-Encoding
+        /><Content-Language /><Content-CRC64 /><Content-MD5>eCcPHYcQE1tVSC8hLI+sEQ==</Content-MD5><Cache-Control
+        /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><ServerEncrypted>true</ServerEncrypted></Properties></Blob><Blob><Name>idx/segments/2020/03/26/2000/meta.json</Name><Properties><Creation-Time>Thu,
+        26 Mar 2020 20:21:27 GMT</Creation-Time><Last-Modified>Fri, 27 Mar 2020 20:23:59
+        GMT</Last-Modified><Etag>0x8D7D28CC83AD6D7</Etag><Content-Length>432</Content-Length><Content-Type>application/json</Content-Type><Content-Encoding
+        /><Content-Language /><Content-CRC64 /><Content-MD5>F6Gf1LfAEuGy2PK0Am5kSg==</Content-MD5><Cache-Control
+        /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><ServerEncrypted>true</ServerEncrypted></Properties></Blob><Blob><Name>idx/segments/2020/03/27/2000/meta.json</Name><Properties><Creation-Time>Fri,
+        27 Mar 2020 20:23:59 GMT</Creation-Time><Last-Modified>Sat, 28 Mar 2020 04:15:23
+        GMT</Last-Modified><Etag>0x8D7D2CEA2C31D1B</Etag><Content-Length>432</Content-Length><Content-Type>application/json</Content-Type><Content-Encoding
+        /><Content-Language /><Content-CRC64 /><Content-MD5>ydnKrFjGdMI1gLDIB/TVQw==</Content-MD5><Cache-Control
+        /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><ServerEncrypted>true</ServerEncrypted></Properties></Blob><Blob><Name>idx/segments/2020/03/28/0400/meta.json</Name><Properties><Creation-Time>Sat,
+        28 Mar 2020 04:15:22 GMT</Creation-Time><Last-Modified>Sat, 28 Mar 2020 05:06:46
+        GMT</Last-Modified><Etag>0x8D7D2D5D0B73736</Etag><Content-Length>432</Content-Length><Content-Type>application/json</Content-Type><Content-Encoding
+        /><Content-Language /><Content-CRC64 /><Content-MD5>6Kj4Z4+dpMkI8L9a8no+Hg==</Content-MD5><Cache-Control
+        /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><ServerEncrypted>true</ServerEncrypted></Properties></Blob><Blob><Name>idx/segments/2020/03/28/0500/meta.json</Name><Properties><Creation-Time>Sat,
+        28 Mar 2020 05:06:46 GMT</Creation-Time><Last-Modified>Sat, 28 Mar 2020 21:11:50
+        GMT</Last-Modified><Etag>0x8D7D35CA249DAA2</Etag><Content-Length>432</Content-Length><Content-Type>application/json</Content-Type><Content-Encoding
+        /><Content-Language /><Content-CRC64 /><Content-MD5>TbGY5MPyENYx0FmKVoVleg==</Content-MD5><Cache-Control
+        /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><ServerEncrypted>true</ServerEncrypted></Properties></Blob><Blob><Name>idx/segments/2020/03/28/2100/meta.json</Name><Properties><Creation-Time>Sat,
+        28 Mar 2020 21:11:50 GMT</Creation-Time><Last-Modified>Wed, 01 Apr 2020 17:13:41
+        GMT</Last-Modified><Etag>0x8D7D66006F3B0DB</Etag><Content-Length>432</Content-Length><Content-Type>application/json</Content-Type><Content-Encoding
+        /><Content-Language /><Content-CRC64 /><Content-MD5>KCysonijNgzH/WrLBnQZKg==</Content-MD5><Cache-Control
+        /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><ServerEncrypted>true</ServerEncrypted></Properties></Blob><Blob><Name>idx/segments/2020/04/01/1700/meta.json</Name><Properties><Creation-Time>Wed,
+        01 Apr 2020 17:13:41 GMT</Creation-Time><Last-Modified>Wed, 22 Apr 2020 19:08:23
+        GMT</Last-Modified><Etag>0x8D7E6F087B59572</Etag><Content-Length>432</Content-Length><Content-Type>application/json</Content-Type><Content-Encoding
+        /><Content-Language /><Content-CRC64 /><Content-MD5>Qd9iHZUtZryQ6EVP94c62g==</Content-MD5><Cache-Control
+        /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><ServerEncrypted>true</ServerEncrypted></Properties></Blob><Blob><Name>idx/segments/2020/04/22/1900/meta.json</Name><Properties><Creation-Time>Wed,
+        22 Apr 2020 19:08:23 GMT</Creation-Time><Last-Modified>Thu, 23 Apr 2020 00:01:15
+        GMT</Last-Modified><Etag>0x8D7E71970F01C7F</Etag><Content-Length>432</Content-Length><Content-Type>application/json</Content-Type><Content-Encoding
+        /><Content-Language /><Content-CRC64 /><Content-MD5>ffEKzWbTh7Tp2VAQoLXXqw==</Content-MD5><Cache-Control
+        /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><ServerEncrypted>true</ServerEncrypted></Properties></Blob><Blob><Name>idx/segments/2020/04/23/0000/meta.json</Name><Properties><Creation-Time>Thu,
+        23 Apr 2020 00:01:15 GMT</Creation-Time><Last-Modified>Thu, 23 Apr 2020 20:22:16
+        GMT</Last-Modified><Etag>0x8D7E7C404132711</Etag><Content-Length>432</Content-Length><Content-Type>application/json</Content-Type><Content-Encoding
+        /><Content-Language /><Content-CRC64 /><Content-MD5>PmqNZPir093HxlYcYCIAfQ==</Content-MD5><Cache-Control
+        /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><ServerEncrypted>true</ServerEncrypted></Properties></Blob><Blob><Name>idx/segments/2020/04/23/2000/meta.json</Name><Properties><Creation-Time>Thu,
+        23 Apr 2020 20:22:16 GMT</Creation-Time><Last-Modified>Thu, 23 Apr 2020 20:22:16
+        GMT</Last-Modified><Etag>0x8D7E7C403EF1992</Etag><Content-Length>433</Content-Length><Content-Type>application/json</Content-Type><Content-Encoding
+        /><Content-Language /><Content-CRC64 /><Content-MD5>gzzblmMeWgc5LImYRQrpig==</Content-MD5><Cache-Control
+        /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><ServerEncrypted>true</ServerEncrypted></Properties></Blob></Blobs><NextMarker
+        /></EnumerationResults>"
+    headers:
+      content-type:
+      - application/xml
+      date:
+      - Fri, 24 Apr 2020 23:11:38 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+      x-ms-version:
+      - '2019-10-10'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-blob/12.3.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      x-ms-date:
+      - Fri, 24 Apr 2020 23:11:39 GMT
+      x-ms-range:
+      - bytes=0-33554431
+      x-ms-version:
+      - '2019-10-10'
+    method: GET
+    uri: https://storagename.blob.core.windows.net/%24blobchangefeed/idx%2Fsegments%2F2019%2F11%2F01%2F1700%2Fmeta.json
+  response:
+    body:
+      string: '{"version":0,"begin":"2019-11-01T17:00:00.000Z","intervalSecs":3600,"status":"Finalized","config":{"version":0,"configVersionEtag":"0x8d75ef484c3700e","numShards":1,"recordsFormat":"avro","formatSchemaVersion":3,"shardDistFnVersion":1},"chunkFilePaths":["$blobchangefeed/log/00/2019/11/01/1700/"],"storageDiagnostics":{"version":0,"lastModifiedTime":"2019-11-01T17:54:18.864Z","data":{"aid":"d30537fe-a006-0042-00dd-902bbb06dfa0"}}}'
+    headers:
+      accept-ranges:
+      - bytes
+      content-length:
+      - '432'
+      content-range:
+      - bytes 0-431/432
+      content-type:
+      - application/json
+      date:
+      - Fri, 24 Apr 2020 23:11:38 GMT
+      etag:
+      - '"0x8D79ADA1931901C"'
+      last-modified:
+      - Thu, 16 Jan 2020 23:16:21 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-blob-content-md5:
+      - 3CfmPL0bg9DmacixhHlI5Q==
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-creation-time:
+      - Fri, 01 Nov 2019 17:54:18 GMT
+      x-ms-lease-state:
+      - available
+      x-ms-lease-status:
+      - unlocked
+      x-ms-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2019-10-10'
+    status:
+      code: 206
+      message: Partial Content
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-blob/12.3.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      x-ms-date:
+      - Fri, 24 Apr 2020 23:11:39 GMT
+      x-ms-version:
+      - '2019-10-10'
+    method: GET
+    uri: https://storagename.blob.core.windows.net/%24blobchangefeed?prefix=log%2F00%2F2019%2F11%2F01%2F1700%2F&restype=container&comp=list
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
+        ServiceEndpoint=\"https://storagename.blob.core.windows.net/\" ContainerName=\"%24blobchangefeed\"><Prefix>log/00/2019/11/01/1700/</Prefix><Blobs><Blob><Name>log/00/2019/11/01/1700/00000.avro</Name><Properties><Creation-Time>Fri,
+        01 Nov 2019 17:55:18 GMT</Creation-Time><Last-Modified>Fri, 01 Nov 2019 17:55:18
+        GMT</Last-Modified><Etag>0x8D75EF4A895F761</Etag><Content-Length>2514</Content-Length><Content-Type>avro/binary</Content-Type><Content-Encoding
+        /><Content-Language /><Content-CRC64 /><Content-MD5 /><Cache-Control /><Content-Disposition
+        /><BlobType>AppendBlob</BlobType><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><ServerEncrypted>true</ServerEncrypted></Properties></Blob></Blobs><NextMarker
+        /></EnumerationResults>"
+    headers:
+      content-type:
+      - application/xml
+      date:
+      - Fri, 24 Apr 2020 23:11:38 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+      x-ms-version:
+      - '2019-10-10'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-blob/12.3.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      x-ms-date:
+      - Fri, 24 Apr 2020 23:11:39 GMT
+      x-ms-range:
+      - bytes=0-33554431
+      x-ms-version:
+      - '2019-10-10'
+    method: GET
+    uri: https://storagename.blob.core.windows.net/%24blobchangefeed/log%2F00%2F2019%2F11%2F01%2F1700%2F00000.avro
+  response:
+    body:
+      string: !!binary |
+        T2JqAQQUYXZyby5jb2RlYwhudWxsFmF2cm8uc2NoZW1h2h17InR5cGUiOiJyZWNvcmQiLCJuYW1l
+        IjoiQmxvYkNoYW5nZUV2ZW50IiwibmFtZXNwYWNlIjoiTWljcm9zb2Z0LlN0b3JhZ2UiLCJmaWVs
+        ZHMiOlt7Im5hbWUiOiJzY2hlbWFWZXJzaW9uIiwidHlwZSI6ImxvbmciLCJkZWZhdWx0IjozfSx7
+        Im5hbWUiOiJ0b3BpYyIsInR5cGUiOiJzdHJpbmciLCJkZWZhdWx0IjoiIn0seyJuYW1lIjoic3Vi
+        amVjdCIsInR5cGUiOiJzdHJpbmciLCJkZWZhdWx0IjoiIn0seyJuYW1lIjoiZXZlbnRUeXBlIiwi
+        dHlwZSI6eyJ0eXBlIjoiZW51bSIsIm5hbWUiOiJFdmVudFR5cGVFbnVtIiwic3ltYm9scyI6WyJV
+        bnNwZWNpZmllZEV2ZW50VHlwZSIsIkJsb2JDcmVhdGVkIiwiQmxvYkRlbGV0ZWQiLCJCbG9iUHJv
+        cGVydGllc1VwZGF0ZWQiLCJCbG9iU25hcHNob3RDcmVhdGVkIiwiQ29udHJvbCJdLCJkZWZhdWx0
+        IjoiVW5zcGVjaWZpZWRFdmVudFR5cGUifX0seyJuYW1lIjoiZXZlbnRUaW1lIiwidHlwZSI6InN0
+        cmluZyIsImRlZmF1bHQiOiIifSx7Im5hbWUiOiJpZCIsInR5cGUiOiJzdHJpbmciLCJkZWZhdWx0
+        IjoiIn0seyJuYW1lIjoiZGF0YSIsInR5cGUiOnsidHlwZSI6InJlY29yZCIsIm5hbWUiOiJCbG9i
+        Q2hhbmdlRXZlbnREYXRhIiwiZmllbGRzIjpbeyJuYW1lIjoiYXBpIiwidHlwZSI6eyJ0eXBlIjoi
+        ZW51bSIsIm5hbWUiOiJBcGlFbnVtIiwic3ltYm9scyI6WyJVbnNwZWNpZmllZEFwaSIsIlB1dEJs
+        b2IiLCJQdXRCbG9ja0xpc3QiLCJDb3B5QmxvYiIsIkRlbGV0ZUJsb2IiLCJTZXRCbG9iTWV0YWRh
+        dGEiLCJDb250cm9sRXZlbnQiLCJVbmRlbGV0ZUJsb2IiLCJTZXRCbG9iUHJvcGVydGllcyIsIlNu
+        YXBzaG90QmxvYiJdLCJkZWZhdWx0IjoiVW5zcGVjaWZpZWRBcGkifSwiZGVmYXVsdCI6IlVuc3Bl
+        Y2lmaWVkQXBpIn0seyJuYW1lIjoiY2xpZW50UmVxdWVzdElkIiwidHlwZSI6InN0cmluZyIsImRl
+        ZmF1bHQiOiIifSx7Im5hbWUiOiJyZXF1ZXN0SWQiLCJ0eXBlIjoic3RyaW5nIiwiZGVmYXVsdCI6
+        IiJ9LHsibmFtZSI6ImV0YWciLCJ0eXBlIjoic3RyaW5nIiwiZGVmYXVsdCI6IiJ9LHsibmFtZSI6
+        ImNvbnRlbnRUeXBlIiwidHlwZSI6InN0cmluZyIsImRlZmF1bHQiOiIifSx7Im5hbWUiOiJjb250
+        ZW50TGVuZ3RoIiwidHlwZSI6ImxvbmciLCJkZWZhdWx0IjowfSx7Im5hbWUiOiJibG9iVHlwZSIs
+        InR5cGUiOnsidHlwZSI6ImVudW0iLCJuYW1lIjoiQmxvYlR5cGVFbnVtIiwic3ltYm9scyI6WyJV
+        bnNwZWNpZmllZEJsb2JUeXBlIiwiQmxvY2tCbG9iIiwiUGFnZUJsb2IiLCJBcHBlbmRCbG9iIl0s
+        ImRlZmF1bHQiOiJVbnNwZWNpZmllZEJsb2JUeXBlIn0sImRlZmF1bHQiOiJVbnNwZWNpZmllZEJs
+        b2JUeXBlIn0seyJuYW1lIjoidXJsIiwidHlwZSI6InN0cmluZyIsImRlZmF1bHQiOiIifSx7Im5h
+        bWUiOiJzZXF1ZW5jZXIiLCJ0eXBlIjoic3RyaW5nIiwiZGVmYXVsdCI6IiJ9LHsibmFtZSI6InBy
+        ZXZpb3VzSW5mbyIsInR5cGUiOlsibnVsbCIseyJ0eXBlIjoibWFwIiwidmFsdWVzIjoic3RyaW5n
+        In1dLCJkZWZhdWx0IjpudWxsfSx7Im5hbWUiOiJzbmFwc2hvdCIsInR5cGUiOlsibnVsbCIsInN0
+        cmluZyJdLCJkZWZhdWx0IjpudWxsfSx7Im5hbWUiOiJibG9iUHJvcGVydGllc1VwZGF0ZWQiLCJ0
+        eXBlIjpbIm51bGwiLHsidHlwZSI6Im1hcCIsInZhbHVlcyI6eyJ0eXBlIjoicmVjb3JkIiwibmFt
+        ZSI6InZhbHVlcyIsImZpZWxkcyI6W3sibmFtZSI6ImN1cnJlbnQiLCJ0eXBlIjoic3RyaW5nIiwi
+        ZGVmYXVsdCI6IiJ9LHsibmFtZSI6InByZXZpb3VzIiwidHlwZSI6InN0cmluZyIsImRlZmF1bHQi
+        OiIifV19fV0sImRlZmF1bHQiOm51bGx9LHsibmFtZSI6InN0b3JhZ2VEaWFnbm9zdGljcyIsInR5
+        cGUiOnsidHlwZSI6Im1hcCIsInZhbHVlcyI6InN0cmluZyJ9LCJkZWZhdWx0Ijp7fX1dfX1dfQAN
+        Bw8MBAQMAAEJAQcLDw4JgoCAgICAgICAAJqIgICAgICAgAAGlAIvc3Vic2NyaXB0aW9ucy9iYTQ1
+        YjIzMy1lMmVmLTQxNjktODgwOC00OWViMGQ4ZWJhMGQvcmVzb3VyY2VHcm91cHMvWENsaWVudC9w
+        cm92aWRlcnMvTWljcm9zb2Z0LlN0b3JhZ2Uvc3RvcmFnZUFjY291bnRzL3NlYW5jaGFuZ2VmZWVk
+        c3RhZ2VmL2Jsb2JTZXJ2aWNlcy9kZWZhdWx0L2NvbnRhaW5lcnMvdGVzdC9ibG9icy9zZGYudHh0
+        AjgyMDE5LTExLTAxVDE3OjUzOjA3LjUxMDYwODBaSGJiMjE5YzhlLTQwMWUtMDAyOC0xZmRkLTkw
+        ZjM5MzA2OWFlNAJINzViNmM0NjAtZmNkMC0xMWU5LTg3ZTItODVkZWYwNTdkYWU5SGJiMjE5Yzhl
+        LTQwMWUtMDAyOC0xZmRkLTkwZjM5MzAwMDAwMCIweDhENzVFRjQ1QTNCODYxNxR0ZXh0L3BsYWlu
+        GAIAYDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAxNzE0MDAwMDAwMDAwMDAwMGZjYwAAAAYG
+        YmlkSGQzMDUzZmExLWEwMDYtMDA0Mi0wMGRkLTkwMmJiYjAwMDAwMAZzaWRINWFhZjk4YmYtZjFk
+        OC1kZDc2LTJkZDItOWI2MGM2ODk1MzhkBnNlcSIoNTkwOCwxMzQsNDA0NCwwKQANBw8MBAQMAAEJ
+        AQcLDw4J
+    headers:
+      accept-ranges:
+      - bytes
+      content-length:
+      - '2514'
+      content-range:
+      - bytes 0-2513/2514
+      content-type:
+      - avro/binary
+      date:
+      - Fri, 24 Apr 2020 23:11:38 GMT
+      etag:
+      - '"0x8D75EF4A895F761"'
+      last-modified:
+      - Fri, 01 Nov 2019 17:55:18 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-blob-committed-block-count:
+      - '2'
+      x-ms-blob-type:
+      - AppendBlob
+      x-ms-creation-time:
+      - Fri, 01 Nov 2019 17:55:18 GMT
+      x-ms-lease-state:
+      - available
+      x-ms-lease-status:
+      - unlocked
+      x-ms-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2019-10-10'
+    status:
+      code: 206
+      message: Partial Content
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-blob/12.3.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      x-ms-date:
+      - Fri, 24 Apr 2020 23:11:39 GMT
+      x-ms-range:
+      - bytes=0-33554431
+      x-ms-version:
+      - '2019-10-10'
+    method: GET
+    uri: https://storagename.blob.core.windows.net/%24blobchangefeed/idx%2Fsegments%2F2020%2F01%2F16%2F2300%2Fmeta.json
+  response:
+    body:
+      string: '{"version":0,"begin":"2020-01-16T23:00:00.000Z","intervalSecs":3600,"status":"Finalized","config":{"version":0,"configVersionEtag":"0x8d79ada1922c359","numShards":1,"recordsFormat":"avro","formatSchemaVersion":3,"shardDistFnVersion":1},"chunkFilePaths":["$blobchangefeed/log/00/2020/01/16/2300/"],"storageDiagnostics":{"version":0,"lastModifiedTime":"2020-01-16T23:16:21.147Z","data":{"aid":"d4ec9a36-c006-0054-00c2-ccdd6c06a5a7"}}}'
+    headers:
+      accept-ranges:
+      - bytes
+      content-length:
+      - '432'
+      content-range:
+      - bytes 0-431/432
+      content-type:
+      - application/json
+      date:
+      - Fri, 24 Apr 2020 23:11:39 GMT
+      etag:
+      - '"0x8D7BF031E1B1184"'
+      last-modified:
+      - Mon, 02 Mar 2020 23:40:40 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-blob-content-md5:
+      - MqfF8F0HsFw0eznJFwjGSQ==
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-creation-time:
+      - Thu, 16 Jan 2020 23:16:21 GMT
+      x-ms-lease-state:
+      - available
+      x-ms-lease-status:
+      - unlocked
+      x-ms-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2019-10-10'
+    status:
+      code: 206
+      message: Partial Content
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-blob/12.3.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      x-ms-date:
+      - Fri, 24 Apr 2020 23:11:39 GMT
+      x-ms-version:
+      - '2019-10-10'
+    method: GET
+    uri: https://storagename.blob.core.windows.net/%24blobchangefeed?prefix=log%2F00%2F2020%2F01%2F16%2F2300%2F&restype=container&comp=list
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
+        ServiceEndpoint=\"https://storagename.blob.core.windows.net/\" ContainerName=\"%24blobchangefeed\"><Prefix>log/00/2020/01/16/2300/</Prefix><Blobs><Blob><Name>log/00/2020/01/16/2300/00000.avro</Name><Properties><Creation-Time>Thu,
+        16 Jan 2020 23:17:21 GMT</Creation-Time><Last-Modified>Thu, 16 Jan 2020 23:17:21
+        GMT</Last-Modified><Etag>0x8D79ADA3CF39A93</Etag><Content-Length>3086</Content-Length><Content-Type>avro/binary</Content-Type><Content-Encoding
+        /><Content-Language /><Content-CRC64 /><Content-MD5 /><Cache-Control /><Content-Disposition
+        /><BlobType>AppendBlob</BlobType><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><ServerEncrypted>true</ServerEncrypted></Properties></Blob></Blobs><NextMarker
+        /></EnumerationResults>"
+    headers:
+      content-type:
+      - application/xml
+      date:
+      - Fri, 24 Apr 2020 23:11:39 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+      x-ms-version:
+      - '2019-10-10'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-blob/12.3.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      x-ms-date:
+      - Fri, 24 Apr 2020 23:11:39 GMT
+      x-ms-range:
+      - bytes=0-33554431
+      x-ms-version:
+      - '2019-10-10'
+    method: GET
+    uri: https://storagename.blob.core.windows.net/%24blobchangefeed/log%2F00%2F2020%2F01%2F16%2F2300%2F00000.avro
+  response:
+    body:
+      string: !!binary |
+        T2JqAQQUYXZyby5jb2RlYwhudWxsFmF2cm8uc2NoZW1h2h17InR5cGUiOiJyZWNvcmQiLCJuYW1l
+        IjoiQmxvYkNoYW5nZUV2ZW50IiwibmFtZXNwYWNlIjoiTWljcm9zb2Z0LlN0b3JhZ2UiLCJmaWVs
+        ZHMiOlt7Im5hbWUiOiJzY2hlbWFWZXJzaW9uIiwidHlwZSI6ImxvbmciLCJkZWZhdWx0IjozfSx7
+        Im5hbWUiOiJ0b3BpYyIsInR5cGUiOiJzdHJpbmciLCJkZWZhdWx0IjoiIn0seyJuYW1lIjoic3Vi
+        amVjdCIsInR5cGUiOiJzdHJpbmciLCJkZWZhdWx0IjoiIn0seyJuYW1lIjoiZXZlbnRUeXBlIiwi
+        dHlwZSI6eyJ0eXBlIjoiZW51bSIsIm5hbWUiOiJFdmVudFR5cGVFbnVtIiwic3ltYm9scyI6WyJV
+        bnNwZWNpZmllZEV2ZW50VHlwZSIsIkJsb2JDcmVhdGVkIiwiQmxvYkRlbGV0ZWQiLCJCbG9iUHJv
+        cGVydGllc1VwZGF0ZWQiLCJCbG9iU25hcHNob3RDcmVhdGVkIiwiQ29udHJvbCJdLCJkZWZhdWx0
+        IjoiVW5zcGVjaWZpZWRFdmVudFR5cGUifX0seyJuYW1lIjoiZXZlbnRUaW1lIiwidHlwZSI6InN0
+        cmluZyIsImRlZmF1bHQiOiIifSx7Im5hbWUiOiJpZCIsInR5cGUiOiJzdHJpbmciLCJkZWZhdWx0
+        IjoiIn0seyJuYW1lIjoiZGF0YSIsInR5cGUiOnsidHlwZSI6InJlY29yZCIsIm5hbWUiOiJCbG9i
+        Q2hhbmdlRXZlbnREYXRhIiwiZmllbGRzIjpbeyJuYW1lIjoiYXBpIiwidHlwZSI6eyJ0eXBlIjoi
+        ZW51bSIsIm5hbWUiOiJBcGlFbnVtIiwic3ltYm9scyI6WyJVbnNwZWNpZmllZEFwaSIsIlB1dEJs
+        b2IiLCJQdXRCbG9ja0xpc3QiLCJDb3B5QmxvYiIsIkRlbGV0ZUJsb2IiLCJTZXRCbG9iTWV0YWRh
+        dGEiLCJDb250cm9sRXZlbnQiLCJVbmRlbGV0ZUJsb2IiLCJTZXRCbG9iUHJvcGVydGllcyIsIlNu
+        YXBzaG90QmxvYiJdLCJkZWZhdWx0IjoiVW5zcGVjaWZpZWRBcGkifSwiZGVmYXVsdCI6IlVuc3Bl
+        Y2lmaWVkQXBpIn0seyJuYW1lIjoiY2xpZW50UmVxdWVzdElkIiwidHlwZSI6InN0cmluZyIsImRl
+        ZmF1bHQiOiIifSx7Im5hbWUiOiJyZXF1ZXN0SWQiLCJ0eXBlIjoic3RyaW5nIiwiZGVmYXVsdCI6
+        IiJ9LHsibmFtZSI6ImV0YWciLCJ0eXBlIjoic3RyaW5nIiwiZGVmYXVsdCI6IiJ9LHsibmFtZSI6
+        ImNvbnRlbnRUeXBlIiwidHlwZSI6InN0cmluZyIsImRlZmF1bHQiOiIifSx7Im5hbWUiOiJjb250
+        ZW50TGVuZ3RoIiwidHlwZSI6ImxvbmciLCJkZWZhdWx0IjowfSx7Im5hbWUiOiJibG9iVHlwZSIs
+        InR5cGUiOnsidHlwZSI6ImVudW0iLCJuYW1lIjoiQmxvYlR5cGVFbnVtIiwic3ltYm9scyI6WyJV
+        bnNwZWNpZmllZEJsb2JUeXBlIiwiQmxvY2tCbG9iIiwiUGFnZUJsb2IiLCJBcHBlbmRCbG9iIl0s
+        ImRlZmF1bHQiOiJVbnNwZWNpZmllZEJsb2JUeXBlIn0sImRlZmF1bHQiOiJVbnNwZWNpZmllZEJs
+        b2JUeXBlIn0seyJuYW1lIjoidXJsIiwidHlwZSI6InN0cmluZyIsImRlZmF1bHQiOiIifSx7Im5h
+        bWUiOiJzZXF1ZW5jZXIiLCJ0eXBlIjoic3RyaW5nIiwiZGVmYXVsdCI6IiJ9LHsibmFtZSI6InBy
+        ZXZpb3VzSW5mbyIsInR5cGUiOlsibnVsbCIseyJ0eXBlIjoibWFwIiwidmFsdWVzIjoic3RyaW5n
+        In1dLCJkZWZhdWx0IjpudWxsfSx7Im5hbWUiOiJzbmFwc2hvdCIsInR5cGUiOlsibnVsbCIsInN0
+        cmluZyJdLCJkZWZhdWx0IjpudWxsfSx7Im5hbWUiOiJibG9iUHJvcGVydGllc1VwZGF0ZWQiLCJ0
+        eXBlIjpbIm51bGwiLHsidHlwZSI6Im1hcCIsInZhbHVlcyI6eyJ0eXBlIjoicmVjb3JkIiwibmFt
+        ZSI6InZhbHVlcyIsImZpZWxkcyI6W3sibmFtZSI6ImN1cnJlbnQiLCJ0eXBlIjoic3RyaW5nIiwi
+        ZGVmYXVsdCI6IiJ9LHsibmFtZSI6InByZXZpb3VzIiwidHlwZSI6InN0cmluZyIsImRlZmF1bHQi
+        OiIifV19fV0sImRlZmF1bHQiOm51bGx9LHsibmFtZSI6InN0b3JhZ2VEaWFnbm9zdGljcyIsInR5
+        cGUiOnsidHlwZSI6Im1hcCIsInZhbHVlcyI6InN0cmluZyJ9LCJkZWZhdWx0Ijp7fX1dfX1dfQAN
+        Bw8MBAQMAAEJAQcLDw4JhICAgICAgICAAJKRgICAgICAgAAGlAIvc3Vic2NyaXB0aW9ucy9iYTQ1
+        YjIzMy1lMmVmLTQxNjktODgwOC00OWViMGQ4ZWJhMGQvcmVzb3VyY2VHcm91cHMvWENsaWVudC9w
+        cm92aWRlcnMvTWljcm9zb2Z0LlN0b3JhZ2Uvc3RvcmFnZUFjY291bnRzL3NlYW5jaGFuZ2VmZWVk
+        c3RhZ2V0L2Jsb2JTZXJ2aWNlcy9kZWZhdWx0L2NvbnRhaW5lcnMvY29udGFpbmVyL2Jsb2JzL25l
+        dyAyLnR4dAI4MjAyMC0wMS0xNlQyMzoxNToxMC40NzIyNTcyWkhjYmExYmY1YS1lMDFlLTAwMWUt
+        N2JjMi1jYzdlZTMwNjMxMjcCSGFhMzlmMDM0LTQ0NjEtNDNhOC00ODhmLWJiYWE3NWNjMjFkY0hj
+        YmExYmY1YS1lMDFlLTAwMWUtN2JjMi1jYzdlZTMwMDAwMDAiMHg4RDc5QUQ5RUYwMkEyOEMydGV4
+        dC9wbGFpbjsgY2hhcnNldD11dGYtOBACAGAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMTc0
+        MjAwMDAwMDAwMDAwMDQyODYAAAAGBmJpZEhkNGVjOWMwZS1jMDA2LTAwNTQtMDBjMy1jY2RkNmMw
+        MDAwMDAGc2lkSDgxZTIxNjljLTM1MjUtNjdlNy0yZGQ3LThmYzAzNGZjZTkwNwZzZXEkKDU5NTQs
+        MTQyLDE3MDMwLDApAAaUAi9zdWJzY3JpcHRpb25zL2JhNDViMjMzLWUyZWYtNDE2OS04ODA4LTQ5
+        ZWIwZDhlYmEwZC9yZXNvdXJjZUdyb3Vwcy9YQ2xpZW50L3Byb3ZpZGVycy9NaWNyb3NvZnQuU3Rv
+        cmFnZS9zdG9yYWdlQWNjb3VudHMvc2VhbmNoYW5nZWZlZWRzdGFnZXQvYmxvYlNlcnZpY2VzL2Rl
+        ZmF1bHQvY29udGFpbmVycy9jb250YWluZXIvYmxvYnMvbmV3IDEudHh0AjgyMDIwLTAxLTE2VDIz
+        OjE1OjEwLjUxMjI1ODJaSDE5OTM0NGJjLTkwMWUtMDAxNC0zMWMyLWNjZGE1NDA2MzEyZgJIMjdl
+        MjMyYTItZmNiNy00YzMyLTUwMGQtZWJkMDFlZWE5M2JiSDE5OTM0NGJjLTkwMWUtMDAxNC0zMWMy
+        LWNjZGE1NDAwMDAwMCIweDhENzlBRDlFRjA4QkQxNjJ0ZXh0L3BsYWluOyBjaGFyc2V0PXV0Zi04
+        8hECAGAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMTc0MjAwMDAwMDAwMDAwMDQyOGYAAAAG
+        BmJpZEhkNGVjOWMwZS1jMDA2LTAwNTQtMDBjMy1jY2RkNmMwMDAwMDAGc2lkSDgxZTIxNjljLTM1
+        MjUtNjdlNy0yZGQ3LThmYzAzNGZjZTkwNwZzZXEkKDU5NTQsMTQzLDE3MDM5LDApAA0HDwwEBAwA
+        AQkBBwsPDgk=
+    headers:
+      accept-ranges:
+      - bytes
+      content-length:
+      - '3086'
+      content-range:
+      - bytes 0-3085/3086
+      content-type:
+      - avro/binary
+      date:
+      - Fri, 24 Apr 2020 23:11:39 GMT
+      etag:
+      - '"0x8D79ADA3CF39A93"'
+      last-modified:
+      - Thu, 16 Jan 2020 23:17:21 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-blob-committed-block-count:
+      - '2'
+      x-ms-blob-type:
+      - AppendBlob
+      x-ms-creation-time:
+      - Thu, 16 Jan 2020 23:17:21 GMT
+      x-ms-lease-state:
+      - available
+      x-ms-lease-status:
+      - unlocked
+      x-ms-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2019-10-10'
+    status:
+      code: 206
+      message: Partial Content
+version: 1
