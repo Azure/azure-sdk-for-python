@@ -39,7 +39,7 @@ class AsyncTextAnalyticsClientBase(object):
         elif hasattr(credential, "api_key"):
             credential_policy = CognitiveServicesCredentialPolicy(credential)
         elif credential is not None:
-            raise TypeError("Unsupported credential: {}. Use an instance of TextAnalyticsApiKeyCredential "
+            raise TypeError("Unsupported credential: {}. Use an instance of AzureKeyCredential "
                             "or a token credential from azure.identity".format(type(credential)))
 
         config = self._create_configuration(**kwargs)
