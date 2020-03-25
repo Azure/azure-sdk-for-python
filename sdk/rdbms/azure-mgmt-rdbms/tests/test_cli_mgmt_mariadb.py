@@ -49,13 +49,13 @@ class MgmtMariaDBTest(AzureMgmtTestCase):
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_mariadb(self, resource_group):
 
-        SERVER_NAME = "testserver21345"
+        SERVER_NAME = "testserver21827"
         SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
         RESOURCE_GROUP = resource_group.name
-        SERVER_GEO_NAME = "servergeo21345"
-        SERVER_REPLICA_NAME = "serverreplica21345"
-        SERVER_POINT_NAME = "serverpoint21345"
-        DATABASE_NAME = "testdatabase21345"
+        SERVER_GEO_NAME = "servergeo21827"
+        SERVER_REPLICA_NAME = "serverreplica21827"
+        SERVER_POINT_NAME = "serverpoint21827"
+        DATABASE_NAME = "testdatabase21827"
         FIREWALL_RULE_NAME = "firewallrule"
         CONFIGURATION_NAME = "configuration"
         VIRTUAL_NETWORK_RULE_NAME = "virutal_networkrule"
@@ -102,26 +102,26 @@ class MgmtMariaDBTest(AzureMgmtTestCase):
         result = result.result()
 
         # Create a database as a point in time restore[put]
-        point_in_time = dt.datetime.now(tz=UTC()).isoformat()
-        BODY = {
-          "location": "eastus",
-          "properties": {
-            "restore_point_in_time": point_in_time,
-            "create_mode": "PointInTimeRestore",
-            "source_server_id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.DBforMariaDB/servers/" + SERVER_NAME + ""
-          },
-          "sku": {
-            "name": "GP_Gen5_2",
-            "tier": "GeneralPurpose",
-            "family": "Gen5",
-            "capacity": "2"
-          },
-          "tags": {
-            "elastic_server": "1"
-          }
-        }
-        result = self.mgmt_client.servers.create(resource_group.name, SERVER_POINT_NAME, BODY)
-        result = result.result()
+        #point_in_time = dt.datetime.now(tz=UTC()).isoformat()
+        #BODY = {
+        #  "location": "eastus",
+        #  "properties": {
+        #    "restore_point_in_time": point_in_time,
+        #    "create_mode": "PointInTimeRestore",
+        #    "source_server_id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.DBforMariaDB/servers/" + SERVER_NAME + ""
+        #  },
+        #  "sku": {
+        #    "name": "GP_Gen5_2",
+        #    "tier": "GeneralPurpose",
+        #    "family": "Gen5",
+        #    "capacity": "2"
+        #  },
+        #  "tags": {
+        #    "elastic_server": "1"
+        #  }
+        #}
+        #result = self.mgmt_client.servers.create(resource_group.name, SERVER_POINT_NAME, BODY)
+        #result = result.result()
 
         # # Create a server as a geo restore [put]
         # BODY = {

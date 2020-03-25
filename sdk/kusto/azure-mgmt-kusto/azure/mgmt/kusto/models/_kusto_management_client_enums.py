@@ -35,6 +35,12 @@ class ProvisioningState(str, Enum):
     moving = "Moving"
 
 
+class LanguageExtensionName(str, Enum):
+
+    python = "PYTHON"
+    r = "R"
+
+
 class AzureSkuName(str, Enum):
 
     standard_ds13_v21_tb_ps = "Standard_DS13_v2+1TB_PS"
@@ -49,6 +55,15 @@ class AzureSkuName(str, Enum):
     standard_d12_v2 = "Standard_D12_v2"
     standard_l4s = "Standard_L4s"
     dev_no_sla_standard_d11_v2 = "Dev(No SLA)_Standard_D11_v2"
+    standard_e2a_v4 = "Standard_E2a_v4"
+    standard_e4a_v4 = "Standard_E4a_v4"
+    standard_e8a_v4 = "Standard_E8a_v4"
+    standard_e16a_v4 = "Standard_E16a_v4"
+    standard_e8as_v41_tb_ps = "Standard_E8as_v4+1TB_PS"
+    standard_e8as_v42_tb_ps = "Standard_E8as_v4+2TB_PS"
+    standard_e16as_v43_tb_ps = "Standard_E16as_v4+3TB_PS"
+    standard_e16as_v44_tb_ps = "Standard_E16as_v4+4TB_PS"
+    dev_no_sla_standard_e2a_v4 = "Dev(No SLA)_Standard_E2a_v4"
 
 
 class AzureSkuTier(str, Enum):

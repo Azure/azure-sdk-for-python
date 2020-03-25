@@ -18,13 +18,13 @@ class ChangeLog:
             buffer.append("**Features**")
             buffer.append("")
             for feature in self.features:
-                buffer.append("- "+feature)
+                buffer.append("  - "+feature)
             buffer.append("")
         if self.breaking_changes:
             buffer.append("**Breaking changes**")
             buffer.append("")
             for breaking_change in self.breaking_changes:
-                buffer.append("- "+breaking_change)
+                buffer.append("  - "+breaking_change)
         return "\n".join(buffer).strip()
 
     @staticmethod

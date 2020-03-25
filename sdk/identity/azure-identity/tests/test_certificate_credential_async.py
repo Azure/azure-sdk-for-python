@@ -17,6 +17,15 @@ from test_certificate_credential import BOTH_CERTS, CERT_PATH, validate_jwt
 
 
 @pytest.mark.asyncio
+async def test_no_scopes():
+    """The credential should raise ValueError when get_token is called with no scopes"""
+
+    credential = CertificateCredential("tenant-id", "client-id", CERT_PATH)
+    with pytest.raises(ValueError):
+        await credential.get_token()
+
+
+@pytest.mark.asyncio
 async def test_close():
     transport = AsyncMockTransport()
     credential = CertificateCredential("tenant-id", "client-id", CERT_PATH, transport=transport)

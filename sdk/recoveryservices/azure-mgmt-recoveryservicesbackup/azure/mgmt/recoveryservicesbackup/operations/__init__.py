@@ -9,6 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+from ._private_endpoint_connection_operations import PrivateEndpointConnectionOperations
 from ._backup_resource_vault_configs_operations import BackupResourceVaultConfigsOperations
 from ._protected_items_operations import ProtectedItemsOperations
 from ._protected_item_operation_results_operations import ProtectedItemOperationResultsOperations
@@ -47,8 +48,10 @@ from ._backup_protection_containers_operations import BackupProtectionContainers
 from ._security_pi_ns_operations import SecurityPINsOperations
 from ._backup_resource_storage_configs_operations import BackupResourceStorageConfigsOperations
 from ._operations import Operations
+from ._recovery_services_backup_client_operations import RecoveryServicesBackupClientOperationsMixin
 
 __all__ = [
+    'PrivateEndpointConnectionOperations',
     'BackupResourceVaultConfigsOperations',
     'ProtectedItemsOperations',
     'ProtectedItemOperationResultsOperations',
@@ -87,4 +90,5 @@ __all__ = [
     'SecurityPINsOperations',
     'BackupResourceStorageConfigsOperations',
     'Operations',
+    'RecoveryServicesBackupClientOperationsMixin',
 ]

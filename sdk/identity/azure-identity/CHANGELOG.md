@@ -1,6 +1,11 @@
 # Release History
 
 ## 1.4.0b2 (Unreleased)
+- All `get_token` methods consistently require at least one scope argument,
+raising an error when none is passed. Although `get_token()` may sometimes
+have succeeded in prior versions, it couldn't do so consistently because its
+behavior was undefined, and dependened on the credential's type and internal
+state. ([#10243](https://github.com/Azure/azure-sdk-for-python/issues/10243))
 
 
 ## 1.4.0b1 (2020-03-10)

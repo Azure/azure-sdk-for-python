@@ -55,7 +55,7 @@ class ManagedIdentityCredential(object):
 
         .. note:: This method is called by Azure SDK clients. It isn't intended for use in application code.
 
-        :param str scopes: desired scopes for the token
+        :param str scopes: desired scope for the access token. This credential allows only one scope per request.
         :rtype: :class:`azure.core.credentials.AccessToken`
         :raises ~azure.identity.CredentialUnavailableError: managed identity isn't available in the hosting environment
         """
@@ -118,7 +118,6 @@ class _ManagedIdentityBase(object):
 class ImdsCredential(_ManagedIdentityBase):
     """Authenticates with a managed identity via the IMDS endpoint.
 
-
     :keyword str client_id: ID of a user-assigned identity. Leave unspecified to use a system-assigned identity.
     """
 
@@ -131,7 +130,9 @@ class ImdsCredential(_ManagedIdentityBase):
         # type: (*str, **Any) -> AccessToken
         """Request an access token for `scopes`.
 
-        :param str scopes: desired scopes for the token
+        .. note:: This method is called by Azure SDK clients. It isn't intended for use in application code.
+
+        :param str scopes: desired scope for the access token. This credential allows only one scope per request.
         :rtype: :class:`azure.core.credentials.AccessToken`
         :raises ~azure.identity.CredentialUnavailableError: the IMDS endpoint is unreachable
         """
@@ -153,7 +154,7 @@ class ImdsCredential(_ManagedIdentityBase):
             raise CredentialUnavailableError(message="IMDS endpoint unavailable")
 
         if len(scopes) != 1:
-            raise ValueError("this credential supports one scope per request")
+            raise ValueError("This credential requires exactly one scope per token request.")
 
         token = self._client.get_cached_token(scopes)
         if not token:
@@ -183,7 +184,9 @@ class MsiCredential(_ManagedIdentityBase):
         # type: (*str, **Any) -> AccessToken
         """Request an access token for `scopes`.
 
-        :param str scopes: desired scopes for the token
+        .. note:: This method is called by Azure SDK clients. It isn't intended for use in application code.
+
+        :param str scopes: desired scope for the access token. This credential allows only one scope per request.
         :rtype: :class:`azure.core.credentials.AccessToken`
         :raises ~azure.identity.CredentialUnavailableError: the MSI endpoint is unavailable
         """
@@ -192,7 +195,7 @@ class MsiCredential(_ManagedIdentityBase):
             raise CredentialUnavailableError(message="MSI endpoint unavailable")
 
         if len(scopes) != 1:
-            raise ValueError("this credential supports only one scope per request")
+            raise ValueError("This credential requires exactly one scope per token request.")
 
         token = self._client.get_cached_token(scopes)
         if not token:

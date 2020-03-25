@@ -10,6 +10,7 @@
 # --------------------------------------------------------------------------
 
 from msrest.serialization import Model
+from msrest.exceptions import HttpOperationError
 
 
 class FeatureSupportRequest(Model):
@@ -7240,6 +7241,34 @@ class EncryptionDetails(Model):
         self.secret_key_vault_id = kwargs.get('secret_key_vault_id', None)
 
 
+class ErrorAdditionalInfo(Model):
+    """The resource management error additional info.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar type: The additional info type.
+    :vartype type: str
+    :ivar info: The additional info.
+    :vartype info: object
+    """
+
+    _validation = {
+        'type': {'readonly': True},
+        'info': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'info': {'key': 'info', 'type': 'object'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ErrorAdditionalInfo, self).__init__(**kwargs)
+        self.type = None
+        self.info = None
+
+
 class ErrorDetail(Model):
     """Error Detail class which encapsulates Code, Message and Recommendations.
 
@@ -7271,6 +7300,63 @@ class ErrorDetail(Model):
         self.code = None
         self.message = None
         self.recommendations = None
+
+
+class ErrorResponse(Model):
+    """The resource management error response.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details:
+     list[~azure.mgmt.recoveryservicesbackup.models.ErrorResponse]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info:
+     list[~azure.mgmt.recoveryservicesbackup.models.ErrorAdditionalInfo]
+    """
+
+    _validation = {
+        'code': {'readonly': True},
+        'message': {'readonly': True},
+        'target': {'readonly': True},
+        'details': {'readonly': True},
+        'additional_info': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+        'target': {'key': 'target', 'type': 'str'},
+        'details': {'key': 'details', 'type': '[ErrorResponse]'},
+        'additional_info': {'key': 'additionalInfo', 'type': '[ErrorAdditionalInfo]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ErrorResponse, self).__init__(**kwargs)
+        self.code = None
+        self.message = None
+        self.target = None
+        self.details = None
+        self.additional_info = None
+
+
+class ErrorResponseException(HttpOperationError):
+    """Server responsed with exception of type: 'ErrorResponse'.
+
+    :param deserialize: A deserializer
+    :param response: Server response to be deserialized.
+    """
+
+    def __init__(self, deserialize, response, *args):
+
+        super(ErrorResponseException, self).__init__(deserialize, response, 'ErrorResponse', *args)
 
 
 class OperationResultInfoBase(Model):
@@ -9282,6 +9368,125 @@ class PreValidateEnableBackupResponse(Model):
         self.recommendation = kwargs.get('recommendation', None)
         self.container_name = kwargs.get('container_name', None)
         self.protected_item_name = kwargs.get('protected_item_name', None)
+
+
+class PrivateEndpoint(Model):
+    """The Private Endpoint network resource that is linked to the Private
+    Endpoint connection.
+
+    :param id: Gets or sets id
+    :type id: str
+    """
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PrivateEndpoint, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+
+
+class PrivateEndpointConnection(Model):
+    """Private Endpoint Connection Response Properties.
+
+    :param provisioning_state: Gets or sets provisioning state of the private
+     endpoint connection. Possible values include: 'Succeeded', 'Deleting',
+     'Failed', 'Pending'
+    :type provisioning_state: str or
+     ~azure.mgmt.recoveryservicesbackup.models.ProvisioningState
+    :param private_endpoint: Gets or sets private endpoint associated with the
+     private endpoint connection
+    :type private_endpoint:
+     ~azure.mgmt.recoveryservicesbackup.models.PrivateEndpoint
+    :param private_link_service_connection_state: Gets or sets private link
+     service connection state
+    :type private_link_service_connection_state:
+     ~azure.mgmt.recoveryservicesbackup.models.PrivateLinkServiceConnectionState
+    """
+
+    _attribute_map = {
+        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+        'private_endpoint': {'key': 'privateEndpoint', 'type': 'PrivateEndpoint'},
+        'private_link_service_connection_state': {'key': 'privateLinkServiceConnectionState', 'type': 'PrivateLinkServiceConnectionState'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PrivateEndpointConnection, self).__init__(**kwargs)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.private_endpoint = kwargs.get('private_endpoint', None)
+        self.private_link_service_connection_state = kwargs.get('private_link_service_connection_state', None)
+
+
+class PrivateEndpointConnectionResource(Resource):
+    """Private Endpoint Connection Response Properties.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id represents the complete path to the resource.
+    :vartype id: str
+    :ivar name: Resource name associated with the resource.
+    :vartype name: str
+    :ivar type: Resource type represents the complete path of the form
+     Namespace/ResourceType/ResourceType/...
+    :vartype type: str
+    :param location: Resource location.
+    :type location: str
+    :param tags: Resource tags.
+    :type tags: dict[str, str]
+    :param e_tag: Optional ETag.
+    :type e_tag: str
+    :param properties: PrivateEndpointConnectionResource properties
+    :type properties:
+     ~azure.mgmt.recoveryservicesbackup.models.PrivateEndpointConnection
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'e_tag': {'key': 'eTag', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'PrivateEndpointConnection'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PrivateEndpointConnectionResource, self).__init__(**kwargs)
+        self.properties = kwargs.get('properties', None)
+
+
+class PrivateLinkServiceConnectionState(Model):
+    """Private Link Service Connection State.
+
+    :param status: Gets or sets the status. Possible values include:
+     'Pending', 'Approved', 'Rejected', 'Disconnected'
+    :type status: str or
+     ~azure.mgmt.recoveryservicesbackup.models.PrivateEndpointConnectionStatus
+    :param description: Gets or sets description
+    :type description: str
+    :param action_required: Gets or sets actions required
+    :type action_required: str
+    """
+
+    _attribute_map = {
+        'status': {'key': 'status', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'action_required': {'key': 'actionRequired', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PrivateLinkServiceConnectionState, self).__init__(**kwargs)
+        self.status = kwargs.get('status', None)
+        self.description = kwargs.get('description', None)
+        self.action_required = kwargs.get('action_required', None)
 
 
 class ProtectableContainerResource(Resource):
