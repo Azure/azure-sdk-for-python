@@ -356,7 +356,7 @@ class ReceivedMessage(PeekMessage):
 
     def _is_live(self, action):
         # pylint: disable=no-member
-        if not self._receiver:
+        if not self._receiver or not self._receiver._running:
             raise ValueError("Orphan message had no open connection.")
         if self.settled:
             raise MessageAlreadySettled(action)
@@ -365,7 +365,7 @@ class ReceivedMessage(PeekMessage):
                 raise MessageLockExpired(inner_exception=self.auto_renew_error)
         except TypeError:
             pass
-        if self._receiver.session and self._receiver.session.expired:  # pylint: disable=protected-access
+        if self._receiver._session and self._receiver._session.expired:  # pylint: disable=protected-access
             raise SessionLockExpired(inner_exception=self._receiver.session.auto_renew_error)
 
     @property

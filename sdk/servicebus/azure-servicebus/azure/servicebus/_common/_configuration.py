@@ -24,4 +24,7 @@ class Configuration(object):  # pylint:disable=too-many-instance-attributes
         self.encoding = kwargs.get("encoding", "UTF-8")
         self.auto_reconnect = kwargs.get("auto_reconnect", True)
         self.idle_timeout = kwargs.get("idle_timeout", None)
-        self.prefetch = kwargs.get("prefetch", 1)
+        prefetch = kwargs.get("prefetch", 0)
+        if int(prefetch) < 0 or int(prefetch) > 50000:
+            raise ValueError("Prefetch must be an integer between 0 and 50000 inclusive.")
+        self.prefetch = prefetch + 1

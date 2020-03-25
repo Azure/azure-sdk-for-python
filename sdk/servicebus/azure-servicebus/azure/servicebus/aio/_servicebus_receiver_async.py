@@ -145,7 +145,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
      the client fails to process the message. The default mode is PeekLock.
     :paramtype mode: ~azure.servicebus.ReceiveSettleMode
     :keyword int prefetch: The maximum number of messages to cache with each request to the service.
-     The default value is 1, meaning messages will be received from the service and processed
+     The default value is 0 meaning messages will be received from the service and processed
      one at a time. Increasing this value will improve message throughput performance but increase
      the change that messages will expire while they are cached if they're not processed fast enough.
     :keyword float idle_timeout: The timeout in seconds between received messages after which the receiver will
@@ -321,7 +321,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
          the client fails to process the message. The default mode is PeekLock.
         :paramtype mode: ~azure.servicebus.ReceiveSettleMode
         :keyword int prefetch: The maximum number of messages to cache with each request to the service.
-         The default value is 1, meaning messages will be received from the service and processed
+         The default value is 0, meaning messages will be received from the service and processed
          one at a time. Increasing this value will improve message throughput performance but increase
          the change that messages will expire while they are cached if they're not processed fast enough.
         :keyword float idle_timeout: The timeout in seconds between received messages after which the receiver will

@@ -203,18 +203,18 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
     def _on_attach_for_session_entity(self, source, target, properties, error):  # pylint: disable=unused-argument
         # pylint: disable=protected-access
         if str(source) == self._entity_uri:
-            self.session._session_start = datetime.datetime.now()
+            self._session._session_start = datetime.datetime.now()
             expiry_in_seconds = properties.get(SESSION_LOCKED_UNTIL)
             if expiry_in_seconds:
                 expiry_in_seconds = (expiry_in_seconds - DATETIMEOFFSET_EPOCH)/10000000
-                self.session._locked_until = datetime.datetime.fromtimestamp(expiry_in_seconds)
+                self._session._locked_until = datetime.datetime.fromtimestamp(expiry_in_seconds)
             session_filter = source.get_filter(name=SESSION_FILTER)
             self._session_id = session_filter.decode(self._config.encoding)
-            self.session._session_id = self._session_id
+            self._session._session_id = self._session_id
 
     def _can_run(self):
-        if self.session and self.session.expired:
-            raise SessionLockExpired(inner_exception=self.session.auto_renew_error)
+        if self._session and self._session.expired:
+            raise SessionLockExpired(inner_exception=self._session.auto_renew_error)
 
 
 class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-many-instance-attributes
@@ -233,7 +233,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
     :keyword str subscription_name: The path of specific Service Bus Subscription under the
      specified Topic the client connects to.
     :keyword int prefetch: The maximum number of messages to cache with each request to the service.
-     The default value is 1, meaning messages will be received from the service and processed
+     The default value is 0, meaning messages will be received from the service and processed
      one at a time. Increasing this value will improve message throughput performance but increase
      the change that messages will expire while they are cached if they're not processed fast enough.
     :keyword float idle_timeout: The timeout in seconds between received messages after which the receiver will
@@ -423,7 +423,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
          the client fails to process the message. The default mode is PeekLock.
         :paramtype mode: ~azure.servicebus.ReceiveSettleMode
         :keyword int prefetch: The maximum number of messages to cache with each request to the service.
-         The default value is 1, meaning messages will be received from the service and processed
+         The default value is 0, meaning messages will be received from the service and processed
          one at a time. Increasing this value will improve message throughput performance but increase
          the change that messages will expire while they are cached if they're not processed fast enough.
         :keyword float idle_timeout: The timeout in seconds between received messages after which the receiver will
