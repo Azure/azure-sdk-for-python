@@ -14,7 +14,6 @@ from azure.core.pipeline.policies import (
     NetworkTraceLoggingPolicy,
     AsyncRetryPolicy,
     AsyncRedirectPolicy,
-    AsyncBearerTokenCredentialPolicy,
     DistributedTracingPolicy,
     HttpLoggingPolicy,
     ContentDecodePolicy,
@@ -29,18 +28,13 @@ class AsyncFormRecognizerClientBase(object):
         self._pipeline = self._create_pipeline(credential, **kwargs)
 
     def _create_pipeline(self, credential, **kwargs):
-        credential_policy = None
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
-        if hasattr(credential, "get_token"):
-            credential_policy = AsyncBearerTokenCredentialPolicy(
-                credential, "https://cognitiveservices.azure.com/.default"
-            )
-        elif hasattr(credential, "api_key"):
+        if hasattr(credential, "api_key"):
             credential_policy = CognitiveServicesCredentialPolicy(credential)
-        elif credential is not None:
-            raise TypeError("Unsupported credential: {}. Use an instance of FormRecognizerApiKeyCredential "
-                            "or a token credential from azure.identity".format(type(credential)))
+        else:
+            raise TypeError("Unsupported credential: {}. Use an instance of FormRecognizerApiKeyCredential."
+                            .format(type(credential)))
 
         config = self._create_configuration(**kwargs)
         config.transport = kwargs.get("transport")  # type: ignore

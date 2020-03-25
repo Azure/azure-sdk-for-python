@@ -37,7 +37,6 @@ from .._models import (
     CustomLabeledModel,
 )
 if TYPE_CHECKING:
-    from azure.core.credentials_async import AsyncTokenCredential
     from .._credential import FormRecognizerApiKeyCredential
     from .._models import (
         ExtractedPage,
@@ -51,16 +50,14 @@ class CustomFormClient(AsyncFormRecognizerClientBase):
     :param str endpoint: Supported Cognitive Services endpoints (protocol and hostname,
         for example: https://westus2.api.cognitive.microsoft.com).
     :param credential: Credentials needed for the client to connect to Azure.
-        This can be the an instance of FormRecognizerApiKeyCredential if using an API key
-        or a token credential from azure.identity.
+        This is an instance of FormRecognizerApiKeyCredential if using an API key.
     :type credential: ~azure.ai.formrecognizer.FormRecognizerApiKeyCredential
-        or ~azure.core.credentials.TokenCredential
     """
 
     def __init__(
             self,
             endpoint: str,
-            credential: Union["FormRecognizerApiKeyCredential", "AsyncTokenCredential"],
+            credential: "FormRecognizerApiKeyCredential",
             **kwargs: Any
     ) -> None:
         super(CustomFormClient, self).__init__(credential=credential, **kwargs)

@@ -26,7 +26,6 @@ from ._response_handlers import (
 from ._generated.models import AnalyzeOperationResult
 from ._helpers import get_content_type, POLLING_INTERVAL
 if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential
     from ._credential import FormRecognizerApiKeyCredential
 
 
@@ -36,14 +35,12 @@ class FormRecognizerClient(FormRecognizerClientBase):
     :param str endpoint: Supported Cognitive Services endpoints (protocol and hostname,
         for example: https://westus2.api.cognitive.microsoft.com).
     :param credential: Credentials needed for the client to connect to Azure.
-        This can be the an instance of FormRecognizerApiKeyCredential if using an API key
-        or a token credential from azure.identity.
+        This is an instance of FormRecognizerApiKeyCredential if using an API key.
     :type credential: ~azure.ai.formrecognizer.FormRecognizerApiKeyCredential
-        or ~azure.core.credentials.TokenCredential
     """
 
     def __init__(self, endpoint, credential, **kwargs):
-        # type: (str, Union[FormRecognizerApiKeyCredential, TokenCredential], Any) -> None
+        # type: (str, FormRecognizerApiKeyCredential, Any) -> None
         super(FormRecognizerClient, self).__init__(credential=credential, **kwargs)
         self._client = FormRecognizer(
             endpoint=endpoint, credential=credential, pipeline=self._pipeline

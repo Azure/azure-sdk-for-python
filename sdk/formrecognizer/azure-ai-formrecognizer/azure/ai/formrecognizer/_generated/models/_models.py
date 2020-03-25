@@ -295,7 +295,7 @@ class FieldValue(msrest.serialization.Model):
     :param value_string: String value.
     :type value_string: str
     :param value_date: Date value.
-    :type value_date: str
+    :type value_date: ~datetime.date
     :param value_time: Time value.
     :type value_time: str
     :param value_phone_number: Phone number value.
@@ -331,7 +331,7 @@ class FieldValue(msrest.serialization.Model):
     _attribute_map = {
         'type': {'key': 'type', 'type': 'str'},
         'value_string': {'key': 'valueString', 'type': 'str'},
-        'value_date': {'key': 'valueDate', 'type': 'str'},
+        'value_date': {'key': 'valueDate', 'type': 'date'},
         'value_time': {'key': 'valueTime', 'type': 'str'},
         'value_phone_number': {'key': 'valuePhoneNumber', 'type': 'str'},
         'value_number': {'key': 'valueNumber', 'type': 'float'},

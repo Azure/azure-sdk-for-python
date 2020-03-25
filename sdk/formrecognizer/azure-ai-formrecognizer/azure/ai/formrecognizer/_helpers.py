@@ -4,7 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from datetime import date, time
+from datetime import time
 from azure.core.exceptions import HttpResponseError
 
 POLLING_INTERVAL = 1
@@ -19,11 +19,12 @@ def get_field_value(field):
     if field.value_time:
         hour, minutes, seconds = field.value_time.split(":")
         return time(int(hour), int(minutes), int(seconds))
-    if field.value_date:
-        year, month, day = field.value_date.split("-")
-        return date(int(year), int(month), int(day))
 
-    return field.value_integer or field.value_number or field.value_phone_number or field.value_string
+    return field.value_integer or \
+        field.value_number or \
+        field.value_phone_number or \
+        field.value_string or \
+        field.value_date
 
 
 def get_content_type(form):

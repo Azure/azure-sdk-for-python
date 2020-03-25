@@ -61,53 +61,22 @@ az cognitiveservices account show --name "resource-name" --resource-group "resou
 ```
 
 #### Types of credentials
-The `credential` parameter may be provided as a `FormRecognizerApiKeyCredential` or as a token from Azure Active Directory.
-See the full details regarding [authentication][cognitive_authentication] of
-cognitive services.
+The `credential` parameter may be provided as a `FormRecognizerApiKeyCredential`.
+See the full details regarding [authentication][cognitive_authentication] of cognitive services.
 
-1. To use an [API key][cognitive_authentication_api_key],
-   pass the key as a string into an instance of `FormRecognizerApiKeyCredential("<api_key>")`.
-   The API key can be found in the Azure Portal or by running the following Azure CLI command:
+To use an [API key][cognitive_authentication_api_key],
+pass the key as a string into an instance of `FormRecognizerApiKeyCredential("<api_key>")`.
+The API key can be found in the Azure Portal or by running the following Azure CLI command:
 
-    ```az cognitiveservices account keys list --name "resource-name" --resource-group "resource-group-name"```
+```az cognitiveservices account keys list --name "resource-name" --resource-group "resource-group-name"```
 
-    Use the key as the credential parameter to authenticate the client:
-    ```python
-    from azure.ai.formrecognizer import FormRecognizerClient, FormRecognizerApiKeyCredential
+Use the key as the credential parameter to authenticate the client:
+```python
+from azure.ai.formrecognizer import FormRecognizerClient, FormRecognizerApiKeyCredential
 
-    credential = FormRecognizerApiKeyCredential("<api_key>")
-    client = FormRecognizerClient(endpoint, credential)
-    ```
-
-2. To use an [Azure Active Directory (AAD) token credential][cognitive_authentication_aad],
-   provide an instance of the desired credential type obtained from the
-   [azure-identity][azure_identity_credentials] library.
-   Note that regional endpoints do not support AAD authentication. Create a [custom subdomain][custom_subdomain]
-   name for your resource in order to use this type of authentication.
-
-   Authentication with AAD requires some initial setup:
-   * [Install azure-identity][install_azure_identity]
-   * [Register a new AAD application][register_aad_app]
-   * [Grant access][grant_role_access] to Form Recognizer by assigning the `"Cognitive Services User"` role to your service principal.
-
-   After setup, you can choose which type of [credential][azure_identity_credentials] from azure.identity to use.
-   As an example, [DefaultAzureCredential][default_azure_credential]
-   can be used to authenticate the client:
-
-   Set the values of the client ID, tenant ID, and client secret of the AAD application as environment variables:
-   AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET
-
-   Use the returned token credential to authenticate the client:
-    ```python
-    from azure.identity import DefaultAzureCredential
-    from azure.ai.formrecognizer import FormRecognizerClient
-    token_credential = DefaultAzureCredential()
-
-    client = FormRecognizerClient(
-        endpoint="https://<my-custom-subdomain>.cognitiveservices.azure.com/",
-        credential=token_credential
-    )
-    ```
+credential = FormRecognizerApiKeyCredential("<api_key>")
+client = FormRecognizerClient(endpoint, credential)
+```
 
 ## Key concepts
 
@@ -137,8 +106,7 @@ headers, can be enabled on a client with the `logging_enable` keyword argument:
 ```python
 import sys
 import logging
-from azure.identity import DefaultAzureCredential
-from azure.ai.formrecognizer import FormRecognizerClient
+from azure.ai.formrecognizer import FormRecognizerClient, FormRecognizerApiKeyCredential
 
 # Create a logger for the 'azure' SDK
 logger = logging.getLogger('azure')
@@ -149,7 +117,7 @@ handler = logging.StreamHandler(stream=sys.stdout)
 logger.addHandler(handler)
 
 endpoint = "https://<my-custom-subdomain>.cognitiveservices.azure.com/"
-credential = DefaultAzureCredential()
+credential = FormRecognizerApiKeyCredential("<api_key>")
 
 # This client will log detailed information about its HTTP sessions, at DEBUG level
 client = FormRecognizerClient(endpoint, credential, logging_enable=True)
