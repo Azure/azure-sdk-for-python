@@ -61,9 +61,12 @@ class ServiceBusClient(object):
         self._auth_uri = "sb://{}".format(self.fully_qualified_namespace)
         if self._entity_name:
             self._auth_uri = "{}/{}".format(self._auth_uri, self._entity_name)
+        # Internal flag for switching whether to apply connection sharing, pending fix in uamqp library
+        self._connection_sharing = False
 
     def __enter__(self):
-        self._create_uamqp_connection()
+        if self._connection_sharing:
+            self._create_uamqp_connection()
         return self
 
     def __exit__(self, *args):
@@ -83,7 +86,8 @@ class ServiceBusClient(object):
 
         :return: None
         """
-        self._connection.destroy()
+        if self._connection_sharing:
+            self._connection.destroy()
 
     @classmethod
     def from_connection_string(
@@ -169,6 +173,14 @@ class ServiceBusClient(object):
         """Get ServiceBusReceiver for the specific queue.
 
         :param str queue_name: The path of specific Service Bus Queue the client connects to.
+        :keyword mode: The mode with which messages will be retrieved from the entity. The two options
+         are PeekLock and ReceiveAndDelete. Messages received with PeekLock must be settled within a given
+         lock period before they will be removed from the queue. Messages received with ReceiveAndDelete
+         will be immediately removed from the queue, and cannot be subsequently rejected or re-received if
+         the client fails to process the message. The default mode is PeekLock.
+        :paramtype mode: ~azure.servicebus.ReceiveSettleMode
+        :keyword float idle_timeout: The timeout in seconds between received messages after which the receiver will
+         automatically shutdown. The default value is 0, meaning no timeout.
         :keyword int retry_total: The total number of attempts to redo a failed operation when an error occurs.
          Default value is 3.
         :param int idle_timeout: The timeout in seconds between received messages after which the receiver will

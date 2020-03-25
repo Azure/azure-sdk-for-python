@@ -15,14 +15,14 @@ except ImportError:
     from urllib.parse import quote_plus
 
 import uamqp
-from uamqp import (
-    utils,
-)
+from uamqp import utils
 from uamqp.message import MessageProperties
+
 from ._common._configuration import Configuration
 from .exceptions import (
     InvalidHandlerState,
     ServiceBusError,
+    ServiceBusAuthorizationError,
     _create_servicebus_exception
 )
 from ._common.utils import create_properties
@@ -118,7 +118,6 @@ class BaseHandler(object):  # pylint:disable=too-many-instance-attributes
         self._credential = credential
         self._container_id = "servicebus.pysdk-" + str(uuid.uuid4())[:8]
         self._config = Configuration(**kwargs)
-        self._idle_timeout = kwargs.get("idle_timeout", None)
         self._running = False
         self._handler = None
         self._auth_uri = None
@@ -131,8 +130,12 @@ class BaseHandler(object):  # pylint:disable=too-many-instance-attributes
         self.close()
 
     def _handle_exception(self, exception):
-        error = _create_servicebus_exception(_LOGGER, exception)
-        self._close_handler()
+        error, error_need_close_handler, error_need_raise = _create_servicebus_exception(_LOGGER, exception, self)
+        if error_need_close_handler:
+            self._close_handler()
+        if error_need_raise:
+            raise error
+
         return error
 
     @staticmethod
@@ -150,8 +153,10 @@ class BaseHandler(object):  # pylint:disable=too-many-instance-attributes
 
         entity_in_kwargs = queue_name or topic_name
         if entity_in_conn_str and entity_in_kwargs and (entity_in_conn_str != entity_in_kwargs):
-            raise ValueError("Entity names do not match, the entity name in connection string is {}; the"
-                             " entity name in parameter is {}.".format(entity_in_conn_str, entity_in_kwargs))
+            raise ServiceBusAuthorizationError(
+                "Entity names do not match, the entity name in connection string is {};"
+                " the entity name in parameter is {}.".format(entity_in_conn_str, entity_in_kwargs)
+            )
 
         kwargs["fully_qualified_namespace"] = host
         kwargs["entity_name"] = entity_in_conn_str or entity_in_kwargs
@@ -264,13 +269,6 @@ class BaseHandler(object):  # pylint:disable=too-many-instance-attributes
             self._handler.close()
             self._handler = None
         self._running = False
-
-    def _try_reset_link_error_in_session(self):
-        # Patch for uamqp.Session not cleaning up _link_error
-        try:
-            self._handler._connection.auth._session._link_error = None
-        except AttributeError:
-            pass
 
     def close(self):
         # type: () -> None

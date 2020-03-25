@@ -31,7 +31,8 @@ from .constants import (
 from ..exceptions import (
     MessageAlreadySettled,
     MessageLockExpired,
-    SessionLockExpired
+    SessionLockExpired,
+    MessageSettleFailed
 )
 
 
@@ -40,8 +41,9 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
 
     :param body: The data to send in a single message.
     :type body: str or bytes
-    :param encoding: The encoding for string data. Default is UTF-8.
-    :type encoding: str
+    :param str encoding: The encoding for string data. Default is UTF-8.
+    :keyword session_id: An optional session ID for the message to be sent.
+    :paramtype session_id: str or ~uuid.Guid
 
     .. admonition:: Example:
 
@@ -363,8 +365,8 @@ class ReceivedMessage(PeekMessage):
                 raise MessageLockExpired(inner_exception=self.auto_renew_error)
         except TypeError:
             pass
-        if hasattr(self._receiver, 'expired') and self._receiver.expired:
-            raise SessionLockExpired(inner_exception=self._receiver.auto_renew_error)
+        if self._receiver.session and self._receiver.session.expired:  # pylint: disable=protected-access
+            raise SessionLockExpired(inner_exception=self._receiver.session.auto_renew_error)
 
     @property
     def settled(self):
@@ -420,7 +422,10 @@ class ReceivedMessage(PeekMessage):
         :raises: ~azure.servicebus.common.errors.MessageSettleFailed if message settle operation fails.
         """
         self._is_live('complete')
-        self._receiver._settle_message(SETTLEMENT_COMPLETE, [self.lock_token])  # pylint: disable=protected-access
+        try:
+            self._receiver._settle_message(SETTLEMENT_COMPLETE, [self.lock_token])  # pylint: disable=protected-access
+        except Exception as e:
+            raise MessageSettleFailed("complete", e)
         self._settled = True
 
     def dead_letter(self, description=None):
@@ -439,12 +444,19 @@ class ReceivedMessage(PeekMessage):
         :raises: ~azure.servicebus.common.errors.SessionLockExpired if session lock has already expired.
         :raises: ~azure.servicebus.common.errors.MessageSettleFailed if message settle operation fails.
         """
+        # pylint: disable=protected-access
         self._is_live('dead-letter')
         details = {
             'deadletter-reason': str(description) if description else "",
             'deadletter-description': str(description) if description else ""}
-        self._receiver._settle_message(  # pylint: disable=protected-access
-            SETTLEMENT_DEADLETTER, [self.lock_token], dead_letter_details=details)
+        try:
+            self._receiver._settle_message(
+                SETTLEMENT_DEADLETTER,
+                [self.lock_token],
+                dead_letter_details=details
+            )
+        except Exception as e:
+            raise MessageSettleFailed("reject", e)
         self._settled = True
 
     def abandon(self):
@@ -458,7 +470,10 @@ class ReceivedMessage(PeekMessage):
         :raises: ~azure.servicebus.common.errors.MessageSettleFailed if message settle operation fails.
         """
         self._is_live('abandon')
-        self._receiver._settle_message(SETTLEMENT_ABANDON, [self.lock_token])  # pylint: disable=protected-access
+        try:
+            self._receiver._settle_message(SETTLEMENT_ABANDON, [self.lock_token])  # pylint: disable=protected-access
+        except Exception as e:
+            raise MessageSettleFailed("abandon", e)
         self._settled = True
 
     def defer(self):
@@ -473,7 +488,10 @@ class ReceivedMessage(PeekMessage):
         :raises: ~azure.servicebus.common.errors.MessageSettleFailed if message settle operation fails.
         """
         self._is_live('defer')
-        self._receiver._settle_message(SETTLEMENT_DEFER, [self.lock_token])  # pylint: disable=protected-access
+        try:
+            self._receiver._settle_message(SETTLEMENT_DEFER, [self.lock_token])  # pylint: disable=protected-access
+        except Exception as e:
+            raise MessageSettleFailed("defer", e)
         self._settled = True
 
     def renew_lock(self):

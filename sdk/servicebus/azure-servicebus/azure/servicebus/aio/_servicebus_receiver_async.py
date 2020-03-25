@@ -141,6 +141,8 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
      will be immediately removed from the queue, and cannot be subsequently rejected or re-received if
      the client fails to process the message. The default mode is PeekLock.
     :paramtype mode: ~azure.servicebus.ReceiveSettleMode
+    :keyword float idle_timeout: The timeout in seconds between received messages after which the receiver will
+     automatically shutdown. The default value is 0, meaning no timeout.
     :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
     :keyword int retry_total: The total number of attempts to redo a failed operation when an error occurs.
      Default value is 3.
@@ -193,9 +195,10 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
                 **kwargs
             )
         self._message_iter = None
-        self._session = None
+        self._session_id = None
         self._create_attribute(**kwargs)
         self._connection = kwargs.get("connection")
+        self._session = ServiceBusSession(self._session_id, self, self._config.encoding) if self._session_id else None
 
     async def __anext__(self):
         while True:
@@ -224,7 +227,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
             encoding=self._config.encoding,
             receive_settle_mode=self._mode.value,
             send_settle_mode=SenderSettleMode.Settled if self._mode == ReceiveSettleMode.ReceiveAndDelete else None,
-            timeout=self._idle_timeout * 1000 if self._idle_timeout else 0
+            timeout=self._config.idle_timeout * 1000 if self._config.idle_timeout else 0
         )
 
     async def _open(self):
@@ -234,25 +237,21 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
             await self._handler.close_async()
         auth = None if self._connection else (await create_authentication(self))
         self._create_handler(auth)
-        if self._connection:
-            self._try_reset_link_error_in_session()
         await self._handler.open_async(connection=self._connection)
         self._message_iter = self._handler.receive_messages_iter_async()
         while not await self._handler.client_ready_async():
             await asyncio.sleep(0.05)
         self._running = True
 
-        if self._session_id:
-            self._session = ServiceBusSession(self._session_id, self, self._config.encoding)
-
     async def _receive(self, max_batch_size=None, timeout=None):
         await self._open()
         max_batch_size = max_batch_size or self._handler._prefetch  # pylint: disable=protected-access
 
-        timeout_ms = 1000 * timeout if timeout else (1000 * self._idle_timeout if self._idle_timeout else 0)
+        timeout_ms = 1000 * (timeout or self._config.idle_timeout) if (timeout or self._config.idle_timeout) else 0
         batch = await self._handler.receive_message_batch_async(
             max_batch_size=max_batch_size,
-            timeout=timeout_ms)
+            timeout=timeout_ms
+        )
 
         return [self._build_message(message, ReceivedMessage) for message in batch]
 
@@ -312,6 +311,8 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
          will be immediately removed from the queue, and cannot be subsequently rejected or re-received if
          the client fails to process the message. The default mode is PeekLock.
         :paramtype mode: ~azure.servicebus.ReceiveSettleMode
+        :keyword float idle_timeout: The timeout in seconds between received messages after which the receiver will
+         automatically shutdown. The default value is 0, meaning no timeout.
         :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
         :keyword int retry_total: The total number of attempts to redo a failed operation when an error occurs.
          Default value is 3.
@@ -422,14 +423,18 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
             receive_mode = int(self._mode)
         message = {
             'sequence-numbers': types.AMQPArray([types.AMQPLong(s) for s in sequence_numbers]),
-            'receiver-settle-mode': types.AMQPuInt(receive_mode),
-            'session-id': self._session_id
+            'receiver-settle-mode': types.AMQPuInt(receive_mode)
         }
-        handler = functools.partial(mgmt_handlers.deferred_message_op, mode=receive_mode, message_type=ReceivedMessage)
+
+        if self._session_id:
+            message["session-id"] = self._session_id
+
+        handler = functools.partial(mgmt_handlers.deferred_message_op, mode=self._mode, message_type=ReceivedMessage)
         messages = await self._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_RECEIVE_BY_SEQUENCE_NUMBER,
             message,
-            handler)
+            handler
+        )
         for m in messages:
             m._receiver = self  # pylint: disable=protected-access
         return messages

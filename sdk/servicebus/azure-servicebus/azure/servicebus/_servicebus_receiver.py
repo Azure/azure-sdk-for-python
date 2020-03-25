@@ -51,8 +51,9 @@ class ServiceBusSession(object):
         self._session_id = session_id
         self._receiver = receiver
         self._encoding = encoding
-        self._locked_until = None
         self._session_start = None
+        self._locked_until = None
+        self.auto_renew_error = None
 
 
     def get_session_state(self):
@@ -184,15 +185,17 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
         return source
 
     def _on_attach_for_session_entity(self, source, target, properties, error):  # pylint: disable=unused-argument
+        # pylint: disable=protected-access
         if str(source) == self._entity_uri:
             # This has to live on the session object so that autorenew has access to it.
-            self.session._session_start = datetime.datetime.now()
+            self._session._session_start = datetime.datetime.now()
             expiry_in_seconds = properties.get(SESSION_LOCKED_UNTIL)
             if expiry_in_seconds:
                 expiry_in_seconds = (expiry_in_seconds - DATETIMEOFFSET_EPOCH)/10000000
-                self.session._locked_until = datetime.datetime.fromtimestamp(expiry_in_seconds)
+                self._session._locked_until = datetime.datetime.fromtimestamp(expiry_in_seconds)
             session_filter = source.get_filter(name=SESSION_FILTER)
             self._session_id = session_filter.decode(self._config.encoding)
+            self._session._session_id = self._session_id
 
 
 class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-many-instance-attributes
@@ -210,6 +213,8 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
      the client connects to.
     :keyword str subscription_name: The path of specific Service Bus Subscription under the
      specified Topic the client connects to.
+    :keyword float idle_timeout: The timeout in seconds between received messages after which the receiver will
+     automatically shutdown. The default value is 0, meaning no timeout.
     :keyword mode: The mode with which messages will be retrieved from the entity. The two options
      are PeekLock and ReceiveAndDelete. Messages received with PeekLock must be settled within a given
      lock period before they will be removed from the queue. Messages received with ReceiveAndDelete
@@ -269,9 +274,9 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
                 **kwargs
             )
         self._message_iter = None
-        self._session = None
         self._create_attribute(**kwargs)
         self._connection = kwargs.get("connection")
+        self._session = ServiceBusSession(self._session_id, self, self._config.encoding) if self._session_id else None
         self._prefetch = kwargs.get("prefetch")
 
     def __iter__(self):
@@ -306,7 +311,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
             encoding=self._config.encoding,
             receive_settle_mode=self._mode.value,
             send_settle_mode=SenderSettleMode.Settled if self._mode == ReceiveSettleMode.ReceiveAndDelete else None,
-            timeout=self._idle_timeout * 1000 if self._idle_timeout else 0,
+            timeout=self._config.idle_timeout * 1000 if self._config.idle_timeout else 0,
             prefetch=self._prefetch
         )
 
@@ -318,22 +323,17 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
 
         auth = None if self._connection else create_authentication(self)
         self._create_handler(auth)
-        if self._connection:
-            self._try_reset_link_error_in_session()
         self._handler.open(connection=self._connection)
         self._message_iter = self._handler.receive_messages_iter()
         while not self._handler.client_ready():
             time.sleep(0.05)
         self._running = True
 
-        if self._session_id:
-            self._session = ServiceBusSession(self._session_id, self, self._config.encoding)
-
     def _receive(self, max_batch_size=None, timeout=None):
         self._open()
         max_batch_size = max_batch_size or self._handler._prefetch  # pylint: disable=protected-access
 
-        timeout_ms = 1000 * timeout if timeout else (1000 * self._idle_timeout if self._idle_timeout else 0)
+        timeout_ms = 1000 * (timeout or self._config.idle_timeout) if (timeout or self._config.idle_timeout) else 0
         batch = self._handler.receive_message_batch(
             max_batch_size=max_batch_size,
             timeout=timeout_ms
@@ -399,6 +399,8 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
          will be immediately removed from the queue, and cannot be subsequently rejected or re-received if
          the client fails to process the message. The default mode is PeekLock.
         :paramtype mode: ~azure.servicebus.ReceiveSettleMode
+        :keyword float idle_timeout: The timeout in seconds between received messages after which the receiver will
+         automatically shutdown. The default value is 0, meaning no timeout.
         :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
         :keyword int retry_total: The total number of attempts to redo a failed operation when an error occurs.
          Default value is 3.
@@ -497,13 +499,13 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
             receive_mode = int(self._mode)
         message = {
             'sequence-numbers': types.AMQPArray([types.AMQPLong(s) for s in sequence_numbers]),
-            'receiver-settle-mode': types.AMQPuInt(receive_mode),
+            'receiver-settle-mode': types.AMQPuInt(receive_mode)
         }
 
         if self._session_id:
             message["session-id"] = self._session_id
 
-        handler = functools.partial(mgmt_handlers.deferred_message_op, mode=receive_mode)
+        handler = functools.partial(mgmt_handlers.deferred_message_op, mode=self._mode)
         messages = self._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_RECEIVE_BY_SEQUENCE_NUMBER,
             message,

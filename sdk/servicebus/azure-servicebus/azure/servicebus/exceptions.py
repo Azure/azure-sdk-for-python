@@ -6,6 +6,8 @@
 
 from uamqp import errors, constants
 
+from ._common.constants import SESSION_LOCK_LOST, SESSION_LOCK_TIMEOUT
+
 
 _NO_RETRY_ERRORS = (
     constants.ErrorCodes.DecodeError,
@@ -60,12 +62,27 @@ def _error_handler(error):
     return errors.ErrorAction(retry=True)
 
 
-def _create_servicebus_exception(logger, exception):
+def _create_servicebus_exception(logger, exception, handler):
+    error_need_close_handler = True
+    error_need_raise = False
+
     if isinstance(exception, MessageSendFailed):
         logger.info("Message send error (%r)", exception)
-        raise exception
-
-    if isinstance(exception, (errors.LinkDetach, errors.ConnectionClose)):
+        error, error_need_close_handler, error_need_raise = exception, False, True
+    elif isinstance(exception, errors.LinkDetach) and exception.condition == SESSION_LOCK_LOST:
+        try:
+            session_id = handler._session_id  # pylint: disable=protected-access
+        except AttributeError:
+            session_id = None
+        error = SessionLockExpired("Connection detached - lock on Session {} lost.".format(session_id))
+        error_need_raise = True
+    elif isinstance(exception, errors.LinkDetach) and exception.condition == SESSION_LOCK_TIMEOUT:
+        error = NoActiveSession("Queue has no active session to receive from.")
+        error_need_raise = True
+    elif isinstance(exception, errors.AuthenticationException):
+        logger.info("Authentication failed due to exception: (%r).", exception)
+        error = ServiceBusAuthorizationError(str(exception), exception)
+    elif isinstance(exception, (errors.LinkDetach, errors.ConnectionClose)):
         logger.info("Handler detached due to exception: (%r).", exception)
         if exception.condition == constants.ErrorCodes.UnauthorizedAccess:
             error = ServiceBusAuthorizationError(str(exception), exception)
@@ -78,13 +95,13 @@ def _create_servicebus_exception(logger, exception):
         logger.info("Failed to open handler: (%r).", exception)
         message = "Failed to open handler: {}.".format(exception)
         error = ServiceBusConnectionError(message, exception)
+        error_need_raise, error_need_close_handler = True, False
     else:
         logger.info("Unexpected error occurred (%r). Shutting down.", exception)
         error = exception
         if not isinstance(exception, ServiceBusError):
             error = ServiceBusError("Handler failed: {}.".format(exception))
 
-    error_need_raise = False
     try:
         err_condition = exception.condition
         if err_condition in _NO_RETRY_ERRORS:
@@ -92,10 +109,7 @@ def _create_servicebus_exception(logger, exception):
     except AttributeError:
         pass
 
-    if error_need_raise:
-        raise error
-
-    return error
+    return error, error_need_close_handler, error_need_raise
 
 
 class _ServiceBusErrorPolicy(errors.ErrorPolicy):
