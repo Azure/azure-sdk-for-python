@@ -21,6 +21,16 @@ import logging
 import pytest
 
 
+class MockResponse(HttpResponse):
+    def __init__(self, request, body, content_type):
+        super(MockResponse, self).__init__(request, None)
+        self._body = body
+        self.content_type = content_type
+
+    def body(self):
+        return self._body
+
+
 @pytest.mark.skipif(sys.version_info < (3, 6), reason="Multipart serialization not supported on 2.7 + dict order not deterministic on 3.5")
 def test_http_request_serialization():
     # Method + Url
@@ -612,15 +622,6 @@ def test_multipart_send_with_changeset_overlap():
 
 def test_multipart_receive():
 
-    class MockResponse(HttpResponse):
-        def __init__(self, request, body, content_type):
-            super(MockResponse, self).__init__(request, None)
-            self._body = body
-            self.content_type = content_type
-
-        def body(self):
-            return self._body
-
     class ResponsePolicy(object):
         def on_response(self, request, response):
             # type: (PipelineRequest, PipelineResponse) -> None
@@ -681,22 +682,339 @@ def test_multipart_receive():
     assert res1.status_code == 404
     assert res1.headers['x-ms-fun'] == 'true'
 
+
+def test_multipart_receive_with_one_changeset():
+
+    requests = [
+        HttpRequest("DELETE", "/container0/blob0"),
+        HttpRequest("DELETE", "/container1/blob1")
+    ]
+
+    request = HttpRequest("POST", "http://account.blob.core.windows.net/?comp=batch")
+    request.set_multipart_mixed(*requests)
+    body_as_bytes = (
+        b'--batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed\r\n'
+        b'Content-Type: multipart/mixed; boundary="changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525"\r\n'
+        b'\r\n'
+        b'--changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525\r\n'
+        b'Content-Type: application/http\r\n'
+        b'Content-Transfer-Encoding: binary\r\n'
+        b'Content-ID: 0\r\n'
+        b'\r\n'
+        b'HTTP/1.1 202 Accepted\r\n'
+        b'x-ms-request-id: 778fdc83-801e-0000-62ff-0334671e284f\r\n'
+        b'x-ms-version: 2018-11-09\r\n'
+        b'\r\n'
+        b'\r\n'
+        b'--changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525\r\n'
+        b'Content-Type: application/http\r\n'
+        b'Content-Transfer-Encoding: binary\r\n'
+        b'Content-ID: 1\r\n'
+        b'\r\n'
+        b'HTTP/1.1 202 Accepted\r\n'
+        b'x-ms-request-id: 778fdc83-801e-0000-62ff-0334671e284f\r\n'
+        b'x-ms-version: 2018-11-09\r\n'
+        b'\r\n'
+        b'\r\n'
+        b'--changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525--\r\n'
+        b'\r\n'
+        b'--batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed--\r\n'
+    )
+
+    response = MockResponse(
+        request,
+        body_as_bytes,
+        "multipart/mixed; boundary=batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed"
+    )
+
+    parts = []
+    for part in response.parts():
+        parts.append(part)
+    assert len(parts) == 2
+
+    res0 = parts[0]
+    assert res0.status_code == 202
+
+
+def test_multipart_receive_with_multiple_changesets():
+
+    requests = [
+        HttpRequest("DELETE", "/container0/blob0"),
+        HttpRequest("DELETE", "/container1/blob1"),
+        HttpRequest("DELETE", "/container2/blob2"),
+        HttpRequest("DELETE", "/container3/blob3")
+    ]
+
+    request = HttpRequest("POST", "http://account.blob.core.windows.net/?comp=batch")
+    request.set_multipart_mixed(*requests)
+    body_as_bytes = (
+        b'--batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed\r\n'
+        b'Content-Type: multipart/mixed; boundary="changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525"\r\n'
+        b'\r\n'
+        b'--changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525\r\n'
+        b'Content-Type: application/http\r\n'
+        b'Content-Transfer-Encoding: binary\r\n'
+        b'Content-ID: 0\r\n'
+        b'\r\n'
+        b'HTTP/1.1 200\r\n'
+        b'x-ms-request-id: 778fdc83-801e-0000-62ff-0334671e284f\r\n'
+        b'x-ms-version: 2018-11-09\r\n'
+        b'\r\n'
+        b'\r\n'
+        b'--changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525\r\n'
+        b'Content-Type: application/http\r\n'
+        b'Content-Transfer-Encoding: binary\r\n'
+        b'Content-ID: 1\r\n'
+        b'\r\n'
+        b'HTTP/1.1 202\r\n'
+        b'x-ms-request-id: 778fdc83-801e-0000-62ff-0334671e284f\r\n'
+        b'x-ms-version: 2018-11-09\r\n'
+        b'\r\n'
+        b'\r\n'
+        b'--changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525--\r\n'
+        b'\r\n'
+        b'--batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed\r\n'
+        b'Content-Type: multipart/mixed; boundary="changeset_8b9e487e-a353-4dcb-a6f4-0688191e0314"\r\n'
+        b'\r\n'
+        b'--changeset_8b9e487e-a353-4dcb-a6f4-0688191e0314\r\n'
+        b'Content-Type: application/http\r\n'
+        b'Content-Transfer-Encoding: binary\r\n'
+        b'Content-ID: 2\r\n'
+        b'\r\n'
+        b'HTTP/1.1 404\r\n'
+        b'x-ms-request-id: 778fdc83-801e-0000-62ff-0334671e284f\r\n'
+        b'x-ms-version: 2018-11-09\r\n'
+        b'\r\n'
+        b'\r\n'
+        b'--changeset_8b9e487e-a353-4dcb-a6f4-0688191e0314\r\n'
+        b'Content-Type: application/http\r\n'
+        b'Content-Transfer-Encoding: binary\r\n'
+        b'Content-ID: 3\r\n'
+        b'\r\n'
+        b'HTTP/1.1 409\r\n'
+        b'x-ms-request-id: 778fdc83-801e-0000-62ff-0334671e284f\r\n'
+        b'x-ms-version: 2018-11-09\r\n'
+        b'\r\n'
+        b'\r\n'
+        b'--changeset_8b9e487e-a353-4dcb-a6f4-0688191e0314--\r\n'
+        b'\r\n'
+        b'--batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed--\r\n'
+    )
+
+    response = MockResponse(
+        request,
+        body_as_bytes,
+        "multipart/mixed; boundary=batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed"
+    )
+
+    parts = []
+    for part in response.parts():
+        parts.append(part)
+    assert len(parts) == 4
+    assert parts[0].status_code == 200
+    assert parts[1].status_code == 202
+    assert parts[2].status_code == 404
+    assert parts[3].status_code == 409
+
+
+def test_multipart_receive_with_combination_changeset_first():
+
+    requests = [
+        HttpRequest("DELETE", "/container0/blob0"),
+        HttpRequest("DELETE", "/container1/blob1"),
+        HttpRequest("DELETE", "/container2/blob2")
+    ]
+
+    request = HttpRequest("POST", "http://account.blob.core.windows.net/?comp=batch")
+    request.set_multipart_mixed(*requests)
+    body_as_bytes = (
+        b'--batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed\r\n'
+        b'Content-Type: multipart/mixed; boundary="changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525"\r\n'
+        b'\r\n'
+        b'--changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525\r\n'
+        b'Content-Type: application/http\r\n'
+        b'Content-Transfer-Encoding: binary\r\n'
+        b'Content-ID: 0\r\n'
+        b'\r\n'
+        b'HTTP/1.1 200\r\n'
+        b'x-ms-request-id: 778fdc83-801e-0000-62ff-0334671e284f\r\n'
+        b'x-ms-version: 2018-11-09\r\n'
+        b'\r\n'
+        b'\r\n'
+        b'--changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525\r\n'
+        b'Content-Type: application/http\r\n'
+        b'Content-Transfer-Encoding: binary\r\n'
+        b'Content-ID: 1\r\n'
+        b'\r\n'
+        b'HTTP/1.1 202\r\n'
+        b'x-ms-request-id: 778fdc83-801e-0000-62ff-0334671e284f\r\n'
+        b'x-ms-version: 2018-11-09\r\n'
+        b'\r\n'
+        b'\r\n'
+        b'--changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525--\r\n'
+        b'\r\n'
+        b'--batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed\r\n'
+        b'Content-Type: application/http\r\n'
+        b'Content-Transfer-Encoding: binary\r\n'
+        b'Content-ID: 2\r\n'
+        b'\r\n'
+        b'HTTP/1.1 404\r\n'
+        b'x-ms-request-id: 778fdc83-801e-0000-62ff-0334671e284f\r\n'
+        b'x-ms-version: 2018-11-09\r\n'
+        b'\r\n'
+        b'\r\n'
+        b'--batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed--\r\n'
+    )
+
+    response = MockResponse(
+        request,
+        body_as_bytes,
+        "multipart/mixed; boundary=batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed"
+    )
+
+    parts = []
+    for part in response.parts():
+        parts.append(part)
+    assert len(parts) == 3
+    assert parts[0].status_code == 200
+    assert parts[1].status_code == 202
+    assert parts[2].status_code == 404
+
+
+def test_multipart_receive_with_combination_changeset_middle():
+
+    requests = [
+        HttpRequest("DELETE", "/container0/blob0"),
+        HttpRequest("DELETE", "/container1/blob1"),
+        HttpRequest("DELETE", "/container2/blob2")
+    ]
+
+    request = HttpRequest("POST", "http://account.blob.core.windows.net/?comp=batch")
+    request.set_multipart_mixed(*requests)
+    body_as_bytes = (
+        b'--batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed\r\n'
+        b'Content-Type: application/http\r\n'
+        b'Content-Transfer-Encoding: binary\r\n'
+        b'Content-ID: 2\r\n'
+        b'\r\n'
+        b'HTTP/1.1 200\r\n'
+        b'x-ms-request-id: 778fdc83-801e-0000-62ff-0334671e284f\r\n'
+        b'x-ms-version: 2018-11-09\r\n'
+        b'\r\n'
+        b'\r\n'
+        b'--batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed\r\n'
+        b'Content-Type: multipart/mixed; boundary="changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525"\r\n'
+        b'\r\n'
+        b'--changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525\r\n'
+        b'Content-Type: application/http\r\n'
+        b'Content-Transfer-Encoding: binary\r\n'
+        b'Content-ID: 0\r\n'
+        b'\r\n'
+        b'HTTP/1.1 202\r\n'
+        b'x-ms-request-id: 778fdc83-801e-0000-62ff-0334671e284f\r\n'
+        b'x-ms-version: 2018-11-09\r\n'
+        b'\r\n'
+        b'\r\n'
+        b'--changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525--\r\n'
+        b'\r\n'
+        b'--batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed\r\n'
+        b'Content-Type: application/http\r\n'
+        b'Content-Transfer-Encoding: binary\r\n'
+        b'Content-ID: 2\r\n'
+        b'\r\n'
+        b'HTTP/1.1 404\r\n'
+        b'x-ms-request-id: 778fdc83-801e-0000-62ff-0334671e284f\r\n'
+        b'x-ms-version: 2018-11-09\r\n'
+        b'\r\n'
+        b'\r\n'
+        b'--batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed--\r\n'
+    )
+
+    response = MockResponse(
+        request,
+        body_as_bytes,
+        "multipart/mixed; boundary=batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed"
+    )
+
+    parts = []
+    for part in response.parts():
+        parts.append(part)
+    assert len(parts) == 3
+    assert parts[0].status_code == 200
+    assert parts[1].status_code == 202
+    assert parts[2].status_code == 404
+
+
+def test_multipart_receive_with_combination_changeset_last():
+
+    requests = [
+        HttpRequest("DELETE", "/container0/blob0"),
+        HttpRequest("DELETE", "/container1/blob1"),
+        HttpRequest("DELETE", "/container2/blob2")
+    ]
+
+    request = HttpRequest("POST", "http://account.blob.core.windows.net/?comp=batch")
+    request.set_multipart_mixed(*requests)
+    body_as_bytes = (
+        b'--batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed\r\n'
+        b'Content-Type: application/http\r\n'
+        b'Content-Transfer-Encoding: binary\r\n'
+        b'Content-ID: 2\r\n'
+        b'\r\n'
+        b'HTTP/1.1 200\r\n'
+        b'x-ms-request-id: 778fdc83-801e-0000-62ff-0334671e284f\r\n'
+        b'x-ms-version: 2018-11-09\r\n'
+        b'\r\n'
+        b'\r\n'
+        b'--batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed\r\n'
+        b'Content-Type: multipart/mixed; boundary="changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525"\r\n'
+        b'\r\n'
+        b'--changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525\r\n'
+        b'Content-Type: application/http\r\n'
+        b'Content-Transfer-Encoding: binary\r\n'
+        b'Content-ID: 0\r\n'
+        b'\r\n'
+        b'HTTP/1.1 202\r\n'
+        b'x-ms-request-id: 778fdc83-801e-0000-62ff-0334671e284f\r\n'
+        b'x-ms-version: 2018-11-09\r\n'
+        b'\r\n'
+        b'\r\n'
+        b'--changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525\r\n'
+        b'Content-Type: application/http\r\n'
+        b'Content-Transfer-Encoding: binary\r\n'
+        b'Content-ID: 1\r\n'
+        b'\r\n'
+        b'HTTP/1.1 404\r\n'
+        b'x-ms-request-id: 778fdc83-801e-0000-62ff-0334671e284f\r\n'
+        b'x-ms-version: 2018-11-09\r\n'
+        b'\r\n'
+        b'\r\n'
+        b'--changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525--\r\n'
+        b'\r\n'
+        b'--batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed--\r\n'
+    )
+
+    response = MockResponse(
+        request,
+        body_as_bytes,
+        "multipart/mixed; boundary=batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed"
+    )
+
+    parts = []
+    for part in response.parts():
+        parts.append(part)
+    assert len(parts) == 3
+    assert parts[0].status_code == 200
+    assert parts[1].status_code == 202
+    assert parts[2].status_code == 404
+
+
 def test_multipart_receive_with_bom():
 
     req0 = HttpRequest("DELETE", "/container0/blob0")
 
     request = HttpRequest("POST", "http://account.blob.core.windows.net/?comp=batch")
     request.set_multipart_mixed(req0)
-
-    class MockResponse(HttpResponse):
-        def __init__(self, request, body, content_type):
-            super(MockResponse, self).__init__(request, None)
-            self._body = body
-            self.content_type = content_type
-
-        def body(self):
-            return self._body
-
     body_as_bytes = (
         b"--batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed\n"
         b"Content-Type: application/http\n"
@@ -734,16 +1052,6 @@ def test_recursive_multipart_receive():
 
     request = HttpRequest("POST", "http://account.blob.core.windows.net/?comp=batch")
     request.set_multipart_mixed(req0)
-
-    class MockResponse(HttpResponse):
-        def __init__(self, request, body, content_type):
-            super(MockResponse, self).__init__(request, None)
-            self._body = body
-            self.content_type = content_type
-
-        def body(self):
-            return self._body
-
     internal_body_as_str = (
         "--batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed\r\n"
         "Content-Type: application/http\r\n"
@@ -785,6 +1093,7 @@ def test_recursive_multipart_receive():
 
     internal_response0 = internal_response[0]
     assert internal_response0.status_code == 400
+
 
 def test_close_unopened_transport():
     transport = RequestsTransport()
