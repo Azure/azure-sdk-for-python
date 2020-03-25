@@ -71,7 +71,7 @@ class BaseHandler:  # pylint: disable=too-many-instance-attributes
             encoding=self.encoding,
             **self.handler_kwargs)
 
-    async def _mgmt_request_response(self, operation, message, callback, keep_alive_associated_link=False, **kwargs):
+    async def _mgmt_request_response(self, operation, message, callback, keep_alive_associated_link=True, **kwargs):
         if not self.running:
             raise InvalidHandlerState("Client connection is closed.")
 
