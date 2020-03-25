@@ -24,3 +24,4 @@ class Configuration(object):  # pylint:disable=too-many-instance-attributes
         self.encoding = kwargs.get("encoding", "UTF-8")
         self.auto_reconnect = kwargs.get("auto_reconnect", True)
         self.idle_timeout = kwargs.get("idle_timeout", None)
+        self.prefetch = kwargs.get("prefetch", 1)

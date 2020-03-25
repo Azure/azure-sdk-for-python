@@ -232,6 +232,10 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
      the client connects to.
     :keyword str subscription_name: The path of specific Service Bus Subscription under the
      specified Topic the client connects to.
+    :keyword int prefetch: The maximum number of messages to cache with each request to the service.
+     The default value is 1, meaning messages will be received from the service and processed
+     one at a time. Increasing this value will improve message throughput performance but increase
+     the change that messages will expire while they are cached if they're not processed fast enough.
     :keyword float idle_timeout: The timeout in seconds between received messages after which the receiver will
      automatically shutdown. The default value is 0, meaning no timeout.
     :keyword mode: The mode with which messages will be retrieved from the entity. The two options
@@ -330,7 +334,8 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
             encoding=self._config.encoding,
             receive_settle_mode=self._mode.value,
             send_settle_mode=SenderSettleMode.Settled if self._mode == ReceiveSettleMode.ReceiveAndDelete else None,
-            timeout=self._config.idle_timeout * 1000 if self._config.idle_timeout else 0
+            timeout=self._config.idle_timeout * 1000 if self._config.idle_timeout else 0,
+            prefetch=self._config.prefetch
         )
 
     def _open(self):
@@ -417,6 +422,10 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
          will be immediately removed from the queue, and cannot be subsequently rejected or re-received if
          the client fails to process the message. The default mode is PeekLock.
         :paramtype mode: ~azure.servicebus.ReceiveSettleMode
+        :keyword int prefetch: The maximum number of messages to cache with each request to the service.
+         The default value is 1, meaning messages will be received from the service and processed
+         one at a time. Increasing this value will improve message throughput performance but increase
+         the change that messages will expire while they are cached if they're not processed fast enough.
         :keyword float idle_timeout: The timeout in seconds between received messages after which the receiver will
          automatically shutdown. The default value is 0, meaning no timeout.
         :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.

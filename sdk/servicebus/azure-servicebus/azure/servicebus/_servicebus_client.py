@@ -179,6 +179,10 @@ class ServiceBusClient(object):
          will be immediately removed from the queue, and cannot be subsequently rejected or re-received if
          the client fails to process the message. The default mode is PeekLock.
         :paramtype mode: ~azure.servicebus.ReceiveSettleMode
+        :keyword int prefetch: The maximum number of messages to cache with each request to the service.
+         The default value is 1, meaning messages will be received from the service and processed
+         one at a time. Increasing this value will improve message throughput performance but increase
+         the change that messages will expire while they are cached if they're not processed fast enough.
         :keyword float idle_timeout: The timeout in seconds between received messages after which the receiver will
          automatically shutdown. The default value is 0, meaning no timeout.
         :keyword int retry_total: The total number of attempts to redo a failed operation when an error occurs.
