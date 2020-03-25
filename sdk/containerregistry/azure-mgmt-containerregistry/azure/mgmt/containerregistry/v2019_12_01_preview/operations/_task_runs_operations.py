@@ -61,7 +61,7 @@ class TaskRunsOperations(object):
          ~azure.mgmt.containerregistry.v2019_12_01_preview.models.TaskRun or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorSchemaException<azure.mgmt.containerregistry.v2019_12_01_preview.models.ErrorSchemaException>`
+         :class:`ErrorResponseException<azure.mgmt.containerregistry.v2019_12_01_preview.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.get.metadata['url']
@@ -92,7 +92,7 @@ class TaskRunsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.ErrorSchemaException(self._deserialize, response)
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -141,7 +141,7 @@ class TaskRunsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 201]:
-            raise models.ErrorSchemaException(self._deserialize, response)
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -183,7 +183,7 @@ class TaskRunsOperations(object):
          or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.containerregistry.v2019_12_01_preview.models.TaskRun]]
         :raises:
-         :class:`ErrorSchemaException<azure.mgmt.containerregistry.v2019_12_01_preview.models.ErrorSchemaException>`
+         :class:`ErrorResponseException<azure.mgmt.containerregistry.v2019_12_01_preview.models.ErrorResponseException>`
         """
         raw_result = self._create_initial(
             resource_group_name=resource_group_name,
@@ -244,7 +244,7 @@ class TaskRunsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202, 204]:
-            raise models.ErrorSchemaException(self._deserialize, response)
+            raise models.ErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -271,7 +271,7 @@ class TaskRunsOperations(object):
         :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
         :raises:
-         :class:`ErrorSchemaException<azure.mgmt.containerregistry.v2019_12_01_preview.models.ErrorSchemaException>`
+         :class:`ErrorResponseException<azure.mgmt.containerregistry.v2019_12_01_preview.models.ErrorResponseException>`
         """
         raw_result = self._delete_initial(
             resource_group_name=resource_group_name,
@@ -332,7 +332,7 @@ class TaskRunsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 201]:
-            raise models.ErrorSchemaException(self._deserialize, response)
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -373,7 +373,7 @@ class TaskRunsOperations(object):
          or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.containerregistry.v2019_12_01_preview.models.TaskRun]]
         :raises:
-         :class:`ErrorSchemaException<azure.mgmt.containerregistry.v2019_12_01_preview.models.ErrorSchemaException>`
+         :class:`ErrorResponseException<azure.mgmt.containerregistry.v2019_12_01_preview.models.ErrorResponseException>`
         """
         raw_result = self._update_initial(
             resource_group_name=resource_group_name,
@@ -425,7 +425,7 @@ class TaskRunsOperations(object):
          ~azure.mgmt.containerregistry.v2019_12_01_preview.models.TaskRun or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorSchemaException<azure.mgmt.containerregistry.v2019_12_01_preview.models.ErrorSchemaException>`
+         :class:`ErrorResponseException<azure.mgmt.containerregistry.v2019_12_01_preview.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.get_details.metadata['url']
@@ -456,7 +456,7 @@ class TaskRunsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.ErrorSchemaException(self._deserialize, response)
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -487,7 +487,7 @@ class TaskRunsOperations(object):
         :rtype:
          ~azure.mgmt.containerregistry.v2019_12_01_preview.models.TaskRunPaged[~azure.mgmt.containerregistry.v2019_12_01_preview.models.TaskRun]
         :raises:
-         :class:`ErrorSchemaException<azure.mgmt.containerregistry.v2019_12_01_preview.models.ErrorSchemaException>`
+         :class:`ErrorResponseException<azure.mgmt.containerregistry.v2019_12_01_preview.models.ErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -528,7 +528,7 @@ class TaskRunsOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                raise models.ErrorSchemaException(self._deserialize, response)
+                raise models.ErrorResponseException(self._deserialize, response)
 
             return response
 

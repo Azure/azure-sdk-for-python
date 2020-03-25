@@ -31,8 +31,8 @@ try:
     from ._models_py3 import EncodedTaskRunRequest
     from ._models_py3 import EncodedTaskStep
     from ._models_py3 import EncodedTaskStepUpdateParameters
-    from ._models_py3 import Error
-    from ._models_py3 import ErrorSchema, ErrorSchemaException
+    from ._models_py3 import ErrorResponse, ErrorResponseException
+    from ._models_py3 import ErrorResponseBody
     from ._models_py3 import Event
     from ._models_py3 import EventContent
     from ._models_py3 import EventInfo
@@ -141,8 +141,8 @@ except (SyntaxError, ImportError):
     from ._models import EncodedTaskRunRequest
     from ._models import EncodedTaskStep
     from ._models import EncodedTaskStepUpdateParameters
-    from ._models import Error
-    from ._models import ErrorSchema, ErrorSchemaException
+    from ._models import ErrorResponse, ErrorResponseException
+    from ._models import ErrorResponseBody
     from ._models import Event
     from ._models import EventContent
     from ._models import EventInfo
@@ -296,8 +296,8 @@ __all__ = [
     'EncodedTaskRunRequest',
     'EncodedTaskStep',
     'EncodedTaskStepUpdateParameters',
-    'Error',
-    'ErrorSchema', 'ErrorSchemaException',
+    'ErrorResponse', 'ErrorResponseException',
+    'ErrorResponseBody',
     'Event',
     'EventContent',
     'EventInfo',
