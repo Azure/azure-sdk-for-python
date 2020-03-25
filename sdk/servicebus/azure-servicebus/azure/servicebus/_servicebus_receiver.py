@@ -161,6 +161,10 @@ class ServiceBusSession(object):
 
     @property
     def locked_until(self):
+        # type: () -> datetime
+        """The time at which this session's lock will expire.
+        :rtype: datetime
+        """
         return self._locked_until
 
 
