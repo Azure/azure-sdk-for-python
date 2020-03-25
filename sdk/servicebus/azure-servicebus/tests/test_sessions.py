@@ -26,8 +26,8 @@ from azure.servicebus.common.errors import (
     AutoLockRenewTimeout,
     MessageSettleFailed)
 
-from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPreparer
-from servicebus_preparer import ServiceBusNamespacePreparer, ServiceBusTopicPreparer, ServiceBusQueuePreparer
+from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPreparer, CachedResourceGroupPreparer
+from servicebus_preparer import ServiceBusNamespacePreparer, ServiceBusTopicPreparer, ServiceBusQueuePreparer, CachedServiceBusNamespacePreparer
 
 
 def get_logger(level):
@@ -59,8 +59,8 @@ def print_message(message):
 class ServiceBusSessionTests(AzureMgmtTestCase):
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @RandomNameResourceGroupPreparer()
-    @ServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @CachedResourceGroupPreparer()
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
     def test_session_by_session_client_conn_str_receive_handler_peeklock(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
         queue_client = QueueClient.from_connection_string(
@@ -90,8 +90,8 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @RandomNameResourceGroupPreparer(name_prefix='servicebustest')
-    @ServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
     def test_session_by_queue_client_conn_str_receive_handler_receiveanddelete(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
         queue_client = QueueClient.from_connection_string(
@@ -127,8 +127,8 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @RandomNameResourceGroupPreparer()
-    @ServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @CachedResourceGroupPreparer()
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
     def test_session_by_session_client_conn_str_receive_handler_with_stop(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
         queue_client = QueueClient.from_connection_string(
@@ -169,8 +169,8 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @RandomNameResourceGroupPreparer(name_prefix='servicebustest')
-    @ServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
     def test_session_by_session_client_conn_str_receive_handler_with_no_session(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
         queue_client = QueueClient.from_connection_string(
@@ -184,8 +184,8 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @RandomNameResourceGroupPreparer(name_prefix='servicebustest')
-    @ServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
     def test_session_by_session_client_conn_str_receive_handler_with_inactive_session(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
         queue_client = QueueClient.from_connection_string(
@@ -204,8 +204,8 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @RandomNameResourceGroupPreparer(name_prefix='servicebustest')
-    @ServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
     def test_session_by_servicebus_client_iter_messages_with_retrieve_deferred_receiver_complete(self, servicebus_namespace, servicebus_namespace_key_name, servicebus_namespace_primary_key, servicebus_queue, **kwargs):
         client = ServiceBusClient(
@@ -245,8 +245,8 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @RandomNameResourceGroupPreparer(name_prefix='servicebustest')
-    @ServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
     def test_session_by_servicebus_client_iter_messages_with_retrieve_deferred_receiver_deadletter(self, servicebus_namespace, servicebus_namespace_key_name, servicebus_namespace_primary_key, servicebus_queue, **kwargs):
         client = ServiceBusClient(
@@ -291,8 +291,8 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @RandomNameResourceGroupPreparer(name_prefix='servicebustest')
-    @ServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
     def test_session_by_servicebus_client_iter_messages_with_retrieve_deferred_receiver_deletemode(self, servicebus_namespace, servicebus_namespace_key_name, servicebus_namespace_primary_key, servicebus_queue, **kwargs):
         client = ServiceBusClient(
@@ -330,8 +330,8 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @RandomNameResourceGroupPreparer(name_prefix='servicebustest')
-    @ServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
     def test_session_by_servicebus_client_iter_messages_with_retrieve_deferred_client(self, servicebus_namespace, servicebus_namespace_key_name, servicebus_namespace_primary_key, servicebus_queue, **kwargs):
         client = ServiceBusClient(
@@ -367,8 +367,8 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @RandomNameResourceGroupPreparer(name_prefix='servicebustest')
-    @ServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
     def test_session_by_servicebus_client_fetch_next_with_retrieve_deadletter(self, servicebus_namespace, servicebus_namespace_key_name, servicebus_namespace_primary_key, servicebus_queue, **kwargs):
 
@@ -410,8 +410,8 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @RandomNameResourceGroupPreparer(name_prefix='servicebustest')
-    @ServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
     def test_session_by_servicebus_client_browse_messages_client(self, servicebus_namespace, servicebus_namespace_key_name, servicebus_namespace_primary_key, servicebus_queue, **kwargs):
         client = ServiceBusClient(
@@ -441,8 +441,8 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @RandomNameResourceGroupPreparer(name_prefix='servicebustest')
-    @ServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
     def test_session_by_servicebus_client_browse_messages_with_receiver(self, servicebus_namespace, servicebus_namespace_key_name, servicebus_namespace_primary_key, servicebus_queue, **kwargs):
 
@@ -471,8 +471,8 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @RandomNameResourceGroupPreparer(name_prefix='servicebustest')
-    @ServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
     def test_session_by_servicebus_client_renew_client_locks(self, servicebus_namespace, servicebus_namespace_key_name, servicebus_namespace_primary_key, servicebus_queue, **kwargs):
 
@@ -523,8 +523,8 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @RandomNameResourceGroupPreparer(name_prefix='servicebustest')
-    @ServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
     def test_session_by_conn_str_receive_handler_with_autolockrenew(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
 
@@ -562,7 +562,8 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
 
                     elif len(messages) == 1:
                         print("Starting second sleep")
-                        time.sleep(40)
+                        time.sleep(25) # to ensure that we run out the autolockrenew timeout
+                        time.sleep((session.locked_until - datetime.now()).total_seconds() + 1) # To expire the session.
                         print("Second sleep {}".format(session.locked_until - datetime.now()))
                         assert session.expired
                         assert isinstance(session.auto_renew_error, AutoLockRenewTimeout)
@@ -579,8 +580,8 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @RandomNameResourceGroupPreparer()
-    @ServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @CachedResourceGroupPreparer()
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
     def test_session_message_connection_closed(self, servicebus_namespace, servicebus_namespace_key_name, servicebus_namespace_primary_key, servicebus_queue, **kwargs):
         
@@ -608,8 +609,8 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @RandomNameResourceGroupPreparer()
-    @ServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @CachedResourceGroupPreparer()
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
     def test_session_message_expiry(self, servicebus_namespace, servicebus_namespace_key_name, servicebus_namespace_primary_key, servicebus_queue, **kwargs):
 
@@ -651,8 +652,8 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @RandomNameResourceGroupPreparer(name_prefix='servicebustest')
-    @ServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
     def test_session_schedule_message(self, servicebus_namespace, servicebus_namespace_key_name, servicebus_namespace_primary_key, servicebus_queue, **kwargs):
 
@@ -691,8 +692,8 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @RandomNameResourceGroupPreparer(name_prefix='servicebustest')
-    @ServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
     def test_session_schedule_multiple_messages(self, servicebus_namespace, servicebus_namespace_key_name, servicebus_namespace_primary_key, servicebus_queue, **kwargs):
 
@@ -736,8 +737,8 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @RandomNameResourceGroupPreparer(name_prefix='servicebustest')
-    @ServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
     def test_session_cancel_scheduled_messages(self, servicebus_namespace, servicebus_namespace_key_name, servicebus_namespace_primary_key, servicebus_queue, **kwargs):
 
@@ -770,8 +771,8 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @RandomNameResourceGroupPreparer(name_prefix='servicebustest')
-    @ServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
     def test_session_get_set_state_with_receiver(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
 
@@ -800,8 +801,8 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @RandomNameResourceGroupPreparer(name_prefix='servicebustest')
-    @ServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
     def test_session_by_servicebus_client_list_sessions_with_receiver(self, servicebus_namespace, servicebus_namespace_key_name, servicebus_namespace_primary_key, servicebus_queue, **kwargs):
 
@@ -834,8 +835,8 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @RandomNameResourceGroupPreparer(name_prefix='servicebustest')
-    @ServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
     def test_session_by_servicebus_client_list_sessions_with_client(self, servicebus_namespace, servicebus_namespace_key_name, servicebus_namespace_primary_key, servicebus_queue, **kwargs):
 
@@ -867,8 +868,8 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @RandomNameResourceGroupPreparer(name_prefix='servicebustest')
-    @ServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
     def test_session_by_servicebus_client_session_pool(self, servicebus_namespace, servicebus_namespace_key_name, servicebus_namespace_primary_key, servicebus_queue, **kwargs):
     
@@ -916,8 +917,8 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @RandomNameResourceGroupPreparer(name_prefix='servicebustest')
-    @ServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
     def test_session_by_session_client_conn_str_receive_handler_peeklock_abandon(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
         queue_client = QueueClient.from_connection_string(
@@ -932,7 +933,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                 message = Message("Handler message no. {}".format(i))
                 sender.send(message)
 
-        with queue_client.get_receiver(session=session_id) as receiver:
+        with queue_client.get_receiver(session=session_id, prefetch=0) as receiver:
             message = receiver.next()
             assert message.sequence_number == 1
             message.abandon()
