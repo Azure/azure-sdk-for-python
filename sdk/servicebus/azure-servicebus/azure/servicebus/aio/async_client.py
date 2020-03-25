@@ -11,6 +11,7 @@ from urllib.parse import urlparse
 
 import requests
 from uamqp import types
+from uamqp.constants import TransportType
 
 from azure.servicebus.common import mgmt_handlers, mixins
 from azure.servicebus.aio.async_base_handler import BaseHandler
@@ -37,8 +38,8 @@ class ServiceBusClient(mixins.ServiceBusMixin):
     :param str shared_access_key_name: SAS authentication key name.
     :param str shared_access_key_value: SAS authentication key value.
     :param transport_type: Optional. Underlying transport protocol type (Amqp or AmqpOverWebsocket)
-     Default value is ~uamqp.constants.TransportType.Amqp
-    :type transport_type: ~uamqp.constants.TransportType
+     Default value is ~azure.servicebus.TransportType.Amqp
+    :type transport_type: ~azure.servicebus.TransportType
     :param loop: An async event loop.
     :param int http_request_timeout: Optional. Timeout for the HTTP request, in seconds.
     :param http_request_session: Optional. Session object to use for HTTP requests.
@@ -56,7 +57,7 @@ class ServiceBusClient(mixins.ServiceBusMixin):
 
     def __init__(self, *, service_namespace=None, host_base=SERVICE_BUS_HOST_BASE,
                  shared_access_key_name=None, shared_access_key_value=None, loop=None,
-                 transport_type=None,
+                 transport_type=TransportType.Amqp,
                  http_request_timeout=DEFAULT_HTTP_TIMEOUT, http_request_session=None, debug=False):
 
         self.loop = loop or get_running_loop()

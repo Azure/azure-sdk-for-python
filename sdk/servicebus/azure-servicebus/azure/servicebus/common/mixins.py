@@ -15,6 +15,7 @@ except ImportError:
     from urllib.parse import unquote_plus
 
 from uamqp import Source
+from uamqp.constants import TransportType
 
 import azure.common
 import azure.servicebus
@@ -288,9 +289,7 @@ class BaseClient(object):  # pylint: disable=too-many-instance-attributes
             'key_name': shared_access_key_name,
             'shared_access_key': shared_access_key_value}
 
-        transport_type = kwargs.get('transport_type') or None
-        if transport_type is not None:
-            self.auth_config['transport_type'] = transport_type
+        self.auth_config['transport_type'] = kwargs.get('transport_type') or TransportType.Amqp
 
         self.mgmt_client = kwargs.get('mgmt_client') or ServiceBusService(
             service_namespace=namespace,

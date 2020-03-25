@@ -48,7 +48,7 @@ def parse_conn_str(conn_str):
     shared_access_key_name = None
     shared_access_key = None
     entity_path = None
-    transport_type = None
+    transport_type = TransportType.Amqp
     for element in conn_str.split(';'):
         key, _, value = element.partition('=')
         if key.lower() == 'endpoint':

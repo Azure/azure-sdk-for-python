@@ -14,6 +14,7 @@ except ImportError:
     from urllib.parse import urlparse
 
 from uamqp import types
+from uamqp.constants import TransportType
 
 from azure.servicebus.common import mgmt_handlers, mixins
 from azure.servicebus.common.constants import (
@@ -40,8 +41,8 @@ class ServiceBusClient(mixins.ServiceBusMixin):
     :param str shared_access_key_name: SAS authentication key name.
     :param str shared_access_key_value: SAS authentication key value.
     :param transport_type: Optional. Underlying transport protocol type (Amqp or AmqpOverWebsocket)
-     Default value is ~uamqp.constants.TransportType.Amqp
-    :type transport_type: ~uamqp.constants.TransportType
+     Default value is ~azure.servicebus.TransportType.Amqp
+    :type transport_type: ~azure.servicebus.TransportType
     :param int http_request_timeout: Optional. Timeout for the HTTP request, in seconds.
      Default value is 65 seconds.
     :param http_request_session: Optional. Session object to use for HTTP requests.
@@ -60,7 +61,7 @@ class ServiceBusClient(mixins.ServiceBusMixin):
 
     def __init__(self, service_namespace=None, host_base=SERVICE_BUS_HOST_BASE,
                  shared_access_key_name=None, shared_access_key_value=None,
-                 transport_type=None,
+                 transport_type=TransportType.Amqp,
                  http_request_timeout=DEFAULT_HTTP_TIMEOUT, http_request_session=None, debug=False):
 
         self.service_namespace = service_namespace
