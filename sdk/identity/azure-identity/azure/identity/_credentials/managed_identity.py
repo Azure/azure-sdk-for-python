@@ -4,6 +4,7 @@
 # ------------------------------------
 import os
 
+import six
 from azure.core.configuration import Configuration
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import HttpResponseError
@@ -163,7 +164,24 @@ class ImdsCredential(_ManagedIdentityBase):
             params = {"api-version": "2018-02-01", "resource": resource}
             if self._client_id:
                 params["client_id"] = self._client_id
-            token = self._client.request_token(scopes, method="GET", params=params)
+
+            try:
+                token = self._client.request_token(scopes, method="GET", params=params)
+            except HttpResponseError as ex:
+                # 400 in response to a token request indicates managed identity is disabled,
+                # or the identity with the specified client_id is not available
+                if ex.status_code == 400:
+                    self._endpoint_available = False
+                    message = "ManagedIdentityCredential authentication unavailable. "
+                    if self._client_id:
+                        message += "The requested identity has not been assigned to this resource."
+                    else:
+                        message += "No identity has been assigned to this resource."
+                    six.raise_from(CredentialUnavailableError(message=message), ex)
+
+                # any other error is unexpected, so we propagate the exception
+                raise
+
         return token
 
 
