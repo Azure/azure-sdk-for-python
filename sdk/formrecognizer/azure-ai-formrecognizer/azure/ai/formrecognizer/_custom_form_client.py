@@ -98,7 +98,7 @@ class CustomFormClient(FormRecognizerClientBase):
 
         # FIXME: https://github.com/Azure/azure-sdk-for-python/issues/10417
         response.http_response.headers["Location"] = response.http_response.headers["Location"] + "?includeKeys=true"
-        return LROPoller(self._client._client, response, callback, LROBasePolling(timeout=POLLING_INTERVAL, **kwargs))
+        return LROPoller(self._client._client, response, callback, LROBasePolling(**kwargs))
 
     @distributed_trace
     def begin_labeled_training(self, source, source_prefix_filter="", include_sub_folders=False, **kwargs):
@@ -139,7 +139,7 @@ class CustomFormClient(FormRecognizerClientBase):
             model = self._client._deserialize(Model, raw_response)
             return CustomLabeledModel._from_generated(model)
 
-        return LROPoller(self._client._client, response, callback, LROBasePolling(timeout=POLLING_INTERVAL, **kwargs))
+        return LROPoller(self._client._client, response, callback, LROBasePolling(**kwargs))
 
     @distributed_trace
     def begin_extract_form_pages(self, form, model_id, **kwargs):

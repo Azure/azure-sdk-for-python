@@ -115,7 +115,7 @@ class CustomFormClient(AsyncFormRecognizerClientBase):
             self._client._client,
             response,
             callback,
-            AsyncLROBasePolling(timeout=POLLING_INTERVAL, **kwargs)
+            AsyncLROBasePolling(**kwargs)
         )
 
     @distributed_trace_async
@@ -166,7 +166,7 @@ class CustomFormClient(AsyncFormRecognizerClientBase):
             self._client._client,
             response,
             callback,
-            AsyncLROBasePolling(timeout=POLLING_INTERVAL, **kwargs)
+            AsyncLROBasePolling(**kwargs)
         )
 
     @distributed_trace_async

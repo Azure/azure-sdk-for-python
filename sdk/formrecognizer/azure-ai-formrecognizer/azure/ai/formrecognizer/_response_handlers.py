@@ -63,7 +63,7 @@ def prepare_receipt_result(response, include_elements):
 
 
 def prepare_tables(page, elements):
-    if page.tables is None:
+    if not page.tables:
         return page.tables
 
     return [

@@ -114,8 +114,13 @@ class FieldValue(object):
         if field is None:
             return field
         if field.value_array:
-            return [{field: FieldValue._from_generated(value, elements)
-                    for field, value in obj.value_object.items()} for obj in field.value_array]
+            try:
+                if field.value_array[0].type == "object":
+                    return [{field: FieldValue._from_generated(value, elements)
+                             for field, value in obj.value_object.items()} for obj in field.value_array]
+                return [FieldValue._from_generated(field, elements) for field in field.value_array]
+            except KeyError:
+                return None
         return cls(
             value=get_field_value(field),
             text=field.text,
@@ -133,10 +138,12 @@ class ReceiptType(object):
 
     @classmethod
     def _from_generated(cls, item):
-        return cls(
-            type=get_field_value(item),
-            confidence=item.confidence
-        )
+        if item:
+            return cls(
+                type=get_field_value(item),
+                confidence=item.confidence
+            )
+        return item
 
 
 class ReceiptItem(object):
@@ -211,7 +218,8 @@ class PageMetadata(object):
             width=read_result[page_index].width,
             height=read_result[page_index].height,
             unit=LengthUnit(read_result[page_index].unit),
-            lines=[ExtractedLine._from_generated(line, page_index+1) for line in read_result[page_index].lines or []]
+            lines=[ExtractedLine._from_generated(line, page=page_index+1)
+                   for line in read_result[page_index].lines or []]
         )
 
     @classmethod
@@ -222,7 +230,7 @@ class PageMetadata(object):
             width=page.width,
             height=page.height,
             unit=LengthUnit(page.unit),
-            lines=[ExtractedLine._from_generated(line, page.page) for line in page.lines or []]
+            lines=[ExtractedLine._from_generated(line, page=page.page) for line in page.lines or []]
         ) for page in read_result]
 
 
@@ -373,9 +381,9 @@ class CustomLabeledModel(object):
             status=ModelStatus(model.model_info.status),
             created_on=model.model_info.created_date_time,
             last_updated_on=model.model_info.last_updated_date_time,
-            fields=FieldInfo._from_generated(model.train_result.fields),
-            average_model_accuracy=model.train_result.average_model_accuracy,
-            training_info=TrainingInfo._from_generated(model.train_result)
+            fields=FieldInfo._from_generated(model.train_result) if model.train_result else None,
+            average_model_accuracy=model.train_result.average_model_accuracy if model.train_result else None,
+            training_info=TrainingInfo._from_generated(model.train_result) if model.train_result else None
         )
 
 
@@ -385,13 +393,13 @@ class FieldInfo(object):
         self.accuracy = kwargs.get('accuracy', None)
 
     @classmethod
-    def _from_generated(cls, fields):
-        if fields:
+    def _from_generated(cls, model):
+        if model:
             return [cls(
-                field_name=field.field_name,
-                accuracy=field.accuracy
-            ) for field in fields]
-        return fields
+              field_name=field.field_name,
+              accuracy=field.accuracy
+            ) for field in model.fields]
+        return model
 
 
 class ExtractedPage(object):
