@@ -43,7 +43,7 @@ class TestRecognizeEntities(TextAnalyticsTest):
                 self.assertIsNotNone(entity.category)
                 self.assertIsNotNone(entity.grapheme_offset)
                 self.assertIsNotNone(entity.grapheme_length)
-                self.assertIsNotNone(entity.score)
+                self.assertIsNotNone(entity.confidence_score)
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_all_successful_passing_text_document_input(self, resource_group, location, text_analytics_account, text_analytics_account_key):
@@ -63,7 +63,7 @@ class TestRecognizeEntities(TextAnalyticsTest):
                 self.assertIsNotNone(entity.category)
                 self.assertIsNotNone(entity.grapheme_offset)
                 self.assertIsNotNone(entity.grapheme_length)
-                self.assertIsNotNone(entity.score)
+                self.assertIsNotNone(entity.confidence_score)
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_passing_only_string(self, resource_group, location, text_analytics_account, text_analytics_account_key):
@@ -127,7 +127,7 @@ class TestRecognizeEntities(TextAnalyticsTest):
         text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
         with self.assertRaises(HttpResponseError):
             response = text_analytics.recognize_entities(
-                inputs=["Microsoft was founded by Bill Gates."],
+                documents=["Microsoft was founded by Bill Gates."],
                 model_version="old"
             )
 
@@ -480,7 +480,7 @@ class TestRecognizeEntities(TextAnalyticsTest):
             self.assertIsNotNone(response.statistics)
 
         res = text_analytics.recognize_entities(
-            inputs=["Bill Gates is the CEO of Microsoft."],
+            documents=["Bill Gates is the CEO of Microsoft."],
             model_version="latest",
             show_stats=True,
             language="es",

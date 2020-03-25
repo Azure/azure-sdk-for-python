@@ -11,6 +11,7 @@ parameters:
   BuildDocs: true
   JobName: Test
   AllocateResourceGroup: 'true'
+  TestTimeoutInMinutes: 120
   Matrix:
     Linux_Python35:
       OSName: 'Linux'
@@ -39,7 +40,7 @@ jobs:
       skipComponentGovernanceDetection: true
       CoverageArg: --disablecov
 
-    timeoutInMinutes: 120
+    timeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
     strategy:
       maxParallel: ${{ parameters.MaxParallel }}
       matrix: ${{ parameters.Matrix }}

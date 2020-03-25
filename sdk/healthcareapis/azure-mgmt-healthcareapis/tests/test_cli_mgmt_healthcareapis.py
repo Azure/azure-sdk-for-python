@@ -6,6 +6,16 @@
 # license information.
 #--------------------------------------------------------------------------
 
+
+# TEST SCENARIO COVERAGE
+# ----------------------
+# Methods Total   : 9
+# Methods Covered : 9
+# Examples Total  : 9
+# Examples Tested : 9
+# Coverage %      : 100
+# ----------------------
+
 import unittest
 
 import azure.mgmt.healthcareapis
@@ -24,15 +34,14 @@ class MgmtHealthcareApisTest(AzureMgmtTestCase):
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_healthcareapis(self, resource_group):
 
-        SERVICE_NAME = "myhcasrvanxy"
+        SERVICE_NAME = "myapimrndxyzabc"
+        OPERATIONRESULT_NAME = "read"
+        LOCATION_NAME = AZURE_LOCATION
 
-        # Check name availability[post]
-        result = self.mgmt_client.services.check_name_availability(type="Microsoft.HealthcareApis/services", name=SERVICE_NAME)
-
-        # Create or Update a service with all parameters[put]
+        # ServicePut[put]
         BODY = {
-          "location": "westus2",
-          "kind": "fhir-R4",
+          "location": "eastus",
+          "kind": "fhir",
           "properties": {
             "access_policies": [
               {
@@ -73,32 +82,41 @@ class MgmtHealthcareApisTest(AzureMgmtTestCase):
         result = self.mgmt_client.services.create_or_update(resource_group.name, SERVICE_NAME, BODY)
         result = result.result()
 
-        # Delete service[delete]
-        result = self.mgmt_client.services.delete(resource_group.name, SERVICE_NAME)
-        result = result.result()
+        # OperationResultsGet[get]
+        result = self.mgmt_client.operation_results.get(LOCATION_NAME, OPERATIONRESULT_NAME)
 
-        # Create or Update a service with minimum parameters[put]
-        BODY = {
-          "location": "westus2",
-          "kind": "fhir-R4",
-          "properties": {
-            "access_policies": [
-              {
-                "object_id": "c487e7d1-3210-41a3-8ccc-e9372b78da47"
-              }
-            ]
-          }
-        }
-        result = self.mgmt_client.services.create_or_update(resource_group.name, SERVICE_NAME, BODY)
-        result = result.result()
+        # ServiceGet[get]
+        result = self.mgmt_client.services.get(resource_group.name, SERVICE_NAME)
 
-        # List all services in subscription[get]
+        # ServiceListByResourceGroup[get]
+        result = self.mgmt_client.services.list_by_resource_group(resource_group.name)
+
+        # ServiceList[get]
         result = self.mgmt_client.services.list()
 
-        # List all services in resource group[get]
-        result = self.mgmt_client.services.list_by_resource_group(resource_group.name, )
+        # OperationsList[get]
+        result = self.mgmt_client.operations.list()
 
-        # Delete service[delete]
+        # ServicePatch[patch]
+        BODY = {
+          "tags": {
+            "tag1": "value1",
+            "tag2": "value2"
+          }
+        }
+        result = self.mgmt_client.services.update(resource_group.name, SERVICE_NAME, BODY)
+        result = result.result()
+
+        # CheckNameAvailabilityPost[post]
+        BODY = {
+          "type": "Microsoft.HealthcareApis/services",
+          "name": "serviceName"
+        }
+        NAME = SERVICE_NAME + 'ABC'
+        TYPE = "Microsoft.HealthcareApis/services"
+        result = self.mgmt_client.services.check_name_availability(NAME, TYPE)
+
+        # ServiceDelete[delete]
         result = self.mgmt_client.services.delete(resource_group.name, SERVICE_NAME)
         result = result.result()
 

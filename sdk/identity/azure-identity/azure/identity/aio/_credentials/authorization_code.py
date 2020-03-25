@@ -55,13 +55,13 @@ class AuthorizationCodeCredential(AsyncCredentialBase):
     async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":
         """Request an access token for `scopes`.
 
+        .. note:: This method is called by Azure SDK clients. It isn't intended for use in application code.
+
         The first time this method is called, the credential will redeem its authorization code. On subsequent calls
         the credential will return a cached access token or redeem a refresh token, if it acquired a refresh token upon
         redeeming the authorization code.
 
-        .. note:: This method is called by Azure SDK clients. It isn't intended for use in application code.
-
-        :param str scopes: desired scopes for the access token
+        :param str scopes: desired scopes for the access token. This method requires at least one scope.
         :rtype: :class:`azure.core.credentials.AccessToken`
         :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The error's ``message``
           attribute gives a reason. Any error response from Azure Active Directory is available as the error's
@@ -70,6 +70,8 @@ class AuthorizationCodeCredential(AsyncCredentialBase):
         :keyword loop: An event loop on which to schedule network I/O. If not provided, the currently running
             loop will be used.
         """
+        if not scopes:
+            raise ValueError("'get_token' requires at least one scope")
 
         if self._authorization_code:
             loop = kwargs.pop("loop", None) or asyncio.get_event_loop()

@@ -24,7 +24,7 @@ class ProblemClassificationsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Api version. Constant value: "2019-05-01-preview".
+    :ivar api_version: Api version. Constant value: "2020-04-01".
     """
 
     models = models
@@ -34,14 +34,14 @@ class ProblemClassificationsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-05-01-preview"
+        self.api_version = "2020-04-01"
 
         self.config = config
 
     def list(
             self, service_name, custom_headers=None, raw=False, **operation_config):
         """Lists all the problem classifications (categories) available for a
-        specific Azure service.<br/><br/> Always use the service and problem
+        specific Azure service. Always use the service and problem
         classifications obtained programmatically. This practice ensures that
         you always have the most recent set of service and problem
         classification Ids.
@@ -112,8 +112,7 @@ class ProblemClassificationsOperations(object):
 
     def get(
             self, service_name, problem_classification_name, custom_headers=None, raw=False, **operation_config):
-        """Gets the details of a specific problem classification for a specific
-        Azure service.
+        """Get problem classification details for a specific Azure service.
 
         :param service_name: Name of Azure service available for support.
         :type service_name: str

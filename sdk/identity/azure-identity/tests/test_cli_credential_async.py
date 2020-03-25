@@ -28,6 +28,22 @@ def mock_exec(stdout, stderr="", return_code=0):
 
 
 @pytest.mark.asyncio
+async def test_no_scopes():
+    """The credential should raise ValueError when get_token is called with no scopes"""
+
+    with pytest.raises(ValueError):
+        await AzureCliCredential().get_token()
+
+
+@pytest.mark.asyncio
+async def test_multiple_scopes():
+    """The credential should raise ValueError when get_token is called with more than one scope"""
+
+    with pytest.raises(ValueError):
+        await AzureCliCredential().get_token("one scope", "and another")
+
+
+@pytest.mark.asyncio
 async def test_close():
     """The credential must define close, although it's a no-op because the credential has no transport"""
 

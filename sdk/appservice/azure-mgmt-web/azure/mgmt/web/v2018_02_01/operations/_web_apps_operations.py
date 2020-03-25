@@ -370,9 +370,8 @@ class WebAppsOperations(object):
         :type name: str
         :param delete_metrics: If true, web app metrics are also deleted.
         :type delete_metrics: bool
-        :param delete_empty_server_farm: Specify true if the App Service plan
-         will be empty after app deletion and you want to delete the empty App
-         Service plan. By default, the empty App Service plan is not deleted.
+        :param delete_empty_server_farm: Specify false if you want to keep
+         empty App Service plan. By default, empty App Service plan is deleted.
         :type delete_empty_server_farm: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

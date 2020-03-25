@@ -95,6 +95,7 @@ try:
     from ._models_py3 import ManagedInstanceKey
     from ._models_py3 import ManagedInstanceLongTermRetentionBackup
     from ._models_py3 import ManagedInstanceLongTermRetentionPolicy
+    from ._models_py3 import ManagedInstanceOperation
     from ._models_py3 import ManagedInstancePairInfo
     from ._models_py3 import ManagedInstanceUpdate
     from ._models_py3 import ManagedInstanceVcoresCapability
@@ -271,6 +272,7 @@ except (SyntaxError, ImportError):
     from ._models import ManagedInstanceKey
     from ._models import ManagedInstanceLongTermRetentionBackup
     from ._models import ManagedInstanceLongTermRetentionPolicy
+    from ._models import ManagedInstanceOperation
     from ._models import ManagedInstancePairInfo
     from ._models import ManagedInstanceUpdate
     from ._models import ManagedInstanceVcoresCapability
@@ -394,6 +396,7 @@ from ._paged_models import ManagedInstanceEncryptionProtectorPaged
 from ._paged_models import ManagedInstanceKeyPaged
 from ._paged_models import ManagedInstanceLongTermRetentionBackupPaged
 from ._paged_models import ManagedInstanceLongTermRetentionPolicyPaged
+from ._paged_models import ManagedInstanceOperationPaged
 from ._paged_models import ManagedInstancePaged
 from ._paged_models import ManagedInstanceVulnerabilityAssessmentPaged
 from ._paged_models import ManagedServerSecurityAlertPolicyPaged
@@ -620,6 +623,7 @@ __all__ = [
     'ManagedInstanceKey',
     'ManagedInstanceLongTermRetentionBackup',
     'ManagedInstanceLongTermRetentionPolicy',
+    'ManagedInstanceOperation',
     'ManagedInstancePairInfo',
     'ManagedInstanceUpdate',
     'ManagedInstanceVcoresCapability',
@@ -786,6 +790,7 @@ __all__ = [
     'WorkloadClassifierPaged',
     'ManagedDatabasePaged',
     'ServerAzureADAdministratorPaged',
+    'ManagedInstanceOperationPaged',
     'ServerConnectionType',
     'SecurityAlertPolicyState',
     'SecurityAlertPolicyEmailAccountAdmins',

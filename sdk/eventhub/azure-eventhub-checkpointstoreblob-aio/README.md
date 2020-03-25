@@ -118,7 +118,9 @@ Enabling logging will be helpful to do trouble shooting.
 ## Next steps
 
 ### Examples
-- [./samples/event_processor_blob_storage_example.py](./samples/event_processor_blob_storage_example.py) - EventHubConsumerClient with blob checkpoint store example
+- [./samples/receive_events_using_checkpoint_store_async.py](./samples/receive_events_using_checkpoint_store_async.py) - EventHubConsumerClient with blob checkpoint store example
+- [./samples/receive_events_using_checkpoint_store_storage_api_version_async.py](./samples/receive_events_using_checkpoint_store_storage_api_version_async.py) - EventHubConsumerClient with blob checkpoint store and storage version example
+
 
 ### Documentation
 
