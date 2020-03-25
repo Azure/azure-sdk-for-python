@@ -77,21 +77,22 @@ az cognitiveservices account show --name "resource-name" --resource-group "resou
 ```
 
 #### Types of credentials
-The `credential` parameter may be provided as a `TextAnalyticsApiKeyCredential` or as a token from Azure Active Directory.
+The `credential` parameter may be provided as a `AzureKeyCredential` from azure.core.exceptions or as a token from Azure Active Directory.
 See the full details regarding [authentication][cognitive_authentication] of
 cognitive services.
 
 1. To use an [API key][cognitive_authentication_api_key],
-   pass the key as a string into an instance of `TextAnalyticsApiKeyCredential("<api_key>")`.
+   pass the key as a string into an instance of `AzureKeyCredential("<api_key>")`.
    The API key can be found in the Azure Portal or by running the following Azure CLI command:
 
     ```az cognitiveservices account keys list --name "resource-name" --resource-group "resource-group-name"```
 
     Use the key as the credential parameter to authenticate the client:
     ```python
-    from azure.ai.textanalytics import TextAnalyticsClient, TextAnalyticsApiKeyCredential
+    from azure.core.credentials import AzureKeyCredential
+    from azure.ai.textanalytics import TextAnalyticsClient
 
-    credential = TextAnalyticsApiKeyCredential("<api_key>")
+    credential = AzureKeyCredential("<api_key>")
     text = TextAnalyticsClient(endpoint="https://<region>.api.cognitive.microsoft.com/", credential=credential)
     ```
 
@@ -190,9 +191,10 @@ The following section provides several code snippets covering some of the most c
 [analyze_sentiment][analyze_sentiment] looks at its input text and determines whether its sentiment is positive, negative, neutral or mixed. It's response includes per-sentence sentiment analysis and confidence scores.
 
 ```python
-from azure.ai.textanalytics import TextAnalyticsClient, TextAnalyticsApiKeyCredential
+from azure.core.exceptions import AzureKeyCredential
+from azure.ai.textanalytics import TextAnalyticsClient
 
-text_analytics_client = TextAnalyticsClient(endpoint, TextAnalyticsApiKeyCredential(key))
+text_analytics_client = TextAnalyticsClient(endpoint, AzureKeyCredential(key))
 
 documents = [
     "I did not like the restaurant. The food was too spicy.",
@@ -220,9 +222,10 @@ Please refer to the service documentation for a conceptual discussion of [sentim
 [recognize_entities][recognize_entities] recognizes and categories entities in its input text as people, places, organizations, date/time, quantities, percentages, currencies, and more.
 
 ```python
-from azure.ai.textanalytics import TextAnalyticsClient, TextAnalyticsApiKeyCredential
+from azure.core.credentials import AzureKeyCredential
+from azure.ai.textanalytics import TextAnalyticsClient
 
-text_analytics_client = TextAnalyticsClient(endpoint, TextAnalyticsApiKeyCredential(key))
+text_analytics_client = TextAnalyticsClient(endpoint, AzureKeyCredential(key))
 
 documents = [
     "Microsoft was founded by Bill Gates and Paul Allen.",
@@ -250,9 +253,10 @@ determining whether an occurrence of the word Mars refers to the planet, or to t
 Roman god of war). Recognized entities are associated with URLs to a well-known knowledge base, like Wikipedia.
 
 ```python
-from azure.ai.textanalytics import TextAnalyticsClient, TextAnalyticsApiKeyCredential
+from azure.core.credentials import AzureKeyCredential
+from azure.ai.textanalytics import TextAnalyticsClient
 
-text_analytics_client = TextAnalyticsClient(endpoint, TextAnalyticsApiKeyCredential(key))
+text_analytics_client = TextAnalyticsClient(endpoint, AzureKeyCredential(key))
 
 documents = [
     "Microsoft was founded by Bill Gates and Paul Allen.",
@@ -281,9 +285,10 @@ and [supported types][linked_entities_categories].
 [extract_key_phrases][extract_key_phrases] determines the main talking points in its input text. For example, for the input text "The food was delicious and there were wonderful staff", the API returns: "food" and "wonderful staff".
 
 ```python
-from azure.ai.textanalytics import TextAnalyticsClient, TextAnalyticsApiKeyCredential
+from azure.core.credentials import AzureKeyCredential
+from azure.ai.textanalytics import TextAnalyticsClient
 
-text_analytics_client = TextAnalyticsClient(endpoint, TextAnalyticsApiKeyCredential(key))
+text_analytics_client = TextAnalyticsClient(endpoint, AzureKeyCredential(key))
 
 documents = [
     "Redmond is a city in King County, Washington, United States, located 15 miles east of Seattle.",
@@ -306,9 +311,10 @@ Please refer to the service documentation for a conceptual discussion of [key ph
 [detect_language][detect_language] determines the language of its input text, including the confidence score of the predicted language.
 
 ```python
-from azure.ai.textanalytics import TextAnalyticsClient, TextAnalyticsApiKeyCredential
+from azure.core.credentials import AzureKeyCredential
+from azure.ai.textanalytics import TextAnalyticsClient
 
-text_analytics_client = TextAnalyticsClient(endpoint, TextAnalyticsApiKeyCredential(key))
+text_analytics_client = TextAnalyticsClient(endpoint, AzureKeyCredential(key))
 
 documents = [
     "This is written in English.",

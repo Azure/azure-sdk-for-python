@@ -19,6 +19,7 @@ from azure.core.pipeline.policies import (
     DistributedTracingPolicy,
     HttpLoggingPolicy,
 )
+from azure.core.credentials import AzureKeyCredential
 from ._policies import CognitiveServicesCredentialPolicy, TextAnalyticsResponseHookPolicy
 from ._user_agent import USER_AGENT
 
@@ -35,10 +36,10 @@ class TextAnalyticsClientBase(object):
             credential_policy = BearerTokenCredentialPolicy(
                 credential, "https://cognitiveservices.azure.com/.default"
             )
-        elif hasattr(credential, "api_key"):
+        elif isinstance(credential, AzureKeyCredential):
             credential_policy = CognitiveServicesCredentialPolicy(credential)
         elif credential is not None:
-            raise TypeError("Unsupported credential: {}. Use an instance of TextAnalyticsApiKeyCredential "
+            raise TypeError("Unsupported credential: {}. Use an instance of AzureKeyCredential "
                             "or a token credential from azure.identity".format(type(credential)))
 
         config = self._create_configuration(**kwargs)
