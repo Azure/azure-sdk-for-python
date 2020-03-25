@@ -74,7 +74,7 @@ class DataFileException(schema.AvroException):
 class DataFileReader(object):
     """Read files written by DataFileWriter."""
 
-    def __init__(self, reader, datum_reader):
+    def __init__(self, reader, datum_reader, **kwargs):
         """Initializes a new data file reader.
 
         Args:
@@ -83,8 +83,14 @@ class DataFileReader(object):
         """
         self._reader = reader
         self._raw_decoder = avro_io.BinaryDecoder(reader)
+        self._header_reader = kwargs.pop('header_reader', None)
+        self._header_decoder = None if self._header_reader is None else avro_io.BinaryDecoder(self._header_reader)
         self._datum_decoder = None  # Maybe reset at every block.
         self._datum_reader = datum_reader
+
+        # In case self._reader only has partial content(without header).
+        # seek(0, 0) to make sure read the (partial)content from beginning.
+        self._reader.seek(0, 0)
 
         # read the header: magic, meta, sync
         self._read_header()
@@ -100,6 +106,14 @@ class DataFileReader(object):
 
         # get ready to read
         self._block_count = 0
+
+        # header_reader indicates reader only has partial content. The reader doesn't have block header,
+        # so we read use the block count stored last time.
+        # Also ChangeFeed only has codec==null, so use _raw_decoder is good.
+        if self._header_reader is not None:
+            self._block_count = self._reader.block_count
+            self._datum_decoder = self._raw_decoder
+
         self.datum_reader.writer_schema = (
             schema.parse(self.get_meta(SCHEMA_KEY).decode('utf-8')))
 
@@ -155,11 +169,14 @@ class DataFileReader(object):
         return self._meta.get(key)
 
     def _read_header(self):
+        header_reader = self._header_reader if self._header_reader else self._reader
+        header_decoder = self._header_decoder if self._header_decoder else self._raw_decoder
+
         # seek to the beginning of the file to get magic block
-        self.reader.seek(0, 0)
+        header_reader.seek(0, 0)
 
         # read header into a dict
-        header = self.datum_reader.read_data(META_SCHEMA, self.raw_decoder)
+        header = self.datum_reader.read_data(META_SCHEMA, header_decoder)
 
         # check magic number
         if header.get('magic') != MAGIC:
@@ -209,6 +226,13 @@ class DataFileReader(object):
 
         datum = self.datum_reader.read(self.datum_decoder)
         self._block_count -= 1
+
+        # event_position and block_count are to support reading from current position in the future read,
+        # no need to downloading from the beginning of avro file with these two attr.
+        if hasattr(self._reader, 'event_position'):
+            self.reader.block_count = self.block_count
+            self.reader.track_event_position()
+
         return datum
 
     # PY2
