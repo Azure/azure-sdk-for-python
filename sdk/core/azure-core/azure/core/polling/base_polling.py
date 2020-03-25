@@ -120,15 +120,8 @@ def _is_empty(response):
     """Check if response body contains meaningful content.
 
     :rtype: bool
-    :raises: DecodeError if response body contains invalid json data.
     """
-    content = response.text()
-    if not content:
-        return True
-    try:
-        return not json.loads(content)
-    except ValueError:
-        raise DecodeError("Error occurred in deserializing the response body.")
+    return not bool(response.body())
 
 
 class LongRunningOperation(ABC):

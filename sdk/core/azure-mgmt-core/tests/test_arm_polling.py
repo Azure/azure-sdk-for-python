@@ -192,7 +192,7 @@ def test_post(pipeline_client_builder, deserialization_cb):
                 return TestArmPolling.mock_send(
                     'GET',
                     200,
-                    body=""
+                    body=None
                 ).http_response
             elif request.url == 'http://example.org/async_monitor':
                 return TestArmPolling.mock_send(
@@ -219,10 +219,12 @@ class TestArmPolling(object):
     convert = re.compile('([a-z0-9])([A-Z])')
 
     @staticmethod
-    def mock_send(method, status, headers=None, body=None):
+    def mock_send(method, status, headers=None, body=RESPONSE_BODY):
         if headers is None:
             headers = {}
-        response = mock.create_autospec(Response)
+        response = Response()
+        response._content_consumed = True
+        response._content = json.dumps(body).encode('ascii') if body is not None else None
         response.request = mock.create_autospec(Request)
         response.request.method = method
         response.request.url = RESOURCE_URL
@@ -233,16 +235,13 @@ class TestArmPolling(object):
         response.headers = headers
         response.headers.update({"content-type": "application/json; charset=utf8"})
         response.reason = "OK"
-        content = body if body is not None else RESPONSE_BODY
-        response.text = json.dumps(content)
-        response.json = lambda: json.loads(response.text)
 
         request = CLIENT._request(
             response.request.method,
             response.request.url,
             None,  # params
             response.request.headers,
-            content,
+            body,
             None,  # form_content
             None  # stream_content
         )
@@ -258,7 +257,8 @@ class TestArmPolling(object):
 
     @staticmethod
     def mock_update(url, headers=None):
-        response = mock.create_autospec(Response)
+        response = Response()
+        response._content_consumed = True
         response.request = mock.create_autospec(Request)
         response.request.method = 'GET'
         response.headers = headers or {}
@@ -268,13 +268,13 @@ class TestArmPolling(object):
         if url == ASYNC_URL:
             response.request.url = url
             response.status_code = POLLING_STATUS
-            response.text = ASYNC_BODY
+            response._content = ASYNC_BODY.encode('ascii')
             response.randomFieldFromPollAsyncOpHeader = None
 
         elif url == LOCATION_URL:
             response.request.url = url
             response.status_code = POLLING_STATUS
-            response.text = LOCATION_BODY
+            response._content = LOCATION_BODY.encode('ascii')
             response.randomFieldFromPollLocationHeader = None
 
         elif url == ERROR:
@@ -283,11 +283,10 @@ class TestArmPolling(object):
         elif url == RESOURCE_URL:
             response.request.url = url
             response.status_code = POLLING_STATUS
-            response.text = RESOURCE_BODY
+            response._content = RESOURCE_BODY.encode('ascii')
 
         else:
             raise Exception('URL does not match')
-        response.json = lambda: json.loads(response.text)
 
         request = CLIENT._request(
             response.request.method,
@@ -311,6 +310,11 @@ class TestArmPolling(object):
     @staticmethod
     def mock_outputs(pipeline_response):
         response = pipeline_response.http_response
+        try:
+            body = json.loads(response.text())
+        except ValueError:
+            raise DecodeError("Impossible to deserialize")
+
         body = json.loads(response.text())
         body = {TestArmPolling.convert.sub(r'\1_\2', k).lower(): v
                 for k, v in body.items()}
