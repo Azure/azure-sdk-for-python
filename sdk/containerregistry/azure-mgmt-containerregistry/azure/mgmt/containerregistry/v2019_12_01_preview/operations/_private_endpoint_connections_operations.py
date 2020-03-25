@@ -111,7 +111,9 @@ class PrivateEndpointConnectionsOperations(object):
 
 
     def _create_or_update_initial(
-            self, resource_group_name, registry_name, private_endpoint_connection_name, private_endpoint_connection, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, registry_name, private_endpoint_connection_name, private_endpoint=None, private_link_service_connection_state=None, custom_headers=None, raw=False, **operation_config):
+        private_endpoint_connection = models.PrivateEndpointConnection(private_endpoint=private_endpoint, private_link_service_connection_state=private_link_service_connection_state)
+
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
@@ -163,7 +165,7 @@ class PrivateEndpointConnectionsOperations(object):
         return deserialized
 
     def create_or_update(
-            self, resource_group_name, registry_name, private_endpoint_connection_name, private_endpoint_connection, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, registry_name, private_endpoint_connection_name, private_endpoint=None, private_link_service_connection_state=None, custom_headers=None, raw=False, polling=True, **operation_config):
         """Update the state of specified private endpoint connection associated
         with the container registry.
 
@@ -175,10 +177,14 @@ class PrivateEndpointConnectionsOperations(object):
         :param private_endpoint_connection_name: The name of the private
          endpoint connection.
         :type private_endpoint_connection_name: str
-        :param private_endpoint_connection: The parameters for creating a
-         private endpoint connection.
-        :type private_endpoint_connection:
-         ~azure.mgmt.containerregistry.v2019_12_01_preview.models.PrivateEndpointConnection
+        :param private_endpoint: The resource of private endpoint.
+        :type private_endpoint:
+         ~azure.mgmt.containerregistry.v2019_12_01_preview.models.PrivateEndpoint
+        :param private_link_service_connection_state: A collection of
+         information about the state of the connection between service consumer
+         and provider.
+        :type private_link_service_connection_state:
+         ~azure.mgmt.containerregistry.v2019_12_01_preview.models.PrivateLinkServiceConnectionState
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -197,7 +203,8 @@ class PrivateEndpointConnectionsOperations(object):
             resource_group_name=resource_group_name,
             registry_name=registry_name,
             private_endpoint_connection_name=private_endpoint_connection_name,
-            private_endpoint_connection=private_endpoint_connection,
+            private_endpoint=private_endpoint,
+            private_link_service_connection_state=private_link_service_connection_state,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
