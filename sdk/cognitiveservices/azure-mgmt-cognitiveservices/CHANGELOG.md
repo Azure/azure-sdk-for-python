@@ -1,5 +1,13 @@
 # Release History
 
+## 6.1.0 (2020-03-25)
+
+**Features**
+
+  - Model CognitiveServicesAccount has a new parameter identity
+  - Model CognitiveServicesAccountProperties has a new parameter user_owned_storage
+  - Model CognitiveServicesAccountProperties has a new parameter encryption
+
 ## 6.0.0 (2020-02-07)
 
 **Features**
