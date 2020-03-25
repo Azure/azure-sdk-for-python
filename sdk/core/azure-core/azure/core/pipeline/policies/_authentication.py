@@ -4,6 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 import time
+import six
 
 from . import SansIOHTTPPolicy
 from ...exceptions import ServiceRequestError
@@ -16,7 +17,7 @@ except ImportError:
 if TYPE_CHECKING:
     # pylint:disable=unused-import
     from typing import Any, Dict, Mapping, Optional
-    from azure.core.credentials import AccessToken, TokenCredential
+    from azure.core.credentials import AccessToken, TokenCredential, AzureKeyCredential
     from azure.core.pipeline import PipelineRequest
 
 
@@ -91,3 +92,25 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, SansIOHTTPPo
         if self._need_new_token:
             self._token = self._credential.get_token(*self._scopes)
         self._update_headers(request.http_request.headers, self._token.token)  # type: ignore
+
+
+class AzureKeyCredentialPolicy(SansIOHTTPPolicy):
+    """Adds an API key header for signing requests.
+
+    :param credential: The credential used to authenticate requests.
+    :type credential: ~azure.core.credentials.AzureKeyCredential
+    :param str key_header: The name of the API key header used for signing requests.
+    :raises: TypeError
+    """
+    def __init__(self, credential, key_header):
+        # type: (AzureKeyCredential) -> None
+        super(AzureKeyCredentialPolicy, self).__init__()
+        self._credential = credential
+        if not key_header:
+            raise TypeError("key_header can not be None or empty")
+        if not isinstance(key_header, six.string_types):
+            raise TypeError("key_header must be a string.")
+        self._key_header = key_header
+
+    def on_request(self, request):
+        request.http_request.headers[self._key_header] = self._credential.api_key
