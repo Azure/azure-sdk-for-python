@@ -29,6 +29,19 @@ from ._constants import (
     PROP_PARTITION_KEY,
     PROP_PARTITION_KEY_AMQP_SYMBOL,
     PROP_TIMESTAMP,
+    PROP_ABSOLUTE_EXPIRY_TIME,
+    PROP_CONTENT_ENCODING,
+    PROP_CONTENT_TYPE,
+    PROP_CORRELATION_ID,
+    PROP_GROUP_ID,
+    PROP_GROUP_SEQUENCE,
+    PROP_MESSAGE_ID,
+    PROP_REPLY_TO,
+    PROP_REPLY_TO_GROUP_ID,
+    PROP_SUBJECT,
+    PROP_TO,
+    PROP_USER_ID,
+    PROP_CREATION_TIME,
 )
 
 if TYPE_CHECKING:
@@ -60,6 +73,7 @@ class EventData(object):
     def __init__(self, body=None):
         # type: (Union[str, bytes, List[AnyStr]]) -> None
         self._last_enqueued_event_properties = {}  # type: Dict[str, Any]
+        self._sys_properties = None  # type: Optional[Dict[bytes, Any]]
         if body and isinstance(body, list):
             self.message = Message(body[0])
             for more in body[1:]:
@@ -207,12 +221,30 @@ class EventData(object):
 
     @property
     def system_properties(self):
-        # type: () -> Dict[Union[str, bytes], Any]
+        # type: () -> Dict[bytes, Any]
         """Metadata set by the Event Hubs Service associated with the event
 
         :rtype: dict
         """
-        return self.message.annotations
+
+        if not self._sys_properties:
+            self._sys_properties = {
+                PROP_MESSAGE_ID: self.message.properties.message_id,
+                PROP_USER_ID: self.message.properties.user_id,
+                PROP_TO: self.message.properties.to,
+                PROP_SUBJECT: self.message.properties.subject,
+                PROP_REPLY_TO: self.message.properties.reply_to,
+                PROP_CORRELATION_ID: self.message.properties.correlation_id,
+                PROP_CONTENT_TYPE: self.message.properties.content_type,
+                PROP_CONTENT_ENCODING: self.message.properties.content_encoding,
+                PROP_ABSOLUTE_EXPIRY_TIME: self.message.properties.absolute_expiry_time,
+                PROP_CREATION_TIME: self.message.properties.creation_time,
+                PROP_GROUP_ID: self.message.properties.group_id,
+                PROP_GROUP_SEQUENCE: self.message.properties.group_sequence,
+                PROP_REPLY_TO_GROUP_ID: self.message.properties.reply_to_group_id,
+            }
+            self._sys_properties.update(self.message.annotations)
+        return self._sys_properties
 
     @property
     def body(self):
