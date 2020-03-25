@@ -191,5 +191,4 @@ class BaseHandlerAsync(BaseHandler):
         """
         if not self._running:
             return
-        self._running = False
         await self._close_handler()

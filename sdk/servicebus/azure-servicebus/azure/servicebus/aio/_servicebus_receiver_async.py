@@ -358,18 +358,6 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
             raise ValueError("Subscription name is missing for the topic. Please specify subscription_name.")
         return cls(**constructor_args)
 
-    async def close(self):
-        """Close down the handler links (and connection if the handler uses a separate connection).
-
-        If the handler has already closed, this operation will do nothing.
-
-        :rtype: None
-        """
-        if not self._running:
-            return
-        self._running = False
-        await super(ServiceBusReceiver, self).close()
-
     async def receive(self, max_batch_size=None, timeout=None):
         # type: (int, float) -> List[ReceivedMessage]
         """Receive a batch of messages at once.
