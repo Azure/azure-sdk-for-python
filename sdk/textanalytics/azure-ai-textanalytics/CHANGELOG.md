@@ -2,6 +2,8 @@
 
 ## 1.0.0b4 (Unreleased)
 **Breaking changes**
+- Removed the `recognize_pii_entities` endpoint and all related models (`RecognizePiiEntitiesResult` and `PiiEntity`)
+from this library.
 - `score` attribute has been renamed to `confidence_score` for the `CategorizedEntity`, `LinkedEntityMatch`, and
 `PiiEntity` models
 
