@@ -1,8 +1,11 @@
 
 # Release History
 
-## 1.3.1 (Unreleased)
+## 1.4.0 (Unreleased)
 
+### Features
+
+- Support a default error type in map_error #9773
 
 ## 1.3.0 (2020-03-09)
 
