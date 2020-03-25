@@ -1,6 +1,7 @@
 import platform
 import pytest
 import uamqp
+from azure.eventhub import _common
 
 pytestmark = pytest.mark.skipif(platform.python_implementation() == "PyPy", reason="This is ignored for PyPy")
 
@@ -53,8 +54,6 @@ def test_app_properties():
 
 
 def test_sys_properties():
-    import datetime
-    from azure.eventhub import _common
     properties = uamqp.message.MessageProperties()
     properties.message_id = "message_id"
     properties.user_id = "user_id"
