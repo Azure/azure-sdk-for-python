@@ -38,21 +38,16 @@
   - Added operation group NamedValueOperations
   - Added operation group GatewayOperations
 
-**Breaking changes**
+**General breaking changes**
 
-  - Parameter capacity of model ApiManagementServiceSkuProperties is now required
-  - Operation ApiSchemaOperations.create_or_update has a new signature
-  - Operation ApiTagDescriptionOperations.get has a new signature
-  - Operation ApiTagDescriptionOperations.create_or_update has a new signature
-  - Operation ApiTagDescriptionOperations.get_entity_tag has a new signature
-  - Operation ApiTagDescriptionOperations.delete has a new signature
-  - Operation ApiSchemaOperations.create_or_update has a new signature
-  - Model AuthenticationSettingsContract no longer has parameter subscription_key_required
-  - Model AuthorizationServerContractBaseProperties no longer has parameter client_secret
-  - Model DiagnosticContract no longer has parameter enable_http_correlation_headers
-  - Model SchemaContract no longer has parameter document
-  - Removed operation group PropertyOperations
-  - Removed operation group PolicySnippetOperations
+This version uses a next-generation code generator that *might* introduce breaking changes if from some import. In summary, some modules were incorrectly visible/importable and have been renamed. This fixed several issues caused by usage of classes that were not supposed to be used in the first place.
+  
+  - ApiManagementClient cannot be imported from `azure.mgmt.apimanagement.api_management_client` anymore (import from `azure.mgmt.apimanagement` works like before)
+  - ApiManagementClientConfiguration import has been moved from `azure.mgmt.apimanagement.api_management_client` to `azure.mgmt.apimanagement`
+  - A model `MyClass` from a "models" sub-module cannot be imported anymore using `azure.mgmt.apimanagement.models.my_class` (import from `azure.mgmt.apimanagement.models` works like before)
+  - An operation class `MyClassOperations` from an `operations` sub-module cannot be imported anymore using `azure.mgmt.apimanagement.operations.my_class_operations` (import from `azure.mgmt.apimanagement.operations` works like before)
+  
+Last but not least, HTTP connection pooling is now enabled by default. You should always use a client as a context manager, or call close(), or use no more than one client per process.
 
 ## 0.1.0 (2019-05-01)
 
