@@ -13,7 +13,7 @@ DESCRIPTION:
     This sample demonstrates how to authenticate to the Text Analytics service.
 
     There are two supported methods of authentication:
-    1) Use a Cognitive Services/Text Analytics API key with TextAnalyticsApiKeyCredential
+    1) Use a Cognitive Services/Text Analytics API key with AzureKeyCredential from azure.core.credentials
     2) Use a token credential from azure-identity to authenticate with Azure Active Directory
 
     See more details about authentication here:
@@ -38,11 +38,12 @@ class AuthenticationSample(object):
     def authentication_with_api_key_credential(self):
         print("\n.. authentication_with_api_key_credential")
         # [START create_ta_client_with_key]
-        from azure.ai.textanalytics import TextAnalyticsClient, TextAnalyticsApiKeyCredential
+        from azure.core.credentials import AzureKeyCredential
+        from azure.ai.textanalytics import TextAnalyticsClient
         endpoint = os.getenv("AZURE_TEXT_ANALYTICS_ENDPOINT")
         key = os.getenv("AZURE_TEXT_ANALYTICS_KEY")
 
-        text_analytics_client = TextAnalyticsClient(endpoint, TextAnalyticsApiKeyCredential(key))
+        text_analytics_client = TextAnalyticsClient(endpoint, AzureKeyCredential(key))
         # [END create_ta_client_with_key]
 
         doc = ["I need to take my cat to the veterinarian."]

@@ -31,8 +31,9 @@ class GetDetailedDiagnosticsInformationSample(object):
     key = os.getenv("AZURE_TEXT_ANALYTICS_KEY")
 
     def get_detailed_diagnostics_information(self):
-        from azure.ai.textanalytics import TextAnalyticsClient, TextAnalyticsApiKeyCredential
-        text_analytics_client = TextAnalyticsClient(endpoint=self.endpoint, credential=TextAnalyticsApiKeyCredential(self.key))
+        from azure.core.credentials import AzureKeyCredential
+        from azure.ai.textanalytics import TextAnalyticsClient
+        text_analytics_client = TextAnalyticsClient(endpoint=self.endpoint, credential=AzureKeyCredential(self.key))
 
         documents = [
             "I had the best day of my life.",

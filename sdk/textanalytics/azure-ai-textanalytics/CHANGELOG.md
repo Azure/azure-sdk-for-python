@@ -4,6 +4,7 @@
 **Breaking changes**
 - Removed the `recognize_pii_entities` endpoint and all related models (`RecognizePiiEntitiesResult` and `PiiEntity`)
 from this library.
+- Removed `TextAnalyticsApiKeyCredential` and now using `AzureKeyCredential` from azure.core.credentials as key credential
 - `score` attribute has been renamed to `confidence_score` for the `CategorizedEntity`, `LinkedEntityMatch`, and
 `PiiEntity` models
 

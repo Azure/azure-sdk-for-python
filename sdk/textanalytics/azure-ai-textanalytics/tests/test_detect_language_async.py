@@ -9,13 +9,13 @@ import platform
 
 from azure.core.exceptions import HttpResponseError, ClientAuthenticationError
 from azure.core.pipeline.transport import AioHttpTransport
+from azure.core.credentials import AzureKeyCredential
 from multidict import CIMultiDict, CIMultiDictProxy
 from azure.ai.textanalytics.aio import TextAnalyticsClient
 from azure.ai.textanalytics import (
     VERSION,
     DetectLanguageInput,
-    TextDocumentInput,
-    TextAnalyticsApiKeyCredential
+    TextDocumentInput
 )
 
 from testcase import GlobalTextAnalyticsAccountPreparer
@@ -37,14 +37,14 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_no_single_input(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
         with self.assertRaises(TypeError):
             response = await text_analytics.detect_language("hello world")
 
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_all_successful_passing_dict(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
 
         docs = [{"id": "1", "text": "I should take my cat to the veterinarian."},
                 {"id": "2", "text": "Este es un document escrito en Español."},
@@ -70,7 +70,7 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_all_successful_passing_text_document_input(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
 
         docs = [
             TextDocumentInput(id="1", text="I should take my cat to the veterinarian"),
@@ -96,7 +96,7 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_passing_only_string(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
 
         docs = [
             u"I should take my cat to the veterinarian.",
@@ -116,7 +116,7 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_input_with_some_errors(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
 
         docs = [{"id": "1", "country_hint": "United States", "text": "I should take my cat to the veterinarian."},
                 {"id": "2", "text": "Este es un document escrito en Español."},
@@ -133,7 +133,7 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_input_with_all_errors(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
         text = ""
         for _ in range(5121):
             text += "x"
@@ -151,7 +151,7 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_empty_credential_class(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(""))
+        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(""))
         with self.assertRaises(ClientAuthenticationError):
             response = await text_analytics.detect_language(
                 ["This is written in English."]
@@ -160,7 +160,7 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_bad_credentials(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential("xxxxxxxxxxxx"))
+        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential("xxxxxxxxxxxx"))
         with self.assertRaises(ClientAuthenticationError):
             response = await text_analytics.detect_language(
                 ["This is written in English."]
@@ -169,7 +169,7 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_bad_model_version(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
         with self.assertRaises(HttpResponseError):
             response = await text_analytics.detect_language(
                 documents=["Microsoft was founded by Bill Gates."],
@@ -179,7 +179,7 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_bad_document_input(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
 
         docs = "This is the wrong type"
 
@@ -189,7 +189,7 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_mixing_inputs(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
         docs = [
             {"id": "1", "text": "Microsoft was founded by Bill Gates and Paul Allen."},
             TextDocumentInput(id="2", text="I did not like the hotel we stayed at. It was too expensive."),
@@ -201,7 +201,7 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_out_of_order_ids(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
 
         docs = [{"id": "56", "text": ":)"},
                 {"id": "0", "text": ":("},
@@ -217,7 +217,7 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_show_stats_and_model_version(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
 
         def callback(response):
             self.assertIsNotNone(response.model_version)
@@ -243,7 +243,7 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_batch_size_over_limit(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
 
         docs = [u"hello world"] * 1050
         with self.assertRaises(HttpResponseError):
@@ -252,7 +252,7 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_whole_batch_country_hint(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
 
         def callback(resp):
             country_str = "\"countryHint\": \"CA\""
@@ -270,7 +270,7 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_whole_batch_dont_use_country_hint(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
 
         def callback(resp):
             country_str = "\"countryHint\": \"\""
@@ -288,7 +288,7 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_per_item_dont_use_country_hint(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
 
         def callback(resp):
             country_str = "\"countryHint\": \"\""
@@ -308,7 +308,7 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_whole_batch_country_hint_and_obj_input(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
 
         def callback(resp):
             country_str = "\"countryHint\": \"CA\""
@@ -326,7 +326,7 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_whole_batch_country_hint_and_dict_input(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
 
         def callback(resp):
             country_str = "\"countryHint\": \"CA\""
@@ -342,7 +342,7 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_whole_batch_country_hint_and_obj_per_item_hints(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
 
         def callback(resp):
             country_str = "\"countryHint\": \"CA\""
@@ -363,7 +363,7 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_whole_batch_country_hint_and_dict_per_item_hints(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
 
         def callback(resp):
             country_str = "\"countryHint\": \"CA\""
@@ -382,7 +382,7 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_client_passed_default_country_hint(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key), default_country_hint="CA")
+        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key), default_country_hint="CA")
 
         def callback(resp):
             country_str = "\"countryHint\": \"CA\""
@@ -405,7 +405,7 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_rotate_subscription_key(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        credential = TextAnalyticsApiKeyCredential(text_analytics_account_key)
+        credential = AzureKeyCredential(text_analytics_account_key)
         text_analytics = TextAnalyticsClient(text_analytics_account, credential)
 
         docs = [{"id": "1", "text": "I will go to the park."},
@@ -426,7 +426,7 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_user_agent(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
 
         def callback(resp):
             self.assertIn("azsdk-python-azure-ai-textanalytics/{} Python/{} ({})".format(
@@ -443,7 +443,7 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_document_attribute_error_no_result_attribute(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
 
         docs = [{"id": "1", "text": ""}]
         response = await text_analytics.detect_language(docs)
@@ -467,7 +467,7 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_document_attribute_error_nonexistent_attribute(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
 
         docs = [{"id": "1", "text": ""}]
         response = await text_analytics.detect_language(docs)
@@ -484,7 +484,7 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_bad_model_version_error(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
 
         docs = [{"id": "1", "language": "english", "text": "I did not like the hotel we stayed at."}]
 
@@ -497,7 +497,7 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_document_errors(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
         text = ""
         for _ in range(5121):
             text += "x"
@@ -514,7 +514,7 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_missing_input_records_error(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
         docs = []
         try:
             result = await text_analytics.detect_language(docs)
@@ -525,7 +525,7 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_duplicate_ids_error(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
         # Duplicate Ids
         docs = [{"id": "1", "text": "hello world"},
                 {"id": "1", "text": "I did not like the hotel we stayed at."}]
@@ -538,7 +538,7 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_batch_size_over_limit_error(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
 
         # Batch size over limit
         docs = [u"hello world"] * 1001
@@ -552,7 +552,7 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
     @AsyncTextAnalyticsTest.await_prepared_test
     @pytest.mark.skip(reason="Service bug returns invalidDocument here. Unskip after v3.0-preview.2")
     async def test_invalid_country_hint(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
 
         docs = [{"id": "1", "country_hint": "United States", "text": "hello world"}]
 
@@ -563,7 +563,7 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_country_hint_none(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
 
         # service will eventually support this and we will not need to send "" for input == "none"
         documents = [{"id": "0", "country_hint": "none", "text": "This is written in English."}]
@@ -581,13 +581,13 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
         # test per-operation
         result3 = await text_analytics.detect_language(documents=["this is written in english"], country_hint="none", raw_response_hook=callback)
         # test client default
-        new_client = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key), default_country_hint="none")
+        new_client = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key), default_country_hint="none")
         result4 = await new_client.detect_language(documents=["this is written in english"], raw_response_hook=callback)
 
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_country_hint_kwarg(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
 
         def callback(response):
             country_str = "\"countryHint\": \"ES\""
