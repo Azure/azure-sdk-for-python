@@ -103,7 +103,8 @@ def test_send_non_ascii(connstr_receivers):
         batch.add(EventData(json.dumps({"foo": u"漢字"})))
         client.send_batch(batch)
     time.sleep(1)
-    partition_0 = [EventData._from_message(x) for x in receivers[0].receive_message_batch(timeout=5000)]
+    partition_0 = [EventData._from_message(x) for x in receivers[0].receive_message_batch(timeout=5000)] + \
+                  [EventData._from_message(x) for x in receivers[0].receive_message_batch(timeout=5000)]
     assert len(partition_0) == 2
     assert partition_0[0].body_as_str() == u"é,è,à,ù,â,ê,î,ô,û"
     assert partition_0[1].body_as_json() == {"foo": u"漢字"}
