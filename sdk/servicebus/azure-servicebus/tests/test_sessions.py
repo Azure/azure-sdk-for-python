@@ -562,7 +562,8 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
 
                     elif len(messages) == 1:
                         print("Starting second sleep")
-                        time.sleep(40)
+                        time.sleep(25) # to ensure that we run out the autolockrenew timeout
+                        time.sleep((session.locked_until - datetime.now()).total_seconds() + 1) # To expire the session.
                         print("Second sleep {}".format(session.locked_until - datetime.now()))
                         assert session.expired
                         assert isinstance(session.auto_renew_error, AutoLockRenewTimeout)
