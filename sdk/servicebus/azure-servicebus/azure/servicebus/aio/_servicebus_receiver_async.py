@@ -60,6 +60,7 @@ class ServiceBusSession(BaseSession):
                 :dedent: 4
                 :caption: Get the session state
         """
+        self._can_run()
         response = await self._receiver._mgmt_request_response_with_retry(  # pylint: disable=protected-access
             REQUEST_RESPONSE_GET_SESSION_STATE_OPERATION,
             {'session-id': self.session_id},
@@ -86,6 +87,7 @@ class ServiceBusSession(BaseSession):
                 :dedent: 4
                 :caption: Set the session state
         """
+        self._can_run()
         state = state.encode(self._encoding) if isinstance(state, six.text_type) else state
         return await self._receiver._mgmt_request_response_with_retry(  # pylint: disable=protected-access
             REQUEST_RESPONSE_SET_SESSION_STATE_OPERATION,
@@ -112,6 +114,7 @@ class ServiceBusSession(BaseSession):
                 :dedent: 4
                 :caption: Renew the session lock before it expires
         """
+        self._can_run()
         expiry = await self._receiver._mgmt_request_response_with_retry(  # pylint: disable=protected-access
             REQUEST_RESPONSE_RENEW_SESSION_LOCK_OPERATION,
             {'session-id': self.session_id},
@@ -201,6 +204,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
         self._session = ServiceBusSession(self._session_id, self, self._config.encoding) if self._session_id else None
 
     async def __anext__(self):
+        self._can_run()
         while True:
             try:
                 return await self._do_retryable_operation(self._iter_next)
@@ -386,6 +390,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
                 :caption: Receive messages from ServiceBus.
 
         """
+        self._can_run()
         return await self._do_retryable_operation(
             self._receive,
             max_batch_size=max_batch_size,
@@ -414,6 +419,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
                 :caption: Receive deferred messages from ServiceBus.
 
         """
+        self._can_run()
         if not sequence_numbers:
             raise ValueError("At least one sequence number must be specified.")
         await self._open()
@@ -457,6 +463,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
                 :dedent: 4
                 :caption: Peek messages in the queue.
         """
+        self._can_run()
         if not sequence_number:
             sequence_number = self._last_received_sequenced_number or 1
         if int(message_count) < 1:

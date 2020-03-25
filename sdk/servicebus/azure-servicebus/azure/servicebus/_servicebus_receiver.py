@@ -30,7 +30,10 @@ from ._common.constants import (
     SESSION_FILTER,
     REQUEST_RESPONSE_RENEWLOCK_OPERATION
 )
-from .exceptions import _ServiceBusErrorPolicy
+from .exceptions import (
+    _ServiceBusErrorPolicy,
+    SessionLockExpired
+)
 from ._common import mgmt_handlers
 
 if TYPE_CHECKING:
@@ -54,6 +57,10 @@ class ServiceBusSession(object):
         self._locked_until = None
         self.auto_renew_error = None
 
+    def _can_run(self):
+        if self.expired:
+            raise SessionLockExpired(inner_exception=self.auto_renew_error)
+
     def get_session_state(self):
         # type: () -> str
         """Get the session state.
@@ -71,6 +78,7 @@ class ServiceBusSession(object):
                 :dedent: 4
                 :caption: Get the session state
         """
+        self._can_run()
         response = self._receiver._mgmt_request_response_with_retry(  # pylint: disable=protected-access
             REQUEST_RESPONSE_GET_SESSION_STATE_OPERATION,
             {'session-id': self.session_id},
@@ -97,6 +105,7 @@ class ServiceBusSession(object):
                 :dedent: 4
                 :caption: Set the session state
         """
+        self._can_run()
         state = state.encode(self._encoding) if isinstance(state, six.text_type) else state
         return self._receiver._mgmt_request_response_with_retry(  # pylint: disable=protected-access
             REQUEST_RESPONSE_SET_SESSION_STATE_OPERATION,
@@ -123,6 +132,7 @@ class ServiceBusSession(object):
                 :dedent: 4
                 :caption: Renew the session lock before it expires
         """
+        self._can_run()
         expiry = self._receiver._mgmt_request_response_with_retry(  # pylint: disable=protected-access
             REQUEST_RESPONSE_RENEW_SESSION_LOCK_OPERATION,
             {'session-id': self.session_id},
@@ -148,6 +158,10 @@ class ServiceBusSession(object):
         :rtype: bool
         """
         return bool(self._locked_until and self._locked_until <= datetime.datetime.now())
+
+    @property
+    def locked_until(self):
+        return self._locked_until
 
 
 class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
@@ -185,14 +199,18 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
     def _on_attach_for_session_entity(self, source, target, properties, error):  # pylint: disable=unused-argument
         # pylint: disable=protected-access
         if str(source) == self._entity_uri:
-            self._session._session_start = datetime.datetime.now()
+            self.session._session_start = datetime.datetime.now()
             expiry_in_seconds = properties.get(SESSION_LOCKED_UNTIL)
             if expiry_in_seconds:
                 expiry_in_seconds = (expiry_in_seconds - DATETIMEOFFSET_EPOCH)/10000000
-                self._session._locked_until = datetime.datetime.fromtimestamp(expiry_in_seconds)
+                self.session._locked_until = datetime.datetime.fromtimestamp(expiry_in_seconds)
             session_filter = source.get_filter(name=SESSION_FILTER)
             self._session_id = session_filter.decode(self._config.encoding)
-            self._session._session_id = self._session_id
+            self.session._session_id = self._session_id
+
+    def _can_run(self):
+        if self.session and self.session.expired:
+            raise SessionLockExpired(inner_exception=self.session.auto_renew_error)
 
 
 class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-many-instance-attributes
@@ -279,6 +297,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         return self
 
     def __next__(self):
+        self._can_run()
         while True:
             try:
                 return self._do_retryable_operation(self._iter_next)
@@ -457,6 +476,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
                 :caption: Receive messages from ServiceBus.
 
         """
+        self._can_run()
         return self._do_retryable_operation(
             self._receive,
             max_batch_size=max_batch_size,
@@ -485,6 +505,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
                 :caption: Receive deferred messages from ServiceBus.
 
         """
+        self._can_run()
         if not sequence_numbers:
             raise ValueError("At least one sequence number must be specified.")
         self._open()
@@ -530,6 +551,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
                 :caption: Look at pending messages in the queue.
 
         """
+        self._can_run()
         if not sequence_number:
             sequence_number = self._last_received_sequenced_number or 1
         if int(message_count) < 1:
