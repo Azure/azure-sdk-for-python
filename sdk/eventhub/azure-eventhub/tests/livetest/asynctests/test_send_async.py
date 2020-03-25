@@ -131,14 +131,13 @@ async def test_send_over_websocket_async(connstr_receivers):
 
     async with client:
         batch = await client.create_batch(partition_id="0")
-        for i in range(5):
-            batch.add(EventData("Event Number {}".format(i)))
+        batch.add(EventData("Event Data"))
         await client.send_batch(batch)
 
     time.sleep(1)
     received = []
     received.extend(receivers[0].receive_message_batch(max_batch_size=5, timeout=10000))
-    assert len(received) == 5
+    assert len(received) == 1
 
 
 @pytest.mark.liveTest
@@ -163,5 +162,5 @@ async def test_send_with_create_event_batch_async(connstr_receivers):
         received = []
         for r in receivers:
             received.extend(r.receive_message_batch(timeout=10000))
-        assert len(received) > 1
+        assert len(received) >= 1
         assert EventData._from_message(received[0]).properties[b"raw_prop"] == b"raw_value"
