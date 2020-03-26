@@ -52,6 +52,22 @@ _LOGGER = logging.getLogger(__name__)
 # event_data.encoded_size < 255, batch encode overhead is 5, >=256, overhead is 8 each
 _BATCH_MESSAGE_OVERHEAD_COST = [5, 8]
 
+_SYS_PROP_KEYS_TO_MSG_PROPERTIES = (
+    (PROP_MESSAGE_ID, "message_id"),
+    (PROP_USER_ID, "user_id"),
+    (PROP_TO, "to"),
+    (PROP_SUBJECT,"subject"),
+    (PROP_REPLY_TO, "reply_to"),
+    (PROP_CORRELATION_ID, "correlation_id"),
+    (PROP_CONTENT_TYPE, "content_type"),
+    (PROP_CONTENT_ENCODING, "content_encoding"),
+    (PROP_ABSOLUTE_EXPIRY_TIME, "absolute_expiry_time"),
+    (PROP_CREATION_TIME, "creation_time"),
+    (PROP_GROUP_ID, "group_id"),
+    (PROP_GROUP_SEQUENCE, "group_sequence"),
+    (PROP_REPLY_TO_GROUP_ID, "reply_to_group_id"),
+)
+
 
 class EventData(object):
     """The EventData class is a container for event content.
@@ -248,22 +264,13 @@ class EventData(object):
         :rtype: dict
         """
 
-        if not self._sys_properties:
-            self._sys_properties = {
-                PROP_MESSAGE_ID: self.message.properties.message_id,
-                PROP_USER_ID: self.message.properties.user_id,
-                PROP_TO: self.message.properties.to,
-                PROP_SUBJECT: self.message.properties.subject,
-                PROP_REPLY_TO: self.message.properties.reply_to,
-                PROP_CORRELATION_ID: self.message.properties.correlation_id,
-                PROP_CONTENT_TYPE: self.message.properties.content_type,
-                PROP_CONTENT_ENCODING: self.message.properties.content_encoding,
-                PROP_ABSOLUTE_EXPIRY_TIME: self.message.properties.absolute_expiry_time,
-                PROP_CREATION_TIME: self.message.properties.creation_time,
-                PROP_GROUP_ID: self.message.properties.group_id,
-                PROP_GROUP_SEQUENCE: self.message.properties.group_sequence,
-                PROP_REPLY_TO_GROUP_ID: self.message.properties.reply_to_group_id,
-            }
+        if self._sys_properties is None:
+            self._sys_properties = {}
+            if self.message.properties:
+                for key, prop_name in _SYS_PROP_KEYS_TO_MSG_PROPERTIES:
+                    value = getattr(self.message.properties, prop_name, None)
+                    if value:
+                        self._sys_properties[key] = value
             self._sys_properties.update(self.message.annotations)
         return self._sys_properties
 
