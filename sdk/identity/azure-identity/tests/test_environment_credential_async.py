@@ -13,7 +13,7 @@ from test_environment_credential import ALL_VARIABLES
 
 
 @pytest.mark.asyncio
-async def test_error_raise():
+async def test_incomplete_configuration():
     """get_token should raise CredentialUnavailableError for incomplete configuration."""
 
     with mock.patch.dict(os.environ, {}, clear=True):

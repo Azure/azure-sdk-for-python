@@ -20,7 +20,7 @@ ALL_VARIABLES = {
 }
 
 
-def test_error_raise():
+def test_incomplete_configuration():
     """get_token should raise CredentialUnavailableError for incomplete configuration."""
 
     with mock.patch.dict(os.environ, {}, clear=True):
