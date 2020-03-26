@@ -1,7 +1,23 @@
-pytest-custom_exit_code
-pytest-cov
-pytest-xdist
-pytest-asyncio; python_version >= '3.5'
+# requirements leveraged by ci for testing
+pytest==5.4.1;python_version >= '3.5'
+pytest==4.6.9; python_version == '2.7'
+pytest-asyncio==0.10.0; python_version >= '3.5'
+pytest-cov==2.8.1
+pytest-custom-exit-code==0.3.0
+pytest-xdist==1.31.0
 coverage==4.5.4
+
+# locking packages defined as deps from azure-sdk-tools or azure-devtools
+pytoml==0.1.21
+readme-renderer[md]==25.0
+pyOpenSSL==19.1.0
+json-delta==2.0
+ConfigArgParse==1.1
+six==1.14.0
+vcrpy==3.0.0
+packaging==20.3
+wheel==0.34.2
+Jinja2==2.11.1
+
 ../../../tools/azure-devtools
 ../../../tools/azure-sdk-tools
