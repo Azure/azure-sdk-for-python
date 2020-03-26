@@ -9,12 +9,12 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-compute/11.0.0 Azure-SDK-For-Python
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-compute/12.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/publishers?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/publishers?api-version=2019-12-01
   response:
     body:
       string: "[\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"128technology\"\
@@ -57,6 +57,8 @@ interactions:
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/actifio\"\
         \r\n  },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"activeeon\"\
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/activeeon\"\
+        \r\n  },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"activeops\"\
+        ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/activeops\"\
         \r\n  },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"adastracorporation-4028356\"\
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/adastracorporation-4028356\"\
         \r\n  },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"adgs\"\
@@ -91,6 +93,8 @@ interactions:
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/alertlogic\"\
         \r\n  },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"AlertLogic.Extension\"\
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/AlertLogic.Extension\"\
+        \r\n  },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"alicetrix\"\
+        ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/alicetrix\"\
         \r\n  },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"alienvault\"\
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/alienvault\"\
         \r\n  },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"alldigital-brevity\"\
@@ -227,6 +231,8 @@ interactions:
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/bayware\"\
         \r\n  },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"bdy\"\
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/bdy\"\
+        \r\n  },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"bellsoft1582871421940\"\
+        ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/bellsoft1582871421940\"\
         \r\n  },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"betsol\"\
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/betsol\"\
         \r\n  },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"beyondtrust\"\
@@ -287,6 +293,8 @@ interactions:
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/buddhalabs\"\
         \r\n  },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"Canonical\"\
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/Canonical\"\
+        \r\n  },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"canonical-test\"\
+        ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/canonical-test\"\
         \r\n  },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"carto\"\
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/carto\"\
         \r\n  },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"cask\"\
@@ -371,6 +379,8 @@ interactions:
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/cloudlink\"\
         \r\n  },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"CloudLinkEMC.SecureVM\"\
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/CloudLinkEMC.SecureVM\"\
+        \r\n  },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"cloudmavensolutions\"\
+        ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/cloudmavensolutions\"\
         \r\n  },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"cloudneeti\"\
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/cloudneeti\"\
         \r\n  },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"cloudplan-gmbh\"\
@@ -389,6 +399,8 @@ interactions:
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/codelathe\"\
         \r\n  },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"codenvy\"\
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/codenvy\"\
+        \r\n  },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"codetwo\"\
+        ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/codetwo\"\
         \r\n  },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"cognitive-scale\"\
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/cognitive-scale\"\
         \r\n  },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"cognizant\"\
@@ -505,6 +517,8 @@ interactions:
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/devfactory\"\
         \r\n  },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"device42inc\"\
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/device42inc\"\
+        \r\n  },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"deviceauthorityinc\"\
+        ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/deviceauthorityinc\"\
         \r\n  },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"devopsgroup-uk\"\
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/devopsgroup-uk\"\
         \r\n  },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"dgsecure\"\
@@ -513,6 +527,8 @@ interactions:
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/dhi\"\
         \r\n  },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"diagramics\"\
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/diagramics\"\
+        \r\n  },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"dicomsystems1584107398321\"\
+        ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/dicomsystems1584107398321\"\
         \r\n  },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"diehl-metering\"\
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/diehl-metering\"\
         \r\n  },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"digisitesystems\"\
@@ -557,6 +573,8 @@ interactions:
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/dynatrace.ruxit\"\
         \r\n  },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"eastwind-networks-inc\"\
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/eastwind-networks-inc\"\
+        \r\n  },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"ecessa\"\
+        ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/ecessa\"\
         \r\n  },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"edevtech\"\
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/edevtech\"\
         \r\n  },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"edgenetworks\"\
@@ -889,6 +907,8 @@ interactions:
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/kepion\"\
         \r\n  },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"kinetica\"\
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/kinetica\"\
+        \r\n  },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"kinvolk\"\
+        ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/kinvolk\"\
         \r\n  },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"knime\"\
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/knime\"\
         \r\n  },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"kobalt\"\
@@ -915,6 +935,8 @@ interactions:
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/libraesva\"\
         \r\n  },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"liebsoft\"\
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/liebsoft\"\
+        \r\n  },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"linuxbasedsystemsdesignltd1580878904727\"\
+        ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/linuxbasedsystemsdesignltd1580878904727\"\
         \r\n  },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"liquid-files\"\
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/liquid-files\"\
         \r\n  },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"liquidware\"\
@@ -1409,8 +1431,6 @@ interactions:
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/Microsoft.Azure.Extensions.Testfac552a7-418f-4baa-8f51-d199ceff5c68-20200103050817\"\
         \r\n  },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"Microsoft.Azure.Extensions.Testfb7be054-5c15-494f-822c-b64f9a36e2f3-20200105051753\"\
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/Microsoft.Azure.Extensions.Testfb7be054-5c15-494f-822c-b64f9a36e2f3-20200105051753\"\
-        \r\n  },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"Microsoft.Azure.Extensions.Testfbcde44d-56a5-46fe-b012-c009b46bbbc3-20200106083514\"\
-        ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/Microsoft.Azure.Extensions.Testfbcde44d-56a5-46fe-b012-c009b46bbbc3-20200106083514\"\
         \r\n  },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"Microsoft.Azure.Extensions.Testfc5c7585-6c9a-4aa4-a7c4-1223a94e00c7-20200104083552\"\
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/Microsoft.Azure.Extensions.Testfc5c7585-6c9a-4aa4-a7c4-1223a94e00c7-20200104083552\"\
         \r\n  },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"Microsoft.Azure.FileServer.Edp\"\
@@ -1427,8 +1447,6 @@ interactions:
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/Microsoft.Azure.Monitor.WorkloadInsights.Test\"\
         \r\n  },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"Microsoft.Azure.Monitoring.DependencyAgent\"\
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/Microsoft.Azure.Monitoring.DependencyAgent\"\
-        \r\n  },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"Microsoft.Azure.Monitoring.DependencyAgent.Edp\"\
-        ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/Microsoft.Azure.Monitoring.DependencyAgent.Edp\"\
         \r\n  },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"Microsoft.Azure.Networking.SDN\"\
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/Microsoft.Azure.Networking.SDN\"\
         \r\n  },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"Microsoft.Azure.NetworkWatcher\"\
@@ -1477,10 +1495,18 @@ interactions:
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/Microsoft.Azure.Test.Identity\"\
         \r\n  },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"Microsoft.Azure.WindowsFabric.Test\"\
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/Microsoft.Azure.WindowsFabric.Test\"\
+        \r\n  },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"Microsoft.Azure.WorkloadInsights.Linux.Test1\"\
+        ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/Microsoft.Azure.WorkloadInsights.Linux.Test1\"\
+        \r\n  },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"Microsoft.Azure.WorkloadInsights.Linux.Test2\"\
+        ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/Microsoft.Azure.WorkloadInsights.Linux.Test2\"\
+        \r\n  },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"Microsoft.Azure.WorkloadInsights.Linux.Test3\"\
+        ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/Microsoft.Azure.WorkloadInsights.Linux.Test3\"\
+        \r\n  },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"Microsoft.Azure.WorkloadInsights.Linux.Test4\"\
+        ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/Microsoft.Azure.WorkloadInsights.Linux.Test4\"\
+        \r\n  },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"Microsoft.Azure.WorkloadInsights.Test\"\
+        ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/Microsoft.Azure.WorkloadInsights.Test\"\
         \r\n  },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"Microsoft.AzureCAT.AzureEnhancedMonitoring\"\
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/Microsoft.AzureCAT.AzureEnhancedMonitoring\"\
-        \r\n  },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"Microsoft.AzureCAT.AzureEnhancedMonitoring.Edp\"\
-        ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/Microsoft.AzureCAT.AzureEnhancedMonitoring.Edp\"\
         \r\n  },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"Microsoft.AzureCAT.AzureEnhancedMonitoringTest\"\
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/Microsoft.AzureCAT.AzureEnhancedMonitoringTest\"\
         \r\n  },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"Microsoft.AzureMonitor.WorkloadInsights\"\
@@ -1545,6 +1571,8 @@ interactions:
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/Microsoft.OSTCExtensions.Edp\"\
         \r\n  },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"Microsoft.OSTCExtensions.Test\"\
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/Microsoft.OSTCExtensions.Test\"\
+        \r\n  },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"Microsoft.OSTCExtensions.Testing\"\
+        ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/Microsoft.OSTCExtensions.Testing\"\
         \r\n  },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"Microsoft.Powershell\"\
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/Microsoft.Powershell\"\
         \r\n  },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"Microsoft.Powershell.Test\"\
@@ -1591,6 +1619,8 @@ interactions:
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/Microsoft.WindowsAzure.Compute\"\
         \r\n  },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"Microsoft.WindowsAzure.Compute.test\"\
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/Microsoft.WindowsAzure.Compute.test\"\
+        \r\n  },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"Microsoft.WVD\"\
+        ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/Microsoft.WVD\"\
         \r\n  },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"MicrosoftAzureSiteRecovery\"\
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/MicrosoftAzureSiteRecovery\"\
         \r\n  },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"MicrosoftBizTalkServer\"\
@@ -1893,6 +1923,8 @@ interactions:
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/PuppetLabs\"\
         \r\n  },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"PuppetLabs.Test\"\
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/PuppetLabs.Test\"\
+        \r\n  },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"purestorageinc1578960262525\"\
+        ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/purestorageinc1578960262525\"\
         \r\n  },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"pydio\"\
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/pydio\"\
         \r\n  },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"pyramidanalytics\"\
@@ -1995,6 +2027,8 @@ interactions:
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/saama\"\
         \r\n  },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"saasame-limited\"\
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/saasame-limited\"\
+        \r\n  },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"safesoftwareinc\"\
+        ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/safesoftwareinc\"\
         \r\n  },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"safeticatechnologiessro\"\
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/safeticatechnologiessro\"\
         \r\n  },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"saltstack\"\
@@ -2065,6 +2099,8 @@ interactions:
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/singapore-telecommunications-limited\"\
         \r\n  },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"sios_datakeeper\"\
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/sios_datakeeper\"\
+        \r\n  },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"siportalinc1581539156321\"\
+        ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/siportalinc1581539156321\"\
         \r\n  },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"sisenseltd\"\
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/sisenseltd\"\
         \r\n  },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"Site24x7\"\
@@ -2321,6 +2357,8 @@ interactions:
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/ubeeko\"\
         \r\n  },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"ubercloud\"\
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/ubercloud\"\
+        \r\n  },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"uipath-5054924\"\
+        ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/uipath-5054924\"\
         \r\n  },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"ulex\"\
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/ulex\"\
         \r\n  },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"unifi-software\"\
@@ -2369,6 +2407,8 @@ interactions:
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/vidizmo\"\
         \r\n  },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"vigyanlabs-innovations-pvt-ltd\"\
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/vigyanlabs-innovations-pvt-ltd\"\
+        \r\n  },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"vigyanlabsinc1581413676614\"\
+        ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/vigyanlabsinc1581413676614\"\
         \r\n  },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"viptela\"\
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/viptela\"\
         \r\n  },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"vircom\"\
@@ -2474,11 +2514,11 @@ interactions:
       cache-control:
       - no-cache
       content-length:
-      - '278081'
+      - '282349'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 27 Feb 2020 18:11:32 GMT
+      - Wed, 25 Mar 2020 02:49:22 GMT
       expires:
       - '-1'
       pragma:
@@ -2507,12 +2547,12 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-compute/11.0.0 Azure-SDK-For-Python
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-compute/12.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/publishers/128technology/artifacttypes/vmimage/offers?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/publishers/128technology/artifacttypes/vmimage/offers?api-version=2019-12-01
   response:
     body:
       string: "[\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"128technology_conductor_hourly\"\
@@ -2530,7 +2570,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 27 Feb 2020 18:11:32 GMT
+      - Wed, 25 Mar 2020 02:49:24 GMT
       expires:
       - '-1'
       pragma:
@@ -2559,18 +2599,26 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-compute/11.0.0 Azure-SDK-For-Python
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-compute/12.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/publishers/128technology/artifacttypes/vmimage/offers/128technology_conductor_hourly/skus?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/publishers/128technology/artifacttypes/vmimage/offers/128technology_conductor_hourly/skus?api-version=2019-12-01
   response:
     body:
       string: "[\r\n  {\r\n    \"properties\": {\r\n      \"automaticOSUpgradeProperties\"\
         : {\r\n        \"automaticOSUpgradeSupported\": false\r\n      }\r\n    },\r\
         \n    \"location\": \"westus\",\r\n    \"name\": \"128technology_conductor_hourly\"\
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/128technology/ArtifactTypes/VMImage/Offers/128technology_conductor_hourly/Skus/128technology_conductor_hourly\"\
+        \r\n  },\r\n  {\r\n    \"properties\": {\r\n      \"automaticOSUpgradeProperties\"\
+        : {\r\n        \"automaticOSUpgradeSupported\": false\r\n      }\r\n    },\r\
+        \n    \"location\": \"westus\",\r\n    \"name\": \"128technology_conductor_hourly_422\"\
+        ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/128technology/ArtifactTypes/VMImage/Offers/128technology_conductor_hourly/Skus/128technology_conductor_hourly_422\"\
+        \r\n  },\r\n  {\r\n    \"properties\": {\r\n      \"automaticOSUpgradeProperties\"\
+        : {\r\n        \"automaticOSUpgradeSupported\": false\r\n      }\r\n    },\r\
+        \n    \"location\": \"westus\",\r\n    \"name\": \"128technology_conductor_private_422\"\
+        ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/westus/Publishers/128technology/ArtifactTypes/VMImage/Offers/128technology_conductor_hourly/Skus/128technology_conductor_private_422\"\
         \r\n  },\r\n  {\r\n    \"properties\": {\r\n      \"automaticOSUpgradeProperties\"\
         : {\r\n        \"automaticOSUpgradeSupported\": false\r\n      }\r\n    },\r\
         \n    \"location\": \"westus\",\r\n    \"name\": \"128technology_conductor_private_422-1\"\
@@ -2580,11 +2628,11 @@ interactions:
       cache-control:
       - no-cache
       content-length:
-      - '899'
+      - '1799'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 27 Feb 2020 18:11:33 GMT
+      - Wed, 25 Mar 2020 02:49:24 GMT
       expires:
       - '-1'
       pragma:
@@ -2613,12 +2661,12 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-compute/11.0.0 Azure-SDK-For-Python
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-compute/12.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/publishers/128technology/artifacttypes/vmimage/offers/128technology_conductor_hourly/skus/128technology_conductor_hourly/versions?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/publishers/128technology/artifacttypes/vmimage/offers/128technology_conductor_hourly/skus/128technology_conductor_hourly/versions?api-version=2019-12-01
   response:
     body:
       string: "[\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"4.2.2\"\
@@ -2632,7 +2680,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 27 Feb 2020 18:11:34 GMT
+      - Wed, 25 Mar 2020 02:49:24 GMT
       expires:
       - '-1'
       pragma:
@@ -2661,12 +2709,12 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-compute/11.0.0 Azure-SDK-For-Python
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-compute/12.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/publishers/128technology/artifacttypes/vmimage/offers/128technology_conductor_hourly/skus/128technology_conductor_hourly/versions/4.2.2?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/publishers/128technology/artifacttypes/vmimage/offers/128technology_conductor_hourly/skus/128technology_conductor_hourly/versions/4.2.2?api-version=2019-12-01
   response:
     body:
       string: "{\r\n  \"properties\": {\r\n    \"hyperVGeneration\": \"V1\",\r\n \
@@ -2688,7 +2736,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 27 Feb 2020 18:11:34 GMT
+      - Wed, 25 Mar 2020 02:49:24 GMT
       expires:
       - '-1'
       pragma:

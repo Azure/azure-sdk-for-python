@@ -54,7 +54,8 @@ class MgmtComputeTest(AzureMgmtTestCase):
         params_create = azure.mgmt.storage.models.StorageAccountCreateParameters(
             sku=azure.mgmt.storage.models.Sku(name=azure.mgmt.storage.models.SkuName.standard_lrs),
             kind=azure.mgmt.storage.models.Kind.storage,
-            location=location
+            location=location,
+            enable_https_traffic_only=True
         )
         result_create = self.storage_client.storage_accounts.create(
             group_name,

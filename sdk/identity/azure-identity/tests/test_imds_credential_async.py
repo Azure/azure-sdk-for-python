@@ -8,15 +8,16 @@ from azure.core.exceptions import HttpResponseError
 from azure.identity.aio._credentials.managed_identity import ImdsCredential
 import pytest
 
-from helpers_async import AsyncMockTransport
+from helpers import mock_response
+from helpers_async import AsyncMockTransport, get_completed_future
 
 
 @pytest.mark.asyncio
 async def test_no_scopes():
     """The credential should raise ValueError when get_token is called with no scopes"""
 
-    # the credential will probe the endpoint, taking HttpResponseError as indicating availability
-    transport = mock.Mock(send=mock.Mock(side_effect=HttpResponseError()))
+    successful_probe = mock_response(status_code=400, json_payload={})
+    transport = mock.Mock(send=mock.Mock(return_value=get_completed_future(successful_probe)))
     credential = ImdsCredential(transport=transport)
 
     with pytest.raises(ValueError):
@@ -27,8 +28,8 @@ async def test_no_scopes():
 async def test_multiple_scopes():
     """The credential should raise ValueError when get_token is called with more than one scope"""
 
-    # the credential will probe the endpoint, taking HttpResponseError as indicating availability
-    transport = mock.Mock(send=mock.Mock(side_effect=HttpResponseError()))
+    successful_probe = mock_response(status_code=400, json_payload={})
+    transport = mock.Mock(send=mock.Mock(return_value=get_completed_future(successful_probe)))
     credential = ImdsCredential(transport=transport)
 
     with pytest.raises(ValueError):

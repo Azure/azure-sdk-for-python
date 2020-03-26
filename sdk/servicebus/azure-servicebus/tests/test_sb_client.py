@@ -169,9 +169,9 @@ class ServiceBusClientTests(AzureMgmtTestCase):
     @RandomNameResourceGroupPreparer(name_prefix='servicebustest')
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusNamespaceAuthorizationRulePreparer(name_prefix='servicebustest')
-    @ServiceBusQueuePreparer(name_prefix='servicebustest_queue_one', parameter_name='wrong_queue', dead_lettering_on_message_expiration=True)
-    @ServiceBusQueuePreparer(name_prefix='servicebustest_queue_two', dead_lettering_on_message_expiration=True)
-    @ServiceBusQueueAuthorizationRulePreparer(name_prefix='servicebustest_queue_two')
+    @ServiceBusQueuePreparer(name_prefix='servicebustest_q1', parameter_name='wrong_queue', dead_lettering_on_message_expiration=True)
+    @ServiceBusQueuePreparer(name_prefix='servicebustest_q2', dead_lettering_on_message_expiration=True)
+    @ServiceBusQueueAuthorizationRulePreparer(name_prefix='servicebustest_q2')
     def test_sb_client_incorrect_queue_conn_str(self, servicebus_queue_authorization_rule_connection_string, wrong_queue, **kwargs):
         
         client = ServiceBusClient.from_connection_string(servicebus_queue_authorization_rule_connection_string)
