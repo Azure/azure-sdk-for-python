@@ -95,11 +95,11 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, SansIOHTTPPo
 
 
 class AzureKeyCredentialPolicy(SansIOHTTPPolicy):
-    """Adds an API key header for signing requests.
+    """Adds a key header for signing requests.
 
     :param credential: The credential used to authenticate requests.
     :type credential: ~azure.core.credentials.AzureKeyCredential
-    :param str key_header: The name of the API key header used for signing requests.
+    :param str key_header: The name of the key header used for signing requests.
     :raises: TypeError
     """
     def __init__(self, credential, key_header):
