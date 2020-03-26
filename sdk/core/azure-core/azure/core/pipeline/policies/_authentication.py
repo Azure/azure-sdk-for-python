@@ -95,22 +95,22 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, SansIOHTTPPo
 
 
 class AzureKeyCredentialPolicy(SansIOHTTPPolicy):
-    """Adds a key header for signing requests.
+    """Adds a key header for the provided credential.
 
     :param credential: The credential used to authenticate requests.
     :type credential: ~azure.core.credentials.AzureKeyCredential
-    :param str key_header: The name of the key header used for signing requests.
-    :raises: TypeError
+    :param str name: The name of the key header used for the credential.
+    :raises: ValueError or TypeError
     """
-    def __init__(self, credential, key_header):
+    def __init__(self, credential, name):
         # type: (AzureKeyCredential, str) -> None
         super(AzureKeyCredentialPolicy, self).__init__()
         self._credential = credential
-        if not key_header:
-            raise TypeError("key_header can not be None or empty")
-        if not isinstance(key_header, six.string_types):
-            raise TypeError("key_header must be a string.")
-        self._key_header = key_header
+        if not name:
+            raise ValueError("name can not be None or empty")
+        if not isinstance(name, six.string_types):
+            raise TypeError("name must be a string.")
+        self._name = name
 
     def on_request(self, request):
-        request.http_request.headers[self._key_header] = self._credential.key
+        request.http_request.headers[self._name] = self._credential.key

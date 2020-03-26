@@ -37,7 +37,7 @@ class AzureKeyCredential(object):
     """Credential type used for authenticating to an Azure service.
     It provides the ability to update the key without creating a new client.
 
-    :param str key: The key to your Azure account.
+    :param str key: The key used to authenticate to an Azure service
     :raises: TypeError
     """
 
@@ -63,11 +63,11 @@ class AzureKeyCredential(object):
         This can be used when you've regenerated your service key and want
         to update long-lived clients.
 
-        :param str key: The key to your Azure account.
-        :raises: TypeError
+        :param str key: The key used to authenticate to an Azure service
+        :raises: ValueError or TypeError
         """
         if not key:
-            raise TypeError("The key used for updating can not be None or empty")
+            raise ValueError("The key used for updating can not be None or empty")
         if not isinstance(key, six.string_types):
             raise TypeError("The key used for updating must be a string.")
         self._key = key
