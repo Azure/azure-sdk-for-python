@@ -101,7 +101,7 @@ def prepare_unlabeled_result(response, include_elements):
             page_number=page.page,
             tables=prepare_tables(page, elements),
             fields=[ExtractedField._from_generated(item, elements)
-                    for item in page.key_value_pairs or []],
+                    for item in page.key_value_pairs] if page.key_value_pairs else None,
             form_type_id=page.cluster_id,
             page_metadata=PageMetadata._from_generated_page_index(read_result, page.page-1)
         )

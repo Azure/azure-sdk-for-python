@@ -14,17 +14,21 @@ def get_pipeline_response(pipeline_response, _, response_headers):  # pylint: di
     return pipeline_response
 
 
-def get_field_value(field):
-
-    if field.value_time:
+def get_field_scalar_value(field):
+    field_type = field.type
+    if field_type == "string":
+        return field.value_string
+    if field_type == "number":
+        return field.value_number
+    if field_type == "integer":
+        return field.value_integer
+    if field_type == "date":
+        return field.value_date
+    if field_type == "phoneNumber":
+        return field.value_phone_number
+    if field_type == "time":
         hour, minutes, seconds = field.value_time.split(":")
         return time(int(hour), int(minutes), int(seconds))
-
-    return field.value_integer or \
-        field.value_number or \
-        field.value_phone_number or \
-        field.value_string or \
-        field.value_date
 
 
 def get_content_type(form):

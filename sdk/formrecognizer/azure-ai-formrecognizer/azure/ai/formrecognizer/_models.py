@@ -9,7 +9,7 @@
 from re import findall
 from collections import namedtuple
 from enum import Enum
-from ._helpers import get_field_value
+from ._helpers import get_field_scalar_value
 
 
 PageRange = namedtuple("PageRange", "first_page last_page")
@@ -113,16 +113,14 @@ class FieldValue(object):
     def _from_generated(cls, field, elements):
         if field is None:
             return field
-        if field.value_array:
-            try:
-                if field.value_array[0].type == "object":
-                    return [{field: FieldValue._from_generated(value, elements)
-                             for field, value in obj.value_object.items()} for obj in field.value_array]
-                return [FieldValue._from_generated(field, elements) for field in field.value_array]
-            except KeyError:
-                return None
+
+        if field.type == "array":
+            return [FieldValue._from_generated(field, elements) for field in field.value_array]
+
+        if field.type == "object":
+            return {key: FieldValue._from_generated(value, elements) for key, value in field.value_object.items()}
         return cls(
-            value=get_field_value(field),
+            value=get_field_scalar_value(field),
             text=field.text,
             bounding_box=BoundingBox._from_generated(field.bounding_box),
             confidence=field.confidence,
@@ -140,7 +138,7 @@ class ReceiptType(object):
     def _from_generated(cls, item):
         if item:
             return cls(
-                type=get_field_value(item),
+                type=get_field_scalar_value(item),
                 confidence=item.confidence
             )
         return item
@@ -180,7 +178,7 @@ class ExtractedLine(object):
             text=line.text,
             bounding_box=BoundingBox._from_generated(line.bounding_box),
             page_number=page,
-            words=[ExtractedWord._from_generated(word, page) for word in line.words or []]
+            words=[ExtractedWord._from_generated(word, page) for word in line.words] if line.words else None
         )
 
 
@@ -219,7 +217,7 @@ class PageMetadata(object):
             height=read_result[page_index].height,
             unit=LengthUnit(read_result[page_index].unit),
             lines=[ExtractedLine._from_generated(line, page=page_index+1)
-                   for line in read_result[page_index].lines or []]
+                   for line in read_result[page_index].lines] if read_result[page_index].lines else None
         )
 
     @classmethod
@@ -230,7 +228,7 @@ class PageMetadata(object):
             width=page.width,
             height=page.height,
             unit=LengthUnit(page.unit),
-            lines=[ExtractedLine._from_generated(line, page=page.page) for line in page.lines or []]
+            lines=[ExtractedLine._from_generated(line, page=page.page) for line in page.lines] if page.lines else None
         ) for page in read_result]
 
 
@@ -308,7 +306,8 @@ class TrainingInfo(object):
     def _from_generated(cls, train):
         if train:
             return cls(
-                documents=[TrainingDocumentInfo._from_generated(doc) for doc in train.training_documents or []],
+                documents=[TrainingDocumentInfo._from_generated(doc)
+                           for doc in train.training_documents] if train.training_documents else None,
                 training_errors=FormRecognizerError._from_generated(train.errors)
             )
         return train
