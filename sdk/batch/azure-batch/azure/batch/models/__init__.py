@@ -63,6 +63,7 @@ try:
     from ._models_py3 import ContainerRegistry
     from ._models_py3 import DataDisk
     from ._models_py3 import DeleteCertificateError
+    from ._models_py3 import DiskEncryptionConfiguration
     from ._models_py3 import EnvironmentSetting
     from ._models_py3 import ErrorMessage
     from ._models_py3 import ExitCodeMapping
@@ -174,6 +175,7 @@ try:
     from ._models_py3 import PoolUpdatePropertiesOptions
     from ._models_py3 import PoolUpdatePropertiesParameter
     from ._models_py3 import PoolUsageMetrics
+    from ._models_py3 import PublicIPAddressConfiguration
     from ._models_py3 import RecentJob
     from ._models_py3 import ResizeError
     from ._models_py3 import ResourceFile
@@ -269,6 +271,7 @@ except (SyntaxError, ImportError):
     from ._models import ContainerRegistry
     from ._models import DataDisk
     from ._models import DeleteCertificateError
+    from ._models import DiskEncryptionConfiguration
     from ._models import EnvironmentSetting
     from ._models import ErrorMessage
     from ._models import ExitCodeMapping
@@ -380,6 +383,7 @@ except (SyntaxError, ImportError):
     from ._models import PoolUpdatePropertiesOptions
     from ._models import PoolUpdatePropertiesParameter
     from ._models import PoolUsageMetrics
+    from ._models import PublicIPAddressConfiguration
     from ._models import RecentJob
     from ._models import ResizeError
     from ._models import ResourceFile
@@ -451,9 +455,11 @@ from ._batch_service_client_enums import (
     CertificateVisibility,
     CachingType,
     StorageAccountType,
+    DiskEncryptionTarget,
     DynamicVNetAssignmentScope,
     InboundEndpointProtocol,
     NetworkSecurityGroupRuleAccess,
+    IPAddressProvisioningType,
     PoolLifetimeOption,
     OnAllTasksComplete,
     OnTaskFailure,
@@ -532,6 +538,7 @@ __all__ = [
     'ContainerRegistry',
     'DataDisk',
     'DeleteCertificateError',
+    'DiskEncryptionConfiguration',
     'EnvironmentSetting',
     'ErrorMessage',
     'ExitCodeMapping',
@@ -643,6 +650,7 @@ __all__ = [
     'PoolUpdatePropertiesOptions',
     'PoolUpdatePropertiesParameter',
     'PoolUsageMetrics',
+    'PublicIPAddressConfiguration',
     'RecentJob',
     'ResizeError',
     'ResourceFile',
@@ -713,9 +721,11 @@ __all__ = [
     'CertificateVisibility',
     'CachingType',
     'StorageAccountType',
+    'DiskEncryptionTarget',
     'DynamicVNetAssignmentScope',
     'InboundEndpointProtocol',
     'NetworkSecurityGroupRuleAccess',
+    'IPAddressProvisioningType',
     'PoolLifetimeOption',
     'OnAllTasksComplete',
     'OnTaskFailure',
