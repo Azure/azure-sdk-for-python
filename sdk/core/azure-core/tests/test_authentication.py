@@ -154,11 +154,10 @@ def test_azure_key_credential_policy():
     api_key = "test_key"
     key_header = "api_key"
 
-    transport=Mock()
+    transport=Mock(send=verify_authorization_header)
     credential = AzureKeyCredential(api_key)
     credential_policy = AzureKeyCredentialPolicy(credential=credential, name=key_header)
-    policies = [credential_policy, Mock(send=verify_authorization_header)]
-    pipeline = Pipeline(transport=Mock(), policies=policies)
+    pipeline = Pipeline(transport=Mock(), policies=[credential_policy])
 
     pipeline.run(HttpRequest("GET", "https://test_key_credential"))
 
