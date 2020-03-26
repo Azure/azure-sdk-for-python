@@ -222,7 +222,28 @@ class EventData(object):
     @property
     def system_properties(self):
         # type: () -> Dict[bytes, Any]
-        """Metadata set by the Event Hubs Service associated with the event
+        """Metadata set by the Event Hubs Service associated with the event.
+
+        An EventData could have some or all of the following meta data depending on the source
+        of the event data.
+
+            - b"x-opt-sequence-number" (int)
+            - b"x-opt-offset" (bytes)
+            - b"x-opt-partition-key" (bytes)
+            - b"x-opt-enqueued-time" (int)
+            - b"message-id" (bytes)
+            - b"user-id" (bytes)
+            - b"to" (bytes)
+            - b"subject" (bytes)
+            - b"reply-to" (bytes)
+            - b"correlation-id" (bytes)
+            - b"content-type" (bytes)
+            - b"content-encoding" (bytes)
+            - b"absolute-expiry-time" (int)
+            - b"creation-time" (int)
+            - b"group-id" (bytes)
+            - b"group-sequence" (bytes)
+            - b"reply-to-group-id" (bytes)
 
         :rtype: dict
         """
