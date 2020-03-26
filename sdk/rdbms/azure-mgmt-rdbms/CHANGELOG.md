@@ -1,5 +1,18 @@
 # Release History
 
+## 2.2.0 (2020-03-25)
+
+**Features**
+
+  - Model ServerUpdateParameters has a new parameter public_network_access
+  - Model ServerPropertiesForCreate has a new parameter public_network_access
+  - Model Server has a new parameter public_network_access
+  - Model Server has a new parameter private_endpoint_connections
+  - Model ServerPropertiesForRestore has a new parameter public_network_access
+  - Model ServerPropertiesForReplica has a new parameter public_network_access
+  - Model ServerPropertiesForDefaultCreate has a new parameter public_network_access
+  - Model ServerPropertiesForGeoRestore has a new parameter public_network_access
+
 ## 2.1.0 (2020-03-23)
 
 **Features**
