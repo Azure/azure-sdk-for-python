@@ -77,7 +77,7 @@ az cognitiveservices account show --name "resource-name" --resource-group "resou
 ```
 
 #### Types of credentials
-The `credential` parameter may be provided as a `AzureKeyCredential` from azure.core.exceptions or as a token from Azure Active Directory.
+The `credential` parameter may be provided as a `AzureKeyCredential` from azure.core.credentials or as a token from Azure Active Directory.
 See the full details regarding [authentication][cognitive_authentication] of
 cognitive services.
 
@@ -191,7 +191,7 @@ The following section provides several code snippets covering some of the most c
 [analyze_sentiment][analyze_sentiment] looks at its input text and determines whether its sentiment is positive, negative, neutral or mixed. It's response includes per-sentence sentiment analysis and confidence scores.
 
 ```python
-from azure.core.exceptions import AzureKeyCredential
+from azure.core.credentials import AzureKeyCredential
 from azure.ai.textanalytics import TextAnalyticsClient
 
 text_analytics_client = TextAnalyticsClient(endpoint, AzureKeyCredential(key))
