@@ -1,6 +1,7 @@
 # Release History
 
 ## 9.0.0 (2020-03-24)
+
 ### Features
 - Added ability to encrypt `ComputeNode` disk drives using the new `disk_encryption_configuration` property of `VirtualMachineConfiguration`.
 - **[Breaking]** The `virtual_machine_id` property of `ImageReference` can now only refer to a Shared Image Gallery image.
