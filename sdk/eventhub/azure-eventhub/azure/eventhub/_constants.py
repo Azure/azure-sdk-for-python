@@ -29,7 +29,7 @@ PROP_ABSOLUTE_EXPIRY_TIME = b"absolute-expiry-time"
 PROP_CREATION_TIME = b"creation-time"
 PROP_GROUP_ID = b"group-id"
 PROP_GROUP_SEQUENCE = b"group-sequence"
-PROP_REPLY_TO_GROUP_ID = b"reply-to-group_id"
+PROP_REPLY_TO_GROUP_ID = b"reply-to-group-id"
 
 EPOCH_SYMBOL = b"com.microsoft:epoch"
 TIMEOUT_SYMBOL = b"com.microsoft:timeout"
