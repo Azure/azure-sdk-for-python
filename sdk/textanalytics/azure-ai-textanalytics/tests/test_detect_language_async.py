@@ -415,11 +415,11 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
         response = await text_analytics.detect_language(docs)
         self.assertIsNotNone(response)
 
-        credential.update_key("xxx")  # Make authentication fail
+        credential.update("xxx")  # Make authentication fail
         with self.assertRaises(ClientAuthenticationError):
             response = await text_analytics.detect_language(docs)
 
-        credential.update_key(text_analytics_account_key)  # Authenticate successfully again
+        credential.update(text_analytics_account_key)  # Authenticate successfully again
         response = await text_analytics.detect_language(docs)
         self.assertIsNotNone(response)
 

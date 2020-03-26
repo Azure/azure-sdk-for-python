@@ -38,7 +38,7 @@ from .._models import (
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
-    from .._credential import AzureKeyCredential
+    from azure.core.credentials import AzureKeyCredential
 
 
 class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
