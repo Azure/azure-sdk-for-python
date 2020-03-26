@@ -100,6 +100,7 @@ class ServiceBusClient(mixins.ServiceBusMixin):
             shared_access_key_value=key,
             host_base='.' + base,
             loop=loop,
+            transport_type=transport_type,
             **kwargs)
 
     def get_queue(self, queue_name):

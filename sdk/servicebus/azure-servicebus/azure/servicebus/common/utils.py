@@ -32,14 +32,14 @@ def get_running_loop():
         try:
             loop = asyncio._get_running_loop()  # pylint: disable=protected-access
         except AttributeError:
-            logger.warning('This version of Python is deprecated, please upgrade to >= v3.5.3')
+            _log.warning('This version of Python is deprecated, please upgrade to >= v3.5.3')
         if loop is None:
-            logger.warning('No running event loop')
+            _log.warning('No running event loop')
             loop = asyncio.get_event_loop()
         return loop
     except RuntimeError:
         # For backwards compatibility, create new event loop
-        logger.warning('No running event loop')
+        _log.warning('No running event loop')
         return asyncio.get_event_loop()
 
 
