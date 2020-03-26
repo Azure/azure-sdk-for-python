@@ -14,7 +14,7 @@ def get_pipeline_response(pipeline_response, _, response_headers):  # pylint: di
     return pipeline_response
 
 
-def get_field_scalar_value(field):
+def get_field_scalar_value(field):  # pylint: disable=too-many-return-statements
     field_type = field.type
     if field_type == "string":
         return field.value_string
@@ -29,6 +29,7 @@ def get_field_scalar_value(field):
     if field_type == "time":
         hour, minutes, seconds = field.value_time.split(":")
         return time(int(hour), int(minutes), int(seconds))
+    return None
 
 
 def get_content_type(form):
