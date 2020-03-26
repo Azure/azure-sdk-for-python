@@ -11,7 +11,7 @@ from ... import CredentialUnavailableError
 from ..._credentials.chained import _get_error_message
 
 if TYPE_CHECKING:
-    from typing import Any
+    from typing import Any, Optional
     from azure.core.credentials import AccessToken
     from azure.core.credentials_async import AsyncTokenCredential
 
@@ -29,6 +29,8 @@ class ChainedTokenCredential(AsyncCredentialBase):
     def __init__(self, *credentials: "AsyncTokenCredential") -> None:
         if not credentials:
             raise ValueError("at least one credential is required")
+
+        self._successful_credential = None  # type: Optional[AsyncTokenCredential]
         self.credentials = credentials
 
     async def close(self):
@@ -50,7 +52,9 @@ class ChainedTokenCredential(AsyncCredentialBase):
         history = []
         for credential in self.credentials:
             try:
-                return await credential.get_token(*scopes, **kwargs)
+                token = await credential.get_token(*scopes, **kwargs)
+                self._successful_credential = credential
+                return token
             except CredentialUnavailableError as ex:
                 # credential didn't attempt authentication because it lacks required data or state -> continue
                 history.append((credential, ex.message))
