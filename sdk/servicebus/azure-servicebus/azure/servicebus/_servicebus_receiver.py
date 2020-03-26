@@ -31,7 +31,10 @@ from ._common.constants import (
     SESSION_FILTER,
     REQUEST_RESPONSE_RENEWLOCK_OPERATION
 )
-from .exceptions import _ServiceBusErrorPolicy
+from .exceptions import (
+    _ServiceBusErrorPolicy,
+    SessionLockExpired
+)
 from ._common import mgmt_handlers
 
 if TYPE_CHECKING:
@@ -55,6 +58,9 @@ class ServiceBusSession(object):
         self._locked_until = None
         self.auto_renew_error = None
 
+    def _can_run(self):
+        if self.expired:
+            raise SessionLockExpired(inner_exception=self.auto_renew_error)
 
     def get_session_state(self):
         # type: () -> str
@@ -73,6 +79,7 @@ class ServiceBusSession(object):
                 :dedent: 4
                 :caption: Get the session state
         """
+        self._can_run()
         response = self._receiver._mgmt_request_response_with_retry(  # pylint: disable=protected-access
             REQUEST_RESPONSE_GET_SESSION_STATE_OPERATION,
             {'session-id': self.session_id},
@@ -99,6 +106,7 @@ class ServiceBusSession(object):
                 :dedent: 4
                 :caption: Set the session state
         """
+        self._can_run()
         state = state.encode(self._encoding) if isinstance(state, six.text_type) else state
         return self._receiver._mgmt_request_response_with_retry(  # pylint: disable=protected-access
             REQUEST_RESPONSE_SET_SESSION_STATE_OPERATION,
@@ -125,6 +133,7 @@ class ServiceBusSession(object):
                 :dedent: 4
                 :caption: Renew the session lock before it expires
         """
+        self._can_run()
         expiry = self._receiver._mgmt_request_response_with_retry(  # pylint: disable=protected-access
             REQUEST_RESPONSE_RENEW_SESSION_LOCK_OPERATION,
             {'session-id': self.session_id},
@@ -155,7 +164,6 @@ class ServiceBusSession(object):
     def locked_until(self):
         # type: () -> datetime
         """The time at which this session's lock will expire.
-
         :rtype: datetime
         """
         return self._locked_until
@@ -206,6 +214,10 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
             self._session_id = session_filter.decode(self._config.encoding)
             self._session._session_id = self._session_id
 
+    def _can_run(self):
+        if self._session and self._session.expired:
+            raise SessionLockExpired(inner_exception=self._session.auto_renew_error)
+
 
 class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-many-instance-attributes
     """The ServiceBusReceiver class defines a high level interface for
@@ -222,6 +234,10 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
      the client connects to.
     :keyword str subscription_name: The path of specific Service Bus Subscription under the
      specified Topic the client connects to.
+    :keyword int prefetch: The maximum number of messages to cache with each request to the service.
+     The default value is 0, meaning messages will be received from the service and processed
+     one at a time. Increasing this value will improve message throughput performance but increase
+     the change that messages will expire while they are cached if they're not processed fast enough.
     :keyword float idle_timeout: The timeout in seconds between received messages after which the receiver will
      automatically shutdown. The default value is 0, meaning no timeout.
     :keyword mode: The mode with which messages will be retrieved from the entity. The two options
@@ -292,6 +308,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         return self
 
     def __next__(self):
+        self._can_run()
         while True:
             try:
                 return self._do_retryable_operation(self._iter_next)
@@ -321,7 +338,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
             receive_settle_mode=self._mode.value,
             send_settle_mode=SenderSettleMode.Settled if self._mode == ReceiveSettleMode.ReceiveAndDelete else None,
             timeout=self._config.idle_timeout * 1000 if self._config.idle_timeout else 0,
-            prefetch=self._prefetch
+            prefetch=self._config.prefetch
         )
 
     def _open(self):
@@ -408,6 +425,10 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
          will be immediately removed from the queue, and cannot be subsequently rejected or re-received if
          the client fails to process the message. The default mode is PeekLock.
         :paramtype mode: ~azure.servicebus.ReceiveSettleMode
+        :keyword int prefetch: The maximum number of messages to cache with each request to the service.
+         The default value is 0, meaning messages will be received from the service and processed
+         one at a time. Increasing this value will improve message throughput performance but increase
+         the change that messages will expire while they are cached if they're not processed fast enough.
         :keyword float idle_timeout: The timeout in seconds between received messages after which the receiver will
          automatically shutdown. The default value is 0, meaning no timeout.
         :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
@@ -471,6 +492,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
                 :caption: Receive messages from ServiceBus.
 
         """
+        self._can_run()
         return self._do_retryable_operation(
             self._receive,
             max_batch_size=max_batch_size,
@@ -499,6 +521,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
                 :caption: Receive deferred messages from ServiceBus.
 
         """
+        self._can_run()
         if not sequence_numbers:
             raise ValueError("At least one sequence number must be specified.")
         self._open()
@@ -544,6 +567,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
                 :caption: Look at pending messages in the queue.
 
         """
+        self._can_run()
         if not sequence_number:
             sequence_number = self._last_received_sequenced_number or 1
         if int(message_count) < 1:

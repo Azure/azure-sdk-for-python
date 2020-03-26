@@ -60,6 +60,7 @@ class ServiceBusSession(BaseSession):
                 :dedent: 4
                 :caption: Get the session state
         """
+        self._can_run()
         response = await self._receiver._mgmt_request_response_with_retry(  # pylint: disable=protected-access
             REQUEST_RESPONSE_GET_SESSION_STATE_OPERATION,
             {'session-id': self.session_id},
@@ -86,6 +87,7 @@ class ServiceBusSession(BaseSession):
                 :dedent: 4
                 :caption: Set the session state
         """
+        self._can_run()
         state = state.encode(self._encoding) if isinstance(state, six.text_type) else state
         return await self._receiver._mgmt_request_response_with_retry(  # pylint: disable=protected-access
             REQUEST_RESPONSE_SET_SESSION_STATE_OPERATION,
@@ -112,6 +114,7 @@ class ServiceBusSession(BaseSession):
                 :dedent: 4
                 :caption: Renew the session lock before it expires
         """
+        self._can_run()
         expiry = await self._receiver._mgmt_request_response_with_retry(  # pylint: disable=protected-access
             REQUEST_RESPONSE_RENEW_SESSION_LOCK_OPERATION,
             {'session-id': self.session_id},
@@ -141,6 +144,10 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
      will be immediately removed from the queue, and cannot be subsequently rejected or re-received if
      the client fails to process the message. The default mode is PeekLock.
     :paramtype mode: ~azure.servicebus.ReceiveSettleMode
+    :keyword int prefetch: The maximum number of messages to cache with each request to the service.
+     The default value is 0 meaning messages will be received from the service and processed
+     one at a time. Increasing this value will improve message throughput performance but increase
+     the change that messages will expire while they are cached if they're not processed fast enough.
     :keyword float idle_timeout: The timeout in seconds between received messages after which the receiver will
      automatically shutdown. The default value is 0, meaning no timeout.
     :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
@@ -201,6 +208,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
         self._session = ServiceBusSession(self._session_id, self, self._config.encoding) if self._session_id else None
 
     async def __anext__(self):
+        self._can_run()
         while True:
             try:
                 return await self._do_retryable_operation(self._iter_next)
@@ -227,7 +235,8 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
             encoding=self._config.encoding,
             receive_settle_mode=self._mode.value,
             send_settle_mode=SenderSettleMode.Settled if self._mode == ReceiveSettleMode.ReceiveAndDelete else None,
-            timeout=self._config.idle_timeout * 1000 if self._config.idle_timeout else 0
+            timeout=self._config.idle_timeout * 1000 if self._config.idle_timeout else 0,
+            prefetch=self._config.prefetch
         )
 
     async def _open(self):
@@ -311,6 +320,10 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
          will be immediately removed from the queue, and cannot be subsequently rejected or re-received if
          the client fails to process the message. The default mode is PeekLock.
         :paramtype mode: ~azure.servicebus.ReceiveSettleMode
+        :keyword int prefetch: The maximum number of messages to cache with each request to the service.
+         The default value is 0, meaning messages will be received from the service and processed
+         one at a time. Increasing this value will improve message throughput performance but increase
+         the change that messages will expire while they are cached if they're not processed fast enough.
         :keyword float idle_timeout: The timeout in seconds between received messages after which the receiver will
          automatically shutdown. The default value is 0, meaning no timeout.
         :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
@@ -345,18 +358,6 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
             raise ValueError("Subscription name is missing for the topic. Please specify subscription_name.")
         return cls(**constructor_args)
 
-    async def close(self):
-        """Close down the handler links (and connection if the handler uses a separate connection).
-
-        If the handler has already closed, this operation will do nothing.
-
-        :rtype: None
-        """
-        if not self._running:
-            return
-        self._running = False
-        await super(ServiceBusReceiver, self).close()
-
     async def receive(self, max_batch_size=None, timeout=None):
         # type: (int, float) -> List[ReceivedMessage]
         """Receive a batch of messages at once.
@@ -386,6 +387,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
                 :caption: Receive messages from ServiceBus.
 
         """
+        self._can_run()
         return await self._do_retryable_operation(
             self._receive,
             max_batch_size=max_batch_size,
@@ -414,6 +416,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
                 :caption: Receive deferred messages from ServiceBus.
 
         """
+        self._can_run()
         if not sequence_numbers:
             raise ValueError("At least one sequence number must be specified.")
         await self._open()
@@ -457,6 +460,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
                 :dedent: 4
                 :caption: Peek messages in the queue.
         """
+        self._can_run()
         if not sequence_number:
             sequence_number = self._last_received_sequenced_number or 1
         if int(message_count) < 1:
