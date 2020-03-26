@@ -62,6 +62,10 @@ def print_message(message):
         pass
     _logger.debug("Enqueued time: {}".format(message.enqueued_time))
 
+
+def sleep_until_expired(locked_entity):
+    time.sleep(max(0,(locked_entity.locked_until - datetime.now()).total_seconds() + 1))
+
 # A note regarding live_test_only.
 # Old servicebus tests were not written to work on both stubs and live entities.
 # This disables those tests for non-live scenarios, and should be removed as tests
@@ -836,7 +840,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 # potentially as a side effect of network delays/sleeps/"typical distributed systems nonsense."  In a perfect world we wouldn't have a magic number/network hop but this allows
                 # a slightly more robust test in absence of that.
                 assert (messages[2].locked_until - datetime.now()) <= timedelta(seconds=31)
-                time.sleep((messages[2].locked_until - datetime.now()).total_seconds())
+                sleep_until_expired(messages[2])
                 with pytest.raises(MessageLockExpired):
                     messages[2].complete()
     
@@ -869,7 +873,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     print("Finished first sleep", message.locked_until)
                     assert not message.expired
                     time.sleep(25) #Time out the auto-renewer
-                    time.sleep((message.locked_until - datetime.now()).total_seconds() + 1) # Now time out the message.
+                    sleep_until_expired(message) # Now time out the message.
                     print("Finished second sleep", message.locked_until, datetime.now())
                     assert message.expired
                     try:
