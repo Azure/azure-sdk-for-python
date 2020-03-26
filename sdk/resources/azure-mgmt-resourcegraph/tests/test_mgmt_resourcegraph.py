@@ -15,10 +15,21 @@ import six
 
 class MgmtResourceGraphTest(AzureMgmtTestCase):
 
+    @property
+    def settings(self):
+        if self.is_live:
+            if self._real_settings:
+                return self._real_settings
+            else:
+                raise AzureTestError('Need a mgmt_settings_real.py file to run tests live.')
+        else:
+            return self._fake_settings
+
     def setUp(self):
         super(MgmtResourceGraphTest, self).setUp()
         self.resourcegraph_client = self.create_basic_client(
-            ResourceGraphClient
+            ResourceGraphClient,
+            subscription_id=self.settings.SUBSCRIPTION_ID
         )
 
     def test_resources_basic_query(self):
