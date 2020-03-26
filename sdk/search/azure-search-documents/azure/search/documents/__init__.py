@@ -28,8 +28,6 @@ from ._version import VERSION
 
 __version__ = VERSION
 
-from ._credential import SearchApiKeyCredential
-
 from ._index import (
     AutocompleteQuery,
     IndexAction,
@@ -49,7 +47,6 @@ __all__ = (
     "IndexAction",
     "IndexDocumentsBatch",
     "IndexingResult",
-    "SearchApiKeyCredential",
     "SearchIndexClient",
     "SearchItemPaged",
     "SearchQuery",

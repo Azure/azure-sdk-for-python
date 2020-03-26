@@ -10,9 +10,10 @@ try:
 except ImportError:
     import mock
 
-from azure.search.documents import SearchApiKeyCredential, SearchServiceClient
+from azure.core.credentials import AzureKeyCredential
+from azure.search.documents import SearchServiceClient
 
-CREDENTIAL = SearchApiKeyCredential(api_key="test_api_key")
+CREDENTIAL = AzureKeyCredential(key="test_api_key")
 
 
 class TestSearchServiceClient(object):
@@ -24,13 +25,13 @@ class TestSearchServiceClient(object):
         }
 
     def test_credential_roll(self):
-        credential = SearchApiKeyCredential(api_key="old_api_key")
+        credential = AzureKeyCredential(key="old_api_key")
         client = SearchServiceClient("endpoint", credential)
         assert client._headers == {
             "api-key": "old_api_key",
             "Accept": "application/json;odata.metadata=minimal",
         }
-        credential.update_key("new_api_key")
+        credential.update("new_api_key")
         assert client._headers == {
             "api-key": "new_api_key",
             "Accept": "application/json;odata.metadata=minimal",
