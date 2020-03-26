@@ -56,7 +56,7 @@ _SYS_PROP_KEYS_TO_MSG_PROPERTIES = (
     (PROP_MESSAGE_ID, "message_id"),
     (PROP_USER_ID, "user_id"),
     (PROP_TO, "to"),
-    (PROP_SUBJECT,"subject"),
+    (PROP_SUBJECT, "subject"),
     (PROP_REPLY_TO, "reply_to"),
     (PROP_CORRELATION_ID, "correlation_id"),
     (PROP_CONTENT_TYPE, "content_type"),
