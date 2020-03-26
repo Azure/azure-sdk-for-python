@@ -6,7 +6,7 @@
 
 import functools
 from typing import (  # pylint: disable=unused-import
-    Union, Optional, Any, Iterable, Dict, List,
+    Union, Optional, Any, Iterable, Dict, List, cast,
     TYPE_CHECKING
 )
 
@@ -217,9 +217,12 @@ class BlobServiceClient(StorageAccountHostsMixin):
                 :caption: Getting account information for the blob service.
         """
         try:
-            return self._client.service.get_account_info(cls=return_response_headers, **kwargs) # type: ignore
+            return cast(Dict,
+                self._client.service.get_account_info(cls=return_response_headers, **kwargs)
+            )
         except StorageErrorException as error:
             process_storage_error(error)
+        return cast(Dict, None)
 
     @distributed_trace
     def get_service_stats(self, **kwargs):
@@ -258,11 +261,12 @@ class BlobServiceClient(StorageAccountHostsMixin):
         """
         timeout = kwargs.pop('timeout', None)
         try:
-            stats = self._client.service.get_statistics( # type: ignore
+            stats = self._client.service.get_statistics(
                 timeout=timeout, use_location=LocationMode.SECONDARY, **kwargs)
-            return service_stats_deserialize(stats)
+            return cast(Dict, service_stats_deserialize(stats))
         except StorageErrorException as error:
             process_storage_error(error)
+        return cast(Dict, None)
 
     @distributed_trace
     def get_service_properties(self, **kwargs):
@@ -288,9 +292,10 @@ class BlobServiceClient(StorageAccountHostsMixin):
         timeout = kwargs.pop('timeout', None)
         try:
             service_props = self._client.service.get_properties(timeout=timeout, **kwargs)
-            return service_properties_deserialize(service_props)
+            return cast(Dict, service_properties_deserialize(service_props))
         except StorageErrorException as error:
             process_storage_error(error)
+        return cast(Dict, None)
 
     @distributed_trace
     def set_service_properties(
@@ -547,13 +552,13 @@ class BlobServiceClient(StorageAccountHostsMixin):
                 :caption: Getting the container client to interact with a specific container.
         """
         try:
-            container_name = container.name
+            container_name = cast(str, container.name)
         except AttributeError:
             container_name = container
         _pipeline = Pipeline(
             transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
             policies=self._pipeline._impl_policies # pylint: disable = protected-access
-        )
+        ) # type: Pipeline
         return ContainerClient(
             self.url, container_name=container_name,
             credential=self.credential, api_version=self.api_version, _configuration=self._config,
@@ -596,18 +601,18 @@ class BlobServiceClient(StorageAccountHostsMixin):
                 :caption: Getting the blob client to interact with a specific blob.
         """
         try:
-            container_name = container.name
+            container_name = cast(str, container.name)
         except AttributeError:
             container_name = container
         try:
-            blob_name = blob.name
+            blob_name = cast(str, blob.name)
         except AttributeError:
             blob_name = blob
         _pipeline = Pipeline(
             transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
             policies=self._pipeline._impl_policies # pylint: disable = protected-access
-        )
-        return BlobClient( # type: ignore
+        ) # type: Pipeline
+        return BlobClient(
             self.url, container_name=container_name, blob_name=blob_name, snapshot=snapshot,
             credential=self.credential, api_version=self.api_version, _configuration=self._config,
             _pipeline=_pipeline, _location_mode=self._location_mode, _hosts=self._hosts,

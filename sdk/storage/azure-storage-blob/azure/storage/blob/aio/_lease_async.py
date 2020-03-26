@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 from typing import (  # pylint: disable=unused-import
-    Union, Optional, Any, IO, Iterable, AnyStr, Dict, List, Tuple,
+    Union, Optional, Any, IO, Iterable, AnyStr, Dict, List, Tuple, cast,
     TypeVar, TYPE_CHECKING
 )
 
@@ -106,9 +106,9 @@ class BlobLeaseClient(LeaseClientBase):
                 **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
-        self.id = response.get('lease_id')  # type: str
-        self.last_modified = response.get('last_modified')   # type: datetime
-        self.etag = kwargs.get('etag')  # type: str
+        self.id = response.get('lease_id')
+        self.last_modified = response.get('last_modified')
+        self.etag = kwargs.get('etag')
 
     @distributed_trace_async
     async def renew(self, **kwargs):
@@ -152,9 +152,9 @@ class BlobLeaseClient(LeaseClientBase):
                 **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
-        self.etag = response.get('etag')  # type: str
-        self.id = response.get('lease_id')  # type: str
-        self.last_modified = response.get('last_modified')   # type: datetime
+        self.etag = response.get('etag')
+        self.id = response.get('lease_id')
+        self.last_modified = response.get('last_modified')
 
     @distributed_trace_async
     async def release(self, **kwargs):
@@ -196,9 +196,9 @@ class BlobLeaseClient(LeaseClientBase):
                 **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
-        self.etag = response.get('etag')  # type: str
-        self.id = response.get('lease_id')  # type: str
-        self.last_modified = response.get('last_modified')   # type: datetime
+        self.etag = response.get('etag')
+        self.id = response.get('lease_id')
+        self.last_modified = response.get('last_modified')
 
     @distributed_trace_async
     async def change(self, proposed_lease_id, **kwargs):
@@ -240,9 +240,9 @@ class BlobLeaseClient(LeaseClientBase):
                 **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
-        self.etag = response.get('etag')  # type: str
-        self.id = response.get('lease_id')  # type: str
-        self.last_modified = response.get('last_modified')   # type: datetime
+        self.etag = response.get('etag')
+        self.id = response.get('lease_id')
+        self.last_modified = response.get('last_modified')
 
     @distributed_trace_async
     async def break_lease(self, lease_break_period=None, **kwargs):
@@ -293,4 +293,4 @@ class BlobLeaseClient(LeaseClientBase):
                 **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
-        return response.get('lease_time') # type: ignore
+        return cast(int, response.get('lease_time'))

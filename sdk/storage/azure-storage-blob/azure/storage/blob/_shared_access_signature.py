@@ -349,7 +349,7 @@ def generate_account_sas(
         start=start,
         ip=ip,
         **kwargs
-    ) # type: ignore
+    )
 
 
 def generate_container_sas(

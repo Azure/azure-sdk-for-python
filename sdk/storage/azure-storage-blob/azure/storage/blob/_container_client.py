@@ -7,7 +7,7 @@
 
 import functools
 from typing import (  # pylint: disable=unused-import
-    Union, Optional, Any, Iterable, AnyStr, Dict, List, Tuple, IO, Iterator,
+    Union, Optional, Any, Iterable, AnyStr, Dict, List, Tuple, IO, Iterator, cast,
     TYPE_CHECKING
 )
 
@@ -49,6 +49,7 @@ if TYPE_CHECKING:
     from azure.core.pipeline.transport import HttpTransport, HttpResponse  # pylint: disable=ungrouped-imports
     from azure.core.pipeline.policies import HTTPPolicy # pylint: disable=ungrouped-imports
     from datetime import datetime
+    from ._download import StorageStreamDownloader
     from ._models import (  # pylint: disable=unused-import
         PublicAccess,
         AccessPolicy,
@@ -277,7 +278,7 @@ class ContainerClient(StorageAccountHostsMixin):
         headers.update(add_metadata_headers(metadata)) # type: ignore
         container_cpk_scope_info = get_container_cpk_scope_info(kwargs)
         try:
-            return self._client.container.create( # type: ignore
+            self._client.container.create(
                 timeout=timeout,
                 access=public_access,
                 container_cpk_scope_info=container_cpk_scope_info,
@@ -411,9 +412,10 @@ class ContainerClient(StorageAccountHostsMixin):
         :rtype: dict(str, str)
         """
         try:
-            return self._client.container.get_account_info(cls=return_response_headers, **kwargs) # type: ignore
+            ret_val = self._client.container.get_account_info(cls=return_response_headers, **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
+        return cast(Dict, ret_val)
 
     @distributed_trace
     def get_container_properties(self, **kwargs):
@@ -508,13 +510,13 @@ class ContainerClient(StorageAccountHostsMixin):
         mod_conditions = get_modify_conditions(kwargs)
         timeout = kwargs.pop('timeout', None)
         try:
-            return self._client.container.set_metadata( # type: ignore
+            return cast(Dict, self._client.container.set_metadata(
                 timeout=timeout,
                 lease_access_conditions=access_conditions,
                 modified_access_conditions=mod_conditions,
                 cls=return_response_headers,
                 headers=headers,
-                **kwargs)
+                **kwargs))
         except StorageErrorException as error:
             process_storage_error(error)
 
@@ -621,7 +623,7 @@ class ContainerClient(StorageAccountHostsMixin):
         access_conditions = get_access_conditions(lease)
         timeout = kwargs.pop('timeout', None)
         try:
-            return self._client.container.set_access_policy(
+            ret_val = self._client.container.set_access_policy(
                 container_acl=signed_identifiers or None,
                 timeout=timeout,
                 access=public_access,
@@ -631,6 +633,7 @@ class ContainerClient(StorageAccountHostsMixin):
                 **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
+        return cast(Dict, ret_val)
 
     @distributed_trace
     def list_blobs(self, name_starts_with=None, include=None, **kwargs):

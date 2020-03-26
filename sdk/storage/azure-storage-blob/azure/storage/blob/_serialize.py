@@ -5,8 +5,8 @@
 # --------------------------------------------------------------------------
 # pylint: disable=no-self-use
 
-from azure.core import MatchConditions
 from typing import Any, Dict, Tuple, Optional
+from azure.core import MatchConditions
 from ._models import ContainerEncryptionScope
 from ._generated.models import (
     ModifiedAccessConditions,

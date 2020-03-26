@@ -289,10 +289,10 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :rtype: dict(str, str)
         """
         try:
-            return self._client.blob.get_account_info(cls=return_response_headers, **kwargs) # type: ignore
+            ret_val = self._client.blob.get_account_info(cls=return_response_headers, **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
-        return cast(Dict, None)
+        return cast(Dict, ret_val)
 
     def _upload_blob_options(  # pylint:disable=too-many-statements
             self, data,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
@@ -859,7 +859,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         """
         options = self._set_http_headers_options(content_settings=content_settings, **kwargs)
         try:
-            return self._client.blob.set_http_headers(**options) # type: ignore
+            self._client.blob.set_http_headers(**options)
         except StorageErrorException as error:
             process_storage_error(error)
 
@@ -939,10 +939,10 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         """
         options = self._set_blob_metadata_options(metadata=metadata, **kwargs)
         try:
-            return self._client.blob.set_metadata(**options)  # type: ignore
+            ret_val = self._client.blob.set_metadata(**options)
         except StorageErrorException as error:
             process_storage_error(error)
-        return cast(Dict, None)
+        return cast(Dict, ret_val)
 
     def _create_page_blob_options(  # type: ignore
             self, size,  # type: int
@@ -1073,7 +1073,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             premium_page_blob_tier=premium_page_blob_tier,
             **kwargs)
         try:
-            return self._client.page_blob.create(**options) # type: ignore
+            return cast(Dict, self._client.page_blob.create(**options))
         except StorageErrorException as error:
             process_storage_error(error)
 
@@ -1173,10 +1173,10 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             metadata=metadata,
             **kwargs)
         try:
-            return self._client.append_blob.create(**options) # type: ignore
+            ret_val = self._client.append_blob.create(**options)
         except StorageErrorException as error:
             process_storage_error(error)
-        return cast(Dict, None)
+        return cast(Dict, ret_val)
 
     def _create_snapshot_options(self, metadata=None, **kwargs):
         # type: (Optional[Dict[str, str]], **Any) -> Dict[str, Any]
@@ -1270,10 +1270,10 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         """
         options = self._create_snapshot_options(metadata=metadata, **kwargs)
         try:
-            return self._client.blob.create_snapshot(**options) # type: ignore
+            ret_val = self._client.blob.create_snapshot(**options)
         except StorageErrorException as error:
             process_storage_error(error)
-        return cast(Dict, None)
+        return cast(Dict, ret_val)
 
     def _start_copy_from_url_options(self, source_url, metadata=None, incremental_copy=False, **kwargs):
         # type: (str, Optional[Dict[str, str]], bool, **Any) -> Dict[str, Any]
@@ -1447,11 +1447,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             **kwargs)
         try:
             if incremental_copy:
-                return cast(Dict, self._client.page_blob.copy_incremental(**options))
-            return cast(Dict, self._client.blob.start_copy_from_url(**options))
+                ret_val = self._client.page_blob.copy_incremental(**options)
+            ret_val= self._client.blob.start_copy_from_url(**options)
         except StorageErrorException as error:
             process_storage_error(error)
-        return cast(Dict, None)
+        return cast(Dict, ret_val)
 
     def _abort_copy_options(self, copy_id, **kwargs):
         # type: (Union[str, Dict[str, Any], BlobProperties], **Any) -> Dict[str, Any]
@@ -1689,10 +1689,10 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             length=length,
             **kwargs)
         try:
-            return self._client.block_blob.stage_block(**options)
+            ret_val = self._client.block_blob.stage_block(**options)
         except StorageErrorException as error:
             process_storage_error(error)
-        return cast(Dict, None)
+        return cast(Dict, ret_val)
 
     def _stage_block_from_url_options(
             self, block_id,  # type: str
@@ -1791,10 +1791,10 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             source_content_md5=source_content_md5,
             **kwargs)
         try:
-            return cast(Dict, self._client.block_blob.stage_block_from_url(**options))
+            ret_val = self._client.block_blob.stage_block_from_url(**options)
         except StorageErrorException as error:
             process_storage_error(error)
-        return cast(Dict, None)
+        return cast(Dict, ret_val)
 
     def _get_block_list_result(self, blocks):
         # type: (BlockList) -> Tuple[List[BlobBlock], List[BlobBlock]]
@@ -1974,7 +1974,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             metadata=metadata,
             **kwargs)
         try:
-            return self._client.block_blob.commit_block_list(**options) # type: ignore
+            return cast(Dict, self._client.block_blob.commit_block_list(**options))
         except StorageErrorException as error:
             process_storage_error(error)
 
@@ -2244,7 +2244,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         options = self._set_sequence_number_options(
             sequence_number_action, sequence_number=sequence_number, **kwargs)
         try:
-            return self._client.page_blob.update_sequence_number(**options) # type: ignore
+            return cast(Dict, self._client.page_blob.update_sequence_number(**options))
         except StorageErrorException as error:
             process_storage_error(error)
 
@@ -2315,7 +2315,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         """
         options = self._resize_blob_options(size, **kwargs)
         try:
-            return self._client.page_blob.resize(**options) # type: ignore
+            return cast(Dict, self._client.page_blob.resize(**options))
         except StorageErrorException as error:
             process_storage_error(error)
 
@@ -2454,7 +2454,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             length=length,
             **kwargs)
         try:
-            return self._client.page_blob.upload_pages(**options) # type: ignore
+            return cast(Dict, self._client.page_blob.upload_pages(**options))
         except StorageErrorException as error:
             process_storage_error(error)
 
@@ -2618,7 +2618,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             **kwargs
         )
         try:
-            return self._client.page_blob.upload_pages_from_url(**options)  # type: ignore
+            return cast(Dict, self._client.page_blob.upload_pages_from_url(**options))
         except StorageErrorException as error:
             process_storage_error(error)
 
@@ -2717,7 +2717,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         """
         options = self._clear_page_options(offset, length, **kwargs)
         try:
-            return self._client.page_blob.clear_pages(**options)  # type: ignore
+            return cast(Dict, self._client.page_blob.clear_pages(**options))
         except StorageErrorException as error:
             process_storage_error(error)
 
@@ -2855,7 +2855,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             **kwargs
         )
         try:
-            return self._client.append_blob.append_block(**options) # type: ignore
+            return cast(Dict, self._client.append_blob.append_block(**options))
         except StorageErrorException as error:
             process_storage_error(error)
 
@@ -3010,6 +3010,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             **kwargs
         )
         try:
-            return self._client.append_blob.append_block_from_url(**options) # type: ignore
+            return cast(Dict, self._client.append_blob.append_block_from_url(**options))
         except StorageErrorException as error:
             process_storage_error(error)
