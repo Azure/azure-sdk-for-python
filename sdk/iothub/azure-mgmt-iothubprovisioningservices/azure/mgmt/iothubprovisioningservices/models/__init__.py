@@ -10,56 +10,56 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .error_messsage_py3 import ErrorMesssage
-    from .async_operation_result_py3 import AsyncOperationResult
-    from .certificate_properties_py3 import CertificateProperties
-    from .certificate_response_py3 import CertificateResponse
-    from .certificate_list_description_py3 import CertificateListDescription
-    from .certificate_body_description_py3 import CertificateBodyDescription
-    from .iot_dps_sku_info_py3 import IotDpsSkuInfo
-    from .iot_hub_definition_description_py3 import IotHubDefinitionDescription
-    from .shared_access_signature_authorization_rule_access_rights_description_py3 import SharedAccessSignatureAuthorizationRuleAccessRightsDescription
-    from .iot_dps_properties_description_py3 import IotDpsPropertiesDescription
-    from .provisioning_service_description_py3 import ProvisioningServiceDescription
-    from .resource_py3 import Resource
-    from .operation_display_py3 import OperationDisplay
-    from .operation_py3 import Operation
-    from .error_details_py3 import ErrorDetails, ErrorDetailsException
-    from .iot_dps_sku_definition_py3 import IotDpsSkuDefinition
-    from .operation_inputs_py3 import OperationInputs
-    from .name_availability_info_py3 import NameAvailabilityInfo
-    from .tags_resource_py3 import TagsResource
-    from .verification_code_response_properties_py3 import VerificationCodeResponseProperties
-    from .verification_code_response_py3 import VerificationCodeResponse
-    from .verification_code_request_py3 import VerificationCodeRequest
+    from ._models_py3 import AsyncOperationResult
+    from ._models_py3 import CertificateBodyDescription
+    from ._models_py3 import CertificateListDescription
+    from ._models_py3 import CertificateProperties
+    from ._models_py3 import CertificateResponse
+    from ._models_py3 import ErrorDetails, ErrorDetailsException
+    from ._models_py3 import ErrorMesssage
+    from ._models_py3 import IotDpsPropertiesDescription
+    from ._models_py3 import IotDpsSkuDefinition
+    from ._models_py3 import IotDpsSkuInfo
+    from ._models_py3 import IotHubDefinitionDescription
+    from ._models_py3 import NameAvailabilityInfo
+    from ._models_py3 import Operation
+    from ._models_py3 import OperationDisplay
+    from ._models_py3 import OperationInputs
+    from ._models_py3 import ProvisioningServiceDescription
+    from ._models_py3 import Resource
+    from ._models_py3 import SharedAccessSignatureAuthorizationRuleAccessRightsDescription
+    from ._models_py3 import TagsResource
+    from ._models_py3 import VerificationCodeRequest
+    from ._models_py3 import VerificationCodeResponse
+    from ._models_py3 import VerificationCodeResponseProperties
 except (SyntaxError, ImportError):
-    from .error_messsage import ErrorMesssage
-    from .async_operation_result import AsyncOperationResult
-    from .certificate_properties import CertificateProperties
-    from .certificate_response import CertificateResponse
-    from .certificate_list_description import CertificateListDescription
-    from .certificate_body_description import CertificateBodyDescription
-    from .iot_dps_sku_info import IotDpsSkuInfo
-    from .iot_hub_definition_description import IotHubDefinitionDescription
-    from .shared_access_signature_authorization_rule_access_rights_description import SharedAccessSignatureAuthorizationRuleAccessRightsDescription
-    from .iot_dps_properties_description import IotDpsPropertiesDescription
-    from .provisioning_service_description import ProvisioningServiceDescription
-    from .resource import Resource
-    from .operation_display import OperationDisplay
-    from .operation import Operation
-    from .error_details import ErrorDetails, ErrorDetailsException
-    from .iot_dps_sku_definition import IotDpsSkuDefinition
-    from .operation_inputs import OperationInputs
-    from .name_availability_info import NameAvailabilityInfo
-    from .tags_resource import TagsResource
-    from .verification_code_response_properties import VerificationCodeResponseProperties
-    from .verification_code_response import VerificationCodeResponse
-    from .verification_code_request import VerificationCodeRequest
-from .operation_paged import OperationPaged
-from .provisioning_service_description_paged import ProvisioningServiceDescriptionPaged
-from .iot_dps_sku_definition_paged import IotDpsSkuDefinitionPaged
-from .shared_access_signature_authorization_rule_access_rights_description_paged import SharedAccessSignatureAuthorizationRuleAccessRightsDescriptionPaged
-from .iot_dps_client_enums import (
+    from ._models import AsyncOperationResult
+    from ._models import CertificateBodyDescription
+    from ._models import CertificateListDescription
+    from ._models import CertificateProperties
+    from ._models import CertificateResponse
+    from ._models import ErrorDetails, ErrorDetailsException
+    from ._models import ErrorMesssage
+    from ._models import IotDpsPropertiesDescription
+    from ._models import IotDpsSkuDefinition
+    from ._models import IotDpsSkuInfo
+    from ._models import IotHubDefinitionDescription
+    from ._models import NameAvailabilityInfo
+    from ._models import Operation
+    from ._models import OperationDisplay
+    from ._models import OperationInputs
+    from ._models import ProvisioningServiceDescription
+    from ._models import Resource
+    from ._models import SharedAccessSignatureAuthorizationRuleAccessRightsDescription
+    from ._models import TagsResource
+    from ._models import VerificationCodeRequest
+    from ._models import VerificationCodeResponse
+    from ._models import VerificationCodeResponseProperties
+from ._paged_models import IotDpsSkuDefinitionPaged
+from ._paged_models import OperationPaged
+from ._paged_models import ProvisioningServiceDescriptionPaged
+from ._paged_models import SharedAccessSignatureAuthorizationRuleAccessRightsDescriptionPaged
+from ._iot_dps_client_enums import (
     IotDpsSku,
     State,
     AllocationPolicy,
@@ -69,28 +69,28 @@ from .iot_dps_client_enums import (
 )
 
 __all__ = [
-    'ErrorMesssage',
     'AsyncOperationResult',
+    'CertificateBodyDescription',
+    'CertificateListDescription',
     'CertificateProperties',
     'CertificateResponse',
-    'CertificateListDescription',
-    'CertificateBodyDescription',
+    'ErrorDetails', 'ErrorDetailsException',
+    'ErrorMesssage',
+    'IotDpsPropertiesDescription',
+    'IotDpsSkuDefinition',
     'IotDpsSkuInfo',
     'IotHubDefinitionDescription',
-    'SharedAccessSignatureAuthorizationRuleAccessRightsDescription',
-    'IotDpsPropertiesDescription',
+    'NameAvailabilityInfo',
+    'Operation',
+    'OperationDisplay',
+    'OperationInputs',
     'ProvisioningServiceDescription',
     'Resource',
-    'OperationDisplay',
-    'Operation',
-    'ErrorDetails', 'ErrorDetailsException',
-    'IotDpsSkuDefinition',
-    'OperationInputs',
-    'NameAvailabilityInfo',
+    'SharedAccessSignatureAuthorizationRuleAccessRightsDescription',
     'TagsResource',
-    'VerificationCodeResponseProperties',
-    'VerificationCodeResponse',
     'VerificationCodeRequest',
+    'VerificationCodeResponse',
+    'VerificationCodeResponseProperties',
     'OperationPaged',
     'ProvisioningServiceDescriptionPaged',
     'IotDpsSkuDefinitionPaged',

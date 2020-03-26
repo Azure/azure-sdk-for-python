@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .iot_dps_client import IotDpsClient
-from .version import VERSION
+from ._configuration import IotDpsClientConfiguration
+from ._iot_dps_client import IotDpsClient
+__all__ = ['IotDpsClient', 'IotDpsClientConfiguration']
 
-__all__ = ['IotDpsClient']
+from .version import VERSION
 
 __version__ = VERSION
 

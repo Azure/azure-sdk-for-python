@@ -9,49 +9,17 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
-from msrestazure import AzureConfiguration
-from .version import VERSION
-from .operations.operations import Operations
-from .operations.dps_certificate_operations import DpsCertificateOperations
-from .operations.iot_dps_resource_operations import IotDpsResourceOperations
+
+from ._configuration import IotDpsClientConfiguration
+from .operations import Operations
+from .operations import DpsCertificateOperations
+from .operations import IotDpsResourceOperations
 from . import models
 
 
-class IotDpsClientConfiguration(AzureConfiguration):
-    """Configuration for IotDpsClient
-    Note that all parameters used to create this instance are saved as instance
-    attributes.
-
-    :param credentials: Credentials needed for the client to connect to Azure.
-    :type credentials: :mod:`A msrestazure Credentials
-     object<msrestazure.azure_active_directory>`
-    :param subscription_id: The subscription identifier.
-    :type subscription_id: str
-    :param str base_url: Service URL
-    """
-
-    def __init__(
-            self, credentials, subscription_id, base_url=None):
-
-        if credentials is None:
-            raise ValueError("Parameter 'credentials' must not be None.")
-        if subscription_id is None:
-            raise ValueError("Parameter 'subscription_id' must not be None.")
-        if not base_url:
-            base_url = 'https://management.azure.com'
-
-        super(IotDpsClientConfiguration, self).__init__(base_url)
-
-        self.add_user_agent('azure-mgmt-iothubprovisioningservices/{}'.format(VERSION))
-        self.add_user_agent('Azure-SDK-For-Python')
-
-        self.credentials = credentials
-        self.subscription_id = subscription_id
-
-
-class IotDpsClient(object):
+class IotDpsClient(SDKClient):
     """API for using the Azure IoT Hub Device Provisioning Service features.
 
     :ivar config: Configuration for client.
@@ -76,7 +44,7 @@ class IotDpsClient(object):
             self, credentials, subscription_id, base_url=None):
 
         self.config = IotDpsClientConfiguration(credentials, subscription_id, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(IotDpsClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = '2018-01-22'
