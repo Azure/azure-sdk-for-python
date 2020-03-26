@@ -920,7 +920,6 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 assert count == 1
     
 
-    @pytest.mark.skip(reason="Creates bad crash.")
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -940,11 +939,8 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 messages = receiver.receive(timeout=10)
                 assert len(messages) == 1
     
-            messages[0].complete()
-            #TODO: BUG: BAD CRASH
-
-            #with pytest.raises(MessageAlreadySettled):
-            #    messages[0].complete()
+            with pytest.raises(ValueError): #TODO: Exception: better error?
+                messages[0].complete()
     
 
     @pytest.mark.liveTest
