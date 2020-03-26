@@ -27,8 +27,8 @@ import asyncio
 
 class DetectLanguageSampleAsync(object):
 
-    endpoint = os.getenv("AZURE_TEXT_ANALYTICS_ENDPOINT")
-    key = os.getenv("AZURE_TEXT_ANALYTICS_KEY")
+    endpoint = os.environ["AZURE_TEXT_ANALYTICS_ENDPOINT"]
+    key = os.environ["AZURE_TEXT_ANALYTICS_KEY"]
 
     async def detect_language_async(self):
         # [START batch_detect_language_async]

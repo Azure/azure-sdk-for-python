@@ -27,8 +27,8 @@ import logging
 _LOGGER = logging.getLogger(__name__)
 
 class GetDetailedDiagnosticsInformationSample(object):
-    endpoint = os.getenv("AZURE_TEXT_ANALYTICS_ENDPOINT")
-    key = os.getenv("AZURE_TEXT_ANALYTICS_KEY")
+    endpoint = os.environ["AZURE_TEXT_ANALYTICS_ENDPOINT"]
+    key = os.environ["AZURE_TEXT_ANALYTICS_KEY"]
 
     def get_detailed_diagnostics_information(self):
         from azure.core.credentials import AzureKeyCredential
