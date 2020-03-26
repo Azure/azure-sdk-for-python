@@ -218,6 +218,7 @@ try:
     from ._models_py3 import ExecutePipelineActivity
     from ._models_py3 import ExecuteSSISPackageActivity
     from ._models_py3 import ExecutionActivity
+    from ._models_py3 import ExportSettings
     from ._models_py3 import ExposureControlRequest
     from ._models_py3 import ExposureControlResponse
     from ._models_py3 import Expression
@@ -288,6 +289,7 @@ try:
     from ._models_py3 import ImpalaLinkedService
     from ._models_py3 import ImpalaObjectDataset
     from ._models_py3 import ImpalaSource
+    from ._models_py3 import ImportSettings
     from ._models_py3 import InformixLinkedService
     from ._models_py3 import InformixSink
     from ._models_py3 import InformixSource
@@ -394,6 +396,7 @@ try:
     from ._models_py3 import OrcFormat
     from ._models_py3 import OrcSink
     from ._models_py3 import OrcSource
+    from ._models_py3 import PackageStore
     from ._models_py3 import ParameterSpecification
     from ._models_py3 import ParquetDataset
     from ._models_py3 import ParquetFormat
@@ -488,10 +491,19 @@ try:
     from ._models_py3 import SftpReadSettings
     from ._models_py3 import SftpServerLinkedService
     from ._models_py3 import SftpWriteSettings
+    from ._models_py3 import SharePointOnlineListLinkedService
+    from ._models_py3 import SharePointOnlineListResourceDataset
+    from ._models_py3 import SharePointOnlineListSource
     from ._models_py3 import ShopifyLinkedService
     from ._models_py3 import ShopifyObjectDataset
     from ._models_py3 import ShopifySource
     from ._models_py3 import SkipErrorFile
+    from ._models_py3 import SnowflakeDataset
+    from ._models_py3 import SnowflakeExportCopyCommand
+    from ._models_py3 import SnowflakeImportCopyCommand
+    from ._models_py3 import SnowflakeLinkedService
+    from ._models_py3 import SnowflakeSink
+    from ._models_py3 import SnowflakeSource
     from ._models_py3 import SparkLinkedService
     from ._models_py3 import SparkObjectDataset
     from ._models_py3 import SparkSource
@@ -792,6 +804,7 @@ except (SyntaxError, ImportError):
     from ._models import ExecutePipelineActivity
     from ._models import ExecuteSSISPackageActivity
     from ._models import ExecutionActivity
+    from ._models import ExportSettings
     from ._models import ExposureControlRequest
     from ._models import ExposureControlResponse
     from ._models import Expression
@@ -862,6 +875,7 @@ except (SyntaxError, ImportError):
     from ._models import ImpalaLinkedService
     from ._models import ImpalaObjectDataset
     from ._models import ImpalaSource
+    from ._models import ImportSettings
     from ._models import InformixLinkedService
     from ._models import InformixSink
     from ._models import InformixSource
@@ -968,6 +982,7 @@ except (SyntaxError, ImportError):
     from ._models import OrcFormat
     from ._models import OrcSink
     from ._models import OrcSource
+    from ._models import PackageStore
     from ._models import ParameterSpecification
     from ._models import ParquetDataset
     from ._models import ParquetFormat
@@ -1062,10 +1077,19 @@ except (SyntaxError, ImportError):
     from ._models import SftpReadSettings
     from ._models import SftpServerLinkedService
     from ._models import SftpWriteSettings
+    from ._models import SharePointOnlineListLinkedService
+    from ._models import SharePointOnlineListResourceDataset
+    from ._models import SharePointOnlineListSource
     from ._models import ShopifyLinkedService
     from ._models import ShopifyObjectDataset
     from ._models import ShopifySource
     from ._models import SkipErrorFile
+    from ._models import SnowflakeDataset
+    from ._models import SnowflakeExportCopyCommand
+    from ._models import SnowflakeImportCopyCommand
+    from ._models import SnowflakeLinkedService
+    from ._models import SnowflakeSink
+    from ._models import SnowflakeSource
     from ._models import SparkLinkedService
     from ._models import SparkObjectDataset
     from ._models import SparkSource
@@ -1454,6 +1478,7 @@ __all__ = [
     'ExecutePipelineActivity',
     'ExecuteSSISPackageActivity',
     'ExecutionActivity',
+    'ExportSettings',
     'ExposureControlRequest',
     'ExposureControlResponse',
     'Expression',
@@ -1524,6 +1549,7 @@ __all__ = [
     'ImpalaLinkedService',
     'ImpalaObjectDataset',
     'ImpalaSource',
+    'ImportSettings',
     'InformixLinkedService',
     'InformixSink',
     'InformixSource',
@@ -1630,6 +1656,7 @@ __all__ = [
     'OrcFormat',
     'OrcSink',
     'OrcSource',
+    'PackageStore',
     'ParameterSpecification',
     'ParquetDataset',
     'ParquetFormat',
@@ -1724,10 +1751,19 @@ __all__ = [
     'SftpReadSettings',
     'SftpServerLinkedService',
     'SftpWriteSettings',
+    'SharePointOnlineListLinkedService',
+    'SharePointOnlineListResourceDataset',
+    'SharePointOnlineListSource',
     'ShopifyLinkedService',
     'ShopifyObjectDataset',
     'ShopifySource',
     'SkipErrorFile',
+    'SnowflakeDataset',
+    'SnowflakeExportCopyCommand',
+    'SnowflakeImportCopyCommand',
+    'SnowflakeLinkedService',
+    'SnowflakeSink',
+    'SnowflakeSource',
     'SparkLinkedService',
     'SparkObjectDataset',
     'SparkSource',
