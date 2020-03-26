@@ -338,11 +338,11 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
         response = text_analytics.recognize_linked_entities(docs)
         self.assertIsNotNone(response)
 
-        credential.update_key("xxx")  # Make authentication fail
+        credential.update("xxx")  # Make authentication fail
         with self.assertRaises(ClientAuthenticationError):
             response = text_analytics.recognize_linked_entities(docs)
 
-        credential.update_key(text_analytics_account_key)  # Authenticate successfully again
+        credential.update(text_analytics_account_key)  # Authenticate successfully again
         response = text_analytics.recognize_linked_entities(docs)
         self.assertIsNotNone(response)
 
