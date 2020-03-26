@@ -26,8 +26,8 @@ import asyncio
 
 class ExtractKeyPhrasesSampleAsync(object):
 
-    endpoint = os.getenv("AZURE_TEXT_ANALYTICS_ENDPOINT")
-    key = os.getenv("AZURE_TEXT_ANALYTICS_KEY")
+    endpoint = os.environ["AZURE_TEXT_ANALYTICS_ENDPOINT"]
+    key = os.environ["AZURE_TEXT_ANALYTICS_KEY"]
 
     async def extract_key_phrases_async(self):
         # [START batch_extract_key_phrases_async]

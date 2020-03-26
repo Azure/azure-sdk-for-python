@@ -41,8 +41,8 @@ class AuthenticationSampleAsync(object):
         # [START create_ta_client_with_key_async]
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.textanalytics.aio import TextAnalyticsClient
-        endpoint = os.getenv("AZURE_TEXT_ANALYTICS_ENDPOINT")
-        key = os.getenv("AZURE_TEXT_ANALYTICS_KEY")
+        endpoint = os.environ["AZURE_TEXT_ANALYTICS_ENDPOINT"]
+        key = os.environ["AZURE_TEXT_ANALYTICS_KEY"]
 
         text_analytics_client = TextAnalyticsClient(endpoint, AzureKeyCredential(key))
         # [END create_ta_client_with_key_async]
@@ -63,7 +63,7 @@ class AuthenticationSampleAsync(object):
         from azure.ai.textanalytics.aio import TextAnalyticsClient
         from azure.identity.aio import DefaultAzureCredential
 
-        endpoint = os.getenv("AZURE_TEXT_ANALYTICS_ENDPOINT")
+        endpoint = os.environ["AZURE_TEXT_ANALYTICS_ENDPOINT"]
         credential = DefaultAzureCredential()
 
         text_analytics_client = TextAnalyticsClient(endpoint, credential=credential)
