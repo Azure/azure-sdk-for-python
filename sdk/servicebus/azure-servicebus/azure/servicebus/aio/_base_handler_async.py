@@ -193,3 +193,12 @@ class BaseHandlerAsync(BaseHandler):
             return
         self._running = False
         await self._close_handler()
+
+    async def reconnect(self):
+        """Reconnect the handler.
+
+        If the handler was disconnected from the service with
+        a retryable error, attempt to reconnect.
+        """
+        await self.close()
+        await self._open()

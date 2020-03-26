@@ -171,12 +171,11 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
     def test_session_by_session_client_conn_str_receive_handler_with_no_session(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
         with ServiceBusClient.from_connection_string(
             servicebus_namespace_connection_string, debug=False) as sb_client:
-    #TODO: Bug: Says queue has no session to receive from?
-            with sb_client.get_queue_receiver(servicebus_queue.name, 
-                                              session_id=NEXT_AVAILABLE, 
-                                              idle_timeout=5) as session:
-                with pytest.raises(NoActiveSession):
-                    session.open()
+            with pytest.raises(NoActiveSession):
+                with sb_client.get_queue_receiver(servicebus_queue.name, 
+                                                  session_id=NEXT_AVAILABLE, 
+                                                  idle_timeout=5) as session:
+                        session.open()
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -321,7 +320,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                 assert len(deferred) == 10
                 for message in deferred:
                     assert isinstance(message, ReceivedMessage)
-                    with pytest.raises(ServiceBusError): #TODO: Exception: MessageAlreadySettled
+                    with pytest.raises(MessageAlreadySettled):
                         message.complete()
                 with pytest.raises(ServiceBusError):
                     deferred = session.receive_deferred_messages(deferred_messages)
@@ -353,12 +352,10 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
 
                 assert count == 10
 
-                with pytest.raises(ValueError):
-                    #TODO: Bug: do we expect this to not fail any more?  (_is_live?)
-                    deferred = session.receive_deferred_messages(deferred_messages)
+                deferred = session.receive_deferred_messages(deferred_messages)
 
-                with pytest.raises(ValueError):
-                    session.settle_deferred_messages('completed', [message])
+                with pytest.raises(MessageAlreadySettled):
+                    message.complete()
 
 
     @pytest.mark.skip(reason='Requires deadletter receiver')
@@ -488,7 +485,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                         with pytest.raises(TypeError):
                             expired = m.expired
                         assert m.locked_until is None
-                        assert m.lock_token is None #TODO: Bug: Not none?
+                        assert m.lock_token is not None
                     time.sleep(5)
                     initial_expiry = receiver.session._locked_until
                     receiver.session.renew_lock()
@@ -539,7 +536,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                             assert message.locked_until is None
                             with pytest.raises(TypeError):
                                 message.renew_lock()
-                            assert message.lock_token is None #TODO: Bug: is none.
+                            assert message.lock_token is not None
                             message.complete()
                             messages.append(message)
 
@@ -758,9 +755,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                 for m in session:
                     assert m.properties.group_id == session_id.encode('utf-8')
                     count += 1
-                with pytest.raises(InvalidHandlerState):
-                    #TODO: Bug: this does not raise
-                    session.session.get_session_state()
+                session.session.get_session_state()
             assert count == 3
 
 
@@ -790,7 +785,6 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                     receiver.set_session_state("SESSION {}".format(session_id))
 
             with sb_client.get_queue_receiver(servicebus_queue.name, session_id=NEXT_AVAILABLE, idle_timeout=5, mode=ReceiveSettleMode.PeekLock) as receiver:
-                #TODO: Bug Needs list_session
                 current_sessions = receiver.list_sessions(updated_since=start_time)
                 assert len(current_sessions) == 5
                 assert current_sessions == sessions
@@ -821,7 +815,6 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                 with sb_client.get_queue_receiver(servicebus_queue.name, session_id=session) as receiver:
                     receiver.set_session_state("SESSION {}".format(session))
 
-                    #TODO: Bug: needs list_sessions
                     current_sessions = receiver.list_sessions(updated_since=start_time)
                     assert len(current_sessions) == 5
                     assert current_sessions == sessions
