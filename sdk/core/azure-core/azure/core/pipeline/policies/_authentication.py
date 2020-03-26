@@ -113,4 +113,4 @@ class AzureKeyCredentialPolicy(SansIOHTTPPolicy):
         self._key_header = key_header
 
     def on_request(self, request):
-        request.http_request.headers[self._key_header] = self._credential.api_key
+        request.http_request.headers[self._key_header] = self._credential.key

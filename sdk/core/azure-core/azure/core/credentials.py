@@ -37,26 +37,26 @@ class AzureKeyCredential(object):
     """Credential type used for authenticating to an Azure service.
     It provides the ability to update the key without creating a new client.
 
-    :param str api_key: The API key to your Azure account.
+    :param str key: The API key to your Azure account.
     :raises: TypeError
     """
 
-    def __init__(self, api_key):
+    def __init__(self, key):
         # type: (str) -> None
-        if not isinstance(api_key, six.string_types):
-            raise TypeError("api_key must be a string.")
-        self._api_key = api_key  # type: str
+        if not isinstance(key, six.string_types):
+            raise TypeError("key must be a string.")
+        self._key = key  # type: str
 
     @property
-    def api_key(self):
+    def key(self):
         # type () -> str
         """The value of the configured API key.
 
         :rtype: str
         """
-        return self._api_key
+        return self._key
 
-    def update_key(self, key):
+    def update(self, key):
         # type: (str) -> None
         """Update the API key.
 
@@ -70,4 +70,4 @@ class AzureKeyCredential(object):
             raise TypeError("The API key used for updating can not be None or empty")
         if not isinstance(key, six.string_types):
             raise TypeError("The API key used for updating must be a string.")
-        self._api_key = key
+        self._key = key

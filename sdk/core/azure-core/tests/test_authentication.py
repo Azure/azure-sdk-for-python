@@ -172,3 +172,14 @@ def test_azure_key_credential_policy_raises():
     credential = AzureKeyCredential(str(api_key))
     with pytest.raises(TypeError):
         credential_policy = AzureKeyCredentialPolicy(credential=credential, key_header=key_header)
+
+def test_azure_key_credential_updates():
+    """Tests AzureKeyCredential updates"""
+    api_key = "original"
+
+    credential = AzureKeyCredential(api_key)
+    assert credential.key == "original"
+
+    api_key = "new"
+    credential.update(api_key)
+    assert credential.key == "new"
