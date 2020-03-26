@@ -156,7 +156,7 @@ def test_azure_key_credential_policy():
 
     transport=Mock()
     credential = AzureKeyCredential(api_key)
-    credential_policy = AzureKeyCredentialPolicy(credential=credential, key_header=key_header)
+    credential_policy = AzureKeyCredentialPolicy(credential=credential, name=key_header)
     policies = [credential_policy, Mock(send=verify_authorization_header)]
     pipeline = Pipeline(transport=Mock(), policies=policies)
 
@@ -171,7 +171,7 @@ def test_azure_key_credential_policy_raises():
 
     credential = AzureKeyCredential(str(api_key))
     with pytest.raises(TypeError):
-        credential_policy = AzureKeyCredentialPolicy(credential=credential, key_header=key_header)
+        credential_policy = AzureKeyCredentialPolicy(credential=credential, name=key_header)
 
 def test_azure_key_credential_updates():
     """Tests AzureKeyCredential updates"""
