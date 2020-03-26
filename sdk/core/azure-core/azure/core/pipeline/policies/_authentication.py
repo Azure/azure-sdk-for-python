@@ -103,7 +103,7 @@ class AzureKeyCredentialPolicy(SansIOHTTPPolicy):
     :raises: TypeError
     """
     def __init__(self, credential, key_header):
-        # type: (AzureKeyCredential) -> None
+        # type: (AzureKeyCredential, str) -> None
         super(AzureKeyCredentialPolicy, self).__init__()
         self._credential = credential
         if not key_header:
