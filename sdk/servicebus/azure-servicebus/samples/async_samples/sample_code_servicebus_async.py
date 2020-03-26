@@ -77,7 +77,7 @@ async def example_create_servicebus_sender_async():
     queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
     servicebus_client = ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str)
     async with servicebus_client:
-        queue_sender = await servicebus_client.get_queue_sender(queue_name=queue_name)
+        queue_sender = servicebus_client.get_queue_sender(queue_name=queue_name)
     # [END create_servicebus_sender_from_sb_client_async]
     return queue_sender
 
@@ -120,7 +120,7 @@ async def example_create_servicebus_receiver_async():
     queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
     servicebus_client = ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str)
     async with servicebus_client:
-        queue_receiver = await servicebus_client.get_queue_receiver(queue_name=queue_name)
+        queue_receiver = servicebus_client.get_queue_receiver(queue_name=queue_name)
     # [END create_servicebus_receiver_from_sb_client_async]
 
     return queue_receiver
@@ -139,7 +139,7 @@ async def example_send_and_receive_async():
 
     # [START servicebus_receiver_receive_async]
     async with servicebus_receiver:
-        messages = await servicebus_receiver.receive(max_batch_size=10, timeout=5)
+        messages = await servicebus_receiver.receive(timeout=5)
         for message in messages:
             print(message)
             await message.complete()
@@ -154,7 +154,7 @@ async def example_receive_deferred_async():
     # [START servicebus_receiver_receive_defer_async]
     async with servicebus_receiver:
         deferred_sequenced_numbers = []
-        messages = await servicebus_receiver.receive(max_batch_size=10, timeout=5)
+        messages = await servicebus_receiver.receive(timeout=5)
         for message in messages:
             deferred_sequenced_numbers.append(message.sequence_number)
             print(message)

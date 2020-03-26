@@ -160,12 +160,6 @@ class ServiceBusClient(object):
             **kwargs
         )
 
-        try:
-            sender._open_with_retry()
-        except Exception:
-            sender._close_handler()
-            raise
-
         return sender
 
     def get_queue_receiver(self, queue_name, **kwargs):
@@ -211,10 +205,5 @@ class ServiceBusClient(object):
             connection=self._connection,
             **kwargs
         )
-        try:
-            receiver._open_with_retry()
-        except Exception:
-            receiver._close_handler()
-            raise
 
         return receiver
