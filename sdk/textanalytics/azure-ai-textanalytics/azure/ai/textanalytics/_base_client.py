@@ -39,7 +39,7 @@ class TextAnalyticsClientBase(object):
             )
         elif isinstance(credential, AzureKeyCredential):
             credential_policy = AzureKeyCredentialPolicy(
-                key_header="Ocp-Apim-Subscription-Key", credential=credential
+                name="Ocp-Apim-Subscription-Key", credential=credential
             )
         elif credential is not None:
             raise TypeError("Unsupported credential: {}. Use an instance of AzureKeyCredential "
