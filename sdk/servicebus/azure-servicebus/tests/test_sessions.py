@@ -56,6 +56,11 @@ def print_message(message):
     _logger.debug("Partition Key: {}".format(message.partition_key))
     _logger.debug("Enqueued time: {}".format(message.enqueued_time))
 
+
+def sleep_until_expired(locked_entity):
+    time.sleep(max(0,(locked_entity.locked_until - datetime.now()).total_seconds() + 1))
+
+
 class ServiceBusSessionTests(AzureMgmtTestCase):
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -516,7 +521,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                 # potentially as a side effect of network delays/sleeps/"typical distributed systems nonsense."  In a perfect world we wouldn't have a magic number/network hop but this allows
                 # a slightly more robust test in absence of that.
                 assert (receiver.locked_until - datetime.now()) <= timedelta(seconds=31)
-                time.sleep((receiver.locked_until - datetime.now()).total_seconds())
+                sleep_until_expired(receiver)
                 with pytest.raises(SessionLockExpired):
                     messages[2].complete()
 
@@ -563,7 +568,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                     elif len(messages) == 1:
                         print("Starting second sleep")
                         time.sleep(25) # to ensure that we run out the autolockrenew timeout
-                        time.sleep((session.locked_until - datetime.now()).total_seconds() + 1) # To expire the session.
+                        sleep_until_expired(session)
                         print("Second sleep {}".format(session.locked_until - datetime.now()))
                         assert session.expired
                         assert isinstance(session.auto_renew_error, AutoLockRenewTimeout)
