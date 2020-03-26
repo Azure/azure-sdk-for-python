@@ -17,15 +17,12 @@ from .operations import ComplianceResultsOperations
 from .operations import PricingsOperations
 from .operations import AlertsOperations
 from .operations import SettingsOperations
-from .operations import IoTSecuritySolutionsOperations
-from .operations import IoTSecuritySolutionsResourceGroupOperations
+from .operations import AdvancedThreatProtectionOperations
+from .operations import DeviceSecurityGroupsOperations
 from .operations import IotSecuritySolutionOperations
-from .operations import IoTSecuritySolutionsAnalyticsOperations
-from .operations import IoTSecuritySolutionsAnalyticsAggregatedAlertsOperations
-from .operations import IoTSecuritySolutionsAnalyticsAggregatedAlertOperations
-from .operations import IoTSecuritySolutionsAnalyticsRecommendationOperations
-from .operations import IoTSecuritySolutionsAnalyticsRecommendationsOperations
-from .operations import AllowedConnectionsOperations
+from .operations import IotSecuritySolutionAnalyticsOperations
+from .operations import IotSecuritySolutionsAnalyticsAggregatedAlertOperations
+from .operations import IotSecuritySolutionsAnalyticsRecommendationOperations
 from .operations import DiscoveredSecuritySolutionsOperations
 from .operations import ExternalSecuritySolutionsOperations
 from .operations import JitNetworkAccessPoliciesOperations
@@ -33,8 +30,6 @@ from .operations import AdaptiveApplicationControlsOperations
 from .operations import LocationsOperations
 from .operations import Operations
 from .operations import TasksOperations
-from .operations import TopologyOperations
-from .operations import AdvancedThreatProtectionOperations
 from .operations import AutoProvisioningSettingsOperations
 from .operations import CompliancesOperations
 from .operations import InformationProtectionPoliciesOperations
@@ -44,6 +39,13 @@ from .operations import RegulatoryComplianceStandardsOperations
 from .operations import RegulatoryComplianceControlsOperations
 from .operations import RegulatoryComplianceAssessmentsOperations
 from .operations import ServerVulnerabilityAssessmentOperations
+from .operations import SubAssessmentsOperations
+from .operations import AutomationsOperations
+from .operations import AssessmentsMetadataOperations
+from .operations import AssessmentsOperations
+from .operations import AdaptiveNetworkHardeningsOperations
+from .operations import AllowedConnectionsOperations
+from .operations import TopologyOperations
 from . import models
 
 
@@ -61,24 +63,18 @@ class SecurityCenter(SDKClient):
     :vartype alerts: azure.mgmt.security.operations.AlertsOperations
     :ivar settings: Settings operations
     :vartype settings: azure.mgmt.security.operations.SettingsOperations
-    :ivar io_tsecurity_solutions: IoTSecuritySolutions operations
-    :vartype io_tsecurity_solutions: azure.mgmt.security.operations.IoTSecuritySolutionsOperations
-    :ivar io_tsecurity_solutions_resource_group: IoTSecuritySolutionsResourceGroup operations
-    :vartype io_tsecurity_solutions_resource_group: azure.mgmt.security.operations.IoTSecuritySolutionsResourceGroupOperations
+    :ivar advanced_threat_protection: AdvancedThreatProtection operations
+    :vartype advanced_threat_protection: azure.mgmt.security.operations.AdvancedThreatProtectionOperations
+    :ivar device_security_groups: DeviceSecurityGroups operations
+    :vartype device_security_groups: azure.mgmt.security.operations.DeviceSecurityGroupsOperations
     :ivar iot_security_solution: IotSecuritySolution operations
     :vartype iot_security_solution: azure.mgmt.security.operations.IotSecuritySolutionOperations
-    :ivar io_tsecurity_solutions_analytics: IoTSecuritySolutionsAnalytics operations
-    :vartype io_tsecurity_solutions_analytics: azure.mgmt.security.operations.IoTSecuritySolutionsAnalyticsOperations
-    :ivar io_tsecurity_solutions_analytics_aggregated_alerts: IoTSecuritySolutionsAnalyticsAggregatedAlerts operations
-    :vartype io_tsecurity_solutions_analytics_aggregated_alerts: azure.mgmt.security.operations.IoTSecuritySolutionsAnalyticsAggregatedAlertsOperations
-    :ivar io_tsecurity_solutions_analytics_aggregated_alert: IoTSecuritySolutionsAnalyticsAggregatedAlert operations
-    :vartype io_tsecurity_solutions_analytics_aggregated_alert: azure.mgmt.security.operations.IoTSecuritySolutionsAnalyticsAggregatedAlertOperations
-    :ivar io_tsecurity_solutions_analytics_recommendation: IoTSecuritySolutionsAnalyticsRecommendation operations
-    :vartype io_tsecurity_solutions_analytics_recommendation: azure.mgmt.security.operations.IoTSecuritySolutionsAnalyticsRecommendationOperations
-    :ivar io_tsecurity_solutions_analytics_recommendations: IoTSecuritySolutionsAnalyticsRecommendations operations
-    :vartype io_tsecurity_solutions_analytics_recommendations: azure.mgmt.security.operations.IoTSecuritySolutionsAnalyticsRecommendationsOperations
-    :ivar allowed_connections: AllowedConnections operations
-    :vartype allowed_connections: azure.mgmt.security.operations.AllowedConnectionsOperations
+    :ivar iot_security_solution_analytics: IotSecuritySolutionAnalytics operations
+    :vartype iot_security_solution_analytics: azure.mgmt.security.operations.IotSecuritySolutionAnalyticsOperations
+    :ivar iot_security_solutions_analytics_aggregated_alert: IotSecuritySolutionsAnalyticsAggregatedAlert operations
+    :vartype iot_security_solutions_analytics_aggregated_alert: azure.mgmt.security.operations.IotSecuritySolutionsAnalyticsAggregatedAlertOperations
+    :ivar iot_security_solutions_analytics_recommendation: IotSecuritySolutionsAnalyticsRecommendation operations
+    :vartype iot_security_solutions_analytics_recommendation: azure.mgmt.security.operations.IotSecuritySolutionsAnalyticsRecommendationOperations
     :ivar discovered_security_solutions: DiscoveredSecuritySolutions operations
     :vartype discovered_security_solutions: azure.mgmt.security.operations.DiscoveredSecuritySolutionsOperations
     :ivar external_security_solutions: ExternalSecuritySolutions operations
@@ -93,10 +89,6 @@ class SecurityCenter(SDKClient):
     :vartype operations: azure.mgmt.security.operations.Operations
     :ivar tasks: Tasks operations
     :vartype tasks: azure.mgmt.security.operations.TasksOperations
-    :ivar topology: Topology operations
-    :vartype topology: azure.mgmt.security.operations.TopologyOperations
-    :ivar advanced_threat_protection: AdvancedThreatProtection operations
-    :vartype advanced_threat_protection: azure.mgmt.security.operations.AdvancedThreatProtectionOperations
     :ivar auto_provisioning_settings: AutoProvisioningSettings operations
     :vartype auto_provisioning_settings: azure.mgmt.security.operations.AutoProvisioningSettingsOperations
     :ivar compliances: Compliances operations
@@ -115,6 +107,20 @@ class SecurityCenter(SDKClient):
     :vartype regulatory_compliance_assessments: azure.mgmt.security.operations.RegulatoryComplianceAssessmentsOperations
     :ivar server_vulnerability_assessment: ServerVulnerabilityAssessment operations
     :vartype server_vulnerability_assessment: azure.mgmt.security.operations.ServerVulnerabilityAssessmentOperations
+    :ivar sub_assessments: SubAssessments operations
+    :vartype sub_assessments: azure.mgmt.security.operations.SubAssessmentsOperations
+    :ivar automations: Automations operations
+    :vartype automations: azure.mgmt.security.operations.AutomationsOperations
+    :ivar assessments_metadata: AssessmentsMetadata operations
+    :vartype assessments_metadata: azure.mgmt.security.operations.AssessmentsMetadataOperations
+    :ivar assessments: Assessments operations
+    :vartype assessments: azure.mgmt.security.operations.AssessmentsOperations
+    :ivar adaptive_network_hardenings: AdaptiveNetworkHardenings operations
+    :vartype adaptive_network_hardenings: azure.mgmt.security.operations.AdaptiveNetworkHardeningsOperations
+    :ivar allowed_connections: AllowedConnections operations
+    :vartype allowed_connections: azure.mgmt.security.operations.AllowedConnectionsOperations
+    :ivar topology: Topology operations
+    :vartype topology: azure.mgmt.security.operations.TopologyOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -145,23 +151,17 @@ class SecurityCenter(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.settings = SettingsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.io_tsecurity_solutions = IoTSecuritySolutionsOperations(
+        self.advanced_threat_protection = AdvancedThreatProtectionOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.io_tsecurity_solutions_resource_group = IoTSecuritySolutionsResourceGroupOperations(
+        self.device_security_groups = DeviceSecurityGroupsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.iot_security_solution = IotSecuritySolutionOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.io_tsecurity_solutions_analytics = IoTSecuritySolutionsAnalyticsOperations(
+        self.iot_security_solution_analytics = IotSecuritySolutionAnalyticsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.io_tsecurity_solutions_analytics_aggregated_alerts = IoTSecuritySolutionsAnalyticsAggregatedAlertsOperations(
+        self.iot_security_solutions_analytics_aggregated_alert = IotSecuritySolutionsAnalyticsAggregatedAlertOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.io_tsecurity_solutions_analytics_aggregated_alert = IoTSecuritySolutionsAnalyticsAggregatedAlertOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.io_tsecurity_solutions_analytics_recommendation = IoTSecuritySolutionsAnalyticsRecommendationOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.io_tsecurity_solutions_analytics_recommendations = IoTSecuritySolutionsAnalyticsRecommendationsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.allowed_connections = AllowedConnectionsOperations(
+        self.iot_security_solutions_analytics_recommendation = IotSecuritySolutionsAnalyticsRecommendationOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.discovered_security_solutions = DiscoveredSecuritySolutionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
@@ -176,10 +176,6 @@ class SecurityCenter(SDKClient):
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
         self.tasks = TasksOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.topology = TopologyOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.advanced_threat_protection = AdvancedThreatProtectionOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.auto_provisioning_settings = AutoProvisioningSettingsOperations(
             self._client, self.config, self._serialize, self._deserialize)
@@ -198,4 +194,18 @@ class SecurityCenter(SDKClient):
         self.regulatory_compliance_assessments = RegulatoryComplianceAssessmentsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.server_vulnerability_assessment = ServerVulnerabilityAssessmentOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.sub_assessments = SubAssessmentsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.automations = AutomationsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.assessments_metadata = AssessmentsMetadataOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.assessments = AssessmentsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.adaptive_network_hardenings = AdaptiveNetworkHardeningsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.allowed_connections = AllowedConnectionsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.topology = TopologyOperations(
             self._client, self.config, self._serialize, self._deserialize)
