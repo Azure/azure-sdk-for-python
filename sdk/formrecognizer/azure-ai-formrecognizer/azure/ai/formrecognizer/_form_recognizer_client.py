@@ -17,7 +17,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.polling import LROPoller
 from azure.core.polling.base_polling import LROBasePolling  # pylint: disable=no-name-in-module,import-error
 from ._generated._form_recognizer_client import FormRecognizerClient as FormRecognizer
-from ._base_client import FormRecognizerClientBase
+from ._policies import CognitiveServicesCredentialPolicy
 from ._response_handlers import (
     prepare_receipt_result,
     prepare_layout_result,
@@ -29,7 +29,7 @@ if TYPE_CHECKING:
     from ._credential import FormRecognizerApiKeyCredential
 
 
-class FormRecognizerClient(FormRecognizerClientBase):
+class FormRecognizerClient(object):
     """FormRecognizerClient.
 
     :param str endpoint: Supported Cognitive Services endpoints (protocol and hostname,
@@ -41,9 +41,11 @@ class FormRecognizerClient(FormRecognizerClientBase):
 
     def __init__(self, endpoint, credential, **kwargs):
         # type: (str, FormRecognizerApiKeyCredential, Any) -> None
-        super(FormRecognizerClient, self).__init__(credential=credential, **kwargs)
         self._client = FormRecognizer(
-            endpoint=endpoint, credential=credential, pipeline=self._pipeline
+            endpoint=endpoint,
+            credential=credential,
+            authentication_policy=CognitiveServicesCredentialPolicy(credential),  # TODO: replace with core policy
+            **kwargs
         )
 
     @distributed_trace
@@ -55,7 +57,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
         type to specify the location (Uri) of the document to be analyzed.
 
         :param form: .json, .pdf, .jpg, .png or .tiff type file stream.
-        :type form: str or file stream
+        :type form: str or stream
         :keyword bool include_text_details: Include text lines and element references in the result.
         :keyword str content_type: Media type of the body sent to the API.
         :return: LROPoller
@@ -94,7 +96,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
         type to specify the location (Uri) of the document to be analyzed.
 
         :param form: .json, .pdf, .jpg, .png or .tiff type file stream.
-        :type form: str or file stream
+        :type form: str or stream
         :keyword str content_type: Media type of the body sent to the API.
         :return: No
         :rtype: None

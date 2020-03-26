@@ -393,12 +393,12 @@ class FieldInfo(object):
 
     @classmethod
     def _from_generated(cls, model):
-        if model:
+        if model.fields:
             return [cls(
               field_name=field.field_name,
               accuracy=field.accuracy
             ) for field in model.fields]
-        return model
+        return model.fields
 
 
 class ExtractedPage(object):

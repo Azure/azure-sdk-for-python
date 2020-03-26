@@ -5,4 +5,7 @@
 # --------------------------------------------------------------------------
 
 from ._form_recognizer_client import FormRecognizerClient
+from ._version import VERSION
+
+__version__ = VERSION
 __all__ = ['FormRecognizerClient']

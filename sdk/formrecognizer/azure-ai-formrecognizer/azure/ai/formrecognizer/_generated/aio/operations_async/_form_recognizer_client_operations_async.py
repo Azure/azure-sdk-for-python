@@ -11,6 +11,8 @@ from azure.core.exceptions import HttpResponseError, ResourceExistsError, Resour
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.core.polling import AsyncNoPolling, AsyncPollingMethod, async_poller
+from azure.core.tracing.decorator import distributed_trace
+from azure.core.tracing.decorator_async import distributed_trace_async
 
 from ... import models
 
@@ -19,6 +21,7 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T
 
 class FormRecognizerClientOperationsMixin:
 
+    @distributed_trace_async
     async def train_custom_model_async(
         self,
         train_request: "models.TrainRequest",
@@ -74,6 +77,7 @@ class FormRecognizerClientOperationsMixin:
 
     train_custom_model_async.metadata = {'url': '/custom/models'}
 
+    @distributed_trace_async
     async def get_custom_model(
         self,
         model_id: str,
@@ -131,6 +135,7 @@ class FormRecognizerClientOperationsMixin:
         return deserialized
     get_custom_model.metadata = {'url': '/custom/models/{modelId}'}
 
+    @distributed_trace_async
     async def delete_custom_model(
         self,
         model_id: str,
@@ -238,6 +243,7 @@ class FormRecognizerClientOperationsMixin:
 
     _analyze_with_custom_model_initial.metadata = {'url': '/custom/models/{modelId}/analyze'}
 
+    @distributed_trace_async
     async def analyze_with_custom_model(
         self,
         model_id: str,
@@ -288,6 +294,7 @@ class FormRecognizerClientOperationsMixin:
         return await async_poller(self._client, raw_result, get_long_running_output, polling_method)
     analyze_with_custom_model.metadata = {'url': '/custom/models/{modelId}/analyze'}
 
+    @distributed_trace_async
     async def get_analyze_form_result(
         self,
         model_id: str,
@@ -401,6 +408,7 @@ class FormRecognizerClientOperationsMixin:
 
     _analyze_receipt_async_initial.metadata = {'url': '/prebuilt/receipt/analyze'}
 
+    @distributed_trace_async
     async def analyze_receipt_async(
         self,
         include_text_details: Optional[bool] = False,
@@ -447,6 +455,7 @@ class FormRecognizerClientOperationsMixin:
         return await async_poller(self._client, raw_result, get_long_running_output, polling_method)
     analyze_receipt_async.metadata = {'url': '/prebuilt/receipt/analyze'}
 
+    @distributed_trace_async
     async def get_analyze_receipt_result(
         self,
         result_id: str,
@@ -553,6 +562,7 @@ class FormRecognizerClientOperationsMixin:
 
     _analyze_layout_async_initial.metadata = {'url': '/layout/analyze'}
 
+    @distributed_trace_async
     async def analyze_layout_async(
         self,
         file_stream: Optional[Union[str, "models.SourcePath"]] = None,
@@ -595,6 +605,7 @@ class FormRecognizerClientOperationsMixin:
         return await async_poller(self._client, raw_result, get_long_running_output, polling_method)
     analyze_layout_async.metadata = {'url': '/layout/analyze'}
 
+    @distributed_trace_async
     async def get_analyze_layout_result(
         self,
         result_id: str,
@@ -647,6 +658,7 @@ class FormRecognizerClientOperationsMixin:
         return deserialized
     get_analyze_layout_result.metadata = {'url': '/layout/analyzeResults/{resultId}'}
 
+    @distributed_trace
     def list_custom_models(
         self,
         **kwargs
@@ -716,6 +728,7 @@ class FormRecognizerClientOperationsMixin:
         )
     list_custom_models.metadata = {'url': '/custom/models'}
 
+    @distributed_trace_async
     async def get_custom_models(
         self,
         **kwargs

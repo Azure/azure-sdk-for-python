@@ -64,7 +64,6 @@ setup(
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
@@ -81,7 +80,6 @@ setup(
     install_requires=[
         "azure-core<2.0.0,>=1.3.0",
         "msrest>=0.6.0",
-        'azure-common~=1.1',
         'six>=1.6',
     ],
     extras_require={

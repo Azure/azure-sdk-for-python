@@ -9,7 +9,8 @@ from typing import Any
 from azure.core.configuration import Configuration
 from azure.core.pipeline import policies
 
-VERSION = "unknown"
+from .._version import VERSION
+
 
 class FormRecognizerClientConfiguration(Configuration):
     """Configuration for FormRecognizerClient.

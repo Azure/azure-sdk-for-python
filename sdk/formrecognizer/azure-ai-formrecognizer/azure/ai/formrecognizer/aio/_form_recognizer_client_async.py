@@ -17,7 +17,7 @@ import six
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.polling.async_base_polling import AsyncLROBasePolling  # pylint: disable=no-name-in-module,import-error
 from .._generated.aio._form_recognizer_client_async import FormRecognizerClient as FormRecognizer
-from ._base_client_async import AsyncFormRecognizerClientBase
+from .._policies import CognitiveServicesCredentialPolicy
 from .._response_handlers import (
     prepare_receipt_result,
     prepare_layout_result
@@ -32,7 +32,7 @@ if TYPE_CHECKING:
     )
 
 
-class FormRecognizerClient(AsyncFormRecognizerClientBase):
+class FormRecognizerClient(object):
     """FormRecognizerClient.
 
     :param str endpoint: Supported Cognitive Services endpoints (protocol and hostname,
@@ -48,20 +48,22 @@ class FormRecognizerClient(AsyncFormRecognizerClientBase):
             credential: "FormRecognizerApiKeyCredential",
             **kwargs: Any
     ) -> None:
-        super(FormRecognizerClient, self).__init__(credential=credential, **kwargs)
         self._client = FormRecognizer(
-            endpoint=endpoint, credential=credential, pipeline=self._pipeline
+            endpoint=endpoint,
+            credential=credential,
+            authentication_policy=CognitiveServicesCredentialPolicy(credential),  # TODO: replace with core policy
+            **kwargs
         )
 
     @distributed_trace_async
-    async def begin_extract_receipts(self, form: Union[str, IO[bytes]], **kwargs: Any) -> List[ExtractedReceipt]:
+    async def begin_extract_receipts(self, form: Union[str, IO[bytes]], **kwargs: Any) -> List["ExtractedReceipt"]:
         """Extract field text and semantic values from a given receipt document.
         The input document must be of one of the supported content types - 'application/pdf',
         'image/jpeg', 'image/png' or 'image/tiff'. Alternatively, use 'application/json'
         type to specify the location (Uri) of the document to be analyzed.
 
         :param form: .json, .pdf, .jpg, .png or .tiff type file stream.
-        :type form: str or file stream
+        :type form: str or stream
         :keyword bool include_text_details: Include text lines and element references in the result.
         :keyword str content_type: Media type of the body sent to the API.
         :return: LROPoller
@@ -94,14 +96,14 @@ class FormRecognizerClient(AsyncFormRecognizerClientBase):
         )
 
     @distributed_trace_async
-    async def begin_extract_layouts(self, form: Union[str, IO[bytes]], **kwargs: Any) -> List[ExtractedLayoutPage]:
+    async def begin_extract_layouts(self, form: Union[str, IO[bytes]], **kwargs: Any) -> List["ExtractedLayoutPage"]:
         """Extract text and layout information from a given document.
         The input document must be of one of the supported content types - 'application/pdf',
         'image/jpeg', 'image/png' or 'image/tiff'. Alternatively, use 'application/json'
         type to specify the location (Uri) of the document to be analyzed.
 
         :param form: .json, .pdf, .jpg, .png or .tiff type file stream.
-        :type form: str or file stream
+        :type form: str or stream
         :keyword str content_type: Media type of the body sent to the API.
         :return: No
         :rtype: None

@@ -22,7 +22,7 @@ from azure.core.exceptions import HttpResponseError
 from ._generated.models import AnalyzeOperationResult, Model
 from ._generated._form_recognizer_client import FormRecognizerClient as FormRecognizer
 from ._generated.models import TrainRequest, TrainSourceFilter
-from ._base_client import FormRecognizerClientBase
+from ._policies import CognitiveServicesCredentialPolicy
 from ._response_handlers import (
     prepare_unlabeled_result,
     prepare_labeled_result,
@@ -38,7 +38,7 @@ if TYPE_CHECKING:
     from ._credential import FormRecognizerApiKeyCredential
 
 
-class CustomFormClient(FormRecognizerClientBase):
+class CustomFormClient(object):
     """CustomFormClient.
 
     :param str endpoint: Supported Cognitive Services endpoints (protocol and hostname,
@@ -50,9 +50,11 @@ class CustomFormClient(FormRecognizerClientBase):
 
     def __init__(self, endpoint, credential, **kwargs):
         # type: (str, FormRecognizerApiKeyCredential, Any) -> None
-        super(CustomFormClient, self).__init__(credential=credential, **kwargs)
         self._client = FormRecognizer(
-            endpoint=endpoint, credential=credential, pipeline=self._pipeline
+            endpoint=endpoint,
+            credential=credential,
+            authentication_policy=CognitiveServicesCredentialPolicy(credential),  # TODO: replace with core policy
+            **kwargs
         )
 
     @distributed_trace
@@ -144,7 +146,7 @@ class CustomFormClient(FormRecognizerClientBase):
         """Analyze Form.
 
         :param form: .json, .pdf, .jpg, .png or .tiff type file stream.
-        :type form: str or file stream
+        :type form: str or stream
         :param str model_id: Model identifier.
         :keyword bool include_text_details: Include text lines and element references in the result.
         :keyword str content_type: Media type of the body sent to the API.
@@ -186,7 +188,7 @@ class CustomFormClient(FormRecognizerClientBase):
         """Analyze Form.
 
         :param form: .json, .pdf, .jpg, .png or .tiff type file stream.
-        :type form: str or file stream
+        :type form: str or stream
         :param str model_id: Model identifier.
         :keyword bool include_text_details: Include text lines and element references in the result.
         :keyword str content_type: Media type of the body sent to the API.
@@ -289,7 +291,7 @@ class CustomFormClient(FormRecognizerClientBase):
         :rtype: ~azure.ai.formrecognizer.CustomLabeledModel
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        response = self._client.get_custom_model(model_id=model_id, **kwargs)
+        response = self._client.get_custom_model(model_id=model_id, include_keys=True, **kwargs)
         if response.keys is None:
             return CustomLabeledModel._from_generated(response)
         raise HttpResponseError(message="Model id '{}' was not trained with labels. Call get_custom_model() "

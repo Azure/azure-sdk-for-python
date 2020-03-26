@@ -23,7 +23,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from .._generated.aio._form_recognizer_client_async import FormRecognizerClient as FormRecognizer
 from .._generated.models import TrainRequest, TrainSourceFilter
-from ._base_client_async import AsyncFormRecognizerClientBase
+from .._policies import CognitiveServicesCredentialPolicy
 from .._response_handlers import (
     prepare_unlabeled_result,
     prepare_labeled_result,
@@ -44,7 +44,7 @@ if TYPE_CHECKING:
     )
 
 
-class CustomFormClient(AsyncFormRecognizerClientBase):
+class CustomFormClient(object):
     """CustomFormClient.
 
     :param str endpoint: Supported Cognitive Services endpoints (protocol and hostname,
@@ -60,9 +60,11 @@ class CustomFormClient(AsyncFormRecognizerClientBase):
             credential: "FormRecognizerApiKeyCredential",
             **kwargs: Any
     ) -> None:
-        super(CustomFormClient, self).__init__(credential=credential, **kwargs)
         self._client = FormRecognizer(
-            endpoint=endpoint, credential=credential, pipeline=self._pipeline
+            endpoint=endpoint,
+            credential=credential,
+            authentication_policy=CognitiveServicesCredentialPolicy(credential),  # TODO: replace with core policy
+            **kwargs
         )
 
     @distributed_trace_async
@@ -172,11 +174,11 @@ class CustomFormClient(AsyncFormRecognizerClientBase):
             form: Union[str, IO[bytes]],
             model_id: str,
             **kwargs: Any
-    ) -> List[ExtractedPage]:
+    ) -> List["ExtractedPage"]:
         """Analyze Form.
 
         :param form: .json, .pdf, .jpg, .png or .tiff type file stream.
-        :type form: str or file stream
+        :type form: str or stream
         :param str model_id: Model identifier.
         :keyword bool include_text_details: Include text lines and element references in the result.
         :keyword str content_type: Media type of the body sent to the API.
@@ -218,11 +220,11 @@ class CustomFormClient(AsyncFormRecognizerClientBase):
             form: Union[str, IO[bytes]],
             model_id: str,
             **kwargs: Any
-    ) -> List[ExtractedLabeledForm]:
+    ) -> List["ExtractedLabeledForm"]:
         """Analyze Form.
 
         :param form: .json, .pdf, .jpg, .png or .tiff type file stream.
-        :type form: str or file stream
+        :type form: str or stream
         :param str model_id: Model identifier.
         :keyword bool include_text_details: Include text lines and element references in the result.
         :keyword str content_type: Media type of the body sent to the API.
@@ -321,7 +323,7 @@ class CustomFormClient(AsyncFormRecognizerClientBase):
         :rtype: ~azure.ai.formrecognizer.CustomLabeledModel
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        response = await self._client.get_custom_model(model_id=model_id, **kwargs)
+        response = await self._client.get_custom_model(model_id=model_id, include_keys=True, **kwargs)
         if response.keys is None:
             return CustomLabeledModel._from_generated(response)
         raise HttpResponseError(message="Model id '{}' was not trained with labels. Call get_custom_model() "

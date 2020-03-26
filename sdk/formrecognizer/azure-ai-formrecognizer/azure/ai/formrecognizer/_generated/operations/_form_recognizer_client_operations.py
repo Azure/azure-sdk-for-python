@@ -11,6 +11,7 @@ from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.core.polling import LROPoller, NoPolling, PollingMethod
+from azure.core.tracing.decorator import distributed_trace
 
 from .. import models
 
@@ -19,6 +20,7 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dic
 
 class FormRecognizerClientOperationsMixin(object):
 
+    @distributed_trace
     def train_custom_model_async(
         self,
         train_request,  # type: "models.TrainRequest"
@@ -75,6 +77,7 @@ class FormRecognizerClientOperationsMixin(object):
 
     train_custom_model_async.metadata = {'url': '/custom/models'}
 
+    @distributed_trace
     def get_custom_model(
         self,
         model_id,  # type: str
@@ -133,6 +136,7 @@ class FormRecognizerClientOperationsMixin(object):
         return deserialized
     get_custom_model.metadata = {'url': '/custom/models/{modelId}'}
 
+    @distributed_trace
     def delete_custom_model(
         self,
         model_id,  # type: str
@@ -242,6 +246,7 @@ class FormRecognizerClientOperationsMixin(object):
 
     _analyze_with_custom_model_initial.metadata = {'url': '/custom/models/{modelId}/analyze'}
 
+    @distributed_trace
     def begin_analyze_with_custom_model(
         self,
         model_id,  # type: str
@@ -293,6 +298,7 @@ class FormRecognizerClientOperationsMixin(object):
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     begin_analyze_with_custom_model.metadata = {'url': '/custom/models/{modelId}/analyze'}
 
+    @distributed_trace
     def get_analyze_form_result(
         self,
         model_id,  # type: str
@@ -408,6 +414,7 @@ class FormRecognizerClientOperationsMixin(object):
 
     _analyze_receipt_async_initial.metadata = {'url': '/prebuilt/receipt/analyze'}
 
+    @distributed_trace
     def begin_analyze_receipt_async(
         self,
         include_text_details=False,  # type: Optional[bool]
@@ -455,6 +462,7 @@ class FormRecognizerClientOperationsMixin(object):
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     begin_analyze_receipt_async.metadata = {'url': '/prebuilt/receipt/analyze'}
 
+    @distributed_trace
     def get_analyze_receipt_result(
         self,
         result_id,  # type: str
@@ -563,6 +571,7 @@ class FormRecognizerClientOperationsMixin(object):
 
     _analyze_layout_async_initial.metadata = {'url': '/layout/analyze'}
 
+    @distributed_trace
     def begin_analyze_layout_async(
         self,
         file_stream=None,  # type: Optional[Union[str, "models.SourcePath"]]
@@ -606,6 +615,7 @@ class FormRecognizerClientOperationsMixin(object):
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     begin_analyze_layout_async.metadata = {'url': '/layout/analyze'}
 
+    @distributed_trace
     def get_analyze_layout_result(
         self,
         result_id,  # type: str
@@ -659,6 +669,7 @@ class FormRecognizerClientOperationsMixin(object):
         return deserialized
     get_analyze_layout_result.metadata = {'url': '/layout/analyzeResults/{resultId}'}
 
+    @distributed_trace
     def list_custom_models(
         self,
         **kwargs  # type: Any
@@ -729,6 +740,7 @@ class FormRecognizerClientOperationsMixin(object):
         )
     list_custom_models.metadata = {'url': '/custom/models'}
 
+    @distributed_trace
     def get_custom_models(
         self,
         **kwargs  # type: Any
