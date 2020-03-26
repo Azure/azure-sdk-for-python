@@ -25,8 +25,8 @@ import os
 
 class ExtractKeyPhrasesSample(object):
 
-    endpoint = os.getenv("AZURE_TEXT_ANALYTICS_ENDPOINT")
-    key = os.getenv("AZURE_TEXT_ANALYTICS_KEY")
+    endpoint = os.environ["AZURE_TEXT_ANALYTICS_ENDPOINT"]
+    key = os.environ["AZURE_TEXT_ANALYTICS_KEY"]
 
     def extract_key_phrases(self):
         # [START batch_extract_key_phrases]

@@ -26,8 +26,8 @@ import asyncio
 
 class RecognizeEntitiesSampleAsync(object):
 
-    endpoint = os.getenv("AZURE_TEXT_ANALYTICS_ENDPOINT")
-    key = os.getenv("AZURE_TEXT_ANALYTICS_KEY")
+    endpoint = os.environ["AZURE_TEXT_ANALYTICS_ENDPOINT"]
+    key = os.environ["AZURE_TEXT_ANALYTICS_KEY"]
 
     async def recognize_entities_async(self):
         # [START batch_recognize_entities_async]
