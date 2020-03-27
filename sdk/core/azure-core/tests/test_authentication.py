@@ -6,10 +6,10 @@
 import time
 
 import azure.core
-from azure.core.credentials import AccessToken
+from azure.core.credentials import AccessToken, AzureKeyCredential
 from azure.core.exceptions import ServiceRequestError
 from azure.core.pipeline import Pipeline
-from azure.core.pipeline.policies import BearerTokenCredentialPolicy, SansIOHTTPPolicy
+from azure.core.pipeline.policies import BearerTokenCredentialPolicy, SansIOHTTPPolicy, AzureKeyCredentialPolicy
 from azure.core.pipeline.transport import HttpRequest
 
 import pytest
