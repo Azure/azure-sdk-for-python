@@ -15,6 +15,7 @@ json-delta==2.0
 ConfigArgParse==1.1
 six==1.14.0
 vcrpy==3.0.0
+pyyaml==5.3.1
 packaging==20.3
 wheel==0.34.2
 Jinja2==2.11.1
