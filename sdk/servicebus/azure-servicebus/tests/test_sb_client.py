@@ -22,9 +22,9 @@ from azure.servicebus.exceptions import (
     ServiceBusAuthorizationError,
     ServiceBusResourceNotFound
 )
-from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPreparer
+from devtools_testutils import AzureMgmtTestCase, CachedResourceGroupPreparer
 from servicebus_preparer import (
-    ServiceBusNamespacePreparer, 
+    CachedServiceBusNamespacePreparer, 
     ServiceBusTopicPreparer, 
     ServiceBusQueuePreparer,
     ServiceBusNamespaceAuthorizationRulePreparer,
@@ -35,8 +35,8 @@ class ServiceBusClientTests(AzureMgmtTestCase):
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @RandomNameResourceGroupPreparer(name_prefix='servicebustest')
-    @ServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
     def test_sb_client_bad_credentials(self, servicebus_namespace, servicebus_queue, **kwargs):
         client = ServiceBusClient(
@@ -63,8 +63,8 @@ class ServiceBusClientTests(AzureMgmtTestCase):
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @RandomNameResourceGroupPreparer(name_prefix='servicebustest')
-    @ServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     def test_sb_client_bad_entity(self, servicebus_namespace_connection_string, **kwargs):
 
         client = ServiceBusClient.from_connection_string(servicebus_namespace_connection_string)
@@ -76,8 +76,8 @@ class ServiceBusClientTests(AzureMgmtTestCase):
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @RandomNameResourceGroupPreparer(name_prefix='servicebustest')
-    @ServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
     @ServiceBusNamespaceAuthorizationRulePreparer(name_prefix='servicebustest', access_rights=[AccessRights.listen])
     def test_sb_client_readonly_credentials(self, servicebus_authorization_rule_connection_string, servicebus_queue, **kwargs):
@@ -93,8 +93,8 @@ class ServiceBusClientTests(AzureMgmtTestCase):
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @RandomNameResourceGroupPreparer(name_prefix='servicebustest')
-    @ServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
     @ServiceBusNamespaceAuthorizationRulePreparer(name_prefix='servicebustest', access_rights=[AccessRights.send])
     def test_sb_client_writeonly_credentials(self, servicebus_authorization_rule_connection_string, servicebus_queue, **kwargs):
@@ -113,8 +113,8 @@ class ServiceBusClientTests(AzureMgmtTestCase):
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @RandomNameResourceGroupPreparer(name_prefix='servicebustest')
-    @ServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusNamespaceAuthorizationRulePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest_qone', parameter_name='wrong_queue', dead_lettering_on_message_expiration=True)
     @ServiceBusQueuePreparer(name_prefix='servicebustest_qtwo', dead_lettering_on_message_expiration=True)
