@@ -173,6 +173,10 @@ class ServiceBusClient(object):
          will be immediately removed from the queue, and cannot be subsequently rejected or re-received if
          the client fails to process the message. The default mode is PeekLock.
         :paramtype mode: ~azure.servicebus.ReceiveSettleMode
+        :keyword session_id: A specific session from which to receive. This must be specified for a
+         sessionful entity, otherwise it must be None. In order to receive messages from the next available
+         session, set this to NEXT_AVAILABLE.
+        :paramtype session_id: str or ~azure.servicebus.NEXT_AVAILABLE
         :keyword int prefetch: The maximum number of messages to cache with each request to the service.
          The default value is 0, meaning messages will be received from the service and processed
          one at a time. Increasing this value will improve message throughput performance but increase

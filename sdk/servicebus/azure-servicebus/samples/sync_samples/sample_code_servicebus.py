@@ -11,8 +11,14 @@ Examples to show basic use case of python azure-servicebus SDK, including:
     - Receive and settle messages
     - Receive and settle deferred messages
 """
+
+import os
 import datetime
-from azure.servicebus import Message
+from azure.servicebus import ServiceBusClient, Message
+
+
+def process_message(message):
+    print(message)
 
 
 def example_create_servicebus_client_sync():
@@ -75,7 +81,7 @@ def example_create_servicebus_sender_sync():
     from azure.servicebus import ServiceBusClient
     servicebus_connection_str = os.environ['SERVICE_BUS_CONNECTION_STR']
     queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
-    servicebus_client = ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str, logging_enable=True)
+    servicebus_client = ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str)
     with servicebus_client:
         queue_sender = servicebus_client.get_queue_sender(queue_name=queue_name)
     # [END create_servicebus_sender_from_sb_client_sync]
@@ -118,7 +124,7 @@ def example_create_servicebus_receiver_sync():
     from azure.servicebus import ServiceBusClient
     servicebus_connection_str = os.environ['SERVICE_BUS_CONNECTION_STR']
     queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
-    servicebus_client = ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str, logging_enable=True)
+    servicebus_client = ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str)
     with servicebus_client:
         queue_receiver = servicebus_client.get_queue_receiver(queue_name=queue_name)
     # [END create_servicebus_receiver_from_sb_client_sync]
@@ -131,11 +137,17 @@ def example_send_and_receive_sync():
     servicebus_receiver = example_create_servicebus_receiver_sync()
 
     from azure.servicebus import Message
-    # [START servicebus_sender_send_sync]
+    # [START send_sync]
     with servicebus_sender:
         message = Message("Hello World")
         servicebus_sender.send(message)
-    # [END servicebus_sender_send_sync]
+    # [END send_sync]
+
+    # [START create_batch_sync]
+    with servicebus_sender:
+        batch_message = servicebus_sender.create_batch()
+        batch_message.add(Message("Single message inside batch"))
+    # [END create_batch_sync]
 
     # [START send_complex_message]
     message = Message("Hello World!!")
@@ -145,13 +157,32 @@ def example_send_and_receive_sync():
     message.time_to_live = datetime.timedelta(seconds=30)
     # [END send_complex_message]
 
-    # [START servicebus_receiver_receive_sync]
+    # [START peek_messages_sync]
+    with servicebus_receiver:
+        messages = servicebus_receiver.peek()
+        for message in messages:
+            print(message)
+    # [END peek_messages_sync]
+
+    # [START auto_lock_renew_message_sync]
+    from azure.servicebus import AutoLockRenew
+    lock_renewal = AutoLockRenew(max_workers=4)
+    with servicebus_receiver:
+        for message in servicebus_receiver:
+            # Auto renew message for 1 minute.
+            lock_renewal.register(message, timeout=60)
+            process_message(message)
+            message.complete()
+    # [END auto_lock_renew_message_sync]
+            break
+
+    # [START receive_sync]
     with servicebus_receiver:
         messages = servicebus_receiver.receive(timeout=5)
         for message in messages:
             print(message)
             message.complete()
-    # [END servicebus_receiver_receive_sync]
+    # [END receive_sync]
 
         # [START receive_complex_message]
         messages = servicebus_receiver.receive(timeout=5)
@@ -177,7 +208,7 @@ def example_receive_deferred_sync():
     servicebus_receiver = example_create_servicebus_receiver_sync()
     with servicebus_sender:
         servicebus_sender.send(Message("Hello World"))
-    # [START servicebus_receiver_receive_defer_sync]
+    # [START receive_defer_sync]
     with servicebus_receiver:
         deferred_sequenced_numbers = []
         messages = servicebus_receiver.receive(timeout=5)
@@ -192,8 +223,53 @@ def example_receive_deferred_sync():
 
         for msg in received_deferred_msg:
             msg.complete()
-    # [END servicebus_receiver_receive_defer_sync]
+    # [END receive_defer_sync]
+
+
+def example_session_ops_sync():
+    servicebus_connection_str = os.environ['SERVICE_BUS_CONNECTION_STR']
+    queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
+    session_id = "<your session id>"
+
+    with ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str) as servicebus_client:
+        # [START get_session_sync]
+        with servicebus_client.get_queue_receiver(queue_name=queue_name, session_id=session_id) as receiver:
+            session = receiver.session
+        # [END get_session_sync]
+
+        # [START get_session_state_sync]
+        with servicebus_client.get_queue_receiver(queue_name=queue_name, session_id=session_id) as receiver:
+            session = receiver.session
+            session_state = session.get_session_state()
+        # [END get_session_state_sync]
+
+        # [START set_session_state_sync]
+        with servicebus_client.get_queue_receiver(queue_name=queue_name, session_id=session_id) as receiver:
+            session = receiver.session
+            session_state = session.set_session_state("START")
+        # [END set_session_state_sync]
+
+        # [START session_renew_lock_sync]
+        with servicebus_client.get_queue_receiver(queue_name=queue_name, session_id=session_id) as receiver:
+            session = receiver.session
+            session_state = session.renew_lock()
+        # [END session_renew_lock_sync]
+
+        # [START auto_lock_renew_session_sync]
+        from azure.servicebus import AutoLockRenew
+
+        lock_renewal = AutoLockRenew(max_workers=4)
+        with servicebus_client.get_queue_receiver(queue_name=queue_name, session_id=session_id) as receiver:
+            session = receiver.session
+            # Auto renew session lock for 2 minutes
+            lock_renewal.register(session, timeout=120)
+            for message in receiver:
+                process_message(message)
+                message.complete()
+        # [END auto_lock_renew_session_sync]
+                break
 
 
 example_send_and_receive_sync()
 example_receive_deferred_sync()
+# example_session_ops_sync()

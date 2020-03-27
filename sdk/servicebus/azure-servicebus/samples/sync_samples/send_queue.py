@@ -6,7 +6,7 @@
 # --------------------------------------------------------------------------------------------
 
 """
-Example to show sending single message to a Service Bus Queue.
+Example to show sending message(s) to a Service Bus Queue.
 """
 
 # pylint: disable=C0111

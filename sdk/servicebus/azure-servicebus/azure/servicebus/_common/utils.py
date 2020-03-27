@@ -133,22 +133,23 @@ class AutoLockRenew(object):
     :param executor: A user-specified thread pool. This cannot be combined with
      setting `max_workers`.
     :type executor: ~concurrent.futures.ThreadPoolExecutor
-    :param max_workers: Specifiy the maximum workers in the thread pool. If not
+    :param max_workers: Specify the maximum workers in the thread pool. If not
      specified the number used will be derived from the core count of the environment.
      This cannot be combined with `executor`.
     :type max_workers: int
 
     .. admonition:: Example:
-        .. literalinclude:: ../samples/sync_samples/test_examples.py
-            :start-after: [START auto_lock_renew_message]
-            :end-before: [END auto_lock_renew_message]
+
+        .. literalinclude:: ../samples/sync_samples/sample_code_servicebus.py
+            :start-after: [START auto_lock_renew_message_sync]
+            :end-before: [END auto_lock_renew_message_sync]
             :language: python
             :dedent: 4
             :caption: Automatically renew a message lock
 
-        .. literalinclude:: ../samples/sync_samples/test_examples.py
-            :start-after: [START auto_lock_renew_session]
-            :end-before: [END auto_lock_renew_session]
+        .. literalinclude:: ../samples/sync_samples/sample_code_servicebus.py
+            :start-after: [START auto_lock_renew_session_sync]
+            :end-before: [END auto_lock_renew_session_sync]
             :language: python
             :dedent: 4
             :caption: Automatically renew a session lock
@@ -200,11 +201,10 @@ class AutoLockRenew(object):
         """Register a renewable entity for automatic lock renewal.
 
         :param renewable: A locked entity that needs to be renewed.
-        :type renewable: ~azure.servicebus.common.message.Message or
-         ~azure.servicebus.receive_handler.SessionReceiver
-        :param timeout: A time in seconds that the lock should be maintained for.
+        :type renewable: ~azure.servicebus.ReceivedMessage or
+         ~azure.servicebus.Session
+        :param float timeout: A time in seconds that the lock should be maintained for.
          Default value is 300 (5 minutes).
-        :type timeout: int
         """
         starttime = renewable_start_time(renewable)
         self.executor.submit(self._auto_lock_renew, renewable, starttime, timeout)

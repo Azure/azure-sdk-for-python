@@ -59,16 +59,17 @@ class AutoLockRenew:
     :type loop: ~asyncio.EventLoop
 
     .. admonition:: Example:
-        .. literalinclude:: ../samples/async_samples/test_examples_async.py
-            :start-after: [START auto_lock_renew_async_message]
-            :end-before: [END auto_lock_renew_async_message]
+
+        .. literalinclude:: ../samples/async_samples/sample_code_servicebus_async.py
+            :start-after: [START auto_lock_renew_message_async]
+            :end-before: [END auto_lock_renew_message_async]
             :language: python
             :dedent: 4
             :caption: Automatically renew a message lock
 
-        .. literalinclude:: ../samples/async_samples/test_examples_async.py
-            :start-after: [START auto_lock_renew_async_session]
-            :end-before: [END auto_lock_renew_async_session]
+        .. literalinclude:: ../samples/async_samples/sample_code_servicebus_async.py
+            :start-after: [START auto_lock_renew_session_async]
+            :end-before: [END auto_lock_renew_session_async]
             :language: python
             :dedent: 4
             :caption: Automatically renew a session lock
@@ -121,11 +122,10 @@ class AutoLockRenew:
         """Register a renewable entity for automatic lock renewal.
 
         :param renewable: A locked entity that needs to be renewed.
-        :type renewable: ~azure.servicebus.aio.async_message.Message or
-         ~azure.servicebus.aio.async_receive_handler.SessionReceiver
-        :param timeout: A time in seconds that the lock should be maintained for.
+        :type renewable: ~azure.servicebus.aio.ReceivedMessage or
+         ~azure.servicebus.aio.Session
+        :param float timeout: A time in seconds that the lock should be maintained for.
          Default value is 300 (5 minutes).
-        :type timeout: int
         """
         starttime = renewable_start_time(renewable)
         renew_future = asyncio.ensure_future(self._auto_lock_renew(renewable, starttime, timeout), loop=self.loop)

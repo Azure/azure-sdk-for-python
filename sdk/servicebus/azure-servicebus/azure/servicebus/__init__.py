@@ -10,7 +10,7 @@ __version__ = VERSION
 
 from ._servicebus_client import ServiceBusClient
 from ._servicebus_sender import ServiceBusSender
-from ._servicebus_receiver import ServiceBusReceiver
+from ._servicebus_receiver import ServiceBusReceiver, ServiceBusSession
 from ._base_handler import ServiceBusSharedKeyCredential
 from ._common.message import Message, BatchMessage, PeekMessage, ReceivedMessage
 from ._common.constants import ReceiveSettleMode, NEXT_AVAILABLE
@@ -58,5 +58,6 @@ __all__ = [
     'ServiceBusSender',
     'ServiceBusSharedKeyCredential',
     'TransportType',
-    'AutoLockRenew'
+    'AutoLockRenew',
+    'ServiceBusSession'
 ]

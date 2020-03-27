@@ -41,6 +41,15 @@ class ServiceBusSession(BaseSession):
 
     **Please use the instance variable `session` on the ServiceBusReceiver to get the corresponding ServiceBusSession
     object linked with the receiver instead of instantiating a ServiceBusSession object directly.**
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/async_samples/sample_code_servicebus_async.py
+            :start-after: [START get_session_async]
+            :end-before: [END get_session_async]
+            :language: python
+            :dedent: 4
+            :caption: Get session from a receiver
     """
 
     async def get_session_state(self):
@@ -144,6 +153,10 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
      will be immediately removed from the queue, and cannot be subsequently rejected or re-received if
      the client fails to process the message. The default mode is PeekLock.
     :paramtype mode: ~azure.servicebus.ReceiveSettleMode
+    :keyword session_id: A specific session from which to receive. This must be specified for a
+     sessionful entity, otherwise it must be None. In order to receive messages from the next available
+     session, set this to NEXT_AVAILABLE.
+    :paramtype session_id: str or ~azure.servicebus.NEXT_AVAILABLE
     :keyword int prefetch: The maximum number of messages to cache with each request to the service.
      The default value is 0 meaning messages will be received from the service and processed
      one at a time. Increasing this value will improve message throughput performance but increase
@@ -292,9 +305,20 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
     def session(self):
         # type: ()->ServiceBusSession
         """
-        Get the ServiceBusSession object linked with the receiver.
+        Get the ServiceBusSession object linked with the receiver. Session is only available to session-enabled
+        entities.
 
         :rtype: ~azure.servicebus.aio.ServiceBusSession
+        :raises: :class:`TypeError`
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_code_servicebus_async.py
+                :start-after: [START get_session_async]
+                :end-before: [END get_session_async]
+                :language: python
+                :dedent: 4
+                :caption: Get session from a receiver
         """
         if not self._session_id:
             raise TypeError("Session is only available to session-enabled entities.")
@@ -320,6 +344,10 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
          will be immediately removed from the queue, and cannot be subsequently rejected or re-received if
          the client fails to process the message. The default mode is PeekLock.
         :paramtype mode: ~azure.servicebus.ReceiveSettleMode
+        :keyword session_id: A specific session from which to receive. This must be specified for a
+         sessionful entity, otherwise it must be None. In order to receive messages from the next available
+         session, set this to NEXT_AVAILABLE.
+        :paramtype session_id: str or ~azure.servicebus.NEXT_AVAILABLE
         :keyword int prefetch: The maximum number of messages to cache with each request to the service.
          The default value is 0, meaning messages will be received from the service and processed
          one at a time. Increasing this value will improve message throughput performance but increase
@@ -380,8 +408,8 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/async_samples/sample_code_servicebus_async.py
-                :start-after: [START servicebus_receiver_receive_async]
-                :end-before: [END servicebus_receiver_receive_async]
+                :start-after: [START receive_async]
+                :end-before: [END receive_async]
                 :language: python
                 :dedent: 4
                 :caption: Receive messages from ServiceBus.
@@ -408,9 +436,9 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sync_samples/sample_code_servicebus.py
-                :start-after: [START servicebus_receiver_receive_defer_sync]
-                :end-before: [END servicebus_receiver_receive_defer_sync]
+            .. literalinclude:: ../samples/async_samples/sample_code_servicebus_async.py
+                :start-after: [START receive_defer_async]
+                :end-before: [END receive_defer_async]
                 :language: python
                 :dedent: 4
                 :caption: Receive deferred messages from ServiceBus.
@@ -444,8 +472,10 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
 
     async def peek(self, message_count=1, sequence_number=0):
         """Browse messages currently pending in the queue.
+
         Peeked messages are not removed from queue, nor are they locked. They cannot be completed,
         deferred or dead-lettered.
+
         :param int message_count: The maximum number of messages to try and peek. The default
          value is 1.
         :param int sequence_number: A message sequence number from which to start browsing messages.
@@ -454,8 +484,8 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/async_samples/sample_code_servicebus_async.py
-                :start-after: [START receiver_peek_messages_async]
-                :end-before: [END receiver_peek_messages_async]
+                :start-after: [START peek_messages_async]
+                :end-before: [END peek_messages_async]
                 :language: python
                 :dedent: 4
                 :caption: Peek messages in the queue.
