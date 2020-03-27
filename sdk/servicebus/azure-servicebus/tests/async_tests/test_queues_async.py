@@ -659,7 +659,8 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                     messages.extend(recv)
 
                 try:
-                    assert not message.expired
+                    with pytest.raises(AttributeError):
+                        assert not message.expired
                     for m in messages:
                         time.sleep(5)
                         initial_expiry = m.locked_until
@@ -952,12 +953,10 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
         async with ServiceBusClient.from_connection_string(
             servicebus_namespace_connection_string, debug=False) as sb_client:
 
-            def message_content():
-                for i in range(5):
-                    yield "Message no. {}".format(i)
-
             async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
-                message = BatchMessage(message_content())
+                message = BatchMessage()
+                for i in range(5):
+                    message.add(Message("Message no. {}".format(i)))
                 await sender.send(message)
 
             async with sb_client.get_queue_receiver(servicebus_queue.name) as receiver:
