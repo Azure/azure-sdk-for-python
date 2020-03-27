@@ -279,6 +279,4 @@ class BaseHandler(object):  # pylint:disable=too-many-instance-attributes
 
         :rtype: None
         """
-        if not self._running:
-            return
         self._close_handler()

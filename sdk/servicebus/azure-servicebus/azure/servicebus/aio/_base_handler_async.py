@@ -190,6 +190,4 @@ class BaseHandlerAsync(BaseHandler):
 
         :rtype: None
         """
-        if not self._running:
-            return
         await self._close_handler()
