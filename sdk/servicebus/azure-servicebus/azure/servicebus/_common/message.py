@@ -366,7 +366,7 @@ class ReceivedMessage(PeekMessage):
     def _is_live(self, action):
         # pylint: disable=no-member
         if not self._receiver or not self._receiver._running:
-            raise ValueError("Orphan message had no open connection.")
+            raise MessageSettleFailed(action, "Orphan message had no open connection.")
         if self.settled:
             raise MessageAlreadySettled(action)
         try:
