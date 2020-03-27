@@ -39,7 +39,7 @@ class FormRecognizerClientConfiguration(Configuration):
         self.credential = credential
         self.endpoint = endpoint
         self.credential_scopes = ['https://cognitiveservices.azure.com/.default']
-        kwargs.setdefault('sdk_moniker', 'azure-ai-formrecognizer/{}'.format(VERSION))
+        kwargs.setdefault('sdk_moniker', 'ai-formrecognizer/{}'.format(VERSION))
         self._configure(**kwargs)
 
     def _configure(

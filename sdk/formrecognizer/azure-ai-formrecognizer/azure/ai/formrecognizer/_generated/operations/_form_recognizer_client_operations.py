@@ -40,6 +40,7 @@ class FormRecognizerClientOperationsMixin(object):
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
+        content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
         url = self.train_custom_model_async.metadata['url']
@@ -53,7 +54,7 @@ class FormRecognizerClientOperationsMixin(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Content-Type'] = kwargs.pop('content_type', 'application/json')
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
 
         # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
@@ -196,6 +197,7 @@ class FormRecognizerClientOperationsMixin(object):
         # type: (...) -> None
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
+        content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
         url = self._analyze_with_custom_model_initial.metadata['url']
@@ -212,7 +214,7 @@ class FormRecognizerClientOperationsMixin(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Content-Type'] = kwargs.pop('content_type', 'application/json')
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
 
         # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
@@ -264,7 +266,7 @@ class FormRecognizerClientOperationsMixin(object):
         :param include_text_details: Include text lines and element references in the result.
         :type include_text_details: bool
         :param file_stream: .json, .pdf, .jpg, .png or .tiff type file stream.
-        :type file_stream: str
+        :type file_stream: ~azure.ai.formrecognizer.models.SourcePath
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
@@ -365,6 +367,7 @@ class FormRecognizerClientOperationsMixin(object):
         # type: (...) -> None
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
+        content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
         url = self._analyze_receipt_async_initial.metadata['url']
@@ -380,7 +383,7 @@ class FormRecognizerClientOperationsMixin(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Content-Type'] = kwargs.pop('content_type', 'application/json')
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
 
         # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
@@ -429,7 +432,7 @@ class FormRecognizerClientOperationsMixin(object):
         :param include_text_details: Include text lines and element references in the result.
         :type include_text_details: bool
         :param file_stream: .json, .pdf, .jpg, .png or .tiff type file stream.
-        :type file_stream: str
+        :type file_stream: ~azure.ai.formrecognizer.models.SourcePath
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
@@ -524,6 +527,7 @@ class FormRecognizerClientOperationsMixin(object):
         # type: (...) -> None
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
+        content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
         url = self._analyze_layout_async_initial.metadata['url']
@@ -537,7 +541,7 @@ class FormRecognizerClientOperationsMixin(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Content-Type'] = kwargs.pop('content_type', 'application/json')
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
 
         # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
@@ -583,7 +587,7 @@ class FormRecognizerClientOperationsMixin(object):
         Analyze Layout.
 
         :param file_stream: .json, .pdf, .jpg, .png or .tiff type file stream.
-        :type file_stream: str
+        :type file_stream: ~azure.ai.formrecognizer.models.SourcePath
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
