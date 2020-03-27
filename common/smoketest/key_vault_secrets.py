@@ -4,10 +4,8 @@
 # ------------------------------------
 import os
 import uuid
-from azure.identity import DefaultAzureCredential
 from azure.keyvault.secrets import SecretClient
 from key_vault_base import KeyVaultBase
-
 
 class KeyVaultSecrets(KeyVaultBase):
     def __init__(self):

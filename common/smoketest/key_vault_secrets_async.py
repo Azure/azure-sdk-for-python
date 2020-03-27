@@ -7,7 +7,6 @@ import uuid
 from azure.keyvault.secrets.aio import SecretClient
 from key_vault_base_async import KeyVaultBaseAsync
 
-
 class KeyVaultSecrets(KeyVaultBaseAsync):
     def __init__(self):
         credential = self.get_default_credential(os.environ.get('AZURE_AUTHORITY_HOST_ALIAS'))

@@ -7,7 +7,6 @@ import uuid
 from azure.keyvault.certificates import CertificateClient, CertificatePolicy
 from key_vault_base import KeyVaultBase
 
-
 class KeyVaultCertificates(KeyVaultBase):
     def __init__(self):
 
