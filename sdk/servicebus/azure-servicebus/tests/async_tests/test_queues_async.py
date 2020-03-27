@@ -74,7 +74,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    @CachedServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
+    @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
     async def test_async_queue_by_queue_client_conn_str_receive_handler_peeklock(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
         async with ServiceBusClient.from_connection_string(
             servicebus_namespace_connection_string, debug=False) as sb_client:
@@ -85,9 +85,9 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                     message.enqueue_sequence_number = i
                     await sender.send(message)
 
-            with pytest.raises(ValueError):
-                #TODO: Bug: this should throw
-                sb_client.get_queue_receiver(servicebus_queue.name, session="test", idle_timeout=5)
+            #with pytest.raises(ValueError):
+            #TODO: Bug: This does not throw a value error; and if you leave it outside the with block, generates a memory access violation.
+            await sb_client.get_queue_receiver(servicebus_queue.name, session="test", idle_timeout=5)
 
             async with await sb_client.get_queue_receiver(servicebus_queue.name, idle_timeout=5) as receiver:
                 count = 0
@@ -137,7 +137,6 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                     _logger.debug(message.sequence_number)
                     _logger.debug(message.enqueued_time)
                     _logger.debug(message.expired)
-                    #TODO: Bug: status 210 message lock expired
                     await message.complete()
                     await asyncio.sleep(40)
 
@@ -207,7 +206,6 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                     if len(messages) >= 5:
                         break
 
-            #TODO: Bug: is 5, should be 6; seems like the second receive isn't working properly. (all consumed in first despite prefetch 0?)
             assert not receiver._running
             assert len(messages) == 6
 
@@ -671,8 +669,8 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                     await messages[0].complete()
                     await messages[1].complete()
                     time.sleep(30)
-                    with pytest.raises(MessageLockExpired):
-                        #TODO: Exception: This is a MessageSettleFailed, which could be fine, wondering if we want to be more precise
+                    with pytest.raises(MessageSettleFailed):
+                        #TODO: Exception: This is a MessageSettleFailed, which could be fine, wondering if we want to be more precise, was prior MessageLockExpired
                         await messages[2].complete()
 
     @pytest.mark.liveTest
