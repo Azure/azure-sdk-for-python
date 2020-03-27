@@ -43,8 +43,9 @@ class StorageAccountPreparer(AzureMgmtPreparer):
         self.resource_group_parameter_name = resource_group_parameter_name
         self.parameter_name = parameter_name
         self.storage_key = ''
+        self.resource_moniker = self.name_prefix
         if random_name_enabled:
-            self.resource_moniker = self.name_prefix + "storname"
+            self.resource_moniker += "storname"
 
     def create_resource(self, name, **kwargs):
         if self.is_live:
