@@ -83,8 +83,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                     await sender.send(message)
 
             with pytest.raises(ValueError):
-                #TODO: Bug: does not raise
-                session = sb_client.get_queue_receiver(servicebus_queue.name, idle_timeout=5)
+                sb_client.get_queue_receiver(servicebus_queue.name, idle_timeout=5)._open()
 
             session = sb_client.get_queue_receiver(servicebus_queue.name, session_id=session_id, idle_timeout=5)
             count = 0
@@ -524,7 +523,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                             await asyncio.sleep(45)
                             print("Second sleep {}".format(session.session.locked_until - datetime.now()))
                             assert session.session.expired
-                            assert isinstance(session.auto_renew_error, AutoLockRenewTimeout)
+                            assert isinstance(session.session.auto_renew_error, AutoLockRenewTimeout)
                             try:
                                 await message.complete()
                                 raise AssertionError("Didn't raise SessionLockExpired")

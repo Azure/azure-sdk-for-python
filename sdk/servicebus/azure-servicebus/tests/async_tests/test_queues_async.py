@@ -670,8 +670,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                     await messages[0].complete()
                     await messages[1].complete()
                     time.sleep(30)
-                    with pytest.raises(MessageSettleFailed):
-                        #TODO: Exception: This is a MessageSettleFailed, which could be fine, wondering if we want to be more precise, was prior MessageLockExpired
+                    with pytest.raises(MessageLockExpired):
                         await messages[2].complete()
 
     @pytest.mark.liveTest
@@ -701,6 +700,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                         print("Finished first sleep", message.locked_until)
                         assert not message.expired
                         await asyncio.sleep(25)
+                        await asyncio.sleep(max(0,(message.locked_until - datetime.now()).total_seconds()))
                         print("Finished second sleep", message.locked_until, datetime.now())
                         assert message.expired
                         try:
