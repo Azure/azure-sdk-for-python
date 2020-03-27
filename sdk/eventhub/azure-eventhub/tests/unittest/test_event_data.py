@@ -1,6 +1,7 @@
 import platform
 import pytest
-
+import uamqp
+from azure.eventhub import _common
 
 pytestmark = pytest.mark.skipif(platform.python_implementation() == "PyPy", reason="This is ignored for PyPy")
 
@@ -50,6 +51,41 @@ def test_app_properties():
     assert str(event_data) == "{ body: '', properties: {'a': 'b'} }"
     assert repr(event_data) == "EventData(body='', properties={'a': 'b'}, offset=None, sequence_number=None, partition_key=None, enqueued_time=None)"
     assert event_data.properties["a"] == "b"
+
+
+def test_sys_properties():
+    properties = uamqp.message.MessageProperties()
+    properties.message_id = "message_id"
+    properties.user_id = "user_id"
+    properties.to = "to"
+    properties.subject = "subject"
+    properties.reply_to = "reply_to"
+    properties.correlation_id = "correlation_id"
+    properties.content_type = "content_type"
+    properties.content_encoding = "content_encoding"
+    properties.absolute_expiry_time = 1
+    properties.creation_time = 1
+    properties.group_id = "group_id"
+    properties.group_sequence = 1
+    properties.reply_to_group_id = "reply_to_group_id"
+    message = uamqp.Message(properties=properties)
+    message.annotations = {_common.PROP_OFFSET: "@latest"}
+    ed = EventData._from_message(message)  # type: EventData
+
+    assert ed.system_properties[_common.PROP_OFFSET] == "@latest"
+    assert ed.system_properties[_common.PROP_CORRELATION_ID] == properties.correlation_id
+    assert ed.system_properties[_common.PROP_MESSAGE_ID] == properties.message_id
+    assert ed.system_properties[_common.PROP_CONTENT_ENCODING] == properties.content_encoding
+    assert ed.system_properties[_common.PROP_CONTENT_TYPE] == properties.content_type
+    assert ed.system_properties[_common.PROP_USER_ID] == properties.user_id
+    assert ed.system_properties[_common.PROP_TO] == properties.to
+    assert ed.system_properties[_common.PROP_SUBJECT] == properties.subject
+    assert ed.system_properties[_common.PROP_REPLY_TO] == properties.reply_to
+    assert ed.system_properties[_common.PROP_ABSOLUTE_EXPIRY_TIME] == properties.absolute_expiry_time
+    assert ed.system_properties[_common.PROP_CREATION_TIME] == properties.creation_time
+    assert ed.system_properties[_common.PROP_GROUP_ID] == properties.group_id
+    assert ed.system_properties[_common.PROP_GROUP_SEQUENCE] == properties.group_sequence
+    assert ed.system_properties[_common.PROP_REPLY_TO_GROUP_ID] == properties.reply_to_group_id
 
 
 def test_event_data_batch():
