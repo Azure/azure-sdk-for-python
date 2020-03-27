@@ -150,14 +150,14 @@ def test_key_vault_regression():
 def test_azure_key_credential_policy():
     """Tests to see if we can create an AzureKeyCredentialPolicy"""
     def verify_authorization_header(request):
-        assert request.http_request.headers["api_key"] == "test_key"
+        assert request.headers["api_key"] == "test_key"
     api_key = "test_key"
     key_header = "api_key"
 
     transport=Mock(send=verify_authorization_header)
     credential = AzureKeyCredential(api_key)
     credential_policy = AzureKeyCredentialPolicy(credential=credential, name=key_header)
-    pipeline = Pipeline(transport=Mock(), policies=[credential_policy])
+    pipeline = Pipeline(transport=transport, policies=[credential_policy])
 
     pipeline.run(HttpRequest("GET", "https://test_key_credential"))
 
