@@ -10,6 +10,7 @@ import os
 import pytest
 import time
 import uuid
+import random
 from datetime import datetime, timedelta
 
 from azure.servicebus import ServiceBusClient, QueueClient, AutoLockRenew
@@ -60,6 +61,10 @@ def print_message(message):
     except TypeError:
         pass
     _logger.debug("Enqueued time: {}".format(message.enqueued_time))
+
+
+def sleep_until_expired(locked_entity):
+    time.sleep(max(0,(locked_entity.locked_until - datetime.now()).total_seconds() + 1))
 
 # A note regarding live_test_only.
 # Old servicebus tests were not written to work on both stubs and live entities.
@@ -421,7 +426,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    @CachedServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
+    @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
     def test_queue_by_servicebus_client_iter_messages_with_retrieve_deferred_receiver_deadletter(self, servicebus_namespace, servicebus_namespace_key_name, servicebus_namespace_primary_key, servicebus_queue, **kwargs):
         client = ServiceBusClient(
             service_namespace=servicebus_namespace.name,
@@ -467,7 +472,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    @CachedServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
+    @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
     def test_queue_by_servicebus_client_iter_messages_with_retrieve_deferred_receiver_deletemode(self, servicebus_namespace, servicebus_namespace_key_name, servicebus_namespace_primary_key, servicebus_queue, **kwargs):
         client = ServiceBusClient(
             service_namespace=servicebus_namespace.name,
@@ -542,7 +547,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    @CachedServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
+    @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
     def test_queue_by_servicebus_client_receive_batch_with_deadletter(self, servicebus_namespace, servicebus_namespace_key_name, servicebus_namespace_primary_key, servicebus_queue, **kwargs):
     
         client = ServiceBusClient(
@@ -636,11 +641,12 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             shared_access_key_value=servicebus_namespace_primary_key,
             debug=False)
     
+        session_id = str(random.randint(1000,9999)) #so we can used a cached queue and not collide.
         queue_client = client.get_queue(servicebus_queue.name)
         with pytest.raises(ValueError):
-            queue_client.get_receiver(session="test")
+            queue_client.get_receiver(session=session_id)
     
-        with queue_client.get_sender(session="test") as sender:
+        with queue_client.get_sender(session=session_id) as sender:
             sender.send(Message("test session sender"))
     
 
@@ -648,7 +654,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    @CachedServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
+    @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
     def test_queue_by_servicebus_client_browse_messages_client(self, servicebus_namespace, servicebus_namespace_key_name, servicebus_namespace_primary_key, servicebus_queue, **kwargs):
     
         client = ServiceBusClient(
@@ -676,7 +682,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    @CachedServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
+    @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
     def test_queue_by_servicebus_client_browse_messages_with_receiver(self, servicebus_namespace, servicebus_namespace_key_name, servicebus_namespace_primary_key, servicebus_queue, **kwargs):
     
         client = ServiceBusClient(
@@ -834,7 +840,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 # potentially as a side effect of network delays/sleeps/"typical distributed systems nonsense."  In a perfect world we wouldn't have a magic number/network hop but this allows
                 # a slightly more robust test in absence of that.
                 assert (messages[2].locked_until - datetime.now()) <= timedelta(seconds=31)
-                time.sleep((messages[2].locked_until - datetime.now()).total_seconds())
+                sleep_until_expired(messages[2])
                 with pytest.raises(MessageLockExpired):
                     messages[2].complete()
     
@@ -842,7 +848,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    @CachedServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
+    @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
     def test_queue_by_queue_client_conn_str_receive_handler_with_autolockrenew(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
         
         queue_client = QueueClient.from_connection_string(
@@ -863,11 +869,11 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     messages.append(message)
                     assert not message.expired
                     renewer.register(message, timeout=60)
-                    print("Registered lock renew thread", message.locked_until, datetime.now())
                     time.sleep(50)
                     print("Finished first sleep", message.locked_until)
                     assert not message.expired
-                    time.sleep(25)
+                    time.sleep(25) #Time out the auto-renewer
+                    sleep_until_expired(message) # Now time out the message.
                     print("Finished second sleep", message.locked_until, datetime.now())
                     assert message.expired
                     try:
