@@ -124,6 +124,7 @@ class BaseHandler(object):  # pylint:disable=too-many-instance-attributes
         self._properties = create_properties()
 
     def __enter__(self):
+        self._open_with_retry()
         return self
 
     def __exit__(self, *args):

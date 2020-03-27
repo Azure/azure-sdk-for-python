@@ -41,7 +41,7 @@ async def main():
     servicebus_client = ServiceBusClient.from_connection_string(conn_str=CONNECTION_STR)
 
     async with servicebus_client:
-        sender = await servicebus_client.get_queue_sender(queue_name=QUEUE_NAME)
+        sender = servicebus_client.get_queue_sender(queue_name=QUEUE_NAME)
         async with sender:
             await send_single_message(sender)
             await send_batch_message(sender)

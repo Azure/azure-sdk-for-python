@@ -57,6 +57,7 @@ class BaseHandlerAsync(BaseHandler):
         )
 
     async def __aenter__(self):
+        await self._open_with_retry()
         return self
 
     async def __aexit__(self, *args):

@@ -131,7 +131,7 @@ class ServiceBusClient(object):
         if self._connection_sharing:
             await self._connection.destroy_async()
 
-    async def get_queue_sender(self, queue_name, **kwargs):
+    def get_queue_sender(self, queue_name, **kwargs):
         # type: (str, Any) -> ServiceBusSender
         """Get ServiceBusSender for the specific queue.
 
@@ -161,15 +161,10 @@ class ServiceBusClient(object):
             connection=self._connection,
             **kwargs
         )
-        try:
-            await sender._open_with_retry()
-        except Exception:
-            await sender._close_handler()
-            raise
 
         return sender
 
-    async def get_queue_receiver(self, queue_name, **kwargs):
+    def get_queue_receiver(self, queue_name, **kwargs):
         # type: (str, Any) -> ServiceBusReceiver
         """Get ServiceBusReceiver for the specific queue.
 
@@ -211,11 +206,5 @@ class ServiceBusClient(object):
             connection=self._connection,
             **kwargs
         )
-
-        try:
-            await receiver._open_with_retry()
-        except Exception:
-            await receiver._close_handler()
-            raise
 
         return receiver

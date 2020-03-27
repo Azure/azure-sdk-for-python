@@ -180,7 +180,7 @@ def example_receive_deferred_sync():
     # [START servicebus_receiver_receive_defer_sync]
     with servicebus_receiver:
         deferred_sequenced_numbers = []
-        messages = servicebus_receiver.receive(max_batch_size=10, timeout=5)
+        messages = servicebus_receiver.receive(timeout=5)
         for message in messages:
             deferred_sequenced_numbers.append(message.sequence_number)
             print(message)
