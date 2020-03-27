@@ -215,13 +215,13 @@ class EventProcessor(
     def _on_event_received(self, partition_context, event):
         # type: (PartitionContext, Union[Optional[EventData], List[EventData]]) -> None
         if event:
-            partition_context._last_received_event = (  # pylint:disable=protected-access
-                event[-1] if isinstance(event, List) else event
-            )
+            try:
+                partition_context._last_received_event = event[-1]  # type: ignore  #pylint:disable=protected-access
+            except TypeError:
+                partition_context._last_received_event = event  # type: ignore  #pylint:disable=protected-access
             with self._context(event):
                 self._event_handler(partition_context, event)
         else:
-            partition_context._last_received_event = None  # pylint:disable=protected-access
             self._event_handler(partition_context, event)
 
     def _load_balancing(self):
@@ -319,6 +319,9 @@ class EventProcessor(
         self._ownership_manager.release_ownership(partition_id)
 
     def _do_receive(self, partition_id, consumer):
+        # type: (str, EventHubConsumer) -> None
+        """Call the consumer.receive() and handle exceptions if any after it exhausts retries.
+        """
         try:
             consumer.receive(self._batch, self._max_batch_size, self._max_wait_time)
         except Exception as error:  # pylint:disable=broad-except
