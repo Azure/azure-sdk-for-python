@@ -74,7 +74,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
+    @CachedServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
     async def test_async_queue_by_queue_client_conn_str_receive_handler_peeklock(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
         async with ServiceBusClient.from_connection_string(
             servicebus_namespace_connection_string, debug=False) as sb_client:
@@ -85,9 +85,9 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                     message.enqueue_sequence_number = i
                     await sender.send(message)
 
-            #with pytest.raises(ValueError):
-            #TODO: Bug: This does not throw a value error; and if you leave it outside the with block, generates a memory access violation.
-            await sb_client.get_queue_receiver(servicebus_queue.name, session="test", idle_timeout=5)
+            with pytest.raises(ValueError):
+                #TODO: Bug: This does not throw a value error; and if you leave it outside the with block, generates a memory access violation.
+                await sb_client.get_queue_receiver(servicebus_queue.name, session="test", idle_timeout=5)
 
             async with await sb_client.get_queue_receiver(servicebus_queue.name, idle_timeout=5) as receiver:
                 count = 0
