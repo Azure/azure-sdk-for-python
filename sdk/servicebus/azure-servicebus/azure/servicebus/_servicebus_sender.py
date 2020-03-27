@@ -285,8 +285,8 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/sync_samples/sample_code_servicebus.py
-                :start-after: [START servicebus_sender_send_sync]
-                :end-before: [END servicebus_sender_send_sync]
+                :start-after: [START send_sync]
+                :end-before: [END send_sync]
                 :language: python
                 :dedent: 4
                 :caption: Send message.
@@ -312,8 +312,8 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/sync_samples/sample_code_servicebus.py
-                :start-after: [START servicebus_sender_create_batch_sync]
-                :end-before: [END servicebus_sender_create_batch_sync]
+                :start-after: [START create_batch_sync]
+                :end-before: [END create_batch_sync]
                 :language: python
                 :dedent: 4
                 :caption: Create BatchMessage object within limited size

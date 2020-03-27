@@ -43,7 +43,7 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
     :type body: str or bytes
     :param str encoding: The encoding for string data. Default is UTF-8.
     :keyword session_id: An optional session ID for the message to be sent.
-    :paramtype session_id: str or ~uuid.Guid
+    :paramtype session_id: str
 
     .. admonition:: Example:
 
@@ -95,6 +95,10 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
 
     @property
     def session_id(self):
+        """The session id of the message
+
+        :rtype: str
+        """
         try:
             return self.properties.group_id.decode('UTF-8')
         except (AttributeError, UnicodeDecodeError):
@@ -102,6 +106,11 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
 
     @session_id.setter
     def session_id(self, value):
+        """Set the session id on the message.
+
+        :param value: The session id for the message.
+        :type value: str
+        """
         self.properties.group_id = value
 
     @property

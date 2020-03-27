@@ -11,8 +11,16 @@ Examples to show basic async use case of python azure-servicebus SDK, including:
     - Receive and settle messages
     - Receive and settle deferred messages
 """
+import os
 import asyncio
-from azure.servicebus.aio import Message
+from azure.servicebus.aio import ServiceBusClient, Message
+
+
+_RUN_ITERATOR = False
+
+
+async def process_message(message):
+    print(message)
 
 
 def example_create_servicebus_client_async():
@@ -131,19 +139,43 @@ async def example_send_and_receive_async():
     servicebus_receiver = await example_create_servicebus_receiver_async()
 
     from azure.servicebus.aio import Message
-    # [START servicebus_sender_send_async]
+    # [START send_async]
     async with servicebus_sender:
         message = Message("Hello World")
         await servicebus_sender.send(message)
-    # [END servicebus_sender_send_async]
+    # [END send_async]
 
-    # [START servicebus_receiver_receive_async]
+    # [START create_batch_async]
+    async with servicebus_sender:
+        batch_message = await servicebus_sender.create_batch()
+        batch_message.add(Message("Single message inside batch"))
+    # [END create_batch_async]
+
+    # [START peek_messages_async]
+    async with servicebus_receiver:
+        messages = await servicebus_receiver.peek()
+        for message in messages:
+            print(message)
+    # [END peek_messages_async]
+
+    # [START receive_async]
     async with servicebus_receiver:
         messages = await servicebus_receiver.receive(timeout=5)
         for message in messages:
             print(message)
             await message.complete()
-    # [END servicebus_receiver_receive_async]
+    # [END receive_async]
+
+    # [START auto_lock_renew_message_async]
+    from azure.servicebus.aio import AutoLockRenew
+
+    lock_renewal = AutoLockRenew()
+    async with servicebus_receiver:
+        async for message in servicebus_receiver:
+            lock_renewal.register(message, timeout=60)
+            await process_message(message)
+            await message.complete()
+    # [END auto_lock_renew_message_async]
 
 
 async def example_receive_deferred_async():
@@ -151,7 +183,7 @@ async def example_receive_deferred_async():
     servicebus_receiver = await example_create_servicebus_receiver_async()
     async with servicebus_sender:
         await servicebus_sender.send(Message("Hello World"))
-    # [START servicebus_receiver_receive_defer_async]
+    # [START receive_defer_async]
     async with servicebus_receiver:
         deferred_sequenced_numbers = []
         messages = await servicebus_receiver.receive(timeout=5)
@@ -166,10 +198,55 @@ async def example_receive_deferred_async():
 
         for msg in received_deferred_msg:
             await msg.complete()
-    # [END servicebus_receiver_receive_defer_async]
+    # [END receive_defer_async]
+
+
+async def example_session_ops_async():
+    servicebus_connection_str = os.environ['SERVICE_BUS_CONNECTION_STR']
+    queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
+    session_id = "<your session id>"
+
+    async with ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str) as servicebus_client:
+        # [START get_session_async]
+        async with servicebus_client.get_queue_receiver(queue_name=queue_name, session_id=session_id) as receiver:
+            session = receiver.session
+        # [END get_session_async]
+
+        # [START get_session_state_async]
+        async with servicebus_client.get_queue_receiver(queue_name=queue_name, session_id=session_id) as receiver:
+            session = receiver.session
+            session_state = await session.get_session_state()
+        # [END get_session_state_async]
+
+        # [START set_session_state_async]
+        async with servicebus_client.get_queue_receiver(queue_name=queue_name, session_id=session_id) as receiver:
+            session = receiver.session
+            session_state = await session.set_session_state("START")
+        # [END set_session_state_async]
+
+        # [START session_renew_lock_async]
+        async with servicebus_client.get_queue_receiver(queue_name=queue_name, session_id=session_id) as receiver:
+            session = receiver.session
+            session_state = await session.renew_lock()
+        # [END session_renew_lock_async]
+
+        # [START auto_lock_renew_session_async]
+        from azure.servicebus.aio import AutoLockRenew
+
+        lock_renewal = AutoLockRenew()
+        async with servicebus_client.get_queue_receiver(queue_name=queue_name, session_id=session_id) as receiver:
+            session = receiver.session
+            # Auto renew session lock for 2 minutes
+            lock_renewal.register(session, timeout=120)
+            async for message in receiver:
+                await process_message(message)
+                await message.complete()
+        # [END auto_lock_renew_session_async]
+                break
 
 
 if __name__ == "__main__":
     loop = asyncio.get_event_loop()
     loop.run_until_complete(example_send_and_receive_async())
     loop.run_until_complete(example_receive_deferred_async())
+    # loop.run_until_complete(example_session_ops_async())

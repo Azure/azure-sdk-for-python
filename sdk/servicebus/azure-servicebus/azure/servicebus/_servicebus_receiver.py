@@ -48,6 +48,15 @@ class ServiceBusSession(object):
 
     **Please use the instance variable `session` on the ServiceBusReceiver to get the corresponding ServiceBusSession
     object linked with the receiver instead of instantiating a ServiceBusSession object directly.**
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/sync_samples/sample_code_servicebus.py
+            :start-after: [START get_session_sync]
+            :end-before: [END get_session_sync]
+            :language: python
+            :dedent: 4
+            :caption: Get session from a receiver
     """
     def __init__(self, session_id, receiver, encoding="UTF-8"):
         self._session_id = session_id
@@ -72,8 +81,8 @@ class ServiceBusSession(object):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/sync_samples/sample_code_servicebus.py
-                :start-after: [START get_session_state]
-                :end-before: [END get_session_state]
+                :start-after: [START get_session_state_sync]
+                :end-before: [END get_session_state_sync]
                 :language: python
                 :dedent: 4
                 :caption: Get the session state
@@ -99,8 +108,8 @@ class ServiceBusSession(object):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/sync_samples/sample_code_servicebus.py
-                :start-after: [START set_session_state]
-                :end-before: [END set_session_state]
+                :start-after: [START set_session_state_sync]
+                :end-before: [END set_session_state_sync]
                 :language: python
                 :dedent: 4
                 :caption: Set the session state
@@ -126,8 +135,8 @@ class ServiceBusSession(object):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/sync_samples/sample_code_servicebus.py
-                :start-after: [START renew_lock]
-                :end-before: [END renew_lock]
+                :start-after: [START session_renew_lock_sync]
+                :end-before: [END session_renew_lock_sync]
                 :language: python
                 :dedent: 4
                 :caption: Renew the session lock before it expires
@@ -163,6 +172,7 @@ class ServiceBusSession(object):
     def locked_until(self):
         # type: () -> datetime
         """The time at which this session's lock will expire.
+
         :rtype: datetime
         """
         return self._locked_until
@@ -244,6 +254,10 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
      will be immediately removed from the queue, and cannot be subsequently rejected or re-received if
      the client fails to process the message. The default mode is PeekLock.
     :paramtype mode: ~azure.servicebus.ReceiveSettleMode
+    :keyword session_id: A specific session from which to receive. This must be specified for a
+     sessionful entity, otherwise it must be None. In order to receive messages from the next available
+     session, set this to NEXT_AVAILABLE.
+    :paramtype session_id: str or ~azure.servicebus.NEXT_AVAILABLE
     :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
     :keyword int retry_total: The total number of attempts to redo a failed operation when an error occurs.
      Default value is 3.
@@ -393,9 +407,20 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
     def session(self):
         # type: ()->ServiceBusSession
         """
-        Get the ServiceBusSession object linked with the receiver.
+        Get the ServiceBusSession object linked with the receiver. Session is only available to session-enabled
+        entities.
 
         :rtype: ~azure.servicebus.ServiceBusSession
+        :raises: :class:`TypeError`
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sync_samples/sample_code_servicebus.py
+                :start-after: [START get_session_sync]
+                :end-before: [END get_session_sync]
+                :language: python
+                :dedent: 4
+                :caption: Get session from a receiver
         """
         if not self._session_id:
             raise TypeError("Session is only available to session-enabled entities.")
@@ -422,6 +447,10 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
          will be immediately removed from the queue, and cannot be subsequently rejected or re-received if
          the client fails to process the message. The default mode is PeekLock.
         :paramtype mode: ~azure.servicebus.ReceiveSettleMode
+        :keyword session_id: A specific session from which to receive. This must be specified for a
+         sessionful entity, otherwise it must be None. In order to receive messages from the next available
+         session, set this to NEXT_AVAILABLE.
+        :paramtype session_id: str or ~azure.servicebus.NEXT_AVAILABLE
         :keyword int prefetch: The maximum number of messages to cache with each request to the service.
          The default value is 0, meaning messages will be received from the service and processed
          one at a time. Increasing this value will improve message throughput performance but increase
@@ -482,8 +511,8 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/sync_samples/sample_code_servicebus.py
-                :start-after: [START servicebus_receiver_receive_sync]
-                :end-before: [END servicebus_receiver_receive_sync]
+                :start-after: [START receive_sync]
+                :end-before: [END receive_sync]
                 :language: python
                 :dedent: 4
                 :caption: Receive messages from ServiceBus.
@@ -511,8 +540,8 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/sync_samples/sample_code_servicebus.py
-                :start-after: [START servicebus_receiver_receive_defer_sync]
-                :end-before: [END servicebus_receiver_receive_defer_sync]
+                :start-after: [START receive_defer_sync]
+                :end-before: [END receive_defer_sync]
                 :language: python
                 :dedent: 4
                 :caption: Receive deferred messages from ServiceBus.
@@ -547,8 +576,10 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
     def peek(self, message_count=1, sequence_number=None):
         # type: (int, Optional[int]) -> list[PeekMessage]
         """Browse messages currently pending in the queue.
+
         Peeked messages are not removed from queue, nor are they locked. They cannot be completed,
         deferred or dead-lettered.
+
         :param int message_count: The maximum number of messages to try and peek. The default
          value is 1.
         :param int sequence_number: A message sequence number from which to start browsing messages.
@@ -557,8 +588,8 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/sync_samples/sample_code_servicebus.py
-                :start-after: [START servicebus_receiver_receive_peek_sync]
-                :end-before: [END servicebus_receiver_receive_peek_sync]
+                :start-after: [START peek_messages_sync]
+                :end-before: [END peek_messages_sync]
                 :language: python
                 :dedent: 4
                 :caption: Look at pending messages in the queue.
