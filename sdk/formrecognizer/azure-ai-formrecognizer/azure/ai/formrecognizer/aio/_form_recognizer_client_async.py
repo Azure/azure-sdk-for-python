@@ -90,7 +90,7 @@ class FormRecognizerClient(object):
             file_stream=form,
             content_type=content_type,
             include_text_details=include_text_details,
-            cls=callback,
+            cls=kwargs.pop("cls", callback),
             polling=AsyncLROBasePolling(timeout=POLLING_INTERVAL, **kwargs),
             **kwargs
         )
@@ -126,7 +126,7 @@ class FormRecognizerClient(object):
         return await self._client.analyze_layout_async(
             file_stream=form,
             content_type=content_type,
-            cls=callback,
+            cls=kwargs.pop("cls", callback),
             polling=AsyncLROBasePolling(timeout=POLLING_INTERVAL, **kwargs),
             **kwargs
         )

@@ -6,7 +6,7 @@
 
 # pylint: disable=protected-access
 
-from re import findall
+import re
 from collections import namedtuple
 from enum import Enum
 from ._helpers import get_field_scalar_value
@@ -21,7 +21,7 @@ def get_elements(field, ocr_result):
     try:
         for item in field.elements:
             extracted_word = None
-            nums = [int(s) for s in findall(r'\d+', item)]
+            nums = [int(s) for s in re.findall(r'\d+', item)]
             read = nums[0]
             line = nums[1]
             if len(nums) == 3:

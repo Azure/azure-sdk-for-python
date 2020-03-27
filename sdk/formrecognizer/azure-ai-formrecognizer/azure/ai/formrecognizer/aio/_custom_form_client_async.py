@@ -29,7 +29,7 @@ from .._response_handlers import (
     prepare_labeled_result,
 )
 from .._generated.models import AnalyzeOperationResult, Model
-from .._helpers import get_pipeline_response, get_content_type, POLLING_INTERVAL
+from .._helpers import get_content_type, POLLING_INTERVAL
 from .._models import (
     ModelInfo,
     ModelsSummary,
@@ -91,8 +91,7 @@ class CustomFormClient(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
 
-        content_type = kwargs.pop("content_type", "application/json")
-
+        cls = kwargs.pop("cls", None)
         response = await self._client.train_custom_model_async(
             train_request=TrainRequest(
                 source=source,
@@ -101,8 +100,7 @@ class CustomFormClient(object):
                     include_sub_folders=include_sub_folders
                 )
             ),
-            content_type=content_type,
-            cls=get_pipeline_response,
+            cls=lambda pipeline_response, _, response_headers: pipeline_response,
             **kwargs
         )
 
@@ -110,10 +108,11 @@ class CustomFormClient(object):
             model = self._client._deserialize(Model, raw_response)
             return CustomModel._from_generated(model)
 
+        deserialization_callback = cls if cls else callback
         return await async_poller(
             self._client._client,
             response,
-            callback,
+            deserialization_callback,
             AsyncLROBasePolling(**kwargs)
         )
 
@@ -141,8 +140,7 @@ class CustomFormClient(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
 
-        content_type = kwargs.pop("content_type", "application/json")
-
+        cls = kwargs.pop("cls", None)
         response = await self._client.train_custom_model_async(
             train_request=TrainRequest(
                 source=source,
@@ -152,8 +150,7 @@ class CustomFormClient(object):
                 ),
                 use_label_file=True
             ),
-            content_type=content_type,
-            cls=get_pipeline_response,
+            cls=lambda pipeline_response, _, response_headers: pipeline_response,
             **kwargs
         )
 
@@ -161,10 +158,11 @@ class CustomFormClient(object):
             model = self._client._deserialize(Model, raw_response)
             return CustomLabeledModel._from_generated(model)
 
+        deserialization_callback = cls if cls else callback
         return await async_poller(
             self._client._client,
             response,
-            callback,
+            deserialization_callback,
             AsyncLROBasePolling(**kwargs)
         )
 
@@ -209,7 +207,7 @@ class CustomFormClient(object):
             model_id=model_id,
             include_text_details=include_text_details,
             content_type=content_type,
-            cls=callback,
+            cls=kwargs.pop("cls", callback),
             polling=AsyncLROBasePolling(timeout=POLLING_INTERVAL, **kwargs),
             **kwargs
         )
@@ -255,7 +253,7 @@ class CustomFormClient(object):
             model_id=model_id,
             include_text_details=include_text_details,
             content_type=content_type,
-            cls=callback,
+            cls=kwargs.pop("cls", callback),
             polling=AsyncLROBasePolling(timeout=POLLING_INTERVAL, **kwargs),
             **kwargs
         )
@@ -284,7 +282,7 @@ class CustomFormClient(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         return self._client.list_custom_models(
-            cls=lambda objs: [ModelInfo._from_generated(x) for x in objs],
+            cls=kwargs.pop("cls", lambda objs: [ModelInfo._from_generated(x) for x in objs]),
             **kwargs
         )
 

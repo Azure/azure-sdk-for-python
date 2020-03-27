@@ -5,13 +5,7 @@
 # ------------------------------------
 
 from datetime import time
-from azure.core.exceptions import HttpResponseError
-
 POLLING_INTERVAL = 1
-
-
-def get_pipeline_response(pipeline_response, _, response_headers):  # pylint: disable=unused-argument
-    return pipeline_response
 
 
 def get_field_scalar_value(field):  # pylint: disable=too-many-return-statements
@@ -27,11 +21,10 @@ def get_field_scalar_value(field):  # pylint: disable=too-many-return-statements
     if field_type == "phoneNumber":
         return field.value_phone_number
     if field_type == "time":
-        try:
+        if field.value_time:
             hour, minutes, seconds = field.value_time.split(":")
             return time(int(hour), int(minutes), int(seconds))
-        except AttributeError:  # service recognized field as time but returned None for value because it wasn't valid
-            pass
+        return field.value_time  # service recognized field as time but returned None for value because it wasn't valid
     return None
 
 
@@ -49,4 +42,4 @@ def get_content_type(form):
             return "image/tiff"
         if form[:4] == bytes([0x4D, 0x4D, 0x0, 0x2A]):  # big-endian
             return "image/tiff"
-    raise HttpResponseError("Content type could not be auto-detected. Please pass the content_type keyword argument.")
+    raise ValueError("Content type could not be auto-detected. Please pass the content_type keyword argument.")

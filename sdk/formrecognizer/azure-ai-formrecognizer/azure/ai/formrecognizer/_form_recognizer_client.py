@@ -21,7 +21,6 @@ from ._policies import CognitiveServicesCredentialPolicy
 from ._response_handlers import (
     prepare_receipt_result,
     prepare_layout_result,
-
 )
 from ._generated.models import AnalyzeOperationResult
 from ._helpers import get_content_type, POLLING_INTERVAL
@@ -82,7 +81,7 @@ class FormRecognizerClient(object):
             file_stream=form,
             content_type=content_type,
             include_text_details=include_text_details,
-            cls=callback,
+            cls=kwargs.pop("cls", callback),
             polling=LROBasePolling(timeout=POLLING_INTERVAL, **kwargs),
             **kwargs
         )
@@ -118,7 +117,7 @@ class FormRecognizerClient(object):
         return self._client.begin_analyze_layout_async(
             file_stream=form,
             content_type=content_type,
-            cls=callback,
+            cls=kwargs.pop("cls", callback),
             polling=LROBasePolling(timeout=POLLING_INTERVAL, **kwargs),
             **kwargs
         )
