@@ -6,6 +6,7 @@
 ### Features
 
 - Support a default error type in map_error #9773
+- Added `AzureKeyCredential` and its respective policy.
 
 ## 1.3.0 (2020-03-09)
 
