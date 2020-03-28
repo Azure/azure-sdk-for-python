@@ -10,11 +10,6 @@ from typing import (  # pylint: disable=unused-import
     TYPE_CHECKING
 )
 
-try:
-    from urllib.parse import urlparse
-except ImportError:
-    from urlparse import urlparse # type: ignore
-
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import Pipeline
 from azure.core.tracing.decorator import distributed_trace
@@ -24,13 +19,14 @@ from ._shared.base_client import StorageAccountHostsMixin, TransportWrapper, par
 from ._shared.parser import _to_utc_datetime
 from ._shared.response_handlers import return_response_headers, process_storage_error, \
     parse_to_internal_user_delegation_key
-from ._generated import AzureBlobStorage, VERSION
 from ._generated.models import StorageErrorException, StorageServiceProperties, KeyInfo
 from ._container_client import ContainerClient
 from ._blob_client import BlobClient
 from ._models import ContainerPropertiesPaged
-from ._serialize import get_api_version
 from ._deserialize import service_stats_deserialize, service_properties_deserialize
+from ._blob_service_client_base import BlobServiceClientBase
+from ._generated import AzureBlobStorage, VERSION
+from ._serialize import get_api_version
 
 if TYPE_CHECKING:
     from datetime import datetime
@@ -50,7 +46,7 @@ if TYPE_CHECKING:
     )
 
 
-class BlobServiceClient(StorageAccountHostsMixin):
+class BlobServiceClient(StorageAccountHostsMixin, BlobServiceClientBase):
     """A client to interact with the Blob Service at the account level.
 
     This client provides operations to retrieve and configure the account properties
@@ -105,7 +101,6 @@ class BlobServiceClient(StorageAccountHostsMixin):
             :dedent: 8
             :caption: Creating the BlobServiceClient with Azure Identity credentials.
     """
-
     def __init__(
             self, account_url,  # type: str
             credential=None,  # type: Optional[Any]
@@ -117,55 +112,14 @@ class BlobServiceClient(StorageAccountHostsMixin):
                 account_url = "https://" + account_url
         except AttributeError:
             raise ValueError("Account URL must be a string.")
-        parsed_url = urlparse(account_url.rstrip('/'))
-        if not parsed_url.netloc:
+        self.parsed_url = urlparse(account_url.rstrip('/'))
+        if not self.parsed_url.netloc:
             raise ValueError("Invalid URL: {}".format(account_url))
-
-        _, sas_token = parse_query(parsed_url.query)
+        _, sas_token = parse_query(self.parsed_url.query)
         self._query_str, credential = self._format_query_string(sas_token, credential)
-        super(BlobServiceClient, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)
+        super(BlobServiceClient, self).__init__(self.parsed_url, service='blob', credential=credential, **kwargs)
         self._client = AzureBlobStorage(self.url, pipeline=self._pipeline)
         self._client._config.version = get_api_version(kwargs, VERSION)  # pylint: disable=protected-access
-
-    def _format_url(self, hostname):
-        """Format the endpoint URL according to the current location
-        mode hostname.
-        """
-        return "{}://{}/{}".format(self.scheme, hostname, self._query_str)
-
-    @classmethod
-    def from_connection_string(
-            cls, conn_str,  # type: str
-            credential=None,  # type: Optional[Any]
-            **kwargs  # type: Any
-        ):  # type: (...) -> BlobServiceClient
-        """Create BlobServiceClient from a Connection String.
-
-        :param str conn_str:
-            A connection string to an Azure Storage account.
-        :param credential:
-            The credentials with which to authenticate. This is optional if the
-            account URL already has a SAS token, or the connection string already has shared
-            access key values. The value can be a SAS token string, an account shared access
-            key, or an instance of a TokenCredentials class from azure.identity.
-            Credentials provided here will take precedence over those in the connection string.
-        :returns: A Blob service client.
-        :rtype: ~azure.storage.blob.BlobServiceClient
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/blob_samples_authentication.py
-                :start-after: [START auth_from_connection_string]
-                :end-before: [END auth_from_connection_string]
-                :language: python
-                :dedent: 8
-                :caption: Creating the BlobServiceClient from a connection string.
-        """
-        account_url, secondary, credential = parse_connection_str(conn_str, credential, 'blob')
-        if 'secondary_hostname' not in kwargs:
-            kwargs['secondary_hostname'] = secondary
-        return cls(account_url, credential=credential, **kwargs)
-
     @distributed_trace
     def get_user_delegation_key(self, key_start_time,  # type: datetime
                                 key_expiry_time,  # type: datetime
@@ -551,9 +505,9 @@ class BlobServiceClient(StorageAccountHostsMixin):
                 :dedent: 8
                 :caption: Getting the container client to interact with a specific container.
         """
-        try:
-            container_name = cast(str, container.name)
-        except AttributeError:
+        if isinstance(container, ContainerProperties):
+            container_name = container.name
+        elif isinstance(container, str):
             container_name = container
         _pipeline = Pipeline(
             transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
@@ -600,13 +554,13 @@ class BlobServiceClient(StorageAccountHostsMixin):
                 :dedent: 12
                 :caption: Getting the blob client to interact with a specific blob.
         """
-        try:
-            container_name = cast(str, container.name)
-        except AttributeError:
+        if isinstance(container, ContainerProperties):
+            container_name = container.name
+        elif isinstance(container, str):
             container_name = container
-        try:
-            blob_name = cast(str, blob.name)
-        except AttributeError:
+        if isinstance(blob, BlobProperties):
+            blob_name = str, blob.name
+        elif isinstance(blob, str):
             blob_name = blob
         _pipeline = Pipeline(
             transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access

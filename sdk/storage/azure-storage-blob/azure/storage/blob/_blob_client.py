@@ -1448,7 +1448,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         try:
             if incremental_copy:
                 ret_val = self._client.page_blob.copy_incremental(**options)
-            ret_val= self._client.blob.start_copy_from_url(**options)
+            ret_val = self._client.blob.start_copy_from_url(**options)
         except StorageErrorException as error:
             process_storage_error(error)
         return cast(Dict, ret_val)

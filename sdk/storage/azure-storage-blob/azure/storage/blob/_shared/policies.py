@@ -13,7 +13,7 @@ from io import SEEK_SET, UnsupportedOperation
 import logging
 import uuid
 import types
-from typing import Any, TYPE_CHECKING
+from typing import Any, cast, TYPE_CHECKING
 from wsgiref.handlers import format_date_time
 try:
     from urllib.parse import (
@@ -306,7 +306,7 @@ class StorageResponseHook(HTTPPolicy):
         if response_callback:
             response_callback(response)
             request.context['response_callback'] = response_callback
-        return response
+        return cast(PipelineResponse, response)
 
 
 class StorageContentValidation(SansIOHTTPPolicy):

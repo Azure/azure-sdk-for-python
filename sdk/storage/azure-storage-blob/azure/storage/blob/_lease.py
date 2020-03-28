@@ -4,15 +4,13 @@
 # license information.
 # --------------------------------------------------------------------------
 
-import uuid
-
 from typing import (  # pylint: disable=unused-import
     Union, Optional, Any, IO, Iterable, AnyStr, Dict, List, Tuple, cast, Awaitable,
     TypeVar, TYPE_CHECKING
 )
 
 from azure.core.tracing.decorator import distributed_trace
-
+from ._lease_client_base import BlobLeaseClientBase
 from ._shared.response_handlers import return_response_headers, process_storage_error
 from ._generated.models import StorageErrorException, LeaseAccessConditions
 from ._serialize import get_modify_conditions
@@ -26,14 +24,14 @@ if TYPE_CHECKING:
 
 def get_access_conditions(lease):
     # type: (Optional[Union[BlobLeaseClient, str]]) -> Union[LeaseAccessConditions, None]
-    try:
-        lease_id = lease.id # type: ignore
-    except AttributeError:
-        lease_id = lease # type: ignore
+    if isinstance(lease, BlobLeaseClient):
+        lease_id = lease.id
+    elif isinstance(lease, str):
+        lease_id = lease
     return LeaseAccessConditions(lease_id=lease_id) if lease_id else None
 
 
-class BlobLeaseClient(object):
+class BlobLeaseClient(BlobLeaseClientBase):
     """Creates a new BlobLeaseClient.
 
     This client provides lease operations on a BlobClient or ContainerClient.
@@ -56,20 +54,6 @@ class BlobLeaseClient(object):
         A string representing the lease ID of an existing lease. This value does not
         need to be specified in order to acquire a new lease, or break one.
     """
-    def __init__(
-            self, client, lease_id=None
-    ):  # pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
-        # type: (Union[BlobClient, ContainerClient], Optional[str]) -> None
-        self.id = lease_id or str(uuid.uuid4())
-        self.last_modified = None
-        self.etag = None
-        if hasattr(client, 'blob_name'):
-            self._client = client._client.blob  # type: ignore # pylint: disable=protected-access
-        elif hasattr(client, 'container_name'):
-            self._client = client._client.container  # type: ignore # pylint: disable=protected-access
-        else:
-            raise TypeError("Lease must use either BlobClient or ContainerClient.")
-
     def __enter__(self):
         return self
 
