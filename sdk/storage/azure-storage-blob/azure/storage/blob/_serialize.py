@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 # pylint: disable=no-self-use
 
-from typing import Any, Dict, Tuple, Optional
+from typing import Any, Dict, Tuple, Optional, cast
 from azure.core import MatchConditions
 from ._models import ContainerEncryptionScope
 from ._generated.models import (
@@ -25,7 +25,7 @@ _SUPPORTED_API_VERSIONS = [
 
 
 def _get_match_headers(kwargs, match_param, etag_param):
-    # type: (Any, str, str) -> Tuple[Dict[str, Any], Optional[str], Optional[str]]
+    # type: (Any, str, str) -> Tuple[Optional[str], Optional[str]]
     if_match = None
     if_none_match = None
     match_condition = kwargs.pop(match_param, None)
@@ -75,7 +75,7 @@ def get_cpk_scope_info(kwargs):
     # type: (Dict[str, Any]) -> CpkScopeInfo
     if 'encryption_scope' in kwargs:
         return CpkScopeInfo(encryption_scope=kwargs.pop('encryption_scope'))
-    return None
+    return cast(CpkScopeInfo, None)
 
 
 def get_container_cpk_scope_info(kwargs):
@@ -93,7 +93,7 @@ def get_container_cpk_scope_info(kwargs):
                 prevent_encryption_scope_override=encryption_scope.get('prevent_encryption_scope_override')
             )
         raise TypeError("Container encryption scope must be dict or type ContainerEncryptionScope.")
-    return None
+    return cast(ContainerCpkScopeInfo, None)
 
 
 def get_api_version(kwargs, default):

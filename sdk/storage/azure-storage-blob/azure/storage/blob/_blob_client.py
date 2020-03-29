@@ -1456,12 +1456,12 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
     def _abort_copy_options(self, copy_id, **kwargs):
         # type: (Union[str, Dict[str, Any], BlobProperties], **Any) -> Dict[str, Any]
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
-        try:
-            copy_id = cast(BlobProperties, copy_id.copy.id)
-        except AttributeError:
-            try:
-                copy_id = cast(Dict, copy_id['copy_id'])
-            except TypeError:
+        if isinstance(copy_id, BlobProperties):
+            copy_id = copy_id.copy.id
+        else:
+            if isinstance(copy_id, Dict):
+                copy_id = copy_id['copy_id']
+            elif isinstance(copy_id, str):
                 pass
         options = {
             'copy_id': copy_id,
@@ -2019,9 +2019,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         # type: (...) -> Dict[str, Any]
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         mod_conditions = get_modify_conditions(kwargs)
-        if length is not None and offset is None:
-            raise ValueError("Offset value must not be None if length is set.")
         if length is not None:
+            if offset is None:
+                raise ValueError("Offset value must not be None if length is set.")
             length = offset + length - 1  # Reformat to an inclusive range index
         page_range, _ = validate_and_format_range_headers(
             offset, length, start_range_required=False, end_range_required=False, align_to_page=True
@@ -2247,6 +2247,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             return cast(Dict, self._client.page_blob.update_sequence_number(**options))
         except StorageErrorException as error:
             process_storage_error(error)
+        return cast(Dict, None)
 
     def _resize_blob_options(self, size, **kwargs):
         # type: (int, **Any) -> Dict[str, Any]
@@ -2318,6 +2319,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             return cast(Dict, self._client.page_blob.resize(**options))
         except StorageErrorException as error:
             process_storage_error(error)
+        return cast(Dict, None)
 
     def _upload_page_options( # type: ignore
             self, page,  # type: bytes
@@ -2621,6 +2623,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             return cast(Dict, self._client.page_blob.upload_pages_from_url(**options))
         except StorageErrorException as error:
             process_storage_error(error)
+        return cast(Dict, None)
 
     def _clear_page_options(self, offset, length, **kwargs):
         # type: (int, int, **Any) -> Dict[str, Any]
@@ -2720,6 +2723,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             return cast(Dict, self._client.page_blob.clear_pages(**options))
         except StorageErrorException as error:
             process_storage_error(error)
+        return cast(Dict, None)
 
     def _append_block_options( # type: ignore
             self, data,  # type: Union[AnyStr, Iterable[AnyStr], IO[AnyStr]]
@@ -2868,17 +2872,16 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         # type: (...) -> Dict[str, Any]
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
-
-        # If end range is provided, start range must be provided
-        if source_length is not None and source_offset is None:
-            raise ValueError("source_offset should also be specified if source_length is specified")
         # Format based on whether length is present
         source_range = None
+        # If end range is provided, start range must be provided
         if source_length is not None:
-            end_range = source_offset + source_length - 1
-            source_range = 'bytes={0}-{1}'.format(source_offset, end_range)
-        elif source_offset is not None:
-            source_range = "bytes={0}-".format(source_offset)
+            if source_offset is None:
+                raise ValueError("source_offset should also be specified if source_length is specified")
+                end_range = source_offset + source_length - 1
+                source_range = 'bytes={0}-{1}'.format(source_offset, end_range)
+            elif source_offset is not None:
+                source_range = "bytes={0}-".format(source_offset)
 
         appendpos_condition = kwargs.pop('appendpos_condition', None)
         maxsize_condition = kwargs.pop('maxsize_condition', None)
@@ -3010,6 +3013,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             **kwargs
         )
         try:
-            return cast(Dict, self._client.append_blob.append_block_from_url(**options))
+            ret_val = self._client.append_blob.append_block_from_url(**options)
         except StorageErrorException as error:
+            ret_val = None
             process_storage_error(error)
+        return cast(Dict, ret_val)
