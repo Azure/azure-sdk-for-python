@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .cost_management_client import CostManagementClient
-from .version import VERSION
+from ._configuration import CostManagementClientConfiguration
+from ._cost_management_client import CostManagementClient
+__all__ = ['CostManagementClient', 'CostManagementClientConfiguration']
 
-__all__ = ['CostManagementClient']
+from .version import VERSION
 
 __version__ = VERSION
 
