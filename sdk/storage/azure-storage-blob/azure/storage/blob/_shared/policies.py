@@ -29,7 +29,7 @@ except ImportError:
         parse_qsl,
         urlunparse,
     )
-
+from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.policies import (
     HeadersPolicy,
     SansIOHTTPPolicy,
