@@ -242,7 +242,7 @@ class ContainerClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def create_container(self, metadata=None, public_access=None, **kwargs):
-        # type: (Optional[Dict[str, str]], Optional[Union[PublicAccess, str]], **Any) -> None
+        # type: (Optional[Dict[str, str]], Optional[Union[PublicAccess, str]], **Any) -> bool
         """
         Creates a new container under the specified account. If the container
         with the same name already exists, the operation fails.
@@ -278,7 +278,7 @@ class ContainerClient(StorageAccountHostsMixin):
         headers.update(add_metadata_headers(metadata)) # type: ignore
         container_cpk_scope_info = get_container_cpk_scope_info(kwargs)
         try:
-            self._client.container.create(
+            ret_val = self._client.container.create(
                 timeout=timeout,
                 access=public_access,
                 container_cpk_scope_info=container_cpk_scope_info,
@@ -286,7 +286,9 @@ class ContainerClient(StorageAccountHostsMixin):
                 headers=headers,
                 **kwargs)
         except StorageErrorException as error:
+            ret_val = None
             process_storage_error(error)
+        return cast(bool, ret_val)
 
     @distributed_trace
     def delete_container(
@@ -1306,7 +1308,7 @@ class ContainerClient(StorageAccountHostsMixin):
         _pipeline = Pipeline(
             transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
             policies=self._pipeline._impl_policies # pylint: disable = protected-access
-        )
+        ) # type: Pipeline
         return BlobClient(
             self.url, container_name=self.container_name, blob_name=blob_name, snapshot=snapshot,
             credential=self.credential, api_version=self.api_version, _configuration=self._config,

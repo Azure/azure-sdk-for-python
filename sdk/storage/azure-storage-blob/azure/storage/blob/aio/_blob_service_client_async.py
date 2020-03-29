@@ -6,7 +6,7 @@
 
 import functools
 from typing import (  # pylint: disable=unused-import
-    Union, Optional, Any, Iterable, Dict, List,
+    Union, Optional, Any, Iterable, Dict, List, cast,
     TYPE_CHECKING
 )
 
@@ -171,9 +171,11 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
                 :caption: Getting account information for the blob service.
         """
         try:
-            return await self._client.service.get_account_info(cls=return_response_headers, **kwargs) # type: ignore
+            ret_val = await self._client.service.get_account_info(cls=return_response_headers, **kwargs)
         except StorageErrorException as error:
+            ret_val = None
             process_storage_error(error)
+        return cast(Dict, ret_val)
 
     @distributed_trace_async
     async def get_service_stats(self, **kwargs):
@@ -214,9 +216,11 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
         try:
             stats = await self._client.service.get_statistics( # type: ignore
                 timeout=timeout, use_location=LocationMode.SECONDARY, **kwargs)
-            return service_stats_deserialize(stats)
+            ret_val = service_stats_deserialize(stats)
         except StorageErrorException as error:
+            ret_val = None
             process_storage_error(error)
+        return cast(Dict, ret_val)
 
     @distributed_trace_async
     async def get_service_properties(self, **kwargs):
@@ -242,9 +246,11 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
         timeout = kwargs.pop('timeout', None)
         try:
             service_props = await self._client.service.get_properties(timeout=timeout, **kwargs)
-            return service_properties_deserialize(service_props)
+            ret_val = service_properties_deserialize(service_props)
         except StorageErrorException as error:
+            ret_val = None
             process_storage_error(error)
+        return cast(Dict, ret_val)
 
     @distributed_trace_async
     async def set_service_properties(
@@ -507,7 +513,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
         _pipeline = AsyncPipeline(
             transport=AsyncTransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
             policies=self._pipeline._impl_policies # pylint: disable = protected-access
-        )
+        ) # type: AsyncPipeline
         return ContainerClient(
             self.url, container_name=container_name,
             credential=self.credential, api_version=self.api_version, _configuration=self._config,
@@ -562,7 +568,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
         _pipeline = AsyncPipeline(
             transport=AsyncTransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
             policies=self._pipeline._impl_policies # pylint: disable = protected-access
-        )
+        ) # type: AsyncPipeline
         return BlobClient( # type: ignore
             self.url, container_name=container_name, blob_name=blob_name, snapshot=snapshot,
             credential=self.credential, api_version=self.api_version, _configuration=self._config,

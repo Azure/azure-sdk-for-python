@@ -6,7 +6,7 @@
 # pylint: disable=too-many-lines
 
 from typing import (  # pylint: disable=unused-import
-    Union, Optional, Any, IO, Iterable, AnyStr, Dict, List, Tuple,
+    Union, Optional, Any, IO, Iterable, AnyStr, Dict, List, Tuple, cast,
     TYPE_CHECKING
 )
 
@@ -253,10 +253,10 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             metadata=metadata,
             **kwargs)
         if blob_type == BlobType.BlockBlob:
-            return await upload_block_blob(**options)
+            return cast(Dict, await upload_block_blob(**options))
         if blob_type == BlobType.PageBlob:
-            return await upload_page_blob(**options)
-        return await upload_append_blob(**options)
+            return cast(Dict, await upload_page_blob(**options))
+        return cast(Dict, await upload_append_blob(**options))
 
     @distributed_trace_async
     async def download_blob(self, offset=None, length=None, **kwargs):
@@ -530,7 +530,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         """
         options = self._set_http_headers_options(content_settings=content_settings, **kwargs)
         try:
-            return await self._client.blob.set_http_headers(**options) # type: ignore
+            await self._client.blob.set_http_headers(**options)
         except StorageErrorException as error:
             process_storage_error(error)
 
@@ -584,9 +584,11 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         """
         options = self._set_blob_metadata_options(metadata=metadata, **kwargs)
         try:
-            return await self._client.blob.set_metadata(**options)  # type: ignore
+            ret_val = await self._client.blob.set_metadata(**options)  # type: ignore
         except StorageErrorException as error:
+            ret_val = None
             process_storage_error(error)
+        return cast(Dict, ret_val)
 
     @distributed_trace_async
     async def create_page_blob(  # type: ignore
@@ -721,9 +723,11 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             metadata=metadata,
             **kwargs)
         try:
-            return await self._client.append_blob.create(**options) # type: ignore
+            ret_val = await self._client.append_blob.create(**options)
         except StorageErrorException as error:
+            ret_val = None
             process_storage_error(error)
+        return cast(Dict, ret_val)
 
     @distributed_trace_async
     async def create_snapshot(self, metadata=None, **kwargs):
@@ -791,9 +795,11 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         """
         options = self._create_snapshot_options(metadata=metadata, **kwargs)
         try:
-            return await self._client.blob.create_snapshot(**options) # type: ignore
+            ret_val = await self._client.blob.create_snapshot(**options)
         except StorageErrorException as error:
+            ret_val = None
             process_storage_error(error)
+        return cast(Dict, ret_val)
 
     @distributed_trace_async
     async def start_copy_from_url(self, source_url, metadata=None, incremental_copy=False, **kwargs):
@@ -1064,7 +1070,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             length=None,  # type: Optional[int]
             **kwargs
         ):
-        # type: (...) -> None
+        # type: (...) -> Dict[str, Any]
         """Creates a new block to be committed as part of a blob.
 
         :param str block_id: A valid Base64 string value that identifies the
@@ -1124,7 +1130,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             source_content_md5=None,  # type: Optional[Union[bytes, bytearray]]
             **kwargs
         ):
-        # type: (...) -> None
+        # type: (...) -> Dict[str, Any]
         """Creates a new block to be committed as part of a blob where
         the contents are read from a URL.
 
@@ -1550,12 +1556,14 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         """
         options = self._resize_blob_options(size, **kwargs)
         try:
-            return await self._client.page_blob.resize(**options) # type: ignore
+            ret_val = await self._client.page_blob.resize(**options)
         except StorageErrorException as error:
+            ret_val = None
             process_storage_error(error)
+        return cast(Dict, ret_val)
 
     @distributed_trace_async
-    async def upload_page( # type: ignore
+    async def upload_page(
             self, page,  # type: bytes
             offset,  # type: int
             length,  # type: int

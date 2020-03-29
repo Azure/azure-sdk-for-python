@@ -13,6 +13,8 @@ from typing import (  # pylint: disable=unused-import
     List,
     Type,
     Tuple,
+    Iterator,
+    cast,
     TYPE_CHECKING,
 )
 import logging
@@ -28,7 +30,10 @@ import six
 from azure.core.configuration import Configuration
 from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline import Pipeline
-from azure.core.pipeline.transport import RequestsTransport, HttpTransport
+from azure.core.pipeline.transport import (
+    RequestsTransport,
+    HttpTransport,
+)
 from azure.core.pipeline.policies import (
     RedirectPolicy,
     ContentDecodePolicy,
@@ -57,6 +62,11 @@ from .._version import VERSION
 from .._generated.models import StorageErrorException
 from .response_handlers import process_storage_error, PartialBatchErrorException
 
+if TYPE_CHECKING:
+    from azure.core.pipeline.transport import (
+        HttpResponse,
+        HttpRequest
+    )
 
 _LOGGER = logging.getLogger(__name__)
 _SERVICE_PARAMS = {
@@ -249,9 +259,10 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         return config, Pipeline(config.transport, policies=policies)
 
     def _batch_send(
-        self, *reqs,
-        **kwargs
+        self, *reqs, # type: HttpRequest
+        **kwargs # type: Any
     ):
+        # type: (...) -> Iterator[HttpResponse]
         """Given a series of request, do a Storage batch call.
         """
         # Pop it here, so requests doesn't feel bad about additional kwarg
@@ -290,9 +301,10 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
                     )
                     raise error
                 return iter(parts)
-            return parts
+            return cast(Iterator, parts)
         except StorageErrorException as error:
             process_storage_error(error)
+        return cast(Iterator, None)
 
 class TransportWrapper(HttpTransport):
     """Wrapper class that ensures that an inner client created

@@ -43,7 +43,7 @@ from ._upload_helpers import (
     upload_block_blob,
     upload_append_blob,
     upload_page_blob)
-from ._models import BlobType, BlobBlock
+from ._models import BlobType, BlobBlock, BlobProperties
 from ._download import StorageStreamDownloader
 from ._lease import BlobLeaseClient, get_access_conditions
 
@@ -52,7 +52,6 @@ if TYPE_CHECKING:
     from ._generated.models import BlockList
     from ._models import (  # pylint: disable=unused-import
         ContainerProperties,
-        BlobProperties,
         BlobSasPermissions,
         ContentSettings,
         PremiumPageBlobTier,

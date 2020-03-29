@@ -8,7 +8,7 @@
 import functools
 from typing import (  # pylint: disable=unused-import
     Union, Optional, Any, Iterable, AnyStr, Dict, List, Tuple, IO, AsyncIterator,
-    TYPE_CHECKING
+    cast, TYPE_CHECKING
 )
 
 from azure.core.tracing.decorator import distributed_trace
@@ -921,7 +921,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         raise_on_any_failure = kwargs.pop('raise_on_any_failure', True)
         timeout = kwargs.pop('timeout', None)
         options = BlobClient._generic_delete_blob_options(  # pylint: disable=protected-access
-            delete_snapshots=delete_snapshots,
+            delete_snapshots=cast(bool, delete_snapshots),
             lease=lease,
             timeout=timeout,
             **kwargs
@@ -1099,7 +1099,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         _pipeline = AsyncPipeline(
             transport=AsyncTransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
             policies=self._pipeline._impl_policies # pylint: disable = protected-access
-        )
+        ) # type: AsyncPipeline
         return BlobClient(
             self.url, container_name=self.container_name, blob_name=blob_name, snapshot=snapshot,
             credential=self.credential, api_version=self.api_version, _configuration=self._config,

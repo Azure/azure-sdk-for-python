@@ -105,7 +105,7 @@ class AsyncStorageAccountHostsMixin(object):
         return config, AsyncPipeline(config.transport, policies=policies)
 
     async def _batch_send(
-        self, *reqs: 'HttpRequest',
+        self, *reqs,
         **kwargs
     ):
         """Given a series of request, do a Storage batch call.
