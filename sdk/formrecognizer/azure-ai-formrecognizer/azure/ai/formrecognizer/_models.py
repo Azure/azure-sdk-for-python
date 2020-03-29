@@ -153,8 +153,8 @@ class FieldValue(object):
     """Represents the values for a recognized field.
 
     :ivar value:
-      The value for the recognized field. Possible types include: 'string', 'date', 'time',
-     'phoneNumber', 'number', 'integer`.
+        The value for the recognized field. Possible types include: 'string', 'date', 'time',
+        'phoneNumber', 'number', 'integer`.
     :vartype value: str, int, float, ~datetime.date, or ~datetime.time
     :ivar str text: The string representation of the value.
     :ivar ~azure.ai.formrecognizer.BoundingBox bounding_box:
@@ -322,7 +322,7 @@ class PageMetadata(object):
         The unit used by the width, height and bounding box properties. For
         images, the unit is "pixel". For PDF, the unit is "inch".
     :ivar list[~azure.ai.formrecognizer.ExtractedLine] lines:
-        When `include_text_details   is set to true, a list of recognized text lines. The
+        When `include_text_details` is set to true, a list of recognized text lines. The
         maximum number of lines returned is 300 per page. The lines are sorted top to bottom, left to
         right, although in certain cases proximity is treated with higher priority. As the sorting
         order depends on the detected text, it may change across images and OCR version updates. Thus,

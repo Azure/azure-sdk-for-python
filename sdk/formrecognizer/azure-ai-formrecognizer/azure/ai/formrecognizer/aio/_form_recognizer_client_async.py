@@ -7,7 +7,6 @@
 # pylint: disable=protected-access
 
 from typing import (  # pylint: disable=unused-import
-    Union,
     Any,
     List,
     IO,
@@ -56,30 +55,26 @@ class FormRecognizerClient(object):
         )
 
     @distributed_trace_async
-    async def begin_extract_receipts(self, form: Union[str, IO[bytes]], **kwargs: Any) -> List["ExtractedReceipt"]:
+    async def begin_extract_receipts(self, stream: IO[bytes], **kwargs: Any) -> List["ExtractedReceipt"]:
         """Extract field text and semantic values from a given receipt document.
         The input document must be of one of the supported content types - 'application/pdf',
-        'image/jpeg', 'image/png' or 'image/tiff'. Alternatively, use 'application/json'
-        type to specify the location (Uri) of the document to be analyzed.
+        'image/jpeg', 'image/png' or 'image/tiff'.
 
-        :param form: .json, .pdf, .jpg, .png or .tiff type file stream.
-        :type form: str or stream
+        :param stream: .pdf, .jpg, .png or .tiff type file stream.
+        :type stream: stream
         :keyword bool include_text_details: Include text lines and element references in the result.
         :keyword str content_type: Media type of the body sent to the API.
         :return: LROPoller
         :rtype: ~azure.core.polling.LROPoller
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        if isinstance(stream, six.string_types):
+            raise TypeError("Call begin_extract_receipts_from_url() to analyze a receipt from a url.")
 
         include_text_details = kwargs.pop("include_text_details", False)
         content_type = kwargs.pop("content_type", None)
-
-        if isinstance(form, six.string_types):
-            form = {"source": form}
-            content_type = content_type or "application/json"
-        elif content_type is None:
-            content_type = get_content_type(form)
-
+        if content_type is None:
+            content_type = get_content_type(stream)
 
         def callback(raw_response, _, headers):  # pylint: disable=unused-argument
             analyze_result = self._client._deserialize(AnalyzeOperationResult, raw_response)
@@ -87,7 +82,7 @@ class FormRecognizerClient(object):
             return extracted_receipt
 
         return await self._client.analyze_receipt_async(
-            file_stream=form,
+            file_stream=stream,
             content_type=content_type,
             include_text_details=include_text_details,
             cls=kwargs.pop("cls", callback),
@@ -96,27 +91,54 @@ class FormRecognizerClient(object):
         )
 
     @distributed_trace_async
-    async def begin_extract_layouts(self, form: Union[str, IO[bytes]], **kwargs: Any) -> List["ExtractedLayoutPage"]:
-        """Extract text and layout information from a given document.
-        The input document must be of one of the supported content types - 'application/pdf',
-        'image/jpeg', 'image/png' or 'image/tiff'. Alternatively, use 'application/json'
-        type to specify the location (Uri) of the document to be analyzed.
+    async def begin_extract_receipts_from_url(self, url: str, **kwargs: Any) -> List["ExtractedReceipt"]:
+        """Extract field text and semantic values from a given receipt document.
+        The input document must be the location (Url) of the document to be analyzed.
 
-        :param form: .json, .pdf, .jpg, .png or .tiff type file stream.
-        :type form: str or stream
-        :keyword str content_type: Media type of the body sent to the API.
-        :return: No
-        :rtype: None
+        :param url: The url of the receipt.
+        :type url: str
+        :keyword bool include_text_details: Include text lines and element references in the result.
+        :return: LROPoller
+        :rtype: ~azure.core.polling.LROPoller
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        if not isinstance(url, six.string_types):
+            raise TypeError("Call begin_extract_receipts() to analyze a receipt from a stream.")
+
+        include_text_details = kwargs.pop("include_text_details", False)
+
+        def callback(raw_response, _, headers):  # pylint: disable=unused-argument
+            analyze_result = self._client._deserialize(AnalyzeOperationResult, raw_response)
+            extracted_receipt = prepare_receipt_result(analyze_result, include_text_details)
+            return extracted_receipt
+
+        return await self._client.analyze_receipt_async(
+            file_stream={"source": url},
+            include_text_details=include_text_details,
+            cls=kwargs.pop("cls", callback),
+            polling=AsyncLROBasePolling(timeout=POLLING_INTERVAL, **kwargs),
+            **kwargs
+        )
+
+    @distributed_trace_async
+    async def begin_extract_layouts(self, stream: IO[bytes], **kwargs: Any) -> List["ExtractedLayoutPage"]:
+        """Extract text and layout information from a given document.
+        The input document must be of one of the supported content types - 'application/pdf',
+        'image/jpeg', 'image/png' or 'image/tiff'.
+
+        :param stream: .pdf, .jpg, .png or .tiff type file stream.
+        :type stream: stream
+        :keyword str content_type: Media type of the body sent to the API.
+        :return: LROPoller
+        :rtype: ~azure.core.polling.LROPoller
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        if isinstance(stream, six.string_types):
+            raise TypeError("Call begin_extract_layouts_from_url() to analyze a document from a url.")
 
         content_type = kwargs.pop("content_type", None)
-
-        if isinstance(form, six.string_types):
-            form = {"source": form}
-            content_type = content_type or "application/json"
-        elif content_type is None:
-            content_type = get_content_type(form)
+        if content_type is None:
+            content_type = get_content_type(stream)
 
         def callback(raw_response, _, headers):  # pylint: disable=unused-argument
             analyze_result = self._client._deserialize(AnalyzeOperationResult, raw_response)
@@ -124,8 +146,34 @@ class FormRecognizerClient(object):
             return extracted_layout
 
         return await self._client.analyze_layout_async(
-            file_stream=form,
+            file_stream=stream,
             content_type=content_type,
+            cls=kwargs.pop("cls", callback),
+            polling=AsyncLROBasePolling(timeout=POLLING_INTERVAL, **kwargs),
+            **kwargs
+        )
+
+    @distributed_trace_async
+    async def begin_extract_layouts_from_url(self, url: str, **kwargs: Any) -> List["ExtractedLayoutPage"]:
+        """Extract text and layout information from a given document.
+        The input document must be the location (Url) of the document to be analyzed.
+
+        :param url: The url of the document.
+        :type url: str
+        :return: LROPoller
+        :rtype: ~azure.core.polling.LROPoller
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        if not isinstance(url, six.string_types):
+            raise TypeError("Call begin_extract_layouts() to analyze a document from a stream.")
+
+        def callback(raw_response, _, headers):  # pylint: disable=unused-argument
+            analyze_result = self._client._deserialize(AnalyzeOperationResult, raw_response)
+            extracted_layout = prepare_layout_result(analyze_result, include_elements=True)
+            return extracted_layout
+
+        return await self._client.analyze_layout_async(
+            file_stream={"source": url},
             cls=kwargs.pop("cls", callback),
             polling=AsyncLROBasePolling(timeout=POLLING_INTERVAL, **kwargs),
             **kwargs

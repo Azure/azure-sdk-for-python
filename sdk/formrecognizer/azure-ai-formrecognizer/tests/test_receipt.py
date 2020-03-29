@@ -17,8 +17,8 @@ class TestReceipt(FormRecognizerTest):
     def test_receipt(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
         client = FormRecognizerClient(form_recognizer_account, FormRecognizerApiKeyCredential(form_recognizer_account_key))
 
-        response = client.begin_extract_receipts(
-            form="https://raw.githubusercontent.com/Azure-Samples/cognitive-services-REST-api-samples/master/curl/form-recognizer/contoso-allinone.jpg",
+        response = client.begin_extract_receipts_from_url(
+            url="https://raw.githubusercontent.com/Azure-Samples/cognitive-services-REST-api-samples/master/curl/form-recognizer/contoso-allinone.jpg",
             include_text_details=True
         )
 

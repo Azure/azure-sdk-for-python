@@ -7,7 +7,6 @@
 # pylint: disable=protected-access
 
 from typing import (  # pylint: disable=unused-import
-    Union,
     Optional,
     Any,
     List,
@@ -169,14 +168,14 @@ class CustomFormClient(object):
     @distributed_trace_async
     async def begin_extract_form_pages(
             self,
-            form: Union[str, IO[bytes]],
+            stream: IO[bytes],
             model_id: str,
             **kwargs: Any
     ) -> List["ExtractedPage"]:
         """Analyze Form.
 
-        :param form: .json, .pdf, .jpg, .png or .tiff type file stream.
-        :type form: str or stream
+        :param stream: .pdf, .jpg, .png or .tiff type file stream.
+        :type stream: stream
         :param str model_id: Model identifier.
         :keyword bool include_text_details: Include text lines and element references in the result.
         :keyword str content_type: Media type of the body sent to the API.
@@ -184,15 +183,13 @@ class CustomFormClient(object):
         :rtype: list[~azure.ai.formrecognizer.ExtractedPage]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        if isinstance(stream, six.string_types):
+            raise TypeError("Call begin_extract_form_pages_from_url() to analyze a document from a url.")
 
         include_text_details = kwargs.pop("include_text_details", False)
         content_type = kwargs.pop("content_type", None)
-
-        if isinstance(form, six.string_types):
-            form = {"source": form}
-            content_type = content_type or "application/json"
-        elif content_type is None:
-            content_type = get_content_type(form)
+        if content_type is None:
+            content_type = get_content_type(stream)
 
         def callback(raw_response, _, headers):  # pylint: disable=unused-argument
             extracted_form = self._client._deserialize(AnalyzeOperationResult, raw_response)
@@ -203,7 +200,7 @@ class CustomFormClient(object):
             return form_result
 
         return await self._client.analyze_with_custom_model(
-            file_stream=form,
+            file_stream=stream,
             model_id=model_id,
             include_text_details=include_text_details,
             content_type=content_type,
@@ -213,16 +210,55 @@ class CustomFormClient(object):
         )
 
     @distributed_trace_async
+    async def begin_extract_form_pages_from_url(
+            self,
+            url: str,
+            model_id: str,
+            **kwargs: Any
+    ) -> List["ExtractedPage"]:
+        """Analyze Form.
+
+        :param url: The url of the document.
+        :type url: str
+        :param str model_id: Model identifier.
+        :keyword bool include_text_details: Include text lines and element references in the result.
+        :return: List[ExtractedPage]
+        :rtype: list[~azure.ai.formrecognizer.ExtractedPage]
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        if not isinstance(url, six.string_types):
+            raise TypeError("Call begin_extract_form_pages() to analyze a document from a stream.")
+
+        include_text_details = kwargs.pop("include_text_details", False)
+
+        def callback(raw_response, _, headers):  # pylint: disable=unused-argument
+            extracted_form = self._client._deserialize(AnalyzeOperationResult, raw_response)
+            if extracted_form.analyze_result.document_results:
+                raise HttpResponseError("Cannot call begin_extract_forms() with the ID of a model trained with "
+                                        "labels. Please call begin_extract_labeled_forms() instead.")
+            form_result = prepare_unlabeled_result(extracted_form, include_text_details)
+            return form_result
+
+        return await self._client.analyze_with_custom_model(
+            file_stream={"source": url},
+            model_id=model_id,
+            include_text_details=include_text_details,
+            cls=kwargs.pop("cls", callback),
+            polling=AsyncLROBasePolling(timeout=POLLING_INTERVAL, **kwargs),
+            **kwargs
+        )
+
+    @distributed_trace_async
     async def begin_extract_labeled_forms(
             self,
-            form: Union[str, IO[bytes]],
+            stream: IO[bytes],
             model_id: str,
             **kwargs: Any
     ) -> List["ExtractedLabeledForm"]:
         """Analyze Form.
 
-        :param form: .json, .pdf, .jpg, .png or .tiff type file stream.
-        :type form: str or stream
+        :param stream: .pdf, .jpg, .png or .tiff type file stream.
+        :type stream: stream
         :param str model_id: Model identifier.
         :keyword bool include_text_details: Include text lines and element references in the result.
         :keyword str content_type: Media type of the body sent to the API.
@@ -230,15 +266,13 @@ class CustomFormClient(object):
         :rtype: list[~azure.ai.formrecognizer.ExtractedLabeledForm]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        if isinstance(stream, six.string_types):
+            raise TypeError("Call begin_extract_labeled_forms_from_url() to analyze a document from a url.")
 
         include_text_details = kwargs.pop("include_text_details", False)
         content_type = kwargs.pop("content_type", None)
-
-        if isinstance(form, six.string_types):
-            form = {"source": form}
-            content_type = content_type or "application/json"
-        elif content_type is None:
-            content_type = get_content_type(form)
+        if content_type is None:
+            content_type = get_content_type(stream)
 
         def callback(raw_response, _, headers):  # pylint: disable=unused-argument
             extracted_form = self._client._deserialize(AnalyzeOperationResult, raw_response)
@@ -249,10 +283,49 @@ class CustomFormClient(object):
             return form_result
 
         return await self._client.analyze_with_custom_model(
-            file_stream=form,
+            file_stream=stream,
             model_id=model_id,
             include_text_details=include_text_details,
             content_type=content_type,
+            cls=kwargs.pop("cls", callback),
+            polling=AsyncLROBasePolling(timeout=POLLING_INTERVAL, **kwargs),
+            **kwargs
+        )
+
+    @distributed_trace_async
+    async def begin_extract_labeled_forms_from_url(
+            self,
+            url: str,
+            model_id: str,
+            **kwargs: Any
+    ) -> List["ExtractedLabeledForm"]:
+        """Analyze Form.
+
+        :param url: The url of the document.
+        :type url: str
+        :param str model_id: Model identifier.
+        :keyword bool include_text_details: Include text lines and element references in the result.
+        :return: List[ExtractedLabeledForm]
+        :rtype: list[~azure.ai.formrecognizer.ExtractedLabeledForm]
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        if not isinstance(url, six.string_types):
+            raise TypeError("Call begin_extract_labeled_forms() to analyze a document from a stream.")
+
+        include_text_details = kwargs.pop("include_text_details", False)
+
+        def callback(raw_response, _, headers):  # pylint: disable=unused-argument
+            extracted_form = self._client._deserialize(AnalyzeOperationResult, raw_response)
+            if not extracted_form.analyze_result.document_results:
+                raise HttpResponseError("Cannot call begin_extract_labeled_forms() with the ID of a model trained "
+                                        "without labels. Please call begin_extract_forms() instead.")
+            form_result = prepare_labeled_result(extracted_form, include_text_details)
+            return form_result
+
+        return await self._client.analyze_with_custom_model(
+            file_stream={"source": url},
+            model_id=model_id,
+            include_text_details=include_text_details,
             cls=kwargs.pop("cls", callback),
             polling=AsyncLROBasePolling(timeout=POLLING_INTERVAL, **kwargs),
             **kwargs
