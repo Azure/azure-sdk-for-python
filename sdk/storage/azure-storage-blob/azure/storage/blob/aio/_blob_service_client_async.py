@@ -24,7 +24,7 @@ from .._shared.response_handlers import parse_to_internal_user_delegation_key
 from .._generated import VERSION
 from .._generated.aio import AzureBlobStorage
 from .._generated.models import StorageErrorException, StorageServiceProperties, KeyInfo
-from .._blob_service_client_base import BlobServiceClientBase
+from .._blob_service_client import BlobServiceClient as BlobServiceClientBase
 from ._container_client_async import ContainerClient
 from ._blob_client_async import BlobClient
 from .._models import ContainerProperties
@@ -500,9 +500,9 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
                 :dedent: 12
                 :caption: Getting the container client to interact with a specific container.
         """
-        if isinstance(container, ContainerProperties):
+        try:
             container_name = container.name
-        elif isinstance(container, str):
+        except AttributeError:
             container_name = container
         _pipeline = AsyncPipeline(
             transport=AsyncTransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
@@ -550,14 +550,14 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
                 :dedent: 16
                 :caption: Getting the blob client to interact with a specific blob.
         """
-        if isinstance(container, ContainerProperties):
+        try:
             container_name = container.name
-        elif isinstance(container, str):
+        except AttributeError:
             container_name = container
 
-        if isinstance(blob, BlobProperties):
+        try:
             blob_name = blob.name
-        elif isinstance(blob, str):
+        except AttributeError:
             blob_name = blob
         _pipeline = AsyncPipeline(
             transport=AsyncTransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
