@@ -627,7 +627,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             servicebus_namespace_connection_string, debug=False) as sb_client:
     
             with pytest.raises(ServiceBusConnectionError):
-                sb_client.get_queue_receiver(servicebus_queue.name, session_id="test")._open()
+                sb_client.get_queue_receiver(servicebus_queue.name, session_id="test")._open_with_retry()
     
             with sb_client.get_queue_sender(servicebus_queue.name, session_id="test") as sender:
                 sender.send(Message("test session sender"))
@@ -939,7 +939,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 messages = receiver.receive(timeout=10)
                 assert len(messages) == 1
     
-            with pytest.raises(ValueError): #TODO: Exception: better error?
+            with pytest.raises(MessageSettleFailed):
                 messages[0].complete()
     
 

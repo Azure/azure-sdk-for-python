@@ -18,6 +18,7 @@ from azure.servicebus.aio import ServiceBusClient, Message, ReceivedMessage, Aut
 from azure.servicebus._common.message import PeekMessage
 from azure.servicebus._common.constants import ReceiveSettleMode, NEXT_AVAILABLE
 from azure.servicebus.exceptions import (
+    ServiceBusConnectionError,
     ServiceBusError,
     NoActiveSession,
     SessionLockExpired,
@@ -82,8 +83,8 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                     message = Message("Handler message no. {}".format(i), session_id=session_id)
                     await sender.send(message)
 
-            with pytest.raises(ValueError):
-                sb_client.get_queue_receiver(servicebus_queue.name, idle_timeout=5)._open()
+            with pytest.raises(ServiceBusConnectionError):
+                await sb_client.get_queue_receiver(servicebus_queue.name, idle_timeout=5)._open_with_retry()
 
             session = sb_client.get_queue_receiver(servicebus_queue.name, session_id=session_id, idle_timeout=5)
             count = 0
@@ -125,7 +126,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
             time.sleep(30)
 
             messages = []
-            with sb_client.get_queue_receiver(servicebus_queue.name, session_id=session_id, mode=ReceiveSettleMode.ReceiveAndDelete, idle_timeout=5) as session:
+            async with sb_client.get_queue_receiver(servicebus_queue.name, session_id=session_id, mode=ReceiveSettleMode.ReceiveAndDelete, idle_timeout=5) as session:
                 async for message in session:
                     messages.append(message)
             assert len(messages) == 0
@@ -183,8 +184,8 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
             servicebus_namespace_connection_string, logging_enable=True) as sb_client:
 
             session = sb_client.get_queue_receiver(servicebus_queue.name, session_id=NEXT_AVAILABLE, idle_timeout=5)
-            with pytest.raises(VendorLinkDetach): #TODO: Exception: Was NoActiveSession
-                await session._open()
+            with pytest.raises(NoActiveSession):
+                await session._open_with_retry()
 
 
     @pytest.mark.liveTest
@@ -199,7 +200,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
             session_id = str(uuid.uuid4())
             messages = []
             session = sb_client.get_queue_receiver(servicebus_queue.name, session_id=session_id, mode=ReceiveSettleMode.ReceiveAndDelete, idle_timeout=5)
-            with session:
+            async with session:
                 async for message in session:
                     messages.append(message)
 
@@ -349,7 +350,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
 
             assert count == 10
 
-            with pytest.raises(ValueError):
+            with pytest.raises(MessageSettleFailed):
                 await message.complete()
 
 
@@ -413,7 +414,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                 assert all(isinstance(m, PeekMessage) for m in messages)
                 for message in messages:
                     print_message(message)
-                    with pytest.raises(AttributeError): #TODO: Exception: was TypeError
+                    with pytest.raises(AttributeError):
                         message.complete()
 
 
@@ -438,7 +439,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                 assert all(isinstance(m, PeekMessage) for m in messages)
                 for message in messages:
                     print_message(message)
-                    with pytest.raises(AttributeError): #TODO: Exception: Was TypeError
+                    with pytest.raises(AttributeError):
                         message.complete()
 
 
@@ -555,7 +556,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                 messages = await receiver.receive(timeout=10)
                 assert len(messages) == 1
 
-            with pytest.raises(ValueError): #TODO: Exception: was MessageSettleFailed
+            with pytest.raises(MessageSettleFailed):
                 await messages[0].complete()
 
 

@@ -74,7 +74,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                     sender.send(message)
 
             with pytest.raises(ServiceBusConnectionError):
-                session = sb_client.get_queue_receiver(servicebus_queue.name, idle_timeout=5)._open()
+                session = sb_client.get_queue_receiver(servicebus_queue.name, idle_timeout=5)._open_with_retry()
 
             with sb_client.get_queue_receiver(servicebus_queue.name, session_id=session_id, idle_timeout=5) as session:
                 count = 0
@@ -578,7 +578,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                 messages = receiver.receive(timeout=10)
                 assert len(messages) == 1
 
-            with pytest.raises(ValueError): #TODO: Exception MessageSettleFailed?
+            with pytest.raises(MessageSettleFailed):
                 messages[0].complete()
 
 

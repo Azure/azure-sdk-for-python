@@ -22,6 +22,7 @@ from azure.servicebus.aio import (
 from azure.servicebus._common.message import PeekMessage
 from azure.servicebus._common.constants import ReceiveSettleMode
 from azure.servicebus.exceptions import (
+    ServiceBusConnectionError,
     ServiceBusError,
     MessageLockExpired,
     InvalidHandlerState,
@@ -74,7 +75,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    @CachedServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
+    @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
     async def test_async_queue_by_queue_client_conn_str_receive_handler_peeklock(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
         async with ServiceBusClient.from_connection_string(
             servicebus_namespace_connection_string, debug=False) as sb_client:
@@ -85,9 +86,8 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                     message.enqueue_sequence_number = i
                     await sender.send(message)
 
-            with pytest.raises(LinkDetach):
-                #TODO: Exception: Linkdetatch is not clear at all.
-                await (sb_client.get_queue_receiver(servicebus_queue.name, session_id="test", idle_timeout=5))._open()
+            with pytest.raises(ServiceBusConnectionError):
+                await (sb_client.get_queue_receiver(servicebus_queue.name, session_id="test", idle_timeout=5))._open_with_retry()
 
             async with sb_client.get_queue_receiver(servicebus_queue.name, idle_timeout=5) as receiver:
                 count = 0
@@ -569,9 +569,8 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
         async with ServiceBusClient.from_connection_string(
             servicebus_namespace_connection_string, debug=False) as sb_client:
 
-            with pytest.raises(LinkDetach):
-                #TODO: Exception: a deep UAMQP link detach error in this case seems suboptimal. was Value Error?
-                await sb_client.get_queue_receiver(servicebus_queue.name, session_id="test")._open()
+            with pytest.raises(ServiceBusConnectionError):
+                await sb_client.get_queue_receiver(servicebus_queue.name, session_id="test")._open_with_retry()
 
             async with sb_client.get_queue_sender(servicebus_queue.name, session_id="test") as sender:
                 await sender.send(Message("test session sender"))
@@ -670,7 +669,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                     await messages[0].complete()
                     await messages[1].complete()
                     time.sleep(30)
-                    with pytest.raises(MessageLockExpired):
+                    with pytest.raises(MessageSettleFailed): #TODO: Exception: Was MessageLockExpired?
                         await messages[2].complete()
 
     @pytest.mark.liveTest
@@ -844,8 +843,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 messages = await receiver.receive(timeout=10)
                 assert len(messages) == 1
 
-            with pytest.raises(ValueError):
-                #TODO: Exception: Was a better exception before. (MessageSettleFailed?)
+            with pytest.raises(MessageSettleFailed):
                 await messages[0].complete()
 
     @pytest.mark.liveTest
