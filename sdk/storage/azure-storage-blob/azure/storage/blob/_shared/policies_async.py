@@ -13,9 +13,10 @@ from azure.core.pipeline.policies import AsyncHTTPPolicy
 from azure.core.exceptions import AzureError
 
 from .policies import is_retry, StorageRetryPolicy
+from azure.core.pipeline import PipelineResponse
 
 if TYPE_CHECKING:
-    from azure.core.pipeline import PipelineRequest, PipelineResponse
+    from azure.core.pipeline import PipelineRequest
 
 
 _LOGGER = logging.getLogger(__name__)

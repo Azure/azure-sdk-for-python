@@ -147,7 +147,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             metadata=None,  # type: Optional[Dict[str, str]]
             **kwargs
         ):
-        # type: (...) -> Any
+        # type: (...) -> Dict[str, Any]
         """Creates a new blob from a data source with automatic chunking.
 
         :param data: The blob data to upload.

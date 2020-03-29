@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 from typing import (  # pylint: disable=unused-import
-    Union, Optional, Any, IO, Iterable, AnyStr, Dict, List, Tuple, cast, Awaitable,
+    Union, Optional, Any, IO, Iterable, AnyStr, Dict, List, Tuple, cast,
     TypeVar, TYPE_CHECKING
 )
 

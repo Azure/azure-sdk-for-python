@@ -388,7 +388,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             metadata=None,  # type: Optional[Dict[str, str]]
             **kwargs
         ):
-        # type: (...) -> Any
+        # type: (...) -> Dict[str, Any]
         """Creates a new blob from a data source with automatic chunking.
 
         :param data: The blob data to upload.
@@ -494,10 +494,10 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             metadata=metadata,
             **kwargs)
         if blob_type == BlobType.BlockBlob:
-            return upload_block_blob(**options)
+            return cast(Dict, upload_block_blob(**options))
         if blob_type == BlobType.PageBlob:
-            return upload_page_blob(**options)
-        return upload_append_blob(**options)
+            return cast(Dict, upload_page_blob(**options))
+        return cast(Dict, upload_append_blob(**options))
 
     def _download_blob_options(self, offset=None, length=None, **kwargs):
         # type: (Optional[int], Optional[int], **Any) -> Dict[str, Any]
