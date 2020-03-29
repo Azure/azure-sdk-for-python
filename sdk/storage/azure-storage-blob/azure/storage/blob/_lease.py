@@ -24,6 +24,7 @@ if TYPE_CHECKING:
 
 def get_access_conditions(lease):
     # type: (Optional[Union[BlobLeaseClient, str]]) -> Union[LeaseAccessConditions, None]
+    lease_id = None
     if isinstance(lease, BlobLeaseClient):
         lease_id = lease.id
     elif isinstance(lease, str):

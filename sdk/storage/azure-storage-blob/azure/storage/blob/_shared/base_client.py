@@ -228,7 +228,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         kwargs.setdefault("connection_timeout", CONNECTION_TIMEOUT)
         kwargs.setdefault("read_timeout", READ_TIMEOUT)
         if not config.transport:
-            config.transport = RequestsTransport(**kwargs)
+            setattr(config, 'transport', RequestsTransport(**kwargs))
         policies = [
             QueueMessagePolicy(),
             config.headers_policy,
