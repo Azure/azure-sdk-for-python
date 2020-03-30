@@ -2877,10 +2877,10 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         if source_length is not None:
             if source_offset is None:
                 raise ValueError("source_offset should also be specified if source_length is specified")
-                end_range = source_offset + source_length - 1
-                source_range = 'bytes={0}-{1}'.format(source_offset, end_range)
-            elif source_offset is not None:
-                source_range = "bytes={0}-".format(source_offset)
+            end_range = source_offset + source_length - 1
+            source_range = 'bytes={0}-{1}'.format(source_offset, end_range)
+        elif source_length is None and source_offset is not None:
+            source_range = "bytes={0}-".format(source_offset)
 
         appendpos_condition = kwargs.pop('appendpos_condition', None)
         maxsize_condition = kwargs.pop('maxsize_condition', None)

@@ -47,7 +47,7 @@ except NameError:
     _unicode_type = str
 
 if TYPE_CHECKING:
-    from azure.core.pipeline import PipelineRequest, PipelineResponse
+    from azure.core.pipeline import PipelineRequest
 
 
 _LOGGER = logging.getLogger(__name__)

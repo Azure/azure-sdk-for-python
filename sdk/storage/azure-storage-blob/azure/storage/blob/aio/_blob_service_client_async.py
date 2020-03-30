@@ -506,9 +506,9 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
                 :dedent: 12
                 :caption: Getting the container client to interact with a specific container.
         """
-        try:
+        if isinstance(container, ContainerProperties):
             container_name = container.name
-        except AttributeError:
+        elif isinstance(container, str):
             container_name = container
         _pipeline = AsyncPipeline(
             transport=AsyncTransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
@@ -556,14 +556,14 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
                 :dedent: 16
                 :caption: Getting the blob client to interact with a specific blob.
         """
-        try:
+        if isinstance(container, ContainerProperties):
             container_name = container.name
-        except AttributeError:
+        elif isinstance(container, str):
             container_name = container
 
-        try:
+        if isinstance(blob, BlobProperties):
             blob_name = blob.name
-        except AttributeError:
+        elif isinstance(blob, str):
             blob_name = blob
         _pipeline = AsyncPipeline(
             transport=AsyncTransportWrapper(self._pipeline._transport), # pylint: disable = protected-access

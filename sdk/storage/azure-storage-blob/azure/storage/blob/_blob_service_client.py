@@ -551,9 +551,9 @@ class BlobServiceClient(StorageAccountHostsMixin):
                 :dedent: 8
                 :caption: Getting the container client to interact with a specific container.
         """
-        try:
-            container_name = cast(str, container.name)
-        except AttributeError:
+        if isinstance(container, ContainerProperties):
+            container_name = container.name
+        elif isinstance(container, str):
             container_name = container
         _pipeline = Pipeline(
             transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
@@ -600,13 +600,13 @@ class BlobServiceClient(StorageAccountHostsMixin):
                 :dedent: 12
                 :caption: Getting the blob client to interact with a specific blob.
         """
-        try:
-            container_name = cast(str, container.name)
-        except AttributeError:
+        if isinstance(container, ContainerProperties):
+            container_name = container.name
+        elif isinstance(container, str):
             container_name = container
-        try:
-            blob_name = cast(str, blob.name)
-        except AttributeError:
+        if isinstance(blob, BlobProperties):
+            blob_name = blob.name
+        elif isinstance(blob, str):
             blob_name = blob
         _pipeline = Pipeline(
             transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access

@@ -296,9 +296,11 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         :rtype: dict(str, str)
         """
         try:
-            return await self._client.container.get_account_info(cls=return_response_headers, **kwargs) # type: ignore
+            ret_val = await self._client.container.get_account_info(cls=return_response_headers, **kwargs)
         except StorageErrorException as error:
+            ret_val = None
             process_storage_error(error)
+        return cast(Dict, ret_val)
 
     @distributed_trace_async
     async def get_container_properties(self, **kwargs):
@@ -497,7 +499,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         mod_conditions = get_modify_conditions(kwargs)
         access_conditions = get_access_conditions(lease)
         try:
-            return await self._client.container.set_access_policy(
+            ret_val = await self._client.container.set_access_policy(
                 container_acl=signed_identifiers or None,
                 timeout=timeout,
                 access=public_access,
@@ -506,7 +508,9 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
                 cls=return_response_headers,
                 **kwargs)
         except StorageErrorException as error:
+            ret_val = None
             process_storage_error(error)
+        return cast(Dict, ret_val)
 
     @distributed_trace
     def list_blobs(self, name_starts_with=None, include=None, **kwargs):
@@ -944,7 +948,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             req.format_parameters(query_parameters)
             reqs.append(req)
 
-        return await self._batch_send(*reqs, **options)
+        return cast(AsyncIterator, await self._batch_send(*reqs, **options))
 
     @distributed_trace
     async def set_standard_blob_tier_blobs(
@@ -1007,7 +1011,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             req.format_parameters(query_parameters)
             reqs.append(req)
 
-        return await self._batch_send(*reqs, **kwargs)
+        return cast(AsyncIterator, await self._batch_send(*reqs, **kwargs))
 
     @distributed_trace
     async def set_premium_page_blob_tier_blobs(
@@ -1066,7 +1070,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             req.format_parameters(query_parameters)
             reqs.append(req)
 
-        return await self._batch_send(*reqs, **kwargs)
+        return cast(AsyncIterator, await self._batch_send(*reqs, **kwargs))
 
     def get_blob_client(
             self, blob,  # type: Union[BlobProperties, str]

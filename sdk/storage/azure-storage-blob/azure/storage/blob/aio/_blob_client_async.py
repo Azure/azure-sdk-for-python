@@ -1117,9 +1117,11 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             length=length,
             **kwargs)
         try:
-            return await self._client.block_blob.stage_block(**options)
+            ret_val = await self._client.block_blob.stage_block(**options)
         except StorageErrorException as error:
+            ret_val = None
             process_storage_error(error)
+        return cast(Dict, ret_val)
 
     @distributed_trace_async
     async def stage_block_from_url(
@@ -1175,9 +1177,11 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             source_content_md5=source_content_md5,
             **kwargs)
         try:
-            return await self._client.block_blob.stage_block_from_url(**options)
+            ret_val = await self._client.block_blob.stage_block_from_url(**options)
         except StorageErrorException as error:
+            ret_val = None
             process_storage_error(error)
+        return cast(Dict, ret_val)
 
     @distributed_trace_async
     async def get_block_list(self, block_list_type="committed", **kwargs):
@@ -1647,9 +1651,11 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             length=length,
             **kwargs)
         try:
-            return await self._client.page_blob.upload_pages(**options) # type: ignore
+            ret_val = await self._client.page_blob.upload_pages(**options)
         except StorageErrorException as error:
+            ret_val = None
             process_storage_error(error)
+        return cast(Dict, ret_val)
 
     @distributed_trace_async
     async def upload_pages_from_url(self, source_url,  # type: str
@@ -1753,9 +1759,11 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             **kwargs
         )
         try:
-            return await self._client.page_blob.upload_pages_from_url(**options)  # type: ignore
+            ret_val = await self._client.page_blob.upload_pages_from_url(**options)
         except StorageErrorException as error:
+            ret_val = None
             process_storage_error(error)
+        return cast(Dict, ret_val)
 
     @distributed_trace_async
     async def clear_page(self, offset, length, **kwargs):
@@ -1814,9 +1822,11 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         """
         options = self._clear_page_options(offset, length, **kwargs)
         try:
-            return await self._client.page_blob.clear_pages(**options)  # type: ignore
+            ret_val = await self._client.page_blob.clear_pages(**options)
         except StorageErrorException as error:
+            ret_val = None
             process_storage_error(error)
+        return cast(Dict, ret_val)
 
     @distributed_trace_async
     async def append_block( # type: ignore
@@ -1993,6 +2003,8 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             **kwargs
         )
         try:
-            return await self._client.append_blob.append_block_from_url(**options)  # type: ignore
+            ret_val = await self._client.append_blob.append_block_from_url(**options)
         except StorageErrorException as error:
+            ret_val = None
             process_storage_error(error)
+        return cast(Dict, ret_val)
