@@ -1,7 +1,13 @@
 # Release History
 
-## 5.0.2 (Unreleased)
+## 5.1.0b1 (Unreleased)
 
+**New Features**
+- Added `EventHubConsumerClient.receive_batch()` to receive and process events in batches instead of one by one. #9184
+- `EventHubConsumerCliuent.receive()` has a new param `max_wait_time`. 
+`on_event` is called every `max_wait_time` when no events are received and `max_wait_time` is not `None` or 0.
+- Param event of `PartitionContext.update_checkpoint` is now optional. The last received event is used when param event is not passed in.
+- `EventData.system_properties` has added missing properties when consuming messages from IotHub. #10408
 
 ## 5.0.1 (2020-03-09)
 
