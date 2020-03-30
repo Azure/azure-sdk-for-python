@@ -14,7 +14,6 @@ from typing import (  # pylint: disable=unused-import
 )
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import HttpResponseError
-from ._generated._text_analytics_client import TextAnalyticsClient as TextAnalytics
 from ._base_client import TextAnalyticsClientBase
 from ._request_handlers import _validate_batch_input
 from ._response_handlers import (

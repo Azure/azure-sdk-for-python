@@ -3,23 +3,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-
-from azure.core.configuration import Configuration
-from azure.core.pipeline import Pipeline
-from azure.core.pipeline.transport import RequestsTransport
-from azure.core.pipeline.policies import (
-    UserAgentPolicy,
-    HeadersPolicy,
-    RequestIdPolicy,
-    ProxyPolicy,
-    NetworkTraceLoggingPolicy,
-    RetryPolicy,
-    RedirectPolicy,
-    BearerTokenCredentialPolicy,
-    DistributedTracingPolicy,
-    HttpLoggingPolicy,
-)
-from ._policies import CognitiveServicesCredentialPolicy, TextAnalyticsResponseHookPolicy
+from ._policies import CognitiveServicesCredentialPolicy
 from ._user_agent import USER_AGENT
 
 
