@@ -9,9 +9,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-search/1.0.0b2 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
+      - azsdk-python-search-documents/1.0.0b2 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       api-key:
-      - 3D98B9FE572C1AE1E540CEF72B72AF1E
+      - 261BCAB0CEF0583E6A7A9625A81EF40F
     method: GET
     uri: https://search40b5101a.search.windows.net/indexes('drgqefsg')/docs/$count?api-version=2019-05-06-Preview
   response:
@@ -25,9 +25,9 @@ interactions:
       content-type:
       - text/plain
       date:
-      - Thu, 19 Mar 2020 00:14:55 GMT
+      - Mon, 30 Mar 2020 22:36:26 GMT
       elapsed-time:
-      - '87'
+      - '68'
       expires:
       - '-1'
       odata-version:
@@ -37,7 +37,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - a8eb7e76-6976-11ea-bb71-8c8590507855
+      - e4683898-72d6-11ea-a580-5cf37071153c
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:

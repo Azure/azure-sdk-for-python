@@ -13,9 +13,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-search/1.0.0b2 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
+      - azsdk-python-search-documents/1.0.0b2 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       api-key:
-      - 2E2E569ABA0682E66FD3FE84A5C7A19B
+      - 5C2F42094D671F20587AFA4402E701C1
     method: POST
     uri: https://search30430f92.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2019-05-06-Preview
   response:
@@ -72,7 +72,7 @@ interactions:
       content-type:
       - application/json; odata.metadata=none
       date:
-      - Thu, 19 Mar 2020 00:16:12 GMT
+      - Mon, 30 Mar 2020 22:38:12 GMT
       elapsed-time:
       - '82'
       expires:
@@ -84,7 +84,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - d6f05db4-6976-11ea-bb71-8c8590507855
+      - 242ec19c-72d7-11ea-a61c-5cf37071153c
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:
@@ -106,9 +106,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-search/1.0.0b2 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
+      - azsdk-python-search-documents/1.0.0b2 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       api-key:
-      - 2E2E569ABA0682E66FD3FE84A5C7A19B
+      - 5C2F42094D671F20587AFA4402E701C1
     method: POST
     uri: https://search30430f92.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2019-05-06-Preview
   response:
@@ -141,9 +141,9 @@ interactions:
       content-type:
       - application/json; odata.metadata=none
       date:
-      - Thu, 19 Mar 2020 00:16:12 GMT
+      - Mon, 30 Mar 2020 22:38:12 GMT
       elapsed-time:
-      - '6'
+      - '9'
       expires:
       - '-1'
       odata-version:
@@ -153,7 +153,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - d71648c6-6976-11ea-bb71-8c8590507855
+      - 248c65a4-72d7-11ea-9144-5cf37071153c
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:

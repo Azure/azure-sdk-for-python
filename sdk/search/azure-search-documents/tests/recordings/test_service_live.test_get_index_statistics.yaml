@@ -1,37 +1,33 @@
 interactions:
 - request:
-    body: '{"search": "mot", "suggesterName": "sg"}'
+    body: null
     headers:
       Accept:
-      - application/json;odata.metadata=none
+      - application/json;odata.metadata=minimal
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
-      Content-Length:
-      - '40'
-      Content-Type:
-      - application/json
       User-Agent:
       - azsdk-python-search-documents/1.0.0b2 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       api-key:
-      - 374B8742DF4AE3116D2AEC84CA83316C
-    method: POST
-    uri: https://searche7b20da6.search.windows.net/indexes('drgqefsg')/docs/search.post.autocomplete?api-version=2019-05-06-Preview
+      - 615AC4969A0A0DFCDE42F5EE74905105
+    method: GET
+    uri: https://search86b411ce.search.windows.net/indexes('drgqefsg')/search.stats?api-version=2019-05-06-Preview
   response:
     body:
-      string: '{"value":[{"text":"motel","queryPlusText":"motel"}]}'
+      string: '{"@odata.context":"https://search86b411ce.search.windows.net/$metadata#Microsoft.Azure.Search.V2019_05_06_Preview.IndexStatistics","documentCount":0,"storageSize":0}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '52'
+      - '165'
       content-type:
-      - application/json; odata.metadata=none
+      - application/json; odata.metadata=minimal
       date:
-      - Mon, 30 Mar 2020 22:35:15 GMT
+      - Mon, 30 Mar 2020 22:41:55 GMT
       elapsed-time:
-      - '140'
+      - '24'
       expires:
       - '-1'
       odata-version:
@@ -41,7 +37,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - ba836c0a-72d6-11ea-8c53-5cf37071153c
+      - a85c0934-72d7-11ea-9f62-5cf37071153c
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:

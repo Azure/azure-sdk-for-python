@@ -34,14 +34,15 @@ class AccessCondition(msrest.serialization.Model):
 
 
 class Analyzer(msrest.serialization.Model):
-    """Abstract base class for analyzers.
+    """Base type for analyzers.
 
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: CustomAnalyzer, PatternAnalyzer, StandardAnalyzer, StopAnalyzer.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Constant filled by server.
+    :param odata_type: Required. Identifies the concrete type of the analyzer.Constant filled by
+     server.
     :type odata_type: str
     :param name: Required. The name of the analyzer. It must only contain letters, digits, spaces,
      dashes or underscores, can only start and end with alphanumeric characters, and is limited to
@@ -163,14 +164,15 @@ class AnalyzeResult(msrest.serialization.Model):
 
 
 class TokenFilter(msrest.serialization.Model):
-    """Abstract base class for token filters.
+    """Base type for token filters.
 
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: AsciiFoldingTokenFilter, CjkBigramTokenFilter, CommonGramTokenFilter, DictionaryDecompounderTokenFilter, EdgeNGramTokenFilter, EdgeNGramTokenFilterV2, ElisionTokenFilter, KeepTokenFilter, KeywordMarkerTokenFilter, LengthTokenFilter, LimitTokenFilter, NGramTokenFilter, NGramTokenFilterV2, PatternCaptureTokenFilter, PatternReplaceTokenFilter, PhoneticTokenFilter, ShingleTokenFilter, SnowballTokenFilter, StemmerOverrideTokenFilter, StemmerTokenFilter, StopwordsTokenFilter, SynonymTokenFilter, TruncateTokenFilter, UniqueTokenFilter, WordDelimiterTokenFilter.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Constant filled by server.
+    :param odata_type: Required. Identifies the concrete type of the token filter.Constant filled
+     by server.
     :type odata_type: str
     :param name: Required. The name of the token filter. It must only contain letters, digits,
      spaces, dashes or underscores, can only start and end with alphanumeric characters, and is
@@ -206,7 +208,8 @@ class AsciiFoldingTokenFilter(TokenFilter):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Constant filled by server.
+    :param odata_type: Required. Identifies the concrete type of the token filter.Constant filled
+     by server.
     :type odata_type: str
     :param name: Required. The name of the token filter. It must only contain letters, digits,
      spaces, dashes or underscores, can only start and end with alphanumeric characters, and is
@@ -269,14 +272,15 @@ class AzureActiveDirectoryApplicationCredentials(msrest.serialization.Model):
 
 
 class CharFilter(msrest.serialization.Model):
-    """Abstract base class for character filters.
+    """Base type for character filters.
 
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: MappingCharFilter, PatternReplaceCharFilter.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Constant filled by server.
+    :param odata_type: Required. Identifies the concrete type of the char filter.Constant filled by
+     server.
     :type odata_type: str
     :param name: Required. The name of the char filter. It must only contain letters, digits,
      spaces, dashes or underscores, can only start and end with alphanumeric characters, and is
@@ -312,7 +316,8 @@ class CjkBigramTokenFilter(TokenFilter):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Constant filled by server.
+    :param odata_type: Required. Identifies the concrete type of the token filter.Constant filled
+     by server.
     :type odata_type: str
     :param name: Required. The name of the token filter. It must only contain letters, digits,
      spaces, dashes or underscores, can only start and end with alphanumeric characters, and is
@@ -348,14 +353,15 @@ class CjkBigramTokenFilter(TokenFilter):
 
 
 class Tokenizer(msrest.serialization.Model):
-    """Abstract base class for tokenizers.
+    """Base type for tokenizers.
 
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: ClassicTokenizer, EdgeNGramTokenizer, KeywordTokenizer, KeywordTokenizerV2, MicrosoftLanguageStemmingTokenizer, MicrosoftLanguageTokenizer, NGramTokenizer, PathHierarchyTokenizerV2, PatternTokenizer, StandardTokenizer, StandardTokenizerV2, UaxUrlEmailTokenizer.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Constant filled by server.
+    :param odata_type: Required. Identifies the concrete type of the tokenizer.Constant filled by
+     server.
     :type odata_type: str
     :param name: Required. The name of the tokenizer. It must only contain letters, digits, spaces,
      dashes or underscores, can only start and end with alphanumeric characters, and is limited to
@@ -391,7 +397,8 @@ class ClassicTokenizer(Tokenizer):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Constant filled by server.
+    :param odata_type: Required. Identifies the concrete type of the tokenizer.Constant filled by
+     server.
     :type odata_type: str
     :param name: Required. The name of the tokenizer. It must only contain letters, digits, spaces,
      dashes or underscores, can only start and end with alphanumeric characters, and is limited to
@@ -424,16 +431,17 @@ class ClassicTokenizer(Tokenizer):
 
 
 class CognitiveServicesAccount(msrest.serialization.Model):
-    """Abstract base class for describing any cognitive service resource attached to the skillset.
+    """Base type for describing any cognitive service resource attached to a skillset.
 
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: CognitiveServicesAccountKey, DefaultCognitiveServicesAccount.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Constant filled by server.
+    :param odata_type: Required. Identifies the concrete type of the cognitive service resource
+     attached to a skillset.Constant filled by server.
     :type odata_type: str
-    :param description:
+    :param description: Description of the cognitive service resource attached to a skillset.
     :type description: str
     """
 
@@ -464,11 +472,13 @@ class CognitiveServicesAccountKey(CognitiveServicesAccount):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Constant filled by server.
+    :param odata_type: Required. Identifies the concrete type of the cognitive service resource
+     attached to a skillset.Constant filled by server.
     :type odata_type: str
-    :param description:
+    :param description: Description of the cognitive service resource attached to a skillset.
     :type description: str
-    :param key: Required.
+    :param key: Required. The key used to provision the cognitive service resource attached to a
+     skillset.
     :type key: str
     """
 
@@ -497,7 +507,8 @@ class CommonGramTokenFilter(TokenFilter):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Constant filled by server.
+    :param odata_type: Required. Identifies the concrete type of the token filter.Constant filled
+     by server.
     :type odata_type: str
     :param name: Required. The name of the token filter. It must only contain letters, digits,
      spaces, dashes or underscores, can only start and end with alphanumeric characters, and is
@@ -540,14 +551,15 @@ class CommonGramTokenFilter(TokenFilter):
 
 
 class Skill(msrest.serialization.Model):
-    """Abstract base class for skills.
+    """Base type for skills.
 
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: WebApiSkill, EntityRecognitionSkill, KeyPhraseExtractionSkill, LanguageDetectionSkill, MergeSkill, SentimentSkill, SplitSkill, TextTranslationSkill, ConditionalSkill, ShaperSkill, ImageAnalysisSkill, OcrSkill.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Constant filled by server.
+    :param odata_type: Required. Identifies the concrete type of the skill.Constant filled by
+     server.
     :type odata_type: str
     :param name: The name of the skill which uniquely identifies it within the skillset. A skill
      with no name defined will be given a default name of its 1-based index in the skills array,
@@ -604,7 +616,8 @@ class ConditionalSkill(Skill):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Constant filled by server.
+    :param odata_type: Required. Identifies the concrete type of the skill.Constant filled by
+     server.
     :type odata_type: str
     :param name: The name of the skill which uniquely identifies it within the skillset. A skill
      with no name defined will be given a default name of its 1-based index in the skills array,
@@ -684,7 +697,8 @@ class CustomAnalyzer(Analyzer):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Constant filled by server.
+    :param odata_type: Required. Identifies the concrete type of the analyzer.Constant filled by
+     server.
     :type odata_type: str
     :param name: Required. The name of the analyzer. It must only contain letters, digits, spaces,
      dashes or underscores, can only start and end with alphanumeric characters, and is limited to
@@ -732,14 +746,15 @@ class CustomAnalyzer(Analyzer):
 
 
 class DataChangeDetectionPolicy(msrest.serialization.Model):
-    """Abstract base class for data change detection policies.
+    """Base type for data change detection policies.
 
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: HighWaterMarkChangeDetectionPolicy, SqlIntegratedChangeTrackingPolicy.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Constant filled by server.
+    :param odata_type: Required. Identifies the concrete type of the data change detection
+     policy.Constant filled by server.
     :type odata_type: str
     """
 
@@ -795,14 +810,15 @@ class DataContainer(msrest.serialization.Model):
 
 
 class DataDeletionDetectionPolicy(msrest.serialization.Model):
-    """Abstract base class for data deletion detection policies.
+    """Base type for data deletion detection policies.
 
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: SoftDeleteColumnDeletionDetectionPolicy.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Constant filled by server.
+    :param odata_type: Required. Identifies the concrete type of the data deletion detection
+     policy.Constant filled by server.
     :type odata_type: str
     """
 
@@ -907,9 +923,10 @@ class DefaultCognitiveServicesAccount(CognitiveServicesAccount):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Constant filled by server.
+    :param odata_type: Required. Identifies the concrete type of the cognitive service resource
+     attached to a skillset.Constant filled by server.
     :type odata_type: str
-    :param description:
+    :param description: Description of the cognitive service resource attached to a skillset.
     :type description: str
     """
 
@@ -935,7 +952,8 @@ class DictionaryDecompounderTokenFilter(TokenFilter):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Constant filled by server.
+    :param odata_type: Required. Identifies the concrete type of the token filter.Constant filled
+     by server.
     :type odata_type: str
     :param name: Required. The name of the token filter. It must only contain letters, digits,
      spaces, dashes or underscores, can only start and end with alphanumeric characters, and is
@@ -990,14 +1008,15 @@ class DictionaryDecompounderTokenFilter(TokenFilter):
 
 
 class ScoringFunction(msrest.serialization.Model):
-    """Abstract base class for functions that can modify document scores during ranking.
+    """Base type for functions that can modify document scores during ranking.
 
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: DistanceScoringFunction, FreshnessScoringFunction, MagnitudeScoringFunction, TagScoringFunction.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Constant filled by server.
+    :param type: Required. Indicates the type of function to use. Valid values include magnitude,
+     freshness, distance, and tag. The function type must be lower case.Constant filled by server.
     :type type: str
     :param field_name: Required. The name of the field used as input to the scoring function.
     :type field_name: str
@@ -1043,7 +1062,8 @@ class DistanceScoringFunction(ScoringFunction):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Constant filled by server.
+    :param type: Required. Indicates the type of function to use. Valid values include magnitude,
+     freshness, distance, and tag. The function type must be lower case.Constant filled by server.
     :type type: str
     :param field_name: Required. The name of the field used as input to the scoring function.
     :type field_name: str
@@ -1119,7 +1139,8 @@ class EdgeNGramTokenFilter(TokenFilter):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Constant filled by server.
+    :param odata_type: Required. Identifies the concrete type of the token filter.Constant filled
+     by server.
     :type odata_type: str
     :param name: Required. The name of the token filter. It must only contain letters, digits,
      spaces, dashes or underscores, can only start and end with alphanumeric characters, and is
@@ -1164,7 +1185,8 @@ class EdgeNGramTokenFilterV2(TokenFilter):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Constant filled by server.
+    :param odata_type: Required. Identifies the concrete type of the token filter.Constant filled
+     by server.
     :type odata_type: str
     :param name: Required. The name of the token filter. It must only contain letters, digits,
      spaces, dashes or underscores, can only start and end with alphanumeric characters, and is
@@ -1211,7 +1233,8 @@ class EdgeNGramTokenizer(Tokenizer):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Constant filled by server.
+    :param odata_type: Required. Identifies the concrete type of the tokenizer.Constant filled by
+     server.
     :type odata_type: str
     :param name: Required. The name of the tokenizer. It must only contain letters, digits, spaces,
      dashes or underscores, can only start and end with alphanumeric characters, and is limited to
@@ -1257,7 +1280,8 @@ class ElisionTokenFilter(TokenFilter):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Constant filled by server.
+    :param odata_type: Required. Identifies the concrete type of the token filter.Constant filled
+     by server.
     :type odata_type: str
     :param name: Required. The name of the token filter. It must only contain letters, digits,
      spaces, dashes or underscores, can only start and end with alphanumeric characters, and is
@@ -1337,7 +1361,8 @@ class EntityRecognitionSkill(Skill):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Constant filled by server.
+    :param odata_type: Required. Identifies the concrete type of the skill.Constant filled by
+     server.
     :type odata_type: str
     :param name: The name of the skill which uniquely identifies it within the skillset. A skill
      with no name defined will be given a default name of its 1-based index in the skills array,
@@ -1463,8 +1488,8 @@ class Field(msrest.serialization.Model):
      Collection(Edm.GeographyPoint) cannot be facetable. Default is true for all other simple
      fields.
     :type facetable: bool
-    :param analyzer: The name of the language analyzer to use for the field. This option can be
-     used only with searchable fields and it can't be set together with either searchAnalyzer or
+    :param analyzer: The name of the analyzer to use for the field. This option can be used only
+     with searchable fields and it can't be set together with either searchAnalyzer or
      indexAnalyzer. Once the analyzer is chosen, it cannot be changed for the field. Must be null
      for complex fields. Possible values include: 'ar.microsoft', 'ar.lucene', 'hy.lucene',
      'bn.microsoft', 'eu.lucene', 'bg.microsoft', 'bg.lucene', 'ca.microsoft', 'ca.lucene', 'zh-
@@ -1486,30 +1511,10 @@ class Field(msrest.serialization.Model):
     :type analyzer: str or ~search_service_client.models.AnalyzerName
     :param search_analyzer: The name of the analyzer used at search time for the field. This option
      can be used only with searchable fields. It must be set together with indexAnalyzer and it
-     cannot be set together with the analyzer option. This analyzer can be updated on an existing
-     field. Must be null for complex fields. Possible values include: 'ar.microsoft', 'ar.lucene',
-     'hy.lucene', 'bn.microsoft', 'eu.lucene', 'bg.microsoft', 'bg.lucene', 'ca.microsoft',
-     'ca.lucene', 'zh-Hans.microsoft', 'zh-Hans.lucene', 'zh-Hant.microsoft', 'zh-Hant.lucene',
-     'hr.microsoft', 'cs.microsoft', 'cs.lucene', 'da.microsoft', 'da.lucene', 'nl.microsoft',
-     'nl.lucene', 'en.microsoft', 'en.lucene', 'et.microsoft', 'fi.microsoft', 'fi.lucene',
-     'fr.microsoft', 'fr.lucene', 'gl.lucene', 'de.microsoft', 'de.lucene', 'el.microsoft',
-     'el.lucene', 'gu.microsoft', 'he.microsoft', 'hi.microsoft', 'hi.lucene', 'hu.microsoft',
-     'hu.lucene', 'is.microsoft', 'id.microsoft', 'id.lucene', 'ga.lucene', 'it.microsoft',
-     'it.lucene', 'ja.microsoft', 'ja.lucene', 'kn.microsoft', 'ko.microsoft', 'ko.lucene',
-     'lv.microsoft', 'lv.lucene', 'lt.microsoft', 'ml.microsoft', 'ms.microsoft', 'mr.microsoft',
-     'nb.microsoft', 'no.lucene', 'fa.lucene', 'pl.microsoft', 'pl.lucene', 'pt-BR.microsoft', 'pt-
-     BR.lucene', 'pt-PT.microsoft', 'pt-PT.lucene', 'pa.microsoft', 'ro.microsoft', 'ro.lucene',
-     'ru.microsoft', 'ru.lucene', 'sr-cyrillic.microsoft', 'sr-latin.microsoft', 'sk.microsoft',
-     'sl.microsoft', 'es.microsoft', 'es.lucene', 'sv.microsoft', 'sv.lucene', 'ta.microsoft',
-     'te.microsoft', 'th.microsoft', 'th.lucene', 'tr.microsoft', 'tr.lucene', 'uk.microsoft',
-     'ur.microsoft', 'vi.microsoft', 'standard.lucene', 'standardasciifolding.lucene', 'keyword',
-     'pattern', 'simple', 'stop', 'whitespace'.
-    :type search_analyzer: str or ~search_service_client.models.AnalyzerName
-    :param index_analyzer: The name of the analyzer used at indexing time for the field. This
-     option can be used only with searchable fields. It must be set together with searchAnalyzer and
-     it cannot be set together with the analyzer option. Once the analyzer is chosen, it cannot be
-     changed for the field. Must be null for complex fields. Possible values include:
-     'ar.microsoft', 'ar.lucene', 'hy.lucene', 'bn.microsoft', 'eu.lucene', 'bg.microsoft',
+     cannot be set together with the analyzer option. This property cannot be set to the name of a
+     language analyzer; use the analyzer property instead if you need a language analyzer. This
+     analyzer can be updated on an existing field. Must be null for complex fields. Possible values
+     include: 'ar.microsoft', 'ar.lucene', 'hy.lucene', 'bn.microsoft', 'eu.lucene', 'bg.microsoft',
      'bg.lucene', 'ca.microsoft', 'ca.lucene', 'zh-Hans.microsoft', 'zh-Hans.lucene', 'zh-
      Hant.microsoft', 'zh-Hant.lucene', 'hr.microsoft', 'cs.microsoft', 'cs.lucene', 'da.microsoft',
      'da.lucene', 'nl.microsoft', 'nl.lucene', 'en.microsoft', 'en.lucene', 'et.microsoft',
@@ -1521,6 +1526,29 @@ class Field(msrest.serialization.Model):
      'ms.microsoft', 'mr.microsoft', 'nb.microsoft', 'no.lucene', 'fa.lucene', 'pl.microsoft',
      'pl.lucene', 'pt-BR.microsoft', 'pt-BR.lucene', 'pt-PT.microsoft', 'pt-PT.lucene',
      'pa.microsoft', 'ro.microsoft', 'ro.lucene', 'ru.microsoft', 'ru.lucene', 'sr-
+     cyrillic.microsoft', 'sr-latin.microsoft', 'sk.microsoft', 'sl.microsoft', 'es.microsoft',
+     'es.lucene', 'sv.microsoft', 'sv.lucene', 'ta.microsoft', 'te.microsoft', 'th.microsoft',
+     'th.lucene', 'tr.microsoft', 'tr.lucene', 'uk.microsoft', 'ur.microsoft', 'vi.microsoft',
+     'standard.lucene', 'standardasciifolding.lucene', 'keyword', 'pattern', 'simple', 'stop',
+     'whitespace'.
+    :type search_analyzer: str or ~search_service_client.models.AnalyzerName
+    :param index_analyzer: The name of the analyzer used at indexing time for the field. This
+     option can be used only with searchable fields. It must be set together with searchAnalyzer and
+     it cannot be set together with the analyzer option.  This property cannot be set to the name of
+     a language analyzer; use the analyzer property instead if you need a language analyzer. Once
+     the analyzer is chosen, it cannot be changed for the field. Must be null for complex fields.
+     Possible values include: 'ar.microsoft', 'ar.lucene', 'hy.lucene', 'bn.microsoft', 'eu.lucene',
+     'bg.microsoft', 'bg.lucene', 'ca.microsoft', 'ca.lucene', 'zh-Hans.microsoft', 'zh-
+     Hans.lucene', 'zh-Hant.microsoft', 'zh-Hant.lucene', 'hr.microsoft', 'cs.microsoft',
+     'cs.lucene', 'da.microsoft', 'da.lucene', 'nl.microsoft', 'nl.lucene', 'en.microsoft',
+     'en.lucene', 'et.microsoft', 'fi.microsoft', 'fi.lucene', 'fr.microsoft', 'fr.lucene',
+     'gl.lucene', 'de.microsoft', 'de.lucene', 'el.microsoft', 'el.lucene', 'gu.microsoft',
+     'he.microsoft', 'hi.microsoft', 'hi.lucene', 'hu.microsoft', 'hu.lucene', 'is.microsoft',
+     'id.microsoft', 'id.lucene', 'ga.lucene', 'it.microsoft', 'it.lucene', 'ja.microsoft',
+     'ja.lucene', 'kn.microsoft', 'ko.microsoft', 'ko.lucene', 'lv.microsoft', 'lv.lucene',
+     'lt.microsoft', 'ml.microsoft', 'ms.microsoft', 'mr.microsoft', 'nb.microsoft', 'no.lucene',
+     'fa.lucene', 'pl.microsoft', 'pl.lucene', 'pt-BR.microsoft', 'pt-BR.lucene', 'pt-PT.microsoft',
+     'pt-PT.lucene', 'pa.microsoft', 'ro.microsoft', 'ro.lucene', 'ru.microsoft', 'ru.lucene', 'sr-
      cyrillic.microsoft', 'sr-latin.microsoft', 'sk.microsoft', 'sl.microsoft', 'es.microsoft',
      'es.lucene', 'sv.microsoft', 'sv.lucene', 'ta.microsoft', 'te.microsoft', 'th.microsoft',
      'th.lucene', 'tr.microsoft', 'tr.lucene', 'uk.microsoft', 'ur.microsoft', 'vi.microsoft',
@@ -1648,7 +1676,8 @@ class FreshnessScoringFunction(ScoringFunction):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Constant filled by server.
+    :param type: Required. Indicates the type of function to use. Valid values include magnitude,
+     freshness, distance, and tag. The function type must be lower case.Constant filled by server.
     :type type: str
     :param field_name: Required. The name of the field used as input to the scoring function.
     :type field_name: str
@@ -1750,7 +1779,8 @@ class HighWaterMarkChangeDetectionPolicy(DataChangeDetectionPolicy):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Constant filled by server.
+    :param odata_type: Required. Identifies the concrete type of the data change detection
+     policy.Constant filled by server.
     :type odata_type: str
     :param high_water_mark_column_name: Required. The name of the high water mark column.
     :type high_water_mark_column_name: str
@@ -1780,7 +1810,8 @@ class ImageAnalysisSkill(Skill):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Constant filled by server.
+    :param odata_type: Required. Identifies the concrete type of the skill.Constant filled by
+     server.
     :type odata_type: str
     :param name: The name of the skill which uniquely identifies it within the skillset. A skill
      with no name defined will be given a default name of its 1-based index in the skills array,
@@ -2359,7 +2390,8 @@ class KeepTokenFilter(TokenFilter):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Constant filled by server.
+    :param odata_type: Required. Identifies the concrete type of the token filter.Constant filled
+     by server.
     :type odata_type: str
     :param name: Required. The name of the token filter. It must only contain letters, digits,
      spaces, dashes or underscores, can only start and end with alphanumeric characters, and is
@@ -2400,7 +2432,8 @@ class KeyPhraseExtractionSkill(Skill):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Constant filled by server.
+    :param odata_type: Required. Identifies the concrete type of the skill.Constant filled by
+     server.
     :type odata_type: str
     :param name: The name of the skill which uniquely identifies it within the skillset. A skill
      with no name defined will be given a default name of its 1-based index in the skills array,
@@ -2460,7 +2493,8 @@ class KeywordMarkerTokenFilter(TokenFilter):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Constant filled by server.
+    :param odata_type: Required. Identifies the concrete type of the token filter.Constant filled
+     by server.
     :type odata_type: str
     :param name: Required. The name of the token filter. It must only contain letters, digits,
      spaces, dashes or underscores, can only start and end with alphanumeric characters, and is
@@ -2501,7 +2535,8 @@ class KeywordTokenizer(Tokenizer):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Constant filled by server.
+    :param odata_type: Required. Identifies the concrete type of the tokenizer.Constant filled by
+     server.
     :type odata_type: str
     :param name: Required. The name of the tokenizer. It must only contain letters, digits, spaces,
      dashes or underscores, can only start and end with alphanumeric characters, and is limited to
@@ -2536,7 +2571,8 @@ class KeywordTokenizerV2(Tokenizer):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Constant filled by server.
+    :param odata_type: Required. Identifies the concrete type of the tokenizer.Constant filled by
+     server.
     :type odata_type: str
     :param name: Required. The name of the tokenizer. It must only contain letters, digits, spaces,
      dashes or underscores, can only start and end with alphanumeric characters, and is limited to
@@ -2573,7 +2609,8 @@ class LanguageDetectionSkill(Skill):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Constant filled by server.
+    :param odata_type: Required. Identifies the concrete type of the skill.Constant filled by
+     server.
     :type odata_type: str
     :param name: The name of the skill which uniquely identifies it within the skillset. A skill
      with no name defined will be given a default name of its 1-based index in the skills array,
@@ -2621,7 +2658,8 @@ class LengthTokenFilter(TokenFilter):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Constant filled by server.
+    :param odata_type: Required. Identifies the concrete type of the token filter.Constant filled
+     by server.
     :type odata_type: str
     :param name: Required. The name of the token filter. It must only contain letters, digits,
      spaces, dashes or underscores, can only start and end with alphanumeric characters, and is
@@ -2663,7 +2701,8 @@ class LimitTokenFilter(TokenFilter):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Constant filled by server.
+    :param odata_type: Required. Identifies the concrete type of the token filter.Constant filled
+     by server.
     :type odata_type: str
     :param name: Required. The name of the token filter. It must only contain letters, digits,
      spaces, dashes or underscores, can only start and end with alphanumeric characters, and is
@@ -2838,7 +2877,8 @@ class MagnitudeScoringFunction(ScoringFunction):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Constant filled by server.
+    :param type: Required. Indicates the type of function to use. Valid values include magnitude,
+     freshness, distance, and tag. The function type must be lower case.Constant filled by server.
     :type type: str
     :param field_name: Required. The name of the field used as input to the scoring function.
     :type field_name: str
@@ -2917,7 +2957,8 @@ class MappingCharFilter(CharFilter):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Constant filled by server.
+    :param odata_type: Required. Identifies the concrete type of the char filter.Constant filled by
+     server.
     :type odata_type: str
     :param name: Required. The name of the char filter. It must only contain letters, digits,
      spaces, dashes or underscores, can only start and end with alphanumeric characters, and is
@@ -2954,7 +2995,8 @@ class MergeSkill(Skill):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Constant filled by server.
+    :param odata_type: Required. Identifies the concrete type of the skill.Constant filled by
+     server.
     :type odata_type: str
     :param name: The name of the skill which uniquely identifies it within the skillset. A skill
      with no name defined will be given a default name of its 1-based index in the skills array,
@@ -3012,7 +3054,8 @@ class MicrosoftLanguageStemmingTokenizer(Tokenizer):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Constant filled by server.
+    :param odata_type: Required. Identifies the concrete type of the tokenizer.Constant filled by
+     server.
     :type odata_type: str
     :param name: Required. The name of the tokenizer. It must only contain letters, digits, spaces,
      dashes or underscores, can only start and end with alphanumeric characters, and is limited to
@@ -3066,7 +3109,8 @@ class MicrosoftLanguageTokenizer(Tokenizer):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Constant filled by server.
+    :param odata_type: Required. Identifies the concrete type of the tokenizer.Constant filled by
+     server.
     :type odata_type: str
     :param name: Required. The name of the tokenizer. It must only contain letters, digits, spaces,
      dashes or underscores, can only start and end with alphanumeric characters, and is limited to
@@ -3120,7 +3164,8 @@ class NGramTokenFilter(TokenFilter):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Constant filled by server.
+    :param odata_type: Required. Identifies the concrete type of the token filter.Constant filled
+     by server.
     :type odata_type: str
     :param name: Required. The name of the token filter. It must only contain letters, digits,
      spaces, dashes or underscores, can only start and end with alphanumeric characters, and is
@@ -3160,7 +3205,8 @@ class NGramTokenFilterV2(TokenFilter):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Constant filled by server.
+    :param odata_type: Required. Identifies the concrete type of the token filter.Constant filled
+     by server.
     :type odata_type: str
     :param name: Required. The name of the token filter. It must only contain letters, digits,
      spaces, dashes or underscores, can only start and end with alphanumeric characters, and is
@@ -3202,7 +3248,8 @@ class NGramTokenizer(Tokenizer):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Constant filled by server.
+    :param odata_type: Required. Identifies the concrete type of the tokenizer.Constant filled by
+     server.
     :type odata_type: str
     :param name: Required. The name of the tokenizer. It must only contain letters, digits, spaces,
      dashes or underscores, can only start and end with alphanumeric characters, and is limited to
@@ -3248,7 +3295,8 @@ class OcrSkill(Skill):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Constant filled by server.
+    :param odata_type: Required. Identifies the concrete type of the skill.Constant filled by
+     server.
     :type odata_type: str
     :param name: The name of the skill which uniquely identifies it within the skillset. A skill
      with no name defined will be given a default name of its 1-based index in the skills array,
@@ -3342,7 +3390,8 @@ class PathHierarchyTokenizerV2(Tokenizer):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Constant filled by server.
+    :param odata_type: Required. Identifies the concrete type of the tokenizer.Constant filled by
+     server.
     :type odata_type: str
     :param name: Required. The name of the tokenizer. It must only contain letters, digits, spaces,
      dashes or underscores, can only start and end with alphanumeric characters, and is limited to
@@ -3395,7 +3444,8 @@ class PatternAnalyzer(Analyzer):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Constant filled by server.
+    :param odata_type: Required. Identifies the concrete type of the analyzer.Constant filled by
+     server.
     :type odata_type: str
     :param name: Required. The name of the analyzer. It must only contain letters, digits, spaces,
      dashes or underscores, can only start and end with alphanumeric characters, and is limited to
@@ -3445,7 +3495,8 @@ class PatternCaptureTokenFilter(TokenFilter):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Constant filled by server.
+    :param odata_type: Required. Identifies the concrete type of the token filter.Constant filled
+     by server.
     :type odata_type: str
     :param name: Required. The name of the token filter. It must only contain letters, digits,
      spaces, dashes or underscores, can only start and end with alphanumeric characters, and is
@@ -3486,7 +3537,8 @@ class PatternReplaceCharFilter(CharFilter):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Constant filled by server.
+    :param odata_type: Required. Identifies the concrete type of the char filter.Constant filled by
+     server.
     :type odata_type: str
     :param name: Required. The name of the char filter. It must only contain letters, digits,
      spaces, dashes or underscores, can only start and end with alphanumeric characters, and is
@@ -3527,7 +3579,8 @@ class PatternReplaceTokenFilter(TokenFilter):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Constant filled by server.
+    :param odata_type: Required. Identifies the concrete type of the token filter.Constant filled
+     by server.
     :type odata_type: str
     :param name: Required. The name of the token filter. It must only contain letters, digits,
      spaces, dashes or underscores, can only start and end with alphanumeric characters, and is
@@ -3568,7 +3621,8 @@ class PatternTokenizer(Tokenizer):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Constant filled by server.
+    :param odata_type: Required. Identifies the concrete type of the tokenizer.Constant filled by
+     server.
     :type odata_type: str
     :param name: Required. The name of the tokenizer. It must only contain letters, digits, spaces,
      dashes or underscores, can only start and end with alphanumeric characters, and is limited to
@@ -3615,7 +3669,8 @@ class PhoneticTokenFilter(TokenFilter):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Constant filled by server.
+    :param odata_type: Required. Identifies the concrete type of the token filter.Constant filled
+     by server.
     :type odata_type: str
     :param name: Required. The name of the token filter. It must only contain letters, digits,
      spaces, dashes or underscores, can only start and end with alphanumeric characters, and is
@@ -3782,7 +3837,8 @@ class SentimentSkill(Skill):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Constant filled by server.
+    :param odata_type: Required. Identifies the concrete type of the skill.Constant filled by
+     server.
     :type odata_type: str
     :param name: The name of the skill which uniquely identifies it within the skillset. A skill
      with no name defined will be given a default name of its 1-based index in the skills array,
@@ -3955,7 +4011,8 @@ class ShaperSkill(Skill):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Constant filled by server.
+    :param odata_type: Required. Identifies the concrete type of the skill.Constant filled by
+     server.
     :type odata_type: str
     :param name: The name of the skill which uniquely identifies it within the skillset. A skill
      with no name defined will be given a default name of its 1-based index in the skills array,
@@ -4003,7 +4060,8 @@ class ShingleTokenFilter(TokenFilter):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Constant filled by server.
+    :param odata_type: Required. Identifies the concrete type of the token filter.Constant filled
+     by server.
     :type odata_type: str
     :param name: Required. The name of the token filter. It must only contain letters, digits,
      spaces, dashes or underscores, can only start and end with alphanumeric characters, and is
@@ -4110,7 +4168,8 @@ class SnowballTokenFilter(TokenFilter):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Constant filled by server.
+    :param odata_type: Required. Identifies the concrete type of the token filter.Constant filled
+     by server.
     :type odata_type: str
     :param name: Required. The name of the token filter. It must only contain letters, digits,
      spaces, dashes or underscores, can only start and end with alphanumeric characters, and is
@@ -4149,7 +4208,8 @@ class SoftDeleteColumnDeletionDetectionPolicy(DataDeletionDetectionPolicy):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Constant filled by server.
+    :param odata_type: Required. Identifies the concrete type of the data deletion detection
+     policy.Constant filled by server.
     :type odata_type: str
     :param soft_delete_column_name: The name of the column to use for soft-deletion detection.
     :type soft_delete_column_name: str
@@ -4182,7 +4242,8 @@ class SplitSkill(Skill):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Constant filled by server.
+    :param odata_type: Required. Identifies the concrete type of the skill.Constant filled by
+     server.
     :type odata_type: str
     :param name: The name of the skill which uniquely identifies it within the skillset. A skill
      with no name defined will be given a default name of its 1-based index in the skills array,
@@ -4244,7 +4305,8 @@ class SqlIntegratedChangeTrackingPolicy(DataChangeDetectionPolicy):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Constant filled by server.
+    :param odata_type: Required. Identifies the concrete type of the data change detection
+     policy.Constant filled by server.
     :type odata_type: str
     """
 
@@ -4269,7 +4331,8 @@ class StandardAnalyzer(Analyzer):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Constant filled by server.
+    :param odata_type: Required. Identifies the concrete type of the analyzer.Constant filled by
+     server.
     :type odata_type: str
     :param name: Required. The name of the analyzer. It must only contain letters, digits, spaces,
      dashes or underscores, can only start and end with alphanumeric characters, and is limited to
@@ -4310,7 +4373,8 @@ class StandardTokenizer(Tokenizer):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Constant filled by server.
+    :param odata_type: Required. Identifies the concrete type of the tokenizer.Constant filled by
+     server.
     :type odata_type: str
     :param name: Required. The name of the tokenizer. It must only contain letters, digits, spaces,
      dashes or underscores, can only start and end with alphanumeric characters, and is limited to
@@ -4346,7 +4410,8 @@ class StandardTokenizerV2(Tokenizer):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Constant filled by server.
+    :param odata_type: Required. Identifies the concrete type of the tokenizer.Constant filled by
+     server.
     :type odata_type: str
     :param name: Required. The name of the tokenizer. It must only contain letters, digits, spaces,
      dashes or underscores, can only start and end with alphanumeric characters, and is limited to
@@ -4383,7 +4448,8 @@ class StemmerOverrideTokenFilter(TokenFilter):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Constant filled by server.
+    :param odata_type: Required. Identifies the concrete type of the token filter.Constant filled
+     by server.
     :type odata_type: str
     :param name: Required. The name of the token filter. It must only contain letters, digits,
      spaces, dashes or underscores, can only start and end with alphanumeric characters, and is
@@ -4420,7 +4486,8 @@ class StemmerTokenFilter(TokenFilter):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Constant filled by server.
+    :param odata_type: Required. Identifies the concrete type of the token filter.Constant filled
+     by server.
     :type odata_type: str
     :param name: Required. The name of the token filter. It must only contain letters, digits,
      spaces, dashes or underscores, can only start and end with alphanumeric characters, and is
@@ -4464,7 +4531,8 @@ class StopAnalyzer(Analyzer):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Constant filled by server.
+    :param odata_type: Required. Identifies the concrete type of the analyzer.Constant filled by
+     server.
     :type odata_type: str
     :param name: Required. The name of the analyzer. It must only contain letters, digits, spaces,
      dashes or underscores, can only start and end with alphanumeric characters, and is limited to
@@ -4499,7 +4567,8 @@ class StopwordsTokenFilter(TokenFilter):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Constant filled by server.
+    :param odata_type: Required. Identifies the concrete type of the token filter.Constant filled
+     by server.
     :type odata_type: str
     :param name: Required. The name of the token filter. It must only contain letters, digits,
      spaces, dashes or underscores, can only start and end with alphanumeric characters, and is
@@ -4649,7 +4718,8 @@ class SynonymTokenFilter(TokenFilter):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Constant filled by server.
+    :param odata_type: Required. Identifies the concrete type of the token filter.Constant filled
+     by server.
     :type odata_type: str
     :param name: Required. The name of the token filter. It must only contain letters, digits,
      spaces, dashes or underscores, can only start and end with alphanumeric characters, and is
@@ -4704,7 +4774,8 @@ class TagScoringFunction(ScoringFunction):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Constant filled by server.
+    :param type: Required. Indicates the type of function to use. Valid values include magnitude,
+     freshness, distance, and tag. The function type must be lower case.Constant filled by server.
     :type type: str
     :param field_name: Required. The name of the field used as input to the scoring function.
     :type field_name: str
@@ -4774,7 +4845,8 @@ class TextTranslationSkill(Skill):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Constant filled by server.
+    :param odata_type: Required. Identifies the concrete type of the skill.Constant filled by
+     server.
     :type odata_type: str
     :param name: The name of the skill which uniquely identifies it within the skillset. A skill
      with no name defined will be given a default name of its 1-based index in the skills array,
@@ -4927,7 +4999,8 @@ class TruncateTokenFilter(TokenFilter):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Constant filled by server.
+    :param odata_type: Required. Identifies the concrete type of the token filter.Constant filled
+     by server.
     :type odata_type: str
     :param name: Required. The name of the token filter. It must only contain letters, digits,
      spaces, dashes or underscores, can only start and end with alphanumeric characters, and is
@@ -4963,7 +5036,8 @@ class UaxUrlEmailTokenizer(Tokenizer):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Constant filled by server.
+    :param odata_type: Required. Identifies the concrete type of the tokenizer.Constant filled by
+     server.
     :type odata_type: str
     :param name: Required. The name of the tokenizer. It must only contain letters, digits, spaces,
      dashes or underscores, can only start and end with alphanumeric characters, and is limited to
@@ -5000,7 +5074,8 @@ class UniqueTokenFilter(TokenFilter):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Constant filled by server.
+    :param odata_type: Required. Identifies the concrete type of the token filter.Constant filled
+     by server.
     :type odata_type: str
     :param name: Required. The name of the token filter. It must only contain letters, digits,
      spaces, dashes or underscores, can only start and end with alphanumeric characters, and is
@@ -5036,7 +5111,8 @@ class WebApiSkill(Skill):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Constant filled by server.
+    :param odata_type: Required. Identifies the concrete type of the skill.Constant filled by
+     server.
     :type odata_type: str
     :param name: The name of the skill which uniquely identifies it within the skillset. A skill
      with no name defined will be given a default name of its 1-based index in the skills array,
@@ -5110,7 +5186,8 @@ class WordDelimiterTokenFilter(TokenFilter):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Constant filled by server.
+    :param odata_type: Required. Identifies the concrete type of the token filter.Constant filled
+     by server.
     :type odata_type: str
     :param name: Required. The name of the token filter. It must only contain letters, digits,
      spaces, dashes or underscores, can only start and end with alphanumeric characters, and is

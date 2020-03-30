@@ -9,9 +9,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-search/1.0.0b2 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
+      - azsdk-python-search-documents/1.0.0b2 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       api-key:
-      - EC787537A28DE28386557BA4856835BA
+      - 0E731245254C3C53E9E802CC0BC7C1FA
     method: POST
     uri: https://search97bd120f.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2019-05-06-Preview
   response:
@@ -65,19 +65,26 @@ interactions:
       content-encoding: gzip
       content-length: '2377'
       content-type: application/json; odata.metadata=none
-      date: Thu, 19 Mar 2020 00:20:37 GMT
+      date: Mon, 30 Mar 2020 22:45:50 GMT
       elapsed-time: '85'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 74f29356-6977-11ea-bb71-8c8590507855
+      request-id: 34dd499a-72d8-11ea-89cc-5cf37071153c
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
       code: 200
       message: OK
-    url: https://search97bd120f.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2019-05-06-Preview
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - search97bd120f.search.windows.net
+        - /indexes('drgqefsg')/docs/search.post.search
+        - api-version=2019-05-06-Preview
+        - ''
 - request:
     body: '{"search": "motel"}'
     headers:
@@ -88,9 +95,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-search/1.0.0b2 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
+      - azsdk-python-search-documents/1.0.0b2 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       api-key:
-      - EC787537A28DE28386557BA4856835BA
+      - 0E731245254C3C53E9E802CC0BC7C1FA
     method: POST
     uri: https://search97bd120f.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2019-05-06-Preview
   response:
@@ -120,17 +127,24 @@ interactions:
       content-encoding: gzip
       content-length: '1271'
       content-type: application/json; odata.metadata=none
-      date: Thu, 19 Mar 2020 00:20:37 GMT
+      date: Mon, 30 Mar 2020 22:45:50 GMT
       elapsed-time: '7'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 750fe9ce-6977-11ea-bb71-8c8590507855
+      request-id: 3513dcf4-72d8-11ea-a3ec-5cf37071153c
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
       code: 200
       message: OK
-    url: https://search97bd120f.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2019-05-06-Preview
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - search97bd120f.search.windows.net
+        - /indexes('drgqefsg')/docs/search.post.search
+        - api-version=2019-05-06-Preview
+        - ''
 version: 1

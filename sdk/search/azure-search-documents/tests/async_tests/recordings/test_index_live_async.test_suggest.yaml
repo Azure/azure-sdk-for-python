@@ -9,9 +9,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-search/1.0.0b2 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
+      - azsdk-python-search-documents/1.0.0b2 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       api-key:
-      - 227C94211C71BF9A79BD490B4A9BA1D5
+      - B09544BBCB58EE62752DF52B45909B80
     method: POST
     uri: https://searchf6640e13.search.windows.net/indexes('drgqefsg')/docs/search.post.suggest?api-version=2019-05-06-Preview
   response:
@@ -23,17 +23,24 @@ interactions:
       content-encoding: gzip
       content-length: '216'
       content-type: application/json; odata.metadata=none
-      date: Thu, 19 Mar 2020 00:21:30 GMT
-      elapsed-time: '82'
+      date: Mon, 30 Mar 2020 22:47:05 GMT
+      elapsed-time: '124'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 9473f31e-6977-11ea-bb71-8c8590507855
+      request-id: 61688ecc-72d8-11ea-8662-5cf37071153c
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
       code: 200
       message: OK
-    url: https://searchf6640e13.search.windows.net/indexes('drgqefsg')/docs/search.post.suggest?api-version=2019-05-06-Preview
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - searchf6640e13.search.windows.net
+        - /indexes('drgqefsg')/docs/search.post.suggest
+        - api-version=2019-05-06-Preview
+        - ''
 version: 1

@@ -27,7 +27,7 @@ from ._utils import (
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
     from typing import Any, List, Union
-    from .. import SearchApiKeyCredential
+    from .. import SearchApiKeyCredential, Index, AnalyzeResult
 
 
 class SearchServiceClient(HeadersMixin):
@@ -77,7 +77,7 @@ class SearchServiceClient(HeadersMixin):
 
     @distributed_trace
     def list_indexes(self, **kwargs):
-        # type: (**Any) -> List[dict]
+        # type: (**Any) -> List[Index]
         """List the indexes in an Azure Search service.
 
         :return: List of indexes
@@ -87,11 +87,11 @@ class SearchServiceClient(HeadersMixin):
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = self._client.indexes.list(**kwargs)
-        return result.as_dict()["indexes"]
+        return result.indexes
 
     @distributed_trace
     def get_index(self, index_name, **kwargs):
-        # type: (str, **Any) -> dict
+        # type: (str, **Any) -> Index
         """
 
         :param index_name: The name of the index to retrieve.
@@ -103,7 +103,7 @@ class SearchServiceClient(HeadersMixin):
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = self._client.indexes.get(index_name, **kwargs)
-        return result.as_dict()
+        return result
 
     @distributed_trace
     def get_index_statistics(self, index_name, **kwargs):
@@ -137,7 +137,7 @@ class SearchServiceClient(HeadersMixin):
 
     @distributed_trace
     def create_index(self, index, **kwargs):
-        # type: (Index, **Any) -> dict
+        # type: (Index, **Any) -> Index
         """
 
         :param index: The index object.
@@ -149,7 +149,7 @@ class SearchServiceClient(HeadersMixin):
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = self._client.indexes.create(index, **kwargs)
-        return result.as_dict()
+        return result
 
     @distributed_trace
     def create_or_update_index(
@@ -160,7 +160,7 @@ class SearchServiceClient(HeadersMixin):
             match_condition=MatchConditions.Unconditionally,
             **kwargs
     ):
-        # type: (str, Index, bool, MatchConditions, **Any) -> dict
+        # type: (str, Index, bool, MatchConditions, **Any) -> Index
         """
 
         :param index_name: The name of the index.
@@ -208,11 +208,11 @@ class SearchServiceClient(HeadersMixin):
             allow_index_downtime=allow_index_downtime,
             access_condition=access_condition,
             **kwargs)
-        return result.as_dict()
+        return result
 
     @distributed_trace
     def analyze_text(self, index_name, analyze_request, **kwargs):
-        # type: (str, AnalyzeRequest, **Any) -> dict
+        # type: (str, AnalyzeRequest, **Any) -> AnalyzeResult
         """
 
         :param index_name: The name of the index for which to test an analyzer.
@@ -227,8 +227,8 @@ class SearchServiceClient(HeadersMixin):
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = self._client.indexes.analyze(
             index_name=index_name,
-            request_todo=analyze_request, **kwargs)
-        return result.as_dict()
+            request=analyze_request, **kwargs)
+        return result
 
     def close(self):
         # type: () -> None

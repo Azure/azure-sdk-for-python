@@ -5,9 +5,9 @@ interactions:
       Accept:
       - application/json;odata.metadata=minimal
       User-Agent:
-      - azsdk-python-search/1.0.0b2 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
+      - azsdk-python-search-documents/1.0.0b2 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       api-key:
-      - FBE49E68975C6A1307FBDED68DAAE9CA
+      - EDE4E63139312484A3191F822151DB87
     method: GET
     uri: https://search24f71524.search.windows.net/servicestats?api-version=2019-05-06-Preview
   response:
@@ -18,17 +18,24 @@ interactions:
       content-encoding: gzip
       content-length: '430'
       content-type: application/json; odata.metadata=minimal
-      date: Thu, 19 Mar 2020 19:51:01 GMT
-      elapsed-time: '49'
+      date: Mon, 30 Mar 2020 22:49:32 GMT
+      elapsed-time: '71'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: f4ecc81c-6a1a-11ea-8e1b-8c8590507855
+      request-id: b8f05998-72d8-11ea-94d6-5cf37071153c
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
       code: 200
       message: OK
-    url: https://search24f71524.search.windows.net/servicestats?api-version=2019-05-06-Preview
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - search24f71524.search.windows.net
+        - /servicestats
+        - api-version=2019-05-06-Preview
+        - ''
 version: 1

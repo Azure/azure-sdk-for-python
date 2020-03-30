@@ -18,7 +18,16 @@ from search_service_preparer import SearchServicePreparer
 from azure_devtools.scenario_tests.utilities import trim_kwargs_from_test_function
 
 from azure.core.exceptions import HttpResponseError
-from azure.search.documents import SearchApiKeyCredential
+from azure.search.documents import(
+    SearchServiceClient,
+    SearchApiKeyCredential,
+    Field,
+    Index,
+    AnalyzeRequest,
+    AnalyzeResult,
+    ScoringProfile,
+    CorsOptions,
+)
 from azure.search.documents.aio import SearchServiceClient
 
 CWD = dirname(realpath(__file__))
@@ -64,8 +73,7 @@ class SearchIndexClientTest(AzureMgmtTestCase):
         client = SearchServiceClient(endpoint, SearchApiKeyCredential(api_key))
         result = await client.list_indexes()
         assert len(result) == 1
-        assert set(result[0].keys()) == {'tokenizers', 'e_tag', 'analyzers', 'token_filters', 'fields', 'name', 'char_filters', 'suggesters', 'scoring_profiles'}
-        assert result[0]["name"] == index_name
+        assert result[0].name == index_name
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
@@ -73,8 +81,7 @@ class SearchIndexClientTest(AzureMgmtTestCase):
     async def test_get_index(self, api_key, endpoint, index_name, **kwargs):
         client = SearchServiceClient(endpoint, SearchApiKeyCredential(api_key))
         result = await client.get_index(index_name)
-        assert set(result.keys()) == {'tokenizers', 'e_tag', 'analyzers', 'token_filters', 'fields', 'name', 'char_filters', 'suggesters', 'scoring_profiles'}
-        assert result["name"] == index_name
+        assert result.name == index_name
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
@@ -94,3 +101,89 @@ class SearchIndexClientTest(AzureMgmtTestCase):
         time.sleep(5)
         result = await client.list_indexes()
         assert len(result) == 0
+
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
+    @await_prepared_test
+    async def test_create_index(self, api_key, endpoint, index_name, **kwargs):
+        name = "hotels"
+        fields = [
+        {
+          "name": "hotelId",
+          "type": "Edm.String",
+          "key": True,
+          "searchable": False
+        },
+        {
+          "name": "baseRate",
+          "type": "Edm.Double"
+        }]
+        scoring_profile = ScoringProfile(
+            name="MyProfile"
+        )
+        scoring_profiles = []
+        scoring_profiles.append(scoring_profile)
+        cors_options = CorsOptions(allowed_origins=["*"], max_age_in_seconds=60)
+        index = Index(
+            name=name,
+            fields=fields,
+            scoring_profiles=scoring_profiles,
+            cors_options=cors_options)
+        client = SearchServiceClient(endpoint, SearchApiKeyCredential(api_key))
+        result = await client.create_index(index)
+        assert result.name == "hotels"
+        assert result.scoring_profiles[0].name == scoring_profile.name
+        assert result.cors_options.allowed_origins == cors_options.allowed_origins
+        assert result.cors_options.max_age_in_seconds == cors_options.max_age_in_seconds
+
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
+    @await_prepared_test
+    async def test_create_or_update_index(self, api_key, endpoint, index_name, **kwargs):
+        name = "hotels"
+        fields = [
+            {
+                "name": "hotelId",
+                "type": "Edm.String",
+                "key": True,
+                "searchable": False
+            },
+            {
+                "name": "baseRate",
+                "type": "Edm.Double"
+            }]
+        cors_options = CorsOptions(allowed_origins=["*"], max_age_in_seconds=60)
+        scoring_profiles = []
+        index = Index(
+            name=name,
+            fields=fields,
+            scoring_profiles=scoring_profiles,
+            cors_options=cors_options)
+        client = SearchServiceClient(endpoint, SearchApiKeyCredential(api_key))
+        result = await client.create_index(index)
+        assert len(result.scoring_profiles) == 0
+        assert result.cors_options.allowed_origins == cors_options.allowed_origins
+        assert result.cors_options.max_age_in_seconds == cors_options.max_age_in_seconds
+        scoring_profile = ScoringProfile(
+            name="MyProfile"
+        )
+        scoring_profiles = []
+        scoring_profiles.append(scoring_profile)
+        index = Index(
+            name=name,
+            fields=fields,
+            scoring_profiles=scoring_profiles,
+            cors_options=cors_options)
+        result = await client.create_or_update_index(index_name=index.name, index=index)
+        assert result.scoring_profiles[0].name == scoring_profile.name
+        assert result.cors_options.allowed_origins == cors_options.allowed_origins
+        assert result.cors_options.max_age_in_seconds == cors_options.max_age_in_seconds
+
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
+    @await_prepared_test
+    async def test_analyze_text(self, api_key, endpoint, index_name, **kwargs):
+        client = SearchServiceClient(endpoint, SearchApiKeyCredential(api_key))
+        analyze_request = AnalyzeRequest(text="One's <two/>", analyzer="standard.lucene")
+        result = await client.analyze_text(index_name, analyze_request)
+        assert len(result.tokens) == 2

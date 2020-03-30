@@ -3,28 +3,28 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json;odata.metadata=none
+      - application/json;odata.metadata=minimal
       User-Agent:
       - azsdk-python-search-documents/1.0.0b2 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       api-key:
-      - FA32A83C54A288AE511F6C490E4CB24E
+      - 3B6CD65B21051A86A1B628976DB09405
     method: GET
-    uri: https://search22c31514.search.windows.net/indexes('drgqefsg')/docs/$count?api-version=2019-05-06-Preview
+    uri: https://searchfabb144b.search.windows.net/indexes('drgqefsg')/search.stats?api-version=2019-05-06-Preview
   response:
     body:
-      string: "\uFEFF10"
+      string: '{"@odata.context":"https://searchfabb144b.search.windows.net/$metadata#Microsoft.Azure.Search.V2019_05_06_Preview.IndexStatistics","documentCount":0,"storageSize":0}'
     headers:
       cache-control: no-cache
       content-encoding: gzip
-      content-length: '127'
-      content-type: text/plain
-      date: Mon, 30 Mar 2020 22:42:44 GMT
-      elapsed-time: '3'
+      content-length: '263'
+      content-type: application/json; odata.metadata=minimal
+      date: Mon, 30 Mar 2020 22:49:22 GMT
+      elapsed-time: '36'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: c6255ad8-72d7-11ea-a3ea-5cf37071153c
+      request-id: b357a8e4-72d8-11ea-a69a-5cf37071153c
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
@@ -34,8 +34,8 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - search22c31514.search.windows.net
-        - /indexes('drgqefsg')/docs/$count
+        - searchfabb144b.search.windows.net
+        - /indexes('drgqefsg')/search.stats
         - api-version=2019-05-06-Preview
         - ''
 version: 1

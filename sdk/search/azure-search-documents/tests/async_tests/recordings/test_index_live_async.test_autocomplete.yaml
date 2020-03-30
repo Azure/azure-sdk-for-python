@@ -9,9 +9,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-search/1.0.0b2 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
+      - azsdk-python-search-documents/1.0.0b2 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       api-key:
-      - 53A9F61B8C003E2D608580D9822FE054
+      - 5B0AA02B42EB4E58BC94BB24093C21BA
     method: POST
     uri: https://search42ca1023.search.windows.net/indexes('drgqefsg')/docs/search.post.autocomplete?api-version=2019-05-06-Preview
   response:
@@ -22,17 +22,24 @@ interactions:
       content-encoding: gzip
       content-length: '163'
       content-type: application/json; odata.metadata=none
-      date: Thu, 19 Mar 2020 00:18:41 GMT
-      elapsed-time: '99'
+      date: Mon, 30 Mar 2020 22:42:59 GMT
+      elapsed-time: '149'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 3015052a-6977-11ea-bb71-8c8590507855
+      request-id: ce836080-72d7-11ea-9016-5cf37071153c
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
       code: 200
       message: OK
-    url: https://search42ca1023.search.windows.net/indexes('drgqefsg')/docs/search.post.autocomplete?api-version=2019-05-06-Preview
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - search42ca1023.search.windows.net
+        - /indexes('drgqefsg')/docs/search.post.autocomplete
+        - api-version=2019-05-06-Preview
+        - ''
 version: 1
