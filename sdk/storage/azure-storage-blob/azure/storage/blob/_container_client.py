@@ -24,18 +24,17 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.transport import HttpRequest
 
-from ._shared.base_client import StorageAccountHostsMixin, TransportWrapper, parse_connection_str, parse_query
+from ._shared.base_client import TransportWrapper, parse_connection_str
 from ._shared.request_handlers import add_metadata_headers, serialize_iso
 from ._shared.response_handlers import (
     process_storage_error,
     return_response_headers,
     return_headers_and_deserialized)
-from ._generated import AzureBlobStorage, VERSION
 from ._generated.models import (
     StorageErrorException,
     SignedIdentifier)
 from ._deserialize import deserialize_container_properties
-from ._serialize import get_modify_conditions, get_container_cpk_scope_info, get_api_version
+from ._serialize import get_modify_conditions, get_container_cpk_scope_info
 from ._models import ( # pylint: disable=unused-import
     ContainerProperties,
     BlobProperties,

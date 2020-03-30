@@ -11,22 +11,21 @@ from typing import (  # pylint: disable=unused-import
     TYPE_CHECKING
 )
 try:
-    from urllib.parse import urlparse, quote, unquote
+    from urllib.parse import urlparse, quote
 except ImportError:
     from urlparse import urlparse # type: ignore
-    from urllib2 import quote, unquote # type: ignore
+    from urllib2 import quote # type: ignore
 
 import six
-from azure.core.tracing.decorator import distributed_trace
 
 from ._shared import encode_base64
-from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
+from ._shared.base_client import StorageAccountHostsMixin, parse_query
 from ._shared.encryption import generate_blob_encryption_data
 from ._shared.uploads import IterStreamer
 from ._shared.request_handlers import (
     add_metadata_headers, get_length, read_length,
     validate_and_format_range_headers)
-from ._shared.response_handlers import return_response_headers, process_storage_error
+from ._shared.response_handlers import return_response_headers
 from ._generated import AzureBlobStorage, VERSION
 from ._generated.models import ( # pylint: disable=unused-import
     DeleteSnapshotsOptionType,
@@ -38,14 +37,9 @@ from ._generated.models import ( # pylint: disable=unused-import
     UserDelegationKey,
     CpkInfo)
 from ._serialize import get_modify_conditions, get_source_conditions, get_cpk_scope_info, get_api_version
-from ._deserialize import get_page_ranges_result, deserialize_blob_properties, deserialize_blob_stream
-from ._upload_helpers import (
-    upload_block_blob,
-    upload_append_blob,
-    upload_page_blob)
+from ._deserialize import deserialize_blob_stream
 from ._models import BlobType, BlobBlock, BlobProperties
-from ._download import StorageStreamDownloader
-from ._lease import BlobLeaseClient, get_access_conditions
+from ._lease import get_access_conditions
 
 if TYPE_CHECKING:
     from datetime import datetime

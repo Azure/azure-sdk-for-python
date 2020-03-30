@@ -5,45 +5,28 @@
 # license information.
 # --------------------------------------------------------------------------
 
-import functools
 from typing import (  # pylint: disable=unused-import
     Union, Optional, Any, Iterable, AnyStr, Dict, List, Tuple, IO, Iterator, cast,
     TYPE_CHECKING
 )
 
 try:
-    from urllib.parse import urlparse, quote, unquote
+    from urllib.parse import urlparse, quote
 except ImportError:
     from urlparse import urlparse # type: ignore
-    from urllib2 import quote, unquote # type: ignore
+    from urllib2 import quote # type: ignore
 
 import six
 
-from azure.core.paging import ItemPaged
-from azure.core.tracing.decorator import distributed_trace
-from azure.core.pipeline import Pipeline
-from azure.core.pipeline.transport import HttpRequest
-
-from ._shared.base_client import StorageAccountHostsMixin, TransportWrapper, parse_connection_str, parse_query
-from ._shared.request_handlers import add_metadata_headers, serialize_iso
-from ._shared.response_handlers import (
-    process_storage_error,
-    return_response_headers,
-    return_headers_and_deserialized)
+from ._shared.base_client import StorageAccountHostsMixin, parse_query
 from ._generated import AzureBlobStorage, VERSION
-from ._generated.models import (
-    StorageErrorException,
-    SignedIdentifier)
-from ._deserialize import deserialize_container_properties
-from ._serialize import get_modify_conditions, get_container_cpk_scope_info, get_api_version
+from ._serialize import get_api_version
 from ._models import ( # pylint: disable=unused-import
     ContainerProperties,
     BlobProperties,
     BlobPropertiesPaged,
     BlobType,
     BlobPrefix)
-from ._lease import BlobLeaseClient, get_access_conditions
-from ._blob_client import BlobClient
 
 if TYPE_CHECKING:
     from azure.core.pipeline.transport import HttpTransport, HttpResponse  # pylint: disable=ungrouped-imports

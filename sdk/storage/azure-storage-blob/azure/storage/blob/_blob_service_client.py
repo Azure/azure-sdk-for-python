@@ -10,26 +10,19 @@ from typing import (  # pylint: disable=unused-import
     TYPE_CHECKING
 )
 
-try:
-    from urllib.parse import urlparse
-except ImportError:
-    from urlparse import urlparse # type: ignore
-
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import Pipeline
 from azure.core.tracing.decorator import distributed_trace
 
 from ._shared.models import LocationMode
-from ._shared.base_client import StorageAccountHostsMixin, TransportWrapper, parse_connection_str, parse_query
+from ._shared.base_client import TransportWrapper, parse_connection_str
 from ._shared.parser import _to_utc_datetime
 from ._shared.response_handlers import return_response_headers, process_storage_error, \
     parse_to_internal_user_delegation_key
-from ._generated import AzureBlobStorage, VERSION
 from ._generated.models import StorageErrorException, StorageServiceProperties, KeyInfo
 from ._container_client import ContainerClient
 from ._blob_client import BlobClient
 from ._models import ContainerPropertiesPaged, ContainerProperties, BlobProperties
-from ._serialize import get_api_version
 from ._deserialize import service_stats_deserialize, service_properties_deserialize
 from ._blob_service_client_base import BlobServiceClientBase
 if TYPE_CHECKING:
