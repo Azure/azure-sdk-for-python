@@ -623,7 +623,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
 
     def _renew_locks(self, *lock_tokens):
         message = {'lock-tokens': types.AMQPArray(lock_tokens)}
-        return self._mgmt_request_response(
+        return self._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_RENEWLOCK_OPERATION,
             message,
             mgmt_handlers.lock_renew_op)

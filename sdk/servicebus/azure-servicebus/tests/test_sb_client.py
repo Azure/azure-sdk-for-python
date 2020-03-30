@@ -42,7 +42,7 @@ class ServiceBusClientTests(AzureMgmtTestCase):
         client = ServiceBusClient(
             fully_qualified_namespace=servicebus_namespace.name + '.servicebus.windows.net',
             credential=ServiceBusSharedKeyCredential('invalid', 'invalid'),
-            debug=False)
+            logging_enable=False)
         with client:
             with pytest.raises(ServiceBusError):
                 with client.get_queue_sender(servicebus_queue.name) as sender:
@@ -55,7 +55,7 @@ class ServiceBusClientTests(AzureMgmtTestCase):
         client = ServiceBusClient(
             fully_qualified_namespace='invalid.servicebus.windows.net',
             credential=ServiceBusSharedKeyCredential('invalid', 'invalid'),
-            debug=False)
+            logging_enable=False)
         with client:
             with pytest.raises(ServiceBusError):
                 with client.get_queue_sender('invalidqueue') as sender:
