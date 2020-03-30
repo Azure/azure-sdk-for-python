@@ -1,0 +1,8 @@
+[packaging]
+package_name = "azure-mgmt-redhatopenshift"
+package_nspkg = "azure-mgmt-nspkg"
+package_pprint_name = "Red Hat Openshift Management"
+package_doc_id = "redhatopenshift"
+is_stable = true
+is_arm = true
+need_msrestazure = true
