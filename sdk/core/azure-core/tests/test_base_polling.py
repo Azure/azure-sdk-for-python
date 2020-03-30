@@ -147,6 +147,7 @@ def test_delay_extraction():
         mock_datetime.side_effect = lambda *args, **kw: basedatetime(*args, **kw)
 
         assert polling._extract_delay() == 60*60  # one hour in seconds
+        assert str(mock_datetime.now.call_args[0][0]) == "<FixedOffset -5.0>"
 
 
 def test_post(pipeline_client_builder, deserialization_cb):
