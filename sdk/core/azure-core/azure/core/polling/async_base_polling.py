@@ -92,13 +92,8 @@ class AsyncLROBasePolling(LROBasePolling):
         """Check for a 'retry-after' header to set timeout,
         otherwise use configured timeout.
         """
-        if self._pipeline_response is None:
-            return
-        response = self._pipeline_response.http_response
-        if response.headers.get("retry-after"):
-            await self._sleep(int(response.headers["retry-after"]))
-        else:
-            await self._sleep(self._timeout)
+        delay = self._extract_delay()
+        await self._sleep(delay)
 
     async def update_status(self):
         """Update the current status of the LRO.

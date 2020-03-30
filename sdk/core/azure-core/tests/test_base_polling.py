@@ -23,7 +23,7 @@
 # THE SOFTWARE.
 #
 #--------------------------------------------------------------------------
-
+import datetime
 import json
 import re
 import types
@@ -47,6 +47,7 @@ from azure.core.pipeline.transport import RequestsTransportResponse, HttpTranspo
 
 from azure.core.polling.base_polling import (
     LROBasePolling,
+    _FixedOffset,
 )
 
 class SimpleResource:
@@ -115,6 +116,37 @@ def deserialization_cb():
     def cb(pipeline_response):
         return json.loads(pipeline_response.http_response.text())
     return cb
+
+
+def test_delay_extraction():
+    polling = LROBasePolling()
+    headers = {}
+
+    response = Response()
+    response.headers = headers
+
+    polling._pipeline_response = PipelineResponse(
+        None,
+        RequestsTransportResponse(
+            None,
+            response,
+        ),
+        None  # context
+    )
+
+    headers['retry-after'] = "10"
+    assert polling._extract_delay() == 10
+
+    # Test that I need to retry exactly one hour after, by mocking "now"
+    headers['retry-after'] = "Mon, 20 Nov 1995 19:12:08 -0500"
+
+    from datetime import datetime as basedatetime
+    now_mock_datetime = datetime.datetime(1995, 11, 20, 18, 12, 8, tzinfo=_FixedOffset(-5*60))
+    with mock.patch('datetime.datetime') as mock_datetime:
+        mock_datetime.now.return_value = now_mock_datetime
+        mock_datetime.side_effect = lambda *args, **kw: basedatetime(*args, **kw)
+
+        assert polling._extract_delay() == 60*60  # one hour in seconds
 
 
 def test_post(pipeline_client_builder, deserialization_cb):
