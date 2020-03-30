@@ -366,7 +366,7 @@ class TestRecognizeLinkedEntities(AsyncTextAnalyticsTest):
         text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
         def callback(resp):
-            self.assertIn("azsdk-python-azure-ai-textanalytics/{} Python/{} ({})".format(
+            self.assertIn("azsdk-python-ai-textanalytics/{} Python/{} ({})".format(
                 VERSION, platform.python_version(), platform.platform()),
                 resp.http_request.headers["User-Agent"]
             )
@@ -397,7 +397,7 @@ class TestRecognizeLinkedEntities(AsyncTextAnalyticsTest):
                 custom_error.args[0],
                 '\'DocumentError\' object has no attribute \'entities\'. '
                 'The service was unable to process this document:\nDocument Id: 1\nError: '
-                'invalidDocument - Document text is empty.\n'
+                'InvalidDocument - Document text is empty.\n'
             )
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -439,11 +439,11 @@ class TestRecognizeLinkedEntities(AsyncTextAnalyticsTest):
                 {"id": "3", "text": text}]
 
         doc_errors = await text_analytics.recognize_linked_entities(docs)
-        self.assertEqual(doc_errors[0].error.code, "invalidDocument")
+        self.assertEqual(doc_errors[0].error.code, "InvalidDocument")
         self.assertIsNotNone(doc_errors[0].error.message)
-        self.assertEqual(doc_errors[1].error.code, "unsupportedLanguageCode")
+        self.assertEqual(doc_errors[1].error.code, "UnsupportedLanguageCode")
         self.assertIsNotNone(doc_errors[1].error.message)
-        self.assertEqual(doc_errors[2].error.code, "invalidDocument")
+        self.assertEqual(doc_errors[2].error.code, "InvalidDocument")
         self.assertIsNotNone(doc_errors[2].error.message)
 
     @GlobalTextAnalyticsAccountPreparer()

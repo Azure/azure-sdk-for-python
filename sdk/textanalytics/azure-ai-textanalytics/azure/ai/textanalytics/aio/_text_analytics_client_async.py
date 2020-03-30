@@ -15,7 +15,7 @@ from typing import (  # pylint: disable=unused-import
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.exceptions import HttpResponseError
 from .._generated.aio._text_analytics_client_async import TextAnalyticsClient as TextAnalytics
-from ._base_client_async import AsyncTextAnalyticsClientBase
+from .._base_client import TextAnalyticsClientBase
 from .._request_handlers import _validate_batch_input
 from .._response_handlers import (
     process_batch_error,
@@ -41,7 +41,7 @@ if TYPE_CHECKING:
     from .._credential import TextAnalyticsApiKeyCredential
 
 
-class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
+class TextAnalyticsClient(TextAnalyticsClientBase):
     """The Text Analytics API is a suite of text analytics web services built with best-in-class
     Microsoft machine learning algorithms. The API can be used to analyze unstructured text for
     tasks such as sentiment analysis, key phrase extraction, and language detection. No training data
@@ -87,9 +87,11 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         credential: Union["TextAnalyticsApiKeyCredential", "AsyncTokenCredential"],
         **kwargs: Any
     ) -> None:
-        super(TextAnalyticsClient, self).__init__(credential=credential, **kwargs)
-        self._client = TextAnalytics(
-            endpoint=endpoint, credential=credential, pipeline=self._pipeline
+        super(TextAnalyticsClient, self).__init__(
+            endpoint=endpoint,
+            credential=credential,
+            aio=True,
+            **kwargs
         )
         self._default_language = kwargs.pop("default_language", "en")
         self._default_country_hint = kwargs.pop("default_country_hint", "US")
