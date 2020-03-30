@@ -35,14 +35,12 @@ class AiohttpTestTransport(AioHttpTransport):
 class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
-    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_no_single_input(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
         with self.assertRaises(TypeError):
             response = await text_analytics.analyze_sentiment("hello world")
 
     @GlobalTextAnalyticsAccountPreparer()
-    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_all_successful_passing_dict(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
 
@@ -62,7 +60,6 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
             self.assertIsNotNone(doc.sentences)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_all_successful_passing_text_document_input(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
 
@@ -82,7 +79,6 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
             self.assertIsNotNone(doc.sentences)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_passing_only_string(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
 
@@ -100,7 +96,6 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
         self.assertTrue(response[3].is_error)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_input_with_some_errors(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
 
@@ -114,7 +109,6 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
         self.assertFalse(response[2].is_error)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_input_with_all_errors(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
 
@@ -128,7 +122,6 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
         self.assertTrue(response[2].is_error)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_empty_credential_class(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(""))
         with self.assertRaises(ClientAuthenticationError):
@@ -137,7 +130,6 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
             )
 
     @GlobalTextAnalyticsAccountPreparer()
-    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_bad_credentials(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential("xxxxxxxxxxxx"))
         with self.assertRaises(ClientAuthenticationError):
@@ -146,7 +138,6 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
             )
 
     @GlobalTextAnalyticsAccountPreparer()
-    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_bad_model_version(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
         with self.assertRaises(HttpResponseError):
@@ -156,7 +147,6 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
             )
 
     @GlobalTextAnalyticsAccountPreparer()
-    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_bad_document_input(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
 
@@ -166,7 +156,6 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
             response = await text_analytics.analyze_sentiment(docs)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_mixing_inputs(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
         docs = [
@@ -178,7 +167,6 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
             response = await text_analytics.analyze_sentiment(docs)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_out_of_order_ids(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
 
@@ -194,7 +182,6 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
             self.assertEqual(resp.id, in_order[idx])
 
     @GlobalTextAnalyticsAccountPreparer()
-    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_show_stats_and_model_version(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
 
@@ -220,7 +207,6 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
         )
 
     @GlobalTextAnalyticsAccountPreparer()
-    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_batch_size_over_limit(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
 
@@ -229,7 +215,6 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
             response = await text_analytics.analyze_sentiment(docs)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_whole_batch_language_hint(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
 
@@ -247,7 +232,6 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
         response = await text_analytics.analyze_sentiment(docs, language="fr", raw_response_hook=callback)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_whole_batch_dont_use_language_hint(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
 
@@ -265,7 +249,6 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
         response = await text_analytics.analyze_sentiment(docs, language="", raw_response_hook=callback)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_per_item_dont_use_language_hint(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
 
@@ -285,7 +268,6 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
         response = await text_analytics.analyze_sentiment(docs, raw_response_hook=callback)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_whole_batch_language_hint_and_obj_input(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
 
@@ -303,7 +285,6 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
         response = await text_analytics.analyze_sentiment(docs, language="de", raw_response_hook=callback)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_whole_batch_language_hint_and_dict_input(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
 
@@ -319,7 +300,6 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
         response = await text_analytics.analyze_sentiment(docs, language="es", raw_response_hook=callback)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_whole_batch_language_hint_and_obj_per_item_hints(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
 
@@ -340,7 +320,6 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
         response = await text_analytics.analyze_sentiment(docs, language="en", raw_response_hook=callback)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_whole_batch_language_hint_and_dict_per_item_hints(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
 
@@ -360,7 +339,6 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
         response = await text_analytics.analyze_sentiment(docs, language="en", raw_response_hook=callback)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_client_passed_default_language_hint(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key), default_language="es")
 
@@ -383,7 +361,6 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
         response = await text_analytics.analyze_sentiment(docs, raw_response_hook=callback)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_rotate_subscription_key(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         credential = AzureKeyCredential(text_analytics_account_key)
         text_analytics = TextAnalyticsClient(text_analytics_account, credential)
@@ -404,7 +381,6 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
         self.assertIsNotNone(response)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_user_agent(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
 
@@ -421,7 +397,6 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
         response = await text_analytics.analyze_sentiment(docs, raw_response_hook=callback)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_document_attribute_error_no_result_attribute(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
 
@@ -445,7 +420,6 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
             )
 
     @GlobalTextAnalyticsAccountPreparer()
-    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_document_attribute_error_nonexistent_attribute(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
 
@@ -462,7 +436,6 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
             )
 
     @GlobalTextAnalyticsAccountPreparer()
-    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_bad_model_version_error(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
 
@@ -475,7 +448,6 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
             self.assertIsNotNone(err.error.message)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_document_errors(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
         text = ""
@@ -495,7 +467,6 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
         self.assertIsNotNone(doc_errors[2].error.message)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_missing_input_records_error(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))\
 
@@ -507,7 +478,6 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
             self.assertIsNotNone(err.error.message)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_duplicate_ids_error(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
         # Duplicate Ids
@@ -520,7 +490,6 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
             self.assertIsNotNone(err.error.message)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_batch_size_over_limit_error(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
 
@@ -533,7 +502,6 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
             self.assertIsNotNone(err.error.message)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_language_kwarg_spanish(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
 

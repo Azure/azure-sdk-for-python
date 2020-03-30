@@ -149,10 +149,12 @@ def test_key_vault_regression():
 
 def test_azure_key_credential_policy():
     """Tests to see if we can create an AzureKeyCredentialPolicy"""
-    def verify_authorization_header(request):
-        assert request.headers["api_key"] == "test_key"
-    api_key = "test_key"
+
     key_header = "api_key"
+    api_key = "test_key"
+
+    def verify_authorization_header(request):
+        assert request.headers[key_header] == api_key
 
     transport=Mock(send=verify_authorization_header)
     credential = AzureKeyCredential(api_key)
@@ -177,8 +179,8 @@ def test_azure_key_credential_updates():
     api_key = "original"
 
     credential = AzureKeyCredential(api_key)
-    assert credential.key == "original"
+    assert credential.key == api_key
 
     api_key = "new"
     credential.update(api_key)
-    assert credential.key == "new"
+    assert credential.key == api_key
