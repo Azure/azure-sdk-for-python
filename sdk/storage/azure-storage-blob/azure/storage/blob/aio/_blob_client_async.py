@@ -21,7 +21,7 @@ from .._generated import VERSION
 from .._generated.aio import AzureBlobStorage
 from .._generated.models import StorageErrorException, CpkInfo
 from .._deserialize import deserialize_blob_properties
-from .._blob_client import BlobClient as BlobClientBase
+from .._blob_client_base import BlobClientBase
 from ._upload_helpers import (
     upload_block_blob,
     upload_append_blob,
@@ -122,6 +122,112 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         self._client = AzureBlobStorage(url=self.url, pipeline=self._pipeline)
         self._client._config.version = get_api_version(kwargs, VERSION)  # pylint: disable=protected-access
         self._loop = kwargs.get('loop', None)
+
+    @classmethod
+    def from_blob_url(cls, blob_url, credential=None, snapshot=None, **kwargs):
+        # type: (str, Optional[Any], Optional[Union[str, Dict[str, Any]]], Any) -> BlobClient
+        """Create BlobClient from a blob url.
+
+        :param str blob_url:
+            The full endpoint URL to the Blob, including SAS token and snapshot if used. This could be
+            either the primary endpoint, or the secondary endpoint depending on the current `location_mode`.
+        :type blob_url: str
+        :param credential:
+            The credentials with which to authenticate. This is optional if the
+            account URL already has a SAS token, or the connection string already has shared
+            access key values. The value can be a SAS token string, an account shared access
+            key, or an instance of a TokenCredentials class from azure.identity.
+            Credentials provided here will take precedence over those in the connection string.
+        :param str snapshot:
+            The optional blob snapshot on which to operate. This can be the snapshot ID string
+            or the response returned from :func:`create_snapshot`. If specified, this will override
+            the snapshot in the url.
+        :returns: A Blob client.
+        :rtype: ~azure.storage.blob.BlobClient
+        """
+        try:
+            if not blob_url.lower().startswith('http'):
+                blob_url = "https://" + blob_url
+        except AttributeError:
+            raise ValueError("Blob URL must be a string.")
+        parsed_url = urlparse(blob_url.rstrip('/'))
+
+        if not parsed_url.netloc:
+            raise ValueError("Invalid URL: {}".format(blob_url))
+
+        path_blob = parsed_url.path.lstrip('/').split('/')
+        account_path = ""
+        if len(path_blob) > 2:
+            account_path = "/" + "/".join(path_blob[:-2])
+        account_url = "{}://{}{}?{}".format(
+            parsed_url.scheme,
+            parsed_url.netloc.rstrip('/'),
+            account_path,
+            parsed_url.query)
+        container_name, blob_name = unquote(path_blob[-2]), unquote(path_blob[-1])
+        if not container_name or not blob_name:
+            raise ValueError("Invalid URL. Provide a blob_url with a valid blob and container name.")
+
+        path_snapshot, _ = parse_query(parsed_url.query)
+        if snapshot:
+            try:
+                path_snapshot = snapshot.snapshot # type: ignore
+            except AttributeError:
+                try:
+                    path_snapshot = snapshot['snapshot'] # type: ignore
+                except TypeError:
+                    path_snapshot = snapshot
+
+        return cls(
+            account_url, container_name=container_name, blob_name=blob_name,
+            snapshot=path_snapshot, credential=credential, **kwargs
+        )
+
+    @classmethod
+    def from_connection_string(
+            cls, conn_str,  # type: str
+            container_name,  # type: str
+            blob_name,  # type: str
+            snapshot=None,  # type: Optional[str]
+            credential=None,  # type: Optional[Any]
+            **kwargs  # type: Any
+        ):  # type: (...) -> BlobClient
+        """Create BlobClient from a Connection String.
+
+        :param str conn_str:
+            A connection string to an Azure Storage account.
+        :param container_name: The container name for the blob.
+        :type container_name: str
+        :param blob_name: The name of the blob with which to interact.
+        :type blob_name: str
+        :param str snapshot:
+            The optional blob snapshot on which to operate. This can be the snapshot ID string
+            or the response returned from :func:`create_snapshot`.
+        :param credential:
+            The credentials with which to authenticate. This is optional if the
+            account URL already has a SAS token, or the connection string already has shared
+            access key values. The value can be a SAS token string, an account shared access
+            key, or an instance of a TokenCredentials class from azure.identity.
+            Credentials provided here will take precedence over those in the connection string.
+        :returns: A Blob client.
+        :rtype: ~azure.storage.blob.BlobClient
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/blob_samples_authentication.py
+                :start-after: [START auth_from_connection_string_blob]
+                :end-before: [END auth_from_connection_string_blob]
+                :language: python
+                :dedent: 8
+                :caption: Creating the BlobClient from a connection string.
+        """
+        account_url, secondary, credential = parse_connection_str(conn_str, credential, 'blob')
+        if 'secondary_hostname' not in kwargs:
+            kwargs['secondary_hostname'] = secondary
+        return cls(
+            account_url, container_name=container_name, blob_name=blob_name,
+            snapshot=snapshot, credential=credential, **kwargs
+        )
 
     @distributed_trace_async
     async def get_account_information(self, **kwargs): # type: ignore
