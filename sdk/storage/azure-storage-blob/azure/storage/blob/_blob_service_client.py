@@ -28,7 +28,7 @@ from ._generated import AzureBlobStorage, VERSION
 from ._generated.models import StorageErrorException, StorageServiceProperties, KeyInfo
 from ._container_client import ContainerClient
 from ._blob_client import BlobClient
-from ._models import ContainerPropertiesPaged
+from ._models import ContainerPropertiesPaged, ContainerProperties, BlobProperties
 from ._serialize import get_api_version
 from ._deserialize import service_stats_deserialize, service_properties_deserialize
 
@@ -39,8 +39,6 @@ if TYPE_CHECKING:
     from ._shared.models import UserDelegationKey
     from ._lease import BlobLeaseClient
     from ._models import (
-        BlobProperties,
-        ContainerProperties,
         PublicAccess,
         BlobAnalyticsLogging,
         Metrics,
