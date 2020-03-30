@@ -137,6 +137,85 @@ class ContainerClient(ContainerClientBase):
             quote(container_name),
             self._query_str)
 
+    @classmethod
+    def from_container_url(cls, container_url, credential=None, **kwargs):
+        # type: (str, Optional[Any], Any) -> ContainerClient
+        """Create ContainerClient from a container url.
+
+        :param str container_url:
+            The full endpoint URL to the Container, including SAS token if used. This could be
+            either the primary endpoint, or the secondary endpoint depending on the current `location_mode`.
+        :type container_url: str
+        :param credential:
+            The credentials with which to authenticate. This is optional if the
+            account URL already has a SAS token, or the connection string already has shared
+            access key values. The value can be a SAS token string, an account shared access
+            key, or an instance of a TokenCredentials class from azure.identity.
+            Credentials provided here will take precedence over those in the connection string.
+        :returns: A container client.
+        :rtype: ~azure.storage.blob.ContainerClient
+        """
+        try:
+            if not container_url.lower().startswith('http'):
+                container_url = "https://" + container_url
+        except AttributeError:
+            raise ValueError("Container URL must be a string.")
+        parsed_url = urlparse(container_url.rstrip('/'))
+        if not parsed_url.netloc:
+            raise ValueError("Invalid URL: {}".format(container_url))
+
+        container_path = parsed_url.path.lstrip('/').split('/')
+        account_path = ""
+        if len(container_path) > 1:
+            account_path = "/" + "/".join(container_path[:-1])
+        account_url = "{}://{}{}?{}".format(
+            parsed_url.scheme,
+            parsed_url.netloc.rstrip('/'),
+            account_path,
+            parsed_url.query)
+        container_name = unquote(container_path[-1])
+        if not container_name:
+            raise ValueError("Invalid URL. Please provide a URL with a valid container name")
+        return cls(account_url, container_name=container_name, credential=credential, **kwargs)
+
+    @classmethod
+    def from_connection_string(
+            cls, conn_str,  # type: str
+            container_name,  # type: str
+            credential=None,  # type: Optional[Any]
+            **kwargs  # type: Any
+        ):  # type: (...) -> ContainerClient
+        """Create ContainerClient from a Connection String.
+
+        :param str conn_str:
+            A connection string to an Azure Storage account.
+        :param container_name:
+            The container name for the blob.
+        :type container_name: str
+        :param credential:
+            The credentials with which to authenticate. This is optional if the
+            account URL already has a SAS token, or the connection string already has shared
+            access key values. The value can be a SAS token string, an account shared access
+            key, or an instance of a TokenCredentials class from azure.identity.
+            Credentials provided here will take precedence over those in the connection string.
+        :returns: A container client.
+        :rtype: ~azure.storage.blob.ContainerClient
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/blob_samples_authentication.py
+                :start-after: [START auth_from_connection_string_container]
+                :end-before: [END auth_from_connection_string_container]
+                :language: python
+                :dedent: 8
+                :caption: Creating the ContainerClient from a connection string.
+        """
+        account_url, secondary, credential = parse_connection_str(conn_str, credential, 'blob')
+        if 'secondary_hostname' not in kwargs:
+            kwargs['secondary_hostname'] = secondary
+        return cls(
+            account_url, container_name=container_name, credential=credential, **kwargs)
+
     @distributed_trace
     def create_container(self, metadata=None, public_access=None, **kwargs):
         # type: (Optional[Dict[str, str]], Optional[Union[PublicAccess, str]], **Any) -> bool

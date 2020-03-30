@@ -155,7 +155,7 @@ class BlobClientBase(StorageAccountHostsMixin):  # pylint: disable=too-many-publ
                 self.snapshot = snapshot or path_snapshot
 
         self._query_str, credential = self._format_query_string(sas_token, credential, snapshot=self.snapshot)
-        super(BlobClient, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)
+        super(BlobClientBase, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)
         self._client = AzureBlobStorage(self.url, pipeline=self._pipeline)
         self._client._config.version = get_api_version(kwargs, VERSION)  # pylint: disable=protected-access
 

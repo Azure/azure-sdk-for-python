@@ -10,8 +10,15 @@ from typing import (  # pylint: disable=unused-import
     TYPE_CHECKING
 )
 
+try:
+    from urllib.parse import urlparse, quote, unquote
+except ImportError:
+    from urlparse import urlparse # type: ignore
+    from urllib2 import quote, unquote # type: ignore
+
 from azure.core.tracing.decorator_async import distributed_trace_async
 
+from .._shared.base_client import parse_connection_str, parse_query
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
 from .._shared.policies_async import ExponentialRetry
 from .._shared.response_handlers import return_response_headers, process_storage_error
