@@ -250,6 +250,12 @@ class BlobContainer(AzureEntityResource):
     :vartype type: str
     :ivar etag: Resource Etag.
     :vartype etag: str
+    :param default_encryption_scope: Default the container to use specified
+     encryption scope for all writes.
+    :type default_encryption_scope: str
+    :param deny_encryption_scope_override: Block override of encryption scope
+     from the container default.
+    :type deny_encryption_scope_override: bool
     :param public_access: Specifies whether data in the container may be
      accessed publicly and the level of access. Possible values include:
      'Container', 'Blob', 'None'
@@ -314,6 +320,8 @@ class BlobContainer(AzureEntityResource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
+        'default_encryption_scope': {'key': 'properties.defaultEncryptionScope', 'type': 'str'},
+        'deny_encryption_scope_override': {'key': 'properties.denyEncryptionScopeOverride', 'type': 'bool'},
         'public_access': {'key': 'properties.publicAccess', 'type': 'PublicAccess'},
         'last_modified_time': {'key': 'properties.lastModifiedTime', 'type': 'iso-8601'},
         'lease_status': {'key': 'properties.leaseStatus', 'type': 'str'},
@@ -326,8 +334,10 @@ class BlobContainer(AzureEntityResource):
         'has_immutability_policy': {'key': 'properties.hasImmutabilityPolicy', 'type': 'bool'},
     }
 
-    def __init__(self, *, public_access=None, metadata=None, **kwargs) -> None:
+    def __init__(self, *, default_encryption_scope: str=None, deny_encryption_scope_override: bool=None, public_access=None, metadata=None, **kwargs) -> None:
         super(BlobContainer, self).__init__(**kwargs)
+        self.default_encryption_scope = default_encryption_scope
+        self.deny_encryption_scope_override = deny_encryption_scope_override
         self.public_access = public_access
         self.last_modified_time = None
         self.lease_status = None
@@ -1509,18 +1519,34 @@ class IPRule(Model):
 class KeyVaultProperties(Model):
     """Properties of key vault.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     :param key_name: The name of KeyVault key.
     :type key_name: str
     :param key_version: The version of KeyVault key.
     :type key_version: str
     :param key_vault_uri: The Uri of KeyVault.
     :type key_vault_uri: str
+    :ivar current_versioned_key_identifier: The object identifier of the
+     current versioned Key Vault Key in use.
+    :vartype current_versioned_key_identifier: str
+    :ivar last_key_rotation_timestamp: Timestamp of last rotation of the Key
+     Vault Key.
+    :vartype last_key_rotation_timestamp: datetime
     """
+
+    _validation = {
+        'current_versioned_key_identifier': {'readonly': True},
+        'last_key_rotation_timestamp': {'readonly': True},
+    }
 
     _attribute_map = {
         'key_name': {'key': 'keyname', 'type': 'str'},
         'key_version': {'key': 'keyversion', 'type': 'str'},
         'key_vault_uri': {'key': 'keyvaulturi', 'type': 'str'},
+        'current_versioned_key_identifier': {'key': 'currentVersionedKeyIdentifier', 'type': 'str'},
+        'last_key_rotation_timestamp': {'key': 'lastKeyRotationTimestamp', 'type': 'iso-8601'},
     }
 
     def __init__(self, *, key_name: str=None, key_version: str=None, key_vault_uri: str=None, **kwargs) -> None:
@@ -1528,6 +1554,8 @@ class KeyVaultProperties(Model):
         self.key_name = key_name
         self.key_version = key_version
         self.key_vault_uri = key_vault_uri
+        self.current_versioned_key_identifier = None
+        self.last_key_rotation_timestamp = None
 
 
 class LeaseContainerRequest(Model):
@@ -1702,6 +1730,12 @@ class ListContainerItem(AzureEntityResource):
     :vartype type: str
     :ivar etag: Resource Etag.
     :vartype etag: str
+    :param default_encryption_scope: Default the container to use specified
+     encryption scope for all writes.
+    :type default_encryption_scope: str
+    :param deny_encryption_scope_override: Block override of encryption scope
+     from the container default.
+    :type deny_encryption_scope_override: bool
     :param public_access: Specifies whether data in the container may be
      accessed publicly and the level of access. Possible values include:
      'Container', 'Blob', 'None'
@@ -1766,6 +1800,8 @@ class ListContainerItem(AzureEntityResource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
+        'default_encryption_scope': {'key': 'properties.defaultEncryptionScope', 'type': 'str'},
+        'deny_encryption_scope_override': {'key': 'properties.denyEncryptionScopeOverride', 'type': 'bool'},
         'public_access': {'key': 'properties.publicAccess', 'type': 'PublicAccess'},
         'last_modified_time': {'key': 'properties.lastModifiedTime', 'type': 'iso-8601'},
         'lease_status': {'key': 'properties.leaseStatus', 'type': 'str'},
@@ -1778,8 +1814,10 @@ class ListContainerItem(AzureEntityResource):
         'has_immutability_policy': {'key': 'properties.hasImmutabilityPolicy', 'type': 'bool'},
     }
 
-    def __init__(self, *, public_access=None, metadata=None, **kwargs) -> None:
+    def __init__(self, *, default_encryption_scope: str=None, deny_encryption_scope_override: bool=None, public_access=None, metadata=None, **kwargs) -> None:
         super(ListContainerItem, self).__init__(**kwargs)
+        self.default_encryption_scope = default_encryption_scope
+        self.deny_encryption_scope_override = deny_encryption_scope_override
         self.public_access = public_access
         self.last_modified_time = None
         self.lease_status = None
