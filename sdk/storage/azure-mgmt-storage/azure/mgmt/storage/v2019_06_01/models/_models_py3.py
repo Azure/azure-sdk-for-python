@@ -2548,9 +2548,9 @@ class PrivateEndpointConnection(Resource):
      the connection between service consumer and provider.
     :type private_link_service_connection_state:
      ~azure.mgmt.storage.v2019_06_01.models.PrivateLinkServiceConnectionState
-    :param provisioning_state: The provisioning state of the private endpoint connection resource.
+    :ivar provisioning_state: The provisioning state of the private endpoint connection resource.
      Possible values include: 'Succeeded', 'Creating', 'Deleting', 'Failed'.
-    :type provisioning_state: str or
+    :vartype provisioning_state: str or
      ~azure.mgmt.storage.v2019_06_01.models.PrivateEndpointConnectionProvisioningState
     """
 
@@ -2558,6 +2558,7 @@ class PrivateEndpointConnection(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'provisioning_state': {'readonly': True},
     }
 
     _attribute_map = {
@@ -2574,13 +2575,12 @@ class PrivateEndpointConnection(Resource):
         *,
         private_endpoint: Optional["PrivateEndpoint"] = None,
         private_link_service_connection_state: Optional["PrivateLinkServiceConnectionState"] = None,
-        provisioning_state: Optional[Union[str, "PrivateEndpointConnectionProvisioningState"]] = None,
         **kwargs
     ):
         super(PrivateEndpointConnection, self).__init__(**kwargs)
         self.private_endpoint = private_endpoint
         self.private_link_service_connection_state = private_link_service_connection_state
-        self.provisioning_state = provisioning_state
+        self.provisioning_state = None
 
 
 class PrivateLinkResource(Resource):
@@ -2940,6 +2940,8 @@ class ServiceSpecification(msrest.serialization.Model):
 class Sku(msrest.serialization.Model):
     """The SKU of the storage account.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
     All required parameters must be populated in order to send to Azure.
 
     :param name: Required. The SKU name. Required for account creation; optional for update. Note
@@ -2947,13 +2949,14 @@ class Sku(msrest.serialization.Model):
      'Standard_LRS', 'Standard_GRS', 'Standard_RAGRS', 'Standard_ZRS', 'Premium_LRS', 'Premium_ZRS',
      'Standard_GZRS', 'Standard_RAGZRS'.
     :type name: str or ~azure.mgmt.storage.v2019_06_01.models.SkuName
-    :param tier: The SKU tier. This is based on the SKU name. Possible values include: 'Standard',
+    :ivar tier: The SKU tier. This is based on the SKU name. Possible values include: 'Standard',
      'Premium'.
-    :type tier: str or ~azure.mgmt.storage.v2019_06_01.models.SkuTier
+    :vartype tier: str or ~azure.mgmt.storage.v2019_06_01.models.SkuTier
     """
 
     _validation = {
         'name': {'required': True},
+        'tier': {'readonly': True},
     }
 
     _attribute_map = {
@@ -2965,12 +2968,11 @@ class Sku(msrest.serialization.Model):
         self,
         *,
         name: Union[str, "SkuName"],
-        tier: Optional[Union[str, "SkuTier"]] = None,
         **kwargs
     ):
         super(Sku, self).__init__(**kwargs)
         self.name = name
-        self.tier = tier
+        self.tier = None
 
 
 class SKUCapability(msrest.serialization.Model):
@@ -3016,9 +3018,9 @@ class SkuInformation(msrest.serialization.Model):
      'Standard_LRS', 'Standard_GRS', 'Standard_RAGRS', 'Standard_ZRS', 'Premium_LRS', 'Premium_ZRS',
      'Standard_GZRS', 'Standard_RAGZRS'.
     :type name: str or ~azure.mgmt.storage.v2019_06_01.models.SkuName
-    :param tier: The SKU tier. This is based on the SKU name. Possible values include: 'Standard',
+    :ivar tier: The SKU tier. This is based on the SKU name. Possible values include: 'Standard',
      'Premium'.
-    :type tier: str or ~azure.mgmt.storage.v2019_06_01.models.SkuTier
+    :vartype tier: str or ~azure.mgmt.storage.v2019_06_01.models.SkuTier
     :ivar resource_type: The type of the resource, usually it is 'storageAccounts'.
     :vartype resource_type: str
     :ivar kind: Indicates the type of storage account. Possible values include: 'Storage',
@@ -3037,6 +3039,7 @@ class SkuInformation(msrest.serialization.Model):
 
     _validation = {
         'name': {'required': True},
+        'tier': {'readonly': True},
         'resource_type': {'readonly': True},
         'kind': {'readonly': True},
         'locations': {'readonly': True},
@@ -3057,13 +3060,12 @@ class SkuInformation(msrest.serialization.Model):
         self,
         *,
         name: Union[str, "SkuName"],
-        tier: Optional[Union[str, "SkuTier"]] = None,
         restrictions: Optional[List["Restriction"]] = None,
         **kwargs
     ):
         super(SkuInformation, self).__init__(**kwargs)
         self.name = name
-        self.tier = tier
+        self.tier = None
         self.resource_type = None
         self.kind = None
         self.locations = None

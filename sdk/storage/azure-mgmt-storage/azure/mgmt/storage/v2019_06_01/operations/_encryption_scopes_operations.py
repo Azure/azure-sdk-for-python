@@ -74,6 +74,7 @@ class EncryptionScopesOperations(object):
         cls = kwargs.pop('cls', None)  # type: ClsType["models.EncryptionScope"]
         error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-06-01"
+        content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
         url = self.put.metadata['url']
@@ -91,8 +92,8 @@ class EncryptionScopesOperations(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = kwargs.pop('content_type', 'application/json')
 
         # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
@@ -154,6 +155,7 @@ class EncryptionScopesOperations(object):
         cls = kwargs.pop('cls', None)  # type: ClsType["models.EncryptionScope"]
         error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-06-01"
+        content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
         url = self.patch.metadata['url']
@@ -171,8 +173,8 @@ class EncryptionScopesOperations(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = kwargs.pop('content_type', 'application/json')
 
         # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
@@ -318,7 +320,7 @@ class EncryptionScopesOperations(object):
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link, iter(list_of_elem)
+            return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
