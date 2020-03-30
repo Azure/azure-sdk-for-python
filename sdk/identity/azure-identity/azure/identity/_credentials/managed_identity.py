@@ -7,7 +7,7 @@ import os
 import six
 from azure.core.configuration import Configuration
 from azure.core.credentials import AccessToken
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
 from azure.core.pipeline.policies import (
     ContentDecodePolicy,
     DistributedTracingPolicy,
@@ -179,8 +179,8 @@ class ImdsCredential(_ManagedIdentityBase):
                         message += "No identity has been assigned to this resource."
                     six.raise_from(CredentialUnavailableError(message=message), ex)
 
-                # any other error is unexpected, so we propagate the exception
-                raise
+                # any other error is unexpected
+                six.raise_from(ClientAuthenticationError(message=ex.message, response=ex.response), None)
 
         return token
 

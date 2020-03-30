@@ -7,7 +7,7 @@ import os
 from typing import TYPE_CHECKING
 
 from azure.core.credentials import AccessToken
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
 from azure.core.pipeline.policies import AsyncRetryPolicy
 
 from azure.identity._credentials.managed_identity import _ManagedIdentityBase
@@ -144,8 +144,8 @@ class ImdsCredential(_AsyncManagedIdentityBase):
                         message += "No identity has been assigned to this resource."
                     raise CredentialUnavailableError(message=message) from ex
 
-                # any other error is unexpected, so we propagate the exception
-                raise
+                # any other error is unexpected
+                raise ClientAuthenticationError(message=ex.message, response=ex.response) from None
 
         return token
 
