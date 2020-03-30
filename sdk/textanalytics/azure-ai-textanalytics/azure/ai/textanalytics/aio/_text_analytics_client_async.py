@@ -14,7 +14,7 @@ from typing import (  # pylint: disable=unused-import
 )
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.exceptions import HttpResponseError
-from .._base_client import TextAnalyticsClientBase
+from ._base_client_async import AsyncTextAnalyticsClientBase
 from .._request_handlers import _validate_batch_input
 from .._response_handlers import (
     process_batch_error,
@@ -40,7 +40,7 @@ if TYPE_CHECKING:
     from .._credential import TextAnalyticsApiKeyCredential
 
 
-class TextAnalyticsClient(TextAnalyticsClientBase):
+class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
     """The Text Analytics API is a suite of text analytics web services built with best-in-class
     Microsoft machine learning algorithms. The API can be used to analyze unstructured text for
     tasks such as sentiment analysis, key phrase extraction, and language detection. No training data
@@ -89,7 +89,6 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         super(TextAnalyticsClient, self).__init__(
             endpoint=endpoint,
             credential=credential,
-            aio=True,
             **kwargs
         )
         self._default_language = kwargs.pop("default_language", "en")

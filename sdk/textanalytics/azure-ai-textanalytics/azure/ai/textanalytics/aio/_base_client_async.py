@@ -3,9 +3,10 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from ._policies import CognitiveServicesCredentialPolicy, TextAnalyticsResponseHookPolicy
-from ._generated import TextAnalyticsClient
-from ._user_agent import USER_AGENT
+from .._policies import CognitiveServicesCredentialPolicy
+from ._policies_async import AsyncTextAnalyticsResponseHookPolicy
+from .._generated.aio import TextAnalyticsClient
+from .._user_agent import USER_AGENT
 
 
 
@@ -21,28 +22,27 @@ def _authentication_policy(credential):
     return credential_policy
 
 
-class TextAnalyticsClientBase(object):
+class AsyncTextAnalyticsClientBase(object):
     def __init__(self, endpoint, credential, **kwargs):
         self._client = TextAnalyticsClient(
             endpoint=endpoint,
             credential=credential,
             sdk_moniker=USER_AGENT,
             authentication_policy=_authentication_policy(credential),
-            custom_hook_policy=TextAnalyticsResponseHookPolicy(**kwargs),
+            custom_hook_policy=AsyncTextAnalyticsResponseHookPolicy(**kwargs),
             **kwargs
         )
 
 
-    def __enter__(self):
-        self._client.__enter__()  # pylint:disable=no-member
+    async def __aenter__(self) -> "TextAnalyticsClientBase":
+        await self._client.__aenter__()
         return self
 
-    def __exit__(self, *args):
-        self._client.__exit__(*args)  # pylint:disable=no-member
+    async def __aexit__(self, *args: "Any") -> None:
+        await self._client.__aexit__(*args)
 
-    def close(self):
-        # type: () -> None
+    async def close(self) -> None:
         """Close sockets opened by the client.
         Calling this method is unnecessary when using the client as a context manager.
         """
-        self._client.close()
+        await self._client.__aexit__()
