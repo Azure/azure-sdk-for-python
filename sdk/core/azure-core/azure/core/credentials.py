@@ -30,7 +30,7 @@ else:
 
     AccessToken = namedtuple("AccessToken", ["token", "expires_on"])
 
-__all__ = ["AzureKeyCredential"]
+__all__ = ["AzureKeyCredential", "AccessToken"]
 
 
 class AzureKeyCredential(object):

@@ -67,14 +67,21 @@ function populateOptions(optionSelector, otherSelectors){
 }
 
 function populateVersionDropDown(selector, values){
-    var select = $(selector);
-
-    $('option', select).remove();
+    var select = $(selector)
+    
+    $('option', select).remove()
 
     $.each(values, function(index, text) {
-      $('<option/>', { 'value' : text, 'text': text }).appendTo(select);
+      $('<option/>', { 'value' : text, 'text': text }).appendTo(select)
     });
-    select.val(currentVersion());  
+
+    var version = currentVersion()
+    if(version==='latest'){
+      select.selectedIndex = 0
+    }
+    else {
+      select.val(version)  
+    }
 }
 
 function getPackageUrl(language, package, version){
