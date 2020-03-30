@@ -16,7 +16,7 @@ from search_service_preparer import SearchServicePreparer
 CWD = dirname(realpath(__file__))
 
 SCHEMA = open(join(CWD, "hotel_schema.json")).read()
-BATCH = json.load(open(join(CWD, "hotel_small.json")))
+BATCH = json.load(open(join(CWD, "hotel_small.json"), encoding='utf-8'))
 
 from azure.core.exceptions import HttpResponseError
 from azure.search.documents import (

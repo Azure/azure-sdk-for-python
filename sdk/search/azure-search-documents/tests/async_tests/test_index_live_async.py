@@ -20,7 +20,7 @@ from azure_devtools.scenario_tests.utilities import trim_kwargs_from_test_functi
 CWD = dirname(realpath(__file__))
 
 SCHEMA = open(join(CWD, "..", "hotel_schema.json")).read()
-BATCH = json.load(open(join(CWD, "..", "hotel_small.json")))
+BATCH = json.load(open(join(CWD, "..", "hotel_small.json"), encoding='utf-8'))
 
 from azure.core.exceptions import HttpResponseError
 from azure.search.documents import (
