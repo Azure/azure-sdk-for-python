@@ -13,7 +13,7 @@ from typing import (  # pylint: disable=unused-import
     TYPE_CHECKING,
 )
 from azure.core.tracing.decorator import distributed_trace
-from ._generated.models import TextAnalyticsErrorException
+from azure.core.exceptions import HttpResponseError
 from ._generated._text_analytics_client import TextAnalyticsClient as TextAnalytics
 from ._base_client import TextAnalyticsClientBase
 from ._request_handlers import _validate_batch_input
@@ -83,9 +83,10 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
 
     def __init__(self, endpoint, credential, **kwargs):
         # type: (str, Union[TextAnalyticsApiKeyCredential, TokenCredential], Any) -> None
-        super(TextAnalyticsClient, self).__init__(credential=credential, **kwargs)
-        self._client = TextAnalytics(
-            endpoint=endpoint, credentials=credential, pipeline=self._pipeline
+        super(TextAnalyticsClient, self).__init__(
+            endpoint=endpoint,
+            credential=credential,
+            **kwargs
         )
         self._default_language = kwargs.pop("default_language", "en")
         self._default_country_hint = kwargs.pop("default_country_hint", "US")
@@ -151,7 +152,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 cls=language_result,
                 **kwargs
             )
-        except TextAnalyticsErrorException as error:
+        except HttpResponseError as error:
             process_batch_error(error)
 
     @distributed_trace
@@ -215,7 +216,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 cls=entities_result,
                 **kwargs
             )
-        except TextAnalyticsErrorException as error:
+        except HttpResponseError as error:
             process_batch_error(error)
 
     @distributed_trace
@@ -280,7 +281,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 cls=linked_entities_result,
                 **kwargs
             )
-        except TextAnalyticsErrorException as error:
+        except HttpResponseError as error:
             process_batch_error(error)
 
     @distributed_trace
@@ -345,7 +346,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 cls=key_phrases_result,
                 **kwargs
             )
-        except TextAnalyticsErrorException as error:
+        except HttpResponseError as error:
             process_batch_error(error)
 
     @distributed_trace
@@ -409,5 +410,5 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 cls=sentiment_result,
                 **kwargs
             )
-        except TextAnalyticsErrorException as error:
+        except HttpResponseError as error:
             process_batch_error(error)
