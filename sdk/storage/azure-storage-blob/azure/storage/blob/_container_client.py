@@ -127,31 +127,6 @@ class ContainerClient(ContainerClientBase):
             :dedent: 8
             :caption: Creating the container client directly.
     """
-    def __init__(
-            self, account_url,  # type: str
-            container_name,  # type: str
-            credential=None,  # type: Optional[Any]
-            **kwargs  # type: Any
-        ):
-        # type: (...) -> None
-        try:
-            if not account_url.lower().startswith('http'):
-                account_url = "https://" + account_url
-        except AttributeError:
-            raise ValueError("Container URL must be a string.")
-        parsed_url = urlparse(account_url.rstrip('/'))
-        if not container_name:
-            raise ValueError("Please specify a container name.")
-        if not parsed_url.netloc:
-            raise ValueError("Invalid URL: {}".format(account_url))
-
-        _, sas_token = parse_query(parsed_url.query)
-        self.container_name = container_name
-        self._query_str, credential = self._format_query_string(sas_token, credential)
-        super(ContainerClient, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)
-        self._client = AzureBlobStorage(self.url, pipeline=self._pipeline)
-        self._client._config.version = get_api_version(kwargs, VERSION)  # pylint: disable=protected-access
-
     def _format_url(self, hostname):
         container_name = self.container_name
         if isinstance(container_name, six.text_type):
