@@ -3,11 +3,11 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+from typing import Any
 from .._policies import CognitiveServicesCredentialPolicy
 from ._policies_async import AsyncTextAnalyticsResponseHookPolicy
 from .._generated.aio import TextAnalyticsClient
 from .._user_agent import USER_AGENT
-
 
 
 def _authentication_policy(credential):
@@ -34,7 +34,7 @@ class AsyncTextAnalyticsClientBase(object):
         )
 
 
-    async def __aenter__(self) -> "TextAnalyticsClientBase":
+    async def __aenter__(self) -> "AsyncTextAnalyticsClientBase":
         await self._client.__aenter__()
         return self
 
