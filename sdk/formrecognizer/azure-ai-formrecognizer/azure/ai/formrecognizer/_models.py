@@ -343,7 +343,7 @@ class PageMetadata(object):
             angle=read_result[page_index].angle,
             width=read_result[page_index].width,
             height=read_result[page_index].height,
-            unit=LengthUnit(read_result[page_index].unit),
+            unit=read_result[page_index].unit,
             lines=[ExtractedLine._from_generated(line, page=page_index+1)
                    for line in read_result[page_index].lines] if read_result[page_index].lines else None
         )
@@ -355,7 +355,7 @@ class PageMetadata(object):
             angle=page.angle,
             width=page.width,
             height=page.height,
-            unit=LengthUnit(page.unit),
+            unit=page.unit,
             lines=[ExtractedLine._from_generated(line, page=page.page) for line in page.lines] if page.lines else None
         ) for page in read_result]
 
@@ -470,7 +470,7 @@ class CustomModel(object):
     def _from_generated(cls, model):
         return cls(
             model_id=model.model_info.model_id,
-            status=ModelStatus(model.model_info.status),
+            status=model.model_info.status,
             created_on=model.model_info.created_date_time,
             last_updated_on=model.model_info.last_updated_date_time,
             extracted_fields=FormFields._from_generated(model.keys),
@@ -548,7 +548,7 @@ class TrainingDocumentInfo(object):
     def _from_generated(cls, doc):
         return cls(
             document_name=doc.document_name,
-            status=TrainStatus(doc.status),
+            status=doc.status,
             page_count=doc.pages,
             errors=FormRecognizerError._from_generated(doc.errors)
         )
@@ -603,7 +603,7 @@ class CustomLabeledModel(object):
     def _from_generated(cls, model):
         return cls(
             model_id=model.model_info.model_id,
-            status=ModelStatus(model.model_info.status),
+            status=model.model_info.status,
             created_on=model.model_info.created_date_time,
             last_updated_on=model.model_info.last_updated_date_time,
             fields=FieldInfo._from_generated(model.train_result) if model.train_result else None,
@@ -749,7 +749,7 @@ class ModelInfo(object):
     def _from_generated(cls, model):
         return cls(
             model_id=model.model_id,
-            status=ModelStatus(model.status),
+            status=model.status,
             created_on=model.created_date_time,
             last_updated_on=model.last_updated_date_time
         )
