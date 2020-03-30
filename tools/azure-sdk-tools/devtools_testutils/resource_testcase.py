@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from collections import namedtuple
+import functools
 import os
 from functools import partial
 
@@ -26,6 +27,7 @@ FakeResource = namedtuple(
 
 class ResourceGroupPreparer(AzureMgmtPreparer):
     def __init__(self, name_prefix='',
+                 use_cache=False,
                  random_name_length=75,
                  parameter_name=RESOURCE_GROUP_PARAM,
                  parameter_name_for_location='location', location='westus',
@@ -47,6 +49,7 @@ class ResourceGroupPreparer(AzureMgmtPreparer):
             self._need_creation = False
         if self.random_name_enabled:
             self.resource_moniker = self.name_prefix + "rgname"
+        self.set_cache(use_cache, parameter_name)
 
     def create_resource(self, name, **kwargs):
         if self.is_live and self._need_creation:
@@ -89,3 +92,4 @@ class ResourceGroupPreparer(AzureMgmtPreparer):
                 pass
 
 RandomNameResourceGroupPreparer = partial(ResourceGroupPreparer, random_name_enabled=True)
+CachedResourceGroupPreparer = functools.partial(ResourceGroupPreparer, use_cache=True, random_name_enabled=True)

@@ -28,7 +28,7 @@ from .exceptions import (
     MessageLockExpired,
     SessionLockExpired,
     AutoLockRenewFailed,
-    AutoLockRenewTimeout)
+    AutoLockRenewTimeout,)
 
 
 TransportType = constants.TransportType

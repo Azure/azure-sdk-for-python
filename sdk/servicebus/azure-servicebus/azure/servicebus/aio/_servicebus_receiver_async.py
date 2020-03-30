@@ -510,3 +510,10 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
             message,
             mgmt_handlers.peek_op
         )
+
+    async def _renew_locks(self, *lock_tokens):
+        message = {'lock-tokens': types.AMQPArray(lock_tokens)}
+        return await self._mgmt_request_response_with_retry(
+            REQUEST_RESPONSE_RENEWLOCK_OPERATION,
+            message,
+            mgmt_handlers.lock_renew_op)

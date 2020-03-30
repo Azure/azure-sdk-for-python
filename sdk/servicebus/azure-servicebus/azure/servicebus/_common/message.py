@@ -374,8 +374,11 @@ class ReceivedMessage(PeekMessage):
                 raise MessageLockExpired(inner_exception=self.auto_renew_error)
         except TypeError:
             pass
-        if self._receiver._session and self._receiver._session.expired:  # pylint: disable=protected-access
-            raise SessionLockExpired(inner_exception=self._receiver.session.auto_renew_error)
+        try:
+            if self._receiver.session and self._receiver.session.expired:  # pylint: disable=protected-access
+                raise SessionLockExpired(inner_exception=self._receiver.session.auto_renew_error)
+        except TypeError: #TODO: Exception: AttributeError?
+            pass
 
     @property
     def settled(self):

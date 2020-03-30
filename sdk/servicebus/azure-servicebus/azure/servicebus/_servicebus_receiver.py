@@ -22,6 +22,7 @@ from ._common.constants import (
     REQUEST_RESPONSE_RENEW_SESSION_LOCK_OPERATION,
     REQUEST_RESPONSE_RECEIVE_BY_SEQUENCE_NUMBER,
     REQUEST_RESPONSE_UPDATE_DISPOSTION_OPERATION,
+    REQUEST_RESPONSE_RENEWLOCK_OPERATION,
     REQUEST_RESPONSE_PEEK_OPERATION,
     ReceiveSettleMode,
     NEXT_AVAILABLE,
@@ -213,6 +214,7 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
     def _on_attach_for_session_entity(self, source, target, properties, error):  # pylint: disable=unused-argument
         # pylint: disable=protected-access
         if str(source) == self._entity_uri:
+            # This has to live on the session object so that autorenew has access to it.
             self._session._session_start = datetime.datetime.now()
             expiry_in_seconds = properties.get(SESSION_LOCKED_UNTIL)
             if expiry_in_seconds:
@@ -314,6 +316,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         self._create_attribute(**kwargs)
         self._connection = kwargs.get("connection")
         self._session = ServiceBusSession(self._session_id, self, self._config.encoding) if self._session_id else None
+        self._prefetch = kwargs.get("prefetch")
 
     def __iter__(self):
         return self
@@ -617,3 +620,10 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
             message,
             mgmt_handlers.peek_op
         )
+
+    def _renew_locks(self, *lock_tokens):
+        message = {'lock-tokens': types.AMQPArray(lock_tokens)}
+        return self._mgmt_request_response_with_retry(
+            REQUEST_RESPONSE_RENEWLOCK_OPERATION,
+            message,
+            mgmt_handlers.lock_renew_op)
