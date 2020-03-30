@@ -433,7 +433,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
     def from_connection_string(
         cls,
         conn_str,
-        **kwargs,
+        **kwargs
     ):
         # type: (str, Any) -> ServiceBusReceiver
         """Create a ServiceBusReceiver from a connection string.
