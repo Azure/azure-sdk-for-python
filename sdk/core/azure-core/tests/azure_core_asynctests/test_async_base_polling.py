@@ -48,9 +48,7 @@ from azure.core.pipeline.transport import AsyncioRequestsTransportResponse, Asyn
 from azure.core.polling.async_base_polling import (
     AsyncLROBasePolling,
 )
-from azure.core.polling.base_polling import (
-    BadStatus
-)
+
 
 class SimpleResource:
     """An implementation of Python 3 SimpleNamespace.

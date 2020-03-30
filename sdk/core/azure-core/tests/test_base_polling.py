@@ -47,7 +47,6 @@ from azure.core.pipeline.transport import RequestsTransportResponse, HttpTranspo
 
 from azure.core.polling.base_polling import (
     LROBasePolling,
-    BadStatus
 )
 
 class SimpleResource:

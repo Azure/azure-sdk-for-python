@@ -48,27 +48,27 @@ except AttributeError:  # Python 2.7, abc exists, but not ABC
     ABC = abc.ABCMeta("ABC", (object,), {"__slots__": ()})  # type: ignore
 
 
-FINISHED = frozenset(["succeeded", "canceled", "failed"])
-FAILED = frozenset(["canceled", "failed"])
-SUCCEEDED = frozenset(["succeeded"])
+_FINISHED = frozenset(["succeeded", "canceled", "failed"])
+_FAILED = frozenset(["canceled", "failed"])
+_SUCCEEDED = frozenset(["succeeded"])
 
 
-def finished(status):
+def _finished(status):
     if hasattr(status, "value"):
         status = status.value
-    return str(status).lower() in FINISHED
+    return str(status).lower() in _FINISHED
 
 
-def failed(status):
+def _failed(status):
     if hasattr(status, "value"):
         status = status.value
-    return str(status).lower() in FAILED
+    return str(status).lower() in _FAILED
 
 
-def succeeded(status):
+def _succeeded(status):
     if hasattr(status, "value"):
         status = status.value
-    return str(status).lower() in SUCCEEDED
+    return str(status).lower() in _SUCCEEDED
 
 
 class BadStatus(Exception):
@@ -404,7 +404,7 @@ class LROBasePolling(PollingMethod):
         """Is this polling finished?
         :rtype: bool
         """
-        return finished(self.status())
+        return _finished(self.status())
 
     def resource(self):
         """Return the built resource.
@@ -484,7 +484,7 @@ class LROBasePolling(PollingMethod):
             self._delay()
             self.update_status()
 
-        if failed(self.status()):
+        if _failed(self.status()):
             raise OperationFailed("Operation failed or canceled")
 
         final_get_url = self._operation.get_final_get_url(self._pipeline_response)
@@ -543,3 +543,15 @@ class LROBasePolling(PollingMethod):
         return self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **self._operation_config
         )
+
+
+__all__ = [
+    'BadResponse',
+    'BadStatus',
+    'OperationFailed',
+    'LongRunningOperation',
+    'OperationResourcePolling',
+    'LocationPolling',
+    'StatusCheckPolling',
+    'LROBasePolling',
+]

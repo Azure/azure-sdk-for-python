@@ -25,7 +25,7 @@
 # --------------------------------------------------------------------------
 from ..exceptions import HttpResponseError
 from .base_polling import (
-    failed,
+    _failed,
     BadStatus,
     BadResponse,
     OperationFailed,
@@ -77,7 +77,7 @@ class AsyncLROBasePolling(LROBasePolling):
             await self._delay()
             await self.update_status()
 
-        if failed(self.status()):
+        if _failed(self.status()):
             raise OperationFailed("Operation failed or canceled")
 
         final_get_url = self._operation.get_final_get_url(self._pipeline_response)
@@ -123,3 +123,7 @@ class AsyncLROBasePolling(LROBasePolling):
         return await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **self._operation_config
         )
+
+__all__ = [
+    'AsyncLROBasePolling'
+]

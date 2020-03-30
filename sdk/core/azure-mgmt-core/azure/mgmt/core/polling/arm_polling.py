@@ -190,3 +190,9 @@ class ARMPolling(LROBasePolling):
             lro_options=lro_options,
             **operation_config
         )
+
+__all__ = [
+    'AzureAsyncOperationPolling',
+    'BodyContentPolling',
+    'ARMPolling',
+]
