@@ -44,6 +44,7 @@ from ._models import ( # pylint: disable=unused-import
     BlobPrefix)
 from ._lease import BlobLeaseClient, get_access_conditions
 from ._blob_client import BlobClient
+from ._container_client_base import ContainerClientBase
 
 if TYPE_CHECKING:
     from azure.core.pipeline.transport import HttpTransport, HttpResponse  # pylint: disable=ungrouped-imports
@@ -70,7 +71,7 @@ def _get_blob_name(blob):
         return blob
 
 
-class ContainerClient(StorageAccountHostsMixin):
+class ContainerClient(ContainerClientBase):
     """A client to interact with a specific container, although that container
     may not yet exist.
 
@@ -160,85 +161,6 @@ class ContainerClient(StorageAccountHostsMixin):
             hostname,
             quote(container_name),
             self._query_str)
-
-    @classmethod
-    def from_container_url(cls, container_url, credential=None, **kwargs):
-        # type: (str, Optional[Any], Any) -> ContainerClient
-        """Create ContainerClient from a container url.
-
-        :param str container_url:
-            The full endpoint URL to the Container, including SAS token if used. This could be
-            either the primary endpoint, or the secondary endpoint depending on the current `location_mode`.
-        :type container_url: str
-        :param credential:
-            The credentials with which to authenticate. This is optional if the
-            account URL already has a SAS token, or the connection string already has shared
-            access key values. The value can be a SAS token string, an account shared access
-            key, or an instance of a TokenCredentials class from azure.identity.
-            Credentials provided here will take precedence over those in the connection string.
-        :returns: A container client.
-        :rtype: ~azure.storage.blob.ContainerClient
-        """
-        try:
-            if not container_url.lower().startswith('http'):
-                container_url = "https://" + container_url
-        except AttributeError:
-            raise ValueError("Container URL must be a string.")
-        parsed_url = urlparse(container_url.rstrip('/'))
-        if not parsed_url.netloc:
-            raise ValueError("Invalid URL: {}".format(container_url))
-
-        container_path = parsed_url.path.lstrip('/').split('/')
-        account_path = ""
-        if len(container_path) > 1:
-            account_path = "/" + "/".join(container_path[:-1])
-        account_url = "{}://{}{}?{}".format(
-            parsed_url.scheme,
-            parsed_url.netloc.rstrip('/'),
-            account_path,
-            parsed_url.query)
-        container_name = unquote(container_path[-1])
-        if not container_name:
-            raise ValueError("Invalid URL. Please provide a URL with a valid container name")
-        return cls(account_url, container_name=container_name, credential=credential, **kwargs)
-
-    @classmethod
-    def from_connection_string(
-            cls, conn_str,  # type: str
-            container_name,  # type: str
-            credential=None,  # type: Optional[Any]
-            **kwargs  # type: Any
-        ):  # type: (...) -> ContainerClient
-        """Create ContainerClient from a Connection String.
-
-        :param str conn_str:
-            A connection string to an Azure Storage account.
-        :param container_name:
-            The container name for the blob.
-        :type container_name: str
-        :param credential:
-            The credentials with which to authenticate. This is optional if the
-            account URL already has a SAS token, or the connection string already has shared
-            access key values. The value can be a SAS token string, an account shared access
-            key, or an instance of a TokenCredentials class from azure.identity.
-            Credentials provided here will take precedence over those in the connection string.
-        :returns: A container client.
-        :rtype: ~azure.storage.blob.ContainerClient
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/blob_samples_authentication.py
-                :start-after: [START auth_from_connection_string_container]
-                :end-before: [END auth_from_connection_string_container]
-                :language: python
-                :dedent: 8
-                :caption: Creating the ContainerClient from a connection string.
-        """
-        account_url, secondary, credential = parse_connection_str(conn_str, credential, 'blob')
-        if 'secondary_hostname' not in kwargs:
-            kwargs['secondary_hostname'] = secondary
-        return cls(
-            account_url, container_name=container_name, credential=credential, **kwargs)
 
     @distributed_trace
     def create_container(self, metadata=None, public_access=None, **kwargs):
@@ -976,68 +898,6 @@ class ContainerClient(StorageAccountHostsMixin):
         kwargs.setdefault('merge_span', True)
         return blob_client.download_blob(offset=offset, length=length, **kwargs)
 
-    def _generate_delete_blobs_options(
-        self, snapshot=None,
-        delete_snapshots=None,
-        request_id=None,
-        lease_access_conditions=None,
-        modified_access_conditions=None,
-        **kwargs
-    ):
-        """This code is a copy from _generated.
-
-        Once Autorest is able to provide request preparation this code should be removed.
-        """
-        lease_id = None
-        if lease_access_conditions is not None:
-            lease_id = lease_access_conditions.lease_id
-        if_modified_since = None
-        if modified_access_conditions is not None:
-            if_modified_since = modified_access_conditions.if_modified_since
-        if_unmodified_since = None
-        if modified_access_conditions is not None:
-            if_unmodified_since = modified_access_conditions.if_unmodified_since
-        if_match = None
-        if modified_access_conditions is not None:
-            if_match = modified_access_conditions.if_match
-        if_none_match = None
-        if modified_access_conditions is not None:
-            if_none_match = modified_access_conditions.if_none_match
-
-        # Construct parameters
-        timeout = kwargs.pop('timeout', None)
-        query_parameters = {}
-        if snapshot is not None:
-            query_parameters['snapshot'] = self._client._serialize.query("snapshot", snapshot, 'str')  # pylint: disable=protected-access
-        if timeout is not None:
-            query_parameters['timeout'] = self._client._serialize.query("timeout", timeout, 'int', minimum=0)  # pylint: disable=protected-access
-
-        # Construct headers
-        header_parameters = {}
-        if delete_snapshots is not None:
-            header_parameters['x-ms-delete-snapshots'] = self._client._serialize.header(  # pylint: disable=protected-access
-                "delete_snapshots", delete_snapshots, 'DeleteSnapshotsOptionType')
-        if request_id is not None:
-            header_parameters['x-ms-client-request-id'] = self._client._serialize.header(  # pylint: disable=protected-access
-                "request_id", request_id, 'str')
-        if lease_id is not None:
-            header_parameters['x-ms-lease-id'] = self._client._serialize.header(  # pylint: disable=protected-access
-                "lease_id", lease_id, 'str')
-        if if_modified_since is not None:
-            header_parameters['If-Modified-Since'] = self._client._serialize.header(  # pylint: disable=protected-access
-                "if_modified_since", if_modified_since, 'rfc-1123')
-        if if_unmodified_since is not None:
-            header_parameters['If-Unmodified-Since'] = self._client._serialize.header(  # pylint: disable=protected-access
-                "if_unmodified_since", if_unmodified_since, 'rfc-1123')
-        if if_match is not None:
-            header_parameters['If-Match'] = self._client._serialize.header(  # pylint: disable=protected-access
-                "if_match", if_match, 'str')
-        if if_none_match is not None:
-            header_parameters['If-None-Match'] = self._client._serialize.header(  # pylint: disable=protected-access
-                "if_none_match", if_none_match, 'str')
-
-        return query_parameters, header_parameters
-
     @distributed_trace
     def delete_blobs(self, *blobs, **kwargs):
         # type: (...) -> Iterator[HttpResponse]
@@ -1121,39 +981,6 @@ class ContainerClient(StorageAccountHostsMixin):
             reqs.append(req)
 
         return self._batch_send(*reqs, **options)
-
-    def _generate_set_tier_options(
-        self, tier, rehydrate_priority=None, request_id=None, lease_access_conditions=None, **kwargs
-    ):
-        """This code is a copy from _generated.
-
-        Once Autorest is able to provide request preparation this code should be removed.
-        """
-        lease_id = None
-        if lease_access_conditions is not None:
-            lease_id = lease_access_conditions.lease_id
-
-        comp = "tier"
-        timeout = kwargs.pop('timeout', None)
-        # Construct parameters
-        query_parameters = {}
-        if timeout is not None:
-            query_parameters['timeout'] = self._client._serialize.query("timeout", timeout, 'int', minimum=0)  # pylint: disable=protected-access
-        query_parameters['comp'] = self._client._serialize.query("comp", comp, 'str')  # pylint: disable=protected-access, specify-parameter-names-in-call
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['x-ms-access-tier'] = self._client._serialize.header("tier", tier, 'str')  # pylint: disable=protected-access, specify-parameter-names-in-call
-        if rehydrate_priority is not None:
-            header_parameters['x-ms-rehydrate-priority'] = self._client._serialize.header(  # pylint: disable=protected-access
-                "rehydrate_priority", rehydrate_priority, 'str')
-        if request_id is not None:
-            header_parameters['x-ms-client-request-id'] = self._client._serialize.header(  # pylint: disable=protected-access
-                "request_id", request_id, 'str')
-        if lease_id is not None:
-            header_parameters['x-ms-lease-id'] = self._client._serialize.header("lease_id", lease_id, 'str')  # pylint: disable=protected-access
-
-        return query_parameters, header_parameters
 
     @distributed_trace
     def set_standard_blob_tier_blobs(
