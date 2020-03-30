@@ -5,7 +5,7 @@
 # ------------------------------------
 
 from datetime import time
-POLLING_INTERVAL = 1
+POLLING_INTERVAL = 5
 
 
 def get_field_scalar_value(field):  # pylint: disable=too-many-return-statements

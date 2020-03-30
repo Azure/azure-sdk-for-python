@@ -17,7 +17,6 @@ import six
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.polling import LROPoller
 from azure.core.polling.base_polling import LROBasePolling  # pylint: disable=no-name-in-module,import-error
-from azure.core.exceptions import HttpResponseError
 from ._generated.models import AnalyzeOperationResult, Model
 from ._generated._form_recognizer_client import FormRecognizerClient as FormRecognizer
 from ._generated.models import TrainRequest, TrainSourceFilter
@@ -92,8 +91,6 @@ class CustomFormClient(object):
             model = self._client._deserialize(Model, raw_response)
             return CustomModel._from_generated(model)
 
-        # FIXME: https://github.com/Azure/azure-sdk-for-python/issues/10417
-        response.http_response.headers["Location"] = response.http_response.headers["Location"] + "?includeKeys=true"
         deserialization_callback = cls if cls else callback
         return LROPoller(self._client._client, response, deserialization_callback, LROBasePolling(**kwargs))
 
@@ -162,8 +159,8 @@ class CustomFormClient(object):
         def callback(raw_response, _, headers):  # pylint: disable=unused-argument
             extracted_form = self._client._deserialize(AnalyzeOperationResult, raw_response)
             if extracted_form.analyze_result.document_results:
-                raise HttpResponseError("Cannot call begin_extract_forms() with the ID of a model trained with "
-                                        "labels. Please call begin_extract_labeled_forms() instead.")
+                raise ValueError("Cannot call begin_extract_forms() with the ID of a model trained with labels. "
+                                 "Please call begin_extract_labeled_forms() instead.")
             form_result = prepare_unlabeled_result(extracted_form, include_text_details)
             return form_result
 
@@ -198,8 +195,8 @@ class CustomFormClient(object):
         def callback(raw_response, _, headers):  # pylint: disable=unused-argument
             extracted_form = self._client._deserialize(AnalyzeOperationResult, raw_response)
             if extracted_form.analyze_result.document_results:
-                raise HttpResponseError("Cannot call begin_extract_forms() with the ID of a model trained with "
-                                        "labels. Please call begin_extract_labeled_forms() instead.")
+                raise ValueError("Cannot call begin_extract_forms() with the ID of a model trained with labels. "
+                                 "Please call begin_extract_labeled_forms() instead.")
             form_result = prepare_unlabeled_result(extracted_form, include_text_details)
             return form_result
 
@@ -237,8 +234,8 @@ class CustomFormClient(object):
         def callback(raw_response, _, headers):  # pylint: disable=unused-argument
             extracted_form = self._client._deserialize(AnalyzeOperationResult, raw_response)
             if not extracted_form.analyze_result.document_results:
-                raise HttpResponseError("Cannot call begin_extract_labeled_forms() with the ID of a model trained "
-                                        "without labels. Please call begin_extract_forms() instead.")
+                raise ValueError("Cannot call begin_extract_labeled_forms() with the ID of a model trained "
+                                 "without labels. Please call begin_extract_forms() instead.")
             form_result = prepare_labeled_result(extracted_form, include_text_details)
             return form_result
 
@@ -273,8 +270,8 @@ class CustomFormClient(object):
         def callback(raw_response, _, headers):  # pylint: disable=unused-argument
             extracted_form = self._client._deserialize(AnalyzeOperationResult, raw_response)
             if not extracted_form.analyze_result.document_results:
-                raise HttpResponseError("Cannot call begin_extract_labeled_forms() with the ID of a model trained "
-                                        "without labels. Please call begin_extract_forms() instead.")
+                raise ValueError("Cannot call begin_extract_labeled_forms() with the ID of a model trained "
+                                 "without labels. Please call begin_extract_forms() instead.")
             form_result = prepare_labeled_result(extracted_form, include_text_details)
             return form_result
 
@@ -342,8 +339,8 @@ class CustomFormClient(object):
         response = self._client.get_custom_model(model_id=model_id, include_keys=True, **kwargs)
         if response.keys:
             return CustomModel._from_generated(response)
-        raise HttpResponseError(message="Model id '{}' is a model that was trained with labels. "
-                                        "Call get_custom_labeled_model() with the model id.".format(model_id))
+        raise ValueError("Model id '{}' is a model that was trained with labels. Call get_custom_labeled_model() "
+                         "with the model id.".format(model_id))
 
     @distributed_trace
     def get_custom_labeled_model(self, model_id, **kwargs):
@@ -358,5 +355,5 @@ class CustomFormClient(object):
         response = self._client.get_custom_model(model_id=model_id, include_keys=True, **kwargs)
         if response.keys is None:
             return CustomLabeledModel._from_generated(response)
-        raise HttpResponseError(message="Model id '{}' was not trained with labels. Call get_custom_model() "
-                                        "with the model id.".format(model_id))
+        raise ValueError("Model id '{}' was not trained with labels. Call get_custom_model() with the model id."
+                         .format(model_id))

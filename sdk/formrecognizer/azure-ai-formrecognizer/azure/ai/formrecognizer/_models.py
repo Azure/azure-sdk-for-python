@@ -14,13 +14,13 @@ from ._helpers import get_field_scalar_value
 
 PageRange = namedtuple("PageRange", "first_page last_page")
 Point = namedtuple("Point", "x y")
+BoundingBox = namedtuple("BoundingBox", ["top_left", "top_right", "bottom_right", "bottom_left"])
 
 
 def get_elements(field, ocr_result):
     elements = []
     try:
         for item in field.elements:
-            extracted_word = None
             nums = [int(s) for s in re.findall(r'\d+', item)]
             read = nums[0]
             line = nums[1]
@@ -28,13 +28,11 @@ def get_elements(field, ocr_result):
                 word = nums[2]
                 ocr_word = ocr_result[read].lines[line].words[word]
                 extracted_word = ExtractedWord._from_generated(ocr_word, page=read+1)
+                elements.append(extracted_word)
+                continue
             ocr_line = ocr_result[read].lines[line]
             extracted_line = ExtractedLine._from_generated(ocr_line, page=read+1)
-
-            if extracted_word:
-                elements.append(extracted_word)
-            else:
-                elements.append(extracted_line)
+            elements.append(extracted_line)
         return elements
     except TypeError:
         return None
@@ -63,37 +61,6 @@ class ModelStatus(str, Enum):
     creating = "creating"
     ready = "ready"
     invalid = "invalid"
-
-
-class BoundingBox:
-    """The quadrangle bounding box that outlines the text.
-    Units are in pixels for images and inches for PDF.
-
-    :ivar ~azure.ai.formrecognizer.Point top_left:
-        The x, y coordinates of the upper left point of the bounding box.
-    :ivar ~azure.ai.formrecognizer.Point top_right:
-        The x, y coordinates of the upper right point of the bounding box.
-    :ivar ~azure.ai.formrecognizer.Point bottom_right:
-        The x, y coordinates of the lower right point of the bounding box.
-    :ivar ~azure.ai.formrecognizer.Point bottom_left:
-        The x, y coordinates of the lower left point of the bounding box.
-    """
-    def __init__(self, **kwargs):
-        self.top_left = kwargs.get("top_left", None)
-        self.top_right = kwargs.get("top_right", None)
-        self.bottom_right = kwargs.get("bottom_right", None)
-        self.bottom_left = kwargs.get("bottom_left", None)
-
-    @classmethod
-    def _from_generated(cls, box):
-        if box is None:
-            return box
-        return cls(
-            top_left=Point(x=box[0], y=box[1]),
-            top_right=Point(x=box[2], y=box[3]),
-            bottom_right=Point(x=box[4], y=box[5]),
-            bottom_left=Point(x=box[6], y=box[7]),
-        )
 
 
 class ExtractedReceipt(object):  # pylint: disable=too-many-instance-attributes
@@ -189,7 +156,12 @@ class FieldValue(object):
         return cls(
             value=get_field_scalar_value(field),
             text=field.text,
-            bounding_box=BoundingBox._from_generated(field.bounding_box),
+            bounding_box=BoundingBox(
+                top_left=Point(x=field.bounding_box[0], y=field.bounding_box[1]),
+                top_right=Point(x=field.bounding_box[2], y=field.bounding_box[3]),
+                bottom_right=Point(x=field.bounding_box[4], y=field.bounding_box[5]),
+                bottom_left=Point(x=field.bounding_box[6], y=field.bounding_box[7])
+            ) if field.bounding_box else None,
             confidence=field.confidence,
             page_number=field.page,
             elements=get_elements(field, elements) if elements else None
@@ -274,7 +246,12 @@ class ExtractedLine(object):
     def _from_generated(cls, line, page):
         return cls(
             text=line.text,
-            bounding_box=BoundingBox._from_generated(line.bounding_box),
+            bounding_box=BoundingBox(
+                top_left=Point(x=line.bounding_box[0], y=line.bounding_box[1]),
+                top_right=Point(x=line.bounding_box[2], y=line.bounding_box[3]),
+                bottom_right=Point(x=line.bounding_box[4], y=line.bounding_box[5]),
+                bottom_left=Point(x=line.bounding_box[6], y=line.bounding_box[7])
+            ) if line.bounding_box else None,
             page_number=page,
             words=[ExtractedWord._from_generated(word, page) for word in line.words] if line.words else None
         )
@@ -300,7 +277,12 @@ class ExtractedWord(object):
     def _from_generated(cls, word, page):
         return cls(
             text=word.text,
-            bounding_box=BoundingBox._from_generated(word.bounding_box),
+            bounding_box=BoundingBox(
+                top_left=Point(x=word.bounding_box[0], y=word.bounding_box[1]),
+                top_right=Point(x=word.bounding_box[2], y=word.bounding_box[3]),
+                bottom_right=Point(x=word.bounding_box[4], y=word.bounding_box[5]),
+                bottom_left=Point(x=word.bounding_box[6], y=word.bounding_box[7])
+            ) if word.bounding_box else None,
             confidence=word.confidence,
             page_number=page
         )
@@ -435,7 +417,12 @@ class TableCell(object):
             column_index=cell.column_index,
             row_span=cell.row_span or 1,
             column_span=cell.column_span or 1,
-            bounding_box=BoundingBox._from_generated(cell.bounding_box),
+            bounding_box=BoundingBox(
+                top_left=Point(x=cell.bounding_box[0], y=cell.bounding_box[1]),
+                top_right=Point(x=cell.bounding_box[2], y=cell.bounding_box[3]),
+                bottom_right=Point(x=cell.bounding_box[4], y=cell.bounding_box[5]),
+                bottom_left=Point(x=cell.bounding_box[6], y=cell.bounding_box[7])
+            ) if cell.bounding_box else None,
             confidence=cell.confidence,
             is_header=cell.is_header or False,
             is_footer=cell.is_footer or False,
@@ -699,7 +686,12 @@ class ExtractedText(object):
     def _from_generated(cls, field, elements):
         return cls(
             text=field.text,
-            bounding_box=BoundingBox._from_generated(field.bounding_box),
+            bounding_box=BoundingBox(
+                top_left=Point(x=field.bounding_box[0], y=field.bounding_box[1]),
+                top_right=Point(x=field.bounding_box[2], y=field.bounding_box[3]),
+                bottom_right=Point(x=field.bounding_box[4], y=field.bounding_box[5]),
+                bottom_left=Point(x=field.bounding_box[6], y=field.bounding_box[7])
+            ) if field.bounding_box else None,
             elements=get_elements(field.elements, elements) if elements else None
         )
 
