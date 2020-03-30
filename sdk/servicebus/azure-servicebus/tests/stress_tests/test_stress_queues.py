@@ -21,7 +21,6 @@ from utilities import get_logger
 
 _logger = get_logger(logging.DEBUG)
 
-#TODO: Make test duration settable via command line arg?
 class ServiceBusQueueStressTests(AzureMgmtTestCase):
 
     @pytest.mark.liveTest
@@ -38,7 +37,6 @@ class ServiceBusQueueStressTests(AzureMgmtTestCase):
                                        duration=timedelta(seconds=60))
 
         result = stress_test.Run()
-        print(result)
         assert(result.total_sent > 0)
         assert(result.total_received > 0)
 
@@ -58,7 +56,6 @@ class ServiceBusQueueStressTests(AzureMgmtTestCase):
                                        duration=timedelta(seconds=60))
 
         result = stress_test.Run()
-        print(result)
         assert(result.total_sent > 0)
         assert(result.total_received > 0)
 
@@ -110,8 +107,8 @@ class ServiceBusQueueStressTests(AzureMgmtTestCase):
         sb_client = ServiceBusClient.from_connection_string(
             servicebus_namespace_connection_string, debug=False)
 
-        stress_test = StressTestRunner(senders = [sb_client.get_queue_sender(servicebus_queue.name, mode=ReceiveSettleMode.ReceiveAndDelete)],
-                                       receivers = [sb_client.get_queue_receiver(servicebus_queue.name)],
+        stress_test = StressTestRunner(senders = [sb_client.get_queue_sender(servicebus_queue.name)],
+                                       receivers = [sb_client.get_queue_receiver(servicebus_queue.name, mode=ReceiveSettleMode.ReceiveAndDelete)],
                                        duration=timedelta(seconds=60))
 
         result = stress_test.Run()

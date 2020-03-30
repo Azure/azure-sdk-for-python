@@ -20,6 +20,10 @@ if sys.version_info < (3, 5):
 if not any([arg.startswith('test_stress') or arg.endswith('StressTest') for arg in sys.argv]):
     collect_ignore.append("tests/stress_tests")
 
+# Allow us to pass stress_test_duration from the command line.
+def pytest_addoption(parser):
+    parser.addoption('--stress_test_duration_seconds', action="store", default=None)
+
 # Note: This is duplicated between here and the basic conftest, so that it does not throw warnings if you're
 # running locally to this SDK. (Everything works properly, pytest just makes a bit of noise.)
 def pytest_configure(config):
