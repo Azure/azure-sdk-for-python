@@ -539,6 +539,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
                 :dedent: 12
                 :caption: Getting the container client to interact with a specific container.
         """
+        container_name = None
         if isinstance(container, ContainerProperties):
             container_name = container.name
         elif isinstance(container, str):
@@ -589,6 +590,8 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
                 :dedent: 16
                 :caption: Getting the blob client to interact with a specific blob.
         """
+        container_name = None
+        blob_name = None
         if isinstance(container, ContainerProperties):
             container_name = container.name
         elif isinstance(container, str):
