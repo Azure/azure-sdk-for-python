@@ -38,6 +38,9 @@ class StressTestRunnerState(object):
         self.total_sent=0
         self.total_received=0
 
+    def __repr__(self):
+        return str(vars(self))
+
 
 class StressTestRunner:
     '''Framework for running a service bus stress test.
