@@ -62,6 +62,7 @@ class StorageAccountsOperations:
 
         _account_name = models.StorageAccountCheckNameAvailabilityParameters(name=name)
         api_version = "2018-11-01"
+        content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
         url = self.check_name_availability.metadata['url']
@@ -76,8 +77,8 @@ class StorageAccountsOperations:
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = kwargs.pop('content_type', 'application/json')
 
         # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
@@ -110,6 +111,7 @@ class StorageAccountsOperations:
         cls = kwargs.pop('cls', None)  # type: ClsType["models.StorageAccount"]
         error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2018-11-01"
+        content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
         url = self._create_initial.metadata['url']
@@ -126,8 +128,8 @@ class StorageAccountsOperations:
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = kwargs.pop('content_type', 'application/json')
 
         # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
@@ -264,6 +266,7 @@ class StorageAccountsOperations:
         self,
         resource_group_name: str,
         account_name: str,
+        expand: Optional[str] = "geoReplicationStats",
         **kwargs
     ) -> "models.StorageAccount":
         """Returns the properties for the specified storage account including but not limited to name, SKU name, location, and account status. The ListKeys operation should be used to retrieve storage keys.
@@ -275,6 +278,9 @@ class StorageAccountsOperations:
          Storage account names must be between 3 and 24 characters in length and use numbers and lower-
          case letters only.
         :type account_name: str
+        :param expand: May be used to expand the properties within account's properties. By default,
+         data is not included when fetching properties. Currently we only support geoReplicationStats.
+        :type expand: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: StorageAccount or the result of cls(response)
         :rtype: ~azure.mgmt.storage.v2018_11_01.models.StorageAccount
@@ -283,7 +289,6 @@ class StorageAccountsOperations:
         cls = kwargs.pop('cls', None)  # type: ClsType["models.StorageAccount"]
         error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2018-11-01"
-        expand = "geoReplicationStats"
 
         # Construct URL
         url = self.get_properties.metadata['url']
@@ -347,6 +352,7 @@ class StorageAccountsOperations:
         cls = kwargs.pop('cls', None)  # type: ClsType["models.StorageAccount"]
         error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2018-11-01"
+        content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
         url = self.update.metadata['url']
@@ -363,8 +369,8 @@ class StorageAccountsOperations:
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = kwargs.pop('content_type', 'application/json')
 
         # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
@@ -603,6 +609,7 @@ class StorageAccountsOperations:
 
         _regenerate_key = models.StorageAccountRegenerateKeyParameters(key_name=key_name)
         api_version = "2018-11-01"
+        content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
         url = self.regenerate_key.metadata['url']
@@ -619,8 +626,8 @@ class StorageAccountsOperations:
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = kwargs.pop('content_type', 'application/json')
 
         # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
@@ -669,6 +676,7 @@ class StorageAccountsOperations:
         cls = kwargs.pop('cls', None)  # type: ClsType["models.ListAccountSasResponse"]
         error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2018-11-01"
+        content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
         url = self.list_account_sas.metadata['url']
@@ -685,8 +693,8 @@ class StorageAccountsOperations:
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = kwargs.pop('content_type', 'application/json')
 
         # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
@@ -735,6 +743,7 @@ class StorageAccountsOperations:
         cls = kwargs.pop('cls', None)  # type: ClsType["models.ListServiceSasResponse"]
         error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2018-11-01"
+        content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
         url = self.list_service_sas.metadata['url']
@@ -751,8 +760,8 @@ class StorageAccountsOperations:
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = kwargs.pop('content_type', 'application/json')
 
         # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]

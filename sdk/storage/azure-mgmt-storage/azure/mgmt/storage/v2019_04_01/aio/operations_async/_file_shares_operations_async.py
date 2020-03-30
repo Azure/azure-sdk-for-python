@@ -112,7 +112,7 @@ class FileSharesOperations:
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link, AsyncList(list_of_elem)
+            return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             request = prepare_request(next_link)
@@ -169,6 +169,7 @@ class FileSharesOperations:
 
         _file_share = models.FileShare(metadata=metadata, share_quota=share_quota)
         api_version = "2019-04-01"
+        content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
         url = self.create.metadata['url']
@@ -186,8 +187,8 @@ class FileSharesOperations:
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = kwargs.pop('content_type', 'application/json')
 
         # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
@@ -253,6 +254,7 @@ class FileSharesOperations:
 
         _file_share = models.FileShare(metadata=metadata, share_quota=share_quota)
         api_version = "2019-04-01"
+        content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
         url = self.update.metadata['url']
@@ -270,8 +272,8 @@ class FileSharesOperations:
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = kwargs.pop('content_type', 'application/json')
 
         # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]

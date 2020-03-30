@@ -131,6 +131,7 @@ class FileServicesOperations(object):
         _parameters = models.FileServiceProperties(cors=cors)
         api_version = "2019-04-01"
         file_services_name = "default"
+        content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
         url = self.set_service_properties.metadata['url']
@@ -148,8 +149,8 @@ class FileServicesOperations(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = kwargs.pop('content_type', 'application/json')
 
         # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]

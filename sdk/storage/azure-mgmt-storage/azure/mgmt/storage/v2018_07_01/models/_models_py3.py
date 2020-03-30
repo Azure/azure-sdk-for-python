@@ -552,7 +552,7 @@ class Encryption(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        key_source: Union[str, "KeySource"],
+        key_source: Union[str, "KeySource"] = "Microsoft.Storage",
         services: Optional["EncryptionServices"] = None,
         key_vault_properties: Optional["KeyVaultProperties"] = None,
         **kwargs
@@ -1392,7 +1392,7 @@ class NetworkRuleSet(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        default_action: Union[str, "DefaultAction"],
+        default_action: Union[str, "DefaultAction"] = "Allow",
         bypass: Optional[Union[str, "Bypass"]] = "AzureServices",
         virtual_network_rules: Optional[List["VirtualNetworkRule"]] = None,
         ip_rules: Optional[List["IPRule"]] = None,

@@ -138,6 +138,7 @@ class BlobContainersOperations(object):
 
         _blob_container = models.BlobContainer(public_access=public_access, metadata=metadata)
         api_version = "2018-07-01"
+        content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
         url = self.create.metadata['url']
@@ -155,8 +156,8 @@ class BlobContainersOperations(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = kwargs.pop('content_type', 'application/json')
 
         # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
@@ -218,6 +219,7 @@ class BlobContainersOperations(object):
 
         _blob_container = models.BlobContainer(public_access=public_access, metadata=metadata)
         api_version = "2018-07-01"
+        content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
         url = self.update.metadata['url']
@@ -235,8 +237,8 @@ class BlobContainersOperations(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = kwargs.pop('content_type', 'application/json')
 
         # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
@@ -423,6 +425,7 @@ class BlobContainersOperations(object):
 
         _legal_hold = models.LegalHold(tags=tags)
         api_version = "2018-07-01"
+        content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
         url = self.set_legal_hold.metadata['url']
@@ -440,8 +443,8 @@ class BlobContainersOperations(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = kwargs.pop('content_type', 'application/json')
 
         # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
@@ -500,6 +503,7 @@ class BlobContainersOperations(object):
 
         _legal_hold = models.LegalHold(tags=tags)
         api_version = "2018-07-01"
+        content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
         url = self.clear_legal_hold.metadata['url']
@@ -517,8 +521,8 @@ class BlobContainersOperations(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = kwargs.pop('content_type', 'application/json')
 
         # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
@@ -583,6 +587,7 @@ class BlobContainersOperations(object):
         _parameters = models.ImmutabilityPolicy(immutability_period_since_creation_in_days=immutability_period_since_creation_in_days)
         immutability_policy_name = "default"
         api_version = "2018-07-01"
+        content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
         url = self.create_or_update_immutability_policy.metadata['url']
@@ -603,8 +608,8 @@ class BlobContainersOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         if if_match is not None:
             header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = kwargs.pop('content_type', 'application/json')
 
         # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
@@ -900,6 +905,7 @@ class BlobContainersOperations(object):
 
         _parameters = models.ImmutabilityPolicy(immutability_period_since_creation_in_days=immutability_period_since_creation_in_days)
         api_version = "2018-07-01"
+        content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
         url = self.extend_immutability_policy.metadata['url']
@@ -918,8 +924,8 @@ class BlobContainersOperations(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = kwargs.pop('content_type', 'application/json')
 
         # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
@@ -980,6 +986,7 @@ class BlobContainersOperations(object):
         cls = kwargs.pop('cls', None)  # type: ClsType["models.LeaseContainerResponse"]
         error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2018-07-01"
+        content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
         url = self.lease.metadata['url']
@@ -997,8 +1004,8 @@ class BlobContainersOperations(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = kwargs.pop('content_type', 'application/json')
 
         # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]

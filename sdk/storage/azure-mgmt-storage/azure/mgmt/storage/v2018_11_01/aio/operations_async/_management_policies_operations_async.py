@@ -130,6 +130,7 @@ class ManagementPoliciesOperations:
         _properties = models.ManagementPolicy(policy=policy)
         api_version = "2018-11-01"
         management_policy_name = "default"
+        content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
         url = self.create_or_update.metadata['url']
@@ -147,8 +148,8 @@ class ManagementPoliciesOperations:
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = kwargs.pop('content_type', 'application/json')
 
         # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]

@@ -108,7 +108,7 @@ class Permissions(str, Enum):
     u = "u"
     p = "p"
 
-class Resource(str, Enum):
+class ResourceEnum(str, Enum):
     """The signed services accessible with the service SAS. Possible values include: Blob (b),
     Container (c), File (f), Share (s).
     """
@@ -118,7 +118,7 @@ class Resource(str, Enum):
     f = "f"
     s = "s"
 
-class Permissions(str, Enum):
+class PermissionsEnum(str, Enum):
     """The signed permissions for the service SAS. Possible values include: Read (r), Write (w),
     Delete (d), List (l), Add (a), Create (c), Update (u) and Process (p).
     """
