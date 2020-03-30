@@ -1,0 +1,61 @@
+{
+    "chosen_version": "2019-06-15",
+    "total_api_version_list": ["2019-06-15"],
+    "client": {
+        "name": "CdnManagementClient",
+        "filename": "_cdn_management_client",
+        "description": "Cdn Management Client.",
+        "has_subscription_id": true
+    },
+    "config": {
+        "credential": true,
+        "credential_scopes": ["https://management.azure.com/.default"],
+        "package_version": true,
+        "global_parameters": {
+            "method": {
+                "credential": {
+                    "method_signature": "credential,  # type: \"TokenCredential\"",
+                    "description": "Credential needed for the client to connect to Azure.",
+                    "docstring_type": "azure.core.credentials.TokenCredential",
+                    "required": true
+                },
+                "subscription_id": {
+                    "method_signature": "subscription_id,  # type: str",
+                    "description": "Azure Subscription ID.",
+                    "docstring_type": "str",
+                    "required": true
+                }
+            },
+            "constant": {
+            }
+        }
+    },
+    "operation_groups": {
+        "profiles": "ProfilesOperations",
+        "endpoints": "EndpointsOperations",
+        "origins": "OriginsOperations",
+        "custom_domains": "CustomDomainsOperations",
+        "resource_usage": "ResourceUsageOperations",
+        "operations": "Operations",
+        "edge_nodes": "EdgeNodesOperations",
+        "policies": "PoliciesOperations",
+        "managed_rule_sets": "ManagedRuleSetsOperations"
+    },
+    "operation_mixins": {
+        "check_name_availability" : {
+            "doc": "    \"\"\"Check the availability of a resource name. This is needed for resources where name is globally unique, such as a CDN endpoint.\n\n:param name: The resource name to validate.\n:type name: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: CheckNameAvailabilityOutput or the result of cls(response)\n:rtype: ~azure.mgmt.cdn.models.CheckNameAvailabilityOutput\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\"",
+            "signature": "def check_name_availability(\n    self,\n    name,  # type: str\n    **kwargs  # type: Any\n):\n",
+            "call": "name"
+        },
+        "check_name_availability_with_subscription" : {
+            "doc": "    \"\"\"Check the availability of a resource name. This is needed for resources where name is globally unique, such as a CDN endpoint.\n\n:param name: The resource name to validate.\n:type name: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: CheckNameAvailabilityOutput or the result of cls(response)\n:rtype: ~azure.mgmt.cdn.models.CheckNameAvailabilityOutput\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\"",
+            "signature": "def check_name_availability_with_subscription(\n    self,\n    name,  # type: str\n    **kwargs  # type: Any\n):\n",
+            "call": "name"
+        },
+        "validate_probe" : {
+            "doc": "    \"\"\"Check if the probe path is a valid path and the file can be accessed. Probe path is the path to a file hosted on the origin server to help accelerate the delivery of dynamic content via the CDN endpoint. This path is relative to the origin path specified in the endpoint configuration.\n\n:param probe_url: The probe URL to validate.\n:type probe_url: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: ValidateProbeOutput or the result of cls(response)\n:rtype: ~azure.mgmt.cdn.models.ValidateProbeOutput\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\"",
+            "signature": "def validate_probe(\n    self,\n    probe_url,  # type: str\n    **kwargs  # type: Any\n):\n",
+            "call": "probe_url"
+        }
+    }
+}
