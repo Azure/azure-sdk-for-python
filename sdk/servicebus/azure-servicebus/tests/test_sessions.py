@@ -29,33 +29,10 @@ from azure.servicebus.exceptions import (
 
 from devtools_testutils import AzureMgmtTestCase, CachedResourceGroupPreparer
 from servicebus_preparer import CachedServiceBusNamespacePreparer, ServiceBusTopicPreparer, ServiceBusQueuePreparer
-
-
-def get_logger(level):
-    azure_logger = logging.getLogger("azure")
-    if not azure_logger.handlers:
-        azure_logger.setLevel(level)
-        handler = logging.StreamHandler(stream=sys.stdout)
-        handler.setFormatter(logging.Formatter('%(asctime)s %(name)-12s %(levelname)-8s %(message)s'))
-        azure_logger.addHandler(handler)
-
-    uamqp_logger = logging.getLogger("uamqp")
-    if not uamqp_logger.handlers:
-        uamqp_logger.setLevel(logging.INFO)
-        uamqp_logger.addHandler(handler)
-    return azure_logger
+from utilities import get_logger, print_message
 
 _logger = get_logger(logging.DEBUG)
 
-
-def print_message(message):
-    _logger.info("Receiving: {}".format(message))
-    _logger.debug("Time to live: {}".format(message.header.time_to_live))
-    _logger.debug("Sequence number: {}".format(message.sequence_number))
-    _logger.debug("Enqueue Sequence numger: {}".format(message.enqueue_sequence_number))
-    _logger.debug("Partition ID: {}".format(message.partition_id))
-    _logger.debug("Partition Key: {}".format(message.partition_key))
-    _logger.debug("Enqueued time: {}".format(message.enqueued_time))
 
 class ServiceBusSessionTests(AzureMgmtTestCase):
     @pytest.mark.liveTest
@@ -79,7 +56,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
             with sb_client.get_queue_receiver(servicebus_queue.name, session_id=session_id, idle_timeout=5) as session:
                 count = 0
                 for message in session:
-                    print_message(message)
+                    print_message(_logger, message)
                     assert message.session_id == session_id
                     count += 1
                     message.complete()
@@ -219,7 +196,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                                               idle_timeout=5) as session:
                 for message in session:
                     deferred_messages.append(message.sequence_number)
-                    print_message(message)
+                    print_message(_logger, message)
                     count += 1
                     message.defer()
 
@@ -262,7 +239,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                                               idle_timeout=5) as session:
                 for message in session:
                     deferred_messages.append(message.sequence_number)
-                    print_message(message)
+                    print_message(_logger, message)
                     count += 1
                     message.defer()
 
@@ -281,7 +258,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
             with sb_client.get_deadletter_receiver(servicebus_queue.name, idle_timeout=5) as receiver:
                 for message in receiver:
                     count += 1
-                    print_message(message)
+                    print_message(_logger, message)
                     assert message.user_properties[b'DeadLetterReason'] == b'something'
                     assert message.user_properties[b'DeadLetterErrorDescription'] == b'something'
                     message.complete()
@@ -307,7 +284,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
             with sb_client.get_queue_receiver(servicebus_queue.name, session_id=session_id, idle_timeout=5) as session:
                 for message in session:
                     deferred_messages.append(message.sequence_number)
-                    print_message(message)
+                    print_message(_logger, message)
                     count += 1
                     message.defer()
 
@@ -346,7 +323,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                 count = 0
                 for message in session:
                     deferred_messages.append(message.sequence_number)
-                    print_message(message)
+                    print_message(_logger, message)
                     count += 1
                     message.defer()
 
@@ -384,7 +361,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                 messages = receiver.receive()
                 while messages:
                     for message in messages:
-                        print_message(message)
+                        print_message(_logger, message)
                         message.dead_letter(description="Testing queue deadletter")
                         count += 1
                     messages = receiver.receive()
@@ -394,7 +371,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                                                       idle_timeout=5) as session:
                 count = 0
                 for message in session:
-                    print_message(message)
+                    print_message(_logger, message)
                     message.complete()
                     #assert message.user_properties[b'DeadLetterReason'] == b'something'  # TODO
                     #assert message.user_properties[b'DeadLetterErrorDescription'] == b'something'  # TODO
@@ -425,7 +402,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                 assert len(messages) == 5
                 assert all(isinstance(m, PeekMessage) for m in messages)
                 for message in messages:
-                    print_message(message)
+                    print_message(_logger, message)
                     with pytest.raises(AttributeError):
                         message.complete()
 
@@ -451,7 +428,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                 assert len(messages) > 0
                 assert all(isinstance(m, PeekMessage) for m in messages)
                 for message in messages:
-                    print_message(message)
+                    print_message(_logger, message)
                     with pytest.raises(AttributeError):
                         message.complete()
 
@@ -601,7 +578,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
             with sb_client.get_queue_receiver(servicebus_queue.name, session_id=session_id) as receiver:
                 messages = receiver.receive(timeout=10)
                 assert len(messages) == 1
-                print_message(messages[0])
+                print_message(_logger, messages[0])
                 time.sleep(60)
                 with pytest.raises(TypeError):
                     messages[0].expired
@@ -617,7 +594,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
             with sb_client.get_queue_receiver(servicebus_queue.name, session_id=session_id) as receiver:
                 messages = receiver.receive(timeout=30)
                 assert len(messages) == 1
-                print_message(messages[0])
+                print_message(_logger, messages[0])
                 #assert messages[0].header.delivery_count  # TODO confirm this with service
                 messages[0].complete()
 
