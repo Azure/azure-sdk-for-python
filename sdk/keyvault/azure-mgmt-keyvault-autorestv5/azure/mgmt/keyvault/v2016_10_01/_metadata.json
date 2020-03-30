@@ -3,7 +3,7 @@
     "total_api_version_list": ["2016-10-01"],
     "client": {
         "name": "KeyVaultManagementClient",
-        "filename": "_key_vault_management_client.py",
+        "filename": "_key_vault_management_client",
         "description": "The Azure management API provides a RESTful set of web services that interact with Azure Key Vault.",
         "has_subscription_id": true
     },
@@ -27,7 +27,6 @@
                 }
             },
             "constant": {
-                "api_version": "\"2016-10-01\""
             }
         }
     },

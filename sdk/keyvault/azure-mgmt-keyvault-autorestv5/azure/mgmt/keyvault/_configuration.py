@@ -43,7 +43,6 @@ class KeyVaultManagementClientConfiguration(Configuration):
 
         self.credential = credential
         self.subscription_id = subscription_id
-        self.api_version = "2019-09-01"
         self.credential_scopes = ['https://management.azure.com/.default']
         kwargs.setdefault('sdk_moniker', 'azure-mgmt-keyvault/{}'.format(VERSION))
         self._configure(**kwargs)

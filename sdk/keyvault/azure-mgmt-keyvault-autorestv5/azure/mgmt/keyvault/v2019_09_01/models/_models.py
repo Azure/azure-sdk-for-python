@@ -515,9 +515,9 @@ class PrivateEndpointConnection(Resource):
     :param private_link_service_connection_state: Approval state of the private link connection.
     :type private_link_service_connection_state:
      ~azure.mgmt.keyvault.v2019_09_01.models.PrivateLinkServiceConnectionState
-    :param provisioning_state: Provisioning state of the private endpoint connection. Possible
+    :ivar provisioning_state: Provisioning state of the private endpoint connection. Possible
      values include: 'Succeeded', 'Creating', 'Updating', 'Deleting', 'Failed', 'Disconnected'.
-    :type provisioning_state: str or
+    :vartype provisioning_state: str or
      ~azure.mgmt.keyvault.v2019_09_01.models.PrivateEndpointConnectionProvisioningState
     """
 
@@ -527,6 +527,7 @@ class PrivateEndpointConnection(Resource):
         'type': {'readonly': True},
         'location': {'readonly': True},
         'tags': {'readonly': True},
+        'provisioning_state': {'readonly': True},
     }
 
     _attribute_map = {
@@ -547,22 +548,28 @@ class PrivateEndpointConnection(Resource):
         super(PrivateEndpointConnection, self).__init__(**kwargs)
         self.private_endpoint = kwargs.get('private_endpoint', None)
         self.private_link_service_connection_state = kwargs.get('private_link_service_connection_state', None)
-        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.provisioning_state = None
 
 
 class PrivateEndpointConnectionItem(msrest.serialization.Model):
     """Private endpoint connection item.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
 
     :param private_endpoint: Properties of the private endpoint object.
     :type private_endpoint: ~azure.mgmt.keyvault.v2019_09_01.models.PrivateEndpoint
     :param private_link_service_connection_state: Approval state of the private link connection.
     :type private_link_service_connection_state:
      ~azure.mgmt.keyvault.v2019_09_01.models.PrivateLinkServiceConnectionState
-    :param provisioning_state: Provisioning state of the private endpoint connection. Possible
+    :ivar provisioning_state: Provisioning state of the private endpoint connection. Possible
      values include: 'Succeeded', 'Creating', 'Updating', 'Deleting', 'Failed', 'Disconnected'.
-    :type provisioning_state: str or
+    :vartype provisioning_state: str or
      ~azure.mgmt.keyvault.v2019_09_01.models.PrivateEndpointConnectionProvisioningState
     """
+
+    _validation = {
+        'provisioning_state': {'readonly': True},
+    }
 
     _attribute_map = {
         'private_endpoint': {'key': 'properties.privateEndpoint', 'type': 'PrivateEndpoint'},
@@ -577,7 +584,7 @@ class PrivateEndpointConnectionItem(msrest.serialization.Model):
         super(PrivateEndpointConnectionItem, self).__init__(**kwargs)
         self.private_endpoint = kwargs.get('private_endpoint', None)
         self.private_link_service_connection_state = kwargs.get('private_link_service_connection_state', None)
-        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.provisioning_state = None
 
 
 class PrivateLinkResource(Resource):

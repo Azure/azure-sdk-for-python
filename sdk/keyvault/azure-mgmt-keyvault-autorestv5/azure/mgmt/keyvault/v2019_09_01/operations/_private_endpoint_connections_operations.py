@@ -108,7 +108,8 @@ class PrivateEndpointConnectionsOperations(object):
         resource_group_name,  # type: str
         vault_name,  # type: str
         private_endpoint_connection_name,  # type: str
-        properties,  # type: "models.PrivateEndpointConnection"
+        private_endpoint=None,  # type: Optional["models.PrivateEndpoint"]
+        private_link_service_connection_state=None,  # type: Optional["models.PrivateLinkServiceConnectionState"]
         **kwargs  # type: Any
     ):
         # type: (...) -> "models.PrivateEndpointConnection"
@@ -121,8 +122,10 @@ class PrivateEndpointConnectionsOperations(object):
         :param private_endpoint_connection_name: Name of the private endpoint connection associated
          with the key vault.
         :type private_endpoint_connection_name: str
-        :param properties: The intended state of private endpoint connection.
-        :type properties: ~azure.mgmt.keyvault.v2019_09_01.models.PrivateEndpointConnection
+        :param private_endpoint: Properties of the private endpoint object.
+        :type private_endpoint: ~azure.mgmt.keyvault.v2019_09_01.models.PrivateEndpoint
+        :param private_link_service_connection_state: Approval state of the private link connection.
+        :type private_link_service_connection_state: ~azure.mgmt.keyvault.v2019_09_01.models.PrivateLinkServiceConnectionState
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PrivateEndpointConnection or the result of cls(response)
         :rtype: ~azure.mgmt.keyvault.v2019_09_01.models.PrivateEndpointConnection
@@ -130,7 +133,10 @@ class PrivateEndpointConnectionsOperations(object):
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.PrivateEndpointConnection"]
         error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
+
+        _properties = models.PrivateEndpointConnection(private_endpoint=private_endpoint, private_link_service_connection_state=private_link_service_connection_state)
         api_version = "2019-09-01"
+        content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
         url = self.put.metadata['url']
@@ -148,12 +154,12 @@ class PrivateEndpointConnectionsOperations(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = kwargs.pop('content_type', 'application/json')
 
         # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(properties, 'PrivateEndpointConnection')
+        body_content = self._serialize.body(_properties, 'PrivateEndpointConnection')
         body_content_kwargs['content'] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
 
