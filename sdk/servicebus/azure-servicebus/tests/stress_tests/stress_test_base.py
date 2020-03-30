@@ -7,6 +7,7 @@
 import time
 from datetime import datetime, timedelta
 import concurrent
+import sys
 import uuid
 
 from azure.servicebus import ServiceBusClient, Message, BatchMessage
@@ -18,22 +19,30 @@ class ReceiveType:
     pull="pull"
 
 
-class StressTestResults:
-    total_sent=0
-    total_received=0
-    time_elapsed=None
-    state_by_sender={}
-    state_by_receiver={}
+class StressTestResults(object):
+    def __init__(self):
+        self.total_sent=0
+        self.total_received=0
+        self.time_elapsed=None
+        self.state_by_sender={}
+        self.state_by_receiver={}
+
+    def __repr__(self):
+        return str(vars(self))
 
 
-class StressTestRunnerState:
+class StressTestRunnerState(object):
     '''Per-runner state, e.g. if you spawn 3 senders each will have this as their state object,
     which will be coalesced at completion into StressTestResults'''
-    total_sent=0
-    total_received=0
+    def __init__(self):
+        self.total_sent=0
+        self.total_received=0
 
 
 class StressTestRunner:
+    '''Framework for running a service bus stress test.
+    Duration can be overriden via the --stress_test_duration flag from the command line'''
+
     def __init__(self,
                  senders,
                  receivers,
@@ -57,6 +66,11 @@ class StressTestRunner:
         # Because of pickle we need to create a state object and not just pass around ourselves.
         # If we ever require multiple runs of this one after another, just make Run() reset this.
         self._state = StressTestRunnerState()
+
+        self._duration_override = None
+        for arg in sys.argv:
+            if arg.startswith('--stress_test_duration_seconds='):
+                self._duration_override = timedelta(seconds=int(arg.split('=')[1]))
 
 
     # Plugin functions the caller can override to further tailor the test.
@@ -103,7 +117,7 @@ class StressTestRunner:
                 message = Message(self.PreProcessMessageBody("a" * self.message_size))
                 self.PreProcessMessage(message)
                 batch.add(message)
-            self.PreProcessBatch(batch)
+            self.PreProcessMessageBatch(batch)
             return batch
         else:
             message = Message(self.PreProcessMessageBody("a" * self.message_size))
@@ -147,7 +161,7 @@ class StressTestRunner:
 
     def Run(self):
         start_time = datetime.now()
-        end_time = start_time + self.duration
+        end_time = start_time + (self._duration_override or self.duration)
         sent_messages = 0
         received_messages = 0
         with concurrent.futures.ProcessPoolExecutor(max_workers=4) as proc_pool:
@@ -160,5 +174,6 @@ class StressTestRunner:
         result.total_sent = sum([r.total_sent for r in result.state_by_sender.values()])
         result.total_received = sum([r.total_received for r in result.state_by_receiver.values()])
         result.time_elapsed = end_time - start_time
+        print("Stress test completed.  Results:\n", result)
         return result
 
