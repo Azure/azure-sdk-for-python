@@ -31,7 +31,7 @@ from ._blob_client import BlobClient
 from ._models import ContainerPropertiesPaged, ContainerProperties, BlobProperties
 from ._serialize import get_api_version
 from ._deserialize import service_stats_deserialize, service_properties_deserialize
-
+from ._blob_service_client_base import BlobServiceClientBase
 if TYPE_CHECKING:
     from datetime import datetime
     from azure.core.pipeline.transport import HttpTransport
@@ -48,7 +48,7 @@ if TYPE_CHECKING:
     )
 
 
-class BlobServiceClient(StorageAccountHostsMixin):
+class BlobServiceClient(BlobServiceClientBase):
     """A client to interact with the Blob Service at the account level.
 
     This client provides operations to retrieve and configure the account properties
@@ -103,28 +103,6 @@ class BlobServiceClient(StorageAccountHostsMixin):
             :dedent: 8
             :caption: Creating the BlobServiceClient with Azure Identity credentials.
     """
-
-    def __init__(
-            self, account_url,  # type: str
-            credential=None,  # type: Optional[Any]
-            **kwargs  # type: Any
-        ):
-        # type: (...) -> None
-        try:
-            if not account_url.lower().startswith('http'):
-                account_url = "https://" + account_url
-        except AttributeError:
-            raise ValueError("Account URL must be a string.")
-        parsed_url = urlparse(account_url.rstrip('/'))
-        if not parsed_url.netloc:
-            raise ValueError("Invalid URL: {}".format(account_url))
-
-        _, sas_token = parse_query(parsed_url.query)
-        self._query_str, credential = self._format_query_string(sas_token, credential)
-        super(BlobServiceClient, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)
-        self._client = AzureBlobStorage(self.url, pipeline=self._pipeline)
-        self._client._config.version = get_api_version(kwargs, VERSION)  # pylint: disable=protected-access
-
     def _format_url(self, hostname):
         """Format the endpoint URL according to the current location
         mode hostname.

@@ -17,6 +17,7 @@ from azure.core.async_paging import AsyncItemPaged
 
 from .._shared.models import LocationMode
 from .._shared.policies_async import ExponentialRetry
+from .._shared.base_client import parse_connection_str
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper
 from .._shared.response_handlers import return_response_headers, process_storage_error
 from .._shared.parser import _to_utc_datetime
@@ -24,7 +25,7 @@ from .._shared.response_handlers import parse_to_internal_user_delegation_key
 from .._generated import VERSION
 from .._generated.aio import AzureBlobStorage
 from .._generated.models import StorageErrorException, StorageServiceProperties, KeyInfo
-from .._blob_service_client import BlobServiceClient as BlobServiceClientBase
+from .._blob_service_client_base import BlobServiceClientBase
 from ._container_client_async import ContainerClient
 from ._blob_client_async import BlobClient
 from .._models import ContainerProperties, BlobProperties
@@ -118,6 +119,39 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
         self._client = AzureBlobStorage(url=self.url, pipeline=self._pipeline)
         self._client._config.version = get_api_version(kwargs, VERSION)  # pylint: disable=protected-access
         self._loop = kwargs.get('loop', None)
+
+    @classmethod
+    def from_connection_string(
+            cls, conn_str,  # type: str
+            credential=None,  # type: Optional[Any]
+            **kwargs  # type: Any
+        ):  # type: (...) -> BlobServiceClient
+        """Create BlobServiceClient from a Connection String.
+
+        :param str conn_str:
+            A connection string to an Azure Storage account.
+        :param credential:
+            The credentials with which to authenticate. This is optional if the
+            account URL already has a SAS token, or the connection string already has shared
+            access key values. The value can be a SAS token string, an account shared access
+            key, or an instance of a TokenCredentials class from azure.identity.
+            Credentials provided here will take precedence over those in the connection string.
+        :returns: A Blob service client.
+        :rtype: ~azure.storage.blob.aio.BlobServiceClient
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/blob_samples_authentication.py
+                :start-after: [START auth_from_connection_string]
+                :end-before: [END auth_from_connection_string]
+                :language: python
+                :dedent: 8
+                :caption: Creating the BlobServiceClient from a connection string.
+        """
+        account_url, secondary, credential = parse_connection_str(conn_str, credential, 'blob')
+        if 'secondary_hostname' not in kwargs:
+            kwargs['secondary_hostname'] = secondary
+        return cls(account_url, credential=credential, **kwargs)
 
     @distributed_trace_async
     async def get_user_delegation_key(self, key_start_time,  # type: datetime
