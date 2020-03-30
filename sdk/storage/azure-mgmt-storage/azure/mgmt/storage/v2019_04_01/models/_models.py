@@ -64,13 +64,13 @@ class AccountSasParameters(msrest.serialization.Model):
         **kwargs
     ):
         super(AccountSasParameters, self).__init__(**kwargs)
-        self.services = kwargs.get('services', None)
-        self.resource_types = kwargs.get('resource_types', None)
-        self.permissions = kwargs.get('permissions', None)
+        self.services = kwargs['services']
+        self.resource_types = kwargs['resource_types']
+        self.permissions = kwargs['permissions']
         self.ip_address_or_range = kwargs.get('ip_address_or_range', None)
         self.protocols = kwargs.get('protocols', None)
         self.shared_access_start_time = kwargs.get('shared_access_start_time', None)
-        self.shared_access_expiry_time = kwargs.get('shared_access_expiry_time', None)
+        self.shared_access_expiry_time = kwargs['shared_access_expiry_time']
         self.key_to_sign = kwargs.get('key_to_sign', None)
 
 
@@ -117,12 +117,12 @@ class ActiveDirectoryProperties(msrest.serialization.Model):
         **kwargs
     ):
         super(ActiveDirectoryProperties, self).__init__(**kwargs)
-        self.domain_name = kwargs.get('domain_name', None)
-        self.net_bios_domain_name = kwargs.get('net_bios_domain_name', None)
-        self.forest_name = kwargs.get('forest_name', None)
-        self.domain_guid = kwargs.get('domain_guid', None)
-        self.domain_sid = kwargs.get('domain_sid', None)
-        self.azure_storage_sid = kwargs.get('azure_storage_sid', None)
+        self.domain_name = kwargs['domain_name']
+        self.net_bios_domain_name = kwargs['net_bios_domain_name']
+        self.forest_name = kwargs['forest_name']
+        self.domain_guid = kwargs['domain_guid']
+        self.domain_sid = kwargs['domain_sid']
+        self.azure_storage_sid = kwargs['azure_storage_sid']
 
 
 class Resource(msrest.serialization.Model):
@@ -229,7 +229,7 @@ class AzureFilesIdentityBasedAuthentication(msrest.serialization.Model):
         **kwargs
     ):
         super(AzureFilesIdentityBasedAuthentication, self).__init__(**kwargs)
-        self.directory_service_options = kwargs.get('directory_service_options', None)
+        self.directory_service_options = kwargs['directory_service_options']
         self.active_directory_properties = kwargs.get('active_directory_properties', None)
 
 
@@ -548,11 +548,11 @@ class CorsRule(msrest.serialization.Model):
         **kwargs
     ):
         super(CorsRule, self).__init__(**kwargs)
-        self.allowed_origins = kwargs.get('allowed_origins', None)
-        self.allowed_methods = kwargs.get('allowed_methods', None)
-        self.max_age_in_seconds = kwargs.get('max_age_in_seconds', None)
-        self.exposed_headers = kwargs.get('exposed_headers', None)
-        self.allowed_headers = kwargs.get('allowed_headers', None)
+        self.allowed_origins = kwargs['allowed_origins']
+        self.allowed_methods = kwargs['allowed_methods']
+        self.max_age_in_seconds = kwargs['max_age_in_seconds']
+        self.exposed_headers = kwargs['exposed_headers']
+        self.allowed_headers = kwargs['allowed_headers']
 
 
 class CorsRules(msrest.serialization.Model):
@@ -602,7 +602,7 @@ class CustomDomain(msrest.serialization.Model):
         **kwargs
     ):
         super(CustomDomain, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
+        self.name = kwargs['name']
         self.use_sub_domain_name = kwargs.get('use_sub_domain_name', None)
 
 
@@ -629,7 +629,7 @@ class DateAfterCreation(msrest.serialization.Model):
         **kwargs
     ):
         super(DateAfterCreation, self).__init__(**kwargs)
-        self.days_after_creation_greater_than = kwargs.get('days_after_creation_greater_than', None)
+        self.days_after_creation_greater_than = kwargs['days_after_creation_greater_than']
 
 
 class DateAfterModification(msrest.serialization.Model):
@@ -655,7 +655,7 @@ class DateAfterModification(msrest.serialization.Model):
         **kwargs
     ):
         super(DateAfterModification, self).__init__(**kwargs)
-        self.days_after_modification_greater_than = kwargs.get('days_after_modification_greater_than', None)
+        self.days_after_modification_greater_than = kwargs['days_after_modification_greater_than']
 
 
 class DeleteRetentionPolicy(msrest.serialization.Model):
@@ -1196,7 +1196,7 @@ class ImmutabilityPolicy(AzureEntityResource):
         **kwargs
     ):
         super(ImmutabilityPolicy, self).__init__(**kwargs)
-        self.immutability_period_since_creation_in_days = kwargs.get('immutability_period_since_creation_in_days', None)
+        self.immutability_period_since_creation_in_days = kwargs['immutability_period_since_creation_in_days']
         self.state = None
 
 
@@ -1272,7 +1272,7 @@ class IPRule(msrest.serialization.Model):
         **kwargs
     ):
         super(IPRule, self).__init__(**kwargs)
-        self.ip_address_or_range = kwargs.get('ip_address_or_range', None)
+        self.ip_address_or_range = kwargs['ip_address_or_range']
 
 
 class KeyVaultProperties(msrest.serialization.Model):
@@ -1340,7 +1340,7 @@ class LeaseContainerRequest(msrest.serialization.Model):
         **kwargs
     ):
         super(LeaseContainerRequest, self).__init__(**kwargs)
-        self.action = kwargs.get('action', None)
+        self.action = kwargs['action']
         self.lease_id = kwargs.get('lease_id', None)
         self.break_period = kwargs.get('break_period', None)
         self.lease_duration = kwargs.get('lease_duration', None)
@@ -1404,7 +1404,7 @@ class LegalHold(msrest.serialization.Model):
     ):
         super(LegalHold, self).__init__(**kwargs)
         self.has_legal_hold = None
-        self.tags = kwargs.get('tags', None)
+        self.tags = kwargs['tags']
 
 
 class LegalHoldProperties(msrest.serialization.Model):
@@ -1737,7 +1737,7 @@ class ManagementPolicyDefinition(msrest.serialization.Model):
         **kwargs
     ):
         super(ManagementPolicyDefinition, self).__init__(**kwargs)
-        self.actions = kwargs.get('actions', None)
+        self.actions = kwargs['actions']
         self.filters = kwargs.get('filters', None)
 
 
@@ -1767,7 +1767,7 @@ class ManagementPolicyFilter(msrest.serialization.Model):
     ):
         super(ManagementPolicyFilter, self).__init__(**kwargs)
         self.prefix_match = kwargs.get('prefix_match', None)
-        self.blob_types = kwargs.get('blob_types', None)
+        self.blob_types = kwargs['blob_types']
 
 
 class ManagementPolicyRule(msrest.serialization.Model):
@@ -1809,8 +1809,8 @@ class ManagementPolicyRule(msrest.serialization.Model):
     ):
         super(ManagementPolicyRule, self).__init__(**kwargs)
         self.enabled = kwargs.get('enabled', None)
-        self.name = kwargs.get('name', None)
-        self.definition = kwargs.get('definition', None)
+        self.name = kwargs['name']
+        self.definition = kwargs['definition']
 
 
 class ManagementPolicySchema(msrest.serialization.Model):
@@ -1836,7 +1836,7 @@ class ManagementPolicySchema(msrest.serialization.Model):
         **kwargs
     ):
         super(ManagementPolicySchema, self).__init__(**kwargs)
-        self.rules = kwargs.get('rules', None)
+        self.rules = kwargs['rules']
 
 
 class ManagementPolicySnapShot(msrest.serialization.Model):
@@ -2150,7 +2150,7 @@ class ServiceSasParameters(msrest.serialization.Model):
         **kwargs
     ):
         super(ServiceSasParameters, self).__init__(**kwargs)
-        self.canonicalized_resource = kwargs.get('canonicalized_resource', None)
+        self.canonicalized_resource = kwargs['canonicalized_resource']
         self.resource = kwargs.get('resource', None)
         self.permissions = kwargs.get('permissions', None)
         self.ip_address_or_range = kwargs.get('ip_address_or_range', None)
@@ -2244,7 +2244,7 @@ class Sku(msrest.serialization.Model):
         **kwargs
     ):
         super(Sku, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
+        self.name = kwargs['name']
         self.tier = None
         self.resource_type = None
         self.kind = None
@@ -2326,7 +2326,7 @@ class TrackedResource(Resource):
     ):
         super(TrackedResource, self).__init__(**kwargs)
         self.tags = kwargs.get('tags', None)
-        self.location = kwargs.get('location', None)
+        self.location = kwargs['location']
 
 
 class StorageAccount(TrackedResource):
@@ -2528,7 +2528,7 @@ class StorageAccountCheckNameAvailabilityParameters(msrest.serialization.Model):
         **kwargs
     ):
         super(StorageAccountCheckNameAvailabilityParameters, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
+        self.name = kwargs['name']
 
 
 class StorageAccountCreateParameters(msrest.serialization.Model):
@@ -2607,9 +2607,9 @@ class StorageAccountCreateParameters(msrest.serialization.Model):
         **kwargs
     ):
         super(StorageAccountCreateParameters, self).__init__(**kwargs)
-        self.sku = kwargs.get('sku', None)
-        self.kind = kwargs.get('kind', None)
-        self.location = kwargs.get('location', None)
+        self.sku = kwargs['sku']
+        self.kind = kwargs['kind']
+        self.location = kwargs['location']
         self.tags = kwargs.get('tags', None)
         self.identity = kwargs.get('identity', None)
         self.custom_domain = kwargs.get('custom_domain', None)
@@ -2738,7 +2738,7 @@ class StorageAccountRegenerateKeyParameters(msrest.serialization.Model):
         **kwargs
     ):
         super(StorageAccountRegenerateKeyParameters, self).__init__(**kwargs)
-        self.key_name = kwargs.get('key_name', None)
+        self.key_name = kwargs['key_name']
 
 
 class StorageAccountUpdateParameters(msrest.serialization.Model):
@@ -3063,5 +3063,5 @@ class VirtualNetworkRule(msrest.serialization.Model):
         **kwargs
     ):
         super(VirtualNetworkRule, self).__init__(**kwargs)
-        self.virtual_network_resource_id = kwargs.get('virtual_network_resource_id', None)
+        self.virtual_network_resource_id = kwargs['virtual_network_resource_id']
         self.state = kwargs.get('state', None)

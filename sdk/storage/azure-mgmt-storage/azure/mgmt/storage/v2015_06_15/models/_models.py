@@ -66,7 +66,7 @@ class CustomDomain(msrest.serialization.Model):
         **kwargs
     ):
         super(CustomDomain, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
+        self.name = kwargs['name']
         self.use_sub_domain_name = kwargs.get('use_sub_domain_name', None)
 
 
@@ -264,7 +264,7 @@ class StorageAccountCheckNameAvailabilityParameters(msrest.serialization.Model):
         **kwargs
     ):
         super(StorageAccountCheckNameAvailabilityParameters, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
+        self.name = kwargs['name']
         self.type = kwargs.get('type', "Microsoft.Storage/storageAccounts")
 
 
@@ -304,7 +304,7 @@ class StorageAccountCreateParameters(msrest.serialization.Model):
         **kwargs
     ):
         super(StorageAccountCreateParameters, self).__init__(**kwargs)
-        self.location = kwargs.get('location', None)
+        self.location = kwargs['location']
         self.tags = kwargs.get('tags', None)
         self.account_type = kwargs.get('account_type', None)
 
@@ -373,7 +373,7 @@ class StorageAccountRegenerateKeyParameters(msrest.serialization.Model):
         **kwargs
     ):
         super(StorageAccountRegenerateKeyParameters, self).__init__(**kwargs)
-        self.key_name = kwargs.get('key_name', None)
+        self.key_name = kwargs['key_name']
 
 
 class StorageAccountUpdateParameters(msrest.serialization.Model):
@@ -445,10 +445,10 @@ class Usage(msrest.serialization.Model):
         **kwargs
     ):
         super(Usage, self).__init__(**kwargs)
-        self.unit = kwargs.get('unit', None)
-        self.current_value = kwargs.get('current_value', None)
-        self.limit = kwargs.get('limit', None)
-        self.name = kwargs.get('name', None)
+        self.unit = kwargs['unit']
+        self.current_value = kwargs['current_value']
+        self.limit = kwargs['limit']
+        self.name = kwargs['name']
 
 
 class UsageListResult(msrest.serialization.Model):

@@ -64,13 +64,13 @@ class AccountSasParameters(msrest.serialization.Model):
         **kwargs
     ):
         super(AccountSasParameters, self).__init__(**kwargs)
-        self.services = kwargs.get('services', None)
-        self.resource_types = kwargs.get('resource_types', None)
-        self.permissions = kwargs.get('permissions', None)
+        self.services = kwargs['services']
+        self.resource_types = kwargs['resource_types']
+        self.permissions = kwargs['permissions']
         self.ip_address_or_range = kwargs.get('ip_address_or_range', None)
         self.protocols = kwargs.get('protocols', None)
         self.shared_access_start_time = kwargs.get('shared_access_start_time', None)
-        self.shared_access_expiry_time = kwargs.get('shared_access_expiry_time', None)
+        self.shared_access_expiry_time = kwargs['shared_access_expiry_time']
         self.key_to_sign = kwargs.get('key_to_sign', None)
 
 
@@ -140,7 +140,7 @@ class CustomDomain(msrest.serialization.Model):
         **kwargs
     ):
         super(CustomDomain, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
+        self.name = kwargs['name']
         self.use_sub_domain_name = kwargs.get('use_sub_domain_name', None)
 
 
@@ -464,8 +464,8 @@ class ServiceSasParameters(msrest.serialization.Model):
         **kwargs
     ):
         super(ServiceSasParameters, self).__init__(**kwargs)
-        self.canonicalized_resource = kwargs.get('canonicalized_resource', None)
-        self.resource = kwargs.get('resource', None)
+        self.canonicalized_resource = kwargs['canonicalized_resource']
+        self.resource = kwargs['resource']
         self.permissions = kwargs.get('permissions', None)
         self.ip_address_or_range = kwargs.get('ip_address_or_range', None)
         self.protocols = kwargs.get('protocols', None)
@@ -515,7 +515,7 @@ class Sku(msrest.serialization.Model):
         **kwargs
     ):
         super(Sku, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
+        self.name = kwargs['name']
         self.tier = None
 
 
@@ -676,7 +676,7 @@ class StorageAccountCheckNameAvailabilityParameters(msrest.serialization.Model):
         **kwargs
     ):
         super(StorageAccountCheckNameAvailabilityParameters, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
+        self.name = kwargs['name']
 
 
 class StorageAccountCreateParameters(msrest.serialization.Model):
@@ -735,9 +735,9 @@ class StorageAccountCreateParameters(msrest.serialization.Model):
         **kwargs
     ):
         super(StorageAccountCreateParameters, self).__init__(**kwargs)
-        self.sku = kwargs.get('sku', None)
-        self.kind = kwargs.get('kind', None)
-        self.location = kwargs.get('location', None)
+        self.sku = kwargs['sku']
+        self.kind = kwargs['kind']
+        self.location = kwargs['location']
         self.tags = kwargs.get('tags', None)
         self.custom_domain = kwargs.get('custom_domain', None)
         self.encryption = kwargs.get('encryption', None)
@@ -854,7 +854,7 @@ class StorageAccountRegenerateKeyParameters(msrest.serialization.Model):
         **kwargs
     ):
         super(StorageAccountRegenerateKeyParameters, self).__init__(**kwargs)
-        self.key_name = kwargs.get('key_name', None)
+        self.key_name = kwargs['key_name']
 
 
 class StorageAccountUpdateParameters(msrest.serialization.Model):
