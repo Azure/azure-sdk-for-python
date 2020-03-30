@@ -416,7 +416,7 @@ class EventHubConsumerClient(ClientBase):
                 :end-before: [END eventhub_consumer_client_receive_batch_sync]
                 :language: python
                 :dedent: 4
-                :caption: Receive events from the EventHub.
+                :caption: Receive events in batches from the EventHub.
         """
         self._receive(on_event_batch, batch=True, **kwargs)
 

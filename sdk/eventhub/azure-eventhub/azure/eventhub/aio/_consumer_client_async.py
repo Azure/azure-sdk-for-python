@@ -535,7 +535,7 @@ class EventHubConsumerClient(ClientBaseAsync):
                 :end-before: [END eventhub_consumer_client_receive_batch_async]
                 :language: python
                 :dedent: 4
-                :caption: Receive events from the EventHub.
+                :caption: Receive events in batches from the EventHub.
         """
         if max_batch_size is None or max_batch_size <= 0:
             raise ValueError("max_batch_size must be larger than 0")
