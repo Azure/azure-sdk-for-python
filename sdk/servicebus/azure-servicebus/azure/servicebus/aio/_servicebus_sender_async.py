@@ -191,7 +191,7 @@ class ServiceBusSender(BaseHandlerAsync, SenderMixin):
     def from_connection_string(
         cls,
         conn_str: str,
-        **kwargs: Any,
+        **kwargs: Any
     ) -> "ServiceBusSender":
         """Create a ServiceBusSender from a connection string.
 

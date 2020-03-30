@@ -328,7 +328,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
     def from_connection_string(
         cls,
         conn_str: str,
-        **kwargs: Any,
+        **kwargs: Any
     ) -> "ServiceBusReceiver":
         """Create a ServiceBusReceiver from a connection string.
 
