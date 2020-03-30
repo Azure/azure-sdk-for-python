@@ -40,15 +40,6 @@ class BatchTest(AzureMgmtTestCase):
         else:
             return 'https://' + batch.account_endpoint
 
-    def create_basic_client(self, client_class, **kwargs):
-        client = client_class(
-            credentials=kwargs.pop('credentials', None),
-            **kwargs
-        )
-        if self.is_playback():
-            client.config.long_running_operation_timeout = 0
-        return client
-
     def create_aad_client(self, batch_account, **kwargs):
         credentials = self.settings.get_credentials(resource=BATCH_RESOURCE)
         client = self.create_basic_client(
@@ -59,8 +50,7 @@ class BatchTest(AzureMgmtTestCase):
         return client
 
     def create_sharedkey_client(self, batch_account, credentials, **kwargs):
-        client = self.create_basic_client(
-            azure.batch.BatchServiceClient,
+        client = azure.batch.BatchServiceClient(
             credentials=credentials,
             batch_url=self._batch_url(batch_account)
         )
@@ -204,6 +194,7 @@ class BatchTest(AzureMgmtTestCase):
         self.assertEqual(counts[0].low_priority.total, 0)
 
         # Test Create Pool with Network Configuration
+        #TODO Public IP tests
         network_config = models.NetworkConfiguration(subnet_id='/subscriptions/00000000-0000-0000-0000-000000000000'
                                                      '/resourceGroups/test'
                                                      '/providers/Microsoft.Network'
@@ -223,7 +214,6 @@ class BatchTest(AzureMgmtTestCase):
         )
         self.assertBatchError('InvalidPropertyValue', client.pool.add, test_network_pool, models.PoolAddOptions(timeout=45))
 
-        # Test Create Pool with Custom Image
         test_image_pool = models.PoolAddParameter(
             id=self.get_resource_name('batch_image_'),
             vm_size='Standard_A1',
@@ -232,7 +222,9 @@ class BatchTest(AzureMgmtTestCase):
                     virtual_machine_image_id="/subscriptions/00000000-0000-0000-0000-000000000000"
                                              "/resourceGroups/test"
                                              "/providers/Microsoft.Compute"
+                                             "/gallery/FakeGallery"
                                              "/images/FakeImage"
+                                             "/versions/version"
                 ),
                 node_agent_sku_id='batch.node.ubuntu 16.04'
             )
@@ -277,6 +269,27 @@ class BatchTest(AzureMgmtTestCase):
         self.assertIsNone(response)
         app_pool = client.pool.get(test_app_pool.id)
         self.assertEqual(app_pool.application_licenses[0], "maya")
+
+        # Test Create Pool with Azure Disk Encryption
+        test_ade_pool = models.PoolAddParameter(
+            id=self.get_resource_name('batch_ade_'),
+            vm_size='Standard_A1',
+            virtual_machine_configuration=models.VirtualMachineConfiguration(
+                image_reference=models.ImageReference(
+                    publisher='Canonical',
+                    offer='UbuntuServer',
+                    sku='16.04-LTS'
+                ),
+                disk_encryption_configuration=models.DiskEncryptionConfiguration(
+                    targets=[models.DiskEncryptionTarget.temporary_disk]
+                ),
+                node_agent_sku_id='batch.node.ubuntu 16.04')
+        )
+        response = client.pool.add(test_ade_pool)
+        self.assertIsNone(response)
+        ade_pool = client.pool.get(test_ade_pool.id)
+        self.assertEqual(ade_pool.virtual_machine_configuration.disk_encryption_configuration.targets,
+                         [models.DiskEncryptionTarget.temporary_disk])
 
         # Test List Pools without Filters
         pools = list(client.pool.list())

@@ -53,7 +53,7 @@ setup(
     author_email='azpysdkhelp@microsoft.com',
     url='https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub-checkpointstoreblob',
     classifiers=[
-        'Development Status :: 5 - Production/Stable',
+        "Development Status :: 5 - Production/Stable",
         'Programming Language :: Python',
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
@@ -67,10 +67,18 @@ setup(
     zip_safe=False,
     packages=find_packages(exclude=exclude_packages),
     install_requires=[
-        'azure-storage-blob<13.0.0,>=12.0.0',
+        # dependencies for the vendored storage blob
+        "azure-core<2.0.0,>=1.2.2",
+        "msrest>=0.6.10",
+        "cryptography>=2.1.4",
+        # end of dependencies for the vendored storage blob
         'azure-eventhub<6.0.0,>=5.0.0',
     ],
     extras_require={
-
-    }
+        # dependencies for the vendored storage blob
+        ":python_version<'3.0'": ['futures'],
+        ":python_version<'3.4'": ['enum34>=1.0.4'],
+        ":python_version<'3.5'": ["typing"]
+        # end of dependencies for the vendored storage blob
+    },
 )

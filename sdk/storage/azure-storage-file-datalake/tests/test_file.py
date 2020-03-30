@@ -34,7 +34,7 @@ class FileTest(StorageTestCase):
     def setUp(self):
         super(FileTest, self).setUp()
         url = self._get_account_url()
-        self.dsc = DataLakeServiceClient(url, credential=self.settings.STORAGE_DATA_LAKE_ACCOUNT_KEY)
+        self.dsc = DataLakeServiceClient(url, credential=self.settings.STORAGE_DATA_LAKE_ACCOUNT_KEY, logging_enable=True)
         self.config = self.dsc._config
 
         self.file_system_name = self.get_resource_name('filesystem')
@@ -222,6 +222,75 @@ class FileTest(StorageTestCase):
             # flush is unsuccessful because extra data were appended.
             file_client.flush_data(6, etag=resp['etag'], match_condition=MatchConditions.IfNotModified)
 
+    def test_upload_data_to_none_existing_file(self):
+        # parallel upload cannot be recorded
+        if TestMode.need_recording_file(self.test_mode):
+            return
+
+        directory_name = self._get_directory_reference()
+
+        # Create a directory to put the file under that
+        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        directory_client.create_directory()
+
+        file_client = directory_client.get_file_client('filename')
+        data = self.get_random_bytes(200*1024)
+        file_client.upload_data(data, overwrite=True, max_concurrency=3)
+
+        downloaded_data = file_client.download_file().readall()
+        self.assertEqual(data, downloaded_data)
+
+    @record
+    def test_upload_data_to_existing_file(self):
+        directory_name = self._get_directory_reference()
+
+        # Create a directory to put the file under that
+        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        directory_client.create_directory()
+
+        # create an existing file
+        file_client = directory_client.get_file_client('filename')
+        file_client.create_file()
+        file_client.append_data(b"abc", 0)
+        file_client.flush_data(3)
+
+        # to override the existing file
+        data = self.get_random_bytes(100)
+        with self.assertRaises(HttpResponseError):
+            file_client.upload_data(data, max_concurrency=5)
+        file_client.upload_data(data, overwrite=True, max_concurrency=5)
+
+        downloaded_data = file_client.download_file().readall()
+        self.assertEqual(data, downloaded_data)
+
+    @record
+    def test_upload_data_to_existing_file_with_content_settings(self):
+        directory_name = self._get_directory_reference()
+
+        # Create a directory to put the file under that
+        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        directory_client.create_directory()
+
+        # create an existing file
+        file_client = directory_client.get_file_client('filename')
+        etag = file_client.create_file()['etag']
+
+        # to override the existing file
+        data = self.get_random_bytes(100)
+        content_settings = ContentSettings(
+            content_language='spanish',
+            content_disposition='inline')
+
+        file_client.upload_data(data, max_concurrency=5,
+                                content_settings=content_settings, etag=etag,
+                                match_condition=MatchConditions.IfNotModified)
+
+        downloaded_data = file_client.download_file().readall()
+        properties = file_client.get_file_properties()
+
+        self.assertEqual(data, downloaded_data)
+        self.assertEqual(properties.content_settings.content_language, content_settings.content_language)
+
     @record
     def test_read_file(self):
         file_client = self._create_file_and_return_client()
@@ -232,7 +301,7 @@ class FileTest(StorageTestCase):
         file_client.flush_data(len(data))
 
         # doanload the data and make sure it is the same as uploaded data
-        downloaded_data = file_client.read_file()
+        downloaded_data = file_client.download_file().readall()
         self.assertEqual(data, downloaded_data)
 
     @record
@@ -258,7 +327,7 @@ class FileTest(StorageTestCase):
                                       file_client.file_system_name,
                                       None,
                                       file_client.path_name,
-                                      user_delegation_key=user_delegation_key,
+                                      user_delegation_key,
                                       permission=FileSasPermissions(read=True, create=True, write=True, delete=True),
                                       expiry=datetime.utcnow() + timedelta(hours=1),
                                       )
@@ -268,7 +337,7 @@ class FileTest(StorageTestCase):
                                              file_client.file_system_name,
                                              file_client.path_name,
                                              credential=sas_token)
-        downloaded_data = new_file_client.read_file()
+        downloaded_data = new_file_client.download_file().readall()
         self.assertEqual(data, downloaded_data)
 
     @record
@@ -282,10 +351,10 @@ class FileTest(StorageTestCase):
 
         # doanload the data into a file and make sure it is the same as uploaded data
         with open(FILE_PATH, 'wb') as stream:
-            bytes_read = file_client.read_file(stream=stream, max_concurrency=2)
+            download = file_client.download_file(max_concurrency=2)
+            download.readinto(stream)
 
         # Assert
-        self.assertIsInstance(bytes_read, int)
         with open(FILE_PATH, 'rb') as stream:
             actual = stream.read()
             self.assertEqual(data, actual)
@@ -300,7 +369,7 @@ class FileTest(StorageTestCase):
         file_client.flush_data(len(data))
 
         # doanload the text data and make sure it is the same as uploaded data
-        downloaded_data = file_client.read_file(max_concurrency=2, encoding="utf-8")
+        downloaded_data = file_client.download_file(max_concurrency=2, encoding="utf-8").readall()
 
         # Assert
         self.assertEqual(data, downloaded_data)
@@ -352,7 +421,7 @@ class FileTest(StorageTestCase):
             self.file_system_name,
             directory_name,
             file_name,
-            account_key=self.dsc.credential.account_key,
+            self.dsc.credential.account_key,
             permission=FileSasPermissions(read=True, write=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
@@ -470,7 +539,7 @@ class FileTest(StorageTestCase):
         file_client.flush_data(3)
         new_client = file_client.rename_file(file_client.file_system_name+'/'+'newname')
 
-        data = new_client.read_file()
+        data = new_client.download_file().readall()
         self.assertEqual(data, data_bytes)
         self.assertEqual(new_client.path_name, "newname")
 
@@ -490,7 +559,7 @@ class FileTest(StorageTestCase):
         new_client = file_client.rename_file(file_client.file_system_name+'/'+existing_file_client.path_name)
         new_url = file_client.url
 
-        data = new_client.read_file()
+        data = new_client.download_file().readall()
         # the existing file was overridden
         self.assertEqual(data, data_bytes)
 
@@ -516,17 +585,17 @@ class FileTest(StorageTestCase):
 
         new_client = f3.rename_file(f1.file_system_name+'/'+f1.path_name)
 
-        self.assertEqual(new_client.read_file(), b"file3")
+        self.assertEqual(new_client.download_file().readall(), b"file3")
 
         # make sure the data in file2 and file4 weren't touched
-        f2_data = f2.read_file()
+        f2_data = f2.download_file().readall()
         self.assertEqual(f2_data, b"file2")
 
-        f4_data = f4.read_file()
+        f4_data = f4.download_file().readall()
         self.assertEqual(f4_data, b"file4")
 
         with self.assertRaises(HttpResponseError):
-            f3.read_file()
+            f3.download_file().readall()
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':

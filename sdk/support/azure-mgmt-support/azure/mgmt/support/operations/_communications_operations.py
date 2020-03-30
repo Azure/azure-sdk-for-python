@@ -26,7 +26,7 @@ class CommunicationsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Api version. Constant value: "2019-05-01-preview".
+    :ivar api_version: Api version. Constant value: "2020-04-01".
     """
 
     models = models
@@ -36,7 +36,7 @@ class CommunicationsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-05-01-preview"
+        self.api_version = "2020-04-01"
 
         self.config = config
 
@@ -114,13 +114,12 @@ class CommunicationsOperations(object):
             self, support_ticket_name, top=None, filter=None, custom_headers=None, raw=False, **operation_config):
         """Lists all communications (attachments not included) for a support
         ticket. <br/></br> You can also filter support ticket communications by
-        <i>CreatedDate</i>�or <i>CommunicationType</i> using the $filter
-        parameter. The only type of communication supported today is
-        <i>Web</i>. Output will be a paged result with <i>nextLink</i>, using
-        which you can retrieve the next set of Communication results.
-        <br/><br/> Support ticket data is available for 12 months after ticket
-        creation. If a ticket was created more than 12 months ago, a request
-        for data might cause an error.
+        _CreatedDate_ or _CommunicationType_ using the $filter parameter. The
+        only type of communication supported today is _Web_. Output will be a
+        paged result with _nextLink_, using which you can retrieve the next set
+        of Communication results. <br/><br/>Support ticket data is available
+        for 12 months after ticket creation. If a ticket was created more than
+        12 months ago, a request for data might cause an error.
 
         :param support_ticket_name: Support ticket name
         :type support_ticket_name: str
@@ -202,7 +201,7 @@ class CommunicationsOperations(object):
 
     def get(
             self, support_ticket_name, communication_name, custom_headers=None, raw=False, **operation_config):
-        """Returns details of a specific communication in a support ticket.
+        """Returns communication details for a support ticket.
 
         :param support_ticket_name: Support ticket name
         :type support_ticket_name: str
@@ -310,12 +309,7 @@ class CommunicationsOperations(object):
 
     def create(
             self, support_ticket_name, communication_name, create_communication_parameters, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Adds a new customer communication to an Azure support ticket. Adding
-        attachments are not currently supported via the API. <br/>To add a file
-        to a support ticket, visit the <a target='_blank'
-        href='https://portal.azure.com/#blade/Microsoft_Azure_Support/HelpAndSupportBlade/managesupportrequest'>Manage
-        support ticket</a> page in the Azure portal, select the support ticket,
-        and use the file upload control to add a new file.
+        """Adds a new customer communication to an Azure support ticket.
 
         :param support_ticket_name: Support ticket name
         :type support_ticket_name: str

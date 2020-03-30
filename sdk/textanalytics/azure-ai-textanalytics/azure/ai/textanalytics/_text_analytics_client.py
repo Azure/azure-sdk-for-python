@@ -23,8 +23,7 @@ from ._response_handlers import (
     linked_entities_result,
     key_phrases_result,
     sentiment_result,
-    language_result,
-    pii_entities_result
+    language_result
 )
 
 if TYPE_CHECKING:
@@ -38,7 +37,6 @@ if TYPE_CHECKING:
         RecognizeLinkedEntitiesResult,
         ExtractKeyPhrasesResult,
         AnalyzeSentimentResult,
-        RecognizePiiEntitiesResult,
         DocumentError,
     )
 
@@ -58,9 +56,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     :param credential: Credentials needed for the client to connect to Azure.
         This can be the an instance of TextAnalyticsApiKeyCredential if using a
         cognitive services/text analytics API key or a token credential
-        from azure.identity.
-    :type credential: ~azure.ai.textanalytics.TextAnalyticsApiKeyCredential or
-        ~azure.core.credentials.TokenCredential
+        from :mod:`azure.identity`.
+    :type credential: :class:`~azure.ai.textanalytics.TextAnalyticsApiKeyCredential` or
+        :class:`~azure.core.credentials.TokenCredential`
     :keyword str default_country_hint: Sets the default country_hint to use for all operations.
         Defaults to "US". If you don't want to use a country hint, pass the string "none".
     :keyword str default_language: Sets the default language to use for all operations.
@@ -95,7 +93,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     @distributed_trace
     def detect_language(  # type: ignore
         self,
-        inputs,  # type: Union[List[str], List[DetectLanguageInput], List[Dict[str, str]]]
+        documents,  # type: Union[List[str], List[DetectLanguageInput], List[Dict[str, str]]]
         **kwargs  # type: Any
     ):
         # type: (...) -> List[Union[DetectLanguageResult, DocumentError]]
@@ -108,11 +106,12 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         See https://docs.microsoft.com/azure/cognitive-services/text-analytics/overview#data-limits
         for document length limits, maximum batch size, and supported text encoding.
 
-        :param inputs: The set of documents to process as part of this batch.
+        :param documents: The set of documents to process as part of this batch.
             If you wish to specify the ID and country_hint on a per-item basis you must
-            use as input a list[DetectLanguageInput] or a list of dict representations of
-            DetectLanguageInput, like `{"id": "1", "country_hint": "us", "text": "hello world"}`.
-        :type inputs:
+            use as input a list[:class:`~azure.ai.textanalytics.DetectLanguageInput`] or a list of
+            dict representations of :class:`~azure.ai.textanalytics.DetectLanguageInput`, like
+            `{"id": "1", "country_hint": "us", "text": "hello world"}`.
+        :type documents:
             list[str] or list[~azure.ai.textanalytics.DetectLanguageInput]
         :keyword str country_hint: A country hint for the entire batch. Accepts two
             letter country codes specified by ISO 3166-1 alpha-2. Per-document
@@ -123,8 +122,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             is not specified, the API will default to the latest, non-preview version.
         :keyword bool show_stats: If set to true, response will contain document
             level statistics.
-        :return: The combined list of DetectLanguageResults and DocumentErrors in the order
-            the original documents were passed in.
+        :return: The combined list of :class:`~azure.ai.textanalytics.DetectLanguageResult` and
+            :class:`~azure.ai.textanalytics.DocumentError` in the order the original documents were
+            passed in.
         :rtype: list[~azure.ai.textanalytics.DetectLanguageResult,
             ~azure.ai.textanalytics.DocumentError]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -140,7 +140,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         """
         country_hint_arg = kwargs.pop("country_hint", None)
         country_hint = country_hint_arg if country_hint_arg is not None else self._default_country_hint
-        docs = _validate_batch_input(inputs, "country_hint", country_hint)
+        docs = _validate_batch_input(documents, "country_hint", country_hint)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
         try:
@@ -157,7 +157,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     @distributed_trace
     def recognize_entities(  # type: ignore
         self,
-        inputs,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
+        documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
         **kwargs  # type: Any
     ):
         # type: (...) -> List[Union[RecognizeEntitiesResult, DocumentError]]
@@ -170,11 +170,12 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         See https://docs.microsoft.com/azure/cognitive-services/text-analytics/overview#data-limits
         for document length limits, maximum batch size, and supported text encoding.
 
-        :param inputs: The set of documents to process as part of this batch.
+        :param documents: The set of documents to process as part of this batch.
             If you wish to specify the ID and language on a per-item basis you must
-            use as input a list[TextDocumentInput] or a list of dict representations of
-            TextDocumentInput, like `{"id": "1", "language": "en", "text": "hello world"}`.
-        :type inputs:
+            use as input a list[:class:`~azure.ai.textanalytics.TextDocumentInput`] or a list
+            of dict representations of :class:`~azure.ai.textanalytics.TextDocumentInput`,
+            like `{"id": "1", "language": "en", "text": "hello world"}`.
+        :type documents:
             list[str] or list[~azure.ai.textanalytics.TextDocumentInput]
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
@@ -185,8 +186,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
         :keyword bool show_stats: If set to true, response will contain document level statistics.
-        :return: The combined list of RecognizeEntitiesResults and DocumentErrors in the order
-            the original documents were passed in.
+        :return: The combined list of :class:`~azure.ai.textanalytics.RecognizeEntitiesResult` and
+            :class:`~azure.ai.textanalytics.DocumentError` in the order the original documents
+            were passed in.
         :rtype: list[~azure.ai.textanalytics.RecognizeEntitiesResult,
             ~azure.ai.textanalytics.DocumentError]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -202,7 +204,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         """
         language_arg = kwargs.pop("language", None)
         language = language_arg if language_arg is not None else self._default_language
-        docs = _validate_batch_input(inputs, "language", language)
+        docs = _validate_batch_input(documents, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
         try:
@@ -217,71 +219,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             process_batch_error(error)
 
     @distributed_trace
-    def recognize_pii_entities(  # type: ignore
-        self,
-        inputs,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> List[Union[RecognizePiiEntitiesResult, DocumentError]]
-        """Recognize entities containing personal information for a batch of documents.
-
-        Returns a list of personal information entities ("SSN",
-        "Bank Account", etc) in the document.  For the list of supported entity types,
-        check https://aka.ms/tanerpii.
-
-        See https://docs.microsoft.com/azure/cognitive-services/text-analytics/overview#data-limits
-        for document length limits, maximum batch size, and supported text encoding.
-
-        :param inputs: The set of documents to process as part of this batch.
-            If you wish to specify the ID and language on a per-item basis you must
-            use as input a list[TextDocumentInput] or a list of dict representations of
-            TextDocumentInput, like `{"id": "1", "language": "en", "text": "hello world"}`.
-        :type inputs:
-            list[str] or list[~azure.ai.textanalytics.TextDocumentInput]
-        :keyword str language: The 2 letter ISO 639-1 representation of language for the
-            entire batch. For example, use "en" for English; "es" for Spanish etc.
-            If not set, uses "en" for English as default. Per-document language will
-            take precedence over whole batch language. See https://aka.ms/talangs for
-            supported languages in Text Analytics API.
-        :keyword str model_version: This value indicates which model will
-            be used for scoring, e.g. "latest", "2019-10-01". If a model-version
-            is not specified, the API will default to the latest, non-preview version.
-        :keyword bool show_stats: If set to true, response will contain document level statistics.
-        :return: The combined list of RecognizePiiEntitiesResults and DocumentErrors in the order
-            the original documents were passed in.
-        :rtype: list[~azure.ai.textanalytics.RecognizePiiEntitiesResult,
-            ~azure.ai.textanalytics.DocumentError]
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/sample_recognize_pii_entities.py
-                :start-after: [START batch_recognize_pii_entities]
-                :end-before: [END batch_recognize_pii_entities]
-                :language: python
-                :dedent: 8
-                :caption: Recognize personally identifiable information entities in a batch of documents.
-        """
-        language_arg = kwargs.pop("language", None)
-        language = language_arg if language_arg is not None else self._default_language
-        docs = _validate_batch_input(inputs, "language", language)
-        model_version = kwargs.pop("model_version", None)
-        show_stats = kwargs.pop("show_stats", False)
-        try:
-            return self._client.entities_recognition_pii(
-                documents=docs,
-                model_version=model_version,
-                show_stats=show_stats,
-                cls=pii_entities_result,
-                **kwargs
-            )
-        except TextAnalyticsErrorException as error:
-            process_batch_error(error)
-
-    @distributed_trace
     def recognize_linked_entities(  # type: ignore
         self,
-        inputs,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
+        documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
         **kwargs  # type: Any
     ):
         # type: (...) -> List[Union[RecognizeLinkedEntitiesResult, DocumentError]]
@@ -295,11 +235,12 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         See https://docs.microsoft.com/azure/cognitive-services/text-analytics/overview#data-limits
         for document length limits, maximum batch size, and supported text encoding.
 
-        :param inputs: The set of documents to process as part of this batch.
+        :param documents: The set of documents to process as part of this batch.
             If you wish to specify the ID and language on a per-item basis you must
-            use as input a list[TextDocumentInput] or a list of dict representations of
-            TextDocumentInput, like `{"id": "1", "language": "en", "text": "hello world"}`.
-        :type inputs:
+            use as input a list[:class:`~azure.ai.textanalytics.TextDocumentInput`] or a list of
+            dict representations of :class:`~azure.ai.textanalytics.TextDocumentInput`, like
+            `{"id": "1", "language": "en", "text": "hello world"}`.
+        :type documents:
             list[str] or list[~azure.ai.textanalytics.TextDocumentInput]
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
@@ -310,8 +251,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
         :keyword bool show_stats: If set to true, response will contain document level statistics.
-        :return: The combined list of RecognizeLinkedEntitiesResults and DocumentErrors in the order
-            the original documents were passed in.
+        :return: The combined list of :class:`~azure.ai.textanalytics.RecognizeLinkedEntitiesResult`
+            and :class:`~azure.ai.textanalytics.DocumentError` in the order the original documents
+            were passed in.
         :rtype: list[~azure.ai.textanalytics.RecognizeLinkedEntitiesResult,
             ~azure.ai.textanalytics.DocumentError]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -327,7 +269,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         """
         language_arg = kwargs.pop("language", None)
         language = language_arg if language_arg is not None else self._default_language
-        docs = _validate_batch_input(inputs, "language", language)
+        docs = _validate_batch_input(documents, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
         try:
@@ -344,7 +286,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     @distributed_trace
     def extract_key_phrases(  # type: ignore
         self,
-        inputs,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
+        documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
         **kwargs  # type: Any
     ):
         # type: (...) -> List[Union[ExtractKeyPhrasesResult, DocumentError]]
@@ -358,11 +300,12 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         See https://docs.microsoft.com/azure/cognitive-services/text-analytics/overview#data-limits
         for document length limits, maximum batch size, and supported text encoding.
 
-        :param inputs: The set of documents to process as part of this batch.
+        :param documents: The set of documents to process as part of this batch.
             If you wish to specify the ID and language on a per-item basis you must
-            use as input a list[TextDocumentInput] or a list of dict representations of
-            TextDocumentInput, like `{"id": "1", "language": "en", "text": "hello world"}`.
-        :type inputs:
+            use as input a list[:class:`~azure.ai.textanalytics.TextDocumentInput`] or a list of
+            dict representations of :class:`~azure.ai.textanalytics.TextDocumentInput`, like
+            `{"id": "1", "language": "en", "text": "hello world"}`.
+        :type documents:
             list[str] or list[~azure.ai.textanalytics.TextDocumentInput]
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
@@ -373,8 +316,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
         :keyword bool show_stats: If set to true, response will contain document level statistics.
-        :return: The combined list of ExtractKeyPhrasesResults and DocumentErrors in the order
-            the original documents were passed in.
+        :return: The combined list of :class:`~azure.ai.textanalytics.ExtractKeyPhrasesResult` and
+            :class:`~azure.ai.textanalytics.DocumentError` in the order the original documents were
+            passed in.
         :rtype: list[~azure.ai.textanalytics.ExtractKeyPhrasesResult,
             ~azure.ai.textanalytics.DocumentError]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -390,7 +334,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         """
         language_arg = kwargs.pop("language", None)
         language = language_arg if language_arg is not None else self._default_language
-        docs = _validate_batch_input(inputs, "language", language)
+        docs = _validate_batch_input(documents, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
         try:
@@ -407,7 +351,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     @distributed_trace
     def analyze_sentiment(  # type: ignore
         self,
-        inputs,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
+        documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
         **kwargs  # type: Any
     ):
         # type: (...) -> List[Union[AnalyzeSentimentResult, DocumentError]]
@@ -420,11 +364,12 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         See https://docs.microsoft.com/azure/cognitive-services/text-analytics/overview#data-limits
         for document length limits, maximum batch size, and supported text encoding.
 
-        :param inputs: The set of documents to process as part of this batch.
+        :param documents: The set of documents to process as part of this batch.
             If you wish to specify the ID and language on a per-item basis you must
-            use as input a list[TextDocumentInput] or a list of dict representations of
-            TextDocumentInput, like `{"id": "1", "language": "en", "text": "hello world"}`.
-        :type inputs:
+            use as input a list[:class:`~azure.ai.textanalytics.TextDocumentInput`] or a list of
+            dict representations of  :class:`~azure.ai.textanalytics.TextDocumentInput`, like
+            `{"id": "1", "language": "en", "text": "hello world"}`.
+        :type documents:
             list[str] or list[~azure.ai.textanalytics.TextDocumentInput]
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
@@ -435,8 +380,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
         :keyword bool show_stats: If set to true, response will contain document level statistics.
-        :return: The combined list of AnalyzeSentimentResults and DocumentErrors in the order
-            the original documents were passed in.
+        :return: The combined list of :class:`~azure.ai.textanalytics.AnalyzeSentimentResult` and
+            :class:`~azure.ai.textanalytics.DocumentError` in the order the original documents were
+            passed in.
         :rtype: list[~azure.ai.textanalytics.AnalyzeSentimentResult,
             ~azure.ai.textanalytics.DocumentError]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -452,7 +398,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         """
         language_arg = kwargs.pop("language", None)
         language = language_arg if language_arg is not None else self._default_language
-        docs = _validate_batch_input(inputs, "language", language)
+        docs = _validate_batch_input(documents, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
         try:

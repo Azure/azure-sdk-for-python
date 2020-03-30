@@ -1,6 +1,9 @@
 # Release History
 
-## 1.1.25 (2020-03-02)
+## 1.1.26 (Unreleased)
+
+
+## 1.1.25 (2020-03-09)
 
 - get_client_from_cli_profile no longer requires "azure-core" if not necessary
 

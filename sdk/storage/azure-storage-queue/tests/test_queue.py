@@ -216,10 +216,11 @@ class StorageQueueTest(StorageTestCase):
         qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
         queue_client = self._get_queue_reference(qsc)
         queue_client.create_queue()
-        queue_client.send_message(u'message1')
+        sent_message = queue_client.send_message(u'message1')
         props = queue_client.get_queue_properties()
 
         # Asserts
+        self.assertEqual(u'message1', sent_message.content)
         self.assertTrue(props.approximate_message_count >= 1)
         self.assertEqual(0, len(props.metadata))
 
@@ -492,6 +493,7 @@ class StorageQueueTest(StorageTestCase):
         self.assertIsNotNone(message.pop_receipt)
         self.assertIsNotNone(message.next_visible_on)
         self.assertIsInstance(message.next_visible_on, datetime)
+        self.assertEqual(u'new text', message.content)
 
         # Get response
         self.assertIsNotNone(list_result2)

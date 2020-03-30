@@ -260,6 +260,24 @@ See
 [azure-core documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md#transport)
 for more information.
 
+Async clients should be closed when they're no longer needed. Each async
+client is an async context manager and defines an async `close` method. For
+example:
+
+```py
+from azure.keyvault.certificates import CertificateClient
+
+# call close when the client is no longer needed
+client = CertificateClient()
+...
+await client.close()
+
+# alternatively, use the client as an async context manager
+client = CertificateClient()
+async with client:
+  ...
+```
+
 ### Asynchronously create a Certificate
 [create_certificate](https://aka.ms/azsdk-python-keyvault-certs-async-createcert) creates a certificate to be stored in the Azure Key Vault. If a certificate with the
 same name already exists, then a new version of the certificate is created.

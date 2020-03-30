@@ -42,6 +42,10 @@ class ServiceBusNamespacePreparer(AzureMgmtPreparer):
         self.resource_group_parameter_name = resource_group_parameter_name
         self.parameter_name = parameter_name
         self.connection_string = ''
+        if random_name_enabled:
+            self.resource_moniker = self.name_prefix + "sbname"
+
+        self.set_cache(use_cache, sku, location)
 
         self.set_cache(use_cache, sku, location)
 
@@ -63,6 +67,11 @@ class ServiceBusNamespacePreparer(AzureMgmtPreparer):
             self.connection_string = key.primary_connection_string
             self.key_name = key.key_name
             self.primary_key = key.primary_key
+
+            self.test_class_instance.scrubber.register_name_pair(
+                name,
+                self.resource_moniker
+            )
         else:
             self.resource = FakeResource(name=name, id=name)
             self.connection_string = 'Endpoint=sb://test-azure-sdk-test.servicebus.windows.net/;SharedAccessKeyName=test;SharedAccessKey=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX='
@@ -154,6 +163,11 @@ class ServiceBusTopicPreparer(_ServiceBusChildResourcePreparer):
                 name,
                 {}
             )
+
+            self.test_class_instance.scrubber.register_name_pair(
+                name,
+                self.resource_moniker
+            )
         else:
             self.resource = FakeResource(name=name, id=name)
         return {
@@ -203,6 +217,11 @@ class ServiceBusSubscriptionPreparer(_ServiceBusChildResourcePreparer):
                 topic.name,
                 name,
                 {}
+            )
+
+            self.test_class_instance.scrubber.register_name_pair(
+                name,
+                self.resource_moniker
             )
         else:
             self.resource = FakeResource(name=name, id=name)
@@ -254,6 +273,8 @@ class ServiceBusQueuePreparer(_ServiceBusChildResourcePreparer):
         self.requires_duplicate_detection=requires_duplicate_detection
         self.dead_lettering_on_message_expiration=dead_lettering_on_message_expiration
         self.requires_session=requires_session
+        if random_name_enabled:
+            self.resource_moniker = self.name_prefix + "sbqueue"
 
     def create_resource(self, name, **kwargs):
         if self.is_live:
@@ -269,6 +290,11 @@ class ServiceBusQueuePreparer(_ServiceBusChildResourcePreparer):
                     requires_duplicate_detection = self.requires_duplicate_detection,
                     dead_lettering_on_message_expiration = self.dead_lettering_on_message_expiration,
                     requires_session = self.requires_session)
+            )
+
+            self.test_class_instance.scrubber.register_name_pair(
+                name,
+                self.resource_moniker
             )
         else:
             self.resource = FakeResource(name=name, id=name)
@@ -320,6 +346,11 @@ class ServiceBusNamespaceAuthorizationRulePreparer(_ServiceBusChildResourcePrepa
 
             key = self.client.namespaces.list_keys(group.name, namespace.name, name)
             connection_string = key.primary_connection_string
+
+            self.test_class_instance.scrubber.register_name_pair(
+                name,
+                self.resource_moniker
+            )
         else:
             self.resource = FakeResource(name=name, id=name)
             connection_string = 'https://microsoft.com'
@@ -376,6 +407,11 @@ class ServiceBusQueueAuthorizationRulePreparer(_ServiceBusChildResourcePreparer)
 
             key = self.client.queues.list_keys(group.name, namespace.name, queue.name, name)
             connection_string = key.primary_connection_string
+
+            self.test_class_instance.scrubber.register_name_pair(
+                name,
+                self.resource_moniker
+            )
         else:
             self.resource = FakeResource(name=name, id=name)
             connection_string = 'https://microsoft.com'

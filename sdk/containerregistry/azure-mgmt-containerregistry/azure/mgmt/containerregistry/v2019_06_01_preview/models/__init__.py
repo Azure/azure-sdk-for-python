@@ -10,7 +10,11 @@
 # --------------------------------------------------------------------------
 
 try:
+    from ._models_py3 import ActiveDirectoryObject
     from ._models_py3 import Actor
+    from ._models_py3 import AgentPool
+    from ._models_py3 import AgentPoolQueueStatus
+    from ._models_py3 import AgentPoolUpdateParameters
     from ._models_py3 import AgentProperties
     from ._models_py3 import Argument
     from ._models_py3 import AuthInfo
@@ -27,8 +31,8 @@ try:
     from ._models_py3 import EncodedTaskRunRequest
     from ._models_py3 import EncodedTaskStep
     from ._models_py3 import EncodedTaskStepUpdateParameters
-    from ._models_py3 import Error
-    from ._models_py3 import ErrorSchema, ErrorSchemaException
+    from ._models_py3 import ErrorResponse, ErrorResponseException
+    from ._models_py3 import ErrorResponseBody
     from ._models_py3 import Event
     from ._models_py3 import EventContent
     from ._models_py3 import EventInfo
@@ -116,7 +120,11 @@ try:
     from ._models_py3 import WebhookCreateParameters
     from ._models_py3 import WebhookUpdateParameters
 except (SyntaxError, ImportError):
+    from ._models import ActiveDirectoryObject
     from ._models import Actor
+    from ._models import AgentPool
+    from ._models import AgentPoolQueueStatus
+    from ._models import AgentPoolUpdateParameters
     from ._models import AgentProperties
     from ._models import Argument
     from ._models import AuthInfo
@@ -133,8 +141,8 @@ except (SyntaxError, ImportError):
     from ._models import EncodedTaskRunRequest
     from ._models import EncodedTaskStep
     from ._models import EncodedTaskStepUpdateParameters
-    from ._models import Error
-    from ._models import ErrorSchema, ErrorSchemaException
+    from ._models import ErrorResponse, ErrorResponseException
+    from ._models import ErrorResponseBody
     from ._models import Event
     from ._models import EventContent
     from ._models import EventInfo
@@ -221,6 +229,7 @@ except (SyntaxError, ImportError):
     from ._models import Webhook
     from ._models import WebhookCreateParameters
     from ._models import WebhookUpdateParameters
+from ._paged_models import AgentPoolPaged
 from ._paged_models import EventPaged
 from ._paged_models import OperationDefinitionPaged
 from ._paged_models import RegistryPaged
@@ -244,9 +253,9 @@ from ._container_registry_management_client_enums import (
     RegistryUsageUnit,
     WebhookStatus,
     WebhookAction,
+    OS,
     RunStatus,
     RunType,
-    OS,
     Architecture,
     Variant,
     ResourceIdentityType,
@@ -266,7 +275,11 @@ from ._container_registry_management_client_enums import (
 )
 
 __all__ = [
+    'ActiveDirectoryObject',
     'Actor',
+    'AgentPool',
+    'AgentPoolQueueStatus',
+    'AgentPoolUpdateParameters',
     'AgentProperties',
     'Argument',
     'AuthInfo',
@@ -283,8 +296,8 @@ __all__ = [
     'EncodedTaskRunRequest',
     'EncodedTaskStep',
     'EncodedTaskStepUpdateParameters',
-    'Error',
-    'ErrorSchema', 'ErrorSchemaException',
+    'ErrorResponse', 'ErrorResponseException',
+    'ErrorResponseBody',
     'Event',
     'EventContent',
     'EventInfo',
@@ -376,6 +389,7 @@ __all__ = [
     'ReplicationPaged',
     'WebhookPaged',
     'EventPaged',
+    'AgentPoolPaged',
     'RunPaged',
     'TaskRunPaged',
     'TaskPaged',
@@ -393,9 +407,9 @@ __all__ = [
     'RegistryUsageUnit',
     'WebhookStatus',
     'WebhookAction',
+    'OS',
     'RunStatus',
     'RunType',
-    'OS',
     'Architecture',
     'Variant',
     'ResourceIdentityType',

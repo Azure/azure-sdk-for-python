@@ -49,7 +49,7 @@ async def test_example_trio():
             return await pipeline.run(request)
         # [END trio]
     response = trio.run(req)
-    assert response.http_response.status_code == 200
+    assert isinstance(response.http_response.status_code, int)
 
 
 @pytest.mark.asyncio
@@ -67,7 +67,7 @@ async def test_example_asyncio():
         response = await pipeline.run(request)
     # [END asyncio]
     assert pipeline._transport.session is None
-    assert response.http_response.status_code == 200
+    assert isinstance(response.http_response.status_code, int)
 
 
 @pytest.mark.asyncio
@@ -85,7 +85,7 @@ async def test_example_aiohttp():
         response = await pipeline.run(request)
     # [END aiohttp]
     assert pipeline._transport.session is None
-    assert response.http_response.status_code == 200
+    assert isinstance(response.http_response.status_code, int)
 
 
 @pytest.mark.asyncio
@@ -107,7 +107,7 @@ async def test_example_async_pipeline():
         response = await pipeline.run(request)
     # [END build_async_pipeline]
     assert pipeline._transport.session is None
-    assert response.http_response.status_code == 200
+    assert isinstance(response.http_response.status_code, int)
 
 
 @pytest.mark.asyncio
@@ -132,7 +132,7 @@ async def test_example_async_pipeline_client():
     # [END build_async_pipeline_client]
 
     assert client._pipeline._transport.session is None
-    assert response.http_response.status_code == 200
+    assert isinstance(response.http_response.status_code, int)
 
 
 @pytest.mark.asyncio
@@ -161,7 +161,7 @@ async def test_example_async_redirect_policy():
     # [END async_redirect_policy]
 
     assert client._pipeline._transport.session is None
-    assert response.http_response.status_code == 200
+    assert isinstance(response.http_response.status_code, int)
 
 
 @pytest.mark.asyncio
@@ -226,4 +226,4 @@ async def test_example_async_retry_policy():
     # [END async_retry_policy]
 
     assert client._pipeline._transport.session is None
-    assert response.http_response.status_code == 200
+    assert isinstance(response.http_response.status_code, int)

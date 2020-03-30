@@ -12,7 +12,7 @@ import azure.mgmt.servicebus.models
 from azure.mgmt.servicebus.models import SBNamespace,SBSku,SkuName,SBQueue,SBAuthorizationRule,AccessRights,AccessKeys
 from azure.common.credentials import ServicePrincipalCredentials
 
-from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
+from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPreparer
 
 
 class MgmtServiceBusTest(AzureMgmtTestCase):
@@ -24,13 +24,13 @@ class MgmtServiceBusTest(AzureMgmtTestCase):
             azure.mgmt.servicebus.ServiceBusManagementClient
         )
 
-    @ResourceGroupPreparer()
+    @RandomNameResourceGroupPreparer()
     def test_sb_queue_curd(self, resource_group, location):
         # List all topic types
         resource_group_name = resource_group.name
 
         # Create a Namespace
-        namespace_name = "testingpythontestcasequeue"
+        namespace_name = self.get_replayable_random_resource_name("testingpythontestcasequeue")
 
         namespaceparameter = SBNamespace(location=location, tags={'tag1': 'value1', 'tag2': 'value2'}, sku=SBSku(name=SkuName.standard))
         creatednamespace = self.servicebus_client.namespaces.create_or_update(resource_group_name, namespace_name, namespaceparameter).result()
@@ -42,7 +42,7 @@ class MgmtServiceBusTest(AzureMgmtTestCase):
             continue
 
         # Create a Queue
-        queue_name = "testingpythonsdkqueue"
+        queue_name = self.get_replayable_random_resource_name("testingpythonsdkqueue")
         createqueueresponse = self.servicebus_client.queues.create_or_update(resource_group_name, namespace_name,queue_name,SBQueue())
         self.assertEqual(createqueueresponse.name, queue_name)
 
@@ -63,7 +63,7 @@ class MgmtServiceBusTest(AzureMgmtTestCase):
         self.assertEqual(updatequeueresponse.enable_express, True)
 
         # Create a new authorizationrule
-        authoRule_name = "testingauthrulepy"
+        authoRule_name = self.get_replayable_random_resource_name("testingauthrulepy")
         createqueueauthorule = self.servicebus_client.queues.create_or_update_authorization_rule(resource_group_name, namespace_name, queue_name, authoRule_name, [AccessRights('Send'), AccessRights('Listen')])
         self.assertEqual(createqueueauthorule.name, authoRule_name,"Authorization rule name not as created - create_or_update_authorization_rule ")
         self.assertEqual(len(createqueueauthorule.rights), 2)

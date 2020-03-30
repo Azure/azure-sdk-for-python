@@ -8,7 +8,7 @@ try:
 except ImportError:
     from cStringIO import StringIO as BytesIO
 import pytest
-from azure.core.exceptions import AzureError
+from azure.core.exceptions import AzureError, ServiceResponseError, ServiceResponseTimeoutError
 from azure.core.pipeline.policies import (
     RetryPolicy,
     RetryMode,
@@ -21,6 +21,7 @@ from azure.core.pipeline.transport import (
 )
 import tempfile
 import os
+import time
 
 def test_retry_code_class_variables():
     retry_policy = RetryPolicy()
@@ -159,3 +160,31 @@ def test_retry_seekable_file():
         pipeline = Pipeline(MockTransport(), [http_retry])
         pipeline.run(http_request)
     os.unlink(f.name)
+
+def test_retry_timeout():
+    class MockTransport(HttpTransport):
+        def __init__(self):
+            self.count = 0
+
+        def __exit__(self, exc_type, exc_val, exc_tb):
+            pass
+        def close(self):
+            pass
+        def open(self):
+            pass
+
+        def send(self, request, **kwargs):  # type: (PipelineRequest, Any) -> PipelineResponse
+            self.count += 1
+            if self.count > 2:
+                assert self.count <= 2
+            time.sleep(0.5)
+            raise ServiceResponseError('timeout')
+
+    http_request = HttpRequest('GET', 'http://127.0.0.1/')
+    headers = {'Content-Type': "multipart/form-data"}
+    http_request.headers = headers
+    http_retry = RetryPolicy(retry_total=10, timeout=1)
+    pipeline = Pipeline(MockTransport(), [http_retry])
+    with pytest.raises(ServiceResponseTimeoutError):
+        pipeline.run(http_request)
+

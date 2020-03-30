@@ -107,7 +107,7 @@ class StorageTestCase(unittest.TestCase):
         handler = logging.StreamHandler()
         handler.setFormatter(logging.Formatter(LOGGING_FORMAT))
         self.logger.handlers = [handler]
-        self.logger.setLevel(logging.INFO)
+        self.logger.setLevel(logging.DEBUG)
         self.logger.propagate = True
         self.logger.disabled = False
 

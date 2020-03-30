@@ -24,8 +24,10 @@ from ._models import(
     LifetimeAction,
     KeyVaultCertificate
 )
+from ._shared.multi_api import ApiVersion
 
 __all__ = [
+    "ApiVersion",
     "CertificatePolicyAction",
     "AdministratorContact",
     "CertificateClient",

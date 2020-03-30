@@ -11,17 +11,12 @@ import uuid
 import warnings
 
 from azure.eventhub.extensions.checkpointstoreblob import BlobCheckpointStore
-
+from azure.eventhub.extensions.checkpointstoreblob._vendor.storage.blob import BlobServiceClient, ContainerClient
 
 def get_live_storage_blob_client():
     try:
         storage_connection_str = os.environ['AZURE_STORAGE_CONN_STR']
     except KeyError:
-        return None, None
-    try:
-        from azure.storage.blob import BlobServiceClient
-        from azure.storage.blob import ContainerClient
-    except ImportError or ModuleNotFoundError:
         return None, None
 
     container_name = str(uuid.uuid4())
@@ -33,7 +28,6 @@ def get_live_storage_blob_client():
 def remove_live_storage_blob_client(container_name):
     try:
         storage_connection_str = os.environ['AZURE_STORAGE_CONN_STR']
-        from azure.storage.blob import BlobServiceClient
         blob_service_client = BlobServiceClient.from_connection_string(storage_connection_str)
         blob_service_client.delete_container(container_name)
     except:

@@ -1,0 +1,34 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json;odata.metadata=minimal
+      User-Agent:
+      - azsdk-python-search/1.0.0b2 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
+      api-key:
+      - FBE49E68975C6A1307FBDED68DAAE9CA
+    method: GET
+    uri: https://search24f71524.search.windows.net/servicestats?api-version=2019-05-06-Preview
+  response:
+    body:
+      string: '{"@odata.context":"https://search24f71524.search.windows.net/$metadata#Microsoft.Azure.Search.V2019_05_06_Preview.ServiceStatistics","counters":{"documentCount":{"usage":0,"quota":null},"indexesCount":{"usage":0,"quota":3},"indexersCount":{"usage":0,"quota":3},"dataSourcesCount":{"usage":0,"quota":3},"storageSize":{"usage":0,"quota":52428800},"synonymMaps":{"usage":0,"quota":3},"skillsetCount":{"usage":0,"quota":3}},"limits":{"maxFieldsPerIndex":1000,"maxFieldNestingDepthPerIndex":10,"maxComplexCollectionFieldsPerIndex":40,"maxComplexObjectsInCollectionsPerDocument":3000}}'
+    headers:
+      cache-control: no-cache
+      content-encoding: gzip
+      content-length: '430'
+      content-type: application/json; odata.metadata=minimal
+      date: Thu, 19 Mar 2020 19:51:01 GMT
+      elapsed-time: '49'
+      expires: '-1'
+      odata-version: '4.0'
+      pragma: no-cache
+      preference-applied: odata.include-annotations="*"
+      request-id: f4ecc81c-6a1a-11ea-8e1b-8c8590507855
+      strict-transport-security: max-age=15724800; includeSubDomains
+      vary: Accept-Encoding
+    status:
+      code: 200
+      message: OK
+    url: https://search24f71524.search.windows.net/servicestats?api-version=2019-05-06-Preview
+version: 1

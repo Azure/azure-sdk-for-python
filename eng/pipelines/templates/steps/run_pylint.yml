@@ -24,4 +24,5 @@ steps:
         --service="${{ parameters.ServiceDirectory }}" 
         --toxenv="lint"
         --disablecov
+        --omit-management
     env: ${{ parameters.EnvVars }}

@@ -18,7 +18,7 @@ stages:
 
   # The Prerelease and Release stages are conditioned on whether we are building a pull request and the branch.
   - ${{if and(ne(variables['Build.Reason'], 'PullRequest'), eq(variables['System.TeamProject'], 'internal'))}}:
-    - template: pipelines/stages/archetype-python-release.yml@azure-sdk-build-tools
+    - template: archetype-python-release.yml
       parameters:
         DependsOn: Build
         ServiceDirectory: ${{parameters.ServiceDirectory}}

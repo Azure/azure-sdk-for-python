@@ -13,6 +13,31 @@ from msrest.serialization import Model
 from msrest.exceptions import HttpOperationError
 
 
+class ActiveDirectoryObject(Model):
+    """The Active Directory Object that will be used for authenticating the token
+    of a container registry.
+
+    :param object_id: The user/group/application object ID for Active
+     Directory Object that will be used for authenticating the token of a
+     container registry.
+    :type object_id: str
+    :param tenant_id: The tenant ID of user/group/application object Active
+     Directory Object that will be used for authenticating the token of a
+     container registry.
+    :type tenant_id: str
+    """
+
+    _attribute_map = {
+        'object_id': {'key': 'objectId', 'type': 'str'},
+        'tenant_id': {'key': 'tenantId', 'type': 'str'},
+    }
+
+    def __init__(self, *, object_id: str=None, tenant_id: str=None, **kwargs) -> None:
+        super(ActiveDirectoryObject, self).__init__(**kwargs)
+        self.object_id = object_id
+        self.tenant_id = tenant_id
+
+
 class Actor(Model):
     """The agent that initiated the event. For most situations, this could be from
     the authorization context of the request.
@@ -29,6 +54,155 @@ class Actor(Model):
     def __init__(self, *, name: str=None, **kwargs) -> None:
         super(Actor, self).__init__(**kwargs)
         self.name = name
+
+
+class Resource(Model):
+    """An Azure resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: The resource ID.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource.
+    :vartype type: str
+    :param location: Required. The location of the resource. This cannot be
+     changed after the resource is created.
+    :type location: str
+    :param tags: The tags of the resource.
+    :type tags: dict[str, str]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'location': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+    }
+
+    def __init__(self, *, location: str, tags=None, **kwargs) -> None:
+        super(Resource, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+        self.location = location
+        self.tags = tags
+
+
+class AgentPool(Resource):
+    """The agentpool that has the ARM resource and properties.
+    The agentpool will have all information to create an agent pool.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: The resource ID.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource.
+    :vartype type: str
+    :param location: Required. The location of the resource. This cannot be
+     changed after the resource is created.
+    :type location: str
+    :param tags: The tags of the resource.
+    :type tags: dict[str, str]
+    :param count: The count of agent machine
+    :type count: int
+    :param tier: The Tier of agent machine
+    :type tier: str
+    :param os: The OS of agent machine. Possible values include: 'Windows',
+     'Linux'
+    :type os: str or
+     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.OS
+    :param virtual_network_subnet_resource_id: The Virtual Network Subnet
+     Resource Id of the agent machine
+    :type virtual_network_subnet_resource_id: str
+    :ivar provisioning_state: The provisioning state of this agent pool.
+     Possible values include: 'Creating', 'Updating', 'Deleting', 'Succeeded',
+     'Failed', 'Canceled'
+    :vartype provisioning_state: str or
+     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.ProvisioningState
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'location': {'required': True},
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'count': {'key': 'properties.count', 'type': 'int'},
+        'tier': {'key': 'properties.tier', 'type': 'str'},
+        'os': {'key': 'properties.os', 'type': 'str'},
+        'virtual_network_subnet_resource_id': {'key': 'properties.virtualNetworkSubnetResourceId', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+    }
+
+    def __init__(self, *, location: str, tags=None, count: int=None, tier: str=None, os=None, virtual_network_subnet_resource_id: str=None, **kwargs) -> None:
+        super(AgentPool, self).__init__(location=location, tags=tags, **kwargs)
+        self.count = count
+        self.tier = tier
+        self.os = os
+        self.virtual_network_subnet_resource_id = virtual_network_subnet_resource_id
+        self.provisioning_state = None
+
+
+class AgentPoolQueueStatus(Model):
+    """The QueueStatus of Agent Pool.
+
+    :param count: The number of pending runs in the queue
+    :type count: int
+    """
+
+    _attribute_map = {
+        'count': {'key': 'count', 'type': 'int'},
+    }
+
+    def __init__(self, *, count: int=None, **kwargs) -> None:
+        super(AgentPoolQueueStatus, self).__init__(**kwargs)
+        self.count = count
+
+
+class AgentPoolUpdateParameters(Model):
+    """The parameters for updating an agent pool.
+
+    :param count: The count of agent machine
+    :type count: int
+    :param tags: The ARM resource tags.
+    :type tags: dict[str, str]
+    """
+
+    _attribute_map = {
+        'count': {'key': 'properties.count', 'type': 'int'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+    }
+
+    def __init__(self, *, count: int=None, tags=None, **kwargs) -> None:
+        super(AgentPoolUpdateParameters, self).__init__(**kwargs)
+        self.count = count
+        self.tags = tags
 
 
 class AgentProperties(Model):
@@ -395,6 +569,8 @@ class RunRequest(Model):
     :param is_archive_enabled: The value that indicates whether archiving is
      enabled for the run or not. Default value: False .
     :type is_archive_enabled: bool
+    :param agent_pool_name: The dedicated agent pool for the run.
+    :type agent_pool_name: str
     :param type: Required. Constant filled by server.
     :type type: str
     """
@@ -405,6 +581,7 @@ class RunRequest(Model):
 
     _attribute_map = {
         'is_archive_enabled': {'key': 'isArchiveEnabled', 'type': 'bool'},
+        'agent_pool_name': {'key': 'agentPoolName', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
     }
 
@@ -412,9 +589,10 @@ class RunRequest(Model):
         'type': {'DockerBuildRequest': 'DockerBuildRequest', 'FileTaskRunRequest': 'FileTaskRunRequest', 'TaskRunRequest': 'TaskRunRequest', 'EncodedTaskRunRequest': 'EncodedTaskRunRequest'}
     }
 
-    def __init__(self, *, is_archive_enabled: bool=False, **kwargs) -> None:
+    def __init__(self, *, is_archive_enabled: bool=False, agent_pool_name: str=None, **kwargs) -> None:
         super(RunRequest, self).__init__(**kwargs)
         self.is_archive_enabled = is_archive_enabled
+        self.agent_pool_name = agent_pool_name
         self.type = None
 
 
@@ -426,6 +604,8 @@ class DockerBuildRequest(RunRequest):
     :param is_archive_enabled: The value that indicates whether archiving is
      enabled for the run or not. Default value: False .
     :type is_archive_enabled: bool
+    :param agent_pool_name: The dedicated agent pool for the run.
+    :type agent_pool_name: str
     :param type: Required. Constant filled by server.
     :type type: str
     :param image_names: The fully qualified image names including the
@@ -475,6 +655,7 @@ class DockerBuildRequest(RunRequest):
 
     _attribute_map = {
         'is_archive_enabled': {'key': 'isArchiveEnabled', 'type': 'bool'},
+        'agent_pool_name': {'key': 'agentPoolName', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'image_names': {'key': 'imageNames', 'type': '[str]'},
         'is_push_enabled': {'key': 'isPushEnabled', 'type': 'bool'},
@@ -489,8 +670,8 @@ class DockerBuildRequest(RunRequest):
         'credentials': {'key': 'credentials', 'type': 'Credentials'},
     }
 
-    def __init__(self, *, docker_file_path: str, platform, is_archive_enabled: bool=False, image_names=None, is_push_enabled: bool=True, no_cache: bool=False, target: str=None, arguments=None, timeout: int=3600, agent_configuration=None, source_location: str=None, credentials=None, **kwargs) -> None:
-        super(DockerBuildRequest, self).__init__(is_archive_enabled=is_archive_enabled, **kwargs)
+    def __init__(self, *, docker_file_path: str, platform, is_archive_enabled: bool=False, agent_pool_name: str=None, image_names=None, is_push_enabled: bool=True, no_cache: bool=False, target: str=None, arguments=None, timeout: int=3600, agent_configuration=None, source_location: str=None, credentials=None, **kwargs) -> None:
+        super(DockerBuildRequest, self).__init__(is_archive_enabled=is_archive_enabled, agent_pool_name=agent_pool_name, **kwargs)
         self.image_names = image_names
         self.is_push_enabled = is_push_enabled
         self.no_cache = no_cache
@@ -730,6 +911,8 @@ class EncodedTaskRunRequest(RunRequest):
     :param is_archive_enabled: The value that indicates whether archiving is
      enabled for the run or not. Default value: False .
     :type is_archive_enabled: bool
+    :param agent_pool_name: The dedicated agent pool for the run.
+    :type agent_pool_name: str
     :param type: Required. Constant filled by server.
     :type type: str
     :param encoded_task_content: Required. Base64 encoded value of the
@@ -771,6 +954,7 @@ class EncodedTaskRunRequest(RunRequest):
 
     _attribute_map = {
         'is_archive_enabled': {'key': 'isArchiveEnabled', 'type': 'bool'},
+        'agent_pool_name': {'key': 'agentPoolName', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'encoded_task_content': {'key': 'encodedTaskContent', 'type': 'str'},
         'encoded_values_content': {'key': 'encodedValuesContent', 'type': 'str'},
@@ -782,8 +966,8 @@ class EncodedTaskRunRequest(RunRequest):
         'credentials': {'key': 'credentials', 'type': 'Credentials'},
     }
 
-    def __init__(self, *, encoded_task_content: str, platform, is_archive_enabled: bool=False, encoded_values_content: str=None, values=None, timeout: int=3600, agent_configuration=None, source_location: str=None, credentials=None, **kwargs) -> None:
-        super(EncodedTaskRunRequest, self).__init__(is_archive_enabled=is_archive_enabled, **kwargs)
+    def __init__(self, *, encoded_task_content: str, platform, is_archive_enabled: bool=False, agent_pool_name: str=None, encoded_values_content: str=None, values=None, timeout: int=3600, agent_configuration=None, source_location: str=None, credentials=None, **kwargs) -> None:
+        super(EncodedTaskRunRequest, self).__init__(is_archive_enabled=is_archive_enabled, agent_pool_name=agent_pool_name, **kwargs)
         self.encoded_task_content = encoded_task_content
         self.encoded_values_content = encoded_values_content
         self.values = values
@@ -896,7 +1080,36 @@ class EncodedTaskStepUpdateParameters(TaskStepUpdateParameters):
         self.type = 'EncodedTask'
 
 
-class Error(Model):
+class ErrorResponse(Model):
+    """An error response from the Azure Container Registry service.
+
+    :param error: Azure container registry build API error body.
+    :type error:
+     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.ErrorResponseBody
+    """
+
+    _attribute_map = {
+        'error': {'key': 'error', 'type': 'ErrorResponseBody'},
+    }
+
+    def __init__(self, *, error=None, **kwargs) -> None:
+        super(ErrorResponse, self).__init__(**kwargs)
+        self.error = error
+
+
+class ErrorResponseException(HttpOperationError):
+    """Server responsed with exception of type: 'ErrorResponse'.
+
+    :param deserialize: A deserializer
+    :param response: Server response to be deserialized.
+    """
+
+    def __init__(self, deserialize, response, *args):
+
+        super(ErrorResponseException, self).__init__(deserialize, response, 'ErrorResponse', *args)
+
+
+class ErrorResponseBody(Model):
     """An error response from the Azure Container Registry service.
 
     All required parameters must be populated in order to send to Azure.
@@ -918,38 +1131,9 @@ class Error(Model):
     }
 
     def __init__(self, *, code: str, message: str, **kwargs) -> None:
-        super(Error, self).__init__(**kwargs)
+        super(ErrorResponseBody, self).__init__(**kwargs)
         self.code = code
         self.message = message
-
-
-class ErrorSchema(Model):
-    """An error response from the Azure Container Registry service.
-
-    :param error: Azure container registry build API error body.
-    :type error:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.Error
-    """
-
-    _attribute_map = {
-        'error': {'key': 'error', 'type': 'Error'},
-    }
-
-    def __init__(self, *, error=None, **kwargs) -> None:
-        super(ErrorSchema, self).__init__(**kwargs)
-        self.error = error
-
-
-class ErrorSchemaException(HttpOperationError):
-    """Server responsed with exception of type: 'ErrorSchema'.
-
-    :param deserialize: A deserializer
-    :param response: Server response to be deserialized.
-    """
-
-    def __init__(self, deserialize, response, *args):
-
-        super(ErrorSchemaException, self).__init__(deserialize, response, 'ErrorSchema', *args)
 
 
 class EventInfo(Model):
@@ -1114,6 +1298,8 @@ class FileTaskRunRequest(RunRequest):
     :param is_archive_enabled: The value that indicates whether archiving is
      enabled for the run or not. Default value: False .
     :type is_archive_enabled: bool
+    :param agent_pool_name: The dedicated agent pool for the run.
+    :type agent_pool_name: str
     :param type: Required. Constant filled by server.
     :type type: str
     :param task_file_path: Required. The template/definition file path
@@ -1155,6 +1341,7 @@ class FileTaskRunRequest(RunRequest):
 
     _attribute_map = {
         'is_archive_enabled': {'key': 'isArchiveEnabled', 'type': 'bool'},
+        'agent_pool_name': {'key': 'agentPoolName', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'task_file_path': {'key': 'taskFilePath', 'type': 'str'},
         'values_file_path': {'key': 'valuesFilePath', 'type': 'str'},
@@ -1166,8 +1353,8 @@ class FileTaskRunRequest(RunRequest):
         'credentials': {'key': 'credentials', 'type': 'Credentials'},
     }
 
-    def __init__(self, *, task_file_path: str, platform, is_archive_enabled: bool=False, values_file_path: str=None, values=None, timeout: int=3600, agent_configuration=None, source_location: str=None, credentials=None, **kwargs) -> None:
-        super(FileTaskRunRequest, self).__init__(is_archive_enabled=is_archive_enabled, **kwargs)
+    def __init__(self, *, task_file_path: str, platform, is_archive_enabled: bool=False, agent_pool_name: str=None, values_file_path: str=None, values=None, timeout: int=3600, agent_configuration=None, source_location: str=None, credentials=None, **kwargs) -> None:
+        super(FileTaskRunRequest, self).__init__(is_archive_enabled=is_archive_enabled, agent_pool_name=agent_pool_name, **kwargs)
         self.task_file_path = task_file_path
         self.values_file_path = values_file_path
         self.values = values
@@ -1921,51 +2108,6 @@ class RegenerateCredentialParameters(Model):
         self.name = name
 
 
-class Resource(Model):
-    """An Azure resource.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar id: The resource ID.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource.
-    :vartype type: str
-    :param location: Required. The location of the resource. This cannot be
-     changed after the resource is created.
-    :type location: str
-    :param tags: The tags of the resource.
-    :type tags: dict[str, str]
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-    }
-
-    def __init__(self, *, location: str, tags=None, **kwargs) -> None:
-        super(Resource, self).__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.location = location
-        self.tags = tags
-
-
 class Registry(Resource):
     """An object that represents a container registry.
 
@@ -2410,6 +2552,8 @@ class Run(ProxyResource):
      'QuickRun', 'AutoBuild', 'AutoRun'
     :type run_type: str or
      ~azure.mgmt.containerregistry.v2019_06_01_preview.models.RunType
+    :param agent_pool_name: The dedicated agent pool for the run.
+    :type agent_pool_name: str
     :param create_time: The time the run was scheduled.
     :type create_time: datetime
     :param start_time: The time the run started.
@@ -2475,6 +2619,7 @@ class Run(ProxyResource):
         'status': {'key': 'properties.status', 'type': 'str'},
         'last_updated_time': {'key': 'properties.lastUpdatedTime', 'type': 'iso-8601'},
         'run_type': {'key': 'properties.runType', 'type': 'str'},
+        'agent_pool_name': {'key': 'properties.agentPoolName', 'type': 'str'},
         'create_time': {'key': 'properties.createTime', 'type': 'iso-8601'},
         'start_time': {'key': 'properties.startTime', 'type': 'iso-8601'},
         'finish_time': {'key': 'properties.finishTime', 'type': 'iso-8601'},
@@ -2493,12 +2638,13 @@ class Run(ProxyResource):
         'is_archive_enabled': {'key': 'properties.isArchiveEnabled', 'type': 'bool'},
     }
 
-    def __init__(self, *, run_id: str=None, status=None, last_updated_time=None, run_type=None, create_time=None, start_time=None, finish_time=None, output_images=None, task: str=None, image_update_trigger=None, source_trigger=None, timer_trigger=None, platform=None, agent_configuration=None, source_registry_auth: str=None, custom_registries=None, update_trigger_token: str=None, provisioning_state=None, is_archive_enabled: bool=False, **kwargs) -> None:
+    def __init__(self, *, run_id: str=None, status=None, last_updated_time=None, run_type=None, agent_pool_name: str=None, create_time=None, start_time=None, finish_time=None, output_images=None, task: str=None, image_update_trigger=None, source_trigger=None, timer_trigger=None, platform=None, agent_configuration=None, source_registry_auth: str=None, custom_registries=None, update_trigger_token: str=None, provisioning_state=None, is_archive_enabled: bool=False, **kwargs) -> None:
         super(Run, self).__init__(**kwargs)
         self.run_id = run_id
         self.status = status
         self.last_updated_time = last_updated_time
         self.run_type = run_type
+        self.agent_pool_name = agent_pool_name
         self.create_time = create_time
         self.start_time = start_time
         self.finish_time = finish_time
@@ -2544,6 +2690,9 @@ class RunFilter(Model):
     :type is_archive_enabled: bool
     :param task_name: The name of the task that the run corresponds to.
     :type task_name: str
+    :param agent_pool_name: The name of the agent pool that the run
+     corresponds to.
+    :type agent_pool_name: str
     """
 
     _attribute_map = {
@@ -2555,9 +2704,10 @@ class RunFilter(Model):
         'output_image_manifests': {'key': 'outputImageManifests', 'type': 'str'},
         'is_archive_enabled': {'key': 'isArchiveEnabled', 'type': 'bool'},
         'task_name': {'key': 'taskName', 'type': 'str'},
+        'agent_pool_name': {'key': 'agentPoolName', 'type': 'str'},
     }
 
-    def __init__(self, *, run_id: str=None, run_type=None, status=None, create_time=None, finish_time=None, output_image_manifests: str=None, is_archive_enabled: bool=None, task_name: str=None, **kwargs) -> None:
+    def __init__(self, *, run_id: str=None, run_type=None, status=None, create_time=None, finish_time=None, output_image_manifests: str=None, is_archive_enabled: bool=None, task_name: str=None, agent_pool_name: str=None, **kwargs) -> None:
         super(RunFilter, self).__init__(**kwargs)
         self.run_id = run_id
         self.run_type = run_type
@@ -2567,6 +2717,7 @@ class RunFilter(Model):
         self.output_image_manifests = output_image_manifests
         self.is_archive_enabled = is_archive_enabled
         self.task_name = task_name
+        self.agent_pool_name = agent_pool_name
 
 
 class RunGetLogResult(Model):
@@ -3192,6 +3343,8 @@ class Task(Resource):
     :param agent_configuration: The machine configuration of the run agent.
     :type agent_configuration:
      ~azure.mgmt.containerregistry.v2019_06_01_preview.models.AgentProperties
+    :param agent_pool_name: The dedicated agent pool for the task.
+    :type agent_pool_name: str
     :param timeout: Run timeout in seconds. Default value: 3600 .
     :type timeout: int
     :param step: Required. The properties of a task step.
@@ -3230,13 +3383,14 @@ class Task(Resource):
         'status': {'key': 'properties.status', 'type': 'str'},
         'platform': {'key': 'properties.platform', 'type': 'PlatformProperties'},
         'agent_configuration': {'key': 'properties.agentConfiguration', 'type': 'AgentProperties'},
+        'agent_pool_name': {'key': 'properties.agentPoolName', 'type': 'str'},
         'timeout': {'key': 'properties.timeout', 'type': 'int'},
         'step': {'key': 'properties.step', 'type': 'TaskStepProperties'},
         'trigger': {'key': 'properties.trigger', 'type': 'TriggerProperties'},
         'credentials': {'key': 'properties.credentials', 'type': 'Credentials'},
     }
 
-    def __init__(self, *, location: str, platform, step, tags=None, identity=None, status=None, agent_configuration=None, timeout: int=3600, trigger=None, credentials=None, **kwargs) -> None:
+    def __init__(self, *, location: str, platform, step, tags=None, identity=None, status=None, agent_configuration=None, agent_pool_name: str=None, timeout: int=3600, trigger=None, credentials=None, **kwargs) -> None:
         super(Task, self).__init__(location=location, tags=tags, **kwargs)
         self.identity = identity
         self.provisioning_state = None
@@ -3244,6 +3398,7 @@ class Task(Resource):
         self.status = status
         self.platform = platform
         self.agent_configuration = agent_configuration
+        self.agent_pool_name = agent_pool_name
         self.timeout = timeout
         self.step = step
         self.trigger = trigger
@@ -3328,6 +3483,8 @@ class TaskRunRequest(RunRequest):
     :param is_archive_enabled: The value that indicates whether archiving is
      enabled for the run or not. Default value: False .
     :type is_archive_enabled: bool
+    :param agent_pool_name: The dedicated agent pool for the run.
+    :type agent_pool_name: str
     :param type: Required. Constant filled by server.
     :type type: str
     :param task_id: Required. The resource ID of task against which run has to
@@ -3346,13 +3503,14 @@ class TaskRunRequest(RunRequest):
 
     _attribute_map = {
         'is_archive_enabled': {'key': 'isArchiveEnabled', 'type': 'bool'},
+        'agent_pool_name': {'key': 'agentPoolName', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'task_id': {'key': 'taskId', 'type': 'str'},
         'override_task_step_properties': {'key': 'overrideTaskStepProperties', 'type': 'OverrideTaskStepProperties'},
     }
 
-    def __init__(self, *, task_id: str, is_archive_enabled: bool=False, override_task_step_properties=None, **kwargs) -> None:
-        super(TaskRunRequest, self).__init__(is_archive_enabled=is_archive_enabled, **kwargs)
+    def __init__(self, *, task_id: str, is_archive_enabled: bool=False, agent_pool_name: str=None, override_task_step_properties=None, **kwargs) -> None:
+        super(TaskRunRequest, self).__init__(is_archive_enabled=is_archive_enabled, agent_pool_name=agent_pool_name, **kwargs)
         self.task_id = task_id
         self.override_task_step_properties = override_task_step_properties
         self.type = 'TaskRunRequest'
@@ -3406,6 +3564,8 @@ class TaskUpdateParameters(Model):
     :param agent_configuration: The machine configuration of the run agent.
     :type agent_configuration:
      ~azure.mgmt.containerregistry.v2019_06_01_preview.models.AgentProperties
+    :param agent_pool_name: The dedicated agent pool for the task.
+    :type agent_pool_name: str
     :param timeout: Run timeout in seconds.
     :type timeout: int
     :param step: The properties for updating a task step.
@@ -3427,6 +3587,7 @@ class TaskUpdateParameters(Model):
         'status': {'key': 'properties.status', 'type': 'str'},
         'platform': {'key': 'properties.platform', 'type': 'PlatformUpdateParameters'},
         'agent_configuration': {'key': 'properties.agentConfiguration', 'type': 'AgentProperties'},
+        'agent_pool_name': {'key': 'properties.agentPoolName', 'type': 'str'},
         'timeout': {'key': 'properties.timeout', 'type': 'int'},
         'step': {'key': 'properties.step', 'type': 'TaskStepUpdateParameters'},
         'trigger': {'key': 'properties.trigger', 'type': 'TriggerUpdateParameters'},
@@ -3434,12 +3595,13 @@ class TaskUpdateParameters(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, *, identity=None, status=None, platform=None, agent_configuration=None, timeout: int=None, step=None, trigger=None, credentials=None, tags=None, **kwargs) -> None:
+    def __init__(self, *, identity=None, status=None, platform=None, agent_configuration=None, agent_pool_name: str=None, timeout: int=None, step=None, trigger=None, credentials=None, tags=None, **kwargs) -> None:
         super(TaskUpdateParameters, self).__init__(**kwargs)
         self.identity = identity
         self.status = status
         self.platform = platform
         self.agent_configuration = agent_configuration
+        self.agent_pool_name = agent_pool_name
         self.timeout = timeout
         self.step = step
         self.trigger = trigger
@@ -3554,9 +3716,6 @@ class Token(ProxyResource):
     :param scope_map_id: The resource ID of the scope map to which the token
      will be associated with.
     :type scope_map_id: str
-    :param object_id: The user/group/application object ID for which the token
-     has to be created.
-    :type object_id: str
     :param credentials: The credentials that can be used for authenticating
      the token.
     :type credentials:
@@ -3582,17 +3741,15 @@ class Token(ProxyResource):
         'creation_date': {'key': 'properties.creationDate', 'type': 'iso-8601'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'scope_map_id': {'key': 'properties.scopeMapId', 'type': 'str'},
-        'object_id': {'key': 'properties.objectId', 'type': 'str'},
         'credentials': {'key': 'properties.credentials', 'type': 'TokenCredentialsProperties'},
         'status': {'key': 'properties.status', 'type': 'str'},
     }
 
-    def __init__(self, *, scope_map_id: str=None, object_id: str=None, credentials=None, status=None, **kwargs) -> None:
+    def __init__(self, *, scope_map_id: str=None, credentials=None, status=None, **kwargs) -> None:
         super(Token, self).__init__(**kwargs)
         self.creation_date = None
         self.provisioning_state = None
         self.scope_map_id = scope_map_id
-        self.object_id = object_id
         self.credentials = credentials
         self.status = status
 
@@ -3631,6 +3788,9 @@ class TokenCredentialsProperties(Model):
     """The properties of the credentials that can be used for authenticating the
     token.
 
+    :param active_directory_object:
+    :type active_directory_object:
+     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.ActiveDirectoryObject
     :param certificates:
     :type certificates:
      list[~azure.mgmt.containerregistry.v2019_06_01_preview.models.TokenCertificate]
@@ -3640,12 +3800,14 @@ class TokenCredentialsProperties(Model):
     """
 
     _attribute_map = {
+        'active_directory_object': {'key': 'activeDirectoryObject', 'type': 'ActiveDirectoryObject'},
         'certificates': {'key': 'certificates', 'type': '[TokenCertificate]'},
         'passwords': {'key': 'passwords', 'type': '[TokenPassword]'},
     }
 
-    def __init__(self, *, certificates=None, passwords=None, **kwargs) -> None:
+    def __init__(self, *, active_directory_object=None, certificates=None, passwords=None, **kwargs) -> None:
         super(TokenCredentialsProperties, self).__init__(**kwargs)
+        self.active_directory_object = active_directory_object
         self.certificates = certificates
         self.passwords = passwords
 

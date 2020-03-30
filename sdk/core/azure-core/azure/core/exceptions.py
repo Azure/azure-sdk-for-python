@@ -73,6 +73,22 @@ def raise_with_traceback(exception, *args, **kwargs):
         error.__traceback__ = exc_traceback
         raise error
 
+class ErrorMap(object):
+    """Error Map class. To be used in map_error method, behaves like a dictionary.
+    It returns the error type if it is found in custom_error_map. Or return default_error
+
+    :param dict custom_error_map: User-defined error map, it is used to map status codes to error types.
+    :keyword error default_error: Default error type. It is returned if the status code is not found in custom_error_map
+    """
+    def __init__(self, custom_error_map=None, **kwargs):
+        self._custom_error_map = custom_error_map or {}
+        self._default_error = kwargs.pop("default_error", None)
+
+    def get(self, key):
+        ret = self._custom_error_map.get(key)
+        if ret:
+            return ret
+        return self._default_error
 
 def map_error(status_code, response, error_map):
     if not error_map:
@@ -122,10 +138,12 @@ class ODataV4Format(object):
         self.target = json_object.get(cls.TARGET_LABEL)  # type: Optional[str]
 
         # details is recursive of this very format
-        self.details = [
-            self.__class__(detail_node)
-            for detail_node in json_object.get(cls.DETAILS_LABEL, [])
-        ]  # type: List[ODataV4Format]
+        self.details = []  # type: List[ODataV4Format]
+        for detail_node in json_object.get(cls.DETAILS_LABEL, []):
+            try:
+                self.details.append(self.__class__(detail_node))
+            except Exception:  # pylint: disable=broad-except
+                pass
 
         self.innererror = json_object.get(cls.INNERERROR_LABEL, {})  # type: Dict[str, Any]
 
@@ -209,6 +227,11 @@ class ServiceResponseError(AzureError):
     The connection may have timed out. These errors can be retried for idempotent or
     safe operations"""
 
+class ServiceRequestTimeoutError(ServiceRequestError):
+    """Error raised when timeout happens"""
+
+class ServiceResponseTimeoutError(ServiceResponseError):
+    """Error raised when timeout happens"""
 
 class HttpResponseError(AzureError):
     """A request was made, and a non-success status code was received from the service.
