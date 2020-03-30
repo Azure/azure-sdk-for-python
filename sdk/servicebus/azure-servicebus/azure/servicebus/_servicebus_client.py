@@ -80,7 +80,8 @@ class ServiceBusClient(object):
             debug=self._config.logging_enable
         )
 
-    def close(self) -> None:
+    def close(self):
+        # type: () -> None
         """
         Close down the ServiceBus client and the underlying connection.
 

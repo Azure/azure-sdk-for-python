@@ -236,7 +236,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
     def from_connection_string(
         cls,
         conn_str,
-        **kwargs,
+        **kwargs
     ):
         # type: (str, Any) -> ServiceBusSender
         """Create a ServiceBusSender from a connection string.
