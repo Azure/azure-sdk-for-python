@@ -86,6 +86,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         super(TextAnalyticsClient, self).__init__(
             endpoint=endpoint,
             credential=credential,
+            aio=False,
             **kwargs
         )
         self._default_language = kwargs.pop("default_language", "en")
