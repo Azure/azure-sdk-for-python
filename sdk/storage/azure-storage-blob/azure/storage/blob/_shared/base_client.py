@@ -226,7 +226,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         self._credential_policy = None # type: Optional[Union[BearerTokenCredentialPolicy, SharedKeyCredentialPolicy]]
         if hasattr(credential, "get_token"):
             self._credential_policy = BearerTokenCredentialPolicy(credential, STORAGE_OAUTH_SCOPE)
-        if isinstance(credential, SharedKeyCredentialPolicy):
+        elif isinstance(credential, SharedKeyCredentialPolicy):
             self._credential_policy = credential
         elif credential is not None:
             raise TypeError("Unsupported credential: {}".format(credential))
