@@ -86,7 +86,7 @@ class AsyncStorageAccountHostsMixin(object):
                 from azure.core.pipeline.transport import AioHttpTransport
             except ImportError:
                 raise ImportError("Unable to create async transport. Please check aiohttp is installed.")
-            config.transport, AioHttpTransport(**kwargs))
+            config.transport = AioHttpTransport(**kwargs))
         policies = [
             QueueMessagePolicy(),
             config.headers_policy,
