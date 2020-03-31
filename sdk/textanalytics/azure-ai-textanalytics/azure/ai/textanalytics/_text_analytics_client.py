@@ -23,13 +23,11 @@ from ._response_handlers import (
     linked_entities_result,
     key_phrases_result,
     sentiment_result,
-    language_result,
-    pii_entities_result
+    language_result
 )
 
 if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential
-    from ._credential import TextAnalyticsApiKeyCredential
+    from azure.core.credentials import TokenCredential, AzureKeyCredential
     from ._models import (
         DetectLanguageInput,
         TextDocumentInput,
@@ -38,7 +36,6 @@ if TYPE_CHECKING:
         RecognizeLinkedEntitiesResult,
         ExtractKeyPhrasesResult,
         AnalyzeSentimentResult,
-        RecognizePiiEntitiesResult,
         DocumentError,
     )
 
@@ -56,10 +53,10 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     :param str endpoint: Supported Cognitive Services or Text Analytics resource
         endpoints (protocol and hostname, for example: https://westus2.api.cognitive.microsoft.com).
     :param credential: Credentials needed for the client to connect to Azure.
-        This can be the an instance of TextAnalyticsApiKeyCredential if using a
+        This can be the an instance of AzureKeyCredential if using a
         cognitive services/text analytics API key or a token credential
         from :mod:`azure.identity`.
-    :type credential: :class:`~azure.ai.textanalytics.TextAnalyticsApiKeyCredential` or
+    :type credential: :class:`~azure.core.credentials.AzureKeyCredential` or
         :class:`~azure.core.credentials.TokenCredential`
     :keyword str default_country_hint: Sets the default country_hint to use for all operations.
         Defaults to "US". If you don't want to use a country hint, pass the string "none".
@@ -84,7 +81,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     """
 
     def __init__(self, endpoint, credential, **kwargs):
-        # type: (str, Union[TextAnalyticsApiKeyCredential, TokenCredential], Any) -> None
+        # type: (str, Union[AzureKeyCredential, TokenCredential], Any) -> None
         super(TextAnalyticsClient, self).__init__(credential=credential, **kwargs)
         self._client = TextAnalytics(
             endpoint=endpoint, credentials=credential, pipeline=self._pipeline
@@ -215,70 +212,6 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 model_version=model_version,
                 show_stats=show_stats,
                 cls=entities_result,
-                **kwargs
-            )
-        except TextAnalyticsErrorException as error:
-            process_batch_error(error)
-
-    @distributed_trace
-    def recognize_pii_entities(  # type: ignore
-        self,
-        documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> List[Union[RecognizePiiEntitiesResult, DocumentError]]
-        """Recognize entities containing personal information for a batch of documents.
-
-        Returns a list of personal information entities ("SSN",
-        "Bank Account", etc) in the document.  For the list of supported entity types,
-        check https://aka.ms/tanerpii.
-
-        See https://docs.microsoft.com/azure/cognitive-services/text-analytics/overview#data-limits
-        for document length limits, maximum batch size, and supported text encoding.
-
-        :param documents: The set of documents to process as part of this batch.
-            If you wish to specify the ID and language on a per-item basis you must
-            use as input a list[:class:`~azure.ai.textanalytics.TextDocumentInput`] or a list of
-            dict representations of :class:`~azure.ai.textanalytics.TextDocumentInput`, like
-            `{"id": "1", "language": "en", "text": "hello world"}`.
-        :type documents:
-            list[str] or list[~azure.ai.textanalytics.TextDocumentInput]
-        :keyword str language: The 2 letter ISO 639-1 representation of language for the
-            entire batch. For example, use "en" for English; "es" for Spanish etc.
-            If not set, uses "en" for English as default. Per-document language will
-            take precedence over whole batch language. See https://aka.ms/talangs for
-            supported languages in Text Analytics API.
-        :keyword str model_version: This value indicates which model will
-            be used for scoring, e.g. "latest", "2019-10-01". If a model-version
-            is not specified, the API will default to the latest, non-preview version.
-        :keyword bool show_stats: If set to true, response will contain document level statistics.
-        :return: The combined list of :class:`~azure.ai.textanalytics.RecognizePiiEntitiesResult` and
-            :class:`~azure.ai.textanalytics.DocumentError` in the order the original documents were
-            passed in.
-        :rtype: list[~azure.ai.textanalytics.RecognizePiiEntitiesResult,
-            ~azure.ai.textanalytics.DocumentError]
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/sample_recognize_pii_entities.py
-                :start-after: [START batch_recognize_pii_entities]
-                :end-before: [END batch_recognize_pii_entities]
-                :language: python
-                :dedent: 8
-                :caption: Recognize personally identifiable information entities in a batch of documents.
-        """
-        language_arg = kwargs.pop("language", None)
-        language = language_arg if language_arg is not None else self._default_language
-        docs = _validate_batch_input(documents, "language", language)
-        model_version = kwargs.pop("model_version", None)
-        show_stats = kwargs.pop("show_stats", False)
-        try:
-            return self._client.entities_recognition_pii(
-                documents=docs,
-                model_version=model_version,
-                show_stats=show_stats,
-                cls=pii_entities_result,
                 **kwargs
             )
         except TextAnalyticsErrorException as error:

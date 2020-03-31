@@ -6,10 +6,10 @@
 import time
 
 import azure.core
-from azure.core.credentials import AccessToken
+from azure.core.credentials import AccessToken, AzureKeyCredential
 from azure.core.exceptions import ServiceRequestError
 from azure.core.pipeline import Pipeline
-from azure.core.pipeline.policies import BearerTokenCredentialPolicy, SansIOHTTPPolicy
+from azure.core.pipeline.policies import BearerTokenCredentialPolicy, SansIOHTTPPolicy, AzureKeyCredentialPolicy
 from azure.core.pipeline.transport import HttpRequest
 
 import pytest
@@ -146,3 +146,41 @@ def test_key_vault_regression():
     policy._token = AccessToken(token, time.time() + 3600)
     assert not policy._need_new_token
     assert policy._token.token == token
+
+def test_azure_key_credential_policy():
+    """Tests to see if we can create an AzureKeyCredentialPolicy"""
+
+    key_header = "api_key"
+    api_key = "test_key"
+
+    def verify_authorization_header(request):
+        assert request.headers[key_header] == api_key
+
+    transport=Mock(send=verify_authorization_header)
+    credential = AzureKeyCredential(api_key)
+    credential_policy = AzureKeyCredentialPolicy(credential=credential, name=key_header)
+    pipeline = Pipeline(transport=transport, policies=[credential_policy])
+
+    pipeline.run(HttpRequest("GET", "https://test_key_credential"))
+
+def test_azure_key_credential_policy_raises():
+    """Tests AzureKeyCredential and AzureKeyCredentialPolicy raises with non-string input parameters."""
+    api_key = 1234
+    key_header = 5678
+    with pytest.raises(TypeError):
+        credential = AzureKeyCredential(api_key)
+
+    credential = AzureKeyCredential(str(api_key))
+    with pytest.raises(TypeError):
+        credential_policy = AzureKeyCredentialPolicy(credential=credential, name=key_header)
+
+def test_azure_key_credential_updates():
+    """Tests AzureKeyCredential updates"""
+    api_key = "original"
+
+    credential = AzureKeyCredential(api_key)
+    assert credential.key == api_key
+
+    api_key = "new"
+    credential.update(api_key)
+    assert credential.key == api_key

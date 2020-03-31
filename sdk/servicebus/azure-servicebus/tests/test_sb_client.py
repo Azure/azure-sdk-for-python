@@ -22,6 +22,7 @@ from azure.servicebus.common.errors import (
     ServiceBusAuthorizationError,
     ServiceBusResourceNotFound
 )
+from uamqp.constants import TransportType
 from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPreparer
 from servicebus_preparer import (
     ServiceBusNamespacePreparer, 
@@ -169,11 +170,23 @@ class ServiceBusClientTests(AzureMgmtTestCase):
     @RandomNameResourceGroupPreparer(name_prefix='servicebustest')
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusNamespaceAuthorizationRulePreparer(name_prefix='servicebustest')
-    @ServiceBusQueuePreparer(name_prefix='servicebustest_queue_one', parameter_name='wrong_queue', dead_lettering_on_message_expiration=True)
-    @ServiceBusQueuePreparer(name_prefix='servicebustest_queue_two', dead_lettering_on_message_expiration=True)
-    @ServiceBusQueueAuthorizationRulePreparer(name_prefix='servicebustest_queue_two')
+    @ServiceBusQueuePreparer(name_prefix='servicebustest_q1', parameter_name='wrong_queue', dead_lettering_on_message_expiration=True)
+    @ServiceBusQueuePreparer(name_prefix='servicebustest_q2', dead_lettering_on_message_expiration=True)
+    @ServiceBusQueueAuthorizationRulePreparer(name_prefix='servicebustest_q2')
     def test_sb_client_incorrect_queue_conn_str(self, servicebus_queue_authorization_rule_connection_string, wrong_queue, **kwargs):
         
         client = ServiceBusClient.from_connection_string(servicebus_queue_authorization_rule_connection_string)
         with pytest.raises(AzureHttpError):
             client.get_queue(wrong_queue.name)
+
+
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @RandomNameResourceGroupPreparer(name_prefix='servicebustest')
+    @ServiceBusNamespacePreparer(name_prefix='servicebustest')
+    def test_servicebusclient_from_conn_str_amqpoverwebsocket(self, servicebus_namespace_connection_string, **kwargs):
+        sb_client = ServiceBusClient.from_connection_string(servicebus_namespace_connection_string)
+        assert sb_client.transport_type == TransportType.Amqp
+
+        websocket_sb_client = ServiceBusClient.from_connection_string(servicebus_namespace_connection_string + ';TransportType=AmqpOverWebsocket')
+        assert websocket_sb_client.transport_type == TransportType.AmqpOverWebsocket

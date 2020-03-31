@@ -10,11 +10,9 @@
 # --------------------------------------------------------------------------
 
 from ._operations import Operations
-from ._graph_query_operations import GraphQueryOperations
 from ._resource_graph_client_operations import ResourceGraphClientOperationsMixin
 
 __all__ = [
     'Operations',
-    'GraphQueryOperations',
     'ResourceGraphClientOperationsMixin',
 ]

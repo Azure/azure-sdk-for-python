@@ -35,6 +35,19 @@ class NetworkRuleAction(str, Enum):
     deny = "Deny"
 
 
+class KeySource(str, Enum):
+
+    microsoft_cognitive_services = "Microsoft.CognitiveServices"
+    microsoft_key_vault = "Microsoft.KeyVault"
+
+
+class IdentityType(str, Enum):
+
+    none = "None"
+    system_assigned = "SystemAssigned"
+    user_assigned = "UserAssigned"
+
+
 class KeyName(str, Enum):
 
     key1 = "Key1"

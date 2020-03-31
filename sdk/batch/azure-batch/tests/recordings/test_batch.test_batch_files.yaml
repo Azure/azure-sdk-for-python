@@ -16,7 +16,7 @@ interactions:
       ocp-date:
       - Wed, 07 Aug 2019 00:17:16 GMT
     method: GET
-    uri: https://batch498930ae3.westcentralus.batch.azure.com/pools/test_batch_test_batch_files98930ae3/nodes?api-version=2019-08-01.10.0
+    uri: https://batch498930ae3.westcentralus.batch.azure.com/pools/test_batch_test_batch_files98930ae3/nodes?api-version=2020-03-01.11.0
   response:
     body:
       string: "{\r\n  \"odata.metadata\":\"https://batch498930ae3.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
@@ -60,7 +60,7 @@ interactions:
       ocp-date:
       - Wed, 07 Aug 2019 00:17:26 GMT
     method: GET
-    uri: https://batch498930ae3.westcentralus.batch.azure.com/pools/test_batch_test_batch_files98930ae3/nodes?api-version=2019-08-01.10.0
+    uri: https://batch498930ae3.westcentralus.batch.azure.com/pools/test_batch_test_batch_files98930ae3/nodes?api-version=2020-03-01.11.0
   response:
     body:
       string: "{\r\n  \"odata.metadata\":\"https://batch498930ae3.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
@@ -104,7 +104,7 @@ interactions:
       ocp-date:
       - Wed, 07 Aug 2019 00:17:36 GMT
     method: GET
-    uri: https://batch498930ae3.westcentralus.batch.azure.com/pools/test_batch_test_batch_files98930ae3/nodes?api-version=2019-08-01.10.0
+    uri: https://batch498930ae3.westcentralus.batch.azure.com/pools/test_batch_test_batch_files98930ae3/nodes?api-version=2020-03-01.11.0
   response:
     body:
       string: "{\r\n  \"odata.metadata\":\"https://batch498930ae3.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
@@ -148,7 +148,7 @@ interactions:
       ocp-date:
       - Wed, 07 Aug 2019 00:17:46 GMT
     method: GET
-    uri: https://batch498930ae3.westcentralus.batch.azure.com/pools/test_batch_test_batch_files98930ae3/nodes?api-version=2019-08-01.10.0
+    uri: https://batch498930ae3.westcentralus.batch.azure.com/pools/test_batch_test_batch_files98930ae3/nodes?api-version=2020-03-01.11.0
   response:
     body:
       string: "{\r\n  \"odata.metadata\":\"https://batch498930ae3.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
@@ -192,7 +192,7 @@ interactions:
       ocp-date:
       - Wed, 07 Aug 2019 00:17:57 GMT
     method: GET
-    uri: https://batch498930ae3.westcentralus.batch.azure.com/pools/test_batch_test_batch_files98930ae3/nodes?api-version=2019-08-01.10.0
+    uri: https://batch498930ae3.westcentralus.batch.azure.com/pools/test_batch_test_batch_files98930ae3/nodes?api-version=2020-03-01.11.0
   response:
     body:
       string: "{\r\n  \"odata.metadata\":\"https://batch498930ae3.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
@@ -236,7 +236,7 @@ interactions:
       ocp-date:
       - Wed, 07 Aug 2019 00:18:07 GMT
     method: GET
-    uri: https://batch498930ae3.westcentralus.batch.azure.com/pools/test_batch_test_batch_files98930ae3/nodes?api-version=2019-08-01.10.0
+    uri: https://batch498930ae3.westcentralus.batch.azure.com/pools/test_batch_test_batch_files98930ae3/nodes?api-version=2020-03-01.11.0
   response:
     body:
       string: "{\r\n  \"odata.metadata\":\"https://batch498930ae3.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
@@ -286,7 +286,7 @@ interactions:
       ocp-date:
       - Wed, 07 Aug 2019 00:18:07 GMT
     method: POST
-    uri: https://batch498930ae3.westcentralus.batch.azure.com/jobs/batch98930ae3/tasks?api-version=2019-08-01.10.0
+    uri: https://batch498930ae3.westcentralus.batch.azure.com/jobs/batch98930ae3/tasks?api-version=2020-03-01.11.0
   response:
     body:
       string: ''
@@ -333,7 +333,7 @@ interactions:
       ocp-date:
       - Wed, 07 Aug 2019 00:18:07 GMT
     method: GET
-    uri: https://batch498930ae3.westcentralus.batch.azure.com/jobs/batch98930ae3/tasks/test_task?api-version=2019-08-01.10.0
+    uri: https://batch498930ae3.westcentralus.batch.azure.com/jobs/batch98930ae3/tasks/test_task?api-version=2020-03-01.11.0
   response:
     body:
       string: "{\r\n  \"odata.metadata\":\"https://batch498930ae3.westcentralus.batch.azure.com/$metadata#tasks/@Element\",\"id\":\"test_task\",\"url\":\"https://batch498930ae3.westcentralus.batch.azure.com/jobs/batch98930ae3/tasks/test_task\",\"eTag\":\"0x8D71ACCB8DE860F\",\"creationTime\":\"2019-08-07T00:18:07.3456143Z\",\"lastModified\":\"2019-08-07T00:18:07.3456143Z\",\"state\":\"active\",\"stateTransitionTime\":\"2019-08-07T00:18:07.3456143Z\",\"commandLine\":\"cmd
@@ -382,7 +382,7 @@ interactions:
       ocp-date:
       - Wed, 07 Aug 2019 00:18:12 GMT
     method: GET
-    uri: https://batch498930ae3.westcentralus.batch.azure.com/jobs/batch98930ae3/tasks/test_task?api-version=2019-08-01.10.0
+    uri: https://batch498930ae3.westcentralus.batch.azure.com/jobs/batch98930ae3/tasks/test_task?api-version=2020-03-01.11.0
   response:
     body:
       string: "{\r\n  \"odata.metadata\":\"https://batch498930ae3.westcentralus.batch.azure.com/$metadata#tasks/@Element\",\"id\":\"test_task\",\"url\":\"https://batch498930ae3.westcentralus.batch.azure.com/jobs/batch98930ae3/tasks/test_task\",\"eTag\":\"0x8D71ACCB8DE860F\",\"creationTime\":\"2019-08-07T00:18:07.3456143Z\",\"lastModified\":\"2019-08-07T00:18:07.3456143Z\",\"state\":\"completed\",\"stateTransitionTime\":\"2019-08-07T00:18:09.804554Z\",\"previousState\":\"running\",\"previousStateTransitionTime\":\"2019-08-07T00:18:09.698258Z\",\"commandLine\":\"cmd
@@ -437,7 +437,7 @@ interactions:
       ocp-date:
       - Wed, 07 Aug 2019 00:18:12 GMT
     method: GET
-    uri: https://batch498930ae3.westcentralus.batch.azure.com/pools/test_batch_test_batch_files98930ae3/nodes/tvmps_bd71c4f0938808e5d43f04eb498b6b035da103637346df4dc766fd73d05d0b7d_d/files?recursive=true&api-version=2019-08-01.10.0
+    uri: https://batch498930ae3.westcentralus.batch.azure.com/pools/test_batch_test_batch_files98930ae3/nodes/tvmps_bd71c4f0938808e5d43f04eb498b6b035da103637346df4dc766fd73d05d0b7d_d/files?recursive=true&api-version=2020-03-01.11.0
   response:
     body:
       string: "{\r\n  \"odata.metadata\":\"https://batch498930ae3.westcentralus.batch.azure.com/$metadata#files\",\"value\":[\r\n
@@ -495,7 +495,7 @@ interactions:
       ocp-date:
       - Wed, 07 Aug 2019 00:18:12 GMT
     method: HEAD
-    uri: https://batch498930ae3.westcentralus.batch.azure.com/pools/test_batch_test_batch_files98930ae3/nodes/tvmps_bd71c4f0938808e5d43f04eb498b6b035da103637346df4dc766fd73d05d0b7d_d/files/workitems%2Fbatch98930ae3%2Fjob-1%2Ftest_task%2Fstdout.txt?api-version=2019-08-01.10.0
+    uri: https://batch498930ae3.westcentralus.batch.azure.com/pools/test_batch_test_batch_files98930ae3/nodes/tvmps_bd71c4f0938808e5d43f04eb498b6b035da103637346df4dc766fd73d05d0b7d_d/files/workitems%2Fbatch98930ae3%2Fjob-1%2Ftest_task%2Fstdout.txt?api-version=2020-03-01.11.0
   response:
     body:
       string: ''
@@ -544,7 +544,7 @@ interactions:
       ocp-date:
       - Wed, 07 Aug 2019 00:18:13 GMT
     method: GET
-    uri: https://batch498930ae3.westcentralus.batch.azure.com/pools/test_batch_test_batch_files98930ae3/nodes/tvmps_bd71c4f0938808e5d43f04eb498b6b035da103637346df4dc766fd73d05d0b7d_d/files/workitems%2Fbatch98930ae3%2Fjob-1%2Ftest_task%2Fstdout.txt?api-version=2019-08-01.10.0
+    uri: https://batch498930ae3.westcentralus.batch.azure.com/pools/test_batch_test_batch_files98930ae3/nodes/tvmps_bd71c4f0938808e5d43f04eb498b6b035da103637346df4dc766fd73d05d0b7d_d/files/workitems%2Fbatch98930ae3%2Fjob-1%2Ftest_task%2Fstdout.txt?api-version=2020-03-01.11.0
   response:
     body:
       string: ''
@@ -595,7 +595,7 @@ interactions:
       ocp-date:
       - Wed, 07 Aug 2019 00:18:13 GMT
     method: DELETE
-    uri: https://batch498930ae3.westcentralus.batch.azure.com/pools/test_batch_test_batch_files98930ae3/nodes/tvmps_bd71c4f0938808e5d43f04eb498b6b035da103637346df4dc766fd73d05d0b7d_d/files/workitems%2Fbatch98930ae3%2Fjob-1%2Ftest_task%2Fstdout.txt?api-version=2019-08-01.10.0
+    uri: https://batch498930ae3.westcentralus.batch.azure.com/pools/test_batch_test_batch_files98930ae3/nodes/tvmps_bd71c4f0938808e5d43f04eb498b6b035da103637346df4dc766fd73d05d0b7d_d/files/workitems%2Fbatch98930ae3%2Fjob-1%2Ftest_task%2Fstdout.txt?api-version=2020-03-01.11.0
   response:
     body:
       string: ''
@@ -634,7 +634,7 @@ interactions:
       ocp-date:
       - Wed, 07 Aug 2019 00:18:13 GMT
     method: GET
-    uri: https://batch498930ae3.westcentralus.batch.azure.com/jobs/batch98930ae3/tasks/test_task/files?api-version=2019-08-01.10.0
+    uri: https://batch498930ae3.westcentralus.batch.azure.com/jobs/batch98930ae3/tasks/test_task/files?api-version=2020-03-01.11.0
   response:
     body:
       string: "{\r\n  \"odata.metadata\":\"https://batch498930ae3.westcentralus.batch.azure.com/$metadata#files\",\"value\":[\r\n
@@ -680,7 +680,7 @@ interactions:
       ocp-date:
       - Wed, 07 Aug 2019 00:18:13 GMT
     method: HEAD
-    uri: https://batch498930ae3.westcentralus.batch.azure.com/jobs/batch98930ae3/tasks/test_task/files/stderr.txt?api-version=2019-08-01.10.0
+    uri: https://batch498930ae3.westcentralus.batch.azure.com/jobs/batch98930ae3/tasks/test_task/files/stderr.txt?api-version=2020-03-01.11.0
   response:
     body:
       string: ''
@@ -729,7 +729,7 @@ interactions:
       ocp-date:
       - Wed, 07 Aug 2019 00:18:13 GMT
     method: GET
-    uri: https://batch498930ae3.westcentralus.batch.azure.com/jobs/batch98930ae3/tasks/test_task/files/stderr.txt?api-version=2019-08-01.10.0
+    uri: https://batch498930ae3.westcentralus.batch.azure.com/jobs/batch98930ae3/tasks/test_task/files/stderr.txt?api-version=2020-03-01.11.0
   response:
     body:
       string: ''
@@ -780,7 +780,7 @@ interactions:
       ocp-date:
       - Wed, 07 Aug 2019 00:18:13 GMT
     method: DELETE
-    uri: https://batch498930ae3.westcentralus.batch.azure.com/jobs/batch98930ae3/tasks/test_task/files/stderr.txt?api-version=2019-08-01.10.0
+    uri: https://batch498930ae3.westcentralus.batch.azure.com/jobs/batch98930ae3/tasks/test_task/files/stderr.txt?api-version=2020-03-01.11.0
   response:
     body:
       string: ''

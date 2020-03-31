@@ -13,7 +13,7 @@ DESCRIPTION:
     This sample demonstrates how to authenticate to the Text Analytics service.
 
     There are two supported methods of authentication:
-    1) Use a Cognitive Services/Text Analytics API key with TextAnalyticsApiKeyCredential
+    1) Use a Cognitive Services/Text Analytics API key with AzureKeyCredential from azure.core.credentials
     2) Use a token credential from azure-identity to authenticate with Azure Active Directory
 
     See more details about authentication here:
@@ -38,11 +38,12 @@ class AuthenticationSample(object):
     def authentication_with_api_key_credential(self):
         print("\n.. authentication_with_api_key_credential")
         # [START create_ta_client_with_key]
-        from azure.ai.textanalytics import TextAnalyticsClient, TextAnalyticsApiKeyCredential
-        endpoint = os.getenv("AZURE_TEXT_ANALYTICS_ENDPOINT")
-        key = os.getenv("AZURE_TEXT_ANALYTICS_KEY")
+        from azure.core.credentials import AzureKeyCredential
+        from azure.ai.textanalytics import TextAnalyticsClient
+        endpoint = os.environ["AZURE_TEXT_ANALYTICS_ENDPOINT"]
+        key = os.environ["AZURE_TEXT_ANALYTICS_KEY"]
 
-        text_analytics_client = TextAnalyticsClient(endpoint, TextAnalyticsApiKeyCredential(key))
+        text_analytics_client = TextAnalyticsClient(endpoint, AzureKeyCredential(key))
         # [END create_ta_client_with_key]
 
         doc = ["I need to take my cat to the veterinarian."]
@@ -55,12 +56,12 @@ class AuthenticationSample(object):
         """DefaultAzureCredential will use the values from these environment
         variables: AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET
         """
-        print("\n.. authentication_with_api_key_credential")
+        print("\n.. authentication_with_azure_active_directory")
         # [START create_ta_client_with_aad]
         from azure.ai.textanalytics import TextAnalyticsClient
         from azure.identity import DefaultAzureCredential
 
-        endpoint = os.getenv("AZURE_TEXT_ANALYTICS_ENDPOINT")
+        endpoint = os.environ["AZURE_TEXT_ANALYTICS_ENDPOINT"]
         credential = DefaultAzureCredential()
 
         text_analytics_client = TextAnalyticsClient(endpoint, credential=credential)

@@ -19,15 +19,12 @@ from ._models import (
     TextAnalyticsError,
     ExtractKeyPhrasesResult,
     RecognizeLinkedEntitiesResult,
-    RecognizePiiEntitiesResult,
     TextDocumentStatistics,
     LinkedEntityMatch,
     TextDocumentBatchStatistics,
     SentenceSentiment,
-    SentimentConfidenceScores,
-    PiiEntity
+    SentimentConfidenceScores
 )
-from ._credential import TextAnalyticsApiKeyCredential
 
 __all__ = [
     'TextAnalyticsClient',
@@ -35,7 +32,6 @@ __all__ = [
     'TextDocumentInput',
     'DetectedLanguage',
     'RecognizeEntitiesResult',
-    'RecognizePiiEntitiesResult',
     'DetectLanguageResult',
     'CategorizedEntity',
     'TextAnalyticsError',
@@ -48,9 +44,7 @@ __all__ = [
     'LinkedEntityMatch',
     'TextDocumentBatchStatistics',
     'SentenceSentiment',
-    'SentimentConfidenceScores',
-    'TextAnalyticsApiKeyCredential',
-    'PiiEntity'
+    'SentimentConfidenceScores'
 ]
 
 __version__ = VERSION
