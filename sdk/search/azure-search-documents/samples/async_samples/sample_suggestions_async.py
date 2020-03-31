@@ -30,10 +30,11 @@ key = os.getenv("AZURE_SEARCH_API_KEY")
 
 async def suggest_query():
     # [START suggest_query_async]
+    from azure.core.credentials import AzureKeyCredential
     from azure.search.documents.aio import SearchIndexClient
-    from azure.search.documents import SearchApiKeyCredential, SuggestQuery
+    from azure.search.documents import SuggestQuery
 
-    search_client = SearchIndexClient(service_endpoint, index_name, SearchApiKeyCredential(key))
+    search_client = SearchIndexClient(service_endpoint, index_name, AzureKeyCredential(key))
 
     query = SuggestQuery(search_text="coffee", suggester_name="sg")
 
