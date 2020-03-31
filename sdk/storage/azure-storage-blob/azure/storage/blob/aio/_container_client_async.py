@@ -34,6 +34,7 @@ from .._shared.response_handlers import (
     return_headers_and_deserialized)
 from .._generated import VERSION
 from .._generated.aio import AzureBlobStorage
+from .._generated import AzureBlobStorage as AzureBlobStorageAsync
 from .._generated.models import (
     StorageErrorException,
     SignedIdentifier)
@@ -129,7 +130,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             container_name=container_name,
             credential=credential,
             **kwargs)
-        self._client = AzureBlobStorage(url=self.url, pipeline=self._pipeline)
+        self._client = cast(AzureBlobStorageAsync, AzureBlobStorage(url=self.url, pipeline=self._pipeline))
         self._client._config.version = get_api_version(kwargs, VERSION)  # pylint: disable=protected-access
         self._loop = kwargs.get('loop', None)
 

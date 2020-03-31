@@ -159,7 +159,7 @@ class BlobClient(BlobClientBase):  # pylint: disable=too-many-public-methods
 
         path_snapshot, _ = parse_query(parsed_url.query)
         try:
-            path_snapshot = snapshot.snapshot
+            path_snapshot = snapshot.snapshot # type: ignore
         except AttributeError:
             if isinstance(snapshot, Dict):
                 path_snapshot = snapshot['snapshot']

@@ -38,7 +38,6 @@ from azure.core.pipeline.policies import (
     RedirectPolicy,
     ContentDecodePolicy,
     BearerTokenCredentialPolicy,
-    AsyncBearerTokenCredentialPolicy,
     ProxyPolicy,
     DistributedTracingPolicy,
     HttpLoggingPolicy,
@@ -76,7 +75,7 @@ _SERVICE_PARAMS = {
     "file": {"primary": "FileEndpoint", "secondary": "FileSecondaryEndpoint"},
     "dfs": {"primary": "BlobEndpoint", "secondary": "BlobEndpoint"},
 }
-T = Optional[Union[BearerTokenCredentialPolicy, AsyncBearerTokenCredentialPolicy, SharedKeyCredentialPolicy]]
+T = Optional[Union[BearerTokenCredentialPolicy, SharedKeyCredentialPolicy]]
 
 class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
     def __init__(

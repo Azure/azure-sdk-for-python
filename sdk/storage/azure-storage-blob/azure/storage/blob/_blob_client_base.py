@@ -141,7 +141,7 @@ class BlobClientBase(StorageAccountHostsMixin):  # pylint: disable=too-many-publ
         self.container_name = container_name
         self.blob_name = blob_name
         try:
-            self.snapshot = snapshot.snapshot
+            self.snapshot = snapshot.snapshot # type: ignore
         except AttributeError:
             if isinstance(snapshot, Dict):
                 self.snapshot = snapshot['snapshot']
@@ -722,7 +722,7 @@ class BlobClientBase(StorageAccountHostsMixin):  # pylint: disable=too-many-publ
             'range': page_range}
         if previous_snapshot_diff:
             try:
-                options['prevsnapshot'] = previous_snapshot_diff.snapshot
+                options['prevsnapshot'] = previous_snapshot_diff.snapshot # type: ignore
             except AttributeError:
                 if isinstance(previous_snapshot_diff, Dict):
                     options['prevsnapshot'] = previous_snapshot_diff['snapshot']

@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 from typing import (  # pylint: disable=unused-import
-    Union, Optional, Any, Iterable, Dict, List, Type, Tuple,
+    Union, Optional, Any, Iterable, Dict, List, Type, Tuple, cast,
     TYPE_CHECKING
 )
 import logging
@@ -41,7 +41,7 @@ if TYPE_CHECKING:
     from azure.core.pipeline import Pipeline
     from azure.core.pipeline.transport import HttpRequest
     from azure.core.configuration import Configuration
-T = Optional[Union[BearerTokenCredentialPolicy, AsyncBearerTokenCredentialPolicy, SharedKeyCredentialPolicy]]
+T = Optional[Union[BearerTokenCredentialPolicy, SharedKeyCredentialPolicy]]
 _LOGGER = logging.getLogger(__name__)
 
 
@@ -70,9 +70,9 @@ class AsyncStorageAccountHostsMixin(object):
         # type: (Any, **Any) -> Tuple[Configuration, Pipeline]
         self._credential_policy = None # type: T
         if hasattr(credential, 'get_token'):
-            self._credential_policy = AsyncBearerTokenCredentialPolicy(credential, STORAGE_OAUTH_SCOPE)
+            self._credential_policy = cast(T, AsyncBearerTokenCredentialPolicy(credential, STORAGE_OAUTH_SCOPE))
         elif isinstance(credential, SharedKeyCredentialPolicy):
-            self._credential_policy = credential
+            self._credential_policy = cast(T, credential)
         elif credential is not None:
             raise TypeError("Unsupported credential: {}".format(credential))
         config = kwargs.get('_configuration') or create_configuration(**kwargs)
