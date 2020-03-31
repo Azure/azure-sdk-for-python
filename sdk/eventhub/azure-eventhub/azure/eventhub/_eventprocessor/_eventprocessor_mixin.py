@@ -7,6 +7,8 @@ from datetime import datetime
 from contextlib import contextmanager
 from typing import (
     Union,
+    List,
+    Iterable,
     Dict,
     Callable,
     Any,
@@ -78,7 +80,7 @@ class EventProcessorMixin(object):
         partition_id,  # type: str
         initial_event_position,  # type: Union[str, int, datetime]
         initial_event_position_inclusive,  # type: bool
-        on_event_received,  # type: Callable[[EventData], None]
+        on_event_received,  # type: Callable[[Union[Optional[EventData], List[EventData]]], None]
         **kwargs  # type: Any
     ):
         # type: (...) -> Union[EventHubConsumer, EventHubConsumerAsync]
@@ -97,7 +99,7 @@ class EventProcessorMixin(object):
 
     @contextmanager
     def _context(self, event):
-        # type: (EventData) -> Iterator[None]
+        # type: (Union[EventData, Iterable[EventData]]) -> Iterator[None]
         """Tracing"""
         span_impl_type = settings.tracing_implementation()  # type: Type[AbstractSpan]
         if span_impl_type is None:
