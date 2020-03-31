@@ -25,7 +25,8 @@ from .._utils import (
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
     from typing import Any, Union
-    from azure.core.credentials import AzureKeyCredential, Index, AnalyzeResult
+    from azure.core.credentials import AzureKeyCredential
+    from ... import Index, AnalyzeResult
 
 
 class SearchServiceClient(HeadersMixin):
