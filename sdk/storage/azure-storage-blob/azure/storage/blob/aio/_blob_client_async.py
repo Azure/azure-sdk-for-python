@@ -33,7 +33,7 @@ from ._upload_helpers import (
     upload_block_blob,
     upload_append_blob,
     upload_page_blob)
-from .._models import BlobType, BlobBlock
+from .._models import BlobType, BlobBlock, BlobProperties
 from .._lease import get_access_conditions
 from ._lease_async import BlobLeaseClient
 from ._download_async import StorageStreamDownloader
@@ -43,7 +43,6 @@ if TYPE_CHECKING:
     from azure.core.pipeline.policies import HTTPPolicy
     from .._models import (  # pylint: disable=unused-import
         ContainerProperties,
-        BlobProperties,
         BlobSasPermissions,
         ContentSettings,
         PremiumPageBlobTier,
