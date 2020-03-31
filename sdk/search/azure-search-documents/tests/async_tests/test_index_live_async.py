@@ -23,9 +23,9 @@ SCHEMA = open(join(CWD, "..", "hotel_schema.json")).read()
 BATCH = json.load(open(join(CWD, "..", "hotel_small.json"), encoding='utf-8'))
 
 from azure.core.exceptions import HttpResponseError
+from azure.core.credentials import AzureKeyCredential
 from azure.search.documents import (
     AutocompleteQuery,
-    SearchApiKeyCredential,
     SearchQuery,
     SuggestQuery,
 )
@@ -53,7 +53,7 @@ class SearchIndexClientTestAsync(AzureMgmtTestCase):
         self, api_key, endpoint, index_name, **kwargs
     ):
         client = SearchIndexClient(
-            endpoint, index_name, SearchApiKeyCredential(api_key)
+            endpoint, index_name, AzureKeyCredential(api_key)
         )
         async with client:
             assert await client.get_document_count() == 10
@@ -62,7 +62,7 @@ class SearchIndexClientTestAsync(AzureMgmtTestCase):
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     async def test_get_document(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexClient(
-            endpoint, index_name, SearchApiKeyCredential(api_key)
+            endpoint, index_name, AzureKeyCredential(api_key)
         )
         async with client:
             for hotel_id in range(1, 11):
@@ -76,7 +76,7 @@ class SearchIndexClientTestAsync(AzureMgmtTestCase):
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     async def test_get_document_missing(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexClient(
-            endpoint, index_name, SearchApiKeyCredential(api_key)
+            endpoint, index_name, AzureKeyCredential(api_key)
         )
         async with client:
             with pytest.raises(HttpResponseError):
@@ -86,7 +86,7 @@ class SearchIndexClientTestAsync(AzureMgmtTestCase):
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     async def test_get_search_simple(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexClient(
-            endpoint, index_name, SearchApiKeyCredential(api_key)
+            endpoint, index_name, AzureKeyCredential(api_key)
         )
         async with client:
             results = []
@@ -103,7 +103,7 @@ class SearchIndexClientTestAsync(AzureMgmtTestCase):
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     async def test_get_search_filter(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexClient(
-            endpoint, index_name, SearchApiKeyCredential(api_key)
+            endpoint, index_name, AzureKeyCredential(api_key)
         )
 
         query = SearchQuery(search_text="WiFi")
@@ -132,7 +132,7 @@ class SearchIndexClientTestAsync(AzureMgmtTestCase):
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     async def test_get_search_counts(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexClient(
-            endpoint, index_name, SearchApiKeyCredential(api_key)
+            endpoint, index_name, AzureKeyCredential(api_key)
         )
 
         query = SearchQuery(search_text="hotel")
@@ -147,7 +147,7 @@ class SearchIndexClientTestAsync(AzureMgmtTestCase):
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     async def test_get_search_coverage(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexClient(
-            endpoint, index_name, SearchApiKeyCredential(api_key)
+            endpoint, index_name, AzureKeyCredential(api_key)
         )
 
         query = SearchQuery(search_text="hotel")
@@ -166,7 +166,7 @@ class SearchIndexClientTestAsync(AzureMgmtTestCase):
         self, api_key, endpoint, index_name, **kwargs
     ):
         client = SearchIndexClient(
-            endpoint, index_name, SearchApiKeyCredential(api_key)
+            endpoint, index_name, AzureKeyCredential(api_key)
         )
 
         query = SearchQuery(search_text="WiFi")
@@ -182,7 +182,7 @@ class SearchIndexClientTestAsync(AzureMgmtTestCase):
         self, api_key, endpoint, index_name, **kwargs
     ):
         client = SearchIndexClient(
-            endpoint, index_name, SearchApiKeyCredential(api_key)
+            endpoint, index_name, AzureKeyCredential(api_key)
         )
 
         query = SearchQuery(search_text="WiFi", facets=["category"])
@@ -201,7 +201,7 @@ class SearchIndexClientTestAsync(AzureMgmtTestCase):
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     async def test_autocomplete(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexClient(
-            endpoint, index_name, SearchApiKeyCredential(api_key)
+            endpoint, index_name, AzureKeyCredential(api_key)
         )
         async with client:
             query = AutocompleteQuery(search_text="mot", suggester_name="sg")
@@ -212,7 +212,7 @@ class SearchIndexClientTestAsync(AzureMgmtTestCase):
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     async def test_suggest(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexClient(
-            endpoint, index_name, SearchApiKeyCredential(api_key)
+            endpoint, index_name, AzureKeyCredential(api_key)
         )
         async with client:
             query = SuggestQuery(search_text="mot", suggester_name="sg")
@@ -226,7 +226,7 @@ class SearchIndexClientTestAsync(AzureMgmtTestCase):
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     async def test_upload_documents_new(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexClient(
-            endpoint, index_name, SearchApiKeyCredential(api_key)
+            endpoint, index_name, AzureKeyCredential(api_key)
         )
         DOCUMENTS = [
             {"hotelId": "1000", "rating": 5, "rooms": [], "hotelName": "Azure Inn"},
@@ -255,7 +255,7 @@ class SearchIndexClientTestAsync(AzureMgmtTestCase):
         self, api_key, endpoint, index_name, **kwargs
     ):
         client = SearchIndexClient(
-            endpoint, index_name, SearchApiKeyCredential(api_key)
+            endpoint, index_name, AzureKeyCredential(api_key)
         )
         DOCUMENTS = [
             {"hotelId": "1000", "rating": 5, "rooms": [], "hotelName": "Azure Inn"},
@@ -272,7 +272,7 @@ class SearchIndexClientTestAsync(AzureMgmtTestCase):
         self, api_key, endpoint, index_name, **kwargs
     ):
         client = SearchIndexClient(
-            endpoint, index_name, SearchApiKeyCredential(api_key)
+            endpoint, index_name, AzureKeyCredential(api_key)
         )
         async with client:
             results = await client.delete_documents(
@@ -298,7 +298,7 @@ class SearchIndexClientTestAsync(AzureMgmtTestCase):
         self, api_key, endpoint, index_name, **kwargs
     ):
         client = SearchIndexClient(
-            endpoint, index_name, SearchApiKeyCredential(api_key)
+            endpoint, index_name, AzureKeyCredential(api_key)
         )
         async with client:
             results = await client.delete_documents(
@@ -324,7 +324,7 @@ class SearchIndexClientTestAsync(AzureMgmtTestCase):
         self, api_key, endpoint, index_name, **kwargs
     ):
         client = SearchIndexClient(
-            endpoint, index_name, SearchApiKeyCredential(api_key)
+            endpoint, index_name, AzureKeyCredential(api_key)
         )
         async with client:
             results = await client.merge_documents(
@@ -350,7 +350,7 @@ class SearchIndexClientTestAsync(AzureMgmtTestCase):
         self, api_key, endpoint, index_name, **kwargs
     ):
         client = SearchIndexClient(
-            endpoint, index_name, SearchApiKeyCredential(api_key)
+            endpoint, index_name, AzureKeyCredential(api_key)
         )
         async with client:
             results = await client.merge_documents(
@@ -376,7 +376,7 @@ class SearchIndexClientTestAsync(AzureMgmtTestCase):
         self, api_key, endpoint, index_name, **kwargs
     ):
         client = SearchIndexClient(
-            endpoint, index_name, SearchApiKeyCredential(api_key)
+            endpoint, index_name, AzureKeyCredential(api_key)
         )
         async with client:
             results = await client.merge_or_upload_documents(

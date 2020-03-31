@@ -10,7 +10,7 @@ from os.path import dirname, join, realpath
 import time
 
 import pytest
-
+from azure.core.credentials import AzureKeyCredential
 from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 
 from search_service_preparer import SearchServicePreparer
@@ -52,7 +52,7 @@ class SearchIndexClientTest(AzureMgmtTestCase):
     @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer()
     async def test_get_service_statistics(self, api_key, endpoint, **kwargs):
-        client = SearchServiceClient(endpoint, SearchApiKeyCredential(api_key))
+        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key))
         result = await client.get_service_statistics()
         assert isinstance(result, dict)
         assert set(result.keys()) == {"counters", "limits"}
