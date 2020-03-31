@@ -40,6 +40,7 @@ if TYPE_CHECKING:
     from azure.core.pipeline import Pipeline
     from azure.core.pipeline.transport import HttpRequest
     from azure.core.configuration import Configuration
+T = Optional[Union[AsyncBearerTokenCredentialPolicy, SharedKeyCredentialPolicy]]
 _LOGGER = logging.getLogger(__name__)
 
 
@@ -66,7 +67,7 @@ class AsyncStorageAccountHostsMixin(object):
 
     def _create_pipeline(self, credential, **kwargs):
         # type: (Any, **Any) -> Tuple[Configuration, Pipeline]
-        self._credential_policy = None # type: Optional[Union[BearerTokenCredentialPolicy, SharedKeyCredentialPolicy]]
+        self._credential_policy = None # type: T
         if hasattr(credential, 'get_token'):
             self._credential_policy = AsyncBearerTokenCredentialPolicy(credential, STORAGE_OAUTH_SCOPE)
         elif isinstance(credential, SharedKeyCredentialPolicy):
@@ -95,7 +96,7 @@ class AsyncStorageAccountHostsMixin(object):
             self._credential_policy,
             ContentDecodePolicy(response_encoding="utf-8"),
             AsyncRedirectPolicy(**kwargs),
-            StorageHosts(hosts=self._hosts, **kwargs),
+            StorageHosts(hosts=getattr(self, "_hosts"), **kwargs),
             config.retry_policy,
             config.logging_policy,
             AsyncStorageResponseHook(**kwargs),

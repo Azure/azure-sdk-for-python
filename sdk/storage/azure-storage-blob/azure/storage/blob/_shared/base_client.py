@@ -267,7 +267,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         """
         # Pop it here, so requests doesn't feel bad about additional kwarg
         raise_on_any_failure = kwargs.pop("raise_on_any_failure", True)
-        request = self._client._client.post(  # pylint: disable=protected-access
+        request = self._client._client.post(  # type: ignore # pylint: disable=protected-access
             url='https://{}/?comp=batch'.format(self.primary_hostname),
             headers={
                 'x-ms-version': self.api_version

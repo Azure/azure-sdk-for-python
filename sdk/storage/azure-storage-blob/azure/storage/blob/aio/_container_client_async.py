@@ -22,6 +22,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.transport import HttpRequest, AsyncHttpResponse
+from azure.core.pipeline.policies import AsyncHTTPPolicy, SansIOHTTPPolicy
 
 from .._shared.base_client import parse_connection_str
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper
@@ -48,7 +49,6 @@ from ._blob_client_async import BlobClient
 
 if TYPE_CHECKING:
     from azure.core.pipeline.transport import HttpTransport
-    from azure.core.pipeline.policies import AsyncHTTPPolicy, SansIOHTTPPolicy
     from .._models import ContainerSasPermissions, PublicAccess
     from ._download_async import StorageStreamDownloader
     from datetime import datetime
@@ -57,7 +57,7 @@ if TYPE_CHECKING:
         ContentSettings,
         StandardBlobTier,
         PremiumPageBlobTier)
-    PoliciesType = List[Union[AsyncHTTPPolicy, SansIOHTTPPolicy]]
+PoliciesType = List[Union[AsyncHTTPPolicy, SansIOHTTPPolicy]]
 
 
 class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):

@@ -23,6 +23,7 @@ from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.transport import HttpRequest
+from azure.core.pipeline.policies import HTTPPolicy, SansIOHTTPPolicy # pylint: disable=ungrouped-imports
 
 from ._shared.base_client import TransportWrapper, parse_connection_str
 from ._shared.request_handlers import add_metadata_headers, serialize_iso
@@ -47,7 +48,6 @@ from ._container_client_base import ContainerClientBase
 
 if TYPE_CHECKING:
     from azure.core.pipeline.transport import HttpTransport, HttpResponse  # pylint: disable=ungrouped-imports
-    from azure.core.pipeline.policies import HTTPPolicy, SansIOHTTPPolicy # pylint: disable=ungrouped-imports
     from datetime import datetime
     from ._download import StorageStreamDownloader
     from ._models import (  # pylint: disable=unused-import
@@ -56,7 +56,7 @@ if TYPE_CHECKING:
         ContentSettings,
         StandardBlobTier,
         PremiumPageBlobTier)
-    PoliciesType = List[Union[HTTPPolicy, SansIOHTTPPolicy]]
+PoliciesType = List[Union[HTTPPolicy, SansIOHTTPPolicy]]
 
 
 def _get_blob_name(blob):

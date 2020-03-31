@@ -14,6 +14,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.pipeline import AsyncPipeline
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.async_paging import AsyncItemPaged
+from azure.core.pipeline.policies import AsyncHTTPPolicy, SansIOHTTPPolicy
 
 from .._shared.models import LocationMode
 from .._shared.policies_async import ExponentialRetry
@@ -36,7 +37,6 @@ from ._models import ContainerPropertiesPaged
 if TYPE_CHECKING:
     from datetime import datetime
     from azure.core.pipeline.transport import HttpTransport
-    from azure.core.pipeline.policies import AsyncHTTPPolicy, SansIOHTTPPolicy
     from .._shared.models import AccountSasPermissions, ResourceTypes, UserDelegationKey
     from ._lease_async import BlobLeaseClient
     from .._models import (
@@ -47,7 +47,7 @@ if TYPE_CHECKING:
         RetentionPolicy,
         StaticWebsite,
     )
-    PoliciesType = List[Union[AsyncHTTPPolicy, SansIOHTTPPolicy]]
+PoliciesType = List[Union[AsyncHTTPPolicy, SansIOHTTPPolicy]]
 
 
 class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):

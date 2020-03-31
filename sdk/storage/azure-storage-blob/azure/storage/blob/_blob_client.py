@@ -891,6 +891,7 @@ class BlobClient(BlobClientBase):  # pylint: disable=too-many-public-methods
         try:
             ret_val = self._client.blob.create_snapshot(**options)
         except StorageErrorException as error:
+            ret_val = None
             process_storage_error(error)
         return cast(Dict, ret_val)
 

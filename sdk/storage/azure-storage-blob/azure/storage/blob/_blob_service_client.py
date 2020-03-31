@@ -13,7 +13,7 @@ from typing import (  # pylint: disable=unused-import
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import Pipeline
 from azure.core.tracing.decorator import distributed_trace
-
+from azure.core.pipeline.policies import HTTPPolicy, SansIOHTTPPolicy
 from ._shared.models import LocationMode
 from ._shared.base_client import TransportWrapper, parse_connection_str
 from ._shared.parser import _to_utc_datetime
@@ -28,7 +28,6 @@ from ._blob_service_client_base import BlobServiceClientBase
 if TYPE_CHECKING:
     from datetime import datetime
     from azure.core.pipeline.transport import HttpTransport
-    from azure.core.pipeline.policies import HTTPPolicy, SansIOHTTPPolicy
     from ._shared.models import UserDelegationKey
     from ._lease import BlobLeaseClient
     from ._models import (
@@ -39,7 +38,7 @@ if TYPE_CHECKING:
         RetentionPolicy,
         StaticWebsite,
     )
-    PoliciesType = List[Union[HTTPPolicy, SansIOHTTPPolicy]]
+PoliciesType = List[Union[HTTPPolicy, SansIOHTTPPolicy]]
 
 
 class BlobServiceClient(BlobServiceClientBase):
