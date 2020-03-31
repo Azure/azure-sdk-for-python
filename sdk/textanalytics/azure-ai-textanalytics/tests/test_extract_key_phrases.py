@@ -471,3 +471,14 @@ class TestExtractKeyPhrases(TextAnalyticsTest):
             language="es",
             raw_response_hook=callback
         )
+
+    @GlobalTextAnalyticsAccountPreparer()
+    def test_pass_cls(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+        def callback(pipeline_response, deserialized, _):
+            return "cls result"
+        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
+        res = text_analytics.extract_key_phrases(
+            documents=["Test passing cls to endpoint"],
+            cls=callback
+        )
+        assert res == "cls result"

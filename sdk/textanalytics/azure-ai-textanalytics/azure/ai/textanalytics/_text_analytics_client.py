@@ -147,7 +147,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 documents=docs,
                 model_version=model_version,
                 show_stats=show_stats,
-                cls=language_result,
+                cls=kwargs.pop("cls", language_result),
                 **kwargs
             )
         except HttpResponseError as error:
@@ -211,7 +211,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 documents=docs,
                 model_version=model_version,
                 show_stats=show_stats,
-                cls=entities_result,
+                cls=kwargs.pop("cls", entities_result),
                 **kwargs
             )
         except HttpResponseError as error:
@@ -276,7 +276,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 documents=docs,
                 model_version=model_version,
                 show_stats=show_stats,
-                cls=linked_entities_result,
+                cls=kwargs.pop("cls", linked_entities_result),
                 **kwargs
             )
         except HttpResponseError as error:
@@ -341,7 +341,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 documents=docs,
                 model_version=model_version,
                 show_stats=show_stats,
-                cls=key_phrases_result,
+                cls=kwargs.pop("cls", key_phrases_result),
                 **kwargs
             )
         except HttpResponseError as error:
@@ -405,7 +405,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 documents=docs,
                 model_version=model_version,
                 show_stats=show_stats,
-                cls=sentiment_result,
+                cls=kwargs.pop("cls", sentiment_result),
                 **kwargs
             )
         except HttpResponseError as error:

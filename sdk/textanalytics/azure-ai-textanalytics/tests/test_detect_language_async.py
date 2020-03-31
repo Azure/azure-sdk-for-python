@@ -568,3 +568,14 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
             country_hint="ES",
             raw_response_hook=callback
         )
+
+    @GlobalTextAnalyticsAccountPreparer()
+    async def test_pass_cls(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+        def callback(pipeline_response, deserialized, _):
+            return "cls result"
+        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
+        res = await text_analytics.detect_language(
+            documents=["Test passing cls to endpoint"],
+            cls=callback
+        )
+        assert res == "cls result"
