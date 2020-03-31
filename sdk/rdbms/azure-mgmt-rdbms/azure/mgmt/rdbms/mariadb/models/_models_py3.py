@@ -1161,6 +1161,15 @@ class Server(TrackedResource):
     :param replica_capacity: The maximum number of replicas that a master
      server can have.
     :type replica_capacity: int
+    :param public_network_access: Whether or not public network access is
+     allowed for this server. Value is optional but if passed in, must be
+     'Enabled' or 'Disabled'. Possible values include: 'Enabled', 'Disabled'
+    :type public_network_access: str or
+     ~azure.mgmt.rdbms.mariadb.models.PublicNetworkAccessEnum
+    :ivar private_endpoint_connections: List of private endpoint connections
+     on a server
+    :vartype private_endpoint_connections:
+     list[~azure.mgmt.rdbms.mariadb.models.ServerPrivateEndpointConnection]
     """
 
     _validation = {
@@ -1169,6 +1178,7 @@ class Server(TrackedResource):
         'type': {'readonly': True},
         'location': {'required': True},
         'replica_capacity': {'minimum': 0},
+        'private_endpoint_connections': {'readonly': True},
     }
 
     _attribute_map = {
@@ -1188,9 +1198,11 @@ class Server(TrackedResource):
         'replication_role': {'key': 'properties.replicationRole', 'type': 'str'},
         'master_server_id': {'key': 'properties.masterServerId', 'type': 'str'},
         'replica_capacity': {'key': 'properties.replicaCapacity', 'type': 'int'},
+        'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
+        'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[ServerPrivateEndpointConnection]'},
     }
 
-    def __init__(self, *, location: str, tags=None, sku=None, administrator_login: str=None, version=None, ssl_enforcement=None, user_visible_state=None, fully_qualified_domain_name: str=None, earliest_restore_date=None, storage_profile=None, replication_role: str=None, master_server_id: str=None, replica_capacity: int=None, **kwargs) -> None:
+    def __init__(self, *, location: str, tags=None, sku=None, administrator_login: str=None, version=None, ssl_enforcement=None, user_visible_state=None, fully_qualified_domain_name: str=None, earliest_restore_date=None, storage_profile=None, replication_role: str=None, master_server_id: str=None, replica_capacity: int=None, public_network_access=None, **kwargs) -> None:
         super(Server, self).__init__(tags=tags, location=location, **kwargs)
         self.sku = sku
         self.administrator_login = administrator_login
@@ -1203,6 +1215,8 @@ class Server(TrackedResource):
         self.replication_role = replication_role
         self.master_server_id = master_server_id
         self.replica_capacity = replica_capacity
+        self.public_network_access = public_network_access
+        self.private_endpoint_connections = None
 
 
 class ServerForCreate(Model):
@@ -1241,6 +1255,112 @@ class ServerForCreate(Model):
         self.tags = tags
 
 
+class ServerPrivateEndpointConnection(Model):
+    """A private endpoint connection under a server.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id of the private endpoint connection.
+    :vartype id: str
+    :ivar properties: Private endpoint connection properties
+    :vartype properties:
+     ~azure.mgmt.rdbms.mariadb.models.ServerPrivateEndpointConnectionProperties
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'properties': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'ServerPrivateEndpointConnectionProperties'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(ServerPrivateEndpointConnection, self).__init__(**kwargs)
+        self.id = None
+        self.properties = None
+
+
+class ServerPrivateEndpointConnectionProperties(Model):
+    """Properties of a private endpoint connection.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :param private_endpoint: Private endpoint which the connection belongs to.
+    :type private_endpoint:
+     ~azure.mgmt.rdbms.mariadb.models.PrivateEndpointProperty
+    :param private_link_service_connection_state: Connection state of the
+     private endpoint connection.
+    :type private_link_service_connection_state:
+     ~azure.mgmt.rdbms.mariadb.models.ServerPrivateLinkServiceConnectionStateProperty
+    :ivar provisioning_state: State of the private endpoint connection.
+     Possible values include: 'Approving', 'Ready', 'Dropping', 'Failed',
+     'Rejecting'
+    :vartype provisioning_state: str or
+     ~azure.mgmt.rdbms.mariadb.models.PrivateEndpointProvisioningState
+    """
+
+    _validation = {
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'private_endpoint': {'key': 'privateEndpoint', 'type': 'PrivateEndpointProperty'},
+        'private_link_service_connection_state': {'key': 'privateLinkServiceConnectionState', 'type': 'ServerPrivateLinkServiceConnectionStateProperty'},
+        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+    }
+
+    def __init__(self, *, private_endpoint=None, private_link_service_connection_state=None, **kwargs) -> None:
+        super(ServerPrivateEndpointConnectionProperties, self).__init__(**kwargs)
+        self.private_endpoint = private_endpoint
+        self.private_link_service_connection_state = private_link_service_connection_state
+        self.provisioning_state = None
+
+
+class ServerPrivateLinkServiceConnectionStateProperty(Model):
+    """ServerPrivateLinkServiceConnectionStateProperty.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param status: Required. The private link service connection status.
+     Possible values include: 'Approved', 'Pending', 'Rejected', 'Disconnected'
+    :type status: str or
+     ~azure.mgmt.rdbms.mariadb.models.PrivateLinkServiceConnectionStateStatus
+    :param description: Required. The private link service connection
+     description.
+    :type description: str
+    :ivar actions_required: The actions required for private link service
+     connection. Possible values include: 'None'
+    :vartype actions_required: str or
+     ~azure.mgmt.rdbms.mariadb.models.PrivateLinkServiceConnectionStateActionsRequire
+    """
+
+    _validation = {
+        'status': {'required': True},
+        'description': {'required': True},
+        'actions_required': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'status': {'key': 'status', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'actions_required': {'key': 'actionsRequired', 'type': 'str'},
+    }
+
+    def __init__(self, *, status, description: str, **kwargs) -> None:
+        super(ServerPrivateLinkServiceConnectionStateProperty, self).__init__(**kwargs)
+        self.status = status
+        self.description = description
+        self.actions_required = None
+
+
 class ServerPropertiesForCreate(Model):
     """The properties used to create a new server.
 
@@ -1257,6 +1377,11 @@ class ServerPropertiesForCreate(Model):
      server. Possible values include: 'Enabled', 'Disabled'
     :type ssl_enforcement: str or
      ~azure.mgmt.rdbms.mariadb.models.SslEnforcementEnum
+    :param public_network_access: Whether or not public network access is
+     allowed for this server. Value is optional but if passed in, must be
+     'Enabled' or 'Disabled'. Possible values include: 'Enabled', 'Disabled'
+    :type public_network_access: str or
+     ~azure.mgmt.rdbms.mariadb.models.PublicNetworkAccessEnum
     :param storage_profile: Storage profile of a server.
     :type storage_profile: ~azure.mgmt.rdbms.mariadb.models.StorageProfile
     :param create_mode: Required. Constant filled by server.
@@ -1270,6 +1395,7 @@ class ServerPropertiesForCreate(Model):
     _attribute_map = {
         'version': {'key': 'version', 'type': 'str'},
         'ssl_enforcement': {'key': 'sslEnforcement', 'type': 'SslEnforcementEnum'},
+        'public_network_access': {'key': 'publicNetworkAccess', 'type': 'str'},
         'storage_profile': {'key': 'storageProfile', 'type': 'StorageProfile'},
         'create_mode': {'key': 'createMode', 'type': 'str'},
     }
@@ -1278,10 +1404,11 @@ class ServerPropertiesForCreate(Model):
         'create_mode': {'Default': 'ServerPropertiesForDefaultCreate', 'PointInTimeRestore': 'ServerPropertiesForRestore', 'GeoRestore': 'ServerPropertiesForGeoRestore', 'Replica': 'ServerPropertiesForReplica'}
     }
 
-    def __init__(self, *, version=None, ssl_enforcement=None, storage_profile=None, **kwargs) -> None:
+    def __init__(self, *, version=None, ssl_enforcement=None, public_network_access=None, storage_profile=None, **kwargs) -> None:
         super(ServerPropertiesForCreate, self).__init__(**kwargs)
         self.version = version
         self.ssl_enforcement = ssl_enforcement
+        self.public_network_access = public_network_access
         self.storage_profile = storage_profile
         self.create_mode = None
 
@@ -1297,6 +1424,11 @@ class ServerPropertiesForDefaultCreate(ServerPropertiesForCreate):
      server. Possible values include: 'Enabled', 'Disabled'
     :type ssl_enforcement: str or
      ~azure.mgmt.rdbms.mariadb.models.SslEnforcementEnum
+    :param public_network_access: Whether or not public network access is
+     allowed for this server. Value is optional but if passed in, must be
+     'Enabled' or 'Disabled'. Possible values include: 'Enabled', 'Disabled'
+    :type public_network_access: str or
+     ~azure.mgmt.rdbms.mariadb.models.PublicNetworkAccessEnum
     :param storage_profile: Storage profile of a server.
     :type storage_profile: ~azure.mgmt.rdbms.mariadb.models.StorageProfile
     :param create_mode: Required. Constant filled by server.
@@ -1319,14 +1451,15 @@ class ServerPropertiesForDefaultCreate(ServerPropertiesForCreate):
     _attribute_map = {
         'version': {'key': 'version', 'type': 'str'},
         'ssl_enforcement': {'key': 'sslEnforcement', 'type': 'SslEnforcementEnum'},
+        'public_network_access': {'key': 'publicNetworkAccess', 'type': 'str'},
         'storage_profile': {'key': 'storageProfile', 'type': 'StorageProfile'},
         'create_mode': {'key': 'createMode', 'type': 'str'},
         'administrator_login': {'key': 'administratorLogin', 'type': 'str'},
         'administrator_login_password': {'key': 'administratorLoginPassword', 'type': 'str'},
     }
 
-    def __init__(self, *, administrator_login: str, administrator_login_password: str, version=None, ssl_enforcement=None, storage_profile=None, **kwargs) -> None:
-        super(ServerPropertiesForDefaultCreate, self).__init__(version=version, ssl_enforcement=ssl_enforcement, storage_profile=storage_profile, **kwargs)
+    def __init__(self, *, administrator_login: str, administrator_login_password: str, version=None, ssl_enforcement=None, public_network_access=None, storage_profile=None, **kwargs) -> None:
+        super(ServerPropertiesForDefaultCreate, self).__init__(version=version, ssl_enforcement=ssl_enforcement, public_network_access=public_network_access, storage_profile=storage_profile, **kwargs)
         self.administrator_login = administrator_login
         self.administrator_login_password = administrator_login_password
         self.create_mode = 'Default'
@@ -1344,6 +1477,11 @@ class ServerPropertiesForGeoRestore(ServerPropertiesForCreate):
      server. Possible values include: 'Enabled', 'Disabled'
     :type ssl_enforcement: str or
      ~azure.mgmt.rdbms.mariadb.models.SslEnforcementEnum
+    :param public_network_access: Whether or not public network access is
+     allowed for this server. Value is optional but if passed in, must be
+     'Enabled' or 'Disabled'. Possible values include: 'Enabled', 'Disabled'
+    :type public_network_access: str or
+     ~azure.mgmt.rdbms.mariadb.models.PublicNetworkAccessEnum
     :param storage_profile: Storage profile of a server.
     :type storage_profile: ~azure.mgmt.rdbms.mariadb.models.StorageProfile
     :param create_mode: Required. Constant filled by server.
@@ -1360,13 +1498,14 @@ class ServerPropertiesForGeoRestore(ServerPropertiesForCreate):
     _attribute_map = {
         'version': {'key': 'version', 'type': 'str'},
         'ssl_enforcement': {'key': 'sslEnforcement', 'type': 'SslEnforcementEnum'},
+        'public_network_access': {'key': 'publicNetworkAccess', 'type': 'str'},
         'storage_profile': {'key': 'storageProfile', 'type': 'StorageProfile'},
         'create_mode': {'key': 'createMode', 'type': 'str'},
         'source_server_id': {'key': 'sourceServerId', 'type': 'str'},
     }
 
-    def __init__(self, *, source_server_id: str, version=None, ssl_enforcement=None, storage_profile=None, **kwargs) -> None:
-        super(ServerPropertiesForGeoRestore, self).__init__(version=version, ssl_enforcement=ssl_enforcement, storage_profile=storage_profile, **kwargs)
+    def __init__(self, *, source_server_id: str, version=None, ssl_enforcement=None, public_network_access=None, storage_profile=None, **kwargs) -> None:
+        super(ServerPropertiesForGeoRestore, self).__init__(version=version, ssl_enforcement=ssl_enforcement, public_network_access=public_network_access, storage_profile=storage_profile, **kwargs)
         self.source_server_id = source_server_id
         self.create_mode = 'GeoRestore'
 
@@ -1382,6 +1521,11 @@ class ServerPropertiesForReplica(ServerPropertiesForCreate):
      server. Possible values include: 'Enabled', 'Disabled'
     :type ssl_enforcement: str or
      ~azure.mgmt.rdbms.mariadb.models.SslEnforcementEnum
+    :param public_network_access: Whether or not public network access is
+     allowed for this server. Value is optional but if passed in, must be
+     'Enabled' or 'Disabled'. Possible values include: 'Enabled', 'Disabled'
+    :type public_network_access: str or
+     ~azure.mgmt.rdbms.mariadb.models.PublicNetworkAccessEnum
     :param storage_profile: Storage profile of a server.
     :type storage_profile: ~azure.mgmt.rdbms.mariadb.models.StorageProfile
     :param create_mode: Required. Constant filled by server.
@@ -1399,13 +1543,14 @@ class ServerPropertiesForReplica(ServerPropertiesForCreate):
     _attribute_map = {
         'version': {'key': 'version', 'type': 'str'},
         'ssl_enforcement': {'key': 'sslEnforcement', 'type': 'SslEnforcementEnum'},
+        'public_network_access': {'key': 'publicNetworkAccess', 'type': 'str'},
         'storage_profile': {'key': 'storageProfile', 'type': 'StorageProfile'},
         'create_mode': {'key': 'createMode', 'type': 'str'},
         'source_server_id': {'key': 'sourceServerId', 'type': 'str'},
     }
 
-    def __init__(self, *, source_server_id: str, version=None, ssl_enforcement=None, storage_profile=None, **kwargs) -> None:
-        super(ServerPropertiesForReplica, self).__init__(version=version, ssl_enforcement=ssl_enforcement, storage_profile=storage_profile, **kwargs)
+    def __init__(self, *, source_server_id: str, version=None, ssl_enforcement=None, public_network_access=None, storage_profile=None, **kwargs) -> None:
+        super(ServerPropertiesForReplica, self).__init__(version=version, ssl_enforcement=ssl_enforcement, public_network_access=public_network_access, storage_profile=storage_profile, **kwargs)
         self.source_server_id = source_server_id
         self.create_mode = 'Replica'
 
@@ -1421,6 +1566,11 @@ class ServerPropertiesForRestore(ServerPropertiesForCreate):
      server. Possible values include: 'Enabled', 'Disabled'
     :type ssl_enforcement: str or
      ~azure.mgmt.rdbms.mariadb.models.SslEnforcementEnum
+    :param public_network_access: Whether or not public network access is
+     allowed for this server. Value is optional but if passed in, must be
+     'Enabled' or 'Disabled'. Possible values include: 'Enabled', 'Disabled'
+    :type public_network_access: str or
+     ~azure.mgmt.rdbms.mariadb.models.PublicNetworkAccessEnum
     :param storage_profile: Storage profile of a server.
     :type storage_profile: ~azure.mgmt.rdbms.mariadb.models.StorageProfile
     :param create_mode: Required. Constant filled by server.
@@ -1441,14 +1591,15 @@ class ServerPropertiesForRestore(ServerPropertiesForCreate):
     _attribute_map = {
         'version': {'key': 'version', 'type': 'str'},
         'ssl_enforcement': {'key': 'sslEnforcement', 'type': 'SslEnforcementEnum'},
+        'public_network_access': {'key': 'publicNetworkAccess', 'type': 'str'},
         'storage_profile': {'key': 'storageProfile', 'type': 'StorageProfile'},
         'create_mode': {'key': 'createMode', 'type': 'str'},
         'source_server_id': {'key': 'sourceServerId', 'type': 'str'},
         'restore_point_in_time': {'key': 'restorePointInTime', 'type': 'iso-8601'},
     }
 
-    def __init__(self, *, source_server_id: str, restore_point_in_time, version=None, ssl_enforcement=None, storage_profile=None, **kwargs) -> None:
-        super(ServerPropertiesForRestore, self).__init__(version=version, ssl_enforcement=ssl_enforcement, storage_profile=storage_profile, **kwargs)
+    def __init__(self, *, source_server_id: str, restore_point_in_time, version=None, ssl_enforcement=None, public_network_access=None, storage_profile=None, **kwargs) -> None:
+        super(ServerPropertiesForRestore, self).__init__(version=version, ssl_enforcement=ssl_enforcement, public_network_access=public_network_access, storage_profile=storage_profile, **kwargs)
         self.source_server_id = source_server_id
         self.restore_point_in_time = restore_point_in_time
         self.create_mode = 'PointInTimeRestore'
@@ -1544,6 +1695,11 @@ class ServerUpdateParameters(Model):
      server. Possible values include: 'Enabled', 'Disabled'
     :type ssl_enforcement: str or
      ~azure.mgmt.rdbms.mariadb.models.SslEnforcementEnum
+    :param public_network_access: Whether or not public network access is
+     allowed for this server. Value is optional but if passed in, must be
+     'Enabled' or 'Disabled'. Possible values include: 'Enabled', 'Disabled'
+    :type public_network_access: str or
+     ~azure.mgmt.rdbms.mariadb.models.PublicNetworkAccessEnum
     :param replication_role: The replication role of the server.
     :type replication_role: str
     :param tags: Application-specific metadata in the form of key-value pairs.
@@ -1556,17 +1712,19 @@ class ServerUpdateParameters(Model):
         'administrator_login_password': {'key': 'properties.administratorLoginPassword', 'type': 'str'},
         'version': {'key': 'properties.version', 'type': 'str'},
         'ssl_enforcement': {'key': 'properties.sslEnforcement', 'type': 'SslEnforcementEnum'},
+        'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
         'replication_role': {'key': 'properties.replicationRole', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, *, sku=None, storage_profile=None, administrator_login_password: str=None, version=None, ssl_enforcement=None, replication_role: str=None, tags=None, **kwargs) -> None:
+    def __init__(self, *, sku=None, storage_profile=None, administrator_login_password: str=None, version=None, ssl_enforcement=None, public_network_access=None, replication_role: str=None, tags=None, **kwargs) -> None:
         super(ServerUpdateParameters, self).__init__(**kwargs)
         self.sku = sku
         self.storage_profile = storage_profile
         self.administrator_login_password = administrator_login_password
         self.version = version
         self.ssl_enforcement = ssl_enforcement
+        self.public_network_access = public_network_access
         self.replication_role = replication_role
         self.tags = tags
 

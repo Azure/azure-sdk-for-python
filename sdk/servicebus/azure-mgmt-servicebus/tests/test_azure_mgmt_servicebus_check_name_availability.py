@@ -11,7 +11,7 @@ import azure.mgmt.servicebus.models
 from azure.mgmt.servicebus.models import SBNamespace
 from azure.common.credentials import ServicePrincipalCredentials
 
-from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
+from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPreparer
 
 
 class MgmtServiceBusTest(AzureMgmtTestCase):
@@ -26,7 +26,7 @@ class MgmtServiceBusTest(AzureMgmtTestCase):
     def process(self, result):
         pass
 
-    @ResourceGroupPreparer()
+    @RandomNameResourceGroupPreparer()
     def test_sb_namespace_available(self, resource_group, location):
         # Check the namespace availability
         availabilityresult = self.servicebus_client.namespaces.check_name_availability_method("Testingthenamespacenameforpython")

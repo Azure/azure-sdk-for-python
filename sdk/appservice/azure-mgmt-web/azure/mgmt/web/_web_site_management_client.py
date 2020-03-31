@@ -354,6 +354,19 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
+    def static_sites(self):
+        """Instance depends on the API version:
+
+           * 2019-08-01: :class:`StaticSitesOperations<azure.mgmt.web.v2019_08_01.operations.StaticSitesOperations>`
+        """
+        api_version = self._get_api_version('static_sites')
+        if api_version == '2019-08-01':
+            from .v2019_08_01.operations import StaticSitesOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
     def top_level_domains(self):
         """Instance depends on the API version:
 

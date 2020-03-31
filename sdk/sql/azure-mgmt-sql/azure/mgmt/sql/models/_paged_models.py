@@ -1000,3 +1000,16 @@ class ServerAzureADAdministratorPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(ServerAzureADAdministratorPaged, self).__init__(*args, **kwargs)
+class ManagedInstanceOperationPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`ManagedInstanceOperation <azure.mgmt.sql.models.ManagedInstanceOperation>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ManagedInstanceOperation]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ManagedInstanceOperationPaged, self).__init__(*args, **kwargs)

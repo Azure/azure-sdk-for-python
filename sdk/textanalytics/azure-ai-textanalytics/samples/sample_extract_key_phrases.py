@@ -25,13 +25,14 @@ import os
 
 class ExtractKeyPhrasesSample(object):
 
-    endpoint = os.getenv("AZURE_TEXT_ANALYTICS_ENDPOINT")
-    key = os.getenv("AZURE_TEXT_ANALYTICS_KEY")
+    endpoint = os.environ["AZURE_TEXT_ANALYTICS_ENDPOINT"]
+    key = os.environ["AZURE_TEXT_ANALYTICS_KEY"]
 
     def extract_key_phrases(self):
         # [START batch_extract_key_phrases]
-        from azure.ai.textanalytics import TextAnalyticsClient, TextAnalyticsApiKeyCredential
-        text_analytics_client = TextAnalyticsClient(endpoint=self.endpoint, credential=TextAnalyticsApiKeyCredential(self.key))
+        from azure.core.credentials import AzureKeyCredential
+        from azure.ai.textanalytics import TextAnalyticsClient
+        text_analytics_client = TextAnalyticsClient(endpoint=self.endpoint, credential=AzureKeyCredential(self.key))
         documents = [
             "Redmond is a city in King County, Washington, United States, located 15 miles east of Seattle.",
             "I need to take my cat to the veterinarian.",

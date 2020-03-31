@@ -25,7 +25,6 @@ from .operations import ComputeNodeOperations
 from . import models
 from .custom.patch import patch_client
 
-
 class BatchServiceClient(SDKClient):
     """A client for issuing REST requests to the Azure Batch service.
 
@@ -65,7 +64,7 @@ class BatchServiceClient(SDKClient):
         super(BatchServiceClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2019-08-01.10.0'
+        self.api_version = '2020-03-01.11.0'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 

@@ -24,6 +24,13 @@ except ImportError:  # python < 3.3
     from mock import Mock, patch  # type: ignore
 
 
+def test_no_scopes():
+    """The credential should raise when get_token is called with no scopes"""
+
+    with pytest.raises(ClientAuthenticationError):
+        InteractiveBrowserCredential().get_token()
+
+
 @patch("azure.identity._credentials.browser.webbrowser.open", lambda _: True)
 def test_policies_configurable():
     policy = Mock(spec_set=SansIOHTTPPolicy, on_request=Mock())

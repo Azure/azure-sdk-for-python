@@ -4,8 +4,8 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
-from azure.ai.textanalytics import TextAnalyticsClient, TextAnalyticsApiKeyCredential
+from azure.core.credentials import AzureKeyCredential
+from azure.ai.textanalytics import TextAnalyticsClient
 from azure.ai.textanalytics import _models
 from testcase import GlobalTextAnalyticsAccountPreparer
 from testcase import TextAnalyticsTest as TestAnalyticsTestCase
@@ -15,7 +15,7 @@ class TextAnalyticsTest(TestAnalyticsTestCase):
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_detect_language(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
 
         response = text_analytics.detect_language(
             documents=[{
@@ -32,21 +32,11 @@ class TextAnalyticsTest(TestAnalyticsTestCase):
         categorized_entity = _models.CategorizedEntity(text="Bill Gates", category="Person", subcategory="Age",
                                                        grapheme_offset=0, grapheme_length=8, confidence_score=0.899)
 
-        pii_entity = _models.PiiEntity(text="555-55-5555", category="SSN", subcategory=None, grapheme_offset=0,
-                                       grapheme_length=8, confidence_score=0.899)
-
         text_document_statistics = _models.TextDocumentStatistics(grapheme_count=14, transaction_count=18)
 
         recognize_entities_result = _models.RecognizeEntitiesResult(
             id="1",
             entities=[categorized_entity],
-            statistics=text_document_statistics,
-            is_error=False
-        )
-
-        recognize_pii_entities_result = _models.RecognizePiiEntitiesResult(
-            id="1",
-            entities=[pii_entity],
             statistics=text_document_statistics,
             is_error=False
         )
@@ -122,18 +112,12 @@ class TextAnalyticsTest(TestAnalyticsTestCase):
         self.assertEqual("CategorizedEntity(text=Bill Gates, category=Person, subcategory=Age, grapheme_offset=0, "
                          "grapheme_length=8, confidence_score=0.899)",
                          repr(categorized_entity))
-        self.assertEqual("PiiEntity(text=555-55-5555, category=SSN, subcategory=None, grapheme_offset=0, "
-                         "grapheme_length=8, confidence_score=0.899)", repr(pii_entity))
         self.assertEqual("TextDocumentStatistics(grapheme_count=14, transaction_count=18)",
                          repr(text_document_statistics))
         self.assertEqual("RecognizeEntitiesResult(id=1, entities=[CategorizedEntity(text=Bill Gates, category=Person, "
                          "subcategory=Age, grapheme_offset=0, grapheme_length=8, confidence_score=0.899)], "
                          "statistics=TextDocumentStatistics(grapheme_count=14, transaction_count=18), "
                          "is_error=False)", repr(recognize_entities_result))
-        self.assertEqual("RecognizePiiEntitiesResult(id=1, entities=[PiiEntity(text=555-55-5555, category=SSN, "
-                         "subcategory=None, grapheme_offset=0, grapheme_length=8, confidence_score=0.899)], "
-                         "statistics=TextDocumentStatistics(grapheme_count=14, transaction_count=18), "
-                         "is_error=False)", repr(recognize_pii_entities_result))
         self.assertEqual("DetectLanguageResult(id=1, primary_language=DetectedLanguage(name=English, "
                          "iso6391_name=en, score=1.0), statistics=TextDocumentStatistics(grapheme_count=14, "
                          "transaction_count=18), is_error=False)", repr(detect_language_result))

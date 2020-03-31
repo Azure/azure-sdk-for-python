@@ -7,22 +7,22 @@ from typing import cast, List, TYPE_CHECKING
 
 import six
 
-from azure.core.pipeline.policies import HeadersPolicy
 from azure.core.tracing.decorator_async import distributed_trace_async
 from ._paging import AsyncSearchItemPaged, AsyncSearchPageIterator
 from .._generated.aio import SearchIndexClient as _SearchIndexClient
 from .._generated.models import IndexBatch, IndexingResult, SearchRequest
 from .._index_documents_batch import IndexDocumentsBatch
 from .._queries import AutocompleteQuery, SearchQuery, SuggestQuery
-from ..._version import VERSION
+from ..._credential import HeadersMixin
+from ..._version import SDK_MONIKER
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
     from typing import Any, Union
-    from .._credential import SearchApiKeyCredential
+    from ... import SearchApiKeyCredential
 
 
-class SearchIndexClient(object):
+class SearchIndexClient(HeadersMixin):
     """A client to interact with an existing Azure search index.
 
     :param endpoint: The URL endpoint of an Azure search service
@@ -33,7 +33,6 @@ class SearchIndexClient(object):
     :type credential: SearchApiKeyCredential
 
     .. admonition:: Example:
-
         .. literalinclude:: ../samples/async_samples/sample_authentication_async.py
             :start-after: [START create_search_client_with_key_async]
             :end-before: [END create_search_client_with_key_async]
@@ -42,24 +41,16 @@ class SearchIndexClient(object):
             :caption: Creating the SearchIndexClient with an API key.
     """
 
+    _ODATA_ACCEPT = "application/json;odata.metadata=none"  # type: str
+
     def __init__(self, endpoint, index_name, credential, **kwargs):
         # type: (str, str, SearchApiKeyCredential, **Any) -> None
 
-        headers_policy = HeadersPolicy(
-            {
-                "api-key": credential.api_key,
-                "Accept": "application/json;odata.metadata=none",
-            }
-        )
-
         self._endpoint = endpoint  # type: str
         self._index_name = index_name  # type: str
+        self._credential = credential  # type: SearchApiKeyCredential
         self._client = _SearchIndexClient(
-            endpoint=endpoint,
-            index_name=index_name,
-            headers_policy=headers_policy,
-            sdk_moniker="search/{}".format(VERSION),
-            **kwargs
+            endpoint=endpoint, index_name=index_name, sdk_moniker=SDK_MONIKER, **kwargs
         )  # type: _SearchIndexClient
 
     def __repr__(self):
@@ -82,6 +73,7 @@ class SearchIndexClient(object):
 
         :rtype: int
         """
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         return int(await self._client.documents.count(**kwargs))
 
     @distributed_trace_async
@@ -104,6 +96,7 @@ class SearchIndexClient(object):
                 :dedent: 4
                 :caption: Get a specific document from the search index.
         """
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = await self._client.documents.get(
             key=key, selected_fields=selected_fields, **kwargs
         )
@@ -153,7 +146,7 @@ class SearchIndexClient(object):
                     repr(query)
                 )
             )
-
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         return AsyncSearchItemPaged(
             self._client, query, kwargs, page_iterator_class=AsyncSearchPageIterator
         )
@@ -181,6 +174,7 @@ class SearchIndexClient(object):
                 "Expected a SuggestQuery for 'query', but got {}".format(repr(query))
             )
 
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         response = await self._client.documents.suggest_post(
             suggest_request=query.request, **kwargs
         )
@@ -212,6 +206,7 @@ class SearchIndexClient(object):
                 )
             )
 
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         response = await self._client.documents.autocomplete_post(
             autocomplete_request=query.request, **kwargs
         )
@@ -241,6 +236,8 @@ class SearchIndexClient(object):
         """
         batch = IndexDocumentsBatch()
         batch.add_upload_documents(documents)
+
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         results = await self.index_documents(batch, **kwargs)
         return cast(List[IndexingResult], results)
 
@@ -272,6 +269,8 @@ class SearchIndexClient(object):
         """
         batch = IndexDocumentsBatch()
         batch.add_delete_documents(documents)
+
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         results = await self.index_documents(batch, **kwargs)
         return cast(List[IndexingResult], results)
 
@@ -299,6 +298,8 @@ class SearchIndexClient(object):
         """
         batch = IndexDocumentsBatch()
         batch.add_merge_documents(documents)
+
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         results = await self.index_documents(batch, **kwargs)
         return cast(List[IndexingResult], results)
 
@@ -317,6 +318,8 @@ class SearchIndexClient(object):
         """
         batch = IndexDocumentsBatch()
         batch.add_merge_or_upload_documents(documents)
+
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         results = await self.index_documents(batch, **kwargs)
         return cast(List[IndexingResult], results)
 
@@ -330,6 +333,8 @@ class SearchIndexClient(object):
         :rtype:  List[IndexingResult]
         """
         index_documents = IndexBatch(actions=batch.actions)
+
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         batch_response = await self._client.documents.index(
             batch=index_documents, **kwargs
         )

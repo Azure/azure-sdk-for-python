@@ -24,7 +24,7 @@ SERVICE_URL_FMT = "https://{}.search.windows.net/indexes?api-version=2019-05-06"
 class SearchServicePreparer(AzureMgmtPreparer):
     def __init__(
         self,
-        schema,
+        schema=None,
         index_batch=None,
         name_prefix="search",
         resource_group_parameter_name=RESOURCE_GROUP_PARAM,
@@ -56,14 +56,17 @@ class SearchServicePreparer(AzureMgmtPreparer):
             raise AzureTestError(template.format(ResourceGroupPreparer.__name__))
 
     def create_resource(self, name, **kwargs):
-        schema = json.loads(self.schema)
+        if self.schema:
+            schema = json.loads(self.schema)
+        else:
+            schema = None
         self.service_name = self.create_random_name()
         self.endpoint = "https://{}.search.windows.net".format(self.service_name)
 
         if not self.is_live:
             return {
                 "api_key": "api-key",
-                "index_name": schema["name"],
+                "index_name": schema["name"] if schema else None,
                 "endpoint": self.endpoint,
             }
 
@@ -103,19 +106,20 @@ class SearchServicePreparer(AzureMgmtPreparer):
             group_name, self.service_name
         ).primary_key
 
-        response = requests.post(
-            SERVICE_URL_FMT.format(self.service_name),
-            headers={"Content-Type": "application/json", "api-key": api_key},
-            data=self.schema,
-        )
-        if response.status_code != 201:
-            raise AzureTestError(
-                "Could not create a search index {}".format(response.status_code)
+        if self.schema:
+            response = requests.post(
+                SERVICE_URL_FMT.format(self.service_name),
+                headers={"Content-Type": "application/json", "api-key": api_key},
+                data=self.schema,
             )
-        self.index_name = schema["name"]
+            if response.status_code != 201:
+                raise AzureTestError(
+                    "Could not create a search index {}".format(response.status_code)
+                )
+            self.index_name = schema["name"]
 
         # optionally load data into the index
-        if self.index_batch:
+        if self.index_batch and self.schema:
             from azure.search.documents import SearchIndexClient, SearchApiKeyCredential
             from azure.search.documents._index._generated.models import IndexBatch
 
