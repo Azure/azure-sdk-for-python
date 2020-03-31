@@ -20,7 +20,6 @@ from azure_devtools.scenario_tests.utilities import trim_kwargs_from_test_functi
 from azure.core.exceptions import HttpResponseError
 from azure.search.documents import(
     SearchServiceClient,
-    SearchApiKeyCredential,
     Field,
     Index,
     AnalyzeRequest,
@@ -60,14 +59,14 @@ class SearchIndexClientTest(AzureMgmtTestCase):
     @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer()
     async def test_list_indexes_empty(self, api_key, endpoint, **kwargs):
-        client = SearchServiceClient(endpoint, SearchApiKeyCredential(api_key))
+        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key))
         result = await client.list_indexes()
         assert len(result) == 0
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     async def test_list_indexes(self, api_key, endpoint, index_name, **kwargs):
-        client = SearchServiceClient(endpoint, SearchApiKeyCredential(api_key))
+        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key))
         result = await client.list_indexes()
         assert len(result) == 1
         assert result[0].name == index_name
@@ -75,21 +74,21 @@ class SearchIndexClientTest(AzureMgmtTestCase):
     @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     async def test_get_index(self, api_key, endpoint, index_name, **kwargs):
-        client = SearchServiceClient(endpoint, SearchApiKeyCredential(api_key))
+        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key))
         result = await client.get_index(index_name)
         assert result.name == index_name
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     async def test_get_index_statistics(self, api_key, endpoint, index_name, **kwargs):
-        client = SearchServiceClient(endpoint, SearchApiKeyCredential(api_key))
+        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key))
         result = await client.get_index_statistics(index_name)
         assert set(result.keys()) == {'document_count', 'storage_size'}
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     async def test_delete_indexes(self, api_key, endpoint, index_name, **kwargs):
-        client = SearchServiceClient(endpoint, SearchApiKeyCredential(api_key))
+        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key))
         await client.delete_index(index_name)
         import time
         if self.is_live:
@@ -123,7 +122,7 @@ class SearchIndexClientTest(AzureMgmtTestCase):
             fields=fields,
             scoring_profiles=scoring_profiles,
             cors_options=cors_options)
-        client = SearchServiceClient(endpoint, SearchApiKeyCredential(api_key))
+        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key))
         result = await client.create_index(index)
         assert result.name == "hotels"
         assert result.scoring_profiles[0].name == scoring_profile.name
@@ -152,7 +151,7 @@ class SearchIndexClientTest(AzureMgmtTestCase):
             fields=fields,
             scoring_profiles=scoring_profiles,
             cors_options=cors_options)
-        client = SearchServiceClient(endpoint, SearchApiKeyCredential(api_key))
+        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key))
         result = await client.create_or_update_index(index_name=index.name, index=index)
         assert len(result.scoring_profiles) == 0
         assert result.cors_options.allowed_origins == cors_options.allowed_origins
@@ -175,7 +174,7 @@ class SearchIndexClientTest(AzureMgmtTestCase):
     @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     async def test_analyze_text(self, api_key, endpoint, index_name, **kwargs):
-        client = SearchServiceClient(endpoint, SearchApiKeyCredential(api_key))
+        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key))
         analyze_request = AnalyzeRequest(text="One's <two/>", analyzer="standard.lucene")
         result = await client.analyze_text(index_name, analyze_request)
         assert len(result.tokens) == 2
