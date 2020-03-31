@@ -1404,7 +1404,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             metadata=metadata,
             **kwargs)
         try:
-            ret_val = self._client.block_blob.commit_block_list(**options)
+            ret_val = await self._client.block_blob.commit_block_list(**options)
         except StorageErrorException as error:
             ret_val = None
             process_storage_error(error)
