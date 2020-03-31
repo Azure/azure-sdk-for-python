@@ -128,7 +128,7 @@ class SearchServiceClient(HeadersMixin):
     @distributed_trace_async
     async def create_index(self, index, **kwargs):
         # type: (Index, **Any) -> Index
-        """
+        """Creates a new search index.
 
         :param index: The index object.
         :type index: ~azure.search.documents.Index
@@ -151,7 +151,7 @@ class SearchServiceClient(HeadersMixin):
             **kwargs
     ):
         # type: (str, Index, bool, MatchConditions, **Any) -> Index
-        """
+        """Creates a new search index or updates an index if it already exists.
 
         :param index_name: The name of the index.
         :type index_name: str
@@ -203,7 +203,7 @@ class SearchServiceClient(HeadersMixin):
     @distributed_trace_async
     async def analyze_text(self, index_name, analyze_request, **kwargs):
         # type: (str, AnalyzeRequest, **Any) -> AnalyzeResult
-        """
+        """Shows how an analyzer breaks text into tokens.
 
         :param index_name: The name of the index for which to test an analyzer.
         :type index_name: str
