@@ -4,8 +4,8 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
-from azure.ai.textanalytics import TextAnalyticsClient, TextAnalyticsApiKeyCredential
+from azure.core.credentials import AzureKeyCredential
+from azure.ai.textanalytics import TextAnalyticsClient
 from azure.ai.textanalytics import _models
 from testcase import GlobalTextAnalyticsAccountPreparer
 from testcase import TextAnalyticsTest as TestAnalyticsTestCase
@@ -15,7 +15,7 @@ class TextAnalyticsTest(TestAnalyticsTestCase):
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_detect_language(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
 
         response = text_analytics.detect_language(
             documents=[{

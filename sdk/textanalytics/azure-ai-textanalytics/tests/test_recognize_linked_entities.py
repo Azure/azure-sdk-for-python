@@ -8,9 +8,9 @@ import pytest
 import platform
 
 from azure.core.exceptions import HttpResponseError, ClientAuthenticationError
+from azure.core.credentials import AzureKeyCredential
 from testcase import TextAnalyticsTest, GlobalTextAnalyticsAccountPreparer
 from azure.ai.textanalytics import (
-    TextAnalyticsApiKeyCredential,
     TextAnalyticsClient,
     TextDocumentInput,
     VERSION
@@ -21,13 +21,13 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_no_single_input(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
         with self.assertRaises(TypeError):
             response = text_analytics.recognize_linked_entities("hello world")
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_all_successful_passing_dict(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
 
         docs = [{"id": "1", "language": "en", "text": "Microsoft was founded by Bill Gates and Paul Allen"},
                 {"id": "2", "language": "es", "text": "Microsoft fue fundado por Bill Gates y Paul Allen"}]
@@ -47,7 +47,7 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_all_successful_passing_text_document_input(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
 
         docs = [
             TextDocumentInput(id="1", text="Microsoft was founded by Bill Gates and Paul Allen"),
@@ -67,7 +67,7 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_passing_only_string(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
 
         docs = [
             u"Microsoft was founded by Bill Gates and Paul Allen",
@@ -82,7 +82,7 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_input_with_some_errors(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
 
         docs = [{"id": "1", "text": ""},
                 {"id": "2", "language": "es", "text": "Microsoft fue fundado por Bill Gates y Paul Allen"}]
@@ -93,7 +93,7 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_input_with_all_errors(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
 
         docs = [{"id": "1", "text": ""},
                 {"id": "2", "language": "Spanish", "text": "Microsoft fue fundado por Bill Gates y Paul Allen"}]
@@ -104,7 +104,7 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_empty_credential_class(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(""))
+        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(""))
         with self.assertRaises(ClientAuthenticationError):
             response = text_analytics.recognize_linked_entities(
                 ["This is written in English."]
@@ -112,7 +112,7 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_bad_credentials(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential("xxxxxxxxxxxx"))
+        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential("xxxxxxxxxxxx"))
         with self.assertRaises(ClientAuthenticationError):
             response = text_analytics.recognize_linked_entities(
                 ["This is written in English."]
@@ -120,7 +120,7 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_bad_model_version(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
         with self.assertRaises(HttpResponseError):
             response = text_analytics.recognize_linked_entities(
                 documents=["Microsoft was founded by Bill Gates."],
@@ -129,7 +129,7 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_bad_document_input(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
 
         docs = "This is the wrong type"
 
@@ -138,7 +138,7 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_mixing_inputs(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
         docs = [
             {"id": "1", "text": "Microsoft was founded by Bill Gates and Paul Allen."},
             TextDocumentInput(id="2", text="I did not like the hotel we stayed at. It was too expensive."),
@@ -149,7 +149,7 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_out_of_order_ids(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
 
         docs = [{"id": "56", "text": ":)"},
                 {"id": "0", "text": ":("},
@@ -164,7 +164,7 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_show_stats_and_model_version(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
 
         def callback(response):
             self.assertIsNotNone(response.model_version)
@@ -189,7 +189,7 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_batch_size_over_limit(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
 
         docs = [u"hello world"] * 1050
         with self.assertRaises(HttpResponseError):
@@ -197,7 +197,7 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_whole_batch_language_hint(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
 
         def callback(resp):
             language_str = "\"language\": \"fr\""
@@ -214,7 +214,7 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_whole_batch_dont_use_language_hint(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
 
         def callback(resp):
             language_str = "\"language\": \"\""
@@ -231,7 +231,7 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_per_item_dont_use_language_hint(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
 
         def callback(resp):
             language_str = "\"language\": \"\""
@@ -250,7 +250,7 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_whole_batch_language_hint_and_obj_input(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
 
         def callback(resp):
             language_str = "\"language\": \"de\""
@@ -267,7 +267,7 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_whole_batch_language_hint_and_obj_per_item_hints(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
 
         def callback(resp):
             language_str = "\"language\": \"es\""
@@ -287,7 +287,7 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_whole_batch_language_hint_and_dict_per_item_hints(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
 
         def callback(resp):
             language_str = "\"language\": \"es\""
@@ -306,7 +306,7 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_client_passed_default_language_hint(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key), default_language="es")
+        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key), default_language="es")
 
         def callback(resp):
             language_str = "\"language\": \"es\""
@@ -328,7 +328,7 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_rotate_subscription_key(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        credential = TextAnalyticsApiKeyCredential(text_analytics_account_key)
+        credential = AzureKeyCredential(text_analytics_account_key)
         text_analytics = TextAnalyticsClient(text_analytics_account, credential)
 
         docs = [{"id": "1", "text": "I will go to the park."},
@@ -338,17 +338,17 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
         response = text_analytics.recognize_linked_entities(docs)
         self.assertIsNotNone(response)
 
-        credential.update_key("xxx")  # Make authentication fail
+        credential.update("xxx")  # Make authentication fail
         with self.assertRaises(ClientAuthenticationError):
             response = text_analytics.recognize_linked_entities(docs)
 
-        credential.update_key(text_analytics_account_key)  # Authenticate successfully again
+        credential.update(text_analytics_account_key)  # Authenticate successfully again
         response = text_analytics.recognize_linked_entities(docs)
         self.assertIsNotNone(response)
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_user_agent(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
 
         def callback(resp):
             self.assertIn("azsdk-python-ai-textanalytics/{} Python/{} ({})".format(
@@ -364,7 +364,7 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_document_attribute_error_no_result_attribute(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
 
         docs = [{"id": "1", "text": ""}]
         response = text_analytics.recognize_linked_entities(docs)
@@ -387,7 +387,7 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_document_attribute_error_nonexistent_attribute(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
 
         docs = [{"id": "1", "text": ""}]
         response = text_analytics.recognize_linked_entities(docs)
@@ -403,7 +403,7 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_bad_model_version_error(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
         docs = [{"id": "1", "language": "english", "text": "I did not like the hotel we stayed at."}]
 
         try:
@@ -414,7 +414,7 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_document_errors(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
         text = ""
         for _ in range(5121):
             text += "x"
@@ -433,7 +433,7 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_missing_input_records_error(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
         docs = []
         try:
             result = text_analytics.recognize_linked_entities(docs)
@@ -443,7 +443,7 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_duplicate_ids_error(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
         # Duplicate Ids
         docs = [{"id": "1", "text": "hello world"},
                 {"id": "1", "text": "I did not like the hotel we stayed at."}]
@@ -455,7 +455,7 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_batch_size_over_limit_error(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
         # Batch size over limit
         docs = [u"hello world"] * 1001
         try:
@@ -466,7 +466,7 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_language_kwarg_spanish(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
 
         def callback(response):
             language_str = "\"language\": \"es\""

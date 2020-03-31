@@ -25,7 +25,6 @@ from ._models import (
     SentenceSentiment,
     SentimentConfidenceScores
 )
-from ._credential import TextAnalyticsApiKeyCredential
 
 __all__ = [
     'TextAnalyticsClient',
@@ -45,8 +44,7 @@ __all__ = [
     'LinkedEntityMatch',
     'TextDocumentBatchStatistics',
     'SentenceSentiment',
-    'SentimentConfidenceScores',
-    'TextAnalyticsApiKeyCredential'
+    'SentimentConfidenceScores'
 ]
 
 __version__ = VERSION

@@ -21,7 +21,8 @@ from common_tasks import (
     install_package_from_whl,
     filter_dev_requirements,
     find_packages_missing_on_pypi,
-    find_whl
+    find_whl,
+    find_tools_packages
 )
 from git_helper import get_release_tag, git_checkout_tag, git_checkout_branch, clone_repo
 from pip._internal.operations import freeze
@@ -219,6 +220,12 @@ class RegressionTest:
         list_to_exclude = [pkg_to_exclude,]
         installed_pkgs = [p.split('==')[0] for p in list(freeze.freeze(paths=self.context.venv.lib_paths)) if p.startswith('azure-')]
         logging.info("Installed azure sdk packages:{}".format(installed_pkgs))
+
+        # Do not exclude list of packages in tools directory and so these tools packages will be reinstalled from repo branch we are testing
+        root_path = os.path.abspath(os.path.join(dependent_pkg_path, "..", "..", ".."))
+        tools_packages = find_tools_packages(root_path)
+        installed_pkgs = [req for req in installed_pkgs if req not in tools_packages]
+
         list_to_exclude.extend(installed_pkgs)
         # install dev requirement but skip already installed package which is being tested or present in dev requirement
         filtered_dev_req_path = filter_dev_requirements(

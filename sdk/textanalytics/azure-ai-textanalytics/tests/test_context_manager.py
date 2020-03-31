@@ -9,11 +9,10 @@ try:
 except ImportError:  # python < 3.3
     import mock  # type: ignore
 
+from azure.core.credentials import AzureKeyCredential
 from testcase import TextAnalyticsTest, GlobalTextAnalyticsAccountPreparer
-from azure.ai.textanalytics import (
-    TextAnalyticsApiKeyCredential,
-    TextAnalyticsClient
-)
+from azure.ai.textanalytics import TextAnalyticsClient
+
 class TestContextManager(TextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -21,7 +20,7 @@ class TestContextManager(TextAnalyticsTest):
         transport = mock.MagicMock()
         client = TextAnalyticsClient(
             text_analytics_account,
-            TextAnalyticsApiKeyCredential(text_analytics_account_key),
+            AzureKeyCredential(text_analytics_account_key),
             transport=transport
         )
         client.close()
@@ -33,7 +32,7 @@ class TestContextManager(TextAnalyticsTest):
         transport = mock.MagicMock()
         client = TextAnalyticsClient(
             text_analytics_account,
-            TextAnalyticsApiKeyCredential(text_analytics_account_key),
+            AzureKeyCredential(text_analytics_account_key),
             transport=transport
         )
 

@@ -3,22 +3,25 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from ._policies import CognitiveServicesCredentialPolicy, TextAnalyticsResponseHookPolicy
-from ._generated import TextAnalyticsClient
+
+from azure.core.pipeline.policies import AzureKeyCredentialPolicy
+from azure.core.credentials import AzureKeyCredential
+from ._policies import TextAnalyticsResponseHookPolicy
 from ._user_agent import USER_AGENT
-
-
+from ._generated import TextAnalyticsClient
 
 def _authentication_policy(credential):
-    credential_policy = None
+    authentication_policy = None
     if credential is None:
         raise ValueError("Parameter 'credential' must not be None.")
-    if hasattr(credential, "api_key"):
-        credential_policy = CognitiveServicesCredentialPolicy(credential)
+    if isinstance(credential, AzureKeyCredential):
+        authentication_policy = AzureKeyCredentialPolicy(
+            name="Ocp-Apim-Subscription-Key", credential=credential
+        )
     elif credential is not None and not hasattr(credential, "get_token"):
-        raise TypeError("Unsupported credential: {}. Use an instance of TextAnalyticsApiKeyCredential "
+        raise TypeError("Unsupported credential: {}. Use an instance of AzureKeyCredential "
                         "or a token credential from azure.identity".format(type(credential)))
-    return credential_policy
+    return authentication_policy
 
 
 class TextAnalyticsClientBase(object):
