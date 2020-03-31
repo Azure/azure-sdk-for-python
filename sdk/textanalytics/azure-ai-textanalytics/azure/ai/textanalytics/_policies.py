@@ -9,18 +9,6 @@ from azure.core.pipeline.policies import SansIOHTTPPolicy
 from ._models import TextDocumentBatchStatistics
 
 
-class CognitiveServicesCredentialPolicy(SansIOHTTPPolicy):
-    def __init__(self, api_key_credential):
-        self.credential = api_key_credential
-        super(CognitiveServicesCredentialPolicy, self).__init__()
-
-    def on_request(self, request):
-        request.http_request.headers[
-            "Ocp-Apim-Subscription-Key"
-        ] = self.credential.api_key
-        request.http_request.headers["X-BingApis-SDK-Client"] = "Python-SDK"
-
-
 class TextAnalyticsResponseHookPolicy(SansIOHTTPPolicy):
     def __init__(self, **kwargs):
         self._response_callback = kwargs.get("raw_response_hook")
