@@ -1,6 +1,6 @@
 # Release History
 
-## 1.3.1 (Unreleased)
+## 1.3.1 (2020-03-31)
 
 - `ManagedIdentityCredential` raises `CredentialUnavailableError` when no
 identity is configured for an IMDS endpoint. This causes
