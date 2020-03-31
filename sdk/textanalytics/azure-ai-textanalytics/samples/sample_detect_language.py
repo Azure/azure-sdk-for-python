@@ -26,13 +26,14 @@ import os
 
 class DetectLanguageSample(object):
 
-    endpoint = os.getenv("AZURE_TEXT_ANALYTICS_ENDPOINT")
-    key = os.getenv("AZURE_TEXT_ANALYTICS_KEY")
+    endpoint = os.environ["AZURE_TEXT_ANALYTICS_ENDPOINT"]
+    key = os.environ["AZURE_TEXT_ANALYTICS_KEY"]
 
     def detect_language(self):
         # [START batch_detect_language]
-        from azure.ai.textanalytics import TextAnalyticsClient, TextAnalyticsApiKeyCredential
-        text_analytics_client = TextAnalyticsClient(endpoint=self.endpoint, credential=TextAnalyticsApiKeyCredential(self.key))
+        from azure.core.credentials import AzureKeyCredential
+        from azure.ai.textanalytics import TextAnalyticsClient
+        text_analytics_client = TextAnalyticsClient(endpoint=self.endpoint, credential=AzureKeyCredential(self.key))
         documents = [
             "This document is written in English.",
             "Este es un document escrito en Español.",
