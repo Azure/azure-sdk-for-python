@@ -14,6 +14,7 @@ from azure.core.exceptions import (
     ResourceNotModifiedError,
 )
 from .._generated.aio import SearchServiceClient as _SearchServiceClient
+from .._generated.models import AccessCondition
 from ..._headers_mixin import HeadersMixin
 from ..._version import SDK_MONIKER
 from .._utils import (
