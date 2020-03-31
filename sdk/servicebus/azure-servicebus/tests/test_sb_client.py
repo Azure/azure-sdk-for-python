@@ -22,6 +22,7 @@ from azure.servicebus.common.errors import (
     ServiceBusAuthorizationError,
     ServiceBusResourceNotFound
 )
+from uamqp.constants import TransportType
 from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPreparer
 from servicebus_preparer import (
     ServiceBusNamespacePreparer, 
@@ -177,3 +178,15 @@ class ServiceBusClientTests(AzureMgmtTestCase):
         client = ServiceBusClient.from_connection_string(servicebus_queue_authorization_rule_connection_string)
         with pytest.raises(AzureHttpError):
             client.get_queue(wrong_queue.name)
+
+
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @RandomNameResourceGroupPreparer(name_prefix='servicebustest')
+    @ServiceBusNamespacePreparer(name_prefix='servicebustest')
+    def test_servicebusclient_from_conn_str_amqpoverwebsocket(self, servicebus_namespace_connection_string, **kwargs):
+        sb_client = ServiceBusClient.from_connection_string(servicebus_namespace_connection_string)
+        assert sb_client.transport_type == TransportType.Amqp
+
+        websocket_sb_client = ServiceBusClient.from_connection_string(servicebus_namespace_connection_string + ';TransportType=AmqpOverWebsocket')
+        assert websocket_sb_client.transport_type == TransportType.AmqpOverWebsocket

@@ -15,6 +15,7 @@ except ImportError:
     from urllib.parse import unquote_plus
 
 from uamqp import Source
+from uamqp.constants import TransportType
 
 import azure.common
 import azure.servicebus
@@ -288,6 +289,8 @@ class BaseClient(object):  # pylint: disable=too-many-instance-attributes
             'key_name': shared_access_key_name,
             'shared_access_key': shared_access_key_value}
 
+        self.auth_config['transport_type'] = kwargs.get('transport_type') or TransportType.Amqp
+
         self.mgmt_client = kwargs.get('mgmt_client') or ServiceBusService(
             service_namespace=namespace,
             shared_access_key_name=shared_access_key_name,
@@ -312,11 +315,11 @@ class BaseClient(object):  # pylint: disable=too-many-instance-attributes
         :param name: The name of the entity, if the 'EntityName' property is
          not included in the connection string.
         """
-        address, policy, key, entity = parse_conn_str(conn_str)
+        address, policy, key, entity, transport_type = parse_conn_str(conn_str)
         entity = name or entity
         address = build_uri(address, entity)
         name = address.split('/')[-1]
-        return cls(address, name, shared_access_key_name=policy, shared_access_key_value=key, **kwargs)
+        return cls(address, name, shared_access_key_name=policy, shared_access_key_value=key, transport_type=transport_type, **kwargs)
 
     def _get_entity(self):
         raise NotImplementedError("Must be implemented by child class.")
