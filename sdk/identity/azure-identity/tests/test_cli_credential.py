@@ -33,6 +33,20 @@ def raise_called_process_error(return_code, output, cmd="..."):
     return mock.Mock(side_effect=error)
 
 
+def test_no_scopes():
+    """The credential should raise ValueError when get_token is called with no scopes"""
+
+    with pytest.raises(ValueError):
+        AzureCliCredential().get_token()
+
+
+def test_multiple_scopes():
+    """The credential should raise ValueError when get_token is called with more than one scope"""
+
+    with pytest.raises(ValueError):
+        AzureCliCredential().get_token("one scope", "and another")
+
+
 def test_get_token():
     """The credential should parse the CLI's output to an AccessToken"""
 

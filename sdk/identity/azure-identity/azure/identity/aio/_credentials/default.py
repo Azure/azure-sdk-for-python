@@ -91,10 +91,13 @@ class DefaultAzureCredential(ChainedTokenCredential):
 
         .. note:: This method is called by Azure SDK clients. It isn't intended for use in application code.
 
-        :param str scopes: desired scopes for the token
+        :param str scopes: desired scopes for the access token. This method requires at least one scope.
         :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The exception has a
           `message` attribute listing each authentication attempt and its error message.
         """
+        if self._successful_credential:
+            return await self._successful_credential.get_token(*scopes, **kwargs)
+
         try:
             return await super(DefaultAzureCredential, self).get_token(*scopes, **kwargs)
         except ClientAuthenticationError as e:

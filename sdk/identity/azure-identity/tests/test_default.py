@@ -4,7 +4,9 @@
 # ------------------------------------
 import os
 
+from azure.core.credentials import AccessToken
 from azure.identity import (
+    CredentialUnavailableError,
     DefaultAzureCredential,
     InteractiveBrowserCredential,
     KnownAuthorities,
@@ -22,6 +24,25 @@ try:
     from unittest.mock import Mock, patch
 except ImportError:  # python < 3.3
     from mock import Mock, patch  # type: ignore
+
+
+def test_iterates_only_once():
+    """When a credential succeeds, DefaultAzureCredential should use that credential thereafter, ignoring the others"""
+
+    unavailable_credential = Mock(get_token=Mock(side_effect=CredentialUnavailableError(message="...")))
+    successful_credential = Mock(get_token=Mock(return_value=AccessToken("***", 42)))
+
+    credential = DefaultAzureCredential()
+    credential.credentials = [
+        unavailable_credential,
+        successful_credential,
+        Mock(get_token=Mock(side_effect=Exception("iteration didn't stop after a credential provided a token"))),
+    ]
+
+    for n in range(3):
+        credential.get_token("scope")
+        assert unavailable_credential.get_token.call_count == 1
+        assert successful_credential.get_token.call_count == n + 1
 
 
 def test_default_credential_authority():

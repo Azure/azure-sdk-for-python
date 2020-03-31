@@ -433,9 +433,9 @@ class MgmtStorageTest(AzureMgmtTestCase):
         }
         result = self.mgmt_client.private_endpoint_connections.put(resource_group.name, STORAGE_ACCOUNT_NAME, PRIVATE_ENDPOINT_CONNECTION_NAME, BODY)
         """
-
+        blob_container = azure.mgmt.storage.models.BlobContainer(public_access=None, metadata=None)
         # PutContainers[put]
-        result = self.mgmt_client.blob_containers.create(resource_group.name, STORAGE_ACCOUNT_NAME, CONTAINER_NAME)
+        result = self.mgmt_client.blob_containers.create(resource_group.name, STORAGE_ACCOUNT_NAME, CONTAINER_NAME, blob_container)
 
         # CreateOrUpdateImmutabilityPolicy[put]
         # BODY = {
@@ -563,7 +563,8 @@ class MgmtStorageTest(AzureMgmtTestCase):
             "metadata": "true"
           }
         }
-        result = self.mgmt_client.blob_containers.update(resource_group.name, STORAGE_ACCOUNT_NAME, CONTAINER_NAME, BODY["public_access"], BODY["metadata"])
+        blob_container = azure.mgmt.storage.models.BlobContainer(public_access=BODY["public_access"], metadata=BODY["metadata"])
+        result = self.mgmt_client.blob_containers.update(resource_group.name, STORAGE_ACCOUNT_NAME, CONTAINER_NAME, blob_container)
 
         # UpdateShares[patch]
         BODY = {

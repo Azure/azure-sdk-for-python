@@ -27,6 +27,8 @@ from azure.servicebus.common.errors import (
     AutoLockRenewFailed,
     AutoLockRenewTimeout)
 
+from uamqp.constants import TransportType
+
 
 __all__ = [
     'Message',
@@ -52,4 +54,5 @@ __all__ = [
     'MessageLockExpired',
     'SessionLockExpired',
     'AutoLockRenewFailed',
-    'AutoLockRenewTimeout']
+    'AutoLockRenewTimeout',
+    'TransportType']

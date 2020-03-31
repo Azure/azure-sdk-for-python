@@ -192,6 +192,8 @@ class CognitiveServicesAccount(Model):
     :type tags: dict[str, str]
     :ivar type: Resource type
     :vartype type: str
+    :param identity: The identity of Cognitive Services account.
+    :type identity: ~azure.mgmt.cognitiveservices.models.Identity
     """
 
     _validation = {
@@ -211,9 +213,10 @@ class CognitiveServicesAccount(Model):
         'sku': {'key': 'sku', 'type': 'Sku'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'type': {'key': 'type', 'type': 'str'},
+        'identity': {'key': 'identity', 'type': 'Identity'},
     }
 
-    def __init__(self, *, kind: str=None, location: str=None, properties=None, sku=None, tags=None, **kwargs) -> None:
+    def __init__(self, *, kind: str=None, location: str=None, properties=None, sku=None, tags=None, identity=None, **kwargs) -> None:
         super(CognitiveServicesAccount, self).__init__(**kwargs)
         self.etag = None
         self.id = None
@@ -224,6 +227,7 @@ class CognitiveServicesAccount(Model):
         self.sku = sku
         self.tags = tags
         self.type = None
+        self.identity = identity
 
 
 class CognitiveServicesAccountApiProperties(Model):
@@ -329,6 +333,11 @@ class CognitiveServicesAccountProperties(Model):
     :param network_acls: A collection of rules governing the accessibility
      from specific network locations.
     :type network_acls: ~azure.mgmt.cognitiveservices.models.NetworkRuleSet
+    :param encryption: The encryption properties for this resource.
+    :type encryption: ~azure.mgmt.cognitiveservices.models.Encryption
+    :param user_owned_storage: The storage accounts for this resource.
+    :type user_owned_storage:
+     list[~azure.mgmt.cognitiveservices.models.UserOwnedStorage]
     :param api_properties: The api properties for special APIs.
     :type api_properties:
      ~azure.mgmt.cognitiveservices.models.CognitiveServicesAccountApiProperties
@@ -346,16 +355,20 @@ class CognitiveServicesAccountProperties(Model):
         'internal_id': {'key': 'internalId', 'type': 'str'},
         'custom_sub_domain_name': {'key': 'customSubDomainName', 'type': 'str'},
         'network_acls': {'key': 'networkAcls', 'type': 'NetworkRuleSet'},
+        'encryption': {'key': 'encryption', 'type': 'Encryption'},
+        'user_owned_storage': {'key': 'userOwnedStorage', 'type': '[UserOwnedStorage]'},
         'api_properties': {'key': 'apiProperties', 'type': 'CognitiveServicesAccountApiProperties'},
     }
 
-    def __init__(self, *, custom_sub_domain_name: str=None, network_acls=None, api_properties=None, **kwargs) -> None:
+    def __init__(self, *, custom_sub_domain_name: str=None, network_acls=None, encryption=None, user_owned_storage=None, api_properties=None, **kwargs) -> None:
         super(CognitiveServicesAccountProperties, self).__init__(**kwargs)
         self.provisioning_state = None
         self.endpoint = None
         self.internal_id = None
         self.custom_sub_domain_name = custom_sub_domain_name
         self.network_acls = network_acls
+        self.encryption = encryption
+        self.user_owned_storage = user_owned_storage
         self.api_properties = api_properties
 
 
@@ -377,6 +390,29 @@ class CognitiveServicesResourceAndSku(Model):
         super(CognitiveServicesResourceAndSku, self).__init__(**kwargs)
         self.resource_type = resource_type
         self.sku = sku
+
+
+class Encryption(Model):
+    """Properties to configure Encryption.
+
+    :param key_vault_properties: Properties of KeyVault
+    :type key_vault_properties:
+     ~azure.mgmt.cognitiveservices.models.KeyVaultProperties
+    :param key_source: Enumerates the possible value of keySource for
+     Encryption. Possible values include: 'Microsoft.CognitiveServices',
+     'Microsoft.KeyVault'. Default value: "Microsoft.KeyVault" .
+    :type key_source: str or ~azure.mgmt.cognitiveservices.models.KeySource
+    """
+
+    _attribute_map = {
+        'key_vault_properties': {'key': 'keyVaultProperties', 'type': 'KeyVaultProperties'},
+        'key_source': {'key': 'keySource', 'type': 'str'},
+    }
+
+    def __init__(self, *, key_vault_properties=None, key_source="Microsoft.KeyVault", **kwargs) -> None:
+        super(Encryption, self).__init__(**kwargs)
+        self.key_vault_properties = key_vault_properties
+        self.key_source = key_source
 
 
 class Error(Model):
@@ -434,6 +470,47 @@ class ErrorBody(Model):
         self.message = message
 
 
+class Identity(Model):
+    """Managed service identity.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :param type: Type of managed service identity. Possible values include:
+     'None', 'SystemAssigned', 'UserAssigned'
+    :type type: str or ~azure.mgmt.cognitiveservices.models.IdentityType
+    :ivar tenant_id: Tenant of managed service identity.
+    :vartype tenant_id: str
+    :ivar principal_id: Principal Id of managed service identity.
+    :vartype principal_id: str
+    :param user_assigned_identities: The list of user assigned identities
+     associated with the resource. The user identity dictionary key references
+     will be ARM resource ids in the form:
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}
+    :type user_assigned_identities: dict[str,
+     ~azure.mgmt.cognitiveservices.models.UserAssignedIdentity]
+    """
+
+    _validation = {
+        'tenant_id': {'readonly': True},
+        'principal_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'IdentityType'},
+        'tenant_id': {'key': 'tenantId', 'type': 'str'},
+        'principal_id': {'key': 'principalId', 'type': 'str'},
+        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{UserAssignedIdentity}'},
+    }
+
+    def __init__(self, *, type=None, user_assigned_identities=None, **kwargs) -> None:
+        super(Identity, self).__init__(**kwargs)
+        self.type = type
+        self.tenant_id = None
+        self.principal_id = None
+        self.user_assigned_identities = user_assigned_identities
+
+
 class IpRule(Model):
     """A rule governing the accessibility from a specific ip address or ip range.
 
@@ -456,6 +533,30 @@ class IpRule(Model):
     def __init__(self, *, value: str, **kwargs) -> None:
         super(IpRule, self).__init__(**kwargs)
         self.value = value
+
+
+class KeyVaultProperties(Model):
+    """Properties to configure keyVault Properties.
+
+    :param key_name: Name of the Key from KeyVault
+    :type key_name: str
+    :param key_version: Version of the Key from KeyVault
+    :type key_version: str
+    :param key_vault_uri: Uri of KeyVault
+    :type key_vault_uri: str
+    """
+
+    _attribute_map = {
+        'key_name': {'key': 'keyName', 'type': 'str'},
+        'key_version': {'key': 'keyVersion', 'type': 'str'},
+        'key_vault_uri': {'key': 'keyVaultUri', 'type': 'str'},
+    }
+
+    def __init__(self, *, key_name: str=None, key_version: str=None, key_vault_uri: str=None, **kwargs) -> None:
+        super(KeyVaultProperties, self).__init__(**kwargs)
+        self.key_name = key_name
+        self.key_version = key_version
+        self.key_vault_uri = key_vault_uri
 
 
 class MetricName(Model):
@@ -824,6 +925,43 @@ class UsagesResult(Model):
     def __init__(self, **kwargs) -> None:
         super(UsagesResult, self).__init__(**kwargs)
         self.value = None
+
+
+class UserAssignedIdentity(Model):
+    """User-assigned managed identity.
+
+    :param principal_id: Azure Active Directory principal ID associated with
+     this Identity.
+    :type principal_id: str
+    :param client_id: Client App Id associated with this identity.
+    :type client_id: str
+    """
+
+    _attribute_map = {
+        'principal_id': {'key': 'principalId', 'type': 'str'},
+        'client_id': {'key': 'clientId', 'type': 'str'},
+    }
+
+    def __init__(self, *, principal_id: str=None, client_id: str=None, **kwargs) -> None:
+        super(UserAssignedIdentity, self).__init__(**kwargs)
+        self.principal_id = principal_id
+        self.client_id = client_id
+
+
+class UserOwnedStorage(Model):
+    """The user owned storage for Cognitive Services account.
+
+    :param resource_id: Full resource id of a Microsoft.Storage resource.
+    :type resource_id: str
+    """
+
+    _attribute_map = {
+        'resource_id': {'key': 'resourceId', 'type': 'str'},
+    }
+
+    def __init__(self, *, resource_id: str=None, **kwargs) -> None:
+        super(UserOwnedStorage, self).__init__(**kwargs)
+        self.resource_id = resource_id
 
 
 class VirtualNetworkRule(Model):

@@ -12,6 +12,28 @@ from helpers_async import AsyncMockTransport
 
 
 @pytest.mark.asyncio
+async def test_no_scopes():
+    """The credential should raise ValueError when get_token is called with no scopes"""
+
+    with mock.patch("os.environ", {EnvironmentVariables.MSI_ENDPOINT: "https://url"}):
+        credential = MsiCredential()
+
+    with pytest.raises(ValueError):
+        await credential.get_token()
+
+
+@pytest.mark.asyncio
+async def test_multiple_scopes():
+    """The credential should raise ValueError when get_token is called with more than one scope"""
+
+    with mock.patch("os.environ", {EnvironmentVariables.MSI_ENDPOINT: "https://url"}):
+        credential = MsiCredential()
+
+    with pytest.raises(ValueError):
+        await credential.get_token("one scope", "and another")
+
+
+@pytest.mark.asyncio
 async def test_close():
     transport = AsyncMockTransport()
 
