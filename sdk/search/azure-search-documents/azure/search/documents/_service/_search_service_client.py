@@ -174,13 +174,12 @@ class SearchServiceClient(HeadersMixin):
         :param match_condition: The match condition to use upon the etag
         :type match_condition: ~azure.core.MatchConditions
         :return: The index created or updated
-        :rtype: ~azure.search.documents.Index
-        :raises: ~azure.core.exceptions.HttpResponseError,
-        ~azure.core.exceptions.ResourceNotFoundError
-        ~azure.core.exceptions.ResourceModifiedError
-        ~azure.core.exceptions.ResourceNotModifiedError
-        ~azure.core.exceptions.ResourceNotFoundError
-        ~azure.core.exceptions.ResourceExistsError
+        :rtype: :class:`~azure.search.documents.Index`
+        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`, \
+        :class:`~azure.core.exceptions.ResourceModifiedError`, \
+        :class:`~azure.core.exceptions.ResourceNotModifiedError`, \
+        :class:`~azure.core.exceptions.ResourceNotFoundError`, \
+        :class:`~azure.core.exceptions.ResourceExistsError`
 
         """
         error_map = {
