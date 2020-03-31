@@ -36,7 +36,7 @@ from ._models import ContainerPropertiesPaged
 if TYPE_CHECKING:
     from datetime import datetime
     from azure.core.pipeline.transport import HttpTransport
-    from azure.core.pipeline.policies import HTTPPolicy
+    from azure.core.pipeline.policies import AsyncHTTPPolicy, SansIOHTTPPolicy
     from .._shared.models import AccountSasPermissions, ResourceTypes, UserDelegationKey
     from ._lease_async import BlobLeaseClient
     from .._models import (
@@ -47,6 +47,7 @@ if TYPE_CHECKING:
         RetentionPolicy,
         StaticWebsite,
     )
+    PoliciesType = List[Union[AsyncHTTPPolicy, SansIOHTTPPolicy]]
 
 
 class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
@@ -546,7 +547,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
             container_name = container
         _pipeline = AsyncPipeline(
             transport=AsyncTransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
-            policies=self._pipeline._impl_policies # pylint: disable = protected-access
+            policies=cast(PoliciesType, self._pipeline._impl_policies) # pylint: disable = protected-access
         ) # type: AsyncPipeline
         return ContainerClient(
             self.url, container_name=container_name,
@@ -603,7 +604,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
             blob_name = blob
         _pipeline = AsyncPipeline(
             transport=AsyncTransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
-            policies=self._pipeline._impl_policies # pylint: disable = protected-access
+            policies=cast(PoliciesType, self._pipeline._impl_policies) # pylint: disable = protected-access
         ) # type: AsyncPipeline
         return BlobClient(
             self.url, container_name=container_name, blob_name=blob_name, snapshot=snapshot,

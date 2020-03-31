@@ -223,10 +223,10 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
 
     def _create_pipeline(self, credential, **kwargs):
         # type: (Any, **Any) -> Tuple[Configuration, Pipeline]
-        self._credential_policy = None
+        self._credential_policy = None # type: Optional[Union[BearerTokenCredentialPolicy, SharedKeyCredentialPolicy]]
         if hasattr(credential, "get_token"):
             self._credential_policy = BearerTokenCredentialPolicy(credential, STORAGE_OAUTH_SCOPE)
-        elif isinstance(credential, SharedKeyCredentialPolicy):
+        if isinstance(credential, SharedKeyCredentialPolicy):
             self._credential_policy = credential
         elif credential is not None:
             raise TypeError("Unsupported credential: {}".format(credential))
@@ -237,7 +237,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         setattr(config, 'transport', kwargs.get("transport"))
         kwargs.setdefault("connection_timeout", CONNECTION_TIMEOUT)
         kwargs.setdefault("read_timeout", READ_TIMEOUT)
-        if not config.transport:
+        if not hasattr(config, 'transport'):
             setattr(config, 'transport', RequestsTransport(**kwargs))
         policies = [
             QueueMessagePolicy(),
@@ -256,7 +256,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
             DistributedTracingPolicy(**kwargs),
             HttpLoggingPolicy(**kwargs)
         ]
-        return config, Pipeline(config.transport, policies=policies)
+        return config, Pipeline(getattr(config, 'transport'), policies=policies)
 
     def _batch_send(
         self, *reqs, # type: HttpRequest

@@ -66,7 +66,7 @@ class AsyncStorageAccountHostsMixin(object):
 
     def _create_pipeline(self, credential, **kwargs):
         # type: (Any, **Any) -> Tuple[Configuration, Pipeline]
-        self._credential_policy = None
+        self._credential_policy = None # type: Optional[Union[BearerTokenCredentialPolicy, SharedKeyCredentialPolicy]]
         if hasattr(credential, 'get_token'):
             self._credential_policy = AsyncBearerTokenCredentialPolicy(credential, STORAGE_OAUTH_SCOPE)
         elif isinstance(credential, SharedKeyCredentialPolicy):
@@ -76,15 +76,15 @@ class AsyncStorageAccountHostsMixin(object):
         config = kwargs.get('_configuration') or create_configuration(**kwargs)
         if kwargs.get('_pipeline'):
             return config, kwargs['_pipeline']
-        config.transport = kwargs.get('transport')
+        setattr(config, 'transport', kwargs.get("transport"))
         kwargs.setdefault("connection_timeout", CONNECTION_TIMEOUT)
         kwargs.setdefault("read_timeout", READ_TIMEOUT)
-        if not config.transport:
+        if not hasattr(config, 'transport'):
             try:
                 from azure.core.pipeline.transport import AioHttpTransport
             except ImportError:
                 raise ImportError("Unable to create async transport. Please check aiohttp is installed.")
-            config.transport = AioHttpTransport(**kwargs)
+            setattr(config, 'transport', AioHttpTransport(**kwargs))
         policies = [
             QueueMessagePolicy(),
             config.headers_policy,
@@ -102,7 +102,7 @@ class AsyncStorageAccountHostsMixin(object):
             DistributedTracingPolicy(**kwargs),
             HttpLoggingPolicy(**kwargs),
         ]
-        return config, AsyncPipeline(config.transport, policies=policies)
+        return config, AsyncPipeline(getattr(config, 'transport'), policies=policies)
 
     async def _batch_send(
         self, *reqs,

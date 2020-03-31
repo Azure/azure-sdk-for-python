@@ -158,13 +158,13 @@ class BlobClient(BlobClientBase):  # pylint: disable=too-many-public-methods
             raise ValueError("Invalid URL. Provide a blob_url with a valid blob and container name.")
 
         path_snapshot, _ = parse_query(parsed_url.query)
-        if snapshot:
+        try:
+            path_snapshot = snapshot.snapshot
+        except AttributeError:
             if isinstance(snapshot, Dict):
                 path_snapshot = snapshot['snapshot']
             elif isinstance(snapshot, str):
                 path_snapshot = snapshot
-            else:
-                path_snapshot = snapshot.snapshot
 
         return cls(
             account_url, container_name=container_name, blob_name=blob_name,

@@ -28,7 +28,7 @@ from ._blob_service_client_base import BlobServiceClientBase
 if TYPE_CHECKING:
     from datetime import datetime
     from azure.core.pipeline.transport import HttpTransport
-    from azure.core.pipeline.policies import HTTPPolicy
+    from azure.core.pipeline.policies import HTTPPolicy, SansIOHTTPPolicy
     from ._shared.models import UserDelegationKey
     from ._lease import BlobLeaseClient
     from ._models import (
@@ -39,6 +39,7 @@ if TYPE_CHECKING:
         RetentionPolicy,
         StaticWebsite,
     )
+    PoliciesType = List[Union[HTTPPolicy, SansIOHTTPPolicy]]
 
 
 class BlobServiceClient(BlobServiceClientBase):
@@ -527,7 +528,7 @@ class BlobServiceClient(BlobServiceClientBase):
             container_name = container
         _pipeline = Pipeline(
             transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
-            policies=self._pipeline._impl_policies # pylint: disable = protected-access
+            policies=cast(PoliciesType, self._pipeline._impl_policies) # pylint: disable = protected-access
         ) # type: Pipeline
         return ContainerClient(
             self.url, container_name=container_name,
@@ -582,7 +583,7 @@ class BlobServiceClient(BlobServiceClientBase):
             blob_name = blob
         _pipeline = Pipeline(
             transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
-            policies=self._pipeline._impl_policies # pylint: disable = protected-access
+            policies=cast(PoliciesType, self._pipeline._impl_policies) # pylint: disable = protected-access
         ) # type: Pipeline
         return BlobClient(
             self.url, container_name=container_name, blob_name=blob_name, snapshot=snapshot,

@@ -47,7 +47,7 @@ from ._container_client_base import ContainerClientBase
 
 if TYPE_CHECKING:
     from azure.core.pipeline.transport import HttpTransport, HttpResponse  # pylint: disable=ungrouped-imports
-    from azure.core.pipeline.policies import HTTPPolicy # pylint: disable=ungrouped-imports
+    from azure.core.pipeline.policies import HTTPPolicy, SansIOHTTPPolicy # pylint: disable=ungrouped-imports
     from datetime import datetime
     from ._download import StorageStreamDownloader
     from ._models import (  # pylint: disable=unused-import
@@ -56,6 +56,7 @@ if TYPE_CHECKING:
         ContentSettings,
         StandardBlobTier,
         PremiumPageBlobTier)
+    PoliciesType = List[Union[HTTPPolicy, SansIOHTTPPolicy]]
 
 
 def _get_blob_name(blob):
@@ -1189,7 +1190,7 @@ class ContainerClient(ContainerClientBase):
         blob_name = _get_blob_name(blob)
         _pipeline = Pipeline(
             transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
-            policies=self._pipeline._impl_policies # pylint: disable = protected-access
+            policies=cast(PoliciesType, self._pipeline._impl_policies) # pylint: disable = protected-access
         ) # type: Pipeline
         return BlobClient(
             self.url, container_name=self.container_name, blob_name=blob_name, snapshot=snapshot,

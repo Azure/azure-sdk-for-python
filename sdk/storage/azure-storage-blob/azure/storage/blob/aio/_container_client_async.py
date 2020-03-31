@@ -48,7 +48,7 @@ from ._blob_client_async import BlobClient
 
 if TYPE_CHECKING:
     from azure.core.pipeline.transport import HttpTransport
-    from azure.core.pipeline.policies import HTTPPolicy
+    from azure.core.pipeline.policies import AsyncHTTPPolicy, SansIOHTTPPolicy
     from .._models import ContainerSasPermissions, PublicAccess
     from ._download_async import StorageStreamDownloader
     from datetime import datetime
@@ -57,6 +57,7 @@ if TYPE_CHECKING:
         ContentSettings,
         StandardBlobTier,
         PremiumPageBlobTier)
+    PoliciesType = List[Union[AsyncHTTPPolicy, SansIOHTTPPolicy]]
 
 
 class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
@@ -1193,7 +1194,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         blob_name = _get_blob_name(blob)
         _pipeline = AsyncPipeline(
             transport=AsyncTransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
-            policies=self._pipeline._impl_policies # pylint: disable = protected-access
+            policies=cast(PoliciesType, self._pipeline._impl_policies) # pylint: disable = protected-access
         ) # type: AsyncPipeline
         return BlobClient(
             self.url, container_name=self.container_name, blob_name=blob_name, snapshot=snapshot,

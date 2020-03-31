@@ -140,13 +140,13 @@ class BlobClientBase(StorageAccountHostsMixin):  # pylint: disable=too-many-publ
 
         self.container_name = container_name
         self.blob_name = blob_name
-        if snapshot is not None:
+        try:
+            self.snapshot = snapshot.snapshot
+        except AttributeError:
             if isinstance(snapshot, Dict):
                 self.snapshot = snapshot['snapshot']
             elif isinstance(snapshot, str):
                 self.snapshot = snapshot or path_snapshot
-            else:
-                self.snapshot = snapshot.snapshot
 
         self._query_str, credential = self._format_query_string(sas_token, credential, snapshot=self.snapshot)
         super(BlobClientBase, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)
@@ -621,7 +621,7 @@ class BlobClientBase(StorageAccountHostsMixin):  # pylint: disable=too-many-publ
             'cpk_scope_info': cpk_scope_info,
             'cpk_info': cpk_info,
             'cls': return_response_headers,
-        }
+        } # type: Dict[str, Any]
         options.update(kwargs)
         return options
 
