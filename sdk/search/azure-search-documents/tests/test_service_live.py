@@ -27,7 +27,7 @@ from azure.search.documents import(
 
 CWD = dirname(realpath(__file__))
 SCHEMA = open(join(CWD, "hotel_schema.json")).read()
-BATCH = json.load(open(join(CWD, "hotel_small.json"), encoding='utf-8'))
+BATCH = json.load(open(join(CWD, "hotel_small.json")))
 
 class SearchIndexClientTest(AzureMgmtTestCase):
     @ResourceGroupPreparer(random_name_enabled=True)

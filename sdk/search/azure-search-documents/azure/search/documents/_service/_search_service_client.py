@@ -6,19 +6,17 @@
 from typing import TYPE_CHECKING
 
 from azure.core.tracing.decorator import distributed_trace
-from ._generated import SearchServiceClient as _SearchServiceClient
-from ._generated.models import AccessCondition
-from .._credential import HeadersMixin
-from .._version import SDK_MONIKER
 from azure.core import MatchConditions
 from azure.core.exceptions import (
-    HttpResponseError,
-    ClientAuthenticationError,
     ResourceExistsError,
     ResourceNotFoundError,
     ResourceModifiedError,
     ResourceNotModifiedError,
 )
+from ._generated import SearchServiceClient as _SearchServiceClient
+from ._generated.models import AccessCondition
+from .._credential import HeadersMixin
+from .._version import SDK_MONIKER
 from ._utils import (
     prep_if_match,
     prep_if_none_match,
