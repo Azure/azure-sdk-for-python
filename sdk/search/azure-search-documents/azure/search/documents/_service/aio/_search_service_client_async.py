@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 
 from azure.core.tracing.decorator_async import distributed_trace_async
 from .._generated.aio import SearchServiceClient as _SearchServiceClient
-from ..._credential import HeadersMixin
+from ..._headers_mixin import HeadersMixin
 from ..._version import SDK_MONIKER
 
 if TYPE_CHECKING:

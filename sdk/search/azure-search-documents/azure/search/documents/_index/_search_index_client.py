@@ -13,7 +13,7 @@ from ._generated.models import IndexBatch, IndexingResult
 from ._index_documents_batch import IndexDocumentsBatch
 from ._paging import SearchItemPaged, SearchPageIterator
 from ._queries import AutocompleteQuery, SearchQuery, SuggestQuery
-from .._credential import HeadersMixin
+from .._headers_mixin import HeadersMixin
 from .._version import SDK_MONIKER
 
 if TYPE_CHECKING:

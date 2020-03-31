@@ -13,7 +13,7 @@ from .._generated.aio import SearchIndexClient as _SearchIndexClient
 from .._generated.models import IndexBatch, IndexingResult, SearchRequest
 from .._index_documents_batch import IndexDocumentsBatch
 from .._queries import AutocompleteQuery, SearchQuery, SuggestQuery
-from ..._credential import HeadersMixin
+from ..._headers_mixin import HeadersMixin
 from ..._version import SDK_MONIKER
 
 if TYPE_CHECKING:
