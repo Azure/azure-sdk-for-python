@@ -27,7 +27,7 @@ def get_access_conditions(lease):
     lease_id = None
     if isinstance(lease, BlobLeaseClient):
         lease_id = lease.id
-    elif isinstance(lease, str):
+    else:
         lease_id = lease
     return LeaseAccessConditions(lease_id=lease_id) if lease_id else None
 
