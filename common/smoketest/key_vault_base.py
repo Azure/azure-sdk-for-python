@@ -11,6 +11,6 @@ class KeyVaultBase:
 
     # Instantiate a default credential based on the credential_type
     def get_default_credential(self, authority_host_alias=None):
-        alias = authority_host_alias or os.environ.get("AZURE_AUTHORITY_HOST_ALIAS")
+        alias = authority_host_alias or os.environ.get("AZURE_CLOUD")
         authority_host = host_alias_map.get(alias, KnownAuthorities.AZURE_PUBLIC_CLOUD)
         return self.credential_type(authority=authority_host)

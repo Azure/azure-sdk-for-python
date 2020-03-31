@@ -10,7 +10,7 @@ from key_vault_base import KeyVaultBase
 class KeyVaultCertificates(KeyVaultBase):
     def __init__(self):
 
-        credential = self.get_default_credential(os.environ.get('AZURE_AUTHORITY_HOST_ALIAS'))
+        credential = self.get_default_credential(os.environ.get('AZURE_CLOUD'))
         self.certificate_client = CertificateClient(
             vault_url=os.environ["AZURE_PROJECT_URL"], credential=credential
         )
