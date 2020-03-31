@@ -1,3 +1,4 @@
+import os
 from azure.identity import DefaultAzureCredential, KnownAuthorities
 
 class KeyVaultBase:

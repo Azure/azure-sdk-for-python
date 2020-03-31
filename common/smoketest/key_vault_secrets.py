@@ -2,14 +2,13 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import os
 import uuid
 from azure.keyvault.secrets import SecretClient
 from key_vault_base import KeyVaultBase
 
 class KeyVaultSecrets(KeyVaultBase):
     def __init__(self):
-        credential = self.get_default_credential(os.environ.get('AZURE_CLOUD'))
+        credential = self.get_default_credential()
         self.secret_client = SecretClient(
             vault_url=os.environ["AZURE_PROJECT_URL"], credential=credential
         )
