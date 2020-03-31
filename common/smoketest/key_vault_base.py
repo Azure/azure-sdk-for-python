@@ -1,5 +1,4 @@
-from azure.identity import DefaultAzureCredential
-from azure.identity import KnownAuthorities
+from azure.identity import DefaultAzureCredential, KnownAuthorities
 
 class KeyVaultBase:
     credential_type = DefaultAzureCredential
@@ -20,4 +19,3 @@ class KeyVaultBase:
         authority_host = self.get_authority_url(authority_host_alias)
         credential = self.credential_type(authority=authority_host)
         return credential
-
