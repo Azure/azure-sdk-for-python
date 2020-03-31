@@ -14,6 +14,7 @@ from azure.core.async_paging import AsyncList
 from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline.policies import (
     ContentDecodePolicy,
+    BearerTokenCredentialPolicy,
     AsyncBearerTokenCredentialPolicy,
     AsyncRedirectPolicy,
     DistributedTracingPolicy,
@@ -40,7 +41,7 @@ if TYPE_CHECKING:
     from azure.core.pipeline import Pipeline
     from azure.core.pipeline.transport import HttpRequest
     from azure.core.configuration import Configuration
-T = Optional[Union[AsyncBearerTokenCredentialPolicy, SharedKeyCredentialPolicy]]
+T = Optional[Union[BearerTokenCredentialPolicy, AsyncBearerTokenCredentialPolicy, SharedKeyCredentialPolicy]]
 _LOGGER = logging.getLogger(__name__)
 
 
@@ -77,15 +78,15 @@ class AsyncStorageAccountHostsMixin(object):
         config = kwargs.get('_configuration') or create_configuration(**kwargs)
         if kwargs.get('_pipeline'):
             return config, kwargs['_pipeline']
-        setattr(config, 'transport', kwargs.get("transport"))
+        config.transport = kwargs.get("transport")
         kwargs.setdefault("connection_timeout", CONNECTION_TIMEOUT)
         kwargs.setdefault("read_timeout", READ_TIMEOUT)
-        if not hasattr(config, 'transport'):
+        if not config.transport:
             try:
                 from azure.core.pipeline.transport import AioHttpTransport
             except ImportError:
                 raise ImportError("Unable to create async transport. Please check aiohttp is installed.")
-            setattr(config, 'transport', AioHttpTransport(**kwargs))
+            config.transport, AioHttpTransport(**kwargs))
         policies = [
             QueueMessagePolicy(),
             config.headers_policy,

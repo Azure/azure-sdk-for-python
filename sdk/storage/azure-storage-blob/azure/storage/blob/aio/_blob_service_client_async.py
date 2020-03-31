@@ -16,7 +16,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.pipeline.policies import AsyncHTTPPolicy, SansIOHTTPPolicy
 
-from .._shared.models import LocationMode
+from .._shared.models import LocationMode, UserDelegationKey
 from .._shared.policies_async import ExponentialRetry
 from .._shared.base_client import parse_connection_str
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper
@@ -37,7 +37,7 @@ from ._models import ContainerPropertiesPaged
 if TYPE_CHECKING:
     from datetime import datetime
     from azure.core.pipeline.transport import HttpTransport
-    from .._shared.models import AccountSasPermissions, ResourceTypes, UserDelegationKey
+    from .._shared.models import AccountSasPermissions, ResourceTypes
     from ._lease_async import BlobLeaseClient
     from .._models import (
         PublicAccess,

@@ -38,6 +38,7 @@ from azure.core.pipeline.policies import (
     RedirectPolicy,
     ContentDecodePolicy,
     BearerTokenCredentialPolicy,
+    AsyncBearerTokenCredentialPolicy,
     ProxyPolicy,
     DistributedTracingPolicy,
     HttpLoggingPolicy,
@@ -75,7 +76,7 @@ _SERVICE_PARAMS = {
     "file": {"primary": "FileEndpoint", "secondary": "FileSecondaryEndpoint"},
     "dfs": {"primary": "BlobEndpoint", "secondary": "BlobEndpoint"},
 }
-
+T = Optional[Union[BearerTokenCredentialPolicy, AsyncBearerTokenCredentialPolicy, SharedKeyCredentialPolicy]]
 
 class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
     def __init__(
@@ -223,7 +224,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
 
     def _create_pipeline(self, credential, **kwargs):
         # type: (Any, **Any) -> Tuple[Configuration, Pipeline]
-        self._credential_policy = None # type: Optional[Union[BearerTokenCredentialPolicy, SharedKeyCredentialPolicy]]
+        self._credential_policy = None # type: T
         if hasattr(credential, "get_token"):
             self._credential_policy = BearerTokenCredentialPolicy(credential, STORAGE_OAUTH_SCOPE)
         elif isinstance(credential, SharedKeyCredentialPolicy):

@@ -14,7 +14,7 @@ from azure.core.paging import ItemPaged
 from azure.core.pipeline import Pipeline
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.pipeline.policies import HTTPPolicy, SansIOHTTPPolicy
-from ._shared.models import LocationMode
+from ._shared.models import LocationMode, UserDelegationKey
 from ._shared.base_client import TransportWrapper, parse_connection_str
 from ._shared.parser import _to_utc_datetime
 from ._shared.response_handlers import return_response_headers, process_storage_error, \
@@ -28,7 +28,6 @@ from ._blob_service_client_base import BlobServiceClientBase
 if TYPE_CHECKING:
     from datetime import datetime
     from azure.core.pipeline.transport import HttpTransport
-    from ._shared.models import UserDelegationKey
     from ._lease import BlobLeaseClient
     from ._models import (
         PublicAccess,
