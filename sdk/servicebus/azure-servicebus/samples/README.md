@@ -4,7 +4,7 @@ languages:
   - python
 products:
   - azure
-  - azure-servicebus
+  - azure-service-bus
 urlFragment: servicebus-samples
 ---
 
