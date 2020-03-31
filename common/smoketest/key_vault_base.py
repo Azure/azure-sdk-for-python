@@ -9,13 +9,8 @@ class KeyVaultBase:
         'AzureCloud': KnownAuthorities.AZURE_PUBLIC_CLOUD,
     }
 
-    def get_authority_url(self, alias, default=KnownAuthorities.AZURE_PUBLIC_CLOUD):
-        if alias in self.host_alias_map:
-            return self.host_alias_map[alias]
-        return default
-
     # Instantiate a default credential based on the credential_type
-    def get_default_credential(self, authority_host_alias):
-        authority_host = self.get_authority_url(authority_host_alias)
-        credential = self.credential_type(authority=authority_host)
-        return credential
+    def get_default_credential(self, authority_host_alias=None):
+        alias = authority_host_alias or os.environ.get("AZURE_AUTHORITY_HOST_ALIAS")
+        authority_host = host_alias_map.get(alias, KnownAuthorities.AZURE_PUBLIC_CLOUD)
+        return self.credential_type(authority=authority_host)
