@@ -181,7 +181,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         except AttributeError:
             if isinstance(snapshot, Dict):
                 path_snapshot = snapshot['snapshot']
-            elif isinstance(snapshot, str):
+            else:
                 path_snapshot = snapshot
 
         return cls(

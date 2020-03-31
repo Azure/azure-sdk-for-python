@@ -145,7 +145,7 @@ class BlobClientBase(StorageAccountHostsMixin):  # pylint: disable=too-many-publ
         except AttributeError:
             if isinstance(snapshot, Dict):
                 self.snapshot = snapshot['snapshot']
-            elif isinstance(snapshot, str):
+            else:
                 self.snapshot = snapshot or path_snapshot
 
         self._query_str, credential = self._format_query_string(sas_token, credential, snapshot=self.snapshot)
@@ -721,12 +721,14 @@ class BlobClientBase(StorageAccountHostsMixin):  # pylint: disable=too-many-publ
             'timeout': kwargs.pop('timeout', None),
             'range': page_range}
         if previous_snapshot_diff:
-            if isinstance(previous_snapshot_diff, Dict):
-                options['prevsnapshot'] = previous_snapshot_diff['snapshot']
-            elif isinstance(previous_snapshot_diff, str):
-                options['prevsnapshot'] = previous_snapshot_diff
-            else:
+            try:
                 options['prevsnapshot'] = previous_snapshot_diff.snapshot
+            except AttributeError:
+                if isinstance(previous_snapshot_diff, Dict):
+                    options['prevsnapshot'] = previous_snapshot_diff['snapshot']
+                else:
+                    options['prevsnapshot'] = previous_snapshot_diff
+
         options.update(kwargs)
         return options
 
