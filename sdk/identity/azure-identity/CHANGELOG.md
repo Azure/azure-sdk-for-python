@@ -1,5 +1,13 @@
 # Release History
 
+## 1.3.1 (Unreleased)
+
+- `ManagedIdentityCredential` raises `CredentialUnavailableError` when no
+identity is configured for an IMDS endpoint. This causes
+`ChainedTokenCredential` to correctly try the next credential in the chain.
+([#10488](https://github.com/Azure/azure-sdk-for-python/issues/10488))
+
+
 ## 1.3.0 (2020-02-11)
 
 - Correctly parse token expiration time on Windows App Service
