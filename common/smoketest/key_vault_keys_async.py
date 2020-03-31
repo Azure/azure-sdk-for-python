@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import os
 import uuid
 from azure.keyvault.keys.aio import KeyClient
 from key_vault_base_async import KeyVaultBaseAsync

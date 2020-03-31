@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import os
 import uuid
 from azure.keyvault.certificates import CertificateClient, CertificatePolicy
 from key_vault_base import KeyVaultBase
