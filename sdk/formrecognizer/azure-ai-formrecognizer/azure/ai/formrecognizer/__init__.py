@@ -35,7 +35,9 @@ from ._models import (
     ExtractedText,
     ExtractedLabeledForm,
     ModelInfo,
-    ModelsSummary
+    ModelsSummary,
+    Point,
+    PageRange
 )
 
 
@@ -69,7 +71,9 @@ __all__ = [
     'ExtractedText',
     'ExtractedLabeledForm',
     'ModelInfo',
-    'ModelsSummary'
+    'ModelsSummary',
+    'Point',
+    'PageRange'
 ]
 
 __VERSION__ = VERSION

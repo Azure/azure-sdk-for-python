@@ -398,3 +398,15 @@ class CustomFormClient(object):
             return CustomLabeledModel._from_generated(response)
         raise ValueError("Model id '{}' was not trained with labels. Call get_custom_model() with the model id."
                          .format(model_id))
+
+    async def __aenter__(self) -> "CustomFormClient":
+        await self._client.__aenter__()
+        return self
+
+    async def __aexit__(self, *args: "Any") -> None:
+        await self._client.__aexit__(*args)
+
+    async def close(self) -> None:
+        """Close the :class:`~azure.ai.formrecognizer.CustomFormClient` session.
+        """
+        await self._client.__aexit__()

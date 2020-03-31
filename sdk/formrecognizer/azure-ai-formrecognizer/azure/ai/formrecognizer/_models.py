@@ -12,11 +12,6 @@ from enum import Enum
 from ._helpers import get_field_scalar_value
 
 
-PageRange = namedtuple("PageRange", "first_page last_page")
-Point = namedtuple("Point", "x y")
-BoundingBox = namedtuple("BoundingBox", ["top_left", "top_right", "bottom_right", "bottom_left"])
-
-
 def get_elements(field, ocr_result):
     elements = []
     try:
@@ -61,6 +56,50 @@ class ModelStatus(str, Enum):
     creating = "creating"
     ready = "ready"
     invalid = "invalid"
+
+
+class Point(namedtuple("Point", "x y")):
+    """The x, y coordinate of a point of on a bounding box.
+
+    :ivar float x: x-coordinate
+    :ivar float y: y-coordinate
+    """
+    __slots__ = ()
+
+    def __new__(cls, x, y):
+        return super(Point, cls).__new__(cls, x, y)
+
+
+class BoundingBox(namedtuple("BoundingBox", ["top_left", "top_right", "bottom_right", "bottom_left"])):
+    """The quadrangle bounding box that outlines the text.
+    Units are in pixels for images and inches for PDF.
+
+    :ivar ~azure.ai.formrecognizer.Point top_left:
+        The x, y coordinates of the upper left point of the bounding box.
+    :ivar ~azure.ai.formrecognizer.Point top_right:
+        The x, y coordinates of the upper right point of the bounding box.
+    :ivar ~azure.ai.formrecognizer.Point bottom_right:
+        The x, y coordinates of the lower right point of the bounding box.
+    :ivar ~azure.ai.formrecognizer.Point bottom_left:
+        The x, y coordinates of the lower left point of the bounding box.
+    """
+    __slots__ = ()
+
+    def __new__(cls, top_left, top_right, bottom_right, bottom_left):
+        return super(BoundingBox, cls).__new__(cls, top_left, top_right, bottom_right, bottom_left)
+
+
+class PageRange(namedtuple("PageRange", "first_page last_page")):
+    """The 1 based page range of the document.
+
+    :ivar int first_page: The first page of the document.
+    :ivar int last_page: The last page of the document.
+
+    """
+    __slots__ = ()
+
+    def __new__(cls, first_page, last_page):
+        return super(PageRange, cls).__new__(cls, first_page, last_page)
 
 
 class ExtractedReceipt(object):  # pylint: disable=too-many-instance-attributes

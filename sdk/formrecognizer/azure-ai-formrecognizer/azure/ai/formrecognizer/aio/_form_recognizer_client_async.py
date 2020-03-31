@@ -178,3 +178,15 @@ class FormRecognizerClient(object):
             polling=AsyncLROBasePolling(timeout=POLLING_INTERVAL, **kwargs),
             **kwargs
         )
+
+    async def __aenter__(self) -> "FormRecognizerClient":
+        await self._client.__aenter__()
+        return self
+
+    async def __aexit__(self, *args: "Any") -> None:
+        await self._client.__aexit__(*args)
+
+    async def close(self) -> None:
+        """Close the :class:`~azure.ai.formrecognizer.FormRecognizerClient` session.
+        """
+        await self._client.__aexit__()
