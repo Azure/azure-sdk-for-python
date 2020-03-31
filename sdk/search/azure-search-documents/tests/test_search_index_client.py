@@ -11,6 +11,7 @@ except ImportError:
     import mock
 
 from azure.core.paging import ItemPaged
+from azure.core.credentials import AzureKeyCredential
 
 from azure.search.documents._index._generated.models import (
     IndexAction,
@@ -23,14 +24,13 @@ from azure.search.documents._index._search_index_client import SearchPageIterato
 from azure.search.documents import (
     AutocompleteQuery,
     IndexDocumentsBatch,
-    SearchApiKeyCredential,
     SearchIndexClient,
     SearchQuery,
     SuggestQuery,
     odata,
 )
 
-CREDENTIAL = SearchApiKeyCredential(api_key="test_api_key")
+CREDENTIAL = AzureKeyCredential(key="test_api_key")
 
 CRUD_METHOD_NAMES = [
     "upload_documents",
@@ -75,20 +75,20 @@ class TestSearchIndexClient(object):
         }
 
     def test_credential_roll(self):
-        credential = SearchApiKeyCredential(api_key="old_api_key")
+        credential = AzureKeyCredential(key="old_api_key")
         client = SearchIndexClient("endpoint", "index name", credential)
         assert client._headers == {
             "api-key": "old_api_key",
             "Accept": "application/json;odata.metadata=none",
         }
-        credential.update_key("new_api_key")
+        credential.update("new_api_key")
         assert client._headers == {
             "api-key": "new_api_key",
             "Accept": "application/json;odata.metadata=none",
         }
 
     def test_headers_merge(self):
-        credential = SearchApiKeyCredential(api_key="test_api_key")
+        credential = AzureKeyCredential(key="test_api_key")
         client = SearchIndexClient("endpoint", "index name", credential)
         orig = {"foo": "bar"}
         result = client._merge_client_headers(orig)
