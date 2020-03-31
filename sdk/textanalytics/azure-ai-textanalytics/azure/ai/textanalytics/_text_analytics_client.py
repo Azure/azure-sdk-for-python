@@ -27,8 +27,7 @@ from ._response_handlers import (
 )
 
 if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential
-    from ._credential import TextAnalyticsApiKeyCredential
+    from azure.core.credentials import TokenCredential, AzureKeyCredential
     from ._models import (
         DetectLanguageInput,
         TextDocumentInput,
@@ -54,10 +53,10 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     :param str endpoint: Supported Cognitive Services or Text Analytics resource
         endpoints (protocol and hostname, for example: https://westus2.api.cognitive.microsoft.com).
     :param credential: Credentials needed for the client to connect to Azure.
-        This can be the an instance of TextAnalyticsApiKeyCredential if using a
+        This can be the an instance of AzureKeyCredential if using a
         cognitive services/text analytics API key or a token credential
         from :mod:`azure.identity`.
-    :type credential: :class:`~azure.ai.textanalytics.TextAnalyticsApiKeyCredential` or
+    :type credential: :class:`~azure.core.credentials.AzureKeyCredential` or
         :class:`~azure.core.credentials.TokenCredential`
     :keyword str default_country_hint: Sets the default country_hint to use for all operations.
         Defaults to "US". If you don't want to use a country hint, pass the string "none".
@@ -82,7 +81,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     """
 
     def __init__(self, endpoint, credential, **kwargs):
-        # type: (str, Union[TextAnalyticsApiKeyCredential, TokenCredential], Any) -> None
+        # type: (str, Union[AzureKeyCredential, TokenCredential], Any) -> None
         super(TextAnalyticsClient, self).__init__(credential=credential, **kwargs)
         self._client = TextAnalytics(
             endpoint=endpoint, credentials=credential, pipeline=self._pipeline
