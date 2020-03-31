@@ -133,7 +133,7 @@ class SearchIndexClientTest(AzureMgmtTestCase):
             scoring_profiles=scoring_profiles,
             cors_options=cors_options)
         client = SearchServiceClient(endpoint, SearchApiKeyCredential(api_key))
-        result = client.create_index(index)
+        result = client.create_or_update_index(index_name=index.name, index=index)
         assert len(result.scoring_profiles) == 0
         assert result.cors_options.allowed_origins == cors_options.allowed_origins
         assert result.cors_options.max_age_in_seconds == cors_options.max_age_in_seconds

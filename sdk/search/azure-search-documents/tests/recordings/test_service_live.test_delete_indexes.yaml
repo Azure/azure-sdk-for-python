@@ -13,7 +13,7 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/1.0.0b2 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       api-key:
-      - 8E6B59F373B780A1E1D535863FDA5BC9
+      - 668B8A9202953BC7FBED4F24F5304DBF
     method: DELETE
     uri: https://search21c20f2f.search.windows.net/indexes('drgqefsg')?api-version=2019-05-06-Preview
   response:
@@ -23,15 +23,15 @@ interactions:
       cache-control:
       - no-cache
       date:
-      - Mon, 30 Mar 2020 22:41:05 GMT
+      - Tue, 31 Mar 2020 17:39:04 GMT
       elapsed-time:
-      - '231'
+      - '510'
       expires:
       - '-1'
       pragma:
       - no-cache
       request-id:
-      - 8ac77274-72d7-11ea-9ee3-5cf37071153c
+      - 84492680-7376-11ea-bf5b-5cf37071153c
       strict-transport-security:
       - max-age=15724800; includeSubDomains
     status:
@@ -49,7 +49,7 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/1.0.0b2 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       api-key:
-      - 8E6B59F373B780A1E1D535863FDA5BC9
+      - 668B8A9202953BC7FBED4F24F5304DBF
     method: GET
     uri: https://search21c20f2f.search.windows.net/indexes?api-version=2019-05-06-Preview
   response:
@@ -63,9 +63,9 @@ interactions:
       content-type:
       - application/json; odata.metadata=minimal
       date:
-      - Mon, 30 Mar 2020 22:41:10 GMT
+      - Tue, 31 Mar 2020 17:39:09 GMT
       elapsed-time:
-      - '18'
+      - '23'
       expires:
       - '-1'
       odata-version:
@@ -75,7 +75,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - 8e1967c0-72d7-11ea-b236-5cf37071153c
+      - 87ce7638-7376-11ea-8421-5cf37071153c
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:

@@ -11,7 +11,7 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/1.0.0b2 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       api-key:
-      - 0E731245254C3C53E9E802CC0BC7C1FA
+      - FB1BC0FBDA7D6157D105BF00F952E069
     method: POST
     uri: https://search97bd120f.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2019-05-06-Preview
   response:
@@ -65,13 +65,13 @@ interactions:
       content-encoding: gzip
       content-length: '2377'
       content-type: application/json; odata.metadata=none
-      date: Mon, 30 Mar 2020 22:45:50 GMT
-      elapsed-time: '85'
+      date: Tue, 31 Mar 2020 17:43:27 GMT
+      elapsed-time: '218'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 34dd499a-72d8-11ea-89cc-5cf37071153c
+      request-id: 20aa627a-7377-11ea-a8c8-5cf37071153c
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
@@ -97,7 +97,7 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/1.0.0b2 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       api-key:
-      - 0E731245254C3C53E9E802CC0BC7C1FA
+      - FB1BC0FBDA7D6157D105BF00F952E069
     method: POST
     uri: https://search97bd120f.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2019-05-06-Preview
   response:
@@ -127,13 +127,13 @@ interactions:
       content-encoding: gzip
       content-length: '1271'
       content-type: application/json; odata.metadata=none
-      date: Mon, 30 Mar 2020 22:45:50 GMT
-      elapsed-time: '7'
+      date: Tue, 31 Mar 2020 17:43:27 GMT
+      elapsed-time: '9'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 3513dcf4-72d8-11ea-a3ec-5cf37071153c
+      request-id: 20f28f7a-7377-11ea-b67d-5cf37071153c
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:

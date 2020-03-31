@@ -11,7 +11,7 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/1.0.0b2 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       api-key:
-      - CC053C21FB71B2494521E9B44B88366B
+      - 806AC17ACCD9D0AB7EDD5C57948070EF
     method: GET
     uri: https://search623710eb.search.windows.net/indexes('drgqefsg')/docs('1000')?api-version=2019-05-06-Preview
   response:
@@ -23,15 +23,15 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 30 Mar 2020 22:36:41 GMT
+      - Tue, 31 Mar 2020 17:34:14 GMT
       elapsed-time:
-      - '75'
+      - '123'
       expires:
       - '-1'
       pragma:
       - no-cache
       request-id:
-      - eda1536e-72d6-11ea-b2af-5cf37071153c
+      - d77c941e-7375-11ea-ade1-5cf37071153c
       strict-transport-security:
       - max-age=15724800; includeSubDomains
     status:

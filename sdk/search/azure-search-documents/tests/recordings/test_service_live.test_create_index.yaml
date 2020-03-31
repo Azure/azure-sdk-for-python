@@ -18,12 +18,12 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/1.0.0b2 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       api-key:
-      - 37B250244194C65E72BB802CC6A5FA40
+      - EA2B41F1F9F9CD531EC80F4905A3189A
     method: POST
     uri: https://search3f00e58.search.windows.net/indexes?api-version=2019-05-06-Preview
   response:
     body:
-      string: '{"@odata.context":"https://search3f00e58.search.windows.net/$metadata#indexes/$entity","@odata.etag":"\"0x8D7D4FB5B7C319E\"","name":"hotels","defaultScoringProfile":null,"fields":[{"name":"hotelId","type":"Edm.String","searchable":false,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":true,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"synonymMaps":[]},{"name":"baseRate","type":"Edm.Double","searchable":false,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":false,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"synonymMaps":[]}],"scoringProfiles":[{"name":"MyProfile","functionAggregation":null,"text":null,"functions":[]}],"corsOptions":{"allowedOrigins":["*"],"maxAgeInSeconds":60},"suggesters":[],"analyzers":[],"tokenizers":[],"tokenFilters":[],"charFilters":[],"encryptionKey":null,"similarity":null}'
+      string: '{"@odata.context":"https://search3f00e58.search.windows.net/$metadata#indexes/$entity","@odata.etag":"\"0x8D7D59A543B59C4\"","name":"hotels","defaultScoringProfile":null,"fields":[{"name":"hotelId","type":"Edm.String","searchable":false,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":true,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"synonymMaps":[]},{"name":"baseRate","type":"Edm.Double","searchable":false,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":false,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"synonymMaps":[]}],"scoringProfiles":[{"name":"MyProfile","functionAggregation":null,"text":null,"functions":[]}],"corsOptions":{"allowedOrigins":["*"],"maxAgeInSeconds":60},"suggesters":[],"analyzers":[],"tokenizers":[],"tokenFilters":[],"charFilters":[],"encryptionKey":null,"similarity":null}'
     headers:
       cache-control:
       - no-cache
@@ -32,11 +32,11 @@ interactions:
       content-type:
       - application/json; odata.metadata=minimal
       date:
-      - Mon, 30 Mar 2020 22:40:33 GMT
+      - Tue, 31 Mar 2020 17:38:31 GMT
       elapsed-time:
-      - '1614'
+      - '2330'
       etag:
-      - W/"0x8D7D4FB5B7C319E"
+      - W/"0x8D7D59A543B59C4"
       expires:
       - '-1'
       location:
@@ -48,7 +48,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - 76de2b46-72d7-11ea-888c-5cf37071153c
+      - 6efa6738-7376-11ea-8516-5cf37071153c
       strict-transport-security:
       - max-age=15724800; includeSubDomains
     status:

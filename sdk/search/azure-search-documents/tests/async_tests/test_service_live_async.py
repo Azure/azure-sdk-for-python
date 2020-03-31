@@ -51,7 +51,6 @@ def await_prepared_test(test_fn):
 class SearchIndexClientTest(AzureMgmtTestCase):
     @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer()
-    @await_prepared_test
     async def test_get_service_statistics(self, api_key, endpoint, **kwargs):
         client = SearchServiceClient(endpoint, SearchApiKeyCredential(api_key))
         result = await client.get_service_statistics()
@@ -60,7 +59,6 @@ class SearchIndexClientTest(AzureMgmtTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer()
-    @await_prepared_test
     async def test_list_indexes_empty(self, api_key, endpoint, **kwargs):
         client = SearchServiceClient(endpoint, SearchApiKeyCredential(api_key))
         result = await client.list_indexes()
@@ -68,7 +66,6 @@ class SearchIndexClientTest(AzureMgmtTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
-    @await_prepared_test
     async def test_list_indexes(self, api_key, endpoint, index_name, **kwargs):
         client = SearchServiceClient(endpoint, SearchApiKeyCredential(api_key))
         result = await client.list_indexes()
@@ -77,7 +74,6 @@ class SearchIndexClientTest(AzureMgmtTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
-    @await_prepared_test
     async def test_get_index(self, api_key, endpoint, index_name, **kwargs):
         client = SearchServiceClient(endpoint, SearchApiKeyCredential(api_key))
         result = await client.get_index(index_name)
@@ -85,7 +81,6 @@ class SearchIndexClientTest(AzureMgmtTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
-    @await_prepared_test
     async def test_get_index_statistics(self, api_key, endpoint, index_name, **kwargs):
         client = SearchServiceClient(endpoint, SearchApiKeyCredential(api_key))
         result = await client.get_index_statistics(index_name)
@@ -93,7 +88,6 @@ class SearchIndexClientTest(AzureMgmtTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
-    @await_prepared_test
     async def test_delete_indexes(self, api_key, endpoint, index_name, **kwargs):
         client = SearchServiceClient(endpoint, SearchApiKeyCredential(api_key))
         await client.delete_index(index_name)
@@ -104,7 +98,6 @@ class SearchIndexClientTest(AzureMgmtTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
-    @await_prepared_test
     async def test_create_index(self, api_key, endpoint, index_name, **kwargs):
         name = "hotels"
         fields = [
@@ -138,7 +131,6 @@ class SearchIndexClientTest(AzureMgmtTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
-    @await_prepared_test
     async def test_create_or_update_index(self, api_key, endpoint, index_name, **kwargs):
         name = "hotels"
         fields = [
@@ -160,7 +152,7 @@ class SearchIndexClientTest(AzureMgmtTestCase):
             scoring_profiles=scoring_profiles,
             cors_options=cors_options)
         client = SearchServiceClient(endpoint, SearchApiKeyCredential(api_key))
-        result = await client.create_index(index)
+        result = await client.create_or_update_index(index_name=index.name, index=index)
         assert len(result.scoring_profiles) == 0
         assert result.cors_options.allowed_origins == cors_options.allowed_origins
         assert result.cors_options.max_age_in_seconds == cors_options.max_age_in_seconds
@@ -181,7 +173,6 @@ class SearchIndexClientTest(AzureMgmtTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
-    @await_prepared_test
     async def test_analyze_text(self, api_key, endpoint, index_name, **kwargs):
         client = SearchServiceClient(endpoint, SearchApiKeyCredential(api_key))
         analyze_request = AnalyzeRequest(text="One's <two/>", analyzer="standard.lucene")

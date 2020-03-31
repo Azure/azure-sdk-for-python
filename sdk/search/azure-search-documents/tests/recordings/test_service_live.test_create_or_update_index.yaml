@@ -15,15 +15,17 @@ interactions:
       - '239'
       Content-Type:
       - application/json
+      Prefer:
+      - return=representation
       User-Agent:
       - azsdk-python-search-documents/1.0.0b2 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       api-key:
-      - 18A8EC88A9AC7A849BE20033B10331DE
-    method: POST
-    uri: https://searchaa3a127a.search.windows.net/indexes?api-version=2019-05-06-Preview
+      - B345241086F6136CFBD5226C55E72C1B
+    method: PUT
+    uri: https://searchaa3a127a.search.windows.net/indexes('hotels')?api-version=2019-05-06-Preview
   response:
     body:
-      string: '{"@odata.context":"https://searchaa3a127a.search.windows.net/$metadata#indexes/$entity","@odata.etag":"\"0x8D7D4FB651EBE92\"","name":"hotels","defaultScoringProfile":null,"fields":[{"name":"hotelId","type":"Edm.String","searchable":false,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":true,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"synonymMaps":[]},{"name":"baseRate","type":"Edm.Double","searchable":false,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":false,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"synonymMaps":[]}],"scoringProfiles":[],"corsOptions":{"allowedOrigins":["*"],"maxAgeInSeconds":60},"suggesters":[],"analyzers":[],"tokenizers":[],"tokenFilters":[],"charFilters":[],"encryptionKey":null,"similarity":null}'
+      string: '{"@odata.context":"https://searchaa3a127a.search.windows.net/$metadata#indexes/$entity","@odata.etag":"\"0x8D7D59A5F6D181C\"","name":"hotels","defaultScoringProfile":null,"fields":[{"name":"hotelId","type":"Edm.String","searchable":false,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":true,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"synonymMaps":[]},{"name":"baseRate","type":"Edm.Double","searchable":false,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":false,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"synonymMaps":[]}],"scoringProfiles":[],"corsOptions":{"allowedOrigins":["*"],"maxAgeInSeconds":60},"suggesters":[],"analyzers":[],"tokenizers":[],"tokenFilters":[],"charFilters":[],"encryptionKey":null,"similarity":null}'
     headers:
       cache-control:
       - no-cache
@@ -32,11 +34,11 @@ interactions:
       content-type:
       - application/json; odata.metadata=minimal
       date:
-      - Mon, 30 Mar 2020 22:40:49 GMT
+      - Tue, 31 Mar 2020 17:38:49 GMT
       elapsed-time:
-      - '670'
+      - '1894'
       etag:
-      - W/"0x8D7D4FB651EBE92"
+      - W/"0x8D7D59A5F6D181C"
       expires:
       - '-1'
       location:
@@ -48,7 +50,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - 810cea3e-72d7-11ea-8081-5cf37071153c
+      - 7a68e0ee-7376-11ea-ab74-5cf37071153c
       strict-transport-security:
       - max-age=15724800; includeSubDomains
     status:
@@ -75,12 +77,12 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/1.0.0b2 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       api-key:
-      - 18A8EC88A9AC7A849BE20033B10331DE
+      - B345241086F6136CFBD5226C55E72C1B
     method: PUT
     uri: https://searchaa3a127a.search.windows.net/indexes('hotels')?api-version=2019-05-06-Preview
   response:
     body:
-      string: '{"@odata.context":"https://searchaa3a127a.search.windows.net/$metadata#indexes/$entity","@odata.etag":"\"0x8D7D4FB654BCA6C\"","name":"hotels","defaultScoringProfile":null,"fields":[{"name":"hotelId","type":"Edm.String","searchable":false,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":true,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"synonymMaps":[]},{"name":"baseRate","type":"Edm.Double","searchable":false,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":false,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"synonymMaps":[]}],"scoringProfiles":[{"name":"MyProfile","functionAggregation":null,"text":null,"functions":[]}],"corsOptions":{"allowedOrigins":["*"],"maxAgeInSeconds":60},"suggesters":[],"analyzers":[],"tokenizers":[],"tokenFilters":[],"charFilters":[],"encryptionKey":null,"similarity":null}'
+      string: '{"@odata.context":"https://searchaa3a127a.search.windows.net/$metadata#indexes/$entity","@odata.etag":"\"0x8D7D59A5FA1F0A9\"","name":"hotels","defaultScoringProfile":null,"fields":[{"name":"hotelId","type":"Edm.String","searchable":false,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":true,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"synonymMaps":[]},{"name":"baseRate","type":"Edm.Double","searchable":false,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":false,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"synonymMaps":[]}],"scoringProfiles":[{"name":"MyProfile","functionAggregation":null,"text":null,"functions":[]}],"corsOptions":{"allowedOrigins":["*"],"maxAgeInSeconds":60},"suggesters":[],"analyzers":[],"tokenizers":[],"tokenFilters":[],"charFilters":[],"encryptionKey":null,"similarity":null}'
     headers:
       cache-control:
       - no-cache
@@ -89,11 +91,11 @@ interactions:
       content-type:
       - application/json; odata.metadata=minimal
       date:
-      - Mon, 30 Mar 2020 22:40:49 GMT
+      - Tue, 31 Mar 2020 17:38:49 GMT
       elapsed-time:
-      - '117'
+      - '198'
       etag:
-      - W/"0x8D7D4FB654BCA6C"
+      - W/"0x8D7D59A5FA1F0A9"
       expires:
       - '-1'
       odata-version:
@@ -103,7 +105,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - 81aabdcc-72d7-11ea-ac47-5cf37071153c
+      - 7bc9cad8-7376-11ea-a5b9-5cf37071153c
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:

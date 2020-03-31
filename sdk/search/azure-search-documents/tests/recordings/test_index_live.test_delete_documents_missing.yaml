@@ -16,7 +16,7 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/1.0.0b2 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       api-key:
-      - 3F48D9637CADAD42A8394D540197AD9F
+      - 99211B5C4ABD8A0143509AE62A1DCEC4
     method: POST
     uri: https://searcha9301291.search.windows.net/indexes('drgqefsg')/docs/search.index?api-version=2019-05-06-Preview
   response:
@@ -30,9 +30,9 @@ interactions:
       content-type:
       - application/json; odata.metadata=none
       date:
-      - Mon, 30 Mar 2020 22:35:50 GMT
+      - Tue, 31 Mar 2020 17:33:18 GMT
       elapsed-time:
-      - '74'
+      - '214'
       expires:
       - '-1'
       odata-version:
@@ -42,7 +42,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - cf13e5f0-72d6-11ea-93c8-5cf37071153c
+      - b626c902-7375-11ea-b906-5cf37071153c
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:
@@ -62,7 +62,7 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/1.0.0b2 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       api-key:
-      - 3F48D9637CADAD42A8394D540197AD9F
+      - 99211B5C4ABD8A0143509AE62A1DCEC4
     method: GET
     uri: https://searcha9301291.search.windows.net/indexes('drgqefsg')/docs/$count?api-version=2019-05-06-Preview
   response:
@@ -76,9 +76,9 @@ interactions:
       content-type:
       - text/plain
       date:
-      - Mon, 30 Mar 2020 22:35:53 GMT
+      - Tue, 31 Mar 2020 17:33:22 GMT
       elapsed-time:
-      - '5'
+      - '4'
       expires:
       - '-1'
       odata-version:
@@ -88,7 +88,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - d11a35d8-72d6-11ea-b337-5cf37071153c
+      - b85c6a1c-7375-11ea-bf12-5cf37071153c
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:
@@ -108,7 +108,7 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/1.0.0b2 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       api-key:
-      - 3F48D9637CADAD42A8394D540197AD9F
+      - 99211B5C4ABD8A0143509AE62A1DCEC4
     method: GET
     uri: https://searcha9301291.search.windows.net/indexes('drgqefsg')/docs('1000')?api-version=2019-05-06-Preview
   response:
@@ -120,15 +120,15 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 30 Mar 2020 22:35:53 GMT
+      - Tue, 31 Mar 2020 17:33:22 GMT
       elapsed-time:
-      - '4'
+      - '5'
       expires:
       - '-1'
       pragma:
       - no-cache
       request-id:
-      - d137f090-72d6-11ea-88a8-5cf37071153c
+      - b87b9240-7375-11ea-a8d5-5cf37071153c
       strict-transport-security:
       - max-age=15724800; includeSubDomains
     status:
@@ -146,7 +146,7 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/1.0.0b2 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       api-key:
-      - 3F48D9637CADAD42A8394D540197AD9F
+      - 99211B5C4ABD8A0143509AE62A1DCEC4
     method: GET
     uri: https://searcha9301291.search.windows.net/indexes('drgqefsg')/docs('4')?api-version=2019-05-06-Preview
   response:
@@ -158,15 +158,15 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 30 Mar 2020 22:35:53 GMT
+      - Tue, 31 Mar 2020 17:33:22 GMT
       elapsed-time:
-      - '5'
+      - '6'
       expires:
       - '-1'
       pragma:
       - no-cache
       request-id:
-      - d1494224-72d6-11ea-bebe-5cf37071153c
+      - b88bff3a-7375-11ea-b8fd-5cf37071153c
       strict-transport-security:
       - max-age=15724800; includeSubDomains
     status:

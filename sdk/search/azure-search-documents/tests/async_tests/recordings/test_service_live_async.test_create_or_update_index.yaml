@@ -11,22 +11,24 @@ interactions:
       - '239'
       Content-Type:
       - application/json
+      Prefer:
+      - return=representation
       User-Agent:
       - azsdk-python-search-documents/1.0.0b2 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       api-key:
-      - 390CA976A2988CE4AE72AEACC41A8545
-    method: POST
-    uri: https://search234a14f7.search.windows.net/indexes?api-version=2019-05-06-Preview
+      - 123ED9977EF261D85F8AC1062CDE21AF
+    method: PUT
+    uri: https://search234a14f7.search.windows.net/indexes('hotels')?api-version=2019-05-06-Preview
   response:
     body:
-      string: '{"@odata.context":"https://search234a14f7.search.windows.net/$metadata#indexes/$entity","@odata.etag":"\"0x8D7D4FC773ED17C\"","name":"hotels","defaultScoringProfile":null,"fields":[{"name":"hotelId","type":"Edm.String","searchable":false,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":true,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"synonymMaps":[]},{"name":"baseRate","type":"Edm.Double","searchable":false,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":false,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"synonymMaps":[]}],"scoringProfiles":[],"corsOptions":{"allowedOrigins":["*"],"maxAgeInSeconds":60},"suggesters":[],"analyzers":[],"tokenizers":[],"tokenFilters":[],"charFilters":[],"encryptionKey":null,"similarity":null}'
+      string: '{"@odata.context":"https://search234a14f7.search.windows.net/$metadata#indexes/$entity","@odata.etag":"\"0x8D7D59B6AEE529E\"","name":"hotels","defaultScoringProfile":null,"fields":[{"name":"hotelId","type":"Edm.String","searchable":false,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":true,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"synonymMaps":[]},{"name":"baseRate","type":"Edm.Double","searchable":false,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":false,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"synonymMaps":[]}],"scoringProfiles":[],"corsOptions":{"allowedOrigins":["*"],"maxAgeInSeconds":60},"suggesters":[],"analyzers":[],"tokenizers":[],"tokenFilters":[],"charFilters":[],"encryptionKey":null,"similarity":null}'
     headers:
       cache-control: no-cache
       content-length: '816'
       content-type: application/json; odata.metadata=minimal
-      date: Mon, 30 Mar 2020 22:48:29 GMT
-      elapsed-time: '718'
-      etag: W/"0x8D7D4FC773ED17C"
+      date: Tue, 31 Mar 2020 17:46:18 GMT
+      elapsed-time: '1329'
+      etag: W/"0x8D7D59B6AEE529E"
       expires: '-1'
       location:
       - h
@@ -122,7 +124,7 @@ interactions:
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 931c2068-72d8-11ea-b7a4-5cf37071153c
+      request-id: 864f9086-7377-11ea-868d-5cf37071153c
       strict-transport-security: max-age=15724800; includeSubDomains
     status:
       code: 201
@@ -132,7 +134,7 @@ interactions:
       - !!python/object/new:urllib.parse.SplitResult
         - https
         - search234a14f7.search.windows.net
-        - /indexes
+        - /indexes('hotels')
         - api-version=2019-05-06-Preview
         - ''
 - request:
@@ -152,25 +154,25 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/1.0.0b2 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       api-key:
-      - 390CA976A2988CE4AE72AEACC41A8545
+      - 123ED9977EF261D85F8AC1062CDE21AF
     method: PUT
     uri: https://search234a14f7.search.windows.net/indexes('hotels')?api-version=2019-05-06-Preview
   response:
     body:
-      string: '{"@odata.context":"https://search234a14f7.search.windows.net/$metadata#indexes/$entity","@odata.etag":"\"0x8D7D4FC775CE666\"","name":"hotels","defaultScoringProfile":null,"fields":[{"name":"hotelId","type":"Edm.String","searchable":false,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":true,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"synonymMaps":[]},{"name":"baseRate","type":"Edm.Double","searchable":false,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":false,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"synonymMaps":[]}],"scoringProfiles":[{"name":"MyProfile","functionAggregation":null,"text":null,"functions":[]}],"corsOptions":{"allowedOrigins":["*"],"maxAgeInSeconds":60},"suggesters":[],"analyzers":[],"tokenizers":[],"tokenFilters":[],"charFilters":[],"encryptionKey":null,"similarity":null}'
+      string: '{"@odata.context":"https://search234a14f7.search.windows.net/$metadata#indexes/$entity","@odata.etag":"\"0x8D7D59B6B1B1029\"","name":"hotels","defaultScoringProfile":null,"fields":[{"name":"hotelId","type":"Edm.String","searchable":false,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":true,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"synonymMaps":[]},{"name":"baseRate","type":"Edm.Double","searchable":false,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":false,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"synonymMaps":[]}],"scoringProfiles":[{"name":"MyProfile","functionAggregation":null,"text":null,"functions":[]}],"corsOptions":{"allowedOrigins":["*"],"maxAgeInSeconds":60},"suggesters":[],"analyzers":[],"tokenizers":[],"tokenFilters":[],"charFilters":[],"encryptionKey":null,"similarity":null}'
     headers:
       cache-control: no-cache
       content-encoding: gzip
       content-length: '536'
       content-type: application/json; odata.metadata=minimal
-      date: Mon, 30 Mar 2020 22:48:29 GMT
-      elapsed-time: '141'
-      etag: W/"0x8D7D4FC775CE666"
+      date: Tue, 31 Mar 2020 17:46:18 GMT
+      elapsed-time: '216'
+      etag: W/"0x8D7D59B6B1B1029"
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 93cba866-72d8-11ea-a104-5cf37071153c
+      request-id: 8747c682-7377-11ea-87ce-5cf37071153c
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:

@@ -11,7 +11,7 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/1.0.0b2 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       api-key:
-      - B9EC23448DCD571F5DEC22D38BDD9C3A
+      - 6DEB27E4FBB0BC39EFE5178B262B6B27
     method: POST
     uri: https://searchbcc312d1.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2019-05-06-Preview
   response:
@@ -65,13 +65,13 @@ interactions:
       content-encoding: gzip
       content-length: '2377'
       content-type: application/json; odata.metadata=none
-      date: Mon, 30 Mar 2020 22:44:46 GMT
-      elapsed-time: '184'
+      date: Tue, 31 Mar 2020 17:42:27 GMT
+      elapsed-time: '38'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 0ef1de0a-72d8-11ea-9e80-5cf37071153c
+      request-id: fd19b022-7376-11ea-8831-5cf37071153c
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
@@ -97,7 +97,7 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/1.0.0b2 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       api-key:
-      - B9EC23448DCD571F5DEC22D38BDD9C3A
+      - 6DEB27E4FBB0BC39EFE5178B262B6B27
     method: POST
     uri: https://searchbcc312d1.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2019-05-06-Preview
   response:
@@ -151,13 +151,13 @@ interactions:
       content-encoding: gzip
       content-length: '2389'
       content-type: application/json; odata.metadata=none
-      date: Mon, 30 Mar 2020 22:44:47 GMT
+      date: Tue, 31 Mar 2020 17:42:27 GMT
       elapsed-time: '9'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 0f6a7fe2-72d8-11ea-a714-5cf37071153c
+      request-id: fd3eebcc-7376-11ea-a5a1-5cf37071153c
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
