@@ -73,7 +73,8 @@ class SearchIndexClientTest(AzureMgmtTestCase):
         client = SearchServiceClient(endpoint, SearchApiKeyCredential(api_key))
         client.delete_index(index_name)
         import time
-        time.sleep(5)
+        if self.is_live:
+            time.sleep(5)
         result = client.list_indexes()
         assert len(result) == 0
 
