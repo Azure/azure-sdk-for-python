@@ -102,7 +102,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 async for message in messages:
                     _logger.debug(message)
                     _logger.debug(message.sequence_number)
-                    _logger.debug(message.enqueued_time)
+                    _logger.debug(message.enqueued_time_utc)
                     _logger.debug(message.expired)
                     await message.complete()
                     await asyncio.sleep(40)
@@ -340,7 +340,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 for message in deferred:
                     assert isinstance(message, ReceivedMessage)
                     assert message.lock_token
-                    assert message.locked_until
+                    assert message.locked_until_utc
                     assert message._receiver
                     await message.renew_lock()
                     await message.complete()
@@ -629,9 +629,9 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                         assert not message.expired
                     for m in messages:
                         time.sleep(5)
-                        initial_expiry = m.locked_until
+                        initial_expiry = m.locked_until_utc
                         await m.renew_lock()
-                        assert (m.locked_until - initial_expiry) >= timedelta(seconds=5)
+                        assert (m.locked_until_utc - initial_expiry) >= timedelta(seconds=5)
                 finally:
                     await messages[0].complete()
                     await messages[1].complete()
@@ -661,13 +661,13 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                         messages.append(message)
                         assert not message.expired
                         renewer.register(message, timeout=60)
-                        print("Registered lock renew thread", message.locked_until, datetime.now())
+                        print("Registered lock renew thread", message.locked_until_utc, datetime.utcnow())
                         await asyncio.sleep(50)
-                        print("Finished first sleep", message.locked_until)
+                        print("Finished first sleep", message.locked_until_utc)
                         assert not message.expired
                         await asyncio.sleep(25)
-                        await asyncio.sleep(max(0,(message.locked_until - datetime.now()).total_seconds()))
-                        print("Finished second sleep", message.locked_until, datetime.now())
+                        await asyncio.sleep(max(0,(message.locked_until_utc - datetime.utcnow()).total_seconds()))
+                        print("Finished second sleep", message.locked_until_utc, datetime.utcnow())
                         assert message.expired
                         try:
                             await message.complete()
@@ -676,13 +676,13 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                             assert isinstance(e.inner_exception, AutoLockRenewTimeout)
                     else:
                         if message.expired:
-                            print("Remaining messages", message.locked_until, datetime.now())
+                            print("Remaining messages", message.locked_until_utc, datetime.utcnow())
                             assert message.expired
                             with pytest.raises(MessageLockExpired):
                                 await message.complete()
                         else:
                             assert message.header.delivery_count >= 1
-                            print("Remaining messages", message.locked_until, datetime.now())
+                            print("Remaining messages", message.locked_until_utc, datetime.utcnow())
                             messages.append(message)
                             await message.complete()
             await renewer.shutdown()
@@ -962,8 +962,8 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                         data = str(messages[0])
                         assert data == content
                         assert messages[0].properties.message_id == message_id
-                        assert messages[0].scheduled_enqueue_time == enqueue_time
-                        assert messages[0].scheduled_enqueue_time == messages[0].enqueued_time.replace(microsecond=0)
+                        assert messages[0].scheduled_enqueue_time_utc == enqueue_time
+                        assert messages[0].scheduled_enqueue_time_utc == messages[0].enqueued_time_utc.replace(microsecond=0)
                         assert len(messages) == 1
                     finally:
                         for m in messages:
@@ -1003,8 +1003,8 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                         data = str(messages[0])
                         assert data == content
                         assert messages[0].properties.message_id in (message_id_a, message_id_b)
-                        assert messages[0].scheduled_enqueue_time == enqueue_time
-                        assert messages[0].scheduled_enqueue_time == messages[0].enqueued_time.replace(microsecond=0)
+                        assert messages[0].scheduled_enqueue_time_utc == enqueue_time
+                        assert messages[0].scheduled_enqueue_time_utc == messages[0].enqueued_time_utc.replace(microsecond=0)
                         assert len(messages) == 2
                     finally:
                         for m in messages:

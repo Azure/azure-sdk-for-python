@@ -207,7 +207,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                 for message in deferred:
                     assert isinstance(message, ReceivedMessage)
                     assert message.lock_token
-                    assert not message.locked_until
+                    assert not message.locked_until_utc
                     assert message._receiver
                     with pytest.raises(TypeError):
                         await message.renew_lock()
@@ -439,12 +439,12 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                     for m in messages:
                         with pytest.raises(TypeError):
                             expired = m.expired
-                        assert m.locked_until is None
+                        assert m.locked_until_utc is None
                         assert m.lock_token is not None
                     time.sleep(5)
-                    initial_expiry = receiver.session.locked_until
+                    initial_expiry = receiver.session.locked_until_utc
                     await receiver.session.renew_lock()
-                    assert (receiver.session.locked_until - initial_expiry) >= timedelta(seconds=5)
+                    assert (receiver.session.locked_until_utc - initial_expiry) >= timedelta(seconds=5)
                 finally:
                     await messages[0].complete()
                     await messages[1].complete()
@@ -472,16 +472,16 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
             messages = []
             async with sb_client.get_queue_receiver(servicebus_queue.name, session_id=session_id, idle_timeout=5, mode=ReceiveSettleMode.PeekLock, prefetch=20) as session:
                 renewer.register(session.session, timeout=60)
-                print("Registered lock renew thread", session.session.locked_until, datetime.now())
+                print("Registered lock renew thread", session.session.locked_until_utc, datetime.utcnow())
                 with pytest.raises(SessionLockExpired):
                     async for message in session:
                         if not messages:
                             await asyncio.sleep(45)
-                            print("First sleep {}".format(session.session.locked_until - datetime.now()))
+                            print("First sleep {}".format(session.session.locked_until_utc - datetime.utcnow()))
                             assert not session.session.expired
                             with pytest.raises(TypeError):
                                 message.expired
-                            assert message.locked_until is None
+                            assert message.locked_until_utc is None
                             with pytest.raises(TypeError):
                                 await message.renew_lock()
                             assert message.lock_token is not None
@@ -490,7 +490,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
 
                         elif len(messages) == 1:
                             await asyncio.sleep(45)
-                            print("Second sleep {}".format(session.session.locked_until - datetime.now()))
+                            print("Second sleep {}".format(session.session.locked_until_utc - datetime.utcnow()))
                             assert session.session.expired
                             assert isinstance(session.session.auto_renew_error, AutoLockRenewTimeout)
                             try:
@@ -596,8 +596,8 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                     data = str(messages[0])
                     assert data == content
                     assert messages[0].properties.message_id == message_id
-                    assert messages[0].scheduled_enqueue_time == enqueue_time
-                    assert messages[0].scheduled_enqueue_time == messages[0].enqueued_time.replace(microsecond=0)
+                    assert messages[0].scheduled_enqueue_time_utc == enqueue_time
+                    assert messages[0].scheduled_enqueue_time_utc == messages[0].enqueued_time_utc.replace(microsecond=0)
                     assert len(messages) == 1
                 else:
                     raise Exception("Failed to receive schdeduled message.")
@@ -637,8 +637,8 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                     data = str(messages[0])
                     assert data == content
                     assert messages[0].properties.message_id in (message_id_a, message_id_b)
-                    assert messages[0].scheduled_enqueue_time == enqueue_time
-                    assert messages[0].scheduled_enqueue_time == messages[0].enqueued_time.replace(microsecond=0)
+                    assert messages[0].scheduled_enqueue_time_utc == enqueue_time
+                    assert messages[0].scheduled_enqueue_time_utc == messages[0].enqueued_time_utc.replace(microsecond=0)
                     assert len(messages) == 2
                 else:
                     raise Exception("Failed to receive schdeduled message.")
@@ -717,7 +717,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
             servicebus_namespace_connection_string, logging_enable=True) as sb_client:
 
             sessions = []
-            start_time = datetime.now()
+            start_time = datetime.utcnow()
             for i in range(5):
                 sessions.append(str(uuid.uuid4()))
 
@@ -747,7 +747,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
             servicebus_namespace_connection_string, logging_enable=True) as sb_client:
 
             sessions = []
-            start_time = datetime.now()
+            start_time = datetime.utcnow()
             for i in range(5):
                 sessions.append(str(uuid.uuid4()))
 

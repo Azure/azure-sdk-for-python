@@ -55,10 +55,10 @@ class SenderMixin(object):
         self._handler._msg_timeout = remaining_time * 1000  # type: ignore  # pylint: disable=protected-access
 
     @classmethod
-    def _build_schedule_request(cls, schedule_time, *messages):
+    def _build_schedule_request(cls, schedule_time_utc, *messages):
         request_body = {'messages': []}
         for message in messages:
-            message.schedule(schedule_time)
+            message.schedule(schedule_time_utc)
             message_data = {}
             message_data['message-id'] = message.properties.message_id
             if message.properties.group_id:

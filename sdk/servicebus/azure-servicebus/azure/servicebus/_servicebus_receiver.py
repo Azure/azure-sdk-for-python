@@ -3,7 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 import time
-import datetime
 import logging
 import functools
 import uuid
@@ -14,7 +13,7 @@ from uamqp import ReceiveClient, Source, types
 from uamqp.constants import SenderSettleMode
 
 from ._base_handler import BaseHandler
-from ._common.utils import create_authentication
+from ._common.utils import create_authentication, utc_from_timestamp, utc_now
 from ._common.message import PeekMessage, ReceivedMessage
 from ._common.constants import (
     REQUEST_RESPONSE_GET_SESSION_STATE_OPERATION,
@@ -28,8 +27,7 @@ from ._common.constants import (
     NEXT_AVAILABLE,
     SESSION_LOCKED_UNTIL,
     DATETIMEOFFSET_EPOCH,
-    SESSION_FILTER,
-    REQUEST_RESPONSE_RENEWLOCK_OPERATION
+    SESSION_FILTER
 )
 from .exceptions import (
     _ServiceBusErrorPolicy,
@@ -38,6 +36,7 @@ from .exceptions import (
 from ._common import mgmt_handlers
 
 if TYPE_CHECKING:
+    import datetime
     from azure.core.credentials import TokenCredential
 
 _LOGGER = logging.getLogger(__name__)
@@ -64,7 +63,7 @@ class ServiceBusSession(object):
         self._receiver = receiver
         self._encoding = encoding
         self._session_start = None
-        self._locked_until = None
+        self._locked_until_utc = None
         self.auto_renew_error = None
 
     def _can_run(self):
@@ -148,7 +147,7 @@ class ServiceBusSession(object):
             {'session-id': self.session_id},
             mgmt_handlers.default
         )
-        self._locked_until = datetime.datetime.fromtimestamp(expiry[b'expiration']/1000.0)
+        self._locked_until_utc = utc_from_timestamp(expiry[b'expiration']/1000.0)
 
     @property
     def session_id(self):
@@ -167,16 +166,16 @@ class ServiceBusSession(object):
 
         :rtype: bool
         """
-        return bool(self._locked_until and self._locked_until <= datetime.datetime.now())
+        return bool(self._locked_until_utc and self._locked_until_utc <= utc_now())
 
     @property
-    def locked_until(self):
-        # type: () -> datetime
+    def locked_until_utc(self):
+        # type: () -> datetime.datetime
         """The time at which this session's lock will expire.
 
-        :rtype: datetime
+        :rtype: datetime.datetime
         """
-        return self._locked_until
+        return self._locked_until_utc
 
 
 class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
@@ -215,11 +214,11 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
         # pylint: disable=protected-access
         if str(source) == self._entity_uri:
             # This has to live on the session object so that autorenew has access to it.
-            self._session._session_start = datetime.datetime.now()
+            self._session._session_start = utc_now()
             expiry_in_seconds = properties.get(SESSION_LOCKED_UNTIL)
             if expiry_in_seconds:
                 expiry_in_seconds = (expiry_in_seconds - DATETIMEOFFSET_EPOCH)/10000000
-                self._session._locked_until = datetime.datetime.fromtimestamp(expiry_in_seconds)
+                self._session._locked_until_utc = utc_from_timestamp(expiry_in_seconds)
             session_filter = source.get_filter(name=SESSION_FILTER)
             self._session_id = session_filter.decode(self._config.encoding)
             self._session._session_id = self._session_id
@@ -427,7 +426,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         """
         if not self._session_id:
             raise TypeError("Session is only available to session-enabled entities.")
-        return self._session
+        return self._session  # type: ignore
 
     @classmethod
     def from_connection_string(
@@ -577,7 +576,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         return messages
 
     def peek(self, message_count=1, sequence_number=None):
-        # type: (int, Optional[int]) -> list[PeekMessage]
+        # type: (int, Optional[int]) -> List[PeekMessage]
         """Browse messages currently pending in the queue.
 
         Peeked messages are not removed from queue, nor are they locked. They cannot be completed,
@@ -620,10 +619,3 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
             message,
             mgmt_handlers.peek_op
         )
-
-    def _renew_locks(self, *lock_tokens):
-        message = {'lock-tokens': types.AMQPArray(lock_tokens)}
-        return self._mgmt_request_response_with_retry(
-            REQUEST_RESPONSE_RENEWLOCK_OPERATION,
-            message,
-            mgmt_handlers.lock_renew_op)

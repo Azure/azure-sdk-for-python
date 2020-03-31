@@ -27,6 +27,38 @@ from .constants import (
 _log = logging.getLogger(__name__)
 
 
+class UTC(datetime.tzinfo):
+    """Time Zone info for handling UTC"""
+
+    def utcoffset(self, dt):
+        """UTF offset for UTC is 0."""
+        return datetime.timedelta(0)
+
+    def tzname(self, dt):
+        """Timestamp representation."""
+        return "Z"
+
+    def dst(self, dt):
+        """No daylight saving for UTC."""
+        return datetime.timedelta(hours=1)
+
+
+try:
+    from datetime import timezone  # pylint: disable=ungrouped-imports
+
+    TZ_UTC = timezone.utc  # type: ignore
+except ImportError:
+    TZ_UTC = UTC()  # type: ignore
+
+
+def utc_from_timestamp(timestamp):
+    return datetime.datetime.fromtimestamp(timestamp, tz=TZ_UTC)
+
+
+def utc_now():
+    return datetime.datetime.now(tz=TZ_UTC)
+
+
 def get_running_loop():
     try:
         import asyncio  # pylint: disable=import-error
@@ -88,7 +120,7 @@ def create_properties():
 
 def renewable_start_time(renewable):
     try:
-        return renewable.received_timestamp
+        return renewable.received_timestamp_utc
     except AttributeError:
         pass
     try:
@@ -181,10 +213,10 @@ class AutoLockRenew(object):
         _log.debug("Running lock auto-renew thread for %r seconds", timeout)
         try:
             while self._renewable(renewable):
-                if (datetime.datetime.now() - starttime) >= datetime.timedelta(seconds=timeout):
+                if (utc_now() - starttime) >= datetime.timedelta(seconds=timeout):
                     _log.debug("Reached auto lock renew timeout - letting lock expire.")
                     raise AutoLockRenewTimeout("Auto-renew period ({} seconds) elapsed.".format(timeout))
-                if (renewable.locked_until - datetime.datetime.now()) <= datetime.timedelta(seconds=self.renew_period):
+                if (renewable.locked_until_utc - utc_now()) <= datetime.timedelta(seconds=self.renew_period):
                     _log.debug("%r seconds or less until lock expires - auto renewing.", self.renew_period)
                     renewable.renew_lock()
                 time.sleep(self.sleep_time)

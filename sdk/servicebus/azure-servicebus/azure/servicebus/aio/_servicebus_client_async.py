@@ -128,7 +128,7 @@ class ServiceBusClient(object):
 
         :return: None
         """
-        if self._connection_sharing:
+        if self._connection_sharing and self._connection:
             await self._connection.destroy_async()
 
     def get_queue_sender(self, queue_name, **kwargs):

@@ -130,7 +130,7 @@ class StressTestRunner:
 
     def _Send(self, sender, end_time):
         with sender:
-            while end_time > datetime.now():
+            while end_time > datetime.utcnow():
                 message = self._ConstructMessage()
                 sender.send(message)
                 self.OnSend(self._state, message)
@@ -142,7 +142,7 @@ class StressTestRunner:
     def _Receive(self, receiver, end_time):
         receiver._config.idle_timeout = self.idle_timeout
         with receiver:
-            while end_time > datetime.now():
+            while end_time > datetime.utcnow():
                 if self.receive_type == ReceiveType.pull:
                     batch = receiver.receive()
                 elif self.receive_type == ReceiveType.push:
@@ -156,14 +156,14 @@ class StressTestRunner:
                         pass
                     self._state.total_received += 1
                     #TODO: Get EnqueuedTimeUtc out of broker properties and calculate latency. Should properties/app properties be mostly None?
-                    if end_time <= datetime.now():
+                    if end_time <= datetime.utcnow():
                         break
                     time.sleep(self.receive_delay)
         return self._state
 
 
     def Run(self):
-        start_time = datetime.now()
+        start_time = datetime.utcnow()
         end_time = start_time + (self._duration_override or self.duration)
         sent_messages = 0
         received_messages = 0

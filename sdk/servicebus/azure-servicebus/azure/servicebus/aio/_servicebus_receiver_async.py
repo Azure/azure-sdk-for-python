@@ -6,7 +6,6 @@ import asyncio
 import collections
 import functools
 import logging
-import datetime
 from typing import Any, TYPE_CHECKING, List, Union
 import six
 
@@ -27,6 +26,7 @@ from .._common.constants import (
     ReceiveSettleMode
 )
 from .._common import mgmt_handlers
+from .._common.utils import utc_from_timestamp
 from ._async_utils import create_authentication
 
 if TYPE_CHECKING:
@@ -129,7 +129,7 @@ class ServiceBusSession(BaseSession):
             {'session-id': self.session_id},
             mgmt_handlers.default
         )
-        self._locked_until = datetime.datetime.fromtimestamp(expiry[b'expiration']/1000.0)
+        self._locked_until_utc = utc_from_timestamp(expiry[b'expiration']/1000.0)
 
 
 class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, ReceiverMixin):
@@ -322,7 +322,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
         """
         if not self._session_id:
             raise TypeError("Session is only available to session-enabled entities.")
-        return self._session
+        return self._session  # type: ignore
 
     @classmethod
     def from_connection_string(
@@ -510,10 +510,3 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
             message,
             mgmt_handlers.peek_op
         )
-
-    async def _renew_locks(self, *lock_tokens):
-        message = {'lock-tokens': types.AMQPArray(lock_tokens)}
-        return await self._mgmt_request_response_with_retry(
-            REQUEST_RESPONSE_RENEWLOCK_OPERATION,
-            message,
-            mgmt_handlers.lock_renew_op)

@@ -87,7 +87,7 @@ class ServiceBusClient(object):
 
         :return: None
         """
-        if self._connection_sharing:
+        if self._connection_sharing and self._connection:
             self._connection.destroy()
 
     @classmethod

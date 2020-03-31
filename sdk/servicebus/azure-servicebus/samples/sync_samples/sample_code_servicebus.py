@@ -197,9 +197,9 @@ def example_send_and_receive_sync():
             print("Annotations: {}".format(message.annotations))
             print("Delivery count: {}".format(message.header.delivery_count))
             print("Message ID: {}".format(message.properties.message_id))
-            print("Locked until: {}".format(message.locked_until))
+            print("Locked until: {}".format(message.locked_until_utc))
             print("Lock Token: {}".format(message.lock_token))
-            print("Enqueued time: {}".format(message.enqueued_time))
+            print("Enqueued time: {}".format(message.enqueued_time_utc))
         # [END receive_complex_message]
 
 

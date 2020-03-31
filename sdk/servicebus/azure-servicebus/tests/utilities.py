@@ -34,8 +34,8 @@ def print_message(_logger, message):
     _logger.debug("Annotations: {}".format(message.annotations))
     _logger.debug("Delivery count: {}".format(message.header.delivery_count))
     try:
-        _logger.debug("Locked until: {}".format(message.locked_until))
+        _logger.debug("Locked until: {}".format(message.locked_until_utc))
         _logger.debug("Lock Token: {}".format(message.lock_token))
     except (TypeError, AttributeError):
         pass
-    _logger.debug("Enqueued time: {}".format(message.enqueued_time))
+    _logger.debug("Enqueued time: {}".format(message.enqueued_time_utc))

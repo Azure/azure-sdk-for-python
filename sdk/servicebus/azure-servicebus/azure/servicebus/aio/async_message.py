@@ -4,7 +4,6 @@
 # license information.
 # -------------------------------------------------------------------------
 
-import datetime
 import uuid
 
 from .._common import message as sync_message
@@ -16,7 +15,7 @@ from .._common.constants import (
     ReceiveSettleMode,
     _X_OPT_LOCK_TOKEN
 )
-from .._common.utils import get_running_loop
+from .._common.utils import get_running_loop, utc_from_timestamp
 from ..exceptions import MessageSettleFailed
 
 
@@ -145,4 +144,4 @@ class ReceivedMessage(sync_message.ReceivedMessage):
             raise ValueError("Unable to renew lock - no lock token found.")
 
         expiry = await self._receiver._renew_locks(token)  # pylint: disable=protected-access
-        self._expiry = datetime.datetime.fromtimestamp(expiry[b'expirations'][0]/1000.0)
+        self._expiry = utc_from_timestamp(expiry[b'expirations'][0]/1000.0)

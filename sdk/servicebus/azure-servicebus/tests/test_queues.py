@@ -80,7 +80,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                         for message in receiver:
                             _logger.debug(message)
                             _logger.debug(message.sequence_number)
-                            _logger.debug(message.enqueued_time)
+                            _logger.debug(message.enqueued_time_utc)
                             _logger.debug(message.expired)
                             message.complete()
                             time.sleep(40)
@@ -374,7 +374,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 for message in deferred:
                     assert isinstance(message, ReceivedMessage)
                     assert message.lock_token
-                    assert message.locked_until
+                    assert message.locked_until_utc
                     assert message._receiver
                     message.renew_lock()
                     message.complete()
@@ -762,14 +762,14 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     for m in messages:
                         assert not m.expired
                         time.sleep(5)
-                        initial_expiry = m.locked_until
+                        initial_expiry = m.locked_until_utc
                         m.renew_lock()
-                        assert (m.locked_until - initial_expiry) >= timedelta(seconds=5)
+                        assert (m.locked_until_utc - initial_expiry) >= timedelta(seconds=5)
                 finally:
                     messages[0].complete()
                     messages[1].complete()
-                    assert (messages[2].locked_until - datetime.now()) <= timedelta(seconds=60)
-                    time.sleep((messages[2].locked_until - datetime.now()).total_seconds())
+                    assert (messages[2].locked_until_utc - datetime.utcnow()) <= timedelta(seconds=60)
+                    time.sleep((messages[2].locked_until_utc - datetime.utcnow()).total_seconds())
                     with pytest.raises(MessageLockExpired):
                         messages[2].complete()
     
@@ -799,12 +799,12 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                         messages.append(message)
                         assert not message.expired
                         renewer.register(message, timeout=60)
-                        print("Registered lock renew thread", message.locked_until, datetime.now())
+                        print("Registered lock renew thread", message.locked_until_utc, datetime.utcnow())
                         time.sleep(50)
-                        print("Finished first sleep", message.locked_until)
+                        print("Finished first sleep", message.locked_until_utc)
                         assert not message.expired
-                        time.sleep((message.locked_until - datetime.now()).total_seconds()+1)
-                        print("Finished second sleep", message.locked_until, datetime.now())
+                        time.sleep((message.locked_until_utc - datetime.utcnow()).total_seconds()+1)
+                        print("Finished second sleep", message.locked_until_utc, datetime.utcnow())
                         assert message.expired
                         try:
                             message.complete()
@@ -813,13 +813,13 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                             assert isinstance(e.inner_exception, AutoLockRenewTimeout)
                     else:
                         if message.expired:
-                            print("Remaining messages", message.locked_until, datetime.now())
+                            print("Remaining messages", message.locked_until_utc, datetime.utcnow())
                             assert message.expired
                             with pytest.raises(MessageLockExpired):
                                 message.complete()
                         else:
                             assert message.header.delivery_count >= 1
-                            print("Remaining messages", message.locked_until, datetime.now())
+                            print("Remaining messages", message.locked_until_utc, datetime.utcnow())
                             messages.append(message)
                             message.complete()
             renewer.shutdown()
@@ -930,7 +930,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             with sb_client.get_queue_receiver(servicebus_queue.name) as receiver:
                 messages = receiver.receive(timeout=10)
                 assert len(messages) == 1
-                time.sleep((messages[0].locked_until - datetime.now()).total_seconds()+1)
+                time.sleep((messages[0].locked_until_utc - datetime.utcnow()).total_seconds()+1)
                 assert messages[0].expired
                 with pytest.raises(MessageLockExpired):
                     messages[0].complete()
@@ -1076,8 +1076,8 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                         data = str(messages[0])
                         assert data == content
                         assert messages[0].properties.message_id == message_id
-                        assert messages[0].scheduled_enqueue_time == enqueue_time
-                        assert messages[0].scheduled_enqueue_time == messages[0].enqueued_time.replace(microsecond=0)
+                        assert messages[0].scheduled_enqueue_time_utc == enqueue_time
+                        assert messages[0].scheduled_enqueue_time_utc == messages[0].enqueued_time_utc.replace(microsecond=0)
                         assert len(messages) == 1
                     finally:
                         for m in messages:
@@ -1118,8 +1118,8 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                         data = str(messages[0])
                         assert data == content
                         assert messages[0].properties.message_id in (message_id_a, message_id_b)
-                        assert messages[0].scheduled_enqueue_time == enqueue_time
-                        assert messages[0].scheduled_enqueue_time == messages[0].enqueued_time.replace(microsecond=0)
+                        assert messages[0].scheduled_enqueue_time_utc == enqueue_time
+                        assert messages[0].scheduled_enqueue_time_utc == messages[0].enqueued_time_utc.replace(microsecond=0)
                         assert len(messages) == 2
                     finally:
                         for m in messages:

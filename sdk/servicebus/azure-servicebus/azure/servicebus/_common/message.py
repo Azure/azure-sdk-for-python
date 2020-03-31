@@ -6,7 +6,7 @@
 
 import datetime
 import uuid
-from typing import Optional
+from typing import Optional, List
 
 import uamqp
 from uamqp import types
@@ -34,6 +34,7 @@ from ..exceptions import (
     SessionLockExpired,
     MessageSettleFailed
 )
+from .utils import utc_from_timestamp, utc_now
 
 
 class Message(object):  # pylint: disable=too-many-public-methods,too-many-instance-attributes
@@ -62,7 +63,7 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
         # problems as MessageProperties won't absorb spurious args.
         self.properties = uamqp.message.MessageProperties(encoding=encoding, subject=subject)
         self.header = uamqp.message.MessageHeader()
-        self.received_timestamp = None
+        self.received_timestamp_utc = None
         self.auto_renew_error = None
         self._annotations = {}
         self._app_properties = {}
@@ -76,7 +77,7 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
             self._app_properties = self.message.application_properties
             self.properties = self.message.properties
             self.header = self.message.header
-            self.received_timestamp = datetime.datetime.now()
+            self.received_timestamp_utc = utc_now()
         else:
             self._build_message(body)
 
@@ -206,17 +207,17 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
         """
         return self.message.get_data()
 
-    def schedule(self, schedule_time):
-        """Add a specific enqueue time to the message.
+    def schedule(self, schedule_time_utc):
+        """Add a specific utc enqueue time to the message.
 
-        :param schedule_time: The scheduled time to enqueue the message.
-        :type schedule_time: ~datetime.datetime
+        :param schedule_time_utc: The scheduled utc time to enqueue the message.
+        :type schedule_time_utc: ~datetime.datetime
         """
         if not self.properties.message_id:
             self.properties.message_id = str(uuid.uuid4())
         if not self.message.annotations:
             self.message.annotations = {}
-        self.message.annotations[types.AMQPSymbol(_X_OPT_SCHEDULED_ENQUEUE_TIME)] = schedule_time
+        self.message.annotations[types.AMQPSymbol(_X_OPT_SCHEDULED_ENQUEUE_TIME)] = schedule_time_utc
 
 
 class BatchMessage(object):
@@ -240,7 +241,7 @@ class BatchMessage(object):
         self.message = uamqp.BatchMessage(data=[], multi_messages=False, properties=None)
         self._size = self.message.gather()[0].get_message_encoded_size()
         self._count = 0
-        self._messages = []
+        self._messages = []  # type: List[Message]
 
     def __repr__(self):
         # type: () -> str
@@ -322,21 +323,21 @@ class PeekMessage(Message):
         return None
 
     @property
-    def enqueued_time(self):
+    def enqueued_time_utc(self):
         if self.message.annotations:
             timestamp = self.message.annotations.get(_X_OPT_ENQUEUED_TIME)
             if timestamp:
                 in_seconds = timestamp/1000.0
-                return datetime.datetime.utcfromtimestamp(in_seconds)
+                return utc_from_timestamp(in_seconds)
         return None
 
     @property
-    def scheduled_enqueue_time(self):
+    def scheduled_enqueue_time_utc(self):
         if self.message.annotations:
             timestamp = self.message.annotations.get(_X_OPT_SCHEDULED_ENQUEUE_TIME)
             if timestamp:
                 in_seconds = timestamp/1000.0
-                return datetime.datetime.utcfromtimestamp(in_seconds)
+                return utc_from_timestamp(in_seconds)
         return None
 
     @property
@@ -365,7 +366,7 @@ class ReceivedMessage(PeekMessage):
 
     def _is_live(self, action):
         # pylint: disable=no-member
-        if not self._receiver or not self._receiver._running:
+        if not self._receiver or not self._receiver._running:  # pylint: disable=protected-access
             raise MessageSettleFailed(action, "Orphan message had no open connection.")
         if self.settled:
             raise MessageAlreadySettled(action)
@@ -375,7 +376,7 @@ class ReceivedMessage(PeekMessage):
         except TypeError:
             pass
         try:
-            if self._receiver.session and self._receiver.session.expired:  # pylint: disable=protected-access
+            if self._receiver.session and self._receiver.session.expired:
                 raise SessionLockExpired(inner_exception=self._receiver.session.auto_renew_error)
         except TypeError: #TODO: Exception: AttributeError?
             pass
@@ -395,19 +396,19 @@ class ReceivedMessage(PeekMessage):
     def expired(self):
         if self._receiver._session_id:  # pylint: disable=protected-access
             raise TypeError("Session messages do not expire. Please use the Session expiry instead.")
-        if self.locked_until and self.locked_until <= datetime.datetime.now():
+        if self.locked_until_utc and self.locked_until_utc <= utc_now():
             return True
         return False
 
     @property
-    def locked_until(self):
+    def locked_until_utc(self):
         if self._receiver._session_id or self.settled:  # pylint: disable=protected-access
             return None
         if self._expiry:
             return self._expiry
         if self.message.annotations and _X_OPT_LOCKED_UNTIL in self.message.annotations:
             expiry_in_seconds = self.message.annotations[_X_OPT_LOCKED_UNTIL]/1000
-            self._expiry = datetime.datetime.fromtimestamp(expiry_in_seconds)
+            self._expiry = utc_from_timestamp(expiry_in_seconds)
         return self._expiry
 
     @property
@@ -528,4 +529,4 @@ class ReceivedMessage(PeekMessage):
             raise ValueError("Unable to renew lock - no lock token found.")
 
         expiry = self._receiver._renew_locks(token)  # pylint: disable=protected-access
-        self._expiry = datetime.datetime.fromtimestamp(expiry[b'expirations'][0]/1000.0)
+        self._expiry = utc_from_timestamp(expiry[b'expirations'][0]/1000.0)

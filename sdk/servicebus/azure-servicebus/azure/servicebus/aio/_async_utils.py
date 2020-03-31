@@ -11,7 +11,7 @@ import functools
 
 from uamqp import authentication
 
-from .._common.utils import renewable_start_time, get_running_loop
+from .._common.utils import renewable_start_time, get_running_loop, utc_now
 from ..exceptions import AutoLockRenewTimeout, AutoLockRenewFailed
 from .._common.constants import JWT_TOKEN_SCOPE
 
@@ -102,10 +102,10 @@ class AutoLockRenew:
         _log.debug("Running async lock auto-renew for %r seconds", timeout)
         try:
             while self._renewable(renewable):
-                if (datetime.datetime.now() - starttime) >= datetime.timedelta(seconds=timeout):
+                if (utc_now() - starttime) >= datetime.timedelta(seconds=timeout):
                     _log.debug("Reached auto lock renew timeout - letting lock expire.")
                     raise AutoLockRenewTimeout("Auto-renew period ({} seconds) elapsed.".format(timeout))
-                if (renewable.locked_until - datetime.datetime.now()) <= datetime.timedelta(seconds=self.renew_period):
+                if (renewable.locked_until_utc - utc_now()) <= datetime.timedelta(seconds=self.renew_period):
                     _log.debug("%r seconds or less until lock expires - auto renewing.", self.renew_period)
                     await renewable.renew_lock()
                 await asyncio.sleep(self.sleep_time)
