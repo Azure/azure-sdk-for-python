@@ -636,7 +636,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                     await messages[0].complete()
                     await messages[1].complete()
                     time.sleep(30)
-                    with pytest.raises(MessageSettleFailed): #TODO: Exception: Was MessageLockExpired?
+                    with pytest.raises(MessageLockExpired):
                         await messages[2].complete()
 
     @pytest.mark.liveTest
