@@ -323,9 +323,13 @@ if __name__ == '__main__':
 You can use `EventHubConsumerClient` to work with IoT Hub as well. This is useful for receiving telemetry data of IoT Hub from the
 linked EventHub. The associated connection string will not have send claims, hence sending events is not possible.
 
-- Please notice that the connection string needs to be for an
-  [Event Hub-compatible endpoint](https://docs.microsoft.com/en-us/azure/iot-hub/iot-hub-devguide-messages-read-builtin)
-  e.g. "Endpoint=sb://my-iothub-namespace-[uid].servicebus.windows.net/;SharedAccessKeyName=my-SA-name;SharedAccessKey=my-SA-key;EntityPath=my-iot-hub-name"
+Please notice that the connection string needs to be for an [Event Hub-compatible endpoint](https://docs.microsoft.com/en-us/azure/iot-hub/iot-hub-devguide-messages-read-builtin), 
+e.g. "Endpoint=sb://my-iothub-namespace-[uid].servicebus.windows.net/;SharedAccessKeyName=my-SA-name;SharedAccessKey=my-SA-key;EntityPath=my-iot-hub-name"
+
+There are two ways to get the Event Hubs compatible endpoint:
+- Manually get the "Built-in endpoints" of the IoT Hub in Azure Portal.
+- Programmatically retrieve the built-in Event Hubs compatible endpoint.
+Refer to [IoT Hub Connection String Sample](./samples/async_samples/iot_hub_connection_string_receive_async.py).
 
 ```python
 from azure.eventhub import EventHubConsumerClient
