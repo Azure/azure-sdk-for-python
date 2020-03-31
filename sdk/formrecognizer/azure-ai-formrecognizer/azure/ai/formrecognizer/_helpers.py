@@ -6,6 +6,7 @@
 
 from datetime import time
 POLLING_INTERVAL = 5
+COGNITIVE_KEY_HEADER = "Ocp-Apim-Subscription-Key"
 
 
 def get_field_scalar_value(field):  # pylint: disable=too-many-return-statements

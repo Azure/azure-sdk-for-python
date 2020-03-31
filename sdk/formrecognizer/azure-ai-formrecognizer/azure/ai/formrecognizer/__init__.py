@@ -7,7 +7,7 @@
 from ._version import VERSION
 from ._form_recognizer_client import FormRecognizerClient
 from ._custom_form_client import CustomFormClient
-from ._credential import FormRecognizerApiKeyCredential
+
 from ._models import (
     LengthUnit,
     TrainStatus,
@@ -44,7 +44,6 @@ from ._models import (
 __all__ = [
     'FormRecognizerClient',
     'CustomFormClient',
-    'FormRecognizerApiKeyCredential',
     'LengthUnit',
     'TrainStatus',
     'ModelStatus',

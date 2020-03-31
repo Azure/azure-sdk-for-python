@@ -15,16 +15,16 @@ import six
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.polling import LROPoller
 from azure.core.polling.base_polling import LROBasePolling  # pylint: disable=no-name-in-module,import-error
+from azure.core.pipeline.policies import AzureKeyCredentialPolicy
 from ._generated._form_recognizer_client import FormRecognizerClient as FormRecognizer
-from ._policies import CognitiveServicesCredentialPolicy
 from ._response_handlers import (
     prepare_receipt_result,
     prepare_layout_result,
 )
 from ._generated.models import AnalyzeOperationResult
-from ._helpers import get_content_type, POLLING_INTERVAL
+from ._helpers import get_content_type, POLLING_INTERVAL, COGNITIVE_KEY_HEADER
 if TYPE_CHECKING:
-    from ._credential import FormRecognizerApiKeyCredential
+    from azure.core.credentials import AzureKeyCredential
 
 
 class FormRecognizerClient(object):
@@ -33,16 +33,16 @@ class FormRecognizerClient(object):
     :param str endpoint: Supported Cognitive Services endpoints (protocol and hostname,
         for example: https://westus2.api.cognitive.microsoft.com).
     :param credential: Credentials needed for the client to connect to Azure.
-        This is an instance of FormRecognizerApiKeyCredential if using an API key.
-    :type credential: ~azure.ai.formrecognizer.FormRecognizerApiKeyCredential
+        This is an instance of AzureKeyCredential if using an API key.
+    :type credential: ~azure.core.credentials.AzureKeyCredential
     """
 
     def __init__(self, endpoint, credential, **kwargs):
-        # type: (str, FormRecognizerApiKeyCredential, Any) -> None
+        # type: (str, AzureKeyCredential, Any) -> None
         self._client = FormRecognizer(
             endpoint=endpoint,
             credential=credential,
-            authentication_policy=CognitiveServicesCredentialPolicy(credential),  # TODO: replace with core policy
+            authentication_policy=AzureKeyCredentialPolicy(credential, COGNITIVE_KEY_HEADER),
             **kwargs
         )
 

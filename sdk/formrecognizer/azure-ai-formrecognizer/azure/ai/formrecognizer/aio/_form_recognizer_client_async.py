@@ -15,16 +15,16 @@ from typing import (  # pylint: disable=unused-import
 import six
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.polling.async_base_polling import AsyncLROBasePolling  # pylint: disable=no-name-in-module,import-error
+from azure.core.pipeline.policies import AzureKeyCredentialPolicy
 from .._generated.aio._form_recognizer_client_async import FormRecognizerClient as FormRecognizer
-from .._policies import CognitiveServicesCredentialPolicy
 from .._response_handlers import (
     prepare_receipt_result,
     prepare_layout_result
 )
 from .._generated.models import AnalyzeOperationResult
-from .._helpers import get_content_type, POLLING_INTERVAL
+from .._helpers import get_content_type, POLLING_INTERVAL, COGNITIVE_KEY_HEADER
 if TYPE_CHECKING:
-    from .._credential import FormRecognizerApiKeyCredential
+    from azure.core.credentials import AzureKeyCredential
     from .._models import (
         ExtractedReceipt,
         ExtractedLayoutPage
@@ -37,20 +37,20 @@ class FormRecognizerClient(object):
     :param str endpoint: Supported Cognitive Services endpoints (protocol and hostname,
         for example: https://westus2.api.cognitive.microsoft.com).
     :param credential: Credentials needed for the client to connect to Azure.
-        This is an instance of FormRecognizerApiKeyCredential if using an API key.
-    :type credential: ~azure.ai.formrecognizer.FormRecognizerApiKeyCredential
+        This is an instance of AzureKeyCredential if using an API key.
+    :type credential: ~azure.core.credentials.AzureKeyCredential
     """
 
     def __init__(
             self,
             endpoint: str,
-            credential: "FormRecognizerApiKeyCredential",
+            credential: "AzureKeyCredential",
             **kwargs: Any
     ) -> None:
         self._client = FormRecognizer(
             endpoint=endpoint,
             credential=credential,
-            authentication_policy=CognitiveServicesCredentialPolicy(credential),  # TODO: replace with core policy
+            authentication_policy=AzureKeyCredentialPolicy(credential, COGNITIVE_KEY_HEADER),
             **kwargs
         )
 

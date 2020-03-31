@@ -61,20 +61,21 @@ az cognitiveservices account show --name "resource-name" --resource-group "resou
 ```
 
 #### Types of credentials
-The `credential` parameter may be provided as a `FormRecognizerApiKeyCredential`.
+The `credential` parameter may be provided as a `AzureKeyCredential` from [azure.core][TODO].
 See the full details regarding [authentication][cognitive_authentication] of cognitive services.
 
 To use an [API key][cognitive_authentication_api_key],
-pass the key as a string into an instance of `FormRecognizerApiKeyCredential("<api_key>")`.
+pass the key as a string into an instance of `AzureKeyCredential("<api_key>")`.
 The API key can be found in the Azure Portal or by running the following Azure CLI command:
 
 ```az cognitiveservices account keys list --name "resource-name" --resource-group "resource-group-name"```
 
 Use the key as the credential parameter to authenticate the client:
 ```python
-from azure.ai.formrecognizer import FormRecognizerClient, FormRecognizerApiKeyCredential
+from azure.ai.formrecognizer import FormRecognizerClient
+from azure.core.credentials import AzureKeyCredential
 
-credential = FormRecognizerApiKeyCredential("<api_key>")
+credential = AzureKeyCredential("<api_key>")
 client = FormRecognizerClient(endpoint, credential)
 ```
 
@@ -106,7 +107,8 @@ headers, can be enabled on a client with the `logging_enable` keyword argument:
 ```python
 import sys
 import logging
-from azure.ai.formrecognizer import FormRecognizerClient, FormRecognizerApiKeyCredential
+from azure.ai.formrecognizer import FormRecognizerClient
+from azure.core.credentials import AzureKeyCredential
 
 # Create a logger for the 'azure' SDK
 logger = logging.getLogger('azure')
@@ -117,7 +119,7 @@ handler = logging.StreamHandler(stream=sys.stdout)
 logger.addHandler(handler)
 
 endpoint = "https://<my-custom-subdomain>.cognitiveservices.azure.com/"
-credential = FormRecognizerApiKeyCredential("<api_key>")
+credential = AzureKeyCredential("<api_key>")
 
 # This client will log detailed information about its HTTP sessions, at DEBUG level
 client = FormRecognizerClient(endpoint, credential, logging_enable=True)
