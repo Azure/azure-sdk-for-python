@@ -140,13 +140,13 @@ class BlobClientBase(StorageAccountHostsMixin):  # pylint: disable=too-many-publ
 
         self.container_name = container_name
         self.blob_name = blob_name
-        try:
-            self.snapshot = snapshot.snapshot # type: ignore
-        except AttributeError:
-            try:
-                self.snapshot = snapshot['snapshot'] # type: ignore
-            except TypeError:
+        if snapshot is not None:
+            if isinstance(snapshot, Dict):
+                self.snapshot = snapshot['snapshot']
+            elif isinstance(snapshot, str):
                 self.snapshot = snapshot or path_snapshot
+            else:
+                self.snapshot = snapshot.snapshot
 
         self._query_str, credential = self._format_query_string(sas_token, credential, snapshot=self.snapshot)
         super(BlobClientBase, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)
@@ -187,7 +187,7 @@ class BlobClientBase(StorageAccountHostsMixin):  # pylint: disable=too-many-publ
 
         encoding = kwargs.pop('encoding', 'UTF-8')
         if isinstance(data, six.text_type):
-            data = data.encode(encoding) # type: ignore
+            data = cast(Iterable, data.encode(encoding))
         if length is None:
             length = get_length(data)
         if isinstance(data, bytes):
@@ -365,7 +365,7 @@ class BlobClientBase(StorageAccountHostsMixin):  # pylint: disable=too-many-publ
         options.update(kwargs)
         return options
 
-    def _create_page_blob_options(  # type: ignore
+    def _create_page_blob_options(
             self, size,  # type: int
             content_settings=None,  # type: Optional[ContentSettings]
             metadata=None, # type: Optional[Dict[str, str]]
@@ -401,10 +401,10 @@ class BlobClientBase(StorageAccountHostsMixin):  # pylint: disable=too-many-publ
                                encryption_algorithm=cpk.algorithm)
 
         if premium_page_blob_tier:
-            try:
-                headers['x-ms-access-tier'] = premium_page_blob_tier.value  # type: ignore
-            except AttributeError:
-                headers['x-ms-access-tier'] = premium_page_blob_tier  # type: ignore
+            if isinstance(premium_page_blob_tier, PremiumPageBlobTier):
+                headers['x-ms-access-tier'] = premium_page_blob_tier.value
+            else:
+                headers['x-ms-access-tier'] = premium_page_blob_tier
         options = {
             'content_length': 0,
             'blob_content_length': size,
@@ -549,7 +549,7 @@ class BlobClientBase(StorageAccountHostsMixin):  # pylint: disable=too-many-publ
             raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
         block_id = encode_base64(str(block_id))
         if isinstance(data, six.text_type):
-            data = data.encode(kwargs.pop('encoding', 'UTF-8'))  # type: ignore
+            data = cast(Iterable, data.encode(kwargs.pop('encoding', 'UTF-8')))
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         if length is None:
             length = get_length(data)
@@ -635,7 +635,7 @@ class BlobClientBase(StorageAccountHostsMixin):  # pylint: disable=too-many-publ
             uncommitted = [BlobBlock._from_generated(b) for b in blocks.uncommitted_blocks]  # pylint: disable=protected-access
         return committed, uncommitted
 
-    def _commit_block_list_options( # type: ignore
+    def _commit_block_list_options(
             self, block_list,  # type: List[BlobBlock]
             content_settings=None,  # type: Optional[ContentSettings]
             metadata=None,  # type: Optional[Dict[str, str]]
@@ -698,7 +698,7 @@ class BlobClientBase(StorageAccountHostsMixin):  # pylint: disable=too-many-publ
         options.update(kwargs)
         return options
 
-    def _get_page_ranges_options( # type: ignore
+    def _get_page_ranges_options(
             self, offset=None, # type: Optional[int]
             length=None, # type: Optional[int]
             previous_snapshot_diff=None,  # type: Optional[Union[str, Dict[str, Any]]]
@@ -721,13 +721,12 @@ class BlobClientBase(StorageAccountHostsMixin):  # pylint: disable=too-many-publ
             'timeout': kwargs.pop('timeout', None),
             'range': page_range}
         if previous_snapshot_diff:
-            try:
-                options['prevsnapshot'] = previous_snapshot_diff.snapshot # type: ignore
-            except AttributeError:
-                try:
-                    options['prevsnapshot'] = previous_snapshot_diff['snapshot'] # type: ignore
-                except TypeError:
-                    options['prevsnapshot'] = previous_snapshot_diff
+            if isinstance(previous_snapshot_diff, Dict):
+                options['prevsnapshot'] = previous_snapshot_diff['snapshot']
+            elif isinstance(previous_snapshot_diff, str):
+                options['prevsnapshot'] = previous_snapshot_diff
+            else:
+                options['prevsnapshot'] = previous_snapshot_diff.snapshot
         options.update(kwargs)
         return options
 
@@ -771,7 +770,7 @@ class BlobClientBase(StorageAccountHostsMixin):  # pylint: disable=too-many-publ
         options.update(kwargs)
         return options
 
-    def _upload_page_options( # type: ignore
+    def _upload_page_options(
             self, page,  # type: bytes
             offset,  # type: int
             length,  # type: int
@@ -788,7 +787,7 @@ class BlobClientBase(StorageAccountHostsMixin):  # pylint: disable=too-many-publ
         if length is None or length % 512 != 0:
             raise ValueError("length must be an integer that aligns with 512 page size")
         end_range = offset + length - 1  # Reformat to an inclusive range index
-        content_range = 'bytes={0}-{1}'.format(offset, end_range) # type: ignore
+        content_range = 'bytes={0}-{1}'.format(offset, end_range)
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         seq_conditions = SequenceNumberAccessConditions(
             if_sequence_number_less_than_or_equal_to=kwargs.pop('if_sequence_number_lte', None),
@@ -821,7 +820,7 @@ class BlobClientBase(StorageAccountHostsMixin):  # pylint: disable=too-many-publ
         options.update(kwargs)
         return options
 
-    def _upload_pages_from_url_options(  # type: ignore
+    def _upload_pages_from_url_options(
             self, source_url,  # type: str
             offset,  # type: int
             length,  # type: int
@@ -918,7 +917,7 @@ class BlobClientBase(StorageAccountHostsMixin):  # pylint: disable=too-many-publ
         options.update(kwargs)
         return options
 
-    def _append_block_options( # type: ignore
+    def _append_block_options(
             self, data,  # type: Union[AnyStr, Iterable[AnyStr], IO[AnyStr]]
             length=None,  # type: Optional[int]
             **kwargs
@@ -928,7 +927,7 @@ class BlobClientBase(StorageAccountHostsMixin):  # pylint: disable=too-many-publ
             raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
 
         if isinstance(data, six.text_type):
-            data = data.encode(kwargs.pop('encoding', 'UTF-8')) # type: ignore
+            data = cast(Iterable, data.encode(kwargs.pop('encoding', 'UTF-8')))
         if length is None:
             length = get_length(data)
             if length is None:
@@ -972,7 +971,7 @@ class BlobClientBase(StorageAccountHostsMixin):  # pylint: disable=too-many-publ
         options.update(kwargs)
         return options
 
-    def _append_block_from_url_options(  # type: ignore
+    def _append_block_from_url_options(
             self, copy_source_url,  # type: str
             source_offset=None,  # type: Optional[int]
             source_length=None,  # type: Optional[int]

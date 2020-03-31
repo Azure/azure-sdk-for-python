@@ -159,13 +159,12 @@ class BlobClient(BlobClientBase):  # pylint: disable=too-many-public-methods
 
         path_snapshot, _ = parse_query(parsed_url.query)
         if snapshot:
-            try:
-                path_snapshot = snapshot.snapshot # type: ignore
-            except AttributeError:
-                try:
-                    path_snapshot = snapshot['snapshot'] # type: ignore
-                except TypeError:
-                    path_snapshot = snapshot
+            if isinstance(snapshot, Dict):
+                path_snapshot = snapshot['snapshot']
+            elif isinstance(snapshot, str):
+                path_snapshot = snapshot
+            else:
+                path_snapshot = snapshot.snapshot
 
         return cls(
             account_url, container_name=container_name, blob_name=blob_name,
@@ -585,7 +584,7 @@ class BlobClient(BlobClientBase):  # pylint: disable=too-many-public-methods
             process_storage_error(error)
         blob_props.name = self.blob_name
         blob_props.container = self.container_name
-        return blob_props # type: ignore
+        return cast(BlobProperties, blob_props)
 
     @distributed_trace
     def set_http_headers(self, content_settings=None, **kwargs):
@@ -685,7 +684,7 @@ class BlobClient(BlobClientBase):  # pylint: disable=too-many-public-methods
         return cast(Dict, ret_val)
 
     @distributed_trace
-    def create_page_blob(  # type: ignore
+    def create_page_blob(
             self, size,  # type: int
             content_settings=None,  # type: Optional[ContentSettings]
             metadata=None, # type: Optional[Dict[str, str]]
@@ -758,9 +757,11 @@ class BlobClient(BlobClientBase):  # pylint: disable=too-many-public-methods
             premium_page_blob_tier=premium_page_blob_tier,
             **kwargs)
         try:
-            return cast(Dict, self._client.page_blob.create(**options))
+            ret_val = self._client.page_blob.create(**options)
         except StorageErrorException as error:
+            ret_val = None
             process_storage_error(error)
+        return cast(Dict, ret_val)
 
     @distributed_trace
     def create_append_blob(self, content_settings=None, metadata=None, **kwargs):
@@ -1114,7 +1115,7 @@ class BlobClient(BlobClientBase):  # pylint: disable=too-many-public-methods
                 :dedent: 8
                 :caption: Acquiring a lease on a blob.
         """
-        lease = BlobLeaseClient(self, lease_id=lease_id) # type: ignore
+        lease = BlobLeaseClient(self, lease_id=lease_id)
         lease.acquire(lease_duration=lease_duration, **kwargs)
         return lease
 
@@ -1308,7 +1309,7 @@ class BlobClient(BlobClientBase):  # pylint: disable=too-many-public-methods
         return self._get_block_list_result(blocks)
 
     @distributed_trace
-    def commit_block_list( # type: ignore
+    def commit_block_list(
             self, block_list,  # type: List[BlobBlock]
             content_settings=None,  # type: Optional[ContentSettings]
             metadata=None,  # type: Optional[Dict[str, str]]
@@ -1381,9 +1382,11 @@ class BlobClient(BlobClientBase):  # pylint: disable=too-many-public-methods
             metadata=metadata,
             **kwargs)
         try:
-            return cast(Dict, self._client.block_blob.commit_block_list(**options))
+            ret_val = self._client.block_blob.commit_block_list(**options)
         except StorageErrorException as error:
+            ret_val = None
             process_storage_error(error)
+        return cast(Dict, ret_val)
 
     @distributed_trace
     def set_premium_page_blob_tier(self, premium_page_blob_tier, **kwargs):
@@ -1418,7 +1421,7 @@ class BlobClient(BlobClientBase):  # pylint: disable=too-many-public-methods
             process_storage_error(error)
 
     @distributed_trace
-    def get_page_ranges( # type: ignore
+    def get_page_ranges(
             self, offset=None, # type: Optional[int]
             length=None, # type: Optional[int]
             previous_snapshot_diff=None,  # type: Optional[Union[str, Dict[str, Any]]]
@@ -1656,7 +1659,7 @@ class BlobClient(BlobClientBase):  # pylint: disable=too-many-public-methods
         return cast(Dict, None)
 
     @distributed_trace
-    def upload_page( # type: ignore
+    def upload_page(
             self, page,  # type: bytes
             offset,  # type: int
             length,  # type: int
@@ -1740,9 +1743,11 @@ class BlobClient(BlobClientBase):  # pylint: disable=too-many-public-methods
             length=length,
             **kwargs)
         try:
-            return cast(Dict, self._client.page_blob.upload_pages(**options))
+            ret_val = self._client.page_blob.upload_pages(**options)
         except StorageErrorException as error:
+            ret_val = None
             process_storage_error(error)
+        return cast(Dict, ret_val)
 
     @distributed_trace
     def upload_pages_from_url(self, source_url,  # type: str
@@ -1913,7 +1918,7 @@ class BlobClient(BlobClientBase):  # pylint: disable=too-many-public-methods
         return cast(Dict, None)
 
     @distributed_trace
-    def append_block( # type: ignore
+    def append_block(
             self, data,  # type: Union[AnyStr, Iterable[AnyStr], IO[AnyStr]]
             length=None,  # type: Optional[int]
             **kwargs
@@ -1987,14 +1992,16 @@ class BlobClient(BlobClientBase):  # pylint: disable=too-many-public-methods
         :rtype: dict(str, Any)
         """
         options = self._append_block_options(
-            data,
+            cast(Iterable, data),
             length=length,
             **kwargs
         )
         try:
-            return cast(Dict, self._client.append_blob.append_block(**options))
+            ret_val = self._client.append_blob.append_block(**options)
         except StorageErrorException as error:
+            ret_val = None
             process_storage_error(error)
+        return cast(Dict, ret_val)
 
     @distributed_trace
     def append_block_from_url(self, copy_source_url,  # type: str

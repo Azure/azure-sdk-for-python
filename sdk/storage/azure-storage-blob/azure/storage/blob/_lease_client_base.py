@@ -27,8 +27,8 @@ class BlobLeaseClientBase(object):
         self.last_modified = None
         self.etag = None
         if hasattr(client, 'blob_name'):
-            self._client = client._client.blob  # type: ignore # pylint: disable=protected-access
+            self._client = client._client.blob # pylint: disable=protected-access
         elif hasattr(client, 'container_name'):
-            self._client = client._client.container  # type: ignore # pylint: disable=protected-access
+            self._client = client._client.container # pylint: disable=protected-access
         else:
             raise TypeError("Lease must use either BlobClient or ContainerClient.")

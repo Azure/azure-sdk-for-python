@@ -6,7 +6,7 @@
 
 import os
 from typing import ( # pylint: disable=unused-import
-    Dict, Any, Union, Iterable, AnyStr, IO
+    Dict, Any, Union, Iterable, AnyStr, IO, cast
 )
 
 from .._models import BlobType
@@ -63,7 +63,7 @@ async def upload_blob_to_url(
     :rtype: dict(str, Any)
     """
     async with BlobClient.from_blob_url(blob_url, credential=credential) as client:
-        return await client.upload_blob(data=data, blob_type=BlobType.BlockBlob, **kwargs)
+        return cast(Dict, await client.upload_blob(data=data, blob_type=BlobType.BlockBlob, **kwargs))
 
 
 async def _download_to_stream(client, handle, **kwargs):

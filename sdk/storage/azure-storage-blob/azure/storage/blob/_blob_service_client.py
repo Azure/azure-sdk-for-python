@@ -159,11 +159,11 @@ class BlobServiceClient(BlobServiceClientBase):
         try:
             user_delegation_key = self._client.service.get_user_delegation_key(key_info=key_info,
                                                                                timeout=timeout,
-                                                                               **kwargs)  # type: ignore
+                                                                               **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
 
-        return parse_to_internal_user_delegation_key(user_delegation_key)  # type: ignore
+        return cast(UserDelegationKey, parse_to_internal_user_delegation_key(user_delegation_key))
 
     @distributed_trace
     def get_account_information(self, **kwargs):
@@ -490,10 +490,10 @@ class BlobServiceClient(BlobServiceClientBase):
                 :dedent: 12
                 :caption: Deleting a container in the blob service.
         """
-        container = self.get_container_client(container) # type: ignore
+        container_name = self.get_container_client(container)
         kwargs.setdefault('merge_span', True)
         timeout = kwargs.pop('timeout', None)
-        container.delete_container( # type: ignore
+        container_name.delete_container(
             lease=lease,
             timeout=timeout,
             **kwargs)

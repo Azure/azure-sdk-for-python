@@ -250,7 +250,7 @@ class ContainerClient(ContainerClientBase):
         """
         headers = kwargs.pop('headers', {})
         timeout = kwargs.pop('timeout', None)
-        headers.update(add_metadata_headers(metadata)) # type: ignore
+        headers.update(add_metadata_headers(metadata))
         container_cpk_scope_info = get_container_cpk_scope_info(kwargs)
         try:
             ret_val = self._client.container.create(
@@ -371,7 +371,7 @@ class ContainerClient(ContainerClientBase):
                 :dedent: 8
                 :caption: Acquiring a lease on the container.
         """
-        lease = BlobLeaseClient(self, lease_id=lease_id) # type: ignore
+        lease = BlobLeaseClient(self, lease_id=lease_id)
         kwargs.setdefault('merge_span', True)
         timeout = kwargs.pop('timeout', None)
         lease.acquire(lease_duration=lease_duration, timeout=timeout, **kwargs)
@@ -428,12 +428,13 @@ class ContainerClient(ContainerClientBase):
                 cls=deserialize_container_properties,
                 **kwargs)
         except StorageErrorException as error:
+            response = None
             process_storage_error(error)
         response.name = self.container_name
-        return response # type: ignore
+        return cast(ContainerProperties, response)
 
     @distributed_trace
-    def set_container_metadata( # type: ignore
+    def set_container_metadata(
             self, metadata=None,  # type: Optional[Dict[str, str]]
             **kwargs
         ):
@@ -487,15 +488,17 @@ class ContainerClient(ContainerClientBase):
         mod_conditions = get_modify_conditions(kwargs)
         timeout = kwargs.pop('timeout', None)
         try:
-            return cast(Dict, self._client.container.set_metadata(
+            ret_val = self._client.container.set_metadata(
                 timeout=timeout,
                 lease_access_conditions=access_conditions,
                 modified_access_conditions=mod_conditions,
                 cls=return_response_headers,
                 headers=headers,
-                **kwargs))
+                **kwargs)
         except StorageErrorException as error:
+            ret_val = None
             process_storage_error(error)
+        return cast(Dict, ret_val)
 
     @distributed_trace
     def get_container_access_policy(self, **kwargs):
@@ -593,15 +596,14 @@ class ContainerClient(ContainerClientBase):
             if value:
                 value.start = serialize_iso(value.start)
                 value.expiry = serialize_iso(value.expiry)
-            identifiers.append(SignedIdentifier(id=key, access_policy=value)) # type: ignore
-        signed_identifiers = identifiers # type: ignore
+            identifiers.append(SignedIdentifier(id=key, access_policy=value))
         lease = kwargs.pop('lease', None)
         mod_conditions = get_modify_conditions(kwargs)
         access_conditions = get_access_conditions(lease)
         timeout = kwargs.pop('timeout', None)
         try:
             ret_val = self._client.container.set_access_policy(
-                container_acl=signed_identifiers or None,
+                container_acl=identifiers or None,
                 timeout=timeout,
                 access=public_access,
                 lease_access_conditions=access_conditions,
@@ -876,10 +878,10 @@ class ContainerClient(ContainerClientBase):
             The timeout parameter is expressed in seconds.
         :rtype: None
         """
-        blob_client = self.get_blob_client(blob) # type: ignore
+        blob_client = self.get_blob_client(blob)
         kwargs.setdefault('merge_span', True)
         timeout = kwargs.pop('timeout', None)
-        blob_client.delete_blob( # type: ignore
+        blob_client.delete_blob(
             delete_snapshots=delete_snapshots,
             timeout=timeout,
             **kwargs)
@@ -947,7 +949,7 @@ class ContainerClient(ContainerClientBase):
         :returns: A streaming object (StorageStreamDownloader)
         :rtype: ~azure.storage.blob.StorageStreamDownloader
         """
-        blob_client = self.get_blob_client(blob) # type: ignore
+        blob_client = self.get_blob_client(blob)
         kwargs.setdefault('merge_span', True)
         return blob_client.download_blob(offset=offset, length=length, **kwargs)
 

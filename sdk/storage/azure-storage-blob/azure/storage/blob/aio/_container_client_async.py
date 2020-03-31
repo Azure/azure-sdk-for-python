@@ -213,7 +213,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
 
     @distributed_trace_async
     async def create_container(self, metadata=None, public_access=None, **kwargs):
-        # type: (Optional[Dict[str, str]], Optional[Union[PublicAccess, str]], **Any) -> None
+        # type: (Optional[Dict[str, str]], Optional[Union[PublicAccess, str]], **Any) -> bool
         """
         Creates a new container under the specified account. If the container
         with the same name already exists, the operation fails.
@@ -245,11 +245,11 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
                 :caption: Creating a container to store blobs.
         """
         headers = kwargs.pop('headers', {})
-        headers.update(add_metadata_headers(metadata)) # type: ignore
+        headers.update(add_metadata_headers(metadata))
         timeout = kwargs.pop('timeout', None)
         container_cpk_scope_info = get_container_cpk_scope_info(kwargs)
         try:
-            return await self._client.container.create( # type: ignore
+            ret_val = await self._client.container.create(
                 timeout=timeout,
                 access=public_access,
                 container_cpk_scope_info=container_cpk_scope_info,
@@ -257,7 +257,9 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
                 headers=headers,
                 **kwargs)
         except StorageErrorException as error:
+            ret_val = None
             process_storage_error(error)
+        return cast(bool, ret_val)
 
     @distributed_trace_async
     async def delete_container(
@@ -365,7 +367,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
                 :dedent: 12
                 :caption: Acquiring a lease on the container.
         """
-        lease = BlobLeaseClient(self, lease_id=lease_id) # type: ignore
+        lease = BlobLeaseClient(self, lease_id=lease_id)
         kwargs.setdefault('merge_span', True)
         timeout = kwargs.pop('timeout', None)
         await lease.acquire(lease_duration=lease_duration, timeout=timeout, **kwargs)
@@ -423,12 +425,13 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
                 cls=deserialize_container_properties,
                 **kwargs)
         except StorageErrorException as error:
+            response = None
             process_storage_error(error)
         response.name = self.container_name
-        return response # type: ignore
+        return cast(ContainerProperties, response)
 
     @distributed_trace_async
-    async def set_container_metadata( # type: ignore
+    async def set_container_metadata(
             self, metadata=None,  # type: Optional[Dict[str, str]]
             **kwargs
         ):
@@ -472,7 +475,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         mod_conditions = get_modify_conditions(kwargs)
         timeout = kwargs.pop('timeout', None)
         try:
-            return await self._client.container.set_metadata( # type: ignore
+            ret_val = await self._client.container.set_metadata(
                 timeout=timeout,
                 lease_access_conditions=access_conditions,
                 modified_access_conditions=mod_conditions,
@@ -480,7 +483,9 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
                 headers=headers,
                 **kwargs)
         except StorageErrorException as error:
+            ret_val = None
             process_storage_error(error)
+        return cast(Dict, ret_val)
 
     @distributed_trace_async
     async def get_container_access_policy(self, **kwargs):
@@ -580,14 +585,13 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             if value:
                 value.start = serialize_iso(value.start)
                 value.expiry = serialize_iso(value.expiry)
-            identifiers.append(SignedIdentifier(id=key, access_policy=value)) # type: ignore
-        signed_identifiers = identifiers # type: ignore
+            identifiers.append(SignedIdentifier(id=key, access_policy=value))
 
         mod_conditions = get_modify_conditions(kwargs)
         access_conditions = get_access_conditions(lease)
         try:
             ret_val = await self._client.container.set_access_policy(
-                container_acl=signed_identifiers or None,
+                container_acl=identifiers or None,
                 timeout=timeout,
                 access=public_access,
                 lease_access_conditions=access_conditions,
@@ -866,10 +870,10 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             The timeout parameter is expressed in seconds.
         :rtype: None
         """
-        blob = self.get_blob_client(blob) # type: ignore
+        blob_name = self.get_blob_client(blob)
         kwargs.setdefault('merge_span', True)
         timeout = kwargs.pop('timeout', None)
-        await blob.delete_blob( # type: ignore
+        await blob_name.delete_blob(
             delete_snapshots=delete_snapshots,
             timeout=timeout,
             **kwargs)
@@ -937,7 +941,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         :returns: A streaming object. (StorageStreamDownloader)
         :rtype: ~azure.storage.blob.aio.StorageStreamDownloader
         """
-        blob_client = self.get_blob_client(blob) # type: ignore
+        blob_client = self.get_blob_client(blob)
         kwargs.setdefault('merge_span', True)
         return await blob_client.download_blob(
             offset=offset,

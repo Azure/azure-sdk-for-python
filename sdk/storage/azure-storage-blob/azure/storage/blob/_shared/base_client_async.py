@@ -76,7 +76,7 @@ class AsyncStorageAccountHostsMixin(object):
         config = kwargs.get('_configuration') or create_configuration(**kwargs)
         if kwargs.get('_pipeline'):
             return config, kwargs['_pipeline']
-        config.transport = kwargs.get('transport')  # type: ignore
+        config.transport = kwargs.get('transport')
         kwargs.setdefault("connection_timeout", CONNECTION_TIMEOUT)
         kwargs.setdefault("read_timeout", READ_TIMEOUT)
         if not config.transport:
@@ -95,7 +95,7 @@ class AsyncStorageAccountHostsMixin(object):
             self._credential_policy,
             ContentDecodePolicy(response_encoding="utf-8"),
             AsyncRedirectPolicy(**kwargs),
-            StorageHosts(hosts=self._hosts, **kwargs), # type: ignore
+            StorageHosts(hosts=self._hosts, **kwargs),
             config.retry_policy,
             config.logging_policy,
             AsyncStorageResponseHook(**kwargs),

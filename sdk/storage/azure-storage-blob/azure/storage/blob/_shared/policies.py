@@ -42,6 +42,7 @@ from azure.core.exceptions import AzureError, ServiceRequestError, ServiceRespon
 from .models import LocationMode
 
 try:
+    # https://github.com/python/typing/issues/208
     _unicode_type = unicode # type: ignore
 except NameError:
     _unicode_type = str
