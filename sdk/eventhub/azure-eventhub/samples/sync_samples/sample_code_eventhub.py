@@ -135,6 +135,18 @@ def example_eventhub_sync_send_and_receive():
         with consumer:
             consumer.receive(on_event=on_event)
         # [END eventhub_consumer_client_receive_sync]
+
+        # [START eventhub_consumer_client_receive_batch_sync]
+        logger = logging.getLogger("azure.eventhub")
+
+        def on_event_batch(partition_context, event_batch):
+            # Put your code here.
+            # If the operation is i/o intensive, multi-thread will have better performance.
+            logger.info("Received events from partition: {}".format(partition_context.partition_id))
+
+        with consumer:
+            consumer.receive_batch(on_event_batch=on_event_batch)
+        # [END eventhub_consumer_client_receive_batch_sync]
     finally:
         pass
 
