@@ -22,7 +22,7 @@ class SearchServiceClient(HeadersMixin):
     :param endpoint: The URL endpoint of an Azure search service
     :type endpoint: str
     :param credential: A credential to authorize search client requests
-    :type credential: ~azure.key.credentials.AzureKeyCredential
+    :type credential: ~azure.core.credentials.AzureKeyCredential
 
     .. admonition:: Example:
 
