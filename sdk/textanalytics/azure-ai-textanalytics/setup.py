@@ -36,7 +36,7 @@ except ImportError:
     pass
 
 # Version extraction inspired from 'requests'
-with open(os.path.join(package_folder_path, 'version.py'), 'r') as fd:
+with open(os.path.join(package_folder_path, '_version.py'), 'r') as fd:
     version = re.search(r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]',
                         fd.read(), re.MULTILINE).group(1)
 
@@ -51,15 +51,15 @@ with open('CHANGELOG.md', encoding='utf-8') as f:
 setup(
     name=PACKAGE_NAME,
     version=version,
-    description='Microsoft Azure {} Client Library for Python'.format(PACKAGE_PPRINT_NAME),
-    long_description=readme + '\n\n' + changelog,
+    description='Microsoft {} Client Library for Python'.format(PACKAGE_PPRINT_NAME),
+    long_description=readme + "\n\n" + changelog,
     long_description_content_type='text/markdown',
     license='MIT License',
     author='Microsoft Corporation',
     author_email='azpysdkhelp@microsoft.com',
     url='https://github.com/Azure/azure-sdk-for-python',
     classifiers=[
-        'Development Status :: 4 - Beta',
+        "Development Status :: 4 - Beta",
         'Programming Language :: Python',
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
@@ -78,10 +78,13 @@ setup(
         'azure.ai',
     ]),
     install_requires=[
-        'msrest>=0.5.0',
+        "azure-core<2.0.0,>=1.4.0",
+        "msrest>=0.6.0",
         'azure-common~=1.1',
+        'six>=1.6',
     ],
     extras_require={
         ":python_version<'3.0'": ['azure-ai-nspkg'],
+        ":python_version<'3.5'": ['typing'],
     }
 )
