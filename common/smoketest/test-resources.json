@@ -24,7 +24,7 @@
         "storageEndpointSuffix": {
             "type": "string"
         },
-        "authorityHostAlias": {
+        "azureCloud": {
             "type": "string"
         }
     },
@@ -282,9 +282,9 @@
             "type": "string",
             "value": "[parameters('testApplicationSecret')]"
         },
-        "AZURE_AUTHORITY_HOST_ALIAS": {
+        "AZURE_CLOUD": {
             "type": "string",
-            "value": "[parameters('authorityHostAlias')]"
+            "value": "[parameters('azureCloud')]"
         },
         "AZURE_PROJECT_URL": {
             "type": "string",
