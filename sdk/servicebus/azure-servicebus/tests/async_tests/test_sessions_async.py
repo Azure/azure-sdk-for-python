@@ -244,15 +244,15 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                 assert len(deferred) == 10
                 for message in deferred:
                     assert isinstance(message, ReceivedMessage)
-                    await message.dead_letter("something")
+                    await message.dead_letter(reason="Testing reason", description="Testing description")
 
             count = 0
             async with sb_client.get_deadletter_receiver(idle_timeout=5) as receiver:
                 async for message in receiver:
                     count += 1
                     print_message(_logger, message)
-                    assert message.user_properties[b'DeadLetterReason'] == b'something'
-                    assert message.user_properties[b'DeadLetterErrorDescription'] == b'something'
+                    assert message.user_properties[b'DeadLetterReason'] == b'Testing reason'
+                    assert message.user_properties[b'DeadLetterErrorDescription'] == b'Testing description'
                     await message.complete()
             assert count == 10
 
@@ -345,7 +345,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                 while messages:
                     for message in messages:
                         print_message(_logger, message)
-                        await message.dead_letter(description="Testing queue deadletter")
+                        await message.dead_letter(reason="Testing reason", description="Testing description")
                         count += 1
                     messages = await receiver.receive()
             assert count == 10
@@ -354,8 +354,8 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                 count = 0
                 async for message in session:
                     print_message(_logger, message)
-                    #assert message.user_properties[b'DeadLetterReason'] == b'something'  # TODO
-                    #assert message.user_properties[b'DeadLetterErrorDescription'] == b'something'  # TODO
+                    #assert message.user_properties[b'DeadLetterReason'] == b'Testing reason'  # TODO
+                    #assert message.user_properties[b'DeadLetterErrorDescription'] == b'Testing description'  # TODO
                     await message.complete()
                     count += 1
             assert count == 10

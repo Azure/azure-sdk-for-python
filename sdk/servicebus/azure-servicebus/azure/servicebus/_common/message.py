@@ -441,17 +441,15 @@ class ReceivedMessage(PeekMessage):
             raise MessageSettleFailed("complete", e)
         self._settled = True
 
-    def dead_letter(self, description=None):
+    def dead_letter(self, reason=None, description=None):
         """Move the message to the Dead Letter queue.
 
         The Dead Letter queue is a sub-queue that can be
         used to store messages that failed to process correctly, or otherwise require further inspection
         or processing. The queue can also be configured to send expired messages to the Dead Letter queue.
-        To receive dead-lettered messages, use `QueueClient.get_deadletter_receiver()` or
-        `SubscriptionClient.get_deadletter_receiver()`.
 
-        :param description: The reason for dead-lettering the message.
-        :type description: str
+        :param str reason: The reason for dead-lettering the message.
+        :param str description: The detailed description for dead-lettering the message.
         :raises: ~azure.servicebus.common.errors.MessageAlreadySettled if the message has been settled.
         :raises: ~azure.servicebus.common.errors.MessageLockExpired if message lock has already expired.
         :raises: ~azure.servicebus.common.errors.SessionLockExpired if session lock has already expired.
@@ -460,7 +458,7 @@ class ReceivedMessage(PeekMessage):
         # pylint: disable=protected-access
         self._is_live('dead-letter')
         details = {
-            'deadletter-reason': str(description) if description else "",
+            'deadletter-reason': str(reason) if reason else "",
             'deadletter-description': str(description) if description else ""}
         try:
             self._receiver._settle_message(

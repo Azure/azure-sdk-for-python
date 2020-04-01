@@ -375,15 +375,15 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 assert len(deferred) == 10
                 for message in deferred:
                     assert isinstance(message, ReceivedMessage)
-                    await message.dead_letter("something")
+                    await message.dead_letter(reason="Testing reason", description="Testing description")
 
             count = 0
             async with await sb_client.get_deadletter_receiver(idle_timeout=5) as receiver:
                 async for message in receiver:
                     count += 1
                     print_message(_logger, message)
-                    assert message.user_properties[b'DeadLetterReason'] == b'something'
-                    assert message.user_properties[b'DeadLetterErrorDescription'] == b'something'
+                    assert message.user_properties[b'DeadLetterReason'] == b'Testing reason'
+                    assert message.user_properties[b'DeadLetterErrorDescription'] == b'Testing description'
                     await message.complete()
             assert count == 10
 
@@ -475,7 +475,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                     for message in messages:
                         print_message(_logger, message)
                         count += 1
-                        await message.dead_letter(description="Testing")
+                        await message.dead_letter(reason="Testing reason", description="Testing description")
                     messages = await receiver.receive()
 
             assert count == 10
@@ -510,7 +510,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 while messages:
                     for message in messages:
                         print_message(_logger, message)
-                        await message.dead_letter(description="Testing queue deadletter")
+                        await message.dead_letter(reason="Testing reason", description="Testing description")
                         count += 1
                     messages = await receiver.receive()
 
