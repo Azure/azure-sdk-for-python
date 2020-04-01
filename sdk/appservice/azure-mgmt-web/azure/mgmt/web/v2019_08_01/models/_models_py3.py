@@ -9283,6 +9283,8 @@ class SiteConfig(Model):
     :type python_version: str
     :param node_version: Version of Node.js.
     :type node_version: str
+    :param power_shell_version: Version of PowerShell.
+    :type power_shell_version: str
     :param linux_fx_version: Linux App Framework and version
     :type linux_fx_version: str
     :param windows_fx_version: Xenon App Framework and version
@@ -9424,6 +9426,7 @@ class SiteConfig(Model):
         'php_version': {'key': 'phpVersion', 'type': 'str'},
         'python_version': {'key': 'pythonVersion', 'type': 'str'},
         'node_version': {'key': 'nodeVersion', 'type': 'str'},
+        'power_shell_version': {'key': 'powerShellVersion', 'type': 'str'},
         'linux_fx_version': {'key': 'linuxFxVersion', 'type': 'str'},
         'windows_fx_version': {'key': 'windowsFxVersion', 'type': 'str'},
         'request_tracing_enabled': {'key': 'requestTracingEnabled', 'type': 'bool'},
@@ -9474,7 +9477,7 @@ class SiteConfig(Model):
         'health_check_path': {'key': 'healthCheckPath', 'type': 'str'},
     }
 
-    def __init__(self, *, number_of_workers: int=None, default_documents=None, net_framework_version: str="v4.6", php_version: str=None, python_version: str=None, node_version: str=None, linux_fx_version: str=None, windows_fx_version: str=None, request_tracing_enabled: bool=None, request_tracing_expiration_time=None, remote_debugging_enabled: bool=None, remote_debugging_version: str=None, http_logging_enabled: bool=None, logs_directory_size_limit: int=None, detailed_error_logging_enabled: bool=None, publishing_username: str=None, app_settings=None, connection_strings=None, handler_mappings=None, document_root: str=None, scm_type=None, use32_bit_worker_process: bool=None, web_sockets_enabled: bool=None, always_on: bool=None, java_version: str=None, java_container: str=None, java_container_version: str=None, app_command_line: str=None, managed_pipeline_mode=None, virtual_applications=None, load_balancing=None, experiments=None, limits=None, auto_heal_enabled: bool=None, auto_heal_rules=None, tracing_options: str=None, vnet_name: str=None, cors=None, push=None, api_definition=None, api_management_config=None, auto_swap_slot_name: str=None, local_my_sql_enabled: bool=False, managed_service_identity_id: int=None, x_managed_service_identity_id: int=None, ip_security_restrictions=None, scm_ip_security_restrictions=None, scm_ip_security_restrictions_use_main: bool=None, http20_enabled: bool=True, min_tls_version=None, ftps_state=None, pre_warmed_instance_count: int=None, health_check_path: str=None, **kwargs) -> None:
+    def __init__(self, *, number_of_workers: int=None, default_documents=None, net_framework_version: str="v4.6", php_version: str=None, python_version: str=None, node_version: str=None, power_shell_version: str=None, linux_fx_version: str=None, windows_fx_version: str=None, request_tracing_enabled: bool=None, request_tracing_expiration_time=None, remote_debugging_enabled: bool=None, remote_debugging_version: str=None, http_logging_enabled: bool=None, logs_directory_size_limit: int=None, detailed_error_logging_enabled: bool=None, publishing_username: str=None, app_settings=None, connection_strings=None, handler_mappings=None, document_root: str=None, scm_type=None, use32_bit_worker_process: bool=None, web_sockets_enabled: bool=None, always_on: bool=None, java_version: str=None, java_container: str=None, java_container_version: str=None, app_command_line: str=None, managed_pipeline_mode=None, virtual_applications=None, load_balancing=None, experiments=None, limits=None, auto_heal_enabled: bool=None, auto_heal_rules=None, tracing_options: str=None, vnet_name: str=None, cors=None, push=None, api_definition=None, api_management_config=None, auto_swap_slot_name: str=None, local_my_sql_enabled: bool=False, managed_service_identity_id: int=None, x_managed_service_identity_id: int=None, ip_security_restrictions=None, scm_ip_security_restrictions=None, scm_ip_security_restrictions_use_main: bool=None, http20_enabled: bool=True, min_tls_version=None, ftps_state=None, pre_warmed_instance_count: int=None, health_check_path: str=None, **kwargs) -> None:
         super(SiteConfig, self).__init__(**kwargs)
         self.number_of_workers = number_of_workers
         self.default_documents = default_documents
@@ -9482,6 +9485,7 @@ class SiteConfig(Model):
         self.php_version = php_version
         self.python_version = python_version
         self.node_version = node_version
+        self.power_shell_version = power_shell_version
         self.linux_fx_version = linux_fx_version
         self.windows_fx_version = windows_fx_version
         self.request_tracing_enabled = request_tracing_enabled
@@ -9559,6 +9563,8 @@ class SiteConfigResource(ProxyOnlyResource):
     :type python_version: str
     :param node_version: Version of Node.js.
     :type node_version: str
+    :param power_shell_version: Version of PowerShell.
+    :type power_shell_version: str
     :param linux_fx_version: Linux App Framework and version
     :type linux_fx_version: str
     :param windows_fx_version: Xenon App Framework and version
@@ -9707,6 +9713,7 @@ class SiteConfigResource(ProxyOnlyResource):
         'php_version': {'key': 'properties.phpVersion', 'type': 'str'},
         'python_version': {'key': 'properties.pythonVersion', 'type': 'str'},
         'node_version': {'key': 'properties.nodeVersion', 'type': 'str'},
+        'power_shell_version': {'key': 'properties.powerShellVersion', 'type': 'str'},
         'linux_fx_version': {'key': 'properties.linuxFxVersion', 'type': 'str'},
         'windows_fx_version': {'key': 'properties.windowsFxVersion', 'type': 'str'},
         'request_tracing_enabled': {'key': 'properties.requestTracingEnabled', 'type': 'bool'},
@@ -9757,7 +9764,7 @@ class SiteConfigResource(ProxyOnlyResource):
         'health_check_path': {'key': 'properties.healthCheckPath', 'type': 'str'},
     }
 
-    def __init__(self, *, kind: str=None, number_of_workers: int=None, default_documents=None, net_framework_version: str="v4.6", php_version: str=None, python_version: str=None, node_version: str=None, linux_fx_version: str=None, windows_fx_version: str=None, request_tracing_enabled: bool=None, request_tracing_expiration_time=None, remote_debugging_enabled: bool=None, remote_debugging_version: str=None, http_logging_enabled: bool=None, logs_directory_size_limit: int=None, detailed_error_logging_enabled: bool=None, publishing_username: str=None, app_settings=None, connection_strings=None, handler_mappings=None, document_root: str=None, scm_type=None, use32_bit_worker_process: bool=None, web_sockets_enabled: bool=None, always_on: bool=None, java_version: str=None, java_container: str=None, java_container_version: str=None, app_command_line: str=None, managed_pipeline_mode=None, virtual_applications=None, load_balancing=None, experiments=None, limits=None, auto_heal_enabled: bool=None, auto_heal_rules=None, tracing_options: str=None, vnet_name: str=None, cors=None, push=None, api_definition=None, api_management_config=None, auto_swap_slot_name: str=None, local_my_sql_enabled: bool=False, managed_service_identity_id: int=None, x_managed_service_identity_id: int=None, ip_security_restrictions=None, scm_ip_security_restrictions=None, scm_ip_security_restrictions_use_main: bool=None, http20_enabled: bool=True, min_tls_version=None, ftps_state=None, pre_warmed_instance_count: int=None, health_check_path: str=None, **kwargs) -> None:
+    def __init__(self, *, kind: str=None, number_of_workers: int=None, default_documents=None, net_framework_version: str="v4.6", php_version: str=None, python_version: str=None, node_version: str=None, power_shell_version: str=None, linux_fx_version: str=None, windows_fx_version: str=None, request_tracing_enabled: bool=None, request_tracing_expiration_time=None, remote_debugging_enabled: bool=None, remote_debugging_version: str=None, http_logging_enabled: bool=None, logs_directory_size_limit: int=None, detailed_error_logging_enabled: bool=None, publishing_username: str=None, app_settings=None, connection_strings=None, handler_mappings=None, document_root: str=None, scm_type=None, use32_bit_worker_process: bool=None, web_sockets_enabled: bool=None, always_on: bool=None, java_version: str=None, java_container: str=None, java_container_version: str=None, app_command_line: str=None, managed_pipeline_mode=None, virtual_applications=None, load_balancing=None, experiments=None, limits=None, auto_heal_enabled: bool=None, auto_heal_rules=None, tracing_options: str=None, vnet_name: str=None, cors=None, push=None, api_definition=None, api_management_config=None, auto_swap_slot_name: str=None, local_my_sql_enabled: bool=False, managed_service_identity_id: int=None, x_managed_service_identity_id: int=None, ip_security_restrictions=None, scm_ip_security_restrictions=None, scm_ip_security_restrictions_use_main: bool=None, http20_enabled: bool=True, min_tls_version=None, ftps_state=None, pre_warmed_instance_count: int=None, health_check_path: str=None, **kwargs) -> None:
         super(SiteConfigResource, self).__init__(kind=kind, **kwargs)
         self.number_of_workers = number_of_workers
         self.default_documents = default_documents
@@ -9765,6 +9772,7 @@ class SiteConfigResource(ProxyOnlyResource):
         self.php_version = php_version
         self.python_version = python_version
         self.node_version = node_version
+        self.power_shell_version = power_shell_version
         self.linux_fx_version = linux_fx_version
         self.windows_fx_version = windows_fx_version
         self.request_tracing_enabled = request_tracing_enabled

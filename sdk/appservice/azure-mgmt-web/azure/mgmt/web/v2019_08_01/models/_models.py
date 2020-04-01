@@ -9283,6 +9283,8 @@ class SiteConfig(Model):
     :type python_version: str
     :param node_version: Version of Node.js.
     :type node_version: str
+    :param power_shell_version: Version of PowerShell.
+    :type power_shell_version: str
     :param linux_fx_version: Linux App Framework and version
     :type linux_fx_version: str
     :param windows_fx_version: Xenon App Framework and version
@@ -9424,6 +9426,7 @@ class SiteConfig(Model):
         'php_version': {'key': 'phpVersion', 'type': 'str'},
         'python_version': {'key': 'pythonVersion', 'type': 'str'},
         'node_version': {'key': 'nodeVersion', 'type': 'str'},
+        'power_shell_version': {'key': 'powerShellVersion', 'type': 'str'},
         'linux_fx_version': {'key': 'linuxFxVersion', 'type': 'str'},
         'windows_fx_version': {'key': 'windowsFxVersion', 'type': 'str'},
         'request_tracing_enabled': {'key': 'requestTracingEnabled', 'type': 'bool'},
@@ -9482,6 +9485,7 @@ class SiteConfig(Model):
         self.php_version = kwargs.get('php_version', None)
         self.python_version = kwargs.get('python_version', None)
         self.node_version = kwargs.get('node_version', None)
+        self.power_shell_version = kwargs.get('power_shell_version', None)
         self.linux_fx_version = kwargs.get('linux_fx_version', None)
         self.windows_fx_version = kwargs.get('windows_fx_version', None)
         self.request_tracing_enabled = kwargs.get('request_tracing_enabled', None)
@@ -9559,6 +9563,8 @@ class SiteConfigResource(ProxyOnlyResource):
     :type python_version: str
     :param node_version: Version of Node.js.
     :type node_version: str
+    :param power_shell_version: Version of PowerShell.
+    :type power_shell_version: str
     :param linux_fx_version: Linux App Framework and version
     :type linux_fx_version: str
     :param windows_fx_version: Xenon App Framework and version
@@ -9707,6 +9713,7 @@ class SiteConfigResource(ProxyOnlyResource):
         'php_version': {'key': 'properties.phpVersion', 'type': 'str'},
         'python_version': {'key': 'properties.pythonVersion', 'type': 'str'},
         'node_version': {'key': 'properties.nodeVersion', 'type': 'str'},
+        'power_shell_version': {'key': 'properties.powerShellVersion', 'type': 'str'},
         'linux_fx_version': {'key': 'properties.linuxFxVersion', 'type': 'str'},
         'windows_fx_version': {'key': 'properties.windowsFxVersion', 'type': 'str'},
         'request_tracing_enabled': {'key': 'properties.requestTracingEnabled', 'type': 'bool'},
@@ -9765,6 +9772,7 @@ class SiteConfigResource(ProxyOnlyResource):
         self.php_version = kwargs.get('php_version', None)
         self.python_version = kwargs.get('python_version', None)
         self.node_version = kwargs.get('node_version', None)
+        self.power_shell_version = kwargs.get('power_shell_version', None)
         self.linux_fx_version = kwargs.get('linux_fx_version', None)
         self.windows_fx_version = kwargs.get('windows_fx_version', None)
         self.request_tracing_enabled = kwargs.get('request_tracing_enabled', None)
