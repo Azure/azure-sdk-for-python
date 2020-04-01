@@ -20,14 +20,14 @@ class TextAnalyticsClientConfiguration(Configuration):
     attributes.
 
     :param credential: Credential needed for the client to connect to Azure.
-    :type credential: azure.core.credentials.TokenCredential
+    :type credential: azure.core.credentials.AsyncTokenCredential
     :param endpoint: Supported Cognitive Services endpoints (protocol and hostname, for example: https://westus.api.cognitive.microsoft.com).
     :type endpoint: str
     """
 
     def __init__(
         self,
-        credential: "TokenCredential",
+        credential: "AsyncTokenCredential",
         endpoint: str,
         **kwargs: Any
     ) -> None:

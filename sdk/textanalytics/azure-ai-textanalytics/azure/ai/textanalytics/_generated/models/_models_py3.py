@@ -251,7 +251,7 @@ class DocumentSentiment(msrest.serialization.Model):
     :param id: Required. Unique, non-empty document identifier.
     :type id: str
     :param sentiment: Required. Predicted sentiment for document (Negative, Neutral, Positive, or
-     Mixed). Possible values include: 'positive', 'neutral', 'negative', 'mixed'.
+     Mixed). Possible values include: "positive", "neutral", "negative", "mixed".
     :type sentiment: str or ~azure.ai.textanalytics.models.DocumentSentimentValue
     :param statistics: if showStats=true was specified in the request this field will contain
      information about the document payload.
@@ -480,10 +480,10 @@ class InnerError(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param code: Required. Error code. Possible values include: 'invalidParameterValue',
-     'invalidRequestBodyFormat', 'emptyRequest', 'missingInputRecords', 'invalidDocument',
-     'modelVersionIncorrect', 'invalidDocumentBatch', 'unsupportedLanguageCode',
-     'invalidCountryHint'.
+    :param code: Required. Error code. Possible values include: "invalidParameterValue",
+     "invalidRequestBodyFormat", "emptyRequest", "missingInputRecords", "invalidDocument",
+     "modelVersionIncorrect", "invalidDocumentBatch", "unsupportedLanguageCode",
+     "invalidCountryHint".
     :type code: str or ~azure.ai.textanalytics.models.InnerErrorCodeValue
     :param message: Required. Error message.
     :type message: str
@@ -904,7 +904,7 @@ class SentenceSentiment(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param sentiment: Required. The predicted Sentiment for the sentence. Possible values include:
-     'positive', 'neutral', 'negative'.
+     "positive", "neutral", "negative".
     :type sentiment: str or ~azure.ai.textanalytics.models.SentenceSentimentValue
     :param sentence_scores: Required. The sentiment confidence score between 0 and 1 for the
      sentence for all classes.
@@ -1039,8 +1039,8 @@ class TextAnalyticsError(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param code: Required. Error code. Possible values include: 'invalidRequest',
-     'invalidArgument', 'internalServerError', 'serviceUnavailable'.
+    :param code: Required. Error code. Possible values include: "invalidRequest",
+     "invalidArgument", "internalServerError", "serviceUnavailable".
     :type code: str or ~azure.ai.textanalytics.models.ErrorCodeValue
     :param message: Required. Error message.
     :type message: str

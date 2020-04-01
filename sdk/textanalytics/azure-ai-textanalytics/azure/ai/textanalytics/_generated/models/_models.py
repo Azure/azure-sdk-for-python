@@ -42,9 +42,9 @@ class DetectedLanguage(msrest.serialization.Model):
         **kwargs
     ):
         super(DetectedLanguage, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.iso6391_name = kwargs.get('iso6391_name', None)
-        self.score = kwargs.get('score', None)
+        self.name = kwargs['name']
+        self.iso6391_name = kwargs['iso6391_name']
+        self.score = kwargs['score']
 
 
 class DocumentEntities(msrest.serialization.Model):
@@ -77,8 +77,8 @@ class DocumentEntities(msrest.serialization.Model):
         **kwargs
     ):
         super(DocumentEntities, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
-        self.entities = kwargs.get('entities', None)
+        self.id = kwargs['id']
+        self.entities = kwargs['entities']
         self.statistics = kwargs.get('statistics', None)
 
 
@@ -108,8 +108,8 @@ class DocumentError(msrest.serialization.Model):
         **kwargs
     ):
         super(DocumentError, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
-        self.error = kwargs.get('error', None)
+        self.id = kwargs['id']
+        self.error = kwargs['error']
 
 
 class DocumentKeyPhrases(msrest.serialization.Model):
@@ -143,8 +143,8 @@ class DocumentKeyPhrases(msrest.serialization.Model):
         **kwargs
     ):
         super(DocumentKeyPhrases, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
-        self.key_phrases = kwargs.get('key_phrases', None)
+        self.id = kwargs['id']
+        self.key_phrases = kwargs['key_phrases']
         self.statistics = kwargs.get('statistics', None)
 
 
@@ -178,8 +178,8 @@ class DocumentLanguage(msrest.serialization.Model):
         **kwargs
     ):
         super(DocumentLanguage, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
-        self.detected_languages = kwargs.get('detected_languages', None)
+        self.id = kwargs['id']
+        self.detected_languages = kwargs['detected_languages']
         self.statistics = kwargs.get('statistics', None)
 
 
@@ -213,8 +213,8 @@ class DocumentLinkedEntities(msrest.serialization.Model):
         **kwargs
     ):
         super(DocumentLinkedEntities, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
-        self.entities = kwargs.get('entities', None)
+        self.id = kwargs['id']
+        self.entities = kwargs['entities']
         self.statistics = kwargs.get('statistics', None)
 
 
@@ -226,7 +226,7 @@ class DocumentSentiment(msrest.serialization.Model):
     :param id: Required. Unique, non-empty document identifier.
     :type id: str
     :param sentiment: Required. Predicted sentiment for document (Negative, Neutral, Positive, or
-     Mixed). Possible values include: 'positive', 'neutral', 'negative', 'mixed'.
+     Mixed). Possible values include: "positive", "neutral", "negative", "mixed".
     :type sentiment: str or ~azure.ai.textanalytics.models.DocumentSentimentValue
     :param statistics: if showStats=true was specified in the request this field will contain
      information about the document payload.
@@ -258,11 +258,11 @@ class DocumentSentiment(msrest.serialization.Model):
         **kwargs
     ):
         super(DocumentSentiment, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
-        self.sentiment = kwargs.get('sentiment', None)
+        self.id = kwargs['id']
+        self.sentiment = kwargs['sentiment']
         self.statistics = kwargs.get('statistics', None)
-        self.document_scores = kwargs.get('document_scores', None)
-        self.sentences = kwargs.get('sentences', None)
+        self.document_scores = kwargs['document_scores']
+        self.sentences = kwargs['sentences']
 
 
 class DocumentStatistics(msrest.serialization.Model):
@@ -291,8 +291,8 @@ class DocumentStatistics(msrest.serialization.Model):
         **kwargs
     ):
         super(DocumentStatistics, self).__init__(**kwargs)
-        self.characters_count = kwargs.get('characters_count', None)
-        self.transactions_count = kwargs.get('transactions_count', None)
+        self.characters_count = kwargs['characters_count']
+        self.transactions_count = kwargs['transactions_count']
 
 
 class EntitiesResult(msrest.serialization.Model):
@@ -329,10 +329,10 @@ class EntitiesResult(msrest.serialization.Model):
         **kwargs
     ):
         super(EntitiesResult, self).__init__(**kwargs)
-        self.documents = kwargs.get('documents', None)
-        self.errors = kwargs.get('errors', None)
+        self.documents = kwargs['documents']
+        self.errors = kwargs['errors']
         self.statistics = kwargs.get('statistics', None)
-        self.model_version = kwargs.get('model_version', None)
+        self.model_version = kwargs['model_version']
 
 
 class Entity(msrest.serialization.Model):
@@ -376,12 +376,12 @@ class Entity(msrest.serialization.Model):
         **kwargs
     ):
         super(Entity, self).__init__(**kwargs)
-        self.text = kwargs.get('text', None)
-        self.type = kwargs.get('type', None)
+        self.text = kwargs['text']
+        self.type = kwargs['type']
         self.subtype = kwargs.get('subtype', None)
-        self.offset = kwargs.get('offset', None)
-        self.length = kwargs.get('length', None)
-        self.score = kwargs.get('score', None)
+        self.offset = kwargs['offset']
+        self.length = kwargs['length']
+        self.score = kwargs['score']
 
 
 class EntityLinkingResult(msrest.serialization.Model):
@@ -418,10 +418,10 @@ class EntityLinkingResult(msrest.serialization.Model):
         **kwargs
     ):
         super(EntityLinkingResult, self).__init__(**kwargs)
-        self.documents = kwargs.get('documents', None)
-        self.errors = kwargs.get('errors', None)
+        self.documents = kwargs['documents']
+        self.errors = kwargs['errors']
         self.statistics = kwargs.get('statistics', None)
-        self.model_version = kwargs.get('model_version', None)
+        self.model_version = kwargs['model_version']
 
 
 class InnerError(msrest.serialization.Model):
@@ -429,10 +429,10 @@ class InnerError(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param code: Required. Error code. Possible values include: 'invalidParameterValue',
-     'invalidRequestBodyFormat', 'emptyRequest', 'missingInputRecords', 'invalidDocument',
-     'modelVersionIncorrect', 'invalidDocumentBatch', 'unsupportedLanguageCode',
-     'invalidCountryHint'.
+    :param code: Required. Error code. Possible values include: "invalidParameterValue",
+     "invalidRequestBodyFormat", "emptyRequest", "missingInputRecords", "invalidDocument",
+     "modelVersionIncorrect", "invalidDocumentBatch", "unsupportedLanguageCode",
+     "invalidCountryHint".
     :type code: str or ~azure.ai.textanalytics.models.InnerErrorCodeValue
     :param message: Required. Error message.
     :type message: str
@@ -462,8 +462,8 @@ class InnerError(msrest.serialization.Model):
         **kwargs
     ):
         super(InnerError, self).__init__(**kwargs)
-        self.code = kwargs.get('code', None)
-        self.message = kwargs.get('message', None)
+        self.code = kwargs['code']
+        self.message = kwargs['message']
         self.details = kwargs.get('details', None)
         self.target = kwargs.get('target', None)
         self.inner_error = kwargs.get('inner_error', None)
@@ -503,10 +503,10 @@ class KeyPhraseResult(msrest.serialization.Model):
         **kwargs
     ):
         super(KeyPhraseResult, self).__init__(**kwargs)
-        self.documents = kwargs.get('documents', None)
-        self.errors = kwargs.get('errors', None)
+        self.documents = kwargs['documents']
+        self.errors = kwargs['errors']
         self.statistics = kwargs.get('statistics', None)
-        self.model_version = kwargs.get('model_version', None)
+        self.model_version = kwargs['model_version']
 
 
 class LanguageBatchInput(msrest.serialization.Model):
@@ -531,7 +531,7 @@ class LanguageBatchInput(msrest.serialization.Model):
         **kwargs
     ):
         super(LanguageBatchInput, self).__init__(**kwargs)
-        self.documents = kwargs.get('documents', None)
+        self.documents = kwargs['documents']
 
 
 class LanguageInput(msrest.serialization.Model):
@@ -563,8 +563,8 @@ class LanguageInput(msrest.serialization.Model):
         **kwargs
     ):
         super(LanguageInput, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
-        self.text = kwargs.get('text', None)
+        self.id = kwargs['id']
+        self.text = kwargs['text']
         self.country_hint = kwargs.get('country_hint', None)
 
 
@@ -602,10 +602,10 @@ class LanguageResult(msrest.serialization.Model):
         **kwargs
     ):
         super(LanguageResult, self).__init__(**kwargs)
-        self.documents = kwargs.get('documents', None)
-        self.errors = kwargs.get('errors', None)
+        self.documents = kwargs['documents']
+        self.errors = kwargs['errors']
         self.statistics = kwargs.get('statistics', None)
-        self.model_version = kwargs.get('model_version', None)
+        self.model_version = kwargs['model_version']
 
 
 class LinkedEntity(msrest.serialization.Model):
@@ -650,12 +650,12 @@ class LinkedEntity(msrest.serialization.Model):
         **kwargs
     ):
         super(LinkedEntity, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.matches = kwargs.get('matches', None)
-        self.language = kwargs.get('language', None)
+        self.name = kwargs['name']
+        self.matches = kwargs['matches']
+        self.language = kwargs['language']
         self.id = kwargs.get('id', None)
-        self.url = kwargs.get('url', None)
-        self.data_source = kwargs.get('data_source', None)
+        self.url = kwargs['url']
+        self.data_source = kwargs['data_source']
 
 
 class Match(msrest.serialization.Model):
@@ -693,10 +693,10 @@ class Match(msrest.serialization.Model):
         **kwargs
     ):
         super(Match, self).__init__(**kwargs)
-        self.score = kwargs.get('score', None)
-        self.text = kwargs.get('text', None)
-        self.offset = kwargs.get('offset', None)
-        self.length = kwargs.get('length', None)
+        self.score = kwargs['score']
+        self.text = kwargs['text']
+        self.offset = kwargs['offset']
+        self.length = kwargs['length']
 
 
 class MultiLanguageBatchInput(msrest.serialization.Model):
@@ -721,7 +721,7 @@ class MultiLanguageBatchInput(msrest.serialization.Model):
         **kwargs
     ):
         super(MultiLanguageBatchInput, self).__init__(**kwargs)
-        self.documents = kwargs.get('documents', None)
+        self.documents = kwargs['documents']
 
 
 class MultiLanguageInput(msrest.serialization.Model):
@@ -755,8 +755,8 @@ class MultiLanguageInput(msrest.serialization.Model):
         **kwargs
     ):
         super(MultiLanguageInput, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
-        self.text = kwargs.get('text', None)
+        self.id = kwargs['id']
+        self.text = kwargs['text']
         self.language = kwargs.get('language', None)
 
 
@@ -796,10 +796,10 @@ class RequestStatistics(msrest.serialization.Model):
         **kwargs
     ):
         super(RequestStatistics, self).__init__(**kwargs)
-        self.documents_count = kwargs.get('documents_count', None)
-        self.valid_documents_count = kwargs.get('valid_documents_count', None)
-        self.erroneous_documents_count = kwargs.get('erroneous_documents_count', None)
-        self.transactions_count = kwargs.get('transactions_count', None)
+        self.documents_count = kwargs['documents_count']
+        self.valid_documents_count = kwargs['valid_documents_count']
+        self.erroneous_documents_count = kwargs['erroneous_documents_count']
+        self.transactions_count = kwargs['transactions_count']
 
 
 class SentenceSentiment(msrest.serialization.Model):
@@ -808,7 +808,7 @@ class SentenceSentiment(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param sentiment: Required. The predicted Sentiment for the sentence. Possible values include:
-     'positive', 'neutral', 'negative'.
+     "positive", "neutral", "negative".
     :type sentiment: str or ~azure.ai.textanalytics.models.SentenceSentimentValue
     :param sentence_scores: Required. The sentiment confidence score between 0 and 1 for the
      sentence for all classes.
@@ -841,10 +841,10 @@ class SentenceSentiment(msrest.serialization.Model):
         **kwargs
     ):
         super(SentenceSentiment, self).__init__(**kwargs)
-        self.sentiment = kwargs.get('sentiment', None)
-        self.sentence_scores = kwargs.get('sentence_scores', None)
-        self.offset = kwargs.get('offset', None)
-        self.length = kwargs.get('length', None)
+        self.sentiment = kwargs['sentiment']
+        self.sentence_scores = kwargs['sentence_scores']
+        self.offset = kwargs['offset']
+        self.length = kwargs['length']
         self.warnings = kwargs.get('warnings', None)
 
 
@@ -878,9 +878,9 @@ class SentimentConfidenceScorePerLabel(msrest.serialization.Model):
         **kwargs
     ):
         super(SentimentConfidenceScorePerLabel, self).__init__(**kwargs)
-        self.positive = kwargs.get('positive', None)
-        self.neutral = kwargs.get('neutral', None)
-        self.negative = kwargs.get('negative', None)
+        self.positive = kwargs['positive']
+        self.neutral = kwargs['neutral']
+        self.negative = kwargs['negative']
 
 
 class SentimentResponse(msrest.serialization.Model):
@@ -917,10 +917,10 @@ class SentimentResponse(msrest.serialization.Model):
         **kwargs
     ):
         super(SentimentResponse, self).__init__(**kwargs)
-        self.documents = kwargs.get('documents', None)
-        self.errors = kwargs.get('errors', None)
+        self.documents = kwargs['documents']
+        self.errors = kwargs['errors']
         self.statistics = kwargs.get('statistics', None)
-        self.model_version = kwargs.get('model_version', None)
+        self.model_version = kwargs['model_version']
 
 
 class TextAnalyticsError(msrest.serialization.Model):
@@ -928,8 +928,8 @@ class TextAnalyticsError(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param code: Required. Error code. Possible values include: 'invalidRequest',
-     'invalidArgument', 'internalServerError', 'serviceUnavailable'.
+    :param code: Required. Error code. Possible values include: "invalidRequest",
+     "invalidArgument", "internalServerError", "serviceUnavailable".
     :type code: str or ~azure.ai.textanalytics.models.ErrorCodeValue
     :param message: Required. Error message.
     :type message: str
@@ -959,8 +959,8 @@ class TextAnalyticsError(msrest.serialization.Model):
         **kwargs
     ):
         super(TextAnalyticsError, self).__init__(**kwargs)
-        self.code = kwargs.get('code', None)
-        self.message = kwargs.get('message', None)
+        self.code = kwargs['code']
+        self.message = kwargs['message']
         self.target = kwargs.get('target', None)
         self.inner_error = kwargs.get('inner_error', None)
         self.details = kwargs.get('details', None)

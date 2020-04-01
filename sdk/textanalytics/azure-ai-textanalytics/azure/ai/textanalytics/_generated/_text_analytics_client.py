@@ -30,7 +30,7 @@ class TextAnalyticsClient(TextAnalyticsClientOperationsMixin):
         credential,  # type: "TokenCredential"
         endpoint,  # type: str
         **kwargs  # type: Any
-    ): 
+    ):
         # type: (...) -> None
         base_url = '{Endpoint}/text/analytics/v3.0-preview.1'
         self._config = TextAnalyticsClientConfiguration(credential, endpoint, **kwargs)
