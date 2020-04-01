@@ -56,7 +56,7 @@ exporter = ConsoleSpanExporter()
 
 trace.set_tracer_provider(TracerProvider())
 tracer = trace.get_tracer(__name__)
-trace.tracer_provider().add_span_processor(
+trace.get_tracer_provider().add_span_processor(
     SimpleExportSpanProcessor(exporter)
 )
 
@@ -69,7 +69,7 @@ with tracer.start_as_current_span(name="MyApplication"):
     client.create_container('mycontainer')  # Call will be traced
 ```
 
-Azure Exporter can be found in the [package](https://github.com/microsoft/opentelemetry-exporters-python) `opentelemetry-azure-monitor-exporter`
+Azure Exporter can be found in the [package](https://pypi.org/project/opentelemetry-azure-monitor-exporter/) `opentelemetry-azure-monitor-exporter`
 
 
 ## Troubleshooting
