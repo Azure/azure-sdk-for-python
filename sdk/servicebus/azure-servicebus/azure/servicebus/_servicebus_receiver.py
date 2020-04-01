@@ -27,7 +27,17 @@ from ._common.constants import (
     NEXT_AVAILABLE,
     SESSION_LOCKED_UNTIL,
     DATETIMEOFFSET_EPOCH,
-    SESSION_FILTER
+    SESSION_FILTER,
+    MGMT_RESPONSE_SESSION_STATE,
+    MGMT_RESPONSE_EXPIRATION,
+    MGMT_REQUEST_SESSION_ID,
+    MGMT_REQUEST_SESSION_STATE,
+    MGMT_REQUEST_DISPOSITION_STATUS,
+    MGMT_REQUEST_LOCK_TOKENS,
+    MGMT_REQUEST_SEQUENCE_NUMBERS,
+    MGMT_REQUEST_RECEIVER_SETTLE_MODE,
+    MGMT_REQUEST_FROM_SEQUENCE_NUMBER,
+    MGMT_REQUEST_MESSAGE_COUNT
 )
 from .exceptions import (
     _ServiceBusErrorPolicy,
@@ -90,10 +100,10 @@ class ServiceBusSession(object):
         self._can_run()
         response = self._receiver._mgmt_request_response_with_retry(  # pylint: disable=protected-access
             REQUEST_RESPONSE_GET_SESSION_STATE_OPERATION,
-            {'session-id': self.session_id},
+            {MGMT_REQUEST_SESSION_ID: self.session_id},
             mgmt_handlers.default
         )
-        session_state = response.get(b'session-state')
+        session_state = response.get(MGMT_RESPONSE_SESSION_STATE)
         if isinstance(session_state, six.binary_type):
             session_state = session_state.decode('UTF-8')
         return session_state
@@ -118,7 +128,7 @@ class ServiceBusSession(object):
         state = state.encode(self._encoding) if isinstance(state, six.text_type) else state
         return self._receiver._mgmt_request_response_with_retry(  # pylint: disable=protected-access
             REQUEST_RESPONSE_SET_SESSION_STATE_OPERATION,
-            {'session-id': self.session_id, 'session-state': bytearray(state)},
+            {MGMT_REQUEST_SESSION_ID: self.session_id, MGMT_REQUEST_SESSION_STATE: bytearray(state)},
             mgmt_handlers.default
         )
 
@@ -144,10 +154,10 @@ class ServiceBusSession(object):
         self._can_run()
         expiry = self._receiver._mgmt_request_response_with_retry(  # pylint: disable=protected-access
             REQUEST_RESPONSE_RENEW_SESSION_LOCK_OPERATION,
-            {'session-id': self.session_id},
+            {MGMT_REQUEST_SESSION_ID: self.session_id},
             mgmt_handlers.default
         )
-        self._locked_until_utc = utc_from_timestamp(expiry[b'expiration']/1000.0)
+        self._locked_until_utc = utc_from_timestamp(expiry[MGMT_RESPONSE_EXPIRATION]/1000.0)
 
     @property
     def session_id(self):
@@ -382,12 +392,12 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
 
     def _settle_message(self, settlement, lock_tokens, dead_letter_details=None):
         message = {
-            'disposition-status': settlement,
-            'lock-tokens': types.AMQPArray(lock_tokens)
+            MGMT_REQUEST_DISPOSITION_STATUS: settlement,
+            MGMT_REQUEST_LOCK_TOKENS: types.AMQPArray(lock_tokens)
         }
 
         if self._session_id:
-            message["session-id"] = self._session_id
+            message[MGMT_REQUEST_SESSION_ID] = self._session_id
         if dead_letter_details:
             message.update(dead_letter_details)
 
@@ -398,7 +408,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         )
 
     def _renew_locks(self, *lock_tokens):
-        message = {'lock-tokens': types.AMQPArray(lock_tokens)}
+        message = {MGMT_REQUEST_LOCK_TOKENS: types.AMQPArray(lock_tokens)}
         return self._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_RENEWLOCK_OPERATION,
             message,
@@ -558,12 +568,12 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         except AttributeError:
             receive_mode = int(self._mode)
         message = {
-            'sequence-numbers': types.AMQPArray([types.AMQPLong(s) for s in sequence_numbers]),
-            'receiver-settle-mode': types.AMQPuInt(receive_mode)
+            MGMT_REQUEST_SEQUENCE_NUMBERS: types.AMQPArray([types.AMQPLong(s) for s in sequence_numbers]),
+            MGMT_REQUEST_RECEIVER_SETTLE_MODE: types.AMQPuInt(receive_mode)
         }
 
         if self._session_id:
-            message["session-id"] = self._session_id
+            message[MGMT_REQUEST_SESSION_ID] = self._session_id
 
         handler = functools.partial(mgmt_handlers.deferred_message_op, mode=self._mode)
         messages = self._mgmt_request_response_with_retry(
@@ -607,12 +617,12 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
 
         self._open()
         message = {
-            'from-sequence-number': types.AMQPLong(sequence_number),
-            'message-count': message_count
+            MGMT_REQUEST_FROM_SEQUENCE_NUMBER: types.AMQPLong(sequence_number),
+            MGMT_REQUEST_MESSAGE_COUNT: message_count
         }
 
         if self._session_id:
-            message["session-id"] = self._session_id
+            message[MGMT_REQUEST_SESSION_ID] = self._session_id
 
         return self._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_PEEK_OPERATION,

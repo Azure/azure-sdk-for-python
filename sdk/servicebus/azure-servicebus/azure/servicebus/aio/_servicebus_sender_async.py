@@ -17,7 +17,8 @@ from ..exceptions import (
 )
 from .._common.constants import (
     REQUEST_RESPONSE_SCHEDULE_MESSAGE_OPERATION,
-    REQUEST_RESPONSE_CANCEL_SCHEDULED_MESSAGE_OPERATION
+    REQUEST_RESPONSE_CANCEL_SCHEDULED_MESSAGE_OPERATION,
+    MGMT_REQUEST_SEQUENCE_NUMBERS
 )
 from .._common import mgmt_handlers
 from ._async_utils import create_authentication
@@ -180,7 +181,7 @@ class ServiceBusSender(BaseHandlerAsync, SenderMixin):
             numbers = [types.AMQPLong(sequence_numbers)]
         else:
             numbers = [types.AMQPLong(s) for s in sequence_numbers]
-        request_body = {'sequence-numbers': types.AMQPArray(numbers)}
+        request_body = {MGMT_REQUEST_SEQUENCE_NUMBERS: types.AMQPArray(numbers)}
         return await self._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_CANCEL_SCHEDULED_MESSAGE_OPERATION,
             request_body,

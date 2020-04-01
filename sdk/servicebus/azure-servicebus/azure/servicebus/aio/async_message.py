@@ -13,7 +13,15 @@ from .._common.constants import (
     SETTLEMENT_DEFER,
     SETTLEMENT_DEADLETTER,
     ReceiveSettleMode,
-    _X_OPT_LOCK_TOKEN
+    _X_OPT_LOCK_TOKEN,
+    MGMT_RESPONSE_EXPIRATION,
+    MGMT_REQUEST_DEAD_LETTER_REASON,
+    MGMT_REQUEST_DEAD_LETTER_DESCRIPTION,
+    MESSAGE_COMPLETE,
+    MESSAGE_DEAD_LETTER,
+    MESSAGE_ABANDON,
+    MESSAGE_DEFER,
+    MESSAGE_RENEW_LOCK
 )
 from .._common.utils import get_running_loop, utc_from_timestamp
 from ..exceptions import MessageSettleFailed
@@ -54,11 +62,11 @@ class ReceivedMessage(sync_message.ReceivedMessage):
         :raises: ~azure.servicebus.common.errors.MessageSettleFailed if message settle operation fails.
         """
         # pylint: disable=protected-access
-        self._is_live('complete')
+        self._is_live(MESSAGE_COMPLETE)
         try:
             await self._receiver._settle_message(SETTLEMENT_COMPLETE, [self.lock_token])
         except Exception as e:
-            raise MessageSettleFailed("complete", e)
+            raise MessageSettleFailed(MESSAGE_COMPLETE, e)
         self._settled = True
 
     async def dead_letter(self, reason=None, description=None):
@@ -75,10 +83,10 @@ class ReceivedMessage(sync_message.ReceivedMessage):
         :raises: ~azure.servicebus.common.errors.MessageSettleFailed if message settle operation fails.
         """
         # pylint: disable=protected-access
-        self._is_live('dead-letter')
+        self._is_live(MESSAGE_DEAD_LETTER)
         details = {
-            'deadletter-reason': str(reason) if reason else "",
-            'deadletter-description': str(description) if description else ""}
+            MGMT_REQUEST_DEAD_LETTER_REASON: str(reason) if reason else "",
+            MGMT_REQUEST_DEAD_LETTER_DESCRIPTION: str(description) if description else ""}
         try:
             await self._receiver._settle_message(
                 SETTLEMENT_DEADLETTER,
@@ -86,7 +94,7 @@ class ReceivedMessage(sync_message.ReceivedMessage):
                 dead_letter_details=details
             )
         except Exception as e:
-            raise MessageSettleFailed("reject", e)
+            raise MessageSettleFailed(MESSAGE_DEAD_LETTER, e)
         self._settled = True
 
     async def abandon(self):
@@ -97,11 +105,11 @@ class ReceivedMessage(sync_message.ReceivedMessage):
         :raises: ~azure.servicebus.common.errors.MessageSettleFailed if message settle operation fails.
         """
         # pylint: disable=protected-access
-        self._is_live('abandon')
+        self._is_live(MESSAGE_ABANDON)
         try:
             await self._receiver._settle_message(SETTLEMENT_ABANDON, [self.lock_token])
         except Exception as e:
-            raise MessageSettleFailed("abandon", e)
+            raise MessageSettleFailed(MESSAGE_ABANDON, e)
         self._settled = True
 
     async def defer(self):
@@ -112,11 +120,11 @@ class ReceivedMessage(sync_message.ReceivedMessage):
         :raises: ~azure.servicebus.common.errors.MessageSettleFailed if message settle operation fails.
         """
         # pylint: disable=protected-access
-        self._is_live('defer')
+        self._is_live(MESSAGE_DEFER)
         try:
             await self._receiver._settle_message(SETTLEMENT_DEFER, [self.lock_token])
         except Exception as e:
-            raise MessageSettleFailed("defer", e)
+            raise MessageSettleFailed(MESSAGE_DEFER, e)
         self._settled = True
 
     async def renew_lock(self):
@@ -136,10 +144,10 @@ class ReceivedMessage(sync_message.ReceivedMessage):
         """
         if self._receiver._session_id:  # pylint: disable=protected-access
             raise TypeError("Session messages cannot be renewed. Please renew the Session lock instead.")
-        self._is_live('renew')
+        self._is_live(MESSAGE_RENEW_LOCK)
         token = self.lock_token
         if not token:
             raise ValueError("Unable to renew lock - no lock token found.")
 
         expiry = await self._receiver._renew_locks(token)  # pylint: disable=protected-access
-        self._expiry = utc_from_timestamp(expiry[b'expirations'][0]/1000.0)
+        self._expiry = utc_from_timestamp(expiry[MGMT_RESPONSE_EXPIRATION][0]/1000.0)

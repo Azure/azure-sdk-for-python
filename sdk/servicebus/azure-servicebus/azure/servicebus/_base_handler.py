@@ -26,6 +26,10 @@ from .exceptions import (
     _create_servicebus_exception
 )
 from ._common.utils import create_properties
+from ._common.constants import (
+    CONTAINER_PREFIX,
+    MANAGEMENT_PATH_SUFFIX
+)
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -114,9 +118,9 @@ class BaseHandler(object):  # pylint:disable=too-many-instance-attributes
     ):
         self.fully_qualified_namespace = fully_qualified_namespace
         self._entity_name = entity_name
-        self._mgmt_target = self._entity_name + "/$management"
+        self._mgmt_target = self._entity_name + MANAGEMENT_PATH_SUFFIX
         self._credential = credential
-        self._container_id = "servicebus.pysdk-" + str(uuid.uuid4())[:8]
+        self._container_id = CONTAINER_PREFIX + str(uuid.uuid4())[:8]
         self._config = Configuration(**kwargs)
         self._running = False
         self._handler = None

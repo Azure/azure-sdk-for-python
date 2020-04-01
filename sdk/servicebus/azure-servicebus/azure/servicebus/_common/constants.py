@@ -47,9 +47,35 @@ SETTLEMENT_ABANDON = "abandoned"
 SETTLEMENT_DEFER = "defered"
 SETTLEMENT_DEADLETTER = "suspended"
 
-CONTAINER_PREFIX = "eventhub.pysdk-"
+CONTAINER_PREFIX = "servicebus.pysdk-"
 JWT_TOKEN_SCOPE = "https://servicebus.azure.net//.default"
 USER_AGENT_PREFIX = "azsdk-python-servicebus"
+
+MANAGEMENT_PATH_SUFFIX = "/$management"
+
+MGMT_RESPONSE_SESSION_STATE = b'session-state'
+MGMT_RESPONSE_EXPIRATION = b'expiration'
+MGMT_REQUEST_SESSION_ID = 'session-id'
+MGMT_REQUEST_SESSION_STATE = 'session-state'
+MGMT_REQUEST_DISPOSITION_STATUS = 'disposition-status'
+MGMT_REQUEST_LOCK_TOKENS = 'lock-tokens'
+MGMT_REQUEST_SEQUENCE_NUMBERS = 'sequence-numbers'
+MGMT_REQUEST_RECEIVER_SETTLE_MODE = 'receiver-settle-mode'
+MGMT_REQUEST_FROM_SEQUENCE_NUMBER = 'from-sequence-number'
+MGMT_REQUEST_MESSAGE_COUNT = 'message-count'
+MGMT_REQUEST_MESSAGE = 'message'
+MGMT_REQUEST_MESSAGES = 'messages'
+MGMT_REQUEST_MESSAGE_ID = 'message-id'
+MGMT_REQUEST_PARTITION_KEY = 'partition-key'
+MGMT_REQUEST_VIA_PARTITION_KEY = 'via-partition-key'
+MGMT_REQUEST_DEAD_LETTER_REASON = 'deadletter-reason'
+MGMT_REQUEST_DEAD_LETTER_DESCRIPTION = 'deadletter-description'
+
+MESSAGE_COMPLETE = 'complete'
+MESSAGE_DEAD_LETTER = 'dead-letter'
+MESSAGE_ABANDON = 'abandon'
+MESSAGE_DEFER = 'defer'
+MESSAGE_RENEW_LOCK = 'renew'
 
 # event_data.encoded_size < 255, batch encode overhead is 5, >=256, overhead is 8 each
 _BATCH_MESSAGE_OVERHEAD_COST = [5, 8]
