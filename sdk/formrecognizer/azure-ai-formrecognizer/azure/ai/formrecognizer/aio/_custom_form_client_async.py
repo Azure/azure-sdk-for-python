@@ -16,7 +16,7 @@ from typing import (  # pylint: disable=unused-import
 )
 import six
 from azure.core.polling import async_poller
-from azure.core.polling.async_base_polling import AsyncLROBasePolling  # pylint: disable=no-name-in-module,import-error
+from azure.core.polling.async_base_polling import AsyncLROBasePolling
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy
@@ -34,6 +34,7 @@ from .._models import (
     CustomModel,
     CustomLabeledModel,
 )
+from .._user_agent import USER_AGENT
 if TYPE_CHECKING:
     from azure.core.credentials import AzureKeyCredential
     from .._models import (
@@ -61,6 +62,7 @@ class CustomFormClient(object):
         self._client = FormRecognizer(
             endpoint=endpoint,
             credential=credential,
+            sdk_moniker=USER_AGENT,
             authentication_policy=AzureKeyCredentialPolicy(credential, COGNITIVE_KEY_HEADER),
             **kwargs
         )
@@ -76,7 +78,7 @@ class CustomFormClient(object):
         """Create and train a custom model. The request must include a source parameter that is an
         externally accessible Azure storage blob container Uri (preferably a Shared Access Signature Uri).
         Models are trained using documents that are of the following content type - 'application/pdf',
-        'image/jpeg', 'image/png', 'image/tiff'. Other type of content is ignored.
+        'image/jpeg', 'image/png', 'image/tiff'. Other type of content in the container is ignored.
 
         :param str source: An Azure Storage blob container URI.
         :param str source_prefix_filter: A case-sensitive prefix string to filter documents in the source path for
@@ -125,7 +127,7 @@ class CustomFormClient(object):
         """Create and train a custom model with labels. The request must include a source parameter that is an
         externally accessible Azure storage blob container Uri (preferably a Shared Access Signature Uri).
         Models are trained using documents that are of the following content type - 'application/pdf',
-        'image/jpeg', 'image/png', 'image/tiff'. Other type of content is ignored.
+        'image/jpeg', 'image/png', 'image/tiff'. Other type of content in the container is ignored.
 
         :param str source: An Azure Storage blob container URI.
         :param str source_prefix_filter: A case-sensitive prefix string to filter documents in the source path for
@@ -193,10 +195,9 @@ class CustomFormClient(object):
         def callback(raw_response, _, headers):  # pylint: disable=unused-argument
             extracted_form = self._client._deserialize(AnalyzeOperationResult, raw_response)
             if extracted_form.analyze_result.document_results:
-                raise ValueError("Cannot call begin_extract_forms() with the ID of a model trained with labels. "
+                raise ValueError("Cannot call begin_extract_form_pages() with the ID of a model trained with labels. "
                                  "Please call begin_extract_labeled_forms() instead.")
-            form_result = prepare_unlabeled_result(extracted_form, include_text_details)
-            return form_result
+            return prepare_unlabeled_result(extracted_form)
 
         return await self._client.analyze_with_custom_model(
             file_stream=stream,
@@ -233,10 +234,9 @@ class CustomFormClient(object):
         def callback(raw_response, _, headers):  # pylint: disable=unused-argument
             extracted_form = self._client._deserialize(AnalyzeOperationResult, raw_response)
             if extracted_form.analyze_result.document_results:
-                raise ValueError("Cannot call begin_extract_forms() with the ID of a model trained with labels. "
-                                 "Please call begin_extract_labeled_forms() instead.")
-            form_result = prepare_unlabeled_result(extracted_form, include_text_details)
-            return form_result
+                raise ValueError("Cannot call begin_extract_form_pages_from_url() with the ID of a model trained "
+                                 "with labels. Please call begin_extract_labeled_forms_from_url() instead.")
+            return prepare_unlabeled_result(extracted_form)
 
         return await self._client.analyze_with_custom_model(
             file_stream={"source": url},
@@ -277,9 +277,8 @@ class CustomFormClient(object):
             extracted_form = self._client._deserialize(AnalyzeOperationResult, raw_response)
             if not extracted_form.analyze_result.document_results:
                 raise ValueError("Cannot call begin_extract_labeled_forms() with the ID of a model trained without "
-                                 "labels. Please call begin_extract_forms() instead.")
-            form_result = prepare_labeled_result(extracted_form, include_text_details)
-            return form_result
+                                 "labels. Please call begin_extract_form_pages() instead.")
+            return prepare_labeled_result(extracted_form)
 
         return await self._client.analyze_with_custom_model(
             file_stream=stream,
@@ -316,10 +315,9 @@ class CustomFormClient(object):
         def callback(raw_response, _, headers):  # pylint: disable=unused-argument
             extracted_form = self._client._deserialize(AnalyzeOperationResult, raw_response)
             if not extracted_form.analyze_result.document_results:
-                raise ValueError("Cannot call begin_extract_labeled_forms() with the ID of a model trained "
-                                 "without labels. Please call begin_extract_forms() instead.")
-            form_result = prepare_labeled_result(extracted_form, include_text_details)
-            return form_result
+                raise ValueError("Cannot call begin_extract_labeled_forms_from_url() with the ID of a model trained "
+                                 "without labels. Please call begin_extract_form_pages_from_url() instead.")
+            return prepare_labeled_result(extracted_form)
 
         return await self._client.analyze_with_custom_model(
             file_stream={"source": url},

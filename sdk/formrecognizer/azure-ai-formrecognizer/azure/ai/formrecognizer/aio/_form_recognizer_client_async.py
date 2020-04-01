@@ -14,7 +14,7 @@ from typing import (  # pylint: disable=unused-import
 )
 import six
 from azure.core.tracing.decorator_async import distributed_trace_async
-from azure.core.polling.async_base_polling import AsyncLROBasePolling  # pylint: disable=no-name-in-module,import-error
+from azure.core.polling.async_base_polling import AsyncLROBasePolling
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy
 from .._generated.aio._form_recognizer_client_async import FormRecognizerClient as FormRecognizer
 from .._response_handlers import (
@@ -23,6 +23,7 @@ from .._response_handlers import (
 )
 from .._generated.models import AnalyzeOperationResult
 from .._helpers import get_content_type, POLLING_INTERVAL, COGNITIVE_KEY_HEADER
+from .._user_agent import USER_AGENT
 if TYPE_CHECKING:
     from azure.core.credentials import AzureKeyCredential
     from .._models import (
@@ -50,9 +51,14 @@ class FormRecognizerClient(object):
         self._client = FormRecognizer(
             endpoint=endpoint,
             credential=credential,
+            sdk_moniker=USER_AGENT,
             authentication_policy=AzureKeyCredentialPolicy(credential, COGNITIVE_KEY_HEADER),
             **kwargs
         )
+
+    def _receipt_callback(self, raw_response, _, headers):  # pylint: disable=unused-argument
+        analyze_result = self._client._deserialize(AnalyzeOperationResult, raw_response)
+        return prepare_receipt_result(analyze_result)
 
     @distributed_trace_async
     async def begin_extract_receipts(self, stream: IO[bytes], **kwargs: Any) -> List["ExtractedReceipt"]:
@@ -76,16 +82,11 @@ class FormRecognizerClient(object):
         if content_type is None:
             content_type = get_content_type(stream)
 
-        def callback(raw_response, _, headers):  # pylint: disable=unused-argument
-            analyze_result = self._client._deserialize(AnalyzeOperationResult, raw_response)
-            extracted_receipt = prepare_receipt_result(analyze_result, include_text_details)
-            return extracted_receipt
-
         return await self._client.analyze_receipt_async(
             file_stream=stream,
             content_type=content_type,
             include_text_details=include_text_details,
-            cls=kwargs.pop("cls", callback),
+            cls=kwargs.pop("cls", self._receipt_callback),
             polling=AsyncLROBasePolling(timeout=POLLING_INTERVAL, **kwargs),
             **kwargs
         )
@@ -107,18 +108,17 @@ class FormRecognizerClient(object):
 
         include_text_details = kwargs.pop("include_text_details", False)
 
-        def callback(raw_response, _, headers):  # pylint: disable=unused-argument
-            analyze_result = self._client._deserialize(AnalyzeOperationResult, raw_response)
-            extracted_receipt = prepare_receipt_result(analyze_result, include_text_details)
-            return extracted_receipt
-
         return await self._client.analyze_receipt_async(
             file_stream={"source": url},
             include_text_details=include_text_details,
-            cls=kwargs.pop("cls", callback),
+            cls=kwargs.pop("cls", self._receipt_callback),
             polling=AsyncLROBasePolling(timeout=POLLING_INTERVAL, **kwargs),
             **kwargs
         )
+
+    def _layout_callback(self, raw_response, _, headers):  # pylint: disable=unused-argument
+        analyze_result = self._client._deserialize(AnalyzeOperationResult, raw_response)
+        return prepare_layout_result(analyze_result)
 
     @distributed_trace_async
     async def begin_extract_layouts(self, stream: IO[bytes], **kwargs: Any) -> List["ExtractedLayoutPage"]:
@@ -140,15 +140,10 @@ class FormRecognizerClient(object):
         if content_type is None:
             content_type = get_content_type(stream)
 
-        def callback(raw_response, _, headers):  # pylint: disable=unused-argument
-            analyze_result = self._client._deserialize(AnalyzeOperationResult, raw_response)
-            extracted_layout = prepare_layout_result(analyze_result, include_elements=True)
-            return extracted_layout
-
         return await self._client.analyze_layout_async(
             file_stream=stream,
             content_type=content_type,
-            cls=kwargs.pop("cls", callback),
+            cls=kwargs.pop("cls", self._layout_callback),
             polling=AsyncLROBasePolling(timeout=POLLING_INTERVAL, **kwargs),
             **kwargs
         )
@@ -167,14 +162,9 @@ class FormRecognizerClient(object):
         if not isinstance(url, six.string_types):
             raise TypeError("Call begin_extract_layouts() to analyze a document from a stream.")
 
-        def callback(raw_response, _, headers):  # pylint: disable=unused-argument
-            analyze_result = self._client._deserialize(AnalyzeOperationResult, raw_response)
-            extracted_layout = prepare_layout_result(analyze_result, include_elements=True)
-            return extracted_layout
-
         return await self._client.analyze_layout_async(
             file_stream={"source": url},
-            cls=kwargs.pop("cls", callback),
+            cls=kwargs.pop("cls", self._layout_callback),
             polling=AsyncLROBasePolling(timeout=POLLING_INTERVAL, **kwargs),
             **kwargs
         )

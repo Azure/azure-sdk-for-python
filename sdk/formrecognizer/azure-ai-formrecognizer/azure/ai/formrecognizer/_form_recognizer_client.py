@@ -14,7 +14,7 @@ from typing import (  # pylint: disable=unused-import
 import six
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.polling import LROPoller
-from azure.core.polling.base_polling import LROBasePolling  # pylint: disable=no-name-in-module,import-error
+from azure.core.polling.base_polling import LROBasePolling
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy
 from ._generated._form_recognizer_client import FormRecognizerClient as FormRecognizer
 from ._response_handlers import (
@@ -23,6 +23,7 @@ from ._response_handlers import (
 )
 from ._generated.models import AnalyzeOperationResult
 from ._helpers import get_content_type, POLLING_INTERVAL, COGNITIVE_KEY_HEADER
+from ._user_agent import USER_AGENT
 if TYPE_CHECKING:
     from azure.core.credentials import AzureKeyCredential
 
@@ -42,9 +43,14 @@ class FormRecognizerClient(object):
         self._client = FormRecognizer(
             endpoint=endpoint,
             credential=credential,
+            sdk_moniker=USER_AGENT,
             authentication_policy=AzureKeyCredentialPolicy(credential, COGNITIVE_KEY_HEADER),
             **kwargs
         )
+
+    def _receipt_callback(self, raw_response, _, headers):  # pylint: disable=unused-argument
+        analyze_result = self._client._deserialize(AnalyzeOperationResult, raw_response)
+        return prepare_receipt_result(analyze_result)
 
     @distributed_trace
     def begin_extract_receipts(self, stream, **kwargs):
@@ -58,7 +64,7 @@ class FormRecognizerClient(object):
         :keyword bool include_text_details: Include text lines and element references in the result.
         :keyword str content_type: Media type of the body sent to the API.
         :return: LROPoller
-        :rtype: ~azure.core.polling.LROPoller
+        :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.ExtractedReceipt]]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         if isinstance(stream, six.string_types):
@@ -69,16 +75,11 @@ class FormRecognizerClient(object):
         if content_type is None:
             content_type = get_content_type(stream)
 
-        def callback(raw_response, _, headers):  # pylint: disable=unused-argument
-            analyze_result = self._client._deserialize(AnalyzeOperationResult, raw_response)
-            extracted_receipt = prepare_receipt_result(analyze_result, include_text_details)
-            return extracted_receipt
-
         return self._client.begin_analyze_receipt_async(
             file_stream=stream,
             content_type=content_type,
             include_text_details=include_text_details,
-            cls=kwargs.pop("cls", callback),
+            cls=kwargs.pop("cls", self._receipt_callback),
             polling=LROBasePolling(timeout=POLLING_INTERVAL, **kwargs),
             **kwargs
         )
@@ -93,7 +94,7 @@ class FormRecognizerClient(object):
         :type url: str
         :keyword bool include_text_details: Include text lines and element references in the result.
         :return: LROPoller
-        :rtype: ~azure.core.polling.LROPoller
+        :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.ExtractedReceipt]]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         if not isinstance(url, six.string_types):
@@ -101,18 +102,17 @@ class FormRecognizerClient(object):
 
         include_text_details = kwargs.pop("include_text_details", False)
 
-        def callback(raw_response, _, headers):  # pylint: disable=unused-argument
-            analyze_result = self._client._deserialize(AnalyzeOperationResult, raw_response)
-            extracted_receipt = prepare_receipt_result(analyze_result, include_text_details)
-            return extracted_receipt
-
         return self._client.begin_analyze_receipt_async(
             file_stream={"source": url},
             include_text_details=include_text_details,
-            cls=kwargs.pop("cls", callback),
+            cls=kwargs.pop("cls", self._receipt_callback),
             polling=LROBasePolling(timeout=POLLING_INTERVAL, **kwargs),
             **kwargs
         )
+
+    def _layout_callback(self, raw_response, _, headers):  # pylint: disable=unused-argument
+        analyze_result = self._client._deserialize(AnalyzeOperationResult, raw_response)
+        return prepare_layout_result(analyze_result)
 
     @distributed_trace
     def begin_extract_layouts(self, stream, **kwargs):
@@ -125,7 +125,7 @@ class FormRecognizerClient(object):
         :type stream: stream
         :keyword str content_type: Media type of the body sent to the API.
         :return: LROPoller
-        :rtype: ~azure.core.polling.LROPoller
+        :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.ExtractedLayoutPage]]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         if isinstance(stream, six.string_types):
@@ -135,15 +135,10 @@ class FormRecognizerClient(object):
         if content_type is None:
             content_type = get_content_type(stream)
 
-        def callback(raw_response, _, headers):  # pylint: disable=unused-argument
-            analyze_result = self._client._deserialize(AnalyzeOperationResult, raw_response)
-            extracted_layout = prepare_layout_result(analyze_result, include_elements=True)
-            return extracted_layout
-
         return self._client.begin_analyze_layout_async(
             file_stream=stream,
             content_type=content_type,
-            cls=kwargs.pop("cls", callback),
+            cls=kwargs.pop("cls", self._layout_callback),
             polling=LROBasePolling(timeout=POLLING_INTERVAL, **kwargs),
             **kwargs
         )
@@ -157,20 +152,15 @@ class FormRecognizerClient(object):
         :param url: The url of the document.
         :type url: str
         :return: LROPoller
-        :rtype: ~azure.core.polling.LROPoller
+        :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.ExtractedLayoutPage]]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         if not isinstance(url, six.string_types):
             raise TypeError("Call begin_extract_layouts() to analyze a document from a stream.")
 
-        def callback(raw_response, _, headers):  # pylint: disable=unused-argument
-            analyze_result = self._client._deserialize(AnalyzeOperationResult, raw_response)
-            extracted_layout = prepare_layout_result(analyze_result, include_elements=True)
-            return extracted_layout
-
         return self._client.begin_analyze_layout_async(
             file_stream={"source": url},
-            cls=kwargs.pop("cls", callback),
+            cls=kwargs.pop("cls", self._layout_callback),
             polling=LROBasePolling(timeout=POLLING_INTERVAL, **kwargs),
             **kwargs
         )

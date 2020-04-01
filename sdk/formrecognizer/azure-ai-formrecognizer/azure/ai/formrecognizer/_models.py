@@ -12,7 +12,7 @@ from enum import Enum
 from ._helpers import get_field_scalar_value
 
 
-def get_elements(field, ocr_result):
+def get_elements(field, read_result):
     elements = []
     try:
         for item in field.elements:
@@ -21,11 +21,11 @@ def get_elements(field, ocr_result):
             line = nums[1]
             if len(nums) == 3:
                 word = nums[2]
-                ocr_word = ocr_result[read].lines[line].words[word]
+                ocr_word = read_result[read].lines[line].words[word]
                 extracted_word = ExtractedWord._from_generated(ocr_word, page=read+1)
                 elements.append(extracted_word)
                 continue
-            ocr_line = ocr_result[read].lines[line]
+            ocr_line = read_result[read].lines[line]
             extracted_line = ExtractedLine._from_generated(ocr_line, page=read+1)
             elements.append(extracted_line)
         return elements
@@ -183,15 +183,15 @@ class FieldValue(object):
         self.elements = kwargs.get("elements", None)
 
     @classmethod
-    def _from_generated(cls, field, elements):
+    def _from_generated(cls, field, read_result):
         if field is None:
             return field
 
         if field.type == "array":
-            return [FieldValue._from_generated(field, elements) for field in field.value_array]
+            return [FieldValue._from_generated(field, read_result) for field in field.value_array]
 
         if field.type == "object":
-            return {key: FieldValue._from_generated(value, elements) for key, value in field.value_object.items()}
+            return {key: FieldValue._from_generated(value, read_result) for key, value in field.value_object.items()}
         return cls(
             value=get_field_scalar_value(field),
             text=field.text,
@@ -203,7 +203,7 @@ class FieldValue(object):
             ) if field.bounding_box else None,
             confidence=field.confidence,
             page_number=field.page,
-            elements=get_elements(field, elements) if elements else None
+            elements=get_elements(field, read_result) if field.elements else None
         )
 
 
@@ -250,14 +250,14 @@ class ReceiptItem(object):
         self.total_price = kwargs.get("total_price", None)
 
     @classmethod
-    def _from_generated(cls, items, elements):
+    def _from_generated(cls, items, read_result):
         try:
             receipt_item = items.value_array
             return [cls(
-                name=FieldValue._from_generated(item.value_object.get("Name"), elements),
-                quantity=FieldValue._from_generated(item.value_object.get("Quantity"), elements),
-                item_price=FieldValue._from_generated(item.value_object.get("Price"), elements),
-                total_price=FieldValue._from_generated(item.value_object.get("TotalPrice"), elements),
+                name=FieldValue._from_generated(item.value_object.get("Name"), read_result),
+                quantity=FieldValue._from_generated(item.value_object.get("Quantity"), read_result),
+                item_price=FieldValue._from_generated(item.value_object.get("Price"), read_result),
+                total_price=FieldValue._from_generated(item.value_object.get("TotalPrice"), read_result),
             ) for item in receipt_item]
         except AttributeError:
             return None
@@ -449,7 +449,7 @@ class TableCell(object):
         self.elements = kwargs.get('elements', None)
 
     @classmethod
-    def _from_generated(cls, cell, elements):
+    def _from_generated(cls, cell, read_result):
         return cls(
             text=cell.text,
             row_index=cell.row_index,
@@ -465,7 +465,7 @@ class TableCell(object):
             confidence=cell.confidence,
             is_header=cell.is_header or False,
             is_footer=cell.is_footer or False,
-            elements=get_elements(cell, elements) if elements else None
+            elements=get_elements(cell, read_result) if cell.elements else None
         )
 
 
@@ -697,10 +697,10 @@ class ExtractedField(object):
         self.confidence = kwargs.get('confidence', None)
 
     @classmethod
-    def _from_generated(cls, field, elements):
+    def _from_generated(cls, field, read_result):
         return cls(
-            name=ExtractedText._from_generated(field.key, elements),
-            value=ExtractedText._from_generated(field.value, elements),
+            name=ExtractedText._from_generated(field.key, read_result),
+            value=ExtractedText._from_generated(field.value, read_result),
             confidence=field.confidence
         )
 
@@ -722,7 +722,7 @@ class ExtractedText(object):
         self.elements = kwargs.get('elements', None)
 
     @classmethod
-    def _from_generated(cls, field, elements):
+    def _from_generated(cls, field, read_result):
         return cls(
             text=field.text,
             bounding_box=BoundingBox(
@@ -731,7 +731,7 @@ class ExtractedText(object):
                 bottom_right=Point(x=field.bounding_box[4], y=field.bounding_box[5]),
                 bottom_left=Point(x=field.bounding_box[6], y=field.bounding_box[7])
             ) if field.bounding_box else None,
-            elements=get_elements(field.elements, elements) if elements else None
+            elements=get_elements(field.elements, read_result) if field.elements else None
         )
 
 

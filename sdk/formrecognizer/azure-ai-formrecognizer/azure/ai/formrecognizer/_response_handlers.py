@@ -22,11 +22,10 @@ from ._models import (
 )
 
 
-def prepare_receipt_result(response, include_elements):
+def prepare_receipt_result(response):
     receipts = []
     read_result = response.analyze_result.read_results
     document_result = response.analyze_result.document_results
-    elements = read_result if include_elements else None
     page_metadata = PageMetadata._from_generated(read_result)
 
     for page in document_result:
@@ -38,23 +37,23 @@ def prepare_receipt_result(response, include_elements):
             receipts.append(receipt)
             continue
         receipt = ExtractedReceipt(
-            merchant_address=FieldValue._from_generated(page.fields.get("MerchantAddress", None), elements),
-            merchant_name=FieldValue._from_generated(page.fields.get("MerchantName", None), elements),
-            merchant_phone_number=FieldValue._from_generated(page.fields.get("MerchantPhoneNumber", None), elements),
+            merchant_address=FieldValue._from_generated(page.fields.get("MerchantAddress", None), read_result),
+            merchant_name=FieldValue._from_generated(page.fields.get("MerchantName", None), read_result),
+            merchant_phone_number=FieldValue._from_generated(page.fields.get("MerchantPhoneNumber", None), read_result),
             receipt_type=ReceiptType._from_generated(page.fields.get("ReceiptType", None)),
-            receipt_items=ReceiptItem._from_generated(page.fields.get("Items", None), elements),
-            subtotal=FieldValue._from_generated(page.fields.get("Subtotal", None), elements),
-            tax=FieldValue._from_generated(page.fields.get("Tax", None), elements),
-            tip=FieldValue._from_generated(page.fields.get("Tip", None), elements),
-            total=FieldValue._from_generated(page.fields.get("Total", None), elements),
-            transaction_date=FieldValue._from_generated(page.fields.get("TransactionDate", None), elements),
-            transaction_time=FieldValue._from_generated(page.fields.get("TransactionTime", None), elements),
+            receipt_items=ReceiptItem._from_generated(page.fields.get("Items", None), read_result),
+            subtotal=FieldValue._from_generated(page.fields.get("Subtotal", None), read_result),
+            tax=FieldValue._from_generated(page.fields.get("Tax", None), read_result),
+            tip=FieldValue._from_generated(page.fields.get("Tip", None), read_result),
+            total=FieldValue._from_generated(page.fields.get("Total", None), read_result),
+            transaction_date=FieldValue._from_generated(page.fields.get("TransactionDate", None), read_result),
+            transaction_time=FieldValue._from_generated(page.fields.get("TransactionTime", None), read_result),
             page_range=PageRange(first_page=page.page_range[0], last_page=page.page_range[1]),
             page_metadata=page_metadata
         )
 
         receipt.fields = {
-            key: FieldValue._from_generated(value, elements)
+            key: FieldValue._from_generated(value, read_result)
             for key, value in page.fields.items()
             if key not in ["ReceiptType", "Items"]  # these two are not represented by FieldValue in SDK
         }
@@ -62,7 +61,7 @@ def prepare_receipt_result(response, include_elements):
     return receipts
 
 
-def prepare_tables(page, elements):
+def prepare_tables(page, read_result):
     if not page.tables:
         return page.tables
 
@@ -71,36 +70,34 @@ def prepare_tables(page, elements):
             row_count=table.rows,
             column_count=table.columns,
             page_number=page.page,
-            cells=[TableCell._from_generated(cell, elements) for cell in table.cells],
+            cells=[TableCell._from_generated(cell, read_result) for cell in table.cells],
         ) for table in page.tables
     ]
 
 
-def prepare_layout_result(response, include_elements):
+def prepare_layout_result(response):
     pages = []
     read_result = response.analyze_result.read_results
-    elements = read_result if include_elements else None
 
     for page in response.analyze_result.page_results:
         result_page = ExtractedLayoutPage(
             page_number=page.page,
-            tables=prepare_tables(page, elements),
+            tables=prepare_tables(page, read_result),
             page_metadata=PageMetadata._from_generated_page_index(read_result, page.page-1)
         )
         pages.append(result_page)
     return pages
 
 
-def prepare_unlabeled_result(response, include_elements):
+def prepare_unlabeled_result(response):
     extracted_pages = []
     read_result = response.analyze_result.read_results
-    elements = read_result if include_elements else None
 
     for page in response.analyze_result.page_results:
         result_page = ExtractedPage(
             page_number=page.page,
-            tables=prepare_tables(page, elements),
-            fields=[ExtractedField._from_generated(item, elements)
+            tables=prepare_tables(page, read_result),
+            fields=[ExtractedField._from_generated(item, read_result)
                     for item in page.key_value_pairs] if page.key_value_pairs else None,
             form_type_id=page.cluster_id,
             page_metadata=PageMetadata._from_generated_page_index(read_result, page.page-1)
@@ -110,13 +107,11 @@ def prepare_unlabeled_result(response, include_elements):
     return extracted_pages
 
 
-def prepare_labeled_result(response, include_elements):
+def prepare_labeled_result(response):
     read_result = response.analyze_result.read_results
     page_result = response.analyze_result.page_results
-    elements = read_result if include_elements else None
-
     page_metadata = PageMetadata._from_generated(read_result)
-    tables = [prepare_tables(page, elements) for page in page_result]
+    tables = [prepare_tables(page, read_result) for page in page_result]
 
     result = []
 
@@ -127,7 +122,7 @@ def prepare_labeled_result(response, include_elements):
                 last_page=document.page_range[1]
             ),
             fields={
-                label: FieldValue._from_generated(value, elements)
+                label: FieldValue._from_generated(value, read_result)
                 for label, value
                 in document.fields.items()
             },
