@@ -41,9 +41,9 @@ def pack_continuation_token(response):
 
 
 def unpack_continuation_token(token):
-    unpakced_token = json.loads(base64.b64decode(token))
-    next_link = unpakced_token["nextLink"]
-    next_page_parameters = unpakced_token["nextPageParameters"]
+    unpacked_token = json.loads(base64.b64decode(token))
+    next_link = unpacked_token["nextLink"]
+    next_page_parameters = unpacked_token["nextPageParameters"]
     next_page_request = SearchRequest.deserialize(next_page_parameters)
     return next_link, next_page_request
 
