@@ -36,7 +36,7 @@ def pack_continuation_token(response):
 
 
 def unpack_continuation_token(token):
-    api_version, next_link, next_page_parameters = json.loads(base64.b64decode(token))
+    _, next_link, next_page_parameters = json.loads(base64.b64decode(token))
     next_page_request = SearchRequest.deserialize(next_page_parameters)
     return next_link, next_page_request
 
