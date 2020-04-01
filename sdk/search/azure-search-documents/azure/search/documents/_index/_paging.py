@@ -25,17 +25,18 @@ def convert_search_result(result):
 
 
 def pack_continuation_token(response):
+    api_version = "2019-05-06-Preview"
     if response.next_page_parameters is not None:
         return base64.b64encode(
             json.dumps(
-                [response.next_link, response.next_page_parameters.serialize()]
+                [api_version, response.next_link, response.next_page_parameters.serialize()]
             ).encode("utf-8")
         )
     return None
 
 
 def unpack_continuation_token(token):
-    next_link, next_page_parameters = json.loads(base64.b64decode(token))
+    api_version, next_link, next_page_parameters = json.loads(base64.b64decode(token))
     next_page_request = SearchRequest.deserialize(next_page_parameters)
     return next_link, next_page_request
 
