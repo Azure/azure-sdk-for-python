@@ -27,6 +27,7 @@ import datetime
 import json
 import re
 import types
+import platform
 import unittest
 try:
     from unittest import mock
@@ -117,8 +118,8 @@ def deserialization_cb():
         return json.loads(pipeline_response.http_response.text())
     return cb
 
-
-def test_delay_extraction():
+@pytest.fixture
+def polling_response():
     polling = LROBasePolling()
     headers = {}
 
@@ -133,9 +134,18 @@ def test_delay_extraction():
         ),
         None  # context
     )
+    return polling, headers
+
+def test_delay_extraction_int(polling_response):
+    polling, headers = polling_response
 
     headers['retry-after'] = "10"
     assert polling._extract_delay() == 10
+
+
+@pytest.mark.skipif(platform.python_implementation() == 'PyPy', reason="https://stackoverflow.com/questions/11146725/isinstance-and-mocking")
+def test_delay_extraction_httpdate(polling_response):
+    polling, headers = polling_response
 
     # Test that I need to retry exactly one hour after, by mocking "now"
     headers['retry-after'] = "Mon, 20 Nov 1995 19:12:08 -0500"
