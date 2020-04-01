@@ -167,7 +167,7 @@ class CloudError(Model):
 
 
 class ConnectionState(Model):
-    """ConnectionState Information.
+    """ConnectionState information.
 
     :param status: Status of the connection. Possible values include:
      'Pending', 'Approved', 'Rejected', 'Disconnected'
@@ -587,6 +587,8 @@ class EventChannel(Resource):
      'Canceled', 'Failed'
     :vartype provisioning_state: str or
      ~azure.mgmt.eventgrid.models.EventChannelProvisioningState
+    :param filter: Information about the filter for the event channel.
+    :type filter: ~azure.mgmt.eventgrid.models.EventChannelFilter
     """
 
     _validation = {
@@ -603,13 +605,15 @@ class EventChannel(Resource):
         'source': {'key': 'properties.source', 'type': 'EventChannelSource'},
         'destination': {'key': 'properties.destination', 'type': 'EventChannelDestination'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'filter': {'key': 'properties.filter', 'type': 'EventChannelFilter'},
     }
 
-    def __init__(self, *, source=None, destination=None, **kwargs) -> None:
+    def __init__(self, *, source=None, destination=None, filter=None, **kwargs) -> None:
         super(EventChannel, self).__init__(**kwargs)
         self.source = source
         self.destination = destination
         self.provisioning_state = None
+        self.filter = filter
 
 
 class EventChannelDestination(Model):
@@ -641,6 +645,48 @@ class EventChannelDestination(Model):
         self.azure_subscription_id = azure_subscription_id
         self.resource_group = resource_group
         self.partner_topic_name = partner_topic_name
+
+
+class EventChannelFilter(Model):
+    """Filter for the Event Channel.
+
+    :param subject_begins_with: An optional string to filter events for an
+     event channel based on a resource path prefix.
+     The format of this depends on the publisher of the events. Wildcard
+     characters are not supported in this path.
+    :type subject_begins_with: str
+    :param subject_ends_with: An optional string to filter events for an event
+     channel based on a resource path suffix.
+     Wildcard characters are not supported in this path.
+    :type subject_ends_with: str
+    :param included_event_types: A list of applicable event types that need to
+     be part of the event channel. If it is desired to subscribe to all default
+     event types, set the IncludedEventTypes to null.
+    :type included_event_types: list[str]
+    :param is_subject_case_sensitive: Specifies if the SubjectBeginsWith and
+     SubjectEndsWith properties of the filter
+     should be compared in a case sensitive manner.
+    :type is_subject_case_sensitive: bool
+    :param advanced_filters: An array of advanced filters that are used for
+     filtering event channels.
+    :type advanced_filters: list[~azure.mgmt.eventgrid.models.AdvancedFilter]
+    """
+
+    _attribute_map = {
+        'subject_begins_with': {'key': 'subjectBeginsWith', 'type': 'str'},
+        'subject_ends_with': {'key': 'subjectEndsWith', 'type': 'str'},
+        'included_event_types': {'key': 'includedEventTypes', 'type': '[str]'},
+        'is_subject_case_sensitive': {'key': 'isSubjectCaseSensitive', 'type': 'bool'},
+        'advanced_filters': {'key': 'advancedFilters', 'type': '[AdvancedFilter]'},
+    }
+
+    def __init__(self, *, subject_begins_with: str=None, subject_ends_with: str=None, included_event_types=None, is_subject_case_sensitive: bool=None, advanced_filters=None, **kwargs) -> None:
+        super(EventChannelFilter, self).__init__(**kwargs)
+        self.subject_begins_with = subject_begins_with
+        self.subject_ends_with = subject_ends_with
+        self.included_event_types = included_event_types
+        self.is_subject_case_sensitive = is_subject_case_sensitive
+        self.advanced_filters = advanced_filters
 
 
 class EventChannelSource(Model):
@@ -1725,6 +1771,8 @@ class PartnerRegistrationEventTypesListResult(Model):
 class PartnerRegistrationUpdateParameters(Model):
     """Properties of the Partner Registration update.
 
+    :param tags: Tags of the partner registration resource.
+    :type tags: dict[str, str]
     :param partner_topic_type_name: Name of the partner topic type.
     :type partner_topic_type_name: str
     :param partner_topic_type_display_name: Display name of the partner topic
@@ -1750,6 +1798,7 @@ class PartnerRegistrationUpdateParameters(Model):
     """
 
     _attribute_map = {
+        'tags': {'key': 'tags', 'type': '{str}'},
         'partner_topic_type_name': {'key': 'partnerTopicTypeName', 'type': 'str'},
         'partner_topic_type_display_name': {'key': 'partnerTopicTypeDisplayName', 'type': 'str'},
         'partner_topic_type_description': {'key': 'partnerTopicTypeDescription', 'type': 'str'},
@@ -1758,8 +1807,9 @@ class PartnerRegistrationUpdateParameters(Model):
         'authorized_azure_subscription_ids': {'key': 'authorizedAzureSubscriptionIds', 'type': '[str]'},
     }
 
-    def __init__(self, *, partner_topic_type_name: str=None, partner_topic_type_display_name: str=None, partner_topic_type_description: str=None, setup_uri: str=None, logo_uri: str=None, authorized_azure_subscription_ids=None, **kwargs) -> None:
+    def __init__(self, *, tags=None, partner_topic_type_name: str=None, partner_topic_type_display_name: str=None, partner_topic_type_description: str=None, setup_uri: str=None, logo_uri: str=None, authorized_azure_subscription_ids=None, **kwargs) -> None:
         super(PartnerRegistrationUpdateParameters, self).__init__(**kwargs)
+        self.tags = tags
         self.partner_topic_type_name = partner_topic_type_name
         self.partner_topic_type_display_name = partner_topic_type_display_name
         self.partner_topic_type_description = partner_topic_type_description
@@ -1936,7 +1986,7 @@ class PrivateEndpoint(Model):
 
 
 class PrivateEndpointConnection(Resource):
-    """PrivateEndpointConnection resource information.
+    """PrivateEndpointConnection.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -2120,47 +2170,6 @@ class ServiceBusTopicEventSubscriptionDestination(EventSubscriptionDestination):
         super(ServiceBusTopicEventSubscriptionDestination, self).__init__(**kwargs)
         self.resource_id = resource_id
         self.endpoint_type = 'ServiceBusTopic'
-
-
-class SkuDefinitionsForResourceType(Model):
-    """Describes an EventGrid Resource Sku Definition.
-
-    :param resource_type: The Resource Type applicable for the Sku.
-    :type resource_type: str
-    :param skus: The Sku pricing tiers for the resource type.
-    :type skus: list[~azure.mgmt.eventgrid.models.ResourceSku]
-    """
-
-    _attribute_map = {
-        'resource_type': {'key': 'resourceType', 'type': 'str'},
-        'skus': {'key': 'skus', 'type': '[ResourceSku]'},
-    }
-
-    def __init__(self, *, resource_type: str=None, skus=None, **kwargs) -> None:
-        super(SkuDefinitionsForResourceType, self).__init__(**kwargs)
-        self.resource_type = resource_type
-        self.skus = skus
-
-
-class SkuDefinitionsForResourceTypeListResult(Model):
-    """List collection of Sku Definitions for each Resource Type.
-
-    :param value: A collection of Sku Definitions for each Resource Type.
-    :type value:
-     list[~azure.mgmt.eventgrid.models.SkuDefinitionsForResourceType]
-    :param next_link: A link for the next page of Sku Definitions.
-    :type next_link: str
-    """
-
-    _attribute_map = {
-        'value': {'key': 'value', 'type': '[SkuDefinitionsForResourceType]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-    }
-
-    def __init__(self, *, value=None, next_link: str=None, **kwargs) -> None:
-        super(SkuDefinitionsForResourceTypeListResult, self).__init__(**kwargs)
-        self.value = value
-        self.next_link = next_link
 
 
 class StorageBlobDeadLetterDestination(DeadLetterDestination):
@@ -2471,7 +2480,7 @@ class Topic(TrackedResource):
     :type location: str
     :param tags: Tags of the resource.
     :type tags: dict[str, str]
-    :param private_endpoint_connections: List of private endpoint connections.
+    :param private_endpoint_connections:
     :type private_endpoint_connections:
      list[~azure.mgmt.eventgrid.models.PrivateEndpointConnection]
     :ivar provisioning_state: Provisioning state of the topic. Possible values
