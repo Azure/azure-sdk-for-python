@@ -11,6 +11,11 @@ from typing import (  # pylint: disable=unused-import
     TYPE_CHECKING
 )
 
+try:
+    from urllib.parse import quote
+except ImportError:
+    from urllib2 import quote # type: ignore
+
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.async_paging import AsyncItemPaged
@@ -938,7 +943,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             blob_name = _get_blob_name(blob)
             req = HttpRequest(
                 "DELETE",
-                "/{}/{}".format(self.container_name, blob_name),
+                "/{}/{}".format(self.container_name, quote(blob_name, safe='~/')),
                 headers=header_parameters
             )
             req.format_parameters(query_parameters)

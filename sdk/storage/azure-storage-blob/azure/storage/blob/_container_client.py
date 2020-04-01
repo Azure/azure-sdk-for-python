@@ -1109,7 +1109,7 @@ class ContainerClient(StorageAccountHostsMixin):
             blob_name = _get_blob_name(blob)
             req = HttpRequest(
                 "DELETE",
-                "/{}/{}".format(self.container_name, blob_name),
+                "/{}/{}".format(self.container_name, quote(blob_name, safe='~/')),
                 headers=header_parameters
             )
             req.format_parameters(query_parameters)
