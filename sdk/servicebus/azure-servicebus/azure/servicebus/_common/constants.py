@@ -70,6 +70,7 @@ MGMT_REQUEST_PARTITION_KEY = 'partition-key'
 MGMT_REQUEST_VIA_PARTITION_KEY = 'via-partition-key'
 MGMT_REQUEST_DEAD_LETTER_REASON = 'deadletter-reason'
 MGMT_REQUEST_DEAD_LETTER_DESCRIPTION = 'deadletter-description'
+MGMT_REQUEST_OP_TYPE_ENTITY_MGMT = b"entity-mgmt"
 
 MESSAGE_COMPLETE = 'complete'
 MESSAGE_DEAD_LETTER = 'dead-letter'
@@ -77,7 +78,10 @@ MESSAGE_ABANDON = 'abandon'
 MESSAGE_DEFER = 'defer'
 MESSAGE_RENEW_LOCK = 'renew'
 
-# event_data.encoded_size < 255, batch encode overhead is 5, >=256, overhead is 8 each
+TOKEN_TYPE_JWT = b"jwt"
+TOKEN_TYPE_SASTOKEN = b"servicebus.windows.net:sastoken"
+
+# message.encoded_size < 255, batch encode overhead is 5, >=256, overhead is 8 each
 _BATCH_MESSAGE_OVERHEAD_COST = [5, 8]
 
 # Message annotation keys

@@ -386,7 +386,7 @@ class ReceivedMessage(PeekMessage):
         try:
             if self._receiver.session and self._receiver.session.expired:
                 raise SessionLockExpired(inner_exception=self._receiver.session.auto_renew_error)
-        except TypeError: #TODO: Exception: AttributeError?
+        except TypeError:
             pass
 
     @property

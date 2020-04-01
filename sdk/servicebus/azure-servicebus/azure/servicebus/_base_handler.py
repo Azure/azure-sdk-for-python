@@ -28,7 +28,9 @@ from .exceptions import (
 from ._common.utils import create_properties
 from ._common.constants import (
     CONTAINER_PREFIX,
-    MANAGEMENT_PATH_SUFFIX
+    MANAGEMENT_PATH_SUFFIX,
+    TOKEN_TYPE_SASTOKEN,
+    MGMT_REQUEST_OP_TYPE_ENTITY_MGMT
 )
 
 if TYPE_CHECKING:
@@ -99,7 +101,7 @@ class ServiceBusSharedKeyCredential(object):
         # type: (str, str) -> None
         self.policy = policy
         self.key = key
-        self.token_type = b"servicebus.windows.net:sastoken"
+        self.token_type = TOKEN_TYPE_SASTOKEN
 
     def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
         # type: (str, Any) -> _AccessToken
@@ -246,7 +248,7 @@ class BaseHandler(object):  # pylint:disable=too-many-instance-attributes
             return self._handler.mgmt_request(
                 mgmt_msg,
                 mgmt_operation,
-                op_type=b"entity-mgmt",
+                op_type=MGMT_REQUEST_OP_TYPE_ENTITY_MGMT,
                 node=self._mgmt_target.encode(self._config.encoding),
                 timeout=5000,
                 callback=callback

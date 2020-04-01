@@ -21,7 +21,9 @@ from uamqp import authentication
 from ..exceptions import AutoLockRenewFailed, AutoLockRenewTimeout
 from .._version import VERSION as sdk_version
 from .constants import (
-    JWT_TOKEN_SCOPE
+    JWT_TOKEN_SCOPE,
+    TOKEN_TYPE_JWT,
+    TOKEN_TYPE_SASTOKEN
 )
 
 _log = logging.getLogger(__name__)
@@ -135,8 +137,8 @@ def create_authentication(client):
         # ignore mypy's warning because token_type is Optional
         token_type = client._credential.token_type  # type: ignore
     except AttributeError:
-        token_type = b"jwt"
-    if token_type == b"servicebus.windows.net:sastoken":
+        token_type = TOKEN_TYPE_JWT
+    if token_type == TOKEN_TYPE_SASTOKEN:
         auth = authentication.JWTTokenAuth(
             client._auth_uri,
             client._auth_uri,
