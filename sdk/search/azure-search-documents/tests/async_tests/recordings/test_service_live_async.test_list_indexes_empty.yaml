@@ -3,28 +3,28 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json;odata.metadata=none
+      - application/json;odata.metadata=minimal
       User-Agent:
       - azsdk-python-search-documents/1.0.0b2 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       api-key:
-      - D65A80EA1763B20275FB2AED50855D0A
+      - 72C48CC5CD2D6887604017BA463E5AD8
     method: GET
-    uri: https://search22c31514.search.windows.net/indexes('drgqefsg')/docs/$count?api-version=2019-05-06-Preview
+    uri: https://searchd36d1383.search.windows.net/indexes?api-version=2019-05-06-Preview
   response:
     body:
-      string: "\uFEFF10"
+      string: '{"@odata.context":"https://searchd36d1383.search.windows.net/$metadata#indexes","value":[]}'
     headers:
       cache-control: no-cache
       content-encoding: gzip
-      content-length: '127'
-      content-type: text/plain
-      date: Tue, 31 Mar 2020 17:40:31 GMT
-      elapsed-time: '49'
+      content-length: '200'
+      content-type: application/json; odata.metadata=minimal
+      date: Tue, 31 Mar 2020 17:47:53 GMT
+      elapsed-time: '53'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: b8366d18-7376-11ea-a04c-5cf37071153c
+      request-id: bf1320c8-7377-11ea-a18b-5cf37071153c
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
@@ -34,8 +34,8 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - search22c31514.search.windows.net
-        - /indexes('drgqefsg')/docs/$count
+        - searchd36d1383.search.windows.net
+        - /indexes
         - api-version=2019-05-06-Preview
         - ''
 version: 1

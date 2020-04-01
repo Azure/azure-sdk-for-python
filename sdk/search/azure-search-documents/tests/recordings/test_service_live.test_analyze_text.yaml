@@ -1,38 +1,37 @@
 interactions:
 - request:
-    body: '{"search": "mot", "suggesterName": "sg"}'
+    body: '{"text": "One''s <two/>", "analyzer": "standard.lucene"}'
     headers:
       Accept:
-      - application/json;odata.metadata=none
+      - application/json;odata.metadata=minimal
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       Content-Length:
-      - '40'
+      - '55'
       Content-Type:
       - application/json
       User-Agent:
       - azsdk-python-search-documents/1.0.0b2 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       api-key:
-      - A2B76F10EF4B449A928BF1076E6B66CF
+      - 1E6460D60590FF5912219E29955BA73D
     method: POST
-    uri: https://searcha7cc0b96.search.windows.net/indexes('drgqefsg')/docs/search.post.suggest?api-version=2019-05-06-Preview
+    uri: https://search4d10e85.search.windows.net/indexes('drgqefsg')/search.analyze?api-version=2019-05-06-Preview
   response:
     body:
-      string: '{"value":[{"@search.text":"Cheapest hotel in town. Infact, a motel.","hotelId":"2"},{"@search.text":"Secret
-        Point Motel","hotelId":"9"}]}'
+      string: '{"@odata.context":"https://search4d10e85.search.windows.net/$metadata#Microsoft.Azure.Search.V2019_05_06_Preview.AnalyzeResult","tokens":[{"token":"one''s","startOffset":0,"endOffset":5,"position":0},{"token":"two","startOffset":7,"endOffset":10,"position":1}]}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '137'
+      - '260'
       content-type:
-      - application/json; odata.metadata=none
+      - application/json; odata.metadata=minimal
       date:
-      - Tue, 31 Mar 2020 17:37:11 GMT
+      - Tue, 31 Mar 2020 17:38:13 GMT
       elapsed-time:
-      - '230'
+      - '22'
       expires:
       - '-1'
       odata-version:
@@ -42,7 +41,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - 40f40230-7376-11ea-b23a-5cf37071153c
+      - 65b43be8-7376-11ea-b65e-5cf37071153c
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:

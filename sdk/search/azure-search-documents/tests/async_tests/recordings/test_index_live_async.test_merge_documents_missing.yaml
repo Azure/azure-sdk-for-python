@@ -10,9 +10,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-search/1.0.0b2 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
+      - azsdk-python-search-documents/1.0.0b2 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       api-key:
-      - E9C841AA4C505EA80436C967A6F701BE
+      - 810746AF80D7347379C5970815F0C2FA
     method: POST
     uri: https://searchdde14ab.search.windows.net/indexes('drgqefsg')/docs/search.index?api-version=2019-05-06-Preview
   response:
@@ -24,28 +24,35 @@ interactions:
       content-encoding: gzip
       content-length: '225'
       content-type: application/json; odata.metadata=none
-      date: Thu, 19 Mar 2020 00:21:02 GMT
-      elapsed-time: '86'
+      date: Tue, 31 Mar 2020 17:44:04 GMT
+      elapsed-time: '172'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 83e9990e-6977-11ea-bb71-8c8590507855
+      request-id: 3700fff4-7377-11ea-b38d-5cf37071153c
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
       code: 207
       message: Multi-Status
-    url: https://searchdde14ab.search.windows.net/indexes('drgqefsg')/docs/search.index?api-version=2019-05-06-Preview
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - searchdde14ab.search.windows.net
+        - /indexes('drgqefsg')/docs/search.index
+        - api-version=2019-05-06-Preview
+        - ''
 - request:
     body: null
     headers:
       Accept:
       - application/json;odata.metadata=none
       User-Agent:
-      - azsdk-python-search/1.0.0b2 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
+      - azsdk-python-search-documents/1.0.0b2 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       api-key:
-      - E9C841AA4C505EA80436C967A6F701BE
+      - 810746AF80D7347379C5970815F0C2FA
     method: GET
     uri: https://searchdde14ab.search.windows.net/indexes('drgqefsg')/docs/$count?api-version=2019-05-06-Preview
   response:
@@ -56,28 +63,35 @@ interactions:
       content-encoding: gzip
       content-length: '127'
       content-type: text/plain
-      date: Thu, 19 Mar 2020 00:21:05 GMT
+      date: Tue, 31 Mar 2020 17:44:07 GMT
       elapsed-time: '3'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 85d1da92-6977-11ea-bb71-8c8590507855
+      request-id: 390b28b6-7377-11ea-bc59-5cf37071153c
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
       code: 200
       message: OK
-    url: https://searchdde14ab.search.windows.net/indexes('drgqefsg')/docs/$count?api-version=2019-05-06-Preview
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - searchdde14ab.search.windows.net
+        - /indexes('drgqefsg')/docs/$count
+        - api-version=2019-05-06-Preview
+        - ''
 - request:
     body: null
     headers:
       Accept:
       - application/json;odata.metadata=none
       User-Agent:
-      - azsdk-python-search/1.0.0b2 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
+      - azsdk-python-search-documents/1.0.0b2 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       api-key:
-      - E9C841AA4C505EA80436C967A6F701BE
+      - 810746AF80D7347379C5970815F0C2FA
     method: GET
     uri: https://searchdde14ab.search.windows.net/indexes('drgqefsg')/docs('1000')?api-version=2019-05-06-Preview
   response:
@@ -86,25 +100,32 @@ interactions:
     headers:
       cache-control: no-cache
       content-length: '0'
-      date: Thu, 19 Mar 2020 00:21:05 GMT
-      elapsed-time: '4'
+      date: Tue, 31 Mar 2020 17:44:07 GMT
+      elapsed-time: '5'
       expires: '-1'
       pragma: no-cache
-      request-id: 85d7a3c8-6977-11ea-bb71-8c8590507855
+      request-id: 391513d2-7377-11ea-ad3e-5cf37071153c
       strict-transport-security: max-age=15724800; includeSubDomains
     status:
       code: 404
       message: Not Found
-    url: https://searchdde14ab.search.windows.net/indexes('drgqefsg')/docs('1000')?api-version=2019-05-06-Preview
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - searchdde14ab.search.windows.net
+        - /indexes('drgqefsg')/docs('1000')
+        - api-version=2019-05-06-Preview
+        - ''
 - request:
     body: null
     headers:
       Accept:
       - application/json;odata.metadata=none
       User-Agent:
-      - azsdk-python-search/1.0.0b2 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
+      - azsdk-python-search-documents/1.0.0b2 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       api-key:
-      - E9C841AA4C505EA80436C967A6F701BE
+      - 810746AF80D7347379C5970815F0C2FA
     method: GET
     uri: https://searchdde14ab.search.windows.net/indexes('drgqefsg')/docs('4')?api-version=2019-05-06-Preview
   response:
@@ -116,17 +137,24 @@ interactions:
       content-encoding: gzip
       content-length: '422'
       content-type: application/json; odata.metadata=none
-      date: Thu, 19 Mar 2020 00:21:05 GMT
-      elapsed-time: '9'
+      date: Tue, 31 Mar 2020 17:44:07 GMT
+      elapsed-time: '12'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 85dc6e9e-6977-11ea-bb71-8c8590507855
+      request-id: 391ebe4c-7377-11ea-81e1-5cf37071153c
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
       code: 200
       message: OK
-    url: https://searchdde14ab.search.windows.net/indexes('drgqefsg')/docs('4')?api-version=2019-05-06-Preview
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - searchdde14ab.search.windows.net
+        - /indexes('drgqefsg')/docs('4')
+        - api-version=2019-05-06-Preview
+        - ''
 version: 1
