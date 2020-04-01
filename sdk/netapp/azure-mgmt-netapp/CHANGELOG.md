@@ -1,5 +1,18 @@
 # Release History
 
+## 1.0.0 (2020-04-02)
+
+**Breaking changes**
+
+  - Parameter endpoint_type of model ReplicationObject is now required
+  - Model Volume no longer has parameter is_restoring
+  - Model ReplicationObject no longer has parameter remote_volume_region
+  - Removed operation VolumesOperations.break_replication
+  - Removed operation VolumesOperations.replication_status_method
+  - Removed operation VolumesOperations.resync_replication
+  - Removed operation VolumesOperations.delete_replication
+  - Removed operation VolumesOperations.authorize_replication
+
 ## 0.8.0 (2020-01-12)
 
 **Features**
