@@ -116,14 +116,5 @@ async def test_receive_connection_idle_timeout_and_reconnect_async(connstr_sende
 
             await consumer._handler.do_work_async()
             assert consumer._handler._connection._state == c_uamqp.ConnectionState.DISCARDING
-
-            duration = 10
-            now_time = time.time()
-            end_time = now_time + duration
-
-            while now_time < end_time:
-                await consumer.receive()
-                await asyncio.sleep(0.01)
-                now_time = time.time()
-
+            await consumer.receive(batch=False, max_batch_size=1, max_wait_time=10)
             assert on_event_received.event.body_as_str() == "Event"
