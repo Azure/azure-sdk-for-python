@@ -4,43 +4,27 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from azure.core.polling.base_polling import LROBasePolling, _FAILED
+from azure.core.polling.base_polling import LocationPolling
 
 
-def _finished(pipeline_response, status):
-    if hasattr(status, "value"):
-        status = status.value
-    if status.lower() == "succeeded" and \
-            pipeline_response.context['deserialized_data']['modelInfo']['status'] != "creating":
-        return True
-    return str(status).lower() in _FAILED
+class TrainingPolling(LocationPolling):
 
-
-class TrainingPolling(LROBasePolling):
-
-    def __init__(
-        self, timeout=30, lro_algorithms=None, lro_options=None, **operation_config
-    ):
-        super(TrainingPolling, self).__init__(timeout, lro_algorithms, lro_options, **operation_config)
-
-    def finished(self):
-        """Is this polling finished?
-        :rtype: bool
+    def get_polling_url(self):
+        # type: () -> str
+        """Return the polling URL.
         """
-        return _finished(self._pipeline_response, self._status)
+        return self._location_url + "?includeKeys=true"
 
-    def request_status(self, status_link):
-        """Do a simple GET to this status link.
+    def get_status(self, pipeline_response):
+        # type: (PipelineResponseType) -> str
+        """Process the latest status update retrieved from a 'location' header.
 
-        This method re-inject 'x-ms-client-request-id'.
-
-        :rtype: azure.core.pipeline.PipelineResponse
+        :param azure.core.pipeline.PipelineResponse response: latest REST call response.
+        :raises: BadResponse if response has no body and not status 200.
         """
-        params = {"includeKeys": True}
-        request = self._client.get(status_link, params=params)
-        # Re-inject 'x-ms-client-request-id' while polling
-        if "request_id" not in self._operation_config:
-            self._operation_config["request_id"] = self._get_request_id()
-        return self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **self._operation_config
-        )
+
+        if pipeline_response.http_response.status_code == 200:
+            if pipeline_response.context['deserialized_data']['modelInfo']['status'] != "creating":
+                return "Succeeded"
+            return "InProgress"
+        return "Failed"
