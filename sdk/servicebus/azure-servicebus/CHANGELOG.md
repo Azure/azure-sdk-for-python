@@ -29,7 +29,6 @@ Version 7.0.0b1 is a preview of our efforts to create a client library that is u
     * `open` no longer exists, and is performed implicitly if needed.
 * Normalized top level client parameters with idiomatic and consistent naming.
     * Renamed `debug` in `ServiceBusClient` initializer to `logging_enable`.
-    * Renamed `timeout` to `idle_timeout` in all locations.
     * Renamed `service_namespace` in `ServiceBusClient` initializer to `fully_qualified_namespace`.
 * New error hierarchy, with more specific semantics
     * `azure.servicebus.exceptions.ServiceBusError`

@@ -11,7 +11,7 @@ import os
 import pytest
 import time
 import uuid
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from uamqp.errors import VendorLinkDetach
 from azure.servicebus.aio import ServiceBusClient, Message, ReceivedMessage, AutoLockRenew
@@ -472,12 +472,12 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
             messages = []
             async with sb_client.get_queue_receiver(servicebus_queue.name, session_id=session_id, idle_timeout=5, mode=ReceiveSettleMode.PeekLock, prefetch=20) as session:
                 renewer.register(session.session, timeout=60)
-                print("Registered lock renew thread", session.session.locked_until_utc, datetime.utcnow())
+                print("Registered lock renew thread", session.session.locked_until_utc, datetime.now(timezone.utc))
                 with pytest.raises(SessionLockExpired):
                     async for message in session:
                         if not messages:
                             await asyncio.sleep(45)
-                            print("First sleep {}".format(session.session.locked_until_utc - datetime.utcnow()))
+                            print("First sleep {}".format(session.session.locked_until_utc - datetime.now(timezone.utc)))
                             assert not session.session.expired
                             with pytest.raises(TypeError):
                                 message.expired
@@ -490,7 +490,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
 
                         elif len(messages) == 1:
                             await asyncio.sleep(45)
-                            print("Second sleep {}".format(session.session.locked_until_utc - datetime.utcnow()))
+                            print("Second sleep {}".format(session.session.locked_until_utc - datetime.now(timezone.utc)))
                             assert session.session.expired
                             assert isinstance(session.session.auto_renew_error, AutoLockRenewTimeout)
                             try:
@@ -577,7 +577,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
             servicebus_namespace_connection_string, logging_enable=True) as sb_client:
             import uuid
             session_id = str(uuid.uuid4())
-            enqueue_time = (datetime.utcnow() + timedelta(minutes=2)).replace(microsecond=0)
+            enqueue_time = (datetime.now(timezone.utc) + timedelta(minutes=2)).replace(microsecond=0)
             async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                 content = str(uuid.uuid4())
                 message_id = uuid.uuid4()
@@ -615,7 +615,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
             servicebus_namespace_connection_string, logging_enable=True) as sb_client:
             import uuid
             session_id = str(uuid.uuid4())
-            enqueue_time = (datetime.utcnow() + timedelta(minutes=2)).replace(microsecond=0)
+            enqueue_time = (datetime.now(timezone.utc) + timedelta(minutes=2)).replace(microsecond=0)
             messages = []
             async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                 content = str(uuid.uuid4())
@@ -656,7 +656,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
             servicebus_namespace_connection_string, logging_enable=True) as sb_client:
 
             session_id = str(uuid.uuid4())
-            enqueue_time = (datetime.utcnow() + timedelta(minutes=2)).replace(microsecond=0)
+            enqueue_time = (datetime.now(timezone.utc) + timedelta(minutes=2)).replace(microsecond=0)
             async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                 message_a = Message("Test scheduled message", session_id=session_id)
                 message_b = Message("Test scheduled message", session_id=session_id)
@@ -717,7 +717,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
             servicebus_namespace_connection_string, logging_enable=True) as sb_client:
 
             sessions = []
-            start_time = datetime.utcnow()
+            start_time = datetime.now(timezone.utc)
             for i in range(5):
                 sessions.append(str(uuid.uuid4()))
 
@@ -747,7 +747,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
             servicebus_namespace_connection_string, logging_enable=True) as sb_client:
 
             sessions = []
-            start_time = datetime.utcnow()
+            start_time = datetime.now(timezone.utc)
             for i in range(5):
                 sessions.append(str(uuid.uuid4()))
 

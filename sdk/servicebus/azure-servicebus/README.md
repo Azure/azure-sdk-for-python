@@ -30,7 +30,7 @@ To use this package, you must have:
 * Python 2.7, 3.5, 3.6, 3.7 or 3.8 - [Install Python][python]
 
 
-If you need an azure service bus namespace, you can create it via the [Azure Portal][azure_namespace_creation].
+If you need an Azure service bus namespace, you can create it via the [Azure Portal][azure_namespace_creation].
 If you do not wish to use the graphical portal UI, you can use the Azure CLI via [Cloud Shell][cloud_shell_bash], or Azure CLI run locally, to create one with this Azure CLI command:
 
 ```Bash
@@ -91,7 +91,7 @@ The following sections provide several code snippets covering some of the most c
 
 ### Send to a queue
 
-This example sends a message to a queue that is assumed to already exist, created via the azure portal or az commands.
+This example sends a message to a queue that is assumed to already exist, created via the Azure portal or az commands.
 
 ```Python
 from azure.servicebus import ServiceBusClient

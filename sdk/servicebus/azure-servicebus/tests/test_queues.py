@@ -10,7 +10,7 @@ import os
 import pytest
 import time
 import uuid
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from azure.servicebus import ServiceBusClient, AutoLockRenew
 from azure.servicebus._common.message import Message, PeekMessage, ReceivedMessage, BatchMessage
@@ -768,8 +768,8 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 finally:
                     messages[0].complete()
                     messages[1].complete()
-                    assert (messages[2].locked_until_utc - datetime.utcnow()) <= timedelta(seconds=60)
-                    time.sleep((messages[2].locked_until_utc - datetime.utcnow()).total_seconds())
+                    assert (messages[2].locked_until_utc - datetime.now(timezone.utc)) <= timedelta(seconds=60)
+                    time.sleep((messages[2].locked_until_utc - datetime.now(timezone.utc)).total_seconds())
                     with pytest.raises(MessageLockExpired):
                         messages[2].complete()
     
@@ -799,12 +799,12 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                         messages.append(message)
                         assert not message.expired
                         renewer.register(message, timeout=60)
-                        print("Registered lock renew thread", message.locked_until_utc, datetime.utcnow())
+                        print("Registered lock renew thread", message.locked_until_utc, datetime.now(timezone.utc))
                         time.sleep(50)
                         print("Finished first sleep", message.locked_until_utc)
                         assert not message.expired
-                        time.sleep((message.locked_until_utc - datetime.utcnow()).total_seconds()+1)
-                        print("Finished second sleep", message.locked_until_utc, datetime.utcnow())
+                        time.sleep((message.locked_until_utc - datetime.now(timezone.utc)).total_seconds()+1)
+                        print("Finished second sleep", message.locked_until_utc, datetime.now(timezone.utc))
                         assert message.expired
                         try:
                             message.complete()
@@ -813,13 +813,13 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                             assert isinstance(e.inner_exception, AutoLockRenewTimeout)
                     else:
                         if message.expired:
-                            print("Remaining messages", message.locked_until_utc, datetime.utcnow())
+                            print("Remaining messages", message.locked_until_utc, datetime.now(timezone.utc))
                             assert message.expired
                             with pytest.raises(MessageLockExpired):
                                 message.complete()
                         else:
                             assert message.header.delivery_count >= 1
-                            print("Remaining messages", message.locked_until_utc, datetime.utcnow())
+                            print("Remaining messages", message.locked_until_utc, datetime.now(timezone.utc))
                             messages.append(message)
                             message.complete()
             renewer.shutdown()
@@ -930,7 +930,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             with sb_client.get_queue_receiver(servicebus_queue.name) as receiver:
                 messages = receiver.receive(timeout=10)
                 assert len(messages) == 1
-                time.sleep((messages[0].locked_until_utc - datetime.utcnow()).total_seconds()+1)
+                time.sleep((messages[0].locked_until_utc - datetime.now(timezone.utc)).total_seconds()+1)
                 assert messages[0].expired
                 with pytest.raises(MessageLockExpired):
                     messages[0].complete()
@@ -1060,7 +1060,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
         with ServiceBusClient.from_connection_string(
             servicebus_namespace_connection_string, logging_enable=False) as sb_client:
 
-            enqueue_time = (datetime.utcnow() + timedelta(minutes=2)).replace(microsecond=0)
+            enqueue_time = (datetime.now(timezone.utc) + timedelta(minutes=2)).replace(microsecond=0)
             with sb_client.get_queue_receiver(servicebus_queue.name) as receiver:
                 with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                     content = str(uuid.uuid4())
@@ -1097,7 +1097,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
         with ServiceBusClient.from_connection_string(
             servicebus_namespace_connection_string, logging_enable=False) as sb_client:
 
-            enqueue_time = (datetime.utcnow() + timedelta(minutes=2)).replace(microsecond=0)
+            enqueue_time = (datetime.now(timezone.utc) + timedelta(minutes=2)).replace(microsecond=0)
             with sb_client.get_queue_receiver(servicebus_queue.name,
                                               prefetch=20) as receiver:
                 with sb_client.get_queue_sender(servicebus_queue.name) as sender:
@@ -1139,7 +1139,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
         with ServiceBusClient.from_connection_string(
             servicebus_namespace_connection_string, logging_enable=False) as sb_client:
 
-            enqueue_time = (datetime.utcnow() + timedelta(minutes=2)).replace(microsecond=0)
+            enqueue_time = (datetime.now(timezone.utc) + timedelta(minutes=2)).replace(microsecond=0)
             with sb_client.get_queue_receiver(servicebus_queue.name) as receiver:
                 with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                     message_a = Message("Test scheduled message")
