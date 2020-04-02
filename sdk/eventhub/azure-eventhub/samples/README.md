@@ -43,7 +43,8 @@ Both [sync version](https://github.com/Azure/azure-sdk-for-python/tree/master/sd
 - [recv_with_checkpoint_by_batch.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub/samples/sync_samples/recv_with_checkpoint_by_batch.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub/samples/async_samples/recv_with_checkpoint_by_batch_async.py)) - Examples to receive events and do checkpoint by batch using blob checkpoint store:
     - Receive events and do checkpoint every fixed amount of events (e.g. checkpoint every 20 events) using blob checkpoint store
 
-- [receive_batch_with_checkpoint.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub/samples/sync_samples/receive_batch_with_checkpoint.py) ([async_version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub/samples/async_samples/receive_batch_with_checkpoint_async.py.py))
+- [receive_batch_with_checkpoint.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub/samples/sync_samples/receive_batch_with_checkpoint.py) ([async_version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub/samples/async_samples/receive_batch_with_checkpoint_async.py)) - Examples to receive events in batches and do checkpoint by the batch:
+    - Receive events in batches by calling `EventHubConsumer.receive_batch` and do checkpoint with the last event of that batch.
 
 - [recv_with_checkpoint_by_time_interval.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub/samples/sync_samples/recv_with_checkpoint_by_time_interval.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub/samples/async_samples/recv_with_checkpoint_by_time_interval_async.py)) - Examples to receive events and do checkpoint by time interval using blob checkpoint store:
     - Receive events and do checkpoint every fixed time interval (e.g. checkpoint every 20 seconds) using blob checkpoint store
@@ -59,7 +60,8 @@ Both [sync version](https://github.com/Azure/azure-sdk-for-python/tree/master/sd
 - [proxy.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub/samples/sync_samples/proxy.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub/samples/async_samples/proxy_async.py)) - Examples to send and receive events behind a proxy:
     - Send and receive events behind a proxy
 
-- [iot_hub_connection_string_receive_async.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub/samples/async_samples/iot_hub_connection_string_receive_async.py)
+- [iot_hub_connection_string_receive_async.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub/samples/async_samples/iot_hub_connection_string_receive_async.py) - Examples to receive events from an IoT Hub:
+    - Convert an IoT Hub connection string to the built-in Event Hub endpoint and receive events from it
 
 ## Prerequisites
 - Python 2.7, 3.5 or later.
