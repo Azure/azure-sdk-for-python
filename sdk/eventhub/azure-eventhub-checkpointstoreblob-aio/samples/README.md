@@ -5,7 +5,7 @@ languages:
 products:
   - azure
   - azure-event-hubs
-urlFragment: eventhub-samples
+urlFragment: eventhub-checkpointstore-aio-samples
 ---
 
 # Azure Event Hubs client library samples with persistent checkpointing for Python
