@@ -57,9 +57,10 @@ To create a client object, you will need the `endpoint` for your search service
 and a `credential` that allows you access:
 
 ```python
-from azure.search import SearchApiKeyCredential, SearchIndexClient
+from azure.core.credentials import AzureKeyCredential
+from azure.search import SearchIndexClient
 
-credential = SearchApiKeyCredential("<api key>")
+credential = AzureKeyCredential("<api key>")
 
 client = SearchIndexClient(endpoint="<service endpoint>",
                            index_name="<index name>",
@@ -79,8 +80,9 @@ It provides both synchronous and asynchronous operations to access a specific us
 ### Retrieve a specific document from an index
 Get a specific document from the index, e.f. obtain the document for hotel "23":
 ```python
-from azure.search import SearchApiKeyCredential, SearchIndexClient
-search_client = SearchIndexClient(service_endpoint, index_name, SearchApiKeyCredential(key))
+from azure.core.credentials import AzureKeyCredential
+from azure.search import SearchIndexClient
+search_client = SearchIndexClient(service_endpoint, index_name, AzureKeyCredential(key))
 
 result = search_client.get_document(key="23")
 
@@ -93,8 +95,9 @@ print("    Category: {}".format(result["Category"]))
 Search the entire index or documents matching a simple search text, e.g. find
 hotels with the text "spa":
 ```python
-from azure.search import SearchApiKeyCredential, SearchIndexClient
-search_client = SearchIndexClient(service_endpoint, index_name, SearchApiKeyCredential(key))
+from azure.core.credentials import AzureKeyCredential
+from azure.search import SearchIndexClient
+search_client = SearchIndexClient(service_endpoint, index_name, AzureKeyCredential(key))
 
 results = search_client.search(query="spa")
 
@@ -106,8 +109,9 @@ for result in results:
 Get search suggestions for related terms, e.g. find search suggestions for
 the term "coffee":
 ```python
-from azure.search import SearchApiKeyCredential, SearchIndexClient, SuggestQuery
-search_client = SearchIndexClient(service_endpoint, index_name, SearchApiKeyCredential(key))
+from azure.core.credentials import AzureKeyCredential
+from azure.search import SearchIndexClient, SuggestQuery
+search_client = SearchIndexClient(service_endpoint, index_name, AzureKeyCredential(key))
 
 query = SuggestQuery(search_text="coffee", suggester_name="sg")
 
@@ -121,8 +125,9 @@ for result in results:
 ### Upload documents to an index
 Add documents (or update existing ones), e.g add a new document for a new hotel:
 ```python
-from azure.search import SearchApiKeyCredential, SearchIndexClient
-search_client = SearchIndexClient(service_endpoint, index_name, SearchApiKeyCredential(key))
+from azure.core.credentials import AzureKeyCredential
+from azure.search import SearchIndexClient
+search_client = SearchIndexClient(service_endpoint, index_name, AzureKeyCredential(key))
 
 DOCUMENT = {
     'Category': 'Hotel',
@@ -154,7 +159,8 @@ headers, can be enabled on a client with the `logging_enable` keyword argument:
 ```python
 import sys
 import logging
-from azure.search import SearchApiKeyCredential, SearchIndexClient
+from azure.core.credentials import AzureKeyCredential
+from azure.search import SearchIndexClient
 
 # Create a logger for the 'azure' SDK
 logger = logging.getLogger('azure')
@@ -165,7 +171,7 @@ handler = logging.StreamHandler(stream=sys.stdout)
 logger.addHandler(handler)
 
 # This client will log detailed information about its HTTP sessions, at DEBUG level
-search_client = SearchIndexClient(service_endpoint, index_name, SearchApiKeyCredential(key), logging_enable=True)
+search_client = SearchIndexClient(service_endpoint, index_name, AzureKeyCredential(key), logging_enable=True)
 ```
 
 Similarly, `logging_enable` can enable detailed logging for a single operation,

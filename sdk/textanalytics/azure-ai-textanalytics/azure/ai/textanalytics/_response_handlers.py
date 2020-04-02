@@ -15,7 +15,6 @@ from ._models import (
     CategorizedEntity,
     TextDocumentStatistics,
     RecognizeLinkedEntitiesResult,
-    RecognizePiiEntitiesResult,
     LinkedEntity,
     ExtractKeyPhrasesResult,
     AnalyzeSentimentResult,
@@ -24,8 +23,7 @@ from ._models import (
     DetectedLanguage,
     DocumentError,
     SentimentConfidenceScores,
-    TextAnalyticsError,
-    PiiEntity
+    TextAnalyticsError
 )
 
 
@@ -94,15 +92,6 @@ def entities_result(entity):
     return RecognizeEntitiesResult(
         id=entity.id,
         entities=[CategorizedEntity._from_generated(e) for e in entity.entities],  # pylint: disable=protected-access
-        statistics=TextDocumentStatistics._from_generated(entity.statistics),  # pylint: disable=protected-access
-    )
-
-
-@prepare_result
-def pii_entities_result(entity):
-    return RecognizePiiEntitiesResult(
-        id=entity.id,
-        entities=[PiiEntity._from_generated(e) for e in entity.entities],  # pylint: disable=protected-access
         statistics=TextDocumentStatistics._from_generated(entity.statistics),  # pylint: disable=protected-access
     )
 

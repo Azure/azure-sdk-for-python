@@ -76,7 +76,7 @@ setup(
         'azure.search',
     ]),
     install_requires=[
-        "azure-core<2.0.0,>=1.2.2",
+        "azure-core<2.0.0,>=1.4.0",
         "msrest>=0.6.10",
     ],
     extras_require={
