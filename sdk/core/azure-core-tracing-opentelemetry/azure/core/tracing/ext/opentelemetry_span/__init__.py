@@ -250,7 +250,7 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
         # returns the current Context object
         context = get_current()
 
-        def call_with_current_context(*args, **kwargs:):
+        def call_with_current_context(*args, **kwargs):
             try:
                 token = attach(context)
                 return func(*args, **kwargs)
