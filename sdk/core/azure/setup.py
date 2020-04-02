@@ -24,6 +24,10 @@ Here's a non-exhaustive list of common packages:
 -  azure-mgmt-resource (https://pypi.python.org/pypi/azure-mgmt-resource) : Generic package about Azure Resource Management (ARM)
 -  azure-keyvault-secrets (https://pypi.python.org/pypi/azure-keyvault-secrets) : Access to secrets in Key Vault
 -  azure-storage-blob (https://pypi.python.org/pypi/azure-storage-blob) : Access to blobs in storage accounts
+
+A more comprehensive discussion of the rationale for this decision can be found in the following issue:
+https://github.com/Azure/azure-sdk-for-python/issues/10646
+
 """
 
 raise RuntimeError(message)
