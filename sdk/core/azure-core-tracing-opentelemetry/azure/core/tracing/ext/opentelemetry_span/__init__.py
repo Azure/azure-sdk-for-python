@@ -133,8 +133,7 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
         """Set the end time for a span."""
         self.span_instance.end()
 
-    @staticmethod
-    def to_header():
+    def to_header(self): # pylint: disable=no-self-use
         # type: () -> Dict[str, str]
         """
         Returns a dictionary with the header labels and values.
