@@ -54,7 +54,7 @@ USER_AGENT_PREFIX = "azsdk-python-servicebus"
 MANAGEMENT_PATH_SUFFIX = "/$management"
 
 MGMT_RESPONSE_SESSION_STATE = b'session-state'
-MGMT_RESPONSE_EXPIRATION = b'expiration'
+MGMT_RESPONSE_EXPIRATION = b'expirations'
 MGMT_REQUEST_SESSION_ID = 'session-id'
 MGMT_REQUEST_SESSION_STATE = 'session-state'
 MGMT_REQUEST_DISPOSITION_STATUS = 'disposition-status'
