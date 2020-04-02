@@ -31,6 +31,7 @@ from azure.search.documents import (
 )
 from azure.search.documents.aio import SearchIndexClient
 
+TIME_TO_SLEEP = 3
 
 def await_prepared_test(test_fn):
     """Synchronous wrapper for async test methods. Used to avoid making changes
@@ -240,7 +241,7 @@ class SearchIndexClientTestAsync(AzureMgmtTestCase):
 
             # There can be some lag before a document is searchable
             if self.is_live:
-                time.sleep(3)
+                time.sleep(TIME_TO_SLEEP)
 
             assert await client.get_document_count() == 12
             for doc in DOCUMENTS:
@@ -284,7 +285,7 @@ class SearchIndexClientTestAsync(AzureMgmtTestCase):
 
             # There can be some lag before a document is searchable
             if self.is_live:
-                time.sleep(3)
+                time.sleep(TIME_TO_SLEEP)
 
             assert await client.get_document_count() == 8
 
@@ -311,7 +312,7 @@ class SearchIndexClientTestAsync(AzureMgmtTestCase):
 
             # There can be some lag before a document is searchable
             if self.is_live:
-                time.sleep(3)
+                time.sleep(TIME_TO_SLEEP)
 
             assert await client.get_document_count() == 9
 
@@ -338,7 +339,7 @@ class SearchIndexClientTestAsync(AzureMgmtTestCase):
 
             # There can be some lag before a document is searchable
             if self.is_live:
-                time.sleep(3)
+                time.sleep(TIME_TO_SLEEP)
 
             assert await client.get_document_count() == 10
 
@@ -365,7 +366,7 @@ class SearchIndexClientTestAsync(AzureMgmtTestCase):
 
             # There can be some lag before a document is searchable
             if self.is_live:
-                time.sleep(3)
+                time.sleep(TIME_TO_SLEEP)
 
             assert await client.get_document_count() == 10
 
@@ -392,7 +393,7 @@ class SearchIndexClientTestAsync(AzureMgmtTestCase):
 
             # There can be some lag before a document is searchable
             if self.is_live:
-                time.sleep(3)
+                time.sleep(TIME_TO_SLEEP)
 
             assert await client.get_document_count() == 11
 

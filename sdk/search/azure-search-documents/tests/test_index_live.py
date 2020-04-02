@@ -27,6 +27,7 @@ from azure.search.documents import (
     SuggestQuery,
 )
 
+TIME_TO_SLEEP = 3
 
 class SearchIndexClientTest(AzureMgmtTestCase):
     @ResourceGroupPreparer(random_name_enabled=True)
@@ -199,7 +200,7 @@ class SearchIndexClientTest(AzureMgmtTestCase):
 
         # There can be some lag before a document is searchable
         if self.is_live:
-            time.sleep(3)
+            time.sleep(TIME_TO_SLEEP)
 
         assert client.get_document_count() == 12
         for doc in DOCUMENTS:
@@ -235,7 +236,7 @@ class SearchIndexClientTest(AzureMgmtTestCase):
 
         # There can be some lag before a document is searchable
         if self.is_live:
-            time.sleep(3)
+            time.sleep(TIME_TO_SLEEP)
 
         assert client.get_document_count() == 8
 
@@ -257,7 +258,7 @@ class SearchIndexClientTest(AzureMgmtTestCase):
 
         # There can be some lag before a document is searchable
         if self.is_live:
-            time.sleep(3)
+            time.sleep(TIME_TO_SLEEP)
 
         assert client.get_document_count() == 9
 
@@ -281,7 +282,7 @@ class SearchIndexClientTest(AzureMgmtTestCase):
 
         # There can be some lag before a document is searchable
         if self.is_live:
-            time.sleep(3)
+            time.sleep(TIME_TO_SLEEP)
 
         assert client.get_document_count() == 10
 
@@ -305,7 +306,7 @@ class SearchIndexClientTest(AzureMgmtTestCase):
 
         # There can be some lag before a document is searchable
         if self.is_live:
-            time.sleep(3)
+            time.sleep(TIME_TO_SLEEP)
 
         assert client.get_document_count() == 10
 
@@ -329,7 +330,7 @@ class SearchIndexClientTest(AzureMgmtTestCase):
 
         # There can be some lag before a document is searchable
         if self.is_live:
-            time.sleep(3)
+            time.sleep(TIME_TO_SLEEP)
 
         assert client.get_document_count() == 11
 
