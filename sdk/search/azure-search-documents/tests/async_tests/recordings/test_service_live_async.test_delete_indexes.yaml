@@ -1,0 +1,74 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json;odata.metadata=minimal
+      User-Agent:
+      - azsdk-python-search-documents/1.0.0b2 Python/3.6.3 (Windows-10-10.0.18362-SP0)
+      api-key:
+      - CFBC99722708A5421EEAF35F420BF320
+    method: DELETE
+    uri: https://search86db11ac.search.windows.net/indexes('drgqefsg')?api-version=2019-05-06-Preview
+  response:
+    body:
+      string: ''
+    headers:
+      cache-control: no-cache
+      date: Tue, 31 Mar 2020 17:46:35 GMT
+      elapsed-time: '427'
+      expires: '-1'
+      pragma: no-cache
+      request-id: 90f352fe-7377-11ea-9c63-5cf37071153c
+      strict-transport-security: max-age=15724800; includeSubDomains
+    status:
+      code: 204
+      message: No Content
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - search86db11ac.search.windows.net
+        - /indexes('drgqefsg')
+        - api-version=2019-05-06-Preview
+        - ''
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json;odata.metadata=minimal
+      User-Agent:
+      - azsdk-python-search-documents/1.0.0b2 Python/3.6.3 (Windows-10-10.0.18362-SP0)
+      api-key:
+      - CFBC99722708A5421EEAF35F420BF320
+    method: GET
+    uri: https://search86db11ac.search.windows.net/indexes?api-version=2019-05-06-Preview
+  response:
+    body:
+      string: '{"@odata.context":"https://search86db11ac.search.windows.net/$metadata#indexes","value":[]}'
+    headers:
+      cache-control: no-cache
+      content-encoding: gzip
+      content-length: '199'
+      content-type: application/json; odata.metadata=minimal
+      date: Tue, 31 Mar 2020 17:46:40 GMT
+      elapsed-time: '26'
+      expires: '-1'
+      odata-version: '4.0'
+      pragma: no-cache
+      preference-applied: odata.include-annotations="*"
+      request-id: 945637a6-7377-11ea-aeeb-5cf37071153c
+      strict-transport-security: max-age=15724800; includeSubDomains
+      vary: Accept-Encoding
+    status:
+      code: 200
+      message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - search86db11ac.search.windows.net
+        - /indexes
+        - api-version=2019-05-06-Preview
+        - ''
+version: 1
