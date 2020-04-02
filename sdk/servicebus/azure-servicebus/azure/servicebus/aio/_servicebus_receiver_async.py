@@ -25,7 +25,7 @@ from .._common.constants import (
     REQUEST_RESPONSE_RENEWLOCK_OPERATION,
     ReceiveSettleMode,
     MGMT_RESPONSE_SESSION_STATE,
-    MGMT_RESPONSE_EXPIRATION,
+    MGMT_RESPONSE_RECEIVER_EXPIRATION,
     MGMT_REQUEST_SESSION_ID,
     MGMT_REQUEST_SESSION_STATE,
     MGMT_REQUEST_DISPOSITION_STATUS,
@@ -139,7 +139,7 @@ class ServiceBusSession(BaseSession):
             {MGMT_REQUEST_SESSION_ID: self.session_id},
             mgmt_handlers.default
         )
-        self._locked_until_utc = utc_from_timestamp(expiry[MGMT_RESPONSE_EXPIRATION]/1000.0)
+        self._locked_until_utc = utc_from_timestamp(expiry[MGMT_RESPONSE_RECEIVER_EXPIRATION]/1000.0)
 
 
 class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, ReceiverMixin):

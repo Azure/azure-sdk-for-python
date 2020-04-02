@@ -12,7 +12,7 @@ from .._common.constants import (
     SETTLEMENT_DEFER,
     SETTLEMENT_DEADLETTER,
     ReceiveSettleMode,
-    MGMT_RESPONSE_EXPIRATION,
+    MGMT_RESPONSE_MESSAGE_EXPIRATION,
     MGMT_REQUEST_DEAD_LETTER_REASON,
     MGMT_REQUEST_DEAD_LETTER_DESCRIPTION,
     MESSAGE_COMPLETE,
@@ -143,4 +143,4 @@ class ReceivedMessage(sync_message.ReceivedMessage):
             raise ValueError("Unable to renew lock - no lock token found.")
 
         expiry = await self._receiver._renew_locks(token)  # pylint: disable=protected-access
-        self._expiry = utc_from_timestamp(expiry[MGMT_RESPONSE_EXPIRATION][0]/1000.0)
+        self._expiry = utc_from_timestamp(expiry[MGMT_RESPONSE_MESSAGE_EXPIRATION][0]/1000.0)
