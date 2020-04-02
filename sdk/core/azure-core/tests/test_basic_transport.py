@@ -210,6 +210,55 @@ def test_multipart_send():
     )
 
 
+@pytest.mark.skipif(sys.version_info < (3, 0), reason="Multipart serialization not supported on 2.7")
+def test_multipart_send_with_context():
+
+    transport = mock.MagicMock(spec=HttpTransport)
+
+    header_policy = HeadersPolicy({
+        'x-ms-date': 'Thu, 14 Jun 2018 16:46:54 GMT'
+    })
+
+    req0 = HttpRequest("DELETE", "/container0/blob0")
+    req1 = HttpRequest("DELETE", "/container1/blob1")
+
+    request = HttpRequest("POST", "http://account.blob.core.windows.net/?comp=batch")
+    request.set_multipart_mixed(
+        req0,
+        req1,
+        policies=[header_policy],
+        boundary="batch_357de4f7-6d0b-4e02-8cd2-6361411a9525", # Fix it so test are deterministic
+        headers={'Accept': 'application/json'}
+    )
+
+    with Pipeline(transport) as pipeline:
+        pipeline.run(request)
+
+    assert request.body == (
+        b'--batch_357de4f7-6d0b-4e02-8cd2-6361411a9525\r\n'
+        b'Content-Type: application/http\r\n'
+        b'Content-Transfer-Encoding: binary\r\n'
+        b'Content-ID: 0\r\n'
+        b'\r\n'
+        b'DELETE /container0/blob0 HTTP/1.1\r\n'
+        b'x-ms-date: Thu, 14 Jun 2018 16:46:54 GMT\r\n'
+        b'Accept: application/json\r\n'
+        b'\r\n'
+        b'\r\n'
+        b'--batch_357de4f7-6d0b-4e02-8cd2-6361411a9525\r\n'
+        b'Content-Type: application/http\r\n'
+        b'Content-Transfer-Encoding: binary\r\n'
+        b'Content-ID: 1\r\n'
+        b'\r\n'
+        b'DELETE /container1/blob1 HTTP/1.1\r\n'
+        b'x-ms-date: Thu, 14 Jun 2018 16:46:54 GMT\r\n'
+        b'Accept: application/json\r\n'
+        b'\r\n'
+        b'\r\n'
+        b'--batch_357de4f7-6d0b-4e02-8cd2-6361411a9525--\r\n'
+    )
+
+
 def test_multipart_receive():
 
     class MockResponse(HttpResponse):
