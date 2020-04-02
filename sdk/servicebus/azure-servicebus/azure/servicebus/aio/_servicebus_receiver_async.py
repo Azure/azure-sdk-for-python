@@ -419,7 +419,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
          If no messages arrive, and no timeout is specified, this call will not return
          until the connection is closed. If specified, an no messages arrive within the
          timeout period, an empty list will be returned.
-        :rtype: list[~azure.servicebus.aio.Message]
+        :rtype: list[~azure.servicebus.aio.ReceivedMessage]
 
         .. admonition:: Example:
 

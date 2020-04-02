@@ -15,11 +15,9 @@ from datetime import datetime, timedelta, timezone
 
 from azure.servicebus.aio import (
     ServiceBusClient,
-    Message,
-    BatchMessage,
     ReceivedMessage,
     AutoLockRenew)
-from azure.servicebus._common.message import PeekMessage
+from azure.servicebus._common.message import Message, BatchMessage, PeekMessage
 from azure.servicebus._common.constants import ReceiveSettleMode
 from azure.servicebus.exceptions import (
     ServiceBusConnectionError,

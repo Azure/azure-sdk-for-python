@@ -14,8 +14,8 @@ import uuid
 from datetime import datetime, timedelta, timezone
 
 from uamqp.errors import VendorLinkDetach
-from azure.servicebus.aio import ServiceBusClient, Message, ReceivedMessage, AutoLockRenew
-from azure.servicebus._common.message import PeekMessage
+from azure.servicebus.aio import ServiceBusClient, ReceivedMessage, AutoLockRenew
+from azure.servicebus._common.message import Message, PeekMessage
 from azure.servicebus._common.constants import ReceiveSettleMode, NEXT_AVAILABLE
 from azure.servicebus.exceptions import (
     ServiceBusConnectionError,
