@@ -106,4 +106,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
         :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The exception has a
           `message` attribute listing each authentication attempt and its error message.
         """
-        return super(DefaultAzureCredential, self).get_token(*scopes, **kwargs)  # pylint:disable=useless-super-delegation
+        if self._successful_credential:
+            return self._successful_credential.get_token(*scopes, **kwargs)
+
+        return super(DefaultAzureCredential, self).get_token(*scopes, **kwargs)
