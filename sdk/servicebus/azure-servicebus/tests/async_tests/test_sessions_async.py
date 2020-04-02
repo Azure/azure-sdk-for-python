@@ -432,7 +432,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                 messages.extend(await receiver.receive())
                 recv = True
                 while recv:
-                    recv = await receiver.receive(timeout=5)
+                    recv = await receiver.receive(max_wait_time=5)
                     messages.extend(recv)
 
                 try:
@@ -521,7 +521,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                 await sender.send(message)
 
             async with sb_client.get_queue_receiver(servicebus_queue.name, session_id=session_id) as receiver:
-                messages = await receiver.receive(timeout=10)
+                messages = await receiver.receive(max_wait_time=10)
                 assert len(messages) == 1
 
             with pytest.raises(MessageSettleFailed):
@@ -545,7 +545,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                 await sender.send(message)
 
             async with sb_client.get_queue_receiver(servicebus_queue.name, session_id=session_id) as receiver:
-                messages = await receiver.receive(timeout=10)
+                messages = await receiver.receive(max_wait_time=10)
                 assert len(messages) == 1
                 print_message(_logger, messages[0])
                 await asyncio.sleep(60) #TODO: Was 30, but then lock isn't expired.
@@ -560,7 +560,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                     await receiver.session.renew_lock()
 
             async with sb_client.get_queue_receiver(servicebus_queue.name, session_id=session_id) as receiver:
-                messages = await receiver.receive(timeout=30)
+                messages = await receiver.receive(max_wait_time=30)
                 assert len(messages) == 1
                 print_message(_logger, messages[0])
                 #assert messages[0].header.delivery_count  # TODO confirm this with service
@@ -590,8 +590,8 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
             renewer = AutoLockRenew()
             async with sb_client.get_queue_receiver(servicebus_queue.name, session_id=session_id) as receiver:
                 renewer.register(receiver.session, timeout=140)
-                messages.extend(await receiver.receive(timeout=120))
-                messages.extend(await receiver.receive(timeout=5))
+                messages.extend(await receiver.receive(max_wait_time=120))
+                messages.extend(await receiver.receive(max_wait_time=5))
                 if messages:
                     data = str(messages[0])
                     assert data == content
@@ -631,8 +631,8 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
             renewer = AutoLockRenew()
             async with sb_client.get_queue_receiver(servicebus_queue.name, session_id=session_id, prefetch=20) as receiver:
                 renewer.register(receiver.session, timeout=140)
-                messages.extend(await receiver.receive(timeout=120))
-                messages.extend(await receiver.receive(timeout=5))
+                messages.extend(await receiver.receive(max_wait_time=120))
+                messages.extend(await receiver.receive(max_wait_time=5))
                 if messages:
                     data = str(messages[0])
                     assert data == content
@@ -668,8 +668,8 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
             messages = []
             async with sb_client.get_queue_receiver(servicebus_queue.name, session_id=session_id) as receiver:
                 renewer.register(receiver.session, timeout=140)
-                messages.extend(await receiver.receive(timeout=120))
-                messages.extend(await receiver.receive(timeout=5))
+                messages.extend(await receiver.receive(max_wait_time=120))
+                messages.extend(await receiver.receive(max_wait_time=5))
                 try:
                     assert len(messages) == 0
                 except AssertionError:

@@ -753,7 +753,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
 
             time.sleep(30)
             async with sb_client.get_queue_receiver(servicebus_queue.name) as receiver:
-                messages = await receiver.receive(timeout=10)
+                messages = await receiver.receive(max_wait_time=10)
             assert not messages
 
             async with await sb_client.get_deadletter_receiver(idle_timeout=5, mode=ReceiveSettleMode.PeekLock) as receiver:
@@ -805,7 +805,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 await sender.send(message)
 
             async with sb_client.get_queue_receiver(servicebus_queue.name) as receiver:
-                messages = await receiver.receive(timeout=10)
+                messages = await receiver.receive(max_wait_time=10)
                 assert len(messages) == 1
 
             with pytest.raises(MessageSettleFailed):
@@ -826,7 +826,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 await sender.send(message)
 
             async with sb_client.get_queue_receiver(servicebus_queue.name) as receiver:
-                messages = await receiver.receive(timeout=10)
+                messages = await receiver.receive(max_wait_time=10)
                 assert len(messages) == 1
                 time.sleep(60)
                 assert messages[0].expired
@@ -836,7 +836,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                     await messages[0].renew_lock()
 
             async with sb_client.get_queue_receiver(servicebus_queue.name) as receiver:
-                messages = await receiver.receive(timeout=30)
+                messages = await receiver.receive(max_wait_time=30)
                 assert len(messages) == 1
                 print_message(_logger, messages[0])
                 assert messages[0].header.delivery_count > 0
@@ -857,7 +857,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 await sender.send(message)
             
             async with sb_client.get_queue_receiver(servicebus_queue.name) as receiver:
-                messages = await receiver.receive(timeout=10)
+                messages = await receiver.receive(max_wait_time=10)
                 assert len(messages) == 1
                 time.sleep(15)
                 await messages[0].renew_lock()
@@ -868,7 +868,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 await messages[0].complete()
             
             async with sb_client.get_queue_receiver(servicebus_queue.name) as receiver:
-                messages = await receiver.receive(timeout=10)
+                messages = await receiver.receive(max_wait_time=10)
                 assert len(messages) == 0
 
     @pytest.mark.liveTest
@@ -885,7 +885,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 await sender.send(message)
 
             async with sb_client.get_queue_receiver(servicebus_queue.name, mode=ReceiveSettleMode.ReceiveAndDelete) as receiver:
-                messages = await receiver.receive(timeout=10)
+                messages = await receiver.receive(max_wait_time=10)
                 assert len(messages) == 1
                 received = messages[0]
                 print_message(_logger, received)
@@ -902,7 +902,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
 
             time.sleep(30)
             async with sb_client.get_queue_receiver(servicebus_queue.name) as receiver:
-                messages = await receiver.receive(timeout=10)
+                messages = await receiver.receive(max_wait_time=10)
                 for m in messages:
                     print_message(_logger, m)
                 assert len(messages) == 0
@@ -923,10 +923,10 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 await sender.send(message)
 
             async with sb_client.get_queue_receiver(servicebus_queue.name) as receiver:
-                messages = await receiver.receive(timeout=10)
+                messages = await receiver.receive(max_wait_time=10)
                 recv = True
                 while recv:
-                    recv = await receiver.receive(timeout=10)
+                    recv = await receiver.receive(max_wait_time=10)
                     messages.extend(recv)
 
                 assert len(messages) == 5
@@ -954,7 +954,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                     message.schedule(enqueue_time)
                     await sender.send(message)
 
-                messages = await receiver.receive(timeout=120)
+                messages = await receiver.receive(max_wait_time=120)
                 if messages:
                     try:
                         data = str(messages[0])
@@ -992,9 +992,9 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                     tokens = await sender.schedule(enqueue_time, message_a, message_b)
                     assert len(tokens) == 2
 
-                recv = await receiver.receive(timeout=120)
+                recv = await receiver.receive(max_wait_time=120)
                 messages.extend(recv)
-                recv = await receiver.receive(timeout=5)
+                recv = await receiver.receive(max_wait_time=5)
                 messages.extend(recv)
                 if messages:
                     try:
@@ -1030,5 +1030,5 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
 
                     await sender.cancel_scheduled_messages(*tokens)
 
-                messages = await receiver.receive(timeout=120)
+                messages = await receiver.receive(max_wait_time=120)
                 assert len(messages) == 0

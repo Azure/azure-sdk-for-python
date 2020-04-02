@@ -510,7 +510,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
             raise ValueError("Subscription name is missing for the topic. Please specify subscription_name.")
         return cls(**constructor_args)
 
-    def receive(self, max_batch_size=None, timeout=None):
+    def receive(self, max_batch_size=None, max_wait_time=None):
         # type: (int, float) -> List[ReceivedMessage]
         """Receive a batch of messages at once.
 
@@ -523,7 +523,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
 
         :param int max_batch_size: Maximum number of messages in the batch. Actual number
          returned will depend on prefetch size and incoming stream rate.
-        :param float timeout: The time to wait in seconds for the first message to arrive.
+        :param float max_wait_time: Maximum time to wait in seconds for the first message to arrive.
          If no messages arrive, and no timeout is specified, this call will not return
          until the connection is closed. If specified, an no messages arrive within the
          timeout period, an empty list will be returned.
@@ -543,7 +543,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         return self._do_retryable_operation(
             self._receive,
             max_batch_size=max_batch_size,
-            timeout=timeout,
+            timeout=max_wait_time,
             require_timeout=True
         )
 

@@ -93,7 +93,7 @@ Becomes this in v7:
 with ServiceBusClient.from_connection_string(conn_str=CONNECTION_STR) as client:
 
     with client.get_queue_receiver(queue_name=QUEUE_NAME) as receiver:
-        batch = receiver.receive(max_batch_size=10, timeout=5)
+        batch = receiver.receive(max_batch_size=10, max_wait_time=5)
         for message in batch:
             print("Message: {}".format(message))
             message.complete()
