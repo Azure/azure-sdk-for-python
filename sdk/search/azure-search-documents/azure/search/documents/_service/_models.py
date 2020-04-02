@@ -9,7 +9,8 @@ from typing import List, Optional, Union
 from ._generated.models import Analyzer, RegexFlags, Tokenizer
 
 class PatternAnalyzer(Analyzer):
-    """Flexibly separates text into terms via a regular expression pattern. This analyzer is implemented using Apache Lucene.
+    """Flexibly separates text into terms via a regular expression pattern.
+    This analyzer is implemented using Apache Lucene.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -49,23 +50,18 @@ class PatternAnalyzer(Analyzer):
 
     def __init__(
         self,
-        *,
-        name: str,
-        lower_case_terms: Optional[bool] = True,
-        pattern: Optional[str] = "\W+",
-        flags: Optional[List[Union[str, "RegexFlags"]]] = None,
-        stopwords: Optional[List[str]] = None,
         **kwargs
     ):
-        super(PatternAnalyzer, self).__init__(name=name, **kwargs)
+        super(PatternAnalyzer, self).__init__(**kwargs)
         self.odata_type = '#Microsoft.Azure.Search.PatternAnalyzer'
-        self.lower_case_terms = lower_case_terms
-        self.pattern = pattern
-        self.flags = flags
-        self.stopwords = stopwords
+        self.lower_case_terms = kwargs.get('lower_case_terms', True)
+        self.pattern = kwargs.get('pattern', "\W+")
+        self.flags = kwargs.get('flags', None)
+        self.stopwords = kwargs.get('stopwords', None)
 
 class PatternTokenizer(Tokenizer):
-    """Tokenizer that uses regex pattern matching to construct distinct tokens. This tokenizer is implemented using Apache Lucene.
+    """Tokenizer that uses regex pattern matching to construct distinct tokens.
+    This tokenizer is implemented using Apache Lucene.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -79,8 +75,6 @@ class PatternTokenizer(Tokenizer):
     :param pattern: A regular expression pattern to match token separators. Default is an
      expression that matches one or more whitespace characters.
     :type pattern: str
-    :param flags: Regular expression flags. Possible values include: 'CANON_EQ',
-     'CASE_INSENSITIVE', 'COMMENTS', 'DOTALL', 'LITERAL', 'MULTILINE', 'UNICODE_CASE', 'UNIX_LINES'.
     :param flags: List of regular expression flags. Possible values of each flag include: 'CANON_EQ',
      'CASE_INSENSITIVE', 'COMMENTS', 'DOTALL', 'LITERAL', 'MULTILINE', 'UNICODE_CASE', 'UNIX_LINES'.
     :type flags: list[str] or list[~search_service_client.models.RegexFlags]
@@ -105,15 +99,10 @@ class PatternTokenizer(Tokenizer):
 
     def __init__(
         self,
-        *,
-        name: str,
-        pattern: Optional[str] = "\W+",
-        flags: Optional[List[Union[str, "RegexFlags"]]] = None,
-        group: Optional[int] = -1,
         **kwargs
     ):
-        super(PatternTokenizer, self).__init__(name=name, **kwargs)
+        super(PatternTokenizer, self).__init__(**kwargs)
         self.odata_type = '#Microsoft.Azure.Search.PatternTokenizer'
-        self.pattern = pattern
-        self.flags = flags
-        self.group = group
+        self.pattern = kwargs.get('pattern', "\W+")
+        self.flags = kwargs.get('flags', None)
+        self.group = kwargs.get('group', -1)
