@@ -12,6 +12,7 @@ import time
 import unittest
 import uuid
 import os
+import sys
 from datetime import datetime, timedelta
 
 from azure.core.exceptions import (
