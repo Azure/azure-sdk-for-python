@@ -10,6 +10,7 @@
 - Added `azure.core.polling.base_polling` module with a "Microsoft One API" polling implementation #10090
   Also contains the async version in `azure.core.polling.async_base_polling`
 - Support kwarg `enforce_https` to disable HTTPS check on authentication #9821
+- Support additional kwargs in `HttpRequest.set_multipart_mixed` that will be passed into pipeline context.
 
 ## 1.3.0 (2020-03-09)
 
