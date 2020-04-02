@@ -13,7 +13,7 @@ from uamqp import ReceiveClientAsync, types
 from uamqp.constants import SenderSettleMode
 
 from ._base_handler_async import BaseHandlerAsync
-from .async_message import ReceivedMessage
+from ._async_message import ReceivedMessage
 from .._servicebus_receiver import ReceiverMixin, ServiceBusSession as BaseSession
 from .._common.constants import (
     REQUEST_RESPONSE_GET_SESSION_STATE_OPERATION,
@@ -23,7 +23,17 @@ from .._common.constants import (
     REQUEST_RESPONSE_PEEK_OPERATION,
     REQUEST_RESPONSE_RECEIVE_BY_SEQUENCE_NUMBER,
     REQUEST_RESPONSE_RENEWLOCK_OPERATION,
-    ReceiveSettleMode
+    ReceiveSettleMode,
+    MGMT_RESPONSE_SESSION_STATE,
+    MGMT_RESPONSE_EXPIRATION,
+    MGMT_REQUEST_SESSION_ID,
+    MGMT_REQUEST_SESSION_STATE,
+    MGMT_REQUEST_DISPOSITION_STATUS,
+    MGMT_REQUEST_LOCK_TOKENS,
+    MGMT_REQUEST_SEQUENCE_NUMBERS,
+    MGMT_REQUEST_RECEIVER_SETTLE_MODE,
+    MGMT_REQUEST_FROM_SEQUENCE_NUMBER,
+    MGMT_REQUEST_MESSAGE_COUNT
 )
 from .._common import mgmt_handlers
 from .._common.utils import utc_from_timestamp
@@ -72,10 +82,10 @@ class ServiceBusSession(BaseSession):
         self._can_run()
         response = await self._receiver._mgmt_request_response_with_retry(  # pylint: disable=protected-access
             REQUEST_RESPONSE_GET_SESSION_STATE_OPERATION,
-            {'session-id': self.session_id},
+            {MGMT_REQUEST_SESSION_ID: self.session_id},
             mgmt_handlers.default
         )
-        session_state = response.get(b'session-state')
+        session_state = response.get(MGMT_RESPONSE_SESSION_STATE)
         if isinstance(session_state, six.binary_type):
             session_state = session_state.decode('UTF-8')
         return session_state
@@ -100,7 +110,7 @@ class ServiceBusSession(BaseSession):
         state = state.encode(self._encoding) if isinstance(state, six.text_type) else state
         return await self._receiver._mgmt_request_response_with_retry(  # pylint: disable=protected-access
             REQUEST_RESPONSE_SET_SESSION_STATE_OPERATION,
-            {'session-id': self.session_id, 'session-state': bytearray(state)},
+            {MGMT_REQUEST_SESSION_ID: self.session_id, MGMT_REQUEST_SESSION_STATE: bytearray(state)},
             mgmt_handlers.default
         )
 
@@ -126,17 +136,23 @@ class ServiceBusSession(BaseSession):
         self._can_run()
         expiry = await self._receiver._mgmt_request_response_with_retry(  # pylint: disable=protected-access
             REQUEST_RESPONSE_RENEW_SESSION_LOCK_OPERATION,
-            {'session-id': self.session_id},
+            {MGMT_REQUEST_SESSION_ID: self.session_id},
             mgmt_handlers.default
         )
-        self._locked_until_utc = utc_from_timestamp(expiry[b'expiration']/1000.0)
+        self._locked_until_utc = utc_from_timestamp(expiry[MGMT_RESPONSE_EXPIRATION]/1000.0)
 
 
 class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, ReceiverMixin):
     """The ServiceBusReceiver class defines a high level interface for
     receiving messages from the Azure Service Bus Queue or Topic Subscription.
 
-    :ivar str fully_qualified_namespace: The fully qualified host name for the Service Bus namespace.
+    :ivar fully_qualified_namespace: The fully qualified host name for the Service Bus namespace.
+     The namespace format is: `<yournamespace>.servicebus.windows.net`.
+    :vartype fully_qualified_namespace: str
+    :ivar entity_path: The path of the entity that the client connects to.
+    :vartype entity_path: str
+
+    :param str fully_qualified_namespace: The fully qualified host name for the Service Bus namespace.
      The namespace format is: `<yournamespace>.servicebus.windows.net`.
     :param ~azure.core.credentials.TokenCredential credential: The credential object used for authentication which
      implements a particular interface for getting tokens. It accepts
@@ -189,7 +205,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
         credential: "TokenCredential",
         **kwargs: Any
     ):
-        if kwargs.get("from_connection_str", False):
+        if kwargs.get("entity_name"):
             super(ServiceBusReceiver, self).__init__(
                 fully_qualified_namespace=fully_qualified_namespace,
                 credential=credential,
@@ -279,11 +295,11 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
 
     async def _settle_message(self, settlement, lock_tokens, dead_letter_details=None):
         message = {
-            'disposition-status': settlement,
-            'lock-tokens': types.AMQPArray(lock_tokens)}
+            MGMT_REQUEST_DISPOSITION_STATUS: settlement,
+            MGMT_REQUEST_LOCK_TOKENS: types.AMQPArray(lock_tokens)}
 
         if self._session_id:
-            message["session-id"] = self._session_id
+            message[MGMT_REQUEST_SESSION_ID] = self._session_id
         if dead_letter_details:
             message.update(dead_letter_details)
 
@@ -294,7 +310,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
         )
 
     async def _renew_locks(self, *lock_tokens):
-        message = {'lock-tokens': types.AMQPArray(lock_tokens)}
+        message = {MGMT_REQUEST_LOCK_TOKENS: types.AMQPArray(lock_tokens)}
         return await self._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_RENEWLOCK_OPERATION,
             message,
@@ -453,12 +469,12 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
         except AttributeError:
             receive_mode = int(self._mode)
         message = {
-            'sequence-numbers': types.AMQPArray([types.AMQPLong(s) for s in sequence_numbers]),
-            'receiver-settle-mode': types.AMQPuInt(receive_mode)
+            MGMT_REQUEST_SEQUENCE_NUMBERS: types.AMQPArray([types.AMQPLong(s) for s in sequence_numbers]),
+            MGMT_REQUEST_RECEIVER_SETTLE_MODE: types.AMQPuInt(receive_mode)
         }
 
         if self._session_id:
-            message["session-id"] = self._session_id
+            message[MGMT_REQUEST_SESSION_ID] = self._session_id
 
         handler = functools.partial(mgmt_handlers.deferred_message_op, mode=self._mode, message_type=ReceivedMessage)
         messages = await self._mgmt_request_response_with_retry(
@@ -501,8 +517,8 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
         await self._open()
 
         message = {
-            'from-sequence-number': types.AMQPLong(sequence_number),
-            'message-count': message_count
+            MGMT_REQUEST_FROM_SEQUENCE_NUMBER: types.AMQPLong(sequence_number),
+            MGMT_REQUEST_MESSAGE_COUNT: message_count
         }
 
         return await self._mgmt_request_response_with_retry(

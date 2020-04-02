@@ -21,7 +21,14 @@ from .exceptions import (
 from ._common.utils import create_authentication
 from ._common.constants import (
     REQUEST_RESPONSE_CANCEL_SCHEDULED_MESSAGE_OPERATION,
-    REQUEST_RESPONSE_SCHEDULE_MESSAGE_OPERATION
+    REQUEST_RESPONSE_SCHEDULE_MESSAGE_OPERATION,
+    MGMT_REQUEST_SEQUENCE_NUMBERS,
+    MGMT_REQUEST_SESSION_ID,
+    MGMT_REQUEST_MESSAGE,
+    MGMT_REQUEST_MESSAGES,
+    MGMT_REQUEST_MESSAGE_ID,
+    MGMT_REQUEST_PARTITION_KEY,
+    MGMT_REQUEST_VIA_PARTITION_KEY
 )
 
 if TYPE_CHECKING:
@@ -56,19 +63,19 @@ class SenderMixin(object):
 
     @classmethod
     def _build_schedule_request(cls, schedule_time_utc, *messages):
-        request_body = {'messages': []}
+        request_body = {MGMT_REQUEST_MESSAGES: []}
         for message in messages:
             message.schedule(schedule_time_utc)
             message_data = {}
-            message_data['message-id'] = message.properties.message_id
+            message_data[MGMT_REQUEST_MESSAGE_ID] = message.properties.message_id
             if message.properties.group_id:
-                message_data['session-id'] = message.properties.group_id
+                message_data[MGMT_REQUEST_SESSION_ID] = message.properties.group_id
             if message.partition_key:
-                message_data['partition-key'] = message.partition_key
+                message_data[MGMT_REQUEST_PARTITION_KEY] = message.partition_key
             if message.via_partition_key:
-                message_data['via-partition-key'] = message.via_partition_key
-            message_data['message'] = bytearray(message.message.encode_message())
-            request_body['messages'].append(message_data)
+                message_data[MGMT_REQUEST_VIA_PARTITION_KEY] = message.via_partition_key
+            message_data[MGMT_REQUEST_MESSAGE] = bytearray(message.message.encode_message())
+            request_body[MGMT_REQUEST_MESSAGES].append(message_data)
         return request_body
 
 
@@ -76,7 +83,13 @@ class ServiceBusSender(BaseHandler, SenderMixin):
     """The ServiceBusSender class defines a high level interface for
     sending messages to the Azure Service Bus Queue or Topic.
 
-    :ivar str fully_qualified_namespace: The fully qualified host name for the Service Bus namespace.
+    :ivar fully_qualified_namespace: The fully qualified host name for the Service Bus namespace.
+     The namespace format is: `<yournamespace>.servicebus.windows.net`.
+    :vartype fully_qualified_namespace: str
+    :ivar entity_name: The name of the entity that the client connects to.
+    :vartype entity_name: str
+
+    :param str fully_qualified_namespace: The fully qualified host name for the Service Bus namespace.
      The namespace format is: `<yournamespace>.servicebus.windows.net`.
     :param ~azure.core.credentials.TokenCredential credential: The credential object used for authentication which
      implements a particular interface for getting tokens. It accepts
@@ -111,7 +124,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         **kwargs
     ):
         # type: (str, TokenCredential, Any) -> None
-        if kwargs.get("from_connection_str", False):
+        if kwargs.get("entity_name"):
             super(ServiceBusSender, self).__init__(
                 fully_qualified_namespace=fully_qualified_namespace,
                 credential=credential,
@@ -225,7 +238,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             numbers = [types.AMQPLong(sequence_numbers)]
         else:
             numbers = [types.AMQPLong(s) for s in sequence_numbers]
-        request_body = {'sequence-numbers': types.AMQPArray(numbers)}
+        request_body = {MGMT_REQUEST_SEQUENCE_NUMBERS: types.AMQPArray(numbers)}
         return self._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_CANCEL_SCHEDULED_MESSAGE_OPERATION,
             request_body,

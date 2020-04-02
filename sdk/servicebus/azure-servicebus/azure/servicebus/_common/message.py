@@ -6,7 +6,7 @@
 
 import datetime
 import uuid
-from typing import Optional, List
+from typing import Optional, List, Union, Generator
 
 import uamqp
 from uamqp import types
@@ -26,7 +26,15 @@ from .constants import (
     _X_OPT_VIA_PARTITION_KEY,
     _X_OPT_LOCKED_UNTIL,
     _X_OPT_LOCK_TOKEN,
-    _X_OPT_SCHEDULED_ENQUEUE_TIME
+    _X_OPT_SCHEDULED_ENQUEUE_TIME,
+    MGMT_RESPONSE_EXPIRATION,
+    MGMT_REQUEST_DEAD_LETTER_REASON,
+    MGMT_REQUEST_DEAD_LETTER_DESCRIPTION,
+    MESSAGE_COMPLETE,
+    MESSAGE_DEAD_LETTER,
+    MESSAGE_ABANDON,
+    MESSAGE_DEFER,
+    MESSAGE_RENEW_LOCK
 )
 from ..exceptions import (
     MessageAlreadySettled,
@@ -40,11 +48,17 @@ from .utils import utc_from_timestamp, utc_now
 class Message(object):  # pylint: disable=too-many-public-methods,too-many-instance-attributes
     """A Service Bus Message.
 
+    :ivar properties: Properties of the internal AMQP message object.
+    :vartype properties: ~uamqp.message.MessageProperties
+    :ivar header: Header of the internal AMQP message object.
+    :vartype header: ~uamqp.message.MessageHeader
+    :ivar message: Internal AMQP message object.
+    :vartype message: ~uamqp.message.Message
+
     :param body: The data to send in a single message.
     :type body: str or bytes
-    :param str encoding: The encoding for string data. Default is UTF-8.
-    :keyword session_id: An optional session ID for the message to be sent.
-    :paramtype session_id: str
+    :keyword str encoding: The encoding for string data. Default is UTF-8.
+    :keyword str session_id: An optional session ID for the message to be sent.
 
     .. admonition:: Example:
 
@@ -57,17 +71,16 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
 
     """
 
-    def __init__(self, body, encoding='UTF-8', **kwargs):
+    def __init__(self, body, **kwargs):
         subject = kwargs.pop('subject', None)
         # Although we might normally thread through **kwargs this causes
         # problems as MessageProperties won't absorb spurious args.
-        self.properties = uamqp.message.MessageProperties(encoding=encoding, subject=subject)
+        self._encoding = kwargs.pop("encoding", 'UTF-8')
+        self.properties = uamqp.message.MessageProperties(encoding=self._encoding, subject=subject)
         self.header = uamqp.message.MessageHeader()
-        self.received_timestamp_utc = None
-        self.auto_renew_error = None
         self._annotations = {}
         self._app_properties = {}
-        self._encoding = encoding
+
         self._expiry = None
         self._receiver = None
         self.session_id = kwargs.get("session_id", None)
@@ -77,7 +90,6 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
             self._app_properties = self.message.application_properties
             self.properties = self.message.properties
             self.header = self.message.header
-            self.received_timestamp_utc = utc_now()
         else:
             self._build_message(body)
 
@@ -96,6 +108,7 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
 
     @property
     def session_id(self):
+        # type: () -> str
         """The session id of the message
 
         :rtype: str
@@ -116,6 +129,7 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
 
     @property
     def annotations(self):
+        # type: () -> dict
         """The annotations of the message.
 
         :rtype: dict
@@ -133,6 +147,7 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
 
     @property
     def user_properties(self):
+        # type: () -> dict
         """User defined properties on the message.
 
         :rtype: dict
@@ -150,6 +165,11 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
 
     @property
     def enqueue_sequence_number(self):
+        # type: () -> Optional[int]
+        """
+
+        :rtype: int
+        """
         if self.message.annotations:
             return self.message.annotations.get(_X_OPT_ENQUEUE_SEQUENCE_NUMBER)
         return None
@@ -162,6 +182,11 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
 
     @property
     def partition_key(self):
+        # type: () -> Optional[str]
+        """
+
+        :rtype: str
+        """
         if self.message.annotations:
             return self.message.annotations.get(_X_OPT_PARTITION_KEY)
         return None
@@ -174,6 +199,11 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
 
     @property
     def via_partition_key(self):
+        # type: () -> Optional[str]
+        """
+
+        :rtype: str
+        """
         if self.message.annotations:
             return self.message.annotations.get(_X_OPT_VIA_PARTITION_KEY)
         return None
@@ -186,6 +216,11 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
 
     @property
     def time_to_live(self):
+        # type: () -> Optional[datetime.timedelta]
+        """
+
+        :rtype: ~datetime.timedelta
+        """
         if self.header and self.header.time_to_live:
             return datetime.timedelta(milliseconds=self.header.time_to_live)
         return None
@@ -201,6 +236,7 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
 
     @property
     def body(self):
+        # type: () -> Union[bytes, Generator[bytes]]
         """The body of the Message.
 
         :rtype: bytes or generator[bytes]
@@ -208,10 +244,12 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
         return self.message.get_data()
 
     def schedule(self, schedule_time_utc):
+        # type: (datetime.datetime) -> None
         """Add a specific utc enqueue time to the message.
 
         :param schedule_time_utc: The scheduled utc time to enqueue the message.
         :type schedule_time_utc: ~datetime.datetime
+        :rtype: None
         """
         if not self.properties.message_id:
             self.properties.message_id = str(uuid.uuid4())
@@ -231,6 +269,11 @@ class BatchMessage(object):
 
     **Please use the create_batch method of ServiceBusSender
     to create a BatchMessage object instead of instantiating a BatchMessage object directly.**
+
+    :ivar max_size_in_bytes: The maximum size of bytes data that a BatchMessage object can hold.
+    :vartype max_size_in_bytes: int
+    :ivar message: Internal AMQP BatchMessage object.
+    :vartype message: ~uamqp.BatchMessage
 
     :param int max_size_in_bytes: The maximum size of bytes data that a BatchMessage object can hold.
 
@@ -264,9 +307,14 @@ class BatchMessage(object):
 
     def add(self, message):
         # type: (Message) -> None
-        """
+        """Try to add a single Message to the batch.
 
-        :param message:
+        The total size of an added message is the sum of its body, properties, etc.
+        If this added size results in the batch exceeding the maximum batch size, a `ValueError` will
+        be raised.
+
+        :param message: The Message to be added to the batch.
+        :type message: ~azure.servicebus.Message
         :rtype: None
         :raises: :class:`ValueError`, when exceeding the size limit.
         """
@@ -300,13 +348,18 @@ class PeekMessage(Message):
     A peeked message cannot be completed, abandoned, dead-lettered or deferred.
     It has no lock token or expiry.
 
+    :ivar received_timestamp_utc: The utc timestamp of when the message is received.
+    :vartype received_timestamp_utc: datetime.datetime
+
     """
 
     def __init__(self, message):
         super(PeekMessage, self).__init__(None, message=message)
+        self.received_timestamp_utc = utc_now()
 
     @property
     def settled(self):
+        # type: () -> bool
         """Whether the message has been settled.
 
         This will aways be `True` for a message received using ReceiveAndDelete mode,
@@ -318,12 +371,22 @@ class PeekMessage(Message):
 
     @property
     def partition_id(self):
+        # type: () -> Optional[str]
+        """
+
+        :rtype: int
+        """
         if self.message.annotations:
             return self.message.annotations.get(_X_OPT_PARTITION_ID)
         return None
 
     @property
     def enqueued_time_utc(self):
+        # type: () -> Optional[datetime.datetime]
+        """
+
+        :rtype: ~datetime.datetime
+        """
         if self.message.annotations:
             timestamp = self.message.annotations.get(_X_OPT_ENQUEUED_TIME)
             if timestamp:
@@ -333,6 +396,11 @@ class PeekMessage(Message):
 
     @property
     def scheduled_enqueue_time_utc(self):
+        # type: () -> Optional[datetime.datetime]
+        """
+
+        :rtype: ~datetime.datetime
+        """
         if self.message.annotations:
             timestamp = self.message.annotations.get(_X_OPT_SCHEDULED_ENQUEUE_TIME)
             if timestamp:
@@ -342,6 +410,11 @@ class PeekMessage(Message):
 
     @property
     def sequence_number(self):
+        # type: () -> Optional[int]
+        """
+
+        :rtype: int
+        """
         if self.message.annotations:
             return self.message.annotations.get(_X_OPT_SEQUENCE_NUMBER)
         return None
@@ -350,6 +423,9 @@ class PeekMessage(Message):
 class ReceivedMessage(PeekMessage):
     """
     A Service Bus Message received from service side.
+
+    :ivar auto_renew_error: Error when AutoLockRenew is used and it fails to renew the message lock.
+    :vartype auto_renew_error: ~azure.servicebus.AutoLockRenewTimeout or ~azure.servicebus.AutoLockRenewFailed
 
     .. admonition:: Example:
 
@@ -361,8 +437,9 @@ class ReceivedMessage(PeekMessage):
             :caption: Checking the properties on a received message.
     """
     def __init__(self, message, mode=ReceiveSettleMode.PeekLock):
-        self._settled = (mode == ReceiveSettleMode.ReceiveAndDelete)
         super(ReceivedMessage, self).__init__(message=message)
+        self._settled = (mode == ReceiveSettleMode.ReceiveAndDelete)
+        self.auto_renew_error = None
 
     def _is_live(self, action):
         # pylint: disable=no-member
@@ -378,11 +455,12 @@ class ReceivedMessage(PeekMessage):
         try:
             if self._receiver.session and self._receiver.session.expired:
                 raise SessionLockExpired(inner_exception=self._receiver.session.auto_renew_error)
-        except TypeError: #TODO: Exception: AttributeError?
+        except TypeError:
             pass
 
     @property
     def settled(self):
+        # type: () -> bool
         """Whether the message has been settled.
 
         This will aways be `True` for a message received using ReceiveAndDelete mode,
@@ -394,6 +472,11 @@ class ReceivedMessage(PeekMessage):
 
     @property
     def expired(self):
+        # type: () -> bool
+        """
+
+        :rtype: bool
+        """
         if self._receiver._session_id:  # pylint: disable=protected-access
             raise TypeError("Session messages do not expire. Please use the Session expiry instead.")
         if self.locked_until_utc and self.locked_until_utc <= utc_now():
@@ -402,6 +485,11 @@ class ReceivedMessage(PeekMessage):
 
     @property
     def locked_until_utc(self):
+        # type: () -> Optional[datetime.datetime]
+        """
+
+        :rtype: datetime.datetime
+        """
         if self._receiver._session_id or self.settled:  # pylint: disable=protected-access
             return None
         if self._expiry:
@@ -413,10 +501,15 @@ class ReceivedMessage(PeekMessage):
 
     @property
     def lock_token(self):
+        # type: () -> Optional[Union[uuid.UUID, str]]
+        """
+
+        :rtype:  ~uuid.UUID or str
+        """
         if self.settled:
             return None
 
-        if hasattr(self.message, 'delivery_tag') and self.message.delivery_tag:
+        if self.message.delivery_tag:
             return uuid.UUID(bytes_le=self.message.delivery_tag)
 
         delivery_annotations = self.message.delivery_annotations
@@ -425,43 +518,45 @@ class ReceivedMessage(PeekMessage):
         return None
 
     def complete(self):
+        # type: () -> None
         """Complete the message.
 
         This removes the message from the queue.
 
+        :rtype: None
         :raises: ~azure.servicebus.common.errors.MessageAlreadySettled if the message has been settled.
         :raises: ~azure.servicebus.common.errors.MessageLockExpired if message lock has already expired.
         :raises: ~azure.servicebus.common.errors.SessionLockExpired if session lock has already expired.
         :raises: ~azure.servicebus.common.errors.MessageSettleFailed if message settle operation fails.
         """
-        self._is_live('complete')
+        self._is_live(MESSAGE_COMPLETE)
         try:
             self._receiver._settle_message(SETTLEMENT_COMPLETE, [self.lock_token])  # pylint: disable=protected-access
         except Exception as e:
-            raise MessageSettleFailed("complete", e)
+            raise MessageSettleFailed(MESSAGE_COMPLETE, e)
         self._settled = True
 
-    def dead_letter(self, description=None):
+    def dead_letter(self, reason=None, description=None):
+        # type: (Optional[str], Optional[str]) -> None
         """Move the message to the Dead Letter queue.
 
         The Dead Letter queue is a sub-queue that can be
         used to store messages that failed to process correctly, or otherwise require further inspection
         or processing. The queue can also be configured to send expired messages to the Dead Letter queue.
-        To receive dead-lettered messages, use `QueueClient.get_deadletter_receiver()` or
-        `SubscriptionClient.get_deadletter_receiver()`.
 
-        :param description: The reason for dead-lettering the message.
-        :type description: str
+        :param str reason: The reason for dead-lettering the message.
+        :param str description: The detailed description for dead-lettering the message.
+        :rtype: None
         :raises: ~azure.servicebus.common.errors.MessageAlreadySettled if the message has been settled.
         :raises: ~azure.servicebus.common.errors.MessageLockExpired if message lock has already expired.
         :raises: ~azure.servicebus.common.errors.SessionLockExpired if session lock has already expired.
         :raises: ~azure.servicebus.common.errors.MessageSettleFailed if message settle operation fails.
         """
         # pylint: disable=protected-access
-        self._is_live('dead-letter')
+        self._is_live(MESSAGE_DEAD_LETTER)
         details = {
-            'deadletter-reason': str(description) if description else "",
-            'deadletter-description': str(description) if description else ""}
+            MGMT_REQUEST_DEAD_LETTER_REASON: str(reason) if reason else "",
+            MGMT_REQUEST_DEAD_LETTER_DESCRIPTION: str(description) if description else ""}
         try:
             self._receiver._settle_message(
                 SETTLEMENT_DEADLETTER,
@@ -469,45 +564,50 @@ class ReceivedMessage(PeekMessage):
                 dead_letter_details=details
             )
         except Exception as e:
-            raise MessageSettleFailed("reject", e)
+            raise MessageSettleFailed(MESSAGE_DEAD_LETTER, e)
         self._settled = True
 
     def abandon(self):
+        # type: () -> None
         """Abandon the message.
 
         This message will be returned to the queue to be reprocessed.
 
+        :rtype: None
         :raises: ~azure.servicebus.common.errors.MessageAlreadySettled if the message has been settled.
         :raises: ~azure.servicebus.common.errors.MessageLockExpired if message lock has already expired.
         :raises: ~azure.servicebus.common.errors.SessionLockExpired if session lock has already expired.
         :raises: ~azure.servicebus.common.errors.MessageSettleFailed if message settle operation fails.
         """
-        self._is_live('abandon')
+        self._is_live(MESSAGE_ABANDON)
         try:
             self._receiver._settle_message(SETTLEMENT_ABANDON, [self.lock_token])  # pylint: disable=protected-access
         except Exception as e:
-            raise MessageSettleFailed("abandon", e)
+            raise MessageSettleFailed(MESSAGE_ABANDON, e)
         self._settled = True
 
     def defer(self):
+        # type: () -> None
         """Defer the message.
 
         This message will remain in the queue but must be received
         specifically by its sequence number in order to be processed.
 
+        :rtype: None
         :raises: ~azure.servicebus.common.errors.MessageAlreadySettled if the message has been settled.
         :raises: ~azure.servicebus.common.errors.MessageLockExpired if message lock has already expired.
         :raises: ~azure.servicebus.common.errors.SessionLockExpired if session lock has already expired.
         :raises: ~azure.servicebus.common.errors.MessageSettleFailed if message settle operation fails.
         """
-        self._is_live('defer')
+        self._is_live(MESSAGE_DEFER)
         try:
             self._receiver._settle_message(SETTLEMENT_DEFER, [self.lock_token])  # pylint: disable=protected-access
         except Exception as e:
-            raise MessageSettleFailed("defer", e)
+            raise MessageSettleFailed(MESSAGE_DEFER, e)
         self._settled = True
 
     def renew_lock(self):
+        # type: () -> None
         """Renew the message lock.
 
         This will maintain the lock on the message to ensure
@@ -517,16 +617,17 @@ class ReceivedMessage(PeekMessage):
         background task by registering the message with an `azure.servicebus.AutoLockRenew` instance.
         This operation is only available for non-sessionful messages.
 
+        :rtype: None
         :raises: TypeError if the message is sessionful.
         :raises: ~azure.servicebus.common.errors.MessageLockExpired is message lock has already expired.
         :raises: ~azure.servicebus.common.errors.MessageAlreadySettled is message has already been settled.
         """
         if self._receiver._session_id:  # pylint: disable=protected-access
             raise TypeError("Session messages cannot be renewed. Please renew the Session lock instead.")
-        self._is_live('renew')
+        self._is_live(MESSAGE_RENEW_LOCK)
         token = self.lock_token
         if not token:
             raise ValueError("Unable to renew lock - no lock token found.")
 
         expiry = self._receiver._renew_locks(token)  # pylint: disable=protected-access
-        self._expiry = utc_from_timestamp(expiry[b'expirations'][0]/1000.0)
+        self._expiry = utc_from_timestamp(expiry[MGMT_RESPONSE_EXPIRATION][0]/1000.0)

@@ -10,6 +10,10 @@ import uamqp
 from uamqp.message import MessageProperties
 
 from .._base_handler import BaseHandler, _generate_sas_token
+from .._common.constants import (
+    TOKEN_TYPE_SASTOKEN,
+    MGMT_REQUEST_OP_TYPE_ENTITY_MGMT
+)
 from ..exceptions import (
     InvalidHandlerState,
     ServiceBusError,
@@ -32,7 +36,7 @@ class ServiceBusSharedKeyCredential(object):
     def __init__(self, policy: str, key: str):
         self.policy = policy
         self.key = key
-        self.token_type = b"servicebus.windows.net:sastoken"
+        self.token_type = TOKEN_TYPE_SASTOKEN
 
     async def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
         if not scopes:
@@ -147,7 +151,7 @@ class BaseHandlerAsync(BaseHandler):
             return await self._handler.mgmt_request_async(
                 mgmt_msg,
                 mgmt_operation,
-                op_type=b"entity-mgmt",
+                op_type=MGMT_REQUEST_OP_TYPE_ENTITY_MGMT,
                 node=self._mgmt_target.encode(self._config.encoding),
                 timeout=5000,
                 callback=callback)

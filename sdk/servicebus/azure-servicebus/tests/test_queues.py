@@ -415,7 +415,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 assert len(deferred) == 10
                 for message in deferred:
                     assert isinstance(message, ReceivedMessage)
-                    message.dead_letter("something")
+                    message.dead_letter(reason="Testing reason", description="Testing description")
     
             count = 0
             with sb_client.get_deadletter_receiver(servicebus_queue.name,
@@ -423,8 +423,8 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 for message in receiver:
                     count += 1
                     print_message(_logger, message)
-                    assert message.user_properties[b'DeadLetterReason'] == b'something'
-                    assert message.user_properties[b'DeadLetterErrorDescription'] == b'something'
+                    assert message.user_properties[b'DeadLetterReason'] == b'Testing reason'
+                    assert message.user_properties[b'DeadLetterErrorDescription'] == b'Testing description'
                     message.complete()
             assert count == 10
     
@@ -526,7 +526,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     for message in messages:
                         print_message(_logger, message)
                         count += 1
-                        message.dead_letter(description="Testing")
+                        message.dead_letter(reason="Testing reason", description="Testing description")
                     messages = receiver.receive()
     
             assert count == 10
@@ -568,7 +568,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 while messages:
                     for message in messages:
                         print_message(_logger, message)
-                        message.dead_letter(description="Testing queue deadletter")
+                        message.dead_letter(reason="Testing reason", description="Testing description")
                         count += 1
                     messages = receiver.receive()
     

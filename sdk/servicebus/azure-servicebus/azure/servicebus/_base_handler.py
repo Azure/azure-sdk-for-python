@@ -26,6 +26,12 @@ from .exceptions import (
     _create_servicebus_exception
 )
 from ._common.utils import create_properties
+from ._common.constants import (
+    CONTAINER_PREFIX,
+    MANAGEMENT_PATH_SUFFIX,
+    TOKEN_TYPE_SASTOKEN,
+    MGMT_REQUEST_OP_TYPE_ENTITY_MGMT
+)
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -95,7 +101,7 @@ class ServiceBusSharedKeyCredential(object):
         # type: (str, str) -> None
         self.policy = policy
         self.key = key
-        self.token_type = b"servicebus.windows.net:sastoken"
+        self.token_type = TOKEN_TYPE_SASTOKEN
 
     def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
         # type: (str, Any) -> _AccessToken
@@ -114,9 +120,9 @@ class BaseHandler(object):  # pylint:disable=too-many-instance-attributes
     ):
         self.fully_qualified_namespace = fully_qualified_namespace
         self._entity_name = entity_name
-        self._mgmt_target = self._entity_name + "/$management"
+        self._mgmt_target = self._entity_name + MANAGEMENT_PATH_SUFFIX
         self._credential = credential
-        self._container_id = "servicebus.pysdk-" + str(uuid.uuid4())[:8]
+        self._container_id = CONTAINER_PREFIX + str(uuid.uuid4())[:8]
         self._config = Configuration(**kwargs)
         self._running = False
         self._handler = None
@@ -162,7 +168,6 @@ class BaseHandler(object):  # pylint:disable=too-many-instance-attributes
         kwargs["fully_qualified_namespace"] = host
         kwargs["entity_name"] = entity_in_conn_str or entity_in_kwargs
         kwargs["credential"] = ServiceBusSharedKeyCredential(policy, key)
-        kwargs["from_connection_str"] = True
         return kwargs
 
     def _backoff(
@@ -242,7 +247,7 @@ class BaseHandler(object):  # pylint:disable=too-many-instance-attributes
             return self._handler.mgmt_request(
                 mgmt_msg,
                 mgmt_operation,
-                op_type=b"entity-mgmt",
+                op_type=MGMT_REQUEST_OP_TYPE_ENTITY_MGMT,
                 node=self._mgmt_target.encode(self._config.encoding),
                 timeout=5000,
                 callback=callback
