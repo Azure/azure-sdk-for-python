@@ -47,8 +47,6 @@ class ServiceBusNamespacePreparer(AzureMgmtPreparer):
 
         self.set_cache(use_cache, sku, location)
 
-        self.set_cache(use_cache, sku, location)
-
     def create_resource(self, name, **kwargs):
         if self.is_live:
             self.client = self.create_mgmt_client(ServiceBusManagementClient)
