@@ -239,7 +239,8 @@ class SearchIndexClientTestAsync(AzureMgmtTestCase):
             assert set(x.status_code for x in results) == {201}
 
             # There can be some lag before a document is searchable
-            time.sleep(3)
+            if self.is_live:
+                time.sleep(3)
 
             assert await client.get_document_count() == 12
             for doc in DOCUMENTS:
@@ -282,7 +283,8 @@ class SearchIndexClientTestAsync(AzureMgmtTestCase):
             assert set(x.status_code for x in results) == {200}
 
             # There can be some lag before a document is searchable
-            time.sleep(3)
+            if self.is_live:
+                time.sleep(3)
 
             assert await client.get_document_count() == 8
 
@@ -308,7 +310,8 @@ class SearchIndexClientTestAsync(AzureMgmtTestCase):
             assert set(x.status_code for x in results) == {200}
 
             # There can be some lag before a document is searchable
-            time.sleep(3)
+            if self.is_live:
+                time.sleep(3)
 
             assert await client.get_document_count() == 9
 
@@ -334,7 +337,8 @@ class SearchIndexClientTestAsync(AzureMgmtTestCase):
             assert set(x.status_code for x in results) == {200}
 
             # There can be some lag before a document is searchable
-            time.sleep(3)
+            if self.is_live:
+                time.sleep(3)
 
             assert await client.get_document_count() == 10
 
@@ -360,7 +364,8 @@ class SearchIndexClientTestAsync(AzureMgmtTestCase):
             assert set(x.status_code for x in results) == {200, 404}
 
             # There can be some lag before a document is searchable
-            time.sleep(3)
+            if self.is_live:
+                time.sleep(3)
 
             assert await client.get_document_count() == 10
 
@@ -386,7 +391,8 @@ class SearchIndexClientTestAsync(AzureMgmtTestCase):
             assert set(x.status_code for x in results) == {200, 201}
 
             # There can be some lag before a document is searchable
-            time.sleep(3)
+            if self.is_live:
+                time.sleep(3)
 
             assert await client.get_document_count() == 11
 

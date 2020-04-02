@@ -41,6 +41,7 @@ from ._index import (
 )
 
 from ._service import SearchServiceClient
+from ._service._models import PatternAnalyzer, PatternTokenizer
 from ._service._generated.models import(
     Field,
     TextWeights,
@@ -56,9 +57,9 @@ from ._service._generated.models import(
     ScoringProfile,
     CorsOptions,
     Suggester,
+    RegexFlags,
     Analyzer,
     CustomAnalyzer,
-    PatternAnalyzer,
     StandardAnalyzer,
     StopAnalyzer,
     Tokenizer,
@@ -68,7 +69,6 @@ from ._service._generated.models import(
     MicrosoftLanguageStemmingTokenizer,
     MicrosoftLanguageTokenizer,
     NGramTokenizer,
-    PatternTokenizer,
     StandardTokenizer,
     UaxUrlEmailTokenizer,
     TokenFilter,
@@ -132,6 +132,7 @@ __all__ = (
     "ScoringProfile",
     "CorsOptions",
     "Suggester",
+    "RegexFlags",
     "Analyzer",
     "CustomAnalyzer",
     "PatternAnalyzer",
