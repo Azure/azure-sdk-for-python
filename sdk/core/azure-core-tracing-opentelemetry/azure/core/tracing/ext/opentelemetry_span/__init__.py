@@ -139,7 +139,7 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
         :return: A key value pair dictionary
         """
         temp_headers = {} # type: Dict[str, str]
-        inject(self.get_current_tracer(), _set_headers_from_http_request_headers, temp_headers)
+        inject(_set_headers_from_http_request_headers, temp_headers)
         return temp_headers
 
     def add_attribute(self, key, value):
