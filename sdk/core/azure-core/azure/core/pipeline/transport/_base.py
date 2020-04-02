@@ -400,12 +400,14 @@ class HttpRequest(object):
         # type: (HttpRequest, Any) -> None
         """Set the part of a multipart/mixed.
 
-        Only support args for now are HttpRequest objects.
+        Only supported args for now are HttpRequest objects.
 
         boundary is optional, and one will be generated if you don't provide one.
         Note that no verification are made on the boundary, this is considered advanced
         enough so you know how to respect RFC1341 7.2.1 and provide a correct boundary.
 
+        Any additional kwargs will be passed into the pipeline context for per-request policy
+        configuration.
 
         :keyword list[SansIOHTTPPolicy] policies: SansIOPolicy to apply at preparation time
         :keyword str boundary: Optional boundary
@@ -420,8 +422,8 @@ class HttpRequest(object):
         self.multipart_mixed_info = (
             requests,
             kwargs.pop("policies", []),
-            kwargs.pop("boundary", None),
-            kwargs.pop("changesets", [])
+            kwargs.pop("boundary", []),
+            kwargs
         )
 
     def prepare_multipart_body(self):

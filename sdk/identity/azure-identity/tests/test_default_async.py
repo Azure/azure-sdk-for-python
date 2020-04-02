@@ -7,7 +7,8 @@ import os
 from unittest.mock import Mock, patch
 from urllib.parse import urlparse
 
-from azure.identity import KnownAuthorities
+from azure.core.credentials import AccessToken
+from azure.identity import CredentialUnavailableError, KnownAuthorities
 from azure.identity.aio import DefaultAzureCredential, SharedTokenCacheCredential
 from azure.identity.aio._credentials.azure_cli import AzureCliCredential
 from azure.identity.aio._credentials.managed_identity import ManagedIdentityCredential
@@ -15,8 +16,28 @@ from azure.identity._constants import EnvironmentVariables
 import pytest
 
 from helpers import mock_response, Request
-from helpers_async import async_validating_transport, wrap_in_future
+from helpers_async import async_validating_transport, get_completed_future, wrap_in_future
 from test_shared_cache_credential import build_aad_response, get_account_event, populated_cache
+
+
+@pytest.mark.asyncio
+async def test_iterates_only_once():
+    """When a credential succeeds, DefaultAzureCredential should use that credential thereafter, ignoring the others"""
+
+    unavailable_credential = Mock(get_token=Mock(side_effect=CredentialUnavailableError(message="...")))
+    successful_credential = Mock(get_token=Mock(return_value=get_completed_future(AccessToken("***", 42))))
+
+    credential = DefaultAzureCredential()
+    credential.credentials = [
+        unavailable_credential,
+        successful_credential,
+        Mock(get_token=Mock(side_effect=Exception("iteration didn't stop after a credential provided a token"))),
+    ]
+
+    for n in range(3):
+        await credential.get_token("scope")
+        assert unavailable_credential.get_token.call_count == 1
+        assert successful_credential.get_token.call_count == n + 1
 
 
 @pytest.mark.asyncio

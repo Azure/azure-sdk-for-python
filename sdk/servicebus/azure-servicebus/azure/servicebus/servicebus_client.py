@@ -14,6 +14,7 @@ except ImportError:
     from urllib.parse import urlparse
 
 from uamqp import types
+from uamqp.constants import TransportType
 
 from azure.servicebus.common import mgmt_handlers, mixins
 from azure.servicebus.common.constants import (
@@ -39,6 +40,9 @@ class ServiceBusClient(mixins.ServiceBusMixin):
     :param str host_base: Optional. Live host base URL. Defaults to Public Azure.
     :param str shared_access_key_name: SAS authentication key name.
     :param str shared_access_key_value: SAS authentication key value.
+    :param transport_type: Optional. Underlying transport protocol type (Amqp or AmqpOverWebsocket)
+     Default value is ~azure.servicebus.TransportType.Amqp
+    :type transport_type: ~azure.servicebus.TransportType
     :param int http_request_timeout: Optional. Timeout for the HTTP request, in seconds.
      Default value is 65 seconds.
     :param http_request_session: Optional. Session object to use for HTTP requests.
@@ -57,12 +61,14 @@ class ServiceBusClient(mixins.ServiceBusMixin):
 
     def __init__(self, service_namespace=None, host_base=SERVICE_BUS_HOST_BASE,
                  shared_access_key_name=None, shared_access_key_value=None,
+                 transport_type=TransportType.Amqp,
                  http_request_timeout=DEFAULT_HTTP_TIMEOUT, http_request_session=None, debug=False):
 
         self.service_namespace = service_namespace
         self.host_base = host_base
         self.shared_access_key_name = shared_access_key_name
         self.shared_access_key_value = shared_access_key_value
+        self.transport_type = transport_type
         self.debug = debug
         self.mgmt_client = ServiceBusService(
             service_namespace=service_namespace,
@@ -88,13 +94,14 @@ class ServiceBusClient(mixins.ServiceBusMixin):
                 :caption: Create a ServiceBusClient via a connection string.
 
         """
-        address, policy, key, _ = parse_conn_str(conn_str)
+        address, policy, key, _, transport_type = parse_conn_str(conn_str)
         parsed_namespace = urlparse(address)
         namespace, _, base = parsed_namespace.hostname.partition('.')
         return cls(
             namespace,
             shared_access_key_name=policy,
             shared_access_key_value=key,
+            transport_type=transport_type,
             host_base='.' + base,
             **kwargs)
 
@@ -129,6 +136,7 @@ class ServiceBusClient(mixins.ServiceBusMixin):
             self._get_host(), queue,
             shared_access_key_name=self.shared_access_key_name,
             shared_access_key_value=self.shared_access_key_value,
+            transport_type=self.transport_type,
             mgmt_client=self.mgmt_client,
             debug=self.debug)
 
@@ -157,6 +165,7 @@ class ServiceBusClient(mixins.ServiceBusMixin):
                 self._get_host(), queue,
                 shared_access_key_name=self.shared_access_key_name,
                 shared_access_key_value=self.shared_access_key_value,
+                transport_type=self.transport_type,
                 mgmt_client=self.mgmt_client,
                 debug=self.debug))
         return queue_clients
@@ -189,6 +198,7 @@ class ServiceBusClient(mixins.ServiceBusMixin):
             self._get_host(), topic,
             shared_access_key_name=self.shared_access_key_name,
             shared_access_key_value=self.shared_access_key_value,
+            transport_type=self.transport_type,
             debug=self.debug)
 
     def list_topics(self):
@@ -216,6 +226,7 @@ class ServiceBusClient(mixins.ServiceBusMixin):
                 self._get_host(), topic,
                 shared_access_key_name=self.shared_access_key_name,
                 shared_access_key_value=self.shared_access_key_value,
+                transport_type=self.transport_type,
                 debug=self.debug))
         return topic_clients
 
@@ -249,6 +260,7 @@ class ServiceBusClient(mixins.ServiceBusMixin):
             self._get_host(), topic_name, subscription,
             shared_access_key_name=self.shared_access_key_name,
             shared_access_key_value=self.shared_access_key_value,
+            transport_type=self.transport_type,
             debug=self.debug)
 
     def list_subscriptions(self, topic_name):
@@ -281,6 +293,7 @@ class ServiceBusClient(mixins.ServiceBusMixin):
                 self._get_host(), topic_name, sub,
                 shared_access_key_name=self.shared_access_key_name,
                 shared_access_key_value=self.shared_access_key_value,
+                transport_type=self.transport_type,
                 debug=self.debug))
         return sub_clients
 
@@ -796,11 +809,11 @@ class SubscriptionClient(ReceiveClientMixin, mixins.BaseClient):
          not included in the connection string.
         :type topic: str
         """
-        address, policy, key, entity = parse_conn_str(conn_str)
+        address, policy, key, entity, transport_type = parse_conn_str(conn_str)
         entity = topic or entity
         address = build_uri(address, entity)
         address += "/Subscriptions/" + name
-        return cls(address, name, shared_access_key_name=policy, shared_access_key_value=key, **kwargs)
+        return cls(address, name, shared_access_key_name=policy, shared_access_key_value=key, transport_type=transport_type, **kwargs)
 
     @classmethod
     def from_entity(cls, address, topic, entity, **kwargs):  # pylint: disable=arguments-differ

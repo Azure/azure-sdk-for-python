@@ -33,7 +33,6 @@ try:
 except ImportError:
     import mock
 
-import httpretty
 import pytest
 
 from requests import Request, Response
@@ -46,10 +45,12 @@ from azure.core import PipelineClient
 from azure.core.pipeline import PipelineResponse, Pipeline
 from azure.core.pipeline.transport import RequestsTransportResponse, HttpTransport
 
-from azure.mgmt.core.polling.arm_polling import (
+from azure.core.polling.base_polling import (
     LongRunningOperation,
+    BadStatus,
+)
+from azure.mgmt.core.polling.arm_polling import (
     ARMPolling,
-    BadStatus
 )
 
 class SimpleResource:
@@ -113,7 +114,14 @@ def pipeline_client_builder():
     return create_client
 
 
-def test_post(pipeline_client_builder):
+@pytest.fixture
+def deserialization_cb():
+    def cb(pipeline_response):
+        return json.loads(pipeline_response.http_response.text())
+    return cb
+
+
+def test_post(pipeline_client_builder, deserialization_cb):
 
         # Test POST LRO with both Location and Azure-AsyncOperation
 
@@ -148,9 +156,6 @@ def test_post(pipeline_client_builder):
 
         client = pipeline_client_builder(send)
 
-        def deserialization_cb(pipeline_response):
-            return json.loads(pipeline_response.http_response.text())
-
         # Test 1, LRO options with Location final state
         poll = LROPoller(
             client,
@@ -169,14 +174,14 @@ def test_post(pipeline_client_builder):
         result = poll.result()
         assert result['status'] == 'Succeeded'
 
-        # Test 3, backward compat (no options, means "azure-async-operation")
+        # Test 3, "do the right thing" and use Location by default
         poll = LROPoller(
             client,
             initial_response,
             deserialization_cb,
             ARMPolling(0))
         result = poll.result()
-        assert result['status'] == 'Succeeded'
+        assert result['location_result'] == True
 
         # Test 4, location has no body
 
@@ -187,7 +192,7 @@ def test_post(pipeline_client_builder):
                 return TestArmPolling.mock_send(
                     'GET',
                     200,
-                    body=""
+                    body=None
                 ).http_response
             elif request.url == 'http://example.org/async_monitor':
                 return TestArmPolling.mock_send(
@@ -214,10 +219,12 @@ class TestArmPolling(object):
     convert = re.compile('([a-z0-9])([A-Z])')
 
     @staticmethod
-    def mock_send(method, status, headers=None, body=None):
+    def mock_send(method, status, headers=None, body=RESPONSE_BODY):
         if headers is None:
             headers = {}
-        response = mock.create_autospec(Response)
+        response = Response()
+        response._content_consumed = True
+        response._content = json.dumps(body).encode('ascii') if body is not None else None
         response.request = mock.create_autospec(Request)
         response.request.method = method
         response.request.url = RESOURCE_URL
@@ -228,16 +235,13 @@ class TestArmPolling(object):
         response.headers = headers
         response.headers.update({"content-type": "application/json; charset=utf8"})
         response.reason = "OK"
-        content = body if body is not None else RESPONSE_BODY
-        response.text = json.dumps(content)
-        response.json = lambda: json.loads(response.text)
 
         request = CLIENT._request(
             response.request.method,
             response.request.url,
             None,  # params
             response.request.headers,
-            content,
+            body,
             None,  # form_content
             None  # stream_content
         )
@@ -251,10 +255,10 @@ class TestArmPolling(object):
             None  # context
         )
 
-
     @staticmethod
     def mock_update(url, headers=None):
-        response = mock.create_autospec(Response)
+        response = Response()
+        response._content_consumed = True
         response.request = mock.create_autospec(Request)
         response.request.method = 'GET'
         response.headers = headers or {}
@@ -264,13 +268,13 @@ class TestArmPolling(object):
         if url == ASYNC_URL:
             response.request.url = url
             response.status_code = POLLING_STATUS
-            response.text = ASYNC_BODY
+            response._content = ASYNC_BODY.encode('ascii')
             response.randomFieldFromPollAsyncOpHeader = None
 
         elif url == LOCATION_URL:
             response.request.url = url
             response.status_code = POLLING_STATUS
-            response.text = LOCATION_BODY
+            response._content = LOCATION_BODY.encode('ascii')
             response.randomFieldFromPollLocationHeader = None
 
         elif url == ERROR:
@@ -279,11 +283,10 @@ class TestArmPolling(object):
         elif url == RESOURCE_URL:
             response.request.url = url
             response.status_code = POLLING_STATUS
-            response.text = RESOURCE_BODY
+            response._content = RESOURCE_BODY.encode('ascii')
 
         else:
             raise Exception('URL does not match')
-        response.json = lambda: json.loads(response.text)
 
         request = CLIENT._request(
             response.request.method,
@@ -307,6 +310,11 @@ class TestArmPolling(object):
     @staticmethod
     def mock_outputs(pipeline_response):
         response = pipeline_response.http_response
+        try:
+            body = json.loads(response.text())
+        except ValueError:
+            raise DecodeError("Impossible to deserialize")
+
         body = json.loads(response.text())
         body = {TestArmPolling.convert.sub(r'\1_\2', k).lower(): v
                 for k, v in body.items()}
@@ -324,14 +332,17 @@ class TestArmPolling(object):
             resource = SimpleResource(**body)
         return resource
 
+    @staticmethod
+    def mock_deserialization_no_body(pipeline_response):
+        """Use this mock when you don't expect a return (last body irrelevant)
+        """
+        return None
+
     def test_long_running_put(self):
         #TODO: Test custom header field
 
         # Test throw on non LRO related status code
         response = TestArmPolling.mock_send('PUT', 1000, {})
-        op = LongRunningOperation(response, lambda x:None)
-        with pytest.raises(BadStatus):
-            op.set_initial_status(response)
         with pytest.raises(HttpResponseError):
             LROPoller(CLIENT, response,
                 TestArmPolling.mock_outputs,
@@ -479,7 +490,6 @@ class TestArmPolling(object):
             TestArmPolling.mock_outputs,
             ARMPolling(0))
         poll.wait()
-        assert poll.result() is None
         assert poll._polling_method._pipeline_response.http_response.internal_response.randomFieldFromPollAsyncOpHeader is None
 
     def test_long_running_post_legacy(self):
@@ -491,10 +501,9 @@ class TestArmPolling(object):
             {'azure-asyncoperation': ASYNC_URL},
             body={'properties':{'provisioningState': 'Succeeded'}})
         poll = LROPoller(CLIENT, response,
-            TestArmPolling.mock_outputs,
+            TestArmPolling.mock_deserialization_no_body,
             ARMPolling(0))
         poll.wait()
-        #self.assertIsNone(poll.result())
         assert poll._polling_method._pipeline_response.http_response.internal_response.randomFieldFromPollAsyncOpHeader is None
 
         # Test polling from azure-asyncoperation header
@@ -503,10 +512,9 @@ class TestArmPolling(object):
             {'azure-asyncoperation': ASYNC_URL},
             body={'properties':{'provisioningState': 'Succeeded'}})
         poll = LROPoller(CLIENT, response,
-            TestArmPolling.mock_outputs,
+            TestArmPolling.mock_deserialization_no_body,
             ARMPolling(0))
         poll.wait()
-        #self.assertIsNone(poll.result())
         assert poll._polling_method._pipeline_response.http_response.internal_response.randomFieldFromPollAsyncOpHeader is None
 
         # Test polling from location header
@@ -554,7 +562,7 @@ class TestArmPolling(object):
             ARMPolling(0)
         )
         with pytest.raises(DecodeError):
-            poll.wait()
+            poll.result()
 
         LOCATION_BODY = '{\'"}'
         response = TestArmPolling.mock_send(
@@ -564,7 +572,7 @@ class TestArmPolling(object):
             TestArmPolling.mock_outputs,
             ARMPolling(0))
         with pytest.raises(DecodeError):
-            poll.wait()
+            poll.result()
 
         LOCATION_BODY = '{'
         POLLING_STATUS = 203
@@ -575,7 +583,7 @@ class TestArmPolling(object):
             TestArmPolling.mock_outputs,
             ARMPolling(0))
         with pytest.raises(HttpResponseError): # TODO: Node.js raises on deserialization
-            poll.wait()
+            poll.result()
 
         LOCATION_BODY = json.dumps({ 'name': TEST_NAME })
         POLLING_STATUS = 200

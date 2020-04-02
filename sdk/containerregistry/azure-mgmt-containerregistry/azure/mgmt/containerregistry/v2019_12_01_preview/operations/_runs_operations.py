@@ -66,7 +66,7 @@ class RunsOperations(object):
         :rtype:
          ~azure.mgmt.containerregistry.v2019_12_01_preview.models.RunPaged[~azure.mgmt.containerregistry.v2019_12_01_preview.models.Run]
         :raises:
-         :class:`ErrorSchemaException<azure.mgmt.containerregistry.v2019_12_01_preview.models.ErrorSchemaException>`
+         :class:`ErrorResponseException<azure.mgmt.containerregistry.v2019_12_01_preview.models.ErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -111,7 +111,7 @@ class RunsOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                raise models.ErrorSchemaException(self._deserialize, response)
+                raise models.ErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -144,7 +144,7 @@ class RunsOperations(object):
         :rtype: ~azure.mgmt.containerregistry.v2019_12_01_preview.models.Run
          or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorSchemaException<azure.mgmt.containerregistry.v2019_12_01_preview.models.ErrorSchemaException>`
+         :class:`ErrorResponseException<azure.mgmt.containerregistry.v2019_12_01_preview.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.get.metadata['url']
@@ -175,7 +175,7 @@ class RunsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.ErrorSchemaException(self._deserialize, response)
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -226,7 +226,7 @@ class RunsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 201]:
-            raise models.ErrorSchemaException(self._deserialize, response)
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -267,7 +267,7 @@ class RunsOperations(object):
          or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.containerregistry.v2019_12_01_preview.models.Run]]
         :raises:
-         :class:`ErrorSchemaException<azure.mgmt.containerregistry.v2019_12_01_preview.models.ErrorSchemaException>`
+         :class:`ErrorResponseException<azure.mgmt.containerregistry.v2019_12_01_preview.models.ErrorResponseException>`
         """
         raw_result = self._update_initial(
             resource_group_name=resource_group_name,
@@ -318,7 +318,7 @@ class RunsOperations(object):
          ~azure.mgmt.containerregistry.v2019_12_01_preview.models.RunGetLogResult
          or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorSchemaException<azure.mgmt.containerregistry.v2019_12_01_preview.models.ErrorSchemaException>`
+         :class:`ErrorResponseException<azure.mgmt.containerregistry.v2019_12_01_preview.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.get_log_sas_url.metadata['url']
@@ -349,7 +349,7 @@ class RunsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.ErrorSchemaException(self._deserialize, response)
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -393,7 +393,7 @@ class RunsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202]:
-            raise models.ErrorSchemaException(self._deserialize, response)
+            raise models.ErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -420,7 +420,7 @@ class RunsOperations(object):
         :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
         :raises:
-         :class:`ErrorSchemaException<azure.mgmt.containerregistry.v2019_12_01_preview.models.ErrorSchemaException>`
+         :class:`ErrorResponseException<azure.mgmt.containerregistry.v2019_12_01_preview.models.ErrorResponseException>`
         """
         raw_result = self._cancel_initial(
             resource_group_name=resource_group_name,

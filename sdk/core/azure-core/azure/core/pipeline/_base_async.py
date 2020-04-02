@@ -25,7 +25,7 @@
 # --------------------------------------------------------------------------
 import abc
 
-from typing import Any, Union, List, Generic, TypeVar
+from typing import Any, Union, List, Generic, TypeVar, Dict
 
 from azure.core.pipeline import PipelineRequest, PipelineResponse, PipelineContext
 from azure.core.pipeline.policies import AsyncHTTPPolicy, SansIOHTTPPolicy
@@ -168,8 +168,8 @@ class AsyncPipeline(
     async def __aexit__(self, *exc_details):  # pylint: disable=arguments-differ
         await self._transport.__aexit__(*exc_details)
 
-    async def _prepare_multipart_mixed_request(self, request, **kwargs):
-        # type: (HTTPRequestType, Any) -> None
+    async def _prepare_multipart_mixed_request(self, request):
+        # type: (HTTPRequestType) -> None
         """Will execute the multipart policies.
 
         Does nothing if "set_multipart_mixed" was never called.
@@ -180,9 +180,10 @@ class AsyncPipeline(
 
         requests = multipart_mixed_info[0]  # type: List[HTTPRequestType]
         policies = multipart_mixed_info[1]  # type: List[SansIOHTTPPolicy]
+        pipeline_options = multipart_mixed_info[3]  # type: Dict[str, Any]
 
         async def prepare_requests(req):
-            context = PipelineContext(None, **kwargs)
+            context = PipelineContext(None, **pipeline_options)
             pipeline_request = PipelineRequest(req, context)
             for policy in policies:
                 await _await_result(policy.on_request, pipeline_request)
@@ -201,8 +202,7 @@ class AsyncPipeline(
         :return: The PipelineResponse object.
         :rtype: ~azure.core.pipeline.PipelineResponse
         """
-        multipart_options = kwargs.pop("multipart_options", None) or {}
-        await self._prepare_multipart_mixed_request(request, **multipart_options)
+        await self._prepare_multipart_mixed_request(request)
         request.prepare_multipart_body()  # type: ignore
         context = PipelineContext(self._transport, **kwargs)
         pipeline_request = PipelineRequest(request, context)
