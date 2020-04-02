@@ -85,7 +85,7 @@ class ServiceBusClientTests(AzureMgmtTestCase):
 
         with client:
             with client.get_queue_receiver(servicebus_queue.name) as receiver:
-                messages = receiver.receive(max_batch_size=1, timeout=1)
+                messages = receiver.receive(max_batch_size=1, max_wait_time=1)
 
             with pytest.raises(ServiceBusError): 
                 with client.get_queue_sender(servicebus_queue.name) as sender:
@@ -103,7 +103,7 @@ class ServiceBusClientTests(AzureMgmtTestCase):
         with client:
             with pytest.raises(ServiceBusError):
                 with client.get_queue_receiver(servicebus_queue.name) as receiver:
-                    messages = receiver.receive(max_batch_size=1, timeout=1)
+                    messages = receiver.receive(max_batch_size=1, max_wait_time=1)
 
             with client.get_queue_sender(servicebus_queue.name) as sender:
                 sender.send(Message("test"))

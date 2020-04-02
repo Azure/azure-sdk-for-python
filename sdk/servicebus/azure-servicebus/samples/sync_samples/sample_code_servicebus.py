@@ -178,14 +178,14 @@ def example_send_and_receive_sync():
 
     # [START receive_sync]
     with servicebus_receiver:
-        messages = servicebus_receiver.receive(timeout=5)
+        messages = servicebus_receiver.receive(max_wait_time=5)
         for message in messages:
             print(message)
             message.complete()
     # [END receive_sync]
 
         # [START receive_complex_message]
-        messages = servicebus_receiver.receive(timeout=5)
+        messages = servicebus_receiver.receive(max_wait_time=5)
         for message in messages:
             print("Receiving: {}".format(message))
             print("Time to live: {}".format(message.time_to_live))
@@ -211,7 +211,7 @@ def example_receive_deferred_sync():
     # [START receive_defer_sync]
     with servicebus_receiver:
         deferred_sequenced_numbers = []
-        messages = servicebus_receiver.receive(timeout=5)
+        messages = servicebus_receiver.receive(max_wait_time=5)
         for message in messages:
             deferred_sequenced_numbers.append(message.sequence_number)
             print(message)

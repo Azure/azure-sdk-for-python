@@ -13,7 +13,8 @@ Examples to show basic async use case of python azure-servicebus SDK, including:
 """
 import os
 import asyncio
-from azure.servicebus.aio import ServiceBusClient, Message
+from azure.servicebus.aio import ServiceBusClient
+from azure.servicebus import Message
 
 
 _RUN_ITERATOR = False
@@ -138,7 +139,7 @@ async def example_send_and_receive_async():
     servicebus_sender = await example_create_servicebus_sender_async()
     servicebus_receiver = await example_create_servicebus_receiver_async()
 
-    from azure.servicebus.aio import Message
+    from azure.servicebus import Message
     # [START send_async]
     async with servicebus_sender:
         message = Message("Hello World")
@@ -160,7 +161,7 @@ async def example_send_and_receive_async():
 
     # [START receive_async]
     async with servicebus_receiver:
-        messages = await servicebus_receiver.receive(timeout=5)
+        messages = await servicebus_receiver.receive(max_wait_time=5)
         for message in messages:
             print(message)
             await message.complete()
@@ -186,7 +187,7 @@ async def example_receive_deferred_async():
     # [START receive_defer_async]
     async with servicebus_receiver:
         deferred_sequenced_numbers = []
-        messages = await servicebus_receiver.receive(timeout=5)
+        messages = await servicebus_receiver.receive(max_wait_time=5)
         for message in messages:
             deferred_sequenced_numbers.append(message.sequence_number)
             print(message)
