@@ -83,7 +83,13 @@ class ServiceBusSender(BaseHandler, SenderMixin):
     """The ServiceBusSender class defines a high level interface for
     sending messages to the Azure Service Bus Queue or Topic.
 
-    :ivar str fully_qualified_namespace: The fully qualified host name for the Service Bus namespace.
+    :ivar fully_qualified_namespace: The fully qualified host name for the Service Bus namespace.
+     The namespace format is: `<yournamespace>.servicebus.windows.net`.
+    :vartype fully_qualified_namespace: str
+    :ivar entity_name: The name of the entity that the client connects to.
+    :vartype entity_name: str
+
+    :param str fully_qualified_namespace: The fully qualified host name for the Service Bus namespace.
      The namespace format is: `<yournamespace>.servicebus.windows.net`.
     :param ~azure.core.credentials.TokenCredential credential: The credential object used for authentication which
      implements a particular interface for getting tokens. It accepts

@@ -3,9 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-
-import uuid
-
 from .._common import message as sync_message
 from .._common.constants import (
     SETTLEMENT_ABANDON,
@@ -13,7 +10,6 @@ from .._common.constants import (
     SETTLEMENT_DEFER,
     SETTLEMENT_DEADLETTER,
     ReceiveSettleMode,
-    _X_OPT_LOCK_TOKEN,
     MGMT_RESPONSE_EXPIRATION,
     MGMT_REQUEST_DEAD_LETTER_REASON,
     MGMT_REQUEST_DEAD_LETTER_DESCRIPTION,
@@ -35,17 +31,6 @@ class ReceivedMessage(sync_message.ReceivedMessage):
     def __init__(self, message, mode=ReceiveSettleMode.PeekLock, loop=None):
         self._loop = loop or get_running_loop()
         super(ReceivedMessage, self).__init__(message=message, mode=mode)
-
-    @property
-    def lock_token(self):
-        if self.settled:
-            return None
-        if hasattr(self.message, 'delivery_tag') and self.message.delivery_tag:
-            return uuid.UUID(bytes_le=self.message.delivery_tag)
-        delivery_annotations = self.message.delivery_annotations
-        if delivery_annotations:
-            return delivery_annotations.get(_X_OPT_LOCK_TOKEN)
-        return None
 
     @property
     def settled(self):

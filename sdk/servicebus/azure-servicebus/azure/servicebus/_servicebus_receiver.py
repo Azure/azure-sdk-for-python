@@ -59,6 +59,9 @@ class ServiceBusSession(object):
     **Please use the instance variable `session` on the ServiceBusReceiver to get the corresponding ServiceBusSession
     object linked with the receiver instead of instantiating a ServiceBusSession object directly.**
 
+    :ivar auto_renew_error: Error when AutoLockRenew is used and it fails to renew the session lock.
+    :vartype auto_renew_error: ~azure.servicebus.AutoLockRenewTimeout or ~azure.servicebus.AutoLockRenewFailed
+
     .. admonition:: Example:
 
         .. literalinclude:: ../samples/sync_samples/sample_code_servicebus.py
@@ -242,7 +245,13 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
     """The ServiceBusReceiver class defines a high level interface for
     receiving messages from the Azure Service Bus Queue or Topic Subscription.
 
-    :ivar str fully_qualified_namespace: The fully qualified host name for the Service Bus namespace.
+    :ivar fully_qualified_namespace: The fully qualified host name for the Service Bus namespace.
+     The namespace format is: `<yournamespace>.servicebus.windows.net`.
+    :vartype fully_qualified_namespace: str
+    :ivar entity_path: The path of the entity that the client connects to.
+    :vartype entity_path: str
+
+    :param str fully_qualified_namespace: The fully qualified host name for the Service Bus namespace.
      The namespace format is: `<yournamespace>.servicebus.windows.net`.
     :param ~azure.core.credentials.TokenCredential credential: The credential object used for authentication which
      implements a particular interface for getting tokens. It accepts

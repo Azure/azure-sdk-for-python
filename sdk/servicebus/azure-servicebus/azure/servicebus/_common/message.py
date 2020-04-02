@@ -48,11 +48,17 @@ from .utils import utc_from_timestamp, utc_now
 class Message(object):  # pylint: disable=too-many-public-methods,too-many-instance-attributes
     """A Service Bus Message.
 
+    :ivar properties: Properties of the internal AMQP message object.
+    :vartype properties: ~uamqp.message.MessageProperties
+    :ivar header: Header of the internal AMQP message object.
+    :vartype header: ~uamqp.message.MessageHeader
+    :ivar message: Internal AMQP message object.
+    :vartype message: ~uamqp.message.Message
+
     :param body: The data to send in a single message.
     :type body: str or bytes
     :param str encoding: The encoding for string data. Default is UTF-8.
-    :keyword session_id: An optional session ID for the message to be sent.
-    :paramtype session_id: str
+    :keyword str session_id: An optional session ID for the message to be sent.
 
     .. admonition:: Example:
 
@@ -71,8 +77,6 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
         # problems as MessageProperties won't absorb spurious args.
         self.properties = uamqp.message.MessageProperties(encoding=encoding, subject=subject)
         self.header = uamqp.message.MessageHeader()
-        self.received_timestamp_utc = None
-        self.auto_renew_error = None
         self._annotations = {}
         self._app_properties = {}
         self._encoding = encoding
@@ -85,7 +89,6 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
             self._app_properties = self.message.application_properties
             self.properties = self.message.properties
             self.header = self.message.header
-            self.received_timestamp_utc = utc_now()
         else:
             self._build_message(body)
 
@@ -240,6 +243,11 @@ class BatchMessage(object):
     **Please use the create_batch method of ServiceBusSender
     to create a BatchMessage object instead of instantiating a BatchMessage object directly.**
 
+    :ivar max_size_in_bytes: The maximum size of bytes data that a BatchMessage object can hold.
+    :vartype max_size_in_bytes: int
+    :ivar message: Internal AMQP BatchMessage object.
+    :vartype message: ~uamqp.BatchMessage
+
     :param int max_size_in_bytes: The maximum size of bytes data that a BatchMessage object can hold.
 
     """
@@ -308,10 +316,14 @@ class PeekMessage(Message):
     A peeked message cannot be completed, abandoned, dead-lettered or deferred.
     It has no lock token or expiry.
 
+    :ivar received_timestamp_utc: The utc timestamp of when the message is received.
+    :vartype received_timestamp_utc: datetime.datetime
+
     """
 
     def __init__(self, message):
         super(PeekMessage, self).__init__(None, message=message)
+        self.received_timestamp_utc = utc_now()
 
     @property
     def settled(self):
@@ -359,6 +371,9 @@ class ReceivedMessage(PeekMessage):
     """
     A Service Bus Message received from service side.
 
+    :ivar auto_renew_error: Error when AutoLockRenew is used and it fails to renew the message lock.
+    :vartype auto_renew_error: ~azure.servicebus.AutoLockRenewTimeout or ~azure.servicebus.AutoLockRenewFailed
+
     .. admonition:: Example:
 
         .. literalinclude:: ../samples/sync_samples/sample_code_servicebus.py
@@ -369,8 +384,9 @@ class ReceivedMessage(PeekMessage):
             :caption: Checking the properties on a received message.
     """
     def __init__(self, message, mode=ReceiveSettleMode.PeekLock):
-        self._settled = (mode == ReceiveSettleMode.ReceiveAndDelete)
         super(ReceivedMessage, self).__init__(message=message)
+        self._settled = (mode == ReceiveSettleMode.ReceiveAndDelete)
+        self.auto_renew_error = None
 
     def _is_live(self, action):
         # pylint: disable=no-member
@@ -424,7 +440,7 @@ class ReceivedMessage(PeekMessage):
         if self.settled:
             return None
 
-        if hasattr(self.message, 'delivery_tag') and self.message.delivery_tag:
+        if self.message.delivery_tag:
             return uuid.UUID(bytes_le=self.message.delivery_tag)
 
         delivery_annotations = self.message.delivery_annotations
