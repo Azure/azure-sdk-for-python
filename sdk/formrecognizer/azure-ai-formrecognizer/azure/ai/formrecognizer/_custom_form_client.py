@@ -32,7 +32,7 @@ from ._models import (
     CustomModel,
     CustomLabeledModel,
 )
-from ._training_polling import TrainingPolling
+from ._polling import TrainingPolling, AnalyzePolling
 from ._user_agent import USER_AGENT
 if TYPE_CHECKING:
     from azure.core.credentials import AzureKeyCredential
@@ -182,7 +182,7 @@ class CustomFormClient(object):
             include_text_details=include_text_details,
             content_type=content_type,
             cls=kwargs.pop("cls", callback),
-            polling=LROBasePolling(timeout=POLLING_INTERVAL, **kwargs),
+            polling=LROBasePolling(timeout=POLLING_INTERVAL, lro_algorithms=[AnalyzePolling()], **kwargs),
             **kwargs
         )
 
@@ -216,7 +216,7 @@ class CustomFormClient(object):
             model_id=model_id,
             include_text_details=include_text_details,
             cls=kwargs.pop("cls", callback),
-            polling=LROBasePolling(timeout=POLLING_INTERVAL, **kwargs),
+            polling=LROBasePolling(timeout=POLLING_INTERVAL, lro_algorithms=[AnalyzePolling()], **kwargs),
             **kwargs
         )
 
@@ -255,7 +255,7 @@ class CustomFormClient(object):
             include_text_details=include_text_details,
             content_type=content_type,
             cls=kwargs.pop("cls", callback),
-            polling=LROBasePolling(timeout=POLLING_INTERVAL, **kwargs),
+            polling=LROBasePolling(timeout=POLLING_INTERVAL, lro_algorithms=[AnalyzePolling()], **kwargs),
             **kwargs
         )
 
@@ -289,7 +289,7 @@ class CustomFormClient(object):
             model_id=model_id,
             include_text_details=include_text_details,
             cls=kwargs.pop("cls", callback),
-            polling=LROBasePolling(timeout=POLLING_INTERVAL, **kwargs),
+            polling=LROBasePolling(timeout=POLLING_INTERVAL, lro_algorithms=[AnalyzePolling()], **kwargs),
             **kwargs
         )
 
