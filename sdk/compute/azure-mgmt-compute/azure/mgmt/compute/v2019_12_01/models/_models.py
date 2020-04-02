@@ -1138,15 +1138,25 @@ class DiffDiskSettings(Model):
      disk. Possible values include: 'Local'
     :type option: str or
      ~azure.mgmt.compute.v2019_12_01.models.DiffDiskOptions
+    :param placement: Specifies the ephemeral disk placement for operating
+     system disk. This property is used to specify Cache disk or Resource disk
+     for ephemeral OS disk provisioning. By default if customer does not
+     specify this placement property in the request, the Ephemeral OS disk will
+     be provisioned using Cache disk. Possible values include: 'CacheDisk',
+     'ResourceDisk'
+    :type placement: str or
+     ~azure.mgmt.compute.v2019_12_01.models.DiffDiskPlacement
     """
 
     _attribute_map = {
         'option': {'key': 'option', 'type': 'str'},
+        'placement': {'key': 'placement', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(DiffDiskSettings, self).__init__(**kwargs)
         self.option = kwargs.get('option', None)
+        self.placement = kwargs.get('placement', None)
 
 
 class Disallowed(Model):
