@@ -6,9 +6,9 @@ import abc
 import os
 import sys
 
-
 from msal import TokenCache
-from azure.core.exceptions import ClientAuthenticationError
+
+from .. import CredentialUnavailableError
 from .._constants import KnownAuthorities
 
 try:
@@ -162,7 +162,7 @@ class SharedTokenCacheBase(ABC):
         accounts = self._get_accounts_having_matching_refresh_tokens()
         if not accounts:
             # cache is empty or contains no refresh token -> user needs to sign in
-            raise ClientAuthenticationError(message=NO_ACCOUNTS)
+            raise CredentialUnavailableError(message=NO_ACCOUNTS)
 
         filtered_accounts = _filtered_accounts(accounts, username, tenant_id)
         if len(filtered_accounts) == 1:
@@ -180,7 +180,7 @@ class SharedTokenCacheBase(ABC):
         else:
             message = MULTIPLE_ACCOUNTS.format(cached_accounts)
 
-        raise ClientAuthenticationError(message=message)
+        raise CredentialUnavailableError(message=message)
 
     def _get_refresh_tokens(self, account):
         return self._cache.find(
