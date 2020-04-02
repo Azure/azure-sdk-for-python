@@ -14,45 +14,49 @@ from azure.eventhub.aio import EventHubProducerClient, EventHubConsumerClient, E
 from azure.eventhub.exceptions import OperationTimeoutError
 
 import uamqp
-from uamqp import authentication, errors, c_uamqp
+from uamqp import authentication, errors, c_uamqp, compat
 
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_send_with_long_interval_async(live_eventhub, sleep):
+    test_partition = "0"
     sender = EventHubProducerClient(live_eventhub['hostname'], live_eventhub['event_hub'],
                                     EventHubSharedKeyCredential(live_eventhub['key_name'], live_eventhub['access_key']))
     async with sender:
-        batch = await sender.create_batch()
+        batch = await sender.create_batch(partition_id=test_partition)
         batch.add(EventData(b"A single event"))
         await sender.send_batch(batch)
-        for _ in range(1):
-            if sleep:
-                await asyncio.sleep(300)
-            else:
-                await sender._producers[-1]._handler._connection._conn.destroy()
-            batch = await sender.create_batch()
-            batch.add(EventData(b"A single event"))
-            await sender.send_batch(batch)
-        partition_ids = await sender.get_partition_ids()
+
+        if sleep:
+            await asyncio.sleep(250)  # EH server side idle timeout is 240 second
+        else:
+            await sender._producers[test_partition]._handler._connection._conn.destroy()
+        batch = await sender.create_batch(partition_id=test_partition)
+        batch.add(EventData(b"A single event"))
+        await sender.send_batch(batch)
 
     received = []
-    for p in partition_ids:
-        uri = "sb://{}/{}".format(live_eventhub['hostname'], live_eventhub['event_hub'])
-        sas_auth = authentication.SASTokenAuth.from_shared_access_key(
-            uri, live_eventhub['key_name'], live_eventhub['access_key'])
+    uri = "sb://{}/{}".format(live_eventhub['hostname'], live_eventhub['event_hub'])
+    sas_auth = authentication.SASTokenAuth.from_shared_access_key(
+        uri, live_eventhub['key_name'], live_eventhub['access_key'])
 
-        source = "amqps://{}/{}/ConsumerGroups/{}/Partitions/{}".format(
-            live_eventhub['hostname'],
-            live_eventhub['event_hub'],
-            live_eventhub['consumer_group'],
-            p)
-        receiver = uamqp.ReceiveClient(source, auth=sas_auth, debug=False, timeout=5000, prefetch=500)
-        try:
-            receiver.open()
-            received.extend([EventData._from_message(x) for x in receiver.receive_message_batch(timeout=5000)])
-        finally:
-            receiver.close()
+    source = "amqps://{}/{}/ConsumerGroups/{}/Partitions/{}".format(
+        live_eventhub['hostname'],
+        live_eventhub['event_hub'],
+        live_eventhub['consumer_group'],
+        test_partition)
+    receiver = uamqp.ReceiveClient(source, auth=sas_auth, debug=False, timeout=10000, prefetch=10)
+    try:
+        receiver.open()
+
+        # receive_message_batch() returns immediately once it receives any messages before the max_batch_size
+        # and timeout reach. Could be 1, 2, or any number between 1 and max_batch_size.
+        # So call it twice to ensure the two events are received.
+        received.extend([EventData._from_message(x) for x in receiver.receive_message_batch(max_batch_size=1, timeout=5000)])
+        received.extend([EventData._from_message(x) for x in receiver.receive_message_batch(max_batch_size=1, timeout=5000)])
+    finally:
+        receiver.close()
 
     assert len(received) == 2
     assert list(received[0].body)[0] == b"A single event"
@@ -76,10 +80,16 @@ async def test_send_connection_idle_timeout_and_reconnect_async(connstr_receiver
                 # Mac may raise OperationTimeoutError or MessageHandlerError
                 await sender._send_event_data()
             await sender._send_event_data_with_retry()
-
-    messages = receivers[0].receive_message_batch(max_batch_size=10, timeout=10000)
-    received_ed1 = EventData._from_message(messages[0])
-    assert received_ed1.body_as_str() == 'data'
+    retry = 0
+    while retry < 3:
+        try:
+            messages = receivers[0].receive_message_batch(max_batch_size=10, timeout=10000)
+            if messages:
+                received_ed1 = EventData._from_message(messages[0])
+                assert received_ed1.body_as_str() == 'data'
+                break
+        except compat.TimeoutException:
+            retry += 1
 
 
 @pytest.mark.liveTest
@@ -106,14 +116,5 @@ async def test_receive_connection_idle_timeout_and_reconnect_async(connstr_sende
 
             await consumer._handler.do_work_async()
             assert consumer._handler._connection._state == c_uamqp.ConnectionState.DISCARDING
-
-            duration = 10
-            now_time = time.time()
-            end_time = now_time + duration
-
-            while now_time < end_time:
-                await consumer.receive()
-                await asyncio.sleep(0.01)
-                now_time = time.time()
-
+            await consumer.receive(batch=False, max_batch_size=1, max_wait_time=10)
             assert on_event_received.event.body_as_str() == "Event"

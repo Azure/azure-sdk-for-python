@@ -280,10 +280,7 @@ class PageBlobChunkUploader(_ChunkUploader):  # pylint: disable=abstract-method
     def _is_chunk_empty(self, chunk_data):
         # read until non-zero byte is encountered
         # if reached the end without returning, then chunk_data is all 0's
-        for each_byte in chunk_data:
-            if each_byte not in [0, b"\x00"]:
-                return False
-        return True
+        return not any(bytearray(chunk_data))
 
     def _upload_chunk(self, chunk_offset, chunk_data):
         # avoid uploading the empty pages
@@ -336,14 +333,33 @@ class AppendBlobChunkUploader(_ChunkUploader):  # pylint: disable=abstract-metho
             )
 
 
+class DataLakeFileChunkUploader(_ChunkUploader):  # pylint: disable=abstract-method
+
+    def _upload_chunk(self, chunk_offset, chunk_data):
+        # avoid uploading the empty pages
+        self.response_headers = self.service.append_data(
+            body=chunk_data,
+            position=chunk_offset,
+            content_length=len(chunk_data),
+            cls=return_response_headers,
+            data_stream_total=self.total_size,
+            upload_stream_current=self.progress_total,
+            **self.request_options
+        )
+
+        if not self.parallel and self.request_options.get('modified_access_conditions'):
+            self.request_options['modified_access_conditions'].if_match = self.response_headers['etag']
+
+
 class FileChunkUploader(_ChunkUploader):  # pylint: disable=abstract-method
 
     def _upload_chunk(self, chunk_offset, chunk_data):
-        chunk_end = chunk_offset + len(chunk_data) - 1
+        length = len(chunk_data)
+        chunk_end = chunk_offset + length - 1
         response = self.service.upload_range(
             chunk_data,
             chunk_offset,
-            chunk_end,
+            length,
             data_stream_total=self.total_size,
             upload_stream_current=self.progress_total,
             **self.request_options

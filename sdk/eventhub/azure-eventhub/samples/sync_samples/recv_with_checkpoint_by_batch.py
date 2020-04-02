@@ -51,7 +51,10 @@ if __name__ == '__main__':
             with a checkpoint store, the client will load-balance partition assignment with other EventHubConsumerClient
             instances which also try to receive events from all partitions and use the same storage resource.
             """
-            consumer_client.receive(on_event=on_event)
+            consumer_client.receive(
+                on_event=on_event,
+                starting_position="-1",  # "-1" is from the beginning of the partition.
+            )
             # With specified partition_id, load-balance will be disabled, for example:
             # client.receive(on_event=on_event, partition_id='0')
     except KeyboardInterrupt:

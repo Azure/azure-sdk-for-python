@@ -6,11 +6,11 @@
 ###########
 
 # Catch all
-/sdk/ @mayurid
+/sdk/ @mayurid @lmazuel
 
 # Core
 /sdk/core/ @lmazuel @xiangyan99 @johanste
-/sdk/core/azure-core/ @xiangyan99 @bryevdv
+/sdk/core/azure-core/ @xiangyan99 @bryevdv @lmazuel
 
 # Service team
 /sdk/identity/ @chlowell @schaabs
@@ -36,6 +36,8 @@
 /sdk/servicefabric/ @QingChenmsft @samedder
 /sql/sql/ @jaredmoo
 /sdk/servicebus/ @annatisch @yunhaoling @YijunXieMS @KieranBrantnerMagee
+/sdk/synapse/ @aim-for-better @idear1203
+/sdk/textanalytics/ @kristapratico @iscai-msft
 
 # Management Plane
 /**/*mgmt*/ @zikalino

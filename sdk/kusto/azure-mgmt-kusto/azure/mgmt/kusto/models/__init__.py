@@ -19,9 +19,13 @@ try:
     from ._models_py3 import CheckNameResult
     from ._models_py3 import Cluster
     from ._models_py3 import ClusterCheckNameRequest
+    from ._models_py3 import ClusterPrincipalAssignment
+    from ._models_py3 import ClusterPrincipalAssignmentCheckNameRequest
     from ._models_py3 import ClusterUpdate
     from ._models_py3 import Database
     from ._models_py3 import DatabasePrincipal
+    from ._models_py3 import DatabasePrincipalAssignment
+    from ._models_py3 import DatabasePrincipalAssignmentCheckNameRequest
     from ._models_py3 import DatabasePrincipalListRequest
     from ._models_py3 import DatabasePrincipalListResult
     from ._models_py3 import DatabaseStatistics
@@ -30,6 +34,7 @@ try:
     from ._models_py3 import DataConnectionValidation
     from ._models_py3 import DataConnectionValidationListResult
     from ._models_py3 import DataConnectionValidationResult
+    from ._models_py3 import DiagnoseVirtualNetworkResult
     from ._models_py3 import EventGridDataConnection
     from ._models_py3 import EventHubDataConnection
     from ._models_py3 import FollowerDatabaseDefinition
@@ -37,6 +42,8 @@ try:
     from ._models_py3 import IdentityUserAssignedIdentitiesValue
     from ._models_py3 import IotHubDataConnection
     from ._models_py3 import KeyVaultProperties
+    from ._models_py3 import LanguageExtension
+    from ._models_py3 import LanguageExtensionsList
     from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
     from ._models_py3 import OptimizedAutoscale
@@ -59,9 +66,13 @@ except (SyntaxError, ImportError):
     from ._models import CheckNameResult
     from ._models import Cluster
     from ._models import ClusterCheckNameRequest
+    from ._models import ClusterPrincipalAssignment
+    from ._models import ClusterPrincipalAssignmentCheckNameRequest
     from ._models import ClusterUpdate
     from ._models import Database
     from ._models import DatabasePrincipal
+    from ._models import DatabasePrincipalAssignment
+    from ._models import DatabasePrincipalAssignmentCheckNameRequest
     from ._models import DatabasePrincipalListRequest
     from ._models import DatabasePrincipalListResult
     from ._models import DatabaseStatistics
@@ -70,6 +81,7 @@ except (SyntaxError, ImportError):
     from ._models import DataConnectionValidation
     from ._models import DataConnectionValidationListResult
     from ._models import DataConnectionValidationResult
+    from ._models import DiagnoseVirtualNetworkResult
     from ._models import EventGridDataConnection
     from ._models import EventHubDataConnection
     from ._models import FollowerDatabaseDefinition
@@ -77,6 +89,8 @@ except (SyntaxError, ImportError):
     from ._models import IdentityUserAssignedIdentitiesValue
     from ._models import IotHubDataConnection
     from ._models import KeyVaultProperties
+    from ._models import LanguageExtension
+    from ._models import LanguageExtensionsList
     from ._models import Operation
     from ._models import OperationDisplay
     from ._models import OptimizedAutoscale
@@ -92,24 +106,33 @@ except (SyntaxError, ImportError):
 from ._paged_models import AttachedDatabaseConfigurationPaged
 from ._paged_models import AzureResourceSkuPaged
 from ._paged_models import ClusterPaged
+from ._paged_models import ClusterPrincipalAssignmentPaged
 from ._paged_models import DatabasePaged
+from ._paged_models import DatabasePrincipalAssignmentPaged
 from ._paged_models import DatabasePrincipalPaged
 from ._paged_models import DataConnectionPaged
 from ._paged_models import FollowerDatabaseDefinitionPaged
+from ._paged_models import LanguageExtensionPaged
 from ._paged_models import OperationPaged
 from ._paged_models import SkuDescriptionPaged
 from ._kusto_management_client_enums import (
     State,
     ProvisioningState,
+    LanguageExtensionName,
     AzureSkuName,
     AzureSkuTier,
     AzureScaleType,
     DefaultPrincipalsModificationKind,
     PrincipalsModificationKind,
-    DataFormat,
+    EventHubDataFormat,
+    Compression,
+    IotHubDataFormat,
+    EventGridDataFormat,
     IdentityType,
     DatabasePrincipalRole,
     DatabasePrincipalType,
+    PrincipalType,
+    ClusterPrincipalRole,
     Type,
     Reason,
 )
@@ -124,9 +147,13 @@ __all__ = [
     'CheckNameResult',
     'Cluster',
     'ClusterCheckNameRequest',
+    'ClusterPrincipalAssignment',
+    'ClusterPrincipalAssignmentCheckNameRequest',
     'ClusterUpdate',
     'Database',
     'DatabasePrincipal',
+    'DatabasePrincipalAssignment',
+    'DatabasePrincipalAssignmentCheckNameRequest',
     'DatabasePrincipalListRequest',
     'DatabasePrincipalListResult',
     'DatabaseStatistics',
@@ -135,6 +162,7 @@ __all__ = [
     'DataConnectionValidation',
     'DataConnectionValidationListResult',
     'DataConnectionValidationResult',
+    'DiagnoseVirtualNetworkResult',
     'EventGridDataConnection',
     'EventHubDataConnection',
     'FollowerDatabaseDefinition',
@@ -142,6 +170,8 @@ __all__ = [
     'IdentityUserAssignedIdentitiesValue',
     'IotHubDataConnection',
     'KeyVaultProperties',
+    'LanguageExtension',
+    'LanguageExtensionsList',
     'Operation',
     'OperationDisplay',
     'OptimizedAutoscale',
@@ -158,22 +188,31 @@ __all__ = [
     'ClusterPaged',
     'SkuDescriptionPaged',
     'AzureResourceSkuPaged',
+    'LanguageExtensionPaged',
+    'ClusterPrincipalAssignmentPaged',
     'DatabasePaged',
     'DatabasePrincipalPaged',
+    'DatabasePrincipalAssignmentPaged',
     'AttachedDatabaseConfigurationPaged',
     'DataConnectionPaged',
     'OperationPaged',
     'State',
     'ProvisioningState',
+    'LanguageExtensionName',
     'AzureSkuName',
     'AzureSkuTier',
     'AzureScaleType',
     'DefaultPrincipalsModificationKind',
     'PrincipalsModificationKind',
-    'DataFormat',
+    'EventHubDataFormat',
+    'Compression',
+    'IotHubDataFormat',
+    'EventGridDataFormat',
     'IdentityType',
     'DatabasePrincipalRole',
     'DatabasePrincipalType',
+    'PrincipalType',
+    'ClusterPrincipalRole',
     'Type',
     'Reason',
 ]

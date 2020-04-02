@@ -38,18 +38,18 @@ class ServiceStatsTest(StorageTestCase):
 
     @staticmethod
     def override_response_body_with_live_status(response):
-        response.http_response.text = lambda: SERVICE_LIVE_RESP_BODY
+        response.http_response.text = lambda encoding=None: SERVICE_LIVE_RESP_BODY
 
     @staticmethod
     def override_response_body_with_unavailable_status(response):
-        response.http_response.text = lambda: SERVICE_UNAVAILABLE_RESP_BODY
+        response.http_response.text = lambda encoding=None: SERVICE_UNAVAILABLE_RESP_BODY
 
     # --Test cases per service ---------------------------------------
     @GlobalResourceGroupPreparer()
     @StorageAccountPreparer(random_name_enabled=True, name_prefix='pyacrstorage', sku='Standard_RAGRS')
     def test_blob_service_stats(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        url = self.account_url(storage_account.name, "blob")
+        url = self.account_url(storage_account, "blob")
         bs = BlobServiceClient(url, credential=storage_account_key)
         # Act
         stats = bs.get_service_stats(raw_response_hook=self.override_response_body_with_live_status)
@@ -61,7 +61,7 @@ class ServiceStatsTest(StorageTestCase):
     @StorageAccountPreparer(random_name_enabled=True, name_prefix='pyacrstorage', sku='Standard_RAGRS')
     def test_blob_service_stats_when_unavailable(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        url = self.account_url(storage_account.name, "blob")
+        url = self.account_url(storage_account, "blob")
         bs = BlobServiceClient(url, credential=storage_account_key)
 
         # Act

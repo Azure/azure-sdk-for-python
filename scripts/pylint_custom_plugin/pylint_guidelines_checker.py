@@ -53,7 +53,7 @@ class ClientConstructorTakesCorrectParameters(BaseChecker):
             },
         ),
     )
-    ignore_clients = ["PipelineClient", "AsyncPipelineClient"]
+    ignore_clients = ["PipelineClient", "AsyncPipelineClient", "ARMPipelineClient", "AsyncARMPipelineClient"]
 
     def __init__(self, linter=None):
         super(ClientConstructorTakesCorrectParameters, self).__init__(linter)
@@ -162,7 +162,7 @@ class ClientHasApprovedMethodNamePrefix(BaseChecker):
         ),
     )
 
-    ignore_clients = ["PipelineClient", "AsyncPipelineClient"]
+    ignore_clients = ["PipelineClient", "AsyncPipelineClient", "ARMPipelineClient", "AsyncARMPipelineClient"]
 
     def __init__(self, linter=None):
         super(ClientHasApprovedMethodNamePrefix, self).__init__(linter)
@@ -222,7 +222,7 @@ class ClientMethodsUseKwargsWithMultipleParameters(BaseChecker):
         ),
     )
 
-    ignore_clients = ["PipelineClient", "AsyncPipelineClient"]
+    ignore_clients = ["PipelineClient", "AsyncPipelineClient", "ARMPipelineClient", "AsyncARMPipelineClient"]
 
     def __init__(self, linter=None):
         super(ClientMethodsUseKwargsWithMultipleParameters, self).__init__(linter)
@@ -276,7 +276,7 @@ class ClientMethodsHaveTypeAnnotations(BaseChecker):
             },
         ),
     )
-    ignore_clients = ["PipelineClient", "AsyncPipelineClient"]
+    ignore_clients = ["PipelineClient", "AsyncPipelineClient", "ARMPipelineClient", "AsyncARMPipelineClient"]
 
     def __init__(self, linter=None):
         super(ClientMethodsHaveTypeAnnotations, self).__init__(linter)
@@ -356,7 +356,7 @@ class ClientMethodsHaveTracingDecorators(BaseChecker):
             },
         ),
     )
-    ignore_clients = ["PipelineClient", "AsyncPipelineClient"]
+    ignore_clients = ["PipelineClient", "AsyncPipelineClient", "ARMPipelineClient", "AsyncARMPipelineClient"]
 
     def __init__(self, linter=None):
         super(ClientMethodsHaveTracingDecorators, self).__init__(linter)
@@ -428,7 +428,7 @@ class ClientsDoNotUseStaticMethods(BaseChecker):
             },
         ),
     )
-    ignore_clients = ["PipelineClient", "AsyncPipelineClient"]
+    ignore_clients = ["PipelineClient", "AsyncPipelineClient", "ARMPipelineClient", "AsyncARMPipelineClient"]
 
     def __init__(self, linter=None):
         super(ClientsDoNotUseStaticMethods, self).__init__(linter)
@@ -526,7 +526,7 @@ class ClientUsesCorrectNamingConventions(BaseChecker):
             },
         ),
     )
-    ignore_clients = ["PipelineClient", "AsyncPipelineClient"]
+    ignore_clients = ["PipelineClient", "AsyncPipelineClient", "ARMPipelineClient", "AsyncARMPipelineClient"]
 
     def __init__(self, linter=None):
         super(ClientUsesCorrectNamingConventions, self).__init__(linter)
@@ -596,7 +596,7 @@ class ClientMethodsHaveKwargsParameter(BaseChecker):
             },
         ),
     )
-    ignore_clients = ["PipelineClient", "AsyncPipelineClient"]
+    ignore_clients = ["PipelineClient", "AsyncPipelineClient", "ARMPipelineClient", "AsyncARMPipelineClient"]
 
     def __init__(self, linter=None):
         super(ClientMethodsHaveKwargsParameter, self).__init__(linter)
@@ -652,8 +652,8 @@ class ClientMethodNamesDoNotUseDoubleUnderscorePrefix(BaseChecker):
             },
         ),
     )
-    ignore_clients = ["PipelineClient", "AsyncPipelineClient"]
-    acceptable_names = ["__init__", "__enter__", "__exit__", "__aenter__", "__aexit__"]
+    ignore_clients = ["PipelineClient", "AsyncPipelineClient", "ARMPipelineClient", "AsyncARMPipelineClient"]
+    acceptable_names = ["__init__", "__enter__", "__exit__", "__aenter__", "__aexit__", "__repr__"]
 
     def __init__(self, linter=None):
         super(ClientMethodNamesDoNotUseDoubleUnderscorePrefix, self).__init__(linter)
@@ -703,7 +703,7 @@ class ClientDocstringUsesLiteralIncludeForCodeExample(BaseChecker):
         ),
     )
 
-    ignore_clients = ["PipelineClient", "AsyncPipelineClient"]
+    ignore_clients = ["PipelineClient", "AsyncPipelineClient", "ARMPipelineClient", "AsyncARMPipelineClient"]
 
     def __init__(self, linter=None):
         super(ClientDocstringUsesLiteralIncludeForCodeExample, self).__init__(linter)
@@ -771,7 +771,7 @@ class AsyncClientCorrectNaming(BaseChecker):
             },
         ),
     )
-    ignore_clients = ["PipelineClient", "AsyncPipelineClient"]
+    ignore_clients = ["PipelineClient", "AsyncPipelineClient", "ARMPipelineClient", "AsyncARMPipelineClient"]
 
     def __init__(self, linter=None):
         super(AsyncClientCorrectNaming, self).__init__(linter)
@@ -820,7 +820,7 @@ class SpecifyParameterNamesInCall(BaseChecker):
             },
         ),
     )
-    ignore_clients = ["PipelineClient", "AsyncPipelineClient"]
+    ignore_clients = ["PipelineClient", "AsyncPipelineClient", "ARMPipelineClient", "AsyncARMPipelineClient"]
 
     def __init__(self, linter=None):
         super(SpecifyParameterNamesInCall, self).__init__(linter)
@@ -871,7 +871,7 @@ class ClientListMethodsUseCorePaging(BaseChecker):
             },
         ),
     )
-    ignore_clients = ["PipelineClient", "AsyncPipelineClient"]
+    ignore_clients = ["PipelineClient", "AsyncPipelineClient", "ARMPipelineClient", "AsyncARMPipelineClient"]
 
     def __init__(self, linter=None):
         super(ClientListMethodsUseCorePaging, self).__init__(linter)
@@ -926,7 +926,7 @@ class ClientLROMethodsUseCorePolling(BaseChecker):
             },
         ),
     )
-    ignore_clients = ["PipelineClient", "AsyncPipelineClient"]
+    ignore_clients = ["PipelineClient", "AsyncPipelineClient", "ARMPipelineClient", "AsyncARMPipelineClient"]
 
     def __init__(self, linter=None):
         super(ClientLROMethodsUseCorePolling, self).__init__(linter)
@@ -981,7 +981,7 @@ class ClientLROMethodsUseCorrectNaming(BaseChecker):
             },
         ),
     )
-    ignore_clients = ["PipelineClient", "AsyncPipelineClient"]
+    ignore_clients = ["PipelineClient", "AsyncPipelineClient", "ARMPipelineClient", "AsyncARMPipelineClient"]
 
     def __init__(self, linter=None):
         super(ClientLROMethodsUseCorrectNaming, self).__init__(linter)
@@ -1039,7 +1039,7 @@ class ClientConstructorDoesNotHaveConnectionStringParam(BaseChecker):
             },
         ),
     )
-    ignore_clients = ["PipelineClient", "AsyncPipelineClient"]
+    ignore_clients = ["PipelineClient", "AsyncPipelineClient", "ARMPipelineClient", "AsyncARMPipelineClient"]
 
     def __init__(self, linter=None):
         super(ClientConstructorDoesNotHaveConnectionStringParam, self).__init__(linter)

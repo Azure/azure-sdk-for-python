@@ -42,22 +42,22 @@ with open(os.path.join(package_folder_path, '_version.py'), 'r') as fd:
 if not version:
     raise RuntimeError('Cannot find version information')
 
-with open('README.rst', encoding='utf-8') as f:
+with open('README.md', encoding='utf-8') as f:
     readme = f.read()
-with open('HISTORY.rst', encoding='utf-8') as f:
-    history = f.read()
+with open('CHANGELOG.md', encoding='utf-8') as f:
+    changelog = f.read()
 
 setup(
     name=PACKAGE_NAME,
     version=version,
     description='Microsoft Azure Client Library for Python (Common)',
-    long_description=readme + '\n\n' + history,
+    long_description=readme + '\n\n' + changelog,
     license='MIT License',
     author='Microsoft Corporation',
     author_email='azpysdkhelp@microsoft.com',
     url='https://github.com/Azure/azure-sdk-for-python',
     classifiers=[
-        'Development Status :: 5 - Production/Stable',
+        "Development Status :: 5 - Production/Stable",
         'Programming Language :: Python',
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
@@ -72,7 +72,7 @@ setup(
     zip_safe=False,
     packages=[
         'azure.common',
-        'azure.profiles',
+        'azure.profiles'
     ],
     extras_require={
         ":python_version<'3.0'": ['azure-nspkg'],

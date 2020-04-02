@@ -161,7 +161,8 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         the session.
         """
         try:
-            token_type = self._credential.token_type
+            # ignore mypy's warning because token_type is Optional
+            token_type = self._credential.token_type    # type: ignore
         except AttributeError:
             token_type = b"jwt"
         if token_type == b"servicebus.windows.net:sastoken":
@@ -227,6 +228,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
                     self._address.hostname, mgmt_auth
                 )  # pylint:disable=assignment-from-none
                 mgmt_client.open(connection=conn)
+                mgmt_msg.application_properties["security_token"] = mgmt_auth.token
                 response = mgmt_client.mgmt_request(
                     mgmt_msg,
                     constants.READ_OPERATION,

@@ -20,6 +20,7 @@ USAGE:
 import os
 from datetime import datetime, timedelta
 
+from azure.core.exceptions import ResourceExistsError
 
 SOURCE_FILE = 'SampleSource.txt'
 
@@ -44,7 +45,7 @@ class ContainerSamples(object):
         # [START create_container_client_sasurl]
         from azure.storage.blob import ContainerClient
 
-        sas_url = sas_url = "https://account.blob.core.windows.net/mycontainer?sv=2015-04-05&st=2015-04-29T22%3A18%3A26Z&se=2015-04-30T02%3A23%3A26Z&sr=b&sp=rw&sip=168.1.5.60-168.1.5.70&spr=https&sig=Z%2FRHIX5Xcg0Mq2rqI3OlWTjEg2tYkboXr1P9ZUXDtkk%3D"
+        sas_url = "https://account.blob.core.windows.net/mycontainer?sv=2015-04-05&st=2015-04-29T22%3A18%3A26Z&se=2015-04-30T02%3A23%3A26Z&sr=b&sp=rw&sip=168.1.5.60-168.1.5.70&spr=https&sig=Z%2FRHIX5Xcg0Mq2rqI3OlWTjEg2tYkboXr1P9ZUXDtkk%3D"
         container = ContainerClient.from_container_url(sas_url)
         # [END create_container_client_sasurl]
 

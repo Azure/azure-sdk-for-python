@@ -27,47 +27,64 @@
 
 import functools
 
+from typing import Awaitable, Callable, Dict, Optional, Any, TypeVar, overload
+
 from .common import change_context, get_function_and_class_name
 from ..settings import settings
 
-try:
-    from typing import TYPE_CHECKING
-except ImportError:
-    TYPE_CHECKING = False
 
-if TYPE_CHECKING:
-    from typing import Callable, Any
+T = TypeVar("T")
 
 
-def distributed_trace_async(func=None, name_of_span=None):
-    # type: (Callable, str) -> Callable[[Any], Any]
-    """Decorator to apply to async function to get traced automatically.
+@overload
+def distributed_trace_async(
+    __func: Callable[..., Awaitable[T]]
+) -> Callable[..., Awaitable[T]]:
+    pass
+
+
+@overload
+def distributed_trace_async(  # pylint:disable=function-redefined
+    **kwargs: Any  # pylint:disable=unused-argument
+) -> Callable[[Callable[..., Awaitable[T]]], Callable[..., Awaitable[T]]]:
+    pass
+
+
+def distributed_trace_async(  # pylint:disable=function-redefined
+    __func: Callable[..., Awaitable[T]] = None, **kwargs: Any
+):
+    """Decorator to apply to function to get traced automatically.
 
     Span will use the func name or "name_of_span".
 
     :param callable func: A function to decorate
     :param str name_of_span: The span name to replace func name if necessary
     """
-    if func is None:
-        return functools.partial(distributed_trace_async, name_of_span=name_of_span)
+    name_of_span = kwargs.pop("name_of_span", None)
+    tracing_attributes = kwargs.pop("tracing_attributes", {})
 
-    @functools.wraps(func)
-    async def wrapper_use_tracer(*args, **kwargs):
-        # type: (Any, Any) -> Any
-        merge_span = kwargs.pop('merge_span', False)
-        passed_in_parent = kwargs.pop("parent_span", None)
+    def decorator(func: Callable[..., Awaitable[T]]) -> Callable[..., Awaitable[T]]:
+        @functools.wraps(func)
+        async def wrapper_use_tracer(*args, **kwargs):
+            # type: (*Any, **Any) -> T
+            merge_span = kwargs.pop("merge_span", False)
+            passed_in_parent = kwargs.pop("parent_span", None)
 
-        span_impl_type = settings.tracing_implementation()
-        if span_impl_type is None:
-            return await func(*args, **kwargs) # type: ignore
+            span_impl_type = settings.tracing_implementation()
+            if span_impl_type is None:
+                return await func(*args, **kwargs)
 
-        # Merge span is parameter is set, but only if no explicit parent are passed
-        if merge_span and not passed_in_parent:
-            return await func(*args, **kwargs) # type: ignore
+            # Merge span is parameter is set, but only if no explicit parent are passed
+            if merge_span and not passed_in_parent:
+                return await func(*args, **kwargs)
 
-        with change_context(passed_in_parent):
-            name = name_of_span or get_function_and_class_name(func, *args)  # type: ignore
-            with span_impl_type(name=name):
-                return await func(*args, **kwargs)  # type: ignore
+            with change_context(passed_in_parent):
+                name = name_of_span or get_function_and_class_name(func, *args)
+                with span_impl_type(name=name) as span:
+                    for key, value in tracing_attributes.items():
+                        span.add_attribute(key, value)
+                    return await func(*args, **kwargs)
 
-    return wrapper_use_tracer
+        return wrapper_use_tracer
+
+    return decorator if __func is None else decorator(__func)

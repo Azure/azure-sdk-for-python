@@ -4,13 +4,15 @@
 # --------------------------------------------------------------------------------------------
 from __future__ import unicode_literals
 
+import time
 import uuid
 import logging
+from collections import deque
 from typing import TYPE_CHECKING, Callable, Dict, Optional, Any
 
 import uamqp
 from uamqp import types, errors, utils
-from uamqp import ReceiveClient, Source
+from uamqp import ReceiveClient, Source, Message
 
 from .exceptions import _error_handler
 from ._common import EventData
@@ -23,6 +25,7 @@ from ._constants import (
 )
 
 if TYPE_CHECKING:
+    from typing import Deque
     from uamqp.authentication import JWTTokenAuth
     from ._consumer_client import EventHubConsumerClient
 
@@ -119,7 +122,9 @@ class EventHubConsumer(
         self._track_last_enqueued_event_properties = (
             track_last_enqueued_event_properties
         )
+        self._message_buffer = deque()  # type: Deque[Message]
         self._last_received_event = None  # type: Optional[EventData]
+        self._receive_start_time = None  # type: Optional[float]
 
     def _create_handler(self, auth):
         # type: (JWTTokenAuth) -> None
@@ -165,10 +170,15 @@ class EventHubConsumer(
     def _message_received(self, message):
         # type: (uamqp.Message) -> None
         # pylint:disable=protected-access
+        self._message_buffer.appendleft(message)
+
+    def _next_message_in_buffer(self):
+        # pylint:disable=protected-access
+        message = self._message_buffer.pop()
         event_data = EventData._from_message(message)
         trace_link_message(event_data)
         self._last_received_event = event_data
-        self._on_event_received(event_data)
+        return event_data
 
     def _open(self):
         # type: () -> bool
@@ -194,35 +204,48 @@ class EventHubConsumer(
                 self.handler_ready = True
         return self.handler_ready
 
-    def receive(self):
-        # type: () -> None
+    def receive(self, batch=False, max_batch_size=300, max_wait_time=None):
         retried_times = 0
-        last_exception = None
         max_retries = (
             self._client._config.max_retries  # pylint:disable=protected-access
         )
-
-        while retried_times <= max_retries:
-            try:
-                if self._open():
-                    self._handler.do_work()  # type: ignore
-                return
-            except Exception as exception:  # pylint: disable=broad-except
-                if (
-                    isinstance(exception, uamqp.errors.LinkDetach)
-                    and exception.condition == uamqp.constants.ErrorCodes.LinkStolen  # pylint: disable=no-member
-                ):
-                    raise self._handle_exception(exception)
-                if not self.running:  # exit by close
-                    return
-                if self._last_received_event:
-                    self._offset = self._last_received_event.offset
-                last_exception = self._handle_exception(exception)
-                retried_times += 1
-                if retried_times > max_retries:
-                    _LOGGER.info(
-                        "%r operation has exhausted retry. Last exception: %r.",
-                        self._name,
-                        last_exception,
+        self._receive_start_time = self._receive_start_time or time.time()
+        deadline = self._receive_start_time + (max_wait_time or 0)  # max_wait_time can be None
+        if len(self._message_buffer) < max_batch_size:
+            while retried_times <= max_retries:
+                try:
+                    if self._open():
+                        self._handler.do_work()  # type: ignore
+                    break
+                except Exception as exception:  # pylint: disable=broad-except
+                    if (
+                        isinstance(exception, uamqp.errors.LinkDetach)
+                        and exception.condition == uamqp.constants.ErrorCodes.LinkStolen  # pylint: disable=no-member
+                    ):
+                        raise self._handle_exception(exception)
+                    if not self.running:  # exit by close
+                        return
+                    if self._last_received_event:
+                        self._offset = self._last_received_event.offset
+                    last_exception = self._handle_exception(exception)
+                    retried_times += 1
+                    if retried_times > max_retries:
+                        _LOGGER.info(
+                            "%r operation has exhausted retry. Last exception: %r.",
+                            self._name,
+                            last_exception,
+                        )
+                        raise last_exception
+        if len(self._message_buffer) >= max_batch_size \
+                or (self._message_buffer and not max_wait_time) \
+                or (deadline <= time.time() and max_wait_time):
+            if batch:
+                events_for_callback = []
+                for _ in range(min(max_batch_size, len(self._message_buffer))):
+                    events_for_callback.append(
+                        self._next_message_in_buffer()  # pylint: disable=protected-access
                     )
-                    raise last_exception
+                self._on_event_received(events_for_callback)
+            else:
+                self._on_event_received(self._next_message_in_buffer() if self._message_buffer else None)
+            self._receive_start_time = None

@@ -11,6 +11,7 @@
 
 try:
     from ._models_py3 import ActiveDirectory
+    from ._models_py3 import AuthorizeRequest
     from ._models_py3 import CapacityPool
     from ._models_py3 import CapacityPoolPatch
     from ._models_py3 import Dimension
@@ -22,6 +23,7 @@ try:
     from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
     from ._models_py3 import ReplicationObject
+    from ._models_py3 import ReplicationStatus
     from ._models_py3 import ResourceNameAvailability
     from ._models_py3 import ResourceNameAvailabilityRequest
     from ._models_py3 import ServiceSpecification
@@ -34,6 +36,7 @@ try:
     from ._models_py3 import VolumePropertiesExportPolicy
 except (SyntaxError, ImportError):
     from ._models import ActiveDirectory
+    from ._models import AuthorizeRequest
     from ._models import CapacityPool
     from ._models import CapacityPoolPatch
     from ._models import Dimension
@@ -45,6 +48,7 @@ except (SyntaxError, ImportError):
     from ._models import Operation
     from ._models import OperationDisplay
     from ._models import ReplicationObject
+    from ._models import ReplicationStatus
     from ._models import ResourceNameAvailability
     from ._models import ResourceNameAvailabilityRequest
     from ._models import ServiceSpecification
@@ -65,10 +69,15 @@ from ._azure_net_app_files_management_client_enums import (
     InAvailabilityReasonType,
     CheckNameResourceTypes,
     ServiceLevel,
+    EndpointType,
+    ReplicationSchedule,
+    RelationshipStatus,
+    MirrorState,
 )
 
 __all__ = [
     'ActiveDirectory',
+    'AuthorizeRequest',
     'CapacityPool',
     'CapacityPoolPatch',
     'Dimension',
@@ -80,6 +89,7 @@ __all__ = [
     'Operation',
     'OperationDisplay',
     'ReplicationObject',
+    'ReplicationStatus',
     'ResourceNameAvailability',
     'ResourceNameAvailabilityRequest',
     'ServiceSpecification',
@@ -99,4 +109,8 @@ __all__ = [
     'InAvailabilityReasonType',
     'CheckNameResourceTypes',
     'ServiceLevel',
+    'EndpointType',
+    'ReplicationSchedule',
+    'RelationshipStatus',
+    'MirrorState',
 ]

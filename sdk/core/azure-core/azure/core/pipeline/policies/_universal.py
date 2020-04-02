@@ -149,6 +149,10 @@ class RequestIdPolicy(SansIOHTTPPolicy):
         request_id = unset = object()
         if 'request_id' in request.context.options:
             request_id = request.context.options.pop('request_id')
+            if request_id is None:
+                return
+        elif self._request_id is None:
+            return
         elif self._request_id is not _Unset:
             request_id = self._request_id   # type: ignore
         elif self._auto_request_id:
@@ -164,6 +168,9 @@ class UserAgentPolicy(SansIOHTTPPolicy):
 
     :keyword bool user_agent_overwrite: Overwrites User-Agent when True. Defaults to False.
     :keyword bool user_agent_use_env: Gets user-agent from environment. Defaults to True.
+    :keyword str user_agent: If specified, this will be added in front of the user agent string.
+    :keyword str sdk_moniker: If specified, the user agent string will be
+        azsdk-python-[sdk_moniker] Python/[python_version] ([platform_version])
 
     .. admonition:: Example:
 
@@ -178,18 +185,23 @@ class UserAgentPolicy(SansIOHTTPPolicy):
     _ENV_ADDITIONAL_USER_AGENT = 'AZURE_HTTP_USER_AGENT'
 
     def __init__(self, base_user_agent=None, **kwargs):  # pylint: disable=super-init-not-called
-        # type: (Optional[str], bool) -> None
+        # type: (Optional[str], **Any) -> None
         self.overwrite = kwargs.pop('user_agent_overwrite', False)
         self.use_env = kwargs.pop('user_agent_use_env', True)
+        application_id = kwargs.pop('user_agent', None)
+        sdk_moniker = kwargs.pop('sdk_moniker', 'core/{}'.format(azcore_version))
 
-        if base_user_agent is None:
-            self._user_agent = "azsdk-python-core/{} Python/{} ({})".format(
-                azcore_version,
+        if base_user_agent:
+            self._user_agent = base_user_agent
+        else:
+            self._user_agent = "azsdk-python-{} Python/{} ({})".format(
+                sdk_moniker,
                 platform.python_version(),
                 platform.platform()
             )
-        else:
-            self._user_agent = base_user_agent
+
+        if application_id:
+            self._user_agent = "{} {}".format(application_id, self._user_agent)
 
     @property
     def user_agent(self):
@@ -222,7 +234,7 @@ class UserAgentPolicy(SansIOHTTPPolicy):
             if options_dict.pop('user_agent_overwrite', self.overwrite):
                 http_request.headers[self._USERAGENT] = user_agent
             else:
-                user_agent = "{} {}".format(self.user_agent, user_agent)
+                user_agent = "{} {}".format(user_agent, self.user_agent)
                 http_request.headers[self._USERAGENT] = user_agent
 
         elif self.overwrite or self._USERAGENT not in http_request.headers:
@@ -426,12 +438,19 @@ class HttpLoggingPolicy(SansIOHTTPPolicy):
 
 class ContentDecodePolicy(SansIOHTTPPolicy):
     """Policy for decoding unstreamed response content.
+
+    :param response_encoding: The encoding to use if known for this service (will disable auto-detection)
+    :type response_encoding: str
     """
     # Accept "text" because we're open minded people...
     JSON_REGEXP = re.compile(r'^(application|text)/([0-9a-z+.]+\+)?json$')
 
     # Name used in context
     CONTEXT_NAME = "deserialized_data"
+
+    def __init__(self, response_encoding=None, **kwargs):  # pylint: disable=unused-argument
+        # type: (Optional[str], Any) -> None
+        self._response_encoding = response_encoding
 
     @classmethod
     def deserialize_from_text(
@@ -466,7 +485,7 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
             data_as_str = cast(str, data)
 
         if mime_type is None:
-            return data
+            return data_as_str
 
         if cls.JSON_REGEXP.match(mime_type):
             try:
@@ -501,18 +520,22 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
                 # context otherwise.
                 _LOGGER.critical("Wasn't XML not JSON, failing")
                 raise_with_traceback(DecodeError, message="XML is invalid", response=response)
+        elif mime_type.startswith("text/"):
+            return data_as_str
         raise DecodeError("Cannot deserialize content-type: {}".format(mime_type))
 
     @classmethod
     def deserialize_from_http_generics(
         cls,  # type: Type[ContentDecodePolicyType]
-        response  # Union[HttpResponse, AsyncHttpResponse]
+        response,  # Union[HttpResponse, AsyncHttpResponse]
+        encoding=None,  # Optional[str]
     ):
         """Deserialize from HTTP response.
 
         Headers will tested for "content-type"
 
         :param response: The HTTP response
+        :param encoding: The encoding to use if known for this service (will disable auto-detection)
         :raises ~azure.core.exceptions.DecodeError: If deserialization fails
         :returns: A dict or XML tree, depending of the mime-type
         """
@@ -526,7 +549,15 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
         else:
             mime_type = "application/json"
 
-        return cls.deserialize_from_text(response.text(), mime_type, response=response)
+        # Rely on transport implementation to give me "text()" decoded correctly
+        return cls.deserialize_from_text(response.text(encoding), mime_type, response=response)
+
+    def on_request(self, request):
+        # type: (PipelineRequest) -> None
+        options = request.context.options
+        response_encoding = options.pop("response_encoding", self._response_encoding)
+        if response_encoding:
+            request.context["response_encoding"] = response_encoding
 
     def on_response(self,
         request, # type: PipelineRequest[HTTPRequestType]
@@ -553,7 +584,12 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
         if response.context.options.get("stream", True):
             return
 
-        response.context[self.CONTEXT_NAME] = self.deserialize_from_http_generics(response.http_response)
+        response_encoding = request.context.get('response_encoding')
+
+        response.context[self.CONTEXT_NAME] = self.deserialize_from_http_generics(
+            response.http_response,
+            response_encoding
+        )
 
 
 class ProxyPolicy(SansIOHTTPPolicy):

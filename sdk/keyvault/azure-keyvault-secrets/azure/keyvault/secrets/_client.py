@@ -8,7 +8,7 @@ from azure.core.tracing.decorator import distributed_trace
 from ._models import KeyVaultSecret, DeletedSecret, SecretProperties
 from ._shared import KeyVaultClientBase
 from ._shared.exceptions import error_map as _error_map
-from ._shared._polling import DeletePollingMethod, RecoverDeletedPollingMethod, KeyVaultOperationPoller
+from ._shared._polling import DeleteRecoverPollingMethod, KeyVaultOperationPoller
 
 try:
     from typing import TYPE_CHECKING
@@ -28,7 +28,8 @@ class SecretClient(KeyVaultClientBase):
     :param str vault_url: URL of the vault the client will access. This is also called the vault's "DNS Name".
     :param credential: An object which can provide an access token for the vault, such as a credential from
         :mod:`azure.identity`
-    :keyword str api_version: version of the Key Vault API to use. Defaults to the most recent.
+    :keyword api_version: version of the Key Vault API to use. Defaults to the most recent.
+    :paramtype api_version: ~azure.keyvault.secrets.ApiVersion
     :keyword transport: transport to use. Defaults to :class:`~azure.core.pipeline.transport.RequestsTransport`.
     :paramtype transport: ~azure.core.pipeline.transport.HttpTransport
 
@@ -103,13 +104,18 @@ class SecretClient(KeyVaultClientBase):
         not_before = kwargs.pop("not_before", None)
         expires_on = kwargs.pop("expires_on", None)
         if enabled is not None or not_before is not None or expires_on is not None:
-            attributes = self._client.models.SecretAttributes(
+            attributes = self._models.SecretAttributes(
                 enabled=enabled, not_before=not_before, expires=expires_on
             )
         else:
             attributes = None
         bundle = self._client.set_secret(
-            vault_base_url=self.vault_url, secret_name=name, value=value, secret_attributes=attributes, **kwargs
+            vault_base_url=self.vault_url,
+            secret_name=name,
+            value=value,
+            secret_attributes=attributes,
+            error_map=_error_map,
+            **kwargs
         )
         return KeyVaultSecret._from_secret_bundle(bundle)
 
@@ -147,7 +153,7 @@ class SecretClient(KeyVaultClientBase):
         not_before = kwargs.pop("not_before", None)
         expires_on = kwargs.pop("expires_on", None)
         if enabled is not None or not_before is not None or expires_on is not None:
-            attributes = self._client.models.SecretAttributes(
+            attributes = self._models.SecretAttributes(
                 enabled=enabled, not_before=not_before, expires=expires_on
             )
         else:
@@ -185,6 +191,7 @@ class SecretClient(KeyVaultClientBase):
             self._vault_url,
             maxresults=kwargs.pop("max_page_size", None),
             cls=lambda objs: [SecretProperties._from_secret_item(x) for x in objs],
+            error_map=_error_map,
             **kwargs
         )
 
@@ -213,6 +220,7 @@ class SecretClient(KeyVaultClientBase):
             name,
             maxresults=kwargs.pop("max_page_size", None),
             cls=lambda objs: [SecretProperties._from_secret_item(x) for x in objs],
+            error_map=_error_map,
             **kwargs
         )
 
@@ -297,17 +305,16 @@ class SecretClient(KeyVaultClientBase):
         deleted_secret = DeletedSecret._from_deleted_secret_bundle(
             self._client.delete_secret(self.vault_url, name, error_map=_error_map, **kwargs)
         )
-        sd_disabled = deleted_secret.recovery_id is None
+
         command = partial(self.get_deleted_secret, name=name, **kwargs)
-        delete_secret_polling_method = DeletePollingMethod(
+        polling_method = DeleteRecoverPollingMethod(
+            # no recovery ID means soft-delete is disabled, in which case we initialize the poller as finished
+            finished=deleted_secret.recovery_id is None,
             command=command,
             final_resource=deleted_secret,
-            initial_status="deleting",
-            finished_status="deleted",
-            sd_disabled=sd_disabled,
-            interval=polling_interval
+            interval=polling_interval,
         )
-        return KeyVaultOperationPoller(delete_secret_polling_method)
+        return KeyVaultOperationPoller(polling_method)
 
     @distributed_trace
     def get_deleted_secret(self, name, **kwargs):
@@ -355,6 +362,7 @@ class SecretClient(KeyVaultClientBase):
             self._vault_url,
             maxresults=kwargs.pop("max_page_size", None),
             cls=lambda objs: [DeletedSecret._from_deleted_secret_item(x) for x in objs],
+            error_map=_error_map,
             **kwargs
         )
 
@@ -383,7 +391,7 @@ class SecretClient(KeyVaultClientBase):
                 secret_client.purge_deleted_secret("secret-name")
 
         """
-        self._client.purge_deleted_secret(self.vault_url, name, **kwargs)
+        self._client.purge_deleted_secret(self.vault_url, name, error_map=_error_map, **kwargs)
 
     @distributed_trace
     def begin_recover_deleted_secret(self, name, **kwargs):
@@ -420,14 +428,11 @@ class SecretClient(KeyVaultClientBase):
         if polling_interval is None:
             polling_interval = 2
         recovered_secret = SecretProperties._from_secret_bundle(
-            self._client.recover_deleted_secret(self.vault_url, name, **kwargs)
+            self._client.recover_deleted_secret(self.vault_url, name, error_map=_error_map, **kwargs)
         )
+
         command = partial(self.get_secret, name=name, **kwargs)
-        recover_secret_polling_method = RecoverDeletedPollingMethod(
-            command=command,
-            final_resource=recovered_secret,
-            initial_status="recovering",
-            finished_status="recovered",
-            interval=polling_interval
+        polling_method = DeleteRecoverPollingMethod(
+            finished=False, command=command, final_resource=recovered_secret, interval=polling_interval,
         )
-        return KeyVaultOperationPoller(recover_secret_polling_method)
+        return KeyVaultOperationPoller(polling_method)

@@ -12,13 +12,11 @@
 from ._accounts_operations import AccountsOperations
 from ._resource_skus_operations import ResourceSkusOperations
 from ._operations import Operations
-from ._check_sku_availability_operations import CheckSkuAvailabilityOperations
 from ._cognitive_services_management_client_operations import CognitiveServicesManagementClientOperationsMixin
 
 __all__ = [
     'AccountsOperations',
     'ResourceSkusOperations',
     'Operations',
-    'CheckSkuAvailabilityOperations',
     'CognitiveServicesManagementClientOperationsMixin',
 ]

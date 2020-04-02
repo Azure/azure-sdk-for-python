@@ -11,6 +11,7 @@ from urllib.parse import urlparse
 
 import requests
 from uamqp import types
+from uamqp.constants import TransportType
 
 from azure.servicebus.common import mgmt_handlers, mixins
 from azure.servicebus.aio.async_base_handler import BaseHandler
@@ -36,13 +37,16 @@ class ServiceBusClient(mixins.ServiceBusMixin):
     :param str host_base: Optional. Live host base URL. Defaults to Azure URL.
     :param str shared_access_key_name: SAS authentication key name.
     :param str shared_access_key_value: SAS authentication key value.
+    :param transport_type: Optional. Underlying transport protocol type (Amqp or AmqpOverWebsocket)
+     Default value is ~azure.servicebus.TransportType.Amqp
+    :type transport_type: ~azure.servicebus.TransportType
     :param loop: An async event loop.
     :param int http_request_timeout: Optional. Timeout for the HTTP request, in seconds.
     :param http_request_session: Optional. Session object to use for HTTP requests.
     :param bool debug: Whether to output AMQP network trace to the logger.
 
-    Example:
-        .. literalinclude:: ../examples/async_examples/test_examples_async.py
+    .. admonition:: Example:
+        .. literalinclude:: ../samples/async_samples/test_examples_async.py
             :start-after: [START create_async_servicebus_client]
             :end-before: [END create_async_servicebus_client]
             :language: python
@@ -53,6 +57,7 @@ class ServiceBusClient(mixins.ServiceBusMixin):
 
     def __init__(self, *, service_namespace=None, host_base=SERVICE_BUS_HOST_BASE,
                  shared_access_key_name=None, shared_access_key_value=None, loop=None,
+                 transport_type=TransportType.Amqp,
                  http_request_timeout=DEFAULT_HTTP_TIMEOUT, http_request_session=None, debug=False):
 
         self.loop = loop or get_running_loop()
@@ -60,6 +65,7 @@ class ServiceBusClient(mixins.ServiceBusMixin):
         self.host_base = host_base
         self.shared_access_key_name = shared_access_key_name
         self.shared_access_key_value = shared_access_key_value
+        self.transport_type = transport_type
         self.debug = debug
         self.mgmt_client = ServiceBusService(
             service_namespace=service_namespace,
@@ -76,8 +82,8 @@ class ServiceBusClient(mixins.ServiceBusMixin):
         :param conn_str: The connection string.
         :type conn_str: str
 
-        Example:
-            .. literalinclude:: ../examples/async_examples/test_examples_async.py
+        .. admonition:: Example:
+            .. literalinclude:: ../samples/async_samples/test_examples_async.py
                 :start-after: [START create_async_servicebus_client_connstr]
                 :end-before: [END create_async_servicebus_client_connstr]
                 :language: python
@@ -85,7 +91,7 @@ class ServiceBusClient(mixins.ServiceBusMixin):
                 :caption: Create a ServiceBusClient via a connection string.
 
         """
-        address, policy, key, _ = parse_conn_str(conn_str)
+        address, policy, key, _, transport_type = parse_conn_str(conn_str)
         parsed_namespace = urlparse(address)
         namespace, _, base = parsed_namespace.hostname.partition('.')
         return cls(
@@ -94,6 +100,7 @@ class ServiceBusClient(mixins.ServiceBusMixin):
             shared_access_key_value=key,
             host_base='.' + base,
             loop=loop,
+            transport_type=transport_type,
             **kwargs)
 
     def get_queue(self, queue_name):
@@ -105,8 +112,8 @@ class ServiceBusClient(mixins.ServiceBusMixin):
         :raises: ~azure.servicebus.common.errors.ServiceBusConnectionError if the namespace is not found.
         :raises: ~azure.servicebus.common.errors.ServiceBusResourceNotFound if the queue is not found.
 
-        Example:
-            .. literalinclude:: ../examples/async_examples/test_examples_async.py
+        .. admonition:: Example:
+            .. literalinclude:: ../samples/async_samples/test_examples_async.py
                 :start-after: [START get_async_queue_client]
                 :end-before: [END get_async_queue_client]
                 :language: python
@@ -124,6 +131,7 @@ class ServiceBusClient(mixins.ServiceBusMixin):
             self._get_host(), queue,
             shared_access_key_name=self.shared_access_key_name,
             shared_access_key_value=self.shared_access_key_value,
+            transport_type=self.transport_type,
             mgmt_client=self.mgmt_client,
             loop=self.loop,
             debug=self.debug)
@@ -144,6 +152,7 @@ class ServiceBusClient(mixins.ServiceBusMixin):
                 self._get_host(), queue,
                 shared_access_key_name=self.shared_access_key_name,
                 shared_access_key_value=self.shared_access_key_value,
+                transport_type=self.transport_type,
                 mgmt_client=self.mgmt_client,
                 loop=self.loop,
                 debug=self.debug))
@@ -158,8 +167,8 @@ class ServiceBusClient(mixins.ServiceBusMixin):
         :raises: ~azure.servicebus.common.errors.ServiceBusConnectionError if the namespace is not found.
         :raises: ~azure.servicebus.common.errors.ServiceBusResourceNotFound if the topic is not found.
 
-        Example:
-            .. literalinclude:: ../examples/async_examples/test_examples_async.py
+        .. admonition:: Example:
+            .. literalinclude:: ../samples/async_samples/test_examples_async.py
                 :start-after: [START get_async_topic_client]
                 :end-before: [END get_async_topic_client]
                 :language: python
@@ -177,6 +186,7 @@ class ServiceBusClient(mixins.ServiceBusMixin):
             self._get_host(), topic,
             shared_access_key_name=self.shared_access_key_name,
             shared_access_key_value=self.shared_access_key_value,
+            transport_type=self.transport_type,
             loop=self.loop,
             debug=self.debug)
 
@@ -196,6 +206,7 @@ class ServiceBusClient(mixins.ServiceBusMixin):
                 self._get_host(), topic,
                 shared_access_key_name=self.shared_access_key_name,
                 shared_access_key_value=self.shared_access_key_value,
+                transport_type=self.transport_type,
                 loop=self.loop,
                 debug=self.debug))
         return topic_clients
@@ -211,8 +222,8 @@ class ServiceBusClient(mixins.ServiceBusMixin):
         :raises: ~azure.servicebus.common.errors.ServiceBusConnectionError if the namespace is not found.
         :raises: ~azure.servicebus.common.errors.ServiceBusResourceNotFound if the subscription is not found.
 
-        Example:
-            .. literalinclude:: ../examples/async_examples/test_examples_async.py
+        .. admonition:: Example:
+            .. literalinclude:: ../samples/async_samples/test_examples_async.py
                 :start-after: [START get_async_subscription_client]
                 :end-before: [END get_async_subscription_client]
                 :language: python
@@ -230,6 +241,7 @@ class ServiceBusClient(mixins.ServiceBusMixin):
             self._get_host(), topic_name, subscription,
             shared_access_key_name=self.shared_access_key_name,
             shared_access_key_value=self.shared_access_key_value,
+            transport_type=self.transport_type,
             loop=self.loop,
             debug=self.debug)
 
@@ -254,6 +266,7 @@ class ServiceBusClient(mixins.ServiceBusMixin):
                 self._get_host(), topic_name, sub,
                 shared_access_key_name=self.shared_access_key_name,
                 shared_access_key_value=self.shared_access_key_value,
+                transport_type=self.transport_type,
                 loop=self.loop,
                 debug=self.debug))
         return sub_clients
@@ -287,15 +300,15 @@ class SendClientMixin:
          failed, otherwise it will be `None`.
         :rtype: list[tuple[bool, ~azure.servicebus.common.errors.MessageSendFailed]]
 
-        Example:
-            .. literalinclude:: ../examples/async_examples/test_examples_async.py
+        .. admonition:: Example:
+            .. literalinclude:: ../samples/async_samples/test_examples_async.py
                 :start-after: [START queue_client_send]
                 :end-before: [END queue_client_send]
                 :language: python
                 :dedent: 4
                 :caption: Send a single message.
 
-            .. literalinclude:: ../examples/async_examples/test_examples_async.py
+            .. literalinclude:: ../samples/async_samples/test_examples_async.py
                 :start-after: [START queue_client_send_multiple]
                 :end-before: [END queue_client_send_multiple]
                 :language: python
@@ -337,8 +350,8 @@ class SendClientMixin:
         :returns: A Sender instance with an unopened connection.
         :rtype: ~azure.servicebus.aio.async_send_handler.Sender
 
-        Example:
-            .. literalinclude:: ../examples/async_examples/test_examples_async.py
+        .. admonition:: Example:
+            .. literalinclude:: ../samples/async_samples/test_examples_async.py
                 :start-after: [START open_close_sender_context]
                 :end-before: [END open_close_sender_context]
                 :language: python
@@ -387,8 +400,8 @@ class ReceiveClientMixin:
         :type session: str
         :rtype: list[~azure.servicebus.common.message.PeekMessage]
 
-        Example:
-            .. literalinclude:: ../examples/async_examples/test_examples_async.py
+        .. admonition:: Example:
+            .. literalinclude:: ../samples/async_samples/test_examples_async.py
                 :start-after: [START client_peek_messages]
                 :end-before: [END client_peek_messages]
                 :language: python
@@ -428,8 +441,8 @@ class ReceiveClientMixin:
         :type mode: ~azure.servicebus.common.constants.ReceiveSettleMode
         :rtype: list[~azure.servicebus.aio.async_message.DeferredMessage]
 
-        Example:
-            .. literalinclude:: ../examples/async_examples/test_examples_async.py
+        .. admonition:: Example:
+            .. literalinclude:: ../samples/async_samples/test_examples_async.py
                 :start-after: [START client_defer_messages]
                 :end-before: [END client_defer_messages]
                 :language: python
@@ -467,8 +480,8 @@ class ReceiveClientMixin:
         :param messages: A list of deferred messages to be settled.
         :type messages: list[~azure.servicebus.aio.async_message.DeferredMessage]
 
-        Example:
-            .. literalinclude:: ../examples/async_examples/test_examples_async.py
+        .. admonition:: Example:
+            .. literalinclude:: ../samples/async_samples/test_examples_async.py
                 :start-after: [START client_settle_deferred_messages]
                 :end-before: [END client_settle_deferred_messages]
                 :language: python
@@ -549,8 +562,8 @@ class ReceiveClientMixin:
         :returns: A Receiver instance with an unopened connection.
         :rtype: ~azure.servicebus.aio.async_receive_handler.Receiver
 
-        Example:
-            .. literalinclude:: ../examples/async_examples/test_examples_async.py
+        .. admonition:: Example:
+            .. literalinclude:: ../samples/async_samples/test_examples_async.py
                 :start-after: [START open_close_receiver_context]
                 :end-before: [END open_close_receiver_context]
                 :language: python
@@ -617,8 +630,8 @@ class ReceiveClientMixin:
         :returns: A Receiver instance with an unopened Connection.
         :rtype: ~azure.servicebus.aio.async_receive_handler.Receiver
 
-        Example:
-            .. literalinclude:: ../examples/async_examples/test_examples_async.py
+        .. admonition:: Example:
+            .. literalinclude:: ../samples/async_samples/test_examples_async.py
                 :start-after: [START receiver_deadletter_messages]
                 :end-before: [END receiver_deadletter_messages]
                 :language: python
@@ -688,8 +701,8 @@ class QueueClient(SendClientMixin, ReceiveClientMixin, BaseClient):
     :param debug: Whether to output network trace logs to the logger. Default is `False`.
     :type debug: bool
 
-    Example:
-        .. literalinclude:: ../examples/async_examples/test_examples_async.py
+    .. admonition:: Example:
+        .. literalinclude:: ../samples/async_samples/test_examples_async.py
             :start-after: [START create_queue_client]
             :end-before: [END create_queue_client]
             :language: python
@@ -726,8 +739,8 @@ class TopicClient(SendClientMixin, BaseClient):
     :param debug: Whether to output network trace logs to the logger. Default is `False`.
     :type debug: bool
 
-    Example:
-        .. literalinclude:: ../examples/async_examples/test_examples_async.py
+    .. admonition:: Example:
+        .. literalinclude:: ../samples/async_samples/test_examples_async.py
             :start-after: [START create_topic_client]
             :end-before: [END create_topic_client]
             :language: python
@@ -764,8 +777,8 @@ class SubscriptionClient(ReceiveClientMixin, BaseClient):
     :param debug: Whether to output network trace logs to the logger. Default is `False`.
     :type debug: bool
 
-    Example:
-        .. literalinclude:: ../examples/async_examples/test_examples_async.py
+    .. admonition:: Example:
+        .. literalinclude:: ../samples/async_samples/test_examples_async.py
             :start-after: [START create_sub_client]
             :end-before: [END create_sub_client]
             :language: python
@@ -796,11 +809,11 @@ class SubscriptionClient(ReceiveClientMixin, BaseClient):
          not included in the connection string.
         :type topic: str
         """
-        address, policy, key, entity = parse_conn_str(conn_str)
+        address, policy, key, entity, transport_type = parse_conn_str(conn_str)
         entity = topic or entity
         address = build_uri(address, entity)
         address += "/Subscriptions/" + name
-        return cls(address, name, shared_access_key_name=policy, shared_access_key_value=key, **kwargs)
+        return cls(address, name, shared_access_key_name=policy, shared_access_key_value=key, transport_type=transport_type, **kwargs)
 
     @classmethod
     def from_entity(cls, address, topic, entity, **kwargs):  # pylint: disable=arguments-differ

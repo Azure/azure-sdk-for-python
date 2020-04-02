@@ -87,7 +87,12 @@ async def test_send_non_ascii_async(connstr_receivers):
         batch.add(EventData(json.dumps({"foo": u"漢字"})))
         await client.send_batch(batch)
     await asyncio.sleep(1)
-    partition_0 = [EventData._from_message(x) for x in receivers[0].receive_message_batch(timeout=5000)]
+    # receive_message_batch() returns immediately once it receives any messages before the max_batch_size
+    # and timeout reach. Could be 1, 2, or any number between 1 and max_batch_size.
+    # So call it twice to ensure the two events are received.
+    partition_0 = [EventData._from_message(x) for x in receivers[0].receive_message_batch(timeout=5000)] + \
+                  [EventData._from_message(x) for x in receivers[0].receive_message_batch(timeout=5000)]
+
     assert len(partition_0) == 2
     assert partition_0[0].body_as_str() == u"é,è,à,ù,â,ê,î,ô,û"
     assert partition_0[1].body_as_json() == {"foo": u"漢字"}
@@ -130,16 +135,14 @@ async def test_send_over_websocket_async(connstr_receivers):
                                                            transport_type=TransportType.AmqpOverWebsocket)
 
     async with client:
-        batch = await client.create_batch()
-        for i in range(5):
-            batch.add(EventData("Event Number {}".format(i)))
+        batch = await client.create_batch(partition_id="0")
+        batch.add(EventData("Event Data"))
         await client.send_batch(batch)
 
     time.sleep(1)
     received = []
-    for r in receivers:
-        received.extend(r.receive_message_batch(timeout=6000))
-    assert len(received) == 5
+    received.extend(receivers[0].receive_message_batch(max_batch_size=5, timeout=10000))
+    assert len(received) == 1
 
 
 @pytest.mark.liveTest
@@ -164,5 +167,5 @@ async def test_send_with_create_event_batch_async(connstr_receivers):
         received = []
         for r in receivers:
             received.extend(r.receive_message_batch(timeout=10000))
-        assert len(received) > 1
+        assert len(received) >= 1
         assert EventData._from_message(received[0]).properties[b"raw_prop"] == b"raw_value"

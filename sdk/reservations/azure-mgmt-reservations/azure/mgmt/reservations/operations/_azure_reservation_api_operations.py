@@ -42,6 +42,8 @@ class AzureReservationAPIOperationsMixin(object):
         :raises:
          :class:`ErrorException<azure.mgmt.reservations.models.ErrorException>`
         """
+        api_version = "2019-04-01"
+
         # Construct URL
         url = self.get_catalog.metadata['url']
         path_format_arguments = {
@@ -51,7 +53,7 @@ class AzureReservationAPIOperationsMixin(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
         query_parameters['reservedResourceType'] = self._serialize.query("reserved_resource_type", reserved_resource_type, 'str')
         if location is not None:
             query_parameters['location'] = self._serialize.query("location", location, 'str')
@@ -104,6 +106,8 @@ class AzureReservationAPIOperationsMixin(object):
         :raises:
          :class:`ErrorException<azure.mgmt.reservations.models.ErrorException>`
         """
+        api_version = "2019-04-01"
+
         # Construct URL
         url = self.get_applied_reservation_list.metadata['url']
         path_format_arguments = {
@@ -113,7 +117,7 @@ class AzureReservationAPIOperationsMixin(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
         header_parameters = {}

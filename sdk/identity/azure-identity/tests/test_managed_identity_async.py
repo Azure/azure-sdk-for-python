@@ -12,7 +12,10 @@ from azure.identity._internal.user_agent import USER_AGENT
 
 import pytest
 
-from helpers import async_validating_transport, mock_response, Request
+from helpers import mock_response, Request
+from helpers_async import async_validating_transport
+
+MANAGED_IDENTITY_ENVIRON = "azure.identity.aio._credentials.managed_identity.os.environ"
 
 
 @pytest.mark.asyncio
@@ -22,12 +25,12 @@ async def test_cloud_shell():
     access_token = "****"
     expires_on = 42
     expected_token = AccessToken(access_token, expires_on)
-    url = "http://localhost:42/token"
+    endpoint = "http://localhost:42/token"
     scope = "scope"
     transport = async_validating_transport(
         requests=[
             Request(
-                url,
+                base_url=endpoint,
                 method="POST",
                 required_headers={"Metadata": "true", "User-Agent": USER_AGENT},
                 required_data={"resource": scope},
@@ -47,7 +50,7 @@ async def test_cloud_shell():
         ],
     )
 
-    with mock.patch("os.environ", {EnvironmentVariables.MSI_ENDPOINT: url}):
+    with mock.patch("os.environ", {EnvironmentVariables.MSI_ENDPOINT: endpoint}):
         token = await ManagedIdentityCredential(transport=transport).get_token(scope)
         assert token == expected_token
 
@@ -60,12 +63,12 @@ async def test_cloud_shell_user_assigned_identity():
     expires_on = 42
     client_id = "some-guid"
     expected_token = AccessToken(access_token, expires_on)
-    url = "http://localhost:42/token"
+    endpoint = "http://localhost:42/token"
     scope = "scope"
     transport = async_validating_transport(
         requests=[
             Request(
-                url,
+                base_url=endpoint,
                 method="POST",
                 required_headers={"Metadata": "true", "User-Agent": USER_AGENT},
                 required_data={"client_id": client_id, "resource": scope},
@@ -85,7 +88,7 @@ async def test_cloud_shell_user_assigned_identity():
         ],
     )
 
-    with mock.patch("os.environ", {EnvironmentVariables.MSI_ENDPOINT: url}):
+    with mock.patch("os.environ", {EnvironmentVariables.MSI_ENDPOINT: endpoint}):
         token = await ManagedIdentityCredential(client_id=client_id, transport=transport).get_token(scope)
         assert token == expected_token
 
@@ -97,13 +100,13 @@ async def test_app_service():
     access_token = "****"
     expires_on = 42
     expected_token = AccessToken(access_token, expires_on)
-    url = "http://localhost:42/token"
+    endpoint = "http://localhost:42/token"
     secret = "expected-secret"
     scope = "scope"
     transport = async_validating_transport(
         requests=[
             Request(
-                url,
+                base_url=endpoint,
                 method="GET",
                 required_headers={"Metadata": "true", "secret": secret, "User-Agent": USER_AGENT},
                 required_params={"api-version": "2017-09-01", "resource": scope},
@@ -121,9 +124,66 @@ async def test_app_service():
         ],
     )
 
-    with mock.patch("os.environ", {EnvironmentVariables.MSI_ENDPOINT: url, EnvironmentVariables.MSI_SECRET: secret}):
+    with mock.patch(
+        "os.environ", {EnvironmentVariables.MSI_ENDPOINT: endpoint, EnvironmentVariables.MSI_SECRET: secret}
+    ):
         token = await ManagedIdentityCredential(transport=transport).get_token(scope)
         assert token == expected_token
+
+
+@pytest.mark.asyncio
+async def test_app_service_2017_09_01():
+    """test parsing of App Service MSI 2017-09-01's eccentric platform-dependent expires_on strings"""
+
+    access_token = "****"
+    expires_on = 42
+    expected_token = AccessToken(access_token, expires_on)
+    url = "http://localhost:42/token"
+    secret = "expected-secret"
+    scope = "scope"
+
+    transport = async_validating_transport(
+        requests=[
+            Request(
+                url,
+                method="GET",
+                required_headers={"Metadata": "true", "secret": secret, "User-Agent": USER_AGENT},
+                required_params={"api-version": "2017-09-01", "resource": scope},
+            )
+        ]
+        * 2,
+        responses=[
+            mock_response(
+                json_payload={
+                    "access_token": access_token,
+                    "expires_on": "01/01/1970 00:00:{} +00:00".format(expires_on),  # linux format
+                    "resource": scope,
+                    "token_type": "Bearer",
+                }
+            ),
+            mock_response(
+                json_payload={
+                    "access_token": access_token,
+                    "expires_on": "1/1/1970 12:00:{} AM +00:00".format(expires_on),  # windows format
+                    "resource": scope,
+                    "token_type": "Bearer",
+                }
+            ),
+        ],
+    )
+
+    with mock.patch.dict(
+        MANAGED_IDENTITY_ENVIRON,
+        {EnvironmentVariables.MSI_ENDPOINT: url, EnvironmentVariables.MSI_SECRET: secret},
+        clear=True,
+    ):
+        token = await ManagedIdentityCredential(transport=transport).get_token(scope)
+        assert token == expected_token
+        assert token.expires_on == expires_on
+
+        token = await ManagedIdentityCredential(transport=transport).get_token(scope)
+        assert token == expected_token
+        assert token.expires_on == expires_on
 
 
 @pytest.mark.asyncio
@@ -134,13 +194,13 @@ async def test_app_service_user_assigned_identity():
     expires_on = 42
     client_id = "some-guid"
     expected_token = AccessToken(access_token, expires_on)
-    url = "http://localhost:42/token"
+    endpoint = "http://localhost:42/token"
     secret = "expected-secret"
     scope = "scope"
     transport = async_validating_transport(
         requests=[
             Request(
-                url,
+                base_url=endpoint,
                 method="GET",
                 required_headers={"Metadata": "true", "secret": secret, "User-Agent": USER_AGENT},
                 required_params={"api-version": "2017-09-01", "clientid": client_id, "resource": scope},
@@ -158,7 +218,9 @@ async def test_app_service_user_assigned_identity():
         ],
     )
 
-    with mock.patch("os.environ", {EnvironmentVariables.MSI_ENDPOINT: url, EnvironmentVariables.MSI_SECRET: secret}):
+    with mock.patch(
+        "os.environ", {EnvironmentVariables.MSI_ENDPOINT: endpoint, EnvironmentVariables.MSI_SECRET: secret}
+    ):
         token = await ManagedIdentityCredential(client_id=client_id, transport=transport).get_token(scope)
         assert token == expected_token
 
@@ -168,13 +230,12 @@ async def test_imds():
     access_token = "****"
     expires_on = 42
     expected_token = AccessToken(access_token, expires_on)
-    url = Endpoints.IMDS
     scope = "scope"
     transport = async_validating_transport(
         requests=[
-            Request(url),  # first request should be availability probe => match only the URL
+            Request(url=Endpoints.IMDS),  # first request should be availability probe => match only the URL
             Request(
-                url,
+                base_url=Endpoints.IMDS,
                 method="GET",
                 required_headers={"Metadata": "true", "User-Agent": USER_AGENT},
                 required_params={"api-version": "2018-02-01", "resource": scope},
@@ -197,7 +258,9 @@ async def test_imds():
         ],
     )
 
-    token = await ManagedIdentityCredential(transport=transport).get_token(scope)
+    # ensure e.g. $MSI_ENDPOINT isn't set, so we get ImdsCredential
+    with mock.patch.dict("os.environ", clear=True):
+        token = await ManagedIdentityCredential(transport=transport).get_token(scope)
     assert token == expected_token
 
 
@@ -211,9 +274,9 @@ async def test_imds_user_assigned_identity():
     client_id = "some-guid"
     transport = async_validating_transport(
         requests=[
-            Request(url),  # first request should be availability probe => match only the URL
+            Request(base_url=url),  # first request should be availability probe => match only the URL
             Request(
-                url,
+                base_url=url,
                 method="GET",
                 required_headers={"Metadata": "true", "User-Agent": USER_AGENT},
                 required_params={"api-version": "2018-02-01", "client_id": client_id, "resource": scope},
@@ -237,5 +300,7 @@ async def test_imds_user_assigned_identity():
         ],
     )
 
-    token = await ManagedIdentityCredential(client_id=client_id, transport=transport).get_token(scope)
+    # ensure e.g. $MSI_ENDPOINT isn't set, so we get ImdsCredential
+    with mock.patch.dict("os.environ", clear=True):
+        token = await ManagedIdentityCredential(client_id=client_id, transport=transport).get_token(scope)
     assert token == expected_token

@@ -4,7 +4,6 @@
 # -----------------------------------------------------------------------------------
 
 from typing import Dict, Optional, Any, TYPE_CHECKING
-
 import logging
 from .checkpoint_store import CheckpointStore
 from ..._utils import get_last_enqueued_event_properties
@@ -57,26 +56,25 @@ class PartitionContext(object):
             return get_last_enqueued_event_properties(self._last_received_event)
         return None
 
-    async def update_checkpoint(self, event: "EventData") -> None:
+    async def update_checkpoint(self, event: Optional["EventData"] = None) -> None:
         """Updates the receive checkpoint to the given events offset.
-
-        This operation will only update a checkpoint if a `checkpoint_store` was provided during
-        creation of the `EventHubConsumerClient`. Otherwise a warning will be logged.
 
         :param ~azure.eventhub.EventData event: The EventData instance which contains the offset and
          sequence number information used for checkpoint.
         :rtype: None
         """
         if self._checkpoint_store:
-            checkpoint = {
-                "fully_qualified_namespace": self.fully_qualified_namespace,
-                "eventhub_name": self.eventhub_name,
-                "consumer_group": self.consumer_group,
-                "partition_id": self.partition_id,
-                "offset": event.offset,
-                "sequence_number": event.sequence_number,
-            }
-            await self._checkpoint_store.update_checkpoint(checkpoint)
+            checkpoint_event = event or self._last_received_event
+            if checkpoint_event:
+                checkpoint = {
+                    "fully_qualified_namespace": self.fully_qualified_namespace,
+                    "eventhub_name": self.eventhub_name,
+                    "consumer_group": self.consumer_group,
+                    "partition_id": self.partition_id,
+                    "offset": checkpoint_event.offset,
+                    "sequence_number": checkpoint_event.sequence_number,
+                }
+                await self._checkpoint_store.update_checkpoint(checkpoint)
         else:
             _LOGGER.warning(
                 "namespace %r, eventhub %r, consumer_group %r, partition_id %r "

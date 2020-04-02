@@ -13,6 +13,7 @@ from uamqp.message import Message, MessageProperties
 from uamqp import authentication
 from uamqp import constants, errors
 
+from azure.servicebus.common.constants import ASSOCIATEDLINKPROPERTYNAME
 from azure.servicebus.common.utils import create_properties, get_running_loop
 from azure.servicebus.common.errors import (
     _ServiceBusErrorPolicy,
@@ -70,16 +71,24 @@ class BaseHandler:  # pylint: disable=too-many-instance-attributes
             encoding=self.encoding,
             **self.handler_kwargs)
 
-    async def _mgmt_request_response(self, operation, message, callback, **kwargs):
+    async def _mgmt_request_response(self, operation, message, callback, keep_alive_associated_link=True, **kwargs):
         if not self.running:
             raise InvalidHandlerState("Client connection is closed.")
+
+        application_properties = {}
+        if keep_alive_associated_link:
+            try:
+                application_properties = {ASSOCIATEDLINKPROPERTYNAME:self._handler.message_handler.name}
+            except AttributeError:
+                pass
 
         mgmt_msg = Message(
             body=message,
             properties=MessageProperties(
                 reply_to=self.mgmt_target,
                 encoding=self.encoding,
-                **kwargs))
+                **kwargs),
+            application_properties=application_properties)
         try:
             return await self._handler.mgmt_request_async(
                 mgmt_msg,
@@ -131,7 +140,8 @@ class BaseHandler:  # pylint: disable=too-many-instance-attributes
         a retryable error - attempt to reconnect.
         This method will be called automatically for most retryable errors.
         """
-        await self._handler.close()
+        await self._handler.close_async()
+        self.running = False
         self._build_handler()
         await self.open()
 
@@ -145,8 +155,8 @@ class BaseHandler:  # pylint: disable=too-many-instance-attributes
 
         .. note:: This operation is not thread-safe.
 
-        Example:
-            .. literalinclude:: ../examples/async_examples/test_examples_async.py
+        .. admonition:: Example:
+            .. literalinclude:: ../samples/async_samples/test_examples_async.py
                 :start-after: [START open_close_sender_directly]
                 :end-before: [END open_close_sender_directly]
                 :language: python
@@ -183,8 +193,8 @@ class BaseHandler:  # pylint: disable=too-many-instance-attributes
          due to an error.
         :type exception: Exception
 
-        Example:
-            .. literalinclude:: ../examples/async_examples/test_examples_async.py
+        .. admonition:: Example:
+            .. literalinclude:: ../samples/async_samples/test_examples_async.py
                 :start-after: [START open_close_sender_directly]
                 :end-before: [END open_close_sender_directly]
                 :language: python

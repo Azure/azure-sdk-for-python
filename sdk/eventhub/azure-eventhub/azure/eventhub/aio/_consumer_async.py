@@ -2,15 +2,16 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
+import time
 import asyncio
 import uuid
 import logging
-from typing import TYPE_CHECKING, Callable, Awaitable, cast, Dict, Optional
+from collections import deque
+from typing import TYPE_CHECKING, Callable, Awaitable, cast, Dict, Optional, Union, List
 
 import uamqp
 from uamqp import errors, types, utils
 from uamqp import ReceiveClientAsync, Source
-from uamqp.compat import queue
 
 from ._client_base_async import ConsumerProducerMixin
 from .._common import EventData
@@ -19,6 +20,7 @@ from .._utils import create_properties, trace_link_message, event_position_selec
 from .._constants import EPOCH_SYMBOL, TIMEOUT_SYMBOL, RECEIVER_RUNTIME_METRIC_SYMBOL
 
 if TYPE_CHECKING:
+    from typing import Deque
     from uamqp.authentication import JWTTokenAsync
     from ._consumer_client_async import EventHubConsumerClient
 
@@ -79,7 +81,7 @@ class EventHubConsumer(
 
         self._on_event_received = kwargs[
             "on_event_received"
-        ]  # type: Callable[[EventData], Awaitable[None]]
+        ]  # type: Callable[[Union[Optional[EventData], List[EventData]]], Awaitable[None]]
         self._loop = kwargs.get("loop", None)
         self._client = client
         self._source = source
@@ -113,7 +115,7 @@ class EventHubConsumer(
         self._track_last_enqueued_event_properties = (
             track_last_enqueued_event_properties
         )
-        self._event_queue = queue.Queue()
+        self._message_buffer = deque()  # type: Deque[uamqp.Message]
         self._last_received_event = None  # type: Optional[EventData]
 
     def _create_handler(self, auth: "JWTTokenAsync") -> None:
@@ -157,49 +159,64 @@ class EventHubConsumer(
         await self._do_retryable_operation(self._open, operation_need_param=False)
 
     def _message_received(self, message: uamqp.Message) -> None:
-        self._event_queue.put(message)
+        self._message_buffer.appendleft(message)
 
-    async def receive(self) -> None:
-        retried_times = 0
-        last_exception = None
+    def _next_message_in_buffer(self):
+        # pylint:disable=protected-access
+        message = self._message_buffer.pop()
+        event_data = EventData._from_message(message)
+        trace_link_message(event_data)
+        self._last_received_event = event_data
+        return event_data
+
+    async def receive(self, batch=False, max_batch_size=300, max_wait_time=None) -> None:
         max_retries = (
             self._client._config.max_retries  # pylint:disable=protected-access
         )
+        has_not_fetched_once = True  # ensure one trip when max_wait_time is very small
+        deadline = time.time() + (max_wait_time or 0)  # max_wait_time can be None
+        while len(self._message_buffer) < max_batch_size and \
+                (time.time() < deadline or has_not_fetched_once):
+            retried_times = 0
+            has_not_fetched_once = False
+            while retried_times <= max_retries:
+                try:
+                    await self._open()
+                    await cast(ReceiveClientAsync, self._handler).do_work_async()  # uamqp sleeps 0.05 if none received
+                    break
+                except asyncio.CancelledError:  # pylint: disable=try-except-raise
+                    raise
+                except Exception as exception:  # pylint: disable=broad-except
+                    if (
+                        isinstance(exception, uamqp.errors.LinkDetach)
+                        and exception.condition == uamqp.constants.ErrorCodes.LinkStolen  # pylint: disable=no-member
+                    ):
+                        raise await self._handle_exception(exception)
+                    if not self.running:  # exit by close
+                        return
+                    if self._last_received_event:
+                        self._offset = self._last_received_event.offset
+                    last_exception = await self._handle_exception(exception)
+                    retried_times += 1
+                    if retried_times > max_retries:
+                        _LOGGER.info(
+                            "%r operation has exhausted retry. Last exception: %r.",
+                            self._name,
+                            last_exception,
+                        )
+                        raise last_exception
 
-        while retried_times <= max_retries:
-            try:
-                await self._open()
-                await cast(ReceiveClientAsync, self._handler).do_work_async()
-                break
-            except asyncio.CancelledError:  # pylint: disable=try-except-raise
-                raise
-            except Exception as exception:  # pylint: disable=broad-except
-                if (
-                    isinstance(exception, uamqp.errors.LinkDetach)
-                    and exception.condition == uamqp.constants.ErrorCodes.LinkStolen  # pylint: disable=no-member
-                ):
-                    raise await self._handle_exception(exception)
-                if not self.running:  # exit by close
-                    return
-                if self._last_received_event:
-                    self._offset = self._last_received_event.offset
-                last_exception = await self._handle_exception(exception)
-                retried_times += 1
-                if retried_times > max_retries:
-                    _LOGGER.info(
-                        "%r operation has exhausted retry. Last exception: %r.",
-                        self._name,
-                        last_exception,
-                    )
-                    raise last_exception
-
-        while not self._event_queue.empty():
-            message = self._event_queue.get()
-            event_data = EventData._from_message(  # pylint:disable=protected-access
-                message
-            )
-            self._last_received_event = event_data
-            trace_link_message(event_data)
-            await self._on_event_received(event_data)
-            self._event_queue.task_done()
-        return
+        if self._message_buffer:
+            while self._message_buffer:
+                if batch:
+                    events_for_callback = []  # type: List[EventData]
+                    for _ in range(min(max_batch_size, len(self._message_buffer))):
+                        events_for_callback.append(self._next_message_in_buffer())
+                    await self._on_event_received(events_for_callback)
+                else:
+                    await self._on_event_received(self._next_message_in_buffer())
+        elif max_wait_time:
+            if batch:
+                await self._on_event_received([])
+            else:
+                await self._on_event_received(None)

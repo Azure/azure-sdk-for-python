@@ -89,6 +89,61 @@ class ARMResourceProperties(Model):
         self.tags = tags
 
 
+class AutopilotSettingsResource(Model):
+    """Cosmos DB autopilot settings object.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param max_throughput: Required. Represents max throughput an autopilot
+     container can operate at.
+    :type max_throughput: int
+    :param auto_upgrade_policy: Cosmos DB resource auto-upgrade policy
+    :type auto_upgrade_policy:
+     ~azure.mgmt.cosmosdb.models.AutoUpgradePolicyResource
+    :ivar target_max_throughput: Represents target max throughput an autopilot
+     container should operate at once offer is no longer in pending state.
+    :vartype target_max_throughput: int
+    """
+
+    _validation = {
+        'max_throughput': {'required': True},
+        'target_max_throughput': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'max_throughput': {'key': 'maxThroughput', 'type': 'int'},
+        'auto_upgrade_policy': {'key': 'autoUpgradePolicy', 'type': 'AutoUpgradePolicyResource'},
+        'target_max_throughput': {'key': 'targetMaxThroughput', 'type': 'int'},
+    }
+
+    def __init__(self, *, max_throughput: int, auto_upgrade_policy=None, **kwargs) -> None:
+        super(AutopilotSettingsResource, self).__init__(**kwargs)
+        self.max_throughput = max_throughput
+        self.auto_upgrade_policy = auto_upgrade_policy
+        self.target_max_throughput = None
+
+
+class AutoUpgradePolicyResource(Model):
+    """Cosmos DB resource auto-upgrade policy.
+
+    :param throughput_policy: Represents throughput policy which service must
+     adhere to for auto-upgrade
+    :type throughput_policy:
+     ~azure.mgmt.cosmosdb.models.ThroughputPolicyResource
+    """
+
+    _attribute_map = {
+        'throughput_policy': {'key': 'throughputPolicy', 'type': 'ThroughputPolicyResource'},
+    }
+
+    def __init__(self, *, throughput_policy=None, **kwargs) -> None:
+        super(AutoUpgradePolicyResource, self).__init__(**kwargs)
+        self.throughput_policy = throughput_policy
+
+
 class Resource(Model):
     """Resource.
 
@@ -204,7 +259,7 @@ class CassandraKeyspaceCreateUpdateParameters(ARMResourceProperties):
     :type resource: ~azure.mgmt.cosmosdb.models.CassandraKeyspaceResource
     :param options: Required. A key-value pair of options to be applied for
      the request. This corresponds to the headers sent with the request.
-    :type options: dict[str, str]
+    :type options: ~azure.mgmt.cosmosdb.models.CreateUpdateOptions
     """
 
     _validation = {
@@ -222,7 +277,7 @@ class CassandraKeyspaceCreateUpdateParameters(ARMResourceProperties):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'resource': {'key': 'properties.resource', 'type': 'CassandraKeyspaceResource'},
-        'options': {'key': 'properties.options', 'type': '{str}'},
+        'options': {'key': 'properties.options', 'type': 'CreateUpdateOptions'},
     }
 
     def __init__(self, *, resource, options, location: str=None, tags=None, **kwargs) -> None:
@@ -401,7 +456,7 @@ class CassandraTableCreateUpdateParameters(ARMResourceProperties):
     :type resource: ~azure.mgmt.cosmosdb.models.CassandraTableResource
     :param options: Required. A key-value pair of options to be applied for
      the request. This corresponds to the headers sent with the request.
-    :type options: dict[str, str]
+    :type options: ~azure.mgmt.cosmosdb.models.CreateUpdateOptions
     """
 
     _validation = {
@@ -419,7 +474,7 @@ class CassandraTableCreateUpdateParameters(ARMResourceProperties):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'resource': {'key': 'properties.resource', 'type': 'CassandraTableResource'},
-        'options': {'key': 'properties.options', 'type': '{str}'},
+        'options': {'key': 'properties.options', 'type': 'CreateUpdateOptions'},
     }
 
     def __init__(self, *, resource, options, location: str=None, tags=None, **kwargs) -> None:
@@ -721,6 +776,30 @@ class ContainerPartitionKey(Model):
         self.version = version
 
 
+class CreateUpdateOptions(Model):
+    """CreateUpdateOptions are a list of key-value pairs that describe the
+    resource. Supported keys are "If-Match", "If-None-Match", "Session-Token"
+    and "Throughput".
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, str]
+    :param throughput: Request Units per second. For example, "throughput":
+     "10000".
+    :type throughput: str
+    """
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{str}'},
+        'throughput': {'key': 'throughput', 'type': 'str'},
+    }
+
+    def __init__(self, *, additional_properties=None, throughput: str=None, **kwargs) -> None:
+        super(CreateUpdateOptions, self).__init__(**kwargs)
+        self.additional_properties = additional_properties
+        self.throughput = throughput
+
+
 class DatabaseAccountConnectionString(Model):
     """Connection string for the Cosmos DB account.
 
@@ -812,6 +891,8 @@ class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):
     :param disable_key_based_metadata_write_access: Disable write operations
      on metadata resources (databases, containers, throughput) via account keys
     :type disable_key_based_metadata_write_access: bool
+    :param key_vault_key_uri: The URI of the key vault
+    :type key_vault_key_uri: str
     """
 
     _validation = {
@@ -841,11 +922,12 @@ class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):
         'enable_cassandra_connector': {'key': 'properties.enableCassandraConnector', 'type': 'bool'},
         'connector_offer': {'key': 'properties.connectorOffer', 'type': 'str'},
         'disable_key_based_metadata_write_access': {'key': 'properties.disableKeyBasedMetadataWriteAccess', 'type': 'bool'},
+        'key_vault_key_uri': {'key': 'properties.keyVaultKeyUri', 'type': 'str'},
     }
 
     database_account_offer_type = "Standard"
 
-    def __init__(self, *, locations, location: str=None, tags=None, kind="GlobalDocumentDB", consistency_policy=None, ip_range_filter: str=None, is_virtual_network_filter_enabled: bool=None, enable_automatic_failover: bool=None, capabilities=None, virtual_network_rules=None, enable_multiple_write_locations: bool=None, enable_cassandra_connector: bool=None, connector_offer=None, disable_key_based_metadata_write_access: bool=None, **kwargs) -> None:
+    def __init__(self, *, locations, location: str=None, tags=None, kind="GlobalDocumentDB", consistency_policy=None, ip_range_filter: str=None, is_virtual_network_filter_enabled: bool=None, enable_automatic_failover: bool=None, capabilities=None, virtual_network_rules=None, enable_multiple_write_locations: bool=None, enable_cassandra_connector: bool=None, connector_offer=None, disable_key_based_metadata_write_access: bool=None, key_vault_key_uri: str=None, **kwargs) -> None:
         super(DatabaseAccountCreateUpdateParameters, self).__init__(location=location, tags=tags, **kwargs)
         self.kind = kind
         self.consistency_policy = consistency_policy
@@ -859,6 +941,7 @@ class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):
         self.enable_cassandra_connector = enable_cassandra_connector
         self.connector_offer = connector_offer
         self.disable_key_based_metadata_write_access = disable_key_based_metadata_write_access
+        self.key_vault_key_uri = key_vault_key_uri
 
 
 class DatabaseAccountGetResults(ARMResourceProperties):
@@ -939,6 +1022,8 @@ class DatabaseAccountGetResults(ARMResourceProperties):
     :param disable_key_based_metadata_write_access: Disable write operations
      on metadata resources (databases, containers, throughput) via account keys
     :type disable_key_based_metadata_write_access: bool
+    :param key_vault_key_uri: The URI of the key vault
+    :type key_vault_key_uri: str
     """
 
     _validation = {
@@ -977,9 +1062,10 @@ class DatabaseAccountGetResults(ARMResourceProperties):
         'enable_cassandra_connector': {'key': 'properties.enableCassandraConnector', 'type': 'bool'},
         'connector_offer': {'key': 'properties.connectorOffer', 'type': 'str'},
         'disable_key_based_metadata_write_access': {'key': 'properties.disableKeyBasedMetadataWriteAccess', 'type': 'bool'},
+        'key_vault_key_uri': {'key': 'properties.keyVaultKeyUri', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str=None, tags=None, kind="GlobalDocumentDB", provisioning_state: str=None, ip_range_filter: str=None, is_virtual_network_filter_enabled: bool=None, enable_automatic_failover: bool=None, consistency_policy=None, capabilities=None, virtual_network_rules=None, enable_multiple_write_locations: bool=None, enable_cassandra_connector: bool=None, connector_offer=None, disable_key_based_metadata_write_access: bool=None, **kwargs) -> None:
+    def __init__(self, *, location: str=None, tags=None, kind="GlobalDocumentDB", provisioning_state: str=None, ip_range_filter: str=None, is_virtual_network_filter_enabled: bool=None, enable_automatic_failover: bool=None, consistency_policy=None, capabilities=None, virtual_network_rules=None, enable_multiple_write_locations: bool=None, enable_cassandra_connector: bool=None, connector_offer=None, disable_key_based_metadata_write_access: bool=None, key_vault_key_uri: str=None, **kwargs) -> None:
         super(DatabaseAccountGetResults, self).__init__(location=location, tags=tags, **kwargs)
         self.kind = kind
         self.provisioning_state = provisioning_state
@@ -999,6 +1085,7 @@ class DatabaseAccountGetResults(ARMResourceProperties):
         self.enable_cassandra_connector = enable_cassandra_connector
         self.connector_offer = connector_offer
         self.disable_key_based_metadata_write_access = disable_key_based_metadata_write_access
+        self.key_vault_key_uri = key_vault_key_uri
 
 
 class DatabaseAccountListConnectionStringsResult(Model):
@@ -1157,6 +1244,8 @@ class DatabaseAccountUpdateParameters(Model):
     :param disable_key_based_metadata_write_access: Disable write operations
      on metadata resources (databases, containers, throughput) via account keys
     :type disable_key_based_metadata_write_access: bool
+    :param key_vault_key_uri: The URI of the key vault
+    :type key_vault_key_uri: str
     """
 
     _attribute_map = {
@@ -1173,9 +1262,10 @@ class DatabaseAccountUpdateParameters(Model):
         'enable_cassandra_connector': {'key': 'properties.enableCassandraConnector', 'type': 'bool'},
         'connector_offer': {'key': 'properties.connectorOffer', 'type': 'str'},
         'disable_key_based_metadata_write_access': {'key': 'properties.disableKeyBasedMetadataWriteAccess', 'type': 'bool'},
+        'key_vault_key_uri': {'key': 'properties.keyVaultKeyUri', 'type': 'str'},
     }
 
-    def __init__(self, *, tags=None, location: str=None, consistency_policy=None, locations=None, ip_range_filter: str=None, is_virtual_network_filter_enabled: bool=None, enable_automatic_failover: bool=None, capabilities=None, virtual_network_rules=None, enable_multiple_write_locations: bool=None, enable_cassandra_connector: bool=None, connector_offer=None, disable_key_based_metadata_write_access: bool=None, **kwargs) -> None:
+    def __init__(self, *, tags=None, location: str=None, consistency_policy=None, locations=None, ip_range_filter: str=None, is_virtual_network_filter_enabled: bool=None, enable_automatic_failover: bool=None, capabilities=None, virtual_network_rules=None, enable_multiple_write_locations: bool=None, enable_cassandra_connector: bool=None, connector_offer=None, disable_key_based_metadata_write_access: bool=None, key_vault_key_uri: str=None, **kwargs) -> None:
         super(DatabaseAccountUpdateParameters, self).__init__(**kwargs)
         self.tags = tags
         self.location = location
@@ -1190,6 +1280,7 @@ class DatabaseAccountUpdateParameters(Model):
         self.enable_cassandra_connector = enable_cassandra_connector
         self.connector_offer = connector_offer
         self.disable_key_based_metadata_write_access = disable_key_based_metadata_write_access
+        self.key_vault_key_uri = key_vault_key_uri
 
 
 class ErrorResponse(Model):
@@ -1359,7 +1450,7 @@ class GremlinDatabaseCreateUpdateParameters(ARMResourceProperties):
     :type resource: ~azure.mgmt.cosmosdb.models.GremlinDatabaseResource
     :param options: Required. A key-value pair of options to be applied for
      the request. This corresponds to the headers sent with the request.
-    :type options: dict[str, str]
+    :type options: ~azure.mgmt.cosmosdb.models.CreateUpdateOptions
     """
 
     _validation = {
@@ -1377,7 +1468,7 @@ class GremlinDatabaseCreateUpdateParameters(ARMResourceProperties):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'resource': {'key': 'properties.resource', 'type': 'GremlinDatabaseResource'},
-        'options': {'key': 'properties.options', 'type': '{str}'},
+        'options': {'key': 'properties.options', 'type': 'CreateUpdateOptions'},
     }
 
     def __init__(self, *, resource, options, location: str=None, tags=None, **kwargs) -> None:
@@ -1515,7 +1606,7 @@ class GremlinGraphCreateUpdateParameters(ARMResourceProperties):
     :type resource: ~azure.mgmt.cosmosdb.models.GremlinGraphResource
     :param options: Required. A key-value pair of options to be applied for
      the request. This corresponds to the headers sent with the request.
-    :type options: dict[str, str]
+    :type options: ~azure.mgmt.cosmosdb.models.CreateUpdateOptions
     """
 
     _validation = {
@@ -1533,7 +1624,7 @@ class GremlinGraphCreateUpdateParameters(ARMResourceProperties):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'resource': {'key': 'properties.resource', 'type': 'GremlinGraphResource'},
-        'options': {'key': 'properties.options', 'type': '{str}'},
+        'options': {'key': 'properties.options', 'type': 'CreateUpdateOptions'},
     }
 
     def __init__(self, *, resource, options, location: str=None, tags=None, **kwargs) -> None:
@@ -2067,7 +2158,7 @@ class MongoDBCollectionCreateUpdateParameters(ARMResourceProperties):
     :type resource: ~azure.mgmt.cosmosdb.models.MongoDBCollectionResource
     :param options: Required. A key-value pair of options to be applied for
      the request. This corresponds to the headers sent with the request.
-    :type options: dict[str, str]
+    :type options: ~azure.mgmt.cosmosdb.models.CreateUpdateOptions
     """
 
     _validation = {
@@ -2085,7 +2176,7 @@ class MongoDBCollectionCreateUpdateParameters(ARMResourceProperties):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'resource': {'key': 'properties.resource', 'type': 'MongoDBCollectionResource'},
-        'options': {'key': 'properties.options', 'type': '{str}'},
+        'options': {'key': 'properties.options', 'type': 'CreateUpdateOptions'},
     }
 
     def __init__(self, *, resource, options, location: str=None, tags=None, **kwargs) -> None:
@@ -2241,7 +2332,7 @@ class MongoDBDatabaseCreateUpdateParameters(ARMResourceProperties):
     :type resource: ~azure.mgmt.cosmosdb.models.MongoDBDatabaseResource
     :param options: Required. A key-value pair of options to be applied for
      the request. This corresponds to the headers sent with the request.
-    :type options: dict[str, str]
+    :type options: ~azure.mgmt.cosmosdb.models.CreateUpdateOptions
     """
 
     _validation = {
@@ -2259,7 +2350,7 @@ class MongoDBDatabaseCreateUpdateParameters(ARMResourceProperties):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'resource': {'key': 'properties.resource', 'type': 'MongoDBDatabaseResource'},
-        'options': {'key': 'properties.options', 'type': '{str}'},
+        'options': {'key': 'properties.options', 'type': 'CreateUpdateOptions'},
     }
 
     def __init__(self, *, resource, options, location: str=None, tags=None, **kwargs) -> None:
@@ -2991,7 +3082,7 @@ class SqlContainerCreateUpdateParameters(ARMResourceProperties):
     :type resource: ~azure.mgmt.cosmosdb.models.SqlContainerResource
     :param options: Required. A key-value pair of options to be applied for
      the request. This corresponds to the headers sent with the request.
-    :type options: dict[str, str]
+    :type options: ~azure.mgmt.cosmosdb.models.CreateUpdateOptions
     """
 
     _validation = {
@@ -3009,7 +3100,7 @@ class SqlContainerCreateUpdateParameters(ARMResourceProperties):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'resource': {'key': 'properties.resource', 'type': 'SqlContainerResource'},
-        'options': {'key': 'properties.options', 'type': '{str}'},
+        'options': {'key': 'properties.options', 'type': 'CreateUpdateOptions'},
     }
 
     def __init__(self, *, resource, options, location: str=None, tags=None, **kwargs) -> None:
@@ -3201,7 +3292,7 @@ class SqlDatabaseCreateUpdateParameters(ARMResourceProperties):
     :type resource: ~azure.mgmt.cosmosdb.models.SqlDatabaseResource
     :param options: Required. A key-value pair of options to be applied for
      the request. This corresponds to the headers sent with the request.
-    :type options: dict[str, str]
+    :type options: ~azure.mgmt.cosmosdb.models.CreateUpdateOptions
     """
 
     _validation = {
@@ -3219,7 +3310,7 @@ class SqlDatabaseCreateUpdateParameters(ARMResourceProperties):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'resource': {'key': 'properties.resource', 'type': 'SqlDatabaseResource'},
-        'options': {'key': 'properties.options', 'type': '{str}'},
+        'options': {'key': 'properties.options', 'type': 'CreateUpdateOptions'},
     }
 
     def __init__(self, *, resource, options, location: str=None, tags=None, **kwargs) -> None:
@@ -3367,7 +3458,7 @@ class SqlStoredProcedureCreateUpdateParameters(ARMResourceProperties):
     :type resource: ~azure.mgmt.cosmosdb.models.SqlStoredProcedureResource
     :param options: Required. A key-value pair of options to be applied for
      the request. This corresponds to the headers sent with the request.
-    :type options: dict[str, str]
+    :type options: ~azure.mgmt.cosmosdb.models.CreateUpdateOptions
     """
 
     _validation = {
@@ -3385,7 +3476,7 @@ class SqlStoredProcedureCreateUpdateParameters(ARMResourceProperties):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'resource': {'key': 'properties.resource', 'type': 'SqlStoredProcedureResource'},
-        'options': {'key': 'properties.options', 'type': '{str}'},
+        'options': {'key': 'properties.options', 'type': 'CreateUpdateOptions'},
     }
 
     def __init__(self, *, resource, options, location: str=None, tags=None, **kwargs) -> None:
@@ -3531,7 +3622,7 @@ class SqlTriggerCreateUpdateParameters(ARMResourceProperties):
     :type resource: ~azure.mgmt.cosmosdb.models.SqlTriggerResource
     :param options: Required. A key-value pair of options to be applied for
      the request. This corresponds to the headers sent with the request.
-    :type options: dict[str, str]
+    :type options: ~azure.mgmt.cosmosdb.models.CreateUpdateOptions
     """
 
     _validation = {
@@ -3549,7 +3640,7 @@ class SqlTriggerCreateUpdateParameters(ARMResourceProperties):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'resource': {'key': 'properties.resource', 'type': 'SqlTriggerResource'},
-        'options': {'key': 'properties.options', 'type': '{str}'},
+        'options': {'key': 'properties.options', 'type': 'CreateUpdateOptions'},
     }
 
     def __init__(self, *, resource, options, location: str=None, tags=None, **kwargs) -> None:
@@ -3718,7 +3809,7 @@ class SqlUserDefinedFunctionCreateUpdateParameters(ARMResourceProperties):
     :type resource: ~azure.mgmt.cosmosdb.models.SqlUserDefinedFunctionResource
     :param options: Required. A key-value pair of options to be applied for
      the request. This corresponds to the headers sent with the request.
-    :type options: dict[str, str]
+    :type options: ~azure.mgmt.cosmosdb.models.CreateUpdateOptions
     """
 
     _validation = {
@@ -3736,7 +3827,7 @@ class SqlUserDefinedFunctionCreateUpdateParameters(ARMResourceProperties):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'resource': {'key': 'properties.resource', 'type': 'SqlUserDefinedFunctionResource'},
-        'options': {'key': 'properties.options', 'type': '{str}'},
+        'options': {'key': 'properties.options', 'type': 'CreateUpdateOptions'},
     }
 
     def __init__(self, *, resource, options, location: str=None, tags=None, **kwargs) -> None:
@@ -3882,7 +3973,7 @@ class TableCreateUpdateParameters(ARMResourceProperties):
     :type resource: ~azure.mgmt.cosmosdb.models.TableResource
     :param options: Required. A key-value pair of options to be applied for
      the request. This corresponds to the headers sent with the request.
-    :type options: dict[str, str]
+    :type options: ~azure.mgmt.cosmosdb.models.CreateUpdateOptions
     """
 
     _validation = {
@@ -3900,7 +3991,7 @@ class TableCreateUpdateParameters(ARMResourceProperties):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'resource': {'key': 'properties.resource', 'type': 'TableResource'},
-        'options': {'key': 'properties.options', 'type': '{str}'},
+        'options': {'key': 'properties.options', 'type': 'CreateUpdateOptions'},
     }
 
     def __init__(self, *, resource, options, location: str=None, tags=None, **kwargs) -> None:
@@ -4014,16 +4105,42 @@ class TableResource(Model):
         self.id = id
 
 
+class ThroughputPolicyResource(Model):
+    """Cosmos DB resource throughput policy.
+
+    :param is_enabled: Determines whether the ThroughputPolicy is active or
+     not
+    :type is_enabled: bool
+    :param increment_percent: Represents the percentage by which throughput
+     can increase every time throughput policy kicks in.
+    :type increment_percent: int
+    """
+
+    _attribute_map = {
+        'is_enabled': {'key': 'isEnabled', 'type': 'bool'},
+        'increment_percent': {'key': 'incrementPercent', 'type': 'int'},
+    }
+
+    def __init__(self, *, is_enabled: bool=None, increment_percent: int=None, **kwargs) -> None:
+        super(ThroughputPolicyResource, self).__init__(**kwargs)
+        self.is_enabled = is_enabled
+        self.increment_percent = increment_percent
+
+
 class ThroughputSettingsGetPropertiesResource(Model):
     """ThroughputSettingsGetPropertiesResource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param throughput: Required. Value of the Cosmos DB resource throughput
+    :param throughput: Value of the Cosmos DB resource throughput. Either
+     throughput is required or autopilotSettings is required, but not both.
     :type throughput: int
+    :param autopilot_settings: Cosmos DB resource for Autopilot settings.
+     Either throughput is required or autopilotSettings is required, but not
+     both.
+    :type autopilot_settings:
+     ~azure.mgmt.cosmosdb.models.AutopilotSettingsResource
     :ivar minimum_throughput: The minimum throughput of the resource
     :vartype minimum_throughput: str
     :ivar offer_replace_pending: The throughput replace is pending
@@ -4039,7 +4156,6 @@ class ThroughputSettingsGetPropertiesResource(Model):
     """
 
     _validation = {
-        'throughput': {'required': True},
         'minimum_throughput': {'readonly': True},
         'offer_replace_pending': {'readonly': True},
         '_rid': {'readonly': True},
@@ -4049,6 +4165,7 @@ class ThroughputSettingsGetPropertiesResource(Model):
 
     _attribute_map = {
         'throughput': {'key': 'throughput', 'type': 'int'},
+        'autopilot_settings': {'key': 'autopilotSettings', 'type': 'AutopilotSettingsResource'},
         'minimum_throughput': {'key': 'minimumThroughput', 'type': 'str'},
         'offer_replace_pending': {'key': 'offerReplacePending', 'type': 'str'},
         '_rid': {'key': '_rid', 'type': 'str'},
@@ -4056,9 +4173,10 @@ class ThroughputSettingsGetPropertiesResource(Model):
         '_etag': {'key': '_etag', 'type': 'str'},
     }
 
-    def __init__(self, *, throughput: int, **kwargs) -> None:
+    def __init__(self, *, throughput: int=None, autopilot_settings=None, **kwargs) -> None:
         super(ThroughputSettingsGetPropertiesResource, self).__init__(**kwargs)
         self.throughput = throughput
+        self.autopilot_settings = autopilot_settings
         self.minimum_throughput = None
         self.offer_replace_pending = None
         self._rid = None
@@ -4109,15 +4227,20 @@ class ThroughputSettingsGetResults(ARMResourceProperties):
 
 
 class ThroughputSettingsResource(Model):
-    """Cosmos DB resource throughput object.
+    """Cosmos DB resource throughput object. Either throughput is required or
+    autopilotSettings is required, but not both.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param throughput: Required. Value of the Cosmos DB resource throughput
+    :param throughput: Value of the Cosmos DB resource throughput. Either
+     throughput is required or autopilotSettings is required, but not both.
     :type throughput: int
+    :param autopilot_settings: Cosmos DB resource for Autopilot settings.
+     Either throughput is required or autopilotSettings is required, but not
+     both.
+    :type autopilot_settings:
+     ~azure.mgmt.cosmosdb.models.AutopilotSettingsResource
     :ivar minimum_throughput: The minimum throughput of the resource
     :vartype minimum_throughput: str
     :ivar offer_replace_pending: The throughput replace is pending
@@ -4125,20 +4248,21 @@ class ThroughputSettingsResource(Model):
     """
 
     _validation = {
-        'throughput': {'required': True},
         'minimum_throughput': {'readonly': True},
         'offer_replace_pending': {'readonly': True},
     }
 
     _attribute_map = {
         'throughput': {'key': 'throughput', 'type': 'int'},
+        'autopilot_settings': {'key': 'autopilotSettings', 'type': 'AutopilotSettingsResource'},
         'minimum_throughput': {'key': 'minimumThroughput', 'type': 'str'},
         'offer_replace_pending': {'key': 'offerReplacePending', 'type': 'str'},
     }
 
-    def __init__(self, *, throughput: int, **kwargs) -> None:
+    def __init__(self, *, throughput: int=None, autopilot_settings=None, **kwargs) -> None:
         super(ThroughputSettingsResource, self).__init__(**kwargs)
         self.throughput = throughput
+        self.autopilot_settings = autopilot_settings
         self.minimum_throughput = None
         self.offer_replace_pending = None
 

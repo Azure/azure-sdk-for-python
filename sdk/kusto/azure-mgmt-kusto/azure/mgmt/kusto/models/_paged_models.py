@@ -64,6 +64,32 @@ class AzureResourceSkuPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(AzureResourceSkuPaged, self).__init__(*args, **kwargs)
+class LanguageExtensionPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`LanguageExtension <azure.mgmt.kusto.models.LanguageExtension>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[LanguageExtension]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(LanguageExtensionPaged, self).__init__(*args, **kwargs)
+class ClusterPrincipalAssignmentPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`ClusterPrincipalAssignment <azure.mgmt.kusto.models.ClusterPrincipalAssignment>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ClusterPrincipalAssignment]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ClusterPrincipalAssignmentPaged, self).__init__(*args, **kwargs)
 class DatabasePaged(Paged):
     """
     A paging container for iterating over a list of :class:`Database <azure.mgmt.kusto.models.Database>` object
@@ -90,6 +116,19 @@ class DatabasePrincipalPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(DatabasePrincipalPaged, self).__init__(*args, **kwargs)
+class DatabasePrincipalAssignmentPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`DatabasePrincipalAssignment <azure.mgmt.kusto.models.DatabasePrincipalAssignment>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[DatabasePrincipalAssignment]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(DatabasePrincipalAssignmentPaged, self).__init__(*args, **kwargs)
 class AttachedDatabaseConfigurationPaged(Paged):
     """
     A paging container for iterating over a list of :class:`AttachedDatabaseConfiguration <azure.mgmt.kusto.models.AttachedDatabaseConfiguration>` object

@@ -51,6 +51,12 @@ class Reason(str, Enum):
     already_exists = "AlreadyExists"
 
 
+class KeyType(str, Enum):
+
+    service = "Service"
+    account = "Account"
+
+
 class KeySource(str, Enum):
 
     microsoft_storage = "Microsoft.Storage"
@@ -115,6 +121,13 @@ class GeoReplicationStatus(str, Enum):
     live = "Live"
     bootstrap = "Bootstrap"
     unavailable = "Unavailable"
+
+
+class BlobRestoreProgressStatus(str, Enum):
+
+    in_progress = "InProgress"
+    complete = "Complete"
+    failed = "Failed"
 
 
 class ProvisioningState(str, Enum):
@@ -202,6 +215,18 @@ class SignedResource(str, Enum):
     s = "s"
 
 
+class EncryptionScopeSource(str, Enum):
+
+    microsoft_storage = "Microsoft.Storage"
+    microsoft_key_vault = "Microsoft.KeyVault"
+
+
+class EncryptionScopeState(str, Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"
+
+
 class PublicAccess(str, Enum):
 
     container = "Container"
@@ -246,6 +271,7 @@ class ImmutabilityPolicyUpdateType(str, Enum):
 class StorageAccountExpand(str, Enum):
 
     geo_replication_stats = "geoReplicationStats"
+    blob_restore_status = "blobRestoreStatus"
 
 
 class ListKeyExpand(str, Enum):

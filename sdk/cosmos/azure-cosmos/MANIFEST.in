@@ -1,5 +1,5 @@
 include README.md
-include HISTORY.md
+include CHANGELOG.md
 include LICENSE.txt
 include azure/__init__.py
 recursive-include samples *.py

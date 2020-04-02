@@ -71,7 +71,7 @@
 <tr>
 <td>cat</td>
 <td>Return contents of file</td>
-<td rowspan="4"><strong>read_file</strong></td>
+<td rowspan="4"><strong>download_file</strong></td>
 <td rowspan="4">Put the expected range parameters in Gen2 API will achieve the same function of the 4 Gen1 APIs.</td>
 </tr>
 <tr>
@@ -89,8 +89,8 @@
 <tr>
 <td>get</td>
 <td>Stream data from file at path to local filename</td>
-<td><strong>read_file</strong></td>
-<td>Passing a <strong>stream</strong> parameter in <strong>read_file</strong> should do the same thing as Gen1 <strong>get</strong> API does</td>
+<td><strong>download_file</strong></td>
+<td>Passing a <strong>stream</strong> parameter in <strong>download_file</strong> should do the same thing as Gen1 <strong>get</strong> API does</td>
 </tr>
 <tr>
 <td rowspan="2">rename/mv</td>
@@ -143,7 +143,7 @@
 <td><a href="https://docs.microsoft.com/en-us/python/API/azure-datalake-store/azure.datalake.store.core.azuredlfilesystem?view=azure-python#open-path--mode--rb---blocksize-33554432--delimiter-none-"><strong>open</strong></a></td>
 <td>Open a file for reading or writing to.</td>
 <td>N/A</td>
-<td>There is no open file operation In ADLS Gen2. However users can do operations to the file directly, eg. <strong>append_data, flush_data, read_file</strong></td>
+<td>There is no open file operation In ADLS Gen2. However users can do operations to the file directly, eg. <strong>append_data, flush_data, download_file</strong></td>
 </tr>
 <tr>
 <td>concat/merge</td>

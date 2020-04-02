@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .videos_operations import VideosOperations
+from ._videos_operations import VideosOperations
 
 __all__ = [
     'VideosOperations',

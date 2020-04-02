@@ -14,7 +14,8 @@ class KeyVaultCertificates:
         # * AZURE_CLIENT_ID
         # * AZURE_CLIENT_SECRET
         # * AZURE_TENANT_ID
-        credential = DefaultAzureCredential()
+        authority_host = os.environ.get('AZURE_AUTHORITY_HOST') or KnownAuthorities.AZURE_PUBLIC_CLOUD
+        credential = DefaultAzureCredential(authority=authority_host)
         self.certificate_client = CertificateClient(
             vault_url=os.environ["AZURE_PROJECT_URL"], credential=credential
         )
@@ -22,18 +23,23 @@ class KeyVaultCertificates:
         self.certificate_name = "cert-name-" + uuid.uuid1().hex
 
     def create_certificate(self):
-        print("creating certificate...")
-        self.certificate_client.create_certificate(name=self.certificate_name)
+        print("Creating certificate (name: {})".format(self.certificate_name))
+        create_poller = self.certificate_client.begin_create_certificate(
+            certificate_name=self.certificate_name,
+            policy=CertificatePolicy.get_default())
+        print("\twaiting...")
+        create_poller.result()
         print("\tdone")
 
     def get_certificate(self):
         print("Getting a certificate...")
-        certificate = self.certificate_client.get_certificate_with_policy(name=self.certificate_name)
-        print("\tdone, certificate: %s." % certificate.name)
+        certificate = self.certificate_client.get_certificate(certificate_name=self.certificate_name)
+        print("\tdone, certificate: {}.".format(certificate.name))
 
     def delete_certificate(self):
         print("Deleting a certificate...")
-        deleted_certificate = self.certificate_client.delete_certificate(name=self.certificate_name)
+        poller = self.certificate_client.begin_delete_certificate(certificate_name=self.certificate_name)
+        deleted_certificate = poller.result()
         print("\tdone: " + deleted_certificate.name)
 
     def run(self):

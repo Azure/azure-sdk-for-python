@@ -58,7 +58,8 @@ if __name__ == '__main__':
                 on_event=on_event,
                 on_partition_initialize=on_partition_initialize,
                 on_partition_close=on_partition_close,
-                on_error=on_error
+                on_error=on_error,
+                starting_position="-1",  # "-1" is from the beginning of the partition.
             )
     except KeyboardInterrupt:
         print('Stopped receiving.')

@@ -142,6 +142,40 @@ transport = AioHttpTransport(
 )
 ```
 
+### Proxy Settings
+
+There are two ways to configure proxy settings.
+
+- Use environment proxy settings
+
+When creating the transport, "use_env_settings" parameter can be used to enable or disable the environment proxy settings. e.g.:
+
+```python
+synchronous_transport = RequestsTransport(use_env_settings=True)
+```
+
+If "use_env_settings" is set to True(by default), the transport will look for environment variables 
+
+- HTTP_PROXY
+- HTTPS_PROXY
+
+and use their values to configure the proxy settings.
+
+- Use ProxyPolicy
+
+You can use ProxyPolicy to configure the proxy settings as well. e.g.
+
+```python
+from azure.core.pipeline.policies import ProxyPolicy
+
+proxy_policy = ProxyPolicy()
+
+proxy_policy.proxies = {'http': 'http://10.10.1.10:3148'}
+
+# Use basic auth
+proxy_policy.proxies = {'https': 'http://user:password@10.10.1.10:1180/'}
+```
+
 ### HttpRequest and HttpResponse
 
 The HttpRequest and HttpResponse objects represent a generic concept of HTTP request and response constructs and are in no way tied to a particular transport or HTTP library.
@@ -349,6 +383,53 @@ from azure.core.pipeline.policies import (
     AsyncRedirectPolicy
 )
 ```
+
+#### Available Policies
+
+| Name | Policy Flavor | Parameters accepted in Init | Parameters accepted in Request |
+| --- | --- | --- | --- |
+| HeadersPolicy | SansIOHTTPPolicy | base_headers | headers |
+|  |  | headers | |
+| RequestIdPolicy | SansIOHTTPPolicy | request_id | request_id |
+|  |  | auto_request_id | |
+| UserAgentPolicy | SansIOHTTPPolicy | base_user_agent | user_agent |
+|  |  | user_agent_overwrite | |
+|  |  | user_agent_use_env | |
+|  |  | user_agent | |
+|  |  | sdk_moniker | |
+| NetworkTraceLoggingPolicy | SansIOHTTPPolicy | logging_enable | logging_enable |
+| HttpLoggingPolicy | SansIOHTTPPolicy | logger | logger |
+| ContentDecodePolicy | SansIOHTTPPolicy | response_encoding | response_encoding |
+| ProxyPolicy | SansIOHTTPPolicy | proxies | proxies |
+| CustomHookPolicy | SansIOHTTPPolicy | raw_request_hook | raw_request_hook |
+|  |  | raw_response_hook | raw_response_hook |
+| DistributedTracingPolicy | SansIOHTTPPolicy | network_span_namer | network_span_namer |
+|  |  | tracing_attributes | |
+| --- | --- | --- | --- |
+| RedirectPolicy | HTTPPolicy | permit_redirects | permit_redirects |
+|  |  | redirect_max | redirect_max |
+|  |  | redirect_remove_headers | |
+|  |  | redirect_on_status_codes | |
+| AsyncRedirectPolicy | AsyncHTTPPolicy | permit_redirects | permit_redirects |
+|  |  | redirect_max | redirect_max |
+|  |  | redirect_remove_headers | |
+|  |  | redirect_on_status_codes | |
+| RetryPolicy | HTTPPolicy | retry_total | retry_total |
+|  |  | retry_connect | retry_connect |
+|  |  | retry_read | retry_read |
+|  |  | retry_status | retry_status |
+|  |  | retry_backoff_factor | retry_backoff_factor |
+|  |  | retry_backoff_max | retry_backoff_max |
+|  |  | retry_mode | retry_mode |
+|  |  | retry_on_status_codes | retry_on_status_codes |
+| AsyncRetryPolicy | AsyncHTTPPolicy | retry_total | retry_total |
+|  |  | retry_connect | retry_connect |
+|  |  | retry_read | retry_read |
+|  |  | retry_status | retry_status |
+|  |  | retry_backoff_factor | retry_backoff_factor |
+|  |  | retry_backoff_max | retry_backoff_max |
+|  |  | retry_mode | retry_mode |
+|  |  | retry_on_status_codes | retry_on_status_codes |
 
 ### The Pipeline
 

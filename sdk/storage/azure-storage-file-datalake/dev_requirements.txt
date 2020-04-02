@@ -3,4 +3,4 @@
 ../../core/azure-core
 ../azure-storage-blob
 -e ../../identity/azure-identity
-pytest
+aiohttp>=3.0; python_version >= '3.5'

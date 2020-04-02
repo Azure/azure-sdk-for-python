@@ -17,6 +17,78 @@ import uuid
 
 class CognitiveServicesManagementClientOperationsMixin(object):
 
+    def check_sku_availability(
+            self, location, skus, kind, type, custom_headers=None, raw=False, **operation_config):
+        """Check available SKUs.
+
+        :param location: Resource location.
+        :type location: str
+        :param skus: The SKU of the resource.
+        :type skus: list[str]
+        :param kind: The Kind of the resource.
+        :type kind: str
+        :param type: The Type of the resource.
+        :type type: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: CheckSkuAvailabilityResultList or ClientRawResponse if
+         raw=true
+        :rtype:
+         ~azure.mgmt.cognitiveservices.models.CheckSkuAvailabilityResultList or
+         ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        parameters = models.CheckSkuAvailabilityParameter(skus=skus, kind=kind, type=type)
+
+        # Construct URL
+        url = self.check_sku_availability.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'location': self._serialize.url("location", location, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(parameters, 'CheckSkuAvailabilityParameter')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('CheckSkuAvailabilityResultList', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    check_sku_availability.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.CognitiveServices/locations/{location}/checkSkuAvailability'}
+
     def check_domain_availability(
             self, subdomain_name, type, custom_headers=None, raw=False, **operation_config):
         """Check whether a domain is available.
@@ -41,6 +113,10 @@ class CognitiveServicesManagementClientOperationsMixin(object):
 
         # Construct URL
         url = self.check_domain_availability.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -78,4 +154,4 @@ class CognitiveServicesManagementClientOperationsMixin(object):
             return client_raw_response
 
         return deserialized
-    check_domain_availability.metadata = {'url': '/providers/Microsoft.CognitiveServices/checkDomainAvailability'}
+    check_domain_availability.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.CognitiveServices/checkDomainAvailability'}

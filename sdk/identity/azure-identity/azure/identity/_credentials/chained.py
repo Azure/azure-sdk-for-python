@@ -4,6 +4,8 @@
 # ------------------------------------
 from azure.core.exceptions import ClientAuthenticationError
 
+from .. import CredentialUnavailableError
+
 try:
     from typing import TYPE_CHECKING
 except ImportError:
@@ -11,8 +13,21 @@ except ImportError:
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
-    from typing import Any
+    from typing import Any, Optional
     from azure.core.credentials import AccessToken, TokenCredential
+
+
+def _get_error_message(history):
+    attempts = []
+    for credential, error in history:
+        if error:
+            attempts.append("{}: {}".format(credential.__class__.__name__, error))
+        else:
+            attempts.append(credential.__class__.__name__)
+    return """No credential in this chain provided a token.
+Attempted credentials:\n\t{}""".format(
+        "\n\t".join(attempts)
+    )
 
 
 class ChainedTokenCredential(object):
@@ -29,6 +44,8 @@ class ChainedTokenCredential(object):
         # type: (*TokenCredential) -> None
         if not credentials:
             raise ValueError("at least one credential is required")
+
+        self._successful_credential = None  # type: Optional[TokenCredential]
         self.credentials = credentials
 
     def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
@@ -37,27 +54,22 @@ class ChainedTokenCredential(object):
 
         .. note:: This method is called by Azure SDK clients. It isn't intended for use in application code.
 
-        :param str scopes: desired scopes for the token
-        :raises ~azure.core.exceptions.ClientAuthenticationError: when no credential in the chain provides a token
+        :param str scopes: desired scopes for the access token. This method requires at least one scope.
+        :raises ~azure.core.exceptions.ClientAuthenticationError: no credential in the chain provided a token
         """
         history = []
         for credential in self.credentials:
             try:
-                return credential.get_token(*scopes, **kwargs)
-            except ClientAuthenticationError as ex:
+                token = credential.get_token(*scopes, **kwargs)
+                self._successful_credential = credential
+                return token
+            except CredentialUnavailableError as ex:
+                # credential didn't attempt authentication because it lacks required data or state -> continue
                 history.append((credential, ex.message))
             except Exception as ex:  # pylint: disable=broad-except
+                # credential failed to authenticate, or something unexpectedly raised -> break
                 history.append((credential, str(ex)))
-        error_message = self._get_error_message(history)
-        raise ClientAuthenticationError(message=error_message)
+                break
 
-    @staticmethod
-    def _get_error_message(history):
-        attempts = []
-        for credential, error in history:
-            if error:
-                attempts.append("{}: {}".format(credential.__class__.__name__, error))
-            else:
-                attempts.append(credential.__class__.__name__)
-        return """No credential in this chain provided a token.
-Attempted credentials:\n\t{}""".format("\n\t".join(attempts))
+        error_message = _get_error_message(history)
+        raise ClientAuthenticationError(message=error_message)

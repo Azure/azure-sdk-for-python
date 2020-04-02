@@ -14,7 +14,8 @@ class KeyVaultKeys:
         # * AZURE_CLIENT_ID
         # * AZURE_CLIENT_SECRET
         # * AZURE_TENANT_ID
-        credential = DefaultAzureCredential()
+        authority_host = os.environ.get('AZURE_AUTHORITY_HOST') or KnownAuthorities.AZURE_PUBLIC_CLOUD
+        credential = DefaultAzureCredential(authority=authority_host)
         self.key_client = KeyClient(
             vault_url=os.environ["AZURE_PROJECT_URL"], credential=credential
         )
@@ -23,13 +24,13 @@ class KeyVaultKeys:
 
     async def create_rsa_key(self):
         print("Creating an RSA key...")
-        await self.key_client.create_rsa_key(name=self.key_name, size=2048, hsm=False)
+        await self.key_client.create_rsa_key(name=self.key_name, size=2048)
         print("\tdone")
 
     async def get_key(self):
         print("Getting a key...")
         key = await self.key_client.get_key(name=self.key_name)
-        print(f"\tdone, key: {key.name}.")
+        print("\tdone, key: {}.".format(key.name))
 
     async def delete_key(self):
         print("Deleting a key...")

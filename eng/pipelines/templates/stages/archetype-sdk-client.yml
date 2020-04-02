@@ -1,6 +1,10 @@
 parameters:
   Artifacts: []
   ServiceDirectory: not-specified
+  ToxEnvParallel: '--tenvparallel'
+  InjectedPackages: ''
+  BuildDocs: true
+
   
 stages:
   - stage: Build
@@ -8,12 +12,16 @@ stages:
     - template: ../jobs/archetype-sdk-client.yml
       parameters:
         ServiceDirectory: ${{parameters.ServiceDirectory}}
+        ToxEnvParallel: ${{parameters.ToxEnvParallel}}
+        BuildDocs: ${{parameters.BuildDocs}}
+        InjectedPackages: ${{parameters.InjectedPackages}}
 
   # The Prerelease and Release stages are conditioned on whether we are building a pull request and the branch.
   - ${{if and(ne(variables['Build.Reason'], 'PullRequest'), eq(variables['System.TeamProject'], 'internal'))}}:
-    - template: pipelines/stages/archetype-python-release.yml@azure-sdk-build-tools
+    - template: archetype-python-release.yml
       parameters:
         DependsOn: Build
+        ServiceDirectory: ${{parameters.ServiceDirectory}}
         Artifacts: ${{parameters.Artifacts}}
         ArtifactName: packages
         DocArtifact: documentation

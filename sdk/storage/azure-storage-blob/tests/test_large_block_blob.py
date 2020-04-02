@@ -11,6 +11,7 @@ import pytest
 from os import path, remove, sys, urandom
 import platform
 import unittest
+import uuid
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from azure.storage.blob import (
     BlobServiceClient,
@@ -36,12 +37,12 @@ if platform.python_implementation() == 'PyPy':
     pytest.skip("Skip tests for Pypy", allow_module_level=True)
 
 class StorageLargeBlockBlobTest(StorageTestCase):
-    def _setup(self, name, key):
+    def _setup(self, storage_account, key):
         # test chunking functionality by reducing the threshold
         # for chunking and the size of each chunk, otherwise
         # the tests would take too long to execute
         self.bsc = BlobServiceClient(
-            self.account_url(name, "blob"),
+            self.account_url(storage_account, "blob"),
             credential=key,
             max_single_put_size=32 * 1024,
             max_block_size=2 * 1024 * 1024,
@@ -79,14 +80,17 @@ class StorageLargeBlockBlobTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_put_block_bytes_large(self, resource_group, location, storage_account, storage_account_key):
 
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob = self._create_blob()
 
         # Act
         for i in range(5):
             resp = blob.stage_block(
                 'block {0}'.format(i).encode('utf-8'), urandom(LARGE_BLOCK_SIZE))
-            self.assertIsNone(resp)
+            self.assertIsNotNone(resp)
+            assert 'content_md5' in resp
+            assert 'content_crc64' in resp
+            assert 'request_id' in resp
 
             # Assert
 
@@ -94,7 +98,7 @@ class StorageLargeBlockBlobTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_put_block_bytes_large_with_md5(self, resource_group, location, storage_account, storage_account_key):
 
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob = self._create_blob()
 
         # Act
@@ -103,13 +107,16 @@ class StorageLargeBlockBlobTest(StorageTestCase):
                 'block {0}'.format(i).encode('utf-8'),
                 urandom(LARGE_BLOCK_SIZE),
                 validate_content=True)
-            self.assertIsNone(resp)
+            self.assertIsNotNone(resp)
+            assert 'content_md5' in resp
+            assert 'content_crc64' in resp
+            assert 'request_id' in resp
 
     @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     def test_put_block_stream_large(self, resource_group, location, storage_account, storage_account_key):
 
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob = self._create_blob()
 
         # Act
@@ -119,7 +126,10 @@ class StorageLargeBlockBlobTest(StorageTestCase):
                 'block {0}'.format(i).encode('utf-8'),
                 stream,
                 length=LARGE_BLOCK_SIZE)
-            self.assertIsNone(resp)
+            self.assertIsNotNone(resp)
+            assert 'content_md5' in resp
+            assert 'content_crc64' in resp
+            assert 'request_id' in resp
 
             # Assert
 
@@ -127,7 +137,7 @@ class StorageLargeBlockBlobTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_put_block_stream_large_with_md5(self, resource_group, location, storage_account, storage_account_key):
 
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob = self._create_blob()
 
         # Act
@@ -138,7 +148,10 @@ class StorageLargeBlockBlobTest(StorageTestCase):
                 stream,
                 length=LARGE_BLOCK_SIZE,
                 validate_content=True)
-            self.assertIsNone(resp)
+            self.assertIsNotNone(resp)
+            assert 'content_md5' in resp
+            assert 'content_crc64' in resp
+            assert 'request_id' in resp
 
         # Assert
 
@@ -147,11 +160,11 @@ class StorageLargeBlockBlobTest(StorageTestCase):
     def test_create_large_blob_from_path(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
 
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = bytearray(urandom(LARGE_BLOB_SIZE))
-        FILE_PATH = 'large_blob_from_path.temp.dat'
+        FILE_PATH = 'large_blob_from_path.temp.{}.dat'.format(str(uuid.uuid4()))
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
 
@@ -168,7 +181,7 @@ class StorageLargeBlockBlobTest(StorageTestCase):
     def test_create_large_blob_from_path_with_md5(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
 
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = bytearray(urandom(LARGE_BLOB_SIZE))
@@ -188,7 +201,7 @@ class StorageLargeBlockBlobTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_create_large_blob_from_path_non_parallel(self, resource_group, location, storage_account, storage_account_key):
 
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = bytearray(self.get_random_bytes(100))
@@ -209,7 +222,7 @@ class StorageLargeBlockBlobTest(StorageTestCase):
     def test_create_large_blob_from_path_with_progress(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
 
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = bytearray(urandom(LARGE_BLOB_SIZE))
@@ -238,11 +251,11 @@ class StorageLargeBlockBlobTest(StorageTestCase):
     def test_create_large_blob_from_path_with_properties(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
 
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = bytearray(urandom(LARGE_BLOB_SIZE))
-        FILE_PATH = 'blob_from_path_with_properties.temp.dat'
+        FILE_PATH = 'blob_from_path_with_properties.temp.{}.dat'.format(str(uuid.uuid4()))
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
 
@@ -265,11 +278,11 @@ class StorageLargeBlockBlobTest(StorageTestCase):
     def test_create_large_blob_from_stream_chunked_upload(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
 
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = bytearray(urandom(LARGE_BLOB_SIZE))
-        FILE_PATH = 'blob_from_stream_chunked_upload.temp.dat'
+        FILE_PATH = 'blob_from_stream_chunked_upload.temp.{}.dat'.format(str(uuid.uuid4()))
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
 
@@ -286,11 +299,11 @@ class StorageLargeBlockBlobTest(StorageTestCase):
     def test_creat_lrgblob_frm_stream_w_progress_chnkd_upload(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
 
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = bytearray(urandom(LARGE_BLOB_SIZE))
-        FILE_PATH = 'stream_w_progress_chnkd_upload.temp.dat'
+        FILE_PATH = 'stream_w_progress_chnkd_upload.temp.{}.dat'.format(str(uuid.uuid4()))
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
 
@@ -314,11 +327,11 @@ class StorageLargeBlockBlobTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_create_large_blob_from_stream_chunked_upload_with_count(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = bytearray(urandom(LARGE_BLOB_SIZE))
-        FILE_PATH = 'chunked_upload_with_count.temp.dat'
+        FILE_PATH = 'chunked_upload_with_count.temp.{}.dat'.format(str(uuid.uuid4()))
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
 
@@ -336,11 +349,11 @@ class StorageLargeBlockBlobTest(StorageTestCase):
     def test_creat_lrgblob_frm_strm_chnkd_uplod_w_count_n_props(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
 
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = bytearray(urandom(LARGE_BLOB_SIZE))
-        FILE_PATH = 'plod_w_count_n_props.temp.dat'
+        FILE_PATH = 'plod_w_count_n_props.temp.{}.dat'.format(str(uuid.uuid4()))
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
 
@@ -365,11 +378,11 @@ class StorageLargeBlockBlobTest(StorageTestCase):
     def test_creat_lrg_blob_frm_stream_chnked_upload_w_props(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
 
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = bytearray(urandom(LARGE_BLOB_SIZE))
-        FILE_PATH = 'creat_lrg_blob.temp.dat'
+        FILE_PATH = 'creat_lrg_blob.temp.{}.dat'.format(str(uuid.uuid4()))
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
 

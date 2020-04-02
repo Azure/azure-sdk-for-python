@@ -13,6 +13,17 @@ from .chained import ChainedTokenCredential
 from .environment import EnvironmentCredential
 from .managed_identity import ManagedIdentityCredential
 from .shared_cache import SharedTokenCacheCredential
+from .azure_cli import AzureCliCredential
+
+
+try:
+    from typing import TYPE_CHECKING
+except ImportError:
+    TYPE_CHECKING = False
+
+if TYPE_CHECKING:
+    from typing import Any
+    from azure.core.credentials import AccessToken
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -29,12 +40,14 @@ class DefaultAzureCredential(ChainedTokenCredential):
     3. On Windows only: a user who has signed in with a Microsoft application, such as Visual Studio. If multiple
        identities are in the cache, then the value of  the environment variable ``AZURE_USERNAME`` is used to select
        which identity to use. See :class:`~azure.identity.SharedTokenCacheCredential` for more details.
+    4. The identity currently logged in to the Azure CLI.
 
     This default behavior is configurable with keyword arguments.
 
     :keyword str authority: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com',
           the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.KnownAuthorities`
           defines authorities for other clouds. Managed identities ignore this because they reside in a single cloud.
+    :keyword bool exclude_cli_credential: Whether to exclude the Azure CLI from the credential. Defaults to **False**.
     :keyword bool exclude_environment_credential: Whether to exclude a service principal configured by environment
         variables from the credential. Defaults to **False**.
     :keyword bool exclude_managed_identity_credential: Whether to exclude managed identity from the credential.
@@ -60,6 +73,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
         exclude_environment_credential = kwargs.pop("exclude_environment_credential", False)
         exclude_managed_identity_credential = kwargs.pop("exclude_managed_identity_credential", False)
         exclude_shared_token_cache_credential = kwargs.pop("exclude_shared_token_cache_credential", False)
+        exclude_cli_credential = kwargs.pop("exclude_cli_credential", False)
         exclude_interactive_browser_credential = kwargs.pop("exclude_interactive_browser_credential", True)
 
         credentials = []
@@ -77,18 +91,32 @@ class DefaultAzureCredential(ChainedTokenCredential):
             except Exception as ex:  # pylint:disable=broad-except
                 # transitive dependency pywin32 doesn't support 3.8 (https://github.com/mhammond/pywin32/issues/1431)
                 _LOGGER.info("Shared token cache is unavailable: '%s'", ex)
+        if not exclude_cli_credential:
+            credentials.append(AzureCliCredential())
         if not exclude_interactive_browser_credential:
             credentials.append(InteractiveBrowserCredential())
 
         super(DefaultAzureCredential, self).__init__(*credentials)
 
     def get_token(self, *scopes, **kwargs):
+        # type: (*str, **Any) -> AccessToken
+        """Request an access token for `scopes`.
+
+        .. note:: This method is called by Azure SDK clients. It isn't intended for use in application code.
+
+        :param str scopes: desired scopes for the access token. This method requires at least one scope.
+        :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The exception has a
+          `message` attribute listing each authentication attempt and its error message.
+        """
+        if self._successful_credential:
+            return self._successful_credential.get_token(*scopes, **kwargs)
+
         try:
             return super(DefaultAzureCredential, self).get_token(*scopes, **kwargs)
         except ClientAuthenticationError as e:
             raise ClientAuthenticationError(
                 message="""
-{}\n\nPlease visit the Azure identity Python SDK docs at
+{}\n\nPlease visit the documentation at
 https://aka.ms/python-sdk-identity#defaultazurecredential
 to learn what options DefaultAzureCredential supports""".format(
                     e.message

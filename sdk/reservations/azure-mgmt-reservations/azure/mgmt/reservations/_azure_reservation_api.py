@@ -14,6 +14,11 @@ from msrest import Serializer, Deserializer
 
 from ._configuration import AzureReservationAPIConfiguration
 from .operations import AzureReservationAPIOperationsMixin
+from .operations import QuotaOperations
+from .operations import QuotaRequestOperations
+from .operations import QuotasOperations
+from .operations import QuotaRequestsOperations
+from .operations import AutoQuotaIncreaseOperations
 from .operations import ReservationOperations
 from .operations import ReservationOrderOperations
 from .operations import OperationOperations
@@ -21,11 +26,21 @@ from . import models
 
 
 class AzureReservationAPI(AzureReservationAPIOperationsMixin, SDKClient):
-    """This API describe Azure Reservation
+    """AzureReservationAPI
 
     :ivar config: Configuration for client.
     :vartype config: AzureReservationAPIConfiguration
 
+    :ivar quota: Quota operations
+    :vartype quota: azure.mgmt.reservations.operations.QuotaOperations
+    :ivar quota_request: QuotaRequest operations
+    :vartype quota_request: azure.mgmt.reservations.operations.QuotaRequestOperations
+    :ivar quotas: Quotas operations
+    :vartype quotas: azure.mgmt.reservations.operations.QuotasOperations
+    :ivar quota_requests: QuotaRequests operations
+    :vartype quota_requests: azure.mgmt.reservations.operations.QuotaRequestsOperations
+    :ivar auto_quota_increase: AutoQuotaIncrease operations
+    :vartype auto_quota_increase: azure.mgmt.reservations.operations.AutoQuotaIncreaseOperations
     :ivar reservation: Reservation operations
     :vartype reservation: azure.mgmt.reservations.operations.ReservationOperations
     :ivar reservation_order: ReservationOrder operations
@@ -46,10 +61,19 @@ class AzureReservationAPI(AzureReservationAPIOperationsMixin, SDKClient):
         super(AzureReservationAPI, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2019-04-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
+        self.quota = QuotaOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.quota_request = QuotaRequestOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.quotas = QuotasOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.quota_requests = QuotaRequestsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.auto_quota_increase = AutoQuotaIncreaseOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.reservation = ReservationOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.reservation_order = ReservationOrderOperations(

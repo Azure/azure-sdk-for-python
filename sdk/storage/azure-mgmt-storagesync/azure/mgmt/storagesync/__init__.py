@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .storage_sync_management_client import StorageSyncManagementClient
-from .version import VERSION
+from ._configuration import StorageSyncManagementClientConfiguration
+from ._storage_sync_management_client import StorageSyncManagementClient
+__all__ = ['StorageSyncManagementClient', 'StorageSyncManagementClientConfiguration']
 
-__all__ = ['StorageSyncManagementClient']
+from .version import VERSION
 
 __version__ = VERSION
 

@@ -1,4 +1,4 @@
-include *.rst
+include *.md
 include azure/__init__.py
 include azure/cognitiveservices/__init__.py
 include azure/cognitiveservices/knowledge/__init__.py

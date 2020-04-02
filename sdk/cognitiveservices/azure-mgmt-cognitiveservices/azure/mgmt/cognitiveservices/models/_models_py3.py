@@ -169,31 +169,19 @@ class CognitiveServicesAccount(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param etag: Entity Tag
-    :type etag: str
+    :ivar etag: Entity Tag
+    :vartype etag: str
     :ivar id: The id of the created account
     :vartype id: str
-    :param kind: Type of cognitive service account.
+    :param kind: The Kind of the resource.
     :type kind: str
     :param location: The location of the resource
     :type location: str
     :ivar name: The name of the created account
     :vartype name: str
-    :ivar provisioning_state: Gets the status of the cognitive services
-     account at the time the operation was called. Possible values include:
-     'Creating', 'ResolvingDNS', 'Moving', 'Deleting', 'Succeeded', 'Failed'
-    :vartype provisioning_state: str or
-     ~azure.mgmt.cognitiveservices.models.ProvisioningState
-    :param endpoint: Endpoint of the created account.
-    :type endpoint: str
-    :param internal_id: The internal identifier.
-    :type internal_id: str
-    :param custom_sub_domain_name: Optional subdomain name used for
-     token-based authentication.
-    :type custom_sub_domain_name: str
-    :param network_acls: A collection of rules governing the accessibility
-     from specific network locations.
-    :type network_acls: ~azure.mgmt.cognitiveservices.models.NetworkRuleSet
+    :param properties: Properties of Cognitive Services account.
+    :type properties:
+     ~azure.mgmt.cognitiveservices.models.CognitiveServicesAccountProperties
     :param sku: The SKU of Cognitive Services account.
     :type sku: ~azure.mgmt.cognitiveservices.models.Sku
     :param tags: Gets or sets a list of key value pairs that describe the
@@ -204,12 +192,14 @@ class CognitiveServicesAccount(Model):
     :type tags: dict[str, str]
     :ivar type: Resource type
     :vartype type: str
+    :param identity: The identity of Cognitive Services account.
+    :type identity: ~azure.mgmt.cognitiveservices.models.Identity
     """
 
     _validation = {
+        'etag': {'readonly': True},
         'id': {'readonly': True},
         'name': {'readonly': True},
-        'provisioning_state': {'readonly': True},
         'type': {'readonly': True},
     }
 
@@ -219,81 +209,62 @@ class CognitiveServicesAccount(Model):
         'kind': {'key': 'kind', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'endpoint': {'key': 'properties.endpoint', 'type': 'str'},
-        'internal_id': {'key': 'properties.internalId', 'type': 'str'},
-        'custom_sub_domain_name': {'key': 'properties.customSubDomainName', 'type': 'str'},
-        'network_acls': {'key': 'properties.networkAcls', 'type': 'NetworkRuleSet'},
+        'properties': {'key': 'properties', 'type': 'CognitiveServicesAccountProperties'},
         'sku': {'key': 'sku', 'type': 'Sku'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'type': {'key': 'type', 'type': 'str'},
+        'identity': {'key': 'identity', 'type': 'Identity'},
     }
 
-    def __init__(self, *, etag: str=None, kind: str=None, location: str=None, endpoint: str=None, internal_id: str=None, custom_sub_domain_name: str=None, network_acls=None, sku=None, tags=None, **kwargs) -> None:
+    def __init__(self, *, kind: str=None, location: str=None, properties=None, sku=None, tags=None, identity=None, **kwargs) -> None:
         super(CognitiveServicesAccount, self).__init__(**kwargs)
-        self.etag = etag
+        self.etag = None
         self.id = None
         self.kind = kind
         self.location = location
         self.name = None
-        self.provisioning_state = None
-        self.endpoint = endpoint
-        self.internal_id = internal_id
-        self.custom_sub_domain_name = custom_sub_domain_name
-        self.network_acls = network_acls
+        self.properties = properties
         self.sku = sku
         self.tags = tags
         self.type = None
+        self.identity = identity
 
 
-class CognitiveServicesAccountCreateParameters(Model):
-    """The parameters to provide for the account.
+class CognitiveServicesAccountApiProperties(Model):
+    """The api properties for special APIs.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param sku: Required. Required. Gets or sets the SKU of the resource.
-    :type sku: ~azure.mgmt.cognitiveservices.models.Sku
-    :param kind: Required. Required. Gets or sets the Kind of the resource.
-    :type kind: str
-    :param location: Required. Required. Gets or sets the location of the
-     resource. This will be one of the supported and registered Azure Geo
-     Regions (e.g. West US, East US, Southeast Asia, etc.). The geo region of a
-     resource cannot be changed once it is created, but if an identical geo
-     region is specified on update the request will succeed.
-    :type location: str
-    :param tags: Gets or sets a list of key value pairs that describe the
-     resource. These tags can be used in viewing and grouping this resource
-     (across resource groups). A maximum of 15 tags can be provided for a
-     resource. Each tag must have a key no greater than 128 characters and
-     value no greater than 256 characters.
-    :type tags: dict[str, str]
-    :param properties: Required. Must exist in the request. Must be an empty
-     object. Must not be null.
-    :type properties: object
+    :param qna_runtime_endpoint: (QnAMaker Only) The runtime endpoint of
+     QnAMaker.
+    :type qna_runtime_endpoint: str
+    :param statistics_enabled: (Bing Search Only) The flag to enable
+     statistics of Bing Search.
+    :type statistics_enabled: bool
+    :param event_hub_connection_string: (Personalization Only) The flag to
+     enable statistics of Bing Search.
+    :type event_hub_connection_string: str
+    :param storage_account_connection_string: (Personalization Only) The
+     storage account connection string.
+    :type storage_account_connection_string: str
     """
 
     _validation = {
-        'sku': {'required': True},
-        'kind': {'required': True},
-        'location': {'required': True},
-        'properties': {'required': True},
+        'event_hub_connection_string': {'max_length': 1000, 'pattern': r'^( *)Endpoint=sb://(.*);( *)SharedAccessKeyName=(.*);( *)SharedAccessKey=(.*)$'},
+        'storage_account_connection_string': {'max_length': 1000, 'pattern': r'^(( *)DefaultEndpointsProtocol=(http|https)( *);( *))?AccountName=(.*)AccountKey=(.*)EndpointSuffix=(.*)$'},
     }
 
     _attribute_map = {
-        'sku': {'key': 'sku', 'type': 'Sku'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'properties': {'key': 'properties', 'type': 'object'},
+        'qna_runtime_endpoint': {'key': 'qnaRuntimeEndpoint', 'type': 'str'},
+        'statistics_enabled': {'key': 'statisticsEnabled', 'type': 'bool'},
+        'event_hub_connection_string': {'key': 'eventHubConnectionString', 'type': 'str'},
+        'storage_account_connection_string': {'key': 'storageAccountConnectionString', 'type': 'str'},
     }
 
-    def __init__(self, *, sku, kind: str, location: str, properties, tags=None, **kwargs) -> None:
-        super(CognitiveServicesAccountCreateParameters, self).__init__(**kwargs)
-        self.sku = sku
-        self.kind = kind
-        self.location = location
-        self.tags = tags
-        self.properties = properties
+    def __init__(self, *, qna_runtime_endpoint: str=None, statistics_enabled: bool=None, event_hub_connection_string: str=None, storage_account_connection_string: str=None, **kwargs) -> None:
+        super(CognitiveServicesAccountApiProperties, self).__init__(**kwargs)
+        self.qna_runtime_endpoint = qna_runtime_endpoint
+        self.statistics_enabled = statistics_enabled
+        self.event_hub_connection_string = event_hub_connection_string
+        self.storage_account_connection_string = storage_account_connection_string
 
 
 class CognitiveServicesAccountEnumerateSkusResult(Model):
@@ -341,33 +312,64 @@ class CognitiveServicesAccountKeys(Model):
         self.key2 = key2
 
 
-class CognitiveServicesAccountUpdateParameters(Model):
-    """The parameters to provide for the account.
+class CognitiveServicesAccountProperties(Model):
+    """Properties of Cognitive Services account.
 
-    :param sku: Gets or sets the SKU of the resource.
-    :type sku: ~azure.mgmt.cognitiveservices.models.Sku
-    :param tags: Gets or sets a list of key value pairs that describe the
-     resource. These tags can be used in viewing and grouping this resource
-     (across resource groups). A maximum of 15 tags can be provided for a
-     resource. Each tag must have a key no greater than 128 characters and
-     value no greater than 256 characters.
-    :type tags: dict[str, str]
-    :param properties: Additional properties for Account. Only provided fields
-     will be updated.
-    :type properties: object
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar provisioning_state: Gets the status of the cognitive services
+     account at the time the operation was called. Possible values include:
+     'Creating', 'ResolvingDNS', 'Moving', 'Deleting', 'Succeeded', 'Failed'
+    :vartype provisioning_state: str or
+     ~azure.mgmt.cognitiveservices.models.ProvisioningState
+    :ivar endpoint: Endpoint of the created account.
+    :vartype endpoint: str
+    :ivar internal_id: The internal identifier.
+    :vartype internal_id: str
+    :param custom_sub_domain_name: Optional subdomain name used for
+     token-based authentication.
+    :type custom_sub_domain_name: str
+    :param network_acls: A collection of rules governing the accessibility
+     from specific network locations.
+    :type network_acls: ~azure.mgmt.cognitiveservices.models.NetworkRuleSet
+    :param encryption: The encryption properties for this resource.
+    :type encryption: ~azure.mgmt.cognitiveservices.models.Encryption
+    :param user_owned_storage: The storage accounts for this resource.
+    :type user_owned_storage:
+     list[~azure.mgmt.cognitiveservices.models.UserOwnedStorage]
+    :param api_properties: The api properties for special APIs.
+    :type api_properties:
+     ~azure.mgmt.cognitiveservices.models.CognitiveServicesAccountApiProperties
     """
 
-    _attribute_map = {
-        'sku': {'key': 'sku', 'type': 'Sku'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'properties': {'key': 'properties', 'type': 'object'},
+    _validation = {
+        'provisioning_state': {'readonly': True},
+        'endpoint': {'readonly': True},
+        'internal_id': {'readonly': True},
     }
 
-    def __init__(self, *, sku=None, tags=None, properties=None, **kwargs) -> None:
-        super(CognitiveServicesAccountUpdateParameters, self).__init__(**kwargs)
-        self.sku = sku
-        self.tags = tags
-        self.properties = properties
+    _attribute_map = {
+        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+        'endpoint': {'key': 'endpoint', 'type': 'str'},
+        'internal_id': {'key': 'internalId', 'type': 'str'},
+        'custom_sub_domain_name': {'key': 'customSubDomainName', 'type': 'str'},
+        'network_acls': {'key': 'networkAcls', 'type': 'NetworkRuleSet'},
+        'encryption': {'key': 'encryption', 'type': 'Encryption'},
+        'user_owned_storage': {'key': 'userOwnedStorage', 'type': '[UserOwnedStorage]'},
+        'api_properties': {'key': 'apiProperties', 'type': 'CognitiveServicesAccountApiProperties'},
+    }
+
+    def __init__(self, *, custom_sub_domain_name: str=None, network_acls=None, encryption=None, user_owned_storage=None, api_properties=None, **kwargs) -> None:
+        super(CognitiveServicesAccountProperties, self).__init__(**kwargs)
+        self.provisioning_state = None
+        self.endpoint = None
+        self.internal_id = None
+        self.custom_sub_domain_name = custom_sub_domain_name
+        self.network_acls = network_acls
+        self.encryption = encryption
+        self.user_owned_storage = user_owned_storage
+        self.api_properties = api_properties
 
 
 class CognitiveServicesResourceAndSku(Model):
@@ -388,6 +390,29 @@ class CognitiveServicesResourceAndSku(Model):
         super(CognitiveServicesResourceAndSku, self).__init__(**kwargs)
         self.resource_type = resource_type
         self.sku = sku
+
+
+class Encryption(Model):
+    """Properties to configure Encryption.
+
+    :param key_vault_properties: Properties of KeyVault
+    :type key_vault_properties:
+     ~azure.mgmt.cognitiveservices.models.KeyVaultProperties
+    :param key_source: Enumerates the possible value of keySource for
+     Encryption. Possible values include: 'Microsoft.CognitiveServices',
+     'Microsoft.KeyVault'. Default value: "Microsoft.KeyVault" .
+    :type key_source: str or ~azure.mgmt.cognitiveservices.models.KeySource
+    """
+
+    _attribute_map = {
+        'key_vault_properties': {'key': 'keyVaultProperties', 'type': 'KeyVaultProperties'},
+        'key_source': {'key': 'keySource', 'type': 'str'},
+    }
+
+    def __init__(self, *, key_vault_properties=None, key_source="Microsoft.KeyVault", **kwargs) -> None:
+        super(Encryption, self).__init__(**kwargs)
+        self.key_vault_properties = key_vault_properties
+        self.key_source = key_source
 
 
 class Error(Model):
@@ -445,6 +470,47 @@ class ErrorBody(Model):
         self.message = message
 
 
+class Identity(Model):
+    """Managed service identity.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :param type: Type of managed service identity. Possible values include:
+     'None', 'SystemAssigned', 'UserAssigned'
+    :type type: str or ~azure.mgmt.cognitiveservices.models.IdentityType
+    :ivar tenant_id: Tenant of managed service identity.
+    :vartype tenant_id: str
+    :ivar principal_id: Principal Id of managed service identity.
+    :vartype principal_id: str
+    :param user_assigned_identities: The list of user assigned identities
+     associated with the resource. The user identity dictionary key references
+     will be ARM resource ids in the form:
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}
+    :type user_assigned_identities: dict[str,
+     ~azure.mgmt.cognitiveservices.models.UserAssignedIdentity]
+    """
+
+    _validation = {
+        'tenant_id': {'readonly': True},
+        'principal_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'IdentityType'},
+        'tenant_id': {'key': 'tenantId', 'type': 'str'},
+        'principal_id': {'key': 'principalId', 'type': 'str'},
+        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{UserAssignedIdentity}'},
+    }
+
+    def __init__(self, *, type=None, user_assigned_identities=None, **kwargs) -> None:
+        super(Identity, self).__init__(**kwargs)
+        self.type = type
+        self.tenant_id = None
+        self.principal_id = None
+        self.user_assigned_identities = user_assigned_identities
+
+
 class IpRule(Model):
     """A rule governing the accessibility from a specific ip address or ip range.
 
@@ -467,6 +533,30 @@ class IpRule(Model):
     def __init__(self, *, value: str, **kwargs) -> None:
         super(IpRule, self).__init__(**kwargs)
         self.value = value
+
+
+class KeyVaultProperties(Model):
+    """Properties to configure keyVault Properties.
+
+    :param key_name: Name of the Key from KeyVault
+    :type key_name: str
+    :param key_version: Version of the Key from KeyVault
+    :type key_version: str
+    :param key_vault_uri: Uri of KeyVault
+    :type key_vault_uri: str
+    """
+
+    _attribute_map = {
+        'key_name': {'key': 'keyName', 'type': 'str'},
+        'key_version': {'key': 'keyVersion', 'type': 'str'},
+        'key_vault_uri': {'key': 'keyVaultUri', 'type': 'str'},
+    }
+
+    def __init__(self, *, key_name: str=None, key_version: str=None, key_vault_uri: str=None, **kwargs) -> None:
+        super(KeyVaultProperties, self).__init__(**kwargs)
+        self.key_name = key_name
+        self.key_version = key_version
+        self.key_vault_uri = key_vault_uri
 
 
 class MetricName(Model):
@@ -500,11 +590,6 @@ class MetricName(Model):
 class NetworkRuleSet(Model):
     """A set of rules governing the network accessibility.
 
-    :param bypass: Tells what traffic can bypass network rules. This can be
-     'AzureServices' or 'None'.  If not specified the default is
-     'AzureServices'. Possible values include: 'AzureServices', 'None'
-    :type bypass: str or
-     ~azure.mgmt.cognitiveservices.models.NetworkRuleBypassOptions
     :param default_action: The default action when no rule from ipRules and
      from virtualNetworkRules match. This is only used after the bypass
      property has been evaluated. Possible values include: 'Allow', 'Deny'
@@ -518,15 +603,13 @@ class NetworkRuleSet(Model):
     """
 
     _attribute_map = {
-        'bypass': {'key': 'bypass', 'type': 'str'},
         'default_action': {'key': 'defaultAction', 'type': 'str'},
         'ip_rules': {'key': 'ipRules', 'type': '[IpRule]'},
         'virtual_network_rules': {'key': 'virtualNetworkRules', 'type': '[VirtualNetworkRule]'},
     }
 
-    def __init__(self, *, bypass=None, default_action=None, ip_rules=None, virtual_network_rules=None, **kwargs) -> None:
+    def __init__(self, *, default_action=None, ip_rules=None, virtual_network_rules=None, **kwargs) -> None:
         super(NetworkRuleSet, self).__init__(**kwargs)
-        self.bypass = bypass
         self.default_action = default_action
         self.ip_rules = ip_rules
         self.virtual_network_rules = virtual_network_rules
@@ -842,6 +925,43 @@ class UsagesResult(Model):
     def __init__(self, **kwargs) -> None:
         super(UsagesResult, self).__init__(**kwargs)
         self.value = None
+
+
+class UserAssignedIdentity(Model):
+    """User-assigned managed identity.
+
+    :param principal_id: Azure Active Directory principal ID associated with
+     this Identity.
+    :type principal_id: str
+    :param client_id: Client App Id associated with this identity.
+    :type client_id: str
+    """
+
+    _attribute_map = {
+        'principal_id': {'key': 'principalId', 'type': 'str'},
+        'client_id': {'key': 'clientId', 'type': 'str'},
+    }
+
+    def __init__(self, *, principal_id: str=None, client_id: str=None, **kwargs) -> None:
+        super(UserAssignedIdentity, self).__init__(**kwargs)
+        self.principal_id = principal_id
+        self.client_id = client_id
+
+
+class UserOwnedStorage(Model):
+    """The user owned storage for Cognitive Services account.
+
+    :param resource_id: Full resource id of a Microsoft.Storage resource.
+    :type resource_id: str
+    """
+
+    _attribute_map = {
+        'resource_id': {'key': 'resourceId', 'type': 'str'},
+    }
+
+    def __init__(self, *, resource_id: str=None, **kwargs) -> None:
+        super(UserOwnedStorage, self).__init__(**kwargs)
+        self.resource_id = resource_id
 
 
 class VirtualNetworkRule(Model):

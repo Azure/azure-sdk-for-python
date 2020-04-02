@@ -10,6 +10,7 @@
 # --------------------------------------------------------------------------
 
 from msrest.serialization import Model
+from msrest.exceptions import HttpOperationError
 
 
 class FeatureSupportRequest(Model):
@@ -2176,6 +2177,9 @@ class AzureIaaSVMProtectionPolicy(ProtectionPolicy):
     :type protected_items_count: int
     :param backup_management_type: Required. Constant filled by server.
     :type backup_management_type: str
+    :param instant_rp_details:
+    :type instant_rp_details:
+     ~azure.mgmt.recoveryservicesbackup.models.InstantRPAdditionalDetails
     :param schedule_policy: Backup schedule specified as part of backup
      policy.
     :type schedule_policy:
@@ -2199,14 +2203,16 @@ class AzureIaaSVMProtectionPolicy(ProtectionPolicy):
     _attribute_map = {
         'protected_items_count': {'key': 'protectedItemsCount', 'type': 'int'},
         'backup_management_type': {'key': 'backupManagementType', 'type': 'str'},
+        'instant_rp_details': {'key': 'instantRPDetails', 'type': 'InstantRPAdditionalDetails'},
         'schedule_policy': {'key': 'schedulePolicy', 'type': 'SchedulePolicy'},
         'retention_policy': {'key': 'retentionPolicy', 'type': 'RetentionPolicy'},
         'instant_rp_retention_range_in_days': {'key': 'instantRpRetentionRangeInDays', 'type': 'int'},
         'time_zone': {'key': 'timeZone', 'type': 'str'},
     }
 
-    def __init__(self, *, protected_items_count: int=None, schedule_policy=None, retention_policy=None, instant_rp_retention_range_in_days: int=None, time_zone: str=None, **kwargs) -> None:
+    def __init__(self, *, protected_items_count: int=None, instant_rp_details=None, schedule_policy=None, retention_policy=None, instant_rp_retention_range_in_days: int=None, time_zone: str=None, **kwargs) -> None:
         super(AzureIaaSVMProtectionPolicy, self).__init__(protected_items_count=protected_items_count, **kwargs)
+        self.instant_rp_details = instant_rp_details
         self.schedule_policy = schedule_policy
         self.retention_policy = retention_policy
         self.instant_rp_retention_range_in_days = instant_rp_retention_range_in_days
@@ -7235,6 +7241,34 @@ class EncryptionDetails(Model):
         self.secret_key_vault_id = secret_key_vault_id
 
 
+class ErrorAdditionalInfo(Model):
+    """The resource management error additional info.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar type: The additional info type.
+    :vartype type: str
+    :ivar info: The additional info.
+    :vartype info: object
+    """
+
+    _validation = {
+        'type': {'readonly': True},
+        'info': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'info': {'key': 'info', 'type': 'object'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(ErrorAdditionalInfo, self).__init__(**kwargs)
+        self.type = None
+        self.info = None
+
+
 class ErrorDetail(Model):
     """Error Detail class which encapsulates Code, Message and Recommendations.
 
@@ -7266,6 +7300,63 @@ class ErrorDetail(Model):
         self.code = None
         self.message = None
         self.recommendations = None
+
+
+class ErrorResponse(Model):
+    """The resource management error response.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details:
+     list[~azure.mgmt.recoveryservicesbackup.models.ErrorResponse]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info:
+     list[~azure.mgmt.recoveryservicesbackup.models.ErrorAdditionalInfo]
+    """
+
+    _validation = {
+        'code': {'readonly': True},
+        'message': {'readonly': True},
+        'target': {'readonly': True},
+        'details': {'readonly': True},
+        'additional_info': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+        'target': {'key': 'target', 'type': 'str'},
+        'details': {'key': 'details', 'type': '[ErrorResponse]'},
+        'additional_info': {'key': 'additionalInfo', 'type': '[ErrorAdditionalInfo]'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(ErrorResponse, self).__init__(**kwargs)
+        self.code = None
+        self.message = None
+        self.target = None
+        self.details = None
+        self.additional_info = None
+
+
+class ErrorResponseException(HttpOperationError):
+    """Server responsed with exception of type: 'ErrorResponse'.
+
+    :param deserialize: A deserializer
+    :param response: Server response to be deserialized.
+    """
+
+    def __init__(self, deserialize, response, *args):
+
+        super(ErrorResponseException, self).__init__(deserialize, response, 'ErrorResponse', *args)
 
 
 class OperationResultInfoBase(Model):
@@ -9279,6 +9370,125 @@ class PreValidateEnableBackupResponse(Model):
         self.protected_item_name = protected_item_name
 
 
+class PrivateEndpoint(Model):
+    """The Private Endpoint network resource that is linked to the Private
+    Endpoint connection.
+
+    :param id: Gets or sets id
+    :type id: str
+    """
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+    }
+
+    def __init__(self, *, id: str=None, **kwargs) -> None:
+        super(PrivateEndpoint, self).__init__(**kwargs)
+        self.id = id
+
+
+class PrivateEndpointConnection(Model):
+    """Private Endpoint Connection Response Properties.
+
+    :param provisioning_state: Gets or sets provisioning state of the private
+     endpoint connection. Possible values include: 'Succeeded', 'Deleting',
+     'Failed', 'Pending'
+    :type provisioning_state: str or
+     ~azure.mgmt.recoveryservicesbackup.models.ProvisioningState
+    :param private_endpoint: Gets or sets private endpoint associated with the
+     private endpoint connection
+    :type private_endpoint:
+     ~azure.mgmt.recoveryservicesbackup.models.PrivateEndpoint
+    :param private_link_service_connection_state: Gets or sets private link
+     service connection state
+    :type private_link_service_connection_state:
+     ~azure.mgmt.recoveryservicesbackup.models.PrivateLinkServiceConnectionState
+    """
+
+    _attribute_map = {
+        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+        'private_endpoint': {'key': 'privateEndpoint', 'type': 'PrivateEndpoint'},
+        'private_link_service_connection_state': {'key': 'privateLinkServiceConnectionState', 'type': 'PrivateLinkServiceConnectionState'},
+    }
+
+    def __init__(self, *, provisioning_state=None, private_endpoint=None, private_link_service_connection_state=None, **kwargs) -> None:
+        super(PrivateEndpointConnection, self).__init__(**kwargs)
+        self.provisioning_state = provisioning_state
+        self.private_endpoint = private_endpoint
+        self.private_link_service_connection_state = private_link_service_connection_state
+
+
+class PrivateEndpointConnectionResource(Resource):
+    """Private Endpoint Connection Response Properties.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id represents the complete path to the resource.
+    :vartype id: str
+    :ivar name: Resource name associated with the resource.
+    :vartype name: str
+    :ivar type: Resource type represents the complete path of the form
+     Namespace/ResourceType/ResourceType/...
+    :vartype type: str
+    :param location: Resource location.
+    :type location: str
+    :param tags: Resource tags.
+    :type tags: dict[str, str]
+    :param e_tag: Optional ETag.
+    :type e_tag: str
+    :param properties: PrivateEndpointConnectionResource properties
+    :type properties:
+     ~azure.mgmt.recoveryservicesbackup.models.PrivateEndpointConnection
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'e_tag': {'key': 'eTag', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'PrivateEndpointConnection'},
+    }
+
+    def __init__(self, *, location: str=None, tags=None, e_tag: str=None, properties=None, **kwargs) -> None:
+        super(PrivateEndpointConnectionResource, self).__init__(location=location, tags=tags, e_tag=e_tag, **kwargs)
+        self.properties = properties
+
+
+class PrivateLinkServiceConnectionState(Model):
+    """Private Link Service Connection State.
+
+    :param status: Gets or sets the status. Possible values include:
+     'Pending', 'Approved', 'Rejected', 'Disconnected'
+    :type status: str or
+     ~azure.mgmt.recoveryservicesbackup.models.PrivateEndpointConnectionStatus
+    :param description: Gets or sets description
+    :type description: str
+    :param action_required: Gets or sets actions required
+    :type action_required: str
+    """
+
+    _attribute_map = {
+        'status': {'key': 'status', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'action_required': {'key': 'actionRequired', 'type': 'str'},
+    }
+
+    def __init__(self, *, status=None, description: str=None, action_required: str=None, **kwargs) -> None:
+        super(PrivateLinkServiceConnectionState, self).__init__(**kwargs)
+        self.status = status
+        self.description = description
+        self.action_required = action_required
+
+
 class ProtectableContainerResource(Resource):
     """Protectable Container Class.
 
@@ -10057,19 +10267,24 @@ class TargetRestoreInfo(Model):
     :param database_name: Database name InstanceName/DataBaseName for SQL or
      System/DbName for SAP Hana
     :type database_name: str
+    :param target_directory_for_file_restore: Target directory location for
+     restore as files.
+    :type target_directory_for_file_restore: str
     """
 
     _attribute_map = {
         'overwrite_option': {'key': 'overwriteOption', 'type': 'str'},
         'container_id': {'key': 'containerId', 'type': 'str'},
         'database_name': {'key': 'databaseName', 'type': 'str'},
+        'target_directory_for_file_restore': {'key': 'targetDirectoryForFileRestore', 'type': 'str'},
     }
 
-    def __init__(self, *, overwrite_option=None, container_id: str=None, database_name: str=None, **kwargs) -> None:
+    def __init__(self, *, overwrite_option=None, container_id: str=None, database_name: str=None, target_directory_for_file_restore: str=None, **kwargs) -> None:
         super(TargetRestoreInfo, self).__init__(**kwargs)
         self.overwrite_option = overwrite_option
         self.container_id = container_id
         self.database_name = database_name
+        self.target_directory_for_file_restore = target_directory_for_file_restore
 
 
 class TokenInformation(Model):

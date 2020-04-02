@@ -11,6 +11,7 @@ from unittest.mock import Mock, patch
 import pytest
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
+from azure.identity import CredentialUnavailableError
 from azure.identity.aio import (
     ChainedTokenCredential,
     ClientSecretCredential,
@@ -21,8 +22,8 @@ from azure.identity.aio import (
 from azure.identity.aio._credentials.managed_identity import ImdsCredential
 from azure.identity._constants import EnvironmentVariables
 
-from helpers import mock_response, Request, async_validating_transport
-
+from helpers import mock_response, Request
+from helpers_async import async_validating_transport, wrap_in_future
 
 @pytest.mark.asyncio
 async def test_client_secret_environment_credential():
@@ -59,13 +60,14 @@ async def test_client_secret_environment_credential():
 
 @pytest.mark.asyncio
 async def test_credential_chain_error_message():
-    def raise_authn_error(message):
-        raise ClientAuthenticationError(message)
-
     first_error = "first_error"
-    first_credential = Mock(spec=ClientSecretCredential, get_token=lambda _: raise_authn_error(first_error))
+    first_credential = Mock(
+        spec=ClientSecretCredential, get_token=Mock(side_effect=CredentialUnavailableError(first_error))
+    )
     second_error = "second_error"
-    second_credential = Mock(name="second_credential", get_token=lambda _: raise_authn_error(second_error))
+    second_credential = Mock(
+        name="second_credential", get_token=Mock(side_effect=ClientAuthenticationError(second_error))
+    )
 
     with pytest.raises(ClientAuthenticationError) as ex:
         await ChainedTokenCredential(first_credential, second_credential).get_token("scope")
@@ -77,14 +79,14 @@ async def test_credential_chain_error_message():
 
 @pytest.mark.asyncio
 async def test_chain_attempts_all_credentials():
-    async def raise_authn_error(message="it didn't work"):
-        raise ClientAuthenticationError(message)
+    async def credential_unavailable(message="it didn't work"):
+        raise CredentialUnavailableError(message)
 
     expected_token = AccessToken("expected_token", 0)
     credentials = [
-        Mock(get_token=Mock(wraps=raise_authn_error)),
-        Mock(get_token=Mock(wraps=raise_authn_error)),
-        Mock(get_token=asyncio.coroutine(lambda _: expected_token)),
+        Mock(get_token=Mock(wraps=credential_unavailable)),
+        Mock(get_token=Mock(wraps=credential_unavailable)),
+        Mock(get_token=wrap_in_future(lambda _: expected_token)),
     ]
 
     token = await ChainedTokenCredential(*credentials).get_token("scope")
@@ -95,9 +97,31 @@ async def test_chain_attempts_all_credentials():
 
 
 @pytest.mark.asyncio
+async def test_chain_raises_for_unexpected_error():
+    """the chain should not continue after an unexpected error (i.e. anything but CredentialUnavailableError)"""
+
+    async def credential_unavailable(message="it didn't work"):
+        raise CredentialUnavailableError(message)
+
+    expected_message = "it can't be done"
+
+    credentials = [
+        Mock(get_token=Mock(wraps=credential_unavailable)),
+        Mock(get_token=Mock(side_effect=ValueError(expected_message))),
+        Mock(get_token=Mock(wraps=wrap_in_future(lambda _: AccessToken("**", 42))))
+    ]
+
+    with pytest.raises(ClientAuthenticationError) as ex:
+        await ChainedTokenCredential(*credentials).get_token("scope")
+
+    assert expected_message in ex.value.message
+    assert credentials[-1].get_token.call_count == 0
+
+
+@pytest.mark.asyncio
 async def test_chain_returns_first_token():
     expected_token = Mock()
-    first_credential = Mock(get_token=asyncio.coroutine(lambda _: expected_token))
+    first_credential = Mock(get_token=wrap_in_future(lambda _: expected_token))
     second_credential = Mock(get_token=Mock())
 
     aggregate = ChainedTokenCredential(first_credential, second_credential)
@@ -123,14 +147,14 @@ async def test_imds_credential_cache():
     }
 
     mock_response = Mock(
-        text=lambda: json.dumps(token_payload),
+        text=lambda encoding=None: json.dumps(token_payload),
         headers={"content-type": "application/json"},
         status_code=200,
         content_type="application/json",
     )
     mock_send = Mock(return_value=mock_response)
 
-    credential = ImdsCredential(transport=Mock(send=asyncio.coroutine(mock_send)))
+    credential = ImdsCredential(transport=Mock(send=wrap_in_future(mock_send)))
     token = await credential.get_token(scope)
     assert token.token == expired
     assert mock_send.call_count == 2  # first request was probing for endpoint availability
@@ -153,7 +177,7 @@ async def test_imds_credential_cache():
 @pytest.mark.asyncio
 async def test_imds_credential_retries():
     mock_response = Mock(
-        text=lambda: b"{}",
+        text=lambda encoding=None: b"{}",
         headers={"content-type": "application/json", "Retry-After": "0"},
         content_type="application/json",
     )
@@ -166,7 +190,7 @@ async def test_imds_credential_retries():
         mock_response.status_code = status_code
         try:
             await ImdsCredential(
-                transport=Mock(send=asyncio.coroutine(mock_send), sleep=asyncio.coroutine(lambda _: None))
+                transport=Mock(send=wrap_in_future(mock_send), sleep=wrap_in_future(lambda _: None))
             ).get_token("scope")
         except ClientAuthenticationError:
             pass

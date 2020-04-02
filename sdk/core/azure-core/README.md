@@ -1,7 +1,13 @@
 
 # Azure Core Library
 
-Azure core library defines basic exceptions and shared modules those are needed when you use client libraries. If you are a client library developer, please reference [client library developer reference](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md) for more information.
+Azure core library defines basic exceptions and shared modules those are needed when you use client libraries. 
+
+As an end user, you don't need to manually install azure-core because it will be installed automatically when you install other SDKs. 
+
+If you are a client library developer, please reference [client library developer reference](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md) for more information.
+
+[Source code]() | [Package (Pypi)][package] | [API reference documentation]()
 
 ## Azure Core Library Exceptions
 
@@ -101,7 +107,15 @@ class TooManyRedirectsError(HttpResponseError):
 ## Shared modules
 
 ### MatchConditions
-An enum to describe match conditions.
+MatchConditions is an enum to describe match conditions.
+```python
+class MatchConditions(Enum):
+    Unconditionally = 1
+    IfNotModified = 2
+    IfModified = 3
+    IfPresent = 4
+    IfMissing = 5
+```
 
 ## Contributing
 This project welcomes contributions and suggestions. Most contributions require
@@ -120,3 +134,6 @@ For more information, see the
 [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/)
 or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any
 additional questions or comments.
+
+<!-- LINKS -->
+[package]: https://pypi.org/project/azure-core/

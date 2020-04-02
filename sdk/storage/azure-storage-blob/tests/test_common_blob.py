@@ -10,6 +10,7 @@ import pytest
 import requests
 import time
 import unittest
+import uuid
 import os
 from datetime import datetime, timedelta
 
@@ -51,8 +52,8 @@ TEST_BLOB_PREFIX = 'blob'
 
 class StorageCommonBlobTest(StorageTestCase):
 
-    def _setup(self, name, key):
-        self.bsc = BlobServiceClient(self.account_url(name, "blob"), credential=key)
+    def _setup(self, storage_account, key):
+        self.bsc = BlobServiceClient(self.account_url(storage_account, "blob"), credential=key)
         self.container_name = self.get_resource_name('utcontainer')
         if self.is_live:
             container = self.bsc.get_container_client(self.container_name)
@@ -62,8 +63,8 @@ class StorageCommonBlobTest(StorageTestCase):
                 pass
         self.byte_data = self.get_random_bytes(1024)
 
-    def _setup_remote(self, name, key):
-        self.bsc2 = BlobServiceClient(self.account_url(name, "blob"), credential=key)
+    def _setup_remote(self, storage_account, key):
+        self.bsc2 = BlobServiceClient(self.account_url(storage_account, "blob"), credential=key)
         self.remote_container_name = 'rmt'
 
     def _teardown(self, FILE_PATH):
@@ -138,7 +139,7 @@ class StorageCommonBlobTest(StorageTestCase):
     #-- Common test cases for blobs ----------------------------------------------
     @GlobalStorageAccountPreparer()
     def test_blob_exists(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._create_block_blob()
 
         # Act
@@ -151,7 +152,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_blob_not_exists(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._get_blob_reference()
 
         # Act
@@ -162,7 +163,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_blob_snapshot_exists(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._create_block_blob()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         snapshot = blob.create_snapshot()
@@ -177,7 +178,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_blob_snapshot_not_exists(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._create_block_blob()
 
         # Act
@@ -189,7 +190,7 @@ class StorageCommonBlobTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_blob_container_not_exists(self, resource_group, location, storage_account, storage_account_key):
         # In this case both the blob and container do not exist
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._get_blob_reference()
 
         # Act
@@ -200,7 +201,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_create_blob_with_question_mark(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = '?ques?tion?'
         blob_data = u'???'
 
@@ -216,7 +217,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_create_blob_with_special_chars(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
 
         # Act
         for c in '-._ /()$=\',~':
@@ -233,7 +234,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_create_blob_with_lease_id(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._create_block_blob()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         lease = blob.acquire_lease()
@@ -249,7 +250,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_create_blob_with_generator(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
 
         # Act
         def gen():
@@ -267,7 +268,7 @@ class StorageCommonBlobTest(StorageTestCase):
     @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     def test_create_blob_with_requests(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
 
         # Act
         uri = "http://www.gutenberg.org/files/59466/59466-0.txt"
@@ -279,7 +280,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_create_blob_with_metadata(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._get_blob_reference()
         metadata={'hello': 'world', 'number': '42'}
 
@@ -296,7 +297,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_get_blob_with_existing_blob(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._create_block_blob()
 
         # Act
@@ -310,7 +311,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_get_blob_with_snapshot(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._create_block_blob()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         snapshot = self.bsc.get_blob_client(
@@ -326,7 +327,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_get_blob_with_snapshot_previous(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._create_block_blob()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         snapshot = self.bsc.get_blob_client(
@@ -346,7 +347,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_get_blob_with_range(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._create_block_blob()
 
         # Act
@@ -359,7 +360,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_get_blob_with_lease(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._create_block_blob()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         lease = blob.acquire_lease()
@@ -374,7 +375,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_get_blob_with_non_existing_blob(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._get_blob_reference()
 
         # Act
@@ -386,7 +387,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_set_blob_properties_with_existing_blob(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._create_block_blob()
 
         # Act
@@ -405,7 +406,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_set_blob_properties_with_blob_settings_param(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._create_block_blob()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         props = blob.get_blob_properties()
@@ -423,7 +424,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_get_blob_properties(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._create_block_blob()
 
         # Act
@@ -442,7 +443,7 @@ class StorageCommonBlobTest(StorageTestCase):
     # HEAD request.
     @GlobalStorageAccountPreparer()
     def test_get_blob_properties_fail(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._create_block_blob()
 
         # Act
@@ -460,7 +461,7 @@ class StorageCommonBlobTest(StorageTestCase):
     # GET request. This is preferred to relying on the ErrorCode in the body.
     @GlobalStorageAccountPreparer()
     def test_get_blob_metadata_fail(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._create_block_blob()
 
         # Act
@@ -474,7 +475,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_get_blob_server_encryption(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._create_block_blob()
 
         # Act
@@ -487,7 +488,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_get_blob_properties_server_encryption(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._create_block_blob()
 
         # Act
@@ -500,7 +501,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_list_blobs_server_encryption(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         self._create_block_blob()
         container = self.bsc.get_container_client(self.container_name)
         blob_list = container.list_blobs()
@@ -514,7 +515,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_no_server_encryption(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._create_block_blob()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
@@ -530,7 +531,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_get_blob_properties_with_snapshot(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._create_block_blob()
         container = self.bsc.get_container_client(self.container_name)
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
@@ -550,7 +551,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_get_blob_properties_with_leased_blob(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._create_block_blob()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         lease = blob.acquire_lease()
@@ -569,7 +570,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_get_blob_metadata(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._create_block_blob()
 
         # Act
@@ -584,7 +585,7 @@ class StorageCommonBlobTest(StorageTestCase):
     def test_set_blob_metadata_with_upper_case(self, resource_group, location, storage_account, storage_account_key):
         # bug in devtools...converts upper case header to lowercase
         # passes live.
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         metadata = {'hello': 'world', 'number': '42', 'UP': 'UPval'}
         blob_name = self._create_block_blob()
 
@@ -603,7 +604,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_delete_blob_with_existing_blob(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._create_block_blob()
 
         # Act
@@ -616,7 +617,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_delete_blob_with_non_existing_blob(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._get_blob_reference()
 
         # Act
@@ -629,7 +630,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_delete_blob_snapshot(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._create_block_blob()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         snapshot = self.bsc.get_blob_client(
@@ -648,7 +649,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_delete_blob_snapshots(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._create_block_blob()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         blob.create_snapshot()
@@ -665,7 +666,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_delete_blob_with_snapshots(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._create_block_blob()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         blob.create_snapshot()
@@ -685,7 +686,7 @@ class StorageCommonBlobTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_soft_delete_blob_without_snapshots(self, resource_group, location, storage_account, storage_account_key):
         try:
-            self._setup(storage_account.name, storage_account_key)
+            self._setup(storage_account, storage_account_key)
             self._enable_soft_delete()
             blob_name = self._create_block_blob()
 
@@ -721,7 +722,7 @@ class StorageCommonBlobTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_soft_delete_single_blob_snapshot(self, resource_group, location, storage_account, storage_account_key):
         try:
-            self._setup(storage_account.name, storage_account_key)
+            self._setup(storage_account, storage_account_key)
             self._enable_soft_delete()
             blob_name = self._create_block_blob()
             blob = self.bsc.get_blob_client(self.container_name, blob_name)
@@ -768,7 +769,7 @@ class StorageCommonBlobTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_soft_delete_only_snapshots_of_blob(self, resource_group, location, storage_account, storage_account_key):
         try:
-            self._setup(storage_account.name, storage_account_key)
+            self._setup(storage_account, storage_account_key)
             self._enable_soft_delete()
             blob_name = self._create_block_blob()
             blob = self.bsc.get_blob_client(self.container_name, blob_name)
@@ -812,7 +813,7 @@ class StorageCommonBlobTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_soft_delete_blob_including_all_snapshots(self, resource_group, location, storage_account, storage_account_key):
         try:
-            self._setup(storage_account.name, storage_account_key)
+            self._setup(storage_account, storage_account_key)
             self._enable_soft_delete()
             blob_name = self._create_block_blob()
             blob = self.bsc.get_blob_client(self.container_name, blob_name)
@@ -851,7 +852,7 @@ class StorageCommonBlobTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_soft_delete_with_leased_blob(self, resource_group, location, storage_account, storage_account_key):
         try:
-            self._setup(storage_account.name, storage_account_key)
+            self._setup(storage_account, storage_account_key)
             self._enable_soft_delete()
             blob_name = self._create_block_blob()
             blob = self.bsc.get_blob_client(self.container_name, blob_name)
@@ -890,13 +891,13 @@ class StorageCommonBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_copy_blob_with_existing_blob(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._create_block_blob()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
         # Act
         sourceblob = '{0}/{1}/{2}'.format(
-            self.account_url(storage_account.name, "blob"), self.container_name, blob_name)
+            self.account_url(storage_account, "blob"), self.container_name, blob_name)
 
         copyblob = self.bsc.get_blob_client(self.container_name, 'blob1copy')
         copy = copyblob.start_copy_from_url(sourceblob)
@@ -915,13 +916,13 @@ class StorageCommonBlobTest(StorageTestCase):
     def test_copy_blob_with_blob_tier_specified(self, resource_group, location, storage_account, storage_account_key):
         pytest.skip("Unable to set premium account")
         # Arrange
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._create_block_blob()
         self.bsc.get_blob_client(self.container_name, blob_name)
 
         # Act
         sourceblob = '{0}/{1}/{2}'.format(
-            self.account_url(storage_account.name, "blob"), self.container_name, blob_name)
+            self.account_url(storage_account, "blob"), self.container_name, blob_name)
 
         copyblob = self.bsc.get_blob_client(self.container_name, 'blob1copy')
         blob_tier = StandardBlobTier.Cool
@@ -937,12 +938,12 @@ class StorageCommonBlobTest(StorageTestCase):
     def test_copy_blob_with_rehydrate_priority(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         pytest.skip("Unabe to set up premium storage account type")
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._create_block_blob()
 
         # Act
         sourceblob = '{0}/{1}/{2}'.format(
-            self.account_url(storage_account.name, "blob"), self.container_name, blob_name)
+            self.account_url(storage_account, "blob"), self.container_name, blob_name)
 
         blob_tier = StandardBlobTier.Archive
         rehydrate_priority = RehydratePriority.high
@@ -981,8 +982,8 @@ class StorageCommonBlobTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     @StorageAccountPreparer(random_name_enabled=True, name_prefix='pyrmtstorage', parameter_name='rmt')
     def test_copy_blob_async_private_blob_no_sas(self, resource_group, location, storage_account, storage_account_key, rmt, rmt_key):
-        self._setup(storage_account.name, storage_account_key)
-        self._setup_remote(rmt.name, rmt_key)
+        self._setup(storage_account, storage_account_key)
+        self._setup_remote(rmt, rmt_key)
         self._create_remote_container()
         source_blob = self._create_remote_block_blob()
 
@@ -997,9 +998,9 @@ class StorageCommonBlobTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     @StorageAccountPreparer(random_name_enabled=True, name_prefix='pyrmtstorage', parameter_name='rmt')
     def test_copy_blob_async_private_blob_with_sas(self, resource_group, location, storage_account, storage_account_key, rmt, rmt_key):
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         data = b'12345678' * 1024 * 1024
-        self._setup_remote(rmt.name, rmt_key)
+        self._setup_remote(rmt, rmt_key)
         self._create_remote_container()
         source_blob = self._create_remote_block_blob(blob_data=data)
         sas_token = generate_blob_sas(
@@ -1027,7 +1028,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_abort_copy_blob(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         source_blob = "http://www.gutenberg.org/files/59466/59466-0.txt"
         copied_blob = self.bsc.get_blob_client(self.container_name, '59466-0.txt')
 
@@ -1047,7 +1048,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_abort_copy_blob_with_synchronous_copy_fails(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         source_blob_name = self._create_block_blob()
         source_blob = self.bsc.get_blob_client(self.container_name, source_blob_name)
 
@@ -1065,7 +1066,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_snapshot_blob(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._create_block_blob()
 
         # Act
@@ -1079,7 +1080,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_lease_blob_acquire_and_release(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._create_block_blob()
 
         # Act
@@ -1095,7 +1096,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_lease_blob_with_duration(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._create_block_blob()
 
         # Act
@@ -1111,7 +1112,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_lease_blob_with_proposed_lease_id(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._create_block_blob()
 
         # Act
@@ -1125,7 +1126,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_lease_blob_change_lease_id(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._create_block_blob()
 
         # Act
@@ -1143,7 +1144,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_lease_blob_break_period(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._create_block_blob()
 
         # Act
@@ -1165,7 +1166,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_lease_blob_acquire_and_renew(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._create_block_blob()
 
         # Act
@@ -1180,7 +1181,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_lease_blob_acquire_twice_fails(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._create_block_blob()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         lease = blob.acquire_lease()
@@ -1195,7 +1196,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_unicode_get_blob_unicode_name(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = '啊齄丂狛狜'
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         blob.upload_blob(b'hello world')
@@ -1209,7 +1210,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_create_blob_blob_unicode_data(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
@@ -1223,7 +1224,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_no_sas_private_blob(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._create_block_blob()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
@@ -1237,7 +1238,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_no_sas_public_blob(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         data = b'a public blob can be read without a shared access signature'
         blob_name = 'blob1.txt'
         container_name = self._get_container_reference()
@@ -1257,7 +1258,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_public_access_blob(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         data = b'public access blob'
         blob_name = 'blob1.txt'
         container_name = self._get_container_reference()
@@ -1280,7 +1281,7 @@ class StorageCommonBlobTest(StorageTestCase):
     def test_sas_access_blob(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
 
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._create_block_blob()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
@@ -1307,7 +1308,7 @@ class StorageCommonBlobTest(StorageTestCase):
     def test_sas_access_blob_snapshot(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
 
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._create_block_blob()
         blob_client = self.bsc.get_blob_client(self.container_name, blob_name)
         blob_snapshot = blob_client.create_snapshot()
@@ -1343,7 +1344,7 @@ class StorageCommonBlobTest(StorageTestCase):
     def test_sas_signed_identifier(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
 
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._create_block_blob()
         container = self.bsc.get_container_client(self.container_name)
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
@@ -1377,7 +1378,7 @@ class StorageCommonBlobTest(StorageTestCase):
     def test_account_sas(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
 
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._create_block_blob()
 
         token = generate_account_sas(
@@ -1405,11 +1406,11 @@ class StorageCommonBlobTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_get_user_delegation_key(self, resource_group, location, storage_account, storage_account_key):
         # Act
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         token_credential = self.generate_oauth_token()
 
         # Action 1: make sure token works
-        service = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=token_credential)
+        service = BlobServiceClient(self.account_url(storage_account, "blob"), credential=token_credential)
 
         start = datetime.utcnow()
         expiry = datetime.utcnow() + timedelta(hours=1)
@@ -1471,22 +1472,22 @@ class StorageCommonBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_token_credential(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         token_credential = self.generate_oauth_token()
 
         # Action 1: make sure token works
-        service = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=token_credential)
+        service = BlobServiceClient(self.account_url(storage_account, "blob"), credential=token_credential)
         result = service.get_service_properties()
         self.assertIsNotNone(result)
 
         # Action 2: change token value to make request fail
         fake_credential = self.generate_fake_token()
-        service = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=fake_credential)
+        service = BlobServiceClient(self.account_url(storage_account, "blob"), credential=fake_credential)
         with self.assertRaises(ClientAuthenticationError):
             service.get_service_properties()
 
         # Action 3: update token to make it working again
-        service = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=token_credential)
+        service = BlobServiceClient(self.account_url(storage_account, "blob"), credential=token_credential)
         result = service.get_service_properties()
         self.assertIsNotNone(result)
 
@@ -1495,7 +1496,7 @@ class StorageCommonBlobTest(StorageTestCase):
     def test_shared_read_access_blob(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
 
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._create_block_blob()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
@@ -1523,7 +1524,7 @@ class StorageCommonBlobTest(StorageTestCase):
     def test_shared_read_access_blob_with_content_query_params(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
 
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._create_block_blob()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
@@ -1560,7 +1561,7 @@ class StorageCommonBlobTest(StorageTestCase):
     def test_shared_write_access_blob(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
 
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         updated_data = b'updated blob data'
         blob_name = self._create_block_blob()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
@@ -1591,7 +1592,7 @@ class StorageCommonBlobTest(StorageTestCase):
     def test_shared_delete_access_blob(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
 
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._create_block_blob()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
@@ -1619,7 +1620,7 @@ class StorageCommonBlobTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_get_account_information(self, resource_group, location, storage_account, storage_account_key):
         # Act
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         info = self.bsc.get_account_information()
 
         # Assert
@@ -1630,7 +1631,7 @@ class StorageCommonBlobTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_get_account_information_with_container_name(self, resource_group, location, storage_account, storage_account_key):
         # Act
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         # Container name gets ignored
         container = self.bsc.get_container_client("missing")
         info = container.get_account_information()
@@ -1643,7 +1644,7 @@ class StorageCommonBlobTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_get_account_information_with_blob_name(self, resource_group, location, storage_account, storage_account_key):
         # Act
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         # Both container and blob names get ignored
         blob = self.bsc.get_blob_client("missing", "missing")
         info = blob.get_account_information()
@@ -1657,7 +1658,7 @@ class StorageCommonBlobTest(StorageTestCase):
     def test_get_account_information_with_container_sas(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
 
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         container = self.bsc.get_container_client(self.container_name)
         token = generate_container_sas(
             container.account_name,
@@ -1680,7 +1681,7 @@ class StorageCommonBlobTest(StorageTestCase):
     def test_get_account_information_with_blob_sas(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
 
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._create_block_blob()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
@@ -1706,9 +1707,9 @@ class StorageCommonBlobTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     @StorageAccountPreparer(random_name_enabled=True, name_prefix='pyrmtstorage', parameter_name='rmt')
     def test_download_to_file_with_sas(self, resource_group, location, storage_account, storage_account_key, rmt, rmt_key):
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         data = b'12345678' * 1024 * 1024
-        self._setup_remote(rmt.name, rmt_key)
+        self._setup_remote(rmt, rmt_key)
         self._create_remote_container()
         source_blob = self._create_remote_block_blob(blob_data=data)
         sas_token = generate_blob_sas(
@@ -1721,7 +1722,7 @@ class StorageCommonBlobTest(StorageTestCase):
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
         blob = BlobClient.from_blob_url(source_blob.url, credential=sas_token)
-        FILE_PATH = 'download_to_file_with_sas.temp.dat'
+        FILE_PATH = 'download_to_file_with_sas.temp.{}.dat'.format(str(uuid.uuid4()))
 
         # Act
         download_blob_from_url(blob.url, FILE_PATH)
@@ -1736,12 +1737,12 @@ class StorageCommonBlobTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     @StorageAccountPreparer(random_name_enabled=True, name_prefix='pyrmtstorage', parameter_name='rmt')
     def test_download_to_file_with_credential(self, resource_group, location, storage_account, storage_account_key, rmt, rmt_key):
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         data = b'12345678' * 1024 * 1024
-        self._setup_remote(rmt.name, rmt_key)
+        self._setup_remote(rmt, rmt_key)
         self._create_remote_container()
         source_blob = self._create_remote_block_blob(blob_data=data)
-        FILE_PATH = 'to_file_with_credential.temp.dat'
+        FILE_PATH = 'to_file_with_credential.temp.{}.dat'.format(str(uuid.uuid4()))
         # Act
         download_blob_from_url(
             source_blob.url, FILE_PATH,
@@ -1757,12 +1758,12 @@ class StorageCommonBlobTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     @StorageAccountPreparer(random_name_enabled=True, name_prefix='pyrmtstorage', parameter_name='rmt')
     def test_download_to_stream_with_credential(self, resource_group, location, storage_account, storage_account_key, rmt, rmt_key):
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         data = b'12345678' * 1024 * 1024
-        self._setup_remote(rmt.name, rmt_key)
+        self._setup_remote(rmt, rmt_key)
         self._create_remote_container()
         source_blob = self._create_remote_block_blob(blob_data=data)
-        FILE_PATH = 'download_to_stream_with_credential.temp.dat'
+        FILE_PATH = 'download_to_stream_with_credential.temp.{}.dat'.format(str(uuid.uuid4()))
         # Act
         with open(FILE_PATH, 'wb') as stream:
             download_blob_from_url(
@@ -1780,12 +1781,12 @@ class StorageCommonBlobTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     @StorageAccountPreparer(random_name_enabled=True, name_prefix='pyrmtstorage', parameter_name='rmt')
     def test_download_to_file_with_existing_file(self, resource_group, location, storage_account, storage_account_key, rmt, rmt_key):
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         data = b'12345678' * 1024 * 1024
-        self._setup_remote(rmt.name, rmt_key)
+        self._setup_remote(rmt, rmt_key)
         self._create_remote_container()
         source_blob = self._create_remote_block_blob(blob_data=data)
-        FILE_PATH = 'file_with_existing_file.temp.dat'
+        FILE_PATH = 'file_with_existing_file.temp.{}.dat'.format(str(uuid.uuid4()))
         # Act
         download_blob_from_url(
             source_blob.url, FILE_PATH,
@@ -1804,12 +1805,12 @@ class StorageCommonBlobTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     @StorageAccountPreparer(random_name_enabled=True, name_prefix='pyrmtstorage', parameter_name='rmt')
     def test_download_to_file_with_existing_file_overwrite(self, resource_group, location, storage_account, storage_account_key, rmt, rmt_key):
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         data = b'12345678' * 1024 * 1024
-        self._setup_remote(rmt.name, rmt_key)
+        self._setup_remote(rmt, rmt_key)
         self._create_remote_container()
         source_blob = self._create_remote_block_blob(blob_data=data)
-        FILE_PATH = 'file_with_existing_file_overwrite.temp.dat'
+        FILE_PATH = 'file_with_existing_file_overwrite.temp.{}.dat'.format(str(uuid.uuid4()))
         # Act
         download_blob_from_url(
             source_blob.url, FILE_PATH,
@@ -1832,7 +1833,7 @@ class StorageCommonBlobTest(StorageTestCase):
     def test_upload_to_url_bytes_with_sas(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
 
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         data = b'12345678' * 1024 * 1024
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
@@ -1861,7 +1862,7 @@ class StorageCommonBlobTest(StorageTestCase):
     def test_upload_to_url_bytes_with_credential(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
 
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         data = b'12345678' * 1024 * 1024
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
@@ -1880,7 +1881,7 @@ class StorageCommonBlobTest(StorageTestCase):
     def test_upload_to_url_bytes_with_existing_blob(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
 
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         data = b'12345678' * 1024 * 1024
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
@@ -1900,7 +1901,7 @@ class StorageCommonBlobTest(StorageTestCase):
     def test_upload_to_url_bytes_with_existing_blob_overwrite(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
 
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         data = b'12345678' * 1024 * 1024
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
@@ -1922,7 +1923,7 @@ class StorageCommonBlobTest(StorageTestCase):
     def test_upload_to_url_text_with_credential(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
 
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         data = '12345678' * 1024 * 1024
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
@@ -1942,8 +1943,8 @@ class StorageCommonBlobTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_upload_to_url_file_with_credential(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
-        FILE_PATH = 'upload_to_url_file_with_credential.temp.dat'
-        self._setup(storage_account.name, storage_account_key)
+        FILE_PATH = 'upload_to_url_file_with_credential.temp.{}.dat'.format(str(uuid.uuid4()))
+        self._setup(storage_account, storage_account_key)
         data = b'12345678' * 1024 * 1024
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
@@ -1980,7 +1981,7 @@ class StorageCommonBlobTest(StorageTestCase):
     def test_transport_closed_only_once(self, resource_group, location, storage_account, storage_account_key):
         container_name = self.get_resource_name('utcontainersync')
         transport = RequestsTransport()
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, transport=transport)
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key, transport=transport)
         blob_name = self._get_blob_reference()
         with bsc:
             bsc.get_service_properties()

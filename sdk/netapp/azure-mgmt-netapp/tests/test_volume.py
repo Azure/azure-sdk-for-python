@@ -2,7 +2,7 @@ import time
 import json
 from azure.mgmt.resource import ResourceManagementClient
 from devtools_testutils import AzureMgmtTestCase
-from azure.mgmt.netapp.models import Volume, VolumePatch
+from azure.mgmt.netapp.models import Volume, VolumePatch, ReplicationObject, VolumePropertiesDataProtection
 from test_pool import create_pool, delete_pool
 from test_account import delete_account
 from setup import *
@@ -11,25 +11,37 @@ import unittest
 
 volumes = [TEST_VOL_1, TEST_VOL_2]
 
+# to skip tests use
+#raise unittest.SkipTest("Skipping Volume test")
 
-def create_volume_body(volume_name, location):
+
+def create_volume_body(volume_name, location, rg=TEST_RG, vnet=VNET):
+    default_protocol_type = { "NFSv3" }
+
     volume_body = Volume(
+        location=location,
         usage_threshold = 100 * GIGABYTE,
+        protocol_types = default_protocol_type,
         creation_token=volume_name,
         service_level=SERVICE_LEVEL,
-        location=location,
-        subnet_id = "/subscriptions/" + SUBSID + "/resourceGroups/" + TEST_RG + "/providers/Microsoft.Network/virtualNetworks/" + VNET + "/subnets/default"
+        subnet_id = "/subscriptions/" + SUBSID + "/resourceGroups/" + rg + "/providers/Microsoft.Network/virtualNetworks/" + vnet + "/subnets/default"
     )
 
     return volume_body
 
-def create_volume(client, rg=TEST_RG, account_name=TEST_ACC_1, pool_name=TEST_POOL_1, volume_name=TEST_VOL_1, location=LOCATION, volume_only=False, live=False):
+def create_volume(client, rg=TEST_RG, account_name=TEST_ACC_1, pool_name=TEST_POOL_1, volume_name=TEST_VOL_1, location=LOCATION, vnet=VNET, volume_only=False, live=False):
     if not volume_only:
-        pool = create_pool(client)
+        pool = create_pool(
+            client,
+            rg,
+            account_name,
+            pool_name,
+            location,
+            False)
         if live:
             time.sleep(10)
 
-    volume_body = create_volume_body(volume_name, location)
+    volume_body = create_volume_body(volume_name, location, rg, vnet)
     volume = client.volumes.create_or_update(
         volume_body,
         rg,
@@ -39,6 +51,51 @@ def create_volume(client, rg=TEST_RG, account_name=TEST_ACC_1, pool_name=TEST_PO
     ).result()
 
     return volume
+
+def create_dp_volume(client, source_volume, rg=TEST_REMOTE_RG, account_name=TEST_ACC_2, pool_name=TEST_POOL_2, volume_name=TEST_VOL_2, location=REMOTE_LOCATION, volume_only=False, live=False):
+    if not volume_only:
+        pool = create_pool(
+            client,
+            rg,
+            account_name,
+            pool_name,
+            location,
+            False)
+        if live:
+            time.sleep(10)
+
+    # data protection and replication object
+    replication = ReplicationObject(
+        endpoint_type = "dst",
+        remote_volume_resource_id = source_volume.id,
+        replication_schedule = "_10minutely"
+    )
+
+    data_protection = VolumePropertiesDataProtection(
+        replication = replication
+    )
+
+    default_protocol_type = { "NFSv3" }
+
+    volume_body = Volume(
+        location=location,
+        usage_threshold = 100 * GIGABYTE,
+        protocol_types = default_protocol_type,
+        creation_token=volume_name,
+        subnet_id = "/subscriptions/" + SUBSID + "/resourceGroups/" + rg + "/providers/Microsoft.Network/virtualNetworks/" + REMOTE_VNET + "/subnets/default",
+        volume_type = "DataProtection",
+        data_protection = data_protection
+    )
+
+    destination_volume = client.volumes.create_or_update(
+        volume_body,
+        rg,
+        account_name,
+        pool_name,
+        volume_name
+    ).result()
+
+    return destination_volume
 
 def get_volume(client, rg, account_name, pool_name, volume_name):
     volume = client.volumes.get(rg, account_name, pool_name, volume_name)
@@ -77,6 +134,23 @@ def delete_volume(client, rg, account_name, pool_name, volume_name, live=False):
     client.volumes.delete(rg, account_name, pool_name, volume_name).wait()
     wait_for_no_volume(client, rg, account_name, pool_name, volume_name, live)
 
+def wait_for_replication_status(client, target_state):
+    # python isn't good at do-while loops but loop until we get the target state
+    while True:
+        replication_status = client.volumes.replication_status_method(TEST_REMOTE_RG, TEST_ACC_2, TEST_POOL_2, TEST_VOL_2);
+        if (replication_status.mirror_state == target_state):
+            break
+        time.sleep(1)
+
+def wait_for_succeeded(client):
+    # python isn't good at do-while loops but loop until we get volumes in succeeded state
+    while True:
+        source_volume = client.volumes.get(TEST_REPL_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1);
+        dp_volume = client.volumes.get(TEST_REMOTE_RG, TEST_ACC_2, TEST_POOL_2, TEST_VOL_2);
+        if ((source_volume.provisioning_state == "Succeeded") and (dp_volume.provisioning_state == "Succeeded")):
+            break
+        time.sleep(1)
+
 
 class NetAppAccountTestCase(AzureMgmtTestCase):
     def setUp(self):
@@ -84,7 +158,6 @@ class NetAppAccountTestCase(AzureMgmtTestCase):
         self.client = self.create_mgmt_client(azure.mgmt.netapp.AzureNetAppFilesManagementClient)
 
     def test_create_delete_list_volume(self):
-        raise unittest.SkipTest("Skipping Volume test")
         volume = create_volume(
             self.client,
             TEST_RG,
@@ -112,7 +185,6 @@ class NetAppAccountTestCase(AzureMgmtTestCase):
         delete_account(self.client, TEST_RG, TEST_ACC_1, live=self.is_live)
 
     def test_list_volumes(self):
-        raise unittest.SkipTest("Skipping Volume test")
         volume = create_volume(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, LOCATION, live=self.is_live)
         volume = create_volume(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_2, LOCATION, volume_only=True, live=self.is_live)
 
@@ -130,8 +202,104 @@ class NetAppAccountTestCase(AzureMgmtTestCase):
         delete_pool(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, live=self.is_live)
         delete_account(self.client, TEST_RG, TEST_ACC_1, live=self.is_live)
 
+    def test_volume_replication(self):
+        source_volume = create_volume(
+            self.client,
+            TEST_REPL_RG,
+            TEST_ACC_1,
+            TEST_POOL_1,
+            TEST_VOL_1,
+            vnet=REPL_VNET,
+            live=self.is_live)
+
+        if self.is_live:
+            time.sleep(5)
+
+        sourceVolume = self.client.volumes.get(
+            TEST_REPL_RG,
+            TEST_ACC_1,
+            TEST_POOL_1,
+            TEST_VOL_1);
+
+        dp_volume = create_dp_volume(
+            self.client,
+            source_volume,
+            TEST_REMOTE_RG,
+            TEST_ACC_2,
+            TEST_POOL_2,
+            TEST_VOL_2,
+            live=self.is_live)
+
+        if self.is_live:
+            time.sleep(30)
+
+        # sync replication
+        self.client.volumes.authorize_replication(TEST_REPL_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, dp_volume.id)
+        wait_for_succeeded(self.client);
+        wait_for_replication_status(self.client, "Mirrored");
+
+        # break replication
+        self.client.volumes.break_replication(TEST_REMOTE_RG, TEST_ACC_2, TEST_POOL_2, TEST_VOL_2);
+        wait_for_replication_status(self.client, "Broken");
+        if self.is_live:
+            time.sleep(30)
+        wait_for_succeeded(self.client);
+
+        # resync
+        self.client.volumes.resync_replication(TEST_REMOTE_RG, TEST_ACC_2, TEST_POOL_2, TEST_VOL_2);
+        wait_for_replication_status(self.client, "Mirrored");
+        if self.is_live:
+            time.sleep(30)
+
+        # break again
+        self.client.volumes.break_replication(TEST_REMOTE_RG, TEST_ACC_2, TEST_POOL_2, TEST_VOL_2);
+        wait_for_replication_status(self.client, "Broken");
+        if self.is_live:
+            time.sleep(30)
+
+        # delete the data protection object
+        #  - initiate delete replication on destination, this then releases on source, both resulting in object deletion
+        self.client.volumes.delete_replication(TEST_REMOTE_RG, TEST_ACC_2, TEST_POOL_2, TEST_VOL_2);
+
+        replication_found = True; # because it was previously present
+        while replication_found:
+            try:
+                replication_status = self.client.volumes.replication_status_method(TEST_REMOTE_RG, TEST_ACC_2, TEST_POOL_2, TEST_VOL_2);
+            except:
+                # an exception means the replication was not found
+                # i.e. it has been deleted
+                # ok without checking it could have been for another reason
+                # but then the delete below will fail
+                replication_found = False;
+
+            time.sleep(1)
+
+        # seems the volumes are not always in a terminal state here so check again
+        # and ensure the replication objects are removed
+        # python isn't good at do-while loops but loop until we get volumes in succeeded state
+        while True:
+            source_volume = self.client.volumes.get(TEST_REPL_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1);
+            dp_volume = self.client.volumes.get(TEST_REMOTE_RG, TEST_ACC_2, TEST_POOL_2, TEST_VOL_2);
+            if ((source_volume.provisioning_state == "Succeeded") and (dp_volume.provisioning_state == "Succeeded") and (source_volume.data_protection.replication is None) and (dp_volume.data_protection.replication is None)):
+                break
+            time.sleep(1)
+
+        # now proceed with the delete of the volumes and tidy up resources
+
+        # delete destination volume
+        self.client.volumes.delete(TEST_REMOTE_RG, TEST_ACC_2, TEST_POOL_2, TEST_VOL_2).wait()
+        wait_for_no_volume(self.client, TEST_REMOTE_RG, TEST_ACC_2, TEST_POOL_2, TEST_VOL_2, live=self.is_live)
+        delete_pool(self.client, TEST_REMOTE_RG, TEST_ACC_2, TEST_POOL_2, live=self.is_live)
+        delete_account(self.client, TEST_REMOTE_RG, TEST_ACC_2, live=self.is_live)
+
+        # delete source volume
+        self.client.volumes.delete(TEST_REPL_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1).wait()
+        wait_for_no_volume(self.client, TEST_REPL_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, live=self.is_live)
+        delete_pool(self.client, TEST_REPL_RG, TEST_ACC_1, TEST_POOL_1, live=self.is_live)
+        delete_account(self.client, TEST_REPL_RG, TEST_ACC_1, live=self.is_live)
+
+
     def test_get_volume_by_name(self):
-        raise unittest.SkipTest("Skipping Volume test")
         volume = create_volume(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, LOCATION, live=self.is_live)
 
         volume = self.client.volumes.get(TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1)
@@ -143,7 +311,6 @@ class NetAppAccountTestCase(AzureMgmtTestCase):
         delete_account(self.client, TEST_RG, TEST_ACC_1, live=self.is_live)
 
     def test_update_volume(self):
-        raise unittest.SkipTest("Skipping Volume test")
         volume = create_volume(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, live=self.is_live)
         self.assertEqual("Premium", volume.service_level)
         self.assertEqual(100 * GIGABYTE, volume.usage_threshold)
@@ -171,7 +338,6 @@ class NetAppAccountTestCase(AzureMgmtTestCase):
         delete_account(self.client, TEST_RG, TEST_ACC_1, live=self.is_live)
 
     def test_patch_volume(self):
-        raise unittest.SkipTest("Skipping Volume test")
         volume = create_volume(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, live=self.is_live)
         self.assertEqual("Premium", volume.service_level);
         self.assertEqual(100 * GIGABYTE, volume.usage_threshold);

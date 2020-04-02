@@ -176,20 +176,27 @@ This example demonstrates authenticating the `SecretClient` from the
 from azure.identity import CertificateCredential
 from azure.keyvault.secrets import SecretClient
 
-# requires a PEM-encoded certificate with private key, not protected with a password
+# requires a PEM-encoded certificate with private key
 cert_path = "/app/certs/certificate.pem"
 credential = CertificateCredential(tenant_id, client_id, cert_path)
+
+# if the private key is password protected, provide a 'password' keyword argument
+credential = CertificateCredential(tenant_id, client_id, cert_path, password="cert-password")
+
 
 client = SecretClient("https://my-vault.vault.azure.net", credential)
 ```
 
-## Chaining credentials:
+## Chaining credentials
 [ChainedTokenCredential][chain_cred_ref] links multiple credential instances
-to be tried sequentially when authenticating. The following example demonstrates
-creating a credential which will attempt to authenticate using managed identity,
-and fall back to a service principal if a managed identity is unavailable. This
-example uses the `EventHubClient` from the [azure-eventhub][azure_eventhub]
-client library.
+to be tried sequentially when authenticating. It will try each chained
+credential in turn until one provides a token or fails to authenticate due to
+an error.
+
+The following example demonstrates creating a credential which will attempt to
+authenticate using managed identity, and fall back to a service principal when
+managed identity is unavailable. This example uses the `EventHubClient` from
+the [azure-eventhub][azure_eventhub] client library.
 
 ```py
 from azure.eventhub import EventHubClient
@@ -198,8 +205,8 @@ from azure.identity import ChainedTokenCredential, ClientSecretCredential, Manag
 managed_identity = ManagedIdentityCredential()
 service_principal = ClientSecretCredential(tenant_id, client_id, client_secret)
 
-# when an access token is needed, the chain will try each
-# credential in order, stopping when one provides a token
+# when an access token is needed, the chain will try each credential in order,
+# stopping when one provides a token or fails to authenticate due to an error
 credential_chain = ChainedTokenCredential(managed_identity, service_principal)
 
 # the ChainedTokenCredential can be used anywhere a credential is required
@@ -212,6 +219,24 @@ credentials in [azure.identity.aio][ref_docs_aio], you must first install an
 async transport, such as [aiohttp](https://pypi.org/project/aiohttp/). See
 [azure-core documentation](../../core/azure-core/README.md#transport)
 for more information.
+
+Async credentials should be closed when they're no longer needed. Each async
+credential is an async context manager and defines an async `close` method. For
+example:
+
+```py
+from azure.identity.aio import DefaultAzureCredential
+
+# call close when the credential is no longer needed
+credential = DefaultAzureCredential()
+...
+await credential.close()
+
+# alternatively, use the credential as an async context manager
+credential = DefaultAzureCredential()
+async with credential:
+  ...
+```
 
 This example demonstrates authenticating the asynchronous `SecretClient` from
 [azure-keyvault-secrets][azure_keyvault_secrets] with an asynchronous
@@ -230,6 +255,11 @@ client = SecretClient("https://my-vault.vault.azure.net", default_credential)
 
 # Troubleshooting
 ## General
+Credentials raise `CredentialUnavailableError` when they're unable to attempt
+authentication because they lack required data or state. For example,
+[EnvironmentCredential][environment_cred_ref] will raise this exception when
+[its configuration](#environment-variables "its configuration") is incomplete.
+
 Credentials raise `azure.core.exceptions.ClientAuthenticationError` when they fail
 to authenticate. `ClientAuthenticationError` has a `message` attribute which
 describes why authentication failed. When raised by
@@ -277,7 +307,7 @@ For more information, see the
 or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any
 additional questions or comments.
 
-[azure_eventhubs]: ../../eventhub/azure-eventhub
+[azure_eventhub]: ../../eventhub/azure-eventhub
 [azure_keyvault_keys]: ../../keyvault/azure-keyvault-keys
 [azure_keyvault_secrets]: ../../keyvault/azure-keyvault-secrets
 [azure_storage_blob]: ../../storage/azure-storage-blob

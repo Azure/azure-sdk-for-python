@@ -39,9 +39,9 @@ class EventHubProducerClient(ClientBaseAsync):
     :keyword str user_agent: The user agent that should be appended to the built-in user agent string.
     :keyword int retry_total: The total number of attempts to redo a failed operation when an error occurs. Default
      value is 3.
-    :keyword float idle_timeout: Timeout, in seconds, after which the underlying connection will close
-     if there is no further activity. By default the value is None, meaning that the service determines when to
-     close an idle connection.
+    :keyword float idle_timeout: Timeout, in seconds, after which this client will close the underlying connection
+     if there is no activity. By default the value is None, meaning that the client will not shutdown due to inactivity
+     unless initiated by the service.
     :keyword transport_type: The type of transport protocol that will be used for communicating with
      the Event Hubs service. Default is `TransportType.Amqp`.
     :paramtype transport_type: ~azure.eventhub.TransportType
@@ -51,7 +51,7 @@ class EventHubProducerClient(ClientBaseAsync):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../samples/docstring_samples/sample_code_eventhub_async.py
+        .. literalinclude:: ../samples/async_samples/sample_code_eventhub_async.py
             :start-after: [START create_eventhub_producer_client_async]
             :end-before: [END create_eventhub_producer_client_async]
             :language: python
@@ -179,9 +179,9 @@ class EventHubProducerClient(ClientBaseAsync):
         :keyword str user_agent: The user agent that should be appended to the built-in user agent string.
         :keyword int retry_total: The total number of attempts to redo a failed operation when an error occurs.
          Default value is 3.
-        :keyword float idle_timeout: Timeout, in seconds, after which the underlying connection will close
-         if there is no further activity. By default the value is None, meaning that the service determines when to
-         close an idle connection.
+        :keyword float idle_timeout: Timeout, in seconds, after which this client will close the underlying connection
+         if there is no activity. By default the value is None, meaning that the client will not shutdown due to
+         inactivity unless initiated by the service.
         :keyword transport_type: The type of transport protocol that will be used for communicating with
          the Event Hubs service. Default is `TransportType.Amqp`.
         :paramtype transport_type: ~azure.eventhub.TransportType
@@ -189,7 +189,7 @@ class EventHubProducerClient(ClientBaseAsync):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/docstring_samples/sample_code_eventhub_async.py
+            .. literalinclude:: ../samples/async_samples/sample_code_eventhub_async.py
                 :start-after: [START create_eventhub_producer_client_from_conn_str_async]
                 :end-before: [END create_eventhub_producer_client_from_conn_str_async]
                 :language: python
@@ -231,7 +231,7 @@ class EventHubProducerClient(ClientBaseAsync):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/docstring_samples/sample_code_eventhub_async.py
+            .. literalinclude:: ../samples/async_samples/sample_code_eventhub_async.py
                 :start-after: [START eventhub_producer_client_send_async]
                 :end-before: [END eventhub_producer_client_send_async]
                 :language: python
@@ -267,12 +267,13 @@ class EventHubProducerClient(ClientBaseAsync):
          will assign to all partitions using round-robin.
         :param str partition_key: With the given partition_key, event data will be sent to
          a particular partition of the Event Hub decided by the service.
-        :param int max_size_in_bytes: The maximum size of bytes data that an EventDataBatch object can hold.
+        :param int max_size_in_bytes: The maximum size of bytes data that an EventDataBatch object can hold. By
+         default, the value is determined by your Event Hubs tier.
         :rtype: ~azure.eventhub.EventDataBatch
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/docstring_samples/sample_code_eventhub_async.py
+            .. literalinclude:: ../samples/async_samples/sample_code_eventhub_async.py
                 :start-after: [START eventhub_producer_client_create_batch_async]
                 :end-before: [END eventhub_producer_client_create_batch_async]
                 :language: python
@@ -351,7 +352,7 @@ class EventHubProducerClient(ClientBaseAsync):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/docstring_samples/sample_code_eventhub_async.py
+            .. literalinclude:: ../samples/async_samples/sample_code_eventhub_async.py
                 :start-after: [START eventhub_producer_client_close_async]
                 :end-before: [END eventhub_producer_client_close_async]
                 :language: python

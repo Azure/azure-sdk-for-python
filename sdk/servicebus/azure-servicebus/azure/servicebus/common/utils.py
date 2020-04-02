@@ -15,6 +15,8 @@ except ImportError:
     from urllib.parse import urlparse
 from concurrent.futures import ThreadPoolExecutor
 
+from uamqp.constants import TransportType
+
 from azure.servicebus.common.errors import AutoLockRenewFailed, AutoLockRenewTimeout
 from azure.servicebus import __version__ as sdk_version
 
@@ -23,13 +25,22 @@ _log = logging.getLogger(__name__)
 
 def get_running_loop():
     try:
-        import asyncio
+        import asyncio  # pylint: disable=import-error
         return asyncio.get_running_loop()
     except AttributeError:  # 3.5 / 3.6
-        loop = asyncio._get_running_loop()  # pylint: disable=protected-access
+        loop = None
+        try:
+            loop = asyncio._get_running_loop()  # pylint: disable=protected-access
+        except AttributeError:
+            _log.warning('This version of Python is deprecated, please upgrade to >= v3.5.3')
         if loop is None:
-            raise RuntimeError('No running event loop')
+            _log.warning('No running event loop')
+            loop = asyncio.get_event_loop()
         return loop
+    except RuntimeError:
+        # For backwards compatibility, create new event loop
+        _log.warning('No running event loop')
+        return asyncio.get_event_loop()
 
 
 def parse_conn_str(conn_str):
@@ -37,6 +48,7 @@ def parse_conn_str(conn_str):
     shared_access_key_name = None
     shared_access_key = None
     entity_path = None
+    transport_type = TransportType.Amqp
     for element in conn_str.split(';'):
         key, _, value = element.partition('=')
         if key.lower() == 'endpoint':
@@ -47,9 +59,16 @@ def parse_conn_str(conn_str):
             shared_access_key = value
         elif key.lower() == 'entitypath':
             entity_path = value
+        elif key.lower() == 'transporttype':
+            if value.lower() == "amqpoverwebsocket":
+                transport_type = TransportType.AmqpOverWebsocket
+            elif value.lower() == "amqp":
+                transport_type = TransportType.Amqp
+            else:
+                raise ValueError("Invalid value for TransportType in connection string")
     if not all([endpoint, shared_access_key_name, shared_access_key]):
         raise ValueError("Invalid connection string")
-    return endpoint, shared_access_key_name, shared_access_key, entity_path
+    return endpoint, shared_access_key_name, shared_access_key, entity_path, transport_type
 
 
 def build_uri(address, entity):
@@ -93,15 +112,15 @@ class AutoLockRenew(object):
      This cannot be combined with `executor`.
     :type max_workers: int
 
-    Example:
-        .. literalinclude:: ../examples/test_examples.py
+    .. admonition:: Example:
+        .. literalinclude:: ../samples/sync_samples/test_examples.py
             :start-after: [START auto_lock_renew_message]
             :end-before: [END auto_lock_renew_message]
             :language: python
             :dedent: 4
             :caption: Automatically renew a message lock
 
-        .. literalinclude:: ../examples/test_examples.py
+        .. literalinclude:: ../samples/sync_samples/test_examples.py
             :start-after: [START auto_lock_renew_session]
             :end-before: [END auto_lock_renew_session]
             :language: python

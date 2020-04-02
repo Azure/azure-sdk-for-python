@@ -99,7 +99,8 @@ class ClientBaseAsync(ClientBase):
 
         """
         try:
-            token_type = self._credential.token_type
+            # ignore mypy's warning because token_type is Optional
+            token_type = self._credential.token_type    # type: ignore
         except AttributeError:
             token_type = b"jwt"
         if token_type == b"servicebus.windows.net:sastoken":
@@ -165,6 +166,7 @@ class ClientBaseAsync(ClientBase):
                 conn = await self._conn_manager_async.get_connection(
                     self._address.hostname, mgmt_auth
                 )
+                mgmt_msg.application_properties["security_token"] = mgmt_auth.token
                 await mgmt_client.open_async(connection=conn)
                 response = await mgmt_client.mgmt_request_async(
                     mgmt_msg,

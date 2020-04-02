@@ -657,6 +657,8 @@ class ClusterCreateProperties(Model):
     :param disk_encryption_properties: The disk encryption properties.
     :type disk_encryption_properties:
      ~azure.mgmt.hdinsight.models.DiskEncryptionProperties
+    :param min_supported_tls_version: The minimal supported tls version.
+    :type min_supported_tls_version: str
     """
 
     _attribute_map = {
@@ -669,9 +671,10 @@ class ClusterCreateProperties(Model):
         'compute_profile': {'key': 'computeProfile', 'type': 'ComputeProfile'},
         'storage_profile': {'key': 'storageProfile', 'type': 'StorageProfile'},
         'disk_encryption_properties': {'key': 'diskEncryptionProperties', 'type': 'DiskEncryptionProperties'},
+        'min_supported_tls_version': {'key': 'minSupportedTlsVersion', 'type': 'str'},
     }
 
-    def __init__(self, *, cluster_version: str=None, os_type=None, tier=None, cluster_definition=None, kafka_rest_properties=None, security_profile=None, compute_profile=None, storage_profile=None, disk_encryption_properties=None, **kwargs) -> None:
+    def __init__(self, *, cluster_version: str=None, os_type=None, tier=None, cluster_definition=None, kafka_rest_properties=None, security_profile=None, compute_profile=None, storage_profile=None, disk_encryption_properties=None, min_supported_tls_version: str=None, **kwargs) -> None:
         super(ClusterCreateProperties, self).__init__(**kwargs)
         self.cluster_version = cluster_version
         self.os_type = os_type
@@ -682,6 +685,7 @@ class ClusterCreateProperties(Model):
         self.compute_profile = compute_profile
         self.storage_profile = storage_profile
         self.disk_encryption_properties = disk_encryption_properties
+        self.min_supported_tls_version = min_supported_tls_version
 
 
 class ClusterDefinition(Model):
@@ -780,6 +784,8 @@ class ClusterGetProperties(Model):
     :param disk_encryption_properties: The disk encryption properties.
     :type disk_encryption_properties:
      ~azure.mgmt.hdinsight.models.DiskEncryptionProperties
+    :param min_supported_tls_version: The minimal supported tls version.
+    :type min_supported_tls_version: str
     """
 
     _validation = {
@@ -801,9 +807,10 @@ class ClusterGetProperties(Model):
         'errors': {'key': 'errors', 'type': '[Errors]'},
         'connectivity_endpoints': {'key': 'connectivityEndpoints', 'type': '[ConnectivityEndpoint]'},
         'disk_encryption_properties': {'key': 'diskEncryptionProperties', 'type': 'DiskEncryptionProperties'},
+        'min_supported_tls_version': {'key': 'minSupportedTlsVersion', 'type': 'str'},
     }
 
-    def __init__(self, *, cluster_definition, cluster_version: str=None, os_type=None, tier=None, kafka_rest_properties=None, security_profile=None, compute_profile=None, provisioning_state=None, created_date: str=None, cluster_state: str=None, quota_info=None, errors=None, connectivity_endpoints=None, disk_encryption_properties=None, **kwargs) -> None:
+    def __init__(self, *, cluster_definition, cluster_version: str=None, os_type=None, tier=None, kafka_rest_properties=None, security_profile=None, compute_profile=None, provisioning_state=None, created_date: str=None, cluster_state: str=None, quota_info=None, errors=None, connectivity_endpoints=None, disk_encryption_properties=None, min_supported_tls_version: str=None, **kwargs) -> None:
         super(ClusterGetProperties, self).__init__(**kwargs)
         self.cluster_version = cluster_version
         self.os_type = os_type
@@ -819,6 +826,7 @@ class ClusterGetProperties(Model):
         self.errors = errors
         self.connectivity_endpoints = connectivity_endpoints
         self.disk_encryption_properties = disk_encryption_properties
+        self.min_supported_tls_version = min_supported_tls_version
 
 
 class ClusterIdentity(Model):

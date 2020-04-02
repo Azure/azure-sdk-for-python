@@ -16,6 +16,7 @@ from uamqp import authentication
 from uamqp import constants, errors
 from uamqp.message import Message, MessageProperties
 
+from azure.servicebus.common.constants import ASSOCIATEDLINKPROPERTYNAME
 from azure.servicebus.common.utils import create_properties
 from azure.servicebus.common.errors import (
     _ServiceBusErrorPolicy,
@@ -71,16 +72,25 @@ class BaseHandler(object):  # pylint: disable=too-many-instance-attributes
             encoding=self.encoding,
             **self.handler_kwargs)
 
-    def _mgmt_request_response(self, operation, message, callback, **kwargs):
+    def _mgmt_request_response(self, operation, message, callback, keep_alive_associated_link=True, **kwargs):
         if not self.running:
             raise InvalidHandlerState("Client connection is closed.")
+
+        application_properties = {}
+        # Some mgmt calls do not support an associated link name.  Most do, however, so on by default.
+        if keep_alive_associated_link:
+            try:
+                application_properties = {ASSOCIATEDLINKPROPERTYNAME:self._handler.message_handler.name}
+            except AttributeError:
+                pass
 
         mgmt_msg = Message(
             body=message,
             properties=MessageProperties(
                 reply_to=self.mgmt_target,
                 encoding=self.encoding,
-                **kwargs))
+                **kwargs),
+            application_properties=application_properties)
         try:
             return self._handler.mgmt_request(
                 mgmt_msg,
@@ -133,6 +143,7 @@ class BaseHandler(object):  # pylint: disable=too-many-instance-attributes
         This method will be called automatically for most retryable errors.
         """
         self._handler.close()
+        self.running = False
         self._build_handler()
         self.open()
 

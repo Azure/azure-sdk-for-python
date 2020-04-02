@@ -12,11 +12,11 @@ interactions:
       - '0'
       User-Agent:
       - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-resource/4.0.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-resource/8.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Search/unregister?api-version=2019-08-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Search/unregister?api-version=2019-10-01
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Search","namespace":"Microsoft.Search","authorization":{"applicationId":"408992c7-2af6-4ff1-92e3-65b73d2b5092","roleDefinitionId":"20FA3191-87CF-4C3D-9510-74CCB594A310"},"resourceTypes":[{"resourceType":"searchServices","locations":["West
@@ -40,7 +40,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 07 Dec 2019 13:49:47 GMT
+      - Tue, 04 Feb 2020 04:13:05 GMT
       expires:
       - '-1'
       pragma:
@@ -69,11 +69,11 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-resource/4.0.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-resource/8.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Search?api-version=2019-08-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Search?api-version=2019-10-01
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Search","namespace":"Microsoft.Search","authorization":{"applicationId":"408992c7-2af6-4ff1-92e3-65b73d2b5092","roleDefinitionId":"20FA3191-87CF-4C3D-9510-74CCB594A310"},"resourceTypes":[{"resourceType":"searchServices","locations":["West
@@ -97,7 +97,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 07 Dec 2019 13:49:47 GMT
+      - Tue, 04 Feb 2020 04:13:06 GMT
       expires:
       - '-1'
       pragma:
@@ -124,11 +124,11 @@ interactions:
       - '0'
       User-Agent:
       - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-resource/4.0.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-resource/8.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Search/register?api-version=2019-08-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Search/register?api-version=2019-10-01
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Search","namespace":"Microsoft.Search","authorization":{"applicationId":"408992c7-2af6-4ff1-92e3-65b73d2b5092","roleDefinitionId":"20FA3191-87CF-4C3D-9510-74CCB594A310"},"resourceTypes":[{"resourceType":"searchServices","locations":["West
@@ -152,7 +152,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 07 Dec 2019 13:49:50 GMT
+      - Tue, 04 Feb 2020 04:13:09 GMT
       expires:
       - '-1'
       pragma:

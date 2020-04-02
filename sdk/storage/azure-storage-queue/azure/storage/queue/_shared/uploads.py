@@ -280,10 +280,7 @@ class PageBlobChunkUploader(_ChunkUploader):  # pylint: disable=abstract-method
     def _is_chunk_empty(self, chunk_data):
         # read until non-zero byte is encountered
         # if reached the end without returning, then chunk_data is all 0's
-        for each_byte in chunk_data:
-            if each_byte not in [0, b"\x00"]:
-                return False
-        return True
+        return not any(bytearray(chunk_data))
 
     def _upload_chunk(self, chunk_offset, chunk_data):
         # avoid uploading the empty pages
@@ -339,11 +336,12 @@ class AppendBlobChunkUploader(_ChunkUploader):  # pylint: disable=abstract-metho
 class FileChunkUploader(_ChunkUploader):  # pylint: disable=abstract-method
 
     def _upload_chunk(self, chunk_offset, chunk_data):
-        chunk_end = chunk_offset + len(chunk_data) - 1
+        length = len(chunk_data)
+        chunk_end = chunk_offset + length - 1
         response = self.service.upload_range(
             chunk_data,
             chunk_offset,
-            chunk_end,
+            length,
             data_stream_total=self.total_size,
             upload_stream_current=self.progress_total,
             **self.request_options

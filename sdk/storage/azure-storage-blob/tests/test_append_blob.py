@@ -12,6 +12,7 @@ from os import (
     remove,
 )
 import unittest
+import uuid
 from datetime import datetime, timedelta
 
 from azure.core import MatchConditions
@@ -51,8 +52,8 @@ class StorageAppendBlobTest(StorageTestCase):
             except:
                 pass
 
-    def _get_blob_reference(self):
-        return self.get_resource_name(TEST_BLOB_PREFIX)
+    def _get_blob_reference(self, prefix=TEST_BLOB_PREFIX):
+        return self.get_resource_name(prefix)
 
     def _create_blob(self, bsc):
         blob_name = self._get_blob_reference()
@@ -88,7 +89,7 @@ class StorageAppendBlobTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_create_blob(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
         blob_name = self._get_blob_reference()
 
@@ -104,7 +105,7 @@ class StorageAppendBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_create_blob_with_lease_id(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
         blob = self._create_blob(bsc)
 
@@ -120,7 +121,7 @@ class StorageAppendBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_create_blob_with_metadata(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
         metadata = {'hello': 'world', 'number': '42'}
         blob_name = self._get_blob_reference()
@@ -135,7 +136,7 @@ class StorageAppendBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_append_block(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
         blob = self._create_blob(bsc)
 
@@ -152,7 +153,7 @@ class StorageAppendBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_append_block_unicode(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
         blob = self._create_blob(bsc)
 
@@ -167,7 +168,7 @@ class StorageAppendBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_append_block_with_md5(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
         blob = self._create_blob(bsc)
 
@@ -183,7 +184,7 @@ class StorageAppendBlobTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_append_block_from_url(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(source_blob_data, bsc)
@@ -231,7 +232,7 @@ class StorageAppendBlobTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_append_block_from_url_and_validate_content_md5(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(source_blob_data, bsc)
@@ -271,7 +272,7 @@ class StorageAppendBlobTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_append_block_from_url_with_source_if_modified(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(source_blob_data, bsc)
@@ -316,7 +317,7 @@ class StorageAppendBlobTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_append_block_from_url_with_source_if_unmodified(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(source_blob_data, bsc)
@@ -361,7 +362,7 @@ class StorageAppendBlobTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_append_block_from_url_with_source_if_match(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(source_blob_data, bsc)
@@ -406,7 +407,7 @@ class StorageAppendBlobTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_append_block_from_url_with_source_if_none_match(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(source_blob_data, bsc)
@@ -451,7 +452,7 @@ class StorageAppendBlobTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_append_block_from_url_with_if_match(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(source_blob_data, bsc)
@@ -499,7 +500,7 @@ class StorageAppendBlobTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_append_block_from_url_with_if_none_match(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(source_blob_data, bsc)
@@ -542,7 +543,7 @@ class StorageAppendBlobTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_append_block_from_url_with_maxsize_condition(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(source_blob_data, bsc)
@@ -584,7 +585,7 @@ class StorageAppendBlobTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_append_block_from_url_with_appendpos_condition(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(source_blob_data, bsc)
@@ -626,7 +627,7 @@ class StorageAppendBlobTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_append_block_from_url_with_if_modified(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(source_blob_data, bsc)
@@ -670,7 +671,7 @@ class StorageAppendBlobTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_append_block_from_url_with_if_unmodified(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(source_blob_data, bsc)
@@ -691,7 +692,7 @@ class StorageAppendBlobTest(StorageTestCase):
         resp = destination_blob_client. \
             append_block_from_url(source_blob_client.url + '?' + sas,
                                   source_offset=0, source_length=LARGE_BLOB_SIZE,
-                                  if_unmodified_since=source_properties.get('last_modified'))
+                                  if_unmodified_since=source_properties.get('last_modified') + timedelta(minutes=15))
         self.assertEqual(resp.get('blob_append_offset'), '0')
         self.assertEqual(resp.get('blob_committed_block_count'), 1)
         self.assertIsNotNone(resp.get('etag'))
@@ -713,7 +714,7 @@ class StorageAppendBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_create_append_blob_with_no_overwrite(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
         blob_name = self._get_blob_reference()
         blob = bsc.get_blob_client(
@@ -748,7 +749,7 @@ class StorageAppendBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_create_append_blob_with_overwrite(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
         blob_name = self._get_blob_reference()
         blob = bsc.get_blob_client(
@@ -781,7 +782,7 @@ class StorageAppendBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_append_blob_from_bytes(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
         blob = self._create_blob(bsc)
 
@@ -797,7 +798,7 @@ class StorageAppendBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_append_blob_from_0_bytes(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
         blob = self._create_blob(bsc)
 
@@ -813,7 +814,7 @@ class StorageAppendBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_append_blob_from_bytes_with_progress(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
         blob = self._create_blob(bsc)
         data = b'abcdefghijklmnopqrstuvwxyz'
@@ -834,7 +835,7 @@ class StorageAppendBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_append_blob_from_bytes_with_index(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
         blob = self._create_blob(bsc)
 
@@ -848,7 +849,7 @@ class StorageAppendBlobTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_append_blob_from_bytes_with_index_and_count(self, resource_group, location, storage_account,
                                                          storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
         blob = self._create_blob(bsc)
 
@@ -862,7 +863,7 @@ class StorageAppendBlobTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_append_blob_from_bytes_chunked_upload(self, resource_group, location, storage_account,
                                                    storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
         blob = self._create_blob(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -879,7 +880,7 @@ class StorageAppendBlobTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_append_blob_from_bytes_with_progress_chunked_upload(self, resource_group, location, storage_account,
                                                                  storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
         blob = self._create_blob(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -907,7 +908,7 @@ class StorageAppendBlobTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_append_blob_from_bytes_chunked_upload_with_index_and_count(self, resource_group, location, storage_account,
                                                                         storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
         blob = self._create_blob(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -922,11 +923,11 @@ class StorageAppendBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_append_blob_from_path_chunked_upload(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
         blob = self._create_blob(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        FILE_PATH = 'from_path_chunked_upload.temp.dat'
+        FILE_PATH = 'from_path_chunked_upload.temp.{}.dat'.format(str(uuid.uuid4()))
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
 
@@ -945,11 +946,11 @@ class StorageAppendBlobTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_append_blob_from_path_with_progress_chunked_upload(self, resource_group, location, storage_account,
                                                                 storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
         blob = self._create_blob(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        FILE_PATH = 'progress_chunked_upload.temp.dat'
+        FILE_PATH = 'progress_chunked_upload.temp.{}.dat'.format(str(uuid.uuid4()))
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
 
@@ -980,11 +981,11 @@ class StorageAppendBlobTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_append_blob_from_stream_chunked_upload(self, resource_group, location, storage_account,
                                                     storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
         blob = self._create_blob(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        FILE_PATH = 'stream_chunked_upload.temp.dat'
+        FILE_PATH = 'stream_chunked_upload.temp.{}.dat'.format(str(uuid.uuid4()))
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
 
@@ -1002,11 +1003,11 @@ class StorageAppendBlobTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_app_blob_from_stream_nonseekable_chnked_upload_known_size(self, resource_group, location,
                                                                             storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
         blob = self._create_blob(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        FILE_PATH = 'upload_known_size.temp.dat'
+        FILE_PATH = 'upload_known_size.temp.{}.dat'.format(str(uuid.uuid4()))
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
         blob_size = len(data) - 66
@@ -1023,11 +1024,11 @@ class StorageAppendBlobTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_app_blob_from_stream_nonseekable_chnked_upload_unk_size(self, resource_group, location,
                                                                               storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
         blob = self._create_blob(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        FILE_PATH = 'upload_unk_size.temp.dat'
+        FILE_PATH = 'upload_unk_size.temp.{}.dat'.format(str(uuid.uuid4()))
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
 
@@ -1043,11 +1044,11 @@ class StorageAppendBlobTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_append_blob_from_stream_with_multiple_appends(self, resource_group, location, storage_account,
                                                            storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
         blob = self._create_blob(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        FILE_PATH = 'multiple_appends.temp.dat'
+        FILE_PATH = 'multiple_appends.temp.{}.dat'.format(str(uuid.uuid4()))
         with open(FILE_PATH, 'wb') as stream1:
             stream1.write(data)
         with open(FILE_PATH, 'wb') as stream2:
@@ -1067,11 +1068,11 @@ class StorageAppendBlobTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_append_blob_from_stream_chunked_upload_with_count(self, resource_group, location, storage_account,
                                                                storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
         blob = self._create_blob(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        FILE_PATH = 'upload_with_count.temp.dat'
+        FILE_PATH = 'upload_with_count.temp.{}.dat'.format(str(uuid.uuid4()))
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
 
@@ -1089,11 +1090,11 @@ class StorageAppendBlobTest(StorageTestCase):
     def test_append_blob_from_stream_chunked_upload_with_count_parallel(self, resource_group, location, storage_account,
                                                                         storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
         blob = self._create_blob(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        FILE_PATH = 'upload_with_count_parallel.temp.dat'
+        FILE_PATH = 'upload_with_count_parallel.temp.{}.dat'.format(str(uuid.uuid4()))
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
 
@@ -1111,7 +1112,7 @@ class StorageAppendBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_append_blob_from_text(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
         blob = self._create_blob(bsc)
         text = u'hello 啊齄丂狛狜 world'
@@ -1128,7 +1129,7 @@ class StorageAppendBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_append_blob_from_text_with_encoding(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
         blob = self._create_blob(bsc)
         text = u'hello 啊齄丂狛狜 world'
@@ -1143,7 +1144,7 @@ class StorageAppendBlobTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_append_blob_from_text_with_encoding_and_progress(self, resource_group, location, storage_account,
                                                               storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
         blob = self._create_blob(bsc)
         text = u'hello 啊齄丂狛狜 world'
@@ -1164,7 +1165,7 @@ class StorageAppendBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_append_blob_from_text_chunked_upload(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
         blob = self._create_blob(bsc)
         data = self.get_random_text_data(LARGE_BLOB_SIZE)
@@ -1178,7 +1179,7 @@ class StorageAppendBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_append_blob_with_md5(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
         blob = self._create_blob(bsc)
         data = b'hello world'

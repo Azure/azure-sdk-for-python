@@ -8,14 +8,36 @@ from unittest.mock import Mock, patch
 from urllib.parse import urlparse
 
 from azure.core.credentials import AccessToken
-from azure.identity import KnownAuthorities
+from azure.identity import CredentialUnavailableError, KnownAuthorities
 from azure.identity.aio import DefaultAzureCredential, SharedTokenCacheCredential
-from azure.identity.aio._credentials.managed_identity import ImdsCredential, MsiCredential
+from azure.identity.aio._credentials.azure_cli import AzureCliCredential
+from azure.identity.aio._credentials.managed_identity import ManagedIdentityCredential
 from azure.identity._constants import EnvironmentVariables
 import pytest
 
-from helpers import async_validating_transport, mock_response, Request
+from helpers import mock_response, Request
+from helpers_async import async_validating_transport, get_completed_future, wrap_in_future
 from test_shared_cache_credential import build_aad_response, get_account_event, populated_cache
+
+
+@pytest.mark.asyncio
+async def test_iterates_only_once():
+    """When a credential succeeds, DefaultAzureCredential should use that credential thereafter, ignoring the others"""
+
+    unavailable_credential = Mock(get_token=Mock(side_effect=CredentialUnavailableError(message="...")))
+    successful_credential = Mock(get_token=Mock(return_value=get_completed_future(AccessToken("***", 42))))
+
+    credential = DefaultAzureCredential()
+    credential.credentials = [
+        unavailable_credential,
+        successful_credential,
+        Mock(get_token=Mock(side_effect=Exception("iteration didn't stop after a credential provided a token"))),
+    ]
+
+    for n in range(3):
+        await credential.get_token("scope")
+        assert unavailable_credential.get_token.call_count == 1
+        assert successful_credential.get_token.call_count == n + 1
 
 
 @pytest.mark.asyncio
@@ -61,7 +83,7 @@ async def test_default_credential_authority():
 
         # managed identity credential should ignore authority
         with patch("os.environ", {EnvironmentVariables.MSI_ENDPOINT: "https://some.url"}):
-            transport = Mock(send=asyncio.coroutine(lambda *_, **__: response))
+            transport = Mock(send=wrap_in_future(lambda *_, **__: response))
             if authority_kwarg:
                 credential = DefaultAzureCredential(authority=authority_kwarg, transport=transport)
             else:
@@ -98,19 +120,16 @@ def test_exclude_options():
         assert actual <= default  # n.b. we know actual is non-empty
         assert default - actual <= excluded
 
-    # with no environment variables set, ManagedIdentityCredential = ImdsCredential
-    with patch("os.environ", {}):
-        credential = DefaultAzureCredential(exclude_managed_identity_credential=True)
-        assert_credentials_not_present(credential, ImdsCredential, MsiCredential)
-
-    # with $MSI_ENDPOINT set, ManagedIdentityCredential = MsiCredential
-    with patch("os.environ", {"MSI_ENDPOINT": "spam"}):
-        credential = DefaultAzureCredential(exclude_managed_identity_credential=True)
-        assert_credentials_not_present(credential, ImdsCredential, MsiCredential)
+    # when exclude_managed_identity_credential is set to True, check if ManagedIdentityCredential instance is not present
+    credential = DefaultAzureCredential(exclude_managed_identity_credential=True)
+    assert_credentials_not_present(credential, ManagedIdentityCredential)
 
     if SharedTokenCacheCredential.supported():
         credential = DefaultAzureCredential(exclude_shared_token_cache_credential=True)
         assert_credentials_not_present(credential, SharedTokenCacheCredential)
+
+    credential = DefaultAzureCredential(exclude_cli_credential=True)
+    assert_credentials_not_present(credential, AzureCliCredential)
 
 
 @pytest.mark.asyncio

@@ -9,23 +9,23 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
-        msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-compute/12.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/vmSizes?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/vmSizes?api-version=2019-12-01
   response:
     body:
       string: "{\r\n  \"value\": [\r\n    {\r\n      \"name\": \"Standard_B1ls\",\r\
         \n      \"numberOfCores\": 1,\r\n      \"osDiskSizeInMB\": 1047552,\r\n  \
-        \    \"resourceDiskSizeInMB\": 1024,\r\n      \"memoryInMB\": 512,\r\n   \
+        \    \"resourceDiskSizeInMB\": 4096,\r\n      \"memoryInMB\": 512,\r\n   \
         \   \"maxDataDiskCount\": 2\r\n    },\r\n    {\r\n      \"name\": \"Standard_B1ms\"\
         ,\r\n      \"numberOfCores\": 1,\r\n      \"osDiskSizeInMB\": 1047552,\r\n\
         \      \"resourceDiskSizeInMB\": 4096,\r\n      \"memoryInMB\": 2048,\r\n\
         \      \"maxDataDiskCount\": 2\r\n    },\r\n    {\r\n      \"name\": \"Standard_B1s\"\
         ,\r\n      \"numberOfCores\": 1,\r\n      \"osDiskSizeInMB\": 1047552,\r\n\
-        \      \"resourceDiskSizeInMB\": 2048,\r\n      \"memoryInMB\": 1024,\r\n\
+        \      \"resourceDiskSizeInMB\": 4096,\r\n      \"memoryInMB\": 1024,\r\n\
         \      \"maxDataDiskCount\": 2\r\n    },\r\n    {\r\n      \"name\": \"Standard_B2ms\"\
         ,\r\n      \"numberOfCores\": 2,\r\n      \"osDiskSizeInMB\": 1047552,\r\n\
         \      \"resourceDiskSizeInMB\": 16384,\r\n      \"memoryInMB\": 8192,\r\n\
@@ -296,7 +296,7 @@ interactions:
         : 204800,\r\n      \"memoryInMB\": 32768,\r\n      \"maxDataDiskCount\": 16\r\
         \n    },\r\n    {\r\n      \"name\": \"Standard_D16_v3\",\r\n      \"numberOfCores\"\
         : 16,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\"\
-        : 409600,\r\n      \"memoryInMB\": 65636,\r\n      \"maxDataDiskCount\": 32\r\
+        : 409600,\r\n      \"memoryInMB\": 65536,\r\n      \"maxDataDiskCount\": 32\r\
         \n    },\r\n    {\r\n      \"name\": \"Standard_D32_v3\",\r\n      \"numberOfCores\"\
         : 32,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\"\
         : 819200,\r\n      \"memoryInMB\": 131072,\r\n      \"maxDataDiskCount\":\
@@ -445,6 +445,25 @@ interactions:
         name\": \"Standard_DS14\",\r\n      \"numberOfCores\": 16,\r\n      \"osDiskSizeInMB\"\
         : 1047552,\r\n      \"resourceDiskSizeInMB\": 229376,\r\n      \"memoryInMB\"\
         : 114688,\r\n      \"maxDataDiskCount\": 64\r\n    },\r\n    {\r\n      \"\
+        name\": \"Standard_L8s_v2\",\r\n      \"numberOfCores\": 8,\r\n      \"osDiskSizeInMB\"\
+        : 1047552,\r\n      \"resourceDiskSizeInMB\": 1830912,\r\n      \"memoryInMB\"\
+        : 65536,\r\n      \"maxDataDiskCount\": 16\r\n    },\r\n    {\r\n      \"\
+        name\": \"Standard_L16s_v2\",\r\n      \"numberOfCores\": 16,\r\n      \"\
+        osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\": 3661824,\r\n\
+        \      \"memoryInMB\": 131072,\r\n      \"maxDataDiskCount\": 32\r\n    },\r\
+        \n    {\r\n      \"name\": \"Standard_L32s_v2\",\r\n      \"numberOfCores\"\
+        : 32,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\"\
+        : 7323648,\r\n      \"memoryInMB\": 262144,\r\n      \"maxDataDiskCount\"\
+        : 32\r\n    },\r\n    {\r\n      \"name\": \"Standard_L48s_v2\",\r\n     \
+        \ \"numberOfCores\": 48,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"\
+        resourceDiskSizeInMB\": 10985472,\r\n      \"memoryInMB\": 393216,\r\n   \
+        \   \"maxDataDiskCount\": 32\r\n    },\r\n    {\r\n      \"name\": \"Standard_L64s_v2\"\
+        ,\r\n      \"numberOfCores\": 64,\r\n      \"osDiskSizeInMB\": 1047552,\r\n\
+        \      \"resourceDiskSizeInMB\": 14647296,\r\n      \"memoryInMB\": 524288,\r\
+        \n      \"maxDataDiskCount\": 32\r\n    },\r\n    {\r\n      \"name\": \"\
+        Standard_L80s_v2\",\r\n      \"numberOfCores\": 80,\r\n      \"osDiskSizeInMB\"\
+        : 1047552,\r\n      \"resourceDiskSizeInMB\": 18309120,\r\n      \"memoryInMB\"\
+        : 655360,\r\n      \"maxDataDiskCount\": 32\r\n    },\r\n    {\r\n      \"\
         name\": \"Standard_G1\",\r\n      \"numberOfCores\": 2,\r\n      \"osDiskSizeInMB\"\
         : 1047552,\r\n      \"resourceDiskSizeInMB\": 393216,\r\n      \"memoryInMB\"\
         : 28672,\r\n      \"maxDataDiskCount\": 8\r\n    },\r\n    {\r\n      \"name\"\
@@ -597,11 +616,11 @@ interactions:
       cache-control:
       - no-cache
       content-length:
-      - '38880'
+      - '40146'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 22 Oct 2019 06:39:35 GMT
+      - Wed, 25 Mar 2020 02:49:32 GMT
       expires:
       - '-1'
       pragma:

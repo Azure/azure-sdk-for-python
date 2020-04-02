@@ -93,6 +93,9 @@ try:
     from ._models_py3 import ManagedInstanceEncryptionProtector
     from ._models_py3 import ManagedInstanceFamilyCapability
     from ._models_py3 import ManagedInstanceKey
+    from ._models_py3 import ManagedInstanceLongTermRetentionBackup
+    from ._models_py3 import ManagedInstanceLongTermRetentionPolicy
+    from ._models_py3 import ManagedInstanceOperation
     from ._models_py3 import ManagedInstancePairInfo
     from ._models_py3 import ManagedInstanceUpdate
     from ._models_py3 import ManagedInstanceVcoresCapability
@@ -115,6 +118,7 @@ try:
     from ._models_py3 import PartnerRegionInfo
     from ._models_py3 import PerformanceLevelCapability
     from ._models_py3 import PrivateEndpointConnection
+    from ._models_py3 import PrivateEndpointConnectionProperties
     from ._models_py3 import PrivateEndpointProperty
     from ._models_py3 import PrivateLinkResource
     from ._models_py3 import PrivateLinkResourceProperties
@@ -143,6 +147,7 @@ try:
     from ._models_py3 import ServerDnsAlias
     from ._models_py3 import ServerDnsAliasAcquisition
     from ._models_py3 import ServerKey
+    from ._models_py3 import ServerPrivateEndpointConnection
     from ._models_py3 import ServerSecurityAlertPolicy
     from ._models_py3 import ServerUpdate
     from ._models_py3 import ServerUsage
@@ -265,6 +270,9 @@ except (SyntaxError, ImportError):
     from ._models import ManagedInstanceEncryptionProtector
     from ._models import ManagedInstanceFamilyCapability
     from ._models import ManagedInstanceKey
+    from ._models import ManagedInstanceLongTermRetentionBackup
+    from ._models import ManagedInstanceLongTermRetentionPolicy
+    from ._models import ManagedInstanceOperation
     from ._models import ManagedInstancePairInfo
     from ._models import ManagedInstanceUpdate
     from ._models import ManagedInstanceVcoresCapability
@@ -287,6 +295,7 @@ except (SyntaxError, ImportError):
     from ._models import PartnerRegionInfo
     from ._models import PerformanceLevelCapability
     from ._models import PrivateEndpointConnection
+    from ._models import PrivateEndpointConnectionProperties
     from ._models import PrivateEndpointProperty
     from ._models import PrivateLinkResource
     from ._models import PrivateLinkResourceProperties
@@ -315,6 +324,7 @@ except (SyntaxError, ImportError):
     from ._models import ServerDnsAlias
     from ._models import ServerDnsAliasAcquisition
     from ._models import ServerKey
+    from ._models import ServerPrivateEndpointConnection
     from ._models import ServerSecurityAlertPolicy
     from ._models import ServerUpdate
     from ._models import ServerUsage
@@ -384,6 +394,9 @@ from ._paged_models import ManagedDatabaseSecurityAlertPolicyPaged
 from ._paged_models import ManagedInstanceAdministratorPaged
 from ._paged_models import ManagedInstanceEncryptionProtectorPaged
 from ._paged_models import ManagedInstanceKeyPaged
+from ._paged_models import ManagedInstanceLongTermRetentionBackupPaged
+from ._paged_models import ManagedInstanceLongTermRetentionPolicyPaged
+from ._paged_models import ManagedInstanceOperationPaged
 from ._paged_models import ManagedInstancePaged
 from ._paged_models import ManagedInstanceVulnerabilityAssessmentPaged
 from ._paged_models import ManagedServerSecurityAlertPolicyPaged
@@ -428,7 +441,6 @@ from ._paged_models import VulnerabilityAssessmentScanRecordPaged
 from ._paged_models import WorkloadClassifierPaged
 from ._paged_models import WorkloadGroupPaged
 from ._sql_management_client_enums import (
-    CheckNameAvailabilityReason,
     ServerConnectionType,
     SecurityAlertPolicyState,
     SecurityAlertPolicyEmailAccountAdmins,
@@ -461,7 +473,6 @@ from ._sql_management_client_enums import (
     ReadOnlyEndpointFailoverPolicy,
     FailoverGroupReplicationRole,
     OperationOrigin,
-    IdentityType,
     SyncAgentState,
     SyncMemberDbType,
     SyncGroupLogType,
@@ -483,6 +494,7 @@ from ._sql_management_client_enums import (
     AutomaticTuningServerMode,
     AutomaticTuningServerReason,
     RestorePointType,
+    SensitivityLabelRank,
     ManagementOperationState,
     CreateMode,
     SampleName,
@@ -496,21 +508,33 @@ from ._sql_management_client_enums import (
     VulnerabilityAssessmentScanState,
     InstanceFailoverGroupReplicationRole,
     InstancePoolLicenseType,
+    IdentityType,
     ManagedServerCreateMode,
     ManagedInstanceLicenseType,
     ManagedInstanceProxyOverride,
-    ManagedDatabaseStatus,
-    ManagedDatabaseCreateMode,
+    PrivateLinkServiceConnectionStateStatus,
+    PrivateLinkServiceConnectionStateActionsRequire,
+    PrivateEndpointProvisioningState,
+    ServerPublicNetworkAccess,
+    CheckNameAvailabilityReason,
     MaxSizeUnit,
     LogSizeUnit,
     CapabilityStatus,
     PerformanceLevelUnit,
     PauseDelayTimeUnit,
+    ManagedDatabaseStatus,
+    ManagedDatabaseCreateMode,
     LongTermRetentionDatabaseState,
     VulnerabilityAssessmentPolicyBaselineName,
     SensitivityLabelSource,
     ReplicaType,
     CapabilityGroup,
+    DatabaseState1,
+    DatabaseState2,
+    DatabaseState3,
+    DatabaseState4,
+    DatabaseState5,
+    DatabaseState6,
 )
 
 __all__ = [
@@ -597,6 +621,9 @@ __all__ = [
     'ManagedInstanceEncryptionProtector',
     'ManagedInstanceFamilyCapability',
     'ManagedInstanceKey',
+    'ManagedInstanceLongTermRetentionBackup',
+    'ManagedInstanceLongTermRetentionPolicy',
+    'ManagedInstanceOperation',
     'ManagedInstancePairInfo',
     'ManagedInstanceUpdate',
     'ManagedInstanceVcoresCapability',
@@ -619,6 +646,7 @@ __all__ = [
     'PartnerRegionInfo',
     'PerformanceLevelCapability',
     'PrivateEndpointConnection',
+    'PrivateEndpointConnectionProperties',
     'PrivateEndpointProperty',
     'PrivateLinkResource',
     'PrivateLinkResourceProperties',
@@ -647,6 +675,7 @@ __all__ = [
     'ServerDnsAlias',
     'ServerDnsAliasAcquisition',
     'ServerKey',
+    'ServerPrivateEndpointConnection',
     'ServerSecurityAlertPolicy',
     'ServerUpdate',
     'ServerUsage',
@@ -687,7 +716,6 @@ __all__ = [
     'WorkloadGroup',
     'RecoverableDatabasePaged',
     'RestorableDroppedDatabasePaged',
-    'ServerPaged',
     'DataMaskingRulePaged',
     'FirewallRulePaged',
     'GeoBackupPolicyPaged',
@@ -753,13 +781,16 @@ __all__ = [
     'InstancePoolPaged',
     'UsagePaged',
     'ManagedInstancePaged',
-    'ManagedDatabasePaged',
     'PrivateEndpointConnectionPaged',
     'PrivateLinkResourcePaged',
-    'ServerAzureADAdministratorPaged',
+    'ServerPaged',
+    'ManagedInstanceLongTermRetentionBackupPaged',
+    'ManagedInstanceLongTermRetentionPolicyPaged',
     'WorkloadGroupPaged',
     'WorkloadClassifierPaged',
-    'CheckNameAvailabilityReason',
+    'ManagedDatabasePaged',
+    'ServerAzureADAdministratorPaged',
+    'ManagedInstanceOperationPaged',
     'ServerConnectionType',
     'SecurityAlertPolicyState',
     'SecurityAlertPolicyEmailAccountAdmins',
@@ -792,7 +823,6 @@ __all__ = [
     'ReadOnlyEndpointFailoverPolicy',
     'FailoverGroupReplicationRole',
     'OperationOrigin',
-    'IdentityType',
     'SyncAgentState',
     'SyncMemberDbType',
     'SyncGroupLogType',
@@ -814,6 +844,7 @@ __all__ = [
     'AutomaticTuningServerMode',
     'AutomaticTuningServerReason',
     'RestorePointType',
+    'SensitivityLabelRank',
     'ManagementOperationState',
     'CreateMode',
     'SampleName',
@@ -827,19 +858,31 @@ __all__ = [
     'VulnerabilityAssessmentScanState',
     'InstanceFailoverGroupReplicationRole',
     'InstancePoolLicenseType',
+    'IdentityType',
     'ManagedServerCreateMode',
     'ManagedInstanceLicenseType',
     'ManagedInstanceProxyOverride',
-    'ManagedDatabaseStatus',
-    'ManagedDatabaseCreateMode',
+    'PrivateLinkServiceConnectionStateStatus',
+    'PrivateLinkServiceConnectionStateActionsRequire',
+    'PrivateEndpointProvisioningState',
+    'ServerPublicNetworkAccess',
+    'CheckNameAvailabilityReason',
     'MaxSizeUnit',
     'LogSizeUnit',
     'CapabilityStatus',
     'PerformanceLevelUnit',
     'PauseDelayTimeUnit',
+    'ManagedDatabaseStatus',
+    'ManagedDatabaseCreateMode',
     'LongTermRetentionDatabaseState',
     'VulnerabilityAssessmentPolicyBaselineName',
     'SensitivityLabelSource',
     'ReplicaType',
     'CapabilityGroup',
+    'DatabaseState1',
+    'DatabaseState2',
+    'DatabaseState3',
+    'DatabaseState4',
+    'DatabaseState5',
+    'DatabaseState6',
 ]

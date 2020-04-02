@@ -15,6 +15,7 @@ try:
     from ._models_py3 import EnabledSubscriptionId
     from ._models_py3 import ErrorResponse, ErrorResponseException
     from ._models_py3 import Location
+    from ._models_py3 import ModernCspSubscriptionCreationParameters
     from ._models_py3 import ModernSubscriptionCreationParameters
     from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
@@ -34,6 +35,7 @@ except (SyntaxError, ImportError):
     from ._models import EnabledSubscriptionId
     from ._models import ErrorResponse, ErrorResponseException
     from ._models import Location
+    from ._models import ModernCspSubscriptionCreationParameters
     from ._models import ModernSubscriptionCreationParameters
     from ._models import Operation
     from ._models import OperationDisplay
@@ -62,6 +64,7 @@ __all__ = [
     'EnabledSubscriptionId',
     'ErrorResponse', 'ErrorResponseException',
     'Location',
+    'ModernCspSubscriptionCreationParameters',
     'ModernSubscriptionCreationParameters',
     'Operation',
     'OperationDisplay',

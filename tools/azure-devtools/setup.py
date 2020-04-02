@@ -9,7 +9,7 @@ import io
 from setuptools import setup
 
 
-VERSION = "1.1.1"
+VERSION = "1.2.1"
 
 
 CLASSIFIERS = [
@@ -29,7 +29,7 @@ CLASSIFIERS = [
 DEPENDENCIES = [
     'ConfigArgParse>=0.12.0',
     'six>=1.10.0',
-    'vcrpy>=1.11.0,<2.1.0',
+    'vcrpy==3.0.0'
 ]
 
 with io.open('README.rst', 'r', encoding='utf-8') as f:

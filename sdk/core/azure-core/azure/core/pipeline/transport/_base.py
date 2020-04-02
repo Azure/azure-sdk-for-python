@@ -226,7 +226,7 @@ class HttpRequest(object):
             data = copy.deepcopy(self.body, memo)
             files = copy.deepcopy(self.files, memo)
             return HttpRequest(self.method, self.url, self.headers, files, data)
-        except ValueError:
+        except (ValueError, TypeError):
             return copy.copy(self)
 
     @property
@@ -475,10 +475,12 @@ class _HttpResponseBase(object):
         # type: (str) -> str
         """Return the whole body as a string.
 
-        :param str encoding: The encoding to apply. If None, use "utf-8".
-         Implementation can be smarter if they want (using headers).
+        :param str encoding: The encoding to apply. If None, use "utf-8" with BOM parsing (utf-8-sig).
+         Implementation can be smarter if they want (using headers or chardet).
         """
-        return self.body().decode(encoding or "utf-8")
+        if encoding == "utf-8" or encoding is None:
+            encoding = "utf-8-sig"
+        return self.body().decode(encoding)
 
     def _get_raw_parts(self, http_response_type=None):
         # type (Optional[Type[_HttpResponseBase]]) -> Iterator[HttpResponse]
@@ -649,6 +651,7 @@ class PipelineClientBase(object):
         :param str url: URL for the request.
         :param dict params: URL query parameters.
         :param dict headers: Headers
+        :param content: The body content
         :param dict form_content: Form content
         :return: An HttpRequest object
         :rtype: ~azure.core.pipeline.transport.HttpRequest
@@ -709,6 +712,7 @@ class PipelineClientBase(object):
         :param str url: The request URL.
         :param dict params: Request URL parameters.
         :param dict headers: Headers
+        :param content: The body content
         :param dict form_content: Form content
         :return: An HttpRequest object
         :rtype: ~azure.core.pipeline.transport.HttpRequest
@@ -734,6 +738,7 @@ class PipelineClientBase(object):
         :param str url: The request URL.
         :param dict params: Request URL parameters.
         :param dict headers: Headers
+        :param content: The body content
         :param dict form_content: Form content
         :return: An HttpRequest object
         :rtype: ~azure.core.pipeline.transport.HttpRequest
@@ -758,6 +763,7 @@ class PipelineClientBase(object):
         :param str url: The request URL.
         :param dict params: Request URL parameters.
         :param dict headers: Headers
+        :param content: The body content
         :param dict form_content: Form content
         :return: An HttpRequest object
         :rtype: ~azure.core.pipeline.transport.HttpRequest
@@ -782,6 +788,7 @@ class PipelineClientBase(object):
         :param str url: The request URL.
         :param dict params: Request URL parameters.
         :param dict headers: Headers
+        :param content: The body content
         :param dict form_content: Form content
         :return: An HttpRequest object
         :rtype: ~azure.core.pipeline.transport.HttpRequest
@@ -806,6 +813,7 @@ class PipelineClientBase(object):
         :param str url: The request URL.
         :param dict params: Request URL parameters.
         :param dict headers: Headers
+        :param content: The body content
         :param dict form_content: Form content
         :return: An HttpRequest object
         :rtype: ~azure.core.pipeline.transport.HttpRequest
@@ -822,6 +830,7 @@ class PipelineClientBase(object):
         :param str url: The request URL.
         :param dict params: Request URL parameters.
         :param dict headers: Headers
+        :param content: The body content
         :param dict form_content: Form content
         :return: An HttpRequest object
         :rtype: ~azure.core.pipeline.transport.HttpRequest
@@ -838,11 +847,31 @@ class PipelineClientBase(object):
         :param str url: The request URL.
         :param dict params: Request URL parameters.
         :param dict headers: Headers
+        :param content: The body content
         :param dict form_content: Form content
         :return: An HttpRequest object
         :rtype: ~azure.core.pipeline.transport.HttpRequest
         """
         request = self._request(
             "MERGE", url, params, headers, content, form_content, None
+        )
+        return request
+
+    def options(self, url, params=None, headers=None, **kwargs):
+        # type: (str, Optional[Dict[str, str]], Optional[Dict[str, str]], Any) -> HttpRequest
+        """Create a OPTIONS request object.
+
+        :param str url: The request URL.
+        :param dict params: Request URL parameters.
+        :param dict headers: Headers
+        :keyword content: The body content
+        :keyword dict form_content: Form content
+        :return: An HttpRequest object
+        :rtype: ~azure.core.pipeline.transport.HttpRequest
+        """
+        content = kwargs.get("content")
+        form_content = kwargs.get("form_content")
+        request = self._request(
+            "OPTIONS", url, params, headers, content, form_content, None
         )
         return request

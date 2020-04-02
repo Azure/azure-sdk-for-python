@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .entities_operations import EntitiesOperations
+from ._entities_operations import EntitiesOperations
 
 __all__ = [
     'EntitiesOperations',

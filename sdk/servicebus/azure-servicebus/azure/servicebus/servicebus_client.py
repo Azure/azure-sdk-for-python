@@ -14,6 +14,7 @@ except ImportError:
     from urllib.parse import urlparse
 
 from uamqp import types
+from uamqp.constants import TransportType
 
 from azure.servicebus.common import mgmt_handlers, mixins
 from azure.servicebus.common.constants import (
@@ -39,14 +40,17 @@ class ServiceBusClient(mixins.ServiceBusMixin):
     :param str host_base: Optional. Live host base URL. Defaults to Public Azure.
     :param str shared_access_key_name: SAS authentication key name.
     :param str shared_access_key_value: SAS authentication key value.
+    :param transport_type: Optional. Underlying transport protocol type (Amqp or AmqpOverWebsocket)
+     Default value is ~azure.servicebus.TransportType.Amqp
+    :type transport_type: ~azure.servicebus.TransportType
     :param int http_request_timeout: Optional. Timeout for the HTTP request, in seconds.
      Default value is 65 seconds.
     :param http_request_session: Optional. Session object to use for HTTP requests.
     :type http_request_session: ~requests.Session
     :param bool debug: Whether to output AMQP network trace to the logger.
 
-    Example:
-        .. literalinclude:: ../examples/test_examples.py
+    .. admonition:: Example:
+        .. literalinclude:: ../samples/sync_samples/test_examples.py
             :start-after: [START create_servicebus_client]
             :end-before: [END create_servicebus_client]
             :language: python
@@ -57,12 +61,14 @@ class ServiceBusClient(mixins.ServiceBusMixin):
 
     def __init__(self, service_namespace=None, host_base=SERVICE_BUS_HOST_BASE,
                  shared_access_key_name=None, shared_access_key_value=None,
+                 transport_type=TransportType.Amqp,
                  http_request_timeout=DEFAULT_HTTP_TIMEOUT, http_request_session=None, debug=False):
 
         self.service_namespace = service_namespace
         self.host_base = host_base
         self.shared_access_key_name = shared_access_key_name
         self.shared_access_key_value = shared_access_key_value
+        self.transport_type = transport_type
         self.debug = debug
         self.mgmt_client = ServiceBusService(
             service_namespace=service_namespace,
@@ -79,8 +85,8 @@ class ServiceBusClient(mixins.ServiceBusMixin):
         :param conn_str: The connection string.
         :type conn_str: str
 
-        Example:
-            .. literalinclude:: ../examples/test_examples.py
+        .. admonition:: Example:
+            .. literalinclude:: ../samples/sync_samples/test_examples.py
                 :start-after: [START create_servicebus_client_connstr]
                 :end-before: [END create_servicebus_client_connstr]
                 :language: python
@@ -88,13 +94,14 @@ class ServiceBusClient(mixins.ServiceBusMixin):
                 :caption: Create a ServiceBusClient via a connection string.
 
         """
-        address, policy, key, _ = parse_conn_str(conn_str)
+        address, policy, key, _, transport_type = parse_conn_str(conn_str)
         parsed_namespace = urlparse(address)
         namespace, _, base = parsed_namespace.hostname.partition('.')
         return cls(
             namespace,
             shared_access_key_name=policy,
             shared_access_key_value=key,
+            transport_type=transport_type,
             host_base='.' + base,
             **kwargs)
 
@@ -110,8 +117,8 @@ class ServiceBusClient(mixins.ServiceBusMixin):
         :raises: ~azure.servicebus.common.errors.ServiceBusConnectionError if the namespace is not found.
         :raises: ~azure.servicebus.common.errors.ServiceBusResourceNotFound if the queue is not found.
 
-        Example:
-            .. literalinclude:: ../examples/test_examples.py
+        .. admonition:: Example:
+            .. literalinclude:: ../samples/sync_samples/test_examples.py
                 :start-after: [START get_queue_client]
                 :end-before: [END get_queue_client]
                 :language: python
@@ -129,6 +136,7 @@ class ServiceBusClient(mixins.ServiceBusMixin):
             self._get_host(), queue,
             shared_access_key_name=self.shared_access_key_name,
             shared_access_key_value=self.shared_access_key_value,
+            transport_type=self.transport_type,
             mgmt_client=self.mgmt_client,
             debug=self.debug)
 
@@ -138,8 +146,8 @@ class ServiceBusClient(mixins.ServiceBusMixin):
         :rtype: list[~azure.servicebus.servicebus_client.QueueClient]
         :raises: ~azure.servicebus.common.errors.ServiceBusConnectionError if the namespace is not found.
 
-        Example:
-            .. literalinclude:: ../examples/test_examples.py
+        .. admonition:: Example:
+            .. literalinclude:: ../samples/sync_samples/test_examples.py
                 :start-after: [START list_queues]
                 :end-before: [END list_queues]
                 :language: python
@@ -157,6 +165,7 @@ class ServiceBusClient(mixins.ServiceBusMixin):
                 self._get_host(), queue,
                 shared_access_key_name=self.shared_access_key_name,
                 shared_access_key_value=self.shared_access_key_value,
+                transport_type=self.transport_type,
                 mgmt_client=self.mgmt_client,
                 debug=self.debug))
         return queue_clients
@@ -170,8 +179,8 @@ class ServiceBusClient(mixins.ServiceBusMixin):
         :raises: ~azure.servicebus.common.errors.ServiceBusConnectionError if the namespace is not found.
         :raises: ~azure.servicebus.common.errors.ServiceBusResourceNotFound if the topic is not found.
 
-        Example:
-            .. literalinclude:: ../examples/test_examples.py
+        .. admonition:: Example:
+            .. literalinclude:: ../samples/sync_samples/test_examples.py
                 :start-after: [START get_topic_client]
                 :end-before: [END get_topic_client]
                 :language: python
@@ -189,6 +198,7 @@ class ServiceBusClient(mixins.ServiceBusMixin):
             self._get_host(), topic,
             shared_access_key_name=self.shared_access_key_name,
             shared_access_key_value=self.shared_access_key_value,
+            transport_type=self.transport_type,
             debug=self.debug)
 
     def list_topics(self):
@@ -197,8 +207,8 @@ class ServiceBusClient(mixins.ServiceBusMixin):
         :rtype: list[~azure.servicebus.servicebus_client.TopicClient]
         :raises: ~azure.servicebus.common.errors.ServiceBusConnectionError if the namespace is not found.
 
-        Example:
-            .. literalinclude:: ../examples/test_examples.py
+        .. admonition:: Example:
+            .. literalinclude:: ../samples/sync_samples/test_examples.py
                 :start-after: [START list_topics]
                 :end-before: [END list_topics]
                 :language: python
@@ -216,6 +226,7 @@ class ServiceBusClient(mixins.ServiceBusMixin):
                 self._get_host(), topic,
                 shared_access_key_name=self.shared_access_key_name,
                 shared_access_key_value=self.shared_access_key_value,
+                transport_type=self.transport_type,
                 debug=self.debug))
         return topic_clients
 
@@ -230,8 +241,8 @@ class ServiceBusClient(mixins.ServiceBusMixin):
         :raises: ~azure.servicebus.common.errors.ServiceBusConnectionError if the namespace is not found.
         :raises: ~azure.servicebus.common.errors.ServiceBusResourceNotFound if the subscription is not found.
 
-        Example:
-            .. literalinclude:: ../examples/test_examples.py
+        .. admonition:: Example:
+            .. literalinclude:: ../samples/sync_samples/test_examples.py
                 :start-after: [START get_subscription_client]
                 :end-before: [END get_subscription_client]
                 :language: python
@@ -249,6 +260,7 @@ class ServiceBusClient(mixins.ServiceBusMixin):
             self._get_host(), topic_name, subscription,
             shared_access_key_name=self.shared_access_key_name,
             shared_access_key_value=self.shared_access_key_value,
+            transport_type=self.transport_type,
             debug=self.debug)
 
     def list_subscriptions(self, topic_name):
@@ -260,8 +272,8 @@ class ServiceBusClient(mixins.ServiceBusMixin):
         :raises: ~azure.servicebus.common.errors.ServiceBusConnectionError if the namespace is not found.
         :raises: ~azure.servicebus.common.errors.ServiceBusResourceNotFound if the topic is not found.
 
-        Example:
-            .. literalinclude:: ../examples/test_examples.py
+        .. admonition:: Example:
+            .. literalinclude:: ../samples/sync_samples/test_examples.py
                 :start-after: [START list_subscriptions]
                 :end-before: [END list_subscriptions]
                 :language: python
@@ -281,6 +293,7 @@ class ServiceBusClient(mixins.ServiceBusMixin):
                 self._get_host(), topic_name, sub,
                 shared_access_key_name=self.shared_access_key_name,
                 shared_access_key_value=self.shared_access_key_value,
+                transport_type=self.transport_type,
                 debug=self.debug))
         return sub_clients
 
@@ -312,15 +325,15 @@ class SendClientMixin(object):
          failed, otherwise it will be `None`.
         :rtype: list[tuple[bool, ~azure.servicebus.common.errors.MessageSendFailed]]
 
-        Example:
-            .. literalinclude:: ../examples/test_examples.py
+        .. admonition:: Example:
+            .. literalinclude:: ../samples/sync_samples/test_examples.py
                 :start-after: [START send_message_service_bus]
                 :end-before: [END send_message_service_bus]
                 :language: python
                 :dedent: 4
                 :caption: Send a message to current entity via a single use connection
 
-            .. literalinclude:: ../examples/test_examples.py
+            .. literalinclude:: ../samples/sync_samples/test_examples.py
                 :start-after: [START send_message_service_bus_multiple]
                 :end-before: [END send_message_service_bus_multiple]
                 :language: python
@@ -361,8 +374,8 @@ class SendClientMixin(object):
         :returns: A Sender instance with an unopened connection.
         :rtype: ~azure.servicebus.send_handler.Sender
 
-        Example:
-            .. literalinclude:: ../examples/test_examples.py
+        .. admonition:: Example:
+            .. literalinclude:: ../samples/sync_samples/test_examples.py
                 :start-after: [START get_sender]
                 :end-before: [END get_sender]
                 :language: python
@@ -409,8 +422,8 @@ class ReceiveClientMixin(object):
         :type session: str
         :rtype: list[~azure.servicebus.common.message.PeekMessage]
 
-        Example:
-            .. literalinclude:: ../examples/test_examples.py
+        .. admonition:: Example:
+            .. literalinclude:: ../samples/sync_samples/test_examples.py
                 :start-after: [START peek_messages_service_bus]
                 :end-before: [END peek_messages_service_bus]
                 :language: python
@@ -446,8 +459,8 @@ class ReceiveClientMixin(object):
         :type skip: int
         :rtype: list[str]
 
-        Example:
-            .. literalinclude:: ../examples/test_examples.py
+        .. admonition:: Example:
+            .. literalinclude:: ../samples/sync_samples/test_examples.py
                 :start-after: [START list_sessions_service_bus]
                 :end-before: [END list_sessions_service_bus]
                 :language: python
@@ -485,8 +498,8 @@ class ReceiveClientMixin(object):
         :type mode: ~azure.servicebus.common.constants.ReceiveSettleMode
         :rtype: list[~azure.servicebus.common.message.Message]
 
-        Example:
-            .. literalinclude:: ../examples/test_examples.py
+        .. admonition:: Example:
+            .. literalinclude:: ../samples/sync_samples/test_examples.py
                 :start-after: [START receive_deferred_messages_service_bus]
                 :end-before: [END receive_deferred_messages_service_bus]
                 :language: python
@@ -521,8 +534,8 @@ class ReceiveClientMixin(object):
         :param messages: A list of deferred messages to be settled.
         :type messages: list[~azure.servicebus.common.message.DeferredMessage]
 
-        Example:
-            .. literalinclude:: ../examples/test_examples.py
+        .. admonition:: Example:
+            .. literalinclude:: ../samples/sync_samples/test_examples.py
                 :start-after: [START settle_deferred_messages_service_bus]
                 :end-before: [END settle_deferred_messages_service_bus]
                 :language: python
@@ -574,8 +587,8 @@ class ReceiveClientMixin(object):
         :raises: If the current Service Bus entity requires sessions, a TypeError will
          be raised.
 
-        Example:
-            .. literalinclude:: ../examples/test_examples.py
+        .. admonition:: Example:
+            .. literalinclude:: ../samples/sync_samples/test_examples.py
                 :start-after: [START get_receiver]
                 :end-before: [END get_receiver]
                 :language: python
@@ -640,8 +653,8 @@ class ReceiveClientMixin(object):
         :returns: A Receiver instance with an unopened Connection.
         :rtype: ~azure.servicebus.receive_handler.Receiver
 
-        Example:
-            .. literalinclude:: ../examples/test_examples.py
+        .. admonition:: Example:
+            .. literalinclude:: ../samples/sync_samples/test_examples.py
                 :start-after: [START get_dead_letter_receiver]
                 :end-before: [END get_dead_letter_receiver]
                 :language: python
@@ -694,8 +707,8 @@ class QueueClient(SendClientMixin, ReceiveClientMixin, mixins.BaseClient):
     :param debug: Whether to output network trace logs to the logger. Default is `False`.
     :type debug: bool
 
-    Example:
-        .. literalinclude:: ../examples/test_examples.py
+    .. admonition:: Example:
+        .. literalinclude:: ../samples/sync_samples/test_examples.py
             :start-after: [START create_queue_client_directly]
             :end-before: [END create_queue_client_directly]
             :language: python
@@ -730,8 +743,8 @@ class TopicClient(SendClientMixin, mixins.BaseClient):
     :param debug: Whether to output network trace logs to the logger. Default is `False`.
     :type debug: bool
 
-    Example:
-        .. literalinclude:: ../examples/test_examples.py
+    .. admonition:: Example:
+        .. literalinclude:: ../samples/sync_samples/test_examples.py
             :start-after: [START create_topic_client_directly]
             :end-before: [END create_topic_client_directly]
             :language: python
@@ -766,8 +779,8 @@ class SubscriptionClient(ReceiveClientMixin, mixins.BaseClient):
     :param debug: Whether to output network trace logs to the logger. Default is `False`.
     :type debug: bool
 
-    Example:
-        .. literalinclude:: ../examples/test_examples.py
+    .. admonition:: Example:
+        .. literalinclude:: ../samples/sync_samples/test_examples.py
             :start-after: [START create_sub_client_directly]
             :end-before: [END create_sub_client_directly]
             :language: python
@@ -796,11 +809,11 @@ class SubscriptionClient(ReceiveClientMixin, mixins.BaseClient):
          not included in the connection string.
         :type topic: str
         """
-        address, policy, key, entity = parse_conn_str(conn_str)
+        address, policy, key, entity, transport_type = parse_conn_str(conn_str)
         entity = topic or entity
         address = build_uri(address, entity)
         address += "/Subscriptions/" + name
-        return cls(address, name, shared_access_key_name=policy, shared_access_key_value=key, **kwargs)
+        return cls(address, name, shared_access_key_name=policy, shared_access_key_value=key, transport_type=transport_type, **kwargs)
 
     @classmethod
     def from_entity(cls, address, topic, entity, **kwargs):  # pylint: disable=arguments-differ

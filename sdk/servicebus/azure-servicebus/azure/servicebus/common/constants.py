@@ -19,6 +19,7 @@ LOCKEDUNTILNAME = b"x-opt-locked-until"
 PARTITIONKEYNAME = b"x-opt-partition-key"
 DEADLETTERSOURCENAME = b"x-opt-deadletter-source"
 DEADLETTERNAME = VENDOR + b":dead-letter"
+ASSOCIATEDLINKPROPERTYNAME = b"associated-link-name"
 
 SESSION_FILTER = VENDOR + b":session-filter"
 SESSION_LOCKED_UNTIL = VENDOR + b":locked-until-utc"

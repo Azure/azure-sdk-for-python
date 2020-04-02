@@ -11,7 +11,7 @@ import azure.mgmt.servicebus.models
 from azure.mgmt.servicebus.models import SBNamespace,SBSku,SkuName,SBAuthorizationRule,AccessRights,AccessKeys
 from azure.common.credentials import ServicePrincipalCredentials
 
-from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
+from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPreparer
 
 
 class MgmtServiceBusTest(AzureMgmtTestCase):
@@ -23,13 +23,13 @@ class MgmtServiceBusTest(AzureMgmtTestCase):
             azure.mgmt.servicebus.ServiceBusManagementClient
         )
 
-    @ResourceGroupPreparer()
+    @RandomNameResourceGroupPreparer()
     def test_sb_namespace_curd(self, resource_group, location):
         # List all topic types
         resource_group_name = resource_group.name #"ardsouza-resourcemovetest-group2"
 
         # Create a Namespace
-        namespace_name = "testingpythontestcasenamespace"
+        namespace_name = self.get_replayable_random_resource_name("testingpythontestcasenamespace")
 
         namespaceparameter=SBNamespace(location=location,tags={'tag1':'value1','tag2':'value2'},sku=SBSku(name=SkuName.standard))
         creatednamespace = self.servicebus_client.namespaces.create_or_update(resource_group_name, namespace_name, namespaceparameter).result()
@@ -51,13 +51,13 @@ class MgmtServiceBusTest(AzureMgmtTestCase):
         self.assertGreater(len(listbysubscriptionresponse), 0, "No Namespace returned, List is empty")
 
         # get the default authorizationrule
-        defaultauthorule_name = "RootManageSharedAccessKey"
+        defaultauthorule_name = self.get_replayable_random_resource_name("RootManageSharedAccessKey")
         defaultamespaceauthorule = self.servicebus_client.namespaces.get_authorization_rule(resource_group_name, namespace_name, defaultauthorule_name)
         self.assertEqual(defaultamespaceauthorule.name, defaultauthorule_name,"Default Authorization rule not returned - RootManageSharedAccessKey")
         self.assertEqual(len(defaultamespaceauthorule.rights), 3, "rights for deafult not as required - send, listen and manage ")
 
         # Create a new authorizationrule
-        authoRule_name = "testingauthrulepy"
+        authoRule_name = self.get_replayable_random_resource_name("testingauthrulepy")
         createnamespaceauthorule = self.servicebus_client.namespaces.create_or_update_authorization_rule(resource_group_name,namespace_name,authoRule_name,[AccessRights('Send'),AccessRights('Listen')])
         self.assertEqual(createnamespaceauthorule.name,authoRule_name, "Authorization rule name not as created - create_or_update_authorization_rule ")
         self.assertEqual(len(createnamespaceauthorule.rights),2)

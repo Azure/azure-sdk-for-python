@@ -181,6 +181,8 @@ class ConfigurationStore(Resource):
     :ivar endpoint: The DNS endpoint where the configuration store API will be
      available.
     :vartype endpoint: str
+    :param encryption: The encryption settings of the configuration store.
+    :type encryption: ~azure.mgmt.appconfiguration.models.EncryptionProperties
     :param sku: Required. The sku of the configuration store.
     :type sku: ~azure.mgmt.appconfiguration.models.Sku
     """
@@ -206,6 +208,7 @@ class ConfigurationStore(Resource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'creation_date': {'key': 'properties.creationDate', 'type': 'iso-8601'},
         'endpoint': {'key': 'properties.endpoint', 'type': 'str'},
+        'encryption': {'key': 'properties.encryption', 'type': 'EncryptionProperties'},
         'sku': {'key': 'sku', 'type': 'Sku'},
     }
 
@@ -215,14 +218,15 @@ class ConfigurationStore(Resource):
         self.provisioning_state = None
         self.creation_date = None
         self.endpoint = None
+        self.encryption = kwargs.get('encryption', None)
         self.sku = kwargs.get('sku', None)
 
 
 class ConfigurationStoreUpdateParameters(Model):
     """The parameters for updating a configuration store.
 
-    :param properties: The properties for updating a configuration store.
-    :type properties: object
+    :param encryption: The encryption settings of the configuration store.
+    :type encryption: ~azure.mgmt.appconfiguration.models.EncryptionProperties
     :param identity: The managed identity information for the configuration
      store.
     :type identity: ~azure.mgmt.appconfiguration.models.ResourceIdentity
@@ -233,7 +237,7 @@ class ConfigurationStoreUpdateParameters(Model):
     """
 
     _attribute_map = {
-        'properties': {'key': 'properties', 'type': 'object'},
+        'encryption': {'key': 'properties.encryption', 'type': 'EncryptionProperties'},
         'identity': {'key': 'identity', 'type': 'ResourceIdentity'},
         'sku': {'key': 'sku', 'type': 'Sku'},
         'tags': {'key': 'tags', 'type': '{str}'},
@@ -241,10 +245,27 @@ class ConfigurationStoreUpdateParameters(Model):
 
     def __init__(self, **kwargs):
         super(ConfigurationStoreUpdateParameters, self).__init__(**kwargs)
-        self.properties = kwargs.get('properties', None)
+        self.encryption = kwargs.get('encryption', None)
         self.identity = kwargs.get('identity', None)
         self.sku = kwargs.get('sku', None)
         self.tags = kwargs.get('tags', None)
+
+
+class EncryptionProperties(Model):
+    """The encryption settings for a configuration store.
+
+    :param key_vault_properties: Key vault properties.
+    :type key_vault_properties:
+     ~azure.mgmt.appconfiguration.models.KeyVaultProperties
+    """
+
+    _attribute_map = {
+        'key_vault_properties': {'key': 'keyVaultProperties', 'type': 'KeyVaultProperties'},
+    }
+
+    def __init__(self, **kwargs):
+        super(EncryptionProperties, self).__init__(**kwargs)
+        self.key_vault_properties = kwargs.get('key_vault_properties', None)
 
 
 class Error(Model):
@@ -344,6 +365,27 @@ class KeyValue(Model):
         self.last_modified = None
         self.locked = None
         self.tags = None
+
+
+class KeyVaultProperties(Model):
+    """Settings concerning key vault encryption for a configuration store.
+
+    :param key_identifier: The URI of the key vault key used to encrypt data.
+    :type key_identifier: str
+    :param identity_client_id: The client id of the identity which will be
+     used to access key vault.
+    :type identity_client_id: str
+    """
+
+    _attribute_map = {
+        'key_identifier': {'key': 'keyIdentifier', 'type': 'str'},
+        'identity_client_id': {'key': 'identityClientId', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(KeyVaultProperties, self).__init__(**kwargs)
+        self.key_identifier = kwargs.get('key_identifier', None)
+        self.identity_client_id = kwargs.get('identity_client_id', None)
 
 
 class ListKeyValueParameters(Model):
@@ -464,6 +506,155 @@ class OperationDefinitionDisplay(Model):
         self.description = kwargs.get('description', None)
 
 
+class PrivateEndpoint(Model):
+    """Private endpoint which a connection belongs to.
+
+    :param id: The resource Id for private endpoint
+    :type id: str
+    """
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PrivateEndpoint, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+
+
+class PrivateEndpointConnection(Model):
+    """A private endpoint connection.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: The resource ID.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource.
+    :vartype type: str
+    :ivar provisioning_state: The provisioning status of the private endpoint
+     connection. Possible values include: 'Creating', 'Updating', 'Deleting',
+     'Succeeded', 'Failed', 'Canceled'
+    :vartype provisioning_state: str or
+     ~azure.mgmt.appconfiguration.models.ProvisioningState
+    :param private_endpoint: The resource of private endpoint.
+    :type private_endpoint:
+     ~azure.mgmt.appconfiguration.models.PrivateEndpoint
+    :param private_link_service_connection_state: Required. A collection of
+     information about the state of the connection between service consumer and
+     provider.
+    :type private_link_service_connection_state:
+     ~azure.mgmt.appconfiguration.models.PrivateLinkServiceConnectionState
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+        'private_link_service_connection_state': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'private_endpoint': {'key': 'properties.privateEndpoint', 'type': 'PrivateEndpoint'},
+        'private_link_service_connection_state': {'key': 'properties.privateLinkServiceConnectionState', 'type': 'PrivateLinkServiceConnectionState'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PrivateEndpointConnection, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+        self.provisioning_state = None
+        self.private_endpoint = kwargs.get('private_endpoint', None)
+        self.private_link_service_connection_state = kwargs.get('private_link_service_connection_state', None)
+
+
+class PrivateLinkResource(Model):
+    """A resource that supports private link capabilities.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: The resource ID.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource.
+    :vartype type: str
+    :ivar group_id: The private link resource group id.
+    :vartype group_id: str
+    :ivar required_members: The private link resource required member names.
+    :vartype required_members: list[str]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'group_id': {'readonly': True},
+        'required_members': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'group_id': {'key': 'properties.groupId', 'type': 'str'},
+        'required_members': {'key': 'properties.requiredMembers', 'type': '[str]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PrivateLinkResource, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+        self.group_id = None
+        self.required_members = None
+
+
+class PrivateLinkServiceConnectionState(Model):
+    """The state of a private link service connection.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :param status: The private link service connection status. Possible values
+     include: 'Pending', 'Approved', 'Rejected', 'Disconnected'
+    :type status: str or ~azure.mgmt.appconfiguration.models.ConnectionStatus
+    :param description: The private link service connection description.
+    :type description: str
+    :ivar actions_required: Any action that is required beyond basic workflow
+     (approve/ reject/ disconnect). Possible values include: 'None', 'Recreate'
+    :vartype actions_required: str or
+     ~azure.mgmt.appconfiguration.models.ActionsRequired
+    """
+
+    _validation = {
+        'actions_required': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'status': {'key': 'status', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'actions_required': {'key': 'actionsRequired', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PrivateLinkServiceConnectionState, self).__init__(**kwargs)
+        self.status = kwargs.get('status', None)
+        self.description = kwargs.get('description', None)
+        self.actions_required = None
+
+
 class RegenerateKeyParameters(Model):
     """The parameters used to regenerate an API key.
 
@@ -481,7 +672,7 @@ class RegenerateKeyParameters(Model):
 
 
 class ResourceIdentity(Model):
-    """ResourceIdentity.
+    """An identity that can be associated with a resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -549,7 +740,7 @@ class Sku(Model):
 
 
 class UserIdentity(Model):
-    """UserIdentity.
+    """A resource identity that is managed by the user of the service.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.

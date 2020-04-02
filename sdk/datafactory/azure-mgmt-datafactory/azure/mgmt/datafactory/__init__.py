@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .data_factory_management_client import DataFactoryManagementClient
-from .version import VERSION
+from ._configuration import DataFactoryManagementClientConfiguration
+from ._data_factory_management_client import DataFactoryManagementClient
+__all__ = ['DataFactoryManagementClient', 'DataFactoryManagementClientConfiguration']
 
-__all__ = ['DataFactoryManagementClient']
+from .version import VERSION
 
 __version__ = VERSION
 

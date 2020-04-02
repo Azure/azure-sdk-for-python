@@ -5,16 +5,18 @@
 import os
 from typing import TYPE_CHECKING
 
-from azure.core.exceptions import ClientAuthenticationError
+from ... import CredentialUnavailableError
 from ..._constants import EnvironmentVariables
+from ..._credentials.environment import get_credential_unavailable_message
 from .client_credential import CertificateCredential, ClientSecretCredential
+from .base import AsyncCredentialBase
 
 if TYPE_CHECKING:
     from typing import Any, Optional, Union
     from azure.core.credentials import AccessToken
 
 
-class EnvironmentCredential:
+class EnvironmentCredential(AsyncCredentialBase):
     """A credential configured by environment variables.
 
     This credential is capable of authenticating as a service principal using a client secret or a certificate, or as
@@ -34,6 +36,7 @@ class EnvironmentCredential:
 
     def __init__(self, **kwargs: "Any") -> None:
         self._credential = None  # type: Optional[Union[CertificateCredential, ClientSecretCredential]]
+        self._unavailable_message = ""
 
         if all(os.environ.get(v) is not None for v in EnvironmentVariables.CLIENT_SECRET_VARS):
             self._credential = ClientSecretCredential(
@@ -50,15 +53,29 @@ class EnvironmentCredential:
                 **kwargs
             )
 
+        if not self._credential:
+            self._unavailable_message = get_credential_unavailable_message()
+
+    async def __aenter__(self):
+        if self._credential:
+            await self._credential.__aenter__()
+        return self
+
+    async def close(self):
+        """Close the credential's transport session."""
+
+        if self._credential:
+            await self._credential.__aexit__()
+
     async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":
         """Asynchronously request an access token for `scopes`.
 
         .. note:: This method is called by Azure SDK clients. It isn't intended for use in application code.
 
-        :param str scopes: desired scopes for the token
+        :param str scopes: desired scopes for the access token. This method requires at least one scope.
         :rtype: :class:`azure.core.credentials.AccessToken`
-        :raises ~azure.core.exceptions.ClientAuthenticationError:
+        :raises ~azure.identity.CredentialUnavailableError: environment variable configuration is incomplete
         """
         if not self._credential:
-            raise ClientAuthenticationError(message="Incomplete environment configuration")
+            raise CredentialUnavailableError(message=self._unavailable_message)
         return await self._credential.get_token(*scopes, **kwargs)

@@ -7,9 +7,9 @@
 import os.path
 import time
 try:
-    from azure.core.credentials import AccessToken
+    from azure.core.credentials import AccessToken as _AccessToken
 except ImportError:
-    AccessToken = None
+    _AccessToken = None
 
 
 def get_cli_profile():
@@ -46,8 +46,6 @@ class _CliCredentials(object):
     _DEFAULT_PREFIX = "/.default"
 
     def __init__(self, cli_profile, resource):
-        if AccessToken is None:  # import failed
-            raise ImportError("You need to install 'azure-core' to use this feature")
         self._profile = cli_profile
         self._resource = resource
         self._cred_dict = {}
@@ -59,6 +57,8 @@ class _CliCredentials(object):
         return self._cred_dict[resource]
 
     def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
+        if _AccessToken is None:  # import failed
+            raise ImportError("You need to install 'azure-core' to use CLI credentials in this context")
 
         if len(scopes) != 1:
             raise ValueError("Multiple scopes are not supported: {}".format(scopes))
@@ -71,7 +71,7 @@ class _CliCredentials(object):
         credentials = self._get_cred(resource)
         _, token, fulltoken = credentials._token_retriever()  # pylint:disable=protected-access
 
-        return AccessToken(token, int(fulltoken['expiresIn'] + time.time()))
+        return _AccessToken(token, int(fulltoken['expiresIn'] + time.time()))
 
     def signed_session(self, session=None):
         credentials = self._get_cred(self._resource)

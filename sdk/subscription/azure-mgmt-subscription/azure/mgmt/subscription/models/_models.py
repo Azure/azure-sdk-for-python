@@ -170,6 +170,44 @@ class Location(Model):
         self.longitude = None
 
 
+class ModernCspSubscriptionCreationParameters(Model):
+    """The parameters required to create a new CSP subscription.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param display_name: Required. The friendly name of the subscription.
+    :type display_name: str
+    :param sku_id: Required. The SKU ID of the Azure plan. Azure plan
+     determines the pricing and service-level agreement of the subscription.
+     Use 001 for Microsoft Azure Plan and 002 for Microsoft Azure Plan for
+     DevTest.
+    :type sku_id: str
+    :param reseller_id: Reseller ID, basically MPN Id.
+    :type reseller_id: str
+    :param service_provider_id: Service provider ID, basically MPN Id.
+    :type service_provider_id: str
+    """
+
+    _validation = {
+        'display_name': {'required': True},
+        'sku_id': {'required': True},
+    }
+
+    _attribute_map = {
+        'display_name': {'key': 'displayName', 'type': 'str'},
+        'sku_id': {'key': 'skuId', 'type': 'str'},
+        'reseller_id': {'key': 'resellerId', 'type': 'str'},
+        'service_provider_id': {'key': 'serviceProviderId', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ModernCspSubscriptionCreationParameters, self).__init__(**kwargs)
+        self.display_name = kwargs.get('display_name', None)
+        self.sku_id = kwargs.get('sku_id', None)
+        self.reseller_id = kwargs.get('reseller_id', None)
+        self.service_provider_id = kwargs.get('service_provider_id', None)
+
+
 class ModernSubscriptionCreationParameters(Model):
     """The parameters required to create a new subscription.
 

@@ -10,58 +10,58 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .search_action_py3 import SearchAction
-    from .suggestions_suggestion_group_py3 import SuggestionsSuggestionGroup
-    from .suggestions_py3 import Suggestions
-    from .query_context_py3 import QueryContext
-    from .search_results_answer_py3 import SearchResultsAnswer
-    from .answer_py3 import Answer
-    from .thing_py3 import Thing
-    from .action_py3 import Action
-    from .response_py3 import Response
-    from .identifiable_py3 import Identifiable
-    from .error_py3 import Error
-    from .error_response_py3 import ErrorResponse, ErrorResponseException
-    from .creative_work_py3 import CreativeWork
-    from .response_base_py3 import ResponseBase
+    from ._models_py3 import Action
+    from ._models_py3 import Answer
+    from ._models_py3 import CreativeWork
+    from ._models_py3 import Error
+    from ._models_py3 import ErrorResponse, ErrorResponseException
+    from ._models_py3 import Identifiable
+    from ._models_py3 import QueryContext
+    from ._models_py3 import Response
+    from ._models_py3 import ResponseBase
+    from ._models_py3 import SearchAction
+    from ._models_py3 import SearchResultsAnswer
+    from ._models_py3 import Suggestions
+    from ._models_py3 import SuggestionsSuggestionGroup
+    from ._models_py3 import Thing
 except (SyntaxError, ImportError):
-    from .search_action import SearchAction
-    from .suggestions_suggestion_group import SuggestionsSuggestionGroup
-    from .suggestions import Suggestions
-    from .query_context import QueryContext
-    from .search_results_answer import SearchResultsAnswer
-    from .answer import Answer
-    from .thing import Thing
-    from .action import Action
-    from .response import Response
-    from .identifiable import Identifiable
-    from .error import Error
-    from .error_response import ErrorResponse, ErrorResponseException
-    from .creative_work import CreativeWork
-    from .response_base import ResponseBase
-from .auto_suggest_search_api_enums import (
+    from ._models import Action
+    from ._models import Answer
+    from ._models import CreativeWork
+    from ._models import Error
+    from ._models import ErrorResponse, ErrorResponseException
+    from ._models import Identifiable
+    from ._models import QueryContext
+    from ._models import Response
+    from ._models import ResponseBase
+    from ._models import SearchAction
+    from ._models import SearchResultsAnswer
+    from ._models import Suggestions
+    from ._models import SuggestionsSuggestionGroup
+    from ._models import Thing
+from ._auto_suggest_client_enums import (
+    ErrorCode,
+    ResponseFormat,
+    SafeSearch,
     ScenarioType,
     SearchKind,
-    ErrorCode,
-    SafeSearch,
-    ResponseFormat,
 )
 
 __all__ = [
-    'SearchAction',
-    'SuggestionsSuggestionGroup',
-    'Suggestions',
-    'QueryContext',
-    'SearchResultsAnswer',
-    'Answer',
-    'Thing',
     'Action',
-    'Response',
-    'Identifiable',
+    'Answer',
+    'CreativeWork',
     'Error',
     'ErrorResponse', 'ErrorResponseException',
-    'CreativeWork',
+    'Identifiable',
+    'QueryContext',
+    'Response',
     'ResponseBase',
+    'SearchAction',
+    'SearchResultsAnswer',
+    'Suggestions',
+    'SuggestionsSuggestionGroup',
+    'Thing',
     'ScenarioType',
     'SearchKind',
     'ErrorCode',

@@ -30,8 +30,8 @@ if not version:
 
 with open('README.md') as f:
     readme = f.read()
-with open('HISTORY.md') as f:
-    history = f.read()
+with open('CHANGELOG.md') as f:
+    changelog = f.read()
 
 exclude_packages = [
         'tests',
@@ -39,21 +39,21 @@ exclude_packages = [
         # Exclude packages that will be covered by PEP420 or nspkg
         'azure',
         'azure.eventhub',
-        'azure.eventhub.extensions',
+        'azure.eventhub.extensions'
     ]
 
 setup(
     name=PACKAGE_NAME,
     version=version,
     description='Microsoft Azure {} Client Library for Python'.format(PACKAGE_PPRINT_NAME),
-    long_description=readme + '\n\n' + history,
+    long_description=readme + '\n\n' + changelog,
     long_description_content_type='text/markdown',
     license='MIT License',
     author='Microsoft Corporation',
     author_email='azpysdkhelp@microsoft.com',
     url='https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub-checkpointstoreblob-aio',
     classifiers=[
-        'Development Status :: 3 - Alpha',
+        "Development Status :: 5 - Production/Stable",
         'Programming Language :: Python',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.5',
@@ -66,11 +66,19 @@ setup(
     packages=find_packages(exclude=exclude_packages),
     python_requires=">=3.5.3",
     install_requires=[
-        'azure-storage-blob<13.0.0,>=12.0.0',
+        # dependencies for the vendored storage blob
+        "azure-core<2.0.0,>=1.2.2",
+        "msrest>=0.6.10",
+        "cryptography>=2.1.4",
+        # end of dependencies for the vendored storage blob
         'azure-eventhub<6.0.0,>=5.0.0',
         'aiohttp<4.0,>=3.0',
     ],
     extras_require={
-
-    }
+        # dependencies for the vendored storage blob
+        ":python_version<'3.0'": ['futures'],
+        ":python_version<'3.4'": ['enum34>=1.0.4'],
+        ":python_version<'3.5'": ["typing"]
+        # end of dependencies for the vendored storage blob
+    },
 )

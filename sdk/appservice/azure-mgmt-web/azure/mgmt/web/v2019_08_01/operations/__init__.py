@@ -20,6 +20,7 @@ from ._diagnostics_operations import DiagnosticsOperations
 from ._provider_operations import ProviderOperations
 from ._recommendations_operations import RecommendationsOperations
 from ._web_apps_operations import WebAppsOperations
+from ._static_sites_operations import StaticSitesOperations
 from ._app_service_environments_operations import AppServiceEnvironmentsOperations
 from ._app_service_plans_operations import AppServicePlansOperations
 from ._resource_health_metadata_operations import ResourceHealthMetadataOperations
@@ -37,6 +38,7 @@ __all__ = [
     'ProviderOperations',
     'RecommendationsOperations',
     'WebAppsOperations',
+    'StaticSitesOperations',
     'AppServiceEnvironmentsOperations',
     'AppServicePlansOperations',
     'ResourceHealthMetadataOperations',

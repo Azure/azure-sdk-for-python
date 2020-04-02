@@ -161,13 +161,6 @@ class AsyncPipeline(
         if self._impl_policies:
             self._impl_policies[-1].next = _AsyncTransportRunner(self._transport)
 
-    def __enter__(self):
-        raise TypeError("Use 'async with' instead")
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        # __exit__ should exist in pair with __enter__ but never executed
-        pass  # pragma: no cover
-
     async def __aenter__(self) -> "AsyncPipeline":
         await self._transport.__aenter__()
         return self

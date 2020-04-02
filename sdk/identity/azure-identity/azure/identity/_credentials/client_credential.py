@@ -39,10 +39,15 @@ class ClientSecretCredential(ClientSecretCredentialBase):
 
         .. note:: This method is called by Azure SDK clients. It isn't intended for use in application code.
 
-        :param str scopes: desired scopes for the token
+        :param str scopes: desired scopes for the access token. This method requires at least one scope.
         :rtype: :class:`azure.core.credentials.AccessToken`
-        :raises ~azure.core.exceptions.ClientAuthenticationError:
+        :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The error's ``message``
+          attribute gives a reason. Any error response from Azure Active Directory is available as the error's
+          ``response`` attribute.
         """
+        if not scopes:
+            raise ValueError("'get_token' requires at least one scope")
+
         token = self._client.get_cached_token(scopes)
         if not token:
             data = dict(self._form_data, scope=" ".join(scopes))
@@ -56,11 +61,13 @@ class CertificateCredential(CertificateCredentialBase):
     :param str tenant_id: ID of the service principal's tenant. Also called its 'directory' ID.
     :param str client_id: the service principal's client ID
     :param str certificate_path: path to a PEM-encoded certificate file including the private key.
-      This file must not be password-protected.
 
     :keyword str authority: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com',
           the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.KnownAuthorities`
           defines authorities for other clouds.
+    :keyword password: The certificate's password. If a unicode string, it will be encoded as UTF-8. If the certificate
+          requires a different encoding, pass appropriately encoded bytes instead.
+    :paramtype password: str or bytes
     """
 
     def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
@@ -69,10 +76,15 @@ class CertificateCredential(CertificateCredentialBase):
 
         .. note:: This method is called by Azure SDK clients. It isn't intended for use in application code.
 
-        :param str scopes: desired scopes for the token
+        :param str scopes: desired scopes for the access token. This method requires at least one scope.
         :rtype: :class:`azure.core.credentials.AccessToken`
-        :raises ~azure.core.exceptions.ClientAuthenticationError:
+        :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The error's ``message``
+          attribute gives a reason. Any error response from Azure Active Directory is available as the error's
+          ``response`` attribute.
         """
+        if not scopes:
+            raise ValueError("'get_token' requires at least one scope")
+
         token = self._client.get_cached_token(scopes)
         if not token:
             data = self._get_request_data(*scopes)

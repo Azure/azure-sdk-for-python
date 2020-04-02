@@ -65,7 +65,7 @@ class StorageLoggingTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_authorization_is_scrubbed_off(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
         self._setup(bsc)
         container = bsc.get_container_client(self.container_name)
         # Act
@@ -82,7 +82,7 @@ class StorageLoggingTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_sas_signature_is_scrubbed_off(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
         self._setup(bsc)
         # Arrange
         container = bsc.get_container_client(self.container_name)
@@ -113,7 +113,7 @@ class StorageLoggingTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_copy_source_sas_is_scrubbed_off(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
         self._setup(bsc)
         # Arrange
         dest_blob_name = self.get_resource_name('destblob')
