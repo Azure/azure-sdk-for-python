@@ -10,7 +10,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azsdk-python-ai-textanalytics/1.0.0b4 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/1.0.0b4 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
         Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/entities/recognition/general?showStats=false
@@ -18,14 +18,14 @@ interactions:
     body:
       string: '{"documents":[{"id":"0","entities":[{"text":"cls","type":"Skill","offset":13,"length":3,"score":0.8}]}],"errors":[],"modelVersion":"2020-02-01"}'
     headers:
-      apim-request-id: 49ce0c90-ed93-44b5-8cde-a40f237b092c
+      apim-request-id: e0d9eebc-c92e-428f-b7cf-e33a472da04d
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=1
-      date: Tue, 31 Mar 2020 14:54:30 GMT
+      date: Thu, 02 Apr 2020 15:07:40 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '46'
+      x-envoy-upstream-service-time: '37'
     status:
       code: 200
       message: OK
