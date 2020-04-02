@@ -27,8 +27,8 @@ from .utils import parse_conn_str, build_uri
 from ..exceptions import (
     ServiceBusConnectionError,
     ServiceBusResourceNotFound)
-from azure.servicebus.control_client import ServiceBusService
-from azure.servicebus.control_client.models import AzureServiceBusResourceNotFound, Queue, Subscription, Topic
+from .._control_client import ServiceBusService
+from .._control_client.models import AzureServiceBusResourceNotFound, Queue, Subscription, Topic
 
 
 class ServiceBusMixin(object):
