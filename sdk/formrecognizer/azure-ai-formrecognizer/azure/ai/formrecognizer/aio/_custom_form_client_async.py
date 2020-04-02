@@ -35,6 +35,7 @@ from .._models import (
     CustomLabeledModel,
 )
 from .._user_agent import USER_AGENT
+from ._training_polling_async import AsyncTrainingPolling
 if TYPE_CHECKING:
     from azure.core.credentials import AzureKeyCredential
     from .._models import (
@@ -113,7 +114,7 @@ class CustomFormClient(object):
             self._client._client,
             response,
             deserialization_callback,
-            AsyncLROBasePolling(**kwargs)
+            AsyncTrainingPolling(**kwargs)
         )
 
     @distributed_trace_async
@@ -163,7 +164,7 @@ class CustomFormClient(object):
             self._client._client,
             response,
             deserialization_callback,
-            AsyncLROBasePolling(**kwargs)
+            AsyncTrainingPolling(**kwargs)
         )
 
     @distributed_trace_async

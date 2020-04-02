@@ -32,6 +32,7 @@ from ._models import (
     CustomModel,
     CustomLabeledModel,
 )
+from ._training_polling import TrainingPolling
 from ._user_agent import USER_AGENT
 if TYPE_CHECKING:
     from azure.core.credentials import AzureKeyCredential
@@ -94,7 +95,7 @@ class CustomFormClient(object):
             return CustomModel._from_generated(model)
 
         deserialization_callback = cls if cls else callback
-        return LROPoller(self._client._client, response, deserialization_callback, LROBasePolling(**kwargs))
+        return LROPoller(self._client._client, response, deserialization_callback, TrainingPolling(**kwargs))
 
     @distributed_trace
     def begin_labeled_training(self, source, source_prefix_filter="", include_sub_folders=False, **kwargs):
@@ -134,7 +135,7 @@ class CustomFormClient(object):
             return CustomLabeledModel._from_generated(model)
 
         deserialization_callback = cls if cls else callback
-        return LROPoller(self._client._client, response, deserialization_callback, LROBasePolling(**kwargs))
+        return LROPoller(self._client._client, response, deserialization_callback, TrainingPolling(**kwargs))
 
     @distributed_trace
     def begin_extract_form_pages(self, stream, model_id, **kwargs):
