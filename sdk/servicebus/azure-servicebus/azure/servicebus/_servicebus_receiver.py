@@ -305,7 +305,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         **kwargs
     ):
         # type: (str, TokenCredential, Any) -> None
-        if kwargs.get("from_connection_str", False):
+        if kwargs.get("entity_name"):
             super(ServiceBusReceiver, self).__init__(
                 fully_qualified_namespace=fully_qualified_namespace,
                 credential=credential,

@@ -129,7 +129,7 @@ class ServiceBusClient(object):
         host, policy, key, entity_in_conn_str = _parse_conn_str(conn_str)
         return cls(
             fully_qualified_namespace=host,
-            entity_name=entity_in_conn_str or kwargs.get("entity_name"),
+            entity_name=entity_in_conn_str or kwargs.pop("entity_name", None),
             credential=ServiceBusSharedKeyCredential(policy, key),
             **kwargs
         )

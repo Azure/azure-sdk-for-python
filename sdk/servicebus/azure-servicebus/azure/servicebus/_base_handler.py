@@ -168,7 +168,6 @@ class BaseHandler(object):  # pylint:disable=too-many-instance-attributes
         kwargs["fully_qualified_namespace"] = host
         kwargs["entity_name"] = entity_in_conn_str or entity_in_kwargs
         kwargs["credential"] = ServiceBusSharedKeyCredential(policy, key)
-        kwargs["from_connection_str"] = True
         return kwargs
 
     def _backoff(
