@@ -11,7 +11,7 @@ class PatternAnalyzer(Analyzer):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Identifies the concrete type of the analyzer.Constant filled by
+    :param odata_type: Required. Identifies the concrete type of the analyzer. Constant filled by
      server.
     :type odata_type: str
     :param name: Required. The name of the analyzer. It must only contain letters, digits, spaces,
@@ -62,7 +62,7 @@ class PatternTokenizer(Tokenizer):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param odata_type: Required. Identifies the concrete type of the tokenizer.Constant filled by
+    :param odata_type: Required. Identifies the concrete type of the tokenizer. Constant filled by
      server.
     :type odata_type: str
     :param name: Required. The name of the tokenizer. It must only contain letters, digits, spaces,
