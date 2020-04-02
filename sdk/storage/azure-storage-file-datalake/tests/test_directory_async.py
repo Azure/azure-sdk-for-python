@@ -19,6 +19,7 @@ from azure.core.exceptions import HttpResponseError, ResourceExistsError, Resour
 from azure.storage.filedatalake import ContentSettings, DirectorySasPermissions
 from azure.storage.filedatalake import generate_directory_sas
 from azure.storage.filedatalake.aio import DataLakeServiceClient, DataLakeDirectoryClient
+from azure.storage.filedatalake import AccessControlChangeResult, AccessControlChangeCounters
 
 from testcase import (
     StorageTestCase,
@@ -29,6 +30,9 @@ from testcase import (
 
 # ------------------------------------------------------------------------------
 TEST_DIRECTORY_PREFIX = 'directory'
+REMOVE_ACL = "mask," + "default:user,default:group," + \
+             "user:ec3595d6-2c17-4696-8caa-7e139758d24a,group:ec3595d6-2c17-4696-8caa-7e139758d24a," + \
+             "default:user:ec3595d6-2c17-4696-8caa-7e139758d24a,default:group:ec3595d6-2c17-4696-8caa-7e139758d24a"
 
 
 # ------------------------------------------------------------------------------
@@ -87,6 +91,13 @@ class DirectoryTest(StorageTestCase):
         directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
         await directory_client.create_directory()
         return directory_client
+
+    async def _create_sub_directory_and_files(self, directory_client, num_of_dirs, num_of_files_per_dir):
+        # the name suffix matter since we need to avoid creating the same directories/files in record mode
+        for i in range(0, num_of_dirs):
+            sub_dir = await directory_client.create_sub_directory(self.get_resource_name('subdir' + str(i)))
+            for j in range(0, num_of_files_per_dir):
+                await sub_dir.create_file(self.get_resource_name('subfile' + str(j)))
 
     async def _create_file_system(self):
         return await self.dsc.create_file_system(self._get_file_system_reference())
@@ -343,6 +354,436 @@ class DirectoryTest(StorageTestCase):
     def test_get_access_control_with_match_conditions_async(self):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_access_control_with_match_conditions())
+
+    @record
+    def test_set_access_control_recursive_async(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_set_access_control_recursive_async())
+
+    async def _test_set_access_control_recursive_async(self):
+        directory_name = self._get_directory_reference()
+        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        await directory_client.create_directory()
+        num_sub_dirs = 5
+        num_file_per_sub_dir = 5
+        await self._create_sub_directory_and_files(directory_client, num_sub_dirs, num_file_per_sub_dir)
+
+        acl = 'user::rwx,group::r-x,other::rwx'
+        summary = await directory_client.set_access_control_recursive(acl=acl)
+
+        # Assert
+        self.assertEqual(summary.counters.directories_successful,
+                         num_sub_dirs + 1)  # +1 as the dir itself was also included
+        self.assertEqual(summary.counters.files_successful, num_sub_dirs * num_file_per_sub_dir)
+        self.assertEqual(summary.counters.failure_count, 0)
+        self.assertIsNone(summary.continuation)
+        access_control = await directory_client.get_access_control()
+        self.assertIsNotNone(access_control)
+        self.assertEqual(acl, access_control['acl'])
+
+    @record
+    def test_set_access_control_recursive_in_batches_async(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_set_access_control_recursive_in_batches_async())
+
+    async def _test_set_access_control_recursive_in_batches_async(self):
+        directory_name = self._get_directory_reference()
+        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        await directory_client.create_directory()
+        num_sub_dirs = 5
+        num_file_per_sub_dir = 5
+        await self._create_sub_directory_and_files(directory_client, num_sub_dirs, num_file_per_sub_dir)
+
+        acl = 'user::rwx,group::r-x,other::rwx'
+        summary = await directory_client.set_access_control_recursive(acl=acl, batch_size=2)
+
+        # Assert
+        self.assertEqual(summary.counters.directories_successful,
+                         num_sub_dirs + 1)  # +1 as the dir itself was also included
+        self.assertEqual(summary.counters.files_successful, num_sub_dirs * num_file_per_sub_dir)
+        self.assertEqual(summary.counters.failure_count, 0)
+        self.assertIsNone(summary.continuation)
+        access_control = await directory_client.get_access_control()
+        self.assertIsNotNone(access_control)
+        self.assertEqual(acl, access_control['acl'])
+
+    @record
+    def test_set_access_control_recursive_in_batches_with_progress_callback_async(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_set_access_control_recursive_in_batches_with_progress_callback_async())
+
+    async def _test_set_access_control_recursive_in_batches_with_progress_callback_async(self):
+        directory_name = self._get_directory_reference()
+        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        await directory_client.create_directory()
+        num_sub_dirs = 5
+        num_file_per_sub_dir = 5
+        await self._create_sub_directory_and_files(directory_client, num_sub_dirs, num_file_per_sub_dir)
+
+        acl = 'user::rwx,group::r-x,other::rwx'
+        running_tally = AccessControlChangeCounters(0, 0, 0)
+        last_response = AccessControlChangeResult(None, "")
+
+        async def progress_callback(resp):
+            running_tally.directories_successful += resp.batch_counters.directories_successful
+            running_tally.files_successful += resp.batch_counters.files_successful
+            running_tally.failure_count += resp.batch_counters.failure_count
+
+            last_response.counters = resp.aggregate_counters
+
+        summary = await directory_client.set_access_control_recursive(acl=acl, progress_callback=progress_callback,
+                                                                      batch_size=2)
+
+        # Assert
+        self.assertEqual(summary.counters.directories_successful,
+                         num_sub_dirs + 1)  # +1 as the dir itself was also included
+        self.assertEqual(summary.counters.files_successful, num_sub_dirs * num_file_per_sub_dir)
+        self.assertEqual(summary.counters.failure_count, 0)
+        self.assertIsNone(summary.continuation)
+        self.assertEqual(summary.counters.directories_successful, running_tally.directories_successful)
+        self.assertEqual(summary.counters.files_successful, running_tally.files_successful)
+        self.assertEqual(summary.counters.failure_count, running_tally.failure_count)
+        self.assertEqual(summary.counters.directories_successful, last_response.counters.directories_successful)
+        self.assertEqual(summary.counters.files_successful, last_response.counters.files_successful)
+        self.assertEqual(summary.counters.failure_count, last_response.counters.failure_count)
+        access_control = await directory_client.get_access_control()
+        self.assertIsNotNone(access_control)
+        self.assertEqual(acl, access_control['acl'])
+
+    @record
+    def test_set_access_control_recursive_with_failures_async(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_set_access_control_recursive_with_failures_async())
+
+    async def _test_set_access_control_recursive_with_failures_async(self):
+        root_directory_client = self.dsc.get_file_system_client(self.file_system_name)._get_root_directory_client()
+        await root_directory_client.set_access_control(acl="user::--x,group::--x,other::--x")
+
+        # Using an AAD identity, create a directory to put files under that
+        directory_name = self._get_directory_reference()
+        token_credential = self.generate_async_oauth_token()
+        directory_client = DataLakeDirectoryClient(self.dsc.url, self.file_system_name, directory_name,
+                                                   credential=token_credential)
+        await directory_client.create_directory()
+        num_sub_dirs = 5
+        num_file_per_sub_dir = 5
+        await self._create_sub_directory_and_files(directory_client, num_sub_dirs, num_file_per_sub_dir)
+
+        # Create a file as super user
+        await self.dsc.get_directory_client(self.file_system_name, directory_name).get_file_client("cannottouchthis") \
+            .create_file()
+
+        acl = 'user::rwx,group::r-x,other::rwx'
+        running_tally = AccessControlChangeCounters(0, 0, 0)
+        failed_entries = []
+
+        async def progress_callback(resp):
+            running_tally.directories_successful += resp.batch_counters.directories_successful
+            running_tally.files_successful += resp.batch_counters.files_successful
+            running_tally.failure_count += resp.batch_counters.failure_count
+            failed_entries.append(resp.batch_failures)
+
+        summary = await directory_client.set_access_control_recursive(acl=acl, progress_callback=progress_callback,
+                                                                      batch_size=2)
+
+        # Assert
+        self.assertEqual(summary.counters.failure_count, 1)
+        self.assertEqual(summary.counters.directories_successful, running_tally.directories_successful)
+        self.assertEqual(summary.counters.files_successful, running_tally.files_successful)
+        self.assertEqual(summary.counters.failure_count, running_tally.failure_count)
+        self.assertEqual(len(failed_entries), 1)
+
+    @record
+    def test_set_access_control_recursive_in_batches_with_explicit_iteration_async(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_set_access_control_recursive_in_batches_with_explicit_iteration_async())
+
+    async def _test_set_access_control_recursive_in_batches_with_explicit_iteration_async(self):
+        directory_name = self._get_directory_reference()
+        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        await directory_client.create_directory()
+        num_sub_dirs = 5
+        num_file_per_sub_dir = 5
+        await self._create_sub_directory_and_files(directory_client, num_sub_dirs, num_file_per_sub_dir)
+
+        acl = 'user::rwx,group::r-x,other::rwx'
+        running_tally = AccessControlChangeCounters(0, 0, 0)
+        result = AccessControlChangeResult(None, "")
+        iteration_count = 0
+        max_batches = 2
+        batch_size = 2
+
+        while result.continuation is not None:
+            result = await directory_client.set_access_control_recursive(acl=acl, batch_size=batch_size,
+                                                                         max_batches=max_batches,
+                                                                         continuation=result.continuation)
+
+            running_tally.directories_successful += result.counters.directories_successful
+            running_tally.files_successful += result.counters.files_successful
+            running_tally.failure_count += result.counters.failure_count
+            iteration_count += 1
+
+        # Assert
+        self.assertEqual(running_tally.directories_successful,
+                         num_sub_dirs + 1)  # +1 as the dir itself was also included
+        self.assertEqual(running_tally.files_successful, num_sub_dirs * num_file_per_sub_dir)
+        self.assertEqual(running_tally.failure_count, 0)
+        access_control = await directory_client.get_access_control()
+        self.assertIsNotNone(access_control)
+        self.assertEqual(acl, access_control['acl'])
+
+    @record
+    def test_update_access_control_recursive_async(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_update_access_control_recursive_async())
+
+    async def _test_update_access_control_recursive_async(self):
+        directory_name = self._get_directory_reference()
+        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        await directory_client.create_directory()
+        num_sub_dirs = 5
+        num_file_per_sub_dir = 5
+        await self._create_sub_directory_and_files(directory_client, num_sub_dirs, num_file_per_sub_dir)
+
+        acl = 'user::rwx,group::r-x,other::rwx'
+        summary = await directory_client.update_access_control_recursive(acl=acl)
+
+        # Assert
+        self.assertEqual(summary.counters.directories_successful,
+                         num_sub_dirs + 1)  # +1 as the dir itself was also included
+        self.assertEqual(summary.counters.files_successful, num_sub_dirs * num_file_per_sub_dir)
+        self.assertEqual(summary.counters.failure_count, 0)
+        access_control = await directory_client.get_access_control()
+        self.assertIsNotNone(access_control)
+        self.assertEqual(acl, access_control['acl'])
+
+    @record
+    def test_update_access_control_recursive_in_batches_async(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_update_access_control_recursive_in_batches_async())
+
+    async def _test_update_access_control_recursive_in_batches_async(self):
+        directory_name = self._get_directory_reference()
+        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        await directory_client.create_directory()
+        num_sub_dirs = 5
+        num_file_per_sub_dir = 5
+        await self._create_sub_directory_and_files(directory_client, num_sub_dirs, num_file_per_sub_dir)
+
+        acl = 'user::rwx,group::r-x,other::rwx'
+        summary = await directory_client.update_access_control_recursive(acl=acl, batch_size=2)
+
+        # Assert
+        self.assertEqual(summary.counters.directories_successful,
+                         num_sub_dirs + 1)  # +1 as the dir itself was also included
+        self.assertEqual(summary.counters.files_successful, num_sub_dirs * num_file_per_sub_dir)
+        self.assertEqual(summary.counters.failure_count, 0)
+        access_control = await directory_client.get_access_control()
+        self.assertIsNotNone(access_control)
+        self.assertEqual(acl, access_control['acl'])
+
+    @record
+    def test_update_access_control_recursive_in_batches_with_progress_callback_async(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_update_access_control_recursive_in_batches_with_progress_callback_async())
+
+    async def _test_update_access_control_recursive_in_batches_with_progress_callback_async(self):
+        directory_name = self._get_directory_reference()
+        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        await directory_client.create_directory()
+        num_sub_dirs = 5
+        num_file_per_sub_dir = 5
+        await self._create_sub_directory_and_files(directory_client, num_sub_dirs, num_file_per_sub_dir)
+
+        acl = 'user::rwx,group::r-x,other::rwx'
+        running_tally = AccessControlChangeCounters(0, 0, 0)
+        last_response = AccessControlChangeResult(None, "")
+
+        async def progress_callback(resp):
+            running_tally.directories_successful += resp.batch_counters.directories_successful
+            running_tally.files_successful += resp.batch_counters.files_successful
+            running_tally.failure_count += resp.batch_counters.failure_count
+
+            last_response.counters = resp.aggregate_counters
+
+        summary = await directory_client.update_access_control_recursive(acl=acl, progress_callback=progress_callback,
+                                                                         batch_size=2)
+
+        # Assert
+        self.assertEqual(summary.counters.directories_successful,
+                         num_sub_dirs + 1)  # +1 as the dir itself was also included
+        self.assertEqual(summary.counters.files_successful, num_sub_dirs * num_file_per_sub_dir)
+        self.assertEqual(summary.counters.failure_count, 0)
+        self.assertEqual(summary.counters.directories_successful, running_tally.directories_successful)
+        self.assertEqual(summary.counters.files_successful, running_tally.files_successful)
+        self.assertEqual(summary.counters.failure_count, running_tally.failure_count)
+        access_control = await directory_client.get_access_control()
+        self.assertIsNotNone(access_control)
+        self.assertEqual(acl, access_control['acl'])
+
+    @record
+    def test_update_access_control_recursive_with_failures_async(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_update_access_control_recursive_with_failures_async())
+
+    async def _test_update_access_control_recursive_with_failures_async(self):
+        root_directory_client = self.dsc.get_file_system_client(self.file_system_name)._get_root_directory_client()
+        await root_directory_client.set_access_control(acl="user::--x,group::--x,other::--x")
+
+        # Using an AAD identity, create a directory to put files under that
+        directory_name = self._get_directory_reference()
+        token_credential = self.generate_async_oauth_token()
+        directory_client = DataLakeDirectoryClient(self.dsc.url, self.file_system_name, directory_name,
+                                                   credential=token_credential)
+        await directory_client.create_directory()
+        num_sub_dirs = 5
+        num_file_per_sub_dir = 5
+        await self._create_sub_directory_and_files(directory_client, num_sub_dirs, num_file_per_sub_dir)
+
+        # Create a file as super user
+        await self.dsc.get_directory_client(self.file_system_name, directory_name).get_file_client("cannottouchthis") \
+            .create_file()
+
+        acl = 'user::rwx,group::r-x,other::rwx'
+        running_tally = AccessControlChangeCounters(0, 0, 0)
+        failed_entries = []
+
+        async def progress_callback(resp):
+            running_tally.directories_successful += resp.batch_counters.directories_successful
+            running_tally.files_successful += resp.batch_counters.files_successful
+            running_tally.failure_count += resp.batch_counters.failure_count
+            failed_entries.append(resp.batch_failures)
+
+        summary = await directory_client.update_access_control_recursive(acl=acl, progress_callback=progress_callback,
+                                                                         batch_size=2)
+
+        # Assert
+        self.assertEqual(summary.counters.failure_count, 1)
+        self.assertEqual(summary.counters.directories_successful, running_tally.directories_successful)
+        self.assertEqual(summary.counters.files_successful, running_tally.files_successful)
+        self.assertEqual(summary.counters.failure_count, running_tally.failure_count)
+        self.assertEqual(len(failed_entries), 1)
+
+    @record
+    def test_remove_access_control_recursive_async(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_remove_access_control_recursive_async())
+
+    async def _test_remove_access_control_recursive_async(self):
+        directory_name = self._get_directory_reference()
+        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        await directory_client.create_directory()
+        num_sub_dirs = 5
+        num_file_per_sub_dir = 5
+        await self._create_sub_directory_and_files(directory_client, num_sub_dirs, num_file_per_sub_dir)
+
+        summary = await directory_client.remove_access_control_recursive(acl=REMOVE_ACL)
+
+        # Assert
+        self.assertEqual(summary.counters.directories_successful,
+                         num_sub_dirs + 1)  # +1 as the dir itself was also included
+        self.assertEqual(summary.counters.files_successful, num_sub_dirs * num_file_per_sub_dir)
+        self.assertEqual(summary.counters.failure_count, 0)
+
+    @record
+    def test_remove_access_control_recursive_in_batches_async(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_remove_access_control_recursive_in_batches_async())
+
+    async def _test_remove_access_control_recursive_in_batches_async(self):
+        directory_name = self._get_directory_reference()
+        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        await directory_client.create_directory()
+        num_sub_dirs = 5
+        num_file_per_sub_dir = 5
+        await self._create_sub_directory_and_files(directory_client, num_sub_dirs, num_file_per_sub_dir)
+
+        summary = await directory_client.remove_access_control_recursive(acl=REMOVE_ACL, batch_size=2)
+
+        # Assert
+        self.assertEqual(summary.counters.directories_successful,
+                         num_sub_dirs + 1)  # +1 as the dir itself was also included
+        self.assertEqual(summary.counters.files_successful, num_sub_dirs * num_file_per_sub_dir)
+        self.assertEqual(summary.counters.failure_count, 0)
+
+    @record
+    def test_remove_access_control_recursive_in_batches_with_progress_callback_async(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_remove_access_control_recursive_in_batches_with_progress_callback_async())
+
+    async def _test_remove_access_control_recursive_in_batches_with_progress_callback_async(self):
+        directory_name = self._get_directory_reference()
+        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        await directory_client.create_directory()
+        num_sub_dirs = 5
+        num_file_per_sub_dir = 5
+        await self._create_sub_directory_and_files(directory_client, num_sub_dirs, num_file_per_sub_dir)
+
+        running_tally = AccessControlChangeCounters(0, 0, 0)
+        last_response = AccessControlChangeResult(None, "")
+
+        async def progress_callback(resp):
+            running_tally.directories_successful += resp.batch_counters.directories_successful
+            running_tally.files_successful += resp.batch_counters.files_successful
+            running_tally.failure_count += resp.batch_counters.failure_count
+
+            last_response.counters = resp.aggregate_counters
+
+        summary = await directory_client.remove_access_control_recursive(acl=REMOVE_ACL,
+                                                                         progress_callback=progress_callback,
+                                                                         batch_size=2)
+
+        # Assert
+        self.assertEqual(summary.counters.directories_successful,
+                         num_sub_dirs + 1)  # +1 as the dir itself was also included
+        self.assertEqual(summary.counters.files_successful, num_sub_dirs * num_file_per_sub_dir)
+        self.assertEqual(summary.counters.failure_count, 0)
+        self.assertEqual(summary.counters.directories_successful, running_tally.directories_successful)
+        self.assertEqual(summary.counters.files_successful, running_tally.files_successful)
+        self.assertEqual(summary.counters.failure_count, running_tally.failure_count)
+
+    @record
+    def test_remove_access_control_recursive_with_failures_async(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_remove_access_control_recursive_with_failures_async())
+
+    async def _test_remove_access_control_recursive_with_failures_async(self):
+        root_directory_client = self.dsc.get_file_system_client(self.file_system_name)._get_root_directory_client()
+        await root_directory_client.set_access_control(acl="user::--x,group::--x,other::--x")
+
+        # Using an AAD identity, create a directory to put files under that
+        directory_name = self._get_directory_reference()
+        token_credential = self.generate_async_oauth_token()
+        directory_client = DataLakeDirectoryClient(self.dsc.url, self.file_system_name, directory_name,
+                                                   credential=token_credential)
+        await directory_client.create_directory()
+        num_sub_dirs = 5
+        num_file_per_sub_dir = 5
+        await self._create_sub_directory_and_files(directory_client, num_sub_dirs, num_file_per_sub_dir)
+
+        # Create a file as super user
+        await self.dsc.get_directory_client(self.file_system_name, directory_name).get_file_client("cannottouchthis") \
+            .create_file()
+
+        running_tally = AccessControlChangeCounters(0, 0, 0)
+        failed_entries = []
+
+        async def progress_callback(resp):
+            running_tally.directories_successful += resp.batch_counters.directories_successful
+            running_tally.files_successful += resp.batch_counters.files_successful
+            running_tally.failure_count += resp.batch_counters.failure_count
+            failed_entries.append(resp.batch_failures)
+
+        summary = await directory_client.remove_access_control_recursive(acl=REMOVE_ACL,
+                                                                         progress_callback=progress_callback,
+                                                                         batch_size=2)
+
+        # Assert
+        self.assertEqual(summary.counters.failure_count, 1)
+        self.assertEqual(summary.counters.directories_successful, running_tally.directories_successful)
+        self.assertEqual(summary.counters.files_successful, running_tally.files_successful)
+        self.assertEqual(summary.counters.failure_count, running_tally.failure_count)
+        self.assertEqual(len(failed_entries), 1)
 
     async def _test_rename_from(self):
         content_settings = ContentSettings(

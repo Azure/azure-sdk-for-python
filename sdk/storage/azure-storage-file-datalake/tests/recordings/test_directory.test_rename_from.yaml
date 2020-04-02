@@ -149,4 +149,148 @@ interactions:
     status:
       code: 200
       message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-dfs/12.0.0 Python/3.7.4 (Darwin-19.4.0-x86_64-i386-64bit)
+      x-ms-client-request-id:
+      - a8be6412-7584-11ea-8fab-acde48001122
+      x-ms-date:
+      - Fri, 03 Apr 2020 08:25:21 GMT
+      x-ms-properties:
+      - ''
+      x-ms-version:
+      - '2019-12-12'
+    method: PUT
+    uri: https://storagename.dfs.core.windows.net/filesystemcd990ccd/directorycd990ccd?resource=directory
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Fri, 03 Apr 2020 08:25:21 GMT
+      ETag:
+      - '"0x8D7D7A88D25C901"'
+      Last-Modified:
+      - Fri, 03 Apr 2020 08:25:21 GMT
+      Server:
+      - Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id:
+      - 87ff0984-e01f-0062-6a91-09f46b000000
+      x-ms-version:
+      - '2019-12-12'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-dfs/12.0.0 Python/3.7.4 (Darwin-19.4.0-x86_64-i386-64bit)
+      x-ms-client-request-id:
+      - a8faa012-7584-11ea-8fab-acde48001122
+      x-ms-date:
+      - Fri, 03 Apr 2020 08:25:21 GMT
+      x-ms-properties:
+      - ''
+      x-ms-rename-source:
+      - /filesystemcd990ccd/directorycd990ccd
+      x-ms-source-lease-id:
+      - ''
+      x-ms-version:
+      - '2019-12-12'
+    method: PUT
+    uri: https://storagename.dfs.core.windows.net/filesystemcd990ccd/newname?mode=legacy
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Fri, 03 Apr 2020 08:25:21 GMT
+      Server:
+      - Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id:
+      - 87ff0985-e01f-0062-6b91-09f46b000000
+      x-ms-version:
+      - '2019-12-12'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-dfs/12.0.0 Python/3.7.4 (Darwin-19.4.0-x86_64-i386-64bit)
+      x-ms-client-request-id:
+      - a90c9be6-7584-11ea-8fab-acde48001122
+      x-ms-date:
+      - Fri, 03 Apr 2020 08:25:22 GMT
+      x-ms-version:
+      - '2019-10-10'
+    method: HEAD
+    uri: https://storagename.blob.core.windows.net/filesystemcd990ccd/newname
+  response:
+    body:
+      string: ''
+    headers:
+      Accept-Ranges:
+      - bytes
+      Content-Length:
+      - '0'
+      Content-Type:
+      - application/octet-stream
+      Date:
+      - Fri, 03 Apr 2020 08:25:22 GMT
+      ETag:
+      - '"0x8D7D7A88D25C901"'
+      Last-Modified:
+      - Fri, 03 Apr 2020 08:25:21 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-creation-time:
+      - Fri, 03 Apr 2020 08:25:21 GMT
+      x-ms-lease-state:
+      - available
+      x-ms-lease-status:
+      - unlocked
+      x-ms-meta-hdi_isfolder:
+      - 'true'
+      x-ms-request-id:
+      - 3b43f4a7-d01e-001b-1091-09084f000000
+      x-ms-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2019-10-10'
+    status:
+      code: 200
+      message: OK
 version: 1
