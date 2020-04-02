@@ -1,0 +1,78 @@
+interactions:
+- request:
+    body: '{"source": "https://krpraticstorageacc.blob.core.windows.net/form-recognizer-merged?sp=racwdl&st=2020-03-13T16:10:53Z&se=2021-01-29T16:10:00Z&sv=2019-02-02&sr=c&sig=G0jqPlgQfpFZ0BW30ki2NUa3d4zjH2mz1wsIOsum5xg%3D",
+      "sourceFilter": {"prefix": "", "includeSubFolders": false}, "useLabelFile":
+      false}'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '296'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/1.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+        Python/3.7.3 (Windows-10-10.0.18362-SP0)
+    method: POST
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models
+  response:
+    body:
+      string: ''
+    headers:
+      apim-request-id:
+      - 3b1d029b-318c-4ac2-a43c-08b0f3fb8d41
+      content-length:
+      - '0'
+      date:
+      - Thu, 02 Apr 2020 18:32:48 GMT
+      location:
+      - https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/90d1745d-e4f1-4dc7-8773-49e0ddd9ac68
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '31'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/1.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+        Python/3.7.3 (Windows-10-10.0.18362-SP0)
+    method: GET
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/90d1745d-e4f1-4dc7-8773-49e0ddd9ac68
+  response:
+    body:
+      string: '{"modelInfo":{"modelId":"90d1745d-e4f1-4dc7-8773-49e0ddd9ac68","status":"creating","createdDateTime":"2020-04-02T18:32:48Z","lastUpdatedDateTime":"2020-04-02T18:32:48Z"}}'
+    headers:
+      apim-request-id:
+      - d9e85477-9ee8-42ba-a247-ab3ffda83aa4
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 02 Apr 2020 18:33:18 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '23'
+    status:
+      code: 200
+      message: OK
+version: 1
