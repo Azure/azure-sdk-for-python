@@ -463,7 +463,7 @@ class IndexesOperations(object):
     def analyze(
         self,
         index_name,  # type: str
-        request_todo,  # type: "models.AnalyzeRequest"
+        request,  # type: "models.AnalyzeRequest"
         request_options=None,  # type: Optional["models.RequestOptions"]
         **kwargs  # type: Any
     ):
@@ -472,8 +472,8 @@ class IndexesOperations(object):
 
         :param index_name: The name of the index for which to test an analyzer.
         :type index_name: str
-        :param request_todo: The text and analyzer or analysis components to test.
-        :type request_todo: ~search_service_client.models.AnalyzeRequest
+        :param request: The text and analyzer or analysis components to test.
+        :type request: ~search_service_client.models.AnalyzeRequest
         :param request_options: Parameter group.
         :type request_options: ~search_service_client.models.RequestOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -510,7 +510,7 @@ class IndexesOperations(object):
 
         # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(request_todo, 'AnalyzeRequest')
+        body_content = self._serialize.body(request, 'AnalyzeRequest')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
 
