@@ -3,6 +3,8 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
+from typing import Optional
+
 from .._common import message as sync_message
 from .._common.constants import (
     SETTLEMENT_ABANDON,
@@ -32,15 +34,13 @@ class ReceivedMessage(sync_message.ReceivedMessage):
         self._loop = loop or get_running_loop()
         super(ReceivedMessage, self).__init__(message=message, mode=mode)
 
-    @property
-    def settled(self):
-        return self._settled
-
     async def complete(self):
+        # type: () -> None
         """Complete the message.
 
         This removes the message from the queue.
 
+        :rtype: None
         :raises: ~azure.servicebus.common.errors.MessageAlreadySettled if the message has been settled.
         :raises: ~azure.servicebus.common.errors.MessageLockExpired if message lock has already expired.
         :raises: ~azure.servicebus.common.errors.SessionLockExpired if session lock has already expired.
@@ -55,6 +55,7 @@ class ReceivedMessage(sync_message.ReceivedMessage):
         self._settled = True
 
     async def dead_letter(self, reason=None, description=None):
+        # type: (Optional[str], Optional[str]) -> None
         """Move the message to the Dead Letter queue.
 
         The Dead Letter queue is a sub-queue that can be
@@ -63,6 +64,7 @@ class ReceivedMessage(sync_message.ReceivedMessage):
 
         :param str reason: The reason for dead-lettering the message.
         :param str description: The detailed description for dead-lettering the message.
+        :rtype: None
         :raises: ~azure.servicebus.common.errors.MessageAlreadySettled if the message has been settled.
         :raises: ~azure.servicebus.common.errors.MessageLockExpired if message lock has already expired.
         :raises: ~azure.servicebus.common.errors.MessageSettleFailed if message settle operation fails.
@@ -83,8 +85,10 @@ class ReceivedMessage(sync_message.ReceivedMessage):
         self._settled = True
 
     async def abandon(self):
+        # type: () -> None
         """Abandon the message. This message will be returned to the queue to be reprocessed.
 
+        :rtype: None
         :raises: ~azure.servicebus.common.errors.MessageAlreadySettled if the message has been settled.
         :raises: ~azure.servicebus.common.errors.MessageLockExpired if message lock has already expired.
         :raises: ~azure.servicebus.common.errors.MessageSettleFailed if message settle operation fails.
@@ -98,8 +102,10 @@ class ReceivedMessage(sync_message.ReceivedMessage):
         self._settled = True
 
     async def defer(self):
+        # type: () -> None
         """Abandon the message. This message will be returned to the queue to be reprocessed.
 
+        :rtype: None
         :raises: ~azure.servicebus.common.errors.MessageAlreadySettled if the message has been settled.
         :raises: ~azure.servicebus.common.errors.MessageLockExpired if message lock has already expired.
         :raises: ~azure.servicebus.common.errors.MessageSettleFailed if message settle operation fails.
@@ -113,6 +119,7 @@ class ReceivedMessage(sync_message.ReceivedMessage):
         self._settled = True
 
     async def renew_lock(self):
+        # type: () -> None
         """Renew the message lock.
 
         This will maintain the lock on the message to ensure
@@ -122,6 +129,7 @@ class ReceivedMessage(sync_message.ReceivedMessage):
         background task by registering the message with an `azure.servicebus.aio.AutoLockRenew` instance.
         This operation is only available for non-sessionful messages.
 
+        :rtype: None
         :raises: TypeError if the message is sessionful.
         :raises: ~azure.servicebus.common.errors.MessageLockExpired is message lock has already expired.
         :raises: ~azure.servicebus.common.errors.SessionLockExpired if session lock has already expired.

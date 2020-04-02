@@ -13,7 +13,7 @@ from uamqp import ReceiveClientAsync, types
 from uamqp.constants import SenderSettleMode
 
 from ._base_handler_async import BaseHandlerAsync
-from .async_message import ReceivedMessage
+from ._async_message import ReceivedMessage
 from .._servicebus_receiver import ReceiverMixin, ServiceBusSession as BaseSession
 from .._common.constants import (
     REQUEST_RESPONSE_GET_SESSION_STATE_OPERATION,
