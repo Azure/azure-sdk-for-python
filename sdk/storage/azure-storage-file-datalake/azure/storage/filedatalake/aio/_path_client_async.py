@@ -281,7 +281,7 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
             "[scope:][type]:[id]:[permissions]".
         :type acl: str
         :param progress_callback:
-            Callback where the caller can track progress of the operation
+            Async callback where the caller can track progress of the operation
             as well as collect paths that failed to change Access Control.
         :type progress_callback: func(~azure.storage.filedatalake._generated.models.SetAccessControlRecursiveResponse)
         :keyword str continuation:
@@ -292,7 +292,6 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
             The default when unspecified is 2000.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :keyword: response dict (Etag and last modified).
         :return: A summary of the recursive operations, including the count of successes and failures,
             as well as a continuation token in case the operation was terminated prematurely.
         :rtype: :class:`~azure.storage.filedatalake.models.AccessControlChanges`
@@ -319,7 +318,7 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
             "[scope:][type]:[id]:[permissions]".
         :type acl: str
         :param progress_callback:
-            Callback where the caller can track progress of the operation
+            Async callback where the caller can track progress of the operation
             as well as collect paths that failed to change Access Control.
         :type progress_callback: func(~azure.storage.filedatalake._generated.models.SetAccessControlRecursiveResponse)
         :keyword str continuation:
@@ -330,7 +329,6 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
             The default when unspecified is 2000.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :keyword: response dict (Etag and last modified).
         :return: A summary of the recursive operations, including the count of successes and failures,
             as well as a continuation token in case the operation was terminated prematurely.
         :rtype: :class:`~azure.storage.filedatalake.models.AccessControlChanges`
@@ -356,7 +354,7 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
             group identifier in the format "[scope:][type]:[id]”.
         :type acl: str
         :param progress_callback:
-            Callback where the caller can track progress of the operation
+            Async callback where the caller can track progress of the operation
             as well as collect paths that failed to change Access Control.
         :type progress_callback: func(~azure.storage.filedatalake._generated.models.SetAccessControlRecursiveResponse)
         :keyword str continuation:
@@ -367,7 +365,6 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
             The default when unspecified is 2000.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :keyword: response dict (Etag and last modified).
         :return: A summary of the recursive operations, including the count of successes and failures,
             as well as a continuation token in case the operation was terminated prematurely.
         :rtype: :class:`~azure.storage.filedatalake.models.AccessControlChanges`

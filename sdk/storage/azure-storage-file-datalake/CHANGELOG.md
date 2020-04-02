@@ -2,7 +2,7 @@
 
 ## XX.XX.XX
 **New Feature**
-- Added support for set/update/remove Access Control on a path and sub-paths.
+- Added support for recursively set/update/remove Access Control on a path and sub-paths.
 
 ## 12.0.0 (2020-03-10)
 **New Feature**

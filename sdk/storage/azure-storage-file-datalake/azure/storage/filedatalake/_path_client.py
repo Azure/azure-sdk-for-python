@@ -433,7 +433,6 @@ class PathClient(StorageAccountHostsMixin):
             The default when unspecified is 2000.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :keyword: response dict (Etag and last modified).
         :return: A summary of the recursive operations, including the count of successes and failures,
             as well as a continuation token in case the operation was terminated prematurely.
         :rtype: :class:`~azure.storage.filedatalake.models.AccessControlChanges`
@@ -471,7 +470,6 @@ class PathClient(StorageAccountHostsMixin):
             The default when unspecified is 2000.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :keyword: response dict (Etag and last modified).
         :return: A summary of the recursive operations, including the count of successes and failures,
             as well as a continuation token in case the operation was terminated prematurely.
         :rtype: :class:`~azure.storage.filedatalake.models.AccessControlChanges`
@@ -508,7 +506,6 @@ class PathClient(StorageAccountHostsMixin):
             The default when unspecified is 2000.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :keyword: response dict (Etag and last modified).
         :return: A summary of the recursive operations, including the count of successes and failures,
             as well as a continuation token in case the operation was terminated prematurely.
         :rtype: :class:`~azure.storage.filedatalake.models.AccessControlChanges`
