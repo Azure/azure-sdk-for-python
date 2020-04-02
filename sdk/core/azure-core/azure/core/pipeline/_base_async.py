@@ -25,7 +25,7 @@
 # --------------------------------------------------------------------------
 import abc
 
-from typing import Any, Union, List, Generic, TypeVar
+from typing import Any, Union, List, Generic, TypeVar, Dict
 
 from azure.core.pipeline import PipelineRequest, PipelineResponse, PipelineContext
 from azure.core.pipeline.policies import AsyncHTTPPolicy, SansIOHTTPPolicy
