@@ -6,7 +6,7 @@
 # --------------------------------------------------------------------------------------------
 
 """
-An example to show receiving events from an Event Hub with checkpoint store doing checkpoint by batch asynchronously.
+An example to show receiving events from an Event Hub with checkpoint store doing checkpoint by batch.
 In the `receive_batch` method of `EventHubConsumerClient`:
 If no partition id is specified, the checkpoint_store are used for load-balance and checkpoint.
 If partition id is specified, the checkpoint_store can only be used for checkpoint without load balancing.
