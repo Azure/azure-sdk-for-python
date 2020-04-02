@@ -44,7 +44,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
     @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
     async def test_async_session_by_session_client_conn_str_receive_handler_peeklock(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
         async with ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, logging_enable=True) as sb_client:
+            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
 
             session_id = str(uuid.uuid4())
             async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
@@ -73,7 +73,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
     @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
     async def test_async_session_by_queue_client_conn_str_receive_handler_receiveanddelete(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
         async with ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, logging_enable=True) as sb_client:
+            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
 
             session_id = str(uuid.uuid4())
             async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
@@ -108,7 +108,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
     @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
     async def test_async_session_by_session_client_conn_str_receive_handler_with_stop(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
         async with ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, logging_enable=True) as sb_client:
+            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
 
             session_id = str(uuid.uuid4())
             async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
@@ -150,7 +150,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
     @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
     async def test_async_session_by_session_client_conn_str_receive_handler_with_no_session(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
         async with ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, logging_enable=True) as sb_client:
+            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
 
             session = sb_client.get_queue_receiver(servicebus_queue.name, session_id=NEXT_AVAILABLE, idle_timeout=5)
             with pytest.raises(NoActiveSession):
@@ -164,7 +164,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
     @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
     async def test_async_session_by_session_client_conn_str_receive_handler_with_inactive_session(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
         async with ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, logging_enable=True) as sb_client:
+            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
 
             session_id = str(uuid.uuid4())
             messages = []
@@ -184,7 +184,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
     @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
     async def test_async_session_by_servicebus_client_iter_messages_with_retrieve_deferred_receiver_complete(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
         async with ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, logging_enable=True) as sb_client:
+            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
 
             deferred_messages = []
             session_id = str(uuid.uuid4())
@@ -222,7 +222,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
     @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
     async def test_async_session_by_servicebus_client_iter_messages_with_retrieve_deferred_receiver_deadletter(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
         async with ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, logging_enable=True) as sb_client:
+            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
 
             deferred_messages = []
             session_id = str(uuid.uuid4())
@@ -265,7 +265,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
     @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
     async def test_async_session_by_servicebus_client_iter_messages_with_retrieve_deferred_receiver_deletemode(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
         async with ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, logging_enable=True) as sb_client:
+            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
 
             deferred_messages = []
             session_id = str(uuid.uuid4())
@@ -300,7 +300,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
     @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
     async def test_async_session_by_servicebus_client_iter_messages_with_retrieve_deferred_client(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
         async with ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, logging_enable=True) as sb_client:
+            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
 
             deferred_messages = []
             session_id = str(uuid.uuid4())
@@ -331,7 +331,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
     @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
     async def test_async_session_by_servicebus_client_fetch_next_with_retrieve_deadletter(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
         async with ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, logging_enable=True) as sb_client:
+            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
 
             session_id = str(uuid.uuid4())
             async with sb_client.get_queue_receiver(servicebus_queue.name, session_id=session_id, idle_timeout=5, prefetch=10) as receiver:
@@ -369,7 +369,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
     @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
     async def test_async_session_by_servicebus_client_browse_messages_client(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
         async with ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, logging_enable=True) as sb_client:
+            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
 
             session_id = str(uuid.uuid4())
             async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
@@ -394,7 +394,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
     @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
     async def test_async_session_by_servicebus_client_browse_messages_with_receiver(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
         async with ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, logging_enable=True) as sb_client:
+            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
 
             session_id = str(uuid.uuid4())
             async with sb_client.get_queue_receiver(servicebus_queue.name, idle_timeout=5, session_id=session_id) as receiver:
@@ -419,7 +419,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
     @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
     async def test_async_session_by_servicebus_client_renew_client_locks(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
         async with ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, logging_enable=True) as sb_client:
+            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
 
             session_id = str(uuid.uuid4())
             messages = []
@@ -461,7 +461,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
     @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
     async def test_async_session_by_conn_str_receive_handler_with_autolockrenew(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
         async with ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, logging_enable=True) as sb_client:
+            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
             session_id = str(uuid.uuid4())
 
             async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
@@ -512,7 +512,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
     @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
     async def test_async_session_message_connection_closed(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
         async with ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, logging_enable=True) as sb_client:
+            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
 
             session_id = str(uuid.uuid4())
 
@@ -536,7 +536,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
     @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
     async def test_async_session_message_expiry(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
         async with ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, logging_enable=True) as sb_client:
+            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
 
             session_id = str(uuid.uuid4())
 
@@ -575,7 +575,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
     @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
     async def test_async_session_schedule_message(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
         async with ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, logging_enable=True) as sb_client:
+            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
             import uuid
             session_id = str(uuid.uuid4())
             enqueue_time = (utc_now() + timedelta(minutes=2)).replace(microsecond=0)
@@ -613,7 +613,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
     @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
     async def test_async_session_schedule_multiple_messages(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
         async with ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, logging_enable=True) as sb_client:
+            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
             import uuid
             session_id = str(uuid.uuid4())
             enqueue_time = (utc_now() + timedelta(minutes=2)).replace(microsecond=0)
@@ -654,7 +654,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
     @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
     async def test_async_session_cancel_scheduled_messages(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
         async with ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, logging_enable=True) as sb_client:
+            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
 
             session_id = str(uuid.uuid4())
             enqueue_time = (utc_now() + timedelta(minutes=2)).replace(microsecond=0)
@@ -688,7 +688,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
     @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
     async def test_async_session_get_set_state_with_receiver(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
         async with ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, logging_enable=True) as sb_client:
+            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
 
             session_id = str(uuid.uuid4())
             async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
@@ -715,7 +715,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
     @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
     async def test_async_session_by_servicebus_client_list_sessions_with_receiver(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
         async with ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, logging_enable=True) as sb_client:
+            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
 
             sessions = []
             start_time = utc_now()
@@ -745,7 +745,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
     @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
     async def test_async_session_by_servicebus_client_list_sessions_with_client(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
         async with ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, logging_enable=True) as sb_client:
+            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
 
             sessions = []
             start_time = utc_now()
@@ -792,7 +792,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
         concurrent_receivers = 5
         sessions = [str(uuid.uuid4()) for i in range(concurrent_receivers)]
         async with ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, logging_enable=True) as sb_client:
+            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
 
             for session_id in sessions:
                 async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
