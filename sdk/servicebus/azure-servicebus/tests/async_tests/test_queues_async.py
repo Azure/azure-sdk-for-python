@@ -11,7 +11,7 @@ import os
 import pytest
 import time
 import uuid
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 
 from azure.servicebus.aio import (
     ServiceBusClient,
@@ -21,6 +21,7 @@ from azure.servicebus.aio import (
     AutoLockRenew)
 from azure.servicebus._common.message import PeekMessage
 from azure.servicebus._common.constants import ReceiveSettleMode
+from azure.servicebus._common.utils import utc_now
 from azure.servicebus.exceptions import (
     ServiceBusConnectionError,
     ServiceBusError,
@@ -661,13 +662,13 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                         messages.append(message)
                         assert not message.expired
                         renewer.register(message, timeout=60)
-                        print("Registered lock renew thread", message.locked_until_utc, datetime.now(timezone.utc))
+                        print("Registered lock renew thread", message.locked_until_utc, utc_now())
                         await asyncio.sleep(50)
                         print("Finished first sleep", message.locked_until_utc)
                         assert not message.expired
                         await asyncio.sleep(25)
-                        await asyncio.sleep(max(0,(message.locked_until_utc - datetime.now(timezone.utc)).total_seconds()))
-                        print("Finished second sleep", message.locked_until_utc, datetime.now(timezone.utc))
+                        await asyncio.sleep(max(0,(message.locked_until_utc - utc_now()).total_seconds()))
+                        print("Finished second sleep", message.locked_until_utc, utc_now())
                         assert message.expired
                         try:
                             await message.complete()
@@ -676,13 +677,13 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                             assert isinstance(e.inner_exception, AutoLockRenewTimeout)
                     else:
                         if message.expired:
-                            print("Remaining messages", message.locked_until_utc, datetime.now(timezone.utc))
+                            print("Remaining messages", message.locked_until_utc, utc_now())
                             assert message.expired
                             with pytest.raises(MessageLockExpired):
                                 await message.complete()
                         else:
                             assert message.header.delivery_count >= 1
-                            print("Remaining messages", message.locked_until_utc, datetime.now(timezone.utc))
+                            print("Remaining messages", message.locked_until_utc, utc_now())
                             messages.append(message)
                             await message.complete()
             await renewer.shutdown()
@@ -946,7 +947,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
         async with ServiceBusClient.from_connection_string(
             servicebus_namespace_connection_string, logging_enable=False) as sb_client:
 
-            enqueue_time = (datetime.now(timezone.utc) + timedelta(minutes=2)).replace(microsecond=0)
+            enqueue_time = (utc_now() + timedelta(minutes=2)).replace(microsecond=0)
             async with sb_client.get_queue_receiver(servicebus_queue.name) as receiver:
                 async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                     content = str(uuid.uuid4())
@@ -980,7 +981,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
     async def test_async_queue_schedule_multiple_messages(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
         async with ServiceBusClient.from_connection_string(
             servicebus_namespace_connection_string, logging_enable=False) as sb_client:
-            enqueue_time = (datetime.now(timezone.utc) + timedelta(minutes=2)).replace(microsecond=0)
+            enqueue_time = (utc_now() + timedelta(minutes=2)).replace(microsecond=0)
             messages = []
             async with sb_client.get_queue_receiver(servicebus_queue.name, prefetch=20) as receiver:
                 async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
@@ -1022,7 +1023,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
         async with ServiceBusClient.from_connection_string(
             servicebus_namespace_connection_string, logging_enable=False) as sb_client:
 
-            enqueue_time = (datetime.now(timezone.utc) + timedelta(minutes=2)).replace(microsecond=0)
+            enqueue_time = (utc_now() + timedelta(minutes=2)).replace(microsecond=0)
             async with sb_client.get_queue_receiver(servicebus_queue.name) as receiver:
                 async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                     message_a = Message("Test scheduled message")
