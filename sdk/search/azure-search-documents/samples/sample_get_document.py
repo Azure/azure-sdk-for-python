@@ -28,9 +28,10 @@ key = os.getenv("AZURE_SEARCH_API_KEY")
 
 def get_document():
     # [START get_document]
-    from azure.search.documents import SearchApiKeyCredential, SearchIndexClient
+    from azure.core.credentials import AzureKeyCredential
+    from azure.search.documents import SearchIndexClient
 
-    search_client = SearchIndexClient(service_endpoint, index_name, SearchApiKeyCredential(key))
+    search_client = SearchIndexClient(service_endpoint, index_name, AzureKeyCredential(key))
 
     result = search_client.get_document(key="23")
 

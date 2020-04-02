@@ -50,10 +50,13 @@ def test_send_with_long_interval_sync(live_eventhub, sleep):
     receiver = uamqp.ReceiveClient(source, auth=sas_auth, debug=False, timeout=5000, prefetch=500)
     try:
         receiver.open()
-        received.extend([EventData._from_message(x) for x in receiver.receive_message_batch(max_batch_size=2, timeout=10000)])
+        # receive_message_batch() returns immediately once it receives any messages before the max_batch_size
+        # and timeout reach. Could be 1, 2, or any number between 1 and max_batch_size.
+        # So call it twice to ensure the two events are received.
+        received.extend([EventData._from_message(x) for x in receiver.receive_message_batch(max_batch_size=1, timeout=5000)])
+        received.extend([EventData._from_message(x) for x in receiver.receive_message_batch(max_batch_size=1, timeout=5000)])
     finally:
         receiver.close()
-
     assert len(received) == 2
     assert list(received[0].body)[0] == b"A single event"
 

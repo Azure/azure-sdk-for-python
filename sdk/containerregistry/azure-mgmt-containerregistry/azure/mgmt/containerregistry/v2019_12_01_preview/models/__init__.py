@@ -32,8 +32,8 @@ try:
     from ._models_py3 import EncodedTaskStep
     from ._models_py3 import EncodedTaskStepUpdateParameters
     from ._models_py3 import EncryptionProperty
-    from ._models_py3 import Error
-    from ._models_py3 import ErrorSchema, ErrorSchemaException
+    from ._models_py3 import ErrorResponse, ErrorResponseException
+    from ._models_py3 import ErrorResponseBody
     from ._models_py3 import Event
     from ._models_py3 import EventContent
     from ._models_py3 import EventInfo
@@ -99,7 +99,7 @@ try:
     from ._models_py3 import SourceTriggerUpdateParameters
     from ._models_py3 import SourceUpdateParameters
     from ._models_py3 import SourceUploadDefinition
-    from ._models_py3 import Status1
+    from ._models_py3 import Status
     from ._models_py3 import StorageAccountProperties
     from ._models_py3 import Target
     from ._models_py3 import Task
@@ -148,8 +148,8 @@ except (SyntaxError, ImportError):
     from ._models import EncodedTaskStep
     from ._models import EncodedTaskStepUpdateParameters
     from ._models import EncryptionProperty
-    from ._models import Error
-    from ._models import ErrorSchema, ErrorSchemaException
+    from ._models import ErrorResponse, ErrorResponseException
+    from ._models import ErrorResponseBody
     from ._models import Event
     from ._models import EventContent
     from ._models import EventInfo
@@ -215,7 +215,7 @@ except (SyntaxError, ImportError):
     from ._models import SourceTriggerUpdateParameters
     from ._models import SourceUpdateParameters
     from ._models import SourceUploadDefinition
-    from ._models import Status1
+    from ._models import Status
     from ._models import StorageAccountProperties
     from ._models import Target
     from ._models import Task
@@ -256,7 +256,7 @@ from ._paged_models import TokenPaged
 from ._paged_models import WebhookPaged
 from ._container_registry_management_client_enums import (
     ImportMode,
-    Status,
+    ConnectionStatus,
     ActionsRequired,
     ProvisioningState,
     SkuName,
@@ -314,8 +314,8 @@ __all__ = [
     'EncodedTaskStep',
     'EncodedTaskStepUpdateParameters',
     'EncryptionProperty',
-    'Error',
-    'ErrorSchema', 'ErrorSchemaException',
+    'ErrorResponse', 'ErrorResponseException',
+    'ErrorResponseBody',
     'Event',
     'EventContent',
     'EventInfo',
@@ -381,7 +381,7 @@ __all__ = [
     'SourceTriggerUpdateParameters',
     'SourceUpdateParameters',
     'SourceUploadDefinition',
-    'Status1',
+    'Status',
     'StorageAccountProperties',
     'Target',
     'Task',
@@ -421,7 +421,7 @@ __all__ = [
     'ScopeMapPaged',
     'TokenPaged',
     'ImportMode',
-    'Status',
+    'ConnectionStatus',
     'ActionsRequired',
     'ProvisioningState',
     'SkuName',

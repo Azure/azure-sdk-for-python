@@ -192,6 +192,8 @@ class CognitiveServicesAccount(Model):
     :type tags: dict[str, str]
     :ivar type: Resource type
     :vartype type: str
+    :param identity: The identity of Cognitive Services account.
+    :type identity: ~azure.mgmt.cognitiveservices.models.Identity
     """
 
     _validation = {
@@ -211,6 +213,7 @@ class CognitiveServicesAccount(Model):
         'sku': {'key': 'sku', 'type': 'Sku'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'type': {'key': 'type', 'type': 'str'},
+        'identity': {'key': 'identity', 'type': 'Identity'},
     }
 
     def __init__(self, **kwargs):
@@ -224,6 +227,7 @@ class CognitiveServicesAccount(Model):
         self.sku = kwargs.get('sku', None)
         self.tags = kwargs.get('tags', None)
         self.type = None
+        self.identity = kwargs.get('identity', None)
 
 
 class CognitiveServicesAccountApiProperties(Model):
@@ -329,6 +333,11 @@ class CognitiveServicesAccountProperties(Model):
     :param network_acls: A collection of rules governing the accessibility
      from specific network locations.
     :type network_acls: ~azure.mgmt.cognitiveservices.models.NetworkRuleSet
+    :param encryption: The encryption properties for this resource.
+    :type encryption: ~azure.mgmt.cognitiveservices.models.Encryption
+    :param user_owned_storage: The storage accounts for this resource.
+    :type user_owned_storage:
+     list[~azure.mgmt.cognitiveservices.models.UserOwnedStorage]
     :param api_properties: The api properties for special APIs.
     :type api_properties:
      ~azure.mgmt.cognitiveservices.models.CognitiveServicesAccountApiProperties
@@ -346,6 +355,8 @@ class CognitiveServicesAccountProperties(Model):
         'internal_id': {'key': 'internalId', 'type': 'str'},
         'custom_sub_domain_name': {'key': 'customSubDomainName', 'type': 'str'},
         'network_acls': {'key': 'networkAcls', 'type': 'NetworkRuleSet'},
+        'encryption': {'key': 'encryption', 'type': 'Encryption'},
+        'user_owned_storage': {'key': 'userOwnedStorage', 'type': '[UserOwnedStorage]'},
         'api_properties': {'key': 'apiProperties', 'type': 'CognitiveServicesAccountApiProperties'},
     }
 
@@ -356,6 +367,8 @@ class CognitiveServicesAccountProperties(Model):
         self.internal_id = None
         self.custom_sub_domain_name = kwargs.get('custom_sub_domain_name', None)
         self.network_acls = kwargs.get('network_acls', None)
+        self.encryption = kwargs.get('encryption', None)
+        self.user_owned_storage = kwargs.get('user_owned_storage', None)
         self.api_properties = kwargs.get('api_properties', None)
 
 
@@ -377,6 +390,29 @@ class CognitiveServicesResourceAndSku(Model):
         super(CognitiveServicesResourceAndSku, self).__init__(**kwargs)
         self.resource_type = kwargs.get('resource_type', None)
         self.sku = kwargs.get('sku', None)
+
+
+class Encryption(Model):
+    """Properties to configure Encryption.
+
+    :param key_vault_properties: Properties of KeyVault
+    :type key_vault_properties:
+     ~azure.mgmt.cognitiveservices.models.KeyVaultProperties
+    :param key_source: Enumerates the possible value of keySource for
+     Encryption. Possible values include: 'Microsoft.CognitiveServices',
+     'Microsoft.KeyVault'. Default value: "Microsoft.KeyVault" .
+    :type key_source: str or ~azure.mgmt.cognitiveservices.models.KeySource
+    """
+
+    _attribute_map = {
+        'key_vault_properties': {'key': 'keyVaultProperties', 'type': 'KeyVaultProperties'},
+        'key_source': {'key': 'keySource', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(Encryption, self).__init__(**kwargs)
+        self.key_vault_properties = kwargs.get('key_vault_properties', None)
+        self.key_source = kwargs.get('key_source', "Microsoft.KeyVault")
 
 
 class Error(Model):
@@ -434,6 +470,47 @@ class ErrorBody(Model):
         self.message = kwargs.get('message', None)
 
 
+class Identity(Model):
+    """Managed service identity.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :param type: Type of managed service identity. Possible values include:
+     'None', 'SystemAssigned', 'UserAssigned'
+    :type type: str or ~azure.mgmt.cognitiveservices.models.IdentityType
+    :ivar tenant_id: Tenant of managed service identity.
+    :vartype tenant_id: str
+    :ivar principal_id: Principal Id of managed service identity.
+    :vartype principal_id: str
+    :param user_assigned_identities: The list of user assigned identities
+     associated with the resource. The user identity dictionary key references
+     will be ARM resource ids in the form:
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}
+    :type user_assigned_identities: dict[str,
+     ~azure.mgmt.cognitiveservices.models.UserAssignedIdentity]
+    """
+
+    _validation = {
+        'tenant_id': {'readonly': True},
+        'principal_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'IdentityType'},
+        'tenant_id': {'key': 'tenantId', 'type': 'str'},
+        'principal_id': {'key': 'principalId', 'type': 'str'},
+        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{UserAssignedIdentity}'},
+    }
+
+    def __init__(self, **kwargs):
+        super(Identity, self).__init__(**kwargs)
+        self.type = kwargs.get('type', None)
+        self.tenant_id = None
+        self.principal_id = None
+        self.user_assigned_identities = kwargs.get('user_assigned_identities', None)
+
+
 class IpRule(Model):
     """A rule governing the accessibility from a specific ip address or ip range.
 
@@ -456,6 +533,30 @@ class IpRule(Model):
     def __init__(self, **kwargs):
         super(IpRule, self).__init__(**kwargs)
         self.value = kwargs.get('value', None)
+
+
+class KeyVaultProperties(Model):
+    """Properties to configure keyVault Properties.
+
+    :param key_name: Name of the Key from KeyVault
+    :type key_name: str
+    :param key_version: Version of the Key from KeyVault
+    :type key_version: str
+    :param key_vault_uri: Uri of KeyVault
+    :type key_vault_uri: str
+    """
+
+    _attribute_map = {
+        'key_name': {'key': 'keyName', 'type': 'str'},
+        'key_version': {'key': 'keyVersion', 'type': 'str'},
+        'key_vault_uri': {'key': 'keyVaultUri', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(KeyVaultProperties, self).__init__(**kwargs)
+        self.key_name = kwargs.get('key_name', None)
+        self.key_version = kwargs.get('key_version', None)
+        self.key_vault_uri = kwargs.get('key_vault_uri', None)
 
 
 class MetricName(Model):
@@ -824,6 +925,43 @@ class UsagesResult(Model):
     def __init__(self, **kwargs):
         super(UsagesResult, self).__init__(**kwargs)
         self.value = None
+
+
+class UserAssignedIdentity(Model):
+    """User-assigned managed identity.
+
+    :param principal_id: Azure Active Directory principal ID associated with
+     this Identity.
+    :type principal_id: str
+    :param client_id: Client App Id associated with this identity.
+    :type client_id: str
+    """
+
+    _attribute_map = {
+        'principal_id': {'key': 'principalId', 'type': 'str'},
+        'client_id': {'key': 'clientId', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(UserAssignedIdentity, self).__init__(**kwargs)
+        self.principal_id = kwargs.get('principal_id', None)
+        self.client_id = kwargs.get('client_id', None)
+
+
+class UserOwnedStorage(Model):
+    """The user owned storage for Cognitive Services account.
+
+    :param resource_id: Full resource id of a Microsoft.Storage resource.
+    :type resource_id: str
+    """
+
+    _attribute_map = {
+        'resource_id': {'key': 'resourceId', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(UserOwnedStorage, self).__init__(**kwargs)
+        self.resource_id = kwargs.get('resource_id', None)
 
 
 class VirtualNetworkRule(Model):

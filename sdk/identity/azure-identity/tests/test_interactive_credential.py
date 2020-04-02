@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import functools
+import random
 import socket
 import threading
 import time
@@ -183,24 +184,28 @@ def test_interactive_credential_timeout():
 
 
 def test_redirect_server():
-    for port in range(8400, 9000):
+    # binding a random port prevents races when running the test in parallel
+    server = None
+    for _ in range(4):
         try:
+            port = random.randint(1024, 65535)
             server = AuthCodeRedirectServer(port, timeout=10)
-            redirect_uri = "http://localhost:{}".format(port)
             break
         except socket.error:
             continue  # keep looking for an open port
+
+    assert server, "failed to start redirect server"
 
     expected_param = "expected-param"
     expected_value = "expected-value"
 
     # the server's wait is blocking, so we do it on another thread
-    thread = threading.Thread(target=server.wait_for_redirect, name=__name__)
+    thread = threading.Thread(target=server.wait_for_redirect)
     thread.daemon = True
     thread.start()
 
     # send a request, verify the server exposes the query
-    url = "http://localhost:{}/?{}={}".format(port, expected_param, expected_value)
+    url = "http://127.0.0.1:{}/?{}={}".format(port, expected_param, expected_value)
     response = urllib.request.urlopen(url)
 
     assert response.code == 200

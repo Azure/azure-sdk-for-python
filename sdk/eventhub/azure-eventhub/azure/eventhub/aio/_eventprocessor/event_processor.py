@@ -6,9 +6,9 @@ import random
 from typing import (
     Dict,
     Callable,
-    List,
     Any,
     Union,
+    List,
     TYPE_CHECKING,
     Optional,
     Iterable,
@@ -50,8 +50,11 @@ class EventProcessor(
         self,
         eventhub_client: "EventHubConsumerClient",
         consumer_group: str,
-        event_handler: Callable[[PartitionContext, EventData], Awaitable[None]],
+        event_handler: Callable[[PartitionContext, Union[Optional[EventData], List[EventData]]], Awaitable[None]],
         *,
+        batch: Optional[bool] = False,
+        max_batch_size: Optional[int] = 300,
+        max_wait_time: Optional[float] = None,
         partition_id: Optional[str] = None,
         checkpoint_store: Optional[CheckpointStore] = None,
         initial_event_position: Union[str, int, "datetime", Dict[str, Any]] = "@latest",
@@ -79,6 +82,9 @@ class EventProcessor(
         self._eventhub_name = eventhub_client.eventhub_name
         self._partition_id = partition_id
         self._event_handler = event_handler
+        self._batch = batch
+        self._max_batch_size = max_batch_size
+        self._max_wait_time = max_wait_time
         self._error_handler = error_handler
         self._partition_initialize_handler = partition_initialize_handler
         self._partition_close_handler = partition_close_handler
@@ -201,13 +207,16 @@ class EventProcessor(
                 await self._process_error(partition_context, err)
 
     async def _on_event_received(
-        self, partition_context: PartitionContext, event: EventData
+        self, partition_context: PartitionContext, event: Union[Optional[EventData], List[EventData]]
     ) -> None:
-        with self._context(event):
-            if self._track_last_enqueued_event_properties:
-                partition_context._last_received_event = (  # pylint: disable=protected-access
-                    event
-                )
+        if event:
+            try:
+                partition_context._last_received_event = event[-1]  # type: ignore  #pylint:disable=protected-access
+            except TypeError:
+                partition_context._last_received_event = event  # type: ignore  # pylint:disable=protected-access
+            with self._context(event):
+                await self._event_handler(partition_context, event)
+        else:
             await self._event_handler(partition_context, event)
 
     async def _close_consumer(self, partition_context):
@@ -235,6 +244,7 @@ class EventProcessor(
             ) = self.get_init_event_position(partition_id, checkpoint)
             if partition_id in self._partition_contexts:
                 partition_context = self._partition_contexts[partition_id]
+                partition_context._last_received_event = None  # pylint:disable=protected-access
             else:
                 partition_context = PartitionContext(
                     self._namespace,
@@ -272,7 +282,9 @@ class EventProcessor(
 
             while self._running:
                 try:
-                    await self._consumers[partition_id].receive()
+                    await self._consumers[partition_id].receive(
+                        self._batch, self._max_batch_size, self._max_wait_time
+                    )
                 except asyncio.CancelledError:
                     _LOGGER.info(
                         "EventProcessor instance %r of eventhub %r partition %r consumer group %r"

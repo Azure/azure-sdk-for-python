@@ -697,8 +697,7 @@ class CertificateAddParameter(Model):
      values include: 'pfx', 'cer'
     :type certificate_format: str or ~azure.batch.models.CertificateFormat
     :param password: The password to access the Certificate's private key.
-     This is required if the Certificate format is pfx. It should be omitted if
-     the Certificate format is cer.
+     This must be omitted if the Certificate format is cer.
     :type password: str
     """
 
@@ -2624,6 +2623,27 @@ class DeleteCertificateError(Model):
         self.values = values
 
 
+class DiskEncryptionConfiguration(Model):
+    """The disk encryption configuration applied on compute nodes in the pool.
+    Disk encryption configuration is not supported on Linux pool created with
+    Shared Image Gallery Image.
+
+    :param targets: The list of disk targets Batch Service will encrypt on the
+     compute node. If omitted, no disks on the compute nodes in the pool will
+     be encrypted. On Linux pool, only "TemporaryDisk" is supported; on Windows
+     pool, "OsDisk" and "TemporaryDisk" must be specified.
+    :type targets: list[str or ~azure.batch.models.DiskEncryptionTarget]
+    """
+
+    _attribute_map = {
+        'targets': {'key': 'targets', 'type': '[DiskEncryptionTarget]'},
+    }
+
+    def __init__(self, *, targets=None, **kwargs) -> None:
+        super(DiskEncryptionConfiguration, self).__init__(**kwargs)
+        self.targets = targets
+
+
 class EnvironmentSetting(Model):
     """An environment variable to be set on a Task process.
 
@@ -3282,19 +3302,16 @@ class ImageReference(Model):
      Image. A value of 'latest' can be specified to select the latest version
      of an Image. If omitted, the default is 'latest'.
     :type version: str
-    :param virtual_machine_image_id: The ARM resource identifier of the
-     Virtual Machine Image or Shared Image Gallery Image. Computes Compute
-     Nodes of the Pool will be created using this Image Id. This is of either
-     the form
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Compute/images/{imageName}
-     for Virtual Machine Image or
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Compute/galleries/{galleryName}/images/{imageDefinitionName}/versions/{versionId}
-     for SIG image. This property is mutually exclusive with other
-     ImageReference properties. For Virtual Machine Image it must be in the
-     same region and subscription as the Azure Batch account. For SIG image it
-     must have replicas in the same region as the Azure Batch account. For
-     information about the firewall settings for the Batch Compute Node agent
-     to communicate with the Batch service see
+    :param virtual_machine_image_id: The ARM resource identifier of the Shared
+     Image Gallery Image. Compute Nodes in the Pool will be created using this
+     Image Id. This is of the
+     form/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Compute/galleries/{galleryName}/images/{imageDefinitionName}/versions/{versionId}.
+     This property is mutually exclusive with other ImageReference properties.
+     For Virtual Machine Image it must be in the same region and subscription
+     as the Azure Batch account. The Shared Image Gallery Image must have
+     replicas in the same region as the Azure Batch account. For information
+     about the firewall settings for the Batch Compute Node agent to
+     communicate with the Batch service see
      https://docs.microsoft.com/en-us/azure/batch/batch-api-basics#virtual-network-vnet-and-firewall-configuration.
     :type virtual_machine_image_id: str
     """
@@ -6479,7 +6496,7 @@ class NetworkConfiguration(Model):
      Azure Batch Account. The specified subnet should have enough free IP
      addresses to accommodate the number of Compute Nodes in the Pool. If the
      subnet doesn't have enough free IP addresses, the Pool will partially
-     allocate Nodes, and a resize error will occur. The 'MicrosoftAzureBatch'
+     allocate Nodes and a resize error will occur. The 'MicrosoftAzureBatch'
      service principal must have the 'Classic Virtual Machine Contributor'
      Role-Based Access Control (RBAC) role for the specified VNet. The
      specified subnet must allow communication from the Azure Batch service to
@@ -6508,29 +6525,26 @@ class NetworkConfiguration(Model):
      Pools with the virtualMachineConfiguration property.
     :type endpoint_configuration:
      ~azure.batch.models.PoolEndpointConfiguration
-    :param public_ips: The list of public IPs which the Batch service will use
-     when provisioning Compute Nodes. The number of IPs specified here limits
-     the maximum size of the Pool - 50 dedicated nodes or 20 low-priority nodes
-     can be allocated for each public IP. For example, a pool needing 150
-     dedicated VMs would need at least 3 public IPs specified. Each element of
-     this collection is of the form:
-     /subscriptions/{subscription}/resourceGroups/{group}/providers/Microsoft.Network/publicIPAddresses/{ip}.
-    :type public_ips: list[str]
+    :param public_ip_address_configuration: The Public IPAddress configuration
+     for Compute Nodes in the Batch Pool. Public IP configuration property is
+     only supported on Pools with the virtualMachineConfiguration property.
+    :type public_ip_address_configuration:
+     ~azure.batch.models.PublicIPAddressConfiguration
     """
 
     _attribute_map = {
         'subnet_id': {'key': 'subnetId', 'type': 'str'},
         'dynamic_vnet_assignment_scope': {'key': 'dynamicVNetAssignmentScope', 'type': 'DynamicVNetAssignmentScope'},
         'endpoint_configuration': {'key': 'endpointConfiguration', 'type': 'PoolEndpointConfiguration'},
-        'public_ips': {'key': 'publicIPs', 'type': '[str]'},
+        'public_ip_address_configuration': {'key': 'publicIPAddressConfiguration', 'type': 'PublicIPAddressConfiguration'},
     }
 
-    def __init__(self, *, subnet_id: str=None, dynamic_vnet_assignment_scope=None, endpoint_configuration=None, public_ips=None, **kwargs) -> None:
+    def __init__(self, *, subnet_id: str=None, dynamic_vnet_assignment_scope=None, endpoint_configuration=None, public_ip_address_configuration=None, **kwargs) -> None:
         super(NetworkConfiguration, self).__init__(**kwargs)
         self.subnet_id = subnet_id
         self.dynamic_vnet_assignment_scope = dynamic_vnet_assignment_scope
         self.endpoint_configuration = endpoint_configuration
-        self.public_ips = public_ips
+        self.public_ip_address_configuration = public_ip_address_configuration
 
 
 class NetworkSecurityGroupRule(Model):
@@ -6543,7 +6557,7 @@ class NetworkSecurityGroupRule(Model):
      number the higher the priority. For example, rules could be specified with
      order numbers of 150, 250, and 350. The rule with the order number of 150
      takes precedence over the rule that has an order of 250. Allowed
-     priorities are 150 to 3500. If any reserved or duplicate values are
+     priorities are 150 to 4096. If any reserved or duplicate values are
      provided the request fails with HTTP status code 400.
     :type priority: int
     :param access: Required. The action that should be taken for a specified
@@ -8609,6 +8623,35 @@ class PoolUsageMetrics(Model):
         self.total_core_hours = total_core_hours
 
 
+class PublicIPAddressConfiguration(Model):
+    """The public IP Address configuration of the networking configuration of a
+    Pool.
+
+    :param provision: The provisioning type for Public IP Addresses for the
+     Pool. The default value is BatchManaged. Possible values include:
+     'batchManaged', 'userManaged', 'noPublicIPAddresses'
+    :type provision: str or ~azure.batch.models.IPAddressProvisioningType
+    :param ip_address_ids: The list of public IPs which the Batch service will
+     use when provisioning Compute Nodes. The number of IPs specified here
+     limits the maximum size of the Pool - 50 dedicated nodes or 20
+     low-priority nodes can be allocated for each public IP. For example, a
+     pool needing 150 dedicated VMs would need at least 3 public IPs specified.
+     Each element of this collection is of the form:
+     /subscriptions/{subscription}/resourceGroups/{group}/providers/Microsoft.Network/publicIPAddresses/{ip}.
+    :type ip_address_ids: list[str]
+    """
+
+    _attribute_map = {
+        'provision': {'key': 'provision', 'type': 'IPAddressProvisioningType'},
+        'ip_address_ids': {'key': 'ipAddressIds', 'type': '[str]'},
+    }
+
+    def __init__(self, *, provision=None, ip_address_ids=None, **kwargs) -> None:
+        super(PublicIPAddressConfiguration, self).__init__(**kwargs)
+        self.provision = provision
+        self.ip_address_ids = ip_address_ids
+
+
 class RecentJob(Model):
     """Information about the most recent Job to run under the Job Schedule.
 
@@ -10630,7 +10673,7 @@ class VirtualMachineConfiguration(Model):
      empty. When the Compute Node is removed from the Pool, the disk and all
      data associated with it is also deleted. The disk is not formatted after
      being attached, it must be formatted before use - for more information see
-     https://docs.microsoft.com/en-us/azure/virtual-machines/linux/add-disk
+     https://docs.microsoft.com/en-us/azure/virtual-machines/linux/classic/attach-disk#initialize-a-new-data-disk-in-linux
      and
      https://docs.microsoft.com/en-us/azure/virtual-machines/windows/attach-disk-ps#add-an-empty-data-disk-to-a-virtual-machine.
     :type data_disks: list[~azure.batch.models.DataDisk]
@@ -10648,6 +10691,11 @@ class VirtualMachineConfiguration(Model):
      this Pool must specify the containerSettings property, and all other Tasks
      may specify it.
     :type container_configuration: ~azure.batch.models.ContainerConfiguration
+    :param disk_encryption_configuration: The disk encryption configuration
+     for the pool. If specified, encryption is performed on each node in the
+     pool during node provisioning.
+    :type disk_encryption_configuration:
+     ~azure.batch.models.DiskEncryptionConfiguration
     """
 
     _validation = {
@@ -10662,9 +10710,10 @@ class VirtualMachineConfiguration(Model):
         'data_disks': {'key': 'dataDisks', 'type': '[DataDisk]'},
         'license_type': {'key': 'licenseType', 'type': 'str'},
         'container_configuration': {'key': 'containerConfiguration', 'type': 'ContainerConfiguration'},
+        'disk_encryption_configuration': {'key': 'diskEncryptionConfiguration', 'type': 'DiskEncryptionConfiguration'},
     }
 
-    def __init__(self, *, image_reference, node_agent_sku_id: str, windows_configuration=None, data_disks=None, license_type: str=None, container_configuration=None, **kwargs) -> None:
+    def __init__(self, *, image_reference, node_agent_sku_id: str, windows_configuration=None, data_disks=None, license_type: str=None, container_configuration=None, disk_encryption_configuration=None, **kwargs) -> None:
         super(VirtualMachineConfiguration, self).__init__(**kwargs)
         self.image_reference = image_reference
         self.node_agent_sku_id = node_agent_sku_id
@@ -10672,6 +10721,7 @@ class VirtualMachineConfiguration(Model):
         self.data_disks = data_disks
         self.license_type = license_type
         self.container_configuration = container_configuration
+        self.disk_encryption_configuration = disk_encryption_configuration
 
 
 class WindowsConfiguration(Model):

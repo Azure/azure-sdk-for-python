@@ -1,5 +1,12 @@
 # Release History
 
+## 3.0.0rc11 (2020-03-25)
+
+**Breaking changes**
+
+  - Operation PrivateEndpointConnectionsOperations.create_or_update has a new signature
+  - Operation PrivateEndpointConnectionsOperations.create_or_update has a new signature
+
 ## 3.0.0rc10 (2020-03-11)
 
 **Features**

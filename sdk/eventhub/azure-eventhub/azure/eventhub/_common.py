@@ -29,6 +29,19 @@ from ._constants import (
     PROP_PARTITION_KEY,
     PROP_PARTITION_KEY_AMQP_SYMBOL,
     PROP_TIMESTAMP,
+    PROP_ABSOLUTE_EXPIRY_TIME,
+    PROP_CONTENT_ENCODING,
+    PROP_CONTENT_TYPE,
+    PROP_CORRELATION_ID,
+    PROP_GROUP_ID,
+    PROP_GROUP_SEQUENCE,
+    PROP_MESSAGE_ID,
+    PROP_REPLY_TO,
+    PROP_REPLY_TO_GROUP_ID,
+    PROP_SUBJECT,
+    PROP_TO,
+    PROP_USER_ID,
+    PROP_CREATION_TIME,
 )
 
 if TYPE_CHECKING:
@@ -38,6 +51,22 @@ _LOGGER = logging.getLogger(__name__)
 
 # event_data.encoded_size < 255, batch encode overhead is 5, >=256, overhead is 8 each
 _BATCH_MESSAGE_OVERHEAD_COST = [5, 8]
+
+_SYS_PROP_KEYS_TO_MSG_PROPERTIES = (
+    (PROP_MESSAGE_ID, "message_id"),
+    (PROP_USER_ID, "user_id"),
+    (PROP_TO, "to"),
+    (PROP_SUBJECT, "subject"),
+    (PROP_REPLY_TO, "reply_to"),
+    (PROP_CORRELATION_ID, "correlation_id"),
+    (PROP_CONTENT_TYPE, "content_type"),
+    (PROP_CONTENT_ENCODING, "content_encoding"),
+    (PROP_ABSOLUTE_EXPIRY_TIME, "absolute_expiry_time"),
+    (PROP_CREATION_TIME, "creation_time"),
+    (PROP_GROUP_ID, "group_id"),
+    (PROP_GROUP_SEQUENCE, "group_sequence"),
+    (PROP_REPLY_TO_GROUP_ID, "reply_to_group_id"),
+)
 
 
 class EventData(object):
@@ -60,6 +89,7 @@ class EventData(object):
     def __init__(self, body=None):
         # type: (Union[str, bytes, List[AnyStr]]) -> None
         self._last_enqueued_event_properties = {}  # type: Dict[str, Any]
+        self._sys_properties = None  # type: Optional[Dict[bytes, Any]]
         if body and isinstance(body, list):
             self.message = Message(body[0])
             for more in body[1:]:
@@ -207,12 +237,42 @@ class EventData(object):
 
     @property
     def system_properties(self):
-        # type: () -> Dict[Union[str, bytes], Any]
-        """Metadata set by the Event Hubs Service associated with the event
+        # type: () -> Dict[bytes, Any]
+        """Metadata set by the Event Hubs Service associated with the event.
+
+        An EventData could have some or all of the following meta data depending on the source
+        of the event data.
+
+            - b"x-opt-sequence-number" (int)
+            - b"x-opt-offset" (bytes)
+            - b"x-opt-partition-key" (bytes)
+            - b"x-opt-enqueued-time" (int)
+            - b"message-id" (bytes)
+            - b"user-id" (bytes)
+            - b"to" (bytes)
+            - b"subject" (bytes)
+            - b"reply-to" (bytes)
+            - b"correlation-id" (bytes)
+            - b"content-type" (bytes)
+            - b"content-encoding" (bytes)
+            - b"absolute-expiry-time" (int)
+            - b"creation-time" (int)
+            - b"group-id" (bytes)
+            - b"group-sequence" (bytes)
+            - b"reply-to-group-id" (bytes)
 
         :rtype: dict
         """
-        return self.message.annotations
+
+        if self._sys_properties is None:
+            self._sys_properties = {}
+            if self.message.properties:
+                for key, prop_name in _SYS_PROP_KEYS_TO_MSG_PROPERTIES:
+                    value = getattr(self.message.properties, prop_name, None)
+                    if value:
+                        self._sys_properties[key] = value
+            self._sys_properties.update(self.message.annotations)
+        return self._sys_properties
 
     @property
     def body(self):
