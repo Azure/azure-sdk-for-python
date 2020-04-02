@@ -135,9 +135,7 @@ class BindingsOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        binding_resource = None
-        if properties is not None:
-            binding_resource = models.BindingResource(properties=properties)
+        binding_resource = models.BindingResource(properties=properties)
 
         # Construct URL
         url = self.create_or_update.metadata['url']
@@ -166,10 +164,7 @@ class BindingsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        if binding_resource is not None:
-            body_content = self._serialize.body(binding_resource, 'BindingResource')
-        else:
-            body_content = None
+        body_content = self._serialize.body(binding_resource, 'BindingResource')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -279,9 +274,7 @@ class BindingsOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        binding_resource = None
-        if properties is not None:
-            binding_resource = models.BindingResource(properties=properties)
+        binding_resource = models.BindingResource(properties=properties)
 
         # Construct URL
         url = self.update.metadata['url']
@@ -310,10 +303,7 @@ class BindingsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        if binding_resource is not None:
-            body_content = self._serialize.body(binding_resource, 'BindingResource')
-        else:
-            body_content = None
+        body_content = self._serialize.body(binding_resource, 'BindingResource')
 
         # Construct and send request
         request = self._client.patch(url, query_parameters, header_parameters, body_content)

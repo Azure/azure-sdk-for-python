@@ -62,18 +62,18 @@ class UserSourceType(str, Enum):
     source = "Source"
 
 
+class RuntimeVersion(str, Enum):
+
+    java_8 = "Java_8"
+    java_11 = "Java_11"
+
+
 class DeploymentResourceProvisioningState(str, Enum):
 
     creating = "Creating"
     updating = "Updating"
     succeeded = "Succeeded"
     failed = "Failed"
-
-
-class RuntimeVersion(str, Enum):
-
-    java_8 = "Java_8"
-    java_11 = "Java_11"
 
 
 class DeploymentResourceStatus(str, Enum):

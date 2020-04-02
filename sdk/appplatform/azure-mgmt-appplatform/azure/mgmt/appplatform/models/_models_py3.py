@@ -91,6 +91,9 @@ class AppResource(ProxyResource):
     :vartype type: str
     :param properties: Properties of the App resource
     :type properties: ~azure.mgmt.appplatform.models.AppResourceProperties
+    :param location: The GEO location of the application, always the same with
+     its parent resource
+    :type location: str
     """
 
     _validation = {
@@ -104,11 +107,13 @@ class AppResource(ProxyResource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'properties': {'key': 'properties', 'type': 'AppResourceProperties'},
+        'location': {'key': 'location', 'type': 'str'},
     }
 
-    def __init__(self, *, properties=None, **kwargs) -> None:
+    def __init__(self, *, properties=None, location: str=None, **kwargs) -> None:
         super(AppResource, self).__init__(**kwargs)
         self.properties = properties
+        self.location = location
 
 
 class AppResourceProperties(Model):
@@ -547,13 +552,13 @@ class DeploymentResourceProperties(Model):
     :type source: ~azure.mgmt.appplatform.models.UserSourceInfo
     :ivar app_name: App name of the deployment
     :vartype app_name: str
+    :param deployment_settings: Deployment settings of the Deployment
+    :type deployment_settings:
+     ~azure.mgmt.appplatform.models.DeploymentSettings
     :ivar provisioning_state: Provisioning state of the Deployment. Possible
      values include: 'Creating', 'Updating', 'Succeeded', 'Failed'
     :vartype provisioning_state: str or
      ~azure.mgmt.appplatform.models.DeploymentResourceProvisioningState
-    :param deployment_settings: Deployment settings of the Deployment
-    :type deployment_settings:
-     ~azure.mgmt.appplatform.models.DeploymentSettings
     :ivar status: Status of the Deployment. Possible values include:
      'Unknown', 'Stopped', 'Running', 'Failed', 'Allocating', 'Upgrading',
      'Compiling'
@@ -580,8 +585,8 @@ class DeploymentResourceProperties(Model):
     _attribute_map = {
         'source': {'key': 'source', 'type': 'UserSourceInfo'},
         'app_name': {'key': 'appName', 'type': 'str'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
         'deployment_settings': {'key': 'deploymentSettings', 'type': 'DeploymentSettings'},
+        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
         'status': {'key': 'status', 'type': 'str'},
         'active': {'key': 'active', 'type': 'bool'},
         'created_time': {'key': 'createdTime', 'type': 'iso-8601'},
@@ -592,8 +597,8 @@ class DeploymentResourceProperties(Model):
         super(DeploymentResourceProperties, self).__init__(**kwargs)
         self.source = source
         self.app_name = None
-        self.provisioning_state = None
         self.deployment_settings = deployment_settings
+        self.provisioning_state = None
         self.status = None
         self.active = None
         self.created_time = None

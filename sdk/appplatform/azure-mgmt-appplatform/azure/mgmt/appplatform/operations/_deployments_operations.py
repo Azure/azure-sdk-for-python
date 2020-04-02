@@ -113,9 +113,7 @@ class DeploymentsOperations(object):
 
     def _create_or_update_initial(
             self, resource_group_name, service_name, app_name, deployment_name, properties=None, custom_headers=None, raw=False, **operation_config):
-        deployment_resource = None
-        if properties is not None:
-            deployment_resource = models.DeploymentResource(properties=properties)
+        deployment_resource = models.DeploymentResource(properties=properties)
 
         # Construct URL
         url = self.create_or_update.metadata['url']
@@ -144,10 +142,7 @@ class DeploymentsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        if deployment_resource is not None:
-            body_content = self._serialize.body(deployment_resource, 'DeploymentResource')
-        else:
-            body_content = None
+        body_content = self._serialize.body(deployment_resource, 'DeploymentResource')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -294,9 +289,7 @@ class DeploymentsOperations(object):
 
     def _update_initial(
             self, resource_group_name, service_name, app_name, deployment_name, properties=None, custom_headers=None, raw=False, **operation_config):
-        deployment_resource = None
-        if properties is not None:
-            deployment_resource = models.DeploymentResource(properties=properties)
+        deployment_resource = models.DeploymentResource(properties=properties)
 
         # Construct URL
         url = self.update.metadata['url']
@@ -325,10 +318,7 @@ class DeploymentsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        if deployment_resource is not None:
-            body_content = self._serialize.body(deployment_resource, 'DeploymentResource')
-        else:
-            body_content = None
+        body_content = self._serialize.body(deployment_resource, 'DeploymentResource')
 
         # Construct and send request
         request = self._client.patch(url, query_parameters, header_parameters, body_content)
@@ -449,9 +439,9 @@ class DeploymentsOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
                 if version is not None:
                     query_parameters['version'] = self._serialize.query("version", version, '[str]', div=',')
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
@@ -527,9 +517,9 @@ class DeploymentsOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
                 if version is not None:
                     query_parameters['version'] = self._serialize.query("version", version, '[str]', div=',')
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
