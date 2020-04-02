@@ -1,5 +1,9 @@
 # Release History
 
+## XX.XX.XX
+**New Feature**
+- Added support for set/update/remove Access Control on a path and sub-paths.
+
 ## 12.0.0 (2020-03-10)
 **New Feature**
 - Added `set_file_system_access_policy` and `get_file_system_access_policy` APIs on FileSystemClient

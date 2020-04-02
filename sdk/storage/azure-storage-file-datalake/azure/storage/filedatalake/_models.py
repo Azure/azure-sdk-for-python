@@ -598,3 +598,23 @@ class LocationMode(object):
 
     PRIMARY = 'primary'  #: Requests should be sent to the primary location.
     SECONDARY = 'secondary'  #: Requests should be sent to the secondary location, if possible.
+
+
+class AccessControlChanges(object):
+    """
+    AccessControlChangeResult contains result of operations that change Access Control Lists recursively.
+
+    :param long directories_successful:
+        Number of directories where Access Control List has been updated successfully.
+    :param long files_successful:
+        Number of files where Access Control List has been updated successfully.
+    :param long failure_count:
+        Number of paths where Access Control List update has failed.
+    :param str continuation:
+        An opaque continuation token that may be used to resume the operations in case of failures.
+    """
+    def __init__(self, directories_successful, files_successful, failure_count, continuation):
+        self.directories_successful = directories_successful
+        self.files_successful = files_successful
+        self.failure_count = failure_count
+        self.continuation = continuation

@@ -6,7 +6,7 @@
 from azure.storage.blob.aio import BlobClient
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
 from .._path_client import PathClient as PathClientBase
-from .._models import DirectoryProperties
+from .._models import DirectoryProperties, AccessControlChanges
 from .._generated.aio import DataLakeStorageClient
 from ._data_lake_lease_async import DataLakeLeaseClient
 from .._generated.models import StorageErrorException
@@ -29,13 +29,15 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
         # type: (...) -> None
         kwargs['retry_policy'] = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)
 
-        super(PathClient, self).__init__(account_url, file_system_name, path_name, # type: ignore # pylint: disable=specify-parameter-names-in-call
+        super(PathClient, self).__init__(account_url, file_system_name, path_name,
+                                         # type: ignore # pylint: disable=specify-parameter-names-in-call
                                          credential=credential,
                                          **kwargs)
 
         kwargs.pop('_hosts', None)
         self._blob_client = BlobClient(self._blob_account_url, file_system_name, blob_name=path_name,
-                                       credential=credential, _hosts=self._blob_client._hosts, **kwargs)  # type: ignore # pylint: disable=protected-access
+                                       credential=credential, _hosts=self._blob_client._hosts,
+                                       **kwargs)  # type: ignore # pylint: disable=protected-access
         self._client = DataLakeStorageClient(self.url, file_system_name, path_name, pipeline=self._pipeline)
         self._loop = kwargs.get('loop', None)
 
@@ -260,6 +262,145 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
         options = self._get_access_control_options(upn=upn, **kwargs)
         try:
             return await self._client.path.get_properties(**options)
+        except StorageErrorException as error:
+            process_storage_error(error)
+
+    async def set_access_control_recursive(self,
+                                           acl=None,  # type: Optional[str]
+                                           progress_callback=None,
+                                           **kwargs):
+        # type: (...) -> Dict[str, Union[str, datetime]]
+        """
+        Sets the Access Control on a path and sub-paths.
+
+        :param acl:
+            Sets POSIX access control rights on files and directories.
+            The value is a comma-separated list of access control entries. Each
+            access control entry (ACE) consists of a scope, a type, a user or
+            group identifier, and permissions in the format
+            "[scope:][type]:[id]:[permissions]".
+        :type acl: str
+        :param progress_callback:
+            Callback where the caller can track progress of the operation
+            as well as collect paths that failed to change Access Control.
+        :type progress_callback: func(~azure.storage.filedatalake._generated.models.SetAccessControlRecursiveResponse)
+        :keyword str continuation:
+            Optional continuation token that can be used to resume previously stopped operation.
+        :keyword int batch_size:
+            Optional. If data set size exceeds batch size then operation will be split into multiple
+            requests so that progress can be tracked. Batch size should be between 1 and 2000.
+            The default when unspecified is 2000.
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :keyword: response dict (Etag and last modified).
+        :return: A summary of the recursive operations, including the count of successes and failures,
+            as well as a continuation token in case the operation was terminated prematurely.
+        :rtype: :class:`~azure.storage.filedatalake.models.AccessControlChanges`
+        """
+        if not acl:
+            raise ValueError("The Access Control List must be set for this operation")
+
+        options = self._set_access_control_recursive_options('set', acl=acl, **kwargs)
+        return await self._set_access_control_internal(options, progress_callback)
+
+    async def update_access_control_recursive(self,
+                                              acl=None,  # type: Optional[str]
+                                              progress_callback=None,
+                                              **kwargs):
+        # type: (...) -> Dict[str, Union[str, datetime]]
+        """
+        Modifies the Access Control on a path and sub-paths.
+
+        :param acl:
+            Modifies POSIX access control rights on files and directories.
+            The value is a comma-separated list of access control entries. Each
+            access control entry (ACE) consists of a scope, a type, a user or
+            group identifier, and permissions in the format
+            "[scope:][type]:[id]:[permissions]".
+        :type acl: str
+        :param progress_callback:
+            Callback where the caller can track progress of the operation
+            as well as collect paths that failed to change Access Control.
+        :type progress_callback: func(~azure.storage.filedatalake._generated.models.SetAccessControlRecursiveResponse)
+        :keyword str continuation:
+            Optional continuation token that can be used to resume previously stopped operation.
+        :keyword int batch_size:
+            Optional. If data set size exceeds batch size then operation will be split into multiple
+            requests so that progress can be tracked. Batch size should be between 1 and 2000.
+            The default when unspecified is 2000.
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :keyword: response dict (Etag and last modified).
+        :return: A summary of the recursive operations, including the count of successes and failures,
+            as well as a continuation token in case the operation was terminated prematurely.
+        :rtype: :class:`~azure.storage.filedatalake.models.AccessControlChanges`
+        """
+        if not acl:
+            raise ValueError("The Access Control List must be set for this operation")
+
+        options = self._set_access_control_recursive_options('modify', acl=acl, **kwargs)
+        return await self._set_access_control_internal(options, progress_callback)
+
+    async def remove_access_control_recursive(self,
+                                              acl=None,  # type: Optional[str]
+                                              progress_callback=None,
+                                              **kwargs):
+        # type: (...) -> Dict[str, Union[str, datetime]]
+        """
+        Removes the Access Control on a path and sub-paths.
+
+        :param acl:
+            Removes POSIX access control rights on files and directories.
+            The value is a comma-separated list of access control entries. Each
+            access control entry (ACE) consists of a scope, a type, and a user or
+            group identifier in the format "[scope:][type]:[id]”.
+        :type acl: str
+        :param progress_callback:
+            Callback where the caller can track progress of the operation
+            as well as collect paths that failed to change Access Control.
+        :type progress_callback: func(~azure.storage.filedatalake._generated.models.SetAccessControlRecursiveResponse)
+        :keyword str continuation:
+            Optional continuation token that can be used to resume previously stopped operation.
+        :keyword int batch_size:
+            Optional. If data set size exceeds batch size then operation will be split into multiple
+            requests so that progress can be tracked. Batch size should be between 1 and 2000.
+            The default when unspecified is 2000.
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :keyword: response dict (Etag and last modified).
+        :return: A summary of the recursive operations, including the count of successes and failures,
+            as well as a continuation token in case the operation was terminated prematurely.
+        :rtype: :class:`~azure.storage.filedatalake.models.AccessControlChanges`
+        """
+        if not acl:
+            raise ValueError("The Access Control List must be set for this operation")
+
+        options = self._set_access_control_recursive_options('remove', acl=acl, **kwargs)
+        return await self._set_access_control_internal(options, progress_callback)
+
+    async def _set_access_control_internal(self, options, progress_callback):
+        try:
+            total_directories_successful = 0
+            total_files_success = 0
+            total_failure_count = 0
+            continue_operation = True
+            while continue_operation:
+                headers, resp = await self._client.path.set_access_control_recursive(**options)
+
+                if progress_callback is not None:
+                    await progress_callback(resp)
+
+                # make a running tally so that we can report the final results
+                total_directories_successful += resp.directories_successful
+                total_files_success += resp.files_successful
+                total_failure_count += resp.failure_count
+
+                # update the continuation token, if there are more operations that cannot be completed in a single call
+                options['continuation'] = headers['continuation']
+                continue_operation = bool(options['continuation'])
+
+            return AccessControlChanges(total_directories_successful, total_files_success,
+                                        total_failure_count, options['continuation'])
         except StorageErrorException as error:
             process_storage_error(error)
 
