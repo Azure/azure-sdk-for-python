@@ -37,7 +37,7 @@ class TrainingPolling(LocationPolling):
             status = body['modelInfo']['status']
             if not status:
                 raise BadResponse("No status found in body")
-            if status != "creating":
+            if status.lower() != "creating":
                 return "Succeeded"
 
             return "InProgress"
