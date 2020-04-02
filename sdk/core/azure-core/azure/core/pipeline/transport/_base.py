@@ -384,6 +384,7 @@ class HttpRequest(object):
             requests,
             kwargs.pop("policies", []),
             kwargs.pop("boundary", []),
+            kwargs
         )
 
     def prepare_multipart_body(self):

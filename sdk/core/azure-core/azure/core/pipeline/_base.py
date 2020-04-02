@@ -157,8 +157,8 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
         self._transport.__exit__(*exc_details)
 
     @staticmethod
-    def _prepare_multipart_mixed_request(request, **kwargs):
-        # type: (HTTPRequestType, Any) -> None
+    def _prepare_multipart_mixed_request(request):
+        # type: (HTTPRequestType) -> None
         """Will execute the multipart policies.
 
         Does nothing if "set_multipart_mixed" was never called.
@@ -169,12 +169,13 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
 
         requests = multipart_mixed_info[0]  # type: List[HTTPRequestType]
         policies = multipart_mixed_info[1]  # type: List[SansIOHTTPPolicy]
+        pipeline_options = multipart_mixed_info[3]  # type: Dict[str, Any]
 
         # Apply on_requests concurrently to all requests
         import concurrent.futures
 
         def prepare_requests(req):
-            context = PipelineContext(None, **kwargs)
+            context = PipelineContext(None, **pipeline_options)
             pipeline_request = PipelineRequest(req, context)
             for policy in policies:
                 _await_result(policy.on_request, pipeline_request)
@@ -194,8 +195,7 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
         :return: The PipelineResponse object
         :rtype: ~azure.core.pipeline.PipelineResponse
         """
-        multipart_options = kwargs.pop("multipart_options", None) or {}
-        self._prepare_multipart_mixed_request(request, **multipart_options)
+        self._prepare_multipart_mixed_request(request)
         request.prepare_multipart_body()  # type: ignore
         context = PipelineContext(self._transport, **kwargs)
         pipeline_request = PipelineRequest(

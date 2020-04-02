@@ -227,11 +227,12 @@ def test_multipart_send_with_context():
         req0,
         req1,
         policies=[header_policy],
-        boundary="batch_357de4f7-6d0b-4e02-8cd2-6361411a9525" # Fix it so test are deterministic
+        boundary="batch_357de4f7-6d0b-4e02-8cd2-6361411a9525", # Fix it so test are deterministic
+        headers={'Accept': 'application/json'}
     )
 
     with Pipeline(transport) as pipeline:
-        pipeline.run(request, multipart_options={'headers': {'Accept': 'application/json'}})
+        pipeline.run(request)
 
     assert request.body == (
         b'--batch_357de4f7-6d0b-4e02-8cd2-6361411a9525\r\n'
