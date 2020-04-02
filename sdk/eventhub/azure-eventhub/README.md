@@ -114,7 +114,7 @@ The following sections provide several code snippets covering some of the most c
 - [Inspect an Event Hub](#inspect-an-event-hub)
 - [Publish events to an Event Hub](#publish-events-to-an-event-hub)
 - [Consume events from an Event Hub](#consume-events-from-an-event-hub)
-- [Consume events from an Event Hub in Batches](#consume-events-from-an-event-hub-in-batches)
+- [Consume events from an Event Hub in batches](#consume-events-from-an-event-hub-in-batches)
 - [Publish events to an Event Hub asynchronously](#publish-events-to-an-event-hub-asynchronously)
 - [Consume events from an Event Hub asynchronously](#consume-events-from-an-event-hub-asynchronously)
 - [Consume events from an Event Hub in batches asynchronously](#consume-events-from-an-event-hub-in-batches-asynchronously)
@@ -209,7 +209,7 @@ with client:
         starting_position="-1",  # "-1" is from the beginning of the partition.
     )
     # receive events from specified partition:
-    # client.receive(on_event=on_event, partition_id='0')
+    # client.receive_batch(on_event_batch=on_event_batch, partition_id='0')
 ```
 
 ### Publish events to an Event Hub asynchronously
@@ -305,7 +305,7 @@ async def receive_batch():
             starting_position="-1",  # "-1" is from the beginning of the partition.
         )
         # receive events from specified partition:
-        # await client.receive(on_event=on_event, partition_id='0')
+        # await client.receive_batch(on_event_batch=on_event_batch, partition_id='0')
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()

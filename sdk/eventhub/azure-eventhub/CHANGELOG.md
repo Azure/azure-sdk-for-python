@@ -1,6 +1,6 @@
 # Release History
 
-## 5.1.0b1 (Unreleased)
+## 5.1.0b1 (2020-04-06)
 
 **New Features**
 - Added `EventHubConsumerClient.receive_batch()` to receive and process events in batches instead of one by one. #9184
