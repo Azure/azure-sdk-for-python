@@ -2,6 +2,9 @@
 
 ## 12.3.1 (Unreleased)
 
+**Fixes**
+- Fixed issue where batch requests could not be combined with token credentials (#9534)
+
 
 ## 12.3.0 (2020-03-10)
 

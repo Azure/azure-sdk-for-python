@@ -12,6 +12,7 @@ import time
 import unittest
 import uuid
 import os
+import sys
 from datetime import datetime, timedelta
 
 from azure.core.exceptions import (
@@ -1489,6 +1490,30 @@ class StorageCommonBlobTest(StorageTestCase):
         service = BlobServiceClient(self.account_url(storage_account, "blob"), credential=token_credential)
         result = service.get_service_properties()
         self.assertIsNotNone(result)
+
+    @pytest.mark.skipif(sys.version_info < (3, 0), reason="Batch not supported on Python 2.7")
+    @GlobalStorageAccountPreparer()
+    def test_token_credential_with_batch_operation(self, resource_group, location, storage_account, storage_account_key):   
+        # Setup
+        container_name = self._get_container_reference()
+        blob_name = self._get_blob_reference()
+        token_credential = self.generate_oauth_token()
+        service = BlobServiceClient(self.account_url(storage_account, "blob"), credential=token_credential)
+        container = service.get_container_client(container_name)
+        try:
+            container.create_container()
+            container.upload_blob(blob_name + '1', b'HelloWorld')
+            container.upload_blob(blob_name + '2', b'HelloWorld')
+            container.upload_blob(blob_name + '3', b'HelloWorld')
+
+            delete_batch = []
+            blob_list = container.list_blobs(name_starts_with=blob_name)
+            for blob in blob_list:        
+                delete_batch.append(blob.name)
+
+            container.delete_blobs(*delete_batch)
+        finally:
+            container.delete_container()
 
     @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
