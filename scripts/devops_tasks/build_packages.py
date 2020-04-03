@@ -88,7 +88,6 @@ if __name__ == "__main__":
         "--devbuild",
         default=False,
         dest="is_dev_build",
-        action="store_true",
         help=(
             "Set build type to dev build so package requirements will be updated if required package is not available on PyPI"
         ),
