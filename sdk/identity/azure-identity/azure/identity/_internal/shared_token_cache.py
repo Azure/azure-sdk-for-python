@@ -31,22 +31,16 @@ if TYPE_CHECKING:
     CacheItem = Mapping[str, str]
 
 
-MULTIPLE_ACCOUNTS = """Multiple users were discovered in the shared token cache. If using DefaultAzureCredential, set
-the AZURE_USERNAME environment variable to the preferred username. Otherwise,
-specify it when constructing SharedTokenCacheCredential.
-Discovered accounts: {}"""
+MULTIPLE_ACCOUNTS = """SharedTokenCacheCredential authentication unavailable. Multiple accounts
+were found in the cache. Use username and tenant id to disambiguate."""
 
-MULTIPLE_MATCHING_ACCOUNTS = """Found multiple accounts matching{}{}. If using DefaultAzureCredential, set environment
-variables AZURE_USERNAME and AZURE_TENANT_ID with the preferred username and tenant.
-Otherwise, specify them when constructing SharedTokenCacheCredential.
-Discovered accounts: {}"""
+MULTIPLE_MATCHING_ACCOUNTS = """SharedTokenCacheCredential authentication unavailable. Multiple accounts
+matching the specified{}{} were found in the cache."""
 
-NO_ACCOUNTS = """The shared cache contains no signed-in accounts. To authenticate with SharedTokenCacheCredential, login
-through developer tooling supporting Azure single sign on"""
+NO_ACCOUNTS = """SharedTokenCacheCredential authentication unavailable. No accounts were found in the cache."""
 
-NO_MATCHING_ACCOUNTS = """The cache contains no account matching the specified{}{}. To authenticate with
-SharedTokenCacheCredential, login through developer tooling supporting Azure single sign on.
-Discovered accounts: {}"""
+NO_MATCHING_ACCOUNTS = """SharedTokenCacheCredential authentication unavailable. No account
+matching the specified{}{} was found in the cache."""
 
 NO_TOKEN = """Token acquisition failed for user '{}'. To fix, re-authenticate
 through developer tooling supporting Azure single sign on"""
@@ -174,9 +168,9 @@ class SharedTokenCacheBase(ABC):
             username_string = " username: {}".format(username) if username else ""
             tenant_string = " tenant: {}".format(tenant_id) if tenant_id else ""
             if filtered_accounts:
-                message = MULTIPLE_MATCHING_ACCOUNTS.format(username_string, tenant_string, cached_accounts)
+                message = MULTIPLE_MATCHING_ACCOUNTS.format(username_string, tenant_string)
             else:
-                message = NO_MATCHING_ACCOUNTS.format(username_string, tenant_string, cached_accounts)
+                message = NO_MATCHING_ACCOUNTS.format(username_string, tenant_string)
         else:
             message = MULTIPLE_ACCOUNTS.format(cached_accounts)
 
