@@ -24,6 +24,7 @@ try:
     from ._models_py3 import DomainUpdateParameters
     from ._models_py3 import EventChannel
     from ._models_py3 import EventChannelDestination
+    from ._models_py3 import EventChannelFilter
     from ._models_py3 import EventChannelSource
     from ._models_py3 import EventHubEventSubscriptionDestination
     from ._models_py3 import EventSubscription
@@ -68,8 +69,6 @@ try:
     from ._models_py3 import RetryPolicy
     from ._models_py3 import ServiceBusQueueEventSubscriptionDestination
     from ._models_py3 import ServiceBusTopicEventSubscriptionDestination
-    from ._models_py3 import SkuDefinitionsForResourceType
-    from ._models_py3 import SkuDefinitionsForResourceTypeListResult
     from ._models_py3 import StorageBlobDeadLetterDestination
     from ._models_py3 import StorageQueueEventSubscriptionDestination
     from ._models_py3 import StringBeginsWithAdvancedFilter
@@ -102,6 +101,7 @@ except (SyntaxError, ImportError):
     from ._models import DomainUpdateParameters
     from ._models import EventChannel
     from ._models import EventChannelDestination
+    from ._models import EventChannelFilter
     from ._models import EventChannelSource
     from ._models import EventHubEventSubscriptionDestination
     from ._models import EventSubscription
@@ -146,8 +146,6 @@ except (SyntaxError, ImportError):
     from ._models import RetryPolicy
     from ._models import ServiceBusQueueEventSubscriptionDestination
     from ._models import ServiceBusTopicEventSubscriptionDestination
-    from ._models import SkuDefinitionsForResourceType
-    from ._models import SkuDefinitionsForResourceTypeListResult
     from ._models import StorageBlobDeadLetterDestination
     from ._models import StorageQueueEventSubscriptionDestination
     from ._models import StringBeginsWithAdvancedFilter
@@ -219,6 +217,7 @@ __all__ = [
     'DomainUpdateParameters',
     'EventChannel',
     'EventChannelDestination',
+    'EventChannelFilter',
     'EventChannelSource',
     'EventHubEventSubscriptionDestination',
     'EventSubscription',
@@ -263,8 +262,6 @@ __all__ = [
     'RetryPolicy',
     'ServiceBusQueueEventSubscriptionDestination',
     'ServiceBusTopicEventSubscriptionDestination',
-    'SkuDefinitionsForResourceType',
-    'SkuDefinitionsForResourceTypeListResult',
     'StorageBlobDeadLetterDestination',
     'StorageQueueEventSubscriptionDestination',
     'StringBeginsWithAdvancedFilter',
