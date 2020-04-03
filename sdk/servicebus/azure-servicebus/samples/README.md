@@ -13,7 +13,7 @@ urlFragment: servicebus-samples
 These are code samples that show common scenario operations with the Azure Service Bus client library.
 Both [sync version](./sync_sampes) and [async version](./async_samples) of samples are provided, async samples require Python 3.5 or later.
 
-- [topic_send.py](./sync_samples/topic_send.py) ([async version](./async_samples/topic_send_async.py)) - Examples to send messages on a service bus topic:
+- [send_queue.py](./sync_samples/send_queue.py) ([async version](./async_samples/send_queue_async.py)) - Examples to send messages on a service bus queue:
     - From a connection string
     - Enabling Logging
 
@@ -35,10 +35,7 @@ pip install azure-servicebus
 
 1. Open a terminal window and `cd` to the directory that the samples are saved in.
 2. Set the environment variables specified in the sample file you wish to run.
-3. Follow the usage described in the file, e.g. `python topic_send.py`.
-
-        Note: If the sample in question uses pytest (look for @livetest marks) please run via pytest specifying the test name, and have the servicebus credentials present in environment variables
-        as described in conftest.py.
+3. Follow the usage described in the file, e.g. `python send_queue.py`.
 
 ## Next steps
 
