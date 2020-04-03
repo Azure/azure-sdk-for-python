@@ -13,24 +13,22 @@ from ._helpers import get_field_scalar_value
 
 
 def get_elements(field, read_result):
-    elements = []
-    try:
-        for item in field.elements:
-            nums = [int(s) for s in re.findall(r'\d+', item)]
-            read = nums[0]
-            line = nums[1]
-            if len(nums) == 3:
-                word = nums[2]
-                ocr_word = read_result[read].lines[line].words[word]
-                extracted_word = ExtractedWord._from_generated(ocr_word, page=read+1)
-                elements.append(extracted_word)
-                continue
-            ocr_line = read_result[read].lines[line]
-            extracted_line = ExtractedLine._from_generated(ocr_line, page=read+1)
-            elements.append(extracted_line)
-        return elements
-    except TypeError:
-        return None
+    text_elements = []
+
+    for item in field.elements:
+        nums = [int(s) for s in re.findall(r"\d+", item)]
+        read = nums[0]
+        line = nums[1]
+        if len(nums) == 3:
+            word = nums[2]
+            ocr_word = read_result[read].lines[line].words[word]
+            extracted_word = ExtractedWord._from_generated(ocr_word, page=read + 1)
+            text_elements.append(extracted_word)
+            continue
+        ocr_line = read_result[read].lines[line]
+        extracted_line = ExtractedLine._from_generated(ocr_line, page=read + 1)
+        text_elements.append(extracted_line)
+    return text_elements
 
 
 class LengthUnit(str, Enum):
@@ -45,6 +43,7 @@ class LengthUnit(str, Enum):
 class TrainStatus(str, Enum):
     """Status of the training operation.
     """
+
     succeeded = "succeeded"
     partially_succeeded = "partiallySucceeded"
     failed = "failed"
@@ -53,6 +52,7 @@ class TrainStatus(str, Enum):
 class ModelStatus(str, Enum):
     """Status of the model.
     """
+
     creating = "creating"
     ready = "ready"
     invalid = "invalid"
@@ -64,6 +64,7 @@ class Point(namedtuple("Point", "x y")):
     :ivar float x: x-coordinate
     :ivar float y: y-coordinate
     """
+
     __slots__ = ()
 
     def __new__(cls, x, y):
@@ -83,10 +84,13 @@ class BoundingBox(namedtuple("BoundingBox", ["top_left", "top_right", "bottom_ri
     :ivar ~azure.ai.formrecognizer.Point bottom_left:
         The x, y coordinates of the lower left point of the bounding box.
     """
+
     __slots__ = ()
 
     def __new__(cls, top_left, top_right, bottom_right, bottom_left):
-        return super(BoundingBox, cls).__new__(cls, top_left, top_right, bottom_right, bottom_left)
+        return super(BoundingBox, cls).__new__(
+            cls, top_left, top_right, bottom_right, bottom_left
+        )
 
 
 class PageRange(namedtuple("PageRange", "first_page last_page")):
@@ -96,6 +100,7 @@ class PageRange(namedtuple("PageRange", "first_page last_page")):
     :ivar int last_page: The last page of the document.
 
     """
+
     __slots__ = ()
 
     def __new__(cls, first_page, last_page):
@@ -188,10 +193,16 @@ class FieldValue(object):
             return field
 
         if field.type == "array":
-            return [FieldValue._from_generated(field, read_result) for field in field.value_array]
+            return [
+                FieldValue._from_generated(field, read_result)
+                for field in field.value_array
+            ]
 
         if field.type == "object":
-            return {key: FieldValue._from_generated(value, read_result) for key, value in field.value_object.items()}
+            return {
+                key: FieldValue._from_generated(value, read_result)
+                for key, value in field.value_object.items()
+            }
         return cls(
             value=get_field_scalar_value(field),
             text=field.text,
@@ -222,12 +233,9 @@ class ReceiptType(object):
 
     @classmethod
     def _from_generated(cls, item):
-        if item:
-            return cls(
-                type=get_field_scalar_value(item),
-                confidence=item.confidence
-            )
-        return item
+        return cls(
+            type=get_field_scalar_value(item),
+            confidence=item.confidence) if item else None
 
 
 class ReceiptItem(object):
@@ -243,10 +251,11 @@ class ReceiptItem(object):
     :ivar ~azure.ai.formrecognizer.FieldValue total_price:
         The total price of the item(s).
     """
+
     def __init__(self, **kwargs):
         self.name = kwargs.get("name", None)
         self.quantity = kwargs.get("quantity", None)
-        self.item_price = kwargs.get('item_price', None)
+        self.item_price = kwargs.get("item_price", None)
         self.total_price = kwargs.get("total_price", None)
 
     @classmethod
@@ -306,6 +315,7 @@ class ExtractedWord(object):
     :ivar int page_number:
         The 1-based page number in the input document.
     """
+
     def __init__(self, **kwargs):
         self.text = kwargs.get("text", None)
         self.bounding_box = kwargs.get("bounding_box", None)
@@ -349,12 +359,13 @@ class PageMetadata(object):
         order depends on the detected text, it may change across images and OCR version updates. Thus,
         business logic should be built upon the actual line location instead of order.
     """
+
     def __init__(self, **kwargs):
-        self.page_number = kwargs.get('page_number', None)
-        self.angle = kwargs.get('angle', None)
-        self.width = kwargs.get('width', None)
-        self.height = kwargs.get('height', None)
-        self.unit = kwargs.get('unit', None)
+        self.page_number = kwargs.get("page_number", None)
+        self.angle = kwargs.get("angle", None)
+        self.width = kwargs.get("width", None)
+        self.height = kwargs.get("height", None)
+        self.unit = kwargs.get("unit", None)
         self.lines = kwargs.get("lines", None)
 
     @classmethod
@@ -393,6 +404,7 @@ class ExtractedLayoutPage(object):
         If `include_text_details=True` is passed, contains a list
         of extracted text result for each page in the input document.
     """
+
     def __init__(self, **kwargs):
         self.tables = kwargs.get("tables", None)
         self.page_number = kwargs.get("page_number", None)
@@ -411,6 +423,7 @@ class ExtractedTable(object):
     :ivar int page_number:
         The 1-based page number in the input document.
     """
+
     def __init__(self, **kwargs):
         self.cells = kwargs.get("cells", None)
         self.row_count = kwargs.get("row_count", None)
@@ -436,17 +449,18 @@ class TableCell(object):
         elements constituting this field.
     :vartype elements: list[~azure.ai.formrecognizer.ExtractedWord, ~azure.ai.formrecognizer.ExtractedLine]
     """
+
     def __init__(self, **kwargs):
-        self.text = kwargs.get('text', None)
-        self.row_index = kwargs.get('row_index', None)
-        self.column_index = kwargs.get('column_index', None)
-        self.row_span = kwargs.get('row_span', 1)
-        self.column_span = kwargs.get('column_span', 1)
-        self.bounding_box = kwargs.get('bounding_box', None)
-        self.confidence = kwargs.get('confidence', None)
-        self.is_header = kwargs.get('is_header', False)
-        self.is_footer = kwargs.get('is_footer', False)
-        self.elements = kwargs.get('elements', None)
+        self.text = kwargs.get("text", None)
+        self.row_index = kwargs.get("row_index", None)
+        self.column_index = kwargs.get("column_index", None)
+        self.row_span = kwargs.get("row_span", 1)
+        self.column_span = kwargs.get("column_span", 1)
+        self.bounding_box = kwargs.get("bounding_box", None)
+        self.confidence = kwargs.get("confidence", None)
+        self.is_header = kwargs.get("is_header", False)
+        self.is_footer = kwargs.get("is_footer", False)
+        self.elements = kwargs.get("elements", None)
 
     @classmethod
     def _from_generated(cls, cell, read_result):
@@ -484,13 +498,14 @@ class CustomModel(object):
     :ivar ~azure.ai.formrecognizer.TrainingInfo training_info:
         Training information about the custom model.
     """
+
     def __init__(self, **kwargs):
-        self.model_id = kwargs.get('model_id', None)
-        self.status = kwargs.get('status', None)
-        self.created_on = kwargs.get('created_on', None)
-        self.last_updated_on = kwargs.get('last_updated_on', None)
+        self.model_id = kwargs.get("model_id", None)
+        self.status = kwargs.get("status", None)
+        self.created_on = kwargs.get("created_on", None)
+        self.last_updated_on = kwargs.get("last_updated_on", None)
         self.extracted_fields = kwargs.get("extracted_fields", None)
-        self.training_info = kwargs.get('training_info', None)
+        self.training_info = kwargs.get("training_info", None)
 
     @classmethod
     def _from_generated(cls, model):
@@ -512,19 +527,18 @@ class TrainingInfo(object):
     :ivar list[~azure.ai.formrecognizer.FormRecognizerError] training_errors:
         List of any errors that occurred while training the model.
     """
+
     def __init__(self, **kwargs):
-        self.documents = kwargs.get('documents', None)
-        self.training_errors = kwargs.get('training_errors', None)
+        self.documents = kwargs.get("documents", None)
+        self.training_errors = kwargs.get("training_errors", None)
 
     @classmethod
     def _from_generated(cls, train):
-        if train:
-            return cls(
-                documents=[TrainingDocumentInfo._from_generated(doc)
-                           for doc in train.training_documents] if train.training_documents else None,
-                training_errors=FormRecognizerError._from_generated(train.errors)
-            )
-        return train
+        return cls(
+            documents=[TrainingDocumentInfo._from_generated(doc)
+                       for doc in train.training_documents] if train.training_documents else None,
+            training_errors=FormRecognizerError._from_generated(train.errors)
+        ) if train else None
 
 
 class FormFields(object):
@@ -535,6 +549,7 @@ class FormFields(object):
     :ivar list[str] fields:
         List of extracted fields on the page.
     """
+
     def __init__(self, **kwargs):
         self.form_type_id = kwargs.get("form_type_id", None)
         self.fields = kwargs.get("fields", None)
@@ -543,10 +558,10 @@ class FormFields(object):
     def _from_generated(cls, keys):
         try:
             clusters = keys.clusters
-            return [cls(
-                form_type_id=cluster_id,
-                fields=fields
-            ) for cluster_id, fields in clusters.items()]
+            return [
+                cls(form_type_id=cluster_id, fields=fields)
+                for cluster_id, fields in clusters.items()
+            ]
         except AttributeError:
             return None
 
@@ -564,11 +579,12 @@ class TrainingDocumentInfo(object):
     :ivar list[~azure.ai.formrecognizer.FormRecognizerError] errors:
         List of any errors for document.
     """
+
     def __init__(self, **kwargs):
-        self.document_name = kwargs.get('document_name', None)
-        self.status = kwargs.get('status', None)
-        self.page_count = kwargs.get('page_count', None)
-        self.errors = kwargs.get('errors', None)
+        self.document_name = kwargs.get("document_name", None)
+        self.status = kwargs.get("status", None)
+        self.page_count = kwargs.get("page_count", None)
+        self.errors = kwargs.get("errors", None)
 
     @classmethod
     def _from_generated(cls, doc):
@@ -586,18 +602,14 @@ class FormRecognizerError(object):
     :ivar str code: Error code.
     :ivar str message: Error message.
     """
+
     def __init__(self, **kwargs):
-        self.code = kwargs.get('code', None)
-        self.message = kwargs.get('message', None)
+        self.code = kwargs.get("code", None)
+        self.message = kwargs.get("message", None)
 
     @classmethod
     def _from_generated(cls, err):
-        if err:
-            return [cls(
-                code=error.code,
-                message=error.message
-            ) for error in err]
-        return err
+        return [cls(code=error.code, message=error.message) for error in err] if err else None
 
 
 class CustomLabeledModel(object):
@@ -616,14 +628,15 @@ class CustomLabeledModel(object):
     :ivar ~azure.ai.formrecognizer.TrainingInfo training_info:
         Training information about the custom model.
     """
+
     def __init__(self, **kwargs):
-        self.model_id = kwargs.get('model_id', None)
-        self.status = kwargs.get('status', None)
-        self.created_on = kwargs.get('created_on', None)
-        self.last_updated_on = kwargs.get('last_updated_on', None)
-        self.fields = kwargs.get('fields', None)
-        self.average_model_accuracy = kwargs.get('average_model_accuracy', None)
-        self.training_info = kwargs.get('training_info', None)
+        self.model_id = kwargs.get("model_id", None)
+        self.status = kwargs.get("status", None)
+        self.created_on = kwargs.get("created_on", None)
+        self.last_updated_on = kwargs.get("last_updated_on", None)
+        self.fields = kwargs.get("fields", None)
+        self.average_model_accuracy = kwargs.get("average_model_accuracy", None)
+        self.training_info = kwargs.get("training_info", None)
 
     @classmethod
     def _from_generated(cls, model):
@@ -644,18 +657,17 @@ class FieldInfo(object):
     :ivar str field_name: Name of the field.
     :ivar float accuracy: Estimated extraction accuracy for this field.
     """
+
     def __init__(self, **kwargs):
-        self.field_name = kwargs.get('field_name', None)
-        self.accuracy = kwargs.get('accuracy', None)
+        self.field_name = kwargs.get("field_name", None)
+        self.accuracy = kwargs.get("accuracy", None)
 
     @classmethod
     def _from_generated(cls, model):
-        if model.fields:
-            return [cls(
-              field_name=field.field_name,
-              accuracy=field.accuracy
-            ) for field in model.fields]
-        return model.fields
+        return [cls(
+            field_name=field.field_name,
+            accuracy=field.accuracy
+        ) for field in model.fields] if model.fields else None
 
 
 class ExtractedPage(object):
@@ -674,12 +686,13 @@ class ExtractedPage(object):
     :ivar str form_type_id:
         Identifier of the type of form.
     """
+
     def __init__(self, **kwargs):
-        self.fields = kwargs.get('fields', None)
-        self.tables = kwargs.get('tables', None)
-        self.page_metadata = kwargs.get('page_metadata', None)
-        self.page_number = kwargs.get('page_number', None)
-        self.form_type_id = kwargs.get('form_type_id', None)
+        self.fields = kwargs.get("fields", None)
+        self.tables = kwargs.get("tables", None)
+        self.page_metadata = kwargs.get("page_metadata", None)
+        self.page_number = kwargs.get("page_number", None)
+        self.form_type_id = kwargs.get("form_type_id", None)
 
 
 class ExtractedField(object):
@@ -691,10 +704,11 @@ class ExtractedField(object):
         The value of the field and its text details.
     :ivar float confidence: Confidence value.
     """
+
     def __init__(self, **kwargs):
-        self.name = kwargs.get('name', None)
-        self.value = kwargs.get('value', None)
-        self.confidence = kwargs.get('confidence', None)
+        self.name = kwargs.get("name", None)
+        self.value = kwargs.get("value", None)
+        self.confidence = kwargs.get("confidence", None)
 
     @classmethod
     def _from_generated(cls, field, read_result):
@@ -716,10 +730,11 @@ class ExtractedText(object):
         elements constituting this field.
     :vartype elements: list[~azure.ai.formrecognizer.ExtractedWord, ~azure.ai.formrecognizer.ExtractedLine]
     """
+
     def __init__(self, **kwargs):
-        self.text = kwargs.get('text', None)
-        self.bounding_box = kwargs.get('bounding_box', None)
-        self.elements = kwargs.get('elements', None)
+        self.text = kwargs.get("text", None)
+        self.bounding_box = kwargs.get("bounding_box", None)
+        self.elements = kwargs.get("elements", None)
 
     @classmethod
     def _from_generated(cls, field, read_result):
@@ -751,10 +766,11 @@ class ExtractedLabeledForm(object):
         angle, unit. If `include_text_details=True` is passed, contains
         a list of extracted text result for each page in the input document.
     """
+
     def __init__(self, **kwargs):
-        self.fields = kwargs.get('fields', None)
-        self.page_range = kwargs.get('page_range', None)
-        self.tables = kwargs.get('tables', None)
+        self.fields = kwargs.get("fields", None)
+        self.page_range = kwargs.get("page_range", None)
+        self.tables = kwargs.get("tables", None)
         self.page_metadata = kwargs.get("page_metadata", None)
 
 
@@ -770,11 +786,12 @@ class ModelInfo(object):
     :ivar ~datetime.datetime last_updated_on:
         Date and time (UTC) when the status was last updated.
     """
+
     def __init__(self, **kwargs):
-        self.model_id = kwargs.get('model_id', None)
-        self.status = kwargs.get('status', None)
-        self.created_on = kwargs.get('created_on', None)
-        self.last_updated_on = kwargs.get('last_updated_on', None)
+        self.model_id = kwargs.get("model_id", None)
+        self.status = kwargs.get("status", None)
+        self.created_on = kwargs.get("created_on", None)
+        self.last_updated_on = kwargs.get("last_updated_on", None)
 
     @classmethod
     def _from_generated(cls, model):
@@ -794,10 +811,11 @@ class ModelsSummary(object):
     :ivar ~datetime.datetime last_updated_on:
         Date and time (UTC) when the summary was last updated.
     """
+
     def __init__(self, **kwargs):
-        self.count = kwargs.get('count', None)
-        self.limit = kwargs.get('limit', None)
-        self.last_updated_on = kwargs.get('last_updated_on', None)
+        self.count = kwargs.get("count", None)
+        self.limit = kwargs.get("limit", None)
+        self.last_updated_on = kwargs.get("last_updated_on", None)
 
     @classmethod
     def _from_generated(cls, model):
