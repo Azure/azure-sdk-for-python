@@ -6,6 +6,7 @@
 
 import pytest
 import platform
+import functools
 
 from azure.core.exceptions import HttpResponseError, ClientAuthenticationError
 from azure.core.credentials import AzureKeyCredential
@@ -19,7 +20,11 @@ from azure.ai.textanalytics import (
 )
 
 from testcase import GlobalTextAnalyticsAccountPreparer
+from testcase import TextAnalyticsClientPreparer as _TextAnalyticsClientPreparer
 from asynctestcase import AsyncTextAnalyticsTest
+
+# pre-apply the client_cls positional argument so it needn't be explicitly passed below
+TextAnalyticsClientPreparer = functools.partial(_TextAnalyticsClientPreparer, TextAnalyticsClient)
 
 
 class AiohttpTestTransport(AioHttpTransport):
@@ -35,19 +40,18 @@ class AiohttpTestTransport(AioHttpTransport):
 class TestExtractKeyPhrases(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
-    async def test_no_single_input(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
+    @TextAnalyticsClientPreparer()
+    async def test_no_single_input(self, client):
         with self.assertRaises(TypeError):
-            response = await text_analytics.extract_key_phrases("hello world")
+            response = await client.extract_key_phrases("hello world")
 
     @GlobalTextAnalyticsAccountPreparer()
-    async def test_all_successful_passing_dict(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
-
+    @TextAnalyticsClientPreparer()
+    async def test_all_successful_passing_dict(self, client):
         docs = [{"id": "1", "language": "en", "text": "Microsoft was founded by Bill Gates and Paul Allen"},
                 {"id": "2", "language": "es", "text": "Microsoft fue fundado por Bill Gates y Paul Allen"}]
 
-        response = await text_analytics.extract_key_phrases(docs, show_stats=True)
+        response = await client.extract_key_phrases(docs, show_stats=True)
         for phrases in response:
             self.assertIn("Paul Allen", phrases.key_phrases)
             self.assertIn("Bill Gates", phrases.key_phrases)
@@ -56,15 +60,14 @@ class TestExtractKeyPhrases(AsyncTextAnalyticsTest):
             self.assertIsNotNone(phrases.statistics)
 
     @GlobalTextAnalyticsAccountPreparer()
-    async def test_all_successful_passing_text_document_input(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
-
+    @TextAnalyticsClientPreparer()
+    async def test_all_successful_passing_text_document_input(self, client):
         docs = [
             TextDocumentInput(id="1", text="Microsoft was founded by Bill Gates and Paul Allen", language="en"),
             TextDocumentInput(id="2", text="Microsoft fue fundado por Bill Gates y Paul Allen", language="es")
         ]
 
-        response = await text_analytics.extract_key_phrases(docs)
+        response = await client.extract_key_phrases(docs)
         for phrases in response:
             self.assertIn("Paul Allen", phrases.key_phrases)
             self.assertIn("Bill Gates", phrases.key_phrases)
@@ -72,104 +75,98 @@ class TestExtractKeyPhrases(AsyncTextAnalyticsTest):
             self.assertIsNotNone(phrases.id)
 
     @GlobalTextAnalyticsAccountPreparer()
-    async def test_passing_only_string(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
-
+    @TextAnalyticsClientPreparer()
+    async def test_passing_only_string(self, client):
         docs = [
             u"Microsoft was founded by Bill Gates and Paul Allen",
             u"Microsoft fue fundado por Bill Gates y Paul Allen",
             u""
         ]
 
-        response = await text_analytics.extract_key_phrases(docs)
+        response = await client.extract_key_phrases(docs)
         self.assertTrue(response[2].is_error)
 
     @GlobalTextAnalyticsAccountPreparer()
-    async def test_input_with_some_errors(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
-
+    @TextAnalyticsClientPreparer()
+    async def test_input_with_some_errors(self, client):
         docs = [{"id": "1", "language": "English", "text": "Microsoft was founded by Bill Gates and Paul Allen"},
                 {"id": "2", "language": "es", "text": "Microsoft fue fundado por Bill Gates y Paul Allen"}]
 
-        response = await text_analytics.extract_key_phrases(docs)
+        response = await client.extract_key_phrases(docs)
         self.assertTrue(response[0].is_error)
         self.assertFalse(response[1].is_error)
 
     @GlobalTextAnalyticsAccountPreparer()
-    async def test_input_with_all_errors(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
-
+    @TextAnalyticsClientPreparer()
+    async def test_input_with_all_errors(self, client):
         docs = [{"id": "1", "language": "English", "text": "Microsoft was founded by Bill Gates and Paul Allen"},
                 {"id": "2", "language": "es", "text": ""}]
 
-        response = await text_analytics.extract_key_phrases(docs)
+        response = await client.extract_key_phrases(docs)
         self.assertTrue(response[0].is_error)
         self.assertTrue(response[1].is_error)
 
     @GlobalTextAnalyticsAccountPreparer()
-    async def test_empty_credential_class(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(""))
+    @TextAnalyticsClientPreparer(client_kwargs={"text_analytics_account_key": ""})
+    async def test_empty_credential_class(self, client):
         with self.assertRaises(ClientAuthenticationError):
-            response = await text_analytics.extract_key_phrases(
+            response = await client.extract_key_phrases(
                 ["This is written in English."]
             )
 
     @GlobalTextAnalyticsAccountPreparer()
-    async def test_bad_credentials(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential("xxxxxxxxxxxx"))
+    @TextAnalyticsClientPreparer(client_kwargs={"text_analytics_account_key": "xxxxxxxxxxxx"})
+    async def test_bad_credentials(self, client):
         with self.assertRaises(ClientAuthenticationError):
-            response = await text_analytics.extract_key_phrases(
+            response = await client.extract_key_phrases(
                 ["This is written in English."]
             )
 
     @GlobalTextAnalyticsAccountPreparer()
-    async def test_bad_model_version(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
+    @TextAnalyticsClientPreparer()
+    async def test_bad_model_version(self, client):
         with self.assertRaises(HttpResponseError):
-            response = await text_analytics.extract_key_phrases(
+            response = await client.extract_key_phrases(
                 documents=["Microsoft was founded by Bill Gates."],
                 model_version="old"
             )
 
     @GlobalTextAnalyticsAccountPreparer()
-    async def test_bad_document_input(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
-
+    @TextAnalyticsClientPreparer()
+    async def test_bad_document_input(self, client):
         docs = "This is the wrong type"
 
         with self.assertRaises(TypeError):
-            response = await text_analytics.extract_key_phrases(docs)
+            response = await client.extract_key_phrases(docs)
 
     @GlobalTextAnalyticsAccountPreparer()
-    async def test_mixing_inputs(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
+    @TextAnalyticsClientPreparer()
+    async def test_mixing_inputs(self, client):
         docs = [
             {"id": "1", "text": "Microsoft was founded by Bill Gates and Paul Allen."},
             TextDocumentInput(id="2", text="I did not like the hotel we stayed at. It was too expensive."),
             u"You cannot mix string input with the above inputs"
         ]
         with self.assertRaises(TypeError):
-            response = await text_analytics.extract_key_phrases(docs)
+            response = await client.extract_key_phrases(docs)
 
     @GlobalTextAnalyticsAccountPreparer()
-    async def test_out_of_order_ids(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
-
+    @TextAnalyticsClientPreparer()
+    async def test_out_of_order_ids(self, client):
         docs = [{"id": "56", "text": ":)"},
                 {"id": "0", "text": ":("},
                 {"id": "22", "text": ""},
                 {"id": "19", "text": ":P"},
                 {"id": "1", "text": ":D"}]
 
-        response = await text_analytics.extract_key_phrases(docs)
+        response = await client.extract_key_phrases(docs)
         in_order = ["56", "0", "22", "19", "1"]
         for idx, resp in enumerate(response):
             self.assertEqual(resp.id, in_order[idx])
 
     @GlobalTextAnalyticsAccountPreparer()
-    async def test_show_stats_and_model_version(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
-
+    @TextAnalyticsClientPreparer()
+    async def test_show_stats_and_model_version(self, client):
         def callback(response):
             self.assertIsNotNone(response.model_version)
             self.assertIsNotNone(response.raw_response)
@@ -184,7 +181,7 @@ class TestExtractKeyPhrases(AsyncTextAnalyticsTest):
                 {"id": "19", "text": ":P"},
                 {"id": "1", "text": ":D"}]
 
-        response = await text_analytics.extract_key_phrases(
+        response = await client.extract_key_phrases(
             docs,
             show_stats=True,
             model_version="latest",
@@ -192,17 +189,15 @@ class TestExtractKeyPhrases(AsyncTextAnalyticsTest):
         )
 
     @GlobalTextAnalyticsAccountPreparer()
-    async def test_batch_size_over_limit(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
-
+    @TextAnalyticsClientPreparer()
+    async def test_batch_size_over_limit(self, client):
         docs = [u"hello world"] * 1050
         with self.assertRaises(HttpResponseError):
-            response = await text_analytics.extract_key_phrases(docs)
+            response = await client.extract_key_phrases(docs)
 
     @GlobalTextAnalyticsAccountPreparer()
-    async def test_whole_batch_language_hint(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
-
+    @TextAnalyticsClientPreparer()
+    async def test_whole_batch_language_hint(self, client):
         def callback(resp):
             language_str = "\"language\": \"fr\""
             language = resp.http_request.body.count(language_str)
@@ -214,12 +209,11 @@ class TestExtractKeyPhrases(AsyncTextAnalyticsTest):
             u"The restaurant was not as good as I hoped."
         ]
 
-        response = await text_analytics.extract_key_phrases(docs, language="fr", raw_response_hook=callback)
+        response = await client.extract_key_phrases(docs, language="fr", raw_response_hook=callback)
 
     @GlobalTextAnalyticsAccountPreparer()
-    async def test_whole_batch_dont_use_language_hint(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
-
+    @TextAnalyticsClientPreparer()
+    async def test_whole_batch_dont_use_language_hint(self, client):
         def callback(resp):
             language_str = "\"language\": \"\""
             language = resp.http_request.body.count(language_str)
@@ -231,12 +225,11 @@ class TestExtractKeyPhrases(AsyncTextAnalyticsTest):
             u"The restaurant was not as good as I hoped."
         ]
 
-        response = await text_analytics.extract_key_phrases(docs, language="", raw_response_hook=callback)
+        response = await client.extract_key_phrases(docs, language="", raw_response_hook=callback)
 
     @GlobalTextAnalyticsAccountPreparer()
-    async def test_per_item_dont_use_language_hint(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
-
+    @TextAnalyticsClientPreparer()
+    async def test_per_item_dont_use_language_hint(self, client):
         def callback(resp):
             language_str = "\"language\": \"\""
             language = resp.http_request.body.count(language_str)
@@ -250,12 +243,11 @@ class TestExtractKeyPhrases(AsyncTextAnalyticsTest):
                 {"id": "2", "language": "", "text": "I did not like the hotel we stayed at."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
-        response = await text_analytics.extract_key_phrases(docs, raw_response_hook=callback)
+        response = await client.extract_key_phrases(docs, raw_response_hook=callback)
 
     @GlobalTextAnalyticsAccountPreparer()
-    async def test_whole_batch_language_hint_and_obj_input(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
-
+    @TextAnalyticsClientPreparer()
+    async def test_whole_batch_language_hint_and_obj_input(self, client):
         def callback(resp):
             language_str = "\"language\": \"de\""
             language = resp.http_request.body.count(language_str)
@@ -267,12 +259,11 @@ class TestExtractKeyPhrases(AsyncTextAnalyticsTest):
             TextDocumentInput(id="3", text="猫は幸せ"),
         ]
 
-        response = await text_analytics.extract_key_phrases(docs, language="de", raw_response_hook=callback)
+        response = await client.extract_key_phrases(docs, language="de", raw_response_hook=callback)
 
     @GlobalTextAnalyticsAccountPreparer()
-    async def test_whole_batch_language_hint_and_obj_per_item_hints(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
-
+    @TextAnalyticsClientPreparer()
+    async def test_whole_batch_language_hint_and_obj_per_item_hints(self, client):
         def callback(resp):
             language_str = "\"language\": \"es\""
             language = resp.http_request.body.count(language_str)
@@ -287,12 +278,11 @@ class TestExtractKeyPhrases(AsyncTextAnalyticsTest):
             TextDocumentInput(id="3", text="猫は幸せ"),
         ]
 
-        response = await text_analytics.extract_key_phrases(docs, language="en", raw_response_hook=callback)
+        response = await client.extract_key_phrases(docs, language="en", raw_response_hook=callback)
 
     @GlobalTextAnalyticsAccountPreparer()
-    async def test_whole_batch_language_hint_and_dict_per_item_hints(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
-
+    @TextAnalyticsClientPreparer()
+    async def test_whole_batch_language_hint_and_dict_per_item_hints(self, client):
         def callback(resp):
             language_str = "\"language\": \"es\""
             language = resp.http_request.body.count(language_str)
@@ -306,12 +296,11 @@ class TestExtractKeyPhrases(AsyncTextAnalyticsTest):
                 {"id": "2", "language": "es", "text": "I did not like the hotel we stayed at."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
-        response = await text_analytics.extract_key_phrases(docs, language="en", raw_response_hook=callback)
+        response = await client.extract_key_phrases(docs, language="en", raw_response_hook=callback)
 
     @GlobalTextAnalyticsAccountPreparer()
-    async def test_client_passed_default_language_hint(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key), default_language="es")
-
+    @TextAnalyticsClientPreparer(client_kwargs={"default_language": "es"})
+    async def test_client_passed_default_language_hint(self, client):
         def callback(resp):
             language_str = "\"language\": \"es\""
             language = resp.http_request.body.count(language_str)
@@ -326,34 +315,33 @@ class TestExtractKeyPhrases(AsyncTextAnalyticsTest):
                 {"id": "2", "text": "I did not like the hotel we stayed at."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
-        response = await text_analytics.extract_key_phrases(docs, raw_response_hook=callback)
-        response = await text_analytics.extract_key_phrases(docs, language="en", raw_response_hook=callback_2)
-        response = await text_analytics.extract_key_phrases(docs, raw_response_hook=callback)
+        response = await client.extract_key_phrases(docs, raw_response_hook=callback)
+        response = await client.extract_key_phrases(docs, language="en", raw_response_hook=callback_2)
+        response = await client.extract_key_phrases(docs, raw_response_hook=callback)
 
     @GlobalTextAnalyticsAccountPreparer()
     async def test_rotate_subscription_key(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         credential = AzureKeyCredential(text_analytics_account_key)
-        text_analytics = TextAnalyticsClient(text_analytics_account, credential)
+        client = TextAnalyticsClient(text_analytics_account, credential)
 
         docs = [{"id": "1", "text": "I will go to the park."},
                 {"id": "2", "text": "I did not like the hotel we stayed at."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
-        response = await text_analytics.extract_key_phrases(docs)
+        response = await client.extract_key_phrases(docs)
         self.assertIsNotNone(response)
 
         credential.update("xxx")  # Make authentication fail
         with self.assertRaises(ClientAuthenticationError):
-            response = await text_analytics.extract_key_phrases(docs)
+            response = await client.extract_key_phrases(docs)
 
         credential.update(text_analytics_account_key)  # Authenticate successfully again
-        response = await text_analytics.extract_key_phrases(docs)
+        response = await client.extract_key_phrases(docs)
         self.assertIsNotNone(response)
 
     @GlobalTextAnalyticsAccountPreparer()
-    async def test_user_agent(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
-
+    @TextAnalyticsClientPreparer()
+    async def test_user_agent(self, client):
         def callback(resp):
             self.assertIn("azsdk-python-azure-ai-textanalytics/{} Python/{} ({})".format(
                 VERSION, platform.python_version(), platform.platform()),
@@ -364,14 +352,13 @@ class TestExtractKeyPhrases(AsyncTextAnalyticsTest):
                 {"id": "2", "text": "I did not like the hotel we stayed at."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
-        response = await text_analytics.extract_key_phrases(docs, raw_response_hook=callback)
+        response = await client.extract_key_phrases(docs, raw_response_hook=callback)
 
     @GlobalTextAnalyticsAccountPreparer()
-    async def test_document_attribute_error_no_result_attribute(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
-
+    @TextAnalyticsClientPreparer()
+    async def test_document_attribute_error_no_result_attribute(self, client):
         docs = [{"id": "1", "text": ""}]
-        response = await text_analytics.extract_key_phrases(docs)
+        response = await client.extract_key_phrases(docs)
 
         # Attributes on DocumentError
         self.assertTrue(response[0].is_error)
@@ -390,11 +377,10 @@ class TestExtractKeyPhrases(AsyncTextAnalyticsTest):
             )
 
     @GlobalTextAnalyticsAccountPreparer()
-    async def test_document_attribute_error_nonexistent_attribute(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
-
+    @TextAnalyticsClientPreparer()
+    async def test_document_attribute_error_nonexistent_attribute(self, client):
         docs = [{"id": "1", "text": ""}]
-        response = await text_analytics.extract_key_phrases(docs)
+        response = await client.extract_key_phrases(docs)
 
         # Attribute not found on DocumentError or result obj, default behavior/message
         try:
@@ -406,20 +392,19 @@ class TestExtractKeyPhrases(AsyncTextAnalyticsTest):
             )
 
     @GlobalTextAnalyticsAccountPreparer()
-    async def test_bad_model_version_error(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
-
+    @TextAnalyticsClientPreparer()
+    async def test_bad_model_version_error(self, client):
         docs = [{"id": "1", "language": "english", "text": "I did not like the hotel we stayed at."}]
 
         try:
-            result = await text_analytics.extract_key_phrases(docs, model_version="bad")
+            result = await client.extract_key_phrases(docs, model_version="bad")
         except HttpResponseError as err:
             self.assertEqual(err.error.code, "InvalidRequest")
             self.assertIsNotNone(err.error.message)
 
     @GlobalTextAnalyticsAccountPreparer()
-    async def test_document_errors(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
+    @TextAnalyticsClientPreparer()
+    async def test_document_errors(self, client):
         text = ""
         for _ in range(5121):
             text += "x"
@@ -428,7 +413,7 @@ class TestExtractKeyPhrases(AsyncTextAnalyticsTest):
                 {"id": "2", "language": "english", "text": "I did not like the hotel we stayed at."},
                 {"id": "3", "text": text}]
 
-        doc_errors = await text_analytics.extract_key_phrases(docs)
+        doc_errors = await client.extract_key_phrases(docs)
         self.assertEqual(doc_errors[0].error.code, "invalidDocument")
         self.assertIsNotNone(doc_errors[0].error.message)
         self.assertEqual(doc_errors[1].error.code, "unsupportedLanguageCode")
@@ -437,51 +422,48 @@ class TestExtractKeyPhrases(AsyncTextAnalyticsTest):
         self.assertIsNotNone(doc_errors[2].error.message)
 
     @GlobalTextAnalyticsAccountPreparer()
-    async def test_missing_input_records_error(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
+    @TextAnalyticsClientPreparer()
+    async def test_missing_input_records_error(self, client):
         docs = []
         try:
-            result = await text_analytics.extract_key_phrases(docs)
+            result = await client.extract_key_phrases(docs)
         except HttpResponseError as err:
             self.assertEqual(err.error.code, "MissingInputRecords")
             self.assertIsNotNone(err.error.message)
 
     @GlobalTextAnalyticsAccountPreparer()
-    async def test_duplicate_ids_error(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
-
+    @TextAnalyticsClientPreparer()
+    async def test_duplicate_ids_error(self, client):
         # Duplicate Ids
         docs = [{"id": "1", "text": "hello world"},
                 {"id": "1", "text": "I did not like the hotel we stayed at."}]
         try:
-            result = await text_analytics.extract_key_phrases(docs)
+            result = await client.extract_key_phrases(docs)
         except HttpResponseError as err:
             self.assertEqual(err.error.code, "InvalidDocument")
             self.assertIsNotNone(err.error.message)
 
     @GlobalTextAnalyticsAccountPreparer()
-    async def test_batch_size_over_limit_error(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
-
+    @TextAnalyticsClientPreparer()
+    async def test_batch_size_over_limit_error(self, client):
         # Batch size over limit
         docs = [u"hello world"] * 1001
         try:
-            response = await text_analytics.extract_key_phrases(docs)
+            response = await client.extract_key_phrases(docs)
         except HttpResponseError as err:
             self.assertEqual(err.error.code, "InvalidDocumentBatch")
             self.assertIsNotNone(err.error.message)
 
     @GlobalTextAnalyticsAccountPreparer()
-    async def test_language_kwarg_spanish(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
-
+    @TextAnalyticsClientPreparer()
+    async def test_language_kwarg_spanish(self, client):
         def callback(response):
             language_str = "\"language\": \"es\""
             self.assertEqual(response.http_request.body.count(language_str), 1)
             self.assertIsNotNone(response.model_version)
             self.assertIsNotNone(response.statistics)
 
-        res = await text_analytics.extract_key_phrases(
+        res = await client.extract_key_phrases(
             documents=["Bill Gates is the CEO of Microsoft."],
             model_version="latest",
             show_stats=True,

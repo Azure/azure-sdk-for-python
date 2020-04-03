@@ -28,6 +28,7 @@ from azure.search.documents import(
 CWD = dirname(realpath(__file__))
 SCHEMA = open(join(CWD, "hotel_schema.json")).read()
 BATCH = json.load(open(join(CWD, "hotel_small.json")))
+TIME_TO_SLEEP = 5
 
 class SearchIndexClientTest(AzureMgmtTestCase):
     @ResourceGroupPreparer(random_name_enabled=True)
@@ -74,7 +75,7 @@ class SearchIndexClientTest(AzureMgmtTestCase):
         client.delete_index(index_name)
         import time
         if self.is_live:
-            time.sleep(5)
+            time.sleep(TIME_TO_SLEEP)
         result = client.list_indexes()
         assert len(result) == 0
 

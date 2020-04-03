@@ -4,18 +4,13 @@
 # ------------------------------------
 import os
 import uuid
-from azure.identity.aio import DefaultAzureCredential
 from azure.keyvault.certificates import CertificatePolicy
 from azure.keyvault.certificates.aio import CertificateClient
+from key_vault_base_async import KeyVaultBaseAsync
 
-class KeyVaultCertificates:
+class KeyVaultCertificates(KeyVaultBaseAsync):
     def __init__(self):
-        # DefaultAzureCredential() expects the following environment variables:
-        # * AZURE_CLIENT_ID
-        # * AZURE_CLIENT_SECRET
-        # * AZURE_TENANT_ID
-        authority_host = os.environ.get('AZURE_AUTHORITY_HOST') or KnownAuthorities.AZURE_PUBLIC_CLOUD
-        credential = DefaultAzureCredential(authority=authority_host)
+        credential = self.get_default_credential()
         self.certificate_client = CertificateClient(
             vault_url=os.environ["AZURE_PROJECT_URL"], credential=credential
         )
@@ -23,6 +18,7 @@ class KeyVaultCertificates:
         self.certificate_name = "cert-name-" + uuid.uuid1().hex
 
     async def create_certificate(self):
+        print("Creating a certificate...")
         await self.certificate_client.create_certificate(
             certificate_name=self.certificate_name, policy=CertificatePolicy.get_default())
         print("\tdone")
