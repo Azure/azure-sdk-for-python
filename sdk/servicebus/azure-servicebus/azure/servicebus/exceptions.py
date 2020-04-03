@@ -68,7 +68,7 @@ def _create_servicebus_exception(logger, exception, handler):
 
     if isinstance(exception, MessageSendFailed):
         logger.info("Message send error (%r)", exception)
-        error, error_need_close_handler, error_need_raise = exception, False, True
+        error = exception
     elif isinstance(exception, errors.LinkDetach) and exception.condition == SESSION_LOCK_LOST:
         try:
             session_id = handler._session_id  # pylint: disable=protected-access
