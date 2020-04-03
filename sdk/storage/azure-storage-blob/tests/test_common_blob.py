@@ -1436,30 +1436,29 @@ class StorageCommonBlobTest(StorageTestCase):
         self.assertEqual(user_delegation_key_1.value, user_delegation_key_2.value)
 
     @pytest.mark.live_test_only
-    def test_user_delegation_sas_for_blob(self):
-        pytest.skip("Current Framework Cannot Support OAUTH")
+    @GlobalStorageAccountPreparer()
+    def test_user_delegation_sas_for_blob(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
-
+        byte_data = self.get_random_bytes(1024)
         # Arrange
         token_credential = self.generate_oauth_token()
-        service_client = BlobServiceClient(self._get_oauth_account_url(), credential=token_credential)
+        service_client = BlobServiceClient(self.account_url(storage_account, "blob"), credential=token_credential)
         user_delegation_key = service_client.get_user_delegation_key(datetime.utcnow(),
                                                                      datetime.utcnow() + timedelta(hours=1))
 
         container_client = service_client.create_container(self.get_resource_name('oauthcontainer'))
         blob_client = container_client.get_blob_client(self.get_resource_name('oauthblob'))
-        blob_client.upload_blob(self.byte_data, length=len(self.byte_data))
+        blob_client.upload_blob(byte_data, length=len(byte_data))
 
         token = generate_blob_sas(
             blob_client.account_name,
             blob_client.container_name,
             blob_client.blob_name,
             snapshot=blob_client.snapshot,
-            account_key=blob_client.credential.account_key,
+            account_key=storage_account_key,
             permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
             user_delegation_key=user_delegation_key,
-            account_name='emilydevtest',
         )
 
         # Act
@@ -1468,7 +1467,7 @@ class StorageCommonBlobTest(StorageTestCase):
         content = new_blob_client.download_blob()
 
         # Assert
-        self.assertEqual(self.byte_data, content.readall())
+        self.assertEqual(byte_data, content.readall())
 
     @GlobalStorageAccountPreparer()
     def test_token_credential(self, resource_group, location, storage_account, storage_account_key):
