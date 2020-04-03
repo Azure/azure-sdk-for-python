@@ -4,7 +4,7 @@
 # ------------------------------------
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
-from azure.identity import KnownAuthorities, SharedTokenCacheCredential
+from azure.identity import CredentialUnavailableError, KnownAuthorities, SharedTokenCacheCredential
 from azure.identity._internal.shared_token_cache import (
     KNOWN_ALIASES,
     MULTIPLE_ACCOUNTS,
@@ -63,13 +63,15 @@ def test_user_agent():
 
 
 def test_empty_cache():
-    with pytest.raises(ClientAuthenticationError, match=NO_ACCOUNTS):
+    """the credential should raise CredentialUnavailableError when the cache is empty"""
+
+    with pytest.raises(CredentialUnavailableError, match=NO_ACCOUNTS):
         SharedTokenCacheCredential(_cache=TokenCache()).get_token("scope")
-    with pytest.raises(ClientAuthenticationError, match=NO_ACCOUNTS):
+    with pytest.raises(CredentialUnavailableError, match=NO_ACCOUNTS):
         SharedTokenCacheCredential(_cache=TokenCache(), username="not@cache").get_token("scope")
-    with pytest.raises(ClientAuthenticationError, match=NO_ACCOUNTS):
+    with pytest.raises(CredentialUnavailableError, match=NO_ACCOUNTS):
         SharedTokenCacheCredential(_cache=TokenCache(), tenant_id="not-cached").get_token("scope")
-    with pytest.raises(ClientAuthenticationError, match=NO_ACCOUNTS):
+    with pytest.raises(CredentialUnavailableError, match=NO_ACCOUNTS):
         SharedTokenCacheCredential(_cache=TokenCache(), tenant_id="not-cached", username="not@cache").get_token("scope")
 
 
@@ -81,7 +83,7 @@ def test_no_matching_account_for_username():
     account = get_account_event(username=upn, uid="uid", utid=tenant, refresh_token="refresh-token")
     cache = populated_cache(account)
 
-    with pytest.raises(ClientAuthenticationError) as ex:
+    with pytest.raises(CredentialUnavailableError) as ex:
         SharedTokenCacheCredential(_cache=cache, username="not" + upn).get_token("scope")
 
     assert ex.value.message.startswith(NO_MATCHING_ACCOUNTS[: NO_MATCHING_ACCOUNTS.index("{")])
@@ -97,7 +99,7 @@ def test_no_matching_account_for_tenant():
     account = get_account_event(username=upn, uid="uid", utid=tenant, refresh_token="refresh-token")
     cache = populated_cache(account)
 
-    with pytest.raises(ClientAuthenticationError) as ex:
+    with pytest.raises(CredentialUnavailableError) as ex:
         SharedTokenCacheCredential(_cache=cache, tenant_id="not-" + tenant).get_token("scope")
 
     assert ex.value.message.startswith(NO_MATCHING_ACCOUNTS[: NO_MATCHING_ACCOUNTS.index("{")])
@@ -113,7 +115,7 @@ def test_no_matching_account_for_tenant_and_username():
     account = get_account_event(username=upn, uid="uid", utid=tenant, refresh_token="refresh-token")
     cache = populated_cache(account)
 
-    with pytest.raises(ClientAuthenticationError) as ex:
+    with pytest.raises(CredentialUnavailableError) as ex:
         SharedTokenCacheCredential(_cache=cache, tenant_id="not-" + tenant, username="not" + upn).get_token("scope")
 
     assert ex.value.message.startswith(NO_MATCHING_ACCOUNTS[: NO_MATCHING_ACCOUNTS.index("{")])
@@ -137,14 +139,14 @@ def test_no_matching_account_for_tenant_or_username():
     transport = Mock(side_effect=Exception())  # credential shouldn't use the network
 
     credential = SharedTokenCacheCredential(username=upn_a, tenant_id=tenant_b, _cache=cache, transport=transport)
-    with pytest.raises(ClientAuthenticationError) as ex:
+    with pytest.raises(CredentialUnavailableError) as ex:
         credential.get_token("scope")
     assert ex.value.message.startswith(NO_MATCHING_ACCOUNTS[: NO_MATCHING_ACCOUNTS.index("{")])
     discovered_accounts = ex.value.message.splitlines()[-1]
     assert all(s in discovered_accounts for s in (upn_a, upn_b, tenant_a, tenant_b))
 
     credential = SharedTokenCacheCredential(username=upn_b, tenant_id=tenant_a, _cache=cache, transport=transport)
-    with pytest.raises(ClientAuthenticationError) as ex:
+    with pytest.raises(CredentialUnavailableError) as ex:
         credential.get_token("scope")
     assert ex.value.message.startswith(NO_MATCHING_ACCOUNTS[: NO_MATCHING_ACCOUNTS.index("{")])
     discovered_accounts = ex.value.message.splitlines()[-1]
@@ -237,11 +239,11 @@ def test_no_refresh_token():
     transport = Mock(side_effect=Exception())  # credential shouldn't use the network
 
     credential = SharedTokenCacheCredential(_cache=cache, transport=transport)
-    with pytest.raises(ClientAuthenticationError, match=NO_ACCOUNTS):
+    with pytest.raises(CredentialUnavailableError, match=NO_ACCOUNTS):
         credential.get_token("scope")
 
     credential = SharedTokenCacheCredential(_cache=cache, transport=transport, username="not@cache")
-    with pytest.raises(ClientAuthenticationError, match=NO_ACCOUNTS):
+    with pytest.raises(CredentialUnavailableError, match=NO_ACCOUNTS):
         credential.get_token("scope")
 
 
@@ -257,9 +259,9 @@ def test_two_accounts_no_username_or_tenant():
     # credential can't select an identity => it shouldn't use the network
     transport = Mock(side_effect=Exception())
 
-    # two users in the cache, no username specified -> ClientAuthenticationError
+    # two users in the cache, no username specified -> CredentialUnavailableError
     credential = SharedTokenCacheCredential(_cache=cache, transport=transport)
-    with pytest.raises(ClientAuthenticationError) as ex:
+    with pytest.raises(CredentialUnavailableError) as ex:
         credential.get_token("scope")
 
     # error message should mention multiple accounts and list usernames in the cache
@@ -350,7 +352,7 @@ def test_same_username_different_tenants():
     # with no tenant specified the credential can't select an identity
     transport = Mock(side_effect=Exception())  # (so it shouldn't use the network)
     credential = SharedTokenCacheCredential(username=upn, _cache=cache, transport=transport)
-    with pytest.raises(ClientAuthenticationError) as ex:
+    with pytest.raises(CredentialUnavailableError) as ex:
         credential.get_token("scope")
     # error message should indicate multiple matching accounts, and list discovered accounts
     assert ex.value.message.startswith(MULTIPLE_MATCHING_ACCOUNTS[: MULTIPLE_MATCHING_ACCOUNTS.index("{")])
@@ -395,7 +397,7 @@ def test_same_tenant_different_usernames():
     # with no username specified the credential can't select an identity
     transport = Mock(side_effect=Exception())  # (so it shouldn't use the network)
     credential = SharedTokenCacheCredential(tenant_id=tenant_id, _cache=cache, transport=transport)
-    with pytest.raises(ClientAuthenticationError) as ex:
+    with pytest.raises(CredentialUnavailableError) as ex:
         credential.get_token("scope")
     # error message should indicate multiple matching accounts, and list discovered accounts
     assert ex.value.message.startswith(MULTIPLE_MATCHING_ACCOUNTS[: MULTIPLE_MATCHING_ACCOUNTS.index("{")])
