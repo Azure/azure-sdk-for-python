@@ -80,6 +80,16 @@ Once you've initialized a `ServiceBusClient`, you can interact with the primary 
 
 For more information about these resources, see [What is Azure Service Bus?][service_bus_overview].
 
+To interact with these resources, one should be familiar with the following SDK concepts:
+
+* [ServiceBusClient](./azure/servicebus/_servicebus_client.py): This is the object a user should first initialize to connect to a Service Bus Namespace.  To interact with a queue topic or subscription, one would spawn a sender or receiver off of this client.
+
+* [Sender](./azure/servicebus/_servicebus_sender.py): To send messages to a Queue or Topic, one would use the corrosponding `get_queue_sender` or `get_topic_sender` method off of a `ServiceBusClient` instance as seen [here](./samples/sync_samples/send_queue.py)
+
+* [Receiver](./azure/servicebus/_servicebus_receiver.py): To receive messages from a Queue or Subscription, one would use the corrosponding `get_queue_receiver` or `get_subscription_receiver` method off of a `ServiceBusClient` instance as seen [here](./samples/sync_samples/receive_queue.py)
+
+* [Message](./azure/servicebus/_common/message.py): When sending, this is the type you will construct to contain your payload.  When receiving, this is where you will access the payload and control how the message is "settled" (completed, dead-lettered, etc)
+
 ## Examples
 
 The following sections provide several code snippets covering some of the most common Service Bus tasks, including:
