@@ -11,6 +11,8 @@ Use the Service Bus client library for Python to communicate between application
 * Send and receive messages within your Service Bus channels.
 * Utilize message locks, sessions, and dead letter functionality to implement complex messaging patterns.
 
+Note: This is a preview release of the Python Service Bus SDK, and is not yet at feature parity with version 0.50.  Some functionality, such as topic and subscription utilization, will be arriving in upcoming Preview releases; Thank you for your patience and interest as we roll out these changes.
+
 [Source code](./) | [Package (PyPi)][pypi] | [API reference documentation][api_docs] | [Product documentation][product_docs] | [Samples](./samples) | [Changelog](./CHANGELOG.md)
 
 ## Getting started
@@ -76,9 +78,19 @@ Once you've initialized a `ServiceBusClient`, you can interact with the primary 
 
 * [Topic][topic_concept]: As opposed to Queues, Topics are better suited to publish/subscribe scenarios.  A topic can be sent to, but requires a subscription, of which there can be multiple in parallel, to consume from.
 
-* [Subscription][subscription_concept]: The mechanism to consume from a Topic.  Each subscription is independent, and receaves a copy of each message sent to the topic.  Rules and Filters can be used to tailor which messages are received by a specific subscription.
+* [Subscription][subscription_concept]: The mechanism to consume from a Topic.  Each subscription is independent, and receives a copy of each message sent to the topic.  Rules and Filters can be used to tailor which messages are received by a specific subscription.
 
 For more information about these resources, see [What is Azure Service Bus?][service_bus_overview].
+
+To interact with these resources, one should be familiar with the following SDK concepts:
+
+* [ServiceBusClient](./azure/servicebus/_servicebus_client.py): This is the object a user should first initialize to connect to a Service Bus Namespace.  To interact with a queue, topic, or subscription, one would spawn a sender or receiver off of this client.
+
+* [Sender](./azure/servicebus/_servicebus_sender.py): To send messages to a Queue or Topic, one would use the corresponding `get_queue_sender` or `get_topic_sender` method off of a `ServiceBusClient` instance as seen [here](./samples/sync_samples/send_queue.py).
+
+* [Receiver](./azure/servicebus/_servicebus_receiver.py): To receive messages from a Queue or Subscription, one would use the corrosponding `get_queue_receiver` or `get_subscription_receiver` method off of a `ServiceBusClient` instance as seen [here](./samples/sync_samples/receive_queue.py).
+
+* [Message](./azure/servicebus/_common/message.py): When sending, this is the type you will construct to contain your payload.  When receiving, this is where you will access the payload and control how the message is "settled" (completed, dead-lettered, etc); these functions are only available on a received message.
 
 ## Examples
 
