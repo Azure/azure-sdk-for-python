@@ -6,8 +6,5 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._batch_service import BatchService
-from ._version import VERSION
-
-__version__ = VERSION
+from ._batch_service_async import BatchService
 __all__ = ['BatchService']

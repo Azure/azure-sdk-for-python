@@ -9,19 +9,19 @@ import datetime
 from typing import Any, Callable, Dict, Generic, Optional, TypeVar
 import warnings
 
+from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
-from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpRequest, HttpResponse
+from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from ... import models
 
 T = TypeVar('T')
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class PoolOperations(object):
-    """PoolOperations operations.
+class PoolOperations:
+    """PoolOperations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -36,7 +36,7 @@ class PoolOperations(object):
 
     models = models
 
-    def __init__(self, client, config, serializer, deserializer):
+    def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
@@ -44,10 +44,9 @@ class PoolOperations(object):
 
     def list_usage_metrics(
         self,
-        pool_list_usage_metrics_options=None,  # type: Optional["models.PoolListUsageMetricsOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.PoolListUsageMetricsResult"
+        pool_list_usage_metrics_options: Optional["models.PoolListUsageMetricsOptions"] = None,
+        **kwargs
+    ) -> "models.PoolListUsageMetricsResult":
         """If you do not specify a $filter clause including a poolId, the response includes all Pools that existed in the Account in the time range of the returned aggregation intervals. If you do not specify a $filter clause including a startTime or endTime these filters default to the start and end times of the last aggregation interval currently available; that is, only the last aggregation interval is returned.
 
         Lists the usage metrics, aggregated by Pool across individual time intervals, for the specified
@@ -125,17 +124,17 @@ class PoolOperations(object):
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('PoolListUsageMetricsResult', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.odata_next_link or None, iter(list_of_elem)
+            return deserialized.odata_next_link or None, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -145,17 +144,16 @@ class PoolOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list_usage_metrics.metadata = {'url': '/poolusagemetrics'}
 
-    def get_all_lifetime_statistics(
+    async def get_all_lifetime_statistics(
         self,
-        pool_get_all_lifetime_statistics_options=None,  # type: Optional["models.PoolGetAllLifetimeStatisticsOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.PoolStatistics"
+        pool_get_all_lifetime_statistics_options: Optional["models.PoolGetAllLifetimeStatisticsOptions"] = None,
+        **kwargs
+    ) -> "models.PoolStatistics":
         """Statistics are aggregated across all Pools that have ever existed in the Account, from Account creation to the last update time of the statistics. The statistics may not be immediately available. The Batch service performs periodic roll-up of statistics. The typical delay is about 30 minutes.
 
         Gets lifetime summary statistics for all of the Pools in the specified Account.
@@ -206,7 +204,7 @@ class PoolOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -227,13 +225,12 @@ class PoolOperations(object):
         return deserialized
     get_all_lifetime_statistics.metadata = {'url': '/lifetimepoolstats'}
 
-    def add(
+    async def add(
         self,
-        pool,  # type: "models.PoolAddParameter"
-        pool_add_options=None,  # type: Optional["models.PoolAddOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        pool: "models.PoolAddParameter",
+        pool_add_options: Optional["models.PoolAddOptions"] = None,
+        **kwargs
+    ) -> None:
         """When naming Pools, avoid including sensitive information such as user names or secret project names. This information may appear in telemetry logs accessible to Microsoft Support engineers.
 
         Adds a Pool to the specified Account.
@@ -291,7 +288,7 @@ class PoolOperations(object):
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
 
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
@@ -313,10 +310,9 @@ class PoolOperations(object):
 
     def list(
         self,
-        pool_list_options=None,  # type: Optional["models.PoolListOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.CloudPoolListResult"
+        pool_list_options: Optional["models.PoolListOptions"] = None,
+        **kwargs
+    ) -> "models.CloudPoolListResult":
         """Lists all of the Pools in the specified Account.
 
         Lists all of the Pools in the specified Account.
@@ -393,17 +389,17 @@ class PoolOperations(object):
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('CloudPoolListResult', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.odata_next_link or None, iter(list_of_elem)
+            return deserialized.odata_next_link or None, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -413,18 +409,17 @@ class PoolOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list.metadata = {'url': '/pools'}
 
-    def delete(
+    async def delete(
         self,
-        pool_id,  # type: str
-        pool_delete_options=None,  # type: Optional["models.PoolDeleteOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        pool_id: str,
+        pool_delete_options: Optional["models.PoolDeleteOptions"] = None,
+        **kwargs
+    ) -> None:
         """When you request that a Pool be deleted, the following actions occur: the Pool state is set to deleting; any ongoing resize operation on the Pool are stopped; the Batch service starts resizing the Pool to zero Compute Nodes; any Tasks running on existing Compute Nodes are terminated and requeued (as if a resize Pool operation had been requested with the default requeue option); finally, the Pool is removed from the system. Because running Tasks are requeued, the user can rerun these Tasks by updating their Job to target a different Pool. The Tasks can then run on the new Pool. If you want to override the requeue behavior, then you should call resize Pool explicitly to shrink the Pool to zero size before deleting the Pool. If you call an Update, Patch or Delete API on a Pool in the deleting state, it will fail with HTTP status code 409 with error code PoolBeingDeleted.
 
         Deletes a Pool from the specified Account.
@@ -493,7 +488,7 @@ class PoolOperations(object):
 
         # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
@@ -510,13 +505,12 @@ class PoolOperations(object):
 
     delete.metadata = {'url': '/pools/{poolId}'}
 
-    def exists(
+    async def exists(
         self,
-        pool_id,  # type: str
-        pool_exists_options=None,  # type: Optional["models.PoolExistsOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        pool_id: str,
+        pool_exists_options: Optional["models.PoolExistsOptions"] = None,
+        **kwargs
+    ) -> None:
         """Gets basic properties of a Pool.
 
         :param pool_id: The ID of the Pool to get.
@@ -583,7 +577,7 @@ class PoolOperations(object):
 
         # Construct and send request
         request = self._client.head(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 404]:
@@ -604,13 +598,12 @@ class PoolOperations(object):
         return 200 <= response.status_code <= 299
     exists.metadata = {'url': '/pools/{poolId}'}
 
-    def get(
+    async def get(
         self,
-        pool_id,  # type: str
-        pool_get_options=None,  # type: Optional["models.PoolGetOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.CloudPool"
+        pool_id: str,
+        pool_get_options: Optional["models.PoolGetOptions"] = None,
+        **kwargs
+    ) -> "models.CloudPool":
         """Gets information about the specified Pool.
 
         :param pool_id: The ID of the Pool to get.
@@ -686,7 +679,7 @@ class PoolOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -707,14 +700,13 @@ class PoolOperations(object):
         return deserialized
     get.metadata = {'url': '/pools/{poolId}'}
 
-    def patch(
+    async def patch(
         self,
-        pool_id,  # type: str
-        pool_patch_parameter,  # type: "models.PoolPatchParameter"
-        pool_patch_options=None,  # type: Optional["models.PoolPatchOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        pool_id: str,
+        pool_patch_parameter: "models.PoolPatchParameter",
+        pool_patch_options: Optional["models.PoolPatchOptions"] = None,
+        **kwargs
+    ) -> None:
         """This only replaces the Pool properties specified in the request. For example, if the Pool has a StartTask associated with it, and a request does not specify a StartTask element, then the Pool keeps the existing StartTask.
 
         Updates the properties of the specified Pool.
@@ -791,7 +783,7 @@ class PoolOperations(object):
         body_content_kwargs['content'] = body_content
         request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
 
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -811,13 +803,12 @@ class PoolOperations(object):
 
     patch.metadata = {'url': '/pools/{poolId}'}
 
-    def disable_auto_scale(
+    async def disable_auto_scale(
         self,
-        pool_id,  # type: str
-        pool_disable_auto_scale_options=None,  # type: Optional["models.PoolDisableAutoScaleOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        pool_id: str,
+        pool_disable_auto_scale_options: Optional["models.PoolDisableAutoScaleOptions"] = None,
+        **kwargs
+    ) -> None:
         """Disables automatic scaling for a Pool.
 
         Disables automatic scaling for a Pool.
@@ -870,7 +861,7 @@ class PoolOperations(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -890,15 +881,14 @@ class PoolOperations(object):
 
     disable_auto_scale.metadata = {'url': '/pools/{poolId}/disableautoscale'}
 
-    def enable_auto_scale(
+    async def enable_auto_scale(
         self,
-        pool_id,  # type: str
-        auto_scale_formula=None,  # type: Optional[str]
-        auto_scale_evaluation_interval=None,  # type: Optional[datetime.timedelta]
-        pool_enable_auto_scale_options=None,  # type: Optional["models.PoolEnableAutoScaleOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        pool_id: str,
+        auto_scale_formula: Optional[str] = None,
+        auto_scale_evaluation_interval: Optional[datetime.timedelta] = None,
+        pool_enable_auto_scale_options: Optional["models.PoolEnableAutoScaleOptions"] = None,
+        **kwargs
+    ) -> None:
         """You cannot enable automatic scaling on a Pool if a resize operation is in progress on the Pool. If automatic scaling of the Pool is currently disabled, you must specify a valid autoscale formula as part of the request. If automatic scaling of the Pool is already enabled, you may specify a new autoscale formula and/or a new evaluation interval. You cannot call this API for the same Pool more than once every 30 seconds.
 
         Enables automatic scaling for a Pool.
@@ -989,7 +979,7 @@ class PoolOperations(object):
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
 
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1009,14 +999,13 @@ class PoolOperations(object):
 
     enable_auto_scale.metadata = {'url': '/pools/{poolId}/enableautoscale'}
 
-    def evaluate_auto_scale(
+    async def evaluate_auto_scale(
         self,
-        pool_id,  # type: str
-        auto_scale_formula,  # type: str
-        pool_evaluate_auto_scale_options=None,  # type: Optional["models.PoolEvaluateAutoScaleOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.AutoScaleRun"
+        pool_id: str,
+        auto_scale_formula: str,
+        pool_evaluate_auto_scale_options: Optional["models.PoolEvaluateAutoScaleOptions"] = None,
+        **kwargs
+    ) -> "models.AutoScaleRun":
         """This API is primarily for validating an autoscale formula, as it simply returns the result without applying the formula to the Pool. The Pool must have auto scaling enabled in order to evaluate a formula.
 
         Gets the result of evaluating an automatic scaling formula on the Pool.
@@ -1084,7 +1073,7 @@ class PoolOperations(object):
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
 
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1106,14 +1095,13 @@ class PoolOperations(object):
         return deserialized
     evaluate_auto_scale.metadata = {'url': '/pools/{poolId}/evaluateautoscale'}
 
-    def resize(
+    async def resize(
         self,
-        pool_id,  # type: str
-        pool_resize_parameter,  # type: "models.PoolResizeParameter"
-        pool_resize_options=None,  # type: Optional["models.PoolResizeOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        pool_id: str,
+        pool_resize_parameter: "models.PoolResizeParameter",
+        pool_resize_options: Optional["models.PoolResizeOptions"] = None,
+        **kwargs
+    ) -> None:
         """You can only resize a Pool when its allocation state is steady. If the Pool is already resizing, the request fails with status code 409. When you resize a Pool, the Pool's allocation state changes from steady to resizing. You cannot resize Pools which are configured for automatic scaling. If you try to do this, the Batch service returns an error 409. If you resize a Pool downwards, the Batch service chooses which Compute Nodes to remove. To remove specific Compute Nodes, use the Pool remove Compute Nodes API instead.
 
         Changes the number of Compute Nodes that are assigned to a Pool.
@@ -1190,7 +1178,7 @@ class PoolOperations(object):
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
 
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
@@ -1210,13 +1198,12 @@ class PoolOperations(object):
 
     resize.metadata = {'url': '/pools/{poolId}/resize'}
 
-    def stop_resize(
+    async def stop_resize(
         self,
-        pool_id,  # type: str
-        pool_stop_resize_options=None,  # type: Optional["models.PoolStopResizeOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        pool_id: str,
+        pool_stop_resize_options: Optional["models.PoolStopResizeOptions"] = None,
+        **kwargs
+    ) -> None:
         """This does not restore the Pool to its previous state before the resize operation: it only stops any further changes being made, and the Pool maintains its current state. After stopping, the Pool stabilizes at the number of Compute Nodes it was at when the stop operation was done. During the stop operation, the Pool allocation state changes first to stopping and then to steady. A resize operation need not be an explicit resize Pool request; this API can also be used to halt the initial sizing of the Pool when it is created.
 
         Stops an ongoing resize operation on the Pool.
@@ -1285,7 +1272,7 @@ class PoolOperations(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
@@ -1305,14 +1292,13 @@ class PoolOperations(object):
 
     stop_resize.metadata = {'url': '/pools/{poolId}/stopresize'}
 
-    def update_properties(
+    async def update_properties(
         self,
-        pool_id,  # type: str
-        pool_update_properties_parameter,  # type: "models.PoolUpdatePropertiesParameter"
-        pool_update_properties_options=None,  # type: Optional["models.PoolUpdatePropertiesOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        pool_id: str,
+        pool_update_properties_parameter: "models.PoolUpdatePropertiesParameter",
+        pool_update_properties_options: Optional["models.PoolUpdatePropertiesOptions"] = None,
+        **kwargs
+    ) -> None:
         """This fully replaces all the updatable properties of the Pool. For example, if the Pool has a StartTask associated with it and if StartTask is not specified with this request, then the Batch service will remove the existing StartTask.
 
         Updates the properties of the specified Pool.
@@ -1373,7 +1359,7 @@ class PoolOperations(object):
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
 
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
@@ -1393,14 +1379,13 @@ class PoolOperations(object):
 
     update_properties.metadata = {'url': '/pools/{poolId}/updateproperties'}
 
-    def remove_nodes(
+    async def remove_nodes(
         self,
-        pool_id,  # type: str
-        node_remove_parameter,  # type: "models.NodeRemoveParameter"
-        pool_remove_nodes_options=None,  # type: Optional["models.PoolRemoveNodesOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        pool_id: str,
+        node_remove_parameter: "models.NodeRemoveParameter",
+        pool_remove_nodes_options: Optional["models.PoolRemoveNodesOptions"] = None,
+        **kwargs
+    ) -> None:
         """This operation can only run when the allocation state of the Pool is steady. When this operation runs, the allocation state changes from steady to resizing.
 
         Removes Compute Nodes from the specified Pool.
@@ -1477,7 +1462,7 @@ class PoolOperations(object):
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
 
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:

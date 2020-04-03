@@ -9,19 +9,19 @@ import datetime
 from typing import Any, Callable, Dict, Generic, Optional, TypeVar
 import warnings
 
+from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
-from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpRequest, HttpResponse
+from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from ... import models
 
 T = TypeVar('T')
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class CertificateOperations(object):
-    """CertificateOperations operations.
+class CertificateOperations:
+    """CertificateOperations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -36,19 +36,18 @@ class CertificateOperations(object):
 
     models = models
 
-    def __init__(self, client, config, serializer, deserializer):
+    def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
         self._config = config
 
-    def add(
+    async def add(
         self,
-        certificate,  # type: "models.CertificateAddParameter"
-        certificate_add_options=None,  # type: Optional["models.CertificateAddOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        certificate: "models.CertificateAddParameter",
+        certificate_add_options: Optional["models.CertificateAddOptions"] = None,
+        **kwargs
+    ) -> None:
         """Adds a Certificate to the specified Account.
 
         Adds a Certificate to the specified Account.
@@ -106,7 +105,7 @@ class CertificateOperations(object):
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
 
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
@@ -128,10 +127,9 @@ class CertificateOperations(object):
 
     def list(
         self,
-        certificate_list_options=None,  # type: Optional["models.CertificateListOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.CertificateListResult"
+        certificate_list_options: Optional["models.CertificateListOptions"] = None,
+        **kwargs
+    ) -> "models.CertificateListResult":
         """Lists all of the Certificates that have been added to the specified Account.
 
         Lists all of the Certificates that have been added to the specified Account.
@@ -204,17 +202,17 @@ class CertificateOperations(object):
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('CertificateListResult', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.odata_next_link or None, iter(list_of_elem)
+            return deserialized.odata_next_link or None, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -224,19 +222,18 @@ class CertificateOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list.metadata = {'url': '/certificates'}
 
-    def cancel_deletion(
+    async def cancel_deletion(
         self,
-        thumbprint_algorithm,  # type: str
-        thumbprint,  # type: str
-        certificate_cancel_deletion_options=None,  # type: Optional["models.CertificateCancelDeletionOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        thumbprint_algorithm: str,
+        thumbprint: str,
+        certificate_cancel_deletion_options: Optional["models.CertificateCancelDeletionOptions"] = None,
+        **kwargs
+    ) -> None:
         """If you try to delete a Certificate that is being used by a Pool or Compute Node, the status of the Certificate changes to deleteFailed. If you decide that you want to continue using the Certificate, you can use this operation to set the status of the Certificate back to active. If you intend to delete the Certificate, you do not need to run this operation after the deletion failed. You must make sure that the Certificate is not being used by any resources, and then you can try again to delete the Certificate.
 
         Cancels a failed deletion of a Certificate from the specified Account.
@@ -293,7 +290,7 @@ class CertificateOperations(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
@@ -313,14 +310,13 @@ class CertificateOperations(object):
 
     cancel_deletion.metadata = {'url': '/certificates(thumbprintAlgorithm={thumbprintAlgorithm},thumbprint={thumbprint})/canceldelete'}
 
-    def delete(
+    async def delete(
         self,
-        thumbprint_algorithm,  # type: str
-        thumbprint,  # type: str
-        certificate_delete_options=None,  # type: Optional["models.CertificateDeleteOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        thumbprint_algorithm: str,
+        thumbprint: str,
+        certificate_delete_options: Optional["models.CertificateDeleteOptions"] = None,
+        **kwargs
+    ) -> None:
         """You cannot delete a Certificate if a resource (Pool or Compute Node) is using it. Before you can delete a Certificate, you must therefore make sure that the Certificate is not associated with any existing Pools, the Certificate is not installed on any Nodes (even if you remove a Certificate from a Pool, it is not removed from existing Compute Nodes in that Pool until they restart), and no running Tasks depend on the Certificate. If you try to delete a Certificate that is in use, the deletion fails. The Certificate status changes to deleteFailed. You can use Cancel Delete Certificate to set the status back to active if you decide that you want to continue using the Certificate.
 
         Deletes a Certificate from the specified Account.
@@ -377,7 +373,7 @@ class CertificateOperations(object):
 
         # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
@@ -396,14 +392,13 @@ class CertificateOperations(object):
 
     delete.metadata = {'url': '/certificates(thumbprintAlgorithm={thumbprintAlgorithm},thumbprint={thumbprint})'}
 
-    def get(
+    async def get(
         self,
-        thumbprint_algorithm,  # type: str
-        thumbprint,  # type: str
-        certificate_get_options=None,  # type: Optional["models.CertificateGetOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.Certificate"
+        thumbprint_algorithm: str,
+        thumbprint: str,
+        certificate_get_options: Optional["models.CertificateGetOptions"] = None,
+        **kwargs
+    ) -> "models.Certificate":
         """Gets information about the specified Certificate.
 
         :param thumbprint_algorithm: The algorithm used to derive the thumbprint parameter. This must
@@ -463,7 +458,7 @@ class CertificateOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:

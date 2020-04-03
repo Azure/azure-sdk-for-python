@@ -9,19 +9,19 @@ import datetime
 from typing import Any, Callable, Dict, Generic, IO, Optional, TypeVar, Union
 import warnings
 
+from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
-from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpRequest, HttpResponse
+from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from ... import models
 
 T = TypeVar('T')
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class ComputeNodeOperations(object):
-    """ComputeNodeOperations operations.
+class ComputeNodeOperations:
+    """ComputeNodeOperations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -36,21 +36,20 @@ class ComputeNodeOperations(object):
 
     models = models
 
-    def __init__(self, client, config, serializer, deserializer):
+    def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
         self._config = config
 
-    def add_user(
+    async def add_user(
         self,
-        pool_id,  # type: str
-        node_id,  # type: str
-        user,  # type: "models.ComputeNodeUser"
-        compute_node_add_user_options=None,  # type: Optional["models.ComputeNodeAddUserOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        pool_id: str,
+        node_id: str,
+        user: "models.ComputeNodeUser",
+        compute_node_add_user_options: Optional["models.ComputeNodeAddUserOptions"] = None,
+        **kwargs
+    ) -> None:
         """You can add a user Account to a Compute Node only when it is in the idle or running state.
 
         Adds a user Account to the specified Compute Node.
@@ -114,7 +113,7 @@ class ComputeNodeOperations(object):
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
 
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
@@ -134,15 +133,14 @@ class ComputeNodeOperations(object):
 
     add_user.metadata = {'url': '/pools/{poolId}/nodes/{nodeId}/users'}
 
-    def delete_user(
+    async def delete_user(
         self,
-        pool_id,  # type: str
-        node_id,  # type: str
-        user_name,  # type: str
-        compute_node_delete_user_options=None,  # type: Optional["models.ComputeNodeDeleteUserOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        pool_id: str,
+        node_id: str,
+        user_name: str,
+        compute_node_delete_user_options: Optional["models.ComputeNodeDeleteUserOptions"] = None,
+        **kwargs
+    ) -> None:
         """You can delete a user Account to a Compute Node only when it is in the idle or running state.
 
         Deletes a user Account from the specified Compute Node.
@@ -201,7 +199,7 @@ class ComputeNodeOperations(object):
 
         # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -218,16 +216,15 @@ class ComputeNodeOperations(object):
 
     delete_user.metadata = {'url': '/pools/{poolId}/nodes/{nodeId}/users/{userName}'}
 
-    def update_user(
+    async def update_user(
         self,
-        pool_id,  # type: str
-        node_id,  # type: str
-        user_name,  # type: str
-        node_update_user_parameter,  # type: "models.NodeUpdateUserParameter"
-        compute_node_update_user_options=None,  # type: Optional["models.ComputeNodeUpdateUserOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        pool_id: str,
+        node_id: str,
+        user_name: str,
+        node_update_user_parameter: "models.NodeUpdateUserParameter",
+        compute_node_update_user_options: Optional["models.ComputeNodeUpdateUserOptions"] = None,
+        **kwargs
+    ) -> None:
         """This operation replaces of all the updatable properties of the Account. For example, if the expiryTime element is not specified, the current value is replaced with the default value, not left unmodified. You can update a user Account on a Compute Node only when it is in the idle or running state.
 
         Updates the password and expiration time of a user Account on the specified Compute Node.
@@ -294,7 +291,7 @@ class ComputeNodeOperations(object):
         body_content_kwargs['content'] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
 
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -314,14 +311,13 @@ class ComputeNodeOperations(object):
 
     update_user.metadata = {'url': '/pools/{poolId}/nodes/{nodeId}/users/{userName}'}
 
-    def get(
+    async def get(
         self,
-        pool_id,  # type: str
-        node_id,  # type: str
-        compute_node_get_options=None,  # type: Optional["models.ComputeNodeGetOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.ComputeNode"
+        pool_id: str,
+        node_id: str,
+        compute_node_get_options: Optional["models.ComputeNodeGetOptions"] = None,
+        **kwargs
+    ) -> "models.ComputeNode":
         """Gets information about the specified Compute Node.
 
         Gets information about the specified Compute Node.
@@ -382,7 +378,7 @@ class ComputeNodeOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -403,15 +399,14 @@ class ComputeNodeOperations(object):
         return deserialized
     get.metadata = {'url': '/pools/{poolId}/nodes/{nodeId}'}
 
-    def reboot(
+    async def reboot(
         self,
-        pool_id,  # type: str
-        node_id,  # type: str
-        node_reboot_option=None,  # type: Optional[Union[str, "models.ComputeNodeRebootOption"]]
-        compute_node_reboot_options=None,  # type: Optional["models.ComputeNodeRebootOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        pool_id: str,
+        node_id: str,
+        node_reboot_option: Optional[Union[str, "models.ComputeNodeRebootOption"]] = None,
+        compute_node_reboot_options: Optional["models.ComputeNodeRebootOptions"] = None,
+        **kwargs
+    ) -> None:
         """You can restart a Compute Node only if it is in an idle or running state.
 
         Restarts the specified Compute Node.
@@ -480,7 +475,7 @@ class ComputeNodeOperations(object):
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
 
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
@@ -500,15 +495,14 @@ class ComputeNodeOperations(object):
 
     reboot.metadata = {'url': '/pools/{poolId}/nodes/{nodeId}/reboot'}
 
-    def reimage(
+    async def reimage(
         self,
-        pool_id,  # type: str
-        node_id,  # type: str
-        node_reimage_option=None,  # type: Optional[Union[str, "models.ComputeNodeReimageOption"]]
-        compute_node_reimage_options=None,  # type: Optional["models.ComputeNodeReimageOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        pool_id: str,
+        node_id: str,
+        node_reimage_option: Optional[Union[str, "models.ComputeNodeReimageOption"]] = None,
+        compute_node_reimage_options: Optional["models.ComputeNodeReimageOptions"] = None,
+        **kwargs
+    ) -> None:
         """You can reinstall the operating system on a Compute Node only if it is in an idle or running state. This API can be invoked only on Pools created with the cloud service configuration property.
 
         Reinstalls the operating system on the specified Compute Node.
@@ -577,7 +571,7 @@ class ComputeNodeOperations(object):
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
 
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
@@ -597,15 +591,14 @@ class ComputeNodeOperations(object):
 
     reimage.metadata = {'url': '/pools/{poolId}/nodes/{nodeId}/reimage'}
 
-    def disable_scheduling(
+    async def disable_scheduling(
         self,
-        pool_id,  # type: str
-        node_id,  # type: str
-        node_disable_scheduling_option=None,  # type: Optional[Union[str, "models.DisableComputeNodeSchedulingOption"]]
-        compute_node_disable_scheduling_options=None,  # type: Optional["models.ComputeNodeDisableSchedulingOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        pool_id: str,
+        node_id: str,
+        node_disable_scheduling_option: Optional[Union[str, "models.DisableComputeNodeSchedulingOption"]] = None,
+        compute_node_disable_scheduling_options: Optional["models.ComputeNodeDisableSchedulingOptions"] = None,
+        **kwargs
+    ) -> None:
         """You can disable Task scheduling on a Compute Node only if its current scheduling state is enabled.
 
         Disables Task scheduling on the specified Compute Node.
@@ -674,7 +667,7 @@ class ComputeNodeOperations(object):
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
 
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -694,14 +687,13 @@ class ComputeNodeOperations(object):
 
     disable_scheduling.metadata = {'url': '/pools/{poolId}/nodes/{nodeId}/disablescheduling'}
 
-    def enable_scheduling(
+    async def enable_scheduling(
         self,
-        pool_id,  # type: str
-        node_id,  # type: str
-        compute_node_enable_scheduling_options=None,  # type: Optional["models.ComputeNodeEnableSchedulingOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        pool_id: str,
+        node_id: str,
+        compute_node_enable_scheduling_options: Optional["models.ComputeNodeEnableSchedulingOptions"] = None,
+        **kwargs
+    ) -> None:
         """You can enable Task scheduling on a Compute Node only if its current scheduling state is disabled.
 
         Enables Task scheduling on the specified Compute Node.
@@ -757,7 +749,7 @@ class ComputeNodeOperations(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -777,14 +769,13 @@ class ComputeNodeOperations(object):
 
     enable_scheduling.metadata = {'url': '/pools/{poolId}/nodes/{nodeId}/enablescheduling'}
 
-    def get_remote_login_settings(
+    async def get_remote_login_settings(
         self,
-        pool_id,  # type: str
-        node_id,  # type: str
-        compute_node_get_remote_login_settings_options=None,  # type: Optional["models.ComputeNodeGetRemoteLoginSettingsOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.ComputeNodeGetRemoteLoginSettingsResult"
+        pool_id: str,
+        node_id: str,
+        compute_node_get_remote_login_settings_options: Optional["models.ComputeNodeGetRemoteLoginSettingsOptions"] = None,
+        **kwargs
+    ) -> "models.ComputeNodeGetRemoteLoginSettingsResult":
         """Before you can remotely login to a Compute Node using the remote login settings, you must create a user Account on the Compute Node. This API can be invoked only on Pools created with the virtual machine configuration property. For Pools created with a cloud service configuration, see the GetRemoteDesktop API.
 
         Gets the settings required for remote login to a Compute Node.
@@ -841,7 +832,7 @@ class ComputeNodeOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -862,14 +853,13 @@ class ComputeNodeOperations(object):
         return deserialized
     get_remote_login_settings.metadata = {'url': '/pools/{poolId}/nodes/{nodeId}/remoteloginsettings'}
 
-    def get_remote_desktop(
+    async def get_remote_desktop(
         self,
-        pool_id,  # type: str
-        node_id,  # type: str
-        compute_node_get_remote_desktop_options=None,  # type: Optional["models.ComputeNodeGetRemoteDesktopOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> IO
+        pool_id: str,
+        node_id: str,
+        compute_node_get_remote_desktop_options: Optional["models.ComputeNodeGetRemoteDesktopOptions"] = None,
+        **kwargs
+    ) -> IO:
         """Before you can access a Compute Node by using the RDP file, you must create a user Account on the Compute Node. This API can only be invoked on Pools created with a cloud service configuration. For Pools created with a virtual machine configuration, see the GetRemoteLoginSettings API.
 
         Gets the Remote Desktop Protocol file for the specified Compute Node.
@@ -927,7 +917,7 @@ class ComputeNodeOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=True, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=True, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -948,15 +938,14 @@ class ComputeNodeOperations(object):
         return deserialized
     get_remote_desktop.metadata = {'url': '/pools/{poolId}/nodes/{nodeId}/rdp'}
 
-    def upload_batch_service_logs(
+    async def upload_batch_service_logs(
         self,
-        pool_id,  # type: str
-        node_id,  # type: str
-        upload_batch_service_logs_configuration,  # type: "models.UploadBatchServiceLogsConfiguration"
-        compute_node_upload_batch_service_logs_options=None,  # type: Optional["models.ComputeNodeUploadBatchServiceLogsOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.UploadBatchServiceLogsResult"
+        pool_id: str,
+        node_id: str,
+        upload_batch_service_logs_configuration: "models.UploadBatchServiceLogsConfiguration",
+        compute_node_upload_batch_service_logs_options: Optional["models.ComputeNodeUploadBatchServiceLogsOptions"] = None,
+        **kwargs
+    ) -> "models.UploadBatchServiceLogsResult":
         """This is for gathering Azure Batch service log files in an automated fashion from Compute Nodes if you are experiencing an error and wish to escalate to Azure support. The Azure Batch service log files should be shared with Azure support to aid in debugging issues with the Batch service.
 
         Upload Azure Batch service log files from the specified Compute Node to Azure Blob Storage.
@@ -1023,7 +1012,7 @@ class ComputeNodeOperations(object):
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
 
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1044,11 +1033,10 @@ class ComputeNodeOperations(object):
 
     def list(
         self,
-        pool_id,  # type: str
-        compute_node_list_options=None,  # type: Optional["models.ComputeNodeListOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.ComputeNodeListResult"
+        pool_id: str,
+        compute_node_list_options: Optional["models.ComputeNodeListOptions"] = None,
+        **kwargs
+    ) -> "models.ComputeNodeListResult":
         """Lists the Compute Nodes in the specified Pool.
 
         Lists the Compute Nodes in the specified Pool.
@@ -1125,17 +1113,17 @@ class ComputeNodeOperations(object):
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('ComputeNodeListResult', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.odata_next_link or None, iter(list_of_elem)
+            return deserialized.odata_next_link or None, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -1145,7 +1133,7 @@ class ComputeNodeOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list.metadata = {'url': '/pools/{poolId}/nodes'}

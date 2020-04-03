@@ -9,19 +9,19 @@ import datetime
 from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar
 import warnings
 
+from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
-from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpRequest, HttpResponse
+from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from ... import models
 
 T = TypeVar('T')
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class TaskOperations(object):
-    """TaskOperations operations.
+class TaskOperations:
+    """TaskOperations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -36,20 +36,19 @@ class TaskOperations(object):
 
     models = models
 
-    def __init__(self, client, config, serializer, deserializer):
+    def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
         self._config = config
 
-    def add(
+    async def add(
         self,
-        job_id,  # type: str
-        task,  # type: "models.TaskAddParameter"
-        task_add_options=None,  # type: Optional["models.TaskAddOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        job_id: str,
+        task: "models.TaskAddParameter",
+        task_add_options: Optional["models.TaskAddOptions"] = None,
+        **kwargs
+    ) -> None:
         """The maximum lifetime of a Task from addition to completion is 180 days. If a Task has not completed within 180 days of being added it will be terminated by the Batch service and left in whatever state it was in at that time.
 
         Adds a Task to the specified Job.
@@ -110,7 +109,7 @@ class TaskOperations(object):
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
 
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
@@ -132,11 +131,10 @@ class TaskOperations(object):
 
     def list(
         self,
-        job_id,  # type: str
-        task_list_options=None,  # type: Optional["models.TaskListOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.CloudTaskListResult"
+        job_id: str,
+        task_list_options: Optional["models.TaskListOptions"] = None,
+        **kwargs
+    ) -> "models.CloudTaskListResult":
         """For multi-instance Tasks, information such as affinityId, executionInfo and nodeInfo refer to the primary Task. Use the list subtasks API to retrieve information about subtasks.
 
         Lists all of the Tasks that are associated with the specified Job.
@@ -217,17 +215,17 @@ class TaskOperations(object):
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('CloudTaskListResult', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.odata_next_link or None, iter(list_of_elem)
+            return deserialized.odata_next_link or None, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -237,19 +235,18 @@ class TaskOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list.metadata = {'url': '/jobs/{jobId}/tasks'}
 
-    def add_collection(
+    async def add_collection(
         self,
-        job_id,  # type: str
-        value,  # type: List["TaskAddParameter"]
-        task_add_collection_options=None,  # type: Optional["models.TaskAddCollectionOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.TaskAddCollectionResult"
+        job_id: str,
+        value: List["TaskAddParameter"],
+        task_add_collection_options: Optional["models.TaskAddCollectionOptions"] = None,
+        **kwargs
+    ) -> "models.TaskAddCollectionResult":
         """Note that each Task must have a unique ID. The Batch service may not return the results for each Task in the same order the Tasks were submitted in this request. If the server times out or the connection is closed during the request, the request may have been partially or fully processed, or not at all. In such cases, the user should re-issue the request. Note that it is up to the user to correctly handle failures when re-issuing a request. For example, you should use the same Task IDs during a retry so that if the prior operation succeeded, the retry will not create extra Tasks unexpectedly. If the response contains any Tasks which failed to add, a client can retry the request. In a retry, it is most efficient to resubmit only Tasks that failed to add, and to omit Tasks that were successfully added on the first attempt. The maximum lifetime of a Task from addition to completion is 180 days. If a Task has not completed within 180 days of being added it will be terminated by the Batch service and left in whatever state it was in at that time.
 
         Adds a collection of Tasks to the specified Job.
@@ -316,7 +313,7 @@ class TaskOperations(object):
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
 
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -335,14 +332,13 @@ class TaskOperations(object):
         return deserialized
     add_collection.metadata = {'url': '/jobs/{jobId}/addtaskcollection'}
 
-    def delete(
+    async def delete(
         self,
-        job_id,  # type: str
-        task_id,  # type: str
-        task_delete_options=None,  # type: Optional["models.TaskDeleteOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        job_id: str,
+        task_id: str,
+        task_delete_options: Optional["models.TaskDeleteOptions"] = None,
+        **kwargs
+    ) -> None:
         """When a Task is deleted, all of the files in its directory on the Compute Node where it ran are also deleted (regardless of the retention time). For multi-instance Tasks, the delete Task operation applies synchronously to the primary task; subtasks and their files are then deleted asynchronously in the background.
 
         Deletes a Task from the specified Job.
@@ -414,7 +410,7 @@ class TaskOperations(object):
 
         # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -431,14 +427,13 @@ class TaskOperations(object):
 
     delete.metadata = {'url': '/jobs/{jobId}/tasks/{taskId}'}
 
-    def get(
+    async def get(
         self,
-        job_id,  # type: str
-        task_id,  # type: str
-        task_get_options=None,  # type: Optional["models.TaskGetOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.CloudTask"
+        job_id: str,
+        task_id: str,
+        task_get_options: Optional["models.TaskGetOptions"] = None,
+        **kwargs
+    ) -> "models.CloudTask":
         """For multi-instance Tasks, information such as affinityId, executionInfo and nodeInfo refer to the primary Task. Use the list subtasks API to retrieve information about subtasks.
 
         Gets information about the specified Task.
@@ -519,7 +514,7 @@ class TaskOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -541,15 +536,14 @@ class TaskOperations(object):
         return deserialized
     get.metadata = {'url': '/jobs/{jobId}/tasks/{taskId}'}
 
-    def update(
+    async def update(
         self,
-        job_id,  # type: str
-        task_id,  # type: str
-        constraints=None,  # type: Optional["models.TaskConstraints"]
-        task_update_options=None,  # type: Optional["models.TaskUpdateOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        job_id: str,
+        task_id: str,
+        constraints: Optional["models.TaskConstraints"] = None,
+        task_update_options: Optional["models.TaskUpdateOptions"] = None,
+        **kwargs
+    ) -> None:
         """Updates the properties of the specified Task.
 
         :param job_id: The ID of the Job containing the Task.
@@ -630,7 +624,7 @@ class TaskOperations(object):
         body_content_kwargs['content'] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
 
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -650,14 +644,13 @@ class TaskOperations(object):
 
     update.metadata = {'url': '/jobs/{jobId}/tasks/{taskId}'}
 
-    def list_subtasks(
+    async def list_subtasks(
         self,
-        job_id,  # type: str
-        task_id,  # type: str
-        task_list_subtasks_options=None,  # type: Optional["models.TaskListSubtasksOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.CloudTaskListSubtasksResult"
+        job_id: str,
+        task_id: str,
+        task_list_subtasks_options: Optional["models.TaskListSubtasksOptions"] = None,
+        **kwargs
+    ) -> "models.CloudTaskListSubtasksResult":
         """If the Task is not a multi-instance Task then this returns an empty collection.
 
         Lists all of the subtasks that are associated with the specified multi-instance Task.
@@ -718,7 +711,7 @@ class TaskOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -739,14 +732,13 @@ class TaskOperations(object):
         return deserialized
     list_subtasks.metadata = {'url': '/jobs/{jobId}/tasks/{taskId}/subtasksinfo'}
 
-    def terminate(
+    async def terminate(
         self,
-        job_id,  # type: str
-        task_id,  # type: str
-        task_terminate_options=None,  # type: Optional["models.TaskTerminateOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        job_id: str,
+        task_id: str,
+        task_terminate_options: Optional["models.TaskTerminateOptions"] = None,
+        **kwargs
+    ) -> None:
         """When the Task has been terminated, it moves to the completed state. For multi-instance Tasks, the terminate Task operation applies synchronously to the primary task; subtasks are then terminated asynchronously in the background.
 
         Terminates the specified Task.
@@ -818,7 +810,7 @@ class TaskOperations(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
@@ -838,14 +830,13 @@ class TaskOperations(object):
 
     terminate.metadata = {'url': '/jobs/{jobId}/tasks/{taskId}/terminate'}
 
-    def reactivate(
+    async def reactivate(
         self,
-        job_id,  # type: str
-        task_id,  # type: str
-        task_reactivate_options=None,  # type: Optional["models.TaskReactivateOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        job_id: str,
+        task_id: str,
+        task_reactivate_options: Optional["models.TaskReactivateOptions"] = None,
+        **kwargs
+    ) -> None:
         """Reactivation makes a Task eligible to be retried again up to its maximum retry count. The Task's state is changed to active. As the Task is no longer in the completed state, any previous exit code or failure information is no longer available after reactivation. Each time a Task is reactivated, its retry count is reset to 0. Reactivation will fail for Tasks that are not completed or that previously completed successfully (with an exit code of 0). Additionally, it will fail if the Job has completed (or is terminating or deleting).
 
         Reactivates a Task, allowing it to run again even if its retry count has been exhausted.
@@ -917,7 +908,7 @@ class TaskOperations(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:

@@ -9,19 +9,19 @@ import datetime
 from typing import Any, Callable, Dict, Generic, IO, Optional, TypeVar
 import warnings
 
+from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
-from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpRequest, HttpResponse
+from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from ... import models
 
 T = TypeVar('T')
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class FileOperations(object):
-    """FileOperations operations.
+class FileOperations:
+    """FileOperations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -36,22 +36,21 @@ class FileOperations(object):
 
     models = models
 
-    def __init__(self, client, config, serializer, deserializer):
+    def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
         self._config = config
 
-    def delete_from_task(
+    async def delete_from_task(
         self,
-        job_id,  # type: str
-        task_id,  # type: str
-        file_path,  # type: str
-        recursive=None,  # type: Optional[bool]
-        file_delete_from_task_options=None,  # type: Optional["models.FileDeleteFromTaskOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        job_id: str,
+        task_id: str,
+        file_path: str,
+        recursive: Optional[bool] = None,
+        file_delete_from_task_options: Optional["models.FileDeleteFromTaskOptions"] = None,
+        **kwargs
+    ) -> None:
         """Deletes the specified Task file from the Compute Node where the Task ran.
 
         Deletes the specified Task file from the Compute Node where the Task ran.
@@ -117,7 +116,7 @@ class FileOperations(object):
 
         # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -134,15 +133,14 @@ class FileOperations(object):
 
     delete_from_task.metadata = {'url': '/jobs/{jobId}/tasks/{taskId}/files/{filePath}'}
 
-    def get_from_task(
+    async def get_from_task(
         self,
-        job_id,  # type: str
-        task_id,  # type: str
-        file_path,  # type: str
-        file_get_from_task_options=None,  # type: Optional["models.FileGetFromTaskOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> IO
+        job_id: str,
+        task_id: str,
+        file_path: str,
+        file_get_from_task_options: Optional["models.FileGetFromTaskOptions"] = None,
+        **kwargs
+    ) -> IO:
         """Returns the content of the specified Task file.
 
         :param job_id: The ID of the Job that contains the Task.
@@ -212,7 +210,7 @@ class FileOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=True, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=True, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -239,15 +237,14 @@ class FileOperations(object):
         return deserialized
     get_from_task.metadata = {'url': '/jobs/{jobId}/tasks/{taskId}/files/{filePath}'}
 
-    def get_properties_from_task(
+    async def get_properties_from_task(
         self,
-        job_id,  # type: str
-        task_id,  # type: str
-        file_path,  # type: str
-        file_get_properties_from_task_options=None,  # type: Optional["models.FileGetPropertiesFromTaskOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        job_id: str,
+        task_id: str,
+        file_path: str,
+        file_get_properties_from_task_options: Optional["models.FileGetPropertiesFromTaskOptions"] = None,
+        **kwargs
+    ) -> None:
         """Gets the properties of the specified Task file.
 
         :param job_id: The ID of the Job that contains the Task.
@@ -312,7 +309,7 @@ class FileOperations(object):
 
         # Construct and send request
         request = self._client.head(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -338,16 +335,15 @@ class FileOperations(object):
         return 200 <= response.status_code <= 299
     get_properties_from_task.metadata = {'url': '/jobs/{jobId}/tasks/{taskId}/files/{filePath}'}
 
-    def delete_from_compute_node(
+    async def delete_from_compute_node(
         self,
-        pool_id,  # type: str
-        node_id,  # type: str
-        file_path,  # type: str
-        recursive=None,  # type: Optional[bool]
-        file_delete_from_compute_node_options=None,  # type: Optional["models.FileDeleteFromComputeNodeOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        pool_id: str,
+        node_id: str,
+        file_path: str,
+        recursive: Optional[bool] = None,
+        file_delete_from_compute_node_options: Optional["models.FileDeleteFromComputeNodeOptions"] = None,
+        **kwargs
+    ) -> None:
         """Deletes the specified file from the Compute Node.
 
         Deletes the specified file from the Compute Node.
@@ -413,7 +409,7 @@ class FileOperations(object):
 
         # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -430,15 +426,14 @@ class FileOperations(object):
 
     delete_from_compute_node.metadata = {'url': '/pools/{poolId}/nodes/{nodeId}/files/{filePath}'}
 
-    def get_from_compute_node(
+    async def get_from_compute_node(
         self,
-        pool_id,  # type: str
-        node_id,  # type: str
-        file_path,  # type: str
-        file_get_from_compute_node_options=None,  # type: Optional["models.FileGetFromComputeNodeOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> IO
+        pool_id: str,
+        node_id: str,
+        file_path: str,
+        file_get_from_compute_node_options: Optional["models.FileGetFromComputeNodeOptions"] = None,
+        **kwargs
+    ) -> IO:
         """Returns the content of the specified Compute Node file.
 
         :param pool_id: The ID of the Pool that contains the Compute Node.
@@ -508,7 +503,7 @@ class FileOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=True, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=True, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -535,15 +530,14 @@ class FileOperations(object):
         return deserialized
     get_from_compute_node.metadata = {'url': '/pools/{poolId}/nodes/{nodeId}/files/{filePath}'}
 
-    def get_properties_from_compute_node(
+    async def get_properties_from_compute_node(
         self,
-        pool_id,  # type: str
-        node_id,  # type: str
-        file_path,  # type: str
-        file_get_properties_from_compute_node_options=None,  # type: Optional["models.FileGetPropertiesFromComputeNodeOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        pool_id: str,
+        node_id: str,
+        file_path: str,
+        file_get_properties_from_compute_node_options: Optional["models.FileGetPropertiesFromComputeNodeOptions"] = None,
+        **kwargs
+    ) -> None:
         """Gets the properties of the specified Compute Node file.
 
         :param pool_id: The ID of the Pool that contains the Compute Node.
@@ -608,7 +602,7 @@ class FileOperations(object):
 
         # Construct and send request
         request = self._client.head(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -636,13 +630,12 @@ class FileOperations(object):
 
     def list_from_task(
         self,
-        job_id,  # type: str
-        task_id,  # type: str
-        recursive=None,  # type: Optional[bool]
-        file_list_from_task_options=None,  # type: Optional["models.FileListFromTaskOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.NodeFileListResult"
+        job_id: str,
+        task_id: str,
+        recursive: Optional[bool] = None,
+        file_list_from_task_options: Optional["models.FileListFromTaskOptions"] = None,
+        **kwargs
+    ) -> "models.NodeFileListResult":
         """Lists the files in a Task's directory on its Compute Node.
 
         Lists the files in a Task's directory on its Compute Node.
@@ -724,17 +717,17 @@ class FileOperations(object):
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('NodeFileListResult', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.odata_next_link or None, iter(list_of_elem)
+            return deserialized.odata_next_link or None, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -744,20 +737,19 @@ class FileOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list_from_task.metadata = {'url': '/jobs/{jobId}/tasks/{taskId}/files'}
 
     def list_from_compute_node(
         self,
-        pool_id,  # type: str
-        node_id,  # type: str
-        recursive=None,  # type: Optional[bool]
-        file_list_from_compute_node_options=None,  # type: Optional["models.FileListFromComputeNodeOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.NodeFileListResult"
+        pool_id: str,
+        node_id: str,
+        recursive: Optional[bool] = None,
+        file_list_from_compute_node_options: Optional["models.FileListFromComputeNodeOptions"] = None,
+        **kwargs
+    ) -> "models.NodeFileListResult":
         """Lists all of the files in Task directories on the specified Compute Node.
 
         Lists all of the files in Task directories on the specified Compute Node.
@@ -838,17 +830,17 @@ class FileOperations(object):
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('NodeFileListResult', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.odata_next_link or None, iter(list_of_elem)
+            return deserialized.odata_next_link or None, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -858,7 +850,7 @@ class FileOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list_from_compute_node.metadata = {'url': '/pools/{poolId}/nodes/{nodeId}/files'}

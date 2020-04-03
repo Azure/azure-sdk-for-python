@@ -9,19 +9,19 @@ import datetime
 from typing import Any, Callable, Dict, Generic, Optional, TypeVar
 import warnings
 
+from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
-from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpRequest, HttpResponse
+from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from ... import models
 
 T = TypeVar('T')
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class JobScheduleOperations(object):
-    """JobScheduleOperations operations.
+class JobScheduleOperations:
+    """JobScheduleOperations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -36,19 +36,18 @@ class JobScheduleOperations(object):
 
     models = models
 
-    def __init__(self, client, config, serializer, deserializer):
+    def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
         self._config = config
 
-    def exists(
+    async def exists(
         self,
-        job_schedule_id,  # type: str
-        job_schedule_exists_options=None,  # type: Optional["models.JobScheduleExistsOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        job_schedule_id: str,
+        job_schedule_exists_options: Optional["models.JobScheduleExistsOptions"] = None,
+        **kwargs
+    ) -> None:
         """Checks the specified Job Schedule exists.
 
         Checks the specified Job Schedule exists.
@@ -117,7 +116,7 @@ class JobScheduleOperations(object):
 
         # Construct and send request
         request = self._client.head(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 404]:
@@ -138,13 +137,12 @@ class JobScheduleOperations(object):
         return 200 <= response.status_code <= 299
     exists.metadata = {'url': '/jobschedules/{jobScheduleId}'}
 
-    def delete(
+    async def delete(
         self,
-        job_schedule_id,  # type: str
-        job_schedule_delete_options=None,  # type: Optional["models.JobScheduleDeleteOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        job_schedule_id: str,
+        job_schedule_delete_options: Optional["models.JobScheduleDeleteOptions"] = None,
+        **kwargs
+    ) -> None:
         """When you delete a Job Schedule, this also deletes all Jobs and Tasks under that schedule. When Tasks are deleted, all the files in their working directories on the Compute Nodes are also deleted (the retention period is ignored). The Job Schedule statistics are no longer accessible once the Job Schedule is deleted, though they are still counted towards Account lifetime statistics.
 
         Deletes a Job Schedule from the specified Account.
@@ -213,7 +211,7 @@ class JobScheduleOperations(object):
 
         # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
@@ -230,13 +228,12 @@ class JobScheduleOperations(object):
 
     delete.metadata = {'url': '/jobschedules/{jobScheduleId}'}
 
-    def get(
+    async def get(
         self,
-        job_schedule_id,  # type: str
-        job_schedule_get_options=None,  # type: Optional["models.JobScheduleGetOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.CloudJobSchedule"
+        job_schedule_id: str,
+        job_schedule_get_options: Optional["models.JobScheduleGetOptions"] = None,
+        **kwargs
+    ) -> "models.CloudJobSchedule":
         """Gets information about the specified Job Schedule.
 
         :param job_schedule_id: The ID of the Job Schedule to get.
@@ -312,7 +309,7 @@ class JobScheduleOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -333,14 +330,13 @@ class JobScheduleOperations(object):
         return deserialized
     get.metadata = {'url': '/jobschedules/{jobScheduleId}'}
 
-    def patch(
+    async def patch(
         self,
-        job_schedule_id,  # type: str
-        job_schedule_patch_parameter,  # type: "models.JobSchedulePatchParameter"
-        job_schedule_patch_options=None,  # type: Optional["models.JobSchedulePatchOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        job_schedule_id: str,
+        job_schedule_patch_parameter: "models.JobSchedulePatchParameter",
+        job_schedule_patch_options: Optional["models.JobSchedulePatchOptions"] = None,
+        **kwargs
+    ) -> None:
         """This replaces only the Job Schedule properties specified in the request. For example, if the schedule property is not specified with this request, then the Batch service will keep the existing schedule. Changes to a Job Schedule only impact Jobs created by the schedule after the update has taken place; currently running Jobs are unaffected.
 
         Updates the properties of the specified Job Schedule.
@@ -417,7 +413,7 @@ class JobScheduleOperations(object):
         body_content_kwargs['content'] = body_content
         request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
 
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -437,14 +433,13 @@ class JobScheduleOperations(object):
 
     patch.metadata = {'url': '/jobschedules/{jobScheduleId}'}
 
-    def update(
+    async def update(
         self,
-        job_schedule_id,  # type: str
-        job_schedule_update_parameter,  # type: "models.JobScheduleUpdateParameter"
-        job_schedule_update_options=None,  # type: Optional["models.JobScheduleUpdateOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        job_schedule_id: str,
+        job_schedule_update_parameter: "models.JobScheduleUpdateParameter",
+        job_schedule_update_options: Optional["models.JobScheduleUpdateOptions"] = None,
+        **kwargs
+    ) -> None:
         """This fully replaces all the updatable properties of the Job Schedule. For example, if the schedule property is not specified with this request, then the Batch service will remove the existing schedule. Changes to a Job Schedule only impact Jobs created by the schedule after the update has taken place; currently running Jobs are unaffected.
 
         Updates the properties of the specified Job Schedule.
@@ -521,7 +516,7 @@ class JobScheduleOperations(object):
         body_content_kwargs['content'] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
 
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -541,13 +536,12 @@ class JobScheduleOperations(object):
 
     update.metadata = {'url': '/jobschedules/{jobScheduleId}'}
 
-    def disable(
+    async def disable(
         self,
-        job_schedule_id,  # type: str
-        job_schedule_disable_options=None,  # type: Optional["models.JobScheduleDisableOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        job_schedule_id: str,
+        job_schedule_disable_options: Optional["models.JobScheduleDisableOptions"] = None,
+        **kwargs
+    ) -> None:
         """No new Jobs will be created until the Job Schedule is enabled again.
 
         Disables a Job Schedule.
@@ -616,7 +610,7 @@ class JobScheduleOperations(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
@@ -636,13 +630,12 @@ class JobScheduleOperations(object):
 
     disable.metadata = {'url': '/jobschedules/{jobScheduleId}/disable'}
 
-    def enable(
+    async def enable(
         self,
-        job_schedule_id,  # type: str
-        job_schedule_enable_options=None,  # type: Optional["models.JobScheduleEnableOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        job_schedule_id: str,
+        job_schedule_enable_options: Optional["models.JobScheduleEnableOptions"] = None,
+        **kwargs
+    ) -> None:
         """Enables a Job Schedule.
 
         Enables a Job Schedule.
@@ -711,7 +704,7 @@ class JobScheduleOperations(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
@@ -731,13 +724,12 @@ class JobScheduleOperations(object):
 
     enable.metadata = {'url': '/jobschedules/{jobScheduleId}/enable'}
 
-    def terminate(
+    async def terminate(
         self,
-        job_schedule_id,  # type: str
-        job_schedule_terminate_options=None,  # type: Optional["models.JobScheduleTerminateOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        job_schedule_id: str,
+        job_schedule_terminate_options: Optional["models.JobScheduleTerminateOptions"] = None,
+        **kwargs
+    ) -> None:
         """Terminates a Job Schedule.
 
         Terminates a Job Schedule.
@@ -806,7 +798,7 @@ class JobScheduleOperations(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
@@ -826,13 +818,12 @@ class JobScheduleOperations(object):
 
     terminate.metadata = {'url': '/jobschedules/{jobScheduleId}/terminate'}
 
-    def add(
+    async def add(
         self,
-        cloud_job_schedule,  # type: "models.JobScheduleAddParameter"
-        job_schedule_add_options=None,  # type: Optional["models.JobScheduleAddOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        cloud_job_schedule: "models.JobScheduleAddParameter",
+        job_schedule_add_options: Optional["models.JobScheduleAddOptions"] = None,
+        **kwargs
+    ) -> None:
         """Adds a Job Schedule to the specified Account.
 
         Adds a Job Schedule to the specified Account.
@@ -890,7 +881,7 @@ class JobScheduleOperations(object):
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
 
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
@@ -912,10 +903,9 @@ class JobScheduleOperations(object):
 
     def list(
         self,
-        job_schedule_list_options=None,  # type: Optional["models.JobScheduleListOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.CloudJobScheduleListResult"
+        job_schedule_list_options: Optional["models.JobScheduleListOptions"] = None,
+        **kwargs
+    ) -> "models.CloudJobScheduleListResult":
         """Lists all of the Job Schedules in the specified Account.
 
         Lists all of the Job Schedules in the specified Account.
@@ -992,17 +982,17 @@ class JobScheduleOperations(object):
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('CloudJobScheduleListResult', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.odata_next_link or None, iter(list_of_elem)
+            return deserialized.odata_next_link or None, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -1012,7 +1002,7 @@ class JobScheduleOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list.metadata = {'url': '/jobschedules'}

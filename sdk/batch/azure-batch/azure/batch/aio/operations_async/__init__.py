@@ -6,15 +6,15 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._application_operations import ApplicationOperations
-from ._pool_operations import PoolOperations
-from ._account_operations import AccountOperations
-from ._job_operations import JobOperations
-from ._certificate_operations import CertificateOperations
-from ._file_operations import FileOperations
-from ._job_schedule_operations import JobScheduleOperations
-from ._task_operations import TaskOperations
-from ._compute_node_operations import ComputeNodeOperations
+from ._application_operations_async import ApplicationOperations
+from ._pool_operations_async import PoolOperations
+from ._account_operations_async import AccountOperations
+from ._job_operations_async import JobOperations
+from ._certificate_operations_async import CertificateOperations
+from ._file_operations_async import FileOperations
+from ._job_schedule_operations_async import JobScheduleOperations
+from ._task_operations_async import TaskOperations
+from ._compute_node_operations_async import ComputeNodeOperations
 
 __all__ = [
     'ApplicationOperations',

@@ -9,19 +9,19 @@ import datetime
 from typing import Any, Callable, Dict, Generic, Optional, TypeVar, Union
 import warnings
 
+from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
-from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpRequest, HttpResponse
+from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from ... import models
 
 T = TypeVar('T')
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class JobOperations(object):
-    """JobOperations operations.
+class JobOperations:
+    """JobOperations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -36,18 +36,17 @@ class JobOperations(object):
 
     models = models
 
-    def __init__(self, client, config, serializer, deserializer):
+    def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
         self._config = config
 
-    def get_all_lifetime_statistics(
+    async def get_all_lifetime_statistics(
         self,
-        job_get_all_lifetime_statistics_options=None,  # type: Optional["models.JobGetAllLifetimeStatisticsOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.JobStatistics"
+        job_get_all_lifetime_statistics_options: Optional["models.JobGetAllLifetimeStatisticsOptions"] = None,
+        **kwargs
+    ) -> "models.JobStatistics":
         """Statistics are aggregated across all Jobs that have ever existed in the Account, from Account creation to the last update time of the statistics. The statistics may not be immediately available. The Batch service performs periodic roll-up of statistics. The typical delay is about 30 minutes.
 
         Gets lifetime summary statistics for all of the Jobs in the specified Account.
@@ -98,7 +97,7 @@ class JobOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -119,13 +118,12 @@ class JobOperations(object):
         return deserialized
     get_all_lifetime_statistics.metadata = {'url': '/lifetimejobstats'}
 
-    def delete(
+    async def delete(
         self,
-        job_id,  # type: str
-        job_delete_options=None,  # type: Optional["models.JobDeleteOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        job_id: str,
+        job_delete_options: Optional["models.JobDeleteOptions"] = None,
+        **kwargs
+    ) -> None:
         """Deleting a Job also deletes all Tasks that are part of that Job, and all Job statistics. This also overrides the retention period for Task data; that is, if the Job contains Tasks which are still retained on Compute Nodes, the Batch services deletes those Tasks' working directories and all their contents.  When a Delete Job request is received, the Batch service sets the Job to the deleting state. All update operations on a Job that is in deleting state will fail with status code 409 (Conflict), with additional information indicating that the Job is being deleted.
 
         Deletes a Job.
@@ -194,7 +192,7 @@ class JobOperations(object):
 
         # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
@@ -211,13 +209,12 @@ class JobOperations(object):
 
     delete.metadata = {'url': '/jobs/{jobId}'}
 
-    def get(
+    async def get(
         self,
-        job_id,  # type: str
-        job_get_options=None,  # type: Optional["models.JobGetOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.CloudJob"
+        job_id: str,
+        job_get_options: Optional["models.JobGetOptions"] = None,
+        **kwargs
+    ) -> "models.CloudJob":
         """Gets information about the specified Job.
 
         Gets information about the specified Job.
@@ -295,7 +292,7 @@ class JobOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -316,14 +313,13 @@ class JobOperations(object):
         return deserialized
     get.metadata = {'url': '/jobs/{jobId}'}
 
-    def patch(
+    async def patch(
         self,
-        job_id,  # type: str
-        job_patch_parameter,  # type: "models.JobPatchParameter"
-        job_patch_options=None,  # type: Optional["models.JobPatchOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        job_id: str,
+        job_patch_parameter: "models.JobPatchParameter",
+        job_patch_options: Optional["models.JobPatchOptions"] = None,
+        **kwargs
+    ) -> None:
         """This replaces only the Job properties specified in the request. For example, if the Job has constraints, and a request does not specify the constraints element, then the Job keeps the existing constraints.
 
         Updates the properties of the specified Job.
@@ -400,7 +396,7 @@ class JobOperations(object):
         body_content_kwargs['content'] = body_content
         request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
 
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -420,14 +416,13 @@ class JobOperations(object):
 
     patch.metadata = {'url': '/jobs/{jobId}'}
 
-    def update(
+    async def update(
         self,
-        job_id,  # type: str
-        job_update_parameter,  # type: "models.JobUpdateParameter"
-        job_update_options=None,  # type: Optional["models.JobUpdateOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        job_id: str,
+        job_update_parameter: "models.JobUpdateParameter",
+        job_update_options: Optional["models.JobUpdateOptions"] = None,
+        **kwargs
+    ) -> None:
         """This fully replaces all the updatable properties of the Job. For example, if the Job has constraints associated with it and if constraints is not specified with this request, then the Batch service will remove the existing constraints.
 
         Updates the properties of the specified Job.
@@ -504,7 +499,7 @@ class JobOperations(object):
         body_content_kwargs['content'] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
 
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -524,14 +519,13 @@ class JobOperations(object):
 
     update.metadata = {'url': '/jobs/{jobId}'}
 
-    def disable(
+    async def disable(
         self,
-        job_id,  # type: str
-        disable_tasks,  # type: Union[str, "models.DisableJobOption"]
-        job_disable_options=None,  # type: Optional["models.JobDisableOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        job_id: str,
+        disable_tasks: Union[str, "models.DisableJobOption"],
+        job_disable_options: Optional["models.JobDisableOptions"] = None,
+        **kwargs
+    ) -> None:
         """The Batch Service immediately moves the Job to the disabling state. Batch then uses the disableTasks parameter to determine what to do with the currently running Tasks of the Job. The Job remains in the disabling state until the disable operation is completed and all Tasks have been dealt with according to the disableTasks option; the Job then moves to the disabled state. No new Tasks are started under the Job until it moves back to active state. If you try to disable a Job that is in any state other than active, disabling, or disabled, the request fails with status code 409.
 
         Disables the specified Job, preventing new Tasks from running.
@@ -610,7 +604,7 @@ class JobOperations(object):
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
 
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
@@ -630,13 +624,12 @@ class JobOperations(object):
 
     disable.metadata = {'url': '/jobs/{jobId}/disable'}
 
-    def enable(
+    async def enable(
         self,
-        job_id,  # type: str
-        job_enable_options=None,  # type: Optional["models.JobEnableOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        job_id: str,
+        job_enable_options: Optional["models.JobEnableOptions"] = None,
+        **kwargs
+    ) -> None:
         """When you call this API, the Batch service sets a disabled Job to the enabling state. After the this operation is completed, the Job moves to the active state, and scheduling of new Tasks under the Job resumes. The Batch service does not allow a Task to remain in the active state for more than 180 days. Therefore, if you enable a Job containing active Tasks which were added more than 180 days ago, those Tasks will not run.
 
         Enables the specified Job, allowing new Tasks to run.
@@ -705,7 +698,7 @@ class JobOperations(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
@@ -725,14 +718,13 @@ class JobOperations(object):
 
     enable.metadata = {'url': '/jobs/{jobId}/enable'}
 
-    def terminate(
+    async def terminate(
         self,
-        job_id,  # type: str
-        terminate_reason=None,  # type: Optional[str]
-        job_terminate_options=None,  # type: Optional["models.JobTerminateOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        job_id: str,
+        terminate_reason: Optional[str] = None,
+        job_terminate_options: Optional["models.JobTerminateOptions"] = None,
+        **kwargs
+    ) -> None:
         """When a Terminate Job request is received, the Batch service sets the Job to the terminating state. The Batch service then terminates any running Tasks associated with the Job and runs any required Job release Tasks. Then the Job moves into the completed state. If there are any Tasks in the Job in the active state, they will remain in the active state. Once a Job is terminated, new Tasks cannot be added and any remaining active Tasks will not be scheduled.
 
         Terminates the specified Job, marking it as completed.
@@ -815,7 +807,7 @@ class JobOperations(object):
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
 
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
@@ -835,13 +827,12 @@ class JobOperations(object):
 
     terminate.metadata = {'url': '/jobs/{jobId}/terminate'}
 
-    def add(
+    async def add(
         self,
-        job,  # type: "models.JobAddParameter"
-        job_add_options=None,  # type: Optional["models.JobAddOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        job: "models.JobAddParameter",
+        job_add_options: Optional["models.JobAddOptions"] = None,
+        **kwargs
+    ) -> None:
         """The Batch service supports two ways to control the work done as part of a Job. In the first approach, the user specifies a Job Manager Task. The Batch service launches this Task when it is ready to start the Job. The Job Manager Task controls all other Tasks that run under this Job, by using the Task APIs. In the second approach, the user directly controls the execution of Tasks under an active Job, by using the Task APIs. Also note: when naming Jobs, avoid including sensitive information such as user names or secret project names. This information may appear in telemetry logs accessible to Microsoft Support engineers.
 
         Adds a Job to the specified Account.
@@ -899,7 +890,7 @@ class JobOperations(object):
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
 
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
@@ -921,10 +912,9 @@ class JobOperations(object):
 
     def list(
         self,
-        job_list_options=None,  # type: Optional["models.JobListOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.CloudJobListResult"
+        job_list_options: Optional["models.JobListOptions"] = None,
+        **kwargs
+    ) -> "models.CloudJobListResult":
         """Lists all of the Jobs in the specified Account.
 
         Lists all of the Jobs in the specified Account.
@@ -1001,17 +991,17 @@ class JobOperations(object):
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('CloudJobListResult', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.odata_next_link or None, iter(list_of_elem)
+            return deserialized.odata_next_link or None, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -1021,18 +1011,17 @@ class JobOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list.metadata = {'url': '/jobs'}
 
     def list_from_job_schedule(
         self,
-        job_schedule_id,  # type: str
-        job_list_from_job_schedule_options=None,  # type: Optional["models.JobListFromJobScheduleOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.CloudJobListResult"
+        job_schedule_id: str,
+        job_list_from_job_schedule_options: Optional["models.JobListFromJobScheduleOptions"] = None,
+        **kwargs
+    ) -> "models.CloudJobListResult":
         """Lists the Jobs that have been created under the specified Job Schedule.
 
         Lists the Jobs that have been created under the specified Job Schedule.
@@ -1113,17 +1102,17 @@ class JobOperations(object):
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('CloudJobListResult', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.odata_next_link or None, iter(list_of_elem)
+            return deserialized.odata_next_link or None, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -1133,18 +1122,17 @@ class JobOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list_from_job_schedule.metadata = {'url': '/jobschedules/{jobScheduleId}/jobs'}
 
     def list_preparation_and_release_task_status(
         self,
-        job_id,  # type: str
-        job_list_preparation_and_release_task_status_options=None,  # type: Optional["models.JobListPreparationAndReleaseTaskStatusOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.CloudJobListPreparationAndReleaseTaskStatusResult"
+        job_id: str,
+        job_list_preparation_and_release_task_status_options: Optional["models.JobListPreparationAndReleaseTaskStatusOptions"] = None,
+        **kwargs
+    ) -> "models.CloudJobListPreparationAndReleaseTaskStatusResult":
         """This API returns the Job Preparation and Job Release Task status on all Compute Nodes that have run the Job Preparation or Job Release Task. This includes Compute Nodes which have since been removed from the Pool. If this API is invoked on a Job which has no Job Preparation or Job Release Task, the Batch service returns HTTP status code 409 (Conflict) with an error code of JobPreparationTaskNotSpecified.
 
         Lists the execution status of the Job Preparation and Job Release Task for the specified Job
@@ -1222,17 +1210,17 @@ class JobOperations(object):
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('CloudJobListPreparationAndReleaseTaskStatusResult', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.odata_next_link or None, iter(list_of_elem)
+            return deserialized.odata_next_link or None, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -1242,18 +1230,17 @@ class JobOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list_preparation_and_release_task_status.metadata = {'url': '/jobs/{jobId}/jobpreparationandreleasetaskstatus'}
 
-    def get_task_counts(
+    async def get_task_counts(
         self,
-        job_id,  # type: str
-        job_get_task_counts_options=None,  # type: Optional["models.JobGetTaskCountsOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.TaskCounts"
+        job_id: str,
+        job_get_task_counts_options: Optional["models.JobGetTaskCountsOptions"] = None,
+        **kwargs
+    ) -> "models.TaskCounts":
         """Task counts provide a count of the Tasks by active, running or completed Task state, and a count of Tasks which succeeded or failed. Tasks in the preparing state are counted as running.
 
         Gets the Task counts for the specified Job.
@@ -1307,7 +1294,7 @@ class JobOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
