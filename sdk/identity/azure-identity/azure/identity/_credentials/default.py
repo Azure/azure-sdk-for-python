@@ -5,8 +5,6 @@
 import logging
 import os
 
-from azure.core.exceptions import ClientAuthenticationError
-
 from .._constants import EnvironmentVariables, KnownAuthorities
 from .browser import InteractiveBrowserCredential
 from .chained import ChainedTokenCredential
@@ -111,14 +109,4 @@ class DefaultAzureCredential(ChainedTokenCredential):
         if self._successful_credential:
             return self._successful_credential.get_token(*scopes, **kwargs)
 
-        try:
-            return super(DefaultAzureCredential, self).get_token(*scopes, **kwargs)
-        except ClientAuthenticationError as e:
-            raise ClientAuthenticationError(
-                message="""
-{}\n\nPlease visit the documentation at
-https://aka.ms/python-sdk-identity#defaultazurecredential
-to learn what options DefaultAzureCredential supports""".format(
-                    e.message
-                )
-            )
+        return super(DefaultAzureCredential, self).get_token(*scopes, **kwargs)

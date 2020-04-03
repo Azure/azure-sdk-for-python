@@ -88,6 +88,68 @@ async def test_multipart_send():
 
 
 @pytest.mark.asyncio
+async def test_multipart_send_with_context():
+
+    # transport = mock.MagicMock(spec=AsyncHttpTransport)
+    # MagicMock support async cxt manager only after 3.8
+    # https://github.com/python/cpython/pull/9296
+
+    class MockAsyncHttpTransport(AsyncHttpTransport):
+        async def __aenter__(self): return self
+        async def __aexit__(self, *args): pass
+        async def open(self): pass
+        async def close(self): pass
+        async def send(self, request, **kwargs): pass
+
+    transport = MockAsyncHttpTransport()
+    header_policy = HeadersPolicy()
+
+    class RequestPolicy(object):
+        async def on_request(self, request):
+            # type: (PipelineRequest) -> None
+            request.http_request.headers['x-ms-date'] = 'Thu, 14 Jun 2018 16:46:54 GMT'
+
+    req0 = HttpRequest("DELETE", "/container0/blob0")
+    req1 = HttpRequest("DELETE", "/container1/blob1")
+
+    request = HttpRequest("POST", "http://account.blob.core.windows.net/?comp=batch")
+    request.set_multipart_mixed(
+        req0,
+        req1,
+        policies=[header_policy, RequestPolicy()],
+        boundary="batch_357de4f7-6d0b-4e02-8cd2-6361411a9525", # Fix it so test are deterministic
+        headers={'Accept': 'application/json'}
+    )
+
+    async with AsyncPipeline(transport) as pipeline:
+        await pipeline.run(request)
+
+    assert request.body == (
+        b'--batch_357de4f7-6d0b-4e02-8cd2-6361411a9525\r\n'
+        b'Content-Type: application/http\r\n'
+        b'Content-Transfer-Encoding: binary\r\n'
+        b'Content-ID: 0\r\n'
+        b'\r\n'
+        b'DELETE /container0/blob0 HTTP/1.1\r\n'
+        b'Accept: application/json\r\n'
+        b'x-ms-date: Thu, 14 Jun 2018 16:46:54 GMT\r\n'
+        b'\r\n'
+        b'\r\n'
+        b'--batch_357de4f7-6d0b-4e02-8cd2-6361411a9525\r\n'
+        b'Content-Type: application/http\r\n'
+        b'Content-Transfer-Encoding: binary\r\n'
+        b'Content-ID: 1\r\n'
+        b'\r\n'
+        b'DELETE /container1/blob1 HTTP/1.1\r\n'
+        b'Accept: application/json\r\n'
+        b'x-ms-date: Thu, 14 Jun 2018 16:46:54 GMT\r\n'
+        b'\r\n'
+        b'\r\n'
+        b'--batch_357de4f7-6d0b-4e02-8cd2-6361411a9525--\r\n'
+    )
+
+
+@pytest.mark.asyncio
 async def test_multipart_receive():
 
     class MockResponse(AsyncHttpResponse):

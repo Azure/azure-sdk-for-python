@@ -6,8 +6,9 @@
 
 from opentelemetry import trace
 from opentelemetry.trace import Span, Link, Tracer, SpanKind as OpenTelemetrySpanKind
-from opentelemetry.context import with_current_context
+from opentelemetry.context import attach, detach, get_current
 from opentelemetry.propagators import extract, inject
+from opentelemetry.trace.propagation import get_span_from_context
 
 from azure.core.tracing import SpanKind, HttpSpanMixin  # pylint: disable=no-name-in-module
 
@@ -132,14 +133,14 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
         """Set the end time for a span."""
         self.span_instance.end()
 
-    def to_header(self):
+    def to_header(self): # pylint: disable=no-self-use
         # type: () -> Dict[str, str]
         """
         Returns a dictionary with the header labels and values.
         :return: A key value pair dictionary
         """
         temp_headers = {} # type: Dict[str, str]
-        inject(self.get_current_tracer(), _set_headers_from_http_request_headers, temp_headers)
+        inject(_set_headers_from_http_request_headers, temp_headers)
         return temp_headers
 
     def add_attribute(self, key, value):
@@ -192,8 +193,9 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
         :type headers: dict
         """
         ctx = extract(_get_headers_from_http_request_headers, headers)
+        span_ctx = get_span_from_context(ctx).get_context()
         current_span = cls.get_current_span()
-        current_span.links.append(Link(ctx))
+        current_span.links.append(Link(span_ctx))
 
     @classmethod
     def get_current_span(cls):
@@ -245,4 +247,14 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
         :param func: The function that will be run in the new context
         :return: The target the pass in instead of the function
         """
-        return with_current_context(func)
+        # returns the current Context object
+        context = get_current()
+
+        def call_with_current_context(*args, **kwargs):
+            try:
+                token = attach(context)
+                return func(*args, **kwargs)
+            finally:
+                detach(token)
+
+        return call_with_current_context

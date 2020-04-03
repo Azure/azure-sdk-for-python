@@ -32,6 +32,7 @@ from azure.search.documents.aio import SearchServiceClient
 CWD = dirname(realpath(__file__))
 SCHEMA = open(join(CWD, "..", "hotel_schema.json")).read()
 BATCH = json.load(open(join(CWD, "..", "hotel_small.json"), encoding='utf-8'))
+TIME_TO_SLEEP = 5
 
 def await_prepared_test(test_fn):
     """Synchronous wrapper for async test methods. Used to avoid making changes
@@ -92,7 +93,7 @@ class SearchIndexClientTest(AzureMgmtTestCase):
         await client.delete_index(index_name)
         import time
         if self.is_live:
-            time.sleep(5)
+            time.sleep(TIME_TO_SLEEP)
         result = await client.list_indexes()
         assert len(result) == 0
 
