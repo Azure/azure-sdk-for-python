@@ -454,7 +454,7 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
     @TextAnalyticsClientPreparer()
     async def test_missing_input_records_error(self, client):
         docs = []
-        with pytest.raises(TypeError) as excinfo:
+        with pytest.raises(ValueError) as excinfo:
             await client.analyze_sentiment(docs)
         assert "Input documents can not be empty" in str(excinfo.value)
 
