@@ -438,11 +438,9 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
     @TextAnalyticsClientPreparer()
     def test_missing_input_records_error(self, client):
         docs = []
-        try:
-            result = client.analyze_sentiment(docs)
-        except HttpResponseError as err:
-            self.assertEqual(err.error.code, "MissingInputRecords")
-            self.assertIsNotNone(err.error.message)
+        with pytest.raises(ValueError) as excinfo:
+            client.analyze_sentiment(docs)
+        assert "Input documents can not be empty" in str(excinfo.value)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
