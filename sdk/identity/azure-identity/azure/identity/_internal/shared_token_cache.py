@@ -8,9 +8,8 @@ import sys
 
 from msal import TokenCache
 
-from azure.core.exceptions import ClientAuthenticationError
+from .. import CredentialUnavailableError
 from .._constants import KnownAuthorities, EnvironmentVariables
-
 
 try:
     ABC = abc.ABC

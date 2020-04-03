@@ -72,6 +72,9 @@ async def test_default_credential_authority():
             EnvironmentVariables.AZURE_CLIENT_SECRET: "secret",
             EnvironmentVariables.AZURE_TENANT_ID: "tenant_id",
         }
+        if os.environ.get(EnvironmentVariables.AZURE_AUTHORITY_HOST):
+            environment.update({EnvironmentVariables.AZURE_AUTHORITY_HOST: os.environ.get(
+                EnvironmentVariables.AZURE_AUTHORITY_HOST)})
         with patch("os.environ", environment):
             transport = Mock(send=send)
             if authority_kwarg:
@@ -104,6 +107,8 @@ async def test_default_credential_authority():
     # all credentials not representing managed identities should use a specified authority or default to public cloud
     await exercise_credentials("authority.com")
     await exercise_credentials(None, KnownAuthorities.AZURE_PUBLIC_CLOUD)
+    with patch('os.environ', {EnvironmentVariables.AZURE_AUTHORITY_HOST: "localhost.com"}):
+        await exercise_credentials(None, os.environ.get(EnvironmentVariables.AZURE_AUTHORITY_HOST))
 
 
 def test_exclude_options():

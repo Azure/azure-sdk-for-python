@@ -5,6 +5,7 @@
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.identity import CredentialUnavailableError, KnownAuthorities, SharedTokenCacheCredential
+from azure.identity._constants import EnvironmentVariables
 from azure.identity._internal.shared_token_cache import (
     KNOWN_ALIASES,
     MULTIPLE_ACCOUNTS,
@@ -15,6 +16,7 @@ from azure.identity._internal.shared_token_cache import (
 from azure.identity._internal.user_agent import USER_AGENT
 from msal import TokenCache
 import pytest
+import os
 
 try:
     from unittest.mock import Mock
@@ -473,7 +475,8 @@ def get_account_event(
             foci="1",
         ),
         "client_id": client_id,
-        "token_endpoint": "https://" + "/".join((authority or KnownAuthorities.AZURE_PUBLIC_CLOUD, utid, "/path")),
+        "token_endpoint": "https://" + "/".join((authority or os.environ.get(
+            EnvironmentVariables.AZURE_AUTHORITY_HOST, KnownAuthorities.AZURE_PUBLIC_CLOUD), utid, "/path")),
         "scope": scopes or ["scope"],
     }
 
