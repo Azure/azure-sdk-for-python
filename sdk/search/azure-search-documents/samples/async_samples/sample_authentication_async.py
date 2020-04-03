@@ -44,7 +44,6 @@ async def authentication_service_client_with_api_key_credential_async():
     from azure.core.credentials import AzureKeyCredential
     from azure.search.documents.aio import SearchServiceClient
     service_endpoint = os.getenv("AZURE_SEARCH_SERVICE_ENDPOINT")
-    index_name = os.getenv("AZURE_SEARCH_INDEX_NAME")
     key = os.getenv("AZURE_SEARCH_API_KEY")
 
     client = SearchServiceClient(service_endpoint, AzureKeyCredential(key))
