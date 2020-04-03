@@ -458,11 +458,9 @@ class TestDetectLanguage(TextAnalyticsTest):
     @TextAnalyticsClientPreparer()
     def test_missing_input_records_error(self, client):
         docs = []
-        try:
-            result = client.detect_language(docs)
-        except HttpResponseError as err:
-            self.assertEqual(err.error.code, "MissingInputRecords")
-            self.assertIsNotNone(err.error.message)
+        with pytest.raises(TypeError) as excinfo:
+            client.detect_language(docs)
+        assert "Input documents can not be empty" in str(excinfo.value)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
