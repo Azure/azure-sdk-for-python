@@ -176,14 +176,17 @@ class MaintenanceConfiguration(Resource):
     :type location: str
     :param tags: Gets or sets tags of the resource
     :type tags: dict[str, str]
-    :param namespace: Gets or sets namespace of the resource
+    :param namespace: Gets or sets namespace of the resource e.g.
+     Microsoft.Maintenance or Microsoft.Sql
     :type namespace: str
     :param extension_properties: Gets or sets extensionProperties of the
-     maintenanceConfiguration
+     maintenanceConfiguration. This is for future use only and would be a set
+     of key value pairs for additional information e.g. whether to follow SDP
+     etc.
     :type extension_properties: dict[str, str]
     :param maintenance_scope: Gets or sets maintenanceScope of the
-     configuration. Possible values include: 'All', 'Host', 'Resource',
-     'InResource'
+     configuration. It represent the impact area of the maintenance. Possible
+     values include: 'All', 'Host', 'Resource', 'InResource'
     :type maintenance_scope: str or
      ~azure.mgmt.maintenance.models.MaintenanceScope
     """
