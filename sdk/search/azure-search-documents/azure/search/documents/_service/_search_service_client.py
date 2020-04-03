@@ -20,6 +20,8 @@ from .._version import SDK_MONIKER
 from ._utils import (
     prep_if_match,
     prep_if_none_match,
+    listize_flags_for_index,
+    delistize_flags_for_index,
 )
 
 if TYPE_CHECKING:
@@ -86,7 +88,8 @@ class SearchServiceClient(HeadersMixin):
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = self._client.indexes.list(**kwargs)
-        return result.indexes
+        indexes = [listize_flags_for_index(x) for x in result.indexes]
+        return indexes
 
     @distributed_trace
     def get_index(self, index_name, **kwargs):
@@ -102,7 +105,7 @@ class SearchServiceClient(HeadersMixin):
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = self._client.indexes.get(index_name, **kwargs)
-        return result
+        return listize_flags_for_index(result)
 
     @distributed_trace
     def get_index_statistics(self, index_name, **kwargs):
@@ -147,7 +150,8 @@ class SearchServiceClient(HeadersMixin):
 
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        result = self._client.indexes.create(index, **kwargs)
+        patched_index = delistize_flags_for_index(index)
+        result = self._client.indexes.create(patched_index, **kwargs)
         return result
 
     @distributed_trace
@@ -200,9 +204,10 @@ class SearchServiceClient(HeadersMixin):
         if match_condition == MatchConditions.IfMissing:
             error_map[412] = ResourceExistsError
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        patched_index = delistize_flags_for_index(index)
         result = self._client.indexes.create_or_update(
             index_name=index_name,
-            index=index,
+            index=patched_index,
             allow_index_downtime=allow_index_downtime,
             access_condition=access_condition,
             **kwargs)

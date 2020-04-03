@@ -23,7 +23,8 @@ Install the Azure Text Analytics client library for Python with [pip][pip]:
 pip install azure-ai-textanalytics --pre
 ```
 
-### Create a Cognitive Services or Text Analytics resource
+### Authenticate the client
+#### Create a Cognitive Services or Text Analytics resource
 Text Analytics supports both [multi-service and single-service access][multi_and_single_service].
 Create a Cognitive Services resource if you plan to access multiple cognitive services under a single endpoint/key. For Text Analytics access only, create a Text Analytics resource.
 
@@ -51,7 +52,6 @@ az cognitiveservices account create \
     --yes
 ```
 
-### Authenticate the client
 Interaction with this service begins with an instance of a [client](#client "ta-client").
 To create a client object, you will need the cognitive services or text analytics `endpoint` to
 your resource and a `credential` that allows you access:

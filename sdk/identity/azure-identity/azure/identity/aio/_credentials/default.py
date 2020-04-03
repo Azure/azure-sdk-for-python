@@ -6,8 +6,6 @@ import logging
 import os
 from typing import TYPE_CHECKING
 
-from azure.core.exceptions import ClientAuthenticationError
-
 from ..._constants import EnvironmentVariables, KnownAuthorities
 from .azure_cli import AzureCliCredential
 from .chained import ChainedTokenCredential
@@ -98,14 +96,4 @@ class DefaultAzureCredential(ChainedTokenCredential):
         if self._successful_credential:
             return await self._successful_credential.get_token(*scopes, **kwargs)
 
-        try:
-            return await super(DefaultAzureCredential, self).get_token(*scopes, **kwargs)
-        except ClientAuthenticationError as e:
-            raise ClientAuthenticationError(
-                message="""
-{}\n\nPlease visit the documentation at
-https://aka.ms/python-sdk-identity#defaultazurecredential
-to learn what options DefaultAzureCredential supports""".format(
-                    e.message
-                )
-            )
+        return await super().get_token(*scopes, **kwargs)

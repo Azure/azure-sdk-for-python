@@ -3,12 +3,12 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from opentelemetry import trace
-from opentelemetry.sdk.trace import TracerSource
+from opentelemetry.sdk.trace import TracerProvider
 
 import pytest
 
 
 @pytest.fixture(scope="session")
 def tracer():
-    trace.set_preferred_tracer_source_implementation(lambda T: TracerSource())
+    trace.set_tracer_provider(TracerProvider())
     return trace.get_tracer(__name__)

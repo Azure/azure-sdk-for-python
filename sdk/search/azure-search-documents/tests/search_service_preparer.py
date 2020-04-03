@@ -19,7 +19,7 @@ from devtools_testutils.resource_testcase import RESOURCE_GROUP_PARAM
 from azure_devtools.scenario_tests.exceptions import AzureTestError
 
 SERVICE_URL_FMT = "https://{}.search.windows.net/indexes?api-version=2019-05-06"
-
+TIME_TO_SLEEP = 3
 
 class SearchServicePreparer(AzureMgmtPreparer):
     def __init__(
@@ -94,8 +94,8 @@ class SearchServicePreparer(AzureMgmtPreparer):
             except Exception as ex:
                 if i == retries - 1:
                     raise
-                time.sleep(3)
-            time.sleep(3)
+                time.sleep(TIME_TO_SLEEP)
+            time.sleep(TIME_TO_SLEEP)
 
         # note the for/else here: will raise an error if we *don't* break
         # above i.e. if result.provisioning state was never "Succeeded"
@@ -138,7 +138,7 @@ class SearchServicePreparer(AzureMgmtPreparer):
             # this by using a constant delay between indexing and querying.
             import time
 
-            time.sleep(3)
+            time.sleep(TIME_TO_SLEEP)
 
         return {
             "api_key": api_key,
