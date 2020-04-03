@@ -38,20 +38,21 @@ semantics with the sender or receiver lifetime.
 
 | In v0.50 | Equivalent in v7 | Sample |
 |---|---|---|
-| `QueueClient.from_connection_string().get_receiver().fetch_next()  and ServiceBusClient.from_connection_string().get_queue().get_receiver().fetch_next()`| `ServiceBusClient.from_connection_string().get_queue_receiver().receive()`| [receive a single batch of messages](./samples/sync_samples/send_queue.py) |
+| `QueueClient.from_connection_string().get_receiver().fetch_next()  and ServiceBusClient.from_connection_string().get_queue().get_receiver().fetch_next()`| `ServiceBusClient.from_connection_string().get_queue_receiver().receive()`| [Get a receiver and receive a single batch of messages](./samples/sync_samples/receive_queue.py) |
 
 ### Sending messages
 
 | In v0.50 | Equivalent in v7 | Sample |
 |---|---|---|
-| `QueueClient.from_connection_string().send()  and ServiceBusClient.from_connection_string().get_queue().get_sender().send()`| `ServiceBusClient.from_connection_string().get_queue_receiver().receive()`| [receive a single batch of messages](./samples/sync_samples/receive_queue.py) |
+| `QueueClient.from_connection_string().send()  and ServiceBusClient.from_connection_string().get_queue().get_sender().send()`| `ServiceBusClient.from_connection_string().get_queue_sender().send()`| [Get a sender and send a message](./samples/sync_samples/send_queue.py) |
+| `queue_client.send(BatchMessage(["data 1", "data 2", ...]))`| `batch = queue_sender.create_batch()  batch.add(Message("data 1"))  queue_sender.send(batch)`| [Create and send a batch of messages](./samples/sync_samples/send_queue.py) |
 
 ### Working with sessions
 
 | In v0.50 | Equivalent in v7 | Sample |
 |---|---|---|
-| `queue_client.send(message, session='foo')  and queue_client.get_sender(session='foo').send(message)`| `sb_client.get_queue_sender().send(Message('body', session_id='foo'))`| [send a message to a session](./samples/sync_samples/session_send_receive.py) |
-| `AutoLockRenew().register(queue_client.get_receiver(session_id='foo'))`| `AutoLockRenew().register(sb_client.get_queue_receiver(session_id='foo').session)`| [access a session and ensure its lock is auto-renewed](./samples/sync_samples/session_send_receive.py) |
+| `queue_client.send(message, session='foo')  and queue_client.get_sender(session='foo').send(message)`| `sb_client.get_queue_sender().send(Message('body', session_id='foo'))`| [Send a message to a session](./samples/sync_samples/session_send_receive.py) |
+| `AutoLockRenew().register(queue_client.get_receiver(session_id='foo'))`| `AutoLockRenew().register(sb_client.get_queue_receiver(session_id='foo').session)`| [Access a session and ensure its lock is auto-renewed](./samples/sync_samples/session_send_receive.py) |
 
 
 ## Migration samples
