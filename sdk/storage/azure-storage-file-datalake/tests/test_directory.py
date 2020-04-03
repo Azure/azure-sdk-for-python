@@ -594,7 +594,6 @@ class DirectoryTest(StorageTestCase):
 
     @record
     def test_rename_from(self):
-        metadata = {'hello': 'world', 'number': '42'}
         directory_name = self._get_directory_reference()
         directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
         directory_client.create_directory()
@@ -603,7 +602,7 @@ class DirectoryTest(StorageTestCase):
 
         new_directory_client = self.dsc.get_directory_client(self.file_system_name, new_name)
 
-        new_directory_client._rename_path('/' + self.file_system_name + '/' + directory_name, metadata=metadata)
+        new_directory_client._rename_path('/' + self.file_system_name + '/' + directory_name)
         properties = new_directory_client.get_directory_properties()
 
         self.assertIsNotNone(properties)
