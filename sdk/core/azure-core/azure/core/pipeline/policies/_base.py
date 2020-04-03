@@ -50,7 +50,7 @@ HTTPRequestType = TypeVar("HTTPRequestType")
 
 _LOGGER = logging.getLogger(__name__)
 
-class HTTPPolicy(ABC, Generic[HTTPRequestType, HTTPResponseType]):  # type: ignore
+class HTTPPolicy(ABC, Generic[HTTPRequestType, HTTPResponseType]):
     """An HTTP policy ABC.
 
     Use with a synchronous pipeline.

@@ -136,7 +136,7 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
     def __init__(self, transport, policies=None):
         # type: (HttpTransportType, PoliciesType) -> None
         self._impl_policies = []  # type: List[HTTPPolicy]
-        self._transport = transport  # type: ignore
+        self._transport = transport
 
         for policy in policies or []:
             if isinstance(policy, SansIOHTTPPolicy):
@@ -163,7 +163,7 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
 
         Does nothing if "set_multipart_mixed" was never called.
         """
-        multipart_mixed_info = request.multipart_mixed_info  # type: ignore
+        multipart_mixed_info = getattr(request, 'multipart_mixed_info')
         if not multipart_mixed_info:
             return
 

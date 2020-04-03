@@ -40,7 +40,7 @@ ImplPoliciesType = List[
 AsyncPoliciesType = List[Union[AsyncHTTPPolicy, SansIOHTTPPolicy]]
 
 try:
-    from contextlib import AbstractAsyncContextManager  # type: ignore
+    from contextlib import AbstractAsyncContextManager
 except ImportError:  # Python <= 3.7
 
     class AbstractAsyncContextManager(object):  # type: ignore
@@ -58,8 +58,7 @@ async def _await_result(func, *args, **kwargs):
     """If func returns an awaitable, await it."""
     result = func(*args, **kwargs)
     if hasattr(result, "__await__"):
-        # type ignore on await: https://github.com/python/mypy/issues/7587
-        return await result  # type: ignore
+        return await result
     return result
 
 

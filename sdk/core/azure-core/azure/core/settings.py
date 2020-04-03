@@ -72,14 +72,14 @@ def convert_bool(value):
     :raises ValueError: If conversion to bool fails
 
     """
-    if value in (True, False):
-        return value  # type: ignore
-
-    val = value.lower()  # type: ignore
-    if val in ["yes", "1", "on", "true", "True"]:
-        return True
-    if val in ["no", "0", "off", "false", "False"]:
-        return False
+    if isinstance(value, bool):
+        return value
+    elif isinstance(value, str):
+        val = value.lower()
+        if val in ["yes", "1", "on", "true", "True"]:
+            return True
+        if val in ["no", "0", "off", "false", "False"]:
+            return False
     raise ValueError("Cannot convert {} to boolean value".format(value))
 
 
@@ -112,9 +112,10 @@ def convert_logging(value):
 
     """
     if value in set(_levels.values()):
-        return value  # type: ignore
-
-    val = value.upper()  # type: ignore
+        return cast(int, value)
+    val = ""
+    if isinstance(value, str):
+        val = value.upper()
     level = _levels.get(val)
     if not level:
         raise ValueError("Cannot convert {} to log level, valid values are: {}".format(value, ", ".join(_levels)))
@@ -127,7 +128,7 @@ def get_opencensus_span():
     try:
         from azure.core.tracing.ext.opencensus_span import OpenCensusSpan  # pylint:disable=redefined-outer-name
 
-        return OpenCensusSpan  # type: ignore
+        return OpenCensusSpan
     except ImportError:
         return None
 
@@ -175,8 +176,7 @@ def convert_tracing_impl(value):
                 value, ", ".join(_tracing_implementation_dict)
             )
         )
-    # type ignored until https://github.com/python/mypy/issues/7279
-    return wrapper_class  # type: ignore
+    return wrapper_class
 
 
 class PrioritizedSetting(object):

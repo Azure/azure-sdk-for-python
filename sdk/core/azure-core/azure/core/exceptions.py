@@ -65,7 +65,7 @@ def raise_with_traceback(exception, *args, **kwargs):
     message = kwargs.pop("message", "")
     exc_type, exc_value, exc_traceback = sys.exc_info()
     # If not called inside a "except", exc_type will be None. Assume it will not happen
-    exc_msg = "{}, {}: {}".format(message, exc_type.__name__, exc_value)  # type: ignore
+    exc_msg = "{}, {}: {}".format(message, getattr(exc_type, '__name__'), exc_value)
     error = exception(exc_msg, *args, **kwargs)
     try:
         raise error.with_traceback(exc_traceback)
@@ -204,7 +204,7 @@ class AzureError(Exception):
         self.exc_type = (
             self.exc_type.__name__ if self.exc_type else type(self.inner_exception)
         )
-        self.exc_msg = "{}, {}: {}".format(message, self.exc_type, self.exc_value)  # type: ignore
+        self.exc_msg = "{}, {}: {}".format(message, self.exc_type, self.exc_value)
         self.message = str(message)
         super(AzureError, self).__init__(self.message, *args)
 
