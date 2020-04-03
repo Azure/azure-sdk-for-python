@@ -14,10 +14,10 @@ Note: The large version gap is in order to normalize service bus SDK versions ac
 
 ### Specific clients for sending and receiving
 In v7 we've simplified the API surface, making two distinct clients, rather than one for each of queue, topic, and subscription:
-* `ServiceBusSender` for sending messages. [Sync API](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/1.0.0/azure.servicebus.html#azure.eventhub.ServiceBusSender)
-and [Async API](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/1.0.0/azure.servicebus.aio.html#azure.servicebus.aio.ServiceBusSender)
-* `ServiceBusReceiver` for receiving messages. [Sync API](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/1.0.0/azure.servicebus.html#azure.eventhub.ServiceBusReceiver)
-and [Async API](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/1.0.0/azure.servicebus.aio.html#azure.servicebus.aio.ServiceBusReceiver)
+* `ServiceBusSender` for sending messages. [Sync API](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/7.0.0b1/azure.servicebus.html#azure.servicebus.ServiceBusSender)
+and [Async API](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/7.0.0b1/azure.servicebus.aio.html#azure.servicebus.aio.ServiceBusSender)
+* `ServiceBusReceiver` for receiving messages. [Sync API](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/7.0.0b1/azure.servicebus.html#azure.servicebus.ServiceBusReceiver)
+and [Async API](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/7.0.0b1/azure.servicebus.aio.html#azure.servicebus.aio.ServiceBusReceiver)
 
 As a user this will be largely transparent to you, as initialization will still occur primarily via the top level ServiceBusClient,
 the primary difference will be that rather than creating a queue_client, for instance, and then a sender off of that, you would simply
@@ -34,17 +34,17 @@ semantics with the sender or receiver lifetime.
 | `ServiceBusClient.from_connection_string()`    | `ServiceBusClient.from_connection_string()` | [using credential](./samples/sync_samples/sample_code_servicebus.py ) |
 | `QueueClient.from_connection_string()`    | `ServiceBusClient.from_connection_string().get_queue_<sender/receiver>()` | [client initialization](./samples/sync_samples/send_queue.py ) |
 
-### Receiving events 
+### Receiving messages
 
 | In v0.50 | Equivalent in v7 | Sample |
 |---|---|---|
-| `QueueClient.from_connection_string().get_receiver().fetch_next()  and ServiceBusClient.from_connection_string().get_queue().get_receiver().fetch_next()`| `ServiceBusClient.from_connection_string().get_queue_receiver().receive()`| [receive a single batch of events](./samples/sync_samples/send_queue.py) |
+| `QueueClient.from_connection_string().get_receiver().fetch_next()  and ServiceBusClient.from_connection_string().get_queue().get_receiver().fetch_next()`| `ServiceBusClient.from_connection_string().get_queue_receiver().receive()`| [receive a single batch of messages](./samples/sync_samples/send_queue.py) |
 
-### Sending events
+### Sending messages
 
 | In v0.50 | Equivalent in v7 | Sample |
 |---|---|---|
-| `QueueClient.from_connection_string().send()  and ServiceBusClient.from_connection_string().get_queue().get_sender().send()`| `ServiceBusClient.from_connection_string().get_queue_receiver().receive()`| [receive a single batch of events](./samples/sync_samples/receive_queue.py) |
+| `QueueClient.from_connection_string().send()  and ServiceBusClient.from_connection_string().get_queue().get_sender().send()`| `ServiceBusClient.from_connection_string().get_queue_receiver().receive()`| [receive a single batch of messages](./samples/sync_samples/receive_queue.py) |
 
 ### Working with sessions
 
@@ -56,14 +56,14 @@ semantics with the sender or receiver lifetime.
 
 ## Migration samples
 
-* [Receiving events](#migrating-code-from-queueclient-and-receiver-to-servicebusreceiver-for-receiving-events)
-* [Sending events](#migrating-code-from-queueclient-and-sender-to-servicebussender-for-sending-events)
+* [Receiving messages](#migrating-code-from-queueclient-and-receiver-to-servicebusreceiver-for-receiving-messages)
+* [Sending messages](#migrating-code-from-queueclient-and-sender-to-servicebussender-for-sending-messages)
 
-### Migrating code from `QueueClient` and `Receiver` to `ServiceBusReceiver` for receiving events
+### Migrating code from `QueueClient` and `Receiver` to `ServiceBusReceiver` for receiving messages
 
 In v0.50, `QueueClient` would be created directly or from the `ServiceBusClient.get_queue` method,
 after which user would call `get_receiver` to obtain a receiver, calling `fetch_next` to receive a single 
-batch of events, or iterate over the receiver to receive continuously.
+batch of messages, or iterate over the receiver to receive continuously.
 
 In v7, users should initialize the client via `ServiceBusClient.get_queue_receiver`.  Single-batch-receive
 has been renamed to `receive`, iterating over the receiver for continual message consumption has not changed.
@@ -104,11 +104,11 @@ with ServiceBusClient.from_connection_string(conn_str=CONNECTION_STR) as client:
 ```
 
 
-### Migrating code from `QueueClient` and `Sender` to `ServiceBusSender` for sending events
+### Migrating code from `QueueClient` and `Sender` to `ServiceBusSender` for sending messages
 
 In v0.50, `QueueClient` would be created directly or from the `ServiceBusClient.get_queue` method,
 after which user would call `get_sender` to obtain a sender, calling `send` to send a single or batch
-of events.  Send could also be called directly off of the `QueueClient`
+of messages.  Send could also be called directly off of the `QueueClient`
 
 In v7, users should initialize the client via `ServiceBusClient.get_queue_sender`.  Sending itself has not
 changed, but currently does not support sending a list of messages in one call.  If this is desired, first
