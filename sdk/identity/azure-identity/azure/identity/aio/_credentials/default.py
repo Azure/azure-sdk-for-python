@@ -96,4 +96,4 @@ class DefaultAzureCredential(ChainedTokenCredential):
         if self._successful_credential:
             return await self._successful_credential.get_token(*scopes, **kwargs)
 
-        return await super(DefaultAzureCredential, self).get_token(*scopes, **kwargs)
+        return await super().get_token(*scopes, **kwargs)

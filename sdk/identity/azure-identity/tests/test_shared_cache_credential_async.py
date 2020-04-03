@@ -133,7 +133,7 @@ async def test_no_matching_account_for_username():
         await SharedTokenCacheCredential(_cache=cache, username="not" + upn).get_token("scope")
 
     assert ex.value.message.startswith(NO_MATCHING_ACCOUNTS[: NO_MATCHING_ACCOUNTS.index("{")])
-    assert "notspam@eggs" in ex.value.message
+    assert "not" + upn in ex.value.message
 
 
 @pytest.mark.asyncio
@@ -149,7 +149,7 @@ async def test_no_matching_account_for_tenant():
         await SharedTokenCacheCredential(_cache=cache, tenant_id="not-" + tenant).get_token("scope")
 
     assert ex.value.message.startswith(NO_MATCHING_ACCOUNTS[: NO_MATCHING_ACCOUNTS.index("{")])
-    assert "not-some-guid" in ex.value.message
+    assert "not-" + tenant in ex.value.message
 
 
 @pytest.mark.asyncio
@@ -167,7 +167,7 @@ async def test_no_matching_account_for_tenant_and_username():
         )
 
     assert ex.value.message.startswith(NO_MATCHING_ACCOUNTS[: NO_MATCHING_ACCOUNTS.index("{")])
-    assert "notspam@eggs" in ex.value.message and "not-some-guid" in ex.value.message
+    assert "not" + upn in ex.value.message and "not-" + tenant in ex.value.message
 
 
 @pytest.mark.asyncio
@@ -313,7 +313,7 @@ async def test_two_accounts_no_username_or_tenant():
 
     # two users in the cache, no username specified -> ClientAuthenticationError
     credential = SharedTokenCacheCredential(_cache=cache, transport=transport)
-    with pytest.raises(ClientAuthenticationError) as ex:
+    with pytest.raises(ClientAuthenticationError, match=MULTIPLE_ACCOUNTS) as ex:
         await credential.get_token("scope")
 
 
@@ -406,7 +406,7 @@ async def test_same_username_different_tenants():
     credential = SharedTokenCacheCredential(username=upn, _cache=cache, transport=transport)
     with pytest.raises(ClientAuthenticationError) as ex:
         await credential.get_token("scope")
-    # error message should indicate multiple matching accounts, and list discovered accounts
+
     assert ex.value.message.startswith(MULTIPLE_MATCHING_ACCOUNTS[: MULTIPLE_MATCHING_ACCOUNTS.index("{")])
     assert upn in ex.value.message
 
@@ -450,7 +450,7 @@ async def test_same_tenant_different_usernames():
     credential = SharedTokenCacheCredential(tenant_id=tenant_id, _cache=cache, transport=transport)
     with pytest.raises(ClientAuthenticationError) as ex:
         await credential.get_token("scope")
-    # error message should indicate multiple matching accounts, and list discovered accounts
+
     assert ex.value.message.startswith(MULTIPLE_MATCHING_ACCOUNTS[: MULTIPLE_MATCHING_ACCOUNTS.index("{")])
     assert tenant_id in ex.value.message
 
