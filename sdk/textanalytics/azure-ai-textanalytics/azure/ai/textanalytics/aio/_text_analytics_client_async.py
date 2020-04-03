@@ -130,7 +130,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             were passed in.
         :rtype: list[~azure.ai.textanalytics.DetectLanguageResult,
             ~azure.ai.textanalytics.DocumentError]
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError:
 
         .. admonition:: Example:
 
@@ -193,7 +193,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             passed in.
         :rtype: list[~azure.ai.textanalytics.RecognizeEntitiesResult,
             ~azure.ai.textanalytics.DocumentError]
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError:
 
         .. admonition:: Example:
 
@@ -257,7 +257,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             were passed in.
         :rtype: list[~azure.ai.textanalytics.RecognizeLinkedEntitiesResult,
             ~azure.ai.textanalytics.DocumentError]
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError:
 
         .. admonition:: Example:
 
@@ -321,7 +321,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             passed in.
         :rtype: list[~azure.ai.textanalytics.ExtractKeyPhrasesResult,
             ~azure.ai.textanalytics.DocumentError]
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError:
 
         .. admonition:: Example:
 
@@ -384,7 +384,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             passed in.
         :rtype: list[~azure.ai.textanalytics.AnalyzeSentimentResult,
             ~azure.ai.textanalytics.DocumentError]
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError:
 
         .. admonition:: Example:
 
