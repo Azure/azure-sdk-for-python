@@ -11,6 +11,8 @@ Use the Service Bus client library for Python to communicate between application
 * Send and receive messages within your Service Bus channels.
 * Utilize message locks, sessions, and dead letter functionality to implement complex messaging patterns.
 
+Note: This is a preview release of the Python Service Bus SDK, and is not yet at feature parity with version 0.50.  Some functionality, such as topic and subscription utilization, will be arriving in upcoming Preview releases; Thank you for your patience and interest as we roll out these changes.
+
 [Source code](./) | [Package (PyPi)][pypi] | [API reference documentation][api_docs] | [Product documentation][product_docs] | [Samples](./samples) | [Changelog](./CHANGELOG.md)
 
 ## Getting started
