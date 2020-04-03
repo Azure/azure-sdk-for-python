@@ -383,9 +383,11 @@ class BlobRestoreRange(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param start_range: Required. Blob start range. Empty means account start.
+    :param start_range: Required. Blob start range. This is inclusive. Empty
+     means account start.
     :type start_range: str
-    :param end_range: Required. Blob end range. Empty means account end.
+    :param end_range: Required. Blob end range. This is exclusive. Empty means
+     account end.
     :type end_range: str
     """
 
@@ -2455,6 +2457,9 @@ class ProxyResource(Resource):
 class RestorePolicyProperties(Model):
     """The blob service properties for blob restore policy.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     All required parameters must be populated in order to send to Azure.
 
     :param enabled: Required. Blob restore is enabled if set to true.
@@ -2462,22 +2467,28 @@ class RestorePolicyProperties(Model):
     :param days: how long this blob can be restored. It should be great than
      zero and less than DeleteRetentionPolicy.days.
     :type days: int
+    :ivar last_enabled_time: Returns the date and time the restore policy was
+     last enabled.
+    :vartype last_enabled_time: datetime
     """
 
     _validation = {
         'enabled': {'required': True},
         'days': {'maximum': 365, 'minimum': 1},
+        'last_enabled_time': {'readonly': True},
     }
 
     _attribute_map = {
         'enabled': {'key': 'enabled', 'type': 'bool'},
         'days': {'key': 'days', 'type': 'int'},
+        'last_enabled_time': {'key': 'lastEnabledTime', 'type': 'iso-8601'},
     }
 
     def __init__(self, **kwargs):
         super(RestorePolicyProperties, self).__init__(**kwargs)
         self.enabled = kwargs.get('enabled', None)
         self.days = kwargs.get('days', None)
+        self.last_enabled_time = None
 
 
 class Restriction(Model):
