@@ -7,9 +7,11 @@
 # pylint: disable=protected-access
 
 from ._models import (
-    ExtractedReceipt,
-    FieldValue,
-    ReceiptItem,
+    USReceipt,
+    USReceiptType,
+    FormField,
+    USReceiptItem,
+    FormPage,
     TableCell,
     ExtractedLayoutPage,
     ExtractedPage,
@@ -18,47 +20,74 @@ from ._models import (
     PageMetadata,
     ExtractedLabeledForm,
     PageRange,
-    ReceiptType
 )
 
 
-def prepare_receipt_result(response):
+def create_us_receipt(response):
     receipts = []
     read_result = response.analyze_result.read_results
     document_result = response.analyze_result.document_results
-    page_metadata = PageMetadata._from_generated(read_result)
+    form_page = FormPage._from_generated_receipt(read_result)
 
     for page in document_result:
         if page.fields is None:
-            receipt = ExtractedReceipt(
+            receipt = USReceipt(
                 page_range=PageRange(first_page=page.page_range[0], last_page=page.page_range[1]),
-                page_metadata=page_metadata
+                pages=form_page,
+                form_type=page.doc_type,
             )
             receipts.append(receipt)
             continue
-        receipt = ExtractedReceipt(
-            merchant_address=FieldValue._from_generated(page.fields.get("MerchantAddress", None), read_result),
-            merchant_name=FieldValue._from_generated(page.fields.get("MerchantName", None), read_result),
-            merchant_phone_number=FieldValue._from_generated(page.fields.get("MerchantPhoneNumber", None), read_result),
-            receipt_type=ReceiptType._from_generated(page.fields.get("ReceiptType", None)),
-            receipt_items=ReceiptItem._from_generated(page.fields.get("Items", None), read_result),
-            subtotal=FieldValue._from_generated(page.fields.get("Subtotal", None), read_result),
-            tax=FieldValue._from_generated(page.fields.get("Tax", None), read_result),
-            tip=FieldValue._from_generated(page.fields.get("Tip", None), read_result),
-            total=FieldValue._from_generated(page.fields.get("Total", None), read_result),
-            transaction_date=FieldValue._from_generated(page.fields.get("TransactionDate", None), read_result),
-            transaction_time=FieldValue._from_generated(page.fields.get("TransactionTime", None), read_result),
-            page_range=PageRange(first_page=page.page_range[0], last_page=page.page_range[1]),
-            page_metadata=page_metadata
+        receipt = USReceipt(
+            merchant_address=FormField._from_generated(
+                "MerchantAddress", page.fields.get("MerchantAddress"), read_result
+            ),
+            merchant_name=FormField._from_generated(
+                "MerchantName", page.fields.get("MerchantName"), read_result
+            ),
+            merchant_phone_number=FormField._from_generated(
+                "MerchantPhoneNumber",
+                page.fields.get("MerchantPhoneNumber"),
+                read_result,
+            ),
+            receipt_type=USReceiptType._from_generated(page.fields.get("ReceiptType")),
+            receipt_items=USReceiptItem._from_generated(
+                page.fields.get("Items"), read_result
+            ),
+            subtotal=FormField._from_generated(
+                "Subtotal", page.fields.get("Subtotal"), read_result
+            ),
+            tax=FormField._from_generated("Tax", page.fields.get("Tax"), read_result),
+            tip=FormField._from_generated("Tip", page.fields.get("Tip"), read_result),
+            total=FormField._from_generated(
+                "Total", page.fields.get("Total"), read_result
+            ),
+            transaction_date=FormField._from_generated(
+                "TransactionDate", page.fields.get("TransactionDate"), read_result
+            ),
+            transaction_time=FormField._from_generated(
+                "TransactionTime", page.fields.get("TransactionTime"), read_result
+            ),
+            page_range=PageRange(
+                first_page=page.page_range[0], last_page=page.page_range[1]
+            ),
+            pages=form_page,
+            form_type=page.doc_type,
+            fields={
+                key: FormField._from_generated(key, value, read_result)
+                for key, value in page.fields.items()
+                if key not in ["ReceiptType", "Items"]  # these two are not represented by FormField in SDK
+            },
         )
 
-        receipt.fields = {
-            key: FieldValue._from_generated(value, read_result)
-            for key, value in page.fields.items()
-            if key not in ["ReceiptType", "Items"]  # these two are not represented by FieldValue in SDK
-        }
         receipts.append(receipt)
     return receipts
+
+
+def prepare_receipt_result(response, receipt_locale):
+    if receipt_locale.lower() == "en-us":
+        return create_us_receipt(response)
+    raise ValueError("The receipt locale '{}' is not supported.".format(receipt_locale))
 
 
 def prepare_tables(page, read_result):
@@ -122,9 +151,8 @@ def prepare_labeled_result(response):
                 last_page=document.page_range[1]
             ),
             fields={
-                label: FieldValue._from_generated(value, read_result)
-                for label, value
-                in document.fields.items()
+                label: FormField._from_generated(label, value, read_result)
+                for label, value in document.fields.items()
             },
             page_metadata=page_metadata,
             tables=tables

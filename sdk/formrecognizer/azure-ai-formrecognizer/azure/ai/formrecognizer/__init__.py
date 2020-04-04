@@ -13,10 +13,10 @@ from ._models import (
     TrainStatus,
     ModelStatus,
     BoundingBox,
-    ExtractedReceipt,
+    USReceipt,
     FieldValue,
-    ReceiptType,
-    ReceiptItem,
+    USReceiptType,
+    USReceiptItem,
     ExtractedLine,
     ExtractedWord,
     PageMetadata,
@@ -37,7 +37,13 @@ from ._models import (
     ModelInfo,
     ModelsSummary,
     Point,
-    PageRange
+    PageRange,
+    RecognizedForm,
+    FormField,
+    FieldText,
+    FormPage,
+    FormLine,
+    FormWord
 )
 
 
@@ -48,10 +54,10 @@ __all__ = [
     'TrainStatus',
     'ModelStatus',
     'BoundingBox',
-    'ExtractedReceipt',
+    'USReceipt',
     'FieldValue',
-    'ReceiptType',
-    'ReceiptItem',
+    'USReceiptType',
+    'USReceiptItem',
     'ExtractedLine',
     'ExtractedWord',
     'PageMetadata',
@@ -72,7 +78,13 @@ __all__ = [
     'ModelInfo',
     'ModelsSummary',
     'Point',
-    'PageRange'
+    'PageRange',
+    'RecognizedForm',
+    'FormField',
+    'FieldText',
+    'FormPage',
+    'FormLine',
+    'FormWord'
 ]
 
 __VERSION__ = VERSION
