@@ -187,6 +187,21 @@ credential = CertificateCredential(tenant_id, client_id, cert_path, password="ce
 client = SecretClient("https://my-vault.vault.azure.net", credential)
 ```
 
+## Authenticating with `ManagedIdentityCredential`
+This example demonstrates authenticating the asynchronous `SecretClient` from
+[azure-keyvault-secrets][azure_keyvault_secrets] with a ManagedIdentityCredential.
+
+```py
+from azure.identity import ManagedIdentityCredential
+from azure.keyvault.secrets import SecretClient
+
+client_id = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+vault_url = "https://xxx.vault.azure.net"
+
+managed_identity = ManagedIdentityCredential(client_id = msi)   
+client = SecretClient(credential = managed_identity, vault_url = vault_url)
+```
+
 ## Chaining credentials
 [ChainedTokenCredential][chain_cred_ref] links multiple credential instances
 to be tried sequentially when authenticating. It will try each chained
