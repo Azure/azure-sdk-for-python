@@ -12,11 +12,11 @@ from ._models import (
     FormField,
     USReceiptItem,
     FormPage,
-    TableCell,
-    ExtractedLayoutPage,
+    FormLine,
+    FormTable,
+    FormTableCell,
     ExtractedPage,
     ExtractedField,
-    ExtractedTable,
     PageMetadata,
     ExtractedLabeledForm,
     PageRange,
@@ -95,26 +95,31 @@ def prepare_tables(page, read_result):
         return page.tables
 
     return [
-        ExtractedTable(
+        FormTable(
             row_count=table.rows,
             column_count=table.columns,
             page_number=page.page,
-            cells=[TableCell._from_generated(cell, read_result) for cell in table.cells],
+            cells=[FormTableCell._from_generated(cell, read_result) for cell in table.cells],
         ) for table in page.tables
     ]
 
 
-def prepare_layout_result(response):
+def prepare_content_result(response):
     pages = []
     read_result = response.analyze_result.read_results
+    page_result = response.analyze_result.page_results
 
-    for page in response.analyze_result.page_results:
-        result_page = ExtractedLayoutPage(
+    for page in read_result:
+        form_page = FormPage(
             page_number=page.page,
-            tables=prepare_tables(page, read_result),
-            page_metadata=PageMetadata._from_generated_page_index(read_result, page.page-1)
+            text_angle=page.angle,
+            width=page.width,
+            height=page.height,
+            unit=page.unit,
+            lines=[FormLine._from_generated(line, page=page.page) for line in page.lines] if page.lines else None,
+            tables=prepare_tables(page_result[page.page-1], read_result),
         )
-        pages.append(result_page)
+        pages.append(form_page)
     return pages
 
 

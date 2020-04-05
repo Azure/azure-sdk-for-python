@@ -465,64 +465,6 @@ class USReceiptItem(object):
             return None
 
 
-class FieldValue(object):
-    """Represents the values for a recognized field.
-
-    :ivar value:
-        The value for the recognized field. Possible types include: 'string', 'date', 'time',
-        'phoneNumber', 'number', 'integer`.
-    :vartype value: str, int, float, ~datetime.date, or ~datetime.time
-    :ivar str text: The string representation of the value.
-    :ivar ~azure.ai.formrecognizer.BoundingBox bounding_box:
-        Bounding box of the field value.
-    :ivar float confidence: Confidence score of value.
-    :ivar int page_number:
-        The 1-based page number in the input document.
-    :ivar elements:
-        When `include_text_details` is set to true, a list of references to the text
-        elements constituting this field.
-    :vartype elements: list[~azure.ai.formrecognizer.ExtractedWord, ~azure.ai.formrecognizer.ExtractedLine]
-    """
-
-    def __init__(self, **kwargs):
-        self.value = kwargs.get("value", None)
-        self.text = kwargs.get("text", None)
-        self.bounding_box = kwargs.get("bounding_box", None)
-        self.confidence = kwargs.get("confidence", None)
-        self.page_number = kwargs.get("page_number", None)
-        self.elements = kwargs.get("elements", None)
-
-    @classmethod
-    def _from_generated(cls, field, read_result):
-        if field is None:
-            return field
-
-        if field.type == "array":
-            return [
-                FieldValue._from_generated(field, read_result)
-                for field in field.value_array
-            ]
-
-        if field.type == "object":
-            return {
-                key: FieldValue._from_generated(value, read_result)
-                for key, value in field.value_object.items()
-            }
-        return cls(
-            value=get_field_scalar_value(field),
-            text=field.text,
-            bounding_box=BoundingBox(
-                top_left=Point(x=field.bounding_box[0], y=field.bounding_box[1]),
-                top_right=Point(x=field.bounding_box[2], y=field.bounding_box[3]),
-                bottom_right=Point(x=field.bounding_box[4], y=field.bounding_box[5]),
-                bottom_left=Point(x=field.bounding_box[6], y=field.bounding_box[7])
-            ) if field.bounding_box else None,
-            confidence=field.confidence,
-            page_number=field.page,
-            elements=get_elements(field, read_result) if field.elements else None
-        )
-
-
 class ExtractedLine(object):
     """An object representing an extracted text line.
 
@@ -643,46 +585,24 @@ class PageMetadata(object):
         ) for page in read_result]
 
 
-class ExtractedLayoutPage(object):
-    """Extracted layout information from a single page.
-
-    :ivar list[~azure.ai.formrecognizer.ExtractedTable] tables:
-        A list of extracted tables contained in a page.
-    :ivar int page_number:
-        The 1-based page number in the input document.
-    :ivar ~azure.ai.formrecognizer.PageMetadata page_metadata:
-        Contains page metadata such as page width, length, angle, unit.
-        If `include_text_content=True` is passed, contains a list
-        of extracted text result for each page in the input document.
-    """
-
-    def __init__(self, **kwargs):
-        self.tables = kwargs.get("tables", None)
-        self.page_number = kwargs.get("page_number", None)
-        self.page_metadata = kwargs.get("page_metadata", None)
-
-
-class ExtractedTable(object):
+class FormTable(object):
     """Information about the extracted table contained in a page.
 
-    :ivar list[~azure.ai.formrecognizer.TableCell] cells:
+    :ivar list[~azure.ai.formrecognizer.FormTableCell] cells:
         List of cells contained in the table.
     :ivar int row_count:
         Number of rows in table.
     :ivar int column_count:
         Number of columns in table.
-    :ivar int page_number:
-        The 1-based page number in the input document.
     """
 
     def __init__(self, **kwargs):
         self.cells = kwargs.get("cells", None)
         self.row_count = kwargs.get("row_count", None)
         self.column_count = kwargs.get("column_count", None)
-        self.page_number = kwargs.get("page_number", None)
 
 
-class TableCell(object):
+class FormTableCell(object):
     """Information about the extracted cell in a table.
 
     :ivar str text: Text content of the cell.
@@ -695,10 +615,10 @@ class TableCell(object):
     :ivar float confidence: Confidence value.
     :ivar bool is_header: Whether the current cell is a header cell.
     :ivar bool is_footer: Whether the current cell is a footer cell.
-    :ivar elements:
+    :ivar text_content:
         When `include_text_content` is set to true, a list of references to the text
-        elements constituting this field.
-    :vartype elements: list[~azure.ai.formrecognizer.ExtractedWord, ~azure.ai.formrecognizer.ExtractedLine]
+        content constituting this field.
+    :vartype text_content: list[~azure.ai.formrecognizer.FormWord, ~azure.ai.formrecognizer.FormLine]
     """
 
     def __init__(self, **kwargs):
@@ -711,7 +631,7 @@ class TableCell(object):
         self.confidence = kwargs.get("confidence", None)
         self.is_header = kwargs.get("is_header", False)
         self.is_footer = kwargs.get("is_footer", False)
-        self.elements = kwargs.get("elements", None)
+        self.text_content = kwargs.get("text_content", None)
 
     @classmethod
     def _from_generated(cls, cell, read_result):
@@ -730,7 +650,7 @@ class TableCell(object):
             confidence=cell.confidence,
             is_header=cell.is_header or False,
             is_footer=cell.is_footer or False,
-            elements=get_elements(cell, read_result) if cell.elements else None
+            text_content=get_elements(cell, read_result) if cell.elements else None
         )
 
 
