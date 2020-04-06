@@ -20,7 +20,7 @@ from ._models import (
 )
 
 
-def create_us_receipt(response):
+def prepare_us_receipt(response):
     receipts = []
     read_result = response.analyze_result.read_results
     document_result = response.analyze_result.document_results
@@ -79,12 +79,6 @@ def create_us_receipt(response):
 
         receipts.append(receipt)
     return receipts
-
-
-def prepare_receipt_result(response, receipt_locale):
-    if receipt_locale.lower() == "en-us":
-        return create_us_receipt(response)
-    raise ValueError("The receipt locale '{}' is not supported.".format(receipt_locale))
 
 
 def prepare_tables(page, read_result):
