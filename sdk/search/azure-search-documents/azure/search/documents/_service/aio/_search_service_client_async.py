@@ -20,6 +20,8 @@ from ..._version import SDK_MONIKER
 from .._utils import (
     prep_if_match,
     prep_if_none_match,
+    listize_flags_for_index,
+    delistize_flags_for_index,
 )
 
 if TYPE_CHECKING:
@@ -37,6 +39,14 @@ class SearchServiceClient(HeadersMixin):
     :param credential: A credential to authorize search client requests
     :type credential: ~azure.core.credentials import AzureKeyCredential
 
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/async_samples/sample_authentication_async.py
+            :start-after: [START create_search_service_with_key_async]
+            :end-before: [END create_search_service_with_key_async]
+            :language: python
+            :dedent: 4
+            :caption: Creating the SearchServiceClient with an API key.
     """
 
     _ODATA_ACCEPT = "application/json;odata.metadata=minimal"  # type: str
@@ -78,7 +88,8 @@ class SearchServiceClient(HeadersMixin):
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = await self._client.indexes.list(**kwargs)
-        return result.indexes
+        indexes = [listize_flags_for_index(x) for x in result.indexes]
+        return indexes
 
     @distributed_trace_async
     async def get_index(self, index_name, **kwargs):
@@ -91,10 +102,18 @@ class SearchServiceClient(HeadersMixin):
         :rtype: ~azure.search.documents.Index
         :raises: ~azure.core.exceptions.HttpResponseError
 
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_index_crud_operations.py
+                :start-after: [START get_index_async]
+                :end-before: [END get_index_async]
+                :language: python
+                :dedent: 4
+                :caption: Get an index.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = await self._client.indexes.get(index_name, **kwargs)
-        return result
+        return listize_flags_for_index(result)
 
     @distributed_trace_async
     async def get_index_statistics(self, index_name, **kwargs):
@@ -122,6 +141,14 @@ class SearchServiceClient(HeadersMixin):
         :type index_name: str
         :raises: ~azure.core.exceptions.HttpResponseError
 
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_index_crud_operations.py
+                :start-after: [START delete_index_async]
+                :end-before: [END delete_index_async]
+                :language: python
+                :dedent: 4
+                :caption: Delete an index.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         await self._client.indexes.delete(index_name, **kwargs)
@@ -137,9 +164,18 @@ class SearchServiceClient(HeadersMixin):
         :rtype: ~azure.search.documents.Index
         :raises: ~azure.core.exceptions.HttpResponseError
 
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_index_crud_operations.py
+                :start-after: [START create_index_async]
+                :end-before: [END create_index_async]
+                :language: python
+                :dedent: 4
+                :caption: Creating a new index.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        result = await self._client.indexes.create(index, **kwargs)
+        patched_index = delistize_flags_for_index(index)
+        result = await self._client.indexes.create(patched_index, **kwargs)
         return result
 
     @distributed_trace_async
@@ -174,6 +210,14 @@ class SearchServiceClient(HeadersMixin):
         :class:`~azure.core.exceptions.ResourceNotFoundError`, \
         :class:`~azure.core.exceptions.ResourceExistsError`
 
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_index_crud_operations.py
+                :start-after: [START update_index_async]
+                :end-before: [END update_index_async]
+                :language: python
+                :dedent: 4
+                :caption: Update an index.
         """
         error_map = {
             404: ResourceNotFoundError
@@ -192,9 +236,10 @@ class SearchServiceClient(HeadersMixin):
         if match_condition == MatchConditions.IfMissing:
             error_map[412] = ResourceExistsError
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        patched_index = delistize_flags_for_index(index)
         result = await self._client.indexes.create_or_update(
             index_name=index_name,
-            index=index,
+            index=patched_index,
             allow_index_downtime=allow_index_downtime,
             access_condition=access_condition,
             **kwargs)
@@ -213,6 +258,14 @@ class SearchServiceClient(HeadersMixin):
         :rtype: ~azure.search.documents.AnalyzeResult
         :raises: ~azure.core.exceptions.HttpResponseError
 
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_analyze_text.py
+                :start-after: [START simple_analyze_text_async]
+                :end-before: [END simple_analyze_text_async]
+                :language: python
+                :dedent: 4
+                :caption: Analyze text
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = await self._client.indexes.analyze(

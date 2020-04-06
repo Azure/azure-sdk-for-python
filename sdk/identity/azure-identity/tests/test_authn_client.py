@@ -14,6 +14,7 @@ except ImportError:  # python < 3.3
 
 from azure.core.credentials import AccessToken
 from azure.identity._authn_client import AuthnClient
+from azure.identity._constants import EnvironmentVariables
 from six.moves.urllib_parse import urlparse
 from helpers import mock_response
 
@@ -205,7 +206,7 @@ def test_cache_scopes():
 
 
 def test_request_url():
-    authority = "authority.com"
+    authority = "localhost"
     tenant = "expected_tenant"
 
     def validate_url(url):
@@ -222,3 +223,10 @@ def test_request_url():
     client.request_token(("scope",))
     request = client.get_refresh_token_grant_request({"secret": "***"}, "scope")
     validate_url(request.url)
+
+    # authority can be configured via environment variable
+    with patch.dict("os.environ", {EnvironmentVariables.AZURE_AUTHORITY_HOST: authority}, clear=True):
+        client = AuthnClient(tenant=tenant, transport=Mock(send=mock_send))
+        client.request_token(("scope",))
+        request = client.get_refresh_token_grant_request({"secret": "***"}, "scope")
+        validate_url(request.url)

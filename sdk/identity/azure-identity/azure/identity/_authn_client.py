@@ -22,7 +22,8 @@ from azure.core.pipeline.policies import (
     UserAgentPolicy,
 )
 from azure.core.pipeline.transport import RequestsTransport, HttpRequest
-from ._constants import AZURE_CLI_CLIENT_ID, KnownAuthorities
+from ._constants import AZURE_CLI_CLIENT_ID
+from ._internal import get_default_authority
 from ._internal.user_agent import USER_AGENT
 
 try:
@@ -61,7 +62,7 @@ class AuthnClientBase(ABC):
         else:
             if not tenant:
                 raise ValueError("'tenant' is required")
-            authority = authority or KnownAuthorities.AZURE_PUBLIC_CLOUD
+            authority = authority or get_default_authority()
             self._auth_url = "https://" + "/".join((authority.strip("/"), tenant.strip("/"), "oauth2/v2.0/token"))
         self._cache = kwargs.get("cache") or TokenCache()  # type: TokenCache
 
@@ -101,7 +102,9 @@ class AuthnClientBase(ABC):
         if not payload or "access_token" not in payload or not ("expires_in" in payload or "expires_on" in payload):
             if payload and "access_token" in payload:
                 payload["access_token"] = "****"
-            raise ClientAuthenticationError(message="Unexpected response '{}'".format(payload))
+            raise ClientAuthenticationError(
+                message="Unexpected response '{}'".format(payload), response=response.http_response
+            )
 
         token = payload["access_token"]
 

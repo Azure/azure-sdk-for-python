@@ -25,7 +25,7 @@
 # --------------------------------------------------------------------------
 import abc
 
-from typing import Any, Union, List, Generic, TypeVar
+from typing import Any, Union, List, Generic, TypeVar, Dict
 
 from azure.core.pipeline import PipelineRequest, PipelineResponse, PipelineContext
 from azure.core.pipeline.policies import AsyncHTTPPolicy, SansIOHTTPPolicy
@@ -180,9 +180,10 @@ class AsyncPipeline(
 
         requests = multipart_mixed_info[0]  # type: List[HTTPRequestType]
         policies = multipart_mixed_info[1]  # type: List[SansIOHTTPPolicy]
+        pipeline_options = multipart_mixed_info[3]  # type: Dict[str, Any]
 
         async def prepare_requests(req):
-            context = PipelineContext(None)
+            context = PipelineContext(None, **pipeline_options)
             pipeline_request = PipelineRequest(req, context)
             for policy in policies:
                 await _await_result(policy.on_request, pipeline_request)

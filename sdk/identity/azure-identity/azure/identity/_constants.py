@@ -29,6 +29,7 @@ class EnvironmentVariables:
 
     MSI_ENDPOINT = "MSI_ENDPOINT"
     MSI_SECRET = "MSI_SECRET"
+    AZURE_AUTHORITY_HOST = "AZURE_AUTHORITY_HOST"
 
 
 class Endpoints:

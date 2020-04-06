@@ -6,10 +6,11 @@ import abc
 import os
 import sys
 
-
 from msal import TokenCache
-from azure.core.exceptions import ClientAuthenticationError
+
+from .. import CredentialUnavailableError
 from .._constants import KnownAuthorities
+from .._internal import get_default_authority
 
 try:
     ABC = abc.ABC
@@ -31,22 +32,16 @@ if TYPE_CHECKING:
     CacheItem = Mapping[str, str]
 
 
-MULTIPLE_ACCOUNTS = """Multiple users were discovered in the shared token cache. If using DefaultAzureCredential, set
-the AZURE_USERNAME environment variable to the preferred username. Otherwise,
-specify it when constructing SharedTokenCacheCredential.
-Discovered accounts: {}"""
+MULTIPLE_ACCOUNTS = """SharedTokenCacheCredential authentication unavailable. Multiple accounts
+were found in the cache. Use username and tenant id to disambiguate."""
 
-MULTIPLE_MATCHING_ACCOUNTS = """Found multiple accounts matching{}{}. If using DefaultAzureCredential, set environment
-variables AZURE_USERNAME and AZURE_TENANT_ID with the preferred username and tenant.
-Otherwise, specify them when constructing SharedTokenCacheCredential.
-Discovered accounts: {}"""
+MULTIPLE_MATCHING_ACCOUNTS = """SharedTokenCacheCredential authentication unavailable. Multiple accounts
+matching the specified{}{} were found in the cache."""
 
-NO_ACCOUNTS = """The shared cache contains no signed-in accounts. To authenticate with SharedTokenCacheCredential, login
-through developer tooling supporting Azure single sign on"""
+NO_ACCOUNTS = """SharedTokenCacheCredential authentication unavailable. No accounts were found in the cache."""
 
-NO_MATCHING_ACCOUNTS = """The cache contains no account matching the specified{}{}. To authenticate with
-SharedTokenCacheCredential, login through developer tooling supporting Azure single sign on.
-Discovered accounts: {}"""
+NO_MATCHING_ACCOUNTS = """SharedTokenCacheCredential authentication unavailable. No account
+matching the specified{}{} was found in the cache."""
 
 NO_TOKEN = """Token acquisition failed for user '{}'. To fix, re-authenticate
 through developer tooling supporting Azure single sign on"""
@@ -92,7 +87,7 @@ class SharedTokenCacheBase(ABC):
     def __init__(self, username=None, **kwargs):  # pylint:disable=unused-argument
         # type: (Optional[str], **Any) -> None
 
-        self._authority = kwargs.pop("authority", None) or KnownAuthorities.AZURE_PUBLIC_CLOUD
+        self._authority = kwargs.pop("authority", None) or get_default_authority()
         self._authority_aliases = KNOWN_ALIASES.get(self._authority) or frozenset((self._authority,))
         self._username = username
         self._tenant_id = kwargs.pop("tenant_id", None)
@@ -162,7 +157,7 @@ class SharedTokenCacheBase(ABC):
         accounts = self._get_accounts_having_matching_refresh_tokens()
         if not accounts:
             # cache is empty or contains no refresh token -> user needs to sign in
-            raise ClientAuthenticationError(message=NO_ACCOUNTS)
+            raise CredentialUnavailableError(message=NO_ACCOUNTS)
 
         filtered_accounts = _filtered_accounts(accounts, username, tenant_id)
         if len(filtered_accounts) == 1:
@@ -174,13 +169,13 @@ class SharedTokenCacheBase(ABC):
             username_string = " username: {}".format(username) if username else ""
             tenant_string = " tenant: {}".format(tenant_id) if tenant_id else ""
             if filtered_accounts:
-                message = MULTIPLE_MATCHING_ACCOUNTS.format(username_string, tenant_string, cached_accounts)
+                message = MULTIPLE_MATCHING_ACCOUNTS.format(username_string, tenant_string)
             else:
-                message = NO_MATCHING_ACCOUNTS.format(username_string, tenant_string, cached_accounts)
+                message = NO_MATCHING_ACCOUNTS.format(username_string, tenant_string)
         else:
             message = MULTIPLE_ACCOUNTS.format(cached_accounts)
 
-        raise ClientAuthenticationError(message=message)
+        raise CredentialUnavailableError(message=message)
 
     def _get_refresh_tokens(self, account):
         return self._cache.find(

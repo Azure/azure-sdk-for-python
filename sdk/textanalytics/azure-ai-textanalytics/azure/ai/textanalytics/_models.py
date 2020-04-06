@@ -221,12 +221,12 @@ class TextAnalyticsError(DictMixin):
     def _from_generated(cls, err):
         if err.inner_error:
             return cls(
-                code=err.inner_error.code.value,
+                code=err.inner_error.code,
                 message=err.inner_error.message,
                 target=err.inner_error.target
             )
         return cls(
-            code=err.code.value,
+            code=err.code,
             message=err.message,
             target=err.target
         )
@@ -623,7 +623,7 @@ class SentenceSentiment(DictMixin):
     @classmethod
     def _from_generated(cls, sentence):
         return cls(
-            sentiment=sentence.sentiment.value,
+            sentiment=sentence.sentiment,
             confidence_scores=SentimentConfidenceScores._from_generated(sentence.sentence_scores),  # pylint: disable=protected-access
             grapheme_offset=sentence.offset,
             grapheme_length=sentence.length,

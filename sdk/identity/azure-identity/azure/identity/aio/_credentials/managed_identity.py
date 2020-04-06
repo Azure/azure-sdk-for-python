@@ -7,7 +7,7 @@ import os
 from typing import TYPE_CHECKING
 
 from azure.core.credentials import AccessToken
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
 from azure.core.pipeline.policies import AsyncRetryPolicy
 
 from azure.identity._credentials.managed_identity import _ManagedIdentityBase
@@ -118,7 +118,8 @@ class ImdsCredential(_AsyncManagedIdentityBase):
                 self._endpoint_available = False
 
         if not self._endpoint_available:
-            raise CredentialUnavailableError(message="IMDS endpoint unavailable")
+            message = "ManagedIdentityCredential authentication unavailable, no managed identity endpoint found."
+            raise CredentialUnavailableError(message=message)
 
         if len(scopes) != 1:
             raise ValueError("This credential requires exactly one scope per token request.")
@@ -131,7 +132,24 @@ class ImdsCredential(_AsyncManagedIdentityBase):
             params = {"api-version": "2018-02-01", "resource": resource}
             if self._client_id:
                 params["client_id"] = self._client_id
-            token = await self._client.request_token(scopes, method="GET", params=params)
+
+            try:
+                token = await self._client.request_token(scopes, method="GET", params=params)
+            except HttpResponseError as ex:
+                # 400 in response to a token request indicates managed identity is disabled,
+                # or the identity with the specified client_id is not available
+                if ex.status_code == 400:
+                    self._endpoint_available = False
+                    message = "ManagedIdentityCredential authentication unavailable. "
+                    if self._client_id:
+                        message += "The requested identity has not been assigned to this resource."
+                    else:
+                        message += "No identity has been assigned to this resource."
+                    raise CredentialUnavailableError(message=message) from ex
+
+                # any other error is unexpected
+                raise ClientAuthenticationError(message=ex.message, response=ex.response) from None
+
         return token
 
 
@@ -156,7 +174,8 @@ class MsiCredential(_AsyncManagedIdentityBase):
         :raises ~azure.identity.CredentialUnavailableError: the MSI endpoint is unavailable
         """
         if not self._endpoint:
-            raise CredentialUnavailableError(message="MSI endpoint unavailable")
+            message = "ManagedIdentityCredential authentication unavailable, no managed identity endpoint found."
+            raise CredentialUnavailableError(message=message)
 
         if len(scopes) != 1:
             raise ValueError("This credential requires exactly one scope per token request.")

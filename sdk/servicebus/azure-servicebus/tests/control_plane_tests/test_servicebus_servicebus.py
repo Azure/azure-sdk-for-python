@@ -19,8 +19,8 @@ from azure.common import (
     AzureMissingResourceHttpError,
     AzureConflictHttpError,
 )
-from azure.servicebus.control_client._http import HTTPError
-from azure.servicebus.control_client import (
+from azure.servicebus._control_client._http import HTTPError
+from azure.servicebus._control_client import (
     AZURE_SERVICEBUS_NAMESPACE,
     AZURE_SERVICEBUS_ACCESS_KEY,
     AZURE_SERVICEBUS_ISSUER,

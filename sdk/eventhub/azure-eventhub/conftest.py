@@ -21,7 +21,7 @@ if sys.version_info < (3, 5):
     collect_ignore.append("samples/async_samples")
     collect_ignore.append("examples/async_examples")
 
-from azure.eventhub import EventHubConsumerClient
+from azure.servicebus._control_client import ServiceBusService, EventHub
 from azure.eventhub import EventHubProducerClient
 import uamqp
 from uamqp import authentication
@@ -67,7 +67,6 @@ log = get_logger(None, logging.DEBUG)
 
 
 def create_eventhub(eventhub_config, client=None):
-    from azure.servicebus.control_client import ServiceBusService, EventHub
     hub_name = str(uuid.uuid4())
     hub_value = EventHub(partition_count=PARTITION_COUNT)
     client = client or ServiceBusService(
@@ -80,7 +79,6 @@ def create_eventhub(eventhub_config, client=None):
 
 
 def cleanup_eventhub(eventhub_config, hub_name, client=None):
-    from azure.servicebus.control_client import ServiceBusService
     client = client or ServiceBusService(
         service_namespace=eventhub_config['namespace'],
         shared_access_key_name=eventhub_config['key_name'],
@@ -108,7 +106,6 @@ def live_eventhub_config():
 
 @pytest.fixture()
 def live_eventhub(live_eventhub_config):  # pylint: disable=redefined-outer-name
-    from azure.servicebus.control_client import ServiceBusService
     client = ServiceBusService(
         service_namespace=live_eventhub_config['namespace'],
         shared_access_key_name=live_eventhub_config['key_name'],
