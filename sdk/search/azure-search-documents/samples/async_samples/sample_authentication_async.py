@@ -39,6 +39,17 @@ async def authentication_with_api_key_credential_async():
 
     print("There are {} documents in the {} search index.".format(result, repr(index_name)))
 
+async def authentication_service_client_with_api_key_credential_async():
+    # [START create_search_service_with_key_async]
+    from azure.core.credentials import AzureKeyCredential
+    from azure.search.documents.aio import SearchServiceClient
+    service_endpoint = os.getenv("AZURE_SEARCH_SERVICE_ENDPOINT")
+    key = os.getenv("AZURE_SEARCH_API_KEY")
+
+    client = SearchServiceClient(service_endpoint, AzureKeyCredential(key))
+    # [END create_search_service_with_key_async]
+
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
     loop.run_until_complete(authentication_with_api_key_credential_async())
+    loop.run_until_complete(authentication_service_client_with_api_key_credential_async())

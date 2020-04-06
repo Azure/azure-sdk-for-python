@@ -1,6 +1,6 @@
 # Release History
 
-## 1.4.0b2 (Unreleased)
+## 1.4.0b2 (2020-04-06)
 - After an instance of `DefaultAzureCredential` successfully authenticates, it
 uses the same authentication method for every subsequent token request. This
 makes subsequent requests more efficient, and prevents unexpected changes of
