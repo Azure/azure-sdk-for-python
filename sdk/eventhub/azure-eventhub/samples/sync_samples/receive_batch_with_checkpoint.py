@@ -12,7 +12,6 @@ If no partition id is specified, the checkpoint_store are used for load-balance 
 If partition id is specified, the checkpoint_store can only be used for checkpoint without load balancing.
 """
 
-import asyncio
 import os
 import logging
 from azure.eventhub import EventHubConsumerClient
@@ -50,5 +49,4 @@ def receive_batch():
 
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(receive_batch())
+    receive_batch()
