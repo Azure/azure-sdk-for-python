@@ -1,6 +1,6 @@
 # Change Log azure-ai-textanalytics
 
-## 1.0.0b4 (Unreleased)
+## 1.0.0b4 (2020-04-06)
 
 **Breaking changes**
 - Removed the `recognize_pii_entities` endpoint and all related models (`RecognizePiiEntitiesResult` and `PiiEntity`)
@@ -9,7 +9,6 @@ from this library.
 - `score` attribute has been renamed to `confidence_score` for the `CategorizedEntity`, `LinkedEntityMatch`, and
 `PiiEntity` models
 - All input parameters `inputs` have been renamed to `documents`
-
 
 ## 1.0.0b3 (2020-03-10)
 
