@@ -356,7 +356,7 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
     @TextAnalyticsClientPreparer()
     def test_user_agent(self, client):
         def callback(resp):
-            self.assertIn("azsdk-python-azure-ai-textanalytics/{} Python/{} ({})".format(
+            self.assertIn("azsdk-python-ai-textanalytics/{} Python/{} ({})".format(
                 VERSION, platform.python_version(), platform.platform()),
                 resp.http_request.headers["User-Agent"]
             )
@@ -386,7 +386,7 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
                 custom_error.args[0],
                 '\'DocumentError\' object has no attribute \'sentiment\'. '
                 'The service was unable to process this document:\nDocument Id: 1\nError: '
-                'invalidDocument - Document text is empty.\n'
+                'InvalidDocument - Document text is empty.\n'
             )
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -427,11 +427,11 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
                 {"id": "3", "text": text}]
 
         doc_errors = client.analyze_sentiment(docs)
-        self.assertEqual(doc_errors[0].error.code, "invalidDocument")
+        self.assertEqual(doc_errors[0].error.code, "InvalidDocument")
         self.assertIsNotNone(doc_errors[0].error.message)
-        self.assertEqual(doc_errors[1].error.code, "unsupportedLanguageCode")
+        self.assertEqual(doc_errors[1].error.code, "UnsupportedLanguageCode")
         self.assertIsNotNone(doc_errors[1].error.message)
-        self.assertEqual(doc_errors[2].error.code, "invalidDocument")
+        self.assertEqual(doc_errors[2].error.code, "InvalidDocument")
         self.assertIsNotNone(doc_errors[2].error.message)
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -481,3 +481,14 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
             language="es",
             raw_response_hook=callback
         )
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    def test_pass_cls(self, client):
+        def callback(pipeline_response, deserialized, _):
+            return "cls result"
+        res = client.analyze_sentiment(
+            documents=["Test passing cls to endpoint"],
+            cls=callback
+        )
+        assert res == "cls result"

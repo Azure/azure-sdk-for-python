@@ -392,7 +392,7 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
     @TextAnalyticsClientPreparer()
     async def test_user_agent(self, client):
         def callback(resp):
-            self.assertIn("azsdk-python-azure-ai-textanalytics/{} Python/{} ({})".format(
+            self.assertIn("azsdk-python-ai-textanalytics/{} Python/{} ({})".format(
                 VERSION, platform.python_version(), platform.platform()),
                 resp.http_request.headers["User-Agent"]
             )
@@ -422,7 +422,7 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
                 custom_error.args[0],
                 '\'DocumentError\' object has no attribute \'primary_language\'. '
                 'The service was unable to process this document:\nDocument Id: 1\nError: '
-                'invalidDocument - Document text is empty.\n'
+                'InvalidDocument - Document text is empty.\n'
             )
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -462,9 +462,9 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
                 {"id": "2", "text": text}]
 
         doc_errors = await client.detect_language(docs)
-        self.assertEqual(doc_errors[0].error.code, "invalidDocument")
+        self.assertEqual(doc_errors[0].error.code, "InvalidDocument")
         self.assertIsNotNone(doc_errors[0].error.message)
-        self.assertEqual(doc_errors[1].error.code, "invalidDocument")
+        self.assertEqual(doc_errors[1].error.code, "InvalidDocument")
         self.assertIsNotNone(doc_errors[1].error.message)
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -501,7 +501,7 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
-    @pytest.mark.skip(reason="Service bug returns invalidDocument here. Unskip after v3.0-preview.2")
+    @pytest.mark.skip(reason="Service bug returns InvalidDocument here. Unskip after v3.0-preview.2")
     async def test_invalid_country_hint(self, client):
 
         docs = [{"id": "1", "country_hint": "United States", "text": "hello world"}]
@@ -548,3 +548,14 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
             country_hint="ES",
             raw_response_hook=callback
         )
+
+    @GlobalTextAnalyticsAccountPreparer()
+    async def test_pass_cls(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+        def callback(pipeline_response, deserialized, _):
+            return "cls result"
+        text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
+        res = await text_analytics.detect_language(
+            documents=["Test passing cls to endpoint"],
+            cls=callback
+        )
+        assert res == "cls result"
