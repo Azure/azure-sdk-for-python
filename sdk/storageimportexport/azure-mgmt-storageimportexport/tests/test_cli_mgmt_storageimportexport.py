@@ -19,7 +19,7 @@
 import unittest
 
 import azure.mgmt.storageimportexport
-from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
+from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer, StorageAccountPreparer
 
 AZURE_LOCATION = 'eastus'
 
@@ -28,19 +28,25 @@ class MgmtXxxMgmtClientNameTest(AzureMgmtTestCase):
     def setUp(self):
         super(MgmtXxxMgmtClientNameTest, self).setUp()
         self.mgmt_client = self.create_mgmt_client(
-            azure.mgmt.storageimportexport.StorageImportExportMgmtClientName
+            azure.mgmt.storageimportexport.StorageImportExport
         )
     
     @ResourceGroupPreparer(location=AZURE_LOCATION)
-    def test_storageimportexport(self, resource_group):
+    @StorageAccountPreparer(location=AZURE_LOCATION, name_prefix='gentest')
+    def test_storageimportexport(self, resource_group, storage_account):
 
         SERVICE_NAME = "myapimrndxyz"
+        SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
+        RESOURCE_GROUP = resource_group.name
+        STORAGE_ACCOUNT_NAME = storage_account.name
+        JOB_NAME = "myJob"
+        LOCATION_NAME = "eastus"
 
         # /Jobs/put/Create job[put]
         BODY = {
           "location": "West US",
           "properties": {
-            "storage_account_id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.ClassicStorage/storageAccounts/" + STORAGE_ACCOUNT_NAME + "",
+            "storage_account_id": storage_account.id, # "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.ClassicStorage/storageAccounts/" + STORAGE_ACCOUNT_NAME + "",
             "job_type": "Import",
             "return_address": {
               "recipient_name": "Tets",
@@ -67,20 +73,20 @@ class MgmtXxxMgmtClientNameTest(AzureMgmtTestCase):
             ]
           }
         }
-        result = self.mgmt_client.jobs.create(resource_group.name, JOB_NAME, BODY)
+        result = self.mgmt_client.jobs.create(resource_group_name=resource_group.name, job_name=JOB_NAME, body=BODY)
 
         # /Jobs/get/Get job[get]
-        result = self.mgmt_client.jobs.get(resource_group.name, JOB_NAME)
+        result = self.mgmt_client.jobs.get(resource_group_name=resource_group.name, job_name=JOB_NAME)
 
         # /Locations/get/Get locations[get]
         result = self.mgmt_client.locations.get(LOCATION_NAME)
 
         # /BitLockerKeys/post/List BitLocker Keys for drives in a job[post]
         BODY = {}
-        result = self.mgmt_client.bit_locker_keys.list(resource_group.name, JOB_NAME, BODY)
+        result = self.mgmt_client.bit_locker_keys.list(resource_group_name=resource_group.name, job_name=JOB_NAME, body=BODY)
 
         # /Jobs/get/List jobs in a resource group[get]
-        result = self.mgmt_client.jobs.list_by_resource_group(resource_group.name)
+        result = self.mgmt_client.jobs.list_by_resource_group(resource_group_name=resource_group.name)
 
         # /Jobs/get/List jobs in a subscription[get]
         result = self.mgmt_client.jobs.list_by_subscription()
@@ -96,10 +102,10 @@ class MgmtXxxMgmtClientNameTest(AzureMgmtTestCase):
             "backup_drive_manifest": True
           }
         }
-        result = self.mgmt_client.jobs.update(resource_group.name, JOB_NAME, BODY)
+        result = self.mgmt_client.jobs.update(resource_group_name=resource_group.name, job_name=JOB_NAME, body=BODY)
 
         # /Jobs/delete/Delete job[delete]
-        result = self.mgmt_client.jobs.delete(resource_group.name, JOB_NAME)
+        result = self.mgmt_client.jobs.delete(resource_group_name=resource_group.name, job_name=JOB_NAME)
 
 
 #------------------------------------------------------------------------------
