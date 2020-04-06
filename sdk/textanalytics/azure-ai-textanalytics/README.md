@@ -463,7 +463,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [named_entity_recognition]: https://docs.microsoft.com/azure/cognitive-services/text-analytics/how-tos/text-analytics-how-to-entity-linking
 [named_entity_categories]: https://docs.microsoft.com/azure/cognitive-services/text-analytics/named-entity-types?tabs=general
 
-[azure_core_ref_docs]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-core/1.4.0/azure.core.pipeline.policies.html
+[azure_core_ref_docs]: https://aka.ms/azsdk-python-core-policies
 [azure_core]: ../../core/azure-core/README.md
 [azure_identity]: ../../identity/azure-identity
 [python_logging]: https://docs.python.org/3.5/library/logging.html
