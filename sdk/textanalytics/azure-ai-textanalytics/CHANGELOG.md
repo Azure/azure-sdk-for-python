@@ -1,6 +1,6 @@
 # Change Log azure-ai-textanalytics
 
-## 1.0.0b4 (2020-04-06)
+## 1.0.0b4 (2020-04-07)
 
 **Breaking changes**
 - Removed the `recognize_pii_entities` endpoint and all related models (`RecognizePiiEntitiesResult` and `PiiEntity`)
