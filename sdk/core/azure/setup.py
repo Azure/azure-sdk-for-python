@@ -15,7 +15,7 @@ Starting with v5.0.0, the 'azure' meta-package is deprecated and cannot be insta
 Please install the service specific packages prefixed by `azure` needed for your application.
 
 The complete list of available packages can be found at:
-https://aka.ms/azsdklist#python-packages
+https://aka.ms/azsdk/python/all
 
 Here's a non-exhaustive list of common packages:
 
