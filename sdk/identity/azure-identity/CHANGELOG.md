@@ -15,6 +15,10 @@ state. ([#10243](https://github.com/Azure/azure-sdk-for-python/issues/10243))
 cache is available but contains ambiguous or insufficient information. This
 causes `ChainedTokenCredential` to correctly try the next credential in the
 chain. ([#10631](https://github.com/Azure/azure-sdk-for-python/issues/10631))
+- The host of the Active Directory endpoint credentials should use can be set
+in the environment variable `AZURE_AUTHORITY_HOST`. See
+`azure.identity.KnownAuthorities` for a list of common values.
+([#8094](https://github.com/Azure/azure-sdk-for-python/issues/8094))
 
 
 ## 1.3.1 (2020-03-30)
