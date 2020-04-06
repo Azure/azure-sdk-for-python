@@ -5,6 +5,7 @@
 import functools
 
 from azure.core.exceptions import ClientAuthenticationError
+from azure.identity._constants import EnvironmentVariables
 from azure.identity._internal.aad_client import AadClient
 import pytest
 from six.moves.urllib_parse import urlparse
@@ -12,9 +13,9 @@ from six.moves.urllib_parse import urlparse
 from helpers import mock_response
 
 try:
-    from unittest.mock import Mock
+    from unittest.mock import Mock, patch
 except ImportError:  # python < 3.3
-    from mock import Mock  # type: ignore
+    from mock import Mock, patch  # type: ignore
 
 
 class MockClient(AadClient):
@@ -111,5 +112,11 @@ def test_request_url():
 
     client = AadClient(tenant_id, "client id", transport=Mock(send=send), authority=authority)
 
+    client.obtain_token_by_authorization_code("code", "uri", "scope")
+    client.obtain_token_by_refresh_token("refresh token", "scope")
+
+    # authority can be configured via environment variable
+    with patch.dict("os.environ", {EnvironmentVariables.AZURE_AUTHORITY_HOST: authority}, clear=True):
+        client = AadClient(tenant_id=tenant_id, client_id="client id", transport=Mock(send=send))
     client.obtain_token_by_authorization_code("code", "uri", "scope")
     client.obtain_token_by_refresh_token("refresh token", "scope")

@@ -6,7 +6,8 @@ import logging
 import os
 from typing import TYPE_CHECKING
 
-from ..._constants import EnvironmentVariables, KnownAuthorities
+from ..._constants import EnvironmentVariables
+from ..._internal import get_default_authority
 from .azure_cli import AzureCliCredential
 from .chained import ChainedTokenCredential
 from .environment import EnvironmentCredential
@@ -52,7 +53,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
     """
 
     def __init__(self, **kwargs):
-        authority = kwargs.pop("authority", None) or KnownAuthorities.AZURE_PUBLIC_CLOUD
+        authority = kwargs.pop("authority", None) or get_default_authority()
 
         shared_cache_username = kwargs.pop("shared_cache_username", os.environ.get(EnvironmentVariables.AZURE_USERNAME))
         shared_cache_tenant_id = kwargs.pop(

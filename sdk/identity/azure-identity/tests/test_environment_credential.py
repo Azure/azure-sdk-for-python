@@ -31,3 +31,25 @@ def test_incomplete_configuration():
         with mock.patch.dict(os.environ, {a: "a", b: "b"}, clear=True):
             with pytest.raises(CredentialUnavailableError) as ex:
                 EnvironmentCredential().get_token("scope")
+
+
+@pytest.mark.parametrize(
+    "credential_name,environment_variables",
+    (
+        ("ClientSecretCredential", EnvironmentVariables.CLIENT_SECRET_VARS),
+        ("CertificateCredential", EnvironmentVariables.CERT_VARS),
+        ("UsernamePasswordCredential", EnvironmentVariables.USERNAME_PASSWORD_VARS),
+    ),
+)
+def test_passes_authority_argument(credential_name, environment_variables):
+    """the credential pass the 'authority' keyword argument to its inner credential"""
+
+    authority = "authority"
+
+    with mock.patch.dict("os.environ", {variable: "foo" for variable in environment_variables}, clear=True):
+        with mock.patch(EnvironmentCredential.__module__ + "." + credential_name) as mock_credential:
+            EnvironmentCredential(authority=authority)
+
+    assert mock_credential.call_count == 1
+    _, kwargs = mock_credential.call_args
+    assert kwargs["authority"] == authority
