@@ -6,19 +6,17 @@
 
 from ._version import VERSION
 from ._form_recognizer_client import FormRecognizerClient
-from ._custom_form_client import CustomFormClient
+from ._form_training_client import FormTrainingClient
 
 from ._models import (
     LengthUnit,
     TrainStatus,
     ModelStatus,
+    FormContentType,
     BoundingBox,
     USReceipt,
     USReceiptType,
     USReceiptItem,
-    ExtractedLine,
-    ExtractedWord,
-    PageMetadata,
     FormTable,
     FormTableCell,
     CustomModel,
@@ -28,10 +26,6 @@ from ._models import (
     FormRecognizerError,
     CustomLabeledModel,
     FieldInfo,
-    ExtractedPage,
-    ExtractedField,
-    ExtractedText,
-    ExtractedLabeledForm,
     ModelInfo,
     ModelsSummary,
     Point,
@@ -47,17 +41,15 @@ from ._models import (
 
 __all__ = [
     'FormRecognizerClient',
-    'CustomFormClient',
+    'FormTrainingClient',
     'LengthUnit',
     'TrainStatus',
     'ModelStatus',
+    'FormContentType',
     'BoundingBox',
     'USReceipt',
     'USReceiptType',
     'USReceiptItem',
-    'ExtractedLine',
-    'ExtractedWord',
-    'PageMetadata',
     'FormTable',
     'FormTableCell',
     'CustomModel',
@@ -67,10 +59,6 @@ __all__ = [
     'FormRecognizerError',
     'CustomLabeledModel',
     'FieldInfo',
-    'ExtractedPage',
-    'ExtractedField',
-    'ExtractedText',
-    'ExtractedLabeledForm',
     'ModelInfo',
     'ModelsSummary',
     'Point',

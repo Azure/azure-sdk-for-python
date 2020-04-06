@@ -15,11 +15,8 @@ from ._models import (
     FormLine,
     FormTable,
     FormTableCell,
-    ExtractedPage,
-    ExtractedField,
-    PageMetadata,
-    ExtractedLabeledForm,
     PageRange,
+    RecognizedForm
 )
 
 
@@ -27,7 +24,7 @@ def create_us_receipt(response):
     receipts = []
     read_result = response.analyze_result.read_results
     document_result = response.analyze_result.document_results
-    form_page = FormPage._from_generated_receipt(read_result)
+    form_page = FormPage._from_generated(read_result)
 
     for page in document_result:
         if page.fields is None:
@@ -123,34 +120,55 @@ def prepare_content_result(response):
     return pages
 
 
+def prepare_form_result(response):
+    document_result = response.analyze_result.document_results
+    if document_result:
+        return prepare_labeled_result(response)
+    return prepare_unlabeled_result(response)
+
+
+def make_dict(fields):
+    # TODO should we append numbers to duplicate keys or just return a list of values for that key
+    # this currently does the latter
+    fields_dict = {}
+    for field in fields:
+        fields_dict.setdefault(field.name, []).append(field)
+    return fields_dict
+
+
 def prepare_unlabeled_result(response):
-    extracted_pages = []
+    result = []
+    form_pages = prepare_content_result(response)
     read_result = response.analyze_result.read_results
+    page_result = response.analyze_result.page_results
+    page_range = PageRange(
+        first_page=read_result[0].page,
+        last_page=read_result[-1].page
+    ),
 
-    for page in response.analyze_result.page_results:
-        result_page = ExtractedPage(
-            page_number=page.page,
-            tables=prepare_tables(page, read_result),
-            fields=[ExtractedField._from_generated(item, read_result)
-                    for item in page.key_value_pairs] if page.key_value_pairs else None,
+    for page in page_result:
+        fields_list = [FormField._from_generated_unlabeled(field, page.page, read_result)
+                       for field in page.key_value_pairs] if page.key_value_pairs else None
+        if fields_list:
+            fields_list = make_dict(fields_list)
+        form = RecognizedForm(
+            page_range=page_range,
+            fields=fields_list,
             form_type_id=page.cluster_id,
-            page_metadata=PageMetadata._from_generated_page_index(read_result, page.page-1)
+            pages=form_pages[page.page-1]
         )
-        extracted_pages.append(result_page)
+        result.append(form)
 
-    return extracted_pages
+    return result
 
 
 def prepare_labeled_result(response):
     read_result = response.analyze_result.read_results
-    page_result = response.analyze_result.page_results
-    page_metadata = PageMetadata._from_generated(read_result)
-    tables = [prepare_tables(page, read_result) for page in page_result]
+    form_pages = prepare_content_result(response)
 
     result = []
-
     for document in response.analyze_result.document_results:
-        form = ExtractedLabeledForm(
+        form = RecognizedForm(
             page_range=PageRange(
                 first_page=document.page_range[0],
                 last_page=document.page_range[1]
@@ -159,8 +177,8 @@ def prepare_labeled_result(response):
                 label: FormField._from_generated(label, value, read_result)
                 for label, value in document.fields.items()
             },
-            page_metadata=page_metadata,
-            tables=tables
+            pages=form_pages,
+            form_type=document.doc_type,
         )
         result.append(form)
     return result
