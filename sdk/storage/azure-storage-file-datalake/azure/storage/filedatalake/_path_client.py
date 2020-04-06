@@ -407,7 +407,7 @@ class PathClient(StorageAccountHostsMixin):
             path_http_headers = get_path_http_headers(content_settings)
 
         options = {
-            'rename_source': rename_source,
+            'rename_source': quote(rename_source),
             'properties': add_metadata_headers(metadata),
             'permissions': kwargs.pop('permissions', None),
             'umask': kwargs.pop('umask', None),
