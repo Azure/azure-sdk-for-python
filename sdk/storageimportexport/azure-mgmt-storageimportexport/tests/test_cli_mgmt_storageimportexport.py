@@ -18,7 +18,7 @@
 
 import unittest
 
-import xxx.namespace.xx
+import azure.mgmt.storageimportexport
 from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 
 AZURE_LOCATION = 'eastus'
@@ -28,7 +28,7 @@ class MgmtXxxMgmtClientNameTest(AzureMgmtTestCase):
     def setUp(self):
         super(MgmtXxxMgmtClientNameTest, self).setUp()
         self.mgmt_client = self.create_mgmt_client(
-            xxx.namespace.xx.XxxMgmtClientName
+            azure.mgmt.storageimportexport.StorageImportExportMgmtClientName
         )
     
     @ResourceGroupPreparer(location=AZURE_LOCATION)
