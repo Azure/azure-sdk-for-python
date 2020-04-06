@@ -174,6 +174,7 @@ class USReceipt(object):  # pylint: disable=too-many-instance-attributes
         If `include_text_content=True` is passed, contains a list
         of extracted text result for each page in the input document.
     :ivar str form_type: The type of form.
+    :ivar str receipt_locale: Defaults to "en-US".
     """
 
     def __init__(self, **kwargs):
@@ -192,6 +193,7 @@ class USReceipt(object):  # pylint: disable=too-many-instance-attributes
         self.page_range = kwargs.get("page_range", None)
         self.pages = kwargs.get("pages", None)
         self.form_type = kwargs.get("form_type", None)
+        self.receipt_locale = kwargs.get("receipt_locale", "en-US")
 
 
 class FormField(object):

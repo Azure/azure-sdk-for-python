@@ -18,7 +18,7 @@ from azure.core.polling.base_polling import LROBasePolling
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy
 from ._generated._form_recognizer_client import FormRecognizerClient as FormRecognizer
 from ._response_handlers import (
-    prepare_receipt_result,
+    prepare_us_receipt,
     prepare_content_result,
     prepare_form_result
 )
@@ -53,21 +53,20 @@ class FormRecognizerClient(object):
             **kwargs
         )
 
-    def _receipt_callback(self, raw_response, receipt_locale):
+    def _receipt_callback(self, raw_response, _, headers):  # pylint: disable=unused-argument
         analyze_result = self._client._deserialize(AnalyzeOperationResult, raw_response)
-        return prepare_receipt_result(analyze_result, receipt_locale)
+        return prepare_us_receipt(analyze_result)
 
     @distributed_trace
-    def begin_recognize_receipts(self, stream, receipt_locale="en-US", **kwargs):
-        # type: (IO[bytes], str, Any) -> LROPoller
+    def begin_recognize_receipts(self, stream, **kwargs):
+        # type: (IO[bytes], Any) -> LROPoller
         """Extract field text and semantic values from a given receipt document.
         The input document must be of one of the supported content types - 'application/pdf',
         'image/jpeg', 'image/png' or 'image/tiff'.
 
         :param stream: .pdf, .jpg, .png or .tiff type file stream.
+             Currently only supports US sales receipts.
         :type stream: stream
-        :param str receipt_locale: The locale of the receipt.
-            Currently only supports US sales receipts and defaults to "en-US".
         :keyword bool include_text_content: Include text lines and text content references in the result.
         :keyword str content_type: Media type of the body sent to the API.
         :return: LROPoller
@@ -78,36 +77,29 @@ class FormRecognizerClient(object):
             raise TypeError("Call begin_recognize_receipts_from_url() to analyze a receipt from a url.")
 
         include_text_content = kwargs.pop("include_text_content", False)
-        receipt_locale = kwargs.pop("receipt_locale", "en-US")
-        cls = kwargs.pop("cls", None)
 
         content_type = kwargs.pop("content_type", None)
         if content_type is None:
             content_type = get_content_type(stream)
 
-        def deserialization_callback(raw_response, _, headers):  # pylint: disable=unused-argument
-            return self._receipt_callback(raw_response, receipt_locale)
-
-        callback = cls if cls else deserialization_callback
         return self._client.begin_analyze_receipt_async(
             file_stream=stream,
             content_type=content_type,
             include_text_details=include_text_content,
-            cls=callback,
+            cls=kwargs.pop("cls", self._receipt_callback),
             polling=LROBasePolling(timeout=POLLING_INTERVAL, **kwargs),
             **kwargs
         )
 
     @distributed_trace
-    def begin_recognize_receipts_from_url(self, url, receipt_locale="en-US", **kwargs):
-        # type: (str, str, Any) -> LROPoller
+    def begin_recognize_receipts_from_url(self, url, **kwargs):
+        # type: (str, Any) -> LROPoller
         """Extract field text and semantic values from a given receipt document.
         The input document must be the location (Url) of the document to be analyzed.
 
-        :param url: The url of the receipt.
+
+        :param url: The url of the receipt. Currently only supports US sales receipts.
         :type url: str
-        :param str receipt_locale: The locale of the receipt.
-            Currently only supports US sales receipts and defaults to "en-US".
         :keyword bool include_text_content: Include text lines and text content references in the result.
         :return: LROPoller
         :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.USReceipt]]
@@ -117,17 +109,11 @@ class FormRecognizerClient(object):
             raise TypeError("Call begin_recognize_receipts() to analyze a receipt from a stream.")
 
         include_text_content = kwargs.pop("include_text_content", False)
-        receipt_locale = kwargs.pop("receipt_locale", "en-US")
-        cls = kwargs.pop("cls", None)
 
-        def deserialization_callback(raw_response, _, headers):  # pylint: disable=unused-argument
-            return self._receipt_callback(raw_response, receipt_locale)
-
-        callback = cls if cls else deserialization_callback
         return self._client.begin_analyze_receipt_async(
             file_stream={"source": url},
             include_text_details=include_text_content,
-            cls=callback,
+            cls=kwargs.pop("cls", self._receipt_callback),
             polling=LROBasePolling(timeout=POLLING_INTERVAL, **kwargs),
             **kwargs
         )
