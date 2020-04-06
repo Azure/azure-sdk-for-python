@@ -54,12 +54,14 @@ async def create_index():
         cors_options=cors_options)
 
     result = await client.create_index(index)
+    print("Create new index succeeded.")
     # [END create_index_async]
 
 async def get_index():
     # [START get_index_async]
     name = "hotels"
     result = await client.get_index(name)
+    print("Get index succeeded.")
     # [END get_index_async]
 
 async def update_index():
@@ -89,12 +91,14 @@ async def update_index():
         cors_options=cors_options)
 
     result = await client.create_or_update_index(index_name=index.name, index=index)
+    print("Update index succeeded.")
     # [END update_index_async]
 
 async def delete_index():
     # [START delete_index_async]
     name = "hotels"
     await client.delete_index(name)
+    print("Delete index succeeded.")
     # [END delete_index_async]
 
 async def main():

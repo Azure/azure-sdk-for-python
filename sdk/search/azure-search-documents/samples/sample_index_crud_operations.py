@@ -52,12 +52,14 @@ def create_index():
         cors_options=cors_options)
 
     result = client.create_index(index)
+    print("Create new index succeeded.")
     # [END create_index]
 
 def get_index():
     # [START get_index]
     name = "hotels"
     result = client.get_index(name)
+    print("Get index succeeded.")
     # [END get_index]
 
 def update_index():
@@ -87,12 +89,14 @@ def update_index():
         cors_options=cors_options)
 
     result = client.create_or_update_index(index_name=index.name, index=index)
+    print("Update index succeeded.")
     # [END update_index]
 
 def delete_index():
     # [START delete_index]
     name = "hotels"
     client.delete_index(name)
+    print("Delete index succeeded.")
     # [END delete_index]
 
 if __name__ == '__main__':
