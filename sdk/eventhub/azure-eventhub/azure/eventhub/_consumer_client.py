@@ -349,9 +349,11 @@ class EventHubConsumerClient(ClientBase):
         # type: (Callable[["PartitionContext", List["EventData"]], None], Any) -> None
         """Receive events from partition(s), with optional load-balancing and checkpointing.
 
-        :param on_event: The callback function for handling a received event. The callback takes two
-         parameters: `partition_context` which contains partition context and `event` which is the received event.
-         The callback function should be defined like: `on_event(partition_context, event)`.
+        :param on_event_batch: The callback function for handling a batch of received events. The callback takes two
+         parameters: `partition_context` which contains partition context and `event_batch`, which is the received
+         events. The callback function should be defined like: `on_event_batch(partition_context, event_batch)`.
+         `event_batch` could be an empty list if `max_wait_time` is not None nor 0 and no event is received
+         after `max_wait_time`.
          For detailed partition context information, please refer to
          :class:`PartitionContext<azure.eventhub.PartitionContext>`.
         :type on_event_batch: Callable[~azure.eventhub.PartitionContext, List[~azure.eventhub.EventData]]
