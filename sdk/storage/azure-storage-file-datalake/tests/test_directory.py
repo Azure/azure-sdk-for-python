@@ -316,6 +316,27 @@ class DirectoryTest(StorageTestCase):
         self.assertIsNotNone(properties)
 
     @record
+    def test_rename_from_an_unencoded_directory_in_another_file_system(self):
+        # create a file dir1 under file system1
+        old_file_system_name = self._get_directory_reference("oldfilesystem")
+        old_dir_name = "old dir"
+        old_client = self.dsc.get_file_system_client(old_file_system_name)
+        old_client.create_file_system()
+        old_client.create_directory(old_dir_name)
+
+        # create a dir2 under file system2
+        new_name = "new name"
+        new_directory_client = self._create_directory_and_get_directory_client(directory_name=new_name)
+        new_directory_client = new_directory_client.create_sub_directory("newsub")
+
+        # rename dir1 under file system1 to dir2 under file system2
+        new_directory_client._rename_path('/' + old_file_system_name + '/' + old_dir_name)
+        properties = new_directory_client.get_directory_properties()
+
+        self.assertIsNotNone(properties)
+        old_client.delete_file_system()
+
+    @record
     def test_rename_to_an_existing_directory_in_another_file_system(self):
         # create a file dir1 under file system1
         destination_file_system_name = self._get_directory_reference("destfilesystem")
