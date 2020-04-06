@@ -170,7 +170,7 @@ Please find further examples in the [samples](./samples) directory demonstrating
 
 ### Additional documentation
 
-For more extensive documentation on the Service Bus service, see the [Service Bus DB documentation][service_bus_docs] on docs.microsoft.com.
+For more extensive documentation on the Service Bus service, see the [Service Bus documentation][service_bus_docs] on docs.microsoft.com.
 
 ## Contributing
 
@@ -188,7 +188,7 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 
 <!-- LINKS -->
 [azure_cli]: https://docs.microsoft.com/cli/azure
-[api_docs]: https://docs.microsoft.com/python/api/overview/azure/servicebus/client?view=azure-python
+[api_docs]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/7.0.0b1/index.html
 [product_docs]: https://docs.microsoft.com/azure/service-bus-messaging/
 [azure_portal]: https://portal.azure.com
 [azure_sub]: https://azure.microsoft.com/free/
