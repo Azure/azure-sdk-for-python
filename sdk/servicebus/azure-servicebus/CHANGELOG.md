@@ -46,6 +46,7 @@ Version 7.0.0b1 is a preview of our efforts to create a client library that is u
     * `azure.servicebus.exceptions.MessageSettleFailed`
     * `azure.servicebus.exceptions.MessageAlreadySettled`
     * `azure.servicebus.exceptions.SessionLockExpired`
+* BatchMessage creation is now initiated via create_batch on a Sender, using .add() on the batch to add messages, in order to enforce service-side max batch sized limitations.
 * Session is now set on the message itself, via `session_id` parameter or property, as opposed to on `Send` or `get_sender` via `session`.  This is to allow sending a batch of messages destined to varied sessions.
 * Session management is now encapsulated within a property of a receiver, e.g. `receiver.session`, to better compartmentalize functionality specific to sessions.
     * To use `AutoLockRenew` against sessions, one would simply pass the inner session object, instead of the receiver itself.
