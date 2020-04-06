@@ -382,10 +382,7 @@ Please notice that the connection string needs to be for an [Event Hub-compatibl
 e.g. "Endpoint=sb://my-iothub-namespace-[uid].servicebus.windows.net/;SharedAccessKeyName=my-SA-name;SharedAccessKey=my-SA-key;EntityPath=my-iot-hub-name"
 
 There are two ways to get the Event Hubs compatible endpoint:
-- Manually get the "Built-in endpoints" of the IoT Hub in Azure Portal.
-- Programmatically retrieve the built-in Event Hubs compatible endpoint.
-Refer to [IoT Hub Connection String Sample](./samples/async_samples/iot_hub_connection_string_receive_async.py).
-
+- Manually get the "Built-in endpoints" of the IoT Hub in Azure Portal and receive from it.
 ```python
 from azure.eventhub import EventHubConsumerClient
 
@@ -395,6 +392,8 @@ client = EventHubConsumerClient.from_connection_string(connection_str, consumer_
 
 partition_ids = client.get_partition_ids()
 ```
+- Programmatically retrieve the built-in Event Hubs compatible endpoint.
+Refer to [IoT Hub Connection String Sample](./samples/async_samples/iot_hub_connection_string_receive_async.py).
 
 ## Troubleshooting
 
