@@ -12,14 +12,12 @@
 import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
-from msrest.polling import LROPoller, NoPolling
-from msrestazure.polling.arm_polling import ARMPolling
 
 from .. import models
 
 
-class SqlPoolsOperations(object):
-    """SqlPoolsOperations operations.
+class IntegrationRuntimesOperations(object):
+    """IntegrationRuntimesOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
@@ -41,36 +39,48 @@ class SqlPoolsOperations(object):
 
         self.config = config
 
-    def get(
-            self, resource_group_name, workspace_name, sql_pool_name, custom_headers=None, raw=False, **operation_config):
-        """Get SQL pool.
+    def update(
+            self, resource_group_name, workspace_name, integration_runtime_name, auto_update=None, update_delay_offset=None, custom_headers=None, raw=False, **operation_config):
+        """Update integration runtime.
 
-        Get SQL pool properties.
+        Update an integration runtime.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
         :type resource_group_name: str
         :param workspace_name: The name of the workspace
         :type workspace_name: str
-        :param sql_pool_name: SQL pool name
-        :type sql_pool_name: str
+        :param integration_runtime_name: Integration runtime name
+        :type integration_runtime_name: str
+        :param auto_update: Enables or disables the auto-update feature of the
+         self-hosted integration runtime. See
+         https://go.microsoft.com/fwlink/?linkid=854189. Possible values
+         include: 'On', 'Off'
+        :type auto_update: str or
+         ~azure.mgmt.synapse.models.IntegrationRuntimeAutoUpdate
+        :param update_delay_offset: The time offset (in hours) in the day,
+         e.g., PT03H is 3 hours. The integration runtime auto update will
+         happen on that time.
+        :type update_delay_offset: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: SqlPool or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.synapse.models.SqlPool or
+        :return: IntegrationRuntimeResource or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.synapse.models.IntegrationRuntimeResource or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        update_integration_runtime_request = models.UpdateIntegrationRuntimeRequest(auto_update=auto_update, update_delay_offset=update_delay_offset)
+
         # Construct URL
-        url = self.get.metadata['url']
+        url = self.update.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
-            'sqlPoolName': self._serialize.url("sql_pool_name", sql_pool_name, 'str')
+            'integrationRuntimeName': self._serialize.url("integration_runtime_name", integration_runtime_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -81,6 +91,7 @@ class SqlPoolsOperations(object):
         # Construct headers
         header_parameters = {}
         header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -88,8 +99,11 @@ class SqlPoolsOperations(object):
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
+        # Construct body
+        body_content = self._serialize.body(update_integration_runtime_request, 'UpdateIntegrationRuntimeRequest')
+
         # Construct and send request
-        request = self._client.get(url, query_parameters, header_parameters)
+        request = self._client.patch(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
@@ -99,47 +113,49 @@ class SqlPoolsOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('SqlPool', response)
+            deserialized = self._deserialize('IntegrationRuntimeResource', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/sqlPools/{sqlPoolName}'}
+    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/integrationRuntimes/{integrationRuntimeName}'}
 
-    def update(
-            self, resource_group_name, workspace_name, sql_pool_name, sql_pool_info, custom_headers=None, raw=False, **operation_config):
-        """Update SQL pool.
+    def get(
+            self, resource_group_name, workspace_name, integration_runtime_name, if_none_match=None, custom_headers=None, raw=False, **operation_config):
+        """Get integration runtime.
 
-        Apply a partial update to a SQL pool.
+        Get an integration runtime.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
         :type resource_group_name: str
         :param workspace_name: The name of the workspace
         :type workspace_name: str
-        :param sql_pool_name: SQL pool name
-        :type sql_pool_name: str
-        :param sql_pool_info: The updated SQL pool properties
-        :type sql_pool_info: ~azure.mgmt.synapse.models.SqlPoolPatchInfo
+        :param integration_runtime_name: Integration runtime name
+        :type integration_runtime_name: str
+        :param if_none_match: ETag of the integration runtime entity. Should
+         only be specified for get. If the ETag matches the existing entity
+         tag, or if * was provided, then no content will be returned.
+        :type if_none_match: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: SqlPool or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.synapse.models.SqlPool or
+        :return: IntegrationRuntimeResource or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.synapse.models.IntegrationRuntimeResource or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.update.metadata['url']
+        url = self.get.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
-            'sqlPoolName': self._serialize.url("sql_pool_name", sql_pool_name, 'str')
+            'integrationRuntimeName': self._serialize.url("integration_runtime_name", integration_runtime_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -150,47 +166,73 @@ class SqlPoolsOperations(object):
         # Construct headers
         header_parameters = {}
         header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
+        if if_none_match is not None:
+            header_parameters['If-None-Match'] = self._serialize.header("if_none_match", if_none_match, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-        # Construct body
-        body_content = self._serialize.body(sql_pool_info, 'SqlPoolPatchInfo')
-
         # Construct and send request
-        request = self._client.patch(url, query_parameters, header_parameters, body_content)
+        request = self._client.get(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 202]:
+        if response.status_code not in [200, 304]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('SqlPool', response)
+            deserialized = self._deserialize('IntegrationRuntimeResource', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/sqlPools/{sqlPoolName}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/integrationRuntimes/{integrationRuntimeName}'}
 
+    def create(
+            self, resource_group_name, workspace_name, integration_runtime_name, properties, if_match=None, custom_headers=None, raw=False, **operation_config):
+        """Create integration runtime.
 
-    def _create_initial(
-            self, resource_group_name, workspace_name, sql_pool_name, sql_pool_info, custom_headers=None, raw=False, **operation_config):
+        Create an integration runtime.
+
+        :param resource_group_name: The name of the resource group. The name
+         is case insensitive.
+        :type resource_group_name: str
+        :param workspace_name: The name of the workspace
+        :type workspace_name: str
+        :param integration_runtime_name: Integration runtime name
+        :type integration_runtime_name: str
+        :param properties: Integration runtime properties.
+        :type properties: ~azure.mgmt.synapse.models.IntegrationRuntime
+        :param if_match: ETag of the integration runtime entity. Should only
+         be specified for update, for which it should match existing entity or
+         can be * for unconditional update.
+        :type if_match: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: IntegrationRuntimeResource or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.synapse.models.IntegrationRuntimeResource or
+         ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        integration_runtime = models.IntegrationRuntimeResource(properties=properties)
+
         # Construct URL
         url = self.create.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
-            'sqlPoolName': self._serialize.url("sql_pool_name", sql_pool_name, 'str')
+            'integrationRuntimeName': self._serialize.url("integration_runtime_name", integration_runtime_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -206,97 +248,63 @@ class SqlPoolsOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
+        if if_match is not None:
+            header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(sql_pool_info, 'SqlPool')
+        body_content = self._serialize.body(integration_runtime, 'IntegrationRuntimeResource')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 202, 404]:
-            raise models.ErrorContractException(self._deserialize, response)
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
 
         deserialized = None
-
         if response.status_code == 200:
-            deserialized = self._deserialize('SqlPool', response)
+            deserialized = self._deserialize('IntegrationRuntimeResource', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
+    create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/integrationRuntimes/{integrationRuntimeName}'}
 
-    def create(
-            self, resource_group_name, workspace_name, sql_pool_name, sql_pool_info, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Create SQL pool.
+    def delete(
+            self, resource_group_name, workspace_name, integration_runtime_name, custom_headers=None, raw=False, **operation_config):
+        """Delete integration runtime.
 
-        Create a SQL pool.
+        Delete an integration runtime.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
         :type resource_group_name: str
         :param workspace_name: The name of the workspace
         :type workspace_name: str
-        :param sql_pool_name: SQL pool name
-        :type sql_pool_name: str
-        :param sql_pool_info: The SQL pool to create
-        :type sql_pool_info: ~azure.mgmt.synapse.models.SqlPool
+        :param integration_runtime_name: Integration runtime name
+        :type integration_runtime_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param bool raw: The poller return type is ClientRawResponse, the
-         direct response alongside the deserialized response
-        :param polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
-        :return: An instance of LROPoller that returns SqlPool or
-         ClientRawResponse<SqlPool> if raw==True
-        :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.synapse.models.SqlPool]
-         or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.synapse.models.SqlPool]]
-        :raises:
-         :class:`ErrorContractException<azure.mgmt.synapse.models.ErrorContractException>`
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        raw_result = self._create_initial(
-            resource_group_name=resource_group_name,
-            workspace_name=workspace_name,
-            sql_pool_name=sql_pool_name,
-            sql_pool_info=sql_pool_info,
-            custom_headers=custom_headers,
-            raw=True,
-            **operation_config
-        )
-
-        def get_long_running_output(response):
-            deserialized = self._deserialize('SqlPool', response)
-
-            if raw:
-                client_raw_response = ClientRawResponse(deserialized, response)
-                return client_raw_response
-
-            return deserialized
-
-        lro_delay = operation_config.get(
-            'long_running_operation_timeout',
-            self.config.long_running_operation_timeout)
-        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
-        elif polling is False: polling_method = NoPolling()
-        else: polling_method = polling
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/sqlPools/{sqlPoolName}'}
-
-
-    def _delete_initial(
-            self, resource_group_name, workspace_name, sql_pool_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
-            'sqlPoolName': self._serialize.url("sql_pool_name", sql_pool_name, 'str')
+            'integrationRuntimeName': self._serialize.url("integration_runtime_name", integration_runtime_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -306,7 +314,6 @@ class SqlPoolsOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -318,79 +325,80 @@ class SqlPoolsOperations(object):
         request = self._client.delete(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 202, 204]:
-            raise models.ErrorContractException(self._deserialize, response)
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('object', response)
-        if response.status_code == 202:
-            deserialized = self._deserialize('object', response)
+        if response.status_code not in [200, 204]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
 
         if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
+            client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/integrationRuntimes/{integrationRuntimeName}'}
 
-        return deserialized
+    def upgrade(
+            self, resource_group_name, workspace_name, integration_runtime_name, custom_headers=None, raw=False, **operation_config):
+        """Upgrade integration runtime.
 
-    def delete(
-            self, resource_group_name, workspace_name, sql_pool_name, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Delete SQL pool.
-
-        Delete a SQL pool.
+        Upgrade an integration runtime.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
         :type resource_group_name: str
         :param workspace_name: The name of the workspace
         :type workspace_name: str
-        :param sql_pool_name: SQL pool name
-        :type sql_pool_name: str
+        :param integration_runtime_name: Integration runtime name
+        :type integration_runtime_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param bool raw: The poller return type is ClientRawResponse, the
-         direct response alongside the deserialized response
-        :param polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
-        :return: An instance of LROPoller that returns object or
-         ClientRawResponse<object> if raw==True
-        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[object] or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[object]]
-        :raises:
-         :class:`ErrorContractException<azure.mgmt.synapse.models.ErrorContractException>`
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        raw_result = self._delete_initial(
-            resource_group_name=resource_group_name,
-            workspace_name=workspace_name,
-            sql_pool_name=sql_pool_name,
-            custom_headers=custom_headers,
-            raw=True,
-            **operation_config
-        )
+        # Construct URL
+        url = self.upgrade.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
+            'integrationRuntimeName': self._serialize.url("integration_runtime_name", integration_runtime_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
 
-        def get_long_running_output(response):
-            deserialized = self._deserialize('object', response)
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
 
-            if raw:
-                client_raw_response = ClientRawResponse(deserialized, response)
-                return client_raw_response
+        # Construct headers
+        header_parameters = {}
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-            return deserialized
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
-        lro_delay = operation_config.get(
-            'long_running_operation_timeout',
-            self.config.long_running_operation_timeout)
-        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
-        elif polling is False: polling_method = NoPolling()
-        else: polling_method = polling
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/sqlPools/{sqlPoolName}'}
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    upgrade.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/integrationRuntimes/{integrationRuntimeName}/upgrade'}
 
     def list_by_workspace(
             self, resource_group_name, workspace_name, custom_headers=None, raw=False, **operation_config):
-        """List SQL pools.
+        """List integration runtimes.
 
-        List all SQL pools.
+        List all integration runtimes.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
@@ -402,9 +410,9 @@ class SqlPoolsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of SqlPool
+        :return: An iterator like instance of IntegrationRuntimeResource
         :rtype:
-         ~azure.mgmt.synapse.models.SqlPoolPaged[~azure.mgmt.synapse.models.SqlPool]
+         ~azure.mgmt.synapse.models.IntegrationRuntimeResourcePaged[~azure.mgmt.synapse.models.IntegrationRuntimeResource]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
@@ -456,21 +464,42 @@ class SqlPoolsOperations(object):
         header_dict = None
         if raw:
             header_dict = {}
-        deserialized = models.SqlPoolPaged(internal_paging, self._deserialize.dependencies, header_dict)
+        deserialized = models.IntegrationRuntimeResourcePaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list_by_workspace.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/sqlPools'}
+    list_by_workspace.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/integrationRuntimes'}
 
+    def start(
+            self, resource_group_name, workspace_name, integration_runtime_name, custom_headers=None, raw=False, **operation_config):
+        """Start integration runtime.
 
-    def _pause_initial(
-            self, resource_group_name, workspace_name, sql_pool_name, custom_headers=None, raw=False, **operation_config):
+        Start an integration runtime.
+
+        :param resource_group_name: The name of the resource group. The name
+         is case insensitive.
+        :type resource_group_name: str
+        :param workspace_name: The name of the workspace
+        :type workspace_name: str
+        :param integration_runtime_name: Integration runtime name
+        :type integration_runtime_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: IntegrationRuntimeStatusResponse or ClientRawResponse if
+         raw=true
+        :rtype: ~azure.mgmt.synapse.models.IntegrationRuntimeStatusResponse or
+         ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
         # Construct URL
-        url = self.pause.metadata['url']
+        url = self.start.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
-            'sqlPoolName': self._serialize.url("sql_pool_name", sql_pool_name, 'str')
+            'integrationRuntimeName': self._serialize.url("integration_runtime_name", integration_runtime_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -498,180 +527,29 @@ class SqlPoolsOperations(object):
             raise exp
 
         deserialized = None
-
         if response.status_code == 200:
-            deserialized = self._deserialize('object', response)
+            deserialized = self._deserialize('IntegrationRuntimeStatusResponse', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
+    start.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/integrationRuntimes/{integrationRuntimeName}/start'}
 
-    def pause(
-            self, resource_group_name, workspace_name, sql_pool_name, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Pause SQL pool.
+    def stop(
+            self, resource_group_name, workspace_name, integration_runtime_name, custom_headers=None, raw=False, **operation_config):
+        """Stop integration runtime.
 
-        Pause a SQL pool.
-
-        :param resource_group_name: The name of the resource group. The name
-         is case insensitive.
-        :type resource_group_name: str
-        :param workspace_name: The name of the workspace
-        :type workspace_name: str
-        :param sql_pool_name: SQL pool name
-        :type sql_pool_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: The poller return type is ClientRawResponse, the
-         direct response alongside the deserialized response
-        :param polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
-        :return: An instance of LROPoller that returns object or
-         ClientRawResponse<object> if raw==True
-        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[object] or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[object]]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        raw_result = self._pause_initial(
-            resource_group_name=resource_group_name,
-            workspace_name=workspace_name,
-            sql_pool_name=sql_pool_name,
-            custom_headers=custom_headers,
-            raw=True,
-            **operation_config
-        )
-
-        def get_long_running_output(response):
-            deserialized = self._deserialize('object', response)
-
-            if raw:
-                client_raw_response = ClientRawResponse(deserialized, response)
-                return client_raw_response
-
-            return deserialized
-
-        lro_delay = operation_config.get(
-            'long_running_operation_timeout',
-            self.config.long_running_operation_timeout)
-        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, **operation_config)
-        elif polling is False: polling_method = NoPolling()
-        else: polling_method = polling
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    pause.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/sqlPools/{sqlPoolName}/pause'}
-
-
-    def _resume_initial(
-            self, resource_group_name, workspace_name, sql_pool_name, custom_headers=None, raw=False, **operation_config):
-        # Construct URL
-        url = self.resume.metadata['url']
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
-            'sqlPoolName': self._serialize.url("sql_pool_name", sql_pool_name, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.post(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200, 202]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('object', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-
-    def resume(
-            self, resource_group_name, workspace_name, sql_pool_name, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Resume SQL pool.
-
-        Resume a SQL pool.
+        Stop an integration runtime.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
         :type resource_group_name: str
         :param workspace_name: The name of the workspace
         :type workspace_name: str
-        :param sql_pool_name: SQL pool name
-        :type sql_pool_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: The poller return type is ClientRawResponse, the
-         direct response alongside the deserialized response
-        :param polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
-        :return: An instance of LROPoller that returns object or
-         ClientRawResponse<object> if raw==True
-        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[object] or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[object]]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        raw_result = self._resume_initial(
-            resource_group_name=resource_group_name,
-            workspace_name=workspace_name,
-            sql_pool_name=sql_pool_name,
-            custom_headers=custom_headers,
-            raw=True,
-            **operation_config
-        )
-
-        def get_long_running_output(response):
-            deserialized = self._deserialize('object', response)
-
-            if raw:
-                client_raw_response = ClientRawResponse(deserialized, response)
-                return client_raw_response
-
-            return deserialized
-
-        lro_delay = operation_config.get(
-            'long_running_operation_timeout',
-            self.config.long_running_operation_timeout)
-        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, **operation_config)
-        elif polling is False: polling_method = NoPolling()
-        else: polling_method = polling
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    resume.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/sqlPools/{sqlPoolName}/resume'}
-
-    def rename(
-            self, resource_group_name, workspace_name, sql_pool_name, id, custom_headers=None, raw=False, **operation_config):
-        """Rename a SQL pool.
-
-        Rename a SQL pool.
-
-        :param resource_group_name: The name of the resource group. The name
-         is case insensitive.
-        :type resource_group_name: str
-        :param workspace_name: The name of the workspace
-        :type workspace_name: str
-        :param sql_pool_name: SQL pool name
-        :type sql_pool_name: str
-        :param id: The target ID for the resource
-        :type id: str
+        :param integration_runtime_name: Integration runtime name
+        :type integration_runtime_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -681,15 +559,13 @@ class SqlPoolsOperations(object):
         :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        parameters = models.ResourceMoveDefinition(id=id)
-
         # Construct URL
-        url = self.rename.metadata['url']
+        url = self.stop.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
-            'sqlPoolName': self._serialize.url("sql_pool_name", sql_pool_name, 'str')
+            'integrationRuntimeName': self._serialize.url("integration_runtime_name", integration_runtime_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -699,7 +575,6 @@ class SqlPoolsOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -707,14 +582,11 @@ class SqlPoolsOperations(object):
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-        # Construct body
-        body_content = self._serialize.body(parameters, 'ResourceMoveDefinition')
-
         # Construct and send request
-        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        request = self._client.post(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 202]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
@@ -722,4 +594,4 @@ class SqlPoolsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    rename.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/sqlPools/{sqlPoolName}/move'}
+    stop.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/integrationRuntimes/{integrationRuntimeName}/stop'}
