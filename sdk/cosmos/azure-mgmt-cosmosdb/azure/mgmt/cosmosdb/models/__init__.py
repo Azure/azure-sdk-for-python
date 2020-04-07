@@ -12,7 +12,6 @@
 try:
     from ._models_py3 import ARMProxyResource
     from ._models_py3 import ARMResourceProperties
-    from ._models_py3 import AutopilotSettingsResource
     from ._models_py3 import AutoUpgradePolicyResource
     from ._models_py3 import AzureEntityResource
     from ._models_py3 import Capability
@@ -84,6 +83,7 @@ try:
     from ._models_py3 import PrivateEndpointProperty
     from ._models_py3 import PrivateLinkResource
     from ._models_py3 import PrivateLinkServiceConnectionStateProperty
+    from ._models_py3 import ProvisionedThroughputSettingsResource
     from ._models_py3 import ProxyResource
     from ._models_py3 import RegionForOnlineOffline
     from ._models_py3 import Resource
@@ -125,7 +125,6 @@ try:
 except (SyntaxError, ImportError):
     from ._models import ARMProxyResource
     from ._models import ARMResourceProperties
-    from ._models import AutopilotSettingsResource
     from ._models import AutoUpgradePolicyResource
     from ._models import AzureEntityResource
     from ._models import Capability
@@ -197,6 +196,7 @@ except (SyntaxError, ImportError):
     from ._models import PrivateEndpointProperty
     from ._models import PrivateLinkResource
     from ._models import PrivateLinkServiceConnectionStateProperty
+    from ._models import ProvisionedThroughputSettingsResource
     from ._models import ProxyResource
     from ._models import RegionForOnlineOffline
     from ._models import Resource
@@ -262,6 +262,7 @@ from ._cosmos_db_management_client_enums import (
     DatabaseAccountOfferType,
     DefaultConsistencyLevel,
     ConnectorOffer,
+    PublicNetworkAccess,
     IndexingMode,
     DataType,
     IndexKind,
@@ -279,7 +280,6 @@ from ._cosmos_db_management_client_enums import (
 __all__ = [
     'ARMProxyResource',
     'ARMResourceProperties',
-    'AutopilotSettingsResource',
     'AutoUpgradePolicyResource',
     'AzureEntityResource',
     'Capability',
@@ -351,6 +351,7 @@ __all__ = [
     'PrivateEndpointProperty',
     'PrivateLinkResource',
     'PrivateLinkServiceConnectionStateProperty',
+    'ProvisionedThroughputSettingsResource',
     'ProxyResource',
     'RegionForOnlineOffline',
     'Resource',
@@ -415,6 +416,7 @@ __all__ = [
     'DatabaseAccountOfferType',
     'DefaultConsistencyLevel',
     'ConnectorOffer',
+    'PublicNetworkAccess',
     'IndexingMode',
     'DataType',
     'IndexKind',

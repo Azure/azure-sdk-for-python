@@ -89,43 +89,6 @@ class ARMResourceProperties(Model):
         self.tags = tags
 
 
-class AutopilotSettingsResource(Model):
-    """Cosmos DB autopilot settings object.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param max_throughput: Required. Represents max throughput an autopilot
-     container can operate at.
-    :type max_throughput: int
-    :param auto_upgrade_policy: Cosmos DB resource auto-upgrade policy
-    :type auto_upgrade_policy:
-     ~azure.mgmt.cosmosdb.models.AutoUpgradePolicyResource
-    :ivar target_max_throughput: Represents target max throughput an autopilot
-     container should operate at once offer is no longer in pending state.
-    :vartype target_max_throughput: int
-    """
-
-    _validation = {
-        'max_throughput': {'required': True},
-        'target_max_throughput': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'max_throughput': {'key': 'maxThroughput', 'type': 'int'},
-        'auto_upgrade_policy': {'key': 'autoUpgradePolicy', 'type': 'AutoUpgradePolicyResource'},
-        'target_max_throughput': {'key': 'targetMaxThroughput', 'type': 'int'},
-    }
-
-    def __init__(self, *, max_throughput: int, auto_upgrade_policy=None, **kwargs) -> None:
-        super(AutopilotSettingsResource, self).__init__(**kwargs)
-        self.max_throughput = max_throughput
-        self.auto_upgrade_policy = auto_upgrade_policy
-        self.target_max_throughput = None
-
-
 class AutoUpgradePolicyResource(Model):
     """Cosmos DB resource auto-upgrade policy.
 
@@ -893,6 +856,10 @@ class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):
     :type disable_key_based_metadata_write_access: bool
     :param key_vault_key_uri: The URI of the key vault
     :type key_vault_key_uri: str
+    :param public_network_access: Whether requests from Public Network are
+     allowed. Possible values include: 'Enabled', 'Disabled'
+    :type public_network_access: str or
+     ~azure.mgmt.cosmosdb.models.PublicNetworkAccess
     """
 
     _validation = {
@@ -923,11 +890,12 @@ class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):
         'connector_offer': {'key': 'properties.connectorOffer', 'type': 'str'},
         'disable_key_based_metadata_write_access': {'key': 'properties.disableKeyBasedMetadataWriteAccess', 'type': 'bool'},
         'key_vault_key_uri': {'key': 'properties.keyVaultKeyUri', 'type': 'str'},
+        'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
     }
 
     database_account_offer_type = "Standard"
 
-    def __init__(self, *, locations, location: str=None, tags=None, kind="GlobalDocumentDB", consistency_policy=None, ip_range_filter: str=None, is_virtual_network_filter_enabled: bool=None, enable_automatic_failover: bool=None, capabilities=None, virtual_network_rules=None, enable_multiple_write_locations: bool=None, enable_cassandra_connector: bool=None, connector_offer=None, disable_key_based_metadata_write_access: bool=None, key_vault_key_uri: str=None, **kwargs) -> None:
+    def __init__(self, *, locations, location: str=None, tags=None, kind="GlobalDocumentDB", consistency_policy=None, ip_range_filter: str=None, is_virtual_network_filter_enabled: bool=None, enable_automatic_failover: bool=None, capabilities=None, virtual_network_rules=None, enable_multiple_write_locations: bool=None, enable_cassandra_connector: bool=None, connector_offer=None, disable_key_based_metadata_write_access: bool=None, key_vault_key_uri: str=None, public_network_access=None, **kwargs) -> None:
         super(DatabaseAccountCreateUpdateParameters, self).__init__(location=location, tags=tags, **kwargs)
         self.kind = kind
         self.consistency_policy = consistency_policy
@@ -942,6 +910,7 @@ class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):
         self.connector_offer = connector_offer
         self.disable_key_based_metadata_write_access = disable_key_based_metadata_write_access
         self.key_vault_key_uri = key_vault_key_uri
+        self.public_network_access = public_network_access
 
 
 class DatabaseAccountGetResults(ARMResourceProperties):
@@ -1024,6 +993,10 @@ class DatabaseAccountGetResults(ARMResourceProperties):
     :type disable_key_based_metadata_write_access: bool
     :param key_vault_key_uri: The URI of the key vault
     :type key_vault_key_uri: str
+    :param public_network_access: Whether requests from Public Network are
+     allowed. Possible values include: 'Enabled', 'Disabled'
+    :type public_network_access: str or
+     ~azure.mgmt.cosmosdb.models.PublicNetworkAccess
     """
 
     _validation = {
@@ -1063,9 +1036,10 @@ class DatabaseAccountGetResults(ARMResourceProperties):
         'connector_offer': {'key': 'properties.connectorOffer', 'type': 'str'},
         'disable_key_based_metadata_write_access': {'key': 'properties.disableKeyBasedMetadataWriteAccess', 'type': 'bool'},
         'key_vault_key_uri': {'key': 'properties.keyVaultKeyUri', 'type': 'str'},
+        'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str=None, tags=None, kind="GlobalDocumentDB", provisioning_state: str=None, ip_range_filter: str=None, is_virtual_network_filter_enabled: bool=None, enable_automatic_failover: bool=None, consistency_policy=None, capabilities=None, virtual_network_rules=None, enable_multiple_write_locations: bool=None, enable_cassandra_connector: bool=None, connector_offer=None, disable_key_based_metadata_write_access: bool=None, key_vault_key_uri: str=None, **kwargs) -> None:
+    def __init__(self, *, location: str=None, tags=None, kind="GlobalDocumentDB", provisioning_state: str=None, ip_range_filter: str=None, is_virtual_network_filter_enabled: bool=None, enable_automatic_failover: bool=None, consistency_policy=None, capabilities=None, virtual_network_rules=None, enable_multiple_write_locations: bool=None, enable_cassandra_connector: bool=None, connector_offer=None, disable_key_based_metadata_write_access: bool=None, key_vault_key_uri: str=None, public_network_access=None, **kwargs) -> None:
         super(DatabaseAccountGetResults, self).__init__(location=location, tags=tags, **kwargs)
         self.kind = kind
         self.provisioning_state = provisioning_state
@@ -1086,6 +1060,7 @@ class DatabaseAccountGetResults(ARMResourceProperties):
         self.connector_offer = connector_offer
         self.disable_key_based_metadata_write_access = disable_key_based_metadata_write_access
         self.key_vault_key_uri = key_vault_key_uri
+        self.public_network_access = public_network_access
 
 
 class DatabaseAccountListConnectionStringsResult(Model):
@@ -1246,6 +1221,10 @@ class DatabaseAccountUpdateParameters(Model):
     :type disable_key_based_metadata_write_access: bool
     :param key_vault_key_uri: The URI of the key vault
     :type key_vault_key_uri: str
+    :param public_network_access: Whether requests from Public Network are
+     allowed. Possible values include: 'Enabled', 'Disabled'
+    :type public_network_access: str or
+     ~azure.mgmt.cosmosdb.models.PublicNetworkAccess
     """
 
     _attribute_map = {
@@ -1263,9 +1242,10 @@ class DatabaseAccountUpdateParameters(Model):
         'connector_offer': {'key': 'properties.connectorOffer', 'type': 'str'},
         'disable_key_based_metadata_write_access': {'key': 'properties.disableKeyBasedMetadataWriteAccess', 'type': 'bool'},
         'key_vault_key_uri': {'key': 'properties.keyVaultKeyUri', 'type': 'str'},
+        'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
     }
 
-    def __init__(self, *, tags=None, location: str=None, consistency_policy=None, locations=None, ip_range_filter: str=None, is_virtual_network_filter_enabled: bool=None, enable_automatic_failover: bool=None, capabilities=None, virtual_network_rules=None, enable_multiple_write_locations: bool=None, enable_cassandra_connector: bool=None, connector_offer=None, disable_key_based_metadata_write_access: bool=None, key_vault_key_uri: str=None, **kwargs) -> None:
+    def __init__(self, *, tags=None, location: str=None, consistency_policy=None, locations=None, ip_range_filter: str=None, is_virtual_network_filter_enabled: bool=None, enable_automatic_failover: bool=None, capabilities=None, virtual_network_rules=None, enable_multiple_write_locations: bool=None, enable_cassandra_connector: bool=None, connector_offer=None, disable_key_based_metadata_write_access: bool=None, key_vault_key_uri: str=None, public_network_access=None, **kwargs) -> None:
         super(DatabaseAccountUpdateParameters, self).__init__(**kwargs)
         self.tags = tags
         self.location = location
@@ -1281,6 +1261,7 @@ class DatabaseAccountUpdateParameters(Model):
         self.connector_offer = connector_offer
         self.disable_key_based_metadata_write_access = disable_key_based_metadata_write_access
         self.key_vault_key_uri = key_vault_key_uri
+        self.public_network_access = public_network_access
 
 
 class ErrorResponse(Model):
@@ -3015,6 +2996,43 @@ class PrivateLinkServiceConnectionStateProperty(Model):
         self.actions_required = None
 
 
+class ProvisionedThroughputSettingsResource(Model):
+    """Cosmos DB provisioned throughput settings object.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param max_throughput: Required. Represents maximum throughput container
+     can scale up to.
+    :type max_throughput: int
+    :param auto_upgrade_policy: Cosmos DB resource auto-upgrade policy
+    :type auto_upgrade_policy:
+     ~azure.mgmt.cosmosdb.models.AutoUpgradePolicyResource
+    :ivar target_max_throughput: Represents target maximum throughput
+     container can scale up to once offer is no longer in pending state.
+    :vartype target_max_throughput: int
+    """
+
+    _validation = {
+        'max_throughput': {'required': True},
+        'target_max_throughput': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'max_throughput': {'key': 'maxThroughput', 'type': 'int'},
+        'auto_upgrade_policy': {'key': 'autoUpgradePolicy', 'type': 'AutoUpgradePolicyResource'},
+        'target_max_throughput': {'key': 'targetMaxThroughput', 'type': 'int'},
+    }
+
+    def __init__(self, *, max_throughput: int, auto_upgrade_policy=None, **kwargs) -> None:
+        super(ProvisionedThroughputSettingsResource, self).__init__(**kwargs)
+        self.max_throughput = max_throughput
+        self.auto_upgrade_policy = auto_upgrade_policy
+        self.target_max_throughput = None
+
+
 class RegionForOnlineOffline(Model):
     """Cosmos DB region to online or offline.
 
@@ -4134,13 +4152,14 @@ class ThroughputSettingsGetPropertiesResource(Model):
     sending a request.
 
     :param throughput: Value of the Cosmos DB resource throughput. Either
-     throughput is required or autopilotSettings is required, but not both.
+     throughput is required or provisionedThroughputSettings is required, but
+     not both.
     :type throughput: int
-    :param autopilot_settings: Cosmos DB resource for Autopilot settings.
-     Either throughput is required or autopilotSettings is required, but not
-     both.
-    :type autopilot_settings:
-     ~azure.mgmt.cosmosdb.models.AutopilotSettingsResource
+    :param provisioned_throughput_settings: Cosmos DB resource for provisioned
+     throughput settings. Either throughput is required or
+     provisionedThroughputSettings is required, but not both.
+    :type provisioned_throughput_settings:
+     ~azure.mgmt.cosmosdb.models.ProvisionedThroughputSettingsResource
     :ivar minimum_throughput: The minimum throughput of the resource
     :vartype minimum_throughput: str
     :ivar offer_replace_pending: The throughput replace is pending
@@ -4165,7 +4184,7 @@ class ThroughputSettingsGetPropertiesResource(Model):
 
     _attribute_map = {
         'throughput': {'key': 'throughput', 'type': 'int'},
-        'autopilot_settings': {'key': 'autopilotSettings', 'type': 'AutopilotSettingsResource'},
+        'provisioned_throughput_settings': {'key': 'provisionedThroughputSettings', 'type': 'ProvisionedThroughputSettingsResource'},
         'minimum_throughput': {'key': 'minimumThroughput', 'type': 'str'},
         'offer_replace_pending': {'key': 'offerReplacePending', 'type': 'str'},
         '_rid': {'key': '_rid', 'type': 'str'},
@@ -4173,10 +4192,10 @@ class ThroughputSettingsGetPropertiesResource(Model):
         '_etag': {'key': '_etag', 'type': 'str'},
     }
 
-    def __init__(self, *, throughput: int=None, autopilot_settings=None, **kwargs) -> None:
+    def __init__(self, *, throughput: int=None, provisioned_throughput_settings=None, **kwargs) -> None:
         super(ThroughputSettingsGetPropertiesResource, self).__init__(**kwargs)
         self.throughput = throughput
-        self.autopilot_settings = autopilot_settings
+        self.provisioned_throughput_settings = provisioned_throughput_settings
         self.minimum_throughput = None
         self.offer_replace_pending = None
         self._rid = None
@@ -4228,19 +4247,20 @@ class ThroughputSettingsGetResults(ARMResourceProperties):
 
 class ThroughputSettingsResource(Model):
     """Cosmos DB resource throughput object. Either throughput is required or
-    autopilotSettings is required, but not both.
+    provisionedThroughputSettings is required, but not both.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
     :param throughput: Value of the Cosmos DB resource throughput. Either
-     throughput is required or autopilotSettings is required, but not both.
+     throughput is required or provisionedThroughputSettings is required, but
+     not both.
     :type throughput: int
-    :param autopilot_settings: Cosmos DB resource for Autopilot settings.
-     Either throughput is required or autopilotSettings is required, but not
-     both.
-    :type autopilot_settings:
-     ~azure.mgmt.cosmosdb.models.AutopilotSettingsResource
+    :param provisioned_throughput_settings: Cosmos DB resource for provisioned
+     throughput settings. Either throughput is required or
+     provisionedThroughputSettings is required, but not both.
+    :type provisioned_throughput_settings:
+     ~azure.mgmt.cosmosdb.models.ProvisionedThroughputSettingsResource
     :ivar minimum_throughput: The minimum throughput of the resource
     :vartype minimum_throughput: str
     :ivar offer_replace_pending: The throughput replace is pending
@@ -4254,15 +4274,15 @@ class ThroughputSettingsResource(Model):
 
     _attribute_map = {
         'throughput': {'key': 'throughput', 'type': 'int'},
-        'autopilot_settings': {'key': 'autopilotSettings', 'type': 'AutopilotSettingsResource'},
+        'provisioned_throughput_settings': {'key': 'provisionedThroughputSettings', 'type': 'ProvisionedThroughputSettingsResource'},
         'minimum_throughput': {'key': 'minimumThroughput', 'type': 'str'},
         'offer_replace_pending': {'key': 'offerReplacePending', 'type': 'str'},
     }
 
-    def __init__(self, *, throughput: int=None, autopilot_settings=None, **kwargs) -> None:
+    def __init__(self, *, throughput: int=None, provisioned_throughput_settings=None, **kwargs) -> None:
         super(ThroughputSettingsResource, self).__init__(**kwargs)
         self.throughput = throughput
-        self.autopilot_settings = autopilot_settings
+        self.provisioned_throughput_settings = provisioned_throughput_settings
         self.minimum_throughput = None
         self.offer_replace_pending = None
 
