@@ -194,3 +194,16 @@ class WorkspacePaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(WorkspacePaged, self).__init__(*args, **kwargs)
+class IntegrationRuntimeResourcePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`IntegrationRuntimeResource <azure.mgmt.synapse.models.IntegrationRuntimeResource>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[IntegrationRuntimeResource]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(IntegrationRuntimeResourcePaged, self).__init__(*args, **kwargs)
