@@ -4,7 +4,7 @@
 
 **BugFixes**
 
-* Fig bug where http_proxy and transport_type in ServiceBusClient are not propagated into connection creation properly.
+* Fig bug where http_proxy and transport_type in ServiceBusClient are not propagated into Sender/Receiver creation properly.
 
 ## 7.0.0b1 (2020-04-06)
 
