@@ -13,7 +13,7 @@ DESCRIPTION:
     This sample demonstrates how to analyze receipts from both a file and a url.
 
 USAGE:
-    python sample_receipts.py
+    python sample_recognize_receipts.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_FORM_RECOGNIZER_ENDPOINT - the endpoint to your Cognitive Services resource.
@@ -68,7 +68,7 @@ class RecognizeReceiptsSample(object):
         from azure.ai.formrecognizer import FormRecognizerClient
         form_recognizer_client = FormRecognizerClient(endpoint=self.endpoint, credential=AzureKeyCredential(self.key))
         poller = form_recognizer_client.begin_recognize_receipts_from_url(
-            url="https://raw.githubusercontent.com/Azure-Samples/cognitive-services-REST-api-samples/master/curl/form-recognizer/contoso-allinone.jpg"
+            url="https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/receipt/contoso-receipt.png"
         )
         receipts = poller.result()
 

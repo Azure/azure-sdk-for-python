@@ -13,7 +13,7 @@ DESCRIPTION:
     This sample demonstrates how to analyze receipts from both a file and a url.
 
 USAGE:
-    python sample_receipts_async.py
+    python sample_recognize_receipts_async.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_FORM_RECOGNIZER_ENDPOINT - the endpoint to your Cognitive Services resource.
@@ -35,7 +35,7 @@ class RecognizeReceiptsSampleAsync(object):
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer.aio import FormRecognizerClient
         form_recognizer_client = FormRecognizerClient(endpoint=self.endpoint, credential=AzureKeyCredential(self.key))
-        with open("sample_forms/receipt/contoso-allinone.jpg", "rb") as f:
+        with open("../sample_forms/receipt/contoso-allinone.jpg", "rb") as f:
             receipts = await form_recognizer_client.begin_recognize_receipts(stream=f.read())
 
         for idx, receipt in enumerate(receipts):
@@ -59,6 +59,7 @@ class RecognizeReceiptsSampleAsync(object):
                 ", ".join([ "[{}, {}]".format(p.x, p.y) for p in receipt.transaction_date.value_data.bounding_box]),
             ))
             print("--------------------------------------")
+        await form_recognizer_client.close()
         print("===============================================")
 
     async def recognize_receipts_from_url(self):
@@ -68,7 +69,7 @@ class RecognizeReceiptsSampleAsync(object):
         from azure.ai.formrecognizer.aio import FormRecognizerClient
         form_recognizer_client = FormRecognizerClient(endpoint=self.endpoint, credential=AzureKeyCredential(self.key))
         receipts = await form_recognizer_client.begin_recognize_receipts_from_url(
-            url="https://raw.githubusercontent.com/Azure-Samples/cognitive-services-REST-api-samples/master/curl/form-recognizer/contoso-allinone.jpg"
+            url="https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/receipt/contoso-receipt.png"
         )
 
         for idx, receipt in enumerate(receipts):
@@ -92,6 +93,7 @@ class RecognizeReceiptsSampleAsync(object):
                 ", ".join([ "[{}, {}]".format(p.x, p.y) for p in receipt.transaction_date.value_data.bounding_box]),
             ))
             print("--------------------------------------")
+        await form_recognizer_client.close()
         print("===============================================")
 
 
