@@ -1,0 +1,38 @@
+interactions:
+- request:
+    body: '{"source": "https://raw.githubusercontent.com/Azure-Samples/cognitive-services-REST-api-samples/master/curl/form-recognizer/contoso-allinone.jpg"}'
+    headers:
+      Content-Length:
+      - '146'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/1.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+        Python/3.7.3 (Windows-10-10.0.18362-SP0)
+    method: POST
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/prebuilt/receipt/analyze?includeTextDetails=false
+  response:
+    body:
+      string: '{"error":{"code":"401","message": "Access denied due to invalid subscription
+        key or wrong API endpoint. Make sure to provide a valid key for an active
+        subscription and use a correct regional API endpoint for your resource."}}'
+    headers:
+      apim-request-id: aa88d297-5a5a-4427-b23c-c5b98346c01f
+      content-length: '225'
+      content-type: application/json
+      date: Sat, 04 Apr 2020 18:01:38 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      www-authenticate: AzureApiManagementKey realm="https://centraluseuap.api.cognitive.microsoft.com/formrecognizer",name="Ocp-Apim-Subscription-Key",type="header"
+      x-content-type-options: nosniff
+    status:
+      code: 401
+      message: Access Denied
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - centraluseuap.api.cognitive.microsoft.com
+        - //formrecognizer/v2.0-preview/prebuilt/receipt/analyze
+        - includeTextDetails=false
+        - ''
+version: 1
