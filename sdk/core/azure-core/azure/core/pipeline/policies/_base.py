@@ -61,7 +61,7 @@ class HTTPPolicy(ABC, Generic[HTTPRequestType, HTTPResponseType]):
     """
 
     def __init__(self):
-        self.next = None
+        self.next = None # type: Any
 
     @abc.abstractmethod
     def send(self, request):

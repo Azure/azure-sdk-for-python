@@ -30,14 +30,14 @@ try:
 except ImportError:
     from urllib.parse import urlparse
 
-from typing import Any, Callable, Union, List, Optional, TYPE_CHECKING
-from azure.core.pipeline.transport._base import HttpResponse  # type: ignore
+from typing import Any, Callable, Union, List, Optional, cast, TYPE_CHECKING
+from azure.core.pipeline.transport._base import HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.common import with_current_context
 
 if TYPE_CHECKING:
     import requests
-    from msrest.serialization import Model # type: ignore # pylint: disable=unused-import
+    from msrest.serialization import Model # pylint: disable=unused-import
     DeserializationCallbackType = Union[Model, Callable[[requests.Response], Model]]
 
 
@@ -126,7 +126,7 @@ class LROPoller(object):
 
         # This implicit test avoids bringing in an explicit dependency on Model directly
         try:
-            deserialization_callback = deserialization_callback.deserialize # type: ignore
+            deserialization_callback = getattr(deserialization_callback, 'deserialize')
         except AttributeError:
             pass
 
@@ -184,7 +184,7 @@ class LROPoller(object):
          if one is available.
         :raises ~azure.core.exceptions.HttpResponseError: Server problem with the query.
         """
-        self.wait(timeout)  # type: ignore
+        self.wait(timeout)
         return self._polling_method.resource()
 
     @distributed_trace
@@ -203,7 +203,7 @@ class LROPoller(object):
         self._thread.join(timeout=timeout)
         try:
             # Let's handle possible None in forgiveness here
-            raise self._exception  # type: ignore
+            raise cast(Exception, self._exception)
         except TypeError: # Was None
             pass
 

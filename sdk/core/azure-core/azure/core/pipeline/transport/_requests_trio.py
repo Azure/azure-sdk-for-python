@@ -27,8 +27,8 @@ from collections.abc import AsyncIterator
 import functools
 import logging
 from typing import Any, Callable, Union, Optional, AsyncIterator as AsyncIteratorType
-import trio  # type: ignore
-import urllib3  # type: ignore
+import trio
+import urllib3
 
 import requests
 
@@ -128,7 +128,7 @@ class TrioRequestsTransportResponse(AsyncHttpResponse, RequestsTransportResponse
     def stream_download(self, pipeline) -> AsyncIteratorType[bytes]:  # type: ignore
         """Generator for streaming response data.
         """
-        return TrioStreamDownloadGenerator(pipeline, self) # type: ignore
+        return TrioStreamDownloadGenerator(pipeline, self)
 
 
 class TrioRequestsTransport(RequestsAsyncTransportBase):  # type: ignore
@@ -174,7 +174,7 @@ class TrioRequestsTransport(RequestsAsyncTransportBase):  # type: ignore
             try:
                 response = await trio.to_thread.run_sync(
                     functools.partial(
-                        self.session.request, # type: ignore
+                        self.session.request,
                         request.method,
                         request.url,
                         headers=request.headers,
@@ -189,7 +189,7 @@ class TrioRequestsTransport(RequestsAsyncTransportBase):  # type: ignore
             except AttributeError:  # trio < 0.12.1
                 response = await trio.run_sync_in_worker_thread(  # pylint: disable=no-member
                     functools.partial(
-                        self.session.request, # type: ignore
+                        self.session.request,
                         request.method,
                         request.url,
                         headers=request.headers,

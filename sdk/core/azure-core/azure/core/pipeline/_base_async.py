@@ -173,7 +173,7 @@ class AsyncPipeline(
 
         Does nothing if "set_multipart_mixed" was never called.
         """
-        multipart_mixed_info = request.multipart_mixed_info  # type: ignore
+        multipart_mixed_info = getattr(request, 'multipart_mixed_info')
         if not multipart_mixed_info:
             return
 
@@ -210,4 +210,4 @@ class AsyncPipeline(
             if self._impl_policies
             else _AsyncTransportRunner(self._transport)
         )
-        return await first_node.send(pipeline_request)  # type: ignore
+        return await first_node.send(pipeline_request)

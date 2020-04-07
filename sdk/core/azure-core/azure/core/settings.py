@@ -74,7 +74,7 @@ def convert_bool(value):
     """
     if isinstance(value, bool):
         return value
-    elif isinstance(value, str):
+    if isinstance(value, str):
         val = value.lower()
         if val in ["yes", "1", "on", "true", "True"]:
             return True
