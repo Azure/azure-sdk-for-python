@@ -9,20 +9,26 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from enum import Enum
 
 
-class WorkspaceUpdate(Model):
-    """An update to a workspace.
+class CustomParameterType(str, Enum):
 
-    :param tags: Resource tags.
-    :type tags: dict[str, str]
-    """
+    bool_enum = "Bool"
+    object_enum = "Object"
+    string = "String"
 
-    _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-    }
 
-    def __init__(self, *, tags=None, **kwargs) -> None:
-        super(WorkspaceUpdate, self).__init__(**kwargs)
-        self.tags = tags
+class ProvisioningState(str, Enum):
+
+    accepted = "Accepted"
+    running = "Running"
+    ready = "Ready"
+    creating = "Creating"
+    created = "Created"
+    deleting = "Deleting"
+    deleted = "Deleted"
+    canceled = "Canceled"
+    failed = "Failed"
+    succeeded = "Succeeded"
+    updating = "Updating"
