@@ -21,10 +21,9 @@ from ._generated._form_recognizer_client import FormRecognizerClient as FormReco
 from ._generated.models import TrainRequest, TrainSourceFilter
 from ._helpers import POLLING_INTERVAL, COGNITIVE_KEY_HEADER
 from ._models import (
-    ModelInfo,
-    ModelsSummary,
-    CustomModel,
-    CustomLabeledModel,
+    CustomFormModelInfo,
+    AccountProperties,
+    CustomFormModel
 )
 from ._polling import TrainingPolling
 from ._user_agent import USER_AGENT
@@ -53,31 +52,34 @@ class FormTrainingClient(object):
         )
 
     @distributed_trace
-    def begin_training(self, source, source_prefix_filter="", include_sub_folders=False, **kwargs):
-        # type: (str, Optional[str], Optional[bool], Any) -> LROPoller
+    def begin_training(self, training_files, use_labels=False, files_prefix="", include_sub_folders=False, **kwargs):
+        # type: (str, Optional[bool], Optional[str], Optional[bool], Any) -> LROPoller
         """Create and train a custom model. The request must include a source parameter that is an
         externally accessible Azure storage blob container Uri (preferably a Shared Access Signature Uri).
         Models are trained using documents that are of the following content type - 'application/pdf',
         'image/jpeg', 'image/png', 'image/tiff'. Other type of content in the container is ignored.
 
-        :param str source: An Azure Storage blob container URI.
-        :param str source_prefix_filter: A case-sensitive prefix string to filter documents in the source path for
+        :param str training_files: An Azure Storage blob container URI.
+        :param bool use_labels: Whether to train with labels or not. Corresponding labeled files must
+            exist in the blob container.
+        :param str files_prefix: A case-sensitive prefix string to filter documents in the source path for
             training. For example, when using a Azure storage blob Uri, use the prefix to restrict sub
             folders for training.
         :param bool include_sub_folders: A flag to indicate if sub folders within the set of prefix folders
             will also need to be included when searching for content to be preprocessed.
         :return: LROPoller
-        :rtype: ~azure.core.polling.LROPoller[~azure.ai.formrecognizer.CustomModel]
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.formrecognizer.CustomFormModel]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
 
         cls = kwargs.pop("cls", None)
         response = self._client.train_custom_model_async(
             train_request=TrainRequest(
-                source=source,
+                source=training_files,
+                use_label_file=use_labels,
                 source_filter=TrainSourceFilter(
-                    prefix=source_prefix_filter,
-                    include_sub_folders=include_sub_folders
+                    prefix=files_prefix,
+                    include_sub_folders=include_sub_folders,
                 )
             ),
             cls=lambda pipeline_response, _, response_headers: pipeline_response,
@@ -86,7 +88,7 @@ class FormTrainingClient(object):
 
         def callback(raw_response):
             model = self._client._deserialize(Model, raw_response)
-            return CustomModel._from_generated(model)
+            return CustomFormModel._from_generated(model)
 
         deserialization_callback = cls if cls else callback
         return LROPoller(
@@ -97,52 +99,7 @@ class FormTrainingClient(object):
         )
 
     @distributed_trace
-    def begin_labeled_training(self, source, source_prefix_filter="", include_sub_folders=False, **kwargs):
-        # type: (str, Optional[str], Optional[bool], Any) -> LROPoller
-        """Create and train a custom model with labels. The request must include a source parameter that is an
-        externally accessible Azure storage blob container Uri (preferably a Shared Access Signature Uri).
-        Models are trained using documents that are of the following content type - 'application/pdf',
-        'image/jpeg', 'image/png', 'image/tiff'. Other type of content in the container is ignored.
-
-        :param str source: An Azure Storage blob container URI.
-        :param str source_prefix_filter: A case-sensitive prefix string to filter documents in the source path for
-            training. For example, when using a Azure storage blob Uri, use the prefix to restrict sub
-            folders for training.
-        :param bool include_sub_folders: A flag to indicate if sub folders within the set of prefix folders
-            will also need to be included when searching for content to be preprocessed.
-        :return: LROPoller
-        :rtype: ~azure.core.polling.LROPoller[~azure.ai.formrecognizer.CustomLabeledModel]
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-
-        cls = kwargs.pop("cls", None)
-        response = self._client.train_custom_model_async(
-            train_request=TrainRequest(
-                source=source,
-                source_filter=TrainSourceFilter(
-                    prefix=source_prefix_filter,
-                    include_sub_folders=include_sub_folders
-                ),
-                use_label_file=True
-            ),
-            cls=lambda pipeline_response, _, response_headers: pipeline_response,
-            **kwargs
-        )
-
-        def callback(raw_response):
-            model = self._client._deserialize(Model, raw_response)
-            return CustomLabeledModel._from_generated(model)
-
-        deserialization_callback = cls if cls else callback
-        return LROPoller(
-            self._client._client,
-            response,
-            deserialization_callback,
-            LROBasePolling(timeout=POLLING_INTERVAL, lro_algorithms=[TrainingPolling()], **kwargs)
-        )
-
-    @distributed_trace
-    def delete_custom_model(self, model_id, **kwargs):
+    def delete_model(self, model_id, **kwargs):
         # type: (str, Any) -> None
         """Mark model for deletion. Model artifacts will be permanently removed within a predetermined period.
 
@@ -159,61 +116,43 @@ class FormTrainingClient(object):
         )
 
     @distributed_trace
-    def list_custom_models(self, **kwargs):
-        # type: (Any) -> Iterable[ModelInfo]
-        """List Custom Models.
+    def list_model_infos(self, **kwargs):
+        # type: (Any) -> Iterable[CustomFormModelInfo]
+        """List information for each model, including model id,
+        status, and when it was created and last updated.
 
-        :return: ItemPaged[~azure.ai.formrecognizer.ModelInfo]
+        :return: ItemPaged[~azure.ai.formrecognizer.CustomFormModelInfo]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         return self._client.list_custom_models(
-            cls=kwargs.pop("cls", lambda objs: [ModelInfo._from_generated(x) for x in objs]),
+            cls=kwargs.pop("cls", lambda objs: [CustomFormModelInfo._from_generated(x) for x in objs]),
             **kwargs
         )
 
     @distributed_trace
-    def get_models_summary(self, **kwargs):
-        # type: (Any) -> ModelsSummary
-        """Get information about all custom models.
+    def get_account_properties(self, **kwargs):
+        # type: (Any) -> AccountProperties
+        """Get information about the models on the form recognizer account.
 
-        :return: Summary of models on account - count, limit, last updated.
-        :rtype: ~azure.ai.formrecognizer.ModelsSummary
+        :return: Summary of models on account - count, limit.
+        :rtype: ~azure.ai.formrecognizer.AccountProperties
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         response = self._client.get_custom_models(**kwargs)
-        return ModelsSummary._from_generated(response.summary)
+        return AccountProperties._from_generated(response.summary)
 
     @distributed_trace
     def get_custom_model(self, model_id, **kwargs):
-        # type: (str, Any) -> CustomModel
+        # type: (str, Any) -> CustomFormModel
         """Get detailed information about a custom model.
 
         :param str model_id: Model identifier.
-        :return: CustomModel
-        :rtype: ~azure.ai.formrecognizer.CustomModel
+        :return: CustomFormModel
+        :rtype: ~azure.ai.formrecognizer.CustomFormModel
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         response = self._client.get_custom_model(model_id=model_id, include_keys=True, **kwargs)
-        if response.keys:
-            return CustomModel._from_generated(response)
-        raise ValueError("Model id '{}' is a model that was trained with labels. Call get_custom_labeled_model() "
-                         "with the model id.".format(model_id))
-
-    @distributed_trace
-    def get_custom_labeled_model(self, model_id, **kwargs):
-        # type: (str, Any) -> CustomLabeledModel
-        """Get detailed information about a custom labeled model.
-
-        :param str model_id: Model identifier.
-        :return: CustomLabeledModel
-        :rtype: ~azure.ai.formrecognizer.CustomLabeledModel
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        response = self._client.get_custom_model(model_id=model_id, include_keys=True, **kwargs)
-        if response.keys is None:
-            return CustomLabeledModel._from_generated(response)
-        raise ValueError("Model id '{}' was not trained with labels. Call get_custom_model() with the model id."
-                         .format(model_id))
+        return CustomFormModel._from_generated(response)
 
     def close(self):
         # type: () -> None

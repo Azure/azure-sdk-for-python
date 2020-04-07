@@ -41,7 +41,7 @@ class LengthUnit(str, Enum):
     inch = "inch"
 
 
-class TrainStatus(str, Enum):
+class TrainingStatus(str, Enum):
     """Status of the training operation.
     """
 
@@ -50,7 +50,7 @@ class TrainStatus(str, Enum):
     failed = "failed"
 
 
-class ModelStatus(str, Enum):
+class CustomFormModelStatus(str, Enum):
     """Status of the model.
     """
 
@@ -70,7 +70,7 @@ class FormContentType(str, Enum):
 
 
 class Point(namedtuple("Point", "x y")):
-    """The x, y coordinate of a point of on a bounding box.
+    """The x, y coordinate of a point on a bounding box.
 
     :ivar float x: x-coordinate
     :ivar float y: y-coordinate
@@ -80,28 +80,6 @@ class Point(namedtuple("Point", "x y")):
 
     def __new__(cls, x, y):
         return super(Point, cls).__new__(cls, x, y)
-
-
-class BoundingBox(namedtuple("BoundingBox", ["top_left", "top_right", "bottom_right", "bottom_left"])):
-    """The quadrangle bounding box that outlines the text.
-    Units are in pixels for images and inches for PDF.
-
-    :ivar ~azure.ai.formrecognizer.Point top_left:
-        The x, y coordinates of the upper left point of the bounding box.
-    :ivar ~azure.ai.formrecognizer.Point top_right:
-        The x, y coordinates of the upper right point of the bounding box.
-    :ivar ~azure.ai.formrecognizer.Point bottom_right:
-        The x, y coordinates of the lower right point of the bounding box.
-    :ivar ~azure.ai.formrecognizer.Point bottom_left:
-        The x, y coordinates of the lower left point of the bounding box.
-    """
-
-    __slots__ = ()
-
-    def __new__(cls, top_left, top_right, bottom_right, bottom_left):
-        return super(BoundingBox, cls).__new__(
-            cls, top_left, top_right, bottom_right, bottom_left
-        )
 
 
 class PageRange(namedtuple("PageRange", "first_page last_page")):
@@ -199,9 +177,9 @@ class USReceipt(object):  # pylint: disable=too-many-instance-attributes
 class FormField(object):
     """Represents the recognized field and its value.
 
-    :ivar ~azure.ai.formrecognizer.FieldText field_label:
+    :ivar ~azure.ai.formrecognizer.FieldText label_data:
         Contains the text, bounding box, and text content of the field label.
-    :ivar ~azure.ai.formrecognizer.FieldText field_value:
+    :ivar ~azure.ai.formrecognizer.FieldText value_data:
         Contains the text, bounding box, and text content of the field value.
     :ivar str name: The name of the field or label.
     :ivar value:
@@ -216,8 +194,8 @@ class FormField(object):
     """
 
     def __init__(self, **kwargs):
-        self.field_label = kwargs.get("field_label", None)
-        self.field_value = kwargs.get("field_value", None)
+        self.label_data = kwargs.get("label_data", None)
+        self.value_data = kwargs.get("value_data", None)
         self.name = kwargs.get("name", None)
         self.value = kwargs.get("value", None)
         self.confidence = kwargs.get("confidence", None)
@@ -240,8 +218,8 @@ class FormField(object):
                 for key, value in value.value_object.items()
             }
         return cls(
-            field_label=FieldText._from_generated(field, read_result),
-            field_value=FieldText._from_generated(value, read_result),
+            label_data=FieldText._from_generated(field, read_result),
+            value_data=FieldText._from_generated(value, read_result),
             value=get_field_scalar_value(value),
             name=field,
             confidence=value.confidence,
@@ -249,12 +227,12 @@ class FormField(object):
         )
 
     @classmethod
-    def _from_generated_unlabeled(cls, field, page, read_result):
+    def _from_generated_unlabeled(cls, field, idx, page, read_result):
         return cls(
-            field_label=FieldText._from_generated_unlabeled(field.key, page, read_result),
-            field_value=FieldText._from_generated_unlabeled(field.value, page, read_result),
+            label_data=FieldText._from_generated_unlabeled(field.key, page, read_result),
+            value_data=FieldText._from_generated_unlabeled(field.value, page, read_result),
             value=field.value.text,
-            name=field.key.text,
+            name="field-" + str(idx),
             confidence=field.confidence,
             page_number=page,
         )
@@ -266,8 +244,9 @@ class FieldText(object):
     :ivar int page_number:
         The 1-based page number in the input document.
     :ivar str text: The string representation of the field or value.
-    :ivar ~azure.ai.formrecognizer.BoundingBox bounding_box:
-        Bounding box of the field or value.
+    :ivar list[~azure.ai.formrecognizer.Point] bounding_box:
+        The quadrangle bounding box that outlines the text.
+        Units are in pixels for images and inches for PDF.
     :ivar text_content:
         When `include_text_content` is set to true, a list of references to the text
         elements constituting this field or value.
@@ -283,18 +262,16 @@ class FieldText(object):
     @classmethod
     def _from_generated(cls, field, read_result):
         if isinstance(field, six.string_types):
-            return cls(
-                text=field
-            )
+            return None
         return cls(
             page_number=field.page,
             text=field.text,
-            bounding_box=BoundingBox(
-                top_left=Point(x=field.bounding_box[0], y=field.bounding_box[1]),
-                top_right=Point(x=field.bounding_box[2], y=field.bounding_box[3]),
-                bottom_right=Point(x=field.bounding_box[4], y=field.bounding_box[5]),
-                bottom_left=Point(x=field.bounding_box[6], y=field.bounding_box[7])
-            ) if field.bounding_box else None,
+            bounding_box=[
+                Point(x=field.bounding_box[0], y=field.bounding_box[1]),
+                Point(x=field.bounding_box[2], y=field.bounding_box[3]),
+                Point(x=field.bounding_box[4], y=field.bounding_box[5]),
+                Point(x=field.bounding_box[6], y=field.bounding_box[7])
+            ] if field.bounding_box else None,
             text_content=get_elements(field, read_result) if field.elements else None
         )
 
@@ -303,12 +280,12 @@ class FieldText(object):
         return cls(
             page_number=page,
             text=field.text,
-            bounding_box=BoundingBox(
-                top_left=Point(x=field.bounding_box[0], y=field.bounding_box[1]),
-                top_right=Point(x=field.bounding_box[2], y=field.bounding_box[3]),
-                bottom_right=Point(x=field.bounding_box[4], y=field.bounding_box[5]),
-                bottom_left=Point(x=field.bounding_box[6], y=field.bounding_box[7])
-            ) if field.bounding_box else None,
+            bounding_box=[
+                Point(x=field.bounding_box[0], y=field.bounding_box[1]),
+                Point(x=field.bounding_box[2], y=field.bounding_box[3]),
+                Point(x=field.bounding_box[4], y=field.bounding_box[5]),
+                Point(x=field.bounding_box[6], y=field.bounding_box[7])
+            ] if field.bounding_box else None,
             text_content=get_elements(field, read_result) if field.elements else None
         )
 
@@ -325,7 +302,7 @@ class FormPage(object):
         The width of the image/PDF in pixels/inches, respectively.
     :ivar float height:
         The height of the image/PDF in pixels/inches, respectively.
-    :ivar ~azure.ai.formrecognizer.LengthUnit unit:
+    :ivar str or ~azure.ai.formrecognizer.LengthUnit unit:
         The unit used by the width, height and bounding box properties. For
         images, the unit is "pixel". For PDF, the unit is "inch".
     :ivar list[~azure.ai.formrecognizer.FormTable] tables:
@@ -363,8 +340,9 @@ class FormLine(object):
     """An object representing an extracted text line.
 
     :ivar str text: The text content of the line.
-    :ivar ~azure.ai.formrecognizer.BoundingBox bounding_box:
-        Bounding box of an extracted line.
+    :ivar list[~azure.ai.formrecognizer.Point] bounding_box:
+        The quadrangle bounding box that outlines the text.
+        Units are in pixels for images and inches for PDF.
     :ivar list[~azure.ai.formrecognizer.FormWord] words:
         List of words in the text line.
     :ivar int page_number:
@@ -381,12 +359,12 @@ class FormLine(object):
     def _from_generated(cls, line, page):
         return cls(
             text=line.text,
-            bounding_box=BoundingBox(
-                top_left=Point(x=line.bounding_box[0], y=line.bounding_box[1]),
-                top_right=Point(x=line.bounding_box[2], y=line.bounding_box[3]),
-                bottom_right=Point(x=line.bounding_box[4], y=line.bounding_box[5]),
-                bottom_left=Point(x=line.bounding_box[6], y=line.bounding_box[7])
-            ) if line.bounding_box else None,
+            bounding_box=[
+                Point(x=line.bounding_box[0], y=line.bounding_box[1]),
+                Point(x=line.bounding_box[2], y=line.bounding_box[3]),
+                Point(x=line.bounding_box[4], y=line.bounding_box[5]),
+                Point(x=line.bounding_box[6], y=line.bounding_box[7])
+            ] if line.bounding_box else None,
             page_number=page,
             words=[FormWord._from_generated(word, page) for word in line.words] if line.words else None
         )
@@ -396,8 +374,9 @@ class FormWord(object):
     """An object representing a word.
 
     :ivar str text: The text content of the word.
-    :ivar ~azure.ai.formrecognizer.BoundingBox bounding_box:
-        Bounding box of an extracted word.
+    :ivar list[~azure.ai.formrecognizer.Point] bounding_box:
+        The quadrangle bounding box that outlines the text.
+        Units are in pixels for images and inches for PDF.
     :ivar float confidence: Confidence value.
     :ivar int page_number:
         The 1-based page number in the input document.
@@ -413,12 +392,12 @@ class FormWord(object):
     def _from_generated(cls, word, page):
         return cls(
             text=word.text,
-            bounding_box=BoundingBox(
-                top_left=Point(x=word.bounding_box[0], y=word.bounding_box[1]),
-                top_right=Point(x=word.bounding_box[2], y=word.bounding_box[3]),
-                bottom_right=Point(x=word.bounding_box[4], y=word.bounding_box[5]),
-                bottom_left=Point(x=word.bounding_box[6], y=word.bounding_box[7])
-            ) if word.bounding_box else None,
+            bounding_box=[
+                Point(x=word.bounding_box[0], y=word.bounding_box[1]),
+                Point(x=word.bounding_box[2], y=word.bounding_box[3]),
+                Point(x=word.bounding_box[4], y=word.bounding_box[5]),
+                Point(x=word.bounding_box[6], y=word.bounding_box[7])
+            ] if word.bounding_box else None,
             confidence=word.confidence,
             page_number=page
         )
@@ -503,8 +482,9 @@ class FormTableCell(object):
     :ivar int column_index: Column index of the cell.
     :ivar int row_span: Number of rows spanned by this cell.
     :ivar int column_span: Number of columns spanned by this cell.
-    :ivar ~azure.ai.formrecognizer.BoundingBox bounding_box:
-        Bounding box of the cell.
+    :ivar list[~azure.ai.formrecognizer.Point] bounding_box:
+        The quadrangle bounding box that outlines the cell text.
+        Units are in pixels for images and inches for PDF.
     :ivar float confidence: Confidence value.
     :ivar bool is_header: Whether the current cell is a header cell.
     :ivar bool is_footer: Whether the current cell is a footer cell.
@@ -534,12 +514,12 @@ class FormTableCell(object):
             column_index=cell.column_index,
             row_span=cell.row_span or 1,
             column_span=cell.column_span or 1,
-            bounding_box=BoundingBox(
-                top_left=Point(x=cell.bounding_box[0], y=cell.bounding_box[1]),
-                top_right=Point(x=cell.bounding_box[2], y=cell.bounding_box[3]),
-                bottom_right=Point(x=cell.bounding_box[4], y=cell.bounding_box[5]),
-                bottom_left=Point(x=cell.bounding_box[6], y=cell.bounding_box[7])
-            ) if cell.bounding_box else None,
+            bounding_box=[
+                Point(x=cell.bounding_box[0], y=cell.bounding_box[1]),
+                Point(x=cell.bounding_box[2], y=cell.bounding_box[3]),
+                Point(x=cell.bounding_box[4], y=cell.bounding_box[5]),
+                Point(x=cell.bounding_box[6], y=cell.bounding_box[7])
+            ] if cell.bounding_box else None,
             confidence=cell.confidence,
             is_header=cell.is_header or False,
             is_footer=cell.is_footer or False,
@@ -547,20 +527,22 @@ class FormTableCell(object):
         )
 
 
-class CustomModel(object):
-    """Represents a custom model which was trained without labels.
+class CustomFormModel(object):
+    """Represents a custom model returned from training.
 
     :ivar str model_id: Model identifier.
-    :ivar ~azure.ai.formrecognizer.ModelStatus status:
+    :ivar str or ~azure.ai.formrecognizer.CustomFormModelStatus status:
         Status of the model. Possible values include: 'creating', 'ready', 'invalid'.
     :ivar ~datetime.datetime created_on:
         Date and time (UTC) when the model was created.
     :ivar ~datetime.datetime last_updated_on:
         Date and time (UTC) when the status was last updated.
-    :ivar list[~azure.ai.formrecognizer.FormFields] extracted_fields:
-        Fields extracted by the custom model.
-    :ivar ~azure.ai.formrecognizer.TrainingInfo training_info:
-        Training information about the custom model.
+    :ivar list[~azure.ai.formrecognizer.CustomFormSubModel] models:
+        A list of submodels which contains the fields trained on.
+    :ivar list[~azure.ai.formrecognizer.FormRecognizerError] errors:
+        List of any training errors.
+    :ivar ~azure.ai.formrecognizer.TrainingDocumentInfo training_documents:
+        Training document information about the custom model.
     """
 
     def __init__(self, **kwargs):
@@ -568,8 +550,9 @@ class CustomModel(object):
         self.status = kwargs.get("status", None)
         self.created_on = kwargs.get("created_on", None)
         self.last_updated_on = kwargs.get("last_updated_on", None)
-        self.extracted_fields = kwargs.get("extracted_fields", None)
-        self.training_info = kwargs.get("training_info", None)
+        self.models = kwargs.get("models", None)
+        self.errors = kwargs.get("errors", None)
+        self.training_documents = kwargs.get("training_documents", None)
 
     @classmethod
     def _from_generated(cls, model):
@@ -578,56 +561,73 @@ class CustomModel(object):
             status=model.model_info.status,
             created_on=model.model_info.created_date_time,
             last_updated_on=model.model_info.last_updated_date_time,
-            extracted_fields=FormFields._from_generated(model.keys),
-            training_info=TrainingInfo._from_generated(model.train_result)
+            models=CustomFormSubModel._from_generated_unlabeled(model)
+            if model.keys else CustomFormSubModel._from_generated_labeled(model),
+            errors=FormRecognizerError._from_generated(model.train_result.errors) if model.train_result else None,
+            training_documents=TrainingDocumentInfo._from_generated(model.train_result)
+            if model.train_result else None
         )
 
 
-class TrainingInfo(object):
-    """Training information about the custom model.
+class CustomFormSubModel(object):
+    """Represents the submodel with model accuracy,
+    any errors while training the model, fields that were
+    trained on, and the form type.
 
-    :ivar list[~azure.ai.formrecognizer.TrainingDocumentInfo] documents:
-        A list of reports for the training documents.
-    :ivar list[~azure.ai.formrecognizer.FormRecognizerError] training_errors:
-        List of any errors that occurred while training the model.
+    :ivar float accuracy: The average accuracy of the model.
+    :ivar fields: The fields the model was trained on.
+    :vartype fields: dict[str, ~azure.ai.formrecognizer.CustomFormModelField]
+    :ivar str form_type: Identifier of the type of form.
     """
-
     def __init__(self, **kwargs):
-        self.documents = kwargs.get("documents", None)
-        self.training_errors = kwargs.get("training_errors", None)
-
-    @classmethod
-    def _from_generated(cls, train):
-        return cls(
-            documents=[TrainingDocumentInfo._from_generated(doc)
-                       for doc in train.training_documents] if train.training_documents else None,
-            training_errors=FormRecognizerError._from_generated(train.errors)
-        ) if train else None
-
-
-class FormFields(object):
-    """Fields extracted by the custom model.
-
-    :ivar str form_type_id:
-        Identifier of the type of form.
-    :ivar list[str] fields:
-        List of extracted fields on the page.
-    """
-
-    def __init__(self, **kwargs):
-        self.form_type_id = kwargs.get("form_type_id", None)
+        self.accuracy = kwargs.get("accuracy", None)
         self.fields = kwargs.get("fields", None)
+        self.form_type = kwargs.get("form_type", None)
 
     @classmethod
-    def _from_generated(cls, keys):
-        try:
-            clusters = keys.clusters
-            return [
-                cls(form_type_id=cluster_id, fields=fields)
-                for cluster_id, fields in clusters.items()
-            ]
-        except AttributeError:
-            return None
+    def _from_generated_unlabeled(cls, model):
+        if model.keys:
+            return [cls(
+                accuracy=None,
+                fields={cluster_id: CustomFormModelField._from_generated_unlabeled(fields)},
+                form_type="form-" + cluster_id
+            ) for cluster_id, fields in model.keys.clusters.items()]
+
+    @classmethod
+    def _from_generated_labeled(cls, model):
+        if model.train_result:
+            return [cls(
+                accuracy=model.train_result.average_model_accuracy,
+                fields={field.field_name: CustomFormModelField._from_generated_labeled(field)
+                        for field in model.train_result.fields},
+                form_type="form-" + model.model_info.model_id
+            )]
+
+
+class CustomFormModelField(object):
+    """A field that the model was trained on.
+
+    :ivar str name: Name of the field.
+    :ivar float accuracy: Estimated extraction accuracy for this field.
+    """
+    def __init__(self, **kwargs):
+        self.name = kwargs.get("name", None)
+        self.accuracy = kwargs.get("accuracy", None)
+
+    @classmethod
+    def _from_generated_labeled(cls, field):
+        return cls(
+            name=field.field_name,
+            accuracy=field.accuracy
+        )
+
+    @classmethod
+    def _from_generated_unlabeled(cls, fields):
+        return [cls(
+            name=field_name,
+            accuracy=None
+        ) for field_name in fields
+        ]
 
 
 class TrainingDocumentInfo(object):
@@ -635,7 +635,7 @@ class TrainingDocumentInfo(object):
 
     :ivar str document_name:
         The name of the document.
-    :ivar ~azure.ai.formrecognizer.TrainStatus status:
+    :ivar str or ~azure.ai.formrecognizer.TrainingStatus status:
         Status of the training operation. Possible values include:
         'succeeded', 'partiallySucceeded', 'failed'.
     :ivar int page_count:
@@ -651,13 +651,13 @@ class TrainingDocumentInfo(object):
         self.errors = kwargs.get("errors", None)
 
     @classmethod
-    def _from_generated(cls, doc):
-        return cls(
+    def _from_generated(cls, train_result):
+        return [cls(
             document_name=doc.document_name,
             status=doc.status,
             page_count=doc.pages,
             errors=FormRecognizerError._from_generated(doc.errors)
-        )
+        ) for doc in train_result.training_documents]
 
 
 class FormRecognizerError(object):
@@ -676,69 +676,11 @@ class FormRecognizerError(object):
         return [cls(code=error.code, message=error.message) for error in err] if err else None
 
 
-class CustomLabeledModel(object):
-    """Represents a custom model which was trained with labels.
-
-    :ivar str model_id: Model identifier.
-    :ivar ~azure.ai.formrecognizer.ModelStatus status:
-        Status of the model. Possible values include: 'creating', 'ready', 'invalid'.
-    :ivar ~datetime.datetime created_on:
-        Date and time (UTC) when the model was created.
-    :ivar ~datetime.datetime last_updated_on:
-        Date and time (UTC) when the status was last updated.
-    :ivar list[~azure.ai.formrecognizer.FieldInfo] fields:
-        The list of labeled fields that the model was trained on.
-    :ivar float average_model_accuracy: Average accuracy.
-    :ivar ~azure.ai.formrecognizer.TrainingInfo training_info:
-        Training information about the custom model.
-    """
-
-    def __init__(self, **kwargs):
-        self.model_id = kwargs.get("model_id", None)
-        self.status = kwargs.get("status", None)
-        self.created_on = kwargs.get("created_on", None)
-        self.last_updated_on = kwargs.get("last_updated_on", None)
-        self.fields = kwargs.get("fields", None)
-        self.average_model_accuracy = kwargs.get("average_model_accuracy", None)
-        self.training_info = kwargs.get("training_info", None)
-
-    @classmethod
-    def _from_generated(cls, model):
-        return cls(
-            model_id=model.model_info.model_id,
-            status=model.model_info.status,
-            created_on=model.model_info.created_date_time,
-            last_updated_on=model.model_info.last_updated_date_time,
-            fields=FieldInfo._from_generated(model.train_result) if model.train_result else None,
-            average_model_accuracy=model.train_result.average_model_accuracy if model.train_result else None,
-            training_info=TrainingInfo._from_generated(model.train_result) if model.train_result else None
-        )
-
-
-class FieldInfo(object):
-    """The labeled field that the model was trained on.
-
-    :ivar str field_name: Name of the field.
-    :ivar float accuracy: Estimated extraction accuracy for this field.
-    """
-
-    def __init__(self, **kwargs):
-        self.field_name = kwargs.get("field_name", None)
-        self.accuracy = kwargs.get("accuracy", None)
-
-    @classmethod
-    def _from_generated(cls, model):
-        return [cls(
-            field_name=field.field_name,
-            accuracy=field.accuracy
-        ) for field in model.fields] if model.fields else None
-
-
-class ModelInfo(object):
+class CustomFormModelInfo(object):
     """Custom model information.
 
     :ivar str model_id: Model identifier.
-    :ivar ~azure.ai.formrecognizer.ModelStatus status:
+    :ivar str or ~azure.ai.formrecognizer.CustomFormModelStatus status:
         Status of the model. Possible values include: 'creating', 'ready',
         'invalid'.
     :ivar ~datetime.datetime created_on:
@@ -763,24 +705,20 @@ class ModelInfo(object):
         )
 
 
-class ModelsSummary(object):
+class AccountProperties(object):
     """Summary of all the custom models on the account.
 
-    :ivar int count: Current count of trained custom models.
-    :ivar int limit: Max number of models that can be trained for this account.
-    :ivar ~datetime.datetime last_updated_on:
-        Date and time (UTC) when the summary was last updated.
+    :ivar int custom_model_count: Current count of trained custom models.
+    :ivar int custom_model_limit: Max number of models that can be trained for this account.
     """
 
     def __init__(self, **kwargs):
-        self.count = kwargs.get("count", None)
-        self.limit = kwargs.get("limit", None)
-        self.last_updated_on = kwargs.get("last_updated_on", None)
+        self.custom_model_count = kwargs.get("custom_model_count", None)
+        self.custom_model_limit = kwargs.get("custom_model_limit", None)
 
     @classmethod
     def _from_generated(cls, model):
         return cls(
-            count=model.count,
-            limit=model.limit,
-            last_updated_on=model.last_updated_date_time
+            custom_model_count=model.count,
+            custom_model_limit=model.limit,
         )

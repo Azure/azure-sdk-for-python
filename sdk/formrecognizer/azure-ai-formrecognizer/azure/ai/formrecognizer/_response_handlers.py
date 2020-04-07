@@ -121,15 +121,6 @@ def prepare_form_result(response):
     return prepare_unlabeled_result(response)
 
 
-def make_dict(fields):
-    # TODO should we append numbers to duplicate keys or just return a list of values for that key
-    # this currently does the latter
-    fields_dict = {}
-    for field in fields:
-        fields_dict.setdefault(field.name, []).append(field)
-    return fields_dict
-
-
 def prepare_unlabeled_result(response):
     result = []
     form_pages = prepare_content_result(response)
@@ -141,14 +132,14 @@ def prepare_unlabeled_result(response):
     ),
 
     for page in page_result:
-        fields_list = [FormField._from_generated_unlabeled(field, page.page, read_result)
-                       for field in page.key_value_pairs] if page.key_value_pairs else None
-        if fields_list:
-            fields_list = make_dict(fields_list)
+        unlabeled_fields = [FormField._from_generated_unlabeled(field, idx, page.page, read_result)
+                            for idx, field in enumerate(page.key_value_pairs)] if page.key_value_pairs else None
+        if unlabeled_fields:
+            unlabeled_fields = {field.name: field for field in unlabeled_fields}
         form = RecognizedForm(
             page_range=page_range,
-            fields=fields_list,
-            form_type_id=page.cluster_id,
+            fields=unlabeled_fields,
+            form_type="form-" + str(page.cluster_id) if page.cluster_id else None,
             pages=form_pages[page.page-1]
         )
         result.append(form)
