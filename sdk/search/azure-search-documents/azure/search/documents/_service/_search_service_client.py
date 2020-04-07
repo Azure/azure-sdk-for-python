@@ -102,6 +102,14 @@ class SearchServiceClient(HeadersMixin):
         :rtype: ~azure.search.documents.Index
         :raises: ~azure.core.exceptions.HttpResponseError
 
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_index_crud_operations.py
+                :start-after: [START get_index]
+                :end-before: [END get_index]
+                :language: python
+                :dedent: 4
+                :caption: Get an index.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = self._client.indexes.get(index_name, **kwargs)
@@ -133,6 +141,14 @@ class SearchServiceClient(HeadersMixin):
         :type index_name: str
         :raises: ~azure.core.exceptions.HttpResponseError
 
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_index_crud_operations.py
+                :start-after: [START delete_index]
+                :end-before: [END delete_index]
+                :language: python
+                :dedent: 4
+                :caption: Delete an index.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         self._client.indexes.delete(index_name, **kwargs)
@@ -148,6 +164,14 @@ class SearchServiceClient(HeadersMixin):
         :rtype: ~azure.search.documents.Index
         :raises: ~azure.core.exceptions.HttpResponseError
 
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_index_crud_operations.py
+                :start-after: [START create_index]
+                :end-before: [END create_index]
+                :language: python
+                :dedent: 4
+                :caption: Creating a new index.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         patched_index = delistize_flags_for_index(index)
@@ -186,6 +210,14 @@ class SearchServiceClient(HeadersMixin):
         :class:`~azure.core.exceptions.ResourceNotFoundError`, \
         :class:`~azure.core.exceptions.ResourceExistsError`
 
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_index_crud_operations.py
+                :start-after: [START update_index]
+                :end-before: [END update_index]
+                :language: python
+                :dedent: 4
+                :caption: Update an index.
         """
         error_map = {
             404: ResourceNotFoundError
@@ -226,6 +258,14 @@ class SearchServiceClient(HeadersMixin):
         :rtype: ~azure.search.documents.AnalyzeResult
         :raises: ~azure.core.exceptions.HttpResponseError
 
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_analyze_text.py
+                :start-after: [START simple_analyze_text]
+                :end-before: [END simple_analyze_text]
+                :language: python
+                :dedent: 4
+                :caption: Analyze text
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = self._client.indexes.analyze(

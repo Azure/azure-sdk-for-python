@@ -7,6 +7,7 @@ import os
 
 from azure.core.pipeline.policies import ContentDecodePolicy, SansIOHTTPPolicy
 from azure.identity import CertificateCredential
+from azure.identity._constants import EnvironmentVariables
 from azure.identity._internal.user_agent import USER_AGENT
 from cryptography import x509
 from cryptography.hazmat.backends import default_backend
@@ -18,9 +19,9 @@ from six.moves.urllib_parse import urlparse
 from helpers import build_aad_response, urlsafeb64_decode, mock_response, Request, validating_transport
 
 try:
-    from unittest.mock import Mock
+    from unittest.mock import Mock, patch
 except ImportError:  # python < 3.3
-    from mock import Mock  # type: ignore
+    from mock import Mock, patch  # type: ignore
 
 CERT_PATH = os.path.join(os.path.dirname(__file__), "certificate.pem")
 CERT_WITH_PASSWORD_PATH = os.path.join(os.path.dirname(__file__), "certificate-with-password.pem")
@@ -82,6 +83,14 @@ def test_request_url(cert_path, cert_password):
         tenant_id, "client-id", cert_path, password=cert_password, transport=Mock(send=mock_send), authority=authority
     )
     token = cred.get_token("scope")
+    assert token.token == access_token
+
+    # authority can be configured via environment variable
+    with patch.dict("os.environ", {EnvironmentVariables.AZURE_AUTHORITY_HOST: authority}, clear=True):
+        credential = CertificateCredential(
+            tenant_id, "client-id", cert_path, password=cert_password, transport=Mock(send=mock_send)
+        )
+        credential.get_token("scope")
     assert token.token == access_token
 
 

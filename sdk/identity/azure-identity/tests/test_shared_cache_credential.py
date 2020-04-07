@@ -5,6 +5,7 @@
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.identity import CredentialUnavailableError, KnownAuthorities, SharedTokenCacheCredential
+from azure.identity._constants import EnvironmentVariables
 from azure.identity._internal.shared_token_cache import (
     KNOWN_ALIASES,
     MULTIPLE_ACCOUNTS,
@@ -12,14 +13,15 @@ from azure.identity._internal.shared_token_cache import (
     NO_ACCOUNTS,
     NO_MATCHING_ACCOUNTS,
 )
+from azure.identity._internal import get_default_authority
 from azure.identity._internal.user_agent import USER_AGENT
 from msal import TokenCache
 import pytest
 
 try:
-    from unittest.mock import Mock
+    from unittest.mock import Mock, patch
 except ImportError:  # python < 3.3
-    from mock import Mock  # type: ignore
+    from mock import Mock, patch  # type: ignore
 
 from helpers import build_aad_response, build_id_token, mock_response, Request, validating_transport
 
@@ -461,6 +463,24 @@ def test_authority_with_no_known_alias():
     assert token.token == expected_access_token
 
 
+def test_authority_environment_variable():
+    """the credential should accept an authority by environment variable when none is otherwise specified"""
+
+    authority = "localhost"
+    expected_access_token = "access-token"
+    expected_refresh_token = "refresh-token"
+    account = get_account_event("spam@eggs", "uid", "tenant", authority=authority, refresh_token=expected_refresh_token)
+    cache = populated_cache(account)
+    transport = validating_transport(
+        requests=[Request(authority=authority, required_data={"refresh_token": expected_refresh_token})],
+        responses=[mock_response(json_payload=build_aad_response(access_token=expected_access_token))],
+    )
+    with patch.dict("os.environ", {EnvironmentVariables.AZURE_AUTHORITY_HOST: authority}, clear=True):
+        credential = SharedTokenCacheCredential(transport=transport, _cache=cache)
+    token = credential.get_token("scope")
+    assert token.token == expected_access_token
+
+
 def get_account_event(
     username, uid, utid, authority=None, client_id="client-id", refresh_token="refresh-token", scopes=None
 ):
@@ -473,7 +493,7 @@ def get_account_event(
             foci="1",
         ),
         "client_id": client_id,
-        "token_endpoint": "https://" + "/".join((authority or KnownAuthorities.AZURE_PUBLIC_CLOUD, utid, "/path")),
+        "token_endpoint": "https://" + "/".join((authority or get_default_authority(), utid, "/path",)),
         "scope": scopes or ["scope"],
     }
 
