@@ -62,6 +62,9 @@ try:
     from ._models_py3 import ManagementPolicySnapShot
     from ._models_py3 import MetricSpecification
     from ._models_py3 import NetworkRuleSet
+    from ._models_py3 import ObjectReplicationPolicy
+    from ._models_py3 import ObjectReplicationPolicyFilter
+    from ._models_py3 import ObjectReplicationPolicyRule
     from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
     from ._models_py3 import PrivateEndpoint
@@ -147,6 +150,9 @@ except (SyntaxError, ImportError):
     from ._models import ManagementPolicySnapShot
     from ._models import MetricSpecification
     from ._models import NetworkRuleSet
+    from ._models import ObjectReplicationPolicy
+    from ._models import ObjectReplicationPolicyFilter
+    from ._models import ObjectReplicationPolicyRule
     from ._models import Operation
     from ._models import OperationDisplay
     from ._models import PrivateEndpoint
@@ -183,6 +189,7 @@ from ._paged_models import BlobServicePropertiesPaged
 from ._paged_models import EncryptionScopePaged
 from ._paged_models import FileShareItemPaged
 from ._paged_models import ListContainerItemPaged
+from ._paged_models import ObjectReplicationPolicyPaged
 from ._paged_models import OperationPaged
 from ._paged_models import SkuInformationPaged
 from ._paged_models import StorageAccountPaged
@@ -281,6 +288,9 @@ __all__ = [
     'ManagementPolicySnapShot',
     'MetricSpecification',
     'NetworkRuleSet',
+    'ObjectReplicationPolicy',
+    'ObjectReplicationPolicyFilter',
+    'ObjectReplicationPolicyRule',
     'Operation',
     'OperationDisplay',
     'PrivateEndpoint',
@@ -317,6 +327,7 @@ __all__ = [
     'SkuInformationPaged',
     'StorageAccountPaged',
     'UsagePaged',
+    'ObjectReplicationPolicyPaged',
     'EncryptionScopePaged',
     'BlobServicePropertiesPaged',
     'ListContainerItemPaged',
