@@ -586,22 +586,20 @@ class CustomFormSubModel(object):
 
     @classmethod
     def _from_generated_unlabeled(cls, model):
-        if model.keys:
-            return [cls(
-                accuracy=None,
-                fields={cluster_id: CustomFormModelField._from_generated_unlabeled(fields)},
-                form_type="form-" + cluster_id
-            ) for cluster_id, fields in model.keys.clusters.items()]
+        return [cls(
+            accuracy=None,
+            fields={cluster_id: CustomFormModelField._from_generated_unlabeled(fields)},
+            form_type="form-" + cluster_id
+        ) for cluster_id, fields in model.keys.clusters.items()] if model.keys else None
 
     @classmethod
     def _from_generated_labeled(cls, model):
-        if model.train_result:
-            return [cls(
-                accuracy=model.train_result.average_model_accuracy,
-                fields={field.field_name: CustomFormModelField._from_generated_labeled(field)
-                        for field in model.train_result.fields},
-                form_type="form-" + model.model_info.model_id
-            )]
+        return [cls(
+            accuracy=model.train_result.average_model_accuracy,
+            fields={field.field_name: CustomFormModelField._from_generated_labeled(field)
+                    for field in model.train_result.fields},
+            form_type="form-" + model.model_info.model_id
+        )] if model.train_result else None
 
 
 class CustomFormModelField(object):
