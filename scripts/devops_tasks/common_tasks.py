@@ -48,6 +48,7 @@ MANAGEMENT_PACKAGE_IDENTIFIERS = [
     "azure-synapse"
 ]
 META_PACKAGES = ["azure", "azure-mgmt", "azure-keyvault"]
+DEPRECATED_META_PACKAGES = ["azure", "azure-mgmt",]
 REGRESSION_EXCLUDED_PACKAGES = [
     "azure-common",
 ]
@@ -212,12 +213,13 @@ def process_glob_string(
         collected_top_level_directories.extend([os.path.dirname(p) for p in globbed])
 
     # dedup, in case we have double coverage from the glob strings. Example: "azure-mgmt-keyvault,azure-mgmt-*"
+    # remove deprecated packages always
     collected_directories = list(
         set(
             [
                 p
                 for p in collected_top_level_directories
-                if additional_contains_filter in p
+                if additional_contains_filter in p and os.path.basename(p) not in DEPRECATED_META_PACKAGES
             ]
         )
     )
