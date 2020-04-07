@@ -2,6 +2,9 @@
 
 ## 7.0.0b2 (Unreleased)
 
+**BugFixes**
+
+* Fig bug where http_proxy and transport_type in ServiceBusClient are not propagated into connection creation properly.
 
 ## 7.0.0b1 (2020-04-06)
 
