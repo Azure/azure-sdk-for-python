@@ -5,6 +5,9 @@
 
 """
 An example to show receiving events from an IoT Hub partition.
+This example is for Python Event Hubs SDK version 1.x.
+The latest version of Python Event Hubs SDK is version 5.x.
+It also has example code that receives from an IoT Hub connection string @ https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventhub/azure-eventhub/samples/async_samples/iot_hub_connection_string_receive_async.py
 """
 from azure import eventhub
 from azure.eventhub import EventData, EventHubClient, Offset
