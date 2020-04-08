@@ -8,7 +8,7 @@ import uamqp
 
 from ._base_handler import _parse_conn_str, ServiceBusSharedKeyCredential
 from ._servicebus_sender import ServiceBusSender
-from ._servicebus_receiver import ServiceBusReceiver
+from ._servicebus_receiver import ServiceBusReceiver, ServiceBusSessionReceiver
 from ._common._configuration import Configuration
 from ._common.utils import create_authentication
 
@@ -208,13 +208,23 @@ class ServiceBusClient(object):
 
         """
         # pylint: disable=protected-access
-        receiver = ServiceBusReceiver(
-            fully_qualified_namespace=self.fully_qualified_namespace,
-            queue_name=queue_name,
-            credential=self._credential,
-            logging_enable=self._config.logging_enable,
-            connection=self._connection,
-            **kwargs
-        )
+        if kwargs.get("session_id"):
+            receiver = ServiceBusSessionReceiver(
+                fully_qualified_namespace=self.fully_qualified_namespace,
+                queue_name=queue_name,
+                credential=self._credential,
+                logging_enable=self._config.logging_enable,
+                connection=self._connection,
+                **kwargs
+            )
+        else:
+            receiver = ServiceBusReceiver(
+                fully_qualified_namespace=self.fully_qualified_namespace,
+                queue_name=queue_name,
+                credential=self._credential,
+                logging_enable=self._config.logging_enable,
+                connection=self._connection,
+                **kwargs
+            )
 
         return receiver

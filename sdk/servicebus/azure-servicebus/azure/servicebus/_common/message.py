@@ -453,9 +453,9 @@ class ReceivedMessage(PeekMessage):
         except TypeError:
             pass
         try:
-            if self._receiver.session and self._receiver.session.expired:
+            if self._receiver.session.expired:
                 raise SessionLockExpired(inner_exception=self._receiver.session.auto_renew_error)
-        except TypeError:
+        except AttributeError:
             pass
 
     @property
@@ -477,8 +477,11 @@ class ReceivedMessage(PeekMessage):
 
         :rtype: bool
         """
-        if self._receiver._session_id:  # pylint: disable=protected-access
-            raise TypeError("Session messages do not expire. Please use the Session expiry instead.")
+        try:
+            if self._receiver._session_id:  # pylint: disable=protected-access
+                raise TypeError("Session messages do not expire. Please use the Session expiry instead.")
+        except AttributeError: # Is not a session receiver
+            pass
         if self.locked_until_utc and self.locked_until_utc <= utc_now():
             return True
         return False
@@ -490,8 +493,11 @@ class ReceivedMessage(PeekMessage):
 
         :rtype: datetime.datetime
         """
-        if self._receiver._session_id or self.settled:  # pylint: disable=protected-access
-            return None
+        try:
+            if self.settled or self._receiver._session_id:  # pylint: disable=protected-access
+                return None
+        except AttributeError: # not settled, and isn't session receiver.
+            pass
         if self._expiry:
             return self._expiry
         if self.message.annotations and _X_OPT_LOCKED_UNTIL in self.message.annotations:
@@ -622,8 +628,11 @@ class ReceivedMessage(PeekMessage):
         :raises: ~azure.servicebus.common.errors.MessageLockExpired is message lock has already expired.
         :raises: ~azure.servicebus.common.errors.MessageAlreadySettled is message has already been settled.
         """
-        if self._receiver._session_id:  # pylint: disable=protected-access
-            raise TypeError("Session messages cannot be renewed. Please renew the Session lock instead.")
+        try:
+            if self._receiver._session_id:  # pylint: disable=protected-access
+                raise TypeError("Session messages cannot be renewed. Please renew the Session lock instead.")
+        except AttributeError: #TODO: Kibrantn: could get rid of these spurious catches by having _session_id be None even on non session receivers, but that seems slightly weird.
+            pass
         self._is_live(MESSAGE_RENEW_LOCK)
         token = self.lock_token
         if not token:
