@@ -41,7 +41,7 @@ class AlertRulesOperations(object):
 
     def create_or_update(
             self, resource_group_name, rule_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """Creates or updates an alert rule.
+        """Creates or updates a classic metric alert rule.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -110,7 +110,7 @@ class AlertRulesOperations(object):
 
     def delete(
             self, resource_group_name, rule_name, custom_headers=None, raw=False, **operation_config):
-        """Deletes an alert rule.
+        """Deletes a classic metric alert rule.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -163,7 +163,7 @@ class AlertRulesOperations(object):
 
     def get(
             self, resource_group_name, rule_name, custom_headers=None, raw=False, **operation_config):
-        """Gets an alert rule.
+        """Gets a classic metric alert rule.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -224,8 +224,8 @@ class AlertRulesOperations(object):
 
     def update(
             self, resource_group_name, rule_name, alert_rules_resource, custom_headers=None, raw=False, **operation_config):
-        """Updates an existing AlertRuleResource. To update other fields use the
-        CreateOrUpdate method.
+        """Updates an existing classic metric AlertRuleResource. To update other
+        fields use the CreateOrUpdate method.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -294,7 +294,7 @@ class AlertRulesOperations(object):
 
     def list_by_resource_group(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """List the alert rules within a resource group.
+        """List the classic metric alert rules within a resource group.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -363,7 +363,7 @@ class AlertRulesOperations(object):
 
     def list_by_subscription(
             self, custom_headers=None, raw=False, **operation_config):
-        """List the alert rules within a subscription.
+        """List the classic metric alert rules within a subscription.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

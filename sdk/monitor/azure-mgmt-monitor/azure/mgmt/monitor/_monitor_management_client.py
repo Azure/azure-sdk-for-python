@@ -115,6 +115,7 @@ class MonitorManagementClient(MultiApiClientMixin, SDKClient):
            * 2019-03-01: :mod:`v2019_03_01.models<azure.mgmt.monitor.v2019_03_01.models>`
            * 2019-06-01: :mod:`v2019_06_01.models<azure.mgmt.monitor.v2019_06_01.models>`
            * 2019-10-17-preview: :mod:`v2019_10_17.models<azure.mgmt.monitor.v2019_10_17.models>`
+           * 2019-10-17-preview: :mod:`v2019_10_17_preview.models<azure.mgmt.monitor.v2019_10_17_preview.models>`
         """
         if api_version == '2015-04-01':
             from .v2015_04_01 import models
@@ -169,6 +170,9 @@ class MonitorManagementClient(MultiApiClientMixin, SDKClient):
             return models
         elif api_version == '2019-10-17-preview':
             from .v2019_10_17 import models
+            return models
+        elif api_version == '2019-10-17-preview':
+            from .v2019_10_17_preview import models
             return models
         raise NotImplementedError("APIVersion {} is not available".format(api_version))
 
@@ -480,10 +484,13 @@ class MonitorManagementClient(MultiApiClientMixin, SDKClient):
         """Instance depends on the API version:
 
            * 2019-10-17-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.monitor.v2019_10_17.operations.PrivateEndpointConnectionsOperations>`
+           * 2019-10-17-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.monitor.v2019_10_17_preview.operations.PrivateEndpointConnectionsOperations>`
         """
         api_version = self._get_api_version('private_endpoint_connections')
         if api_version == '2019-10-17-preview':
             from .v2019_10_17.operations import PrivateEndpointConnectionsOperations as OperationClass
+        elif api_version == '2019-10-17-preview':
+            from .v2019_10_17_preview.operations import PrivateEndpointConnectionsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -493,10 +500,13 @@ class MonitorManagementClient(MultiApiClientMixin, SDKClient):
         """Instance depends on the API version:
 
            * 2019-10-17-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.monitor.v2019_10_17.operations.PrivateLinkResourcesOperations>`
+           * 2019-10-17-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.monitor.v2019_10_17_preview.operations.PrivateLinkResourcesOperations>`
         """
         api_version = self._get_api_version('private_link_resources')
         if api_version == '2019-10-17-preview':
             from .v2019_10_17.operations import PrivateLinkResourcesOperations as OperationClass
+        elif api_version == '2019-10-17-preview':
+            from .v2019_10_17_preview.operations import PrivateLinkResourcesOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -506,10 +516,13 @@ class MonitorManagementClient(MultiApiClientMixin, SDKClient):
         """Instance depends on the API version:
 
            * 2019-10-17-preview: :class:`PrivateLinkScopeOperationStatusOperations<azure.mgmt.monitor.v2019_10_17.operations.PrivateLinkScopeOperationStatusOperations>`
+           * 2019-10-17-preview: :class:`PrivateLinkScopeOperationStatusOperations<azure.mgmt.monitor.v2019_10_17_preview.operations.PrivateLinkScopeOperationStatusOperations>`
         """
         api_version = self._get_api_version('private_link_scope_operation_status')
         if api_version == '2019-10-17-preview':
             from .v2019_10_17.operations import PrivateLinkScopeOperationStatusOperations as OperationClass
+        elif api_version == '2019-10-17-preview':
+            from .v2019_10_17_preview.operations import PrivateLinkScopeOperationStatusOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -519,10 +532,13 @@ class MonitorManagementClient(MultiApiClientMixin, SDKClient):
         """Instance depends on the API version:
 
            * 2019-10-17-preview: :class:`PrivateLinkScopedResourcesOperations<azure.mgmt.monitor.v2019_10_17.operations.PrivateLinkScopedResourcesOperations>`
+           * 2019-10-17-preview: :class:`PrivateLinkScopedResourcesOperations<azure.mgmt.monitor.v2019_10_17_preview.operations.PrivateLinkScopedResourcesOperations>`
         """
         api_version = self._get_api_version('private_link_scoped_resources')
         if api_version == '2019-10-17-preview':
             from .v2019_10_17.operations import PrivateLinkScopedResourcesOperations as OperationClass
+        elif api_version == '2019-10-17-preview':
+            from .v2019_10_17_preview.operations import PrivateLinkScopedResourcesOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -532,10 +548,13 @@ class MonitorManagementClient(MultiApiClientMixin, SDKClient):
         """Instance depends on the API version:
 
            * 2019-10-17-preview: :class:`PrivateLinkScopesOperations<azure.mgmt.monitor.v2019_10_17.operations.PrivateLinkScopesOperations>`
+           * 2019-10-17-preview: :class:`PrivateLinkScopesOperations<azure.mgmt.monitor.v2019_10_17_preview.operations.PrivateLinkScopesOperations>`
         """
         api_version = self._get_api_version('private_link_scopes')
         if api_version == '2019-10-17-preview':
             from .v2019_10_17.operations import PrivateLinkScopesOperations as OperationClass
+        elif api_version == '2019-10-17-preview':
+            from .v2019_10_17_preview.operations import PrivateLinkScopesOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
