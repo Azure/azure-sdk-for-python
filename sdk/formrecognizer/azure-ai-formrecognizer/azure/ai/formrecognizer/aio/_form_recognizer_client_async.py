@@ -12,7 +12,6 @@ from typing import (  # pylint: disable=unused-import
     IO,
     TYPE_CHECKING,
 )
-import six
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy
@@ -67,7 +66,7 @@ class FormRecognizerClient(object):
         return prepare_us_receipt(analyze_result)
 
     @distributed_trace_async
-    async def begin_recognize_receipts(
+    async def recognize_receipts(
             self,
             stream: IO[bytes],
             **kwargs: Any
@@ -85,11 +84,13 @@ class FormRecognizerClient(object):
         :rtype: list[~azure.ai.formrecognizer.USReceipt]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        if not isinstance(stream, bytes) and not hasattr(stream, "read"):
+
+        content_type = kwargs.pop("content_type", None)
+        if content_type == "application/json":
             raise TypeError("Call begin_recognize_receipts_from_url() to analyze a receipt from a url.")
 
         include_text_content = kwargs.pop("include_text_content", False)
-        content_type = kwargs.pop("content_type", None)
+
         if content_type is None:
             content_type = get_content_type(stream)
 
@@ -103,7 +104,7 @@ class FormRecognizerClient(object):
         )
 
     @distributed_trace_async
-    async def begin_recognize_receipts_from_url(
+    async def recognize_receipts_from_url(
             self,
             url: str,
             **kwargs: Any
@@ -118,8 +119,6 @@ class FormRecognizerClient(object):
         :rtype: list[~azure.ai.formrecognizer.USReceipt]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        if hasattr(url, "read") or isinstance(url, bytes):
-            raise TypeError("Call begin_recognize_receipts() to analyze a receipt from a stream.")
 
         include_text_content = kwargs.pop("include_text_content", False)
 
@@ -136,7 +135,7 @@ class FormRecognizerClient(object):
         return prepare_content_result(analyze_result)
 
     @distributed_trace_async
-    async def begin_recognize_content(self, stream: IO[bytes], **kwargs: Any) -> List["FormPage"]:
+    async def recognize_content(self, stream: IO[bytes], **kwargs: Any) -> List["FormPage"]:
         """Extract text and layout information from a given document.
         The input document must be of one of the supported content types - 'application/pdf',
         'image/jpeg', 'image/png' or 'image/tiff'.
@@ -148,10 +147,11 @@ class FormRecognizerClient(object):
         :rtype: list[~azure.ai.formrecognizer.FormPage]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        if not isinstance(stream, bytes) and not hasattr(stream, "read"):
-            raise TypeError("Call begin_recognize_content_from_url() to analyze a document from a url.")
 
         content_type = kwargs.pop("content_type", None)
+        if content_type == "application/json":
+            raise TypeError("Call begin_recognize_content_from_url() to analyze a document from a url.")
+
         if content_type is None:
             content_type = get_content_type(stream)
 
@@ -164,7 +164,7 @@ class FormRecognizerClient(object):
         )
 
     @distributed_trace_async
-    async def begin_recognize_content_from_url(self, url: str, **kwargs: Any) -> List["FormPage"]:
+    async def recognize_content_from_url(self, url: str, **kwargs: Any) -> List["FormPage"]:
         """Extract text and layout information from a given document.
         The input document must be the location (Url) of the document to be analyzed.
 
@@ -174,8 +174,6 @@ class FormRecognizerClient(object):
         :rtype: list[~azure.ai.formrecognizer.FormPage]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        if hasattr(url, "read") or isinstance(url, bytes):
-            raise TypeError("Call begin_recognize_content() to analyze a document from a stream.")
 
         return await self._client.analyze_layout_async(
             file_stream={"source": url},
@@ -189,7 +187,7 @@ class FormRecognizerClient(object):
         return prepare_form_result(analyze_result)
 
     @distributed_trace_async
-    async def begin_recognize_custom_forms(
+    async def recognize_custom_forms(
             self,
             model_id: str,
             stream: IO[bytes],
@@ -206,11 +204,13 @@ class FormRecognizerClient(object):
         :rtype: list[~azure.ai.formrecognizer.RecognizedForm]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        if not isinstance(stream, bytes) and not hasattr(stream, "read"):
+
+        content_type = kwargs.pop("content_type", None)
+        if content_type == "application/json":
             raise TypeError("Call begin_recognize_custom_forms_from_url() to analyze a document from a url.")
 
         include_text_content = kwargs.pop("include_text_content", False)
-        content_type = kwargs.pop("content_type", None)
+
         if content_type is None:
             content_type = get_content_type(stream)
 
@@ -225,7 +225,7 @@ class FormRecognizerClient(object):
         )
 
     @distributed_trace_async
-    async def begin_recognize_custom_forms_from_url(
+    async def recognize_custom_forms_from_url(
             self,
             model_id: str,
             url: str,
@@ -241,8 +241,6 @@ class FormRecognizerClient(object):
         :rtype: list[~azure.ai.formrecognizer.RecognizedForm]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        if hasattr(url, "read") or isinstance(url, bytes):
-            raise TypeError("Call begin_recognize_custom_forms() to analyze a document from a stream.")
 
         include_text_content = kwargs.pop("include_text_content", False)
 
