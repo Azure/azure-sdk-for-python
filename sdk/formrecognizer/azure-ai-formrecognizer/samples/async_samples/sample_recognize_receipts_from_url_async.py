@@ -7,13 +7,13 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_recognize_receipts_async.py
+FILE: sample_recognize_receipts_from_url_async.py
 
 DESCRIPTION:
-    This sample demonstrates how to analyze receipts from a file.
+    This sample demonstrates how to analyze receipts from a URL.
 
 USAGE:
-    python sample_recognize_receipts_async.py
+    python sample_recognize_receipts_from_url_async.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_FORM_RECOGNIZER_ENDPOINT - the endpoint to your Cognitive Services resource.
@@ -24,18 +24,19 @@ import os
 import asyncio
 
 
-class RecognizeReceiptsSampleAsync(object):
+class RecognizeReceiptsFromURLSampleAsync(object):
 
     endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
     key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
 
-    async def recognize_receipts(self):
+    async def recognize_receipts_from_url(self):
         # TODO: this can be used as examples in sphinx
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer.aio import FormRecognizerClient
         form_recognizer_client = FormRecognizerClient(endpoint=self.endpoint, credential=AzureKeyCredential(self.key))
-        with open("../sample_forms/receipt/contoso-allinone.jpg", "rb") as f:
-            receipts = await form_recognizer_client.begin_recognize_receipts(stream=f.read())
+        receipts = await form_recognizer_client.begin_recognize_receipts_from_url(
+            url="https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/receipt/contoso-receipt.png"
+        )
 
         for idx, receipt in enumerate(receipts):
             print("--------Recognizing receipt #{}--------".format(idx))
@@ -62,8 +63,8 @@ class RecognizeReceiptsSampleAsync(object):
 
 
 async def main():
-    sample = RecognizeReceiptsSampleAsync()
-    await sample.recognize_receipts()
+    sample = RecognizeReceiptsFromURLSampleAsync()
+    await sample.recognize_receipts_from_url()
 
 
 if __name__ == '__main__':

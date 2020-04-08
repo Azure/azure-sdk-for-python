@@ -7,14 +7,14 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_recognize_content_async.py
+FILE: sample_recognize_content_from_url_async.py
 
 DESCRIPTION:
     This sample demonstrates how to extact text and layout information a document
-    given through a file.
+    given through a URL.
 
 USAGE:
-    python sample_recognize_content_async.py
+    python sample_recognize_content_from_url_async.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_FORM_RECOGNIZER_ENDPOINT - the endpoint to your Cognitive Services resource.
@@ -25,18 +25,19 @@ import os
 import asyncio
 
 
-class RecognizeContentSampleAsync(object):
+class RecognizeContentFromURLSampleAsync(object):
 
     endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
     key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
 
-    async def recognize_content(self):
+    async def recognize_content_from_url(self):
         # TODO: this can be used as examples in sphinx
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer.aio import FormRecognizerClient
         form_recognizer_client = FormRecognizerClient(endpoint=self.endpoint, credential=AzureKeyCredential(self.key))
-        with open("../sample_forms/forms/Invoice_1.pdf", "rb") as f:
-            contents = await form_recognizer_client.begin_recognize_content(stream=f.read())
+        contents = await form_recognizer_client.begin_recognize_content_from_url(
+            url="https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/Invoice_1.pdf"
+        )
 
         for idx, content in enumerate(contents):
             print("--------Recognizing content #{}--------".format(idx))
@@ -50,8 +51,8 @@ class RecognizeContentSampleAsync(object):
 
 
 async def main():
-    sample = RecognizeContentSampleAsync()
-    await sample.recognize_content()
+    sample = RecognizeContentFromURLSampleAsync()
+    await sample.recognize_content_from_url()
 
 
 if __name__ == '__main__':
