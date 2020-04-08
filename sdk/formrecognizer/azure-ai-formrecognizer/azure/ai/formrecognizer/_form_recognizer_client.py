@@ -73,7 +73,7 @@ class FormRecognizerClient(object):
         :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.USReceipt]]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        if isinstance(stream, six.string_types):
+        if not isinstance(stream, bytes) and not hasattr(stream, "read"):
             raise TypeError("Call begin_recognize_receipts_from_url() to analyze a receipt from a url.")
 
         include_text_content = kwargs.pop("include_text_content", False)
@@ -105,7 +105,7 @@ class FormRecognizerClient(object):
         :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.USReceipt]]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        if not isinstance(url, six.string_types):
+        if hasattr(url, "read") or isinstance(url, bytes):
             raise TypeError("Call begin_recognize_receipts() to analyze a receipt from a stream.")
 
         include_text_content = kwargs.pop("include_text_content", False)
@@ -136,7 +136,7 @@ class FormRecognizerClient(object):
         :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.FormPage]]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        if isinstance(stream, six.string_types):
+        if not isinstance(stream, bytes) and not hasattr(stream, "read"):
             raise TypeError("Call begin_recognize_content_from_url() to analyze a document from a url.")
 
         content_type = kwargs.pop("content_type", None)
@@ -163,7 +163,7 @@ class FormRecognizerClient(object):
         :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.FormPage]]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        if not isinstance(url, six.string_types):
+        if hasattr(url, "read") or isinstance(url, bytes):
             raise TypeError("Call begin_recognize_content() to analyze a document from a stream.")
 
         return self._client.begin_analyze_layout_async(
@@ -191,7 +191,7 @@ class FormRecognizerClient(object):
         :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.RecognizedForm]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        if isinstance(stream, six.string_types):
+        if not isinstance(stream, bytes) and not hasattr(stream, "read"):
             raise TypeError("Call begin_recognize_custom_forms_from_url() to analyze a document from a url.")
 
         include_text_content = kwargs.pop("include_text_content", False)
@@ -222,7 +222,7 @@ class FormRecognizerClient(object):
         :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.RecognizedForm]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        if not isinstance(url, six.string_types):
+        if hasattr(url, "read") or isinstance(url, bytes):
             raise TypeError("Call begin_recognize_custom_forms() to analyze a document from a stream.")
 
         include_text_content = kwargs.pop("include_text_content", False)

@@ -28,15 +28,19 @@ def get_field_scalar_value(field):  # pylint: disable=too-many-return-statements
 def get_content_type(form):
     """Source: https://en.wikipedia.org/wiki/Magic_number_(programming)#Magic_numbers_in_files
     """
+
+    if hasattr(form, "read"):
+        form = form.read(4)
+
     if len(form) > 3:
-        if form[:4] == bytes([0x25, 0x50, 0x44, 0x46]):
+        if form[:4] == b"\x25\x50\x44\x46":
             return "application/pdf"
-        if form[:2] == bytes([0xFF, 0xD8]) and form[-2:] == bytes([0xFF, 0xD9]):
+        if form[:2] == b"\xff\xd8":
             return "image/jpeg"
-        if form[:4] == bytes([0x89, 0x50, 0x4E, 0x47]):
+        if form[:4] == b"\x89\x50\x4E\x47":
             return "image/png"
-        if form[:4] == bytes([0x49, 0x49, 0x2A, 0x0]):  # little-endian
+        if form[:4] == b"\x49\x49\x2A\x00":  # little-endian
             return "image/tiff"
-        if form[:4] == bytes([0x4D, 0x4D, 0x0, 0x2A]):  # big-endian
+        if form[:4] == b"\x4D\x4D\x00\x2A":  # big-endian
             return "image/tiff"
     raise ValueError("Content type could not be auto-detected. Please pass the content_type keyword argument.")
