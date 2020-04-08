@@ -12,7 +12,6 @@ from typing import (  # pylint: disable=unused-import
     IO,
     TYPE_CHECKING,
 )
-import six
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy
@@ -67,7 +66,7 @@ class FormRecognizerClient(object):
         return prepare_us_receipt(analyze_result)
 
     @distributed_trace_async
-    async def begin_recognize_receipts(
+    async def recognize_receipts(
             self,
             stream: IO[bytes],
             **kwargs: Any
@@ -105,7 +104,7 @@ class FormRecognizerClient(object):
         )
 
     @distributed_trace_async
-    async def begin_recognize_receipts_from_url(
+    async def recognize_receipts_from_url(
             self,
             url: str,
             **kwargs: Any
@@ -136,7 +135,7 @@ class FormRecognizerClient(object):
         return prepare_content_result(analyze_result)
 
     @distributed_trace_async
-    async def begin_recognize_content(self, stream: IO[bytes], **kwargs: Any) -> List["FormPage"]:
+    async def recognize_content(self, stream: IO[bytes], **kwargs: Any) -> List["FormPage"]:
         """Extract text and layout information from a given document.
         The input document must be of one of the supported content types - 'application/pdf',
         'image/jpeg', 'image/png' or 'image/tiff'.
@@ -165,7 +164,7 @@ class FormRecognizerClient(object):
         )
 
     @distributed_trace_async
-    async def begin_recognize_content_from_url(self, url: str, **kwargs: Any) -> List["FormPage"]:
+    async def recognize_content_from_url(self, url: str, **kwargs: Any) -> List["FormPage"]:
         """Extract text and layout information from a given document.
         The input document must be the location (Url) of the document to be analyzed.
 
@@ -188,7 +187,7 @@ class FormRecognizerClient(object):
         return prepare_form_result(analyze_result)
 
     @distributed_trace_async
-    async def begin_recognize_custom_forms(
+    async def recognize_custom_forms(
             self,
             model_id: str,
             stream: IO[bytes],
@@ -226,7 +225,7 @@ class FormRecognizerClient(object):
         )
 
     @distributed_trace_async
-    async def begin_recognize_custom_forms_from_url(
+    async def recognize_custom_forms_from_url(
             self,
             model_id: str,
             url: str,

@@ -11,7 +11,6 @@ from typing import (  # pylint: disable=unused-import
     IO,
     TYPE_CHECKING,
 )
-import six
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.polling import LROPoller
 from azure.core.polling.base_polling import LROBasePolling

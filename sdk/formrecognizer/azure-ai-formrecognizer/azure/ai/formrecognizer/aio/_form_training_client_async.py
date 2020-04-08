@@ -57,7 +57,7 @@ class FormTrainingClient(object):
         )
 
     @distributed_trace_async
-    async def begin_training(
+    async def training(
             self,
             training_files: str,
             use_labels: Optional[bool] = False,
