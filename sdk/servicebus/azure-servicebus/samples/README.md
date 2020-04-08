@@ -30,6 +30,8 @@ Both [sync version](./sync_samples) and [async version](./async_samples) of samp
     - Receive messages from session-enabled queue
 - [client_identity_authentication.py](./sync_samples/client_identity_authentication.py) ([async_version](./async_samples/client_identity_authentication_async.py)) - Examples to authenticate the client by Azure Activate Directory
     - Authenticate and create the client utilizing the `azure.identity` library
+- [proxy.py](./sync_samples/proxy.py) ([async_version](./async_samples/proxy_async.py)) - Examples to send message behind a proxy:
+    - Send message behind a proxy
 
 
 ## Prerequisites

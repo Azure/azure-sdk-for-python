@@ -161,6 +161,8 @@ class ServiceBusClient(object):
             queue_name=queue_name,
             credential=self._credential,
             logging_enable=self._config.logging_enable,
+            transport_type=self._config.transport_type,
+            http_proxy=self._config.http_proxy,
             connection=self._connection,
             **kwargs
         )
@@ -213,6 +215,8 @@ class ServiceBusClient(object):
             queue_name=queue_name,
             credential=self._credential,
             logging_enable=self._config.logging_enable,
+            transport_type=self._config.transport_type,
+            http_proxy=self._config.http_proxy,
             connection=self._connection,
             **kwargs
         )
