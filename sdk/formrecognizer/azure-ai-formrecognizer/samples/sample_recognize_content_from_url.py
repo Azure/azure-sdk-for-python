@@ -39,13 +39,36 @@ class RecognizeContentFromURLSample(object):
         contents = poller.result()
 
         for idx, content in enumerate(contents):
-            print("--------Recognizing content #{}--------".format(idx))
+            print("========RECOGNIZING CONTENT #{}========".format(idx))
             print("Has width: {} and height: {}, measured with unit: {}".format(
                 content.width,
                 content.height,
                 content.unit
             ))
-            print("--------------------------------------")
+            print("=======Tables=======")
+            for table_idx, table in enumerate(content.tables):
+                print("Table # {} has {} rows and {} columns".format(table_idx, table.row_count, table.column_count))
+                for cell in table.cells:
+                    print("Cell[{}][{}] has text '{}'".format(
+                        cell.row_index, cell.column_index, cell.text
+                    ))
+                print("---------------------")
+            print("====================")
+            print("=======Lines========")
+            for line_idx, line in enumerate(content.lines):
+                print("Line # {} has text '{}' within bounding box {}".format(
+                    line_idx,
+                    line.text,
+                    ", ".join(["[{}, {}]".format(p.x, p.y) for p in line.bounding_box]),
+                ))
+                print("Now we break down all of the words in this line...")
+                for word_idx, word in enumerate(line.words):
+                    print("Word #{} has text '{}' with confidence score of {}".format(
+                        word_idx, word.text, word.confidence
+                    ))
+                print("---------------------")
+            print("=====================")
+            print("=======================================")
 
 
 if __name__ == '__main__':
