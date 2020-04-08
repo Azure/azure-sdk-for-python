@@ -39,23 +39,17 @@ class RecognizeReceiptsSample(object):
 
         for idx, receipt in enumerate(receipts):
             print("--------Recognizing receipt #{}--------".format(idx))
-            print("Total: {} (Confidence score of {}, based on text value '{}', with bounding box {})".format(
+            print("Total: {} with a confidence score of {})".format(
                 receipt.total.value,
-                receipt.total.confidence,
-                receipt.total.value_data.text,
-                ", ".join(["[{}, {}]".format(p.x, p.y) for p in receipt.total.value_data.bounding_box]),
+                receipt.total.confidence
             ))
-            print("Merchant: {} (Confidence score of {}, based on text value '{}', with bounding box {})".format(
+            print("Merchant: {} with a confidence score of {})".format(
                 receipt.merchant_name.value,
-                receipt.merchant_name.confidence,
-                receipt.merchant_name.value_data.text,
-                ", ".join(["[{}, {}]".format(p.x, p.y) for p in receipt.merchant_name.value_data.bounding_box]),
+                receipt.merchant_name.confidence
             ))
-            print("Transaction date: {} (Confidence score of {}, based on text value '{}', with bounding box {})".format(
+            print("Transaction date: {} with a confidence score of {}".format(
                 receipt.transaction_date.value,
-                receipt.transaction_date.confidence,
-                receipt.transaction_date.value_data.text,
-                ", ".join(["[{}, {}]".format(p.x, p.y) for p in receipt.transaction_date.value_data.bounding_box]),
+                receipt.transaction_date.confidence
             ))
             print("--------------------------------------")
 

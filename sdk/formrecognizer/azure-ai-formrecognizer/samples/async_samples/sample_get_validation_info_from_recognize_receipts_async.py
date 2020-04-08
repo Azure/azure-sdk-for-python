@@ -7,13 +7,13 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_recognize_receipts_from_url_async.py
+FILE: sample_get_validation_info_from_recognize_receipts_async.py
 
 DESCRIPTION:
-    This sample demonstrates how to analyze receipts from a URL.
+    This sample demonstrates how to output the information that will help with manual validation.
 
 USAGE:
-    python sample_recognize_receipts_from_url_async.py
+    python sample_get_validation_info_from_recognize_receipts_async.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_FORM_RECOGNIZER_ENDPOINT - the endpoint to your Cognitive Services resource.
@@ -24,12 +24,12 @@ import os
 import asyncio
 
 
-class RecognizeReceiptsFromURLSampleAsync(object):
+class GetValidationInfoFromRecognizeReceiptsSampleAsync(object):
 
     endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
     key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
 
-    async def recognize_receipts_from_url(self):
+    async def get_validation_info_from_recognize_receipts(self):
         # TODO: this can be used as examples in sphinx
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer.aio import FormRecognizerClient
@@ -40,25 +40,31 @@ class RecognizeReceiptsFromURLSampleAsync(object):
 
         for idx, receipt in enumerate(receipts):
             print("--------Recognizing receipt #{}--------".format(idx))
-            print("Total: {} with a confidence score of {})".format(
+            print("Total: {} (Confidence score of {}, based on text value '{}', with bounding box {})".format(
                 receipt.total.value,
-                receipt.total.confidence
+                receipt.total.confidence,
+                receipt.total.value_data.text,
+                ", ".join(["[{}, {}]".format(p.x, p.y) for p in receipt.total.value_data.bounding_box]),
             ))
-            print("Merchant: {} with a confidence score of {})".format(
+            print("Merchant: {} (Confidence score of {}, based on text value '{}', with bounding box {})".format(
                 receipt.merchant_name.value,
-                receipt.merchant_name.confidence
+                receipt.merchant_name.confidence,
+                receipt.merchant_name.value_data.text,
+                ", ".join(["[{}, {}]".format(p.x, p.y) for p in receipt.merchant_name.value_data.bounding_box]),
             ))
-            print("Transaction date: {} with a confidence score of {}".format(
+            print("Transaction date: {} (Confidence score of {}, based on text value '{}', with bounding box {})".format(
                 receipt.transaction_date.value,
-                receipt.transaction_date.confidence
+                receipt.transaction_date.confidence,
+                receipt.transaction_date.value_data.text,
+                ", ".join(["[{}, {}]".format(p.x, p.y) for p in receipt.transaction_date.value_data.bounding_box]),
             ))
             print("--------------------------------------")
         await form_recognizer_client.close()
 
 
 async def main():
-    sample = RecognizeReceiptsFromURLSampleAsync()
-    await sample.recognize_receipts_from_url()
+    sample = GetValidationInfoFromRecognizeReceiptsSampleAsync()
+    await sample.get_validation_info_from_recognize_receipts()
 
 
 if __name__ == '__main__':
