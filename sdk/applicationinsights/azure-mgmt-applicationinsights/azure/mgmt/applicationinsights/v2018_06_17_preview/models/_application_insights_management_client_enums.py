@@ -9,11 +9,18 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from ._configuration import ApplicationInsightsManagementClientConfiguration
-from ._application_insights_management_client import ApplicationInsightsManagementClient
-__all__ = ['ApplicationInsightsManagementClient', 'ApplicationInsightsManagementClientConfiguration']
+from enum import Enum
 
-from .version import VERSION
 
-__version__ = VERSION
+class SharedTypeKind(str, Enum):
 
+    user = "user"
+    shared = "shared"
+
+
+class CategoryType(str, Enum):
+
+    workbook = "workbook"
+    tsg = "TSG"
+    performance = "performance"
+    retention = "retention"
