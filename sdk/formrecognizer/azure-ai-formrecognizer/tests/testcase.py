@@ -37,10 +37,10 @@ class FormRecognizerTest(AzureTestCase):
     def __init__(self, method_name):
         super(FormRecognizerTest, self).__init__(method_name)
         # URL samples
-        self.receipt_url_jpg = "https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/receipt/contoso-allinone.jpg"
-        self.receipt_url_png = "https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/receipt/contoso-receipt.png"
-        self.invoice_url_pdf = "https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/Invoice_1.pdf"
-        self.form_url_jpg = "https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/Form_1.pdf"
+        self.receipt_url_jpg = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/receipt/contoso-allinone.jpg"
+        self.receipt_url_png = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/receipt/contoso-receipt.png"
+        self.invoice_url_pdf = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/Invoice_1.pdf"
+        self.form_url_jpg = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/Form_1.pdf"
 
         # file stream samples
         self.receipt_jpg = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/receipt/contoso-allinone.jpg"))
@@ -50,10 +50,18 @@ class FormRecognizerTest(AzureTestCase):
         self.unsupported_content_py = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./conftest.py"))
 
     def get_credentials(self):
-        self.endpoint = self.get_settings_value("FORM_RECOGNIZER_ENDPOINT")
-        self.key = self.get_settings_value("FORM_RECOGNIZER_KEY")
-        self.storage_endpoint = self.get_settings_value("FORM_RECOGNIZER_STORAGE_ENDPOINT")
-        self.storage_key = self.get_settings_value("FORM_RECOGNIZER_STORAGE_KEY")
+        if self.is_live:
+            self.endpoint = self.get_settings_value("FORM_RECOGNIZER_ENDPOINT")
+            self.key = self.get_settings_value("FORM_RECOGNIZER_KEY")
+            self.storage_endpoint = self.get_settings_value("FORM_RECOGNIZER_STORAGE_ENDPOINT")
+            self.storage_key = self.get_settings_value("FORM_RECOGNIZER_STORAGE_KEY")
+            self.storage_account_name = self.storage_endpoint.split("https://")[1].split(".blob")[0]
+        else:
+            self.endpoint = "xxxx"
+            self.key = "xxxx"
+            self.storage_endpoint = "xxxx"
+            self.storage_key = "xxxx"
+            self.storage_account_name = "xxxx"
 
     def get_oauth_endpoint(self):
         return self.get_settings_value("FORM_RECOGNIZER_ENDPOINT")
@@ -70,6 +78,19 @@ class FormRecognizerTest(AzureTestCase):
 
     def generate_fake_token(self):
         return FakeTokenCredential()
+
+    def assertModelTransformCorrect(self, model, actual):
+        self.assertEqual(model.model_id, actual.model_info.model_id)
+        self.assertEqual(model.created_on, actual.model_info.created_date_time)
+        self.assertEqual(model.last_updated_on, actual.model_info.last_updated_date_time)
+        self.assertEqual(model.status, actual.model_info.status)
+        # self.assertEqual(model.errors, actual.train_result.errors)  # this won't work yet
+        for m, a in zip(model.training_documents, actual.train_result.training_documents):
+            self.assertEqual(m.document_name, a.document_name)
+            # self.assertEqual(m.errors, a.errors)  # this won't work yet
+            self.assertEqual(m.page_count, a.pages)
+            self.assertEqual(m.status, a.status)
+        # TODO add check for fields/submodels once design is closed
 
     def assertFormPagesTransformCorrect(self, pages, actual_read, page_result=None):
         for page, actual_page in zip(pages, actual_read):

@@ -1,0 +1,117 @@
+interactions:
+- request:
+    body: ''
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '281'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/1.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+        Python/3.7.3 (Windows-10-10.0.18362-SP0)
+    method: POST
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models
+  response:
+    body:
+      string: ''
+    headers:
+      apim-request-id:
+      - cf42aa54-5640-47f5-bdc1-71fa43e1f648
+      content-length:
+      - '0'
+      date:
+      - Wed, 08 Apr 2020 18:54:44 GMT
+      location:
+      - https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/7dba63b5-a987-4bcd-a10f-b594bf9a020c
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '75'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/1.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+        Python/3.7.3 (Windows-10-10.0.18362-SP0)
+    method: GET
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/7dba63b5-a987-4bcd-a10f-b594bf9a020c?includeKeys=true
+  response:
+    body:
+      string: '{"modelInfo":{"modelId":"7dba63b5-a987-4bcd-a10f-b594bf9a020c","status":"creating","createdDateTime":"2020-04-08T18:54:45Z","lastUpdatedDateTime":"2020-04-08T18:54:45Z"}}'
+    headers:
+      apim-request-id:
+      - 20628b4f-3610-4130-95fa-16d9bb9e8ec3
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 08 Apr 2020 18:54:50 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '37'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/1.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+        Python/3.7.3 (Windows-10-10.0.18362-SP0)
+    method: GET
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/7dba63b5-a987-4bcd-a10f-b594bf9a020c?includeKeys=true
+  response:
+    body:
+      string: '{"modelInfo":{"modelId":"7dba63b5-a987-4bcd-a10f-b594bf9a020c","status":"ready","createdDateTime":"2020-04-08T18:54:45Z","lastUpdatedDateTime":"2020-04-08T18:54:53Z"},"keys":{"clusters":{"0":["Additional
+        Notes:","Address:","Address:","Company Name:","Company Phone:","Dated As:","Email:","Hero
+        Limited","Name:","Phone:","Phone:","Purchase Order","Purchase Order","Purchase
+        Order #:","SUBTOTAL","Seattle, WA 93849 Phone:","Shipped From","Shipped To","TAX","TOTAL","Vendor
+        Name:","Website:"]}},"trainResult":{"trainingDocuments":[{"documentName":"Form
+        1.jpg","pages":1,"errors":[],"status":"succeeded"},{"documentName":"Form 3.jpg","pages":1,"errors":[],"status":"succeeded"},{"documentName":"Form
+        5.jpg","pages":1,"errors":[],"status":"succeeded"},{"documentName":"Form2.jpg","pages":1,"errors":[],"status":"succeeded"},{"documentName":"Form4.jpg","pages":1,"errors":[],"status":"succeeded"}],"errors":[]}}'
+    headers:
+      apim-request-id:
+      - ee3e6280-bee6-4802-9d39-e31e8238f48f
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 08 Apr 2020 18:54:55 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '32'
+    status:
+      code: 200
+      message: OK
+version: 1
