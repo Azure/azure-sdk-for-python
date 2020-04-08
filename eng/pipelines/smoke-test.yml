@@ -55,11 +55,13 @@ jobs:
           PythonVersion: '3.8'
           OSVmImage: ubuntu-18.04
           CloudType: AzureChinaCloud
+          Location: 'chinanorth'
           ArmTemplateParameters: $(azureChinaCloudArmParameters)
         Python_37_Windows (AzureChinaCloud):
           PythonVersion: '3.7'
           OSVmImage: windows-2019
           CloudType: AzureChinaCloud
+          Location: 'chinanorth'
           ArmTemplateParameters: $(azureChinaCloudArmParameters)
 
     pool:
