@@ -12,7 +12,7 @@ import time
 import uuid
 from datetime import datetime, timedelta
 
-from azure.servicebus import ServiceBusClient, AutoLockRenew
+from azure.servicebus import ServiceBusClient, AutoLockRenew, TransportType
 from azure.servicebus._common.message import Message, PeekMessage, ReceivedMessage, BatchMessage
 from azure.servicebus._common.constants import ReceiveSettleMode, _X_OPT_LOCK_TOKEN
 from azure.servicebus._common.utils import utc_now
@@ -1158,3 +1158,46 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                         print(str(m))
                         m.complete()
                     raise
+
+
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
+    def test_queue_message_amqp_over_websocket(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+        with ServiceBusClient.from_connection_string(
+                servicebus_namespace_connection_string,
+                transport_type=TransportType.AmqpOverWebsocket,
+                logging_enable=False) as sb_client:
+
+            with sb_client.get_queue_sender(servicebus_queue.name) as sender:
+                assert sender._config.transport_type == TransportType.AmqpOverWebsocket
+                message = Message("Test")
+                sender.send(message)
+
+            with sb_client.get_queue_receiver(servicebus_queue.name, mode=ReceiveSettleMode.ReceiveAndDelete) as receiver:
+                assert receiver._config.transport_type == TransportType.AmqpOverWebsocket
+                messages = receiver.receive(max_wait_time=5)
+                assert len(messages) == 1
+
+    def test_queue_message_http_proxy_setting(self):
+        mock_conn_str = "Endpoint=sb://mock.servicebus.windows.net/;SharedAccessKeyName=mock;SharedAccessKey=mock"
+        http_proxy = {
+            'proxy_hostname': '127.0.0.1',
+            'proxy_port': 8899,
+            'username': 'admin',
+            'password': '123456'
+        }
+
+        sb_client = ServiceBusClient.from_connection_string(mock_conn_str, http_proxy=http_proxy)
+        assert sb_client._config.http_proxy == http_proxy
+        assert sb_client._config.transport_type == TransportType.AmqpOverWebsocket
+
+        sender = sb_client.get_queue_sender(queue_name="mock")
+        assert sender._config.http_proxy == http_proxy
+        assert sender._config.transport_type == TransportType.AmqpOverWebsocket
+
+        receiver = sb_client.get_queue_receiver(queue_name="mock")
+        assert receiver._config.http_proxy == http_proxy
+        assert receiver._config.transport_type == TransportType.AmqpOverWebsocket
