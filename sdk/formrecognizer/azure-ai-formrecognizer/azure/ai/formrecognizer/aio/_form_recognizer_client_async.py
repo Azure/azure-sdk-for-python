@@ -85,11 +85,13 @@ class FormRecognizerClient(object):
         :rtype: list[~azure.ai.formrecognizer.USReceipt]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        if not isinstance(stream, bytes) and not hasattr(stream, "read"):
+
+        content_type = kwargs.pop("content_type", None)
+        if content_type == "application/json":
             raise TypeError("Call begin_recognize_receipts_from_url() to analyze a receipt from a url.")
 
         include_text_content = kwargs.pop("include_text_content", False)
-        content_type = kwargs.pop("content_type", None)
+
         if content_type is None:
             content_type = get_content_type(stream)
 
@@ -118,8 +120,6 @@ class FormRecognizerClient(object):
         :rtype: list[~azure.ai.formrecognizer.USReceipt]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        if hasattr(url, "read") or isinstance(url, bytes):
-            raise TypeError("Call begin_recognize_receipts() to analyze a receipt from a stream.")
 
         include_text_content = kwargs.pop("include_text_content", False)
 
@@ -148,10 +148,11 @@ class FormRecognizerClient(object):
         :rtype: list[~azure.ai.formrecognizer.FormPage]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        if not isinstance(stream, bytes) and not hasattr(stream, "read"):
-            raise TypeError("Call begin_recognize_content_from_url() to analyze a document from a url.")
 
         content_type = kwargs.pop("content_type", None)
+        if content_type == "application/json":
+            raise TypeError("Call begin_recognize_content_from_url() to analyze a document from a url.")
+
         if content_type is None:
             content_type = get_content_type(stream)
 
@@ -174,8 +175,6 @@ class FormRecognizerClient(object):
         :rtype: list[~azure.ai.formrecognizer.FormPage]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        if hasattr(url, "read") or isinstance(url, bytes):
-            raise TypeError("Call begin_recognize_content() to analyze a document from a stream.")
 
         return await self._client.analyze_layout_async(
             file_stream={"source": url},
@@ -206,11 +205,13 @@ class FormRecognizerClient(object):
         :rtype: list[~azure.ai.formrecognizer.RecognizedForm]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        if not isinstance(stream, bytes) and not hasattr(stream, "read"):
+
+        content_type = kwargs.pop("content_type", None)
+        if content_type == "application/json":
             raise TypeError("Call begin_recognize_custom_forms_from_url() to analyze a document from a url.")
 
         include_text_content = kwargs.pop("include_text_content", False)
-        content_type = kwargs.pop("content_type", None)
+
         if content_type is None:
             content_type = get_content_type(stream)
 
@@ -241,8 +242,6 @@ class FormRecognizerClient(object):
         :rtype: list[~azure.ai.formrecognizer.RecognizedForm]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        if hasattr(url, "read") or isinstance(url, bytes):
-            raise TypeError("Call begin_recognize_custom_forms() to analyze a document from a stream.")
 
         include_text_content = kwargs.pop("include_text_content", False)
 

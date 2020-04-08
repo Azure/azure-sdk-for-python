@@ -563,7 +563,7 @@ class CustomFormModel(object):
             last_updated_on=model.model_info.last_updated_date_time,
             models=CustomFormSubModel._from_generated_unlabeled(model)
             if model.keys else CustomFormSubModel._from_generated_labeled(model),
-            errors=FormRecognizerError._from_generated(model.train_result.errors) if model.train_result else None,
+            errors=FormRecognizerError._from_generated(model.train_result.errors) if model.train_result else [],
             training_documents=TrainingDocumentInfo._from_generated(model.train_result)
             if model.train_result else None
         )
@@ -671,7 +671,7 @@ class FormRecognizerError(object):
 
     @classmethod
     def _from_generated(cls, err):
-        return [cls(code=error.code, message=error.message) for error in err] if err else None
+        return [cls(code=error.code, message=error.message) for error in err] if err else []
 
 
 class CustomFormModelInfo(object):
