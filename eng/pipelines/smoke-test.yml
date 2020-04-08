@@ -98,6 +98,7 @@ jobs:
         parameters:
           ServiceDirectory: '$(Build.SourcesDirectory)/common/smoketest/'
           CloudType: $(CloudType)
+          Location: $(Location)
           ArmTemplateParameters: $(ArmTemplateParameters)
 
       - script: python ./common/smoketest/program.py
