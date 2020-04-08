@@ -31,6 +31,7 @@ from typing import TYPE_CHECKING, Optional, Any, Union
 
 from ..exceptions import HttpResponseError, DecodeError
 from . import PollingMethod
+from ..pipeline.policies._utils import get_retry_after
 
 if TYPE_CHECKING:
     from azure.core.pipeline import PipelineResponse
@@ -77,16 +78,6 @@ class _FixedOffset(datetime.tzinfo):
 
     def dst(self, dt):
         return datetime.timedelta(0)
-
-
-def _parse_http_date(text):
-    """Parse a HTTP date format into datetime."""
-    parsed_date = email.utils.parsedate_tz(text)
-    return datetime.datetime(
-        *parsed_date[:6],
-        tzinfo=_FixedOffset(parsed_date[9]/60)
-    )
-
 
 def _finished(status):
     if hasattr(status, "value"):
@@ -543,17 +534,10 @@ class LROBasePolling(PollingMethod):
     def _extract_delay(self):
         if self._pipeline_response is None:
             return None
-        response = self._pipeline_response.http_response
-        delay = self._timeout
-        if response.headers.get("retry-after"):
-            retry_after = response.headers["retry-after"]
-            try:
-                delay = int(retry_after)
-            except ValueError:
-                # Not an integer? Try HTTP date
-                retry_date = _parse_http_date(retry_after)
-                delay = (retry_date - datetime.datetime.now(retry_date.tzinfo)).total_seconds()
-        return delay
+        delay = get_retry_after(self._pipeline_response)
+        if delay:
+            return delay
+        return self._timeout
 
     def _delay(self):
         """Check for a 'retry-after' header to set timeout,

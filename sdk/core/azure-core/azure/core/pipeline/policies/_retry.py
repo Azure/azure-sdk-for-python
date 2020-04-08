@@ -45,6 +45,7 @@ from azure.core.exceptions import (
 )
 
 from ._base import HTTPPolicy, RequestHistory
+from ._utils import get_retry_after as _get_retry_after, _parse_retry_after
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -165,20 +166,9 @@ class RetryPolicy(HTTPPolicy):
         """Helper to parse Retry-After and get value in seconds.
 
         :param str retry_after: Retry-After header
-        :rtype: float
+        :rtype: int
         """
-        try:
-            seconds = float(retry_after)
-        except TypeError:
-            retry_date_tuple = email.utils.parsedate(retry_after)
-            if retry_date_tuple is None:
-                return None
-            retry_date = time.mktime(retry_date_tuple)
-            seconds = retry_date - time.time()
-
-        if seconds < 0:
-            seconds = 0
-        return seconds
+        return _parse_retry_after(retry_after)
 
     def get_retry_after(self, response):
         """Get the value of Retry-After in seconds.
@@ -188,14 +178,7 @@ class RetryPolicy(HTTPPolicy):
         :return: Value of Retry-After in seconds.
         :rtype: float
         """
-        retry_after = response.http_response.headers.get("Retry-After")
-        if retry_after:
-            return self.parse_retry_after(retry_after)
-        retry_after = response.http_response.headers.get("retry-after-ms")
-        if retry_after:
-            parsed_retry_after = self.parse_retry_after(retry_after)
-            return parsed_retry_after / 1000.0
-        return None
+        return _get_retry_after(response)
 
     def _sleep_for_retry(self, response, transport):
         """Sleep based on the Retry-After response header value.
