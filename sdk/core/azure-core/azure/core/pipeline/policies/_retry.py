@@ -31,7 +31,6 @@ from __future__ import absolute_import  # we have a "requests" module that confl
 from io import SEEK_SET, UnsupportedOperation
 import logging
 import time
-import email
 from enum import Enum
 from typing import TYPE_CHECKING, List, Callable, Iterator, Any, Union, Dict, Optional  # pylint: disable=unused-import
 from azure.core.pipeline import PipelineResponse
