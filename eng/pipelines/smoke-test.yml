@@ -55,17 +55,20 @@ jobs:
           PythonVersion: '3.8'
           OSVmImage: ubuntu-18.04
           CloudType: AzureChinaCloud
+          Location: 'chinanorth'
           ArmTemplateParameters: $(azureChinaCloudArmParameters)
         Python_37_Windows (AzureChinaCloud):
           PythonVersion: '3.7'
           OSVmImage: windows-2019
           CloudType: AzureChinaCloud
+          Location: 'chinanorth'
           ArmTemplateParameters: $(azureChinaCloudArmParameters)
 
     pool:
       vmImage: $(OSVmImage)
 
     variables:
+      Location: ''
       azureCloudArmParameters: "@{ storageEndpointSuffix = 'core.windows.net'; azureCloud = 'AzureCloud'; }"
       azureUSGovernmentArmParameters: "@{ storageEndpointSuffix = 'core.usgovcloudapi.net'; azureCloud = 'AzureUSGovernment'; }"
       azureChinaCloudArmParameters: "@{ storageEndpointSuffix = 'core.chinacloudapi.cn'; azureCloud = 'AzureChinaCloud'; }"
@@ -96,6 +99,7 @@ jobs:
         parameters:
           ServiceDirectory: '$(Build.SourcesDirectory)/common/smoketest/'
           CloudType: $(CloudType)
+          Location: $(Location)
           ArmTemplateParameters: $(ArmTemplateParameters)
 
       - script: python ./common/smoketest/program.py
