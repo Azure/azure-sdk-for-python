@@ -208,7 +208,7 @@ class AutomaticRepairsPolicy(Model):
      state change has completed. This helps avoid premature or accidental
      repairs. The time duration should be specified in ISO 8601 format. The
      minimum allowed grace period is 30 minutes (PT30M), which is also the
-     default value.
+     default value. The maximum allowed grace period is 90 minutes (PT90M).
     :type grace_period: str
     """
 
@@ -1138,15 +1138,25 @@ class DiffDiskSettings(Model):
      disk. Possible values include: 'Local'
     :type option: str or
      ~azure.mgmt.compute.v2019_12_01.models.DiffDiskOptions
+    :param placement: Specifies the ephemeral disk placement for operating
+     system disk. This property is used to specify Cache disk or Resource disk
+     for ephemeral OS disk provisioning. By default if customer does not
+     specify this placement property in the request, the Ephemeral OS disk will
+     be provisioned using Cache disk. Possible values include: 'CacheDisk',
+     'ResourceDisk'
+    :type placement: str or
+     ~azure.mgmt.compute.v2019_12_01.models.DiffDiskPlacement
     """
 
     _attribute_map = {
         'option': {'key': 'option', 'type': 'str'},
+        'placement': {'key': 'placement', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(DiffDiskSettings, self).__init__(**kwargs)
         self.option = kwargs.get('option', None)
+        self.placement = kwargs.get('placement', None)
 
 
 class Disallowed(Model):
@@ -3294,14 +3304,12 @@ class NetworkProfile(Model):
 class OrchestrationServiceStateInput(Model):
     """The input for OrchestrationServiceState.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
     All required parameters must be populated in order to send to Azure.
 
-    :ivar service_name: Required. The name of the service. Default value:
-     "AutomaticRepairs" .
-    :vartype service_name: str
+    :param service_name: Required. The name of the service. Possible values
+     include: 'AutomaticRepairs'
+    :type service_name: str or
+     ~azure.mgmt.compute.v2019_12_01.models.OrchestrationServiceNames
     :param action: Required. The action to be performed. Possible values
      include: 'Resume', 'Suspend'
     :type action: str or
@@ -3309,7 +3317,7 @@ class OrchestrationServiceStateInput(Model):
     """
 
     _validation = {
-        'service_name': {'required': True, 'constant': True},
+        'service_name': {'required': True},
         'action': {'required': True},
     }
 
@@ -3318,10 +3326,9 @@ class OrchestrationServiceStateInput(Model):
         'action': {'key': 'action', 'type': 'str'},
     }
 
-    service_name = "AutomaticRepairs"
-
     def __init__(self, **kwargs):
         super(OrchestrationServiceStateInput, self).__init__(**kwargs)
+        self.service_name = kwargs.get('service_name', None)
         self.action = kwargs.get('action', None)
 
 
