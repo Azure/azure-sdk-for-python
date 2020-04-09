@@ -10,7 +10,6 @@
 # --------------------------------------------------------------------------
 
 from msrest.serialization import Model
-from msrest.exceptions import HttpOperationError
 
 
 class PrivateLinkScopesResource(Model):
@@ -80,6 +79,9 @@ class AzureMonitorPrivateLinkScope(PrivateLinkScopesResource):
      Users cannot change this value but are able to read from it. Values will
      include Provisioning ,Succeeded, Canceled and Failed.
     :vartype provisioning_state: str
+    :ivar private_endpoint_connections: List of private endpoint connections.
+    :vartype private_endpoint_connections:
+     list[~azure.mgmt.monitor.v2019_10_17.models.PrivateEndpointConnection]
     """
 
     _validation = {
@@ -88,6 +90,7 @@ class AzureMonitorPrivateLinkScope(PrivateLinkScopesResource):
         'type': {'readonly': True},
         'location': {'required': True},
         'provisioning_state': {'readonly': True},
+        'private_endpoint_connections': {'readonly': True},
     }
 
     _attribute_map = {
@@ -97,11 +100,13 @@ class AzureMonitorPrivateLinkScope(PrivateLinkScopesResource):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
     }
 
     def __init__(self, *, location: str, tags=None, **kwargs) -> None:
         super(AzureMonitorPrivateLinkScope, self).__init__(location=location, tags=tags, **kwargs)
         self.provisioning_state = None
+        self.private_endpoint_connections = None
 
 
 class CloudError(Model):
@@ -141,29 +146,44 @@ class ErrorAdditionalInfo(Model):
 
 
 class ErrorResponse(Model):
+    """Describes the format of Error response.
+
+    :param code: Error code
+    :type code: str
+    :param message: Error message indicating why the operation failed.
+    :type message: str
+    """
+
+    _attribute_map = {
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+    }
+
+    def __init__(self, *, code: str=None, message: str=None, **kwargs) -> None:
+        super(ErrorResponse, self).__init__(**kwargs)
+        self.code = code
+        self.message = message
+
+
+class ErrorResponseCommon(ErrorResponse):
     """The resource management error response.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar code: The error code.
-    :vartype code: str
-    :ivar message: The error message.
-    :vartype message: str
-    :ivar target: The error target.
-    :vartype target: str
+    :param code: Error code
+    :type code: str
+    :param message: Error message indicating why the operation failed.
+    :type message: str
     :ivar details: The error details.
     :vartype details:
-     list[~azure.mgmt.monitor.v2019_10_17.models.ErrorResponse]
+     list[~azure.mgmt.monitor.v2019_10_17.models.ErrorResponseCommon]
     :ivar additional_info: The error additional info.
     :vartype additional_info:
      list[~azure.mgmt.monitor.v2019_10_17.models.ErrorAdditionalInfo]
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
-        'target': {'readonly': True},
         'details': {'readonly': True},
         'additional_info': {'readonly': True},
     }
@@ -171,30 +191,14 @@ class ErrorResponse(Model):
     _attribute_map = {
         'code': {'key': 'code', 'type': 'str'},
         'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[ErrorResponse]'},
+        'details': {'key': 'details', 'type': '[ErrorResponseCommon]'},
         'additional_info': {'key': 'additionalInfo', 'type': '[ErrorAdditionalInfo]'},
     }
 
-    def __init__(self, **kwargs) -> None:
-        super(ErrorResponse, self).__init__(**kwargs)
-        self.code = None
-        self.message = None
-        self.target = None
+    def __init__(self, *, code: str=None, message: str=None, **kwargs) -> None:
+        super(ErrorResponseCommon, self).__init__(code=code, message=message, **kwargs)
         self.details = None
         self.additional_info = None
-
-
-class ErrorResponseException(HttpOperationError):
-    """Server responsed with exception of type: 'ErrorResponse'.
-
-    :param deserialize: A deserializer
-    :param response: Server response to be deserialized.
-    """
-
-    def __init__(self, deserialize, response, *args):
-
-        super(ErrorResponseException, self).__init__(deserialize, response, 'ErrorResponse', *args)
 
 
 class OperationStatus(Model):
@@ -211,7 +215,7 @@ class OperationStatus(Model):
     :param status: The status of the operation.
     :type status: str
     :param error: The error detail of the operation if any.
-    :type error: ~azure.mgmt.monitor.v2019_10_17.models.ErrorResponse
+    :type error: ~azure.mgmt.monitor.v2019_10_17.models.ErrorResponseCommon
     """
 
     _attribute_map = {
@@ -220,7 +224,7 @@ class OperationStatus(Model):
         'start_time': {'key': 'startTime', 'type': 'iso-8601'},
         'end_time': {'key': 'endTime', 'type': 'iso-8601'},
         'status': {'key': 'status', 'type': 'str'},
-        'error': {'key': 'error', 'type': 'ErrorResponse'},
+        'error': {'key': 'error', 'type': 'ErrorResponseCommon'},
     }
 
     def __init__(self, *, id: str=None, name: str=None, start_time=None, end_time=None, status: str=None, error=None, **kwargs) -> None:
@@ -234,19 +238,17 @@ class OperationStatus(Model):
 
 
 class ProxyResource(Model):
-    """Common properties of proxy resource.
+    """An azure resource object.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource ID.
+    :ivar id: Azure resource Id
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: Azure resource name
     :vartype name: str
-    :ivar type: Resource type.
+    :ivar type: Azure resource type
     :vartype type: str
-    :param tags: Resource tags
-    :type tags: dict[str, str]
     """
 
     _validation = {
@@ -259,15 +261,13 @@ class ProxyResource(Model):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, *, tags=None, **kwargs) -> None:
+    def __init__(self, **kwargs) -> None:
         super(ProxyResource, self).__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
-        self.tags = tags
 
 
 class PrivateEndpointConnection(ProxyResource):
@@ -276,14 +276,12 @@ class PrivateEndpointConnection(ProxyResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource ID.
+    :ivar id: Azure resource Id
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: Azure resource name
     :vartype name: str
-    :ivar type: Resource type.
+    :ivar type: Azure resource type
     :vartype type: str
-    :param tags: Resource tags
-    :type tags: dict[str, str]
     :param private_endpoint: Private endpoint which the connection belongs to.
     :type private_endpoint:
      ~azure.mgmt.monitor.v2019_10_17.models.PrivateEndpointProperty
@@ -306,14 +304,13 @@ class PrivateEndpointConnection(ProxyResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
         'private_endpoint': {'key': 'properties.privateEndpoint', 'type': 'PrivateEndpointProperty'},
         'private_link_service_connection_state': {'key': 'properties.privateLinkServiceConnectionState', 'type': 'PrivateLinkServiceConnectionStateProperty'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
-    def __init__(self, *, tags=None, private_endpoint=None, private_link_service_connection_state=None, **kwargs) -> None:
-        super(PrivateEndpointConnection, self).__init__(tags=tags, **kwargs)
+    def __init__(self, *, private_endpoint=None, private_link_service_connection_state=None, **kwargs) -> None:
+        super(PrivateEndpointConnection, self).__init__(**kwargs)
         self.private_endpoint = private_endpoint
         self.private_link_service_connection_state = private_link_service_connection_state
         self.provisioning_state = None
@@ -341,14 +338,12 @@ class PrivateLinkResource(ProxyResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource ID.
+    :ivar id: Azure resource Id
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: Azure resource name
     :vartype name: str
-    :ivar type: Resource type.
+    :ivar type: Azure resource type
     :vartype type: str
-    :param tags: Resource tags
-    :type tags: dict[str, str]
     :ivar group_id: The private link resource group id.
     :vartype group_id: str
     :ivar required_members: The private link resource required member names.
@@ -367,13 +362,12 @@ class PrivateLinkResource(ProxyResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
         'group_id': {'key': 'properties.groupId', 'type': 'str'},
         'required_members': {'key': 'properties.requiredMembers', 'type': '[str]'},
     }
 
-    def __init__(self, *, tags=None, **kwargs) -> None:
-        super(PrivateLinkResource, self).__init__(tags=tags, **kwargs)
+    def __init__(self, **kwargs) -> None:
+        super(PrivateLinkResource, self).__init__(**kwargs)
         self.group_id = None
         self.required_members = None
 
@@ -421,14 +415,12 @@ class ScopedResource(ProxyResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource ID.
+    :ivar id: Azure resource Id
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: Azure resource name
     :vartype name: str
-    :ivar type: Resource type.
+    :ivar type: Azure resource type
     :vartype type: str
-    :param tags: Resource tags
-    :type tags: dict[str, str]
     :param linked_resource_id: The resource id of the scoped Azure monitor
      resource.
     :type linked_resource_id: str
@@ -447,13 +439,12 @@ class ScopedResource(ProxyResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
         'linked_resource_id': {'key': 'properties.linkedResourceId', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
-    def __init__(self, *, tags=None, linked_resource_id: str=None, **kwargs) -> None:
-        super(ScopedResource, self).__init__(tags=tags, **kwargs)
+    def __init__(self, *, linked_resource_id: str=None, **kwargs) -> None:
+        super(ScopedResource, self).__init__(**kwargs)
         self.linked_resource_id = linked_resource_id
         self.provisioning_state = None
 
