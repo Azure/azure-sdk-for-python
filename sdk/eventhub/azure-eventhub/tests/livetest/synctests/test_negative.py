@@ -124,3 +124,19 @@ def test_create_batch_with_too_large_size_sync(connection_str):
     with client:
         with pytest.raises(ValueError):
             client.create_batch(max_size_in_bytes=5 * 1024 * 1024)
+
+
+@pytest.mark.liveTest
+def test_send_timeout(connstr_receivers):
+    connection_str, receivers = connstr_receivers
+    app_prop_key = "raw_prop"
+    app_prop_value = "raw_value"
+    app_prop = {app_prop_key: app_prop_value}
+    client = EventHubProducerClient.from_connection_string(connection_str)
+    with client:
+        event_data_batch = client.create_batch(max_size_in_bytes=100000)
+        ed = EventData('A single event data')
+        event_data_batch.add(ed)
+        from azure.eventhub.exceptions import OperationTimeoutError
+        with pytest.raises(OperationTimeoutError):
+            client.send_batch(event_data_batch, timeout=0.01)
