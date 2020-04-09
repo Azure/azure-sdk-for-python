@@ -87,7 +87,8 @@ class FormRecognizerTest(AzureTestCase):
         self.assertEqual(model.errors, actual.train_result.errors)
         for m, a in zip(model.training_documents, actual.train_result.training_documents):
             self.assertEqual(m.document_name, a.document_name)
-            self.assertEqual(m.errors, a.errors)
+            if m.errors and a.errors:
+                self.assertEqual(m.errors, a.errors)
             self.assertEqual(m.page_count, a.pages)
             self.assertEqual(m.status, a.status)
         # TODO add check for fields/submodels once design is closed
@@ -296,7 +297,6 @@ class GlobalFormRecognizerAccountPreparer(AzureMgmtPreparer):
 
     def create_resource(self, name, **kwargs):
         form_recognizer_account = FormRecognizerTest._FORM_RECOGNIZER_ACCOUNT
-
         return {
             'location': 'westus2',
             'resource_group': FormRecognizerTest._RESOURCE_GROUP,
