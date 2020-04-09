@@ -1,6 +1,7 @@
 # Release History
 
 ## 0.2.0 (2020-04-08)
+
 **Features**
 
   - Added operation DimensionsOperations.list
@@ -36,7 +37,6 @@ first place.
 Last but not least, HTTP connection pooling is now enabled by default.
 You should always use a client as a context manager, or call close(), or
 use no more than one client per process.
-  
 
 ## 0.1.0 (2019-05-04)
 
