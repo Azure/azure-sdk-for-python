@@ -29,7 +29,7 @@ from azure.core.credentials import AzureKeyCredential
 from azure.search.documents.aio import SearchServiceClient
 from azure.search.documents import CorsOptions, Index, ScoringProfile
 
-client = SearchServiceClient(service_endpoint, AzureKeyCredential(key))
+service_client = SearchServiceClient(service_endpoint, AzureKeyCredential(key))
 
 async def create_index():
     # [START create_index_async]
@@ -53,13 +53,13 @@ async def create_index():
         scoring_profiles=scoring_profiles,
         cors_options=cors_options)
 
-    result = await client.create_index(index)
+    result = await service_client.create_index(index)
     # [END create_index_async]
 
 async def get_index():
     # [START get_index_async]
     name = "hotels"
-    result = await client.get_index(name)
+    result = await service_client.get_index(name)
     # [END get_index_async]
 
 async def update_index():
@@ -88,13 +88,13 @@ async def update_index():
         scoring_profiles=scoring_profiles,
         cors_options=cors_options)
 
-    result = await client.create_or_update_index(index_name=index.name, index=index)
+    result = await service_client.create_or_update_index(index_name=index.name, index=index)
     # [END update_index_async]
 
 async def delete_index():
     # [START delete_index_async]
     name = "hotels"
-    await client.delete_index(name)
+    await service_client.delete_index(name)
     # [END delete_index_async]
 
 async def main():
@@ -102,7 +102,7 @@ async def main():
     await get_index()
     await update_index()
     await delete_index()
-    await client.close()
+    await service_client.close()
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
