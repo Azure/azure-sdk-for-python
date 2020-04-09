@@ -18,11 +18,13 @@ from .. import models
 class Operations(object):
     """Operations operations.
 
+    You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
+
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. The current version is 2018-05-31. Constant value: "2019-01-01".
+    :ivar api_version: Version of the API to be used with the client request. The current version is 2019-11-01. Constant value: "2019-11-01".
     """
 
     models = models
@@ -32,7 +34,7 @@ class Operations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-01-01"
+        self.api_version = "2019-11-01"
 
         self.config = config
 
@@ -51,8 +53,7 @@ class Operations(object):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.costmanagement.models.ErrorResponseException>`
         """
-        def internal_paging(next_link=None, raw=False):
-
+        def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
                 url = self.list.metadata['url']
@@ -77,6 +78,11 @@ class Operations(object):
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
@@ -85,12 +91,10 @@ class Operations(object):
             return response
 
         # Deserialize response
-        deserialized = models.OperationPaged(internal_paging, self._deserialize.dependencies)
-
+        header_dict = None
         if raw:
             header_dict = {}
-            client_raw_response = models.OperationPaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
+        deserialized = models.OperationPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
     list.metadata = {'url': '/providers/Microsoft.CostManagement/operations'}

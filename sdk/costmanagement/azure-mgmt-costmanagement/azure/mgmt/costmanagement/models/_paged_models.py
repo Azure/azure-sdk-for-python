@@ -12,6 +12,19 @@
 from msrest.paging import Paged
 
 
+class DimensionPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`Dimension <azure.mgmt.costmanagement.models.Dimension>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Dimension]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(DimensionPaged, self).__init__(*args, **kwargs)
 class OperationPaged(Paged):
     """
     A paging container for iterating over a list of :class:`Operation <azure.mgmt.costmanagement.models.Operation>` object
