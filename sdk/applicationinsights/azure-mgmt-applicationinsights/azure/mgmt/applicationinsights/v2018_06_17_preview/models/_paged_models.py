@@ -9,11 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from ._configuration import ApplicationInsightsManagementClientConfiguration
-from ._application_insights_management_client import ApplicationInsightsManagementClient
-__all__ = ['ApplicationInsightsManagementClient', 'ApplicationInsightsManagementClientConfiguration']
+from msrest.paging import Paged
 
-from .version import VERSION
 
-__version__ = VERSION
+class WorkbookPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`Workbook <azure.mgmt.applicationinsights.v2018_06_17_preview.models.Workbook>` object
+    """
 
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Workbook]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(WorkbookPaged, self).__init__(*args, **kwargs)

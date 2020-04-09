@@ -9,11 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from ._configuration import ApplicationInsightsManagementClientConfiguration
-from ._application_insights_management_client import ApplicationInsightsManagementClient
-__all__ = ['ApplicationInsightsManagementClient', 'ApplicationInsightsManagementClientConfiguration']
+from ._workbooks_operations import WorkbooksOperations
 
-from .version import VERSION
-
-__version__ = VERSION
-
+__all__ = [
+    'WorkbooksOperations',
+]

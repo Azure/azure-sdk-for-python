@@ -16,4 +16,3 @@ __all__ = ['ApplicationInsightsManagementClient', 'ApplicationInsightsManagement
 from .version import VERSION
 
 __version__ = VERSION
-
