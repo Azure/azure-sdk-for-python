@@ -39,6 +39,17 @@ from .operations import SqlPoolVulnerabilityAssessmentRuleBaselinesOperations
 from .operations import WorkspacesOperations
 from .operations import WorkspaceAadAdminsOperations
 from .operations import WorkspaceManagedIdentitySqlControlSettingsOperations
+from .operations import IntegrationRuntimesOperations
+from .operations import IntegrationRuntimeNodeIpAddressOperations
+from .operations import IntegrationRuntimeObjectMetadataOperations
+from .operations import IntegrationRuntimeNodesOperations
+from .operations import IntegrationRuntimeCredentialsOperations
+from .operations import IntegrationRuntimeConnectionInfosOperations
+from .operations import IntegrationRuntimeAuthKeysOperations
+from .operations import IntegrationRuntimeMonitoringDataOperations
+from .operations import IntegrationRuntimeStatusOperations
+from .operations import PrivateLinkResourcesOperations
+from .operations import PrivateEndpointConnectionsOperations
 from . import models
 
 
@@ -100,6 +111,28 @@ class SynapseManagementClient(SDKClient):
     :vartype workspace_aad_admins: azure.mgmt.synapse.operations.WorkspaceAadAdminsOperations
     :ivar workspace_managed_identity_sql_control_settings: WorkspaceManagedIdentitySqlControlSettings operations
     :vartype workspace_managed_identity_sql_control_settings: azure.mgmt.synapse.operations.WorkspaceManagedIdentitySqlControlSettingsOperations
+    :ivar integration_runtimes: IntegrationRuntimes operations
+    :vartype integration_runtimes: azure.mgmt.synapse.operations.IntegrationRuntimesOperations
+    :ivar integration_runtime_node_ip_address: IntegrationRuntimeNodeIpAddress operations
+    :vartype integration_runtime_node_ip_address: azure.mgmt.synapse.operations.IntegrationRuntimeNodeIpAddressOperations
+    :ivar integration_runtime_object_metadata: IntegrationRuntimeObjectMetadata operations
+    :vartype integration_runtime_object_metadata: azure.mgmt.synapse.operations.IntegrationRuntimeObjectMetadataOperations
+    :ivar integration_runtime_nodes: IntegrationRuntimeNodes operations
+    :vartype integration_runtime_nodes: azure.mgmt.synapse.operations.IntegrationRuntimeNodesOperations
+    :ivar integration_runtime_credentials: IntegrationRuntimeCredentials operations
+    :vartype integration_runtime_credentials: azure.mgmt.synapse.operations.IntegrationRuntimeCredentialsOperations
+    :ivar integration_runtime_connection_infos: IntegrationRuntimeConnectionInfos operations
+    :vartype integration_runtime_connection_infos: azure.mgmt.synapse.operations.IntegrationRuntimeConnectionInfosOperations
+    :ivar integration_runtime_auth_keys: IntegrationRuntimeAuthKeys operations
+    :vartype integration_runtime_auth_keys: azure.mgmt.synapse.operations.IntegrationRuntimeAuthKeysOperations
+    :ivar integration_runtime_monitoring_data: IntegrationRuntimeMonitoringData operations
+    :vartype integration_runtime_monitoring_data: azure.mgmt.synapse.operations.IntegrationRuntimeMonitoringDataOperations
+    :ivar integration_runtime_status: IntegrationRuntimeStatus operations
+    :vartype integration_runtime_status: azure.mgmt.synapse.operations.IntegrationRuntimeStatusOperations
+    :ivar private_link_resources: PrivateLinkResources operations
+    :vartype private_link_resources: azure.mgmt.synapse.operations.PrivateLinkResourcesOperations
+    :ivar private_endpoint_connections: PrivateEndpointConnections operations
+    :vartype private_endpoint_connections: azure.mgmt.synapse.operations.PrivateEndpointConnectionsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -171,4 +204,26 @@ class SynapseManagementClient(SDKClient):
         self.workspace_aad_admins = WorkspaceAadAdminsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.workspace_managed_identity_sql_control_settings = WorkspaceManagedIdentitySqlControlSettingsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.integration_runtimes = IntegrationRuntimesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.integration_runtime_node_ip_address = IntegrationRuntimeNodeIpAddressOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.integration_runtime_object_metadata = IntegrationRuntimeObjectMetadataOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.integration_runtime_nodes = IntegrationRuntimeNodesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.integration_runtime_credentials = IntegrationRuntimeCredentialsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.integration_runtime_connection_infos = IntegrationRuntimeConnectionInfosOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.integration_runtime_auth_keys = IntegrationRuntimeAuthKeysOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.integration_runtime_monitoring_data = IntegrationRuntimeMonitoringDataOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.integration_runtime_status = IntegrationRuntimeStatusOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.private_link_resources = PrivateLinkResourcesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
