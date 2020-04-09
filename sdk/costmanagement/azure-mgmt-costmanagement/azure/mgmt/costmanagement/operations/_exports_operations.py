@@ -18,11 +18,13 @@ from .. import models
 class ExportsOperations(object):
     """ExportsOperations operations.
 
+    You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
+
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. The current version is 2018-05-31. Constant value: "2019-01-01".
+    :ivar api_version: Version of the API to be used with the client request. The current version is 2019-11-01. Constant value: "2019-11-01".
     """
 
     models = models
@@ -32,16 +34,17 @@ class ExportsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-01-01"
+        self.api_version = "2019-11-01"
 
         self.config = config
 
     def list(
             self, scope, custom_headers=None, raw=False, **operation_config):
-        """Lists all exports at the given scope.
+        """The operation to list all exports at the given scope.
 
-        :param scope: The scope associated with export operations. This
-         includes '/subscriptions/{subscriptionId}' for subscription scope,
+        :param scope: The scope associated with query and export operations.
+         This includes '/subscriptions/{subscriptionId}/' for subscription
+         scope,
          '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}'
          for resourceGroup scope,
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}' for
@@ -49,7 +52,15 @@ class ExportsOperations(object):
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/departments/{departmentId}'
          for Department scope,
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/enrollmentAccounts/{enrollmentAccountId}'
-         for EnrollmentAccount scope.
+         for EnrollmentAccount scope,
+         '/providers/Microsoft.Management/managementGroups/{managementGroupId}
+         for Management Group scope,
+         '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/billingProfiles/{billingProfileId}'
+         for billingProfile scope,
+         '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/billingProfiles/{billingProfileId}/invoiceSections/{invoiceSectionId}'
+         for invoiceSection scope, and
+         '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/customers/{customerId}'
+         specific for partners.
         :type scope: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -91,7 +102,6 @@ class ExportsOperations(object):
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('ExportListResult', response)
 
@@ -104,10 +114,11 @@ class ExportsOperations(object):
 
     def get(
             self, scope, export_name, custom_headers=None, raw=False, **operation_config):
-        """Gets the export for the defined scope by export name.
+        """The operation to get the export for the defined scope by export name.
 
-        :param scope: The scope associated with export operations. This
-         includes '/subscriptions/{subscriptionId}' for subscription scope,
+        :param scope: The scope associated with query and export operations.
+         This includes '/subscriptions/{subscriptionId}/' for subscription
+         scope,
          '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}'
          for resourceGroup scope,
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}' for
@@ -115,7 +126,15 @@ class ExportsOperations(object):
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/departments/{departmentId}'
          for Department scope,
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/enrollmentAccounts/{enrollmentAccountId}'
-         for EnrollmentAccount scope.
+         for EnrollmentAccount scope,
+         '/providers/Microsoft.Management/managementGroups/{managementGroupId}
+         for Management Group scope,
+         '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/billingProfiles/{billingProfileId}'
+         for billingProfile scope,
+         '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/billingProfiles/{billingProfileId}/invoiceSections/{invoiceSectionId}'
+         for invoiceSection scope, and
+         '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/customers/{customerId}'
+         specific for partners.
         :type scope: str
         :param export_name: Export Name.
         :type export_name: str
@@ -160,7 +179,6 @@ class ExportsOperations(object):
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('Export', response)
 
@@ -177,8 +195,9 @@ class ExportsOperations(object):
         latest eTag to be set in the request. You may obtain the latest eTag by
         performing a get operation. Create operation does not require eTag.
 
-        :param scope: The scope associated with export operations. This
-         includes '/subscriptions/{subscriptionId}' for subscription scope,
+        :param scope: The scope associated with query and export operations.
+         This includes '/subscriptions/{subscriptionId}/' for subscription
+         scope,
          '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}'
          for resourceGroup scope,
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}' for
@@ -186,7 +205,15 @@ class ExportsOperations(object):
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/departments/{departmentId}'
          for Department scope,
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/enrollmentAccounts/{enrollmentAccountId}'
-         for EnrollmentAccount scope.
+         for EnrollmentAccount scope,
+         '/providers/Microsoft.Management/managementGroups/{managementGroupId}
+         for Management Group scope,
+         '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/billingProfiles/{billingProfileId}'
+         for billingProfile scope,
+         '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/billingProfiles/{billingProfileId}/invoiceSections/{invoiceSectionId}'
+         for invoiceSection scope, and
+         '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/customers/{customerId}'
+         specific for partners.
         :type scope: str
         :param export_name: Export Name.
         :type export_name: str
@@ -238,7 +265,6 @@ class ExportsOperations(object):
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('Export', response)
         if response.status_code == 201:
@@ -255,8 +281,9 @@ class ExportsOperations(object):
             self, scope, export_name, custom_headers=None, raw=False, **operation_config):
         """The operation to delete a export.
 
-        :param scope: The scope associated with export operations. This
-         includes '/subscriptions/{subscriptionId}' for subscription scope,
+        :param scope: The scope associated with query and export operations.
+         This includes '/subscriptions/{subscriptionId}/' for subscription
+         scope,
          '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}'
          for resourceGroup scope,
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}' for
@@ -264,7 +291,15 @@ class ExportsOperations(object):
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/departments/{departmentId}'
          for Department scope,
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/enrollmentAccounts/{enrollmentAccountId}'
-         for EnrollmentAccount scope.
+         for EnrollmentAccount scope,
+         '/providers/Microsoft.Management/managementGroups/{managementGroupId}
+         for Management Group scope,
+         '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/billingProfiles/{billingProfileId}'
+         for billingProfile scope,
+         '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/billingProfiles/{billingProfileId}/invoiceSections/{invoiceSectionId}'
+         for invoiceSection scope, and
+         '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/customers/{customerId}'
+         specific for partners.
         :type scope: str
         :param export_name: Export Name.
         :type export_name: str
@@ -315,8 +350,9 @@ class ExportsOperations(object):
             self, scope, export_name, custom_headers=None, raw=False, **operation_config):
         """The operation to execute a export.
 
-        :param scope: The scope associated with export operations. This
-         includes '/subscriptions/{subscriptionId}' for subscription scope,
+        :param scope: The scope associated with query and export operations.
+         This includes '/subscriptions/{subscriptionId}/' for subscription
+         scope,
          '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}'
          for resourceGroup scope,
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}' for
@@ -324,7 +360,15 @@ class ExportsOperations(object):
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/departments/{departmentId}'
          for Department scope,
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/enrollmentAccounts/{enrollmentAccountId}'
-         for EnrollmentAccount scope.
+         for EnrollmentAccount scope,
+         '/providers/Microsoft.Management/managementGroups/{managementGroupId}
+         for Management Group scope,
+         '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/billingProfiles/{billingProfileId}'
+         for billingProfile scope,
+         '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/billingProfiles/{billingProfileId}/invoiceSections/{invoiceSectionId}'
+         for invoiceSection scope, and
+         '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/customers/{customerId}'
+         specific for partners.
         :type scope: str
         :param export_name: Export Name.
         :type export_name: str
@@ -373,11 +417,12 @@ class ExportsOperations(object):
 
     def get_execution_history(
             self, scope, export_name, custom_headers=None, raw=False, **operation_config):
-        """Gets the execution history of a export for the defined scope by export
-        name.
+        """The operation to get the execution history of an export for the defined
+        scope by export name.
 
-        :param scope: The scope associated with export operations. This
-         includes '/subscriptions/{subscriptionId}' for subscription scope,
+        :param scope: The scope associated with query and export operations.
+         This includes '/subscriptions/{subscriptionId}/' for subscription
+         scope,
          '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}'
          for resourceGroup scope,
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}' for
@@ -385,7 +430,15 @@ class ExportsOperations(object):
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/departments/{departmentId}'
          for Department scope,
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/enrollmentAccounts/{enrollmentAccountId}'
-         for EnrollmentAccount scope.
+         for EnrollmentAccount scope,
+         '/providers/Microsoft.Management/managementGroups/{managementGroupId}
+         for Management Group scope,
+         '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/billingProfiles/{billingProfileId}'
+         for billingProfile scope,
+         '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/billingProfiles/{billingProfileId}/invoiceSections/{invoiceSectionId}'
+         for invoiceSection scope, and
+         '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/customers/{customerId}'
+         specific for partners.
         :type scope: str
         :param export_name: Export Name.
         :type export_name: str
@@ -430,7 +483,6 @@ class ExportsOperations(object):
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('ExportExecutionListResult', response)
 
