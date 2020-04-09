@@ -137,6 +137,18 @@ def collect_tox_coverage_files(targeted_packages):
         dest = os.path.join(root_dir, ".coverage")
 
         shutil.move(source, dest)
+        # Generate coverage XML
+        generate_coverage_xml()
+
+
+def generate_coverage_xml():
+    coverage_path = os.path.join(root_dir, ".coverage")
+    if os.path.exists(coverage_path):
+        logging.info("Generating coverage XML")
+        commands = ["coverage", "xml", "-i", "--omit", '"*test*,*example*"']
+        run_check_call(commands, root_dir)
+    else:
+        logging.error("Coverage file is not available in {} to generate coverage XML".format(coverage_path))
 
 
 def individual_workload(tox_command_tuple, workload_results):
