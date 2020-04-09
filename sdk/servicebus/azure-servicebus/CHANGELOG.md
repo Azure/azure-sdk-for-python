@@ -2,6 +2,10 @@
 
 ## 7.0.0b2 (Unreleased)
 
+**New Features**
+
+* Added method `get_topic_sender` in `ServiceBusClient` to get a `ServiceBusSender` for a topic.
+
 **BugFixes**
 
 * Fig bug where http_proxy and transport_type in ServiceBusClient are not propagated into Sender/Receiver creation properly.

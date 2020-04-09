@@ -16,6 +16,9 @@ Both [sync version](./sync_samples) and [async version](./async_samples) of samp
 - [send_queue.py](./sync_samples/send_queue.py) ([async version](./async_samples/send_queue_async.py)) - Examples to send messages to a service bus queue:
     - From a connection string
     - Enabling Logging
+- [send_topic.py](./sync_samples/send_topic.py) ([async version](./async_samples/send_topic_async.py)) - Examples to send messages to a service bus topic:
+    - From a connection string
+    - Enabling Logging
 - [receive_queue.py](./sync_samples/receive_queue.py) ([async_version](./async_samples/receive_queue_async.py)) - Examples to receive messages from a service bus queue:
     - Receive messages
 - [receive_peek.py](./sync_samples/receive_peek.py) ([async_version](./async_samples/receive_peek_async.py)) - Examples to peek messages from a service bus queue:
