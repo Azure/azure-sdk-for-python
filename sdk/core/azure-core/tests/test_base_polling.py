@@ -46,10 +46,8 @@ from azure.core import PipelineClient
 from azure.core.pipeline import PipelineResponse, Pipeline
 from azure.core.pipeline.transport import RequestsTransportResponse, HttpTransport
 
-from azure.core.polling.base_polling import (
-    LROBasePolling,
-    _FixedOffset,
-)
+from azure.core.polling.base_polling import LROBasePolling
+from azure.core.pipeline.policies._utils import _FixedOffset
 
 class SimpleResource:
     """An implementation of Python 3 SimpleNamespace.
@@ -139,7 +137,7 @@ def polling_response():
 def test_delay_extraction_int(polling_response):
     polling, headers = polling_response
 
-    headers['retry-after'] = "10"
+    headers['Retry-After'] = "10"
     assert polling._extract_delay() == 10
 
 
@@ -148,7 +146,7 @@ def test_delay_extraction_httpdate(polling_response):
     polling, headers = polling_response
 
     # Test that I need to retry exactly one hour after, by mocking "now"
-    headers['retry-after'] = "Mon, 20 Nov 1995 19:12:08 -0500"
+    headers['Retry-After'] = "Mon, 20 Nov 1995 19:12:08 -0500"
 
     from datetime import datetime as basedatetime
     now_mock_datetime = datetime.datetime(1995, 11, 20, 18, 12, 8, tzinfo=_FixedOffset(-5*60))
