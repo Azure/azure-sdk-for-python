@@ -46,10 +46,8 @@ from azure.core import PipelineClient
 from azure.core.pipeline import PipelineResponse, Pipeline
 from azure.core.pipeline.transport import RequestsTransportResponse, HttpTransport
 
-from azure.core.polling.base_polling import (
-    LROBasePolling,
-    _FixedOffset,
-)
+from azure.core.polling.base_polling import LROBasePolling
+from azure.core.pipeline.policies._utils import _FixedOffset
 
 class SimpleResource:
     """An implementation of Python 3 SimpleNamespace.
