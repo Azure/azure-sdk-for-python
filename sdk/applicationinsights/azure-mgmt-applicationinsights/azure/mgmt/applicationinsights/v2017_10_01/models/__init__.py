@@ -9,11 +9,17 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from ._configuration import ApplicationInsightsManagementClientConfiguration
-from ._application_insights_management_client import ApplicationInsightsManagementClient
-__all__ = ['ApplicationInsightsManagementClient', 'ApplicationInsightsManagementClientConfiguration']
+try:
+    from ._models_py3 import ApplicationInsightsComponentPricingPlan
+    from ._models_py3 import EASubscriptionMigrationDate
+    from ._models_py3 import Resource
+except (SyntaxError, ImportError):
+    from ._models import ApplicationInsightsComponentPricingPlan
+    from ._models import EASubscriptionMigrationDate
+    from ._models import Resource
 
-from .version import VERSION
-
-__version__ = VERSION
-
+__all__ = [
+    'ApplicationInsightsComponentPricingPlan',
+    'EASubscriptionMigrationDate',
+    'Resource',
+]
