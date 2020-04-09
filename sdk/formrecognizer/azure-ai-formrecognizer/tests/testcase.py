@@ -84,10 +84,10 @@ class FormRecognizerTest(AzureTestCase):
         self.assertEqual(model.created_on, actual.model_info.created_date_time)
         self.assertEqual(model.last_updated_on, actual.model_info.last_updated_date_time)
         self.assertEqual(model.status, actual.model_info.status)
-        # self.assertEqual(model.errors, actual.train_result.errors)  # this won't work yet
+        self.assertEqual(model.errors, actual.train_result.errors)
         for m, a in zip(model.training_documents, actual.train_result.training_documents):
             self.assertEqual(m.document_name, a.document_name)
-            # self.assertEqual(m.errors, a.errors)  # this won't work yet
+            self.assertEqual(m.errors, a.errors)
             self.assertEqual(m.page_count, a.pages)
             self.assertEqual(m.status, a.status)
         # TODO add check for fields/submodels once design is closed

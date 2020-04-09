@@ -19,34 +19,34 @@ class TestContentFromUrlAsync(AsyncFormRecognizerTest):
     async def test_content_url_bad_endpoint(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
         with self.assertRaises(ServiceRequestError):
             client = FormRecognizerClient("http://notreal.azure.com", AzureKeyCredential(form_recognizer_account_key))
-            result = await client.begin_recognize_content_from_url(self.invoice_url_pdf)
+            result = await client.recognize_content_from_url(self.invoice_url_pdf)
 
     @GlobalFormRecognizerAccountPreparer()
     async def test_content_url_auth_successful_key(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
         client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
-        result = await client.begin_recognize_content_from_url(self.invoice_url_pdf)
+        result = await client.recognize_content_from_url(self.invoice_url_pdf)
 
     @GlobalFormRecognizerAccountPreparer()
     async def test_content_url_auth_bad_key(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
         client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential("xxxx"))
         with self.assertRaises(HttpResponseError):
-            result = await client.begin_recognize_content_from_url(self.invoice_url_pdf)
+            result = await client.recognize_content_from_url(self.invoice_url_pdf)
 
     @GlobalFormRecognizerAccountPreparer()
     async def test_content_bad_url(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
         client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
 
         with self.assertRaises(HttpResponseError):
-            result = await client.begin_recognize_content_from_url("https://badurl.jpg")
+            result = await client.recognize_content_from_url("https://badurl.jpg")
 
     @GlobalFormRecognizerAccountPreparer()
     async def test_content_url_pass_stream(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
         client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
         with open(self.receipt_jpg, "rb") as fd:
-            receipt = fd.read()
+            receipt = fd.read(4)  # makes the recording smaller
 
-        with self.assertRaises(TypeError):
-            result = await client.begin_recognize_content_from_url(receipt)
+        with self.assertRaises(HttpResponseError):
+            result = await client.recognize_content_from_url(receipt)
 
     @GlobalFormRecognizerAccountPreparer()
     async def test_content_url_transform_pdf(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
@@ -60,7 +60,7 @@ class TestContentFromUrlAsync(AsyncFormRecognizerTest):
             responses.append(analyze_result)
             responses.append(extracted_layout)
 
-        result = await client.begin_recognize_content_from_url(self.invoice_url_pdf, cls=callback)
+        result = await client.recognize_content_from_url(self.invoice_url_pdf, cls=callback)
         raw_response = responses[0]
         layout = responses[1]
         page_results = raw_response.analyze_result.page_results
@@ -74,7 +74,7 @@ class TestContentFromUrlAsync(AsyncFormRecognizerTest):
         client = FormRecognizerClient(form_recognizer_account,
                                       AzureKeyCredential(form_recognizer_account_key))
 
-        result = await client.begin_recognize_content_from_url(self.invoice_url_pdf)
+        result = await client.recognize_content_from_url(self.invoice_url_pdf)
         self.assertEqual(len(result), 1)
         layout = result[0]
         self.assertEqual(layout.page_number, 1)
@@ -94,7 +94,7 @@ class TestContentFromUrlAsync(AsyncFormRecognizerTest):
             responses.append(analyze_result)
             responses.append(extracted_layout)
 
-        result = await client.begin_recognize_content_from_url(self.form_url_jpg, cls=callback)
+        result = await client.recognize_content_from_url(self.form_url_jpg, cls=callback)
         raw_response = responses[0]
         layout = responses[1]
         page_results = raw_response.analyze_result.page_results
@@ -108,7 +108,7 @@ class TestContentFromUrlAsync(AsyncFormRecognizerTest):
         client = FormRecognizerClient(form_recognizer_account,
                                       AzureKeyCredential(form_recognizer_account_key))
 
-        result = await client.begin_recognize_content_from_url(self.form_url_jpg)
+        result = await client.recognize_content_from_url(self.form_url_jpg)
         self.assertEqual(len(result), 1)
         layout = result[0]
         self.assertEqual(layout.page_number, 1)

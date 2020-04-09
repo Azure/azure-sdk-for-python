@@ -36,13 +36,13 @@ class TestTraining(FormRecognizerTest):
         self.assertIsNotNone(model.model_id)
         self.assertIsNotNone(model.created_on)
         self.assertIsNotNone(model.last_updated_on)
-        self.assertIsNone(model.errors)
+        self.assertEqual(model.errors, [])
         self.assertEqual(model.status, "ready")
         for doc in model.training_documents:
             self.assertIsNotNone(doc.document_name)
             self.assertEqual(doc.page_count, 1)
             self.assertEqual(doc.status, "succeeded")
-            self.assertIsNone(doc.errors)
+            self.assertEqual(doc.errors, [])
         for sub in model.models:
             self.assertIsNotNone(sub.form_type)
 

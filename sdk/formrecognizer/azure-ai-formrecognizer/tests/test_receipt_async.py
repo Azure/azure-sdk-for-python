@@ -22,14 +22,14 @@ class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
             myfile = fd.read()
         with self.assertRaises(ServiceRequestError):
             client = FormRecognizerClient("http://notreal.azure.com", AzureKeyCredential(form_recognizer_account_key))
-            result = await client.begin_recognize_receipts(myfile)
+            result = await client.recognize_receipts(myfile)
 
     @GlobalFormRecognizerAccountPreparer()
     async def test_authentication_successful_key(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
         client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
         with open(self.receipt_jpg, "rb") as fd:
             myfile = fd.read()
-        result = await client.begin_recognize_receipts(myfile)
+        result = await client.recognize_receipts(myfile)
 
     @GlobalFormRecognizerAccountPreparer()
     async def test_authentication_bad_key(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
@@ -37,7 +37,7 @@ class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
         with open(self.receipt_jpg, "rb") as fd:
             myfile = fd.read()
         with self.assertRaises(HttpResponseError):
-            result = await client.begin_recognize_receipts(myfile)
+            result = await client.recognize_receipts(myfile)
 
     @GlobalFormRecognizerAccountPreparer()
     async def test_passing_bad_content_type_param_passed(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
@@ -45,7 +45,7 @@ class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
         with open(self.receipt_jpg, "rb") as fd:
             myfile = fd.read()
         with self.assertRaises(ValueError):
-            result = await client.begin_recognize_receipts(
+            result = await client.recognize_receipts(
                 myfile,
                 content_type="application/jpeg"
             )
@@ -55,7 +55,7 @@ class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
         client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
 
         with self.assertRaises(TypeError):
-            result = await client.begin_recognize_receipts("https://badurl.jpg")
+            result = await client.recognize_receipts("https://badurl.jpg", content_type="application/json")
 
     @GlobalFormRecognizerAccountPreparer()
     async def test_auto_detect_unsupported_stream_content(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
@@ -65,7 +65,7 @@ class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
             myfile = fd.read()
 
         with self.assertRaises(ValueError):
-            result = await client.begin_recognize_receipts(
+            result = await client.recognize_receipts(
                 myfile,
             )
 
@@ -84,7 +84,7 @@ class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
         with open(self.receipt_png, "rb") as fd:
             myfile = fd.read()
 
-        result = await client.begin_recognize_receipts(
+        result = await client.recognize_receipts(
             stream=myfile,
             include_text_content=True,
             cls=callback
@@ -148,7 +148,7 @@ class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
         with open(self.receipt_jpg, "rb") as fd:
             myfile = fd.read()
 
-        result = await client.begin_recognize_receipts(
+        result = await client.recognize_receipts(
             stream=myfile,
             include_text_content=True,
             cls=callback
@@ -205,7 +205,7 @@ class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
         with open(self.receipt_jpg, "rb") as fd:
             receipt = fd.read()
 
-        result = await client.begin_recognize_receipts(receipt)
+        result = await client.recognize_receipts(receipt)
 
         self.assertEqual(len(result), 1)
         receipt = result[0]
@@ -241,7 +241,7 @@ class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
         with open(self.receipt_png, "rb") as fd:
             receipt = fd.read()
 
-        result = await client.begin_recognize_receipts(receipt)
+        result = await client.recognize_receipts(receipt)
         self.assertEqual(len(result), 1)
         receipt = result[0]
         self.assertEqual(receipt.merchant_address.value, '123 Main Street Redmond, WA 98052')
@@ -262,7 +262,7 @@ class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
         client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
         with open(self.receipt_jpg, "rb") as fd:
             receipt = fd.read()
-        result = await client.begin_recognize_receipts(receipt, include_text_content=True)
+        result = await client.recognize_receipts(receipt, include_text_content=True)
 
         self.assertEqual(len(result), 1)
         receipt = result[0]

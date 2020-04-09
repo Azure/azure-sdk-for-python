@@ -21,14 +21,14 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
             myfile = fd.read()
         with self.assertRaises(ServiceRequestError):
             client = FormRecognizerClient("http://notreal.azure.com", AzureKeyCredential(form_recognizer_account_key))
-            result = await client.begin_recognize_content(myfile)
+            result = await client.recognize_content(myfile)
 
     @GlobalFormRecognizerAccountPreparer()
     async def test_content_authentication_successful_key(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
         client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
         with open(self.invoice_pdf, "rb") as fd:
             myfile = fd.read()
-        result = await client.begin_recognize_content(myfile)
+        result = await client.recognize_content(myfile)
 
     @GlobalFormRecognizerAccountPreparer()
     async def test_content_authentication_bad_key(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
@@ -36,7 +36,7 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
         with open(self.invoice_pdf, "rb") as fd:
             myfile = fd.read()
         with self.assertRaises(HttpResponseError):
-            result = await client.begin_recognize_content(myfile)
+            result = await client.recognize_content(myfile)
 
     @GlobalFormRecognizerAccountPreparer()
     async def test_passing_bad_content_type_param_passed(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
@@ -44,7 +44,7 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
         with open(self.invoice_pdf, "rb") as fd:
             myfile = fd.read()
         with self.assertRaises(ValueError):
-            result = await client.begin_recognize_content(
+            result = await client.recognize_content(
                 myfile,
                 content_type="application/jpeg"
             )
@@ -54,7 +54,7 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
         client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
 
         with self.assertRaises(TypeError):
-            result = await client.begin_recognize_content("https://badurl.jpg")
+            result = await client.recognize_content("https://badurl.jpg", content_type="application/json")
 
     @GlobalFormRecognizerAccountPreparer()
     async def test_auto_detect_unsupported_stream_content(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
@@ -64,7 +64,7 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
             myfile = fd.read()
 
         with self.assertRaises(ValueError):
-            result = await client.begin_recognize_content(
+            result = await client.recognize_content(
                 myfile
             )
 
@@ -82,7 +82,7 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
             responses.append(analyze_result)
             responses.append(extracted_layout)
 
-        result = await client.begin_recognize_content(myform, cls=callback)
+        result = await client.recognize_content(myform, cls=callback)
         raw_response = responses[0]
         layout = responses[1]
         page_results = raw_response.analyze_result.page_results
@@ -98,7 +98,7 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
         with open(self.invoice_pdf, "rb") as fd:
             myform = fd.read()
 
-        result = await client.begin_recognize_content(myform)
+        result = await client.recognize_content(myform)
         self.assertEqual(len(result), 1)
         layout = result[0]
         self.assertEqual(layout.page_number, 1)
@@ -120,7 +120,7 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
             responses.append(analyze_result)
             responses.append(extracted_layout)
 
-        result = await client.begin_recognize_content(myform, cls=callback)
+        result = await client.recognize_content(myform, cls=callback)
         raw_response = responses[0]
         layout = responses[1]
         page_results = raw_response.analyze_result.page_results
@@ -136,7 +136,7 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
         with open(self.form_jpg, "rb") as fd:
             myform = fd.read()
 
-        result = await client.begin_recognize_content(myform)
+        result = await client.recognize_content(myform)
         self.assertEqual(len(result), 1)
         layout = result[0]
         self.assertEqual(layout.page_number, 1)

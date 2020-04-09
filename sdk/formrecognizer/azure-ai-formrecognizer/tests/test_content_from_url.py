@@ -43,9 +43,9 @@ class TestContentFromUrl(FormRecognizerTest):
     def test_content_url_pass_stream(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
         client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
         with open(self.receipt_jpg, "rb") as fd:
-            receipt = fd.read()
+            receipt = fd.read(4)  # makes the recording smaller
 
-        with self.assertRaises(TypeError):
+        with self.assertRaises(HttpResponseError):
             poller = client.begin_recognize_content_from_url(receipt)
 
     @GlobalFormRecognizerAccountPreparer()

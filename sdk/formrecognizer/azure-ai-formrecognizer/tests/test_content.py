@@ -54,7 +54,7 @@ class TestContentFromStream(FormRecognizerTest):
         client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
 
         with self.assertRaises(TypeError):
-            poller = client.begin_recognize_content("https://badurl.jpg")
+            poller = client.begin_recognize_content("https://badurl.jpg", content_type="application/json")
 
     @GlobalFormRecognizerAccountPreparer()
     def test_auto_detect_unsupported_stream_content(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
