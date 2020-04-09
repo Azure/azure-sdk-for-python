@@ -3,6 +3,9 @@
 
 ## 1.4.1 (Unreleased)
 
+### Features
+
+- Support "x-ms-retry-after-ms" in response header   #10743
 
 ## 1.4.0 (2020-04-06)
 
