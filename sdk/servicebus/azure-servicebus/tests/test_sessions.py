@@ -521,8 +521,9 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
 
                         elif len(messages) == 1:
                             print("Starting second sleep")
-                            time.sleep(40)
+                            time.sleep(40) # ensure renewer expires
                             print("Second sleep {}".format(receiver.session._locked_until_utc - utc_now()))
+                            time.sleep((receiver.session._locked_until_utc - utc_now()).total_seconds()+1)# and then ensure it didn't slip a renew under the wire.
                             assert receiver.session.expired
                             assert isinstance(receiver.session.auto_renew_error, AutoLockRenewTimeout)
                             try:
