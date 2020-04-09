@@ -216,3 +216,38 @@ class ServiceBusClient(object):
         )
 
         return receiver
+
+    def get_topic_sender(self, topic_name, **kwargs):
+        # type: (str, Any) -> ServiceBusSender
+        """Get ServiceBusSender for the specific topic.
+
+        :param str topic_name: The path of specific Service Bus Topic the client connects to.
+        :keyword int retry_total: The total number of attempts to redo a failed operation when an error occurs.
+         Default value is 3.
+        :keyword float retry_backoff_factor: Delta back-off internal in the unit of second between retries.
+         Default value is 0.8.
+        :keyword float retry_backoff_max: Maximum back-off interval in the unit of second. Default value is 120.
+        :rtype: ~azure.servicebus.aio.ServiceBusSender
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_code_servicebus_async.py
+                :start-after: [START create_topic_sender_from_sb_client_async]
+                :end-before: [END create_topic_sender_from_sb_client_async]
+                :language: python
+                :dedent: 4
+                :caption: Create a new instance of the ServiceBusSender from ServiceBusClient.
+
+        """
+        sender = ServiceBusSender(
+            fully_qualified_namespace=self.fully_qualified_namespace,
+            topic_name=topic_name,
+            credential=self._credential,
+            logging_enable=self._config.logging_enable,
+            transport_type=self._config.transport_type,
+            http_proxy=self._config.http_proxy,
+            connection=self._connection,
+            **kwargs
+        )
+
+        return sender
