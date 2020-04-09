@@ -179,7 +179,6 @@ class ServiceBusTopicPreparer(_ServiceBusChildResourcePreparer):
             self.client.topics.delete(group.name, namespace.name, name, polling=False)
 
 
-
 class ServiceBusSubscriptionPreparer(_ServiceBusChildResourcePreparer):
     def __init__(self,
                  name_prefix='',
@@ -241,8 +240,6 @@ class ServiceBusSubscriptionPreparer(_ServiceBusChildResourcePreparer):
             template = 'To create this service bus subscription a service bus topic is required. Please add ' \
                        'decorator @{} in front of this service bus preparer.'
             raise AzureTestError(template.format(ServiceBusTopicPreparer.__name__))
-
-
 
 
 class ServiceBusQueuePreparer(_ServiceBusChildResourcePreparer):
@@ -433,5 +430,7 @@ class ServiceBusQueueAuthorizationRulePreparer(_ServiceBusChildResourcePreparer)
                        'decorator @{} in front of this service bus preparer.'
             raise AzureTestError(template.format(ServiceBusQueuePreparer.__name__))
 
+
 CachedServiceBusNamespacePreparer = functools.partial(ServiceBusNamespacePreparer, use_cache=True)
 CachedServiceBusQueuePreparer = functools.partial(ServiceBusQueuePreparer, use_cache=True)
+CachedServiceBusTopicPreparer = functools.partial(ServiceBusTopicPreparer, use_cache=True)
