@@ -30,9 +30,12 @@ def simple_analyze_text():
     from azure.core.credentials import AzureKeyCredential
     from azure.search.documents import SearchServiceClient, AnalyzeRequest
 
-    client = SearchServiceClient(service_endpoint, AzureKeyCredential(key))
+    service_client = SearchServiceClient(service_endpoint, AzureKeyCredential(key))
+
     analyze_request = AnalyzeRequest(text="One's <two/>", analyzer="standard.lucene")
-    result = client.analyze_text(index_name, analyze_request)
+
+    result = service_client.analyze_text(index_name, analyze_request)
+    print(result.as_dict())
     # [END simple_analyze_text]
 
 if __name__ == '__main__':
