@@ -9,7 +9,6 @@ import pytest
 import time
 import sys
 
-import proxy
 from azure.eventhub import EventData, TransportType
 from azure.eventhub.exceptions import EventHubError
 from azure.eventhub.aio import EventHubProducerClient
@@ -20,6 +19,7 @@ async def test_send_with_proxy_async(connstr_receivers):
     if sys.version_info < (3, 6):
         pytest.skip("proxy test only works on python 3.6+")
     connection_str, receivers = connstr_receivers
+    import proxy
     with proxy.start(
             [
                 '--hostname', "127.0.0.1",
@@ -48,8 +48,6 @@ async def test_send_with_proxy_async(connstr_receivers):
 @pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_send_with_wrong_proxy_async(connstr_receivers):
-    if sys.version_info < (3, 6):
-        pytest.skip("proxy test only works on python 3.6+")
     connection_str, receivers = connstr_receivers
     client = EventHubProducerClient.from_connection_string(
         connection_str,
