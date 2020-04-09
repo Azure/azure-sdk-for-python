@@ -9,6 +9,7 @@ from ._form_recognizer_client import FormRecognizerClient
 from ._form_training_client import FormTrainingClient
 
 from ._models import (
+    FormContent,
     LengthUnit,
     TrainingStatus,
     CustomFormModelStatus,
@@ -40,6 +41,7 @@ __all__ = [
     'TrainingStatus',
     'CustomFormModelStatus',
     'FormContentType',
+    'FormContent',
     'USReceipt',
     'USReceiptType',
     'USReceiptItem',

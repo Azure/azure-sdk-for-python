@@ -73,7 +73,6 @@ def prepare_us_receipt(response):
             fields={
                 key: FormField._from_generated(key, value, read_result)
                 for key, value in page.fields.items()
-                if key not in ["ReceiptType", "Items"]  # these two are not represented by FormField in SDK
             },
         )
 
@@ -90,7 +89,7 @@ def prepare_tables(page, read_result):
             row_count=table.rows,
             column_count=table.columns,
             page_number=page.page,
-            cells=[FormTableCell._from_generated(cell, read_result) for cell in table.cells],
+            cells=[FormTableCell._from_generated(cell, page.page, read_result) for cell in table.cells],
         ) for table in page.tables
     ]
 

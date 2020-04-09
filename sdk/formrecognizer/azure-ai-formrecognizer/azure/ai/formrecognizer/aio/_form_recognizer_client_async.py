@@ -79,7 +79,8 @@ class FormRecognizerClient(object):
             Currently only supports US sales receipts.
         :type stream: stream
         :keyword bool include_text_content: Include text lines and text content references in the result.
-        :keyword str content_type: Media type of the body sent to the API.
+        :keyword str content_type: Media type of the body sent to the API. For options,
+            see :class:`~azure.ai.formrecognizer.FormContentType`.
         :return: A list of USReceipt.
         :rtype: list[~azure.ai.formrecognizer.USReceipt]
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -142,7 +143,8 @@ class FormRecognizerClient(object):
 
         :param stream: .pdf, .jpg, .png or .tiff type file stream.
         :type stream: stream
-        :keyword str content_type: Media type of the body sent to the API.
+        :keyword str content_type: Media type of the body sent to the API. For options,
+            see :class:`~azure.ai.formrecognizer.FormContentType`.
         :return: A list of FormPage.
         :rtype: list[~azure.ai.formrecognizer.FormPage]
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -199,7 +201,8 @@ class FormRecognizerClient(object):
         :param stream: .pdf, .jpg, .png or .tiff type file stream.
         :type stream: stream
         :keyword bool include_text_content: Include text lines and element references in the result.
-        :keyword str content_type: Media type of the body sent to the API.
+        :keyword str content_type: Media type of the body sent to the API. For options,
+            see :class:`~azure.ai.formrecognizer.FormContentType`.
         :return: List[RecognizedForm]
         :rtype: list[~azure.ai.formrecognizer.RecognizedForm]
         :raises: ~azure.core.exceptions.HttpResponseError

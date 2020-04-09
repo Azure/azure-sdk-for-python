@@ -52,8 +52,8 @@ class FormTrainingClient(object):
         )
 
     @distributed_trace
-    def begin_training(self, training_files, use_labels=False, files_prefix="", include_sub_folders=False, **kwargs):
-        # type: (str, Optional[bool], Optional[str], Optional[bool], Any) -> LROPoller
+    def begin_training(self, training_files, use_labels=False, **kwargs):
+        # type: (str, Optional[bool], Any) -> LROPoller
         """Create and train a custom model. The request must include a source parameter that is an
         externally accessible Azure storage blob container Uri (preferably a Shared Access Signature Uri).
         Models are trained using documents that are of the following content type - 'application/pdf',
@@ -62,11 +62,12 @@ class FormTrainingClient(object):
         :param str training_files: An Azure Storage blob container URI.
         :param bool use_labels: Whether to train with labels or not. Corresponding labeled files must
             exist in the blob container.
-        :param str files_prefix: A case-sensitive prefix string to filter documents in the source path for
+        :keyword str prefix: A case-sensitive prefix string to filter documents in the source path for
             training. For example, when using a Azure storage blob Uri, use the prefix to restrict sub
-            folders for training.
-        :param bool include_sub_folders: A flag to indicate if sub folders within the set of prefix folders
+            folders for training. Not supported if training with labels.
+        :keyword bool include_sub_folders: A flag to indicate if sub folders within the set of prefix folders
             will also need to be included when searching for content to be preprocessed.
+            Not supported if training with labels.
         :return: LROPoller
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.formrecognizer.CustomFormModel]
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -78,8 +79,8 @@ class FormTrainingClient(object):
                 source=training_files,
                 use_label_file=use_labels,
                 source_filter=TrainSourceFilter(
-                    prefix=files_prefix,
-                    include_sub_folders=include_sub_folders,
+                    prefix=kwargs.pop("prefix", ""),
+                    include_sub_folders=kwargs.pop("include_sub_folders", False),
                 )
             ),
             cls=lambda pipeline_response, _, response_headers: pipeline_response,
