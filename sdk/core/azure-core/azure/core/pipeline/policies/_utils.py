@@ -58,7 +58,7 @@ def _parse_http_date(text):
         tzinfo=_FixedOffset(parsed_date[9]/60)
     )
 
-def _parse_retry_after(retry_after):
+def parse_retry_after(retry_after):
     """Helper to parse Retry-After and get value in seconds.
 
     :param str retry_after: Retry-After header
@@ -78,15 +78,15 @@ def get_retry_after(response):
     :param response: The PipelineResponse object
     :type response: ~azure.core.pipeline.PipelineResponse
     :return: Value of Retry-After in seconds.
-    :rtype: float
+    :rtype: float or None
     """
     headers = CaseInsensitiveDict(response.http_response.headers)
     retry_after = headers.get("retry-after")
     if retry_after:
-        return _parse_retry_after(retry_after)
+        return parse_retry_after(retry_after)
     for ms_header in ["retry-after-ms", "x-ms-retry-after-ms"]:
         retry_after = headers.get(ms_header)
         if retry_after:
-            parsed_retry_after = _parse_retry_after(retry_after)
+            parsed_retry_after = parse_retry_after(retry_after)
             return parsed_retry_after / 1000.0
     return None

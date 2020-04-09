@@ -44,7 +44,7 @@ from azure.core.exceptions import (
 )
 
 from ._base import HTTPPolicy, RequestHistory
-from ._utils import get_retry_after as _get_retry_after, _parse_retry_after
+from . import _utils
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -167,7 +167,7 @@ class RetryPolicy(HTTPPolicy):
         :param str retry_after: Retry-After header
         :rtype: float
         """
-        return _parse_retry_after(retry_after)
+        return _utils.parse_retry_after(retry_after)
 
     def get_retry_after(self, response):
         """Get the value of Retry-After in seconds.
@@ -175,9 +175,9 @@ class RetryPolicy(HTTPPolicy):
         :param response: The PipelineResponse object
         :type response: ~azure.core.pipeline.PipelineResponse
         :return: Value of Retry-After in seconds.
-        :rtype: float
+        :rtype: float or None
         """
-        return _get_retry_after(response)
+        return _utils.get_retry_after(response)
 
     def _sleep_for_retry(self, response, transport):
         """Sleep based on the Retry-After response header value.
