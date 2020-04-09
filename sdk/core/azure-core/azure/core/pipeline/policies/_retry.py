@@ -165,7 +165,7 @@ class RetryPolicy(HTTPPolicy):
         """Helper to parse Retry-After and get value in seconds.
 
         :param str retry_after: Retry-After header
-        :rtype: int
+        :rtype: float
         """
         return _parse_retry_after(retry_after)
 

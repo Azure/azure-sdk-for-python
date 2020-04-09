@@ -25,6 +25,7 @@
 # --------------------------------------------------------------------------
 import datetime
 import email.utils
+from requests.structures import CaseInsensitiveDict
 
 class _FixedOffset(datetime.tzinfo):
     """Fixed offset in minutes east from UTC.
@@ -69,9 +70,7 @@ def _parse_retry_after(retry_after):
         # Not an integer? Try HTTP date
         retry_date = _parse_http_date(retry_after)
         delay = (retry_date - datetime.datetime.now(retry_date.tzinfo)).total_seconds()
-    if delay < 0:
-        delay = 0
-    return delay
+    return max(0, delay)
 
 def get_retry_after(response):
     """Get the value of Retry-After in seconds.
@@ -81,15 +80,13 @@ def get_retry_after(response):
     :return: Value of Retry-After in seconds.
     :rtype: float
     """
-    retry_after = response.http_response.headers.get("Retry-After")
+    headers = CaseInsensitiveDict(response.http_response.headers)
+    retry_after = headers.get("retry-after")
     if retry_after:
         return _parse_retry_after(retry_after)
-    retry_after = response.http_response.headers.get("retry-after-ms")
-    if retry_after:
-        parsed_retry_after = _parse_retry_after(retry_after)
-        return parsed_retry_after / 1000.0
-    retry_after = response.http_response.headers.get("x-ms-retry-after-ms")
-    if retry_after:
-        parsed_retry_after = _parse_retry_after(retry_after)
-        return parsed_retry_after / 1000.0
+    for ms_header in ["retry-after-ms", "x-ms-retry-after-ms"]:
+        retry_after = headers.get(ms_header)
+        if retry_after:
+            parsed_retry_after = _parse_retry_after(retry_after)
+            return parsed_retry_after / 1000.0
     return None
