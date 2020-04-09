@@ -38,7 +38,7 @@ async def send_batch_message(sender):
 
 
 async def main():
-    servicebus_client = ServiceBusClient.from_connection_string(conn_str=CONNECTION_STR)
+    servicebus_client = ServiceBusClient.from_connection_string(conn_str=CONNECTION_STR, logging_enable=True)
 
     async with servicebus_client:
         sender = servicebus_client.get_topic_sender(topic_name=TOPIC_NAME)
