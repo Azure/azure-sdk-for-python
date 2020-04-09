@@ -651,9 +651,9 @@ class FileTest(StorageTestCase):
         summary = await file_client.set_access_control_recursive(acl=acl)
 
         # Assert
-        self.assertEqual(summary.directories_successful, 0)
-        self.assertEqual(summary.files_successful, 1)
-        self.assertEqual(summary.failure_count, 0)
+        self.assertEqual(summary.counters.directories_successful, 0)
+        self.assertEqual(summary.counters.files_successful, 1)
+        self.assertEqual(summary.counters.failure_count, 0)
         access_control = await file_client.get_access_control()
         self.assertIsNotNone(access_control)
         self.assertEqual(acl, access_control['acl'])
@@ -670,9 +670,9 @@ class FileTest(StorageTestCase):
         summary = await file_client.update_access_control_recursive(acl=acl)
 
         # Assert
-        self.assertEqual(summary.directories_successful, 0)
-        self.assertEqual(summary.files_successful, 1)
-        self.assertEqual(summary.failure_count, 0)
+        self.assertEqual(summary.counters.directories_successful, 0)
+        self.assertEqual(summary.counters.files_successful, 1)
+        self.assertEqual(summary.counters.failure_count, 0)
         access_control = await file_client.get_access_control()
         self.assertIsNotNone(access_control)
         self.assertEqual(acl, access_control['acl'])
@@ -690,9 +690,9 @@ class FileTest(StorageTestCase):
         summary = await file_client.remove_access_control_recursive(acl=acl)
 
         # Assert
-        self.assertEqual(summary.directories_successful, 0)
-        self.assertEqual(summary.files_successful, 1)
-        self.assertEqual(summary.failure_count, 0)
+        self.assertEqual(summary.counters.directories_successful, 0)
+        self.assertEqual(summary.counters.files_successful, 1)
+        self.assertEqual(summary.counters.failure_count, 0)
 
     @record
     def test_get_properties_async(self):

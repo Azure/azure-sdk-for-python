@@ -27,6 +27,7 @@ from azure.storage.filedatalake.aio import (
 )
 
 
+# TODO: rerun after test account is fixed
 async def recursive_access_control_sample(filesystem_client):
     # create a parent directory
     dir_name = "testdir"
@@ -46,23 +47,26 @@ async def recursive_access_control_sample(filesystem_client):
     failed_entries = []
 
     # the progress callback is invoked each time a batch is completed
-    async def progress_callback(resp):
+    async def progress_callback(acl_changes):
         print("In this batch: {} directories and {} files were processed successfully, {} failures were counted"
-              .format(resp.directories_successful, resp.files_successful, resp.failure_count))
+              .format(acl_changes.batch_counters.directories_successful, acl_changes.batch_counters.files_successful,
+                      acl_changes.batch_counters.failure_count))
 
         # keep track of failed entries if there are any
-        failed_entries.append(resp.failed_entries)
+        failed_entries.append(acl_changes.failed_entries)
 
     # illustrate the operation by using a small batch_size
-    summary = await directory_client.set_access_control_recursive(acl=acl, progress_callback=progress_callback,
-                                                                  batch_size=5)
+    acl_change_result = await directory_client.set_access_control_recursive(acl=acl,
+                                                                            progress_callback=progress_callback,
+                                                                            batch_size=5)
     print("Summary: {} directories and {} files were updated successfully, {} failures were counted."
-          .format(summary.directories_successful, summary.files_successful, summary.failure_count))
+          .format(acl_change_result.counters.directories_successful, acl_change_result.counters.files_successful,
+                  acl_change_result.counters.failure_count))
 
     # if an error was encountered, a continuation token would be returned if the operation can be resumed
-    if summary.continuation is not None:
+    if acl_change_result.continuation is not None:
         print("The operation can be resumed by passing the continuation token {} again into the access control method."
-              .format(summary.continuation_token))
+              .format(acl_change_result.continuation))
 
     # get and display the permissions of the parent directory again
     acl_props = await directory_client.get_access_control()
@@ -93,19 +97,20 @@ async def run():
         account_name
     ), credential=account_key)
 
-    # generate a random name for testing purpose
-    fs_name = "testfs{}".format(random.randint(1, 1000))
-    print("Generating a test filesystem named '{}'.".format(fs_name))
+    async with service_client:
+        # generate a random name for testing purpose
+        fs_name = "testfs{}".format(random.randint(1, 1000))
+        print("Generating a test filesystem named '{}'.".format(fs_name))
 
-    # create the filesystem
-    filesystem_client = await service_client.create_file_system(file_system=fs_name)
+        # create the filesystem
+        filesystem_client = await service_client.create_file_system(file_system=fs_name)
 
-    # invoke the sample code
-    try:
-        await recursive_access_control_sample(filesystem_client)
-    finally:
-        # clean up the demo filesystem
-        await filesystem_client.delete_file_system()
+        # invoke the sample code
+        try:
+            await recursive_access_control_sample(filesystem_client)
+        finally:
+            # clean up the demo filesystem
+            await filesystem_client.delete_file_system()
 
 
 if __name__ == '__main__':

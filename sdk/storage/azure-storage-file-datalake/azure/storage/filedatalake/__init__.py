@@ -27,6 +27,9 @@ from ._models import (
     UserDelegationKey,
     PublicAccess,
     AccessPolicy,
+    AccessControlChangeResult,
+    AccessControlChangeCounters,
+    AccessControlChangeFailure,
     AccessControlChanges,
 )
 from ._shared_access_signature import generate_account_sas, generate_file_system_sas, generate_directory_sas, \
@@ -59,6 +62,9 @@ __all__ = [
     'PathPropertiesPaged',
     'LeaseProperties',
     'ContentSettings',
+    'AccessControlChangeResult',
+    'AccessControlChangeCounters',
+    'AccessControlChangeFailure',
     'AccessControlChanges',
     'AccountSasPermissions',
     'FileSystemSasPermissions',
