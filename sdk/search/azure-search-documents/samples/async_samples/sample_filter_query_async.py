@@ -41,13 +41,12 @@ async def filter_query():
     query.select("HotelName", "Rating")
     query.order_by("Rating desc")
 
-    results = await search_client.search(query=query)
+    async with search_client:
+        results = await search_client.search(query=query)
 
-    print("Florida hotels containing 'WiFi', sorted by Rating:")
-    async for result in results:
-        print("    Name: {} (rating {})".format(result["HotelName"], result["Rating"]))
-
-    await search_client.close()
+        print("Florida hotels containing 'WiFi', sorted by Rating:")
+        async for result in results:
+            print("    Name: {} (rating {})".format(result["HotelName"], result["Rating"]))
     # [END filter_query_async]
 
 if __name__ == '__main__':

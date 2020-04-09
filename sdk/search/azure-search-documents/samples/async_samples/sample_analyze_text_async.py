@@ -32,9 +32,13 @@ async def simple_analyze_text():
     from azure.search.documents.aio import SearchServiceClient
     from azure.search.documents import AnalyzeRequest
 
-    client = SearchServiceClient(service_endpoint, AzureKeyCredential(key))
+    service_client = SearchServiceClient(service_endpoint, AzureKeyCredential(key))
+
     analyze_request = AnalyzeRequest(text="One's <two/>", analyzer="standard.lucene")
-    result = await client.analyze_text(index_name, analyze_request)
+
+    async with service_client:
+        result = await service_client.analyze_text(index_name, analyze_request)
+        print(result.as_dict())
     # [END simple_analyze_text_async]
 
 if __name__ == '__main__':

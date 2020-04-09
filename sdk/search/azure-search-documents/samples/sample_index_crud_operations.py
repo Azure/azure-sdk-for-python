@@ -27,7 +27,7 @@ key = os.getenv("AZURE_SEARCH_API_KEY")
 from azure.core.credentials import AzureKeyCredential
 from azure.search.documents import SearchServiceClient, CorsOptions, Index, ScoringProfile
 
-client = SearchServiceClient(service_endpoint, AzureKeyCredential(key))
+service_client = SearchServiceClient(service_endpoint, AzureKeyCredential(key))
 
 def create_index():
     # [START create_index]
@@ -51,13 +51,13 @@ def create_index():
         scoring_profiles=scoring_profiles,
         cors_options=cors_options)
 
-    result = client.create_index(index)
+    result = service_client.create_index(index)
     # [END create_index]
 
 def get_index():
     # [START get_index]
     name = "hotels"
-    result = client.get_index(name)
+    result = service_client.get_index(name)
     # [END get_index]
 
 def update_index():
@@ -86,13 +86,13 @@ def update_index():
         scoring_profiles=scoring_profiles,
         cors_options=cors_options)
 
-    result = client.create_or_update_index(index_name=index.name, index=index)
+    result = service_client.create_or_update_index(index_name=index.name, index=index)
     # [END update_index]
 
 def delete_index():
     # [START delete_index]
     name = "hotels"
-    client.delete_index(name)
+    service_client.delete_index(name)
     # [END delete_index]
 
 if __name__ == '__main__':
