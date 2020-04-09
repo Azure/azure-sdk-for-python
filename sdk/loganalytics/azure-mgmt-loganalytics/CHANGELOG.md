@@ -1,6 +1,7 @@
 # Release History
 
 ## 0.3.0 (2020-04-08)
+
 **Features**
 
   - Model OperationDisplay has a new parameter description
