@@ -38,8 +38,9 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
         kwargs.pop('_hosts', None)
         self._blob_client = BlobClient(account_url=self._blob_account_url, container_name=file_system_name,
                                        blob_name=path_name,
-                                       credential=credential, _hosts=self._blob_client._hosts,
-                                       **kwargs)  # pylint: disable=protected-access
+                                       credential=credential,
+                                       _hosts=self._blob_client._hosts, # pylint: disable=protected-access
+                                       **kwargs)
         self._client = DataLakeStorageClient(self.url, file_system_name, path_name, pipeline=self._pipeline)
         self._loop = kwargs.get('loop', None)
 
