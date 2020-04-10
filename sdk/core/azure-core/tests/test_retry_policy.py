@@ -109,7 +109,7 @@ def test_retry_on_429():
     pipeline.run(http_request)
     assert transport._count == 2
 
-def test_retry_on_201():
+def test_no_retry_on_201():
     class MockTransport(HttpTransport):
         def __init__(self):
             self._count = 0
@@ -124,6 +124,8 @@ def test_retry_on_201():
             self._count += 1
             response = HttpResponse(request, None)
             response.status_code = 201
+            headers = {"Retry-After": "1"}
+            response.headers = headers
             return response
 
     http_request = HttpRequest('GET', 'http://127.0.0.1/')

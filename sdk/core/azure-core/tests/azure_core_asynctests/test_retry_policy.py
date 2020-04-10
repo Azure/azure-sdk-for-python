@@ -114,7 +114,7 @@ async def test_retry_on_429():
     assert transport._count == 2
 
 @pytest.mark.asyncio
-async def test_retry_on_201():
+async def test_no_retry_on_201():
     class MockTransport(AsyncHttpTransport):
         def __init__(self):
             self._count = 0
@@ -129,6 +129,8 @@ async def test_retry_on_201():
             self._count += 1
             response = HttpResponse(request, None)
             response.status_code = 201
+            headers = {"Retry-After": "1"}
+            response.headers = headers
             return response
 
     http_request = HttpRequest('GET', 'http://127.0.0.1/')
