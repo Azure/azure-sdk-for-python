@@ -467,6 +467,8 @@ class LROBasePolling(PollingMethod):
 
         import pickle
         initial_response = pickle.loads(continuation_token)
+        # Restore the transport in the context
+        initial_response.context.transport = client._pipeline._transport  # pylint: disable=protected-access
         return client, initial_response, deserialization_callback
 
     def run(self):
