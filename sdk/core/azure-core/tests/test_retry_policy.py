@@ -151,7 +151,9 @@ def test_retry_seekable_stream():
                 raise AzureError('fail on first')
             position = request.body.tell()
             assert position == 0
-            return HttpResponse(request, None)
+            response = HttpResponse(request, None)
+            response.status_code = 400
+            return response
 
     data = BytesIO(b"Lots of dataaaa")
     http_request = HttpRequest('GET', 'http://127.0.0.1/')
@@ -184,7 +186,9 @@ def test_retry_seekable_file():
                 if name and body and hasattr(body, 'read'):
                     position = body.tell()
                     assert not position
-                    return HttpResponse(request, None)
+                    response = HttpResponse(request, None)
+                    response.status_code = 400
+                    return response
 
     file = tempfile.NamedTemporaryFile(delete=False)
     file.write(b'Lots of dataaaa')

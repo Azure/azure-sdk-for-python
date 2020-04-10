@@ -275,7 +275,7 @@ class RetryPolicy(HTTPPolicy):
         :return: True if method/status code is retryable. False if not retryable.
         :rtype: bool
         """
-        if response.http_response.status_code and response.http_response.status_code < 400:
+        if response.http_response.status_code < 400:
             return False
         has_retry_after = bool(response.http_response.headers.get("Retry-After"))
         if has_retry_after and self._respect_retry_after_header:
