@@ -7,7 +7,7 @@ from form documents. Form Recognizer is made up of the following services:
 * Prebuilt receipt model - Extract data from USA sales receipts using a prebuilt model.
 * Layout API - Extract text and table structures, along with their bounding box coordinates, from documents.
 
-[Source code][python-fr-src] | [Package (PyPI)][python-fr-pypi] | [API reference documentation][TODO]| [Product documentation][python-fr-product-docs] | [Samples][python-fr-samples]
+[Source code][python-fr-src] | [Package (PyPI)][python-fr-pypi] | [API reference documentation][python-fr-ref-docs]| [Product documentation][python-fr-product-docs] | [Samples][python-fr-samples]
 
 ## Getting started
 
@@ -29,9 +29,9 @@ Create a Cognitive Services resource if you plan to access multiple cognitive se
 
 You can create the resource using
 
-**Option 1:** [Azure Portal][TODO]
+**Option 1:** [Azure Portal][azure_portal_create_FR_resource]
 
-**Option 2:** [Azure CLI][TODO].
+**Option 2:** [Azure CLI][azure_cli_create_FR_resource].
 Below is an example of how you can create a Form Recognizer resource using the CLI:
 
 ```bash
@@ -64,11 +64,11 @@ az cognitiveservices account show --name "resource-name" --resource-group "resou
 ```
 
 #### Types of credentials
-The `credential` parameter may be provided as a `AzureKeyCredential` from [azure.core][TODO].
+The `credential` parameter may be provided as a [`AzureKeyCredential`][azure-key-credential] from [azure.core][azure_core].
 See the full details regarding [authentication][cognitive_authentication] of cognitive services.
 
 To use an [API key][cognitive_authentication_api_key],
-pass the key as a string into an instance of `AzureKeyCredential("<api_key>")`.
+pass the key as a string into an instance of [`AzureKeyCredential("<api_key>")`][azure-key-credential].
 The API key can be found in the Azure Portal or by running the following Azure CLI command:
 
 ```az cognitiveservices account keys list --name "resource-name" --resource-group "resource-group-name"```
@@ -85,102 +85,98 @@ client = FormRecognizerClient(endpoint, credential)
 ## Key concepts
 
 ### FormRecognizerClient
-A `FormRecognizerClient` is the Form Recognizer interface to use for analyzing receipts and extracting layout items from 
-forms. It provides a different method based on input from a URL or input from a stream. 
-Use the receipt methods to extract receipt field values and locations from receipts from the United States from a URL
-or stream. Use the layout methods to extract table data and geometry from a URL or stream.
+A `FormRecognizerClient` is the Form Recognizer interface to use for analyzing receipts and extracting layout items from
+forms. It provides different methods based on inputs from a URL and inputs from a stream. You can extract receipt field
+values from receipts from the US, table data and geometry from a URl or stream, and use a custom trained model to extract
+form data.
 
-### CustomFormClient
-A `CustomFormClient` is the Form Recognizer interface to use for creating, using, and managing custom machine-learned models. 
-It provides operations for training models on forms you provide, and extracting field values and locations from your 
-custom forms.  It also provides operations for viewing and deleting models, as well as understanding how close you 
+### FormTrainingClient
+A `FormTrainingClient` is the Form Recognizer interface to use for creating, using, and managing custom machine-learned models.
+It provides operations for training models on forms you provide, and extracting field values and locations from your
+custom forms.  It also provides operations for viewing and deleting models, as well as understanding how close you
 are to reaching subscription limits for the number of models you can train.
 
 ### Long-Running Operations
 Long-running operations are operations which consist of an initial request sent to the service to start an operation,
-followed by polling the service at intervals to determine whether the operation has completed or failed, and if it has 
+followed by polling the service at intervals to determine whether the operation has completed or failed, and if it has
 succeeded, to get the result.
 
-Methods that train models or extract values from forms are modeled as long-running operations.  The client exposes 
-a `begin_<method-name>` method that returns an `LROPoller`.  Callers should wait for the operation to complete by 
-calling `result()` on the operation returned from the `begin_<method-name>` method.  Sample code snippets are provided 
+Methods that train models or extract values from forms are modeled as long-running operations.  The client exposes
+a `begin_<method-name>` method that returns an `LROPoller`.  Callers should wait for the operation to complete by
+calling `result()` on the operation returned from the `begin_<method-name>` method.  Sample code snippets are provided
 to illustrate using long-running operations [below](#Examples).
 
 ### Training models
-Using the `CustomFormClient`, you can train a machine-learned model on your own form type.  The resulting model will 
+Using the `FormTrainingClient`, you can train a machine-learned model on your own form type.  The resulting model will
 be able to extract values from the types of forms it was trained on.
 
 #### Training without labels
-A model trained without labels uses unsupervised learning to understand the layout and relationships between field 
-names and values in your forms. The learning algorithm clusters the training forms by type and learns what fields and 
-tables are present in each form type. 
+A model trained without labels uses unsupervised learning to understand the layout and relationships between field
+names and values in your forms. The learning algorithm clusters the training forms by type and learns what fields and
+tables are present in each form type.
 
-This approach doesn't require manual data labeling or intensive coding and maintenance, and we recommend you try this 
+This approach doesn't require manual data labeling or intensive coding and maintenance, and we recommend you try this
 method first when training custom models.
 
 #### Training with labels
 A model trained with labels uses supervised learning to extract values you specify by adding labels to your training forms.
-The learning algorithm uses a label file you provide to learn what fields are found at various locations in the form, 
+The learning algorithm uses a label file you provide to learn what fields are found at various locations in the form,
 and learns to extract just those values.
 
 This approach can result in better-performing models, and those models can work with more complex form structures.
 
 ### Extracting values from forms
-Using the `CustomFormClient`, you can use your own trained models to extract field values and locations, as well as 
-table data, from forms of the type you trained your models on.  The output of models trained with and without labels 
+Using the `FormRecognizerClient`, you can use your own trained models to extract field values and locations, as well as
+table data, from forms of the type you trained your models on.  The output of models trained with and without labels
 differs as described below.
 
 #### Using models trained without labels
-Models trained without labels consider each form page to be a different form type.  For example, if you train your 
-model on 3-page forms, it will learn that these are three different types of forms.  When you send a form to it for 
+Models trained without labels consider each form page to be a different form type.  For example, if you train your
+model on 3-page forms, it will learn that these are three different types of forms.  When you send a form to it for
 analysis, it will return a collection of three pages, where each page contains the field names, values, and locations,
 as well as table data, found on that page.
 
 #### Using models trained with labels
-Models trained with labels consider a form as a single unit.  For example, if you train your model on 3-page forms 
-with labels, it will learn to extract field values from the locations you've labeled across all pages in the form. 
-If you sent a document containing two forms to it for analysis, it would return a collection of two forms, 
+Models trained with labels consider a form as a single unit.  For example, if you train your model on 3-page forms
+with labels, it will learn to extract field values from the locations you've labeled across all pages in the form.
+If you sent a document containing two forms to it for analysis, it would return a collection of two forms,
 where each form contains the field names, values, and locations, as well as table data, found in that form.
 Fields and tables have page numbers to identify the pages where they were found.
 
 ### Managing Custom Models
-Using the `CustomFormClient`, you can get, list, and delete the custom models you've trained. 
-You can also view the count of models you've trained and the maximum number of models your subscription will 
+Using the `FormTrainingClient`, you can get, list, and delete the custom models you've trained.
+You can also view the count of models you've trained and the maximum number of models your subscription will
 allow you to store.
 
 ## Examples
 
 The following section provides several code snippets covering some of the most common Form Recognizer tasks, including:
 
-* [Extract Receipts](#extract-receipts "Extract receipts")
+* [Recognize Receipts](#recognize-receipts "Recognize receipts")
 * [Extract Form Layouts](#extract-form-layouts "Extract form layouts")
 * [Train a Model](#train-a-model "Train a model")
 * [Extract Forms Using a Model](#extract-forms-using-a-model "Extract forms using a model")
 
 
-### Extract Receipts
-Extract data from USA sales receipts using a prebuilt model.
+### Recognize Receipts
+Recognize data from USA sales receipts using a prebuilt model.
 
 ```python
 from azure.ai.formrecognizer import FormRecognizerClient
 from azure.core.credentials import AzureKeyCredential
 client = FormRecognizerClient(endpoint, AzureKeyCredential(key))
 
-with open(".tests/sample_data/receipt/contoso-allinone.jpg", "rb") as fd:
+with open("<path to your receipt>", "rb") as fd:
     receipt = fd.read()
 
-poller = client.begin_extract_receipts(receipt)
+poller = client.begin_recognize_receipts(receipt)
 result = poller.result()
 
 r = result[0]
 print("Receipt contained the following values with confidences: ")
 print("ReceiptType: {}\nconfidence: {}\n".format(r.receipt_type.type, r.receipt_type.confidence))
 print("MerchantName: {}\nconfidence: {}\n".format(r.merchant_name.value, r.merchant_name.confidence))
-print("MerchantAddress: {}\nconfidence: {}\n".format(r.merchant_address.value, r.merchant_address.confidence))
-print("MerchantPhoneNumber: {}\nconfidence: {}\n".format(r.merchant_phone_number.value,
-                                                       r.merchant_phone_number.confidence))
 print("TransactionDate: {}\nconfidence: {}\n".format(r.transaction_date.value, r.transaction_date.confidence))
-print("TransactionTime: {}\nconfidence: {}\n".format(r.transaction_time.value, r.transaction_time.confidence))
 print("Receipt items:")
 for item in r.receipt_items:
     print("Item Name: {}\nconfidence: {}".format(item.name.value, item.name.confidence))
@@ -192,8 +188,8 @@ print("Tip: {}\nconfidence: {}\n".format(r.tip.value, r.tip.confidence))
 print("Total: {}\nconfidence: {}\n".format(r.total.value, r.total.confidence))
 ```
 
-### Extract Form Layouts
-Extract text and table structures, along with their bounding box coordinates, from documents.
+### Recognize Form Content
+Recognize text and table structures, along with their bounding box coordinates, from documents.
 
 ```python
 from azure.ai.formrecognizer import FormRecognizerClient
@@ -201,10 +197,10 @@ from azure.core.credentials import AzureKeyCredential
 
 client = FormRecognizerClient(endpoint, AzureKeyCredential(key))
 
-with open(".tests/sample_data/invoice/Test/Invoice_6.pdf", "rb") as fd:
+with open("<path to your form>", "rb") as fd:
     form = fd.read()
 
-poller = client.begin_extract_layouts(form)
+poller = client.begin_recognize_content(form)
 page = poller.result()
 
 table = page[0].tables[0] # page 1, table 1
@@ -215,16 +211,16 @@ for cell in table.cells:
 
 ### Train a model
 Train a machine-learned model on your own form type. The resulting model will be able to extract values from the types of forms it was trained on.
-Provide the training documents as a container SAS url to your Azure Storage Blob container. See details on setting this up
+Provide a container SAS url to your Azure Storage Blob container where you're storing the training documents. See details on setting this up
 in the [service quickstart documentation][quickstart_training].
 
 ```python
-from azure.ai.formrecognizer import CustomFormClient
+from azure.ai.formrecognizer import FormTrainingClient
 from azure.core.credentials import AzureKeyCredential
 
-client = CustomFormClient(endpoint, AzureKeyCredential(key))
+client = FormTrainingClient(endpoint, AzureKeyCredential(key))
 
-blob_sas_url = "xxxxx"  # training documents uploaded to blob storage
+blob_sas_url = "xxx"  # training documents uploaded to blob storage
 poller = client.begin_training(blob_sas_url)
 model = poller.result()
 
@@ -234,54 +230,55 @@ print("Status: {}".format(model.status))
 print("Created on: {}".format(model.created_on))
 print("Last updated on: {}".format(model.last_updated_on))
 
-print("Extracted fields:")
-for item in model.extracted_fields:
-    print(item.form_type_id)
-    print(item.fields) # list of fields
+print("Recognized fields:")
+# looping through the submodels, which contains the fields they were trained on
+for submodel in model.models:
+    print("We have recognized the following fields: {}".format(
+        ", ".join([label for label in submodel.fields])
+    ))
 
 # Training result information
-training_info = model.training_info
-for doc in training_info.documents:
-    print(doc.document_name)
-    print(doc.status)
-    print(doc.page_count)
-    print(doc.errors)
+for doc in model.training_documents:
+    print("Document name: {}".format(doc.document_name))
+    print("Document status: {}".format(doc.status))
+    print("Document page count: {}".format(doc.page_count))
+    print("Document errors: {}".format(doc.errors))
 ```
 
-### Extract Forms Using a Model
-Extract name/value pairs and table data from forms. These models are trained with your own data, so they're tailored to your forms.
+### Recognize Forms Using a Model
+Recognize name/value pairs and table data from forms. These models are trained with your own data, so they're tailored to your forms.
 
 ```python
-from azure.ai.formrecognizer import CustomFormClient
+from azure.ai.formrecognizer import FormRecognizerClient
 from azure.core.credentials import AzureKeyCredential
 
-client = CustomFormClient(endpoint, AzureKeyCredential(key))
+client = FormRecognizerClient(endpoint, AzureKeyCredential(key))
 model_id = "<model id from the above sample>"
 
-with open(".tests/sample_data/invoice/Test/Invoice_7.pdf", "rb") as fd:
+with open("sample_forms/forms/Form_1.jpg", "rb") as fd:
     form = fd.read()
 
-poller = client.begin_extract_form_pages(form, model_id=model_id)
+poller = client.begin_recognize_custom_forms(model_id=model_id, stream=form)
 result = poller.result()
 
-for page in result:
-    print("Page: {}".format(page.page_number))
-    print("Form type ID: {}".format(page.form_type_id))
-    for field in page.fields:
-        print("{}: {}".format(field.name.text, field.value.text))
-        print("Confidence: {}".format(field.confidence))
+for recognized_form in result:
+    print("Form type ID: {}".format(recognized_form.form_type))
+    for label, field in recognized_form.fields.items():
+        print("Field '{}' has value '{}' with a confidence score of {}".format(
+            label, field.value, field.confidence
+        ))
 ```
 
 ## Optional Configuration
 
 Optional keyword arguments can be passed in at the client and per-operation level.
-The azure-core [reference documentation][TODO]
+The azure-core [reference documentation][azure_core_ref_docs]
 describes available configurations for retries, logging, transport protocols, and more.
 
 ## Troubleshooting
 
 ### General
-Form Recognizer client library will raise exceptions defined in [Azure Core][azure_core].
+Form Recognizer client library will raise exceptions defined in [Azure Core][azure_core_ref_docs].
 
 ### Logging
 This library uses the standard
@@ -315,7 +312,7 @@ client = FormRecognizerClient(endpoint, credential, logging_enable=True)
 Similarly, `logging_enable` can enable detailed logging for a single operation,
 even when it isn't enabled for the client:
 ```python
-result = client.begin_extract_receipts(receipt, logging_enable=True)
+result = client.begin_recognize_receipts(receipt, logging_enable=True)
 ```
 
 ## Next steps
@@ -355,6 +352,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [python-fr-src]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/azure/ai/formrecognizer
 [python-fr-pypi]: https://pypi.org/project/azure-ai-formrecognizer/
 [python-fr-product-docs]: https://docs.microsoft.com/en-us/azure/cognitive-services/form-recognizer/overview
+[python-fr-ref-docs]: https://aka.ms/azsdk-python-formrecognizer-ref-docs
 [python-fr-samples]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples
 
 
@@ -362,8 +360,12 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [azure_subscription]: https://azure.microsoft.com/free/
 [FR_or_CS_resource]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account?tabs=multiservice%2Cwindows
 [pip]: https://pypi.org/project/pip/
+[azure_portal_create_FR_resource]: https://ms.portal.azure.com/#create/Microsoft.CognitiveServicesFormRecognizer
+[azure_cli_create_FR_resource]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account-cli?tabs=windows
+[azure-key-credential]: https://aka.ms/azsdk-python-core-azurekeycredential
 
 [azure_core]: ../../core/azure-core/README.md
+[azure_core_ref_docs]: https://aka.ms/azsdk-python-azure-core
 [python_logging]: https://docs.python.org/3/library/logging.html
 [multi_and_single_service]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account?tabs=multiservice%2Cwindows
 [azure_cli_endpoint_lookup]: https://docs.microsoft.com/cli/azure/cognitiveservices/account?view=azure-cli-latest#az-cognitiveservices-account-show
