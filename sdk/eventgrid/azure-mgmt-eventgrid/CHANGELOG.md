@@ -1,5 +1,58 @@
 # Release History
 
+## 3.0.0rc6 (2020-04-03)
+
+**Features**
+
+  - Model PartnerRegistrationUpdateParameters has a new parameter tags
+  - Model EventChannel has a new parameter filter
+
+**Breaking changes**
+
+  - Operation PrivateEndpointConnectionsOperations.update has a new signature
+  - Operation SystemTopicEventSubscriptionsOperations.list_by_system_topic has a new signature
+  - Operation PartnerTopicEventSubscriptionsOperations.list_by_partner_topic has a new signature
+
+## 3.0.0rc5 (2020-03-19)
+
+**Features**
+
+- Model Domain has a new parameter public_network_access
+- Model Domain has a new parameter identity
+- Model Domain has a new parameter private_endpoint_connections
+- Model Domain has a new parameter sku
+- Model DomainUpdateParameters has a new parameter public_network_access
+- Model DomainUpdateParameters has a new parameter identity
+- Model DomainUpdateParameters has a new parameter sku
+- Model TopicUpdateParameters has a new parameter public_network_access
+- Model TopicUpdateParameters has a new parameter identity
+- Model TopicUpdateParameters has a new parameter sku
+- Model EventSubscriptionUpdateParameters has a new parameter dead_letter_with_resource_identity
+- Model EventSubscriptionUpdateParameters has a new parameter delivery_with_resource_identity
+- Model Topic has a new parameter public_network_access
+- Model Topic has a new parameter identity
+- Model Topic has a new parameter private_endpoint_connections
+- Model Topic has a new parameter sku
+- Model EventSubscription has a new parameter dead_letter_with_resource_identity
+- Model EventSubscription has a new parameter delivery_with_resource_identity
+- Added operation group PrivateLinkResourcesOperations
+- Added operation group SystemTopicsOperations
+- Added operation group PrivateEndpointConnectionsOperations
+- Added operation group PartnerTopicsOperations
+- Added operation group PartnerNamespacesOperations
+- Added operation group PartnerTopicEventSubscriptionsOperations
+- Added operation group PartnerRegistrationsOperations
+- Added operation group ExtensionTopicsOperations
+- Added operation group SystemTopicEventSubscriptionsOperations
+- Added operation group EventChannelsOperations
+
+**Breaking changes**
+
+- Model Domain no longer has parameter allow_traffic_from_all_ips
+- Model DomainUpdateParameters no longer has parameter allow_traffic_from_all_ips
+- Model TopicUpdateParameters no longer has parameter allow_traffic_from_all_ips
+- Model Topic no longer has parameter allow_traffic_from_all_ips
+
 ## 3.0.0rc4 (2020-01-17)
 
 **Features**

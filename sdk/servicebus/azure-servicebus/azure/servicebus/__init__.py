@@ -3,16 +3,19 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
+from uamqp import constants
 
 from ._version import VERSION
 __version__ = VERSION
 
-
-from azure.servicebus.common.message import Message, BatchMessage, PeekMessage, DeferredMessage
-from azure.servicebus.servicebus_client import ServiceBusClient, QueueClient, TopicClient, SubscriptionClient
-from azure.servicebus.common.constants import ReceiveSettleMode, NEXT_AVAILABLE
-from azure.servicebus.common.utils import AutoLockRenew
-from azure.servicebus.common.errors import (
+from ._servicebus_client import ServiceBusClient
+from ._servicebus_sender import ServiceBusSender
+from ._servicebus_receiver import ServiceBusReceiver, ServiceBusSession
+from ._base_handler import ServiceBusSharedKeyCredential
+from ._common.message import Message, BatchMessage, PeekMessage, ReceivedMessage
+from ._common.constants import ReceiveSettleMode, NEXT_AVAILABLE
+from ._common.utils import AutoLockRenew
+from .exceptions import (
     ServiceBusError,
     ServiceBusResourceNotFound,
     ServiceBusConnectionError,
@@ -25,19 +28,16 @@ from azure.servicebus.common.errors import (
     MessageLockExpired,
     SessionLockExpired,
     AutoLockRenewFailed,
-    AutoLockRenewTimeout)
+    AutoLockRenewTimeout,)
 
+
+TransportType = constants.TransportType
 
 __all__ = [
     'Message',
     'BatchMessage',
     'PeekMessage',
-    'AutoLockRenew',
-    'DeferredMessage',
-    'ServiceBusClient',
-    'QueueClient',
-    'TopicClient',
-    'SubscriptionClient',
+    'ReceivedMessage',
     'ReceiveSettleMode',
     'NEXT_AVAILABLE',
     'ServiceBusError',
@@ -52,4 +52,12 @@ __all__ = [
     'MessageLockExpired',
     'SessionLockExpired',
     'AutoLockRenewFailed',
-    'AutoLockRenewTimeout']
+    'AutoLockRenewTimeout',
+    'ServiceBusClient',
+    'ServiceBusReceiver',
+    'ServiceBusSender',
+    'ServiceBusSharedKeyCredential',
+    'TransportType',
+    'AutoLockRenew',
+    'ServiceBusSession'
+]

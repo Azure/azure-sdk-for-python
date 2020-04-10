@@ -1265,12 +1265,10 @@ class StorageContainerTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_user_delegation_sas_for_container(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
-        pytest.skip("Current Framework Cannot Support OAUTH")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
         token_credential = self.generate_oauth_token()
-        service_client = BlobServiceClient(self._get_oauth_account_url(), credential=token_credential)
+        service_client = BlobServiceClient(self.account_url(storage_account, "blob"), credential=token_credential)
         user_delegation_key = service_client.get_user_delegation_key(datetime.utcnow(),
                                                                      datetime.utcnow() + timedelta(hours=1))
 
@@ -1278,11 +1276,10 @@ class StorageContainerTest(StorageTestCase):
         token = generate_container_sas(
             container_client.account_name,
             container_client.container_name,
-            account_key=container_client.credential.account_key,
+            account_key=storage_account_key,
             expiry=datetime.utcnow() + timedelta(hours=1),
             permission=ContainerSasPermissions(read=True),
             user_delegation_key=user_delegation_key,
-            account_name='emilydevtest'
         )
 
         blob_client = container_client.get_blob_client(self.get_resource_name('oauthblob'))

@@ -53,13 +53,14 @@ function ExtractReleaseNotes($changeLogLocation)
 
 function VerifyPackages($rootDirectory)
 { 
-   #This function verifies version in history.md for a given package
+   #This function verifies version in CHANGELOG.md for a given package
    try
    {
-      $historyFiles = Get-ChildItem -Path $rootDirectory -Recurse -Include "history.md"
+      $historyFiles = Get-ChildItem -Path $rootDirectory -Recurse -Include "CHANGELOG.md"
       if ($historyFiles -eq $null)
       { 
-         exit(0)
+         Write-Host "Change log file is missing for package"
+         exit(1)
       }
 
       #Find current version of package from _version.py and package name from setup.py
@@ -68,7 +69,7 @@ function VerifyPackages($rootDirectory)
       $releaseNotes = ExtractReleaseNotes -changeLogLocation $changeFile
       if ($releaseNotes.Count -gt 0)
       {
-         #Log package if it doesn't have current version in history.md
+         #Log package if it doesn't have current version in change log
          if ( $releaseNotes.Contains($version))
          {
             $content = $releaseNotes[$version]

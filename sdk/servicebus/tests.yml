@@ -11,6 +11,8 @@ jobs:
   - template: ../../eng/pipelines/templates/jobs/archetype-sdk-tests.yml
     parameters:
       ServiceDirectory: servicebus
+      TestTimeoutInMinutes: 300
+      BuildTargetingString: azure-servicebus*
       EnvVars:
         AZURE_SUBSCRIPTION_ID: $(azure-subscription-id)
         AZURE_TENANT_ID: $(aad-azure-sdk-test-tenant-id)

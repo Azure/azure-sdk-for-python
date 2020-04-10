@@ -25,7 +25,7 @@
 # --------------------------------------------------------------------------
 
 import logging
-from typing import Generic, TypeVar, List, Union, Any
+from typing import Generic, TypeVar, List, Union, Any, Dict
 from azure.core.pipeline import (
     AbstractContextManager,
     PipelineRequest,
@@ -169,12 +169,13 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
 
         requests = multipart_mixed_info[0]  # type: List[HTTPRequestType]
         policies = multipart_mixed_info[1]  # type: List[SansIOHTTPPolicy]
+        pipeline_options = multipart_mixed_info[3]  # type: Dict[str, Any]
 
         # Apply on_requests concurrently to all requests
         import concurrent.futures
 
         def prepare_requests(req):
-            context = PipelineContext(None)
+            context = PipelineContext(None, **pipeline_options)
             pipeline_request = PipelineRequest(req, context)
             for policy in policies:
                 _await_result(policy.on_request, pipeline_request)

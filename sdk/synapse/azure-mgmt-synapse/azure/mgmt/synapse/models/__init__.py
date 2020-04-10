@@ -19,26 +19,63 @@ try:
     from ._models_py3 import BigDataPoolResourceInfo
     from ._models_py3 import CheckNameAvailabilityRequest
     from ._models_py3 import CheckNameAvailabilityResponse
+    from ._models_py3 import CmdkeySetup
+    from ._models_py3 import ComponentSetup
     from ._models_py3 import CreateSqlPoolRestorePointDefinition
+    from ._models_py3 import CustomSetupBase
     from ._models_py3 import DataLakeStorageAccountDetails
     from ._models_py3 import DataWarehouseUserActivities
+    from ._models_py3 import EntityReference
+    from ._models_py3 import EnvironmentVariableSetup
     from ._models_py3 import ErrorAdditionalInfo
     from ._models_py3 import ErrorContract, ErrorContractException
     from ._models_py3 import ErrorDetail
     from ._models_py3 import ErrorResponse
     from ._models_py3 import GeoBackupPolicy
+    from ._models_py3 import GetSsisObjectMetadataRequest
+    from ._models_py3 import IntegrationRuntime
+    from ._models_py3 import IntegrationRuntimeAuthKeys
+    from ._models_py3 import IntegrationRuntimeComputeProperties
+    from ._models_py3 import IntegrationRuntimeConnectionInfo
+    from ._models_py3 import IntegrationRuntimeCustomSetupScriptProperties
+    from ._models_py3 import IntegrationRuntimeDataFlowProperties
+    from ._models_py3 import IntegrationRuntimeDataProxyProperties
+    from ._models_py3 import IntegrationRuntimeMonitoringData
+    from ._models_py3 import IntegrationRuntimeNodeIpAddress
+    from ._models_py3 import IntegrationRuntimeNodeMonitoringData
+    from ._models_py3 import IntegrationRuntimeRegenerateKeyParameters
+    from ._models_py3 import IntegrationRuntimeResource
+    from ._models_py3 import IntegrationRuntimeSsisCatalogInfo
+    from ._models_py3 import IntegrationRuntimeSsisProperties
+    from ._models_py3 import IntegrationRuntimeStatus
+    from ._models_py3 import IntegrationRuntimeStatusResponse
+    from ._models_py3 import IntegrationRuntimeVNetProperties
     from ._models_py3 import IpFirewallRuleInfo
     from ._models_py3 import IpFirewallRuleProperties
     from ._models_py3 import LibraryRequirements
+    from ._models_py3 import LinkedIntegrationRuntime
+    from ._models_py3 import LinkedIntegrationRuntimeKeyAuthorization
+    from ._models_py3 import LinkedIntegrationRuntimeRbacAuthorization
+    from ._models_py3 import LinkedIntegrationRuntimeType
     from ._models_py3 import ManagedIdentity
     from ._models_py3 import ManagedIdentitySqlControlSettingsModel
     from ._models_py3 import ManagedIdentitySqlControlSettingsModelPropertiesGrantSqlControlToManagedIdentity
+    from ._models_py3 import ManagedIntegrationRuntime
+    from ._models_py3 import ManagedIntegrationRuntimeError
+    from ._models_py3 import ManagedIntegrationRuntimeNode
+    from ._models_py3 import ManagedIntegrationRuntimeOperationResult
+    from ._models_py3 import ManagedIntegrationRuntimeStatus
     from ._models_py3 import MetadataSyncConfig
     from ._models_py3 import OperationMetaLogSpecification
     from ._models_py3 import OperationMetaMetricDimensionSpecification
     from ._models_py3 import OperationMetaMetricSpecification
     from ._models_py3 import OperationMetaServiceSpecification
     from ._models_py3 import OperationResource
+    from ._models_py3 import PrivateEndpoint
+    from ._models_py3 import PrivateEndpointConnection
+    from ._models_py3 import PrivateLinkResource
+    from ._models_py3 import PrivateLinkResourceProperties
+    from ._models_py3 import PrivateLinkServiceConnectionState
     from ._models_py3 import ProxyResource
     from ._models_py3 import QueryInterval
     from ._models_py3 import QueryMetric
@@ -49,6 +86,11 @@ try:
     from ._models_py3 import Resource
     from ._models_py3 import ResourceMoveDefinition
     from ._models_py3 import RestorePoint
+    from ._models_py3 import SecretBase
+    from ._models_py3 import SecureString
+    from ._models_py3 import SelfHostedIntegrationRuntime
+    from ._models_py3 import SelfHostedIntegrationRuntimeNode
+    from ._models_py3 import SelfHostedIntegrationRuntimeStatus
     from ._models_py3 import SensitivityLabel
     from ._models_py3 import Sku
     from ._models_py3 import SqlPool
@@ -65,10 +107,23 @@ try:
     from ._models_py3 import SqlPoolVulnerabilityAssessmentRuleBaseline
     from ._models_py3 import SqlPoolVulnerabilityAssessmentRuleBaselineItem
     from ._models_py3 import SqlPoolVulnerabilityAssessmentScansExport
+    from ._models_py3 import SsisEnvironment
+    from ._models_py3 import SsisEnvironmentReference
+    from ._models_py3 import SsisFolder
+    from ._models_py3 import SsisObjectMetadata
+    from ._models_py3 import SsisObjectMetadataListResponse
+    from ._models_py3 import SsisObjectMetadataStatusResponse
+    from ._models_py3 import SsisPackage
+    from ._models_py3 import SsisParameter
+    from ._models_py3 import SsisProject
+    from ._models_py3 import SsisVariable
+    from ._models_py3 import SubResource
     from ._models_py3 import TopQueries
     from ._models_py3 import TopQueriesListResult
     from ._models_py3 import TrackedResource
     from ._models_py3 import TransparentDataEncryption
+    from ._models_py3 import UpdateIntegrationRuntimeNodeRequest
+    from ._models_py3 import UpdateIntegrationRuntimeRequest
     from ._models_py3 import VirtualNetworkProfile
     from ._models_py3 import VulnerabilityAssessmentRecurringScansProperties
     from ._models_py3 import VulnerabilityAssessmentScanError
@@ -86,26 +141,63 @@ except (SyntaxError, ImportError):
     from ._models import BigDataPoolResourceInfo
     from ._models import CheckNameAvailabilityRequest
     from ._models import CheckNameAvailabilityResponse
+    from ._models import CmdkeySetup
+    from ._models import ComponentSetup
     from ._models import CreateSqlPoolRestorePointDefinition
+    from ._models import CustomSetupBase
     from ._models import DataLakeStorageAccountDetails
     from ._models import DataWarehouseUserActivities
+    from ._models import EntityReference
+    from ._models import EnvironmentVariableSetup
     from ._models import ErrorAdditionalInfo
     from ._models import ErrorContract, ErrorContractException
     from ._models import ErrorDetail
     from ._models import ErrorResponse
     from ._models import GeoBackupPolicy
+    from ._models import GetSsisObjectMetadataRequest
+    from ._models import IntegrationRuntime
+    from ._models import IntegrationRuntimeAuthKeys
+    from ._models import IntegrationRuntimeComputeProperties
+    from ._models import IntegrationRuntimeConnectionInfo
+    from ._models import IntegrationRuntimeCustomSetupScriptProperties
+    from ._models import IntegrationRuntimeDataFlowProperties
+    from ._models import IntegrationRuntimeDataProxyProperties
+    from ._models import IntegrationRuntimeMonitoringData
+    from ._models import IntegrationRuntimeNodeIpAddress
+    from ._models import IntegrationRuntimeNodeMonitoringData
+    from ._models import IntegrationRuntimeRegenerateKeyParameters
+    from ._models import IntegrationRuntimeResource
+    from ._models import IntegrationRuntimeSsisCatalogInfo
+    from ._models import IntegrationRuntimeSsisProperties
+    from ._models import IntegrationRuntimeStatus
+    from ._models import IntegrationRuntimeStatusResponse
+    from ._models import IntegrationRuntimeVNetProperties
     from ._models import IpFirewallRuleInfo
     from ._models import IpFirewallRuleProperties
     from ._models import LibraryRequirements
+    from ._models import LinkedIntegrationRuntime
+    from ._models import LinkedIntegrationRuntimeKeyAuthorization
+    from ._models import LinkedIntegrationRuntimeRbacAuthorization
+    from ._models import LinkedIntegrationRuntimeType
     from ._models import ManagedIdentity
     from ._models import ManagedIdentitySqlControlSettingsModel
     from ._models import ManagedIdentitySqlControlSettingsModelPropertiesGrantSqlControlToManagedIdentity
+    from ._models import ManagedIntegrationRuntime
+    from ._models import ManagedIntegrationRuntimeError
+    from ._models import ManagedIntegrationRuntimeNode
+    from ._models import ManagedIntegrationRuntimeOperationResult
+    from ._models import ManagedIntegrationRuntimeStatus
     from ._models import MetadataSyncConfig
     from ._models import OperationMetaLogSpecification
     from ._models import OperationMetaMetricDimensionSpecification
     from ._models import OperationMetaMetricSpecification
     from ._models import OperationMetaServiceSpecification
     from ._models import OperationResource
+    from ._models import PrivateEndpoint
+    from ._models import PrivateEndpointConnection
+    from ._models import PrivateLinkResource
+    from ._models import PrivateLinkResourceProperties
+    from ._models import PrivateLinkServiceConnectionState
     from ._models import ProxyResource
     from ._models import QueryInterval
     from ._models import QueryMetric
@@ -116,6 +208,11 @@ except (SyntaxError, ImportError):
     from ._models import Resource
     from ._models import ResourceMoveDefinition
     from ._models import RestorePoint
+    from ._models import SecretBase
+    from ._models import SecureString
+    from ._models import SelfHostedIntegrationRuntime
+    from ._models import SelfHostedIntegrationRuntimeNode
+    from ._models import SelfHostedIntegrationRuntimeStatus
     from ._models import SensitivityLabel
     from ._models import Sku
     from ._models import SqlPool
@@ -132,10 +229,23 @@ except (SyntaxError, ImportError):
     from ._models import SqlPoolVulnerabilityAssessmentRuleBaseline
     from ._models import SqlPoolVulnerabilityAssessmentRuleBaselineItem
     from ._models import SqlPoolVulnerabilityAssessmentScansExport
+    from ._models import SsisEnvironment
+    from ._models import SsisEnvironmentReference
+    from ._models import SsisFolder
+    from ._models import SsisObjectMetadata
+    from ._models import SsisObjectMetadataListResponse
+    from ._models import SsisObjectMetadataStatusResponse
+    from ._models import SsisPackage
+    from ._models import SsisParameter
+    from ._models import SsisProject
+    from ._models import SsisVariable
+    from ._models import SubResource
     from ._models import TopQueries
     from ._models import TopQueriesListResult
     from ._models import TrackedResource
     from ._models import TransparentDataEncryption
+    from ._models import UpdateIntegrationRuntimeNodeRequest
+    from ._models import UpdateIntegrationRuntimeRequest
     from ._models import VirtualNetworkProfile
     from ._models import VulnerabilityAssessmentRecurringScansProperties
     from ._models import VulnerabilityAssessmentScanError
@@ -144,7 +254,10 @@ except (SyntaxError, ImportError):
     from ._models import WorkspaceAadAdminInfo
     from ._models import WorkspacePatchInfo
 from ._paged_models import BigDataPoolResourceInfoPaged
+from ._paged_models import IntegrationRuntimeResourcePaged
 from ._paged_models import IpFirewallRuleInfoPaged
+from ._paged_models import PrivateEndpointConnectionPaged
+from ._paged_models import PrivateLinkResourcePaged
 from ._paged_models import ReplicationLinkPaged
 from ._paged_models import RestorePointPaged
 from ._paged_models import SensitivityLabelPaged
@@ -178,6 +291,20 @@ from ._synapse_management_client_enums import (
     VulnerabilityAssessmentScanState,
     SecurityAlertPolicyState,
     ResourceIdentityType,
+    IntegrationRuntimeType,
+    IntegrationRuntimeState,
+    DataFlowComputeType,
+    IntegrationRuntimeSsisCatalogPricingTier,
+    IntegrationRuntimeLicenseType,
+    IntegrationRuntimeEntityReferenceType,
+    IntegrationRuntimeEdition,
+    ManagedIntegrationRuntimeNodeStatus,
+    IntegrationRuntimeInternalChannelEncryptionMode,
+    SelfHostedIntegrationRuntimeNodeStatus,
+    IntegrationRuntimeUpdateResult,
+    IntegrationRuntimeAutoUpdate,
+    IntegrationRuntimeAuthKeyName,
+    SsisObjectMetadataType,
     VulnerabilityAssessmentPolicyBaselineName,
 )
 
@@ -191,26 +318,63 @@ __all__ = [
     'BigDataPoolResourceInfo',
     'CheckNameAvailabilityRequest',
     'CheckNameAvailabilityResponse',
+    'CmdkeySetup',
+    'ComponentSetup',
     'CreateSqlPoolRestorePointDefinition',
+    'CustomSetupBase',
     'DataLakeStorageAccountDetails',
     'DataWarehouseUserActivities',
+    'EntityReference',
+    'EnvironmentVariableSetup',
     'ErrorAdditionalInfo',
     'ErrorContract', 'ErrorContractException',
     'ErrorDetail',
     'ErrorResponse',
     'GeoBackupPolicy',
+    'GetSsisObjectMetadataRequest',
+    'IntegrationRuntime',
+    'IntegrationRuntimeAuthKeys',
+    'IntegrationRuntimeComputeProperties',
+    'IntegrationRuntimeConnectionInfo',
+    'IntegrationRuntimeCustomSetupScriptProperties',
+    'IntegrationRuntimeDataFlowProperties',
+    'IntegrationRuntimeDataProxyProperties',
+    'IntegrationRuntimeMonitoringData',
+    'IntegrationRuntimeNodeIpAddress',
+    'IntegrationRuntimeNodeMonitoringData',
+    'IntegrationRuntimeRegenerateKeyParameters',
+    'IntegrationRuntimeResource',
+    'IntegrationRuntimeSsisCatalogInfo',
+    'IntegrationRuntimeSsisProperties',
+    'IntegrationRuntimeStatus',
+    'IntegrationRuntimeStatusResponse',
+    'IntegrationRuntimeVNetProperties',
     'IpFirewallRuleInfo',
     'IpFirewallRuleProperties',
     'LibraryRequirements',
+    'LinkedIntegrationRuntime',
+    'LinkedIntegrationRuntimeKeyAuthorization',
+    'LinkedIntegrationRuntimeRbacAuthorization',
+    'LinkedIntegrationRuntimeType',
     'ManagedIdentity',
     'ManagedIdentitySqlControlSettingsModel',
     'ManagedIdentitySqlControlSettingsModelPropertiesGrantSqlControlToManagedIdentity',
+    'ManagedIntegrationRuntime',
+    'ManagedIntegrationRuntimeError',
+    'ManagedIntegrationRuntimeNode',
+    'ManagedIntegrationRuntimeOperationResult',
+    'ManagedIntegrationRuntimeStatus',
     'MetadataSyncConfig',
     'OperationMetaLogSpecification',
     'OperationMetaMetricDimensionSpecification',
     'OperationMetaMetricSpecification',
     'OperationMetaServiceSpecification',
     'OperationResource',
+    'PrivateEndpoint',
+    'PrivateEndpointConnection',
+    'PrivateLinkResource',
+    'PrivateLinkResourceProperties',
+    'PrivateLinkServiceConnectionState',
     'ProxyResource',
     'QueryInterval',
     'QueryMetric',
@@ -221,6 +385,11 @@ __all__ = [
     'Resource',
     'ResourceMoveDefinition',
     'RestorePoint',
+    'SecretBase',
+    'SecureString',
+    'SelfHostedIntegrationRuntime',
+    'SelfHostedIntegrationRuntimeNode',
+    'SelfHostedIntegrationRuntimeStatus',
     'SensitivityLabel',
     'Sku',
     'SqlPool',
@@ -237,10 +406,23 @@ __all__ = [
     'SqlPoolVulnerabilityAssessmentRuleBaseline',
     'SqlPoolVulnerabilityAssessmentRuleBaselineItem',
     'SqlPoolVulnerabilityAssessmentScansExport',
+    'SsisEnvironment',
+    'SsisEnvironmentReference',
+    'SsisFolder',
+    'SsisObjectMetadata',
+    'SsisObjectMetadataListResponse',
+    'SsisObjectMetadataStatusResponse',
+    'SsisPackage',
+    'SsisParameter',
+    'SsisProject',
+    'SsisVariable',
+    'SubResource',
     'TopQueries',
     'TopQueriesListResult',
     'TrackedResource',
     'TransparentDataEncryption',
+    'UpdateIntegrationRuntimeNodeRequest',
+    'UpdateIntegrationRuntimeRequest',
     'VirtualNetworkProfile',
     'VulnerabilityAssessmentRecurringScansProperties',
     'VulnerabilityAssessmentScanError',
@@ -262,6 +444,9 @@ __all__ = [
     'SqlPoolVulnerabilityAssessmentPaged',
     'VulnerabilityAssessmentScanRecordPaged',
     'WorkspacePaged',
+    'IntegrationRuntimeResourcePaged',
+    'PrivateLinkResourcePaged',
+    'PrivateEndpointConnectionPaged',
     'NodeSize',
     'NodeSizeFamily',
     'ProvisioningState',
@@ -282,5 +467,19 @@ __all__ = [
     'VulnerabilityAssessmentScanState',
     'SecurityAlertPolicyState',
     'ResourceIdentityType',
+    'IntegrationRuntimeType',
+    'IntegrationRuntimeState',
+    'DataFlowComputeType',
+    'IntegrationRuntimeSsisCatalogPricingTier',
+    'IntegrationRuntimeLicenseType',
+    'IntegrationRuntimeEntityReferenceType',
+    'IntegrationRuntimeEdition',
+    'ManagedIntegrationRuntimeNodeStatus',
+    'IntegrationRuntimeInternalChannelEncryptionMode',
+    'SelfHostedIntegrationRuntimeNodeStatus',
+    'IntegrationRuntimeUpdateResult',
+    'IntegrationRuntimeAutoUpdate',
+    'IntegrationRuntimeAuthKeyName',
+    'SsisObjectMetadataType',
     'VulnerabilityAssessmentPolicyBaselineName',
 ]

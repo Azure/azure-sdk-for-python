@@ -54,7 +54,6 @@ class EventHubAsync:
             # on_event will close the consumer_client which resumes execution
             on_event=self.on_event,
             on_error=self.on_error,
-            timeout=RECEIVE_TIMEOUT,
             starting_position=STARTING_POSITION
         )
 
@@ -68,10 +67,9 @@ class EventHubAsync:
             )
 
     async def on_event(self, context, event):
-        if self.received_event_count < len(TEST_EVENTS):
-            self.received_event_count += 1
-            print(event.body_as_str())
-        else:
+        self.received_event_count += 1
+        print(event.body_as_str())
+        if self.received_event_count >= len(TEST_EVENTS):
             # Close the client which allows execution to continue
             await self.close_client()
 

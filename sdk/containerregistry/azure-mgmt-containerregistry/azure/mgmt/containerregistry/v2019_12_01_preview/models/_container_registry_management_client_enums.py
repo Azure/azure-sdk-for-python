@@ -18,7 +18,7 @@ class ImportMode(str, Enum):
     force = "Force"
 
 
-class Status(str, Enum):
+class ConnectionStatus(str, Enum):
 
     approved = "Approved"
     pending = "Pending"
@@ -121,6 +121,12 @@ class WebhookAction(str, Enum):
     chart_delete = "chart_delete"
 
 
+class OS(str, Enum):
+
+    windows = "Windows"
+    linux = "Linux"
+
+
 class RunStatus(str, Enum):
 
     queued = "Queued"
@@ -139,12 +145,6 @@ class RunType(str, Enum):
     quick_run = "QuickRun"
     auto_build = "AutoBuild"
     auto_run = "AutoRun"
-
-
-class OS(str, Enum):
-
-    windows = "Windows"
-    linux = "Linux"
 
 
 class Architecture(str, Enum):

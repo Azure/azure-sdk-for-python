@@ -15,16 +15,18 @@ import logging
 
 from common_tasks import process_glob_string, parse_setup, run_check_call
 
-excluded_packages = ["azure"]
 
 logging.getLogger().setLevel(logging.INFO)
 
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
 psscript = os.path.join(root_dir, "scripts", "devops_tasks", "find_change_log.ps1")
 
+# Service fabric change log has non standard versioning for e.g 7.0.0.0
+# Verify change log should skip this package since this script looks for standard version format of x.y.z
+NON_STANDARD_CHANGE_LOG_PACKAGES = ["azure-servicefabric",]
 
 def find_change_log(targeted_package, version):
-    # Execute powershell script to find a matching version in history.md
+    # Execute powershell script to find a matching version in change log
     command_array = ["pwsh"]
     command_array.append("-File {}".format(psscript))
     command_array.append("-workingDir {}".format(targeted_package))
@@ -57,8 +59,9 @@ def verify_packages(targeted_packages):
         # Parse setup.py using common helper method to get version and package name
         pkg_name, version, _, _ = parse_setup(package)
 
-        # Skip management packages
-        if "-mgmt" in pkg_name or pkg_name in excluded_packages:
+        # Skip management packages and any explicitly excluded packages
+        if "-mgmt" in pkg_name or pkg_name in NON_STANDARD_CHANGE_LOG_PACKAGES:
+            logging.info("Skipping {} due to known exclusion in change log verification".format(pkg_name))
             continue
 
         if not find_change_log(package, version):
@@ -74,7 +77,7 @@ def verify_packages(targeted_packages):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="Verifies latest version is updated in history.md file, Called from DevOps YAML Pipeline"
+        description="Verifies latest version is updated in change log, Called from DevOps YAML Pipeline"
     )
 
     parser.add_argument(
@@ -113,12 +116,15 @@ if __name__ == "__main__":
     else:
         target_dir = root_dir
 
+    # Skip nspkg and metapackage from version check.
+    # Change log file may be missing for these two types
+    # process glob helper methods filter nspkg and metapackages with filter type "Docs"
     targeted_packages = process_glob_string(
-        args.glob_string, target_dir, args.package_filter_string
+        args.glob_string, target_dir, args.package_filter_string, "Docs"
     )
     change_missing = verify_packages(targeted_packages)
     if len(change_missing) > 0:
-        logging.error("Below packages do not have change log in history.md")
+        logging.error("Below packages do not have change log")
         logging.error("***************************************************")
         for pkg_name in change_missing.keys():
             logging.error("{0} - {1}".format(pkg_name, change_missing[pkg_name]))

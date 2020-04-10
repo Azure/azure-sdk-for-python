@@ -12,7 +12,7 @@ import sys
 from subprocess import check_call
 import logging
 from packaging.specifiers import SpecifierSet
-from pkg_resources import Requirement
+from pkg_resources import Requirement, parse_version
 from pypi_tools.pypi import PyPIClient
 
 setup_parser_path = os.path.abspath(
@@ -24,6 +24,12 @@ from setup_parser import get_install_requires
 DEV_REQ_FILE = "dev_requirements.txt"
 NEW_DEV_REQ_FILE = "new_dev_requirements.txt"
 PKGS_TXT_FILE = "packages.txt"
+
+logging.getLogger().setLevel(logging.INFO)
+
+MINIMUM_VERSION_SUPPORTED_OVERRIDE = {
+    'azure-common': '1.1.10',
+}
 
 def install_dependent_packages(setup_py_file_path, dependency_type, temp_dir):
     # This method identifies latest/ minimal version of dependent packages and installs them from pyPI
@@ -79,6 +85,8 @@ def process_requirement(req, dependency_type):
     versions = [str(v) for v in client.get_ordered_versions(pkg_name)]
     logging.info("Versions available on PyPI for %s: %s", pkg_name, versions)
 
+    if pkg_name in MINIMUM_VERSION_SUPPORTED_OVERRIDE:
+        versions = [v for v in versions if parse_version(v) >= parse_version(MINIMUM_VERSION_SUPPORTED_OVERRIDE[pkg_name])]
     # Search from lowest to latest in case of finding minimum dependency
     # Search from latest to lowest in case of finding latest required version
     # reverse the list to get latest version first
@@ -105,11 +113,18 @@ def filter_dev_requirements(setup_py_path, released_packages, temp_dir):
     # filter out any package available on PyPI (released_packages)
     # include packages without relative reference and packages not available on PyPI
     released_packages = [p.split('==')[0] for p in released_packages]
+    # find prebuilt whl paths in dev requiremente
+    prebuilt_dev_reqs = [os.path.basename(req.replace('\n', '')) for req  in requirements if os.path.sep in req]
+    # filter any req if wheel is for a released package
+    req_to_exclude = [req for req in prebuilt_dev_reqs if req.split('-')[0].replace('_', '-') in released_packages]
+    req_to_exclude.extend(released_packages)
+
     filtered_req = [
         req
         for req in requirements
-        if "/" not in req or req.replace('\n', '').split("/")[-1] not in released_packages
+        if os.path.basename(req.replace('\n', '')) not in req_to_exclude
     ]
+
     logging.info("Filtered dev requirements: %s", filtered_req)
 
     new_dev_req_path = ""
@@ -125,6 +140,8 @@ def filter_dev_requirements(setup_py_path, released_packages, temp_dir):
 def install_packages(packages, req_file):
     # install list of given packages from PyPI
     commands = [
+        sys.executable,
+        "-m",
         "pip",
         "install",
     ]

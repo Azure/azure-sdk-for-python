@@ -1,36 +1,62 @@
 interactions:
 - request:
-    body: 'b''b\''b\\\''b\\\\\\\''{"subscriptions": ["00000000-0000-0000-0000-000000000000"],
-      "query": "project id, location | limit 10", "facets": [{"expression": "location",
-      "options": {"sortOrder": "desc", "$top": 4}}, {"expression": "nonExistingColumn",
-      "options": {"sortOrder": "desc", "$top": 4}}]}\\\\\\\''\\\''\'''''
+    body: 'b''b\''{"subscriptions": ["00000000-0000-0000-0000-000000000000"], "query":
+      "project id, location | limit 10", "facets": [{"expression": "location", "options":
+      {"sortOrder": "desc", "$top": 4}}, {"expression": "nonExistingColumn", "options":
+      {"sortOrder": "desc", "$top": 4}}]}\'''''
     headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['270']
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.3 (Windows-10-10.0.17134-SP0) requests/2.19.1 msrest/0.5.4
-          msrest_azure/0.4.34 azure-mgmt-resourcegraph/0.6.0 Azure-SDK-For-Python]
-      accept-language: [en-US]
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '270'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-resourcegraph/2.1.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
     method: POST
     uri: https://management.azure.com/providers/Microsoft.ResourceGraph/resources?api-version=2019-04-01
   response:
-    body: {string: '{"totalRecords":10,"count":10,"data":{"columns":[{"name":"id","type":"string"},{"name":"location","type":"string"}],"rows":[["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/zarttest1f000000-14b9-43b9-8836-3b8df81aa6f2/providers/Microsoft.StreamAnalytics/streamingjobs/zarttest28000000","southcentralus"],["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test/providers/Microsoft.Storage/storageAccounts/testsouthcentralus","southcentralus"],["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/newzarttest30000000-5d0c-432c-8652-102e3aa336b6/providers/Microsoft.Storage/storageAccounts/zarttest93000000","eastus"],["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/backup/providers/Microsoft.ClassicCompute/domainNames/rp-a","westcentralus"],["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test/providers/Microsoft.Storage/storageAccounts/test1","southcentralus"],["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/k8stest_centralus/providers/Microsoft.Compute/virtualMachines/aks-default-34000000-0/extensions/cse-agent-0","centralus"],["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pere/providers/Microsoft.Network/networkSecurityGroups/shouldFail-nsg","eastus"],["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/newzarttestdd000000-bfc5-44f1-b6a9-aabdc7a1e614/providers/Microsoft.Storage/storageAccounts/zarttest43000000","eastus"],["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/newzarttest60000000-3713-4c51-9e6b-c96a30f0fbb7/providers/Microsoft.Storage/storageAccounts/zarttestd2000000","eastus"],["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ManageRG/providers/Microsoft.EventHub/namespaces/resourceuse","eastus"]]},"facets":[{"expression":"location","totalRecords":4,"count":4,"data":{"columns":[{"name":"location","type":"string"},{"name":"count","type":"integer"}],"rows":[["eastus",5],["southcentralus",3],["centralus",1],["westcentralus",1]]},"resultType":"FacetResult"},{"expression":"nonExistingColumn","errors":[{"code":"NoValidColumns","message":"No
+    body:
+      string: '{"totalRecords":10,"count":10,"data":{"columns":[{"name":"id","type":"string"},{"name":"location","type":"string"}],"rows":[["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cli_test_databoxgkhum4fgqffqfxfk2rxguyav7ee36zsnxb3hziamsre5gkdlyz56ani4l23/providers/Microsoft.DataBox/jobs/joblmlobzq6gap36m4h2suwq","westus"],["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cli_test_databoxfatz7bwdvcwrgcw2s4nsrtqd5ekrtasz7ku5i7nfauwkmrc77zvqzofjqfj/providers/Microsoft.DataBox/jobs/job5kora4cnpnjusyrkcnwe2","westus"],["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/Default-Networking/providers/Microsoft.ClassicNetwork/virtualNetworks/CliGtTestVnet6623","westus"],["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cli_test_databoxtxiwrvbtjgrx2npfru76uyoc6b6isd5hdsfn6ktdumkor4a27iy7xdzticf/providers/Microsoft.DataBox/jobs/jobtztsdrfw6z6wivsqbc5nc","westus"],["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/xiaojianxu/providers/Microsoft.Web/sites/lc-web-4","eastasia"],["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/xiaojianxu/providers/Microsoft.Web/serverFarms/lc-plan-4","eastasia"],["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/bim_pl_test_rg/providers/Microsoft.KeyVault/vaults/bimkv-nr-test","eastus"],["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/bim_pl_test_rg/providers/Microsoft.KeyVault/vaults/bimkv-nr-test3","eastus"],["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cli_test_mixed_realitygv2l3elh76a7brm66drgektfyzfsijxog6smmqzg6dnn2r7ofuf6c/providers/Microsoft.MixedReality/spatialAnchorsAccounts/MyAccount","eastus2euap"],["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/zhoxing-test/providers/Microsoft.Network/networkSecurityGroups/azure-cli-deploy-test-nsg1","westus"]]},"facets":[{"expression":"location","totalRecords":4,"count":4,"data":{"columns":[{"name":"location","type":"string"},{"name":"count","type":"integer"}],"rows":[["westus",5],["eastasia",2],["eastus",2],["eastus2euap",1]]},"resultType":"FacetResult"},{"expression":"nonExistingColumn","errors":[{"code":"NoValidColumns","message":"No
         valid columns in facet expression."},{"code":"InvalidColumnNames","message":"Invalid
-        column names: [nonExistingColumn]."}],"resultType":"FacetError"}],"resultTruncated":"false"}'}
+        column names: [nonExistingColumn]."}],"resultType":"FacetError"}],"resultTruncated":"false"}'
     headers:
-      cache-control: [no-cache]
-      content-length: ['2472']
-      content-type: [application/json; charset=utf-8]
-      date: ['Wed, 29 Aug 2018 02:06:59 GMT']
-      expires: ['-1']
-      pragma: [no-cache]
-      server: [Microsoft-HTTPAPI/2.0]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      transfer-encoding: [chunked]
-      vary: [Accept-Encoding]
-      x-content-type-options: [nosniff]
-      x-ms-ratelimit-remaining-tenant-writes: ['1197']
-    status: {code: 200, message: OK}
+      cache-control:
+      - no-cache
+      content-length:
+      - '2404'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 23 Mar 2020 19:28:34 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-tenant-resource-requests:
+      - '12'
+      x-ms-user-quota-remaining:
+      - '12'
+      x-ms-user-quota-resets-after:
+      - 00:00:05
+    status:
+      code: 200
+      message: OK
 version: 1

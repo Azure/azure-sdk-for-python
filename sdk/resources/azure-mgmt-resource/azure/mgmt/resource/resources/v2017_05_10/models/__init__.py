@@ -28,6 +28,7 @@ try:
     from ._models_py3 import ErrorResponse
     from ._models_py3 import ExportTemplateRequest
     from ._models_py3 import GenericResource
+    from ._models_py3 import GenericResourceExpanded
     from ._models_py3 import GenericResourceFilter
     from ._models_py3 import HttpMessage
     from ._models_py3 import Identity
@@ -71,6 +72,7 @@ except (SyntaxError, ImportError):
     from ._models import ErrorResponse
     from ._models import ExportTemplateRequest
     from ._models import GenericResource
+    from ._models import GenericResourceExpanded
     from ._models import GenericResourceFilter
     from ._models import HttpMessage
     from ._models import Identity
@@ -97,7 +99,7 @@ except (SyntaxError, ImportError):
     from ._models import TemplateLink
 from ._paged_models import DeploymentExtendedPaged
 from ._paged_models import DeploymentOperationPaged
-from ._paged_models import GenericResourcePaged
+from ._paged_models import GenericResourceExpandedPaged
 from ._paged_models import ProviderPaged
 from ._paged_models import ResourceGroupPaged
 from ._paged_models import TagDetailsPaged
@@ -125,6 +127,7 @@ __all__ = [
     'ErrorResponse',
     'ExportTemplateRequest',
     'GenericResource',
+    'GenericResourceExpanded',
     'GenericResourceFilter',
     'HttpMessage',
     'Identity',
@@ -151,7 +154,7 @@ __all__ = [
     'TemplateLink',
     'DeploymentExtendedPaged',
     'ProviderPaged',
-    'GenericResourcePaged',
+    'GenericResourceExpandedPaged',
     'ResourceGroupPaged',
     'TagDetailsPaged',
     'DeploymentOperationPaged',

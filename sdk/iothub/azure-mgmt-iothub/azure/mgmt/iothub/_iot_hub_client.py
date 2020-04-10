@@ -77,7 +77,10 @@ class IotHubClient(MultiApiClientMixin, SDKClient):
            * 2017-07-01: :mod:`v2017_07_01.models<azure.mgmt.iothub.v2017_07_01.models>`
            * 2018-01-22: :mod:`v2018_01_22.models<azure.mgmt.iothub.v2018_01_22.models>`
            * 2018-04-01: :mod:`v2018_04_01.models<azure.mgmt.iothub.v2018_04_01.models>`
+           * 2018-12-01-preview: :mod:`v2018_12_01_preview.models<azure.mgmt.iothub.v2018_12_01_preview.models>`
            * 2019-03-22: :mod:`v2019_03_22.models<azure.mgmt.iothub.v2019_03_22.models>`
+           * 2019-03-22-preview: :mod:`v2019_03_22_preview.models<azure.mgmt.iothub.v2019_03_22_preview.models>`
+           * 2019-07-01-preview: :mod:`v2019_07_01_preview.models<azure.mgmt.iothub.v2019_07_01_preview.models>`
            * 2019-11-04: :mod:`v2019_11_04.models<azure.mgmt.iothub.v2019_11_04.models>`
         """
         if api_version == '2016-02-03':
@@ -95,8 +98,17 @@ class IotHubClient(MultiApiClientMixin, SDKClient):
         elif api_version == '2018-04-01':
             from .v2018_04_01 import models
             return models
+        elif api_version == '2018-12-01-preview':
+            from .v2018_12_01_preview import models
+            return models
         elif api_version == '2019-03-22':
             from .v2019_03_22 import models
+            return models
+        elif api_version == '2019-03-22-preview':
+            from .v2019_03_22_preview import models
+            return models
+        elif api_version == '2019-07-01-preview':
+            from .v2019_07_01_preview import models
             return models
         elif api_version == '2019-11-04':
             from .v2019_11_04 import models
@@ -110,7 +122,10 @@ class IotHubClient(MultiApiClientMixin, SDKClient):
            * 2017-07-01: :class:`CertificatesOperations<azure.mgmt.iothub.v2017_07_01.operations.CertificatesOperations>`
            * 2018-01-22: :class:`CertificatesOperations<azure.mgmt.iothub.v2018_01_22.operations.CertificatesOperations>`
            * 2018-04-01: :class:`CertificatesOperations<azure.mgmt.iothub.v2018_04_01.operations.CertificatesOperations>`
+           * 2018-12-01-preview: :class:`CertificatesOperations<azure.mgmt.iothub.v2018_12_01_preview.operations.CertificatesOperations>`
            * 2019-03-22: :class:`CertificatesOperations<azure.mgmt.iothub.v2019_03_22.operations.CertificatesOperations>`
+           * 2019-03-22-preview: :class:`CertificatesOperations<azure.mgmt.iothub.v2019_03_22_preview.operations.CertificatesOperations>`
+           * 2019-07-01-preview: :class:`CertificatesOperations<azure.mgmt.iothub.v2019_07_01_preview.operations.CertificatesOperations>`
            * 2019-11-04: :class:`CertificatesOperations<azure.mgmt.iothub.v2019_11_04.operations.CertificatesOperations>`
         """
         api_version = self._get_api_version('certificates')
@@ -120,8 +135,14 @@ class IotHubClient(MultiApiClientMixin, SDKClient):
             from .v2018_01_22.operations import CertificatesOperations as OperationClass
         elif api_version == '2018-04-01':
             from .v2018_04_01.operations import CertificatesOperations as OperationClass
+        elif api_version == '2018-12-01-preview':
+            from .v2018_12_01_preview.operations import CertificatesOperations as OperationClass
         elif api_version == '2019-03-22':
             from .v2019_03_22.operations import CertificatesOperations as OperationClass
+        elif api_version == '2019-03-22-preview':
+            from .v2019_03_22_preview.operations import CertificatesOperations as OperationClass
+        elif api_version == '2019-07-01-preview':
+            from .v2019_07_01_preview.operations import CertificatesOperations as OperationClass
         elif api_version == '2019-11-04':
             from .v2019_11_04.operations import CertificatesOperations as OperationClass
         else:
@@ -133,11 +154,17 @@ class IotHubClient(MultiApiClientMixin, SDKClient):
         """Instance depends on the API version:
 
            * 2019-03-22: :class:`IotHubOperations<azure.mgmt.iothub.v2019_03_22.operations.IotHubOperations>`
+           * 2019-03-22-preview: :class:`IotHubOperations<azure.mgmt.iothub.v2019_03_22_preview.operations.IotHubOperations>`
+           * 2019-07-01-preview: :class:`IotHubOperations<azure.mgmt.iothub.v2019_07_01_preview.operations.IotHubOperations>`
            * 2019-11-04: :class:`IotHubOperations<azure.mgmt.iothub.v2019_11_04.operations.IotHubOperations>`
         """
         api_version = self._get_api_version('iot_hub')
         if api_version == '2019-03-22':
             from .v2019_03_22.operations import IotHubOperations as OperationClass
+        elif api_version == '2019-03-22-preview':
+            from .v2019_03_22_preview.operations import IotHubOperations as OperationClass
+        elif api_version == '2019-07-01-preview':
+            from .v2019_07_01_preview.operations import IotHubOperations as OperationClass
         elif api_version == '2019-11-04':
             from .v2019_11_04.operations import IotHubOperations as OperationClass
         else:
@@ -153,7 +180,10 @@ class IotHubClient(MultiApiClientMixin, SDKClient):
            * 2017-07-01: :class:`IotHubResourceOperations<azure.mgmt.iothub.v2017_07_01.operations.IotHubResourceOperations>`
            * 2018-01-22: :class:`IotHubResourceOperations<azure.mgmt.iothub.v2018_01_22.operations.IotHubResourceOperations>`
            * 2018-04-01: :class:`IotHubResourceOperations<azure.mgmt.iothub.v2018_04_01.operations.IotHubResourceOperations>`
+           * 2018-12-01-preview: :class:`IotHubResourceOperations<azure.mgmt.iothub.v2018_12_01_preview.operations.IotHubResourceOperations>`
            * 2019-03-22: :class:`IotHubResourceOperations<azure.mgmt.iothub.v2019_03_22.operations.IotHubResourceOperations>`
+           * 2019-03-22-preview: :class:`IotHubResourceOperations<azure.mgmt.iothub.v2019_03_22_preview.operations.IotHubResourceOperations>`
+           * 2019-07-01-preview: :class:`IotHubResourceOperations<azure.mgmt.iothub.v2019_07_01_preview.operations.IotHubResourceOperations>`
            * 2019-11-04: :class:`IotHubResourceOperations<azure.mgmt.iothub.v2019_11_04.operations.IotHubResourceOperations>`
         """
         api_version = self._get_api_version('iot_hub_resource')
@@ -167,8 +197,14 @@ class IotHubClient(MultiApiClientMixin, SDKClient):
             from .v2018_01_22.operations import IotHubResourceOperations as OperationClass
         elif api_version == '2018-04-01':
             from .v2018_04_01.operations import IotHubResourceOperations as OperationClass
+        elif api_version == '2018-12-01-preview':
+            from .v2018_12_01_preview.operations import IotHubResourceOperations as OperationClass
         elif api_version == '2019-03-22':
             from .v2019_03_22.operations import IotHubResourceOperations as OperationClass
+        elif api_version == '2019-03-22-preview':
+            from .v2019_03_22_preview.operations import IotHubResourceOperations as OperationClass
+        elif api_version == '2019-07-01-preview':
+            from .v2019_07_01_preview.operations import IotHubResourceOperations as OperationClass
         elif api_version == '2019-11-04':
             from .v2019_11_04.operations import IotHubResourceOperations as OperationClass
         else:
@@ -182,7 +218,10 @@ class IotHubClient(MultiApiClientMixin, SDKClient):
            * 2017-07-01: :class:`Operations<azure.mgmt.iothub.v2017_07_01.operations.Operations>`
            * 2018-01-22: :class:`Operations<azure.mgmt.iothub.v2018_01_22.operations.Operations>`
            * 2018-04-01: :class:`Operations<azure.mgmt.iothub.v2018_04_01.operations.Operations>`
+           * 2018-12-01-preview: :class:`Operations<azure.mgmt.iothub.v2018_12_01_preview.operations.Operations>`
            * 2019-03-22: :class:`Operations<azure.mgmt.iothub.v2019_03_22.operations.Operations>`
+           * 2019-03-22-preview: :class:`Operations<azure.mgmt.iothub.v2019_03_22_preview.operations.Operations>`
+           * 2019-07-01-preview: :class:`Operations<azure.mgmt.iothub.v2019_07_01_preview.operations.Operations>`
            * 2019-11-04: :class:`Operations<azure.mgmt.iothub.v2019_11_04.operations.Operations>`
         """
         api_version = self._get_api_version('operations')
@@ -192,8 +231,14 @@ class IotHubClient(MultiApiClientMixin, SDKClient):
             from .v2018_01_22.operations import Operations as OperationClass
         elif api_version == '2018-04-01':
             from .v2018_04_01.operations import Operations as OperationClass
+        elif api_version == '2018-12-01-preview':
+            from .v2018_12_01_preview.operations import Operations as OperationClass
         elif api_version == '2019-03-22':
             from .v2019_03_22.operations import Operations as OperationClass
+        elif api_version == '2019-03-22-preview':
+            from .v2019_03_22_preview.operations import Operations as OperationClass
+        elif api_version == '2019-07-01-preview':
+            from .v2019_07_01_preview.operations import Operations as OperationClass
         elif api_version == '2019-11-04':
             from .v2019_11_04.operations import Operations as OperationClass
         else:
@@ -205,14 +250,23 @@ class IotHubClient(MultiApiClientMixin, SDKClient):
         """Instance depends on the API version:
 
            * 2018-04-01: :class:`ResourceProviderCommonOperations<azure.mgmt.iothub.v2018_04_01.operations.ResourceProviderCommonOperations>`
+           * 2018-12-01-preview: :class:`ResourceProviderCommonOperations<azure.mgmt.iothub.v2018_12_01_preview.operations.ResourceProviderCommonOperations>`
            * 2019-03-22: :class:`ResourceProviderCommonOperations<azure.mgmt.iothub.v2019_03_22.operations.ResourceProviderCommonOperations>`
+           * 2019-03-22-preview: :class:`ResourceProviderCommonOperations<azure.mgmt.iothub.v2019_03_22_preview.operations.ResourceProviderCommonOperations>`
+           * 2019-07-01-preview: :class:`ResourceProviderCommonOperations<azure.mgmt.iothub.v2019_07_01_preview.operations.ResourceProviderCommonOperations>`
            * 2019-11-04: :class:`ResourceProviderCommonOperations<azure.mgmt.iothub.v2019_11_04.operations.ResourceProviderCommonOperations>`
         """
         api_version = self._get_api_version('resource_provider_common')
         if api_version == '2018-04-01':
             from .v2018_04_01.operations import ResourceProviderCommonOperations as OperationClass
+        elif api_version == '2018-12-01-preview':
+            from .v2018_12_01_preview.operations import ResourceProviderCommonOperations as OperationClass
         elif api_version == '2019-03-22':
             from .v2019_03_22.operations import ResourceProviderCommonOperations as OperationClass
+        elif api_version == '2019-03-22-preview':
+            from .v2019_03_22_preview.operations import ResourceProviderCommonOperations as OperationClass
+        elif api_version == '2019-07-01-preview':
+            from .v2019_07_01_preview.operations import ResourceProviderCommonOperations as OperationClass
         elif api_version == '2019-11-04':
             from .v2019_11_04.operations import ResourceProviderCommonOperations as OperationClass
         else:

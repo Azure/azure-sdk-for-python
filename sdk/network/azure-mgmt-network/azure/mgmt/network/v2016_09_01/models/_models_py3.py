@@ -1097,7 +1097,7 @@ class BgpPeerStatus(Model):
     :ivar messages_sent: The number of BGP messages sent
     :vartype messages_sent: long
     :ivar messages_received: The number of BGP messages received
-    :vartype messages_received: int
+    :vartype messages_received: long
     """
 
     _validation = {
@@ -1119,7 +1119,7 @@ class BgpPeerStatus(Model):
         'connected_duration': {'key': 'connectedDuration', 'type': 'str'},
         'routes_received': {'key': 'routesReceived', 'type': 'long'},
         'messages_sent': {'key': 'messagesSent', 'type': 'long'},
-        'messages_received': {'key': 'messagesReceived', 'type': 'int'},
+        'messages_received': {'key': 'messagesReceived', 'type': 'long'},
     }
 
     def __init__(self, **kwargs) -> None:

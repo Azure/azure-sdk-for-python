@@ -25,6 +25,8 @@ location = os.path.dirname(os.path.abspath(__file__))
 root_dir = os.path.abspath(os.path.join(location, "..", ".."))
 docs_folder = os.path.join(root_dir, '_docs')
 index = os.path.join(location, 'index.rst')
+# packages that don't exist in source, but still need to be shown
+STATIC_INCLUSION_LIST = ['azure-search']
 
 TOC_TEMPLATE = """
 .. toctree::
@@ -108,7 +110,7 @@ def get_repo_packages(base_dir):
         )
     ]
 
-    packages = [p for p in packages if check_package_against_omission(p)]
+    packages = [p for p in packages if check_package_against_omission(p)] + STATIC_INCLUSION_LIST
 
     return sorted(packages)
 

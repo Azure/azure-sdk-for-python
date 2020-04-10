@@ -1,5 +1,11 @@
 # Release History
 
+## 3.0.0 (2020-03-09)
+
+**Breaking changes**
+
+- Removed operation AppsOperations.list_templates
+
 ## 2.0.0 (2019-12-25)
 
 **Features**

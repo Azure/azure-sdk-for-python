@@ -12,6 +12,9 @@
 try:
     from ._models_py3 import ActiveDirectoryObject
     from ._models_py3 import Actor
+    from ._models_py3 import AgentPool
+    from ._models_py3 import AgentPoolQueueStatus
+    from ._models_py3 import AgentPoolUpdateParameters
     from ._models_py3 import AgentProperties
     from ._models_py3 import Argument
     from ._models_py3 import AuthInfo
@@ -29,8 +32,8 @@ try:
     from ._models_py3 import EncodedTaskStep
     from ._models_py3 import EncodedTaskStepUpdateParameters
     from ._models_py3 import EncryptionProperty
-    from ._models_py3 import Error
-    from ._models_py3 import ErrorSchema, ErrorSchemaException
+    from ._models_py3 import ErrorResponse, ErrorResponseException
+    from ._models_py3 import ErrorResponseBody
     from ._models_py3 import Event
     from ._models_py3 import EventContent
     from ._models_py3 import EventInfo
@@ -96,7 +99,7 @@ try:
     from ._models_py3 import SourceTriggerUpdateParameters
     from ._models_py3 import SourceUpdateParameters
     from ._models_py3 import SourceUploadDefinition
-    from ._models_py3 import Status1
+    from ._models_py3 import Status
     from ._models_py3 import StorageAccountProperties
     from ._models_py3 import Target
     from ._models_py3 import Task
@@ -125,6 +128,9 @@ try:
 except (SyntaxError, ImportError):
     from ._models import ActiveDirectoryObject
     from ._models import Actor
+    from ._models import AgentPool
+    from ._models import AgentPoolQueueStatus
+    from ._models import AgentPoolUpdateParameters
     from ._models import AgentProperties
     from ._models import Argument
     from ._models import AuthInfo
@@ -142,8 +148,8 @@ except (SyntaxError, ImportError):
     from ._models import EncodedTaskStep
     from ._models import EncodedTaskStepUpdateParameters
     from ._models import EncryptionProperty
-    from ._models import Error
-    from ._models import ErrorSchema, ErrorSchemaException
+    from ._models import ErrorResponse, ErrorResponseException
+    from ._models import ErrorResponseBody
     from ._models import Event
     from ._models import EventContent
     from ._models import EventInfo
@@ -209,7 +215,7 @@ except (SyntaxError, ImportError):
     from ._models import SourceTriggerUpdateParameters
     from ._models import SourceUpdateParameters
     from ._models import SourceUploadDefinition
-    from ._models import Status1
+    from ._models import Status
     from ._models import StorageAccountProperties
     from ._models import Target
     from ._models import Task
@@ -235,6 +241,7 @@ except (SyntaxError, ImportError):
     from ._models import Webhook
     from ._models import WebhookCreateParameters
     from ._models import WebhookUpdateParameters
+from ._paged_models import AgentPoolPaged
 from ._paged_models import EventPaged
 from ._paged_models import OperationDefinitionPaged
 from ._paged_models import PrivateEndpointConnectionPaged
@@ -249,7 +256,7 @@ from ._paged_models import TokenPaged
 from ._paged_models import WebhookPaged
 from ._container_registry_management_client_enums import (
     ImportMode,
-    Status,
+    ConnectionStatus,
     ActionsRequired,
     ProvisioningState,
     SkuName,
@@ -264,9 +271,9 @@ from ._container_registry_management_client_enums import (
     RegistryUsageUnit,
     WebhookStatus,
     WebhookAction,
+    OS,
     RunStatus,
     RunType,
-    OS,
     Architecture,
     Variant,
     TaskStatus,
@@ -287,6 +294,9 @@ from ._container_registry_management_client_enums import (
 __all__ = [
     'ActiveDirectoryObject',
     'Actor',
+    'AgentPool',
+    'AgentPoolQueueStatus',
+    'AgentPoolUpdateParameters',
     'AgentProperties',
     'Argument',
     'AuthInfo',
@@ -304,8 +314,8 @@ __all__ = [
     'EncodedTaskStep',
     'EncodedTaskStepUpdateParameters',
     'EncryptionProperty',
-    'Error',
-    'ErrorSchema', 'ErrorSchemaException',
+    'ErrorResponse', 'ErrorResponseException',
+    'ErrorResponseBody',
     'Event',
     'EventContent',
     'EventInfo',
@@ -371,7 +381,7 @@ __all__ = [
     'SourceTriggerUpdateParameters',
     'SourceUpdateParameters',
     'SourceUploadDefinition',
-    'Status1',
+    'Status',
     'StorageAccountProperties',
     'Target',
     'Task',
@@ -404,13 +414,14 @@ __all__ = [
     'ReplicationPaged',
     'WebhookPaged',
     'EventPaged',
+    'AgentPoolPaged',
     'RunPaged',
     'TaskRunPaged',
     'TaskPaged',
     'ScopeMapPaged',
     'TokenPaged',
     'ImportMode',
-    'Status',
+    'ConnectionStatus',
     'ActionsRequired',
     'ProvisioningState',
     'SkuName',
@@ -425,9 +436,9 @@ __all__ = [
     'RegistryUsageUnit',
     'WebhookStatus',
     'WebhookAction',
+    'OS',
     'RunStatus',
     'RunType',
-    'OS',
     'Architecture',
     'Variant',
     'TaskStatus',

@@ -1,5 +1,49 @@
 # Release History
 
+## 12.0.0 (2020-03-23)
+
+**Features**
+
+- Model VirtualMachineScaleSetInstanceView has a new parameter orchestration_services
+- Added operation VirtualMachineScaleSetsOperations.set_orchestration_service_state
+- Added operation group SshPublicKeysOperations
+
+**Breaking changes**
+
+- Model AvailabilitySetUpdate no longer has parameter id
+- Model AvailabilitySetUpdate no longer has parameter name
+- Model AvailabilitySetUpdate no longer has parameter type
+- Model VirtualMachineScaleSetUpdate no longer has parameter id
+- Model VirtualMachineScaleSetUpdate no longer has parameter name
+- Model VirtualMachineScaleSetUpdate no longer has parameter type
+- Model DedicatedHostGroupUpdate no longer has parameter id
+- Model DedicatedHostGroupUpdate no longer has parameter name
+- Model DedicatedHostGroupUpdate no longer has parameter type
+- Model VirtualMachineUpdate no longer has parameter id
+- Model VirtualMachineUpdate no longer has parameter name
+- Model VirtualMachineUpdate no longer has parameter type
+- Model DedicatedHostUpdate no longer has parameter id
+- Model DedicatedHostUpdate no longer has parameter name
+- Model DedicatedHostUpdate no longer has parameter type
+- Model ImageUpdate no longer has parameter id
+- Model ImageUpdate no longer has parameter name
+- Model ImageUpdate no longer has parameter type
+- Model VirtualMachineExtensionUpdate no longer has parameter virtual_machine_extension_update_type
+- Model VirtualMachineExtensionUpdate no longer has parameter id
+- Model VirtualMachineExtensionUpdate no longer has parameter name
+- Model ProximityPlacementGroupUpdate has a new signature
+- Model UpdateResource has a new signature
+
+## 11.1.0 (2020-03-09)
+
+**Features**
+
+- Operation VirtualMachineImagesOperations.list has a new parameter $expand
+
+**Bugfixes**
+
+- remove not-working $filter in Operation VirtualMachineImagesOperations.list
+
 ## 11.0.0 (2020-02-27)
 
 **Features**

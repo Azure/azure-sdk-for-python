@@ -139,7 +139,9 @@ try:
     from ._models_py3 import DPMProtectedItem
     from ._models_py3 import DPMProtectedItemExtendedInfo
     from ._models_py3 import EncryptionDetails
+    from ._models_py3 import ErrorAdditionalInfo
     from ._models_py3 import ErrorDetail
+    from ._models_py3 import ErrorResponse, ErrorResponseException
     from ._models_py3 import ExportJobsOperationResultInfo
     from ._models_py3 import ExtendedProperties
     from ._models_py3 import FeatureSupportRequest
@@ -195,6 +197,10 @@ try:
     from ._models_py3 import PreBackupValidation
     from ._models_py3 import PreValidateEnableBackupRequest
     from ._models_py3 import PreValidateEnableBackupResponse
+    from ._models_py3 import PrivateEndpoint
+    from ._models_py3 import PrivateEndpointConnection
+    from ._models_py3 import PrivateEndpointConnectionResource
+    from ._models_py3 import PrivateLinkServiceConnectionState
     from ._models_py3 import ProtectableContainer
     from ._models_py3 import ProtectableContainerResource
     from ._models_py3 import ProtectedItem
@@ -372,7 +378,9 @@ except (SyntaxError, ImportError):
     from ._models import DPMProtectedItem
     from ._models import DPMProtectedItemExtendedInfo
     from ._models import EncryptionDetails
+    from ._models import ErrorAdditionalInfo
     from ._models import ErrorDetail
+    from ._models import ErrorResponse, ErrorResponseException
     from ._models import ExportJobsOperationResultInfo
     from ._models import ExtendedProperties
     from ._models import FeatureSupportRequest
@@ -428,6 +436,10 @@ except (SyntaxError, ImportError):
     from ._models import PreBackupValidation
     from ._models import PreValidateEnableBackupRequest
     from ._models import PreValidateEnableBackupResponse
+    from ._models import PrivateEndpoint
+    from ._models import PrivateEndpointConnection
+    from ._models import PrivateEndpointConnectionResource
+    from ._models import PrivateLinkServiceConnectionState
     from ._models import ProtectableContainer
     from ._models import ProtectableContainerResource
     from ._models import ProtectedItem
@@ -488,6 +500,9 @@ from ._paged_models import RecoveryPointResourcePaged
 from ._paged_models import WorkloadItemResourcePaged
 from ._paged_models import WorkloadProtectableItemResourcePaged
 from ._recovery_services_backup_client_enums import (
+    OperationStatusValues,
+    ProvisioningState,
+    PrivateEndpointConnectionStatus,
     ProtectionState,
     HealthStatus,
     RecoveryType,
@@ -538,7 +553,6 @@ from ._recovery_services_backup_client_enums import (
     OperationType,
     ContainerType,
     BackupItemType,
-    OperationStatusValues,
 )
 
 __all__ = [
@@ -671,7 +685,9 @@ __all__ = [
     'DPMProtectedItem',
     'DPMProtectedItemExtendedInfo',
     'EncryptionDetails',
+    'ErrorAdditionalInfo',
     'ErrorDetail',
+    'ErrorResponse', 'ErrorResponseException',
     'ExportJobsOperationResultInfo',
     'ExtendedProperties',
     'FeatureSupportRequest',
@@ -727,6 +743,10 @@ __all__ = [
     'PreBackupValidation',
     'PreValidateEnableBackupRequest',
     'PreValidateEnableBackupResponse',
+    'PrivateEndpoint',
+    'PrivateEndpointConnection',
+    'PrivateEndpointConnectionResource',
+    'PrivateLinkServiceConnectionState',
     'ProtectableContainer',
     'ProtectableContainerResource',
     'ProtectedItem',
@@ -786,6 +806,9 @@ __all__ = [
     'WorkloadProtectableItemResourcePaged',
     'ProtectionContainerResourcePaged',
     'ClientDiscoveryValueForSingleApiPaged',
+    'OperationStatusValues',
+    'ProvisioningState',
+    'PrivateEndpointConnectionStatus',
     'ProtectionState',
     'HealthStatus',
     'RecoveryType',
@@ -836,5 +859,4 @@ __all__ = [
     'OperationType',
     'ContainerType',
     'BackupItemType',
-    'OperationStatusValues',
 ]

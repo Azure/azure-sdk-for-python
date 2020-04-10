@@ -1513,6 +1513,7 @@ class StoragePageBlobTest(StorageTestCase):
 
         # Assert
 
+    @pytest.mark.skip(reason="Failing live test https://github.com/Azure/azure-sdk-for-python/issues/10473")
     @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     def test_incremental_copy_blob(self, resource_group, location, storage_account, storage_account_key):

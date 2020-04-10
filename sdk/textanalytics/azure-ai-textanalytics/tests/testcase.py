@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 import pytest
 
-from azure.core.credentials import AccessToken
+from azure.core.credentials import AccessToken, AzureKeyCredential
 from devtools_testutils import (
     AzureTestCase,
     AzureMgmtPreparer,
@@ -94,6 +94,34 @@ class GlobalTextAnalyticsAccountPreparer(AzureMgmtPreparer):
             'text_analytics_account': text_analytics_account,
             'text_analytics_account_key': TextAnalyticsTest._TEXT_ANALYTICS_KEY,
         }
+
+class TextAnalyticsClientPreparer(AzureMgmtPreparer):
+    def __init__(self, client_cls, client_kwargs={}, **kwargs):
+        super(TextAnalyticsClientPreparer, self).__init__(
+            name_prefix='',
+            random_name_length=42
+        )
+        self.client_kwargs = client_kwargs
+        self.client_cls = client_cls
+
+    def create_resource(self, name, **kwargs):
+        client = self.create_text_analytics_client(**kwargs)
+        return {"client": client}
+
+    def create_text_analytics_client(self, **kwargs):
+        text_analytics_account = self.client_kwargs.pop("text_analytics_account", None)
+        if text_analytics_account is None:
+            text_analytics_account = kwargs.pop("text_analytics_account")
+
+        text_analytics_account_key = self.client_kwargs.pop("text_analytics_account_key", None)
+        if text_analytics_account_key is None:
+            text_analytics_account_key = kwargs.pop("text_analytics_account_key")
+
+        return self.client_cls(
+            text_analytics_account,
+            AzureKeyCredential(text_analytics_account_key),
+            **self.client_kwargs
+        )
 
 
 @pytest.fixture(scope="session")

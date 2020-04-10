@@ -1,15 +1,35 @@
 
 # Release History
 
-## 1.2.3 (Unreleased)
+## 1.4.1 (Unreleased)
+
+### Features
+
+- Support "x-ms-retry-after-ms" in response header   #10743
+
+## 1.4.0 (2020-04-06)
+
+### Features
+
+- Support a default error type in map_error #9773
+- Added `AzureKeyCredential` and its respective policy. #10509
+- Added `azure.core.polling.base_polling` module with a "Microsoft One API" polling implementation #10090
+  Also contains the async version in `azure.core.polling.async_base_polling`
+- Support kwarg `enforce_https` to disable HTTPS check on authentication #9821
+- Support additional kwargs in `HttpRequest.set_multipart_mixed` that will be passed into pipeline context.
+
+## 1.3.0 (2020-03-09)
 
 ### Bug fixes
 
 - Appended RequestIdPolicy to the default pipeline  #9841
+- Rewind the body position in async_retry   #10117
 
 ### Features
 
 - Add raw_request_hook support in custom_hook_policy   #9958
+- Add timeout support in retry_policy   #10011
+- Add OdataV4 error format auto-parsing in all exceptions ('error' attribute)  #9738
 
 ## 1.2.2 (2020-02-10)
 

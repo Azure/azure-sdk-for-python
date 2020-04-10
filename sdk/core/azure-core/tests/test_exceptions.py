@@ -210,3 +210,33 @@ class TestExceptions(object):
         assert exp.target is None
         assert exp.details == []
         assert exp.innererror == {}
+
+    def test_broken_odata_details(self):
+        """Do not block creating a nice exception if "details" only is broken
+        """
+        message = {
+            "error": {
+                "code": "Conflict",
+                "message": "The maximum number of Free ServerFarms allowed in a Subscription is 10.",
+                "target": None,
+                "details": [
+                    {
+                        "message": "The maximum number of Free ServerFarms allowed in a Subscription is 10."
+                    },
+                    {"code": "Conflict"},
+                    {
+                        "errorentity": {
+                            "code": "Conflict",
+                            "message": "The maximum number of Free ServerFarms allowed in a Subscription is 10.",
+                            "extendedCode": "59301",
+                            "messageTemplate": "The maximum number of {0} ServerFarms allowed in a Subscription is {1}.",
+                            "parameters": ["Free", "10"],
+                            "innerErrors": None,
+                        }
+                    },
+                ],
+                "innererror": None,
+            }
+        }
+        exp = HttpResponseError(response=_build_response(json.dumps(message).encode("utf-8")))
+        assert exp.error.code == "Conflict"

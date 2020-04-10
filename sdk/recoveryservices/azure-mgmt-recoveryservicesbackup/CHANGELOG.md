@@ -1,5 +1,13 @@
 # Release History
 
+## 0.7.0 (2020-03-24)
+
+**Features**
+
+  - Added operation BackupResourceVaultConfigsOperations.put
+  - Added operation group RecoveryServicesBackupClientOperationsMixin
+  - Added operation group PrivateEndpointConnectionOperations
+
 ## 0.6.0 (2020-01-14)
 
 **Features**

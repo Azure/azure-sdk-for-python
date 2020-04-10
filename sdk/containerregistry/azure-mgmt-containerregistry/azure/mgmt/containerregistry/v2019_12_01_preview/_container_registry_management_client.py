@@ -18,6 +18,7 @@ from .operations import Operations
 from .operations import PrivateEndpointConnectionsOperations
 from .operations import ReplicationsOperations
 from .operations import WebhooksOperations
+from .operations import AgentPoolsOperations
 from .operations import RunsOperations
 from .operations import TaskRunsOperations
 from .operations import TasksOperations
@@ -42,6 +43,8 @@ class ContainerRegistryManagementClient(SDKClient):
     :vartype replications: azure.mgmt.containerregistry.v2019_12_01_preview.operations.ReplicationsOperations
     :ivar webhooks: Webhooks operations
     :vartype webhooks: azure.mgmt.containerregistry.v2019_12_01_preview.operations.WebhooksOperations
+    :ivar agent_pools: AgentPools operations
+    :vartype agent_pools: azure.mgmt.containerregistry.v2019_12_01_preview.operations.AgentPoolsOperations
     :ivar runs: Runs operations
     :vartype runs: azure.mgmt.containerregistry.v2019_12_01_preview.operations.RunsOperations
     :ivar task_runs: TaskRuns operations
@@ -80,6 +83,8 @@ class ContainerRegistryManagementClient(SDKClient):
         self.replications = ReplicationsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.webhooks = WebhooksOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.agent_pools = AgentPoolsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.runs = RunsOperations(
             self._client, self.config, self._serialize, self._deserialize)
