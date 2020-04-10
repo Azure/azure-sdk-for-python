@@ -31,14 +31,12 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
         kwargs['retry_policy'] = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)
 
         super(PathClient, self).__init__(account_url, file_system_name, path_name,
-                                         # type: ignore # pylint: disable=specify-parameter-names-in-call
                                          credential=credential,
-                                         **kwargs)
+                                         **kwargs)  # type: ignore # pylint: disable=specify-parameter-names-in-call
 
-        kwargs.pop('_hosts', None)  # type: ignore # pylint: disable=protected-access
-        _hosts = self._blob_client._hosts,  # type: ignore # pylint: disable=protected-access
+        kwargs.pop('_hosts', None)  # pylint: disable=protected-access
         self._blob_client = BlobClient(self._blob_account_url, file_system_name, blob_name=path_name,
-                                       credential=credential, _hosts=_hosts,
+                                       credential=credential, _hosts=self._blob_client._hosts,
                                        **kwargs)  # type: ignore # pylint: disable=protected-access
         self._client = DataLakeStorageClient(self.url, file_system_name, path_name, pipeline=self._pipeline)
         self._loop = kwargs.get('loop', None)
