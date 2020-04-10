@@ -352,6 +352,12 @@ class DeploymentOperationProperties(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    :ivar provisioning_operation: The name of the current provisioning
+     operation. Possible values include: 'NotSpecified', 'Create', 'Delete',
+     'Waiting', 'AzureAsyncOperationWaiting', 'ResourceCacheWaiting', 'Action',
+     'Read', 'EvaluateDeploymentOutput', 'DeploymentCleanup'
+    :vartype provisioning_operation: str or
+     ~azure.mgmt.resource.resources.v2019_10_01.models.ProvisioningOperation
     :ivar provisioning_state: The state of the provisioning.
     :vartype provisioning_state: str
     :ivar timestamp: The date and time of the operation.
@@ -376,6 +382,7 @@ class DeploymentOperationProperties(Model):
     """
 
     _validation = {
+        'provisioning_operation': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'timestamp': {'readonly': True},
         'duration': {'readonly': True},
@@ -388,6 +395,7 @@ class DeploymentOperationProperties(Model):
     }
 
     _attribute_map = {
+        'provisioning_operation': {'key': 'provisioningOperation', 'type': 'ProvisioningOperation'},
         'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
         'timestamp': {'key': 'timestamp', 'type': 'iso-8601'},
         'duration': {'key': 'duration', 'type': 'str'},
@@ -401,6 +409,7 @@ class DeploymentOperationProperties(Model):
 
     def __init__(self, **kwargs) -> None:
         super(DeploymentOperationProperties, self).__init__(**kwargs)
+        self.provisioning_operation = None
         self.provisioning_state = None
         self.timestamp = None
         self.duration = None
@@ -1735,37 +1744,6 @@ class TagDetails(Model):
         self.values = values
 
 
-class TagValue(Model):
-    """Tag information.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar id: The tag value ID.
-    :vartype id: str
-    :param tag_value: The tag value.
-    :type tag_value: str
-    :param count: The tag value count.
-    :type count: ~azure.mgmt.resource.resources.v2019_10_01.models.TagCount
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'tag_value': {'key': 'tagValue', 'type': 'str'},
-        'count': {'key': 'count', 'type': 'TagCount'},
-    }
-
-    def __init__(self, *, tag_value: str=None, count=None, **kwargs) -> None:
-        super(TagValue, self).__init__(**kwargs)
-        self.id = None
-        self.tag_value = tag_value
-        self.count = count
-
-
 class Tags(Model):
     """A dictionary of name and value pairs.
 
@@ -1842,6 +1820,37 @@ class TagsResource(Model):
         self.name = None
         self.type = None
         self.properties = properties
+
+
+class TagValue(Model):
+    """Tag information.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: The tag value ID.
+    :vartype id: str
+    :param tag_value: The tag value.
+    :type tag_value: str
+    :param count: The tag value count.
+    :type count: ~azure.mgmt.resource.resources.v2019_10_01.models.TagCount
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'tag_value': {'key': 'tagValue', 'type': 'str'},
+        'count': {'key': 'count', 'type': 'TagCount'},
+    }
+
+    def __init__(self, *, tag_value: str=None, count=None, **kwargs) -> None:
+        super(TagValue, self).__init__(**kwargs)
+        self.id = None
+        self.tag_value = tag_value
+        self.count = count
 
 
 class TargetResource(Model):
