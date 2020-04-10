@@ -4,7 +4,7 @@ import os
 from collections import namedtuple
 
 from azure.mgmt.servicebus import ServiceBusManagementClient
-from azure.mgmt.servicebus.models import SBQueue, AccessRights
+from azure.mgmt.servicebus.models import SBQueue, SBSubscription, AccessRights
 
 from azure_devtools.scenario_tests.exceptions import AzureTestError
 
@@ -187,6 +187,7 @@ class ServiceBusSubscriptionPreparer(_ServiceBusChildResourcePreparer):
                  resource_group_parameter_name=RESOURCE_GROUP_PARAM,
                  servicebus_namespace_parameter_name=SERVICEBUS_NAMESPACE_PARAM,
                  servicebus_topic_parameter_name=SERVICEBUS_TOPIC_PARAM,
+                 requires_session=False,
                  disable_recording=True, playback_fake_resource=None,
                  client_kwargs=None, random_name_enabled=True):
         super(ServiceBusSubscriptionPreparer, self).__init__(name_prefix,
@@ -200,7 +201,10 @@ class ServiceBusSubscriptionPreparer(_ServiceBusChildResourcePreparer):
         self.parameter_name = parameter_name
         if random_name_enabled:
             self.resource_moniker = self.name_prefix + "sbsub"
-        self.set_cache(use_cache)
+        self.set_cache(use_cache, requires_session)
+        self.requires_session=requires_session
+        if random_name_enabled:
+            self.resource_moniker = self.name_prefix + "sbqueue"
 
     def create_resource(self, name, **kwargs):
         if self.is_live:
@@ -213,7 +217,9 @@ class ServiceBusSubscriptionPreparer(_ServiceBusChildResourcePreparer):
                 namespace.name,
                 topic.name,
                 name,
-                {}
+                SBSubscription(
+                    requires_session=self.requires_session
+                )
             )
 
             self.test_class_instance.scrubber.register_name_pair(
@@ -434,3 +440,4 @@ class ServiceBusQueueAuthorizationRulePreparer(_ServiceBusChildResourcePreparer)
 CachedServiceBusNamespacePreparer = functools.partial(ServiceBusNamespacePreparer, use_cache=True)
 CachedServiceBusQueuePreparer = functools.partial(ServiceBusQueuePreparer, use_cache=True)
 CachedServiceBusTopicPreparer = functools.partial(ServiceBusTopicPreparer, use_cache=True)
+CachedServiceBusSubscriptionPreparer = functools.partial(ServiceBusSubscriptionPreparer, use_cache=True)
