@@ -19,7 +19,9 @@ from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPrepare
 from servicebus_preparer import (
     CachedServiceBusNamespacePreparer,
     CachedServiceBusTopicPreparer,
-    CachedServiceBusSubscriptionPreparer
+    CachedServiceBusSubscriptionPreparer,
+    ServiceBusTopicPreparer,
+    ServiceBusSubscriptionPreparer
 )
 from utilities import get_logger, print_message
 
@@ -31,8 +33,8 @@ class ServiceBusSubscriptionAsyncTests(AzureMgmtTestCase):
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    @CachedServiceBusTopicPreparer(name_prefix='servicebustest')
-    @CachedServiceBusSubscriptionPreparer(name_prefix='servicebustest')
+    @ServiceBusTopicPreparer(name_prefix='servicebustest')
+    @ServiceBusSubscriptionPreparer(name_prefix='servicebustest')
     async def test_subscription_by_subscription_client_conn_str_receive_basic(self, servicebus_namespace_connection_string, servicebus_topic, servicebus_subscription, **kwargs):
 
         async with ServiceBusClient.from_connection_string(
@@ -58,8 +60,8 @@ class ServiceBusSubscriptionAsyncTests(AzureMgmtTestCase):
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    @CachedServiceBusTopicPreparer(name_prefix='servicebustest')
-    @CachedServiceBusSubscriptionPreparer(name_prefix='servicebustest')
+    @ServiceBusTopicPreparer(name_prefix='servicebustest')
+    @ServiceBusSubscriptionPreparer(name_prefix='servicebustest')
     async def test_subscription_by_sas_token_credential_conn_str_send_basic(self, servicebus_namespace, servicebus_namespace_key_name, servicebus_namespace_primary_key, servicebus_topic, servicebus_subscription, **kwargs):
         fully_qualified_namespace = servicebus_namespace.name + '.servicebus.windows.net'
         async with ServiceBusClient(
