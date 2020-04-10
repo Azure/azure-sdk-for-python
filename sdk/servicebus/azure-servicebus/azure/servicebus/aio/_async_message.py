@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
+import functools
 from typing import Optional
 
 from .._common import message as sync_message
@@ -30,9 +31,9 @@ class ReceivedMessage(sync_message.ReceivedMessage):
 
     """
 
-    def __init__(self, message, mode=ReceiveSettleMode.PeekLock, loop=None):
+    def __init__(self, message, mode=ReceiveSettleMode.PeekLock, is_deferred_message=False, loop=None):
         self._loop = loop or get_running_loop()
-        super(ReceivedMessage, self).__init__(message=message, mode=mode)
+        super(ReceivedMessage, self).__init__(message=message, mode=mode, is_deferred_message=is_deferred_message)
 
     async def complete(self):
         # type: () -> None
@@ -49,7 +50,10 @@ class ReceivedMessage(sync_message.ReceivedMessage):
         # pylint: disable=protected-access
         self._is_live(MESSAGE_COMPLETE)
         try:
-            await self._receiver._settle_message(SETTLEMENT_COMPLETE, [self.lock_token])
+            if self._is_deferred_message:
+                await self._receiver._settle_message(SETTLEMENT_COMPLETE, [self.lock_token])
+            else:
+                await self._loop.run_in_executor(None, self.message.accept)
         except Exception as e:
             raise MessageSettleFailed(MESSAGE_COMPLETE, e)
         self._settled = True
@@ -75,6 +79,8 @@ class ReceivedMessage(sync_message.ReceivedMessage):
             MGMT_REQUEST_DEAD_LETTER_REASON: str(reason) if reason else "",
             MGMT_REQUEST_DEAD_LETTER_DESCRIPTION: str(description) if description else ""}
         try:
+            # note: message.reject() can not set reason and description properly due to the issue
+            # https://github.com/Azure/azure-uamqp-python/issues/155
             await self._receiver._settle_message(
                 SETTLEMENT_DEADLETTER,
                 [self.lock_token],
@@ -96,7 +102,11 @@ class ReceivedMessage(sync_message.ReceivedMessage):
         # pylint: disable=protected-access
         self._is_live(MESSAGE_ABANDON)
         try:
-            await self._receiver._settle_message(SETTLEMENT_ABANDON, [self.lock_token])
+            if self._is_deferred_message:
+                await self._receiver._settle_message(SETTLEMENT_ABANDON, [self.lock_token])
+            else:
+                modify = functools.partial(self.message.modify, True, False)
+                await self._loop.run_in_executor(None, modify)
         except Exception as e:
             raise MessageSettleFailed(MESSAGE_ABANDON, e)
         self._settled = True
@@ -113,7 +123,11 @@ class ReceivedMessage(sync_message.ReceivedMessage):
         # pylint: disable=protected-access
         self._is_live(MESSAGE_DEFER)
         try:
-            await self._receiver._settle_message(SETTLEMENT_DEFER, [self.lock_token])
+            if self._is_deferred_message:
+                await self._receiver._settle_message(SETTLEMENT_DEFER, [self.lock_token])
+            else:
+                modify = functools.partial(self.message.modify, True, True)
+                await self._loop.run_in_executor(None, modify)
         except Exception as e:
             raise MessageSettleFailed(MESSAGE_DEFER, e)
         self._settled = True

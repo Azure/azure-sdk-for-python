@@ -436,9 +436,10 @@ class ReceivedMessage(PeekMessage):
             :dedent: 4
             :caption: Checking the properties on a received message.
     """
-    def __init__(self, message, mode=ReceiveSettleMode.PeekLock):
+    def __init__(self, message, mode=ReceiveSettleMode.PeekLock, is_deferred_message=False):
         super(ReceivedMessage, self).__init__(message=message)
         self._settled = (mode == ReceiveSettleMode.ReceiveAndDelete)
+        self._is_deferred_message = is_deferred_message
         self.auto_renew_error = None
 
     def _is_live(self, action):
@@ -529,9 +530,13 @@ class ReceivedMessage(PeekMessage):
         :raises: ~azure.servicebus.common.errors.SessionLockExpired if session lock has already expired.
         :raises: ~azure.servicebus.common.errors.MessageSettleFailed if message settle operation fails.
         """
+        # pylint: disable=protected-access
         self._is_live(MESSAGE_COMPLETE)
         try:
-            self._receiver._settle_message(SETTLEMENT_COMPLETE, [self.lock_token])  # pylint: disable=protected-access
+            if self._is_deferred_message:
+                self._receiver._settle_message(SETTLEMENT_COMPLETE, [self.lock_token])
+            else:
+                self.message.accept()
         except Exception as e:
             raise MessageSettleFailed(MESSAGE_COMPLETE, e)
         self._settled = True
@@ -558,6 +563,8 @@ class ReceivedMessage(PeekMessage):
             MGMT_REQUEST_DEAD_LETTER_REASON: str(reason) if reason else "",
             MGMT_REQUEST_DEAD_LETTER_DESCRIPTION: str(description) if description else ""}
         try:
+            # note: message.reject() can not set reason and description properly due to the issue
+            # https://github.com/Azure/azure-uamqp-python/issues/155
             self._receiver._settle_message(
                 SETTLEMENT_DEADLETTER,
                 [self.lock_token],
@@ -579,9 +586,13 @@ class ReceivedMessage(PeekMessage):
         :raises: ~azure.servicebus.common.errors.SessionLockExpired if session lock has already expired.
         :raises: ~azure.servicebus.common.errors.MessageSettleFailed if message settle operation fails.
         """
+        # pylint: disable=protected-access
         self._is_live(MESSAGE_ABANDON)
         try:
-            self._receiver._settle_message(SETTLEMENT_ABANDON, [self.lock_token])  # pylint: disable=protected-access
+            if self._is_deferred_message:
+                self._receiver._settle_message(SETTLEMENT_ABANDON, [self.lock_token])
+            else:
+                self.message.modify(True, False)
         except Exception as e:
             raise MessageSettleFailed(MESSAGE_ABANDON, e)
         self._settled = True
@@ -601,7 +612,10 @@ class ReceivedMessage(PeekMessage):
         """
         self._is_live(MESSAGE_DEFER)
         try:
-            self._receiver._settle_message(SETTLEMENT_DEFER, [self.lock_token])  # pylint: disable=protected-access
+            if self._is_deferred_message:
+                self._receiver._settle_message(SETTLEMENT_DEFER, [self.lock_token])  # pylint: disable=protected-access
+            else:
+                self.message.modify(True, True)
         except Exception as e:
             raise MessageSettleFailed(MESSAGE_DEFER, e)
         self._settled = True
