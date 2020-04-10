@@ -38,8 +38,8 @@ setup(
     ],
     zip_safe=False,
     install_requires=[
-        'azure-keyvault-certificates~=4.0',
-        'azure-keyvault-secrets~=4.0',
-        'azure-keyvault-keys~=4.0',
+        'azure-keyvault-certificates~=4.1',
+        'azure-keyvault-secrets~=4.1',
+        'azure-keyvault-keys~=4.1',
     ],
 )
