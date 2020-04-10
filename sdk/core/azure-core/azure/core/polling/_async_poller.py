@@ -43,6 +43,15 @@ class AsyncPollingMethod(object):
     def resource(self):
         raise NotImplementedError("This method needs to be implemented")
 
+    def get_continuation_token(self):
+        # type() -> str
+        raise NotImplementedError("This polling method doesn't support get_continuation_token")
+
+    @classmethod
+    def from_continuation_token(cls, continuation_token, **kwargs):
+        # type(str, Any) -> PollingMethod
+        raise NotImplementedError("This polling method doesn't support from_continuation_token")
+
 
 class AsyncNoPolling(_NoPolling):
     """An empty async poller that returns the deserialized initial response.
