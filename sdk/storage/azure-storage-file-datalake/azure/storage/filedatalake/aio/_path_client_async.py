@@ -35,7 +35,7 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
                                          credential=credential,
                                          **kwargs)
 
-        kwargs.pop('_hosts', None)
+        kwargs.pop('_hosts', None) # type: ignore # pylint: disable=protected-access
         self._blob_client = BlobClient(self._blob_account_url, file_system_name, blob_name=path_name,
                                        credential=credential, _hosts=self._blob_client._hosts,
                                        **kwargs)  # type: ignore # pylint: disable=protected-access
@@ -291,7 +291,8 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
             The default when unspecified is 2000.
         :keyword int max_batch:
             Optional. Defines maximum number of batches that single change Access Control operation can execute.
-            If maximum is reached before all sub-paths are processed then continuation token can be used to resume operation.
+            If maximum is reached before all sub-paths are processed,
+            then continuation token can be used to resume operation.
             Empty value indicates that maximum number of batches in unbound and operation continues till end.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
@@ -304,12 +305,10 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
 
         progress_callback = kwargs.pop('progress_callback', None)
         max_batch = kwargs.pop('max_batch', None)
-        options = self._set_access_control_recursive_options('set', acl=acl, **kwargs)
+        options = self._set_access_control_recursive_options(mode='set', acl=acl, **kwargs)
         return await self._set_access_control_internal(options, progress_callback, max_batch)
 
-    async def update_access_control_recursive(self,
-                                              acl,
-                                              **kwargs):
+    async def update_access_control_recursive(self, acl, **kwargs):
         # type: (str, **Any) -> AccessControlChangeResult
         """
         Modifies the Access Control on a path and sub-paths.
@@ -331,8 +330,10 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
             requests so that progress can be tracked. Batch size should be between 1 and 2000.
             The default when unspecified is 2000.
         :keyword int max_batch:
-            Optional. Defines maximum number of batches that single change Access Control operation can execute.
-            If maximum is reached before all sub-paths are processed then continuation token can be used to resume operation.
+            Optional. Defines maximum number of batches that single,
+            change Access Control operation can execute.
+            If maximum is reached before all sub-paths are processed,
+            then continuation token can be used to resume operation.
             Empty value indicates that maximum number of batches in unbound and operation continues till end.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
@@ -345,7 +346,7 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
 
         progress_callback = kwargs.pop('progress_callback', None)
         max_batch = kwargs.pop('max_batch', None)
-        options = self._set_access_control_recursive_options('modify', acl=acl, **kwargs)
+        options = self._set_access_control_recursive_options(mode='modify', acl=acl, **kwargs)
         return await self._set_access_control_internal(options, progress_callback, max_batch)
 
     async def remove_access_control_recursive(self,
@@ -372,7 +373,8 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
             The default when unspecified is 2000.
         :keyword int max_batch:
             Optional. Defines maximum number of batches that single change Access Control operation can execute.
-            If maximum is reached before all sub-paths are processed then continuation token can be used to resume operation.
+            If maximum is reached before all sub-paths are processed,
+            then continuation token can be used to resume operation.
             Empty value indicates that maximum number of batches in unbound and operation continues till end.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
@@ -385,7 +387,7 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
 
         progress_callback = kwargs.pop('progress_callback', None)
         max_batch = kwargs.pop('max_batch', None)
-        options = self._set_access_control_recursive_options('remove', acl=acl, **kwargs)
+        options = self._set_access_control_recursive_options(mode='remove', acl=acl, **kwargs)
         return await self._set_access_control_internal(options, progress_callback, max_batch)
 
     async def _set_access_control_internal(self, options, progress_callback, max_batch=None):
@@ -429,7 +431,7 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
                         continuation=last_continuation_token))
 
                 # update the continuation token, if there are more operations that cannot be completed in a single call
-                max_batch_satisfied = True if max_batch is not None and batch_count == max_batch else False
+                max_batch_satisfied = (max_batch is not None and batch_count == max_batch)
                 continue_operation = bool(current_continuation_token) and not max_batch_satisfied
                 options['continuation'] = current_continuation_token
 

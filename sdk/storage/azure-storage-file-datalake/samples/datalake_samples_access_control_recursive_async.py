@@ -48,12 +48,14 @@ async def recursive_access_control_sample(filesystem_client):
 
     # the progress callback is invoked each time a batch is completed
     async def progress_callback(acl_changes):
-        print("In this batch: {} directories and {} files were processed successfully, {} failures were counted"
+        print(("In this batch: {} directories and {} files were processed successfully, {} failures were counted. " +
+               "In total, {} directories and {} files were processed successfully, {} failures were counted.")
               .format(acl_changes.batch_counters.directories_successful, acl_changes.batch_counters.files_successful,
-                      acl_changes.batch_counters.failure_count))
+                      acl_changes.batch_counters.failure_count, acl_changes.aggregate_counters.directories_successful,
+                      acl_changes.aggregate_counters.files_successful, acl_changes.aggregate_counters.failure_count))
 
         # keep track of failed entries if there are any
-        failed_entries.append(acl_changes.failed_entries)
+        failed_entries.append(acl_changes.batch_failures)
 
     # illustrate the operation by using a small batch_size
     acl_change_result = await directory_client.set_access_control_recursive(acl=acl,

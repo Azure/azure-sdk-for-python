@@ -372,7 +372,8 @@ class DirectoryTest(StorageTestCase):
         summary = await directory_client.set_access_control_recursive(acl=acl)
 
         # Assert
-        self.assertEqual(summary.counters.directories_successful, num_sub_dirs + 1)  # +1 as the dir itself was also included
+        self.assertEqual(summary.counters.directories_successful,
+                         num_sub_dirs + 1)  # +1 as the dir itself was also included
         self.assertEqual(summary.counters.files_successful, num_sub_dirs * num_file_per_sub_dir)
         self.assertEqual(summary.counters.failure_count, 0)
         self.assertIsNone(summary.continuation)
@@ -397,7 +398,8 @@ class DirectoryTest(StorageTestCase):
         summary = await directory_client.set_access_control_recursive(acl=acl, batch_size=2)
 
         # Assert
-        self.assertEqual(summary.counters.directories_successful, num_sub_dirs + 1)  # +1 as the dir itself was also included
+        self.assertEqual(summary.counters.directories_successful,
+                         num_sub_dirs + 1)  # +1 as the dir itself was also included
         self.assertEqual(summary.counters.files_successful, num_sub_dirs * num_file_per_sub_dir)
         self.assertEqual(summary.counters.failure_count, 0)
         self.assertIsNone(summary.continuation)
@@ -433,7 +435,8 @@ class DirectoryTest(StorageTestCase):
                                                                       batch_size=2)
 
         # Assert
-        self.assertEqual(summary.counters.directories_successful, num_sub_dirs + 1)  # +1 as the dir itself was also included
+        self.assertEqual(summary.counters.directories_successful,
+                         num_sub_dirs + 1)  # +1 as the dir itself was also included
         self.assertEqual(summary.counters.files_successful, num_sub_dirs * num_file_per_sub_dir)
         self.assertEqual(summary.counters.failure_count, 0)
         self.assertIsNone(summary.continuation)
@@ -491,6 +494,45 @@ class DirectoryTest(StorageTestCase):
         self.assertEqual(len(failed_entries), 1)
 
     @record
+    def test_set_access_control_recursive_in_batches_with_explicit_iteration_async(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_set_access_control_recursive_in_batches_with_explicit_iteration_async())
+
+    async def _test_set_access_control_recursive_in_batches_with_explicit_iteration_async(self):
+        directory_name = self._get_directory_reference()
+        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        await directory_client.create_directory()
+        num_sub_dirs = 5
+        num_file_per_sub_dir = 5
+        await self._create_sub_directory_and_files(directory_client, num_sub_dirs, num_file_per_sub_dir)
+
+        acl = 'user::rwx,group::r-x,other::rwx'
+        running_tally = AccessControlChangeCounters(0, 0, 0)
+        result = AccessControlChangeResult(None, "")
+        iteration_count = 0
+        max_batch = 2
+        batch_size = 2
+
+        while result.continuation is not None:
+            result = await directory_client.set_access_control_recursive(acl=acl, batch_size=batch_size,
+                                                                         max_batch=max_batch,
+                                                                         continuation=result.continuation)
+
+            running_tally.directories_successful += result.counters.directories_successful
+            running_tally.files_successful += result.counters.files_successful
+            running_tally.failure_count += result.counters.failure_count
+            iteration_count += 1
+
+        # Assert
+        self.assertEqual(running_tally.directories_successful,
+                         num_sub_dirs + 1)  # +1 as the dir itself was also included
+        self.assertEqual(running_tally.files_successful, num_sub_dirs * num_file_per_sub_dir)
+        self.assertEqual(running_tally.failure_count, 0)
+        access_control = await directory_client.get_access_control()
+        self.assertIsNotNone(access_control)
+        self.assertEqual(acl, access_control['acl'])
+
+    @record
     def test_update_access_control_recursive_async(self):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_update_access_control_recursive_async())
@@ -507,7 +549,8 @@ class DirectoryTest(StorageTestCase):
         summary = await directory_client.update_access_control_recursive(acl=acl)
 
         # Assert
-        self.assertEqual(summary.counters.directories_successful, num_sub_dirs + 1)  # +1 as the dir itself was also included
+        self.assertEqual(summary.counters.directories_successful,
+                         num_sub_dirs + 1)  # +1 as the dir itself was also included
         self.assertEqual(summary.counters.files_successful, num_sub_dirs * num_file_per_sub_dir)
         self.assertEqual(summary.counters.failure_count, 0)
         access_control = await directory_client.get_access_control()
@@ -531,7 +574,8 @@ class DirectoryTest(StorageTestCase):
         summary = await directory_client.update_access_control_recursive(acl=acl, batch_size=2)
 
         # Assert
-        self.assertEqual(summary.counters.directories_successful, num_sub_dirs + 1)  # +1 as the dir itself was also included
+        self.assertEqual(summary.counters.directories_successful,
+                         num_sub_dirs + 1)  # +1 as the dir itself was also included
         self.assertEqual(summary.counters.files_successful, num_sub_dirs * num_file_per_sub_dir)
         self.assertEqual(summary.counters.failure_count, 0)
         access_control = await directory_client.get_access_control()
@@ -566,7 +610,8 @@ class DirectoryTest(StorageTestCase):
                                                                          batch_size=2)
 
         # Assert
-        self.assertEqual(summary.counters.directories_successful, num_sub_dirs + 1)  # +1 as the dir itself was also included
+        self.assertEqual(summary.counters.directories_successful,
+                         num_sub_dirs + 1)  # +1 as the dir itself was also included
         self.assertEqual(summary.counters.files_successful, num_sub_dirs * num_file_per_sub_dir)
         self.assertEqual(summary.counters.failure_count, 0)
         self.assertEqual(summary.counters.directories_successful, running_tally.directories_successful)
@@ -635,7 +680,8 @@ class DirectoryTest(StorageTestCase):
         summary = await directory_client.remove_access_control_recursive(acl=REMOVE_ACL)
 
         # Assert
-        self.assertEqual(summary.counters.directories_successful, num_sub_dirs + 1)  # +1 as the dir itself was also included
+        self.assertEqual(summary.counters.directories_successful,
+                         num_sub_dirs + 1)  # +1 as the dir itself was also included
         self.assertEqual(summary.counters.files_successful, num_sub_dirs * num_file_per_sub_dir)
         self.assertEqual(summary.counters.failure_count, 0)
 
@@ -655,7 +701,8 @@ class DirectoryTest(StorageTestCase):
         summary = await directory_client.remove_access_control_recursive(acl=REMOVE_ACL, batch_size=2)
 
         # Assert
-        self.assertEqual(summary.counters.directories_successful, num_sub_dirs + 1)  # +1 as the dir itself was also included
+        self.assertEqual(summary.counters.directories_successful,
+                         num_sub_dirs + 1)  # +1 as the dir itself was also included
         self.assertEqual(summary.counters.files_successful, num_sub_dirs * num_file_per_sub_dir)
         self.assertEqual(summary.counters.failure_count, 0)
 
@@ -687,7 +734,8 @@ class DirectoryTest(StorageTestCase):
                                                                          batch_size=2)
 
         # Assert
-        self.assertEqual(summary.counters.directories_successful, num_sub_dirs + 1)  # +1 as the dir itself was also included
+        self.assertEqual(summary.counters.directories_successful,
+                         num_sub_dirs + 1)  # +1 as the dir itself was also included
         self.assertEqual(summary.counters.files_successful, num_sub_dirs * num_file_per_sub_dir)
         self.assertEqual(summary.counters.failure_count, 0)
         self.assertEqual(summary.counters.directories_successful, running_tally.directories_successful)

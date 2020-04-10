@@ -432,7 +432,8 @@ class PathClient(StorageAccountHostsMixin):
             The default when unspecified is 2000.
         :keyword int max_batch:
             Optional. Defines maximum number of batches that single change Access Control operation can execute.
-            If maximum is reached before all sub-paths are processed then continuation token can be used to resume operation.
+            If maximum is reached before all sub-paths are processed,
+            then continuation token can be used to resume operation.
             Empty value indicates that maximum number of batches in unbound and operation continues till end.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
@@ -445,11 +446,11 @@ class PathClient(StorageAccountHostsMixin):
 
         progress_callback = kwargs.pop('progress_callback', None)
         max_batch = kwargs.pop('max_batch', None)
-        options = self._set_access_control_recursive_options('set', acl=acl, **kwargs)
+        options = self._set_access_control_recursive_options(mode='set', acl=acl, **kwargs)
         return self._set_access_control_internal(options, progress_callback, max_batch)
 
     def update_access_control_recursive(self,
-                                        acl=None,
+                                        acl,
                                         **kwargs):
         # type: (str, **Any) -> AccessControlChangeResult
         """
@@ -473,7 +474,8 @@ class PathClient(StorageAccountHostsMixin):
             The default when unspecified is 2000.
         :keyword int max_batch:
             Optional. Defines maximum number of batches that single change Access Control operation can execute.
-            If maximum is reached before all sub-paths are processed then continuation token can be used to resume operation.
+            If maximum is reached before all sub-paths are processed,
+            then continuation token can be used to resume operation.
             Empty value indicates that maximum number of batches in unbound and operation continues till end.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
@@ -486,7 +488,7 @@ class PathClient(StorageAccountHostsMixin):
 
         progress_callback = kwargs.pop('progress_callback', None)
         max_batch = kwargs.pop('max_batch', None)
-        options = self._set_access_control_recursive_options('modify', acl=acl, **kwargs)
+        options = self._set_access_control_recursive_options(mode='modify', acl=acl, **kwargs)
         return self._set_access_control_internal(options, progress_callback, max_batch)
 
     def remove_access_control_recursive(self,
@@ -513,7 +515,8 @@ class PathClient(StorageAccountHostsMixin):
             The default when unspecified is 2000.
         :keyword int max_batch:
             Optional. Defines maximum number of batches that single change Access Control operation can execute.
-            If maximum is reached before all sub-paths are processed then continuation token can be used to resume operation.
+            If maximum is reached before all sub-paths are processed then,
+            continuation token can be used to resume operation.
             Empty value indicates that maximum number of batches in unbound and operation continues till end.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
@@ -526,7 +529,7 @@ class PathClient(StorageAccountHostsMixin):
 
         progress_callback = kwargs.pop('progress_callback', None)
         max_batch = kwargs.pop('max_batch', None)
-        options = self._set_access_control_recursive_options('remove', acl=acl, **kwargs)
+        options = self._set_access_control_recursive_options(mode='remove', acl=acl, **kwargs)
         return self._set_access_control_internal(options, progress_callback, max_batch)
 
     def _set_access_control_internal(self, options, progress_callback, max_batch=None):
@@ -570,7 +573,7 @@ class PathClient(StorageAccountHostsMixin):
                         continuation=last_continuation_token))
 
                 # update the continuation token, if there are more operations that cannot be completed in a single call
-                max_batch_satisfied = True if max_batch is not None and batch_count == max_batch else False
+                max_batch_satisfied = (max_batch is not None and batch_count == max_batch)
                 continue_operation = bool(current_continuation_token) and not max_batch_satisfied
                 options['continuation'] = current_continuation_token
 

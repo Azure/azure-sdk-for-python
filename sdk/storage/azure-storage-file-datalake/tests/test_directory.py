@@ -398,40 +398,39 @@ class DirectoryTest(StorageTestCase):
         self.assertEqual(summary.counters.failure_count, running_tally.failure_count)
         self.assertEqual(len(failed_entries), 1)
 
-    # TODO: run to record before merging, after test account is fixed
-    # TODO: repeat for async version
-    # @record
-    # def test_set_access_control_recursive_in_batches_with_explicit_iteration(self):
-    #     directory_name = self._get_directory_reference()
-    #     directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
-    #     directory_client.create_directory()
-    #     num_sub_dirs = 5
-    #     num_file_per_sub_dir = 5
-    #     self._create_sub_directory_and_files(directory_client, num_sub_dirs, num_file_per_sub_dir)
-    #
-    #     acl = 'user::rwx,group::r-x,other::rwx'
-    #     running_tally = AccessControlChangeCounters(0, 0, 0)
-    #     result = AccessControlChangeResult
-    #     iteration_count = 0
-    #     max_batch = 2
-    #
-    #     while iteration_count < (num_sub_dirs*num_file_per_sub_dir+1)/max_batch:
-    #         result = directory_client.set_access_control_recursive(acl=acl, batch_size=2, max_batch=max_batch,
-    #                                                                continuation=result.continuation)
-    #
-    #         running_tally.directories_successful += result.counters.directories_successful
-    #         running_tally.files_successful += result.counters.files_successful
-    #         running_tally.failure_count += result.counters.failure_count
-    #
-    #     # Assert
-    #     self.assertEqual(running_tally.directories_successful,
-    #                      num_sub_dirs + 1)  # +1 as the dir itself was also included
-    #     self.assertEqual(running_tally.files_successful, num_sub_dirs * num_file_per_sub_dir)
-    #     self.assertEqual(running_tally.failure_count, 0)
-    #     self.assertIsNone(result.continuation)
-    #     access_control = directory_client.get_access_control()
-    #     self.assertIsNotNone(access_control)
-    #     self.assertEqual(acl, access_control['acl'])
+    @record
+    def test_set_access_control_recursive_in_batches_with_explicit_iteration(self):
+        directory_name = self._get_directory_reference()
+        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        directory_client.create_directory()
+        num_sub_dirs = 5
+        num_file_per_sub_dir = 5
+        self._create_sub_directory_and_files(directory_client, num_sub_dirs, num_file_per_sub_dir)
+
+        acl = 'user::rwx,group::r-x,other::rwx'
+        running_tally = AccessControlChangeCounters(0, 0, 0)
+        result = AccessControlChangeResult(None, "")
+        iteration_count = 0
+        max_batch = 2
+        batch_size = 2
+
+        while result.continuation is not None:
+            result = directory_client.set_access_control_recursive(acl=acl, batch_size=batch_size, max_batch=max_batch,
+                                                                   continuation=result.continuation)
+
+            running_tally.directories_successful += result.counters.directories_successful
+            running_tally.files_successful += result.counters.files_successful
+            running_tally.failure_count += result.counters.failure_count
+            iteration_count += 1
+
+        # Assert
+        self.assertEqual(running_tally.directories_successful,
+                         num_sub_dirs + 1)  # +1 as the dir itself was also included
+        self.assertEqual(running_tally.files_successful, num_sub_dirs * num_file_per_sub_dir)
+        self.assertEqual(running_tally.failure_count, 0)
+        access_control = directory_client.get_access_control()
+        self.assertIsNotNone(access_control)
+        self.assertEqual(acl, access_control['acl'])
 
     @record
     def test_update_access_control_recursive(self):

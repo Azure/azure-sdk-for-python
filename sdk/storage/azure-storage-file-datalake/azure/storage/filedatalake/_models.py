@@ -667,7 +667,8 @@ class AccessControlChangeFailure(object):
 
 class AccessControlChanges(object):
     """
-    AccessControlChanges contains batch and cumulative counts of operations that change Access Control Lists recursively.
+    AccessControlChanges contains batch and cumulative counts of operations
+    that change Access Control Lists recursively.
     Additionally it exposes path entries that failed to update while these operations progress.
 
     :ivar ~azure.storage.filedatalake.AccessControlChangeCounters batch_counters:
