@@ -122,7 +122,7 @@ class BaseHandler(object):  # pylint:disable=too-many-instance-attributes
         self._entity_name = entity_name
 
         subscription_name = kwargs.get("subscription_name")
-        self._mgmt_target = self._entity_name + ("/Subscriptions/" + subscription_name) if subscription_name else ''
+        self._mgmt_target = self._entity_name + (("/Subscriptions/" + subscription_name) if subscription_name else '')
         self._mgmt_target = "{}{}".format(self._mgmt_target, MANAGEMENT_PATH_SUFFIX)
         self._credential = credential
         self._container_id = CONTAINER_PREFIX + str(uuid.uuid4())[:8]
