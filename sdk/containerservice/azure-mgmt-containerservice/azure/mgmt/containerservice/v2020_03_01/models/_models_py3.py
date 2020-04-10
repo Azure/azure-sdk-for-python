@@ -1779,7 +1779,7 @@ class ManagedClusterPropertiesAutoScalerProfile(Model):
     """Parameters to be applied to the cluster-autoscaler when enabled.
 
     :param balance_similar_node_groups:
-    :type balance_similar_node_groups: bool
+    :type balance_similar_node_groups: str
     :param scan_interval:
     :type scan_interval: str
     :param scale_down_delay_after_add:
@@ -1799,7 +1799,7 @@ class ManagedClusterPropertiesAutoScalerProfile(Model):
     """
 
     _attribute_map = {
-        'balance_similar_node_groups': {'key': 'balance-similar-node-groups', 'type': 'bool'},
+        'balance_similar_node_groups': {'key': 'balance-similar-node-groups', 'type': 'str'},
         'scan_interval': {'key': 'scan-interval', 'type': 'str'},
         'scale_down_delay_after_add': {'key': 'scale-down-delay-after-add', 'type': 'str'},
         'scale_down_delay_after_delete': {'key': 'scale-down-delay-after-delete', 'type': 'str'},
@@ -1810,7 +1810,7 @@ class ManagedClusterPropertiesAutoScalerProfile(Model):
         'max_graceful_termination_sec': {'key': 'max-graceful-termination-sec', 'type': 'str'},
     }
 
-    def __init__(self, *, balance_similar_node_groups: bool=None, scan_interval: str=None, scale_down_delay_after_add: str=None, scale_down_delay_after_delete: str=None, scale_down_delay_after_failure: str=None, scale_down_unneeded_time: str=None, scale_down_unready_time: str=None, scale_down_utilization_threshold: str=None, max_graceful_termination_sec: str=None, **kwargs) -> None:
+    def __init__(self, *, balance_similar_node_groups: str=None, scan_interval: str=None, scale_down_delay_after_add: str=None, scale_down_delay_after_delete: str=None, scale_down_delay_after_failure: str=None, scale_down_unneeded_time: str=None, scale_down_unready_time: str=None, scale_down_utilization_threshold: str=None, max_graceful_termination_sec: str=None, **kwargs) -> None:
         super(ManagedClusterPropertiesAutoScalerProfile, self).__init__(**kwargs)
         self.balance_similar_node_groups = balance_similar_node_groups
         self.scan_interval = scan_interval
