@@ -114,6 +114,31 @@ async def test_retry_on_429():
     assert transport._count == 2
 
 @pytest.mark.asyncio
+async def test_retry_on_201():
+    class MockTransport(AsyncHttpTransport):
+        def __init__(self):
+            self._count = 0
+        async def __aexit__(self, exc_type, exc_val, exc_tb):
+            pass
+        async def close(self):
+            pass
+        async def open(self):
+            pass
+
+        async def send(self, request, **kwargs):  # type: (PipelineRequest, Any) -> PipelineResponse
+            self._count += 1
+            response = HttpResponse(request, None)
+            response.status_code = 201
+            return response
+
+    http_request = HttpRequest('GET', 'http://127.0.0.1/')
+    http_retry = AsyncRetryPolicy(retry_total = 1)
+    transport = MockTransport()
+    pipeline = AsyncPipeline(transport, [http_retry])
+    await pipeline.run(http_request)
+    assert transport._count == 1
+
+@pytest.mark.asyncio
 async def test_retry_seekable_stream():
     class MockTransport(AsyncHttpTransport):
         def __init__(self):
