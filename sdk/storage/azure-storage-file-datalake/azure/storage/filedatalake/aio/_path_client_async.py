@@ -35,9 +35,10 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
                                          credential=credential,
                                          **kwargs)
 
-        kwargs.pop('_hosts', None) # type: ignore # pylint: disable=protected-access
+        kwargs.pop('_hosts', None)  # type: ignore # pylint: disable=protected-access
+        _hosts = self._blob_client._hosts,  # type: ignore # pylint: disable=protected-access
         self._blob_client = BlobClient(self._blob_account_url, file_system_name, blob_name=path_name,
-                                       credential=credential, _hosts=self._blob_client._hosts,
+                                       credential=credential, _hosts=_hosts,
                                        **kwargs)  # type: ignore # pylint: disable=protected-access
         self._client = DataLakeStorageClient(self.url, file_system_name, path_name, pipeline=self._pipeline)
         self._loop = kwargs.get('loop', None)
@@ -306,7 +307,8 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
         progress_callback = kwargs.pop('progress_callback', None)
         max_batch = kwargs.pop('max_batch', None)
         options = self._set_access_control_recursive_options(mode='set', acl=acl, **kwargs)
-        return await self._set_access_control_internal(options, progress_callback, max_batch)
+        return await self._set_access_control_internal(options=options, progress_callback=progress_callback,
+                                                       max_batch=max_batch)
 
     async def update_access_control_recursive(self, acl, **kwargs):
         # type: (str, **Any) -> AccessControlChangeResult
@@ -347,7 +349,8 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
         progress_callback = kwargs.pop('progress_callback', None)
         max_batch = kwargs.pop('max_batch', None)
         options = self._set_access_control_recursive_options(mode='modify', acl=acl, **kwargs)
-        return await self._set_access_control_internal(options, progress_callback, max_batch)
+        return await self._set_access_control_internal(options=options, progress_callback=progress_callback,
+                                                       max_batch=max_batch)
 
     async def remove_access_control_recursive(self,
                                               acl,
@@ -388,7 +391,8 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
         progress_callback = kwargs.pop('progress_callback', None)
         max_batch = kwargs.pop('max_batch', None)
         options = self._set_access_control_recursive_options(mode='remove', acl=acl, **kwargs)
-        return await self._set_access_control_internal(options, progress_callback, max_batch)
+        return await self._set_access_control_internal(options=options, progress_callback=progress_callback,
+                                                       max_batch=max_batch)
 
     async def _set_access_control_internal(self, options, progress_callback, max_batch=None):
         try:

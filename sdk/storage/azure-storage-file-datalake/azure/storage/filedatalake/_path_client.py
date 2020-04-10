@@ -447,7 +447,8 @@ class PathClient(StorageAccountHostsMixin):
         progress_callback = kwargs.pop('progress_callback', None)
         max_batch = kwargs.pop('max_batch', None)
         options = self._set_access_control_recursive_options(mode='set', acl=acl, **kwargs)
-        return self._set_access_control_internal(options, progress_callback, max_batch)
+        return self._set_access_control_internal(options=options, progress_callback=progress_callback,
+                                                 max_batch=max_batch)
 
     def update_access_control_recursive(self,
                                         acl,
@@ -489,7 +490,8 @@ class PathClient(StorageAccountHostsMixin):
         progress_callback = kwargs.pop('progress_callback', None)
         max_batch = kwargs.pop('max_batch', None)
         options = self._set_access_control_recursive_options(mode='modify', acl=acl, **kwargs)
-        return self._set_access_control_internal(options, progress_callback, max_batch)
+        return self._set_access_control_internal(options=options, progress_callback=progress_callback,
+                                                 max_batch=max_batch)
 
     def remove_access_control_recursive(self,
                                         acl,
@@ -530,7 +532,8 @@ class PathClient(StorageAccountHostsMixin):
         progress_callback = kwargs.pop('progress_callback', None)
         max_batch = kwargs.pop('max_batch', None)
         options = self._set_access_control_recursive_options(mode='remove', acl=acl, **kwargs)
-        return self._set_access_control_internal(options, progress_callback, max_batch)
+        return self._set_access_control_internal(options=options, progress_callback=progress_callback,
+                                                 max_batch=max_batch)
 
     def _set_access_control_internal(self, options, progress_callback, max_batch=None):
         try:
