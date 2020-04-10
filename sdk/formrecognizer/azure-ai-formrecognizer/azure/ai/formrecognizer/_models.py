@@ -614,7 +614,7 @@ class CustomFormSubModel(object):
     def _from_generated_unlabeled(cls, model):
         return [cls(
             accuracy=None,
-            fields={cluster_id: CustomFormModelField._from_generated_unlabeled(fields)},
+            fields=CustomFormModelField._from_generated_unlabeled(fields),
             form_type="form-" + cluster_id
         ) for cluster_id, fields in model.keys.clusters.items()]
 
@@ -631,10 +631,12 @@ class CustomFormSubModel(object):
 class CustomFormModelField(object):
     """A field that the model was trained on.
 
+    :ivar str label: Name of label for field.
     :ivar str name: Name of the field.
     :ivar float accuracy: Estimated extraction accuracy for this field.
     """
     def __init__(self, **kwargs):
+        self.label = kwargs.get("label", None)
         self.name = kwargs.get("name", None)
         self.accuracy = kwargs.get("accuracy", None)
 
@@ -647,11 +649,12 @@ class CustomFormModelField(object):
 
     @classmethod
     def _from_generated_unlabeled(cls, fields):
-        return [cls(
-            name=field_name,
-            accuracy=None
-        ) for field_name in fields
-        ]
+        return {
+            "field-{}".format(idx): cls(
+                name="field-{}".format(idx),
+                label=field_name,
+            ) for idx, field_name in enumerate(fields)
+        }
 
 
 class TrainingDocumentInfo(object):
