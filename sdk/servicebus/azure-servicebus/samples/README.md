@@ -21,6 +21,8 @@ Both [sync version](./sync_samples) and [async version](./async_samples) of samp
     - Enabling Logging
 - [receive_queue.py](./sync_samples/receive_queue.py) ([async_version](./async_samples/receive_queue_async.py)) - Examples to receive messages from a service bus queue:
     - Receive messages
+- [receive_subscription.py](./sync_samples/receive_subscription.py) ([async_version](./async_samples/receive_subscription_async.py)) - Examples to receive messages from a service bus subscription:
+    - Receive messages
 - [receive_peek.py](./sync_samples/receive_peek.py) ([async_version](./async_samples/receive_peek_async.py)) - Examples to peek messages from a service bus queue:
     - Peek messages
 - [receive_deferred_message_queue.py](./sync_samples/receive_deferred_message_queue.py) ([async_version](./async_samples/receive_deferred_message_queue_async.py)) - Examples to defer received messages and receive deferred messages from a service bus queue:
