@@ -5,6 +5,7 @@
 **New Features**
 
 * Added method `get_topic_sender` in `ServiceBusClient` to get a `ServiceBusSender` for a topic.
+* Added method `get_subscription_receiver` in `ServiceBusClient` to get a `ServiceBusReceiver` for a subscription under specific topic.
 
 **BugFixes**
 
