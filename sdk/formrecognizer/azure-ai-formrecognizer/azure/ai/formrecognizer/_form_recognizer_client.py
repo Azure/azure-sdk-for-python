@@ -67,7 +67,8 @@ class FormRecognizerClient(object):
              Currently only supports US sales receipts.
         :type stream: stream
         :keyword bool include_text_content: Include text lines and text content references in the result.
-        :keyword str content_type: Media type of the body sent to the API.
+        :keyword str content_type: Media type of the body sent to the API. For options,
+            see :class:`~azure.ai.formrecognizer.FormContentType`.
         :return: LROPoller
         :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.USReceipt]]
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -128,7 +129,8 @@ class FormRecognizerClient(object):
 
         :param stream: .pdf, .jpg, .png or .tiff type file stream.
         :type stream: stream
-        :keyword str content_type: Media type of the body sent to the API.
+        :keyword str content_type: Media type of the body sent to the API. For options,
+            see :class:`~azure.ai.formrecognizer.FormContentType`.
         :return: LROPoller
         :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.FormPage]]
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -168,10 +170,6 @@ class FormRecognizerClient(object):
             **kwargs
         )
 
-    def _analyze_callback(self, raw_response, _, headers):  # pylint: disable=unused-argument
-        analyze_result = self._client._deserialize(AnalyzeOperationResult, raw_response)
-        return prepare_form_result(analyze_result)
-
     @distributed_trace
     def begin_recognize_custom_forms(self, model_id, stream, **kwargs):
         # type: (str, IO[bytes], Any) -> LROPoller
@@ -181,12 +179,13 @@ class FormRecognizerClient(object):
         :param stream: .pdf, .jpg, .png or .tiff type file stream.
         :type stream: stream
         :keyword bool include_text_content: Include text lines and element references in the result.
-        :keyword str content_type: Media type of the body sent to the API.
+        :keyword str content_type: Media type of the body sent to the API. For options,
+            see :class:`~azure.ai.formrecognizer.FormContentType`.
         :return: LROPoller
         :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.RecognizedForm]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-
+        cls = kwargs.pop("cls", None)
         content_type = kwargs.pop("content_type", None)
         if content_type == "application/json":
             raise TypeError("Call begin_recognize_custom_forms_from_url() to analyze a document from a url.")
@@ -195,12 +194,17 @@ class FormRecognizerClient(object):
         if content_type is None:
             content_type = get_content_type(stream)
 
+        def analyze_callback(raw_response, _, headers):  # pylint: disable=unused-argument
+            analyze_result = self._client._deserialize(AnalyzeOperationResult, raw_response)
+            return prepare_form_result(analyze_result, model_id)
+
+        deserialization_callback = cls if cls else analyze_callback
         return self._client.begin_analyze_with_custom_model(
             file_stream=stream,
             model_id=model_id,
             include_text_details=include_text_content,
             content_type=content_type,
-            cls=kwargs.pop("cls", self._analyze_callback),
+            cls=deserialization_callback,
             polling=LROBasePolling(timeout=POLLING_INTERVAL, lro_algorithms=[AnalyzePolling()], **kwargs),
             **kwargs
         )
@@ -218,14 +222,19 @@ class FormRecognizerClient(object):
         :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.RecognizedForm]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-
+        cls = kwargs.pop("cls", None)
         include_text_content = kwargs.pop("include_text_content", False)
 
+        def analyze_callback(raw_response, _, headers):  # pylint: disable=unused-argument
+            analyze_result = self._client._deserialize(AnalyzeOperationResult, raw_response)
+            return prepare_form_result(analyze_result, model_id)
+
+        deserialization_callback = cls if cls else analyze_callback
         return self._client.begin_analyze_with_custom_model(
             file_stream={"source": url},
             model_id=model_id,
             include_text_details=include_text_content,
-            cls=kwargs.pop("cls", self._analyze_callback),
+            cls=deserialization_callback,
             polling=LROBasePolling(timeout=POLLING_INTERVAL, lro_algorithms=[AnalyzePolling()], **kwargs),
             **kwargs
         )

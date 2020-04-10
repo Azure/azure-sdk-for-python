@@ -61,8 +61,6 @@ class FormTrainingClient(object):
             self,
             training_files: str,
             use_labels: Optional[bool] = False,
-            files_prefix: Optional[str] = "",
-            include_sub_folders: Optional[bool] = False,
             **kwargs: Any
     ) -> CustomFormModel:
         """Create and train a custom model. The request must include a source parameter that is an
@@ -73,11 +71,12 @@ class FormTrainingClient(object):
         :param str training_files: An Azure Storage blob container URI.
         :param bool use_labels: Whether to train with labels or not. Corresponding labeled files must
             exist in the blob container.
-        :param str files_prefix: A case-sensitive prefix string to filter documents in the source path for
+        :keyword str prefix: A case-sensitive prefix string to filter documents in the source path for
             training. For example, when using a Azure storage blob Uri, use the prefix to restrict sub
-            folders for training.
-        :param bool include_sub_folders: A flag to indicate if sub folders within the set of prefix folders
+            folders for training. Not supported if training with labels.
+        :keyword bool include_sub_folders: A flag to indicate if sub folders within the set of prefix folders
             will also need to be included when searching for content to be preprocessed.
+            Not supported if training with labels.
         :return: CustomFormModel
         :rtype: ~azure.ai.formrecognizer.CustomFormModel
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -89,8 +88,8 @@ class FormTrainingClient(object):
                 source=training_files,
                 use_label_file=use_labels,
                 source_filter=TrainSourceFilter(
-                    prefix=files_prefix,
-                    include_sub_folders=include_sub_folders
+                    prefix=kwargs.pop("prefix", ""),
+                    include_sub_folders=kwargs.pop("include_sub_folders", False)
                 )
             ),
             cls=lambda pipeline_response, _, response_headers: pipeline_response,

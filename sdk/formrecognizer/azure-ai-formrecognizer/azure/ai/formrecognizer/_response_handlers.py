@@ -30,7 +30,7 @@ def prepare_us_receipt(response):
         if page.fields is None:
             receipt = USReceipt(
                 page_range=PageRange(first_page=page.page_range[0], last_page=page.page_range[1]),
-                pages=form_page,
+                pages=form_page[page.page_range[0]-1:page.page_range[1]],
                 form_type=page.doc_type,
             )
             receipts.append(receipt)
@@ -68,12 +68,11 @@ def prepare_us_receipt(response):
             page_range=PageRange(
                 first_page=page.page_range[0], last_page=page.page_range[1]
             ),
-            pages=form_page,
+            pages=form_page[page.page_range[0]-1:page.page_range[1]],
             form_type=page.doc_type,
             fields={
                 key: FormField._from_generated(key, value, read_result)
                 for key, value in page.fields.items()
-                if key not in ["ReceiptType", "Items"]  # these two are not represented by FormField in SDK
             },
         )
 
@@ -90,7 +89,7 @@ def prepare_tables(page, read_result):
             row_count=table.rows,
             column_count=table.columns,
             page_number=page.page,
-            cells=[FormTableCell._from_generated(cell, read_result) for cell in table.cells],
+            cells=[FormTableCell._from_generated(cell, page.page, read_result) for cell in table.cells],
         ) for table in page.tables
     ]
 
@@ -114,10 +113,10 @@ def prepare_content_result(response):
     return pages
 
 
-def prepare_form_result(response):
+def prepare_form_result(response, model_id):
     document_result = response.analyze_result.document_results
     if document_result:
-        return prepare_labeled_result(response)
+        return prepare_labeled_result(response, model_id)
     return prepare_unlabeled_result(response)
 
 
@@ -126,10 +125,6 @@ def prepare_unlabeled_result(response):
     form_pages = prepare_content_result(response)
     read_result = response.analyze_result.read_results
     page_result = response.analyze_result.page_results
-    page_range = PageRange(
-        first_page=read_result[0].page,
-        last_page=read_result[-1].page
-    ),
 
     for page in page_result:
         unlabeled_fields = [FormField._from_generated_unlabeled(field, idx, page.page, read_result)
@@ -137,9 +132,12 @@ def prepare_unlabeled_result(response):
         if unlabeled_fields:
             unlabeled_fields = {field.name: field for field in unlabeled_fields}
         form = RecognizedForm(
-            page_range=page_range,
+            page_range=PageRange(
+                first_page=page.page,
+                last_page=page.page
+            ),
             fields=unlabeled_fields,
-            form_type="form-" + str(page.cluster_id) if page.cluster_id else None,
+            form_type="form-" + str(page.cluster_id) if page.cluster_id is not None else None,
             pages=form_pages[page.page-1]
         )
         result.append(form)
@@ -147,23 +145,23 @@ def prepare_unlabeled_result(response):
     return result
 
 
-def prepare_labeled_result(response):
+def prepare_labeled_result(response, model_id):
     read_result = response.analyze_result.read_results
     form_pages = prepare_content_result(response)
 
     result = []
-    for document in response.analyze_result.document_results:
+    for doc in response.analyze_result.document_results:
         form = RecognizedForm(
             page_range=PageRange(
-                first_page=document.page_range[0],
-                last_page=document.page_range[1]
+                first_page=doc.page_range[0],
+                last_page=doc.page_range[1]
             ),
             fields={
                 label: FormField._from_generated(label, value, read_result)
-                for label, value in document.fields.items()
+                for label, value in doc.fields.items()
             },
-            pages=form_pages,
-            form_type=document.doc_type,
+            pages=form_pages[doc.page_range[0]-1:doc.page_range[1]],
+            form_type="form-" + model_id,
         )
         result.append(form)
     return result
