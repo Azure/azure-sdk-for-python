@@ -18,21 +18,18 @@ from azure.core.polling.base_polling import LROBasePolling
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy
 from ._generated._form_recognizer_client import FormRecognizerClient as FormRecognizer
 from ._response_handlers import (
-    prepare_us_receipt,
-    prepare_content_result,
-    prepare_form_result
+    prepare_receipt_result,
+    prepare_layout_result,
 )
 from ._generated.models import AnalyzeOperationResult
 from ._helpers import get_content_type, POLLING_INTERVAL, COGNITIVE_KEY_HEADER
 from ._user_agent import USER_AGENT
-from ._polling import AnalyzePolling
-from ._form_training_client import FormTrainingClient
 if TYPE_CHECKING:
     from azure.core.credentials import AzureKeyCredential
 
 
 class FormRecognizerClient(object):
-    """FormRecognizerClient extracts information from forms and images into structured data.
+    """FormRecognizerClient.
 
     :param str endpoint: Supported Cognitive Services endpoints (protocol and hostname,
         for example: https://westus2.api.cognitive.microsoft.com).
@@ -43,11 +40,9 @@ class FormRecognizerClient(object):
 
     def __init__(self, endpoint, credential, **kwargs):
         # type: (str, AzureKeyCredential, Any) -> None
-        self._endpoint = endpoint
-        self._credential = credential
         self._client = FormRecognizer(
-            endpoint=self._endpoint,
-            credential=self._credential,
+            endpoint=endpoint,
+            credential=credential,
             sdk_moniker=USER_AGENT,
             authentication_policy=AzureKeyCredentialPolicy(credential, COGNITIVE_KEY_HEADER),
             **kwargs
@@ -55,29 +50,27 @@ class FormRecognizerClient(object):
 
     def _receipt_callback(self, raw_response, _, headers):  # pylint: disable=unused-argument
         analyze_result = self._client._deserialize(AnalyzeOperationResult, raw_response)
-        return prepare_us_receipt(analyze_result)
+        return prepare_receipt_result(analyze_result)
 
     @distributed_trace
-    def begin_recognize_receipts(self, stream, **kwargs):
+    def begin_extract_receipts(self, stream, **kwargs):
         # type: (IO[bytes], Any) -> LROPoller
         """Extract field text and semantic values from a given receipt document.
         The input document must be of one of the supported content types - 'application/pdf',
         'image/jpeg', 'image/png' or 'image/tiff'.
 
         :param stream: .pdf, .jpg, .png or .tiff type file stream.
-             Currently only supports US sales receipts.
         :type stream: stream
-        :keyword bool include_text_content: Include text lines and text content references in the result.
+        :keyword bool include_text_details: Include text lines and element references in the result.
         :keyword str content_type: Media type of the body sent to the API.
         :return: LROPoller
-        :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.USReceipt]]
+        :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.ExtractedReceipt]]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         if isinstance(stream, six.string_types):
-            raise TypeError("Call begin_recognize_receipts_from_url() to analyze a receipt from a url.")
+            raise TypeError("Call begin_extract_receipts_from_url() to analyze a receipt from a url.")
 
-        include_text_content = kwargs.pop("include_text_content", False)
-
+        include_text_details = kwargs.pop("include_text_details", False)
         content_type = kwargs.pop("content_type", None)
         if content_type is None:
             content_type = get_content_type(stream)
@@ -85,45 +78,44 @@ class FormRecognizerClient(object):
         return self._client.begin_analyze_receipt_async(
             file_stream=stream,
             content_type=content_type,
-            include_text_details=include_text_content,
+            include_text_details=include_text_details,
             cls=kwargs.pop("cls", self._receipt_callback),
             polling=LROBasePolling(timeout=POLLING_INTERVAL, **kwargs),
             **kwargs
         )
 
     @distributed_trace
-    def begin_recognize_receipts_from_url(self, url, **kwargs):
+    def begin_extract_receipts_from_url(self, url, **kwargs):
         # type: (str, Any) -> LROPoller
         """Extract field text and semantic values from a given receipt document.
         The input document must be the location (Url) of the document to be analyzed.
 
-
-        :param url: The url of the receipt. Currently only supports US sales receipts.
+        :param url: The url of the receipt.
         :type url: str
-        :keyword bool include_text_content: Include text lines and text content references in the result.
+        :keyword bool include_text_details: Include text lines and element references in the result.
         :return: LROPoller
-        :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.USReceipt]]
+        :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.ExtractedReceipt]]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         if not isinstance(url, six.string_types):
-            raise TypeError("Call begin_recognize_receipts() to analyze a receipt from a stream.")
+            raise TypeError("Call begin_extract_receipts() to analyze a receipt from a stream.")
 
-        include_text_content = kwargs.pop("include_text_content", False)
+        include_text_details = kwargs.pop("include_text_details", False)
 
         return self._client.begin_analyze_receipt_async(
             file_stream={"source": url},
-            include_text_details=include_text_content,
+            include_text_details=include_text_details,
             cls=kwargs.pop("cls", self._receipt_callback),
             polling=LROBasePolling(timeout=POLLING_INTERVAL, **kwargs),
             **kwargs
         )
 
-    def _content_callback(self, raw_response, _, headers):  # pylint: disable=unused-argument
+    def _layout_callback(self, raw_response, _, headers):  # pylint: disable=unused-argument
         analyze_result = self._client._deserialize(AnalyzeOperationResult, raw_response)
-        return prepare_content_result(analyze_result)
+        return prepare_layout_result(analyze_result)
 
     @distributed_trace
-    def begin_recognize_content(self, stream, **kwargs):
+    def begin_extract_layouts(self, stream, **kwargs):
         # type: (IO[bytes], Any) -> LROPoller
         """Extract text and layout information from a given document.
         The input document must be of one of the supported content types - 'application/pdf',
@@ -133,11 +125,11 @@ class FormRecognizerClient(object):
         :type stream: stream
         :keyword str content_type: Media type of the body sent to the API.
         :return: LROPoller
-        :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.FormPage]]
+        :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.ExtractedLayoutPage]]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         if isinstance(stream, six.string_types):
-            raise TypeError("Call begin_recognize_content_from_url() to analyze a document from a url.")
+            raise TypeError("Call begin_extract_layouts_from_url() to analyze a document from a url.")
 
         content_type = kwargs.pop("content_type", None)
         if content_type is None:
@@ -146,13 +138,13 @@ class FormRecognizerClient(object):
         return self._client.begin_analyze_layout_async(
             file_stream=stream,
             content_type=content_type,
-            cls=kwargs.pop("cls", self._content_callback),
+            cls=kwargs.pop("cls", self._layout_callback),
             polling=LROBasePolling(timeout=POLLING_INTERVAL, **kwargs),
             **kwargs
         )
 
     @distributed_trace
-    def begin_recognize_content_from_url(self, url, **kwargs):
+    def begin_extract_layouts_from_url(self, url, **kwargs):
         # type: (str, Any) -> LROPoller
         """Extract text and layout information from a given document.
         The input document must be the location (Url) of the document to be analyzed.
@@ -160,98 +152,22 @@ class FormRecognizerClient(object):
         :param url: The url of the document.
         :type url: str
         :return: LROPoller
-        :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.FormPage]]
+        :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.ExtractedLayoutPage]]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         if not isinstance(url, six.string_types):
-            raise TypeError("Call begin_recognize_content() to analyze a document from a stream.")
+            raise TypeError("Call begin_extract_layouts() to analyze a document from a stream.")
 
         return self._client.begin_analyze_layout_async(
             file_stream={"source": url},
-            cls=kwargs.pop("cls", self._content_callback),
+            cls=kwargs.pop("cls", self._layout_callback),
             polling=LROBasePolling(timeout=POLLING_INTERVAL, **kwargs),
-            **kwargs
-        )
-
-    def _analyze_callback(self, raw_response, _, headers):  # pylint: disable=unused-argument
-        analyze_result = self._client._deserialize(AnalyzeOperationResult, raw_response)
-        return prepare_form_result(analyze_result)
-
-    @distributed_trace
-    def begin_recognize_custom_forms(self, model_id, stream, **kwargs):
-        # type: (str, IO[bytes], Any) -> LROPoller
-        """Analyze Form.
-
-        :param str model_id: Model identifier.
-        :param stream: .pdf, .jpg, .png or .tiff type file stream.
-        :type stream: stream
-        :keyword bool include_text_content: Include text lines and element references in the result.
-        :keyword str content_type: Media type of the body sent to the API.
-        :return: LROPoller
-        :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.RecognizedForm]
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        if isinstance(stream, six.string_types):
-            raise TypeError("Call begin_recognize_custom_forms_from_url() to analyze a document from a url.")
-
-        include_text_content = kwargs.pop("include_text_content", False)
-        content_type = kwargs.pop("content_type", None)
-        if content_type is None:
-            content_type = get_content_type(stream)
-
-        return self._client.begin_analyze_with_custom_model(
-            file_stream=stream,
-            model_id=model_id,
-            include_text_details=include_text_content,
-            content_type=content_type,
-            cls=kwargs.pop("cls", self._analyze_callback),
-            polling=LROBasePolling(timeout=POLLING_INTERVAL, lro_algorithms=[AnalyzePolling()], **kwargs),
-            **kwargs
-        )
-
-    @distributed_trace
-    def begin_recognize_custom_forms_from_url(self, model_id, url, **kwargs):
-        # type: (str, str, Any) -> LROPoller
-        """Analyze Form.
-
-        :param str model_id: Model identifier.
-        :param url: The url of the document.
-        :type url: str
-        :keyword bool include_text_content: Include text lines and element references in the result.
-        :return: LROPoller
-        :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.RecognizedForm]
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        if not isinstance(url, six.string_types):
-            raise TypeError("Call begin_recognize_custom_forms() to analyze a document from a stream.")
-
-        include_text_content = kwargs.pop("include_text_content", False)
-
-        return self._client.begin_analyze_with_custom_model(
-            file_stream={"source": url},
-            model_id=model_id,
-            include_text_details=include_text_content,
-            cls=kwargs.pop("cls", self._analyze_callback),
-            polling=LROBasePolling(timeout=POLLING_INTERVAL, lro_algorithms=[AnalyzePolling()], **kwargs),
-            **kwargs
-        )
-
-    def get_form_training_client(self, **kwargs):
-        # type: (Any) -> FormTrainingClient
-        """Get an instance of a FormTrainingClient from FormRecognizerClient.
-
-        :rtype: ~azure.ai.formrecognizer.FormTrainingClient
-        :return: A FormTrainingClient
-        """
-        return FormTrainingClient(
-            endpoint=self._endpoint,
-            credential=self._credential,
             **kwargs
         )
 
     def close(self):
         # type: () -> None
-        """Close the :class:`~azure.ai.formrecognizer.FormRecognizerClient` session.
+        """Close the :class:`~azure.ai.formrecognizer.FormRecognizer` session.
         """
         return self._client.close()
 

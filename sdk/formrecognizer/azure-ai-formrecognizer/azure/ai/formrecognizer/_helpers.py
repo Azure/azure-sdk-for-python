@@ -4,6 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
+from datetime import time
 POLLING_INTERVAL = 5
 COGNITIVE_KEY_HEADER = "Ocp-Apim-Subscription-Key"
 
@@ -21,7 +22,10 @@ def get_field_scalar_value(field):  # pylint: disable=too-many-return-statements
     if field_type == "phoneNumber":
         return field.value_phone_number
     if field_type == "time":
-        return field.value_time
+        if field.value_time:
+            hour, minutes, seconds = field.value_time.split(":")
+            return time(int(hour), int(minutes), int(seconds))
+        return field.value_time  # service recognized field as time but returned None for value because it wasn't valid
     return None
 
 

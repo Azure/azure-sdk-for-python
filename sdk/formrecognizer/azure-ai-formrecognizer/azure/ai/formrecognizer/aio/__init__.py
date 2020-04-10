@@ -5,10 +5,10 @@
 # ------------------------------------
 
 from ._form_recognizer_client_async import FormRecognizerClient
-from ._form_training_client_async import FormTrainingClient
+from ._custom_form_client_async import CustomFormClient
 
 
 __all__ = [
     'FormRecognizerClient',
-    'FormTrainingClient'
+    'CustomFormClient'
 ]
