@@ -68,7 +68,8 @@ class PollingMethod(object):
         # type() -> str
         raise NotImplementedError("This polling method doesn't support get_continuation_token")
 
-    def from_continuation_token(self, continuation_token, **kwargs):
+    @classmethod
+    def from_continuation_token(cls, continuation_token, **kwargs):
         # type(str, Any) -> PollingMethod
         raise NotImplementedError("This polling method doesn't support from_continuation_token")
 
