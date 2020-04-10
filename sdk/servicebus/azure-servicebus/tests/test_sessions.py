@@ -30,7 +30,7 @@ from azure.servicebus.exceptions import (
 
 from devtools_testutils import AzureMgmtTestCase, CachedResourceGroupPreparer
 from servicebus_preparer import CachedServiceBusNamespacePreparer, ServiceBusTopicPreparer, ServiceBusQueuePreparer
-from utilities import get_logger, print_message
+from utilities import get_logger, print_message, sleep_until_expired
 
 _logger = get_logger(logging.DEBUG)
 
@@ -477,7 +477,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                     # potentially as a side effect of network delays/sleeps/"typical distributed systems nonsense."  In a perfect world we wouldn't have a magic number/network hop but this allows
                     # a slightly more robust test in absence of that.
                     assert (receiver.session._locked_until_utc - utc_now()) <= timedelta(seconds=60)
-                    time.sleep((receiver.session._locked_until_utc - utc_now()).total_seconds())
+                    sleep_until_expired(receiver.session)
                     with pytest.raises(SessionLockExpired):
                         messages[2].complete()
 
@@ -523,7 +523,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                             print("Starting second sleep")
                             time.sleep(40) # ensure renewer expires
                             print("Second sleep {}".format(receiver.session._locked_until_utc - utc_now()))
-                            time.sleep((receiver.session._locked_until_utc - utc_now()).total_seconds()+1)# and then ensure it didn't slip a renew under the wire.
+                            sleep_until_expired(receiver.session) # and then ensure it didn't slip a renew under the wire.
                             assert receiver.session.expired
                             assert isinstance(receiver.session.auto_renew_error, AutoLockRenewTimeout)
                             try:
