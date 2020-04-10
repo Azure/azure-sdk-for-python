@@ -6,6 +6,8 @@
 # license information.
 # --------------------------------------------------------------------------
 
+import inspect
+import os
 import unittest
 
 from azure.storage.blob._shared.avro.datafile import DataFileReader
@@ -61,12 +63,17 @@ CODECS_TO_VALIDATE = ('null', 'deflate')
 
 
 class AvroReaderTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        test_file_path = inspect.getfile(cls)
+        cls._samples_dir_root = os.path.join(os.path.dirname(test_file_path), 'samples')
+
     def test_reader(self):
         correct = 0
         nitems = 10
         for iexample, (writer_schema, datum) in enumerate(SCHEMAS_TO_VALIDATE):
             for codec in CODECS_TO_VALIDATE:
-                file_path = './samples/test_' + codec + '_' + str(iexample) + '.avro'
+                file_path = os.path.join(AvroReaderTests._samples_dir_root, 'test_' + codec + '_' + str(iexample) + '.avro')
                 with open(file_path, 'rb') as reader:
                     datum_reader = DatumReader()
                     with DataFileReader(reader, datum_reader) as dfr:
@@ -78,7 +85,7 @@ class AvroReaderTests(unittest.TestCase):
             len(CODECS_TO_VALIDATE) * len(SCHEMAS_TO_VALIDATE))
 
     def test_change_feed(self):
-        file_path = './samples/changeFeed.avro'
+        file_path = os.path.join(AvroReaderTests._samples_dir_root, 'changeFeed.avro')
         with open(file_path, 'rb') as reader:
             datum_reader = DatumReader()
             with DataFileReader(reader, datum_reader) as dfr:
