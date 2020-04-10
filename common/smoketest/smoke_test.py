@@ -7,7 +7,9 @@ from key_vault_keys import KeyVaultKeys
 from key_vault_secrets import KeyVaultSecrets
 from storage_blob import StorageBlob
 from event_hubs import EventHub
-from cosmos_db import CosmosDB
+
+# Temporarily disable cosmos smoke tests
+# from cosmos_db import CosmosDB
 
 def execute_smoke_tests():
     print("")
@@ -20,4 +22,6 @@ def execute_smoke_tests():
     KeyVaultSecrets().run()
     StorageBlob().run()
     EventHub().run()
-    CosmosDB().run()
+
+    # Temporarily disable cosmos smoke tests
+    # CosmosDB().run()
