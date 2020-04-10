@@ -568,9 +568,21 @@ class BatchAccount(Resource):
     :ivar key_vault_reference: A reference to the Azure key vault associated
      with the Batch account.
     :vartype key_vault_reference: ~azure.mgmt.batch.models.KeyVaultReference
+    :ivar public_network_access: The network interface type for accessing
+     Azure Batch service and Batch account operations. If not specified, the
+     default value is 'enabled'. Possible values include: 'Enabled',
+     'Disabled'. Default value: "Enabled" .
+    :vartype public_network_access: str or
+     ~azure.mgmt.batch.models.PublicNetworkAccessType
+    :ivar private_endpoint_connections: List of private endpoint connections
+     associated with the Batch account
+    :vartype private_endpoint_connections:
+     list[~azure.mgmt.batch.models.PrivateEndpointConnection]
     :ivar auto_storage: The properties and status of any auto-storage account
      associated with the Batch account.
     :vartype auto_storage: ~azure.mgmt.batch.models.AutoStorageProperties
+    :ivar encryption: The encryption configuration for the Batch account.
+    :vartype encryption: ~azure.mgmt.batch.models.EncryptionProperties
     :ivar dedicated_core_quota: The dedicated core quota for the Batch
      account. For accounts with PoolAllocationMode set to UserSubscription,
      quota is managed on the subscription so this value is not returned.
@@ -613,7 +625,10 @@ class BatchAccount(Resource):
         'provisioning_state': {'readonly': True},
         'pool_allocation_mode': {'readonly': True},
         'key_vault_reference': {'readonly': True},
+        'public_network_access': {'readonly': True},
+        'private_endpoint_connections': {'readonly': True},
         'auto_storage': {'readonly': True},
+        'encryption': {'readonly': True},
         'dedicated_core_quota': {'readonly': True},
         'low_priority_core_quota': {'readonly': True},
         'dedicated_core_quota_per_vm_family': {'readonly': True},
@@ -632,7 +647,10 @@ class BatchAccount(Resource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'ProvisioningState'},
         'pool_allocation_mode': {'key': 'properties.poolAllocationMode', 'type': 'PoolAllocationMode'},
         'key_vault_reference': {'key': 'properties.keyVaultReference', 'type': 'KeyVaultReference'},
+        'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'PublicNetworkAccessType'},
+        'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
         'auto_storage': {'key': 'properties.autoStorage', 'type': 'AutoStorageProperties'},
+        'encryption': {'key': 'properties.encryption', 'type': 'EncryptionProperties'},
         'dedicated_core_quota': {'key': 'properties.dedicatedCoreQuota', 'type': 'int'},
         'low_priority_core_quota': {'key': 'properties.lowPriorityCoreQuota', 'type': 'int'},
         'dedicated_core_quota_per_vm_family': {'key': 'properties.dedicatedCoreQuotaPerVMFamily', 'type': '[VirtualMachineFamilyCoreQuota]'},
@@ -647,7 +665,10 @@ class BatchAccount(Resource):
         self.provisioning_state = None
         self.pool_allocation_mode = None
         self.key_vault_reference = None
+        self.public_network_access = None
+        self.private_endpoint_connections = None
         self.auto_storage = None
+        self.encryption = None
         self.dedicated_core_quota = None
         self.low_priority_core_quota = None
         self.dedicated_core_quota_per_vm_family = None
@@ -679,6 +700,13 @@ class BatchAccountCreateParameters(Model):
     :param key_vault_reference: A reference to the Azure key vault associated
      with the Batch account.
     :type key_vault_reference: ~azure.mgmt.batch.models.KeyVaultReference
+    :param public_network_access: The network access type for accessing Azure
+     Batch account. If not specified, the default value is 'enabled'. Possible
+     values include: 'Enabled', 'Disabled'. Default value: "Enabled" .
+    :type public_network_access: str or
+     ~azure.mgmt.batch.models.PublicNetworkAccessType
+    :param encryption: The encryption configuration for the Batch account.
+    :type encryption: ~azure.mgmt.batch.models.EncryptionProperties
     """
 
     _validation = {
@@ -691,6 +719,8 @@ class BatchAccountCreateParameters(Model):
         'auto_storage': {'key': 'properties.autoStorage', 'type': 'AutoStorageBaseProperties'},
         'pool_allocation_mode': {'key': 'properties.poolAllocationMode', 'type': 'PoolAllocationMode'},
         'key_vault_reference': {'key': 'properties.keyVaultReference', 'type': 'KeyVaultReference'},
+        'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'PublicNetworkAccessType'},
+        'encryption': {'key': 'properties.encryption', 'type': 'EncryptionProperties'},
     }
 
     def __init__(self, **kwargs):
@@ -700,6 +730,8 @@ class BatchAccountCreateParameters(Model):
         self.auto_storage = kwargs.get('auto_storage', None)
         self.pool_allocation_mode = kwargs.get('pool_allocation_mode', None)
         self.key_vault_reference = kwargs.get('key_vault_reference', None)
+        self.public_network_access = kwargs.get('public_network_access', "Enabled")
+        self.encryption = kwargs.get('encryption', None)
 
 
 class BatchAccountKeys(Model):
@@ -765,17 +797,21 @@ class BatchAccountUpdateParameters(Model):
     :type tags: dict[str, str]
     :param auto_storage: The properties related to the auto-storage account.
     :type auto_storage: ~azure.mgmt.batch.models.AutoStorageBaseProperties
+    :param encryption: The encryption configuration for the Batch account.
+    :type encryption: ~azure.mgmt.batch.models.EncryptionProperties
     """
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
         'auto_storage': {'key': 'properties.autoStorage', 'type': 'AutoStorageBaseProperties'},
+        'encryption': {'key': 'properties.encryption', 'type': 'EncryptionProperties'},
     }
 
     def __init__(self, **kwargs):
         super(BatchAccountUpdateParameters, self).__init__(**kwargs)
         self.tags = kwargs.get('tags', None)
         self.auto_storage = kwargs.get('auto_storage', None)
+        self.encryption = kwargs.get('encryption', None)
 
 
 class BatchLocationQuota(Model):
@@ -949,8 +985,7 @@ class CertificateCreateOrUpdateParameters(ProxyResource):
      maximum size is 10KB.
     :type data: str
     :param password: The password to access the certificate's private key.
-     This is required if the certificate format is pfx and must be omitted if
-     the certificate format is cer.
+     This must not be specified if the certificate format is Cer.
     :type password: str
     """
 
@@ -1048,8 +1083,7 @@ class CheckNameAvailabilityParameters(Model):
 
     :param name: Required. The name to check for availability
     :type name: str
-    :ivar type: Required. The resource type. Must be set to
-     Microsoft.Batch/batchAccounts. Default value:
+    :ivar type: Required. The resource type. Default value:
      "Microsoft.Batch/batchAccounts" .
     :vartype type: str
     """
@@ -1446,6 +1480,48 @@ class DeploymentConfiguration(Model):
         self.virtual_machine_configuration = kwargs.get('virtual_machine_configuration', None)
 
 
+class DiskEncryptionConfiguration(Model):
+    """The disk encryption configuration applied on compute nodes in the pool.
+    Disk encryption configuration is not supported on Linux pool created with
+    Virtual Machine Image or Shared Image Gallery Image.
+
+    :param targets: The list of disk targets Batch Service will encrypt on the
+     compute node. On Linux pool, only "TemporaryDisk" is supported; on Windows
+     pool, "OsDisk" and "TemporaryDisk" must be specified.
+    :type targets: list[str or ~azure.mgmt.batch.models.DiskEncryptionTarget]
+    """
+
+    _attribute_map = {
+        'targets': {'key': 'targets', 'type': '[DiskEncryptionTarget]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(DiskEncryptionConfiguration, self).__init__(**kwargs)
+        self.targets = kwargs.get('targets', None)
+
+
+class EncryptionProperties(Model):
+    """EncryptionProperties.
+
+    :param key_source: Type of the key source. Possible values include:
+     'Microsoft.Batch', 'Microsoft.KeyVault'
+    :type key_source: str or ~azure.mgmt.batch.models.KeySource
+    :param key_vault_properties: Additional details when using
+     Microsoft.KeyVault
+    :type key_vault_properties: ~azure.mgmt.batch.models.KeyVaultProperties
+    """
+
+    _attribute_map = {
+        'key_source': {'key': 'keySource', 'type': 'KeySource'},
+        'key_vault_properties': {'key': 'keyVaultProperties', 'type': 'KeyVaultProperties'},
+    }
+
+    def __init__(self, **kwargs):
+        super(EncryptionProperties, self).__init__(**kwargs)
+        self.key_source = kwargs.get('key_source', None)
+        self.key_vault_properties = kwargs.get('key_vault_properties', None)
+
+
 class EnvironmentSetting(Model):
     """An environment variable to be set on a task process.
 
@@ -1483,12 +1559,12 @@ class FixedScaleSettings(Model):
      status code is 400 (Bad Request).
     :type resize_timeout: timedelta
     :param target_dedicated_nodes: The desired number of dedicated compute
-     nodes in the pool. At least one of targetDedicatedNodes, targetLowPriority
-     nodes must be set.
+     nodes in the pool. At least one of targetDedicatedNodes,
+     targetLowPriorityNodes must be set.
     :type target_dedicated_nodes: int
     :param target_low_priority_nodes: The desired number of low-priority
      compute nodes in the pool. At least one of targetDedicatedNodes,
-     targetLowPriority nodes must be set.
+     targetLowPriorityNodes must be set.
     :type target_low_priority_nodes: int
     :param node_deallocation_option: Determines what to do with a node and its
      running task(s) if the pool size is decreasing. If omitted, the default
@@ -1532,18 +1608,14 @@ class ImageReference(Model):
      image. A value of 'latest' can be specified to select the latest version
      of an image. If omitted, the default is 'latest'.
     :type version: str
-    :param id: The ARM resource identifier of the Virtual Machine Image or
-     Shared Image Gallery Image. Compute Nodes of the Pool will be created
-     using this Image Id. This is of either the form
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Compute/images/{imageName}
-     for Virtual Machine Image or
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Compute/galleries/{galleryName}/images/{imageDefinitionName}/versions/{versionId}
-     for SIG image. This property is mutually exclusive with other properties.
-     For Virtual Machine Image it must be in the same region and subscription
-     as the Azure Batch account. For SIG image it must have replicas in the
-     same region as the Azure Batch account. For information about the firewall
-     settings for the Batch node agent to communicate with the Batch service
-     see
+    :param id: The ARM resource identifier of the Shared Image Gallery Image.
+     Compute Nodes in the Pool will be created using this Image Id. This is of
+     the form
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Compute/galleries/{galleryName}/images/{imageDefinitionName}/versions/{versionId}.
+     This property is mutually exclusive with other properties. The Shared
+     Image Gallery image must have replicas in the same region as the Azure
+     Batch account. For information about the firewall settings for the Batch
+     node agent to communicate with the Batch service see
      https://docs.microsoft.com/en-us/azure/batch/batch-api-basics#virtual-network-vnet-and-firewall-configuration.
     :type id: str
     """
@@ -1637,6 +1709,23 @@ class InboundNatPool(Model):
         self.frontend_port_range_start = kwargs.get('frontend_port_range_start', None)
         self.frontend_port_range_end = kwargs.get('frontend_port_range_end', None)
         self.network_security_group_rules = kwargs.get('network_security_group_rules', None)
+
+
+class KeyVaultProperties(Model):
+    """KeyVaultProperties.
+
+    :param key_identifier: Full path to the versioned secret. Example
+     https://mykeyvault.vault.azure.net/keys/testkey/6e34a81fef704045975661e297a4c053
+    :type key_identifier: str
+    """
+
+    _attribute_map = {
+        'key_identifier': {'key': 'keyIdentifier', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(KeyVaultProperties, self).__init__(**kwargs)
+        self.key_identifier = kwargs.get('key_identifier', None)
 
 
 class KeyVaultReference(Model):
@@ -1780,7 +1869,7 @@ class NetworkConfiguration(Model):
      Azure Batch account. The specified subnet should have enough free IP
      addresses to accommodate the number of nodes in the pool. If the subnet
      doesn't have enough free IP addresses, the pool will partially allocate
-     compute nodes, and a resize error will occur. The 'MicrosoftAzureBatch'
+     compute nodes and a resize error will occur. The 'MicrosoftAzureBatch'
      service principal must have the 'Classic Virtual Machine Contributor'
      Role-Based Access Control (RBAC) role for the specified VNet. The
      specified subnet must allow communication from the Azure Batch service to
@@ -1788,15 +1877,14 @@ class NetworkConfiguration(Model):
      checking if the specified VNet has any associated Network Security Groups
      (NSG). If communication to the compute nodes in the specified subnet is
      denied by an NSG, then the Batch service will set the state of the compute
-     nodes to unusable. For pools created via virtualMachineConfiguration the
-     Batch account must have poolAllocationMode userSubscription in order to
-     use a VNet. If the specified VNet has any associated Network Security
-     Groups (NSG), then a few reserved system ports must be enabled for inbound
-     communication. For pools created with a virtual machine configuration,
-     enable ports 29876 and 29877, as well as port 22 for Linux and port 3389
-     for Windows. For pools created with a cloud service configuration, enable
-     ports 10100, 20100, and 30100. Also enable outbound connections to Azure
-     Storage on port 443. For more details see:
+     nodes to unusable. If the specified VNet has any associated Network
+     Security Groups (NSG), then a few reserved system ports must be enabled
+     for inbound communication. For pools created with a virtual machine
+     configuration, enable ports 29876 and 29877, as well as port 22 for Linux
+     and port 3389 for Windows. For pools created with a cloud service
+     configuration, enable ports 10100, 20100, and 30100. Also enable outbound
+     connections to Azure Storage on port 443. For cloudServiceConfiguration
+     pools, only 'classic' VNETs are supported. For more details see:
      https://docs.microsoft.com/en-us/azure/batch/batch-api-basics#virtual-network-vnet-and-firewall-configuration
     :type subnet_id: str
     :param endpoint_configuration: The configuration for endpoints on compute
@@ -1804,27 +1892,24 @@ class NetworkConfiguration(Model):
      pools with the virtualMachineConfiguration property.
     :type endpoint_configuration:
      ~azure.mgmt.batch.models.PoolEndpointConfiguration
-    :param public_ips: The list of public IPs which the Batch service will use
-     when provisioning Compute Nodes. The number of IPs specified here limits
-     the maximum size of the Pool - 50 dedicated nodes or 20 low-priority nodes
-     can be allocated for each public IP. For example, a pool needing 150
-     dedicated VMs would need at least 3 public IPs specified. Each element of
-     this collection is of the form:
-     /subscriptions/{subscription}/resourceGroups/{group}/providers/Microsoft.Network/publicIPAddresses/{ip}.
-    :type public_ips: list[str]
+    :param public_ip_address_configuration: The Public IPAddress configuration
+     for Compute Nodes in the Batch Pool. This property is only supported on
+     Pools with the virtualMachineConfiguration property.
+    :type public_ip_address_configuration:
+     ~azure.mgmt.batch.models.PublicIPAddressConfiguration
     """
 
     _attribute_map = {
         'subnet_id': {'key': 'subnetId', 'type': 'str'},
         'endpoint_configuration': {'key': 'endpointConfiguration', 'type': 'PoolEndpointConfiguration'},
-        'public_ips': {'key': 'publicIPs', 'type': '[str]'},
+        'public_ip_address_configuration': {'key': 'publicIPAddressConfiguration', 'type': 'PublicIPAddressConfiguration'},
     }
 
     def __init__(self, **kwargs):
         super(NetworkConfiguration, self).__init__(**kwargs)
         self.subnet_id = kwargs.get('subnet_id', None)
         self.endpoint_configuration = kwargs.get('endpoint_configuration', None)
-        self.public_ips = kwargs.get('public_ips', None)
+        self.public_ip_address_configuration = kwargs.get('public_ip_address_configuration', None)
 
 
 class NetworkSecurityGroupRule(Model):
@@ -1837,7 +1922,7 @@ class NetworkSecurityGroupRule(Model):
      number the higher the priority. For example, rules could be specified with
      order numbers of 150, 250, and 350. The rule with the order number of 150
      takes precedence over the rule that has an order of 250. Allowed
-     priorities are 150 to 3500. If any reserved or duplicate values are
+     priorities are 150 to 4096. If any reserved or duplicate values are
      provided the request fails with HTTP status code 400.
     :type priority: int
     :param access: Required. The action that should be taken for a specified
@@ -2015,7 +2100,7 @@ class Pool(ProxyResource):
      pool are the same size. For information about available sizes of virtual
      machines for Cloud Services pools (pools created with
      cloudServiceConfiguration), see Sizes for Cloud Services
-     (http://azure.microsoft.com/documentation/articles/cloud-services-sizes-specs/).
+     (https://azure.microsoft.com/documentation/articles/cloud-services-sizes-specs/).
      Batch supports all Cloud Services VM sizes except ExtraSmall. For
      information about available VM sizes for pools using images from the
      Virtual Machines Marketplace (pools created with
@@ -2212,6 +2297,202 @@ class PoolEndpointConfiguration(Model):
     def __init__(self, **kwargs):
         super(PoolEndpointConfiguration, self).__init__(**kwargs)
         self.inbound_nat_pools = kwargs.get('inbound_nat_pools', None)
+
+
+class PrivateEndpoint(Model):
+    """The private endpoint of the private endpoint connection.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: The ARM resource identifier of the private endpoint. This is of
+     the form
+     /subscriptions/{subscription}/resourceGroups/{group}/providers/Microsoft.Network/privateEndpoints/{privateEndpoint}.
+    :vartype id: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PrivateEndpoint, self).__init__(**kwargs)
+        self.id = None
+
+
+class PrivateEndpointConnection(ProxyResource):
+    """Contains information about a private link resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: The ID of the resource.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource.
+    :vartype type: str
+    :ivar etag: The ETag of the resource, used for concurrency statements.
+    :vartype etag: str
+    :ivar provisioning_state: The provisioning state of the private endpoint
+     connection. Possible values include: 'Succeeded', 'Updating', 'Failed'
+    :vartype provisioning_state: str or
+     ~azure.mgmt.batch.models.PrivateEndpointConnectionProvisioningState
+    :param private_endpoint: The ARM resource identifier of the private
+     endpoint.
+    :type private_endpoint: ~azure.mgmt.batch.models.PrivateEndpoint
+    :param private_link_service_connection_state: The private link service
+     connection state of the private endpoint connection.
+    :type private_link_service_connection_state:
+     ~azure.mgmt.batch.models.PrivateLinkServiceConnectionState
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'etag': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'PrivateEndpointConnectionProvisioningState'},
+        'private_endpoint': {'key': 'properties.privateEndpoint', 'type': 'PrivateEndpoint'},
+        'private_link_service_connection_state': {'key': 'properties.privateLinkServiceConnectionState', 'type': 'PrivateLinkServiceConnectionState'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PrivateEndpointConnection, self).__init__(**kwargs)
+        self.provisioning_state = None
+        self.private_endpoint = kwargs.get('private_endpoint', None)
+        self.private_link_service_connection_state = kwargs.get('private_link_service_connection_state', None)
+
+
+class PrivateLinkResource(ProxyResource):
+    """Contains information about a private link resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: The ID of the resource.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource.
+    :vartype type: str
+    :ivar etag: The ETag of the resource, used for concurrency statements.
+    :vartype etag: str
+    :ivar group_id: The group id of the private link resource. The group id is
+     used to establish the private link connection.
+    :vartype group_id: str
+    :ivar required_members: The list of required members that are used to
+     establish the private link connection.
+    :vartype required_members: list[str]
+    :ivar required_zone_names: The list of required zone names for the private
+     DNS resource name.
+    :vartype required_zone_names: list[str]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'etag': {'readonly': True},
+        'group_id': {'readonly': True},
+        'required_members': {'readonly': True},
+        'required_zone_names': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
+        'group_id': {'key': 'properties.groupId', 'type': 'str'},
+        'required_members': {'key': 'properties.requiredMembers', 'type': '[str]'},
+        'required_zone_names': {'key': 'properties.requiredZoneNames', 'type': '[str]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PrivateLinkResource, self).__init__(**kwargs)
+        self.group_id = None
+        self.required_members = None
+        self.required_zone_names = None
+
+
+class PrivateLinkServiceConnectionState(Model):
+    """The private link service connection state of the private endpoint
+    connection.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param status: Required. The status for the private endpoint connection of
+     Batch account. Possible values include: 'Approved', 'Pending', 'Rejected',
+     'Disconnected'
+    :type status: str or
+     ~azure.mgmt.batch.models.PrivateLinkServiceConnectionStatus
+    :param description: Description of the private Connection state.
+    :type description: str
+    :ivar action_required: Action required on the private connection state.
+    :vartype action_required: str
+    """
+
+    _validation = {
+        'status': {'required': True},
+        'action_required': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'status': {'key': 'status', 'type': 'PrivateLinkServiceConnectionStatus'},
+        'description': {'key': 'description', 'type': 'str'},
+        'action_required': {'key': 'actionRequired', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PrivateLinkServiceConnectionState, self).__init__(**kwargs)
+        self.status = kwargs.get('status', None)
+        self.description = kwargs.get('description', None)
+        self.action_required = None
+
+
+class PublicIPAddressConfiguration(Model):
+    """The public IP Address configuration of the networking configuration of a
+    Pool.
+
+    :param provision: The provisioning type for Public IP Addresses for the
+     pool. The default value is BatchManaged. Possible values include:
+     'BatchManaged', 'UserManaged', 'NoPublicIPAddresses'
+    :type provision: str or ~azure.mgmt.batch.models.IPAddressProvisioningType
+    :param ip_address_ids: The list of public IPs which the Batch service will
+     use when provisioning Compute Nodes. The number of IPs specified here
+     limits the maximum size of the Pool - 50 dedicated nodes or 20
+     low-priority nodes can be allocated for each public IP. For example, a
+     pool needing 150 dedicated VMs would need at least 3 public IPs specified.
+     Each element of this collection is of the form:
+     /subscriptions/{subscription}/resourceGroups/{group}/providers/Microsoft.Network/publicIPAddresses/{ip}.
+    :type ip_address_ids: list[str]
+    """
+
+    _attribute_map = {
+        'provision': {'key': 'provision', 'type': 'IPAddressProvisioningType'},
+        'ip_address_ids': {'key': 'ipAddressIds', 'type': '[str]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PublicIPAddressConfiguration, self).__init__(**kwargs)
+        self.provision = kwargs.get('provision', None)
+        self.ip_address_ids = kwargs.get('ip_address_ids', None)
 
 
 class ResizeError(Model):
@@ -2667,6 +2948,11 @@ class VirtualMachineConfiguration(Model):
      specify it.
     :type container_configuration:
      ~azure.mgmt.batch.models.ContainerConfiguration
+    :param disk_encryption_configuration: The disk encryption configuration
+     for the pool. If specified, encryption is performed on each node in the
+     pool during node provisioning.
+    :type disk_encryption_configuration:
+     ~azure.mgmt.batch.models.DiskEncryptionConfiguration
     """
 
     _validation = {
@@ -2681,6 +2967,7 @@ class VirtualMachineConfiguration(Model):
         'data_disks': {'key': 'dataDisks', 'type': '[DataDisk]'},
         'license_type': {'key': 'licenseType', 'type': 'str'},
         'container_configuration': {'key': 'containerConfiguration', 'type': 'ContainerConfiguration'},
+        'disk_encryption_configuration': {'key': 'diskEncryptionConfiguration', 'type': 'DiskEncryptionConfiguration'},
     }
 
     def __init__(self, **kwargs):
@@ -2691,6 +2978,7 @@ class VirtualMachineConfiguration(Model):
         self.data_disks = kwargs.get('data_disks', None)
         self.license_type = kwargs.get('license_type', None)
         self.container_configuration = kwargs.get('container_configuration', None)
+        self.disk_encryption_configuration = kwargs.get('disk_encryption_configuration', None)
 
 
 class VirtualMachineFamilyCoreQuota(Model):
