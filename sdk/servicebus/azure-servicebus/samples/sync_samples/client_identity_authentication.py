@@ -29,7 +29,7 @@ User with username and password:
     If not provided, defaults to the 'organizations' tenant, which supports only Azure Active Directory work or
     school accounts.
 
-Please refer to azure.identity library for detailed information.
+Please refer to azure.identity library for detailed information here: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity
 
 This sample also shows the process of utilizing a different credential object, in this case, DefaultAzureCredential,
 both to demonstrate the ease of adjusting authentication, and to surface another method for doing so.
