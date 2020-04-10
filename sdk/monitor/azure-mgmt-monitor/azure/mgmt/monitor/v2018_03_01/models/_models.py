@@ -784,7 +784,7 @@ class MetricAlertResource(Resource):
      information.
     :type criteria: ~azure.mgmt.monitor.v2018_03_01.models.MetricAlertCriteria
     :param auto_mitigate: the flag that indicates whether the alert should be
-     auto resolved or not.
+     auto resolved or not. The default is true.
     :type auto_mitigate: bool
     :param actions: the array of actions that are performed when the alert
      rule becomes active, and when an alert condition is resolved.
@@ -883,7 +883,7 @@ class MetricAlertResourcePatch(Model):
      information.
     :type criteria: ~azure.mgmt.monitor.v2018_03_01.models.MetricAlertCriteria
     :param auto_mitigate: the flag that indicates whether the alert should be
-     auto resolved or not.
+     auto resolved or not. The default is true.
     :type auto_mitigate: bool
     :param actions: the array of actions that are performed when the alert
      rule becomes active, and when an alert condition is resolved.
