@@ -447,6 +447,28 @@ class LROBasePolling(PollingMethod):
         except OperationFailed as err:
             raise HttpResponseError(response=initial_response.http_response, error=err)
 
+    def get_continuation_token(self):
+        # type() -> str
+        import pickle
+        return pickle.dumps(self._initial_response)
+
+    @classmethod
+    def from_continuation_token(cls, continuation_token, **kwargs):
+        # type(str, Any) -> Tuple
+        try:
+            client = kwargs["client"]
+        except KeyError:
+            raise ValueError("Need kwarg 'client' to be recreated from continuation_token")
+
+        try:
+            deserialization_callback = kwargs["deserialization_callback"]
+        except KeyError:
+            raise ValueError("Need kwarg 'deserialization_callback' to be recreated from continuation_token")
+
+        import pickle
+        initial_response = pickle.loads(continuation_token)
+        return client, initial_response, deserialization_callback
+
     def run(self):
         try:
             self._poll()

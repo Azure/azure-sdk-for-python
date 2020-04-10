@@ -30,7 +30,7 @@ try:
 except ImportError:
     from urllib.parse import urlparse
 
-from typing import Any, Callable, Union, List, Optional, TYPE_CHECKING
+from typing import Any, Callable, Union, List, Optional, Tuple, TYPE_CHECKING
 from azure.core.pipeline.transport._base import HttpResponse  # type: ignore
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.common import with_current_context
@@ -63,6 +63,15 @@ class PollingMethod(object):
     def resource(self):
         # type: () -> Any
         raise NotImplementedError("This method needs to be implemented")
+
+    def get_continuation_token(self):
+        # type() -> str
+        raise NotImplementedError("This polling method doesn't support get_continuation_token")
+
+    def from_continuation_token(self, continuation_token, **kwargs):
+        # type(str, Any) -> PollingMethod
+        raise NotImplementedError("This polling method doesn't support from_continuation_token")
+
 
 class NoPolling(PollingMethod):
     """An empty poller that returns the deserialized initial response.
@@ -101,6 +110,22 @@ class NoPolling(PollingMethod):
         # type: () -> Any
         return self._deserialization_callback(self._initial_response)
 
+    def get_continuation_token(self):
+        # type() -> str
+        import pickle
+        return pickle.dumps(self._initial_response)
+
+    @classmethod
+    def from_continuation_token(cls, continuation_token, **kwargs):
+        # type(str, Any) -> Tuple
+        try:
+            deserialization_callback = kwargs["deserialization_callback"]
+        except KeyError:
+            raise ValueError("Need kwarg 'deserialization_callback' to be recreated from continuation_token")
+        import pickle
+        initial_response = pickle.loads(continuation_token)
+        return None, initial_response, deserialization_callback
+
 
 class LROPoller(object):
     """Poller for long running operations.
@@ -119,8 +144,6 @@ class LROPoller(object):
 
     def __init__(self, client, initial_response, deserialization_callback, polling_method):
         # type: (Any, HttpResponse, DeserializationCallbackType, PollingMethod) -> None
-        self._client = client
-        self._response = initial_response
         self._callbacks = []  # type: List[Callable]
         self._polling_method = polling_method
 
@@ -131,7 +154,7 @@ class LROPoller(object):
             pass
 
         # Might raise a CloudError
-        self._polling_method.initialize(self._client, self._response, deserialization_callback)
+        self._polling_method.initialize(client, initial_response, deserialization_callback)
 
         # Prepare thread execution
         self._thread = None
@@ -165,6 +188,23 @@ class LROPoller(object):
             for call in callbacks:
                 call(self._polling_method)
             callbacks, self._callbacks = self._callbacks, []
+
+    def continuation_token(self):
+        # type: () -> str
+        """Return a continuation token that allows to restart the poller later.
+
+        :returns: An opaque continuation token
+        :rtype: str
+        """
+        return self._polling_method.get_continuation_token()
+
+    @classmethod
+    def from_continuation_token(cls, polling_method, continuation_token, **kwargs):
+        # type: (str, Any) -> LROPoller
+        client, initial_response, deserialization_callback = polling_method.from_continuation_token(
+            continuation_token, **kwargs
+        )
+        return cls(client, initial_response, deserialization_callback, polling_method)
 
     def status(self):
         # type: () -> str
