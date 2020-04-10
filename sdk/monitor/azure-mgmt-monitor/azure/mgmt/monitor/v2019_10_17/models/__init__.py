@@ -12,7 +12,8 @@
 try:
     from ._models_py3 import AzureMonitorPrivateLinkScope
     from ._models_py3 import ErrorAdditionalInfo
-    from ._models_py3 import ErrorResponse, ErrorResponseException
+    from ._models_py3 import ErrorResponse
+    from ._models_py3 import ErrorResponseCommon
     from ._models_py3 import OperationStatus
     from ._models_py3 import PrivateEndpointConnection
     from ._models_py3 import PrivateEndpointProperty
@@ -25,7 +26,8 @@ try:
 except (SyntaxError, ImportError):
     from ._models import AzureMonitorPrivateLinkScope
     from ._models import ErrorAdditionalInfo
-    from ._models import ErrorResponse, ErrorResponseException
+    from ._models import ErrorResponse
+    from ._models import ErrorResponseCommon
     from ._models import OperationStatus
     from ._models import PrivateEndpointConnection
     from ._models import PrivateEndpointProperty
@@ -43,7 +45,8 @@ from ._paged_models import ScopedResourcePaged
 __all__ = [
     'AzureMonitorPrivateLinkScope',
     'ErrorAdditionalInfo',
-    'ErrorResponse', 'ErrorResponseException',
+    'ErrorResponse',
+    'ErrorResponseCommon',
     'OperationStatus',
     'PrivateEndpointConnection',
     'PrivateEndpointProperty',
