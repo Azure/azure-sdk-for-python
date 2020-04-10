@@ -152,7 +152,7 @@ class TestTraining(FormRecognizerTest):
 
         container_sas_url = self.storage_endpoint + "form-recognizer-testing-forms?" + sas_token
 
-        poller = train_client.begin_training(container_sas_url, files_prefix="subfolder", include_sub_folders=True)
+        poller = train_client.begin_training(container_sas_url, prefix="subfolder", include_sub_folders=True)
         model = poller.result()
 
         self.assertIsNotNone(model.model_id)

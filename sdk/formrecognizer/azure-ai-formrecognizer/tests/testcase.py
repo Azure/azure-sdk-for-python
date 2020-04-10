@@ -132,8 +132,8 @@ class FormRecognizerTest(AzureTestCase):
             self.assertEqual(receipt.confidence, text_element.confidence)
             self.assertBoundingBoxTransformCorrect(receipt.bounding_box, text_element.bounding_box)
 
-    def assertReceiptFieldTransformCorrect(self, receipt_field, actual_field, read_results=None):
-        if actual_field is None and receipt_field is None:
+    def assertFormFieldTransformCorrect(self, receipt_field, actual_field, read_results=None):
+        if actual_field is None:
             return
         field_type = actual_field.type
         if field_type == "string":
@@ -164,10 +164,10 @@ class FormRecognizerTest(AzureTestCase):
         actual = actual_items.value_array
 
         for r, a in zip(items, actual):
-            self.assertReceiptFieldTransformCorrect(r.name, a.value_object.get("Name"), read_results)
-            self.assertReceiptFieldTransformCorrect(r.quantity, a.value_object.get("Quantity"), read_results)
-            self.assertReceiptFieldTransformCorrect(r.total_price, a.value_object.get("TotalPrice"), read_results)
-            self.assertReceiptFieldTransformCorrect(r.price, a.value_object.get("Price"), read_results)
+            self.assertFormFieldTransformCorrect(r.name, a.value_object.get("Name"), read_results)
+            self.assertFormFieldTransformCorrect(r.quantity, a.value_object.get("Quantity"), read_results)
+            self.assertFormFieldTransformCorrect(r.total_price, a.value_object.get("TotalPrice"), read_results)
+            self.assertFormFieldTransformCorrect(r.price, a.value_object.get("Price"), read_results)
 
     def assertTablesTransformCorrect(self, layout, actual_layout, read_results=None):
         for table, actual_table in zip(layout, actual_layout):
@@ -203,6 +203,8 @@ class FormRecognizerTest(AzureTestCase):
                 self.assertTextContentHasValues(item.name.value_data.text_content, page_number)
 
     def assertBoundingBoxHasPoints(self, box):
+        if box is None:
+            return
         self.assertIsNotNone(box[0].x)
         self.assertIsNotNone(box[0].y)
         self.assertIsNotNone(box[1].x)
@@ -251,15 +253,6 @@ class FormRecognizerTest(AzureTestCase):
             return
         for word in elements:
             self.assertFormWordHasValues(word, page_number)
-
-    def assertFormFieldHasValues(self, field, page_number, include_text_details):
-        self.assertIsNotNone(field.confidence)
-        self.assertBoundingBoxHasPoints(field.value_data.bounding_box)
-        self.assertEqual(field.page_number, page_number)
-        self.assertIsNotNone(field.value_data.text)
-        self.assertIsNotNone(field.value)
-        if include_text_details:
-            self.assertTextContentHasValues(field.value_data.text_content, page_number)
 
 
 class GlobalResourceGroupPreparer(AzureMgmtPreparer):

@@ -1,0 +1,119 @@
+interactions:
+- request:
+    body: '{"source": "blobsasurl",
+      "sourceFilter": {"prefix": "subfolder", "includeSubFolders": true}, "useLabelFile":
+      false}'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '293'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/1.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+        Python/3.7.3 (Windows-10-10.0.18362-SP0)
+    method: POST
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models
+  response:
+    body:
+      string: ''
+    headers:
+      apim-request-id:
+      - 2e5b2679-e328-4c31-9bdf-a630eb159800
+      content-length:
+      - '0'
+      date:
+      - Fri, 10 Apr 2020 01:46:23 GMT
+      location:
+      - https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/82299602-7671-4ada-99d4-36cd28162870
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '44'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/1.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+        Python/3.7.3 (Windows-10-10.0.18362-SP0)
+    method: GET
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/82299602-7671-4ada-99d4-36cd28162870?includeKeys=true
+  response:
+    body:
+      string: '{"modelInfo":{"modelId":"82299602-7671-4ada-99d4-36cd28162870","status":"creating","createdDateTime":"2020-04-10T01:46:24Z","lastUpdatedDateTime":"2020-04-10T01:46:24Z"}}'
+    headers:
+      apim-request-id:
+      - 7a42002f-95fc-46c9-aaf6-ea4f2090c145
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 10 Apr 2020 01:46:29 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '11'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/1.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+        Python/3.7.3 (Windows-10-10.0.18362-SP0)
+    method: GET
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/82299602-7671-4ada-99d4-36cd28162870?includeKeys=true
+  response:
+    body:
+      string: '{"modelInfo":{"modelId":"82299602-7671-4ada-99d4-36cd28162870","status":"ready","createdDateTime":"2020-04-10T01:46:24Z","lastUpdatedDateTime":"2020-04-10T01:46:32Z"},"keys":{"clusters":{"0":["Additional
+        Notes:","Address:","Address:","Company Name:","Company Phone:","Dated As:","Email:","Hero
+        Limited","Name:","Phone:","Purchase Order","Purchase Order","Purchase Order
+        #:","SUBTOTAL","Seattle, WA 93849 Phone:","Shipped From","Shipped To","TAX","TOTAL","Vendor
+        Name:","Website:"]}},"trainResult":{"trainingDocuments":[{"documentName":"subfolder/xxForm
+        3.jpg","pages":1,"errors":[],"status":"succeeded"},{"documentName":"subfolder/xxForm
+        5.jpg","pages":1,"errors":[],"status":"succeeded"},{"documentName":"subfolder/xxForm2.jpg","pages":1,"errors":[],"status":"succeeded"},{"documentName":"subfolder/xxForm4.jpg","pages":1,"errors":[],"status":"succeeded"},{"documentName":"subfolder/xxForm_1.jpg","pages":1,"errors":[],"status":"succeeded"}],"errors":[]}}'
+    headers:
+      apim-request-id:
+      - 2d5c2dce-7af3-4454-bbfa-508104c761a4
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 10 Apr 2020 01:46:34 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '15'
+    status:
+      code: 200
+      message: OK
+version: 1

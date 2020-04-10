@@ -98,26 +98,26 @@ class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
         document_results = raw_response.analyze_result.document_results
 
         # check hardcoded values
-        self.assertReceiptFieldTransformCorrect(receipt.merchant_address, actual.get("MerchantAddress"), read_results)
-        self.assertReceiptFieldTransformCorrect(receipt.merchant_name, actual.get("MerchantName"), read_results)
-        self.assertReceiptFieldTransformCorrect(receipt.merchant_phone_number, actual.get("MerchantPhoneNumber"), read_results)
-        self.assertReceiptFieldTransformCorrect(receipt.subtotal, actual.get("Subtotal"), read_results)
-        self.assertReceiptFieldTransformCorrect(receipt.tax, actual.get("Tax"), read_results)
-        self.assertReceiptFieldTransformCorrect(receipt.tip, actual.get("Tip"), read_results)
-        self.assertReceiptFieldTransformCorrect(receipt.total, actual.get("Total"), read_results)
-        self.assertReceiptFieldTransformCorrect(receipt.transaction_date, actual.get("TransactionDate"), read_results)
-        self.assertReceiptFieldTransformCorrect(receipt.transaction_time, actual.get("TransactionTime"), read_results)
+        self.assertFormFieldTransformCorrect(receipt.merchant_address, actual.get("MerchantAddress"), read_results)
+        self.assertFormFieldTransformCorrect(receipt.merchant_name, actual.get("MerchantName"), read_results)
+        self.assertFormFieldTransformCorrect(receipt.merchant_phone_number, actual.get("MerchantPhoneNumber"), read_results)
+        self.assertFormFieldTransformCorrect(receipt.subtotal, actual.get("Subtotal"), read_results)
+        self.assertFormFieldTransformCorrect(receipt.tax, actual.get("Tax"), read_results)
+        self.assertFormFieldTransformCorrect(receipt.tip, actual.get("Tip"), read_results)
+        self.assertFormFieldTransformCorrect(receipt.total, actual.get("Total"), read_results)
+        self.assertFormFieldTransformCorrect(receipt.transaction_date, actual.get("TransactionDate"), read_results)
+        self.assertFormFieldTransformCorrect(receipt.transaction_time, actual.get("TransactionTime"), read_results)
 
         # check dict values
-        self.assertReceiptFieldTransformCorrect(receipt.fields.get("MerchantAddress"), actual.get("MerchantAddress"), read_results)
-        self.assertReceiptFieldTransformCorrect(receipt.fields.get("MerchantName"), actual.get("MerchantName"), read_results)
-        self.assertReceiptFieldTransformCorrect(receipt.fields.get("MerchantPhoneNumber"), actual.get("MerchantPhoneNumber"), read_results)
-        self.assertReceiptFieldTransformCorrect(receipt.fields.get("Subtotal"), actual.get("Subtotal"), read_results)
-        self.assertReceiptFieldTransformCorrect(receipt.fields.get("Tax"), actual.get("Tax"), read_results)
-        self.assertReceiptFieldTransformCorrect(receipt.fields.get("Tip"), actual.get("Tip"), read_results)
-        self.assertReceiptFieldTransformCorrect(receipt.fields.get("Total"), actual.get("Total"), read_results)
-        self.assertReceiptFieldTransformCorrect(receipt.fields.get("TransactionDate"), actual.get("TransactionDate"), read_results)
-        self.assertReceiptFieldTransformCorrect(receipt.fields.get("TransactionTime"), actual.get("TransactionTime"), read_results)
+        self.assertFormFieldTransformCorrect(receipt.fields.get("MerchantAddress"), actual.get("MerchantAddress"), read_results)
+        self.assertFormFieldTransformCorrect(receipt.fields.get("MerchantName"), actual.get("MerchantName"), read_results)
+        self.assertFormFieldTransformCorrect(receipt.fields.get("MerchantPhoneNumber"), actual.get("MerchantPhoneNumber"), read_results)
+        self.assertFormFieldTransformCorrect(receipt.fields.get("Subtotal"), actual.get("Subtotal"), read_results)
+        self.assertFormFieldTransformCorrect(receipt.fields.get("Tax"), actual.get("Tax"), read_results)
+        self.assertFormFieldTransformCorrect(receipt.fields.get("Tip"), actual.get("Tip"), read_results)
+        self.assertFormFieldTransformCorrect(receipt.fields.get("Total"), actual.get("Total"), read_results)
+        self.assertFormFieldTransformCorrect(receipt.fields.get("TransactionDate"), actual.get("TransactionDate"), read_results)
+        self.assertFormFieldTransformCorrect(receipt.fields.get("TransactionTime"), actual.get("TransactionTime"), read_results)
 
         # check page range
         self.assertEqual(receipt.page_range.first_page, document_results[0].page_range[0])
@@ -163,26 +163,26 @@ class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
         page_results = raw_response.analyze_result.page_results
 
         # check hardcoded values
-        self.assertReceiptFieldTransformCorrect(receipt.merchant_address, actual.get("MerchantAddress"), read_results)
-        self.assertReceiptFieldTransformCorrect(receipt.merchant_name, actual.get("MerchantName"), read_results)
-        self.assertReceiptFieldTransformCorrect(receipt.merchant_phone_number, actual.get("MerchantPhoneNumber"), read_results)
-        self.assertReceiptFieldTransformCorrect(receipt.subtotal, actual.get("Subtotal"), read_results)
-        self.assertReceiptFieldTransformCorrect(receipt.tax, actual.get("Tax"), read_results)
-        self.assertReceiptFieldTransformCorrect(receipt.tip, actual.get("Tip"), read_results)
-        self.assertReceiptFieldTransformCorrect(receipt.total, actual.get("Total"), read_results)
-        self.assertReceiptFieldTransformCorrect(receipt.transaction_date, actual.get("TransactionDate"), read_results)
-        self.assertReceiptFieldTransformCorrect(receipt.transaction_time, actual.get("TransactionTime"), read_results)
+        self.assertFormFieldTransformCorrect(receipt.merchant_address, actual.get("MerchantAddress"), read_results)
+        self.assertFormFieldTransformCorrect(receipt.merchant_name, actual.get("MerchantName"), read_results)
+        self.assertFormFieldTransformCorrect(receipt.merchant_phone_number, actual.get("MerchantPhoneNumber"), read_results)
+        self.assertFormFieldTransformCorrect(receipt.subtotal, actual.get("Subtotal"), read_results)
+        self.assertFormFieldTransformCorrect(receipt.tax, actual.get("Tax"), read_results)
+        self.assertFormFieldTransformCorrect(receipt.tip, actual.get("Tip"), read_results)
+        self.assertFormFieldTransformCorrect(receipt.total, actual.get("Total"), read_results)
+        self.assertFormFieldTransformCorrect(receipt.transaction_date, actual.get("TransactionDate"), read_results)
+        self.assertFormFieldTransformCorrect(receipt.transaction_time, actual.get("TransactionTime"), read_results)
 
         # check dict values
-        self.assertReceiptFieldTransformCorrect(receipt.fields.get("MerchantAddress"), actual.get("MerchantAddress"), read_results)
-        self.assertReceiptFieldTransformCorrect(receipt.fields.get("MerchantName"), actual.get("MerchantName"), read_results)
-        self.assertReceiptFieldTransformCorrect(receipt.fields.get("MerchantPhoneNumber"), actual.get("MerchantPhoneNumber"), read_results)
-        self.assertReceiptFieldTransformCorrect(receipt.fields.get("Subtotal"), actual.get("Subtotal"), read_results)
-        self.assertReceiptFieldTransformCorrect(receipt.fields.get("Tax"), actual.get("Tax"), read_results)
-        self.assertReceiptFieldTransformCorrect(receipt.fields.get("Tip"), actual.get("Tip"), read_results)
-        self.assertReceiptFieldTransformCorrect(receipt.fields.get("Total"), actual.get("Total"), read_results)
-        self.assertReceiptFieldTransformCorrect(receipt.fields.get("TransactionDate"), actual.get("TransactionDate"), read_results)
-        self.assertReceiptFieldTransformCorrect(receipt.fields.get("TransactionTime"), actual.get("TransactionTime"), read_results)
+        self.assertFormFieldTransformCorrect(receipt.fields.get("MerchantAddress"), actual.get("MerchantAddress"), read_results)
+        self.assertFormFieldTransformCorrect(receipt.fields.get("MerchantName"), actual.get("MerchantName"), read_results)
+        self.assertFormFieldTransformCorrect(receipt.fields.get("MerchantPhoneNumber"), actual.get("MerchantPhoneNumber"), read_results)
+        self.assertFormFieldTransformCorrect(receipt.fields.get("Subtotal"), actual.get("Subtotal"), read_results)
+        self.assertFormFieldTransformCorrect(receipt.fields.get("Tax"), actual.get("Tax"), read_results)
+        self.assertFormFieldTransformCorrect(receipt.fields.get("Tip"), actual.get("Tip"), read_results)
+        self.assertFormFieldTransformCorrect(receipt.fields.get("Total"), actual.get("Total"), read_results)
+        self.assertFormFieldTransformCorrect(receipt.fields.get("TransactionDate"), actual.get("TransactionDate"), read_results)
+        self.assertFormFieldTransformCorrect(receipt.fields.get("TransactionTime"), actual.get("TransactionTime"), read_results)
 
         # check page range
         self.assertEqual(receipt.page_range.first_page, document_results[0].page_range[0])
@@ -224,15 +224,6 @@ class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
         self.assertIsNotNone(receipt.receipt_type.confidence)
         self.assertEqual(receipt.receipt_type.type, 'Itemized')
         self.assertReceiptItemsHasValues(receipt.receipt_items, receipt.page_range.first_page, False)
-
-        # check hardcoded receipt values
-        for field, value in receipt.__dict__.items():
-            if field not in ["receipt_type", "receipt_items", "page_range", "pages", "fields", "form_type", "receipt_locale"]:
-                self.assertFormFieldHasValues(getattr(receipt, field), receipt.page_range.first_page, False)
-
-        # check fields dict
-        for field, value in receipt.fields.items():
-            self.assertFormFieldHasValues(value, receipt.page_range.first_page, False)
 
     @GlobalFormRecognizerAccountPreparer()
     async def test_receipt_png(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
