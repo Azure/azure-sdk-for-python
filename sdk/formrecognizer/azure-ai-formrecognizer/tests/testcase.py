@@ -10,6 +10,8 @@ from datetime import datetime, timedelta
 import os
 import pytest
 import re
+from azure.core.pipeline.transport import AioHttpTransport
+from multidict import CIMultiDict, CIMultiDictProxy
 from azure.core.credentials import AzureKeyCredential
 from azure.storage.blob import ContainerSasPermissions, generate_container_sas, ContainerClient
 from devtools_testutils import (
@@ -21,6 +23,20 @@ from devtools_testutils import (
 from devtools_testutils.cognitiveservices_testcase import CognitiveServicesAccountPreparer
 from devtools_testutils.storage_testcase import StorageAccountPreparer
 from azure_devtools.scenario_tests import ReplayableTest
+
+
+class AiohttpTestTransport(AioHttpTransport):
+    """Workaround to vcrpy bug
+
+    # records location header as a list of char instead of str
+    """
+    async def send(self, request, **config):
+        response = await super(AiohttpTestTransport, self).send(request, **config)
+        if not isinstance(response.headers, CIMultiDictProxy):
+            if response.headers.get("location") and isinstance(response.headers["location"], list):
+                response.headers["location"] = "".join(response.headers.get("location"))
+            response.headers = CIMultiDictProxy(CIMultiDict(response.internal_response.headers))
+        return response
 
 
 class FormRecognizerTest(AzureTestCase):
@@ -312,7 +328,8 @@ class GlobalTrainingAccountPreparer(AzureMgmtPreparer):
             storage_account_key = kwargs.pop("storage_account_key")
 
         if self.is_live:
-            container_client = ContainerClient(storage_account.primary_endpoints.blob, "form-recognizer-testing-forms",
+            container_name = self.resource_random_name.replace("_", "-")  # container names can't have underscore
+            container_client = ContainerClient(storage_account.primary_endpoints.blob, container_name,
                                                storage_account_key)
             container_client.create_container()
 
@@ -326,16 +343,25 @@ class GlobalTrainingAccountPreparer(AzureMgmtPreparer):
 
             sas_token = generate_container_sas(
                 storage_account.name,
-                "form-recognizer-testing-forms",
+                container_name,
                 storage_account_key,
                 permission=ContainerSasPermissions.from_string("rl"),
                 expiry=datetime.utcnow() + timedelta(hours=1)
             )
 
-            container_sas_url = storage_account.primary_endpoints.blob + "form-recognizer-testing-forms?" + sas_token
+            container_sas_url = storage_account.primary_endpoints.blob + container_name + "?" + sas_token
 
         else:
             container_sas_url = "containersasurl"
+
+        if self.moniker.find("async") != -1:
+            return self.client_cls(
+                form_recognizer_account,
+                AzureKeyCredential(form_recognizer_account_key),
+                transport=AiohttpTestTransport(),
+                **self.client_kwargs
+            ), container_sas_url
+
         return self.client_cls(
             form_recognizer_account,
             AzureKeyCredential(form_recognizer_account_key),
