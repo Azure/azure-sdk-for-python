@@ -82,7 +82,7 @@ class SessionReceiverMixin(ReceiverMixin):
             raise SessionLockExpired(inner_exception=self._session.auto_renew_error)
 
     def _create_session_attributes(self, **kwargs):
-        self._session_id = kwargs.get("session_id")
+        self._session_id = kwargs.get("session_id") or NEXT_AVAILABLE
         self._error_policy = _ServiceBusErrorPolicy(
             max_retries=self._config.retry_total,
             is_session=bool(self._session_id)

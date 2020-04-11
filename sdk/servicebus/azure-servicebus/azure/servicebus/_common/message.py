@@ -629,9 +629,9 @@ class ReceivedMessage(PeekMessage):
         :raises: ~azure.servicebus.common.errors.MessageAlreadySettled is message has already been settled.
         """
         try:
-            if self._receiver._session_id:  # pylint: disable=protected-access
+            if self._receiver.session:
                 raise TypeError("Session messages cannot be renewed. Please renew the Session lock instead.")
-        except AttributeError: #TODO: Kibrantn: could get rid of these spurious catches by having _session_id be None even on non session receivers, but that seems slightly weird.
+        except AttributeError:
             pass
         self._is_live(MESSAGE_RENEW_LOCK)
         token = self.lock_token
