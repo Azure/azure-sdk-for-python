@@ -6,10 +6,12 @@
 # license information.
 # --------------------------------------------------------------------------
 
+from datetime import datetime, timedelta
 import os
 import pytest
 import re
-from azure.core.credentials import AccessToken
+from azure.core.credentials import AzureKeyCredential
+from azure.storage.blob import ContainerSasPermissions, generate_container_sas, ContainerClient
 from devtools_testutils import (
     AzureTestCase,
     AzureMgmtPreparer,
@@ -17,18 +19,8 @@ from devtools_testutils import (
     ResourceGroupPreparer,
 )
 from devtools_testutils.cognitiveservices_testcase import CognitiveServicesAccountPreparer
+from devtools_testutils.storage_testcase import StorageAccountPreparer
 from azure_devtools.scenario_tests import ReplayableTest
-
-
-class FakeTokenCredential(object):
-    """Protocol for classes able to provide OAuth tokens.
-    :param str scopes: Lets you specify the type of access needed.
-    """
-    def __init__(self):
-        self.token = AccessToken("YOU SHALL NOT PASS", 0)
-
-    def get_token(self, *args):
-        return self.token
 
 
 class FormRecognizerTest(AzureTestCase):
@@ -49,37 +41,7 @@ class FormRecognizerTest(AzureTestCase):
         self.form_jpg = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/Form_1.jpg"))
         self.unsupported_content_py = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./conftest.py"))
 
-    def get_credentials(self):
-        if self.is_live:
-            self.endpoint = self.get_settings_value("FORM_RECOGNIZER_ENDPOINT")
-            self.key = self.get_settings_value("FORM_RECOGNIZER_KEY")
-            self.storage_endpoint = self.get_settings_value("FORM_RECOGNIZER_STORAGE_ENDPOINT")
-            self.storage_key = self.get_settings_value("FORM_RECOGNIZER_STORAGE_KEY")
-            self.storage_account_name = self.storage_endpoint.split("https://")[1].split(".blob")[0]
-        else:
-            self.endpoint = "xxxx"
-            self.key = "xxxx"
-            self.storage_endpoint = "xxxx"
-            self.storage_key = "xxxx"
-            self.storage_account_name = "xxxx"
-
-    def get_oauth_endpoint(self):
-        return self.get_settings_value("FORM_RECOGNIZER_ENDPOINT")
-
-    def generate_oauth_token(self):
-        if self.is_live:
-            from azure.identity import ClientSecretCredential
-            return ClientSecretCredential(
-                self.get_settings_value("TENANT_ID"),
-                self.get_settings_value("CLIENT_ID"),
-                self.get_settings_value("CLIENT_SECRET"),
-            )
-        return self.generate_fake_token()
-
-    def generate_fake_token(self):
-        return FakeTokenCredential()
-
-    def assertModelTransformCorrect(self, model, actual):
+    def assertModelTransformCorrect(self, model, actual, unlabeled=False):
         self.assertEqual(model.model_id, actual.model_info.model_id)
         self.assertEqual(model.created_on, actual.model_info.created_date_time)
         self.assertEqual(model.last_updated_on, actual.model_info.last_updated_date_time)
@@ -91,7 +53,22 @@ class FormRecognizerTest(AzureTestCase):
                 self.assertEqual(m.errors, a.errors)
             self.assertEqual(m.page_count, a.pages)
             self.assertEqual(m.status, a.status)
-        # TODO add check for fields/submodels once design is closed
+
+        if unlabeled:
+            if actual.keys.clusters:
+                for cluster_id, fields in actual.keys.clusters.items():
+                    self.assertEqual(cluster_id, model.models[int(cluster_id)].form_type[-1])
+                    for field_idx, model_field in model.models[int(cluster_id)].fields.items():
+                        self.assertIn(model_field.label, fields)
+
+        else:
+            if actual.train_result:
+                if actual.train_result.fields:
+                    for a in actual.train_result.fields:
+                        self.assertEqual(model.models[0].fields[a.field_name].name, a.field_name)
+                        self.assertEqual(model.models[0].fields[a.field_name].accuracy, a.accuracy)
+                    self.assertEqual(model.models[0].form_type, "form-"+model.model_id)
+                    self.assertEqual(model.models[0].accuracy, actual.train_result.average_model_accuracy)
 
     def assertFormPagesTransformCorrect(self, pages, actual_read, page_result=None):
         for page, actual_page in zip(pages, actual_read):
@@ -298,6 +275,93 @@ class GlobalFormRecognizerAccountPreparer(AzureMgmtPreparer):
         }
 
 
+class GlobalTrainingAccountPreparer(AzureMgmtPreparer):
+    def __init__(self, client_cls, client_kwargs={}, **kwargs):
+        super(GlobalTrainingAccountPreparer, self).__init__(
+            name_prefix='',
+            random_name_length=42
+        )
+        self.client_kwargs = client_kwargs
+        self.client_cls = client_cls
+
+    def create_resource(self, name, **kwargs):
+        training_client, container_sas_url = self.create_form_client_and_container_sas_url(**kwargs)
+        if self.is_live:
+            self.test_class_instance.scrubber.register_name_pair(
+                container_sas_url,
+                "containersasurl"
+            )
+        return {"training_client": training_client,
+                "container_sas_url": container_sas_url}
+
+    def create_form_client_and_container_sas_url(self, **kwargs):
+        form_recognizer_account = self.client_kwargs.pop("form_recognizer_account", None)
+        if form_recognizer_account is None:
+            form_recognizer_account = kwargs.pop("form_recognizer_account")
+
+        form_recognizer_account_key = self.client_kwargs.pop("form_recognizer_account_key", None)
+        if form_recognizer_account_key is None:
+            form_recognizer_account_key = kwargs.pop("form_recognizer_account_key")
+
+        storage_account = self.client_kwargs.pop("storage_account", None)
+        if storage_account is None:
+            storage_account = kwargs.pop("storage_account")
+
+        storage_account_key = self.client_kwargs.pop("storage_account_key", None)
+        if storage_account_key is None:
+            storage_account_key = kwargs.pop("storage_account_key")
+
+        if self.is_live:
+            container_client = ContainerClient(storage_account.primary_endpoints.blob, "form-recognizer-testing-forms",
+                                               storage_account_key)
+            container_client.create_container()
+
+            training_path = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/training/"))
+            for path, folder, files in os.walk(training_path):
+                for document in files:
+                    with open(os.path.join(path, document), "rb") as data:
+                        if document == "Form_6.jpg":
+                            document = "subfolder/Form_6.jpg"  # create virtual subfolder in container
+                        container_client.upload_blob(name=document, data=data)
+
+            sas_token = generate_container_sas(
+                storage_account.name,
+                "form-recognizer-testing-forms",
+                storage_account_key,
+                permission=ContainerSasPermissions.from_string("rl"),
+                expiry=datetime.utcnow() + timedelta(hours=1)
+            )
+
+            container_sas_url = storage_account.primary_endpoints.blob + "form-recognizer-testing-forms?" + sas_token
+
+        else:
+            container_sas_url = "containersasurl"
+        return self.client_cls(
+            form_recognizer_account,
+            AzureKeyCredential(form_recognizer_account_key),
+            **self.client_kwargs
+        ), container_sas_url
+
+
+class GlobalFormAndStorageAccountPreparer(AzureMgmtPreparer):
+    def __init__(self):
+        super(GlobalFormAndStorageAccountPreparer, self).__init__(
+            name_prefix='',
+            random_name_length=42
+        )
+
+    def create_resource(self, name, **kwargs):
+        form_recognizer_and_storage_account = FormRecognizerTest._FORM_RECOGNIZER_ACCOUNT
+        return {
+            'location': 'westus2',
+            'resource_group': FormRecognizerTest._RESOURCE_GROUP,
+            'form_recognizer_account': form_recognizer_and_storage_account,
+            'form_recognizer_account_key': FormRecognizerTest._FORM_RECOGNIZER_KEY,
+            'storage_account': FormRecognizerTest._STORAGE_ACCOUNT,
+            'storage_account_key': FormRecognizerTest._STORAGE_KEY
+        }
+
+
 @pytest.fixture(scope="session")
 def form_recognizer_account():
     test_case = AzureTestCase("__init__")
@@ -324,6 +388,55 @@ def form_recognizer_account():
             )
             FormRecognizerTest._FORM_RECOGNIZER_ACCOUNT = None
             FormRecognizerTest._FORM_RECOGNIZER_KEY = None
+    finally:
+        rg_preparer.remove_resource(rg_name)
+        FormRecognizerTest._RESOURCE_GROUP = None
+
+
+@pytest.fixture(scope="session")
+def form_recognizer_and_storage_account():
+    test_case = AzureTestCase("__init__")
+    rg_preparer = ResourceGroupPreparer(random_name_enabled=True, name_prefix='pycog')
+    form_recognizer_preparer = CognitiveServicesAccountPreparer(
+        random_name_enabled=True,
+        kind="formrecognizer",
+        name_prefix='pycog',
+        location="centraluseuap"
+    )
+    storage_account_preparer = StorageAccountPreparer(
+        random_name_enabled=True,
+        name_prefix='pycog'
+    )
+
+    try:
+        rg_name, rg_kwargs = rg_preparer._prepare_create_resource(test_case)
+        FormRecognizerTest._RESOURCE_GROUP = rg_kwargs['resource_group']
+        try:
+            form_recognizer_name, form_recognizer_kwargs = form_recognizer_preparer._prepare_create_resource(
+                test_case, **rg_kwargs)
+            FormRecognizerTest._FORM_RECOGNIZER_ACCOUNT = form_recognizer_kwargs['cognitiveservices_account']
+            FormRecognizerTest._FORM_RECOGNIZER_KEY = form_recognizer_kwargs['cognitiveservices_account_key']
+
+            storage_name, storage_kwargs = storage_account_preparer._prepare_create_resource(test_case, **rg_kwargs)
+            storage_account = storage_kwargs['storage_account']
+            storage_key = storage_kwargs['storage_account_key']
+
+            FormRecognizerTest._STORAGE_ACCOUNT = storage_account
+            FormRecognizerTest._STORAGE_KEY = storage_key
+            yield
+        finally:
+            form_recognizer_preparer.remove_resource(
+                form_recognizer_name,
+                resource_group=rg_kwargs['resource_group']
+            )
+            FormRecognizerTest._FORM_RECOGNIZER_ACCOUNT = None
+            FormRecognizerTest._FORM_RECOGNIZER_KEY = None
+            storage_account_preparer.remove_resource(
+                storage_name,
+                resource_group=rg_kwargs['resource_group']
+            )
+            FormRecognizerTest._STORAGE_ACCOUNT = None
+            FormRecognizerTest._STORAGE_KEY = None
     finally:
         rg_preparer.remove_resource(rg_name)
         FormRecognizerTest._RESOURCE_GROUP = None

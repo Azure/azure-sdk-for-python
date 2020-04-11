@@ -1,8 +1,7 @@
 interactions:
 - request:
-    body: '{"source": "blobsasurl",
-      "sourceFilter": {"prefix": "", "includeSubFolders": false}, "useLabelFile":
-      true}'
+    body: 'b''{"source": "containersasurl", "sourceFilter": {"prefix": "", "includeSubFolders":
+      false}, "useLabelFile": true}'''
     headers:
       Accept:
       - '*/*'
@@ -11,7 +10,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '280'
+      - '288'
       Content-Type:
       - application/json
       User-Agent:
@@ -24,19 +23,19 @@ interactions:
       string: ''
     headers:
       apim-request-id:
-      - 9715df1c-196d-4c02-bebe-67c8661b2ac3
+      - 6f6e08ed-91f9-4d71-a98f-465e4ab1147e
       content-length:
       - '0'
       date:
-      - Thu, 09 Apr 2020 01:51:59 GMT
+      - Sat, 11 Apr 2020 01:10:30 GMT
       location:
-      - https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/58c873f0-e17d-4a5d-879a-301bb8f26850
+      - https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/4fffb92f-5122-4105-bc87-c8d75a702847
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '33'
+      - '29'
     status:
       code: 201
       message: Created
@@ -53,19 +52,17 @@ interactions:
       - azsdk-python-ai-formrecognizer/1.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
         Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: GET
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/58c873f0-e17d-4a5d-879a-301bb8f26850?includeKeys=true
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/4fffb92f-5122-4105-bc87-c8d75a702847?includeKeys=true
   response:
     body:
-      string: '{"modelInfo":{"modelId":"58c873f0-e17d-4a5d-879a-301bb8f26850","status":"ready","createdDateTime":"2020-04-09T01:51:59Z","lastUpdatedDateTime":"2020-04-09T01:52:02Z"},"trainResult":{"averageModelAccuracy":0.973,"trainingDocuments":[{"documentName":"Form
-        1.jpg","pages":1,"status":"succeeded"},{"documentName":"Form 3.jpg","pages":1,"status":"succeeded"},{"documentName":"Form
-        5.jpg","pages":1,"status":"succeeded"},{"documentName":"Form2.jpg","pages":1,"status":"succeeded"},{"documentName":"Form4.jpg","pages":1,"status":"succeeded"}],"fields":[{"fieldName":"CompanyAddress","accuracy":0.8},{"fieldName":"CompanyName","accuracy":1.0},{"fieldName":"CompanyPhoneNumber","accuracy":1.0},{"fieldName":"DatedAs","accuracy":1.0},{"fieldName":"Email","accuracy":0.8},{"fieldName":"Merchant","accuracy":1.0},{"fieldName":"PhoneNumber","accuracy":1.0},{"fieldName":"PurchaseOrderNumber","accuracy":1.0},{"fieldName":"Quantity","accuracy":1.0},{"fieldName":"Signature","accuracy":1.0},{"fieldName":"Subtotal","accuracy":1.0},{"fieldName":"Tax","accuracy":1.0},{"fieldName":"Total","accuracy":1.0},{"fieldName":"VendorName","accuracy":1.0},{"fieldName":"Website","accuracy":1.0}],"errors":[]}}'
+      string: '{"modelInfo":{"modelId":"4fffb92f-5122-4105-bc87-c8d75a702847","status":"ready","createdDateTime":"2020-04-11T01:10:30Z","lastUpdatedDateTime":"2020-04-11T01:10:34Z"},"trainResult":{"averageModelAccuracy":0.973,"trainingDocuments":[{"documentName":"Form_1.jpg","pages":1,"status":"succeeded"},{"documentName":"Form_2.jpg","pages":1,"status":"succeeded"},{"documentName":"Form_3.jpg","pages":1,"status":"succeeded"},{"documentName":"Form_4.jpg","pages":1,"status":"succeeded"},{"documentName":"Form_5.jpg","pages":1,"status":"succeeded"}],"fields":[{"fieldName":"CompanyAddress","accuracy":0.8},{"fieldName":"CompanyName","accuracy":1.0},{"fieldName":"CompanyPhoneNumber","accuracy":1.0},{"fieldName":"DatedAs","accuracy":1.0},{"fieldName":"Email","accuracy":0.8},{"fieldName":"Merchant","accuracy":1.0},{"fieldName":"PhoneNumber","accuracy":1.0},{"fieldName":"PurchaseOrderNumber","accuracy":1.0},{"fieldName":"Quantity","accuracy":1.0},{"fieldName":"Signature","accuracy":1.0},{"fieldName":"Subtotal","accuracy":1.0},{"fieldName":"Tax","accuracy":1.0},{"fieldName":"Total","accuracy":1.0},{"fieldName":"VendorName","accuracy":1.0},{"fieldName":"Website","accuracy":1.0}],"errors":[]}}'
     headers:
       apim-request-id:
-      - 34c6f06a-9756-47f4-9446-7d5f709e9cbc
+      - 02d5c1f6-9088-496c-aac9-27f03f30592c
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 09 Apr 2020 01:52:04 GMT
+      - Sat, 11 Apr 2020 01:10:36 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -73,7 +70,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '82'
+      - '13'
     status:
       code: 200
       message: OK

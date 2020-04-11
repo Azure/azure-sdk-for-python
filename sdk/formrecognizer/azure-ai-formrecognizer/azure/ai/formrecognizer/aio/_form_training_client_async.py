@@ -71,12 +71,12 @@ class FormTrainingClient(object):
         :param str training_files: An Azure Storage blob container URI.
         :param bool use_labels: Whether to train with labels or not. Corresponding labeled files must
             exist in the blob container.
-        :keyword str prefix: A case-sensitive prefix string to filter documents in the source path for
-            training. For example, when using a Azure storage blob Uri, use the prefix to restrict sub
-            folders for training. Not supported if training with labels.
-        :keyword bool include_sub_folders: A flag to indicate if sub folders within the set of prefix folders
+        :keyword str prefix: A case-sensitive prefix string to filter documents for training.
+            Use prefix to filter documents themselves, or to restrict sub folders for training
+            when `include_sub_folders` is set to True. Not supported if training with labels.
+        :keyword bool include_sub_folders: A flag to indicate if sub folders
             will also need to be included when searching for content to be preprocessed.
-            Not supported if training with labels.
+            Use with prefix to filter for only certain sub folders. Not supported if training with labels.
         :return: CustomFormModel
         :rtype: ~azure.ai.formrecognizer.CustomFormModel
         :raises: ~azure.core.exceptions.HttpResponseError
