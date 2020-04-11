@@ -22,11 +22,13 @@
 
 import io
 import logging
+import sys
 import zlib
 
-from ..avro import  io as avro_io
+from ..avro import avro_io
 from ..avro import schema
 
+PY3 = sys.version_info[0] == 3
 
 logger = logging.getLogger(__name__)
 
@@ -36,11 +38,12 @@ logger = logging.getLogger(__name__)
 # Version of the container file:
 VERSION = 1
 
-# Magic code that starts a data container file:
-MAGIC = b'Obj' + bytes([VERSION])
-
-# Size of the magic code, in number of bytes:
-MAGIC_SIZE = len(MAGIC)
+if PY3:
+  MAGIC = b'Obj' + bytes([VERSION])
+  MAGIC_SIZE = len(MAGIC)
+else:
+  MAGIC = 'Obj' + chr(VERSION)
+  MAGIC_SIZE = len(MAGIC)
 
 # Size of the synchronization marker, in number of bytes:
 SYNC_SIZE = 16
@@ -253,13 +256,6 @@ class DataFileReader(object):
       # "raw" (no zlib headers) decompression.  See zlib.h.
       uncompressed = zlib.decompress(data, -15)
       self._datum_decoder = avro_io.BinaryDecoder(io.BytesIO(uncompressed))
-    elif self.codec == 'snappy':
-      # Compressed data includes a 4-byte CRC32 checksum
-      length = self.raw_decoder.read_long()
-      data = self.raw_decoder.read(length - 4)
-      uncompressed = snappy.decompress(data)
-      self._datum_decoder = avro_io.BinaryDecoder(io.BytesIO(uncompressed))
-      self.raw_decoder.check_crc32(uncompressed);
     else:
       raise DataFileException("Unknown codec: %r" % self.codec)
 
@@ -291,6 +287,10 @@ class DataFileReader(object):
     datum = self.datum_reader.read(self.datum_decoder)
     self._block_count -= 1
     return datum
+
+  # PY2
+  def next(self):
+    return self.__next__()
 
   def close(self):
     """Close this reader."""

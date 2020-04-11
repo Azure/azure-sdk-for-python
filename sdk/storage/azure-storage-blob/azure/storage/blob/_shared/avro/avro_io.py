@@ -45,8 +45,12 @@ import binascii
 import json
 import logging
 import struct
+import sys
 
 from ..avro import schema
+
+
+PY3 = sys.version_info[0] == 3
 
 logger = logging.getLogger(__name__)
 
@@ -220,11 +224,14 @@ class BinaryDecoder(object):
     that many bytes of UTF-8 encoded character data.
     """
     input_bytes = self.read_bytes()
-    try:
-      return input_bytes.decode('utf-8')
-    except UnicodeDecodeError as exn:
-      logger.error('Invalid UTF-8 input bytes: %r', input_bytes)
-      raise exn
+    if PY3:
+      try:
+        return input_bytes.decode('utf-8')
+      except UnicodeDecodeError as exn:
+        logger.error('Invalid UTF-8 input bytes: %r', input_bytes)
+        raise exn
+    else:
+      return unicode(input_bytes, "utf-8")
 
   def check_crc32(self, bytes):
     checksum = STRUCT_CRC32.unpack(self.read(4))[0];

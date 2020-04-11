@@ -42,8 +42,14 @@ import abc
 import json
 import logging
 import re
+import sys
 import warnings
-from types import MappingProxyType
+from six import with_metaclass
+
+PY2 = sys.version_info[0] == 2
+
+if PY2:
+    str = unicode
 
 logger = logging.getLogger(__name__)
 
@@ -149,18 +155,8 @@ class SchemaParseException(AvroException):
   """Error while parsing a JSON schema descriptor."""
   pass
 
-# ------------------------------------------------------------------------------
-# Utilities
-class MappingProxyEncoder(json.JSONEncoder):
-  def default(self, obj):
-    if isinstance(obj, MappingProxyType):
-      return obj.copy()
-    return json.JSONEncoder.default(self, obj)
 
-# ------------------------------------------------------------------------------
-
-
-class Schema(object, metaclass=abc.ABCMeta):
+class Schema(with_metaclass(abc.ABCMeta, object)):
   """Abstract base class for all Schema classes."""
 
   def __init__(self, type, other_props=None):
@@ -205,9 +201,9 @@ class Schema(object, metaclass=abc.ABCMeta):
     JSON properties of this schema are directly generated from this dict.
 
     Returns:
-      A read-only dictionary of properties associated to this schema.
+      A dictionary of properties associated to this schema.
     """
-    return MappingProxyType(self._props)
+    return self._props
 
   @property
   def other_props(self):
@@ -216,7 +212,7 @@ class Schema(object, metaclass=abc.ABCMeta):
 
   def __str__(self):
     """Returns: the JSON representation of this schema."""
-    return json.dumps(self.to_json(), cls=MappingProxyEncoder)
+    return json.dumps(self.to_json())
 
   @abc.abstractmethod
   def to_json(self, names):
@@ -955,7 +951,7 @@ class RecordSchema(NamedSchema):
     Args:
       fields: iterable of field schema.
     Returns:
-      A read-only map of field schemas, indexed by name.
+      A map of field schemas, indexed by name.
     """
     field_map = {}
     for field in fields:
@@ -963,7 +959,7 @@ class RecordSchema(NamedSchema):
         raise SchemaParseException(
           'Duplicate record field name %r.' % field.name)
       field_map[field.name] = field
-    return MappingProxyType(field_map)
+    return field_map
 
   def __init__(
           self,

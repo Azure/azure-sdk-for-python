@@ -9,9 +9,9 @@
 import inspect
 import os
 import unittest
-
+from io import open
 from azure.storage.blob._shared.avro.datafile import DataFileReader
-from azure.storage.blob._shared.avro.io import DatumReader
+from azure.storage.blob._shared.avro.avro_io import DatumReader
 
 SCHEMAS_TO_VALIDATE = (
   ('"null"', None),
