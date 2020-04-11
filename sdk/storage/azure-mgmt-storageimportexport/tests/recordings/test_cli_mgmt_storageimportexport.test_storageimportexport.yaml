@@ -6,7 +6,7 @@ interactions:
       "Street1", "streetAddress2": "street2", "city": "Redmond", "stateOrProvince":
       "wa", "postalCode": "98007", "countryOrRegion": "USA", "phone": "4250000000",
       "email": "Test@contoso.com"}, "diagnosticsPath": "waimportexport", "logLevel":
-      "Verbose", "backupDriveManifest": true, "driveList": [{"driveId": "9CA995BB",
+      "Verbose", "backupDriveManifest": true, "driveList": [{"driveId": "9CA995AA",
       "bitLockerKey": "238810-662376-448998-450120-652806-203390-606320-483076", "manifestFile":
       "\\\\\\\\\\\\\\\\DriveManifest.xml", "manifestHash": "109B21108597EF36D5785F08303F3638",
       "driveHeaderHash": ""}]}}\\\''\'''''
@@ -31,7 +31,7 @@ interactions:
       string: '{"properties":{"storageAccountId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storageimportexport_test_storageimportexportcdb9187c/providers/Microsoft.Storage/storageAccounts/gentest","jobType":"Import","returnAddress":{"recipientName":"Tets","streetAddress1":"Street1","streetAddress2":"street2","city":"Redmond","stateOrProvince":"wa","postalCode":"98007","countryOrRegion":"USA","phone":"4250000000","email":"Test@contoso.com"},"shippingInformation":{"recipientName":"Microsoft
         Azure Import/Export Service","streetAddress1":"3020 Coronado","streetAddress2":"","city":"Santa
         Clara","stateOrProvince":"CA","postalCode":"95054","countryOrRegion":"USA","phone":"408
-        352 7600"},"diagnosticsPath":"waimportexport","logLevel":"Verbose","backupDriveManifest":true,"cancelRequested":false,"state":"Creating","driveList":[{"driveId":"9CA995BB","manifestFile":"\\DriveManifest.xml","manifestHash":"109B21108597EF36D5785F08303F3638","driveHeaderHash":"","state":"Specified"}],"provisioningState":"Succeeded","encryptionKey":{"kekType":"MicrosoftManaged"}},"identity":{"type":"None"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storageimportexport_test_storageimportexportcdb9187c/providers/Microsoft.ImportExport/jobs/myJob","name":"myJob","type":"Microsoft.ImportExport/jobs","location":"West
+        352 7600"},"diagnosticsPath":"waimportexport","logLevel":"Verbose","backupDriveManifest":true,"cancelRequested":false,"state":"Creating","driveList":[{"driveId":"9CA995AA","manifestFile":"\\DriveManifest.xml","manifestHash":"109B21108597EF36D5785F08303F3638","driveHeaderHash":"","state":"Specified"}],"provisioningState":"Succeeded","encryptionKey":{"kekType":"MicrosoftManaged"}},"identity":{"type":"None"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storageimportexport_test_storageimportexportcdb9187c/providers/Microsoft.ImportExport/jobs/myJob","name":"myJob","type":"Microsoft.ImportExport/jobs","location":"West
         US"}'
     headers:
       cache-control:
@@ -41,7 +41,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Mon, 06 Apr 2020 17:19:04 GMT
+      - Sat, 11 Apr 2020 11:00:25 GMT
       expires:
       - '-1'
       pragma:
@@ -76,7 +76,7 @@ interactions:
       string: '{"properties":{"storageAccountId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storageimportexport_test_storageimportexportcdb9187c/providers/Microsoft.Storage/storageAccounts/gentest","jobType":"Import","returnAddress":{"recipientName":"Tets","streetAddress1":"Street1","streetAddress2":"street2","city":"Redmond","stateOrProvince":"wa","postalCode":"98007","countryOrRegion":"USA","phone":"4250000000","email":"Test@contoso.com"},"shippingInformation":{"recipientName":"Microsoft
         Azure Import/Export Service","streetAddress1":"3020 Coronado","streetAddress2":"","city":"Santa
         Clara","stateOrProvince":"CA","postalCode":"95054","countryOrRegion":"USA","phone":"408
-        352 7600"},"diagnosticsPath":"waimportexport","logLevel":"Verbose","backupDriveManifest":true,"cancelRequested":false,"state":"Creating","driveList":[{"driveId":"9CA995BB","manifestFile":"\\DriveManifest.xml","manifestHash":"109B21108597EF36D5785F08303F3638","driveHeaderHash":"","state":"Specified"}],"provisioningState":"Succeeded","encryptionKey":{"kekType":"MicrosoftManaged"}},"identity":{"type":"None"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storageimportexport_test_storageimportexportcdb9187c/providers/Microsoft.ImportExport/jobs/myJob","name":"myJob","type":"Microsoft.ImportExport/jobs","location":"West
+        352 7600"},"diagnosticsPath":"waimportexport","logLevel":"Verbose","backupDriveManifest":true,"cancelRequested":false,"state":"Creating","driveList":[{"driveId":"9CA995AA","manifestFile":"\\DriveManifest.xml","manifestHash":"109B21108597EF36D5785F08303F3638","driveHeaderHash":"","state":"Specified"}],"provisioningState":"Succeeded","encryptionKey":{"kekType":"MicrosoftManaged"}},"identity":{"type":"None"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storageimportexport_test_storageimportexportcdb9187c/providers/Microsoft.ImportExport/jobs/myJob","name":"myJob","type":"Microsoft.ImportExport/jobs","location":"West
         US"}'
     headers:
       cache-control:
@@ -86,7 +86,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Mon, 06 Apr 2020 17:19:05 GMT
+      - Sat, 11 Apr 2020 11:00:26 GMT
       expires:
       - '-1'
       pragma:
@@ -132,7 +132,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Mon, 06 Apr 2020 17:19:06 GMT
+      - Sat, 11 Apr 2020 11:00:28 GMT
       expires:
       - '-1'
       pragma:
@@ -173,7 +173,7 @@ interactions:
       string: '{"properties":{"storageAccountId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storageimportexport_test_storageimportexportcdb9187c/providers/Microsoft.Storage/storageAccounts/gentest","jobType":"Import","returnAddress":{"recipientName":"Tets","streetAddress1":"Street1","streetAddress2":"street2","city":"Redmond","stateOrProvince":"wa","postalCode":"98007","countryOrRegion":"USA","phone":"4250000000","email":"Test@contoso.com"},"shippingInformation":{"recipientName":"Microsoft
         Azure Import/Export Service","streetAddress1":"3020 Coronado","streetAddress2":"","city":"Santa
         Clara","stateOrProvince":"CA","postalCode":"95054","countryOrRegion":"USA","phone":"408
-        352 7600"},"diagnosticsPath":"waimportexport","logLevel":"Verbose","backupDriveManifest":true,"cancelRequested":false,"state":"Creating","driveList":[{"driveId":"9CA995BB","manifestFile":"\\DriveManifest.xml","manifestHash":"109B21108597EF36D5785F08303F3638","driveHeaderHash":"","state":"Specified"}],"provisioningState":"Succeeded","encryptionKey":{"kekType":"MicrosoftManaged"}},"identity":{"type":"None"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storageimportexport_test_storageimportexportcdb9187c/providers/Microsoft.ImportExport/jobs/myJob","name":"myJob","type":"Microsoft.ImportExport/jobs","location":"West
+        352 7600"},"diagnosticsPath":"waimportexport","logLevel":"Verbose","backupDriveManifest":true,"cancelRequested":false,"state":"Creating","driveList":[{"driveId":"9CA995AA","manifestFile":"\\DriveManifest.xml","manifestHash":"109B21108597EF36D5785F08303F3638","driveHeaderHash":"","state":"Specified"}],"provisioningState":"Succeeded","encryptionKey":{"kekType":"MicrosoftManaged"}},"identity":{"type":"None"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storageimportexport_test_storageimportexportcdb9187c/providers/Microsoft.ImportExport/jobs/myJob","name":"myJob","type":"Microsoft.ImportExport/jobs","location":"West
         US"}'
     headers:
       cache-control:
@@ -183,7 +183,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Mon, 06 Apr 2020 17:19:08 GMT
+      - Sat, 11 Apr 2020 11:00:29 GMT
       expires:
       - '-1'
       pragma:
@@ -228,7 +228,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 06 Apr 2020 17:19:10 GMT
+      - Sat, 11 Apr 2020 11:00:31 GMT
       expires:
       - '-1'
       pragma:
