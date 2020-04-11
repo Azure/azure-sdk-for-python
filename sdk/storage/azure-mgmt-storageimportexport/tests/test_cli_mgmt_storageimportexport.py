@@ -35,7 +35,6 @@ class MgmtStorageImportExportTest(AzureMgmtTestCase):
     @StorageAccountPreparer(location=AZURE_LOCATION, name_prefix='gentest')
     def test_storageimportexport(self, resource_group, storage_account):
 
-        SERVICE_NAME = "myapimrndxyz"
         SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
         RESOURCE_GROUP = resource_group.name
         STORAGE_ACCOUNT_NAME = storage_account.name
