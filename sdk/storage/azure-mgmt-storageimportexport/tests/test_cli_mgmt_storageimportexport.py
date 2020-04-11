@@ -45,7 +45,7 @@ class MgmtStorageImportExportTest(AzureMgmtTestCase):
         BODY = {
           "location": "West US",
           "properties": {
-            "storage_account_id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.ClassicStorage/storageAccounts/" + STORAGE_ACCOUNT_NAME + "",
+            "storage_account_id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Storage/storageAccounts/" + STORAGE_ACCOUNT_NAME + "",
             "job_type": "Import",
             "return_address": {
               "recipient_name": "Tets",
@@ -63,7 +63,7 @@ class MgmtStorageImportExportTest(AzureMgmtTestCase):
             "backup_drive_manifest": True,
             "drive_list": [
               {
-                "drive_id": "9CA995BB",
+                "drive_id": "9CA995AA",
                 "bit_locker_key": "238810-662376-448998-450120-652806-203390-606320-483076",
                 "manifest_file": "\\DriveManifest.xml",
                 "manifest_hash": "109B21108597EF36D5785F08303F3638",
