@@ -19,9 +19,9 @@ class TestTraining(FormRecognizerTest):
 
     @GlobalFormAndStorageAccountPreparer()
     @GlobalTrainingAccountPreparer()
-    def test_training(self, training_client, container_sas_url):
+    def test_training(self, client, container_sas_url):
 
-        poller = training_client.begin_training(container_sas_url)
+        poller = client.begin_training(container_sas_url)
         model = poller.result()
 
         self.assertIsNotNone(model.model_id)
@@ -42,17 +42,17 @@ class TestTraining(FormRecognizerTest):
 
     @GlobalFormAndStorageAccountPreparer()
     @GlobalTrainingAccountPreparer()
-    def test_training_transform(self, training_client, container_sas_url):
+    def test_training_transform(self, client, container_sas_url):
 
         raw_response = []
 
         def callback(response):
-            raw_model = training_client._client._deserialize(Model, response)
+            raw_model = client._client._deserialize(Model, response)
             custom_model = CustomFormModel._from_generated(raw_model)
             raw_response.append(raw_model)
             raw_response.append(custom_model)
 
-        poller = training_client.begin_training(container_sas_url, cls=callback)
+        poller = client.begin_training(container_sas_url, cls=callback)
         model = poller.result()
 
         raw_model = raw_response[0]
@@ -61,9 +61,9 @@ class TestTraining(FormRecognizerTest):
 
     @GlobalFormAndStorageAccountPreparer()
     @GlobalTrainingAccountPreparer()
-    def test_training_with_labels(self, training_client, container_sas_url):
+    def test_training_with_labels(self, client, container_sas_url):
 
-        poller = training_client.begin_training(container_sas_url, use_labels=True)
+        poller = client.begin_training(container_sas_url, use_labels=True)
         model = poller.result()
 
         self.assertIsNotNone(model.model_id)
@@ -84,17 +84,17 @@ class TestTraining(FormRecognizerTest):
 
     @GlobalFormAndStorageAccountPreparer()
     @GlobalTrainingAccountPreparer()
-    def test_training_with_labels_transform(self, training_client, container_sas_url):
+    def test_training_with_labels_transform(self, client, container_sas_url):
 
         raw_response = []
 
         def callback(response):
-            raw_model = training_client._client._deserialize(Model, response)
+            raw_model = client._client._deserialize(Model, response)
             custom_model = CustomFormModel._from_generated(raw_model)
             raw_response.append(raw_model)
             raw_response.append(custom_model)
 
-        poller = training_client.begin_training(container_sas_url, use_labels=True, cls=callback)
+        poller = client.begin_training(container_sas_url, use_labels=True, cls=callback)
         model = poller.result()
 
         raw_model = raw_response[0]
@@ -103,9 +103,9 @@ class TestTraining(FormRecognizerTest):
 
     @GlobalFormAndStorageAccountPreparer()
     @GlobalTrainingAccountPreparer()
-    def test_training_with_files_filter(self, training_client, container_sas_url):
+    def test_training_with_files_filter(self, client, container_sas_url):
 
-        poller = training_client.begin_training(container_sas_url, include_sub_folders=True)
+        poller = client.begin_training(container_sas_url, include_sub_folders=True)
         model = poller.result()
 
         self.assertIsNotNone(model.model_id)

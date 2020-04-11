@@ -5,23 +5,39 @@
 # ------------------------------------
 
 import functools
+from azure.core.pipeline.transport import AioHttpTransport
+from multidict import CIMultiDict, CIMultiDictProxy
 from azure.ai.formrecognizer._generated.models import Model
 from azure.ai.formrecognizer._models import CustomFormModel
-from azure.ai.formrecognizer.aio import FormTrainingClient
+from azure.ai.formrecognizer.aio import FormRecognizerClient
 from testcase import FormRecognizerTest, GlobalFormRecognizerAccountPreparer, GlobalFormAndStorageAccountPreparer
 from testcase import GlobalTrainingAccountPreparer as _GlobalTrainingAccountPreparer
 from asynctestcase import AsyncFormRecognizerTest
 
-GlobalTrainingAccountPreparer = functools.partial(_GlobalTrainingAccountPreparer, FormTrainingClient)
+GlobalTrainingAccountPreparer = functools.partial(_GlobalTrainingAccountPreparer, FormRecognizerClient)
 
 
+class AiohttpTestTransport(AioHttpTransport):
+    """Workaround to vcrpy bug
+
+    # records location header as a list of char instead of str
+    """
+
+    async def send(self, request, **config):
+        response = await super(AiohttpTestTransport, self).send(request, **config)
+        if not isinstance(response.headers, CIMultiDictProxy):
+            if response.headers.get("location") and isinstance(response.headers["location"], list):
+                response.headers["location"] = "".join(response.headers.get("location"))
+            response.headers = CIMultiDictProxy(CIMultiDict(response.internal_response.headers))
+        return response
 
 
 class TestTrainingAsync(AsyncFormRecognizerTest):
 
     @GlobalFormAndStorageAccountPreparer()
     @GlobalTrainingAccountPreparer()
-    async def test_training(self, training_client, container_sas_url):
+    async def test_training(self, client, container_sas_url):
+        training_client = client.get_form_training_client(transport=AiohttpTestTransport())
         model = await training_client.training(container_sas_url)
 
         self.assertIsNotNone(model.model_id)
@@ -42,7 +58,8 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
 
     @GlobalFormAndStorageAccountPreparer()
     @GlobalTrainingAccountPreparer()
-    async def test_training_transform(self, training_client, container_sas_url):
+    async def test_training_transform(self, client, container_sas_url):
+        training_client = client.get_form_training_client(transport=AiohttpTestTransport())
 
         raw_response = []
 
@@ -60,7 +77,8 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
 
     @GlobalFormAndStorageAccountPreparer()
     @GlobalTrainingAccountPreparer()
-    async def test_training_with_labels(self, training_client, container_sas_url):
+    async def test_training_with_labels(self, client, container_sas_url):
+        training_client = client.get_form_training_client(transport=AiohttpTestTransport())
 
         model = await training_client.training(container_sas_url, use_labels=True)
 
@@ -82,7 +100,8 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
 
     @GlobalFormAndStorageAccountPreparer()
     @GlobalTrainingAccountPreparer()
-    async def test_training_with_labels_transform(self, training_client, container_sas_url):
+    async def test_training_with_labels_transform(self, client, container_sas_url):
+        training_client = client.get_form_training_client(transport=AiohttpTestTransport())
 
         raw_response = []
 
@@ -100,7 +119,8 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
 
     @GlobalFormAndStorageAccountPreparer()
     @GlobalTrainingAccountPreparer()
-    async def test_training_with_files_filter(self, training_client, container_sas_url):
+    async def test_training_with_files_filter(self, client, container_sas_url):
+        training_client = client.get_form_training_client(transport=AiohttpTestTransport())
 
         model = await training_client.training(container_sas_url, include_sub_folders=True)
         self.assertEqual(len(model.training_documents), 6)

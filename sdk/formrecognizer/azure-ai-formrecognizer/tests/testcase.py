@@ -10,8 +10,6 @@ from datetime import datetime, timedelta
 import os
 import pytest
 import re
-from azure.core.pipeline.transport import AioHttpTransport
-from multidict import CIMultiDict, CIMultiDictProxy
 from azure.core.credentials import AzureKeyCredential
 from azure.storage.blob import ContainerSasPermissions, generate_container_sas, ContainerClient
 from devtools_testutils import (
@@ -23,20 +21,6 @@ from devtools_testutils import (
 from devtools_testutils.cognitiveservices_testcase import CognitiveServicesAccountPreparer
 from devtools_testutils.storage_testcase import StorageAccountPreparer
 from azure_devtools.scenario_tests import ReplayableTest
-
-
-class AiohttpTestTransport(AioHttpTransport):
-    """Workaround to vcrpy bug
-
-    # records location header as a list of char instead of str
-    """
-    async def send(self, request, **config):
-        response = await super(AiohttpTestTransport, self).send(request, **config)
-        if not isinstance(response.headers, CIMultiDictProxy):
-            if response.headers.get("location") and isinstance(response.headers["location"], list):
-                response.headers["location"] = "".join(response.headers.get("location"))
-            response.headers = CIMultiDictProxy(CIMultiDict(response.internal_response.headers))
-        return response
 
 
 class FormRecognizerTest(AzureTestCase):
@@ -301,13 +285,13 @@ class GlobalTrainingAccountPreparer(AzureMgmtPreparer):
         self.client_cls = client_cls
 
     def create_resource(self, name, **kwargs):
-        training_client, container_sas_url = self.create_form_client_and_container_sas_url(**kwargs)
+        client, container_sas_url = self.create_form_client_and_container_sas_url(**kwargs)
         if self.is_live:
             self.test_class_instance.scrubber.register_name_pair(
                 container_sas_url,
                 "containersasurl"
             )
-        return {"training_client": training_client,
+        return {"client": client,
                 "container_sas_url": container_sas_url}
 
     def create_form_client_and_container_sas_url(self, **kwargs):
@@ -353,14 +337,6 @@ class GlobalTrainingAccountPreparer(AzureMgmtPreparer):
 
         else:
             container_sas_url = "containersasurl"
-
-        if self.moniker.find("async") != -1:
-            return self.client_cls(
-                form_recognizer_account,
-                AzureKeyCredential(form_recognizer_account_key),
-                transport=AiohttpTestTransport(),
-                **self.client_kwargs
-            ), container_sas_url
 
         return self.client_cls(
             form_recognizer_account,
