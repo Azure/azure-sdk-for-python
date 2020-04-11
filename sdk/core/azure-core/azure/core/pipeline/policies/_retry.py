@@ -263,12 +263,20 @@ class RetryPolicy(HTTPPolicy):
         code is on the list of status codes to be retried upon on the
         presence of the aforementioned header.
 
+        The behavior is:
+        -	If status_code < 400: don’t retry
+        -	Else if Retry-After present: retry
+        -	Else: retry based on the safe status code list ([408, 429, 500, 502, 503, 504])
+
+
         :param dict settings: The retry settings.
         :param response: The PipelineResponse object
         :type response: ~azure.core.pipeline.PipelineResponse
         :return: True if method/status code is retryable. False if not retryable.
         :rtype: bool
         """
+        if response.http_response.status_code < 400:
+            return False
         has_retry_after = bool(response.http_response.headers.get("Retry-After"))
         if has_retry_after and self._respect_retry_after_header:
             return True
