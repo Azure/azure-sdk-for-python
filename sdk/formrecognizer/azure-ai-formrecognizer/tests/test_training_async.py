@@ -18,17 +18,17 @@ GlobalTrainingAccountPreparer = functools.partial(_GlobalTrainingAccountPreparer
 
 
 class AiohttpTestTransport(AioHttpTransport):
-    """Workaround to vcrpy bug
+    """Workaround to vcrpy==3.0.0 bug
 
     # records location header as a list of char instead of str
     """
 
     async def send(self, request, **config):
         response = await super(AiohttpTestTransport, self).send(request, **config)
-        if not isinstance(response.headers, CIMultiDictProxy):
-            if response.headers.get("location") and isinstance(response.headers["location"], list):
-                response.headers["location"] = "".join(response.headers.get("location"))
-            response.headers = CIMultiDictProxy(CIMultiDict(response.internal_response.headers))
+        if response.headers.get("location") and isinstance(response.headers["location"], list):
+            response_dict = {header: value for header, value in response.headers.items()}
+            response_dict["location"] = "".join(response.headers.get("location"))
+            response.headers = CIMultiDictProxy(CIMultiDict(response_dict))
         return response
 
 
