@@ -34,12 +34,14 @@ class MgmtPeeringTest(AzureMgmtTestCase):
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_peering(self, resource_group):
 
-        RESOURCE_GROUP = resource_group.name
         SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
-        PEERING_SERVICE_NAME = "myPeeringService"
+        RESOURCE_GROUP = resource_group.name
         PEER_ASN_NAME = "myPeerAsn"
-        PREFIX_NAME = "prefix"
         PEERING_NAME = "myPeering"
+        REGISTERED_ASN_NAME = "myRegisteredAsn"
+        REGISTERED_PREFIX_NAME = "myRegisteredPrefix"
+        PEERING_SERVICE_NAME = "myPeeringService"
+        PREFIX_NAME = "myPrefix"
 
         # /PeerAsns/put/Create a peer ASN[put]
         BODY = {
@@ -71,39 +73,37 @@ class MgmtPeeringTest(AzureMgmtTestCase):
             "name": "Basic_Exchange_Free"
           },
           "kind": "Exchange",
-          "properties": {
-            "exchange": {
-              "connections": [
-                {
-                  "peering_dbfacility_id": "99999",
-                  "bgp_session": {
-                    "peer_session_ipv4address": "192.168.2.1",
-                    "peer_session_ipv6address": "fd00::1",
-                    "max_prefixes_advertised_v4": "1000",
-                    "max_prefixes_advertised_v6": "100",
-                    "md5authentication_key": "test-md5-auth-key"
-                  },
-                  "connection_identifier": "CE495334-0E94-4E51-8164-8116D6CD284D"
+          "location": "eastus",
+          "exchange": {
+            "connections": [
+              {
+                "peering_dbfacility_id": "99999",
+                "bgp_session": {
+                  "peer_session_ipv4address": "192.168.2.1",
+                  "peer_session_ipv6address": "fd00::1",
+                  "max_prefixes_advertised_v4": "1000",
+                  "max_prefixes_advertised_v6": "100",
+                  "md5authentication_key": "test-md5-auth-key"
                 },
-                {
-                  "peering_dbfacility_id": "99999",
-                  "bgp_session": {
-                    "peer_session_ipv4address": "192.168.2.2",
-                    "peer_session_ipv6address": "fd00::2",
-                    "max_prefixes_advertised_v4": "1000",
-                    "max_prefixes_advertised_v6": "100",
-                    "md5authentication_key": "test-md5-auth-key"
-                  },
-                  "connection_identifier": "CDD8E673-CB07-47E6-84DE-3739F778762B"
-                }
-              ],
-              "peer_asn": {
-                "id": "/subscriptions/" + SUBSCRIPTION_ID + "/providers/Microsoft.Peering/peerAsns/" + PEER_ASN_NAME + ""
+                "connection_identifier": "CE495334-0E94-4E51-8164-8116D6CD284D"
+              },
+              {
+                "peering_dbfacility_id": "99999",
+                "bgp_session": {
+                  "peer_session_ipv4address": "192.168.2.2",
+                  "peer_session_ipv6address": "fd00::2",
+                  "max_prefixes_advertised_v4": "1000",
+                  "max_prefixes_advertised_v6": "100",
+                  "md5authentication_key": "test-md5-auth-key"
+                },
+                "connection_identifier": "CDD8E673-CB07-47E6-84DE-3739F778762B"
               }
-            },
-            "peering_location": "peeringLocation0"
+            ],
+            "peer_asn": {
+              "id": "/subscriptions/" + SUBSCRIPTION_ID + "/providers/Microsoft.Peering/peerAsns/" + PEER_ASN_NAME + ""
+            }
           },
-          "location": "eastus"
+          "peering_location": "peeringLocation0"
         }
         # result = self.mgmt_client.peerings.create_or_update(resource_group_name=RESOURCE_GROUP, peering_name=PEERING_NAME, body=BODY)
 
@@ -113,32 +113,30 @@ class MgmtPeeringTest(AzureMgmtTestCase):
             "name": "Premium_Direct_Free"
           },
           "kind": "Direct",
-          "properties": {
-            "direct": {
-              "connections": [
-                {
-                  "bandwidth_in_mbps": "10000",
-                  "session_address_provider": "Peer",
-                  "use_for_peering_service": True,
-                  "peering_dbfacility_id": "63",
-                  "bgp_session": {
-                    "session_prefix_v4": "192.168.0.0/24",
-                    "microsoft_session_ipv4address": "192.168.0.123",
-                    "peer_session_ipv4address": "192.168.0.234",
-                    "max_prefixes_advertised_v4": "1000",
-                    "max_prefixes_advertised_v6": "100"
-                  },
-                  "connection_identifier": "5F4CB5C7-6B43-4444-9338-9ABC72606C16"
-                }
-              ],
-              "peer_asn": {
-                "id": "/subscriptions/" + SUBSCRIPTION_ID + "/providers/Microsoft.Peering/peerAsns/" + PEER_ASN_NAME + ""
-              },
-              "direct_peering_type": "IxRs"
+          "location": "eastus",
+          "direct": {
+            "connections": [
+              {
+                "bandwidth_in_mbps": "10000",
+                "session_address_provider": "Peer",
+                "use_for_peering_service": True,
+                "peering_dbfacility_id": "99999",
+                "bgp_session": {
+                  "session_prefix_v4": "192.168.0.0/24",
+                  "microsoft_session_ipv4address": "192.168.0.123",
+                  "peer_session_ipv4address": "192.168.0.234",
+                  "max_prefixes_advertised_v4": "1000",
+                  "max_prefixes_advertised_v6": "100"
+                },
+                "connection_identifier": "5F4CB5C7-6B43-4444-9338-9ABC72606C16"
+              }
+            ],
+            "peer_asn": {
+              "id": "/subscriptions/" + SUBSCRIPTION_ID + "/providers/Microsoft.Peering/peerAsns/" + PEER_ASN_NAME + ""
             },
-            "peering_location": "peeringLocation0"
+            "direct_peering_type": "IxRs"
           },
-          "location": "eastus"
+          "peering_location": "peeringLocation0"
         }
         # result = self.mgmt_client.peerings.create_or_update(resource_group_name=RESOURCE_GROUP, peering_name=PEERING_NAME, body=BODY)
 
@@ -148,13 +146,14 @@ class MgmtPeeringTest(AzureMgmtTestCase):
             "name": "Basic_Direct_Free"
           },
           "kind": "Direct",
+          "location": "eastus",
           "direct": {
             "connections": [
               {
                 "bandwidth_in_mbps": "10000",
                 "session_address_provider": "Peer",
                 "use_for_peering_service": False,
-                "peering_dbfacility_id": "86",
+                "peering_dbfacility_id": "99999",
                 "bgp_session": {
                   "session_prefix_v4": "192.168.0.0/31",
                   "session_prefix_v6": "fd00::0/127",
@@ -168,7 +167,7 @@ class MgmtPeeringTest(AzureMgmtTestCase):
                 "bandwidth_in_mbps": "10000",
                 "session_address_provider": "Microsoft",
                 "use_for_peering_service": True,
-                "peering_dbfacility_id": "71",
+                "peering_dbfacility_id": "99999",
                 "connection_identifier": "8AB00818-D533-4504-A25A-03A17F61201C"
               }
             ],
@@ -177,24 +176,21 @@ class MgmtPeeringTest(AzureMgmtTestCase):
             },
             "direct_peering_type": "Edge"
           },
-          "peering_location": "Seattle",
-          "location": "eastus"
+          "peering_location": "peeringLocation0"
         }
-        # result = self.mgmt_client.peerings.create_or_update(resource_group_name=RESOURCE_GROUP, peering_name=PEERING_NAME, peering=BODY)
+        # result = self.mgmt_client.peerings.create_or_update(resource_group_name=RESOURCE_GROUP, peering_name=PEERING_NAME, body=BODY)
 
         # /PeeringServices/put/Create a  peering service[put]
         BODY = {
+          "location": "eastus",
           "peering_service_location": "California",
           "peering_service_provider": "Kordia Limited",
-          "location": "eastus"
         }
         result = self.mgmt_client.peering_services.create_or_update(resource_group_name=RESOURCE_GROUP, peering_service_name=PEERING_SERVICE_NAME, peering_service=BODY)
 
         # /RegisteredAsns/put/Create or update a registered ASN for the peering[put]
         BODY = {
-          "properties": {
-            "asn": "65000"
-          }
+          "asn": "65000"
         }
         # result = self.mgmt_client.registered_asns.create_or_update(resource_group_name=RESOURCE_GROUP, peering_name=PEERING_NAME, registered_asn_name=REGISTERED_ASN_NAME, body=BODY)
 
@@ -203,9 +199,7 @@ class MgmtPeeringTest(AzureMgmtTestCase):
 
         # /RegisteredPrefixes/put/Create or update a registered prefix for the peering[put]
         BODY = {
-          "properties": {
-            "prefix": "10.22.20.0/24"
-          }
+          "prefix": "10.22.20.0/24"
         }
         # result = self.mgmt_client.registered_prefixes.create_or_update(resource_group_name=RESOURCE_GROUP, peering_name=PEERING_NAME, registered_prefix_name=REGISTERED_PREFIX_NAME, body=BODY)
 
@@ -273,29 +267,21 @@ class MgmtPeeringTest(AzureMgmtTestCase):
         result = self.mgmt_client.operations.list()
 
         # /PeeringServices/patch/Update peering service tags[patch]
-        BODY = {
-          "tags": {
-            "tag0": "value0",
-            "tag1": "value1"
-          }
+        TAGS = {
+          "tag0": "value0",
+          "tag1": "value1"
         }
-        # result = self.mgmt_client.peering_services.update(resource_group_name=RESOURCE_GROUP, peering_service_name=PEERING_SERVICE_NAME, body=BODY)
+        # result = self.mgmt_client.peering_services.update(resource_group_name=RESOURCE_GROUP, peering_service_name=PEERING_SERVICE_NAME, tags= + ToSnakeCase(k).toUpperCase() + )
 
         # /Peerings/patch/Update peering tags[patch]
-        BODY = {
-          "tags": {
-            "tag0": "value0",
-            "tag1": "value1"
-          }
+        TAGS = {
+          "tag0": "value0",
+          "tag1": "value1"
         }
-        # result = self.mgmt_client.peerings.update(resource_group_name=RESOURCE_GROUP, peering_name=PEERING_NAME, body=BODY)
+        # result = self.mgmt_client.peerings.update(resource_group_name=RESOURCE_GROUP, peering_name=PEERING_NAME, tags= + ToSnakeCase(k).toUpperCase() + )
 
         # //post/Check if peering service provider is available in customer location[post]
-        BODY = {
-          "peering_service_location": "California",
-          "peering_service_provider": "Kordia Limited"
-        }
-        # result = self.mgmt_client..check_service_provider_availability(body=BODY)
+        # result = self.mgmt_client.check_service_provider_availability(peering_service_location="peeringServiceLocation1", peering_service_provider="peeringServiceProvider1")
 
         # /RegisteredPrefixes/delete/Deletes a registered prefix associated with the peering[delete]
         # result = self.mgmt_client.registered_prefixes.delete(resource_group_name=RESOURCE_GROUP, peering_name=PEERING_NAME, registered_prefix_name=REGISTERED_PREFIX_NAME)
