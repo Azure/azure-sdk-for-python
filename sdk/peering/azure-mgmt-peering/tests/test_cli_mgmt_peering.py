@@ -42,29 +42,27 @@ class MgmtPeeringTest(AzureMgmtTestCase):
 
         # /PeerAsns/put/Create a peer ASN[put]
         BODY = {
-          "properties": {
-            "peer_asn": "65000",
-            "peer_contact_detail": [
-              {
-                "role": "Noc",
-                "email": "noc@contoso.com",
-                "phone": "+1 (234) 567-8999"
-              },
-              {
-                "role": "Policy",
-                "email": "abc@contoso.com",
-                "phone": "+1 (234) 567-8900"
-              },
-              {
-                "role": "Technical",
-                "email": "xyz@contoso.com",
-                "phone": "+1 (234) 567-8900"
-              }
-            ],
-            "peer_name": "Contoso"
-          }
+          "peer_asn": "65000",
+          "peer_contact_detail": [
+            {
+              "role": "Noc",
+              "email": "noc@contoso.com",
+              "phone": "+1 (234) 567-8999"
+            },
+            {
+              "role": "Policy",
+              "email": "abc@contoso.com",
+              "phone": "+1 (234) 567-8900"
+            },
+            {
+              "role": "Technical",
+              "email": "xyz@contoso.com",
+              "phone": "+1 (234) 567-8900"
+            }
+          ],
+          "peer_name": "Contoso"
         }
-        # result = self.mgmt_client.peer_asns.create_or_update(peer_asn_name=PEER_ASN_NAME, body=BODY)
+        result = self.mgmt_client.peer_asns.create_or_update(peer_asn_name=PEER_ASN_NAME, peer_asn=BODY)
 
         # /Peerings/put/Create an exchange peering[put]
         BODY = {
@@ -187,10 +185,8 @@ class MgmtPeeringTest(AzureMgmtTestCase):
 
         # /PeeringServices/put/Create a  peering service[put]
         BODY = {
-          "properties": {
-            "peeringServiceLocation": "state1",
-            "peeringServiceProvider": "serviceProvider1"
-          },
+          "peering_service_location": "California",
+          "peering_service_provider": "Kordia Limited",
           "location": "eastus"
         }
         result = self.mgmt_client.peering_services.create_or_update(resource_group_name=RESOURCE_GROUP, peering_service_name=PEERING_SERVICE_NAME, peering_service=BODY)
@@ -204,7 +200,7 @@ class MgmtPeeringTest(AzureMgmtTestCase):
         # result = self.mgmt_client.registered_asns.create_or_update(resource_group_name=RESOURCE_GROUP, peering_name=PEERING_NAME, registered_asn_name=REGISTERED_ASN_NAME, body=BODY)
 
         # /Prefixes/put/Create or update a prefix for the peering service[put]
-        # result = self.mgmt_client.prefixes.create_or_update(resource_group_name=RESOURCE_GROUP, peering_service_name=PEERING_SERVICE_NAME, prefix_name=PREFIX_NAME, prefix="192.168.1.0/24", peering_service_prefix_key="00000000-0000-0000-0000-000000000000")
+        # result = self.mgmt_client.prefixes.create_or_update(resource_group_name=RESOURCE_GROUP, peering_service_name=PEERING_SERVICE_NAME, prefix_name=PREFIX_NAME, prefix="192.168.1.0/24")
 
         # /RegisteredPrefixes/put/Create or update a registered prefix for the peering[put]
         BODY = {
@@ -297,8 +293,8 @@ class MgmtPeeringTest(AzureMgmtTestCase):
 
         # //post/Check if peering service provider is available in customer location[post]
         BODY = {
-          "peering_service_location": "peeringServiceLocation1",
-          "peering_service_provider": "peeringServiceProvider1"
+          "peering_service_location": "California",
+          "peering_service_provider": "Kordia Limited"
         }
         # result = self.mgmt_client..check_service_provider_availability(body=BODY)
 
@@ -318,7 +314,7 @@ class MgmtPeeringTest(AzureMgmtTestCase):
         # result = self.mgmt_client.peerings.delete(resource_group_name=RESOURCE_GROUP, peering_name=PEERING_NAME)
 
         # /PeerAsns/delete/Delete a peer ASN[delete]
-        # result = self.mgmt_client.peer_asns.delete(peer_asn_name=PEER_ASN_NAME)
+        result = self.mgmt_client.peer_asns.delete(peer_asn_name=PEER_ASN_NAME)
 
 
 #------------------------------------------------------------------------------

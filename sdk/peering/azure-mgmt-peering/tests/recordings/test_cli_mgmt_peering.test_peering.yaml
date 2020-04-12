@@ -1,7 +1,9 @@
 interactions:
 - request:
-    body: '{"properties": {"peeringServiceLocation": "state1", "peeringServiceProvider":
-      "serviceProvider1"}, "location": "eastus"}'
+    body: '{"properties": {"peerAsn": 65000, "peerContactDetail": [{"role": "Noc",
+      "email": "noc@contoso.com", "phone": "+1 (234) 567-8999"}, {"role": "Policy",
+      "email": "abc@contoso.com", "phone": "+1 (234) 567-8900"}, {"role": "Technical",
+      "email": "xyz@contoso.com", "phone": "+1 (234) 567-8900"}], "peerName": "Contoso"}}'
     headers:
       Accept:
       - application/json
@@ -10,7 +12,63 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '120'
+      - '314'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-peering/0.2.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Peering/peerAsns/myPeerAsn?api-version=2020-01-01-preview
+  response:
+    body:
+      string: "{\r\n  \"properties\": {\r\n    \"peerAsn\": 65000,\r\n    \"peerContactDetail\"\
+        : [\r\n      {\r\n        \"role\": \"Default\",\r\n        \"email\": \"\
+        abc@contoso.com\",\r\n        \"phone\": \"+1 (234) 567-8900\"\r\n      },\r\
+        \n      {\r\n        \"role\": \"Default\",\r\n        \"email\": \"xyz@contoso.com\"\
+        \r\n      }\r\n    ],\r\n    \"peerName\": \"Contoso\",\r\n    \"validationState\"\
+        : \"Approved\"\r\n  },\r\n  \"name\": \"MyPeerAsn\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Peering/peerAsns/MyPeerAsn\"\
+        ,\r\n  \"type\": \"Microsoft.Peering/peerAsns\"\r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '530'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Sun, 12 Apr 2020 11:11:21 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-resource-requests:
+      - '99'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"properties": {"peeringServiceLocation": "California", "peeringServiceProvider":
+      "Kordia Limited"}, "location": "eastus"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '122'
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
@@ -22,20 +80,20 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_peering_test_peeringf49b0dec/providers/Microsoft.Peering/peeringServices/myPeeringService?api-version=2020-01-01-preview
   response:
     body:
-      string: "{\r\n  \"properties\": {\r\n    \"peeringServiceLocation\": \"state1\"\
-        ,\r\n    \"peeringServiceProvider\": \"serviceProvider1\",\r\n    \"provisioningState\"\
-        : \"Succeeded\"\r\n  },\r\n  \"location\": \"eastus\",\r\n  \"eTag\": \"8940fe94-1e58-4d6f-b9ae-7e8c8cf49391\"\
+      string: "{\r\n  \"properties\": {\r\n    \"peeringServiceLocation\": \"California\"\
+        ,\r\n    \"peeringServiceProvider\": \"Kordia Limited\",\r\n    \"provisioningState\"\
+        : \"Succeeded\"\r\n  },\r\n  \"location\": \"eastus\",\r\n  \"eTag\": \"d5b081bf-afcd-45df-9d4e-08404e4bfe50\"\
         ,\r\n  \"name\": \"myPeeringService\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_peering_test_peeringf49b0dec/providers/Microsoft.Peering/peeringServices/myPeeringService\"\
         ,\r\n  \"type\": \"Microsoft.Peering/peeringServices\"\r\n}"
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '496'
+      - '498'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sun, 12 Apr 2020 10:33:08 GMT
+      - Sun, 12 Apr 2020 11:11:25 GMT
       expires:
       - '-1'
       pragma:
@@ -45,7 +103,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-resource-requests:
-      - '98'
+      - '99'
     status:
       code: 201
       message: Created
@@ -76,7 +134,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Sun, 12 Apr 2020 10:33:10 GMT
+      - Sun, 12 Apr 2020 11:11:27 GMT
       expires:
       - '-1'
       pragma:
@@ -87,6 +145,47 @@ interactions:
       - nosniff
       x-ms-ratelimit-remaining-subscription-deletes:
       - '14999'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-peering/0.2.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: DELETE
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Peering/peerAsns/myPeerAsn?api-version=2020-01-01-preview
+  response:
+    body:
+      string: ''
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '0'
+      date:
+      - Sun, 12 Apr 2020 11:11:29 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-deletes:
+      - '14998'
     status:
       code: 200
       message: OK
