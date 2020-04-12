@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: '{"properties": {"peerAsn": 65000, "peerContactDetail": [{"role": "Noc",
+    body: '{"properties": {"peerAsn": 65001, "peerContactDetail": [{"role": "Noc",
       "email": "noc@contoso.com", "phone": "+1 (234) 567-8999"}, {"role": "Policy",
       "email": "abc@contoso.com", "phone": "+1 (234) 567-8900"}, {"role": "Technical",
       "email": "xyz@contoso.com", "phone": "+1 (234) 567-8900"}], "peerName": "Contoso"}}'
@@ -24,22 +24,25 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Peering/peerAsns/myPeerAsn?api-version=2020-01-01-preview
   response:
     body:
-      string: "{\r\n  \"properties\": {\r\n    \"peerAsn\": 65000,\r\n    \"peerContactDetail\"\
-        : [\r\n      {\r\n        \"role\": \"Default\",\r\n        \"email\": \"\
-        abc@contoso.com\",\r\n        \"phone\": \"+1 (234) 567-8900\"\r\n      },\r\
-        \n      {\r\n        \"role\": \"Default\",\r\n        \"email\": \"xyz@contoso.com\"\
-        \r\n      }\r\n    ],\r\n    \"peerName\": \"Contoso\",\r\n    \"validationState\"\
-        : \"Approved\"\r\n  },\r\n  \"name\": \"MyPeerAsn\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Peering/peerAsns/MyPeerAsn\"\
+      string: "{\r\n  \"properties\": {\r\n    \"peerAsn\": 65001,\r\n    \"peerContactDetail\"\
+        : [\r\n      {\r\n        \"role\": \"Noc\",\r\n        \"email\": \"noc@contoso.com\"\
+        ,\r\n        \"phone\": \"+1 (234) 567-8999\"\r\n      },\r\n      {\r\n \
+        \       \"role\": \"Policy\",\r\n        \"email\": \"abc@contoso.com\",\r\
+        \n        \"phone\": \"+1 (234) 567-8900\"\r\n      },\r\n      {\r\n    \
+        \    \"role\": \"Technical\",\r\n        \"email\": \"xyz@contoso.com\",\r\
+        \n        \"phone\": \"+1 (234) 567-8900\"\r\n      }\r\n    ],\r\n    \"\
+        peerName\": \"Contoso\",\r\n    \"validationState\": \"Pending\"\r\n  },\r\
+        \n  \"name\": \"myPeerAsn\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Peering/peerAsns/myPeerAsn\"\
         ,\r\n  \"type\": \"Microsoft.Peering/peerAsns\"\r\n}"
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '530'
+      - '687'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sun, 12 Apr 2020 11:11:21 GMT
+      - Sun, 12 Apr 2020 11:38:00 GMT
       expires:
       - '-1'
       pragma:
@@ -53,7 +56,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-resource-requests:
-      - '99'
+      - '98'
     status:
       code: 200
       message: OK
@@ -82,7 +85,7 @@ interactions:
     body:
       string: "{\r\n  \"properties\": {\r\n    \"peeringServiceLocation\": \"California\"\
         ,\r\n    \"peeringServiceProvider\": \"Kordia Limited\",\r\n    \"provisioningState\"\
-        : \"Succeeded\"\r\n  },\r\n  \"location\": \"eastus\",\r\n  \"eTag\": \"d5b081bf-afcd-45df-9d4e-08404e4bfe50\"\
+        : \"Succeeded\"\r\n  },\r\n  \"location\": \"eastus\",\r\n  \"eTag\": \"aafc13eb-9285-4938-8671-3ea37ee2a3a7\"\
         ,\r\n  \"name\": \"myPeeringService\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_peering_test_peeringf49b0dec/providers/Microsoft.Peering/peeringServices/myPeeringService\"\
         ,\r\n  \"type\": \"Microsoft.Peering/peeringServices\"\r\n}"
     headers:
@@ -93,7 +96,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sun, 12 Apr 2020 11:11:25 GMT
+      - Sun, 12 Apr 2020 11:38:03 GMT
       expires:
       - '-1'
       pragma:
@@ -107,6 +110,109 @@ interactions:
     status:
       code: 201
       message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-peering/0.2.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_peering_test_peeringf49b0dec/providers/Microsoft.Peering/peeringServices/myPeeringService?api-version=2020-01-01-preview
+  response:
+    body:
+      string: "{\r\n  \"properties\": {\r\n    \"peeringServiceLocation\": \"California\"\
+        ,\r\n    \"peeringServiceProvider\": \"Kordia Limited\",\r\n    \"provisioningState\"\
+        : \"Succeeded\"\r\n  },\r\n  \"location\": \"eastus\",\r\n  \"eTag\": \"aafc13eb-9285-4938-8671-3ea37ee2a3a7\"\
+        ,\r\n  \"name\": \"myPeeringService\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_peering_test_peeringf49b0dec/providers/Microsoft.Peering/peeringServices/myPeeringService\"\
+        ,\r\n  \"type\": \"Microsoft.Peering/peeringServices\"\r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '498'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Sun, 12 Apr 2020 11:38:03 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-resource-requests:
+      - '599'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-peering/0.2.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Peering/peerAsns/myPeerAsn?api-version=2020-01-01-preview
+  response:
+    body:
+      string: "{\r\n  \"properties\": {\r\n    \"peerAsn\": 65001,\r\n    \"peerContactDetail\"\
+        : [\r\n      {\r\n        \"role\": \"Noc\",\r\n        \"email\": \"noc@contoso.com\"\
+        ,\r\n        \"phone\": \"+1 (234) 567-8999\"\r\n      },\r\n      {\r\n \
+        \       \"role\": \"Policy\",\r\n        \"email\": \"abc@contoso.com\",\r\
+        \n        \"phone\": \"+1 (234) 567-8900\"\r\n      },\r\n      {\r\n    \
+        \    \"role\": \"Technical\",\r\n        \"email\": \"xyz@contoso.com\",\r\
+        \n        \"phone\": \"+1 (234) 567-8900\"\r\n      }\r\n    ],\r\n    \"\
+        peerName\": \"Contoso\",\r\n    \"validationState\": \"Pending\"\r\n  },\r\
+        \n  \"name\": \"myPeerAsn\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Peering/peerAsns/myPeerAsn\"\
+        ,\r\n  \"type\": \"Microsoft.Peering/peerAsns\"\r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '687'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Sun, 12 Apr 2020 11:38:04 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-resource-requests:
+      - '599'
+    status:
+      code: 200
+      message: OK
 - request:
     body: null
     headers:
@@ -134,7 +240,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Sun, 12 Apr 2020 11:11:27 GMT
+      - Sun, 12 Apr 2020 11:38:05 GMT
       expires:
       - '-1'
       pragma:
@@ -175,7 +281,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Sun, 12 Apr 2020 11:11:29 GMT
+      - Sun, 12 Apr 2020 11:38:06 GMT
       expires:
       - '-1'
       pragma:

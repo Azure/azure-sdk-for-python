@@ -42,7 +42,7 @@ class MgmtPeeringTest(AzureMgmtTestCase):
 
         # /PeerAsns/put/Create a peer ASN[put]
         BODY = {
-          "peer_asn": "65000",
+          "peer_asn": "65001",
           "peer_contact_detail": [
             {
               "role": "Noc",
@@ -220,13 +220,13 @@ class MgmtPeeringTest(AzureMgmtTestCase):
         # result = self.mgmt_client.registered_asns.get(resource_group_name=RESOURCE_GROUP, peering_name=PEERING_NAME, registered_asn_name=REGISTERED_ASN_NAME)
 
         # /Prefixes/get/List all the prefixes associated with the peering service[get]
-        # result = self.mgmt_client.prefixes.list_by_peering_service(resource_group_name=RESOURCE_GROUP, peering_service_name=PEERING_SERVICE_NAME)
+        result = self.mgmt_client.prefixes.list_by_peering_service(resource_group_name=RESOURCE_GROUP, peering_service_name=PEERING_SERVICE_NAME)
 
         # /RegisteredPrefixes/get/List all the registered prefixes associated with the peering[get]
         # result = self.mgmt_client.registered_prefixes.list_by_peering(resource_group_name=RESOURCE_GROUP, peering_name=PEERING_NAME)
 
         # /PeeringServices/get/Get a peering service[get]
-        # result = self.mgmt_client.peering_services.get(resource_group_name=RESOURCE_GROUP, peering_service_name=PEERING_SERVICE_NAME)
+        result = self.mgmt_client.peering_services.get(resource_group_name=RESOURCE_GROUP, peering_service_name=PEERING_SERVICE_NAME)
 
         # /RegisteredAsns/get/List all the registered ASNs associated with the peering[get]
         # result = self.mgmt_client.registered_asns.list_by_peering(resource_group_name=RESOURCE_GROUP, peering_name=PEERING_NAME)
@@ -235,43 +235,43 @@ class MgmtPeeringTest(AzureMgmtTestCase):
         # result = self.mgmt_client.peerings.get(resource_group_name=RESOURCE_GROUP, peering_name=PEERING_NAME)
 
         # /PeeringServices/get/List peering services in a resource group[get]
-        # result = self.mgmt_client.peering_services.list_by_resource_group(resource_group_name=RESOURCE_GROUP)
+        result = self.mgmt_client.peering_services.list_by_resource_group(resource_group_name=RESOURCE_GROUP)
 
         # /Peerings/get/List peerings in a resource group[get]
-        # result = self.mgmt_client.peerings.list_by_resource_group(resource_group_name=RESOURCE_GROUP)
+        result = self.mgmt_client.peerings.list_by_resource_group(resource_group_name=RESOURCE_GROUP)
 
         # /PeerAsns/get/Get a peer ASN[get]
-        # result = self.mgmt_client.peer_asns.get(peer_asn_name=PEER_ASN_NAME)
+        result = self.mgmt_client.peer_asns.get(peer_asn_name=PEER_ASN_NAME)
 
         # /PeeringServiceCountries/get/List peering service countries[get]
-        # result = self.mgmt_client.peering_service_countries.list()
+        result = self.mgmt_client.peering_service_countries.list()
 
         # /PeeringServiceLocations/get/List peering service locations[get]
-        # result = self.mgmt_client.peering_service_locations.list()
+        result = self.mgmt_client.peering_service_locations.list()
 
         # /PeeringServiceProviders/get/List peering service providers[get]
-        # result = self.mgmt_client.peering_service_providers.list()
+        result = self.mgmt_client.peering_service_providers.list()
 
         # /PeeringLocations/get/List exchange peering locations[get]
-        # result = self.mgmt_client.peering_locations.list()
+        result = self.mgmt_client.peering_locations.list(kind="Exchange")
 
         # /PeeringLocations/get/List direct peering locations[get]
-        # result = self.mgmt_client.peering_locations.list()
+        result = self.mgmt_client.peering_locations.list(kind="Direct")
 
         # /PeeringServices/get/List peering services in a subscription[get]
-        # result = self.mgmt_client.peering_services.list_by_subscription()
+        result = self.mgmt_client.peering_services.list_by_subscription()
 
         # /LegacyPeerings/get/List legacy peerings[get]
-        # result = self.mgmt_client.legacy_peerings.list()
+        result = self.mgmt_client.legacy_peerings.list(kind="Direct", peering_location="California")
 
         # /PeerAsns/get/List peer ASNs in a subscription[get]
-        # result = self.mgmt_client.peer_asns.list_by_subscription()
+        result = self.mgmt_client.peer_asns.list_by_subscription()
 
         # /Peerings/get/List peerings in a subscription[get]
-        # result = self.mgmt_client.peerings.list_by_subscription()
+        result = self.mgmt_client.peerings.list_by_subscription()
 
         # /Operations/get/List peering operations[get]
-        # result = self.mgmt_client.operations.list()
+        result = self.mgmt_client.operations.list()
 
         # /PeeringServices/patch/Update peering service tags[patch]
         BODY = {
