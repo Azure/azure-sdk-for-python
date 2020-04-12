@@ -39,6 +39,7 @@ class MgmtPeeringTest(AzureMgmtTestCase):
         PEERING_SERVICE_NAME = "myPeeringService"
         PEER_ASN_NAME = "myPeerAsn"
         PREFIX_NAME = "prefix"
+        PEERING_NAME = "myPeering"
 
         # /PeerAsns/put/Create a peer ASN[put]
         BODY = {
@@ -119,7 +120,7 @@ class MgmtPeeringTest(AzureMgmtTestCase):
                   "bandwidth_in_mbps": "10000",
                   "session_address_provider": "Peer",
                   "use_for_peering_service": True,
-                  "peering_dbfacility_id": "99999",
+                  "peering_dbfacility_id": "63",
                   "bgp_session": {
                     "session_prefix_v4": "192.168.0.0/24",
                     "microsoft_session_ipv4address": "192.168.0.123",
@@ -147,41 +148,39 @@ class MgmtPeeringTest(AzureMgmtTestCase):
             "name": "Basic_Direct_Free"
           },
           "kind": "Direct",
-          "properties": {
-            "direct": {
-              "connections": [
-                {
-                  "bandwidth_in_mbps": "10000",
-                  "session_address_provider": "Peer",
-                  "use_for_peering_service": False,
-                  "peering_dbfacility_id": "99999",
-                  "bgp_session": {
-                    "session_prefix_v4": "192.168.0.0/31",
-                    "session_prefix_v6": "fd00::0/127",
-                    "max_prefixes_advertised_v4": "1000",
-                    "max_prefixes_advertised_v6": "100",
-                    "md5authentication_key": "test-md5-auth-key"
-                  },
-                  "connection_identifier": "5F4CB5C7-6B43-4444-9338-9ABC72606C16"
+          "direct": {
+            "connections": [
+              {
+                "bandwidth_in_mbps": "10000",
+                "session_address_provider": "Peer",
+                "use_for_peering_service": False,
+                "peering_dbfacility_id": "86",
+                "bgp_session": {
+                  "session_prefix_v4": "192.168.0.0/31",
+                  "session_prefix_v6": "fd00::0/127",
+                  "max_prefixes_advertised_v4": "1000",
+                  "max_prefixes_advertised_v6": "100",
+                  "md5authentication_key": "test-md5-auth-key"
                 },
-                {
-                  "bandwidth_in_mbps": "10000",
-                  "session_address_provider": "Microsoft",
-                  "use_for_peering_service": True,
-                  "peering_dbfacility_id": "99999",
-                  "connection_identifier": "8AB00818-D533-4504-A25A-03A17F61201C"
-                }
-              ],
-              "peer_asn": {
-                "id": "/subscriptions/" + SUBSCRIPTION_ID + "/providers/Microsoft.Peering/peerAsns/" + PEER_ASN_NAME + ""
+                "connection_identifier": "5F4CB5C7-6B43-4444-9338-9ABC72606C16"
               },
-              "direct_peering_type": "Edge"
+              {
+                "bandwidth_in_mbps": "10000",
+                "session_address_provider": "Microsoft",
+                "use_for_peering_service": True,
+                "peering_dbfacility_id": "71",
+                "connection_identifier": "8AB00818-D533-4504-A25A-03A17F61201C"
+              }
+            ],
+            "peer_asn": {
+              "id": "/subscriptions/" + SUBSCRIPTION_ID + "/providers/Microsoft.Peering/peerAsns/" + PEER_ASN_NAME + ""
             },
-            "peering_location": "peeringLocation0"
+            "direct_peering_type": "Edge"
           },
+          "peering_location": "Seattle",
           "location": "eastus"
         }
-        # result = self.mgmt_client.peerings.create_or_update(resource_group_name=RESOURCE_GROUP, peering_name=PEERING_NAME, body=BODY)
+        # result = self.mgmt_client.peerings.create_or_update(resource_group_name=RESOURCE_GROUP, peering_name=PEERING_NAME, peering=BODY)
 
         # /PeeringServices/put/Create a  peering service[put]
         BODY = {

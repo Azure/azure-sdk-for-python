@@ -42,7 +42,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sun, 12 Apr 2020 11:38:00 GMT
+      - Sun, 12 Apr 2020 12:36:24 GMT
       expires:
       - '-1'
       pragma:
@@ -56,7 +56,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-resource-requests:
-      - '98'
+      - '99'
     status:
       code: 200
       message: OK
@@ -85,7 +85,7 @@ interactions:
     body:
       string: "{\r\n  \"properties\": {\r\n    \"peeringServiceLocation\": \"California\"\
         ,\r\n    \"peeringServiceProvider\": \"Kordia Limited\",\r\n    \"provisioningState\"\
-        : \"Succeeded\"\r\n  },\r\n  \"location\": \"eastus\",\r\n  \"eTag\": \"aafc13eb-9285-4938-8671-3ea37ee2a3a7\"\
+        : \"Succeeded\"\r\n  },\r\n  \"location\": \"eastus\",\r\n  \"eTag\": \"04ed594d-7f97-4e30-966e-08641ace08cd\"\
         ,\r\n  \"name\": \"myPeeringService\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_peering_test_peeringf49b0dec/providers/Microsoft.Peering/peeringServices/myPeeringService\"\
         ,\r\n  \"type\": \"Microsoft.Peering/peeringServices\"\r\n}"
     headers:
@@ -96,7 +96,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sun, 12 Apr 2020 11:38:03 GMT
+      - Sun, 12 Apr 2020 12:36:28 GMT
       expires:
       - '-1'
       pragma:
@@ -130,7 +130,7 @@ interactions:
     body:
       string: "{\r\n  \"properties\": {\r\n    \"peeringServiceLocation\": \"California\"\
         ,\r\n    \"peeringServiceProvider\": \"Kordia Limited\",\r\n    \"provisioningState\"\
-        : \"Succeeded\"\r\n  },\r\n  \"location\": \"eastus\",\r\n  \"eTag\": \"aafc13eb-9285-4938-8671-3ea37ee2a3a7\"\
+        : \"Succeeded\"\r\n  },\r\n  \"location\": \"eastus\",\r\n  \"eTag\": \"04ed594d-7f97-4e30-966e-08641ace08cd\"\
         ,\r\n  \"name\": \"myPeeringService\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_peering_test_peeringf49b0dec/providers/Microsoft.Peering/peeringServices/myPeeringService\"\
         ,\r\n  \"type\": \"Microsoft.Peering/peeringServices\"\r\n}"
     headers:
@@ -141,7 +141,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sun, 12 Apr 2020 11:38:03 GMT
+      - Sun, 12 Apr 2020 12:36:28 GMT
       expires:
       - '-1'
       pragma:
@@ -195,7 +195,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sun, 12 Apr 2020 11:38:04 GMT
+      - Sun, 12 Apr 2020 12:36:28 GMT
       expires:
       - '-1'
       pragma:
@@ -240,7 +240,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Sun, 12 Apr 2020 11:38:05 GMT
+      - Sun, 12 Apr 2020 12:36:30 GMT
       expires:
       - '-1'
       pragma:
@@ -250,7 +250,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-deletes:
-      - '14999'
+      - '14998'
     status:
       code: 200
       message: OK
@@ -281,7 +281,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Sun, 12 Apr 2020 11:38:06 GMT
+      - Sun, 12 Apr 2020 12:36:36 GMT
       expires:
       - '-1'
       pragma:
@@ -291,7 +291,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-deletes:
-      - '14998'
+      - '14997'
     status:
       code: 200
       message: OK
