@@ -158,7 +158,7 @@ class ServiceBusClient(object):
 
         """
         # pylint: disable=protected-access
-        sender = ServiceBusSender(
+        return ServiceBusSender(
             fully_qualified_namespace=self.fully_qualified_namespace,
             queue_name=queue_name,
             credential=self._credential,
@@ -168,8 +168,6 @@ class ServiceBusClient(object):
             connection=self._connection,
             **kwargs
         )
-
-        return sender
 
     def get_queue_receiver(self, queue_name, **kwargs):
         # type: (str, Any) -> ServiceBusReceiver
@@ -205,7 +203,7 @@ class ServiceBusClient(object):
 
         """
         # pylint: disable=protected-access
-        receiver = ServiceBusReceiver(
+        return ServiceBusReceiver(
             fully_qualified_namespace=self.fully_qualified_namespace,
             queue_name=queue_name,
             credential=self._credential,
@@ -215,8 +213,6 @@ class ServiceBusClient(object):
             connection=self._connection,
             **kwargs
         )
-
-        return receiver
 
     def get_topic_sender(self, topic_name, **kwargs):
         # type: (str, Any) -> ServiceBusSender
@@ -240,7 +236,7 @@ class ServiceBusClient(object):
                 :caption: Create a new instance of the ServiceBusSender from ServiceBusClient.
 
         """
-        sender = ServiceBusSender(
+        return ServiceBusSender(
             fully_qualified_namespace=self.fully_qualified_namespace,
             topic_name=topic_name,
             credential=self._credential,
@@ -250,8 +246,6 @@ class ServiceBusClient(object):
             connection=self._connection,
             **kwargs
         )
-
-        return sender
 
     def get_subscription_receiver(self, topic_name, subscription_name, **kwargs):
         # type: (str, str, Any) -> ServiceBusReceiver
@@ -291,7 +285,7 @@ class ServiceBusClient(object):
 
         """
         # pylint: disable=protected-access
-        receiver = ServiceBusReceiver(
+        return ServiceBusReceiver(
             fully_qualified_namespace=self.fully_qualified_namespace,
             topic_name=topic_name,
             subscription_name=subscription_name,
@@ -302,9 +296,6 @@ class ServiceBusClient(object):
             connection=self._connection,
             **kwargs
         )
-
-        return receiver
-
 
     def get_subscription_session_receiver(self, topic_name, subscription_name, session_id=None, **kwargs):
         # type: (str, str, Any) -> ServiceBusReceiver
@@ -347,7 +338,7 @@ class ServiceBusClient(object):
 
         """
         # pylint: disable=protected-access
-        receiver = ServiceBusSessionReceiver(
+        return ServiceBusSessionReceiver(
             fully_qualified_namespace=self.fully_qualified_namespace,
             topic_name=topic_name,
             subscription_name=subscription_name,
@@ -359,8 +350,6 @@ class ServiceBusClient(object):
             session_id=session_id,
             **kwargs
         )
-
-        return receiver
 
     def get_queue_session_receiver(self, queue_name, session_id=None, **kwargs):
         # type: (str, str, Any) -> ServiceBusSessionReceiver
@@ -399,7 +388,7 @@ class ServiceBusClient(object):
 
         """
         # pylint: disable=protected-access
-        receiver = ServiceBusSessionReceiver(
+        return ServiceBusSessionReceiver(
             fully_qualified_namespace=self.fully_qualified_namespace,
             queue_name=queue_name,
             credential=self._credential,
@@ -410,5 +399,3 @@ class ServiceBusClient(object):
             http_proxy=self._config.http_proxy,
             **kwargs
         )
-
-        return receiver
