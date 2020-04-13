@@ -100,22 +100,25 @@ The following sections provide several code snippets covering some of the most c
 * [Receive a message from a queue](#receive-from-a-queue)
 * [Defer a message on receipt](#defer-a-message)
 
+To perform management tasks such as creating and deleting queues/topics/subscriptions, please utilize the azure-mgmt-servicebus library, available [here][servicebus_management_repository].
+
 
 ### Send to a queue
 
 This example sends a message to a queue that is assumed to already exist, created via the Azure portal or az commands.
 
 ```Python
-from azure.servicebus import ServiceBusClient
+from azure.servicebus import ServiceBusClient, Message
 
 import os
 connstr = os.environ['SERVICE_BUS_CONN_STR']
+queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
 
 with ServiceBusClient.from_connection_string(connstr) as client:
-    with client.get_queue_sender(queue_name):
+    with client.get_queue_sender(queue_name) as sender:
 
         message = Message("Single message")
-        queue_sender.send(message)
+        sender.send(message)
 ```
 
 ### Receive from a queue
@@ -127,6 +130,7 @@ from azure.servicebus import ServiceBusClient
 
 import os
 connstr = os.environ['SERVICE_BUS_CONN_STR']
+queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
 
 with ServiceBusClient.from_connection_string(connstr) as client:
     with client.get_queue_receiver(queue_name) as receiver:
@@ -207,3 +211,4 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 [topic_concept]: https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-messaging-overview#topics
 [subscription_concept]: https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-queues-topics-subscriptions#topics-and-subscriptions
 [azure_namespace_creation]: https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-create-namespace-portal
+[servicebus_management_repository]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-mgmt-servicebus
