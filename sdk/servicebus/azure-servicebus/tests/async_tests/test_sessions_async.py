@@ -832,7 +832,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                 message = Message(b"Sample topic message", session_id='test_session')
                 await sender.send(message)
 
-            async with sb_client.get_subscription_receiver(
+            async with sb_client.get_subscription_session_receiver(
                 topic_name=servicebus_topic.name,
                 subscription_name=servicebus_subscription.name,
                 session_id='test_session',

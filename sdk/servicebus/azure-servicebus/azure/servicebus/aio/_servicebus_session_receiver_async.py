@@ -8,6 +8,7 @@ from typing import Any, TYPE_CHECKING, List, Union
 from .._common.receiver_mixins import ReceiverMixin, SessionReceiverMixin
 from .._common.constants import ReceiveSettleMode
 from ._servicebus_receiver_async import ServiceBusReceiver
+from ._servicebus_session_async import ServiceBusSession
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
