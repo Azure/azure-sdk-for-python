@@ -13,7 +13,7 @@
 
 **Breaking Changes**
 
-* Session receivers are now created via their own top level functions, e.g. `get_queue_sesison_receiver` and `get_subscription_session_receiver`
+* Session receivers are now created via their own top level functions, e.g. `get_queue_sesison_receiver` and `get_subscription_session_receiver`.  Non session receivers no longer take session_id as a paramter.
 
 ## 7.0.0b1 (2020-04-06)
 
