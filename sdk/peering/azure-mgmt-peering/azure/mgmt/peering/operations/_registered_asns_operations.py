@@ -15,8 +15,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class PeeringServicesOperations(object):
-    """PeeringServicesOperations operations.
+class RegisteredAsnsOperations(object):
+    """RegisteredAsnsOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
@@ -39,21 +39,23 @@ class PeeringServicesOperations(object):
         self.config = config
 
     def get(
-            self, resource_group_name, peering_service_name, custom_headers=None, raw=False, **operation_config):
-        """Gets an existing peering service with the specified name under the
-        given subscription and resource group.
+            self, resource_group_name, peering_name, registered_asn_name, custom_headers=None, raw=False, **operation_config):
+        """Gets an existing registered ASN with the specified name under the given
+        subscription, resource group and peering.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param peering_service_name: The name of the peering.
-        :type peering_service_name: str
+        :param peering_name: The name of the peering.
+        :type peering_name: str
+        :param registered_asn_name: The name of the registered ASN.
+        :type registered_asn_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: PeeringService or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.peering.models.PeeringService or
+        :return: PeeringRegisteredAsn or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.peering.models.PeeringRegisteredAsn or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.peering.models.ErrorResponseException>`
@@ -62,7 +64,8 @@ class PeeringServicesOperations(object):
         url = self.get.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'peeringServiceName': self._serialize.url("peering_service_name", peering_service_name, 'str'),
+            'peeringName': self._serialize.url("peering_name", peering_name, 'str'),
+            'registeredAsnName': self._serialize.url("registered_asn_name", registered_asn_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -90,43 +93,47 @@ class PeeringServicesOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('PeeringService', response)
+            deserialized = self._deserialize('PeeringRegisteredAsn', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Peering/peeringServices/{peeringServiceName}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Peering/peerings/{peeringName}/registeredAsns/{registeredAsnName}'}
 
     def create_or_update(
-            self, resource_group_name, peering_service_name, peering_service, custom_headers=None, raw=False, **operation_config):
-        """Creates a new peering service or updates an existing peering with the
-        specified name under the given subscription and resource group.
+            self, resource_group_name, peering_name, registered_asn_name, asn=None, custom_headers=None, raw=False, **operation_config):
+        """Creates a new registered ASN with the specified name under the given
+        subscription, resource group and peering.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param peering_service_name: The name of the peering service.
-        :type peering_service_name: str
-        :param peering_service: The properties needed to create or update a
-         peering service.
-        :type peering_service: ~azure.mgmt.peering.models.PeeringService
+        :param peering_name: The name of the peering.
+        :type peering_name: str
+        :param registered_asn_name: The name of the ASN.
+        :type registered_asn_name: str
+        :param asn: The customer's ASN from which traffic originates.
+        :type asn: int
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: PeeringService or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.peering.models.PeeringService or
+        :return: PeeringRegisteredAsn or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.peering.models.PeeringRegisteredAsn or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.peering.models.ErrorResponseException>`
         """
+        registered_asn = models.PeeringRegisteredAsn(asn=asn)
+
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'peeringServiceName': self._serialize.url("peering_service_name", peering_service_name, 'str'),
+            'peeringName': self._serialize.url("peering_name", peering_name, 'str'),
+            'registeredAsnName': self._serialize.url("registered_asn_name", registered_asn_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -147,7 +154,7 @@ class PeeringServicesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(peering_service, 'PeeringService')
+        body_content = self._serialize.body(registered_asn, 'PeeringRegisteredAsn')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -158,26 +165,28 @@ class PeeringServicesOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('PeeringService', response)
+            deserialized = self._deserialize('PeeringRegisteredAsn', response)
         if response.status_code == 201:
-            deserialized = self._deserialize('PeeringService', response)
+            deserialized = self._deserialize('PeeringRegisteredAsn', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Peering/peeringServices/{peeringServiceName}'}
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Peering/peerings/{peeringName}/registeredAsns/{registeredAsnName}'}
 
     def delete(
-            self, resource_group_name, peering_service_name, custom_headers=None, raw=False, **operation_config):
-        """Deletes an existing peering service with the specified name under the
-        given subscription and resource group.
+            self, resource_group_name, peering_name, registered_asn_name, custom_headers=None, raw=False, **operation_config):
+        """Deletes an existing registered ASN with the specified name under the
+        given subscription, resource group and peering.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param peering_service_name: The name of the peering service.
-        :type peering_service_name: str
+        :param peering_name: The name of the peering.
+        :type peering_name: str
+        :param registered_asn_name: The name of the registered ASN.
+        :type registered_asn_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -192,7 +201,8 @@ class PeeringServicesOperations(object):
         url = self.delete.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'peeringServiceName': self._serialize.url("peering_service_name", peering_service_name, 'str'),
+            'peeringName': self._serialize.url("peering_name", peering_name, 'str'),
+            'registeredAsnName': self._serialize.url("registered_asn_name", registered_asn_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -220,102 +230,35 @@ class PeeringServicesOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Peering/peeringServices/{peeringServiceName}'}
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Peering/peerings/{peeringName}/registeredAsns/{registeredAsnName}'}
 
-    def update(
-            self, resource_group_name, peering_service_name, tags=None, custom_headers=None, raw=False, **operation_config):
-        """Updates tags for a peering service with the specified name under the
-        given subscription and resource group.
+    def list_by_peering(
+            self, resource_group_name, peering_name, custom_headers=None, raw=False, **operation_config):
+        """Lists all registered ASNs under the given subscription, resource group
+        and peering.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param peering_service_name: The name of the peering service.
-        :type peering_service_name: str
-        :param tags: Gets or sets the tags, a dictionary of descriptors arm
-         object
-        :type tags: dict[str, str]
+        :param peering_name: The name of the peering.
+        :type peering_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: PeeringService or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.peering.models.PeeringService or
-         ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ErrorResponseException<azure.mgmt.peering.models.ErrorResponseException>`
-        """
-        tags1 = models.ResourceTags(tags=tags)
-
-        # Construct URL
-        url = self.update.metadata['url']
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'peeringServiceName': self._serialize.url("peering_service_name", peering_service_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct body
-        body_content = self._serialize.body(tags1, 'ResourceTags')
-
-        # Construct and send request
-        request = self._client.patch(url, query_parameters, header_parameters, body_content)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
-
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('PeeringService', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Peering/peeringServices/{peeringServiceName}'}
-
-    def list_by_resource_group(
-            self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """Lists all of the peering services under the given subscription and
-        resource group.
-
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of PeeringService
+        :return: An iterator like instance of PeeringRegisteredAsn
         :rtype:
-         ~azure.mgmt.peering.models.PeeringServicePaged[~azure.mgmt.peering.models.PeeringService]
+         ~azure.mgmt.peering.models.PeeringRegisteredAsnPaged[~azure.mgmt.peering.models.PeeringRegisteredAsn]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.peering.models.ErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
-                url = self.list_by_resource_group.metadata['url']
+                url = self.list_by_peering.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                    'peeringName': self._serialize.url("peering_name", peering_name, 'str'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -356,72 +299,7 @@ class PeeringServicesOperations(object):
         header_dict = None
         if raw:
             header_dict = {}
-        deserialized = models.PeeringServicePaged(internal_paging, self._deserialize.dependencies, header_dict)
+        deserialized = models.PeeringRegisteredAsnPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Peering/peeringServices'}
-
-    def list_by_subscription(
-            self, custom_headers=None, raw=False, **operation_config):
-        """Lists all of the peerings under the given subscription.
-
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of PeeringService
-        :rtype:
-         ~azure.mgmt.peering.models.PeeringServicePaged[~azure.mgmt.peering.models.PeeringService]
-        :raises:
-         :class:`ErrorResponseException<azure.mgmt.peering.models.ErrorResponseException>`
-        """
-        def prepare_request(next_link=None):
-            if not next_link:
-                # Construct URL
-                url = self.list_by_subscription.metadata['url']
-                path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-
-                # Construct parameters
-                query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-            else:
-                url = next_link
-                query_parameters = {}
-
-            # Construct headers
-            header_parameters = {}
-            header_parameters['Accept'] = 'application/json'
-            if self.config.generate_client_request_id:
-                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            if custom_headers:
-                header_parameters.update(custom_headers)
-            if self.config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
-            return request
-
-        def internal_paging(next_link=None):
-            request = prepare_request(next_link)
-
-            response = self._client.send(request, stream=False, **operation_config)
-
-            if response.status_code not in [200]:
-                raise models.ErrorResponseException(self._deserialize, response)
-
-            return response
-
-        # Deserialize response
-        header_dict = None
-        if raw:
-            header_dict = {}
-        deserialized = models.PeeringServicePaged(internal_paging, self._deserialize.dependencies, header_dict)
-
-        return deserialized
-    list_by_subscription.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Peering/peeringServices'}
+    list_by_peering.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Peering/peerings/{peeringName}/registeredAsns'}
