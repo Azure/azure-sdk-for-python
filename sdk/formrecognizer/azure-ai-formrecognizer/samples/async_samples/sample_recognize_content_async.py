@@ -10,7 +10,7 @@
 FILE: sample_recognize_content_async.py
 
 DESCRIPTION:
-    This sample demonstrates how to extact text and layout information a document
+    This sample demonstrates how to extact text and layout information from a document
     given through a file.
 
 USAGE:
@@ -23,6 +23,7 @@ USAGE:
 
 import os
 import asyncio
+from pathlib import Path
 
 
 class RecognizeContentSampleAsync(object):
@@ -31,45 +32,33 @@ class RecognizeContentSampleAsync(object):
     key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
 
     async def recognize_content(self):
+        # the sample forms are located in this file's parent's parent's files.
+        path_to_sample_forms = Path(__file__).parent.parent.absolute() / Path("sample_forms/forms/Invoice_1.pdf")
         # TODO: this can be used as examples in sphinx
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer.aio import FormRecognizerClient
-        form_recognizer_client = FormRecognizerClient(endpoint=self.endpoint, credential=AzureKeyCredential(self.key))
-        with open("../sample_forms/forms/Invoice_1.pdf", "rb") as f:
-            contents = await form_recognizer_client.recognize_content(stream=f.read())
+        async with FormRecognizerClient(endpoint=self.endpoint, credential=AzureKeyCredential(self.key)) as form_recognizer_client:
 
-        for idx, content in enumerate(contents):
-            print("========RECOGNIZING CONTENT #{}========".format(idx))
-            print("Has width: {} and height: {}, measured with unit: {}".format(
-                content.width,
-                content.height,
-                content.unit
-            ))
-            print("=======Tables=======")
-            for table_idx, table in enumerate(content.tables):
-                print("Table # {} has {} rows and {} columns".format(table_idx, table.row_count, table.column_count))
-                for cell in table.cells:
-                    print("Cell[{}][{}] has text '{}'".format(
-                        cell.row_index, cell.column_index, cell.text
-                    ))
-                print("---------------------")
-            print("====================")
-            print("=======Lines========")
-            for line_idx, line in enumerate(content.lines):
-                print("Line # {} has text '{}' within bounding box {}".format(
-                    line_idx,
-                    line.text,
-                    ", ".join(["[{}, {}]".format(p.x, p.y) for p in line.bounding_box]),
+            with open(path_to_sample_forms, "rb") as f:
+                contents = await form_recognizer_client.recognize_content(stream=f.read())
+
+            for idx, content in enumerate(contents):
+                print("----Recognizing content from page #{}----".format(idx))
+                print("Has width: {} and height: {}, measured with unit: {}".format(
+                    content.width,
+                    content.height,
+                    content.unit
                 ))
-                print("Now we break down all of the words in this line...")
-                for word_idx, word in enumerate(line.words):
-                    print("Word #{} has text '{}' with confidence score of {}".format(
-                        word_idx, word.text, word.confidence
-                    ))
-                print("---------------------")
-            print("=====================")
-            print("=======================================")
-        await form_recognizer_client.close()
+                for table_idx, table in enumerate(content.tables):
+                    print("Table # {} has {} rows and {} columns".format(table_idx, table.row_count, table.column_count))
+                    for cell in table.cells:
+                        print("Cell[{}][{}] has text '{}' within bounding box '{}'".format(
+                            cell.row_index,
+                            cell.column_index,
+                            cell.text,
+                            ", ".join(["[{}, {}]".format(p.x, p.y) for p in cell.bounding_box]),
+                        ))
+                print("----------------------------------------")
 
 
 async def main():
