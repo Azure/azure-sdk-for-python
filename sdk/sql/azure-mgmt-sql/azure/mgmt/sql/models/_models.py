@@ -9609,6 +9609,23 @@ class TransparentDataEncryptionActivity(ProxyResource):
         self.percent_complete = None
 
 
+class UnlinkParameters(Model):
+    """Represents the parameters for Unlink Replication Link request.
+
+    :param forced_termination: Determines whether link will be terminated in a
+     forced or a friendly way.
+    :type forced_termination: bool
+    """
+
+    _attribute_map = {
+        'forced_termination': {'key': 'forcedTermination', 'type': 'bool'},
+    }
+
+    def __init__(self, **kwargs):
+        super(UnlinkParameters, self).__init__(**kwargs)
+        self.forced_termination = kwargs.get('forced_termination', None)
+
+
 class Usage(Model):
     """ARM usage.
 
