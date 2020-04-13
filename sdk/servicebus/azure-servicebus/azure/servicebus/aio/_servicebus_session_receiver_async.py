@@ -134,16 +134,8 @@ class ServiceBusSessionReceiver(ServiceBusReceiver, SessionReceiverMixin):
                 :caption: Create a new instance of the ServiceBusReceiver from connection string.
 
         """
-        constructor_args = cls._from_connection_string(
-            conn_str,
-            **kwargs
-        )
-        if kwargs.get("queue_name") and kwargs.get("subscription_name"):
-            raise ValueError("Queue entity does not have subscription.")
+        return super().from_connection_string(conn_str, **kwargs)
 
-        if kwargs.get("topic_name") and not kwargs.get("subscription_name"):
-            raise ValueError("Subscription name is missing for the topic. Please specify subscription_name.")
-        return cls(**constructor_args)
 
     @property
     def session(self):
