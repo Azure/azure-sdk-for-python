@@ -88,6 +88,17 @@ async def example_create_servicebus_sender_async():
     async with servicebus_client:
         queue_sender = servicebus_client.get_queue_sender(queue_name=queue_name)
     # [END create_servicebus_sender_from_sb_client_async]
+
+    # [START create_topic_sender_from_sb_client_async]
+    import os
+    from azure.servicebus import ServiceBusClient
+    servicebus_connection_str = os.environ['SERVICE_BUS_CONNECTION_STR']
+    topic_name = os.environ['SERVICE_BUS_TOPIC_NAME']
+    servicebus_client = ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str)
+    async with servicebus_client:
+        queue_sender = servicebus_client.get_topic_sender(topic_name=topic_name)
+    # [END create_topic_sender_from_sb_client_async]
+
     return queue_sender
 
 
@@ -131,6 +142,20 @@ async def example_create_servicebus_receiver_async():
     async with servicebus_client:
         queue_receiver = servicebus_client.get_queue_receiver(queue_name=queue_name)
     # [END create_servicebus_receiver_from_sb_client_async]
+
+    # [START create_subscription_receiver_from_sb_client_async]
+    import os
+    from azure.servicebus import ServiceBusClient
+    servicebus_connection_str = os.environ['SERVICE_BUS_CONNECTION_STR']
+    topic_name = os.environ["SERVICE_BUS_TOPIC_NAME"]
+    subscription_name = os.environ["SERVICE_BUS_SUBSCRIPTION_NAME"]
+    servicebus_client = ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str)
+    async with servicebus_client:
+        subscription_receiver = servicebus_client.get_subscription_receiver(
+            topic_name=topic_name,
+            subscription_name=subscription_name,
+        )
+    # [END create_subscription_receiver_from_sb_client_async]
 
     return queue_receiver
 

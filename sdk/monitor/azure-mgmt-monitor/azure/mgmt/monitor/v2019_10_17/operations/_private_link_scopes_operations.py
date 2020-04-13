@@ -11,6 +11,7 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
+from msrestazure.azure_exceptions import CloudError
 from msrest.polling import LROPoller, NoPolling
 from msrestazure.polling.arm_polling import ARMPolling
 
@@ -26,7 +27,7 @@ class PrivateLinkScopesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version to use for this operation. Constant value: "2019-10-17-preview".
+    :ivar api_version: Client Api Version. Constant value: "2019-10-17-preview".
     """
 
     models = models
@@ -53,21 +54,20 @@ class PrivateLinkScopesOperations(object):
         :return: An iterator like instance of AzureMonitorPrivateLinkScope
         :rtype:
          ~azure.mgmt.monitor.v2019_10_17.models.AzureMonitorPrivateLinkScopePaged[~azure.mgmt.monitor.v2019_10_17.models.AzureMonitorPrivateLinkScope]
-        :raises:
-         :class:`ErrorResponseException<azure.mgmt.monitor.v2019_10_17.models.ErrorResponseException>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
                 url = self.list.metadata['url']
                 path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1)
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
@@ -93,7 +93,9 @@ class PrivateLinkScopesOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                raise models.ErrorResponseException(self._deserialize, response)
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
 
             return response
 
@@ -110,8 +112,7 @@ class PrivateLinkScopesOperations(object):
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
         """Gets a list of Azure Monitor PrivateLinkScopes within a resource group.
 
-        :param resource_group_name: The name of the resource group. The name
-         is case insensitive.
+        :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -121,22 +122,21 @@ class PrivateLinkScopesOperations(object):
         :return: An iterator like instance of AzureMonitorPrivateLinkScope
         :rtype:
          ~azure.mgmt.monitor.v2019_10_17.models.AzureMonitorPrivateLinkScopePaged[~azure.mgmt.monitor.v2019_10_17.models.AzureMonitorPrivateLinkScope]
-        :raises:
-         :class:`ErrorResponseException<azure.mgmt.monitor.v2019_10_17.models.ErrorResponseException>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
                 url = self.list_by_resource_group.metadata['url']
                 path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1)
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
@@ -162,7 +162,9 @@ class PrivateLinkScopesOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                raise models.ErrorResponseException(self._deserialize, response)
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
 
             return response
 
@@ -181,15 +183,15 @@ class PrivateLinkScopesOperations(object):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'scopeName': self._serialize.url("scope_name", scope_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -205,7 +207,9 @@ class PrivateLinkScopesOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202, 204]:
-            raise models.ErrorResponseException(self._deserialize, response)
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -215,8 +219,7 @@ class PrivateLinkScopesOperations(object):
             self, resource_group_name, scope_name, custom_headers=None, raw=False, polling=True, **operation_config):
         """Deletes a Azure Monitor PrivateLinkScope.
 
-        :param resource_group_name: The name of the resource group. The name
-         is case insensitive.
+        :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param scope_name: The name of the Azure Monitor PrivateLinkScope
          resource.
@@ -230,8 +233,7 @@ class PrivateLinkScopesOperations(object):
          ClientRawResponse<None> if raw==True
         :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
-        :raises:
-         :class:`ErrorResponseException<azure.mgmt.monitor.v2019_10_17.models.ErrorResponseException>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._delete_initial(
             resource_group_name=resource_group_name,
@@ -259,8 +261,7 @@ class PrivateLinkScopesOperations(object):
             self, resource_group_name, scope_name, custom_headers=None, raw=False, **operation_config):
         """Returns a Azure Monitor PrivateLinkScope.
 
-        :param resource_group_name: The name of the resource group. The name
-         is case insensitive.
+        :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param scope_name: The name of the Azure Monitor PrivateLinkScope
          resource.
@@ -274,21 +275,20 @@ class PrivateLinkScopesOperations(object):
         :rtype:
          ~azure.mgmt.monitor.v2019_10_17.models.AzureMonitorPrivateLinkScope or
          ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ErrorResponseException<azure.mgmt.monitor.v2019_10_17.models.ErrorResponseException>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'scopeName': self._serialize.url("scope_name", scope_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -305,7 +305,9 @@ class PrivateLinkScopesOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
 
         deserialized = None
         if response.status_code == 200:
@@ -324,8 +326,7 @@ class PrivateLinkScopesOperations(object):
         specify a different value for InstrumentationKey nor AppId in the Put
         operation.
 
-        :param resource_group_name: The name of the resource group. The name
-         is case insensitive.
+        :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param scope_name: The name of the Azure Monitor PrivateLinkScope
          resource.
@@ -343,23 +344,22 @@ class PrivateLinkScopesOperations(object):
         :rtype:
          ~azure.mgmt.monitor.v2019_10_17.models.AzureMonitorPrivateLinkScope or
          ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ErrorResponseException<azure.mgmt.monitor.v2019_10_17.models.ErrorResponseException>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         azure_monitor_private_link_scope_payload = models.AzureMonitorPrivateLinkScope(location=location, tags=tags)
 
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'scopeName': self._serialize.url("scope_name", scope_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -379,11 +379,15 @@ class PrivateLinkScopesOperations(object):
         request = self._client.put(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
+        if response.status_code not in [200, 201]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
 
         deserialized = None
         if response.status_code == 200:
+            deserialized = self._deserialize('AzureMonitorPrivateLinkScope', response)
+        if response.status_code == 201:
             deserialized = self._deserialize('AzureMonitorPrivateLinkScope', response)
 
         if raw:
@@ -398,8 +402,7 @@ class PrivateLinkScopesOperations(object):
         """Updates an existing PrivateLinkScope's tags. To update other fields use
         the CreateOrUpdate method.
 
-        :param resource_group_name: The name of the resource group. The name
-         is case insensitive.
+        :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param scope_name: The name of the Azure Monitor PrivateLinkScope
          resource.
@@ -415,23 +418,22 @@ class PrivateLinkScopesOperations(object):
         :rtype:
          ~azure.mgmt.monitor.v2019_10_17.models.AzureMonitorPrivateLinkScope or
          ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ErrorResponseException<azure.mgmt.monitor.v2019_10_17.models.ErrorResponseException>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         private_link_scope_tags = models.TagsResource(tags=tags)
 
         # Construct URL
         url = self.update_tags.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'scopeName': self._serialize.url("scope_name", scope_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -452,7 +454,9 @@ class PrivateLinkScopesOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
 
         deserialized = None
         if response.status_code == 200:

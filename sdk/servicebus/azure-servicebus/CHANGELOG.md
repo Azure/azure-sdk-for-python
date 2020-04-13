@@ -1,5 +1,16 @@
 # Release History
 
+## 7.0.0b2 (Unreleased)
+
+**New Features**
+
+* Added method `get_topic_sender` in `ServiceBusClient` to get a `ServiceBusSender` for a topic.
+* Added method `get_subscription_receiver` in `ServiceBusClient` to get a `ServiceBusReceiver` for a subscription under specific topic.
+
+**BugFixes**
+
+* Fig bug where http_proxy and transport_type in ServiceBusClient are not propagated into Sender/Receiver creation properly.
+
 ## 7.0.0b1 (2020-04-06)
 
 Version 7.0.0b1 is a preview of our efforts to create a client library that is user friendly and idiomatic to the Python ecosystem. The reasons for most of the changes in this update can be found in the Azure SDK Design Guidelines for Python. For more information, please visit https://aka.ms/azure-sdk-preview1-python.
