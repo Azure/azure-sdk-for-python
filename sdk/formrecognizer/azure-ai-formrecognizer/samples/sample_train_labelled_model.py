@@ -10,7 +10,8 @@
 FILE: sample_train_labelled_model.py
 
 DESCRIPTION:
-    This sample demonstrates how to train a model with labelled data.
+    This sample demonstrates how to train a model with labelled data. See sample_recognize_custom_forms.py
+    to recognize forms with your custom model.
 USAGE:
     python sample_train_labelled_model.py
 
