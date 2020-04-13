@@ -251,7 +251,7 @@ class FormField(object):
             value_data=FieldText._from_generated(value, read_result),
             value=get_field_value(field, value, read_result),
             name=field,
-            confidence=value.confidence if value else None,
+            confidence=value.confidence or 1.0 if value else None,
             page_number=value.page if value else None,
         )
 
@@ -262,7 +262,7 @@ class FormField(object):
             value_data=FieldText._from_generated_unlabeled(field.value, page, read_result),
             value=field.value.text,
             name="field-" + str(idx),
-            confidence=field.confidence,
+            confidence=field.confidence or 1.0,
             page_number=page,
         )
 
@@ -422,7 +422,7 @@ class FormWord(FormContent):
                 Point(x=word.bounding_box[4], y=word.bounding_box[5]),
                 Point(x=word.bounding_box[6], y=word.bounding_box[7])
             ] if word.bounding_box else None,
-            confidence=word.confidence,
+            confidence=word.confidence or 1.0,
             page_number=page
         )
 
@@ -444,7 +444,7 @@ class USReceiptType(object):
     def _from_generated(cls, item):
         return cls(
             type=item.value_string,
-            confidence=item.confidence) if item else None
+            confidence=item.confidence or 1.0) if item else None
 
 
 class USReceiptItem(object):
@@ -544,7 +544,7 @@ class FormTableCell(FormContent):
                 Point(x=cell.bounding_box[4], y=cell.bounding_box[5]),
                 Point(x=cell.bounding_box[6], y=cell.bounding_box[7])
             ] if cell.bounding_box else None,
-            confidence=cell.confidence,
+            confidence=cell.confidence or 1.0,
             is_header=cell.is_header or False,
             is_footer=cell.is_footer or False,
             page_number=page,
