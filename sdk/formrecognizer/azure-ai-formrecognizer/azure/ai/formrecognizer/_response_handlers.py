@@ -138,7 +138,7 @@ def prepare_unlabeled_result(response):
             ),
             fields=unlabeled_fields,
             form_type="form-" + str(page.cluster_id) if page.cluster_id is not None else None,
-            pages=form_pages[page.page-1]
+            pages=[form_pages[page.page-1]]
         )
         result.append(form)
 
