@@ -12,8 +12,8 @@
 # Methods Total   : 35
 # Methods Covered : 35
 # Examples Total  : 38
-# Examples Tested : 38
-# Coverage %      : 100
+# Examples Tested : 18
+# Coverage %      : 47
 # ----------------------
 
 import unittest
@@ -65,7 +65,7 @@ class MgmtPeeringTest(AzureMgmtTestCase):
           ],
           "peer_name": "Contoso"
         }
-        result = self.mgmt_client.peer_asns.create_or_update(peer_asn_name=PEER_ASN_NAME, peer_asn=BODY)
+        # result = self.mgmt_client.peer_asns.create_or_update(peer_asn_name=PEER_ASN_NAME, peer_asn=BODY)
 
         # /Peerings/put/Create an exchange peering[put]
         BODY = {
@@ -105,7 +105,7 @@ class MgmtPeeringTest(AzureMgmtTestCase):
           },
           "peering_location": "peeringLocation0"
         }
-        # result = self.mgmt_client.peerings.create_or_update(resource_group_name=RESOURCE_GROUP, peering_name=PEERING_NAME, body=BODY)
+        # result = self.mgmt_client.peerings.create_or_update(resource_group_name=RESOURCE_GROUP, peering_name=PEERING_NAME, peering=BODY)
 
         # /Peerings/put/Create a peering with exchange route server[put]
         BODY = {
@@ -138,7 +138,7 @@ class MgmtPeeringTest(AzureMgmtTestCase):
           },
           "peering_location": "peeringLocation0"
         }
-        # result = self.mgmt_client.peerings.create_or_update(resource_group_name=RESOURCE_GROUP, peering_name=PEERING_NAME, body=BODY)
+        # result = self.mgmt_client.peerings.create_or_update(resource_group_name=RESOURCE_GROUP, peering_name=PEERING_NAME, peering=BODY)
 
         # /Peerings/put/Create a direct peering[put]
         BODY = {
@@ -178,13 +178,13 @@ class MgmtPeeringTest(AzureMgmtTestCase):
           },
           "peering_location": "peeringLocation0"
         }
-        # result = self.mgmt_client.peerings.create_or_update(resource_group_name=RESOURCE_GROUP, peering_name=PEERING_NAME, body=BODY)
+        # result = self.mgmt_client.peerings.create_or_update(resource_group_name=RESOURCE_GROUP, peering_name=PEERING_NAME, peering=BODY)
 
         # /PeeringServices/put/Create a  peering service[put]
         BODY = {
           "location": "eastus",
           "peering_service_location": "California",
-          "peering_service_provider": "Kordia Limited",
+          "peering_service_provider": "Kordia Limited"
         }
         result = self.mgmt_client.peering_services.create_or_update(resource_group_name=RESOURCE_GROUP, peering_service_name=PEERING_SERVICE_NAME, peering_service=BODY)
 
@@ -192,7 +192,7 @@ class MgmtPeeringTest(AzureMgmtTestCase):
         BODY = {
           "asn": "65000"
         }
-        # result = self.mgmt_client.registered_asns.create_or_update(resource_group_name=RESOURCE_GROUP, peering_name=PEERING_NAME, registered_asn_name=REGISTERED_ASN_NAME, body=BODY)
+        # result = self.mgmt_client.registered_asns.create_or_update(resource_group_name=RESOURCE_GROUP, peering_name=PEERING_NAME, registered_asn_name=REGISTERED_ASN_NAME, registered_asn=BODY)
 
         # /Prefixes/put/Create or update a prefix for the peering service[put]
         # result = self.mgmt_client.prefixes.create_or_update(resource_group_name=RESOURCE_GROUP, peering_service_name=PEERING_SERVICE_NAME, prefix_name=PREFIX_NAME, prefix="192.168.1.0/24")
@@ -201,7 +201,7 @@ class MgmtPeeringTest(AzureMgmtTestCase):
         BODY = {
           "prefix": "10.22.20.0/24"
         }
-        # result = self.mgmt_client.registered_prefixes.create_or_update(resource_group_name=RESOURCE_GROUP, peering_name=PEERING_NAME, registered_prefix_name=REGISTERED_PREFIX_NAME, body=BODY)
+        # result = self.mgmt_client.registered_prefixes.create_or_update(resource_group_name=RESOURCE_GROUP, peering_name=PEERING_NAME, registered_prefix_name=REGISTERED_PREFIX_NAME, registered_prefix=BODY)
 
         # /RegisteredPrefixes/get/Get a registered prefix associated with the peering[get]
         # result = self.mgmt_client.registered_prefixes.get(resource_group_name=RESOURCE_GROUP, peering_name=PEERING_NAME, registered_prefix_name=REGISTERED_PREFIX_NAME)
@@ -240,7 +240,7 @@ class MgmtPeeringTest(AzureMgmtTestCase):
         result = self.mgmt_client.peering_service_countries.list()
 
         # /PeeringServiceLocations/get/List peering service locations[get]
-        result = self.mgmt_client.peering_service_locations.list()
+        result = self.mgmt_client.peering_service_locations.list(country="country1")
 
         # /PeeringServiceProviders/get/List peering service providers[get]
         result = self.mgmt_client.peering_service_providers.list()
@@ -255,7 +255,7 @@ class MgmtPeeringTest(AzureMgmtTestCase):
         result = self.mgmt_client.peering_services.list_by_subscription()
 
         # /LegacyPeerings/get/List legacy peerings[get]
-        result = self.mgmt_client.legacy_peerings.list(kind="Direct", peering_location="California")
+        result = self.mgmt_client.legacy_peerings.list(peering_location="peeringLocation0", kind="Exchange", asn="65000")
 
         # /PeerAsns/get/List peer ASNs in a subscription[get]
         result = self.mgmt_client.peer_asns.list_by_subscription()
