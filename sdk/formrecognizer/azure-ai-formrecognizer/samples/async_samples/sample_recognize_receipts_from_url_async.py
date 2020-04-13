@@ -33,26 +33,25 @@ class RecognizeReceiptsFromURLSampleAsync(object):
         # TODO: this can be used as examples in sphinx
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer.aio import FormRecognizerClient
-        form_recognizer_client = FormRecognizerClient(endpoint=self.endpoint, credential=AzureKeyCredential(self.key))
-        url = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/receipt/contoso-receipt.png"
-        receipts = await form_recognizer_client.recognize_receipts_from_url(url=url)
+        async with FormRecognizerClient(endpoint=self.endpoint, credential=AzureKeyCredential(self.key)) as form_recognizer_client:
+            url = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/receipt/contoso-receipt.png"
+            receipts = await form_recognizer_client.recognize_receipts_from_url(url=url)
 
-        for idx, receipt in enumerate(receipts):
-            print("--------Recognizing receipt #{}--------".format(idx))
-            print("Total: {} with a confidence score of {})".format(
-                receipt.total.value,
-                receipt.total.confidence
-            ))
-            print("Merchant: {} with a confidence score of {})".format(
-                receipt.merchant_name.value,
-                receipt.merchant_name.confidence
-            ))
-            print("Transaction date: {} with a confidence score of {}".format(
-                receipt.transaction_date.value,
-                receipt.transaction_date.confidence
-            ))
-            print("--------------------------------------")
-        await form_recognizer_client.close()
+            for idx, receipt in enumerate(receipts):
+                print("--------Recognizing receipt #{}--------".format(idx))
+                print("Receipt Type: {}\nconfidence: {}\n".format(receipt.receipt_type.type, receipt.receipt_type.confidence))
+                print("Merchant Name: {}\nconfidence: {}\n".format(receipt.merchant_name.value, receipt.merchant_name.confidence))
+                print("Transaction Date: {}\nconfidence: {}\n".format(receipt.transaction_date.value, receipt.transaction_date.confidence))
+                print("Receipt items:")
+                for item in receipt.receipt_items:
+                    print("Item Name: {}\nconfidence: {}".format(item.name.value, item.name.confidence))
+                    print("Item Quantity: {}\nconfidence: {}".format(item.quantity.value, item.quantity.confidence))
+                    print("Total Price: {}\nconfidence: {}\n".format(item.total_price.value, item.total_price.confidence))
+                print("Subtotal: {}\nconfidence: {}\n".format(receipt.subtotal.value, receipt.subtotal.confidence))
+                print("Tax: {}\nconfidence: {}\n".format(receipt.tax.value, receipt.tax.confidence))
+                print("Tip: {}\nconfidence: {}\n".format(receipt.tip.value, receipt.tip.confidence))
+                print("Total: {}\nconfidence: {}\n".format(receipt.total.value, receipt.total.confidence))
+                print("--------------------------------------")
 
 
 async def main():

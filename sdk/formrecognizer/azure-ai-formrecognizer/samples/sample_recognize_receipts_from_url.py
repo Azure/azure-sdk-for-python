@@ -39,18 +39,18 @@ class RecognizeReceiptsFromURLSample(object):
 
         for idx, receipt in enumerate(receipts):
             print("--------Recognizing receipt #{}--------".format(idx))
-            print("Total: {} with a confidence score of {})".format(
-                receipt.total.value,
-                receipt.total.confidence
-            ))
-            print("Merchant: {} with a confidence score of {})".format(
-                receipt.merchant_name.value,
-                receipt.merchant_name.confidence
-            ))
-            print("Transaction date: {} with a confidence score of {}".format(
-                receipt.transaction_date.value,
-                receipt.transaction_date.confidence
-            ))
+            print("Receipt Type: {}\nconfidence: {}\n".format(receipt.receipt_type.type, receipt.receipt_type.confidence))
+            print("Merchant Name: {}\nconfidence: {}\n".format(receipt.merchant_name.value, receipt.merchant_name.confidence))
+            print("Transaction Date: {}\nconfidence: {}\n".format(receipt.transaction_date.value, receipt.transaction_date.confidence))
+            print("Receipt items:")
+            for item in receipt.receipt_items:
+                print("Item Name: {}\nconfidence: {}".format(item.name.value, item.name.confidence))
+                print("Item Quantity: {}\nconfidence: {}".format(item.quantity.value, item.quantity.confidence))
+                print("Total Price: {}\nconfidence: {}\n".format(item.total_price.value, item.total_price.confidence))
+            print("Subtotal: {}\nconfidence: {}\n".format(receipt.subtotal.value, receipt.subtotal.confidence))
+            print("Tax: {}\nconfidence: {}\n".format(receipt.tax.value, receipt.tax.confidence))
+            print("Tip: {}\nconfidence: {}\n".format(receipt.tip.value, receipt.tip.confidence))
+            print("Total: {}\nconfidence: {}\n".format(receipt.total.value, receipt.total.confidence))
             print("--------------------------------------")
 
 
