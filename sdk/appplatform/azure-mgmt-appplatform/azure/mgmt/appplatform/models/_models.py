@@ -91,6 +91,9 @@ class AppResource(ProxyResource):
     :vartype type: str
     :param properties: Properties of the App resource
     :type properties: ~azure.mgmt.appplatform.models.AppResourceProperties
+    :param location: The GEO location of the application, always the same with
+     its parent resource
+    :type location: str
     """
 
     _validation = {
@@ -104,11 +107,13 @@ class AppResource(ProxyResource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'properties': {'key': 'properties', 'type': 'AppResourceProperties'},
+        'location': {'key': 'location', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(AppResource, self).__init__(**kwargs)
         self.properties = kwargs.get('properties', None)
+        self.location = kwargs.get('location', None)
 
 
 class AppResourceProperties(Model):
@@ -127,6 +132,10 @@ class AppResourceProperties(Model):
      ~azure.mgmt.appplatform.models.AppResourceProvisioningState
     :param active_deployment_name: Name of the active deployment of the App
     :type active_deployment_name: str
+    :param fqdn: Fully qualified dns Name.
+    :type fqdn: str
+    :param https_only: Indicate if only https is allowed.
+    :type https_only: bool
     :ivar created_time: Date time when the resource is created
     :vartype created_time: datetime
     :param temporary_disk: Temporary disk settings
@@ -146,6 +155,8 @@ class AppResourceProperties(Model):
         'url': {'key': 'url', 'type': 'str'},
         'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
         'active_deployment_name': {'key': 'activeDeploymentName', 'type': 'str'},
+        'fqdn': {'key': 'fqdn', 'type': 'str'},
+        'https_only': {'key': 'httpsOnly', 'type': 'bool'},
         'created_time': {'key': 'createdTime', 'type': 'iso-8601'},
         'temporary_disk': {'key': 'temporaryDisk', 'type': 'TemporaryDisk'},
         'persistent_disk': {'key': 'persistentDisk', 'type': 'PersistentDisk'},
@@ -157,6 +168,8 @@ class AppResourceProperties(Model):
         self.url = None
         self.provisioning_state = None
         self.active_deployment_name = kwargs.get('active_deployment_name', None)
+        self.fqdn = kwargs.get('fqdn', None)
+        self.https_only = kwargs.get('https_only', None)
         self.created_time = None
         self.temporary_disk = kwargs.get('temporary_disk', None)
         self.persistent_disk = kwargs.get('persistent_disk', None)
@@ -249,6 +262,109 @@ class BindingResourceProperties(Model):
         self.generated_properties = None
         self.created_at = None
         self.updated_at = None
+
+
+class CertificateProperties(Model):
+    """Certificate resource payload.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar thumbprint: The thumbprint of certificate.
+    :vartype thumbprint: str
+    :param vault_uri: Required. The vault uri of user key vault.
+    :type vault_uri: str
+    :param key_vault_cert_name: Required. The certificate name of key vault.
+    :type key_vault_cert_name: str
+    :param cert_version: The certificate version of key vault.
+    :type cert_version: str
+    :ivar issuer: The issuer of certificate.
+    :vartype issuer: str
+    :ivar issued_date: The issue date of certificate.
+    :vartype issued_date: str
+    :ivar expiration_date: The expiration date of certificate.
+    :vartype expiration_date: str
+    :ivar activate_date: The activate date of certificate.
+    :vartype activate_date: str
+    :ivar subject_name: The subject name of certificate.
+    :vartype subject_name: str
+    :ivar dns_names: The domain list of certificate.
+    :vartype dns_names: list[str]
+    """
+
+    _validation = {
+        'thumbprint': {'readonly': True},
+        'vault_uri': {'required': True},
+        'key_vault_cert_name': {'required': True},
+        'issuer': {'readonly': True},
+        'issued_date': {'readonly': True},
+        'expiration_date': {'readonly': True},
+        'activate_date': {'readonly': True},
+        'subject_name': {'readonly': True},
+        'dns_names': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'thumbprint': {'key': 'thumbprint', 'type': 'str'},
+        'vault_uri': {'key': 'vaultUri', 'type': 'str'},
+        'key_vault_cert_name': {'key': 'keyVaultCertName', 'type': 'str'},
+        'cert_version': {'key': 'certVersion', 'type': 'str'},
+        'issuer': {'key': 'issuer', 'type': 'str'},
+        'issued_date': {'key': 'issuedDate', 'type': 'str'},
+        'expiration_date': {'key': 'expirationDate', 'type': 'str'},
+        'activate_date': {'key': 'activateDate', 'type': 'str'},
+        'subject_name': {'key': 'subjectName', 'type': 'str'},
+        'dns_names': {'key': 'dnsNames', 'type': '[str]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(CertificateProperties, self).__init__(**kwargs)
+        self.thumbprint = None
+        self.vault_uri = kwargs.get('vault_uri', None)
+        self.key_vault_cert_name = kwargs.get('key_vault_cert_name', None)
+        self.cert_version = kwargs.get('cert_version', None)
+        self.issuer = None
+        self.issued_date = None
+        self.expiration_date = None
+        self.activate_date = None
+        self.subject_name = None
+        self.dns_names = None
+
+
+class CertificateResource(ProxyResource):
+    """Certificate resource payload.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Fully qualified resource Id for the resource.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource.
+    :vartype type: str
+    :param properties: Properties of the certificate resource payload.
+    :type properties: ~azure.mgmt.appplatform.models.CertificateProperties
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'CertificateProperties'},
+    }
+
+    def __init__(self, **kwargs):
+        super(CertificateResource, self).__init__(**kwargs)
+        self.properties = kwargs.get('properties', None)
 
 
 class CloudError(Model):
@@ -464,6 +580,106 @@ class ConfigServerSettings(Model):
         self.git_property = kwargs.get('git_property', None)
 
 
+class CustomDomainProperties(Model):
+    """Custom domain of app resource payload.
+
+    :param thumbprint: The thumbprint of bound certificate.
+    :type thumbprint: str
+    :param app_name: The app name of domain.
+    :type app_name: str
+    :param cert_name: The bound certificate name of domain.
+    :type cert_name: str
+    """
+
+    _attribute_map = {
+        'thumbprint': {'key': 'thumbprint', 'type': 'str'},
+        'app_name': {'key': 'appName', 'type': 'str'},
+        'cert_name': {'key': 'certName', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(CustomDomainProperties, self).__init__(**kwargs)
+        self.thumbprint = kwargs.get('thumbprint', None)
+        self.app_name = kwargs.get('app_name', None)
+        self.cert_name = kwargs.get('cert_name', None)
+
+
+class CustomDomainResource(ProxyResource):
+    """Custom domain resource payload.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Fully qualified resource Id for the resource.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource.
+    :vartype type: str
+    :param properties: Properties of the custom domain resource.
+    :type properties: ~azure.mgmt.appplatform.models.CustomDomainProperties
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'CustomDomainProperties'},
+    }
+
+    def __init__(self, **kwargs):
+        super(CustomDomainResource, self).__init__(**kwargs)
+        self.properties = kwargs.get('properties', None)
+
+
+class CustomDomainValidatePayload(Model):
+    """Custom domain validate payload.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. Name to be validated
+    :type name: str
+    """
+
+    _validation = {
+        'name': {'required': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(CustomDomainValidatePayload, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+
+
+class CustomDomainValidateResult(Model):
+    """Validation result for custom domain.
+
+    :param is_valid: Indicates if domain name is valid.
+    :type is_valid: bool
+    :param message: Message of why domain name is invalid.
+    :type message: str
+    """
+
+    _attribute_map = {
+        'is_valid': {'key': 'isValid', 'type': 'bool'},
+        'message': {'key': 'message', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(CustomDomainValidateResult, self).__init__(**kwargs)
+        self.is_valid = kwargs.get('is_valid', None)
+        self.message = kwargs.get('message', None)
+
+
 class DeploymentInstance(Model):
     """Deployment instance payload.
 
@@ -547,13 +763,13 @@ class DeploymentResourceProperties(Model):
     :type source: ~azure.mgmt.appplatform.models.UserSourceInfo
     :ivar app_name: App name of the deployment
     :vartype app_name: str
+    :param deployment_settings: Deployment settings of the Deployment
+    :type deployment_settings:
+     ~azure.mgmt.appplatform.models.DeploymentSettings
     :ivar provisioning_state: Provisioning state of the Deployment. Possible
      values include: 'Creating', 'Updating', 'Succeeded', 'Failed'
     :vartype provisioning_state: str or
      ~azure.mgmt.appplatform.models.DeploymentResourceProvisioningState
-    :param deployment_settings: Deployment settings of the Deployment
-    :type deployment_settings:
-     ~azure.mgmt.appplatform.models.DeploymentSettings
     :ivar status: Status of the Deployment. Possible values include:
      'Unknown', 'Stopped', 'Running', 'Failed', 'Allocating', 'Upgrading',
      'Compiling'
@@ -580,8 +796,8 @@ class DeploymentResourceProperties(Model):
     _attribute_map = {
         'source': {'key': 'source', 'type': 'UserSourceInfo'},
         'app_name': {'key': 'appName', 'type': 'str'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
         'deployment_settings': {'key': 'deploymentSettings', 'type': 'DeploymentSettings'},
+        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
         'status': {'key': 'status', 'type': 'str'},
         'active': {'key': 'active', 'type': 'bool'},
         'created_time': {'key': 'createdTime', 'type': 'iso-8601'},
@@ -592,8 +808,8 @@ class DeploymentResourceProperties(Model):
         super(DeploymentResourceProperties, self).__init__(**kwargs)
         self.source = kwargs.get('source', None)
         self.app_name = None
-        self.provisioning_state = None
         self.deployment_settings = kwargs.get('deployment_settings', None)
+        self.provisioning_state = None
         self.status = None
         self.active = None
         self.created_time = None

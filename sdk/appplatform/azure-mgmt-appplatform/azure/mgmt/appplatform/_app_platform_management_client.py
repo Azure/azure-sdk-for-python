@@ -16,6 +16,8 @@ from ._configuration import AppPlatformManagementClientConfiguration
 from .operations import ServicesOperations
 from .operations import AppsOperations
 from .operations import BindingsOperations
+from .operations import CertificatesOperations
+from .operations import CustomDomainsOperations
 from .operations import DeploymentsOperations
 from .operations import Operations
 from . import models
@@ -33,6 +35,10 @@ class AppPlatformManagementClient(SDKClient):
     :vartype apps: azure.mgmt.appplatform.operations.AppsOperations
     :ivar bindings: Bindings operations
     :vartype bindings: azure.mgmt.appplatform.operations.BindingsOperations
+    :ivar certificates: Certificates operations
+    :vartype certificates: azure.mgmt.appplatform.operations.CertificatesOperations
+    :ivar custom_domains: CustomDomains operations
+    :vartype custom_domains: azure.mgmt.appplatform.operations.CustomDomainsOperations
     :ivar deployments: Deployments operations
     :vartype deployments: azure.mgmt.appplatform.operations.DeploymentsOperations
     :ivar operations: Operations operations
@@ -64,6 +70,10 @@ class AppPlatformManagementClient(SDKClient):
         self.apps = AppsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.bindings = BindingsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.certificates = CertificatesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.custom_domains = CustomDomainsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.deployments = DeploymentsOperations(
             self._client, self.config, self._serialize, self._deserialize)

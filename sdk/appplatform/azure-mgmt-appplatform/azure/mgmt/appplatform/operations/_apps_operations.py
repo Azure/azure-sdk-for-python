@@ -77,9 +77,9 @@ class AppsOperations(object):
 
         # Construct parameters
         query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
         if sync_status is not None:
             query_parameters['syncStatus'] = self._serialize.query("sync_status", sync_status, 'str')
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -113,10 +113,8 @@ class AppsOperations(object):
 
 
     def _create_or_update_initial(
-            self, resource_group_name, service_name, app_name, properties=None, custom_headers=None, raw=False, **operation_config):
-        app_resource = None
-        if properties is not None:
-            app_resource = models.AppResource(properties=properties)
+            self, resource_group_name, service_name, app_name, properties=None, location=None, custom_headers=None, raw=False, **operation_config):
+        app_resource = models.AppResource(properties=properties, location=location)
 
         # Construct URL
         url = self.create_or_update.metadata['url']
@@ -144,10 +142,7 @@ class AppsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        if app_resource is not None:
-            body_content = self._serialize.body(app_resource, 'AppResource')
-        else:
-            body_content = None
+        body_content = self._serialize.body(app_resource, 'AppResource')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -172,7 +167,7 @@ class AppsOperations(object):
         return deserialized
 
     def create_or_update(
-            self, resource_group_name, service_name, app_name, properties=None, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, service_name, app_name, properties=None, location=None, custom_headers=None, raw=False, polling=True, **operation_config):
         """Create a new App or update an exiting App.
 
         :param resource_group_name: The name of the resource group that
@@ -185,6 +180,9 @@ class AppsOperations(object):
         :type app_name: str
         :param properties: Properties of the App resource
         :type properties: ~azure.mgmt.appplatform.models.AppResourceProperties
+        :param location: The GEO location of the application, always the same
+         with its parent resource
+        :type location: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -203,6 +201,7 @@ class AppsOperations(object):
             service_name=service_name,
             app_name=app_name,
             properties=properties,
+            location=location,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
@@ -286,10 +285,8 @@ class AppsOperations(object):
 
 
     def _update_initial(
-            self, resource_group_name, service_name, app_name, properties=None, custom_headers=None, raw=False, **operation_config):
-        app_resource = None
-        if properties is not None:
-            app_resource = models.AppResource(properties=properties)
+            self, resource_group_name, service_name, app_name, properties=None, location=None, custom_headers=None, raw=False, **operation_config):
+        app_resource = models.AppResource(properties=properties, location=location)
 
         # Construct URL
         url = self.update.metadata['url']
@@ -317,10 +314,7 @@ class AppsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        if app_resource is not None:
-            body_content = self._serialize.body(app_resource, 'AppResource')
-        else:
-            body_content = None
+        body_content = self._serialize.body(app_resource, 'AppResource')
 
         # Construct and send request
         request = self._client.patch(url, query_parameters, header_parameters, body_content)
@@ -345,7 +339,7 @@ class AppsOperations(object):
         return deserialized
 
     def update(
-            self, resource_group_name, service_name, app_name, properties=None, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, service_name, app_name, properties=None, location=None, custom_headers=None, raw=False, polling=True, **operation_config):
         """Operation to update an exiting App.
 
         :param resource_group_name: The name of the resource group that
@@ -358,6 +352,9 @@ class AppsOperations(object):
         :type app_name: str
         :param properties: Properties of the App resource
         :type properties: ~azure.mgmt.appplatform.models.AppResourceProperties
+        :param location: The GEO location of the application, always the same
+         with its parent resource
+        :type location: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -376,6 +373,7 @@ class AppsOperations(object):
             service_name=service_name,
             app_name=app_name,
             properties=properties,
+            location=location,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
