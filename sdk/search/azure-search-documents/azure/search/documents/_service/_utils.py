@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
+from typing import TYPE_CHECKING
 
 from azure.core import MatchConditions
 from ._generated.models import (
@@ -11,6 +12,10 @@ from ._generated.models import (
     PatternTokenizer as _PatternTokenizer,
 )
 from ._models import PatternAnalyzer, PatternTokenizer
+
+if TYPE_CHECKING:
+    # pylint:disable=unused-import,ungrouped-imports
+    from typing import Optional
 
 DELIMITER = "|"
 
@@ -26,7 +31,7 @@ def quote_etag(etag):
 
 
 def prep_if_match(etag, match_condition):
-    # type: (str, MatchConditions) -> str
+    # type: (str, MatchConditions) -> Optional[str]
     if match_condition == MatchConditions.IfNotModified:
         if_match = quote_etag(etag) if etag else None
         return if_match
@@ -36,7 +41,7 @@ def prep_if_match(etag, match_condition):
 
 
 def prep_if_none_match(etag, match_condition):
-    # type: (str, MatchConditions) -> str
+    # type: (str, MatchConditions) -> Optional[str]
     if match_condition == MatchConditions.IfModified:
         if_none_match = quote_etag(etag) if etag else None
         return if_none_match
@@ -46,7 +51,7 @@ def prep_if_none_match(etag, match_condition):
 
 
 def delistize_flags_for_pattern_analyzer(pattern_analyzer):
-    # type: (str, PatternAnalyzer) -> _PatternAnalyzer
+    # type: (PatternAnalyzer) -> _PatternAnalyzer
     if not pattern_analyzer.flags:
         flags = None
     else:
@@ -61,7 +66,7 @@ def delistize_flags_for_pattern_analyzer(pattern_analyzer):
 
 
 def listize_flags_for_pattern_analyzer(pattern_analyzer):
-    # type: (str, _PatternAnalyzer) -> PatternAnalyzer
+    # type: (PatternAnalyzer) -> PatternAnalyzer
     if not pattern_analyzer.flags:
         flags = None
     else:
@@ -76,7 +81,7 @@ def listize_flags_for_pattern_analyzer(pattern_analyzer):
 
 
 def delistize_flags_for_pattern_tokenizer(pattern_tokenizer):
-    # type: (str, PatternTokenizer) -> _PatternTokenizer
+    # type: (PatternTokenizer) -> _PatternTokenizer
     if not pattern_tokenizer.flags:
         flags = None
     else:
@@ -90,7 +95,7 @@ def delistize_flags_for_pattern_tokenizer(pattern_tokenizer):
 
 
 def listize_flags_for_pattern_tokenizer(pattern_tokenizer):
-    # type: (str, _PatternTokenizer) -> PatternTokenizer
+    # type: (PatternTokenizer) -> PatternTokenizer
     if not pattern_tokenizer.flags:
         flags = None
     else:
@@ -104,7 +109,7 @@ def listize_flags_for_pattern_tokenizer(pattern_tokenizer):
 
 
 def delistize_flags_for_index(index):
-    # type: (str, Index) -> Index
+    # type: (Index) -> Index
     if index.analyzers:
         index.analyzers = [
             delistize_flags_for_pattern_analyzer(x)
@@ -123,7 +128,7 @@ def delistize_flags_for_index(index):
 
 
 def listize_flags_for_index(index):
-    # type: (str, Index) -> Index
+    # type: (Index) -> Index
     if index.analyzers:
         index.analyzers = [
             listize_flags_for_pattern_analyzer(x)
