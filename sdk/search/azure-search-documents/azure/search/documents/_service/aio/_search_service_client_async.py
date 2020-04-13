@@ -64,6 +64,24 @@ class SearchServiceClient(HeadersMixin):
         # type: () -> str
         return "<SearchServiceClient [endpoint={}]>".format(repr(self._endpoint))[:1024]
 
+    async def __aenter__(self):
+        # type: () -> SearchServiceClient
+        await self._client.__aenter__()  # pylint:disable=no-member
+        return self
+
+    async def __aexit__(self, *args):
+        # type: (*Any) -> None
+        await self._client.__aexit__(*args)  # pylint:disable=no-member
+
+    async def close(self):
+        # type: () -> None
+        """Close the :class:`~azure.search.SearchServiceClient` session.
+
+        """
+        return await self._client.close()
+
+    ### Service Operations
+
     @distributed_trace_async
     async def get_service_statistics(self, **kwargs):
         # type: (**Any) -> dict
@@ -180,12 +198,12 @@ class SearchServiceClient(HeadersMixin):
 
     @distributed_trace_async
     async def create_or_update_index(
-            self,
-            index_name,
-            index,
-            allow_index_downtime=None,
-            match_condition=MatchConditions.Unconditionally,
-            **kwargs
+        self,
+        index_name,
+        index,
+        allow_index_downtime=None,
+        match_condition=MatchConditions.Unconditionally,
+        **kwargs
     ):
         # type: (str, Index, bool, MatchConditions, **Any) -> Index
         """Creates a new search index or updates an index if it already exists.
@@ -219,14 +237,14 @@ class SearchServiceClient(HeadersMixin):
                 :dedent: 4
                 :caption: Update an index.
         """
-        error_map = {
-            404: ResourceNotFoundError
-        }
+        error_map = {404: ResourceNotFoundError}
         access_condition = None
         if index.e_tag:
             access_condition = AccessCondition()
             access_condition.if_match = prep_if_match(index.e_tag, match_condition)
-            access_condition.if_none_match = prep_if_none_match(index.e_tag, match_condition)
+            access_condition.if_none_match = prep_if_none_match(
+                index.e_tag, match_condition
+            )
         if match_condition == MatchConditions.IfNotModified:
             error_map[412] = ResourceModifiedError
         if match_condition == MatchConditions.IfModified:
@@ -242,7 +260,8 @@ class SearchServiceClient(HeadersMixin):
             index=patched_index,
             allow_index_downtime=allow_index_downtime,
             access_condition=access_condition,
-            **kwargs)
+            **kwargs
+        )
         return result
 
     @distributed_trace_async
@@ -269,22 +288,6 @@ class SearchServiceClient(HeadersMixin):
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = await self._client.indexes.analyze(
-            index_name=index_name,
-            request=analyze_request, **kwargs)
+            index_name=index_name, request=analyze_request, **kwargs
+        )
         return result
-
-    async def close(self):
-        # type: () -> None
-        """Close the :class:`~azure.search.SearchServiceClient` session.
-
-        """
-        return await self._client.close()
-
-    async def __aenter__(self):
-        # type: () -> SearchServiceClient
-        await self._client.__aenter__()  # pylint:disable=no-member
-        return self
-
-    async def __aexit__(self, *args):
-        # type: (*Any) -> None
-        await self._client.__aexit__(*args)  # pylint:disable=no-member

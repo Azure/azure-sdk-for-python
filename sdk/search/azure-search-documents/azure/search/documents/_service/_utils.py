@@ -5,10 +5,15 @@
 # -------------------------------------------------------------------------
 
 from azure.core import MatchConditions
-from ._generated.models import Index, PatternAnalyzer as _PatternAnalyzer, PatternTokenizer as _PatternTokenizer
+from ._generated.models import (
+    Index,
+    PatternAnalyzer as _PatternAnalyzer,
+    PatternTokenizer as _PatternTokenizer,
+)
 from ._models import PatternAnalyzer, PatternTokenizer
 
 DELIMITER = "|"
+
 
 def quote_etag(etag):
     if not etag or etag == "*":
@@ -19,6 +24,7 @@ def quote_etag(etag):
         return etag
     return '"' + etag + '"'
 
+
 def prep_if_match(etag, match_condition):
     # type: (str, MatchConditions) -> str
     if match_condition == MatchConditions.IfNotModified:
@@ -28,6 +34,7 @@ def prep_if_match(etag, match_condition):
         return "*"
     return None
 
+
 def prep_if_none_match(etag, match_condition):
     # type: (str, MatchConditions) -> str
     if match_condition == MatchConditions.IfModified:
@@ -36,6 +43,7 @@ def prep_if_none_match(etag, match_condition):
     if match_condition == MatchConditions.IfMissing:
         return "*"
     return None
+
 
 def delistize_flags_for_pattern_analyzer(pattern_analyzer):
     # type: (str, PatternAnalyzer) -> _PatternAnalyzer
@@ -48,8 +56,9 @@ def delistize_flags_for_pattern_analyzer(pattern_analyzer):
         lower_case_terms=pattern_analyzer.lower_case_terms,
         pattern=pattern_analyzer.pattern,
         flags=flags,
-        stopwords=pattern_analyzer.stopwords
+        stopwords=pattern_analyzer.stopwords,
     )
+
 
 def listize_flags_for_pattern_analyzer(pattern_analyzer):
     # type: (str, _PatternAnalyzer) -> PatternAnalyzer
@@ -62,8 +71,9 @@ def listize_flags_for_pattern_analyzer(pattern_analyzer):
         lower_case_terms=pattern_analyzer.lower_case_terms,
         pattern=pattern_analyzer.pattern,
         flags=flags,
-        stopwords=pattern_analyzer.stopwords
+        stopwords=pattern_analyzer.stopwords,
     )
+
 
 def delistize_flags_for_pattern_tokenizer(pattern_tokenizer):
     # type: (str, PatternTokenizer) -> _PatternTokenizer
@@ -75,8 +85,9 @@ def delistize_flags_for_pattern_tokenizer(pattern_tokenizer):
         name=pattern_tokenizer.name,
         pattern=pattern_tokenizer.pattern,
         flags=flags,
-        group=pattern_tokenizer.group
+        group=pattern_tokenizer.group,
     )
+
 
 def listize_flags_for_pattern_tokenizer(pattern_tokenizer):
     # type: (str, _PatternTokenizer) -> PatternTokenizer
@@ -88,33 +99,43 @@ def listize_flags_for_pattern_tokenizer(pattern_tokenizer):
         name=pattern_tokenizer.name,
         pattern=pattern_tokenizer.pattern,
         flags=flags,
-        group=pattern_tokenizer.group
+        group=pattern_tokenizer.group,
     )
+
 
 def delistize_flags_for_index(index):
     # type: (str, Index) -> Index
     if index.analyzers:
         index.analyzers = [
             delistize_flags_for_pattern_analyzer(x)
-            if isinstance(x, PatternAnalyzer) else x for x in index.analyzers
+            if isinstance(x, PatternAnalyzer)
+            else x
+            for x in index.analyzers
         ]
     if index.tokenizers:
         index.tokenizers = [
             delistize_flags_for_pattern_tokenizer(x)
-            if isinstance(x, PatternTokenizer) else x for x in index.tokenizers
+            if isinstance(x, PatternTokenizer)
+            else x
+            for x in index.tokenizers
         ]
     return index
+
 
 def listize_flags_for_index(index):
     # type: (str, Index) -> Index
     if index.analyzers:
         index.analyzers = [
             listize_flags_for_pattern_analyzer(x)
-            if isinstance(x, _PatternAnalyzer) else x for x in index.analyzers
+            if isinstance(x, _PatternAnalyzer)
+            else x
+            for x in index.analyzers
         ]
     if index.tokenizers:
         index.tokenizers = [
             listize_flags_for_pattern_tokenizer(x)
-            if isinstance(x, _PatternTokenizer) else x for x in index.tokenizers
+            if isinstance(x, _PatternTokenizer)
+            else x
+            for x in index.tokenizers
         ]
     return index
