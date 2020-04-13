@@ -32,7 +32,7 @@ class FormRecognizerTest(AzureTestCase):
         self.receipt_url_jpg = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/receipt/contoso-allinone.jpg"
         self.receipt_url_png = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/receipt/contoso-receipt.png"
         self.invoice_url_pdf = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/Invoice_1.pdf"
-        self.form_url_jpg = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/Form_1.pdf"
+        self.form_url_jpg = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/Form_1.jpg"
 
         # file stream samples
         self.receipt_jpg = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/receipt/contoso-allinone.jpg"))
@@ -92,6 +92,8 @@ class FormRecognizerTest(AzureTestCase):
                 self.assertTablesTransformCorrect(page.tables, actual_page.tables, actual_read)
 
     def assertBoundingBoxTransformCorrect(self, box, actual):
+        if box is None and actual is None:
+            return
         self.assertEqual(box[0].x, actual[0])
         self.assertEqual(box[0].y, actual[1])
         self.assertEqual(box[1].x, actual[2])
@@ -102,6 +104,8 @@ class FormRecognizerTest(AzureTestCase):
         self.assertEqual(box[3].y, actual[7])
 
     def assertTextContentTransformCorrect(self, field_elements, actual_elements, read_result):
+        if field_elements is None and actual_elements is None:
+            return
         for receipt, actual in zip(field_elements, actual_elements):
             nums = [int(s) for s in re.findall(r'\d+', actual)]
             read, line, word = nums[0:3]
@@ -109,6 +113,57 @@ class FormRecognizerTest(AzureTestCase):
             self.assertEqual(receipt.text, text_element.text)
             self.assertEqual(receipt.confidence, text_element.confidence)
             self.assertBoundingBoxTransformCorrect(receipt.bounding_box, text_element.bounding_box)
+
+    def assertLabeledFormFieldDictTransformCorrect(self, form_fields, actual_fields, read_results=None):
+        if actual_fields is None:
+            return
+        for a, b in zip(actual_fields.items(), form_fields.items()):
+            self.assertEqual(a[0], b[0])
+            self.assertEqual(a[1].page, b[1].page_number)
+            self.assertEqual(a[1].confidence, b[1].confidence)
+            self.assertBoundingBoxTransformCorrect(b[1].value_data.bounding_box, a[1].bounding_box)
+            self.assertEqual(a[1].text, b[1].value_data.text)
+            field_type = a[1].type
+            if field_type == "string":
+                self.assertEqual(b[1].value, a[1].value_string)
+            if field_type == "number":
+                self.assertEqual(b[1].value, a[1].value_number)
+            if field_type == "integer":
+                self.assertEqual(b[1].value, a[1].value_integer)
+            if field_type == "date":
+                self.assertEqual(b[1].value, a[1].value_date)
+            if field_type == "phoneNumber":
+                self.assertEqual(b[1].value, a[1].value_phone_number)
+            if field_type == "time":
+                self.assertEqual(b[1].value, a[1].value_time)
+            if read_results:
+                self.assertTextContentTransformCorrect(
+                    b[1].value_data.text_content,
+                    a[1].elements,
+                    read_results
+                )
+
+    def assertUnlabeledFormFieldDictTransformCorrect(self, form_fields, actual_fields, read_results=None):
+        if actual_fields is None:
+            return
+        for idx, a in enumerate(actual_fields):
+            self.assertEqual(a.confidence, form_fields["field-"+str(idx)].confidence)
+            self.assertEqual(a.key.text, form_fields["field-"+str(idx)].label_data.text)
+            self.assertBoundingBoxTransformCorrect(form_fields["field-"+str(idx)].label_data.bounding_box, a.key.bounding_box)
+            if read_results:
+                self.assertTextContentTransformCorrect(
+                    form_fields["field-"+str(idx)].label_data.text_content,
+                    a.key.elements,
+                    read_results
+                )
+            self.assertEqual(a.value.text, form_fields["field-" + str(idx)].value_data.text)
+            self.assertBoundingBoxTransformCorrect(form_fields["field-" + str(idx)].value_data.bounding_box, a.value.bounding_box)
+            if read_results:
+                self.assertTextContentTransformCorrect(
+                    form_fields["field-"+str(idx)].value_data.text_content,
+                    a.value.elements,
+                    read_results
+                )
 
     def assertFormFieldTransformCorrect(self, receipt_field, actual_field, read_results=None):
         if actual_field is None:

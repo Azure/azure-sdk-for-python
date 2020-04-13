@@ -5,69 +5,85 @@
 # ------------------------------------
 
 import functools
+from azure.core.pipeline.transport import AioHttpTransport
+from multidict import CIMultiDict, CIMultiDictProxy
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import HttpResponseError, ServiceRequestError
-from azure.ai.formrecognizer import FormRecognizerClient
+from azure.ai.formrecognizer.aio import FormRecognizerClient, FormTrainingClient
 from azure.ai.formrecognizer._generated.models import AnalyzeOperationResult
 from azure.ai.formrecognizer._response_handlers import prepare_form_result
-from testcase import FormRecognizerTest, GlobalFormRecognizerAccountPreparer, GlobalFormAndStorageAccountPreparer
+from testcase import GlobalFormRecognizerAccountPreparer, GlobalFormAndStorageAccountPreparer
 from testcase import GlobalTrainingAccountPreparer as _GlobalTrainingAccountPreparer
+from asynctestcase import AsyncFormRecognizerTest
 
 
 GlobalTrainingAccountPreparer = functools.partial(_GlobalTrainingAccountPreparer, FormRecognizerClient)
 
 
-class TestCustomForms(FormRecognizerTest):
+class AiohttpTestTransport(AioHttpTransport):
+    """Workaround to vcrpy==3.0.0 bug
+
+    # records location header as a list of char instead of str
+    """
+
+    async def send(self, request, **config):
+        response = await super(AiohttpTestTransport, self).send(request, **config)
+        if response.headers.get("location") and isinstance(response.headers["location"], list):
+            response_dict = {header: value for header, value in response.headers.items()}
+            response_dict["location"] = "".join(response.headers.get("location"))
+            response.headers = CIMultiDictProxy(CIMultiDict(response_dict))
+        return response
+
+
+class TestCustomFormsAsync(AsyncFormRecognizerTest):
 
     @GlobalFormRecognizerAccountPreparer()
-    def test_custom_form_bad_endpoint(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
+    async def test_custom_form_bad_endpoint(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
         with open(self.form_jpg, "rb") as fd:
             myfile = fd.read()
         with self.assertRaises(ServiceRequestError):
             client = FormRecognizerClient("http://notreal.azure.com", AzureKeyCredential(form_recognizer_account_key))
-            poller = client.begin_recognize_custom_forms(model_id="xx", stream=myfile)
+            result = await client.recognize_custom_forms(model_id="xx", stream=myfile)
 
     @GlobalFormRecognizerAccountPreparer()
-    def test_authentication_bad_key(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
+    async def test_authentication_bad_key(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
         client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential("xxxx"))
         with open(self.form_jpg, "rb") as fd:
             myfile = fd.read()
         with self.assertRaises(HttpResponseError):
-            poller = client.begin_recognize_custom_forms(model_id="xx", stream=myfile)
+            result = await client.recognize_custom_forms(model_id="xx", stream=myfile)
 
     @GlobalFormRecognizerAccountPreparer()
-    def test_passing_unsupported_url_content_type(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
+    async def test_passing_unsupported_url_content_type(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
         client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
 
         with self.assertRaises(TypeError):
-            poller = client.begin_recognize_custom_forms(model_id="xx", stream="https://badurl.jpg", content_type="application/json")
+            result = await client.recognize_custom_forms(model_id="xx", stream="https://badurl.jpg", content_type="application/json")
 
     @GlobalFormRecognizerAccountPreparer()
-    def test_auto_detect_unsupported_stream_content(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
+    async def test_auto_detect_unsupported_stream_content(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
         client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
 
         with open(self.unsupported_content_py, "rb") as fd:
             myfile = fd.read()
 
         with self.assertRaises(ValueError):
-            poller = client.begin_recognize_custom_forms(
+            poller = await client.recognize_custom_forms(
                 model_id="xxx",
                 stream=myfile,
             )
 
     @GlobalFormAndStorageAccountPreparer()
     @GlobalTrainingAccountPreparer()
-    def test_custom_form_unlabeled(self, client, container_sas_url):
-        training_client = client.get_form_training_client()
+    async def test_custom_form_unlabeled(self, client, container_sas_url):
+        training_client = client.get_form_training_client(transport=AiohttpTestTransport())
 
-        poller = training_client.begin_training(container_sas_url)
-        model = poller.result()
+        model = await training_client.training(container_sas_url)
 
         with open(self.form_jpg, "rb") as fd:
             myfile = fd.read()
 
-        poller = client.begin_recognize_custom_forms(model.model_id, myfile)
-        form = poller.result()
+        form = await client.recognize_custom_forms(model.model_id, myfile)
 
         self.assertEqual(form[0].form_type, "form-0")
         self.assertFormPagesHasValues(form[0].pages)
@@ -81,17 +97,15 @@ class TestCustomForms(FormRecognizerTest):
 
     @GlobalFormAndStorageAccountPreparer()
     @GlobalTrainingAccountPreparer()
-    def test_custom_form_labeled(self, client, container_sas_url):
-        training_client = client.get_form_training_client()
+    async def test_custom_form_labeled(self, client, container_sas_url):
+        training_client = client.get_form_training_client(transport=AiohttpTestTransport())
 
-        poller = training_client.begin_training(container_sas_url, use_labels=True)
-        model = poller.result()
+        model = await training_client.training(container_sas_url, use_labels=True)
 
         with open(self.form_jpg, "rb") as fd:
             myfile = fd.read()
 
-        poller = client.begin_recognize_custom_forms(model.model_id, myfile)
-        form = poller.result()
+        form = await client.recognize_custom_forms(model.model_id, myfile)
 
         self.assertEqual(form[0].form_type, "form-"+model.model_id)
         self.assertFormPagesHasValues(form[0].pages)
@@ -104,11 +118,10 @@ class TestCustomForms(FormRecognizerTest):
 
     @GlobalFormAndStorageAccountPreparer()
     @GlobalTrainingAccountPreparer()
-    def test_custom_form_unlabeled_transform(self, client, container_sas_url):
-        training_client = client.get_form_training_client()
+    async def test_form_unlabeled_transform(self, client, container_sas_url):
+        training_client = client.get_form_training_client(transport=AiohttpTestTransport())
 
-        poller = training_client.begin_training(container_sas_url)
-        model = poller.result()
+        model = await training_client.training(container_sas_url)
 
         responses = []
 
@@ -121,13 +134,13 @@ class TestCustomForms(FormRecognizerTest):
         with open(self.form_jpg, "rb") as fd:
             myfile = fd.read()
 
-        poller = client.begin_recognize_custom_forms(
+        form = await client.recognize_custom_forms(
             model.model_id,
             myfile,
             include_text_content=True,
             cls=callback
         )
-        form = poller.result()
+
         actual = responses[0]
         recognized_form = responses[1]
         read_results = actual.analyze_result.read_results
@@ -141,11 +154,10 @@ class TestCustomForms(FormRecognizerTest):
 
     @GlobalFormAndStorageAccountPreparer()
     @GlobalTrainingAccountPreparer()
-    def test_custom_form_labeled_transform(self, client, container_sas_url):
-        training_client = client.get_form_training_client()
+    async def test_form_labeled_transform(self, client, container_sas_url):
+        training_client = client.get_form_training_client(transport=AiohttpTestTransport())
 
-        poller = training_client.begin_training(container_sas_url, use_labels=True)
-        model = poller.result()
+        model = await training_client.training(container_sas_url, use_labels=True)
 
         responses = []
 
@@ -158,13 +170,13 @@ class TestCustomForms(FormRecognizerTest):
         with open(self.form_jpg, "rb") as fd:
             myfile = fd.read()
 
-        poller = client.begin_recognize_custom_forms(
+        form = await client.recognize_custom_forms(
             model.model_id,
             myfile,
             include_text_content=True,
             cls=callback
         )
-        form = poller.result()
+
         actual = responses[0]
         recognized_form = responses[1]
         read_results = actual.analyze_result.read_results

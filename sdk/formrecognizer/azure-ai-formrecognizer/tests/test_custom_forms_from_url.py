@@ -17,43 +17,37 @@ from testcase import GlobalTrainingAccountPreparer as _GlobalTrainingAccountPrep
 GlobalTrainingAccountPreparer = functools.partial(_GlobalTrainingAccountPreparer, FormRecognizerClient)
 
 
-class TestCustomForms(FormRecognizerTest):
+class TestCustomFormsFromUrl(FormRecognizerTest):
 
     @GlobalFormRecognizerAccountPreparer()
-    def test_custom_form_bad_endpoint(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
-        with open(self.form_jpg, "rb") as fd:
-            myfile = fd.read()
+    def test_custom_form_url_bad_endpoint(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
         with self.assertRaises(ServiceRequestError):
             client = FormRecognizerClient("http://notreal.azure.com", AzureKeyCredential(form_recognizer_account_key))
-            poller = client.begin_recognize_custom_forms(model_id="xx", stream=myfile)
+            result = client.begin_recognize_custom_forms_from_url(model_id="xx", url=self.form_url_jpg)
 
     @GlobalFormRecognizerAccountPreparer()
-    def test_authentication_bad_key(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
+    def test_url_authentication_bad_key(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
         client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential("xxxx"))
-        with open(self.form_jpg, "rb") as fd:
-            myfile = fd.read()
         with self.assertRaises(HttpResponseError):
-            poller = client.begin_recognize_custom_forms(model_id="xx", stream=myfile)
+            result = client.begin_recognize_custom_forms_from_url(model_id="xx", url=self.form_url_jpg)
 
     @GlobalFormRecognizerAccountPreparer()
-    def test_passing_unsupported_url_content_type(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
+    def test_passing_bad_url(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
         client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
 
-        with self.assertRaises(TypeError):
-            poller = client.begin_recognize_custom_forms(model_id="xx", stream="https://badurl.jpg", content_type="application/json")
+        with self.assertRaises(HttpResponseError):
+            poller = client.begin_recognize_custom_forms_from_url(model_id="xx", url="https://badurl.jpg")
 
     @GlobalFormRecognizerAccountPreparer()
-    def test_auto_detect_unsupported_stream_content(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
+    def test_pass_stream_into_url(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
         client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
 
         with open(self.unsupported_content_py, "rb") as fd:
-            myfile = fd.read()
-
-        with self.assertRaises(ValueError):
-            poller = client.begin_recognize_custom_forms(
-                model_id="xxx",
-                stream=myfile,
-            )
+            with self.assertRaises(HttpResponseError):
+                poller = client.begin_recognize_custom_forms_from_url(
+                    model_id="xxx",
+                    url=fd,
+                )
 
     @GlobalFormAndStorageAccountPreparer()
     @GlobalTrainingAccountPreparer()
@@ -63,10 +57,7 @@ class TestCustomForms(FormRecognizerTest):
         poller = training_client.begin_training(container_sas_url)
         model = poller.result()
 
-        with open(self.form_jpg, "rb") as fd:
-            myfile = fd.read()
-
-        poller = client.begin_recognize_custom_forms(model.model_id, myfile)
+        poller = client.begin_recognize_custom_forms_from_url(model.model_id, self.form_url_jpg)
         form = poller.result()
 
         self.assertEqual(form[0].form_type, "form-0")
@@ -87,10 +78,7 @@ class TestCustomForms(FormRecognizerTest):
         poller = training_client.begin_training(container_sas_url, use_labels=True)
         model = poller.result()
 
-        with open(self.form_jpg, "rb") as fd:
-            myfile = fd.read()
-
-        poller = client.begin_recognize_custom_forms(model.model_id, myfile)
+        poller = client.begin_recognize_custom_forms_from_url(model.model_id, self.form_url_jpg)
         form = poller.result()
 
         self.assertEqual(form[0].form_type, "form-"+model.model_id)
@@ -104,7 +92,7 @@ class TestCustomForms(FormRecognizerTest):
 
     @GlobalFormAndStorageAccountPreparer()
     @GlobalTrainingAccountPreparer()
-    def test_custom_form_unlabeled_transform(self, client, container_sas_url):
+    def test_form_unlbld_transform(self, client, container_sas_url):
         training_client = client.get_form_training_client()
 
         poller = training_client.begin_training(container_sas_url)
@@ -118,12 +106,9 @@ class TestCustomForms(FormRecognizerTest):
             responses.append(analyze_result)
             responses.append(form)
 
-        with open(self.form_jpg, "rb") as fd:
-            myfile = fd.read()
-
-        poller = client.begin_recognize_custom_forms(
+        poller = client.begin_recognize_custom_forms_from_url(
             model.model_id,
-            myfile,
+            self.form_url_jpg,
             include_text_content=True,
             cls=callback
         )
@@ -141,7 +126,7 @@ class TestCustomForms(FormRecognizerTest):
 
     @GlobalFormAndStorageAccountPreparer()
     @GlobalTrainingAccountPreparer()
-    def test_custom_form_labeled_transform(self, client, container_sas_url):
+    def test_form_labeled_transform(self, client, container_sas_url):
         training_client = client.get_form_training_client()
 
         poller = training_client.begin_training(container_sas_url, use_labels=True)
@@ -155,12 +140,9 @@ class TestCustomForms(FormRecognizerTest):
             responses.append(analyze_result)
             responses.append(form)
 
-        with open(self.form_jpg, "rb") as fd:
-            myfile = fd.read()
-
-        poller = client.begin_recognize_custom_forms(
+        poller = client.begin_recognize_custom_forms_from_url(
             model.model_id,
-            myfile,
+            self.form_url_jpg,
             include_text_content=True,
             cls=callback
         )
