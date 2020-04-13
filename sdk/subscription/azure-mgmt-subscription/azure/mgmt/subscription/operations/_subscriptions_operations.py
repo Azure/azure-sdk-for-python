@@ -38,7 +38,7 @@ class SubscriptionsOperations(object):
         self.config = config
 
     def cancel(
-            self, subscription_id, custom_headers=None, raw=False, **operation_config):
+            self, subscription_id, ignore_resource_check=False, custom_headers=None, raw=False, **operation_config):
         """The operation to cancel a subscription.
 
         :param subscription_id: Subscription Id.
@@ -66,6 +66,7 @@ class SubscriptionsOperations(object):
         # Construct parameters
         query_parameters = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['IgnoreResourceCheck'] = self._serialize.query("IgnoreResourceCheck", ignore_resource_check, 'bool')
 
         # Construct headers
         header_parameters = {}
