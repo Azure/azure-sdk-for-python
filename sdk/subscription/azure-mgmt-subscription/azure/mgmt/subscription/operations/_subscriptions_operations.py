@@ -43,6 +43,8 @@ class SubscriptionsOperations(object):
 
         :param subscription_id: Subscription Id.
         :type subscription_id: str
+        :param ignore_resource_check: Ignore existing resources in the subscription
+        :type ignore_resource_check: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
