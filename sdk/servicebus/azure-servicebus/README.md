@@ -112,12 +112,13 @@ from azure.servicebus import ServiceBusClient, Message
 
 import os
 connstr = os.environ['SERVICE_BUS_CONN_STR']
+queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
 
 with ServiceBusClient.from_connection_string(connstr) as client:
-    with client.get_queue_sender(queue_name):
+    with client.get_queue_sender(queue_name) as sender:
 
         message = Message("Single message")
-        queue_sender.send(message)
+        sender.send(message)
 ```
 
 ### Receive from a queue
@@ -129,6 +130,7 @@ from azure.servicebus import ServiceBusClient
 
 import os
 connstr = os.environ['SERVICE_BUS_CONN_STR']
+queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
 
 with ServiceBusClient.from_connection_string(connstr) as client:
     with client.get_queue_receiver(queue_name) as receiver:
