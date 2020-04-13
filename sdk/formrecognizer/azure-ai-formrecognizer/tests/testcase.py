@@ -117,29 +117,31 @@ class FormRecognizerTest(AzureTestCase):
     def assertLabeledFormFieldDictTransformCorrect(self, form_fields, actual_fields, read_results=None):
         if actual_fields is None:
             return
-        for a, b in zip(actual_fields.items(), form_fields.items()):
-            self.assertEqual(a[0], b[0])
-            self.assertEqual(a[1].page, b[1].page_number)
-            self.assertEqual(a[1].confidence, b[1].confidence)
-            self.assertBoundingBoxTransformCorrect(b[1].value_data.bounding_box, a[1].bounding_box)
-            self.assertEqual(a[1].text, b[1].value_data.text)
-            field_type = a[1].type
+
+        b = form_fields
+        for label, a in actual_fields.items():
+            self.assertEqual(a, b[label])
+            self.assertEqual(a.page, b[label].page_number)
+            self.assertEqual(a.confidence, b[label].confidence)
+            self.assertBoundingBoxTransformCorrect(b[label].value_data.bounding_box, a.bounding_box)
+            self.assertEqual(a.text, b[label].value_data.text)
+            field_type = a.type
             if field_type == "string":
-                self.assertEqual(b[1].value, a[1].value_string)
+                self.assertEqual(b[label].value, a.value_string)
             if field_type == "number":
-                self.assertEqual(b[1].value, a[1].value_number)
+                self.assertEqual(b[label].value, a.value_number)
             if field_type == "integer":
-                self.assertEqual(b[1].value, a[1].value_integer)
+                self.assertEqual(b[label].value, a.value_integer)
             if field_type == "date":
-                self.assertEqual(b[1].value, a[1].value_date)
+                self.assertEqual(b[label].value, a.value_date)
             if field_type == "phoneNumber":
-                self.assertEqual(b[1].value, a[1].value_phone_number)
+                self.assertEqual(b[label].value, a.value_phone_number)
             if field_type == "time":
-                self.assertEqual(b[1].value, a[1].value_time)
+                self.assertEqual(b[label].value, a.value_time)
             if read_results:
                 self.assertTextContentTransformCorrect(
-                    b[1].value_data.text_content,
-                    a[1].elements,
+                    b[label].value_data.text_content,
+                    a.elements,
                     read_results
                 )
 
