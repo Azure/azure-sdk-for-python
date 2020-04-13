@@ -478,7 +478,7 @@ class ReceivedMessage(PeekMessage):
         :rtype: bool
         """
         try:
-            if self._receiver._session_id:  # pylint: disable=protected-access
+            if self._receiver.session:  # pylint: disable=protected-access
                 raise TypeError("Session messages do not expire. Please use the Session expiry instead.")
         except AttributeError: # Is not a session receiver
             pass
@@ -494,7 +494,7 @@ class ReceivedMessage(PeekMessage):
         :rtype: datetime.datetime
         """
         try:
-            if self.settled or self._receiver._session_id:  # pylint: disable=protected-access
+            if self.settled or self._receiver.session:  # pylint: disable=protected-access
                 return None
         except AttributeError: # not settled, and isn't session receiver.
             pass

@@ -406,6 +406,8 @@ class ServiceBusClient(object):
             logging_enable=self._config.logging_enable,
             connection=self._connection,
             session_id=session_id,
+            transport_type=self._config.transport_type,
+            http_proxy=self._config.http_proxy,
             **kwargs
         )
 
