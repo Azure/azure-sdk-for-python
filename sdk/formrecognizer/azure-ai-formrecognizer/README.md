@@ -85,14 +85,14 @@ client = FormRecognizerClient(endpoint, credential)
 ## Key concepts
 
 ### FormRecognizerClient
-A `FormRecognizerClient` is the Form Recognizer interface to use for analyzing receipts and extracting layout items from
+A `FormRecognizerClient` is the Form Recognizer interface to use for analyzing receipts and recognizing content from
 forms. It provides different methods based on inputs from a URL and inputs from a stream. You can extract receipt field
-values from receipts from the US, table data and geometry from a URl or stream, and use a custom trained model to extract
+values from receipts from the US, table data and geometry from a URL or stream, and use a custom trained model to recognize
 form data.
 
 ### FormTrainingClient
 A `FormTrainingClient` is the Form Recognizer interface to use for creating, using, and managing custom machine-learned models.
-It provides operations for training models on forms you provide, and extracting field values and locations from your
+It provides operations for training models on forms you provide, and recognizing field values and text placement from your
 custom forms.  It also provides operations for viewing and deleting models, as well as understanding how close you
 are to reaching subscription limits for the number of models you can train.
 
@@ -101,14 +101,14 @@ Long-running operations are operations which consist of an initial request sent 
 followed by polling the service at intervals to determine whether the operation has completed or failed, and if it has
 succeeded, to get the result.
 
-Methods that train models or extract values from forms are modeled as long-running operations.  The client exposes
+Methods that train models or recognize values from forms are modeled as long-running operations.  The client exposes
 a `begin_<method-name>` method that returns an `LROPoller`.  Callers should wait for the operation to complete by
 calling `result()` on the operation returned from the `begin_<method-name>` method.  Sample code snippets are provided
 to illustrate using long-running operations [below](#Examples).
 
 ### Training models
 Using the `FormTrainingClient`, you can train a machine-learned model on your own form type.  The resulting model will
-be able to extract values from the types of forms it was trained on.
+be able to recognize values from the types of forms it was trained on.
 
 #### Training without labels
 A model trained without labels uses unsupervised learning to understand the layout and relationships between field
@@ -119,14 +119,14 @@ This approach doesn't require manual data labeling or intensive coding and maint
 method first when training custom models.
 
 #### Training with labels
-A model trained with labels uses supervised learning to extract values you specify by adding labels to your training forms.
+A model trained with labels uses supervised learning to recognize values you specify by adding labels to your training forms.
 The learning algorithm uses a label file you provide to learn what fields are found at various locations in the form,
-and learns to extract just those values.
+and learns to recognize just those values.
 
 This approach can result in better-performing models, and those models can work with more complex form structures.
 
-### Extracting values from forms
-Using the `FormRecognizerClient`, you can use your own trained models to extract field values and locations, as well as
+### Recognizing values from forms
+Using the `FormRecognizerClient`, you can use your own trained models to recognize field values and locations, as well as
 table data, from forms of the type you trained your models on.  The output of models trained with and without labels
 differs as described below.
 
@@ -138,7 +138,7 @@ as well as table data, found on that page.
 
 #### Using models trained with labels
 Models trained with labels consider a form as a single unit.  For example, if you train your model on 3-page forms
-with labels, it will learn to extract field values from the locations you've labeled across all pages in the form.
+with labels, it will learn to recognize field values from the locations you've labeled across all pages in the form.
 If you sent a document containing two forms to it for analysis, it would return a collection of two forms,
 where each form contains the field names, values, and locations, as well as table data, found in that form.
 Fields and tables have page numbers to identify the pages where they were found.
@@ -153,9 +153,9 @@ allow you to store.
 The following section provides several code snippets covering some of the most common Form Recognizer tasks, including:
 
 * [Recognize Receipts](#recognize-receipts "Recognize receipts")
-* [Extract Form Layouts](#extract-form-layouts "Extract form layouts")
+* [Recognize Content](#recognize-content "Recognize Content")
+* [Recognize Forms Using a Custom Model](#recognize-forms-using-a-custom-model "Recognize Forms Using a Custom Model")
 * [Train a Model](#train-a-model "Train a model")
-* [Extract Forms Using a Model](#extract-forms-using-a-model "Extract forms using a model")
 
 
 ### Recognize Receipts
@@ -174,9 +174,9 @@ result = poller.result()
 
 r = result[0]
 print("Receipt contained the following values with confidences: ")
-print("ReceiptType: {}\nconfidence: {}\n".format(r.receipt_type.type, r.receipt_type.confidence))
-print("MerchantName: {}\nconfidence: {}\n".format(r.merchant_name.value, r.merchant_name.confidence))
-print("TransactionDate: {}\nconfidence: {}\n".format(r.transaction_date.value, r.transaction_date.confidence))
+print("Receipt Type: {}\nconfidence: {}\n".format(r.receipt_type.type, r.receipt_type.confidence))
+print("Merchant Name: {}\nconfidence: {}\n".format(r.merchant_name.value, r.merchant_name.confidence))
+print("Transaction Date: {}\nconfidence: {}\n".format(r.transaction_date.value, r.transaction_date.confidence))
 print("Receipt items:")
 for item in r.receipt_items:
     print("Item Name: {}\nconfidence: {}".format(item.name.value, item.name.confidence))
@@ -188,7 +188,7 @@ print("Tip: {}\nconfidence: {}\n".format(r.tip.value, r.tip.confidence))
 print("Total: {}\nconfidence: {}\n".format(r.total.value, r.total.confidence))
 ```
 
-### Recognize Form Content
+### Recognize Content
 Recognize text and table structures, along with their bounding box coordinates, from documents.
 
 ```python
@@ -210,7 +210,7 @@ for cell in table.cells:
 ```
 
 ### Train a model
-Train a machine-learned model on your own form type. The resulting model will be able to extract values from the types of forms it was trained on.
+Train a machine-learned model on your own form type. The resulting model will be able to recognize values from the types of forms it was trained on.
 Provide a container SAS url to your Azure Storage Blob container where you're storing the training documents. See details on setting this up
 in the [service quickstart documentation][quickstart_training].
 
@@ -245,7 +245,7 @@ for doc in model.training_documents:
     print("Document errors: {}".format(doc.errors))
 ```
 
-### Recognize Forms Using a Model
+### Recognize Forms Using a Custom Model
 Recognize name/value pairs and table data from forms. These models are trained with your own data, so they're tailored to your forms.
 
 ```python
