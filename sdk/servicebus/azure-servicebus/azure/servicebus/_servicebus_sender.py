@@ -255,8 +255,10 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         """Create a ServiceBusSender from a connection string.
 
         :param conn_str: The connection string of a Service Bus.
-        :keyword str queue_name: The path of specific Service Bus Queue the client connects to.  Only one of queue_name or topic_name can be provided.
-        :keyword str topic_name: The path of specific Service Bus Topic the client connects to.  Only one of queue_name or topic_name can be provided.
+        :keyword str queue_name: The path of specific Service Bus Queue the client connects to.
+         Only one of queue_name or topic_name can be provided.
+        :keyword str topic_name: The path of specific Service Bus Topic the client connects to.
+         Only one of queue_name or topic_name can be provided.
         :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
         :keyword int retry_total: The total number of attempts to redo a failed operation when an error occurs.
          Default value is 3.

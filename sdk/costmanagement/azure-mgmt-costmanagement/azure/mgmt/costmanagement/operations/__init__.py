@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .dimensions_operations import DimensionsOperations
-from .query_operations import QueryOperations
-from .exports_operations import ExportsOperations
-from .operations import Operations
+from ._dimensions_operations import DimensionsOperations
+from ._query_operations import QueryOperations
+from ._exports_operations import ExportsOperations
+from ._operations import Operations
 
 __all__ = [
     'DimensionsOperations',

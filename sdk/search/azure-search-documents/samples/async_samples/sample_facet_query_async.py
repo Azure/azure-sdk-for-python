@@ -38,15 +38,14 @@ async def filter_query():
 
     query = SearchQuery(search_text="WiFi", facets=["Category"], top=0)
 
-    results = await search_client.search(query=query)
+    async with search_client:
+        results = await search_client.search(query=query)
 
-    facets = await results.get_facets()
+        facets = await results.get_facets()
 
-    print("Catgory facet counts for hotels:")
-    for facet in facets["Category"]:
-        print("    {}".format(facet))
-
-    await search_client.close()
+        print("Catgory facet counts for hotels:")
+        for facet in facets["Category"]:
+            print("    {}".format(facet))
     # [END facet_query_async]
 
 if __name__ == '__main__':
