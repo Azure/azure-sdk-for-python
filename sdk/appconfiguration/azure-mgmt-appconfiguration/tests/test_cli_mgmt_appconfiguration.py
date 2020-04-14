@@ -50,7 +50,7 @@ class MgmtAppConfigurationTest(AzureMgmtTestCase):
             "my_tag": "myTagValue"
           }
         }
-        result = self.mgmt_client.configuration_stores.create(resource_group_name=RESOURCE_GROUP, configuration_store_name=CONFIGURATION_STORE_NAME, config_store_creation_parameters=BODY)
+        result = self.mgmt_client.configuration_stores.create(resource_group_name=RESOURCE_GROUP, config_store_name=CONFIGURATION_STORE_NAME, config_store_creation_parameters=BODY)
         result = result.result()
 
         # /ConfigurationStores/put/ConfigurationStores_Create_WithIdentity[put]
@@ -93,7 +93,7 @@ class MgmtAppConfigurationTest(AzureMgmtTestCase):
         # result = self.mgmt_client.private_link_resources.list_by_configuration_store(resource_group_name=RESOURCE_GROUP, configuration_store_name=CONFIGURATION_STORE_NAME)
 
         # /ConfigurationStores/get/ConfigurationStores_Get[get]
-        result = self.mgmt_client.configuration_stores.get(resource_group_name=RESOURCE_GROUP, configuration_store_name=CONFIGURATION_STORE_NAME)
+        result = self.mgmt_client.configuration_stores.get(resource_group_name=RESOURCE_GROUP, config_store_name=CONFIGURATION_STORE_NAME)
 
         # /ConfigurationStores/get/ConfigurationStores_ListByResourceGroup[get]
         result = self.mgmt_client.configuration_stores.list_by_resource_group(resource_group_name=RESOURCE_GROUP)
@@ -108,7 +108,7 @@ class MgmtAppConfigurationTest(AzureMgmtTestCase):
         # result = self.mgmt_client.configuration_stores.list_key_value(resource_group_name=RESOURCE_GROUP, configuration_store_name=CONFIGURATION_STORE_NAME, key="MaxRequests", label="dev")
 
         # /ConfigurationStores/post/ConfigurationStores_ListKeys[post]
-        result = self.mgmt_client.configuration_stores.list_keys(resource_group_name=RESOURCE_GROUP, configuration_store_name=CONFIGURATION_STORE_NAME)
+        result = self.mgmt_client.configuration_stores.list_keys(resource_group_name=RESOURCE_GROUP, config_store_name=CONFIGURATION_STORE_NAME)
 
         # /ConfigurationStores/patch/ConfigurationStores_Update[patch]
         BODY = {
@@ -149,7 +149,7 @@ class MgmtAppConfigurationTest(AzureMgmtTestCase):
         # result = result.result()
 
         # /ConfigurationStores/delete/ConfigurationStores_Delete[delete]
-        result = self.mgmt_client.configuration_stores.delete(resource_group_name=RESOURCE_GROUP, configuration_store_name=CONFIGURATION_STORE_NAME)
+        result = self.mgmt_client.configuration_stores.delete(resource_group_name=RESOURCE_GROUP, config_store_name=CONFIGURATION_STORE_NAME)
         result = result.result()
 
 
