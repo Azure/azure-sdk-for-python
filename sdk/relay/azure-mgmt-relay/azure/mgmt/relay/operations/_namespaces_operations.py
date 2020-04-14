@@ -11,12 +11,16 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
+from msrest.polling import LROPoller, NoPolling
+from msrestazure.polling.arm_polling import ARMPolling
 
 from .. import models
 
 
-class HybridConnectionsOperations(object):
-    """HybridConnectionsOperations operations.
+class NamespacesOperations(object):
+    """NamespacesOperations operations.
+
+    You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -36,34 +40,92 @@ class HybridConnectionsOperations(object):
 
         self.config = config
 
-    def list_by_namespace(
-            self, resource_group_name, namespace_name, custom_headers=None, raw=False, **operation_config):
-        """Lists the hybrid connection within the namespace.
+    def check_name_availability_method(
+            self, name, custom_headers=None, raw=False, **operation_config):
+        """Check the specified namespace name availability.
 
-        :param resource_group_name: Name of the Resource group within the
-         Azure subscription.
-        :type resource_group_name: str
-        :param namespace_name: The namespace name
-        :type namespace_name: str
+        :param name: The namespace name to check for availability. The
+         namespace name can contain only letters, numbers, and hyphens. The
+         namespace must start with a letter, and it must end with a letter or
+         number.
+        :type name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of HybridConnection
-        :rtype:
-         ~azure.mgmt.relay.models.HybridConnectionPaged[~azure.mgmt.relay.models.HybridConnection]
+        :return: CheckNameAvailabilityResult or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.relay.models.CheckNameAvailabilityResult or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.relay.models.ErrorResponseException>`
         """
-        def internal_paging(next_link=None, raw=False):
+        parameters = models.CheckNameAvailability(name=name)
 
+        # Construct URL
+        url = self.check_name_availability_method.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(parameters, 'CheckNameAvailability')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.ErrorResponseException(self._deserialize, response)
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('CheckNameAvailabilityResult', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    check_name_availability_method.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Relay/checkNameAvailability'}
+
+    def list(
+            self, custom_headers=None, raw=False, **operation_config):
+        """Lists all the available namespaces within the subscription regardless
+        of the resourceGroups.
+
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of RelayNamespace
+        :rtype:
+         ~azure.mgmt.relay.models.RelayNamespacePaged[~azure.mgmt.relay.models.RelayNamespace]
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.relay.models.ErrorResponseException>`
+        """
+        def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
-                url = self.list_by_namespace.metadata['url']
+                url = self.list.metadata['url']
                 path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-                    'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -88,6 +150,11 @@ class HybridConnectionsOperations(object):
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
@@ -96,56 +163,91 @@ class HybridConnectionsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.HybridConnectionPaged(internal_paging, self._deserialize.dependencies)
-
+        header_dict = None
         if raw:
             header_dict = {}
-            client_raw_response = models.HybridConnectionPaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
+        deserialized = models.RelayNamespacePaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list_by_namespace.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Relay/namespaces/{namespaceName}/hybridConnections'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Relay/namespaces'}
 
-    def create_or_update(
-            self, resource_group_name, namespace_name, hybrid_connection_name, requires_client_authorization=None, user_metadata=None, custom_headers=None, raw=False, **operation_config):
-        """Creates or updates a service hybrid connection. This operation is
-        idempotent.
+    def list_by_resource_group(
+            self, resource_group_name, custom_headers=None, raw=False, **operation_config):
+        """Lists all the available namespaces within the ResourceGroup.
 
         :param resource_group_name: Name of the Resource group within the
          Azure subscription.
         :type resource_group_name: str
-        :param namespace_name: The namespace name
-        :type namespace_name: str
-        :param hybrid_connection_name: The hybrid connection name.
-        :type hybrid_connection_name: str
-        :param requires_client_authorization: Returns true if client
-         authorization is needed for this hybrid connection; otherwise, false.
-        :type requires_client_authorization: bool
-        :param user_metadata: The usermetadata is a placeholder to store
-         user-defined string data for the hybrid connection endpoint. For
-         example, it can be used to store descriptive data, such as a list of
-         teams and their contact information. Also, user-defined configuration
-         settings can be stored.
-        :type user_metadata: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: HybridConnection or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.relay.models.HybridConnection or
-         ~msrest.pipeline.ClientRawResponse
+        :return: An iterator like instance of RelayNamespace
+        :rtype:
+         ~azure.mgmt.relay.models.RelayNamespacePaged[~azure.mgmt.relay.models.RelayNamespace]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.relay.models.ErrorResponseException>`
         """
-        parameters = models.HybridConnection(requires_client_authorization=requires_client_authorization, user_metadata=user_metadata)
+        def prepare_request(next_link=None):
+            if not next_link:
+                # Construct URL
+                url = self.list_by_resource_group.metadata['url']
+                path_format_arguments = {
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+            else:
+                url = next_link
+                query_parameters = {}
+
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Accept'] = 'application/json'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+            # Construct and send request
+            request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
+            response = self._client.send(request, stream=False, **operation_config)
+
+            if response.status_code not in [200]:
+                raise models.ErrorResponseException(self._deserialize, response)
+
+            return response
+
+        # Deserialize response
+        header_dict = None
+        if raw:
+            header_dict = {}
+        deserialized = models.RelayNamespacePaged(internal_paging, self._deserialize.dependencies, header_dict)
+
+        return deserialized
+    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Relay/namespaces'}
+
+
+    def _create_or_update_initial(
+            self, resource_group_name, namespace_name, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-            'hybridConnectionName': self._serialize.url("hybrid_connection_name", hybrid_connection_name, 'str', min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -166,54 +268,88 @@ class HybridConnectionsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'HybridConnection')
+        body_content = self._serialize.body(parameters, 'RelayNamespace')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 201]:
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('HybridConnection', response)
+            deserialized = self._deserialize('RelayNamespace', response)
+        if response.status_code == 201:
+            deserialized = self._deserialize('RelayNamespace', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Relay/namespaces/{namespaceName}/hybridConnections/{hybridConnectionName}'}
 
-    def delete(
-            self, resource_group_name, namespace_name, hybrid_connection_name, custom_headers=None, raw=False, **operation_config):
-        """Deletes a hybrid connection.
+    def create_or_update(
+            self, resource_group_name, namespace_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Create Azure Relay namespace.
 
         :param resource_group_name: Name of the Resource group within the
          Azure subscription.
         :type resource_group_name: str
         :param namespace_name: The namespace name
         :type namespace_name: str
-        :param hybrid_connection_name: The hybrid connection name.
-        :type hybrid_connection_name: str
+        :param parameters: Parameters supplied to create a namespace resource.
+        :type parameters: ~azure.mgmt.relay.models.RelayNamespace
         :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: None or ClientRawResponse if raw=true
-        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns RelayNamespace or
+         ClientRawResponse<RelayNamespace> if raw==True
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.relay.models.RelayNamespace]
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.relay.models.RelayNamespace]]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.relay.models.ErrorResponseException>`
         """
+        raw_result = self._create_or_update_initial(
+            resource_group_name=resource_group_name,
+            namespace_name=namespace_name,
+            parameters=parameters,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            deserialized = self._deserialize('RelayNamespace', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                return client_raw_response
+
+            return deserialized
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Relay/namespaces/{namespaceName}'}
+
+
+    def _delete_initial(
+            self, resource_group_name, namespace_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-            'hybridConnectionName': self._serialize.url("hybrid_connection_name", hybrid_connection_name, 'str', min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -235,32 +371,73 @@ class HybridConnectionsOperations(object):
         request = self._client.delete(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 204]:
+        if response.status_code not in [200, 202, 204]:
             raise models.ErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Relay/namespaces/{namespaceName}/hybridConnections/{hybridConnectionName}'}
 
-    def get(
-            self, resource_group_name, namespace_name, hybrid_connection_name, custom_headers=None, raw=False, **operation_config):
-        """Returns the description for the specified hybrid connection.
+    def delete(
+            self, resource_group_name, namespace_name, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Deletes an existing namespace. This operation also removes all
+        associated resources under the namespace.
 
         :param resource_group_name: Name of the Resource group within the
          Azure subscription.
         :type resource_group_name: str
         :param namespace_name: The namespace name
         :type namespace_name: str
-        :param hybrid_connection_name: The hybrid connection name.
-        :type hybrid_connection_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns None or
+         ClientRawResponse<None> if raw==True
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.relay.models.ErrorResponseException>`
+        """
+        raw_result = self._delete_initial(
+            resource_group_name=resource_group_name,
+            namespace_name=namespace_name,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            if raw:
+                client_raw_response = ClientRawResponse(None, response)
+                return client_raw_response
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Relay/namespaces/{namespaceName}'}
+
+    def get(
+            self, resource_group_name, namespace_name, custom_headers=None, raw=False, **operation_config):
+        """Returns the description for the specified namespace.
+
+        :param resource_group_name: Name of the Resource group within the
+         Azure subscription.
+        :type resource_group_name: str
+        :param namespace_name: The namespace name
+        :type namespace_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: HybridConnection or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.relay.models.HybridConnection or
+        :return: RelayNamespace or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.relay.models.RelayNamespace or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.relay.models.ErrorResponseException>`
@@ -270,7 +447,6 @@ class HybridConnectionsOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-            'hybridConnectionName': self._serialize.url("hybrid_connection_name", hybrid_connection_name, 'str', min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -297,28 +473,99 @@ class HybridConnectionsOperations(object):
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
-            deserialized = self._deserialize('HybridConnection', response)
+            deserialized = self._deserialize('RelayNamespace', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Relay/namespaces/{namespaceName}/hybridConnections/{hybridConnectionName}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Relay/namespaces/{namespaceName}'}
 
-    def list_authorization_rules(
-            self, resource_group_name, namespace_name, hybrid_connection_name, custom_headers=None, raw=False, **operation_config):
-        """Authorization rules for a hybrid connection.
+    def update(
+            self, resource_group_name, namespace_name, tags=None, sku=None, custom_headers=None, raw=False, **operation_config):
+        """Creates or updates a namespace. Once created, this namespace's resource
+        manifest is immutable. This operation is idempotent.
 
         :param resource_group_name: Name of the Resource group within the
          Azure subscription.
         :type resource_group_name: str
         :param namespace_name: The namespace name
         :type namespace_name: str
-        :param hybrid_connection_name: The hybrid connection name.
-        :type hybrid_connection_name: str
+        :param tags: Resource tags.
+        :type tags: dict[str, str]
+        :param sku: SKU of the namespace.
+        :type sku: ~azure.mgmt.relay.models.Sku
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: RelayNamespace or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.relay.models.RelayNamespace or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.relay.models.ErrorResponseException>`
+        """
+        parameters = models.RelayUpdateParameters(tags=tags, sku=sku)
+
+        # Construct URL
+        url = self.update.metadata['url']
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(parameters, 'RelayUpdateParameters')
+
+        # Construct and send request
+        request = self._client.patch(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200, 201]:
+            raise models.ErrorResponseException(self._deserialize, response)
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('RelayNamespace', response)
+        if response.status_code == 201:
+            deserialized = self._deserialize('RelayNamespace', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Relay/namespaces/{namespaceName}'}
+
+    def list_authorization_rules(
+            self, resource_group_name, namespace_name, custom_headers=None, raw=False, **operation_config):
+        """Authorization rules for a namespace.
+
+        :param resource_group_name: Name of the Resource group within the
+         Azure subscription.
+        :type resource_group_name: str
+        :param namespace_name: The namespace name
+        :type namespace_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -330,15 +577,13 @@ class HybridConnectionsOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.relay.models.ErrorResponseException>`
         """
-        def internal_paging(next_link=None, raw=False):
-
+        def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
                 url = self.list_authorization_rules.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
                     'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-                    'hybridConnectionName': self._serialize.url("hybrid_connection_name", hybrid_connection_name, 'str', min_length=1),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -363,6 +608,11 @@ class HybridConnectionsOperations(object):
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
@@ -371,27 +621,23 @@ class HybridConnectionsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.AuthorizationRulePaged(internal_paging, self._deserialize.dependencies)
-
+        header_dict = None
         if raw:
             header_dict = {}
-            client_raw_response = models.AuthorizationRulePaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
+        deserialized = models.AuthorizationRulePaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list_authorization_rules.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Relay/namespaces/{namespaceName}/hybridConnections/{hybridConnectionName}/authorizationRules'}
+    list_authorization_rules.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Relay/namespaces/{namespaceName}/authorizationRules'}
 
     def create_or_update_authorization_rule(
-            self, resource_group_name, namespace_name, hybrid_connection_name, authorization_rule_name, rights, custom_headers=None, raw=False, **operation_config):
-        """Creates or updates an authorization rule for a hybrid connection.
+            self, resource_group_name, namespace_name, authorization_rule_name, rights, custom_headers=None, raw=False, **operation_config):
+        """Creates or updates an authorization rule for a namespace.
 
         :param resource_group_name: Name of the Resource group within the
          Azure subscription.
         :type resource_group_name: str
         :param namespace_name: The namespace name
         :type namespace_name: str
-        :param hybrid_connection_name: The hybrid connection name.
-        :type hybrid_connection_name: str
         :param authorization_rule_name: The authorization rule name.
         :type authorization_rule_name: str
         :param rights: The rights associated with the rule.
@@ -414,7 +660,6 @@ class HybridConnectionsOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-            'hybridConnectionName': self._serialize.url("hybrid_connection_name", hybrid_connection_name, 'str', min_length=1),
             'authorizationRuleName': self._serialize.url("authorization_rule_name", authorization_rule_name, 'str', min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -446,7 +691,6 @@ class HybridConnectionsOperations(object):
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('AuthorizationRule', response)
 
@@ -455,19 +699,17 @@ class HybridConnectionsOperations(object):
             return client_raw_response
 
         return deserialized
-    create_or_update_authorization_rule.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Relay/namespaces/{namespaceName}/hybridConnections/{hybridConnectionName}/authorizationRules/{authorizationRuleName}'}
+    create_or_update_authorization_rule.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Relay/namespaces/{namespaceName}/authorizationRules/{authorizationRuleName}'}
 
     def delete_authorization_rule(
-            self, resource_group_name, namespace_name, hybrid_connection_name, authorization_rule_name, custom_headers=None, raw=False, **operation_config):
-        """Deletes a hybrid connection authorization rule.
+            self, resource_group_name, namespace_name, authorization_rule_name, custom_headers=None, raw=False, **operation_config):
+        """Deletes a namespace authorization rule.
 
         :param resource_group_name: Name of the Resource group within the
          Azure subscription.
         :type resource_group_name: str
         :param namespace_name: The namespace name
         :type namespace_name: str
-        :param hybrid_connection_name: The hybrid connection name.
-        :type hybrid_connection_name: str
         :param authorization_rule_name: The authorization rule name.
         :type authorization_rule_name: str
         :param dict custom_headers: headers that will be added to the request
@@ -485,7 +727,6 @@ class HybridConnectionsOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-            'hybridConnectionName': self._serialize.url("hybrid_connection_name", hybrid_connection_name, 'str', min_length=1),
             'authorizationRuleName': self._serialize.url("authorization_rule_name", authorization_rule_name, 'str', min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -514,19 +755,17 @@ class HybridConnectionsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    delete_authorization_rule.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Relay/namespaces/{namespaceName}/hybridConnections/{hybridConnectionName}/authorizationRules/{authorizationRuleName}'}
+    delete_authorization_rule.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Relay/namespaces/{namespaceName}/authorizationRules/{authorizationRuleName}'}
 
     def get_authorization_rule(
-            self, resource_group_name, namespace_name, hybrid_connection_name, authorization_rule_name, custom_headers=None, raw=False, **operation_config):
-        """Hybrid connection authorization rule for a hybrid connection by name.
+            self, resource_group_name, namespace_name, authorization_rule_name, custom_headers=None, raw=False, **operation_config):
+        """Authorization rule for a namespace by name.
 
         :param resource_group_name: Name of the Resource group within the
          Azure subscription.
         :type resource_group_name: str
         :param namespace_name: The namespace name
         :type namespace_name: str
-        :param hybrid_connection_name: The hybrid connection name.
-        :type hybrid_connection_name: str
         :param authorization_rule_name: The authorization rule name.
         :type authorization_rule_name: str
         :param dict custom_headers: headers that will be added to the request
@@ -545,7 +784,6 @@ class HybridConnectionsOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-            'hybridConnectionName': self._serialize.url("hybrid_connection_name", hybrid_connection_name, 'str', min_length=1),
             'authorizationRuleName': self._serialize.url("authorization_rule_name", authorization_rule_name, 'str', min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -573,7 +811,6 @@ class HybridConnectionsOperations(object):
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('AuthorizationRule', response)
 
@@ -582,19 +819,17 @@ class HybridConnectionsOperations(object):
             return client_raw_response
 
         return deserialized
-    get_authorization_rule.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Relay/namespaces/{namespaceName}/hybridConnections/{hybridConnectionName}/authorizationRules/{authorizationRuleName}'}
+    get_authorization_rule.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Relay/namespaces/{namespaceName}/authorizationRules/{authorizationRuleName}'}
 
     def list_keys(
-            self, resource_group_name, namespace_name, hybrid_connection_name, authorization_rule_name, custom_headers=None, raw=False, **operation_config):
-        """Primary and secondary connection strings to the hybrid connection.
+            self, resource_group_name, namespace_name, authorization_rule_name, custom_headers=None, raw=False, **operation_config):
+        """Primary and secondary connection strings to the namespace.
 
         :param resource_group_name: Name of the Resource group within the
          Azure subscription.
         :type resource_group_name: str
         :param namespace_name: The namespace name
         :type namespace_name: str
-        :param hybrid_connection_name: The hybrid connection name.
-        :type hybrid_connection_name: str
         :param authorization_rule_name: The authorization rule name.
         :type authorization_rule_name: str
         :param dict custom_headers: headers that will be added to the request
@@ -613,7 +848,6 @@ class HybridConnectionsOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-            'hybridConnectionName': self._serialize.url("hybrid_connection_name", hybrid_connection_name, 'str', min_length=1),
             'authorizationRuleName': self._serialize.url("authorization_rule_name", authorization_rule_name, 'str', min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -641,7 +875,6 @@ class HybridConnectionsOperations(object):
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('AccessKeys', response)
 
@@ -650,20 +883,18 @@ class HybridConnectionsOperations(object):
             return client_raw_response
 
         return deserialized
-    list_keys.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Relay/namespaces/{namespaceName}/hybridConnections/{hybridConnectionName}/authorizationRules/{authorizationRuleName}/listKeys'}
+    list_keys.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Relay/namespaces/{namespaceName}/authorizationRules/{authorizationRuleName}/listKeys'}
 
     def regenerate_keys(
-            self, resource_group_name, namespace_name, hybrid_connection_name, authorization_rule_name, key_type, key=None, custom_headers=None, raw=False, **operation_config):
-        """Regenerates the primary or secondary connection strings to the hybrid
-        connection.
+            self, resource_group_name, namespace_name, authorization_rule_name, key_type, key=None, custom_headers=None, raw=False, **operation_config):
+        """Regenerates the primary or secondary connection strings to the
+        namespace.
 
         :param resource_group_name: Name of the Resource group within the
          Azure subscription.
         :type resource_group_name: str
         :param namespace_name: The namespace name
         :type namespace_name: str
-        :param hybrid_connection_name: The hybrid connection name.
-        :type hybrid_connection_name: str
         :param authorization_rule_name: The authorization rule name.
         :type authorization_rule_name: str
         :param key_type: The access key to regenerate. Possible values
@@ -690,7 +921,6 @@ class HybridConnectionsOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-            'hybridConnectionName': self._serialize.url("hybrid_connection_name", hybrid_connection_name, 'str', min_length=1),
             'authorizationRuleName': self._serialize.url("authorization_rule_name", authorization_rule_name, 'str', min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -722,7 +952,6 @@ class HybridConnectionsOperations(object):
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('AccessKeys', response)
 
@@ -731,4 +960,4 @@ class HybridConnectionsOperations(object):
             return client_raw_response
 
         return deserialized
-    regenerate_keys.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Relay/namespaces/{namespaceName}/hybridConnections/{hybridConnectionName}/authorizationRules/{authorizationRuleName}/regenerateKeys'}
+    regenerate_keys.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Relay/namespaces/{namespaceName}/authorizationRules/{authorizationRuleName}/regenerateKeys'}
