@@ -208,7 +208,7 @@ class AutomaticRepairsPolicy(Model):
      state change has completed. This helps avoid premature or accidental
      repairs. The time duration should be specified in ISO 8601 format. The
      minimum allowed grace period is 30 minutes (PT30M), which is also the
-     default value.
+     default value. The maximum allowed grace period is 90 minutes (PT90M).
     :type grace_period: str
     """
 
@@ -1138,15 +1138,29 @@ class DiffDiskSettings(Model):
      disk. Possible values include: 'Local'
     :type option: str or
      ~azure.mgmt.compute.v2019_12_01.models.DiffDiskOptions
+    :param placement: Specifies the ephemeral disk placement for operating
+     system disk.<br><br> Possible values are: <br><br> **CacheDisk** <br><br>
+     **ResourceDisk** <br><br> Default: **CacheDisk** if one is configured for
+     the VM size otherwise **ResourceDisk** is used.<br><br> Refer to VM size
+     documentation for Windows VM at
+     https://docs.microsoft.com/en-us/azure/virtual-machines/windows/sizes and
+     Linux VM at
+     https://docs.microsoft.com/en-us/azure/virtual-machines/linux/sizes to
+     check which VM sizes exposes a cache disk. Possible values include:
+     'CacheDisk', 'ResourceDisk'
+    :type placement: str or
+     ~azure.mgmt.compute.v2019_12_01.models.DiffDiskPlacement
     """
 
     _attribute_map = {
         'option': {'key': 'option', 'type': 'str'},
+        'placement': {'key': 'placement', 'type': 'str'},
     }
 
-    def __init__(self, *, option=None, **kwargs) -> None:
+    def __init__(self, *, option=None, placement=None, **kwargs) -> None:
         super(DiffDiskSettings, self).__init__(**kwargs)
         self.option = option
+        self.placement = placement
 
 
 class Disallowed(Model):
@@ -3294,14 +3308,12 @@ class NetworkProfile(Model):
 class OrchestrationServiceStateInput(Model):
     """The input for OrchestrationServiceState.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
     All required parameters must be populated in order to send to Azure.
 
-    :ivar service_name: Required. The name of the service. Default value:
-     "AutomaticRepairs" .
-    :vartype service_name: str
+    :param service_name: Required. The name of the service. Possible values
+     include: 'AutomaticRepairs'
+    :type service_name: str or
+     ~azure.mgmt.compute.v2019_12_01.models.OrchestrationServiceNames
     :param action: Required. The action to be performed. Possible values
      include: 'Resume', 'Suspend'
     :type action: str or
@@ -3309,7 +3321,7 @@ class OrchestrationServiceStateInput(Model):
     """
 
     _validation = {
-        'service_name': {'required': True, 'constant': True},
+        'service_name': {'required': True},
         'action': {'required': True},
     }
 
@@ -3318,10 +3330,9 @@ class OrchestrationServiceStateInput(Model):
         'action': {'key': 'action', 'type': 'str'},
     }
 
-    service_name = "AutomaticRepairs"
-
-    def __init__(self, *, action, **kwargs) -> None:
+    def __init__(self, *, service_name, action, **kwargs) -> None:
         super(OrchestrationServiceStateInput, self).__init__(**kwargs)
+        self.service_name = service_name
         self.action = action
 
 
@@ -3386,8 +3397,8 @@ class OSDisk(Model):
     :type image: ~azure.mgmt.compute.v2019_12_01.models.VirtualHardDisk
     :param caching: Specifies the caching requirements. <br><br> Possible
      values are: <br><br> **None** <br><br> **ReadOnly** <br><br> **ReadWrite**
-     <br><br> Default: **None for Standard storage. ReadOnly for Premium
-     storage**. Possible values include: 'None', 'ReadOnly', 'ReadWrite'
+     <br><br> Default: **None** for Standard storage. **ReadOnly** for Premium
+     storage. Possible values include: 'None', 'ReadOnly', 'ReadWrite'
     :type caching: str or ~azure.mgmt.compute.v2019_12_01.models.CachingTypes
     :param write_accelerator_enabled: Specifies whether writeAccelerator
      should be enabled or disabled on the disk.
