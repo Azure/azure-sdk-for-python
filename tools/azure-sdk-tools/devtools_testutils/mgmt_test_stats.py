@@ -22,9 +22,9 @@ for d in dirs:
     has_manual = False
     has_auto = False
     for t in test_files:
-      coverage = "MANUAL"
+      coverage = "M"
       if t.startswith("test_cli_"):
-        coverage = "AUTO"
+        coverage = "A"
         with open(join(test_dir, t)) as f:
           content = f.readlines()
           coverage = [x for x in content if x.startswith("# Coverage %      :")]
@@ -38,41 +38,42 @@ for d in dirs:
     none += 1
   all[d.split("/").pop()] = coverage
 
-pattern = ".+/resource-manager$"
-dirs = [x[0] for x in walk("../azure-rest-api-specs/specification") if re.match(pattern, x[0])]
-total = 0
-have_python = 0
-packages = []
-missing = []
-for d in dirs:
-  rp_name = d.split('/')[-2]
-  total += 1
-  readme_files = [f for f in listdir(d) if f in ['readme.md', 'readme.python.md']]
-  readme_file = None
-  if 'readme.python.md' in readme_files:
-    readme_file = join(d, 'readme.python.md')
-  elif 'readme.md' in readme_files:
-    readme_file = join(d, 'readme.md')
+if exists("../azure-rest-api-specs/specification"):
+  pattern = ".+/resource-manager$"
+  dirs = [x[0] for x in walk("../azure-rest-api-specs/specification") if re.match(pattern, x[0])]
+  total = 0
+  have_python = 0
+  packages = []
+  missing = []
+  for d in dirs:
+    rp_name = d.split('/')[-2]
+    total += 1
+    readme_files = [f for f in listdir(d) if f in ['readme.md', 'readme.python.md']]
+    readme_file = None
+    if 'readme.python.md' in readme_files:
+      readme_file = join(d, 'readme.python.md')
+    elif 'readme.md' in readme_files:
+      readme_file = join(d, 'readme.md')
 
-  if readme_file is None:
-    all[rp_name] = "!R"
-  if readme_file is not None:
-    with open(readme_file, encoding='utf8') as f:
-      content = f.readlines()
-      package_name = [x for x in content if x.strip().startswith("package-name: ")]
-      if len(package_name) > 0:
-        have_python += 1
-        package_name = package_name[0].split(': ')[1].rstrip()
-        if package_name not in all:
-          all[package_name] = '!S'
-      else:
-        all[rp_name] = "!R"
+    if readme_file is None:
+      all[rp_name] = "- (R)"
+    else:
+      with open(readme_file, encoding='utf8') as f:
+        content = f.readlines()
+        package_name = [x for x in content if x.strip().startswith("package-name: ")]
+        if len(package_name) > 0:
+          have_python += 1
+          package_name = package_name[0].split(': ')[1].rstrip()
+          if package_name not in all:
+            all[package_name] = '- (S)'
+        else:
+          all[rp_name] = "- (R)"
 
 packages = sorted([x for x in all.keys()])
 print(packages)
 for p in packages:
   coverage = all[p]
-  print("| {:38} | {:10} |".format(p, coverage if coverage in ["!R", "!S", "-" , "AUTO", "MANUAL"] else "{:4.2f}".format(coverage)))
+  print("| {:38} | {:10} |".format(p, coverage if coverage in ["- (R)", "- (S)", "-" , "A", "M"] else "{:4.2f}".format(coverage)))
 
 print("| {:38} | {:10} |".format("", ""))
 print("| {:38} | {:10} |".format("**TOTAL**", "**{}**".format(total)))
