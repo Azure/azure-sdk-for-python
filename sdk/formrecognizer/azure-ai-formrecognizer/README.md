@@ -85,16 +85,14 @@ client = FormRecognizerClient(endpoint, credential)
 ## Key concepts
 
 ### FormRecognizerClient
-A `FormRecognizerClient` is the Form Recognizer interface to use for analyzing receipts and recognizing content from
-forms. It provides different methods based on inputs from a URL and inputs from a stream. You can extract receipt field
-values from receipts from the US, table data and geometry from a URL or stream, and use a custom trained model to recognize
-form data.
+A `FormRecognizerClient` is the Form Recognizer interface to use for analyzing receipts, recognizing content from
+forms, and recognizing data from forms using custom trained models.  It provides different methods
+based on inputs from a URL and inputs from a stream.
 
 ### FormTrainingClient
 A `FormTrainingClient` is the Form Recognizer interface to use for creating, using, and managing custom machine-learned models.
-It provides operations for training models on forms you provide, and recognizing field values and text placement from your
-custom forms.  It also provides operations for viewing and deleting models, as well as understanding how close you
-are to reaching subscription limits for the number of models you can train.
+It provides operations for training models on forms you provide and operations for viewing and deleting models, as well as
+understanding how close you are to reaching subscription limits for the number of models you can train.
 
 ### Long-Running Operations
 Long-running operations are operations which consist of an initial request sent to the service to start an operation,
