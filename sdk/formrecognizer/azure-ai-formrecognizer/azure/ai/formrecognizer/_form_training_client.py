@@ -32,7 +32,10 @@ if TYPE_CHECKING:
 
 
 class FormTrainingClient(object):
-    """FormTrainingClient.
+    """FormTrainingClient is the Form Recognizer interface to use for creating,
+    and managing custom models. It provides methods for training models on forms
+    you provide and methods for viewing and deleting models, as well as
+    accessing account properties.
 
     :param str endpoint: Supported Cognitive Services endpoints (protocol and hostname,
         for example: https://westus2.api.cognitive.microsoft.com).
@@ -54,12 +57,12 @@ class FormTrainingClient(object):
     @distributed_trace
     def begin_training(self, training_files, use_labels=False, **kwargs):
         # type: (str, Optional[bool], Any) -> LROPoller
-        """Create and train a custom model. The request must include a source parameter that is an
+        """Create and train a custom model. The request must include a training_files parameter that is an
         externally accessible Azure storage blob container Uri (preferably a Shared Access Signature Uri).
         Models are trained using documents that are of the following content type - 'application/pdf',
         'image/jpeg', 'image/png', 'image/tiff'. Other type of content in the container is ignored.
 
-        :param str training_files: An Azure Storage blob container URI.
+        :param str training_files: An Azure Storage blob container SAS URI.
         :param bool use_labels: Whether to train with labels or not. Corresponding labeled files must
             exist in the blob container.
         :keyword str prefix: A case-sensitive prefix string to filter documents for training.
@@ -68,9 +71,10 @@ class FormTrainingClient(object):
         :keyword bool include_sub_folders: A flag to indicate if sub folders
             will also need to be included when searching for content to be preprocessed.
             Use with prefix to filter for only certain sub folders. Not supported if training with labels.
-        :return: LROPoller
+        :return: An instance of an LROPoller. Call `result()` on the poller
+            object to return the result of the long running operation.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.formrecognizer.CustomFormModel]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
 
         cls = kwargs.pop("cls", None)
@@ -102,15 +106,15 @@ class FormTrainingClient(object):
     @distributed_trace
     def delete_model(self, model_id, **kwargs):
         # type: (str, Any) -> None
-        """Mark model for deletion. Model artifacts will be permanently removed within a predetermined period.
-
-        Delete Custom Model.
+        """Mark model for deletion. Model artifacts will be permanently
+        removed within a predetermined period.
 
         :param model_id: Model identifier.
         :type model_id: str
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError or ~azure.core.exceptions.ResourceNotFoundError:
         """
+
         self._client.delete_custom_model(
             model_id=model_id,
             **kwargs
@@ -120,10 +124,10 @@ class FormTrainingClient(object):
     def list_model_infos(self, **kwargs):
         # type: (Any) -> Iterable[CustomFormModelInfo]
         """List information for each model, including model id,
-        status, and when it was created and last updated.
+        model status, and when it was created and last modified.
 
         :return: ItemPaged[~azure.ai.formrecognizer.CustomFormModelInfo]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         return self._client.list_custom_models(
             cls=kwargs.pop("cls", lambda objs: [CustomFormModelInfo._from_generated(x) for x in objs]),
@@ -137,7 +141,7 @@ class FormTrainingClient(object):
 
         :return: Summary of models on account - count, limit.
         :rtype: ~azure.ai.formrecognizer.AccountProperties
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         response = self._client.get_custom_models(**kwargs)
         return AccountProperties._from_generated(response.summary)
@@ -145,12 +149,13 @@ class FormTrainingClient(object):
     @distributed_trace
     def get_custom_model(self, model_id, **kwargs):
         # type: (str, Any) -> CustomFormModel
-        """Get detailed information about a custom model.
+        """Get a description of a custom model, including the types of forms
+        it can recognize, and the fields it will extract for each form type.
 
         :param str model_id: Model identifier.
         :return: CustomFormModel
         :rtype: ~azure.ai.formrecognizer.CustomFormModel
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError or ~azure.core.exceptions.ResourceNotFoundError:
         """
         response = self._client.get_custom_model(model_id=model_id, include_keys=True, **kwargs)
         return CustomFormModel._from_generated(response)

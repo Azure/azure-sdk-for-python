@@ -37,6 +37,9 @@ if TYPE_CHECKING:
 
 class FormRecognizerClient(object):
     """FormRecognizerClient extracts information from forms and images into structured data.
+    It is the interface to use for analyzing receipts, recognizing content/layout from
+    forms, and analyzing custom forms from trained models. It provides different methods
+    based on inputs from a URL and inputs from a stream.
 
     :param str endpoint: Supported Cognitive Services endpoints (protocol and hostname,
         for example: https://westus2.api.cognitive.microsoft.com).
@@ -71,7 +74,7 @@ class FormRecognizerClient(object):
             stream: IO[bytes],
             **kwargs: Any
     ) -> List["USReceipt"]:
-        """Extract field text and semantic values from a given receipt document.
+        """Extract field text and semantic values from a given US sales receipt.
         The input document must be of one of the supported content types - 'application/pdf',
         'image/jpeg', 'image/png' or 'image/tiff'.
 
@@ -79,11 +82,12 @@ class FormRecognizerClient(object):
             Currently only supports US sales receipts.
         :type stream: stream
         :keyword bool include_text_content: Include text lines and text content references in the result.
-        :keyword str content_type: Media type of the body sent to the API. For options,
+        :keyword str content_type: Media type of the body sent to the API. Content-type is
+            auto-detected, but can be overridden by passing this keyword argument. For options,
             see :class:`~azure.ai.formrecognizer.FormContentType`.
         :return: A list of USReceipt.
         :rtype: list[~azure.ai.formrecognizer.USReceipt]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
 
         content_type = kwargs.pop("content_type", None)
@@ -110,15 +114,15 @@ class FormRecognizerClient(object):
             url: str,
             **kwargs: Any
     ) -> List["USReceipt"]:
-        """Extract field text and semantic values from a given receipt document.
-        The input document must be the location (Url) of the document to be analyzed.
+        """Extract field text and semantic values from a given US sales receipt.
+        The input document must be the location (Url) of the receipt to be analyzed.
 
         :param url: The url of the receipt. Currently only supports US sales receipts.
         :type url: str
         :keyword bool include_text_content: Include text lines and text content references in the result.
         :return: A list of USReceipt.
         :rtype: list[~azure.ai.formrecognizer.USReceipt]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
 
         include_text_content = kwargs.pop("include_text_content", False)
@@ -137,17 +141,18 @@ class FormRecognizerClient(object):
 
     @distributed_trace_async
     async def recognize_content(self, stream: IO[bytes], **kwargs: Any) -> List["FormPage"]:
-        """Extract text and layout information from a given document.
+        """Extract text and content/layout information from a given document.
         The input document must be of one of the supported content types - 'application/pdf',
         'image/jpeg', 'image/png' or 'image/tiff'.
 
         :param stream: .pdf, .jpg, .png or .tiff type file stream.
         :type stream: stream
-        :keyword str content_type: Media type of the body sent to the API. For options,
+        :keyword str content_type: Media type of the body sent to the API. Content-type is
+            auto-detected, but can be overridden by passing this keyword argument. For options,
             see :class:`~azure.ai.formrecognizer.FormContentType`.
         :return: A list of FormPage.
         :rtype: list[~azure.ai.formrecognizer.FormPage]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
 
         content_type = kwargs.pop("content_type", None)
@@ -174,7 +179,7 @@ class FormRecognizerClient(object):
         :type url: str
         :return: A list of FormPage.
         :rtype: list[~azure.ai.formrecognizer.FormPage]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
 
         return await self._client.analyze_layout_async(
@@ -191,17 +196,20 @@ class FormRecognizerClient(object):
             stream: IO[bytes],
             **kwargs: Any
     ) -> List["RecognizedForm"]:
-        """Analyze Form.
+        """Analyze a custom form with a model trained with or without labels.
+        The input document must be of one of the supported content types - 'application/pdf',
+        'image/jpeg', 'image/png' or 'image/tiff'.
 
         :param str model_id: Model identifier.
         :param stream: .pdf, .jpg, .png or .tiff type file stream.
         :type stream: stream
         :keyword bool include_text_content: Include text lines and element references in the result.
-        :keyword str content_type: Media type of the body sent to the API. For options,
+        :keyword str content_type: Media type of the body sent to the API. Content-type is
+            auto-detected, but can be overridden by passing this keyword argument. For options,
             see :class:`~azure.ai.formrecognizer.FormContentType`.
-        :return: List[RecognizedForm]
+        :return: A list of RecognizedForm.
         :rtype: list[~azure.ai.formrecognizer.RecognizedForm]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
 
         cls = kwargs.pop("cls", None)
@@ -236,15 +244,16 @@ class FormRecognizerClient(object):
             url: str,
             **kwargs: Any
     ) -> List["RecognizedForm"]:
-        """Analyze Form.
+        """Analyze a custom form with a model trained with or without labels.
+        The input document must be the location (Url) of the document to be analyzed.
 
         :param str model_id: Model identifier.
         :param url: The url of the document.
         :type url: str
         :keyword bool include_text_content: Include text lines and element references in the result.
-        :return: List[RecognizedForm]
+        :return: A list of RecognizedForm.
         :rtype: list[~azure.ai.formrecognizer.RecognizedForm]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
 
         cls = kwargs.pop("cls", None)
@@ -267,7 +276,7 @@ class FormRecognizerClient(object):
     def get_form_training_client(self, **kwargs) -> FormTrainingClient:
         """Get an instance of a FormTrainingClient from FormRecognizerClient.
 
-        :rtype: ~azure.ai.formrecognizer.FormTrainingClient
+        :rtype: ~azure.ai.formrecognizer.aio.FormTrainingClient
         :return: A FormTrainingClient
         """
         return FormTrainingClient(
@@ -284,6 +293,6 @@ class FormRecognizerClient(object):
         await self._client.__aexit__(*args)
 
     async def close(self) -> None:
-        """Close the :class:`~azure.ai.formrecognizer.FormRecognizerClient` session.
+        """Close the :class:`~azure.ai.formrecognizer.aio.FormRecognizerClient` session.
         """
         await self._client.__aexit__()

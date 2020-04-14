@@ -32,6 +32,9 @@ if TYPE_CHECKING:
 
 class FormRecognizerClient(object):
     """FormRecognizerClient extracts information from forms and images into structured data.
+    It is the interface to use for analyzing receipts, recognizing content/layout from
+    forms, and analyzing custom forms from trained models. It provides different methods
+    based on inputs from a URL and inputs from a stream.
 
     :param str endpoint: Supported Cognitive Services endpoints (protocol and hostname,
         for example: https://westus2.api.cognitive.microsoft.com).
@@ -59,7 +62,7 @@ class FormRecognizerClient(object):
     @distributed_trace
     def begin_recognize_receipts(self, stream, **kwargs):
         # type: (IO[bytes], Any) -> LROPoller
-        """Extract field text and semantic values from a given receipt document.
+        """Extract field text and semantic values from a given US sales receipt.
         The input document must be of one of the supported content types - 'application/pdf',
         'image/jpeg', 'image/png' or 'image/tiff'.
 
@@ -67,12 +70,15 @@ class FormRecognizerClient(object):
              Currently only supports US sales receipts.
         :type stream: stream
         :keyword bool include_text_content: Include text lines and text content references in the result.
-        :keyword str content_type: Media type of the body sent to the API. For options,
+        :keyword str content_type: Media type of the body sent to the API. Content-type is
+            auto-detected, but can be overridden by passing this keyword argument. For options,
             see :class:`~azure.ai.formrecognizer.FormContentType`.
-        :return: LROPoller
+        :return: An instance of an LROPoller. Call `result()` on the poller
+            object to return the result of the long running operation.
         :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.USReceipt]]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
+
         content_type = kwargs.pop("content_type", None)
         if content_type == "application/json":
             raise TypeError("Call begin_recognize_receipts_from_url() to analyze a receipt from a url.")
@@ -94,16 +100,16 @@ class FormRecognizerClient(object):
     @distributed_trace
     def begin_recognize_receipts_from_url(self, url, **kwargs):
         # type: (str, Any) -> LROPoller
-        """Extract field text and semantic values from a given receipt document.
-        The input document must be the location (Url) of the document to be analyzed.
-
+        """Extract field text and semantic values from a given US sales receipt.
+        The input document must be the location (Url) of the receipt to be analyzed.
 
         :param url: The url of the receipt. Currently only supports US sales receipts.
         :type url: str
         :keyword bool include_text_content: Include text lines and text content references in the result.
-        :return: LROPoller
+        :return: An instance of an LROPoller. Call `result()` on the poller
+            object to return the result of the long running operation.
         :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.USReceipt]]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
 
         include_text_content = kwargs.pop("include_text_content", False)
@@ -123,18 +129,21 @@ class FormRecognizerClient(object):
     @distributed_trace
     def begin_recognize_content(self, stream, **kwargs):
         # type: (IO[bytes], Any) -> LROPoller
-        """Extract text and layout information from a given document.
+        """Extract text and content/layout information from a given document.
         The input document must be of one of the supported content types - 'application/pdf',
         'image/jpeg', 'image/png' or 'image/tiff'.
 
         :param stream: .pdf, .jpg, .png or .tiff type file stream.
         :type stream: stream
-        :keyword str content_type: Media type of the body sent to the API. For options,
+        :keyword str content_type: Media type of the body sent to the API. Content-type is
+            auto-detected, but can be overridden by passing this keyword argument. For options,
             see :class:`~azure.ai.formrecognizer.FormContentType`.
-        :return: LROPoller
+        :return: An instance of an LROPoller. Call `result()` on the poller
+            object to return the result of the long running operation.
         :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.FormPage]]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
+
         content_type = kwargs.pop("content_type", None)
         if content_type == "application/json":
             raise TypeError("Call begin_recognize_content_from_url() to analyze a document from a url.")
@@ -158,9 +167,10 @@ class FormRecognizerClient(object):
 
         :param url: The url of the document.
         :type url: str
-        :return: LROPoller
+        :return: An instance of an LROPoller. Call `result()` on the poller
+            object to return the result of the long running operation.
         :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.FormPage]]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
 
         return self._client.begin_analyze_layout_async(
@@ -173,18 +183,23 @@ class FormRecognizerClient(object):
     @distributed_trace
     def begin_recognize_custom_forms(self, model_id, stream, **kwargs):
         # type: (str, IO[bytes], Any) -> LROPoller
-        """Analyze Form.
+        """Analyze a custom form with a model trained with or without labels.
+        The input document must be of one of the supported content types - 'application/pdf',
+        'image/jpeg', 'image/png' or 'image/tiff'.
 
         :param str model_id: Model identifier.
         :param stream: .pdf, .jpg, .png or .tiff type file stream.
         :type stream: stream
         :keyword bool include_text_content: Include text lines and element references in the result.
-        :keyword str content_type: Media type of the body sent to the API. For options,
+        :keyword str content_type: Media type of the body sent to the API. Content-type is
+            auto-detected, but can be overridden by passing this keyword argument. For options,
             see :class:`~azure.ai.formrecognizer.FormContentType`.
-        :return: LROPoller
+        :return: An instance of an LROPoller. Call `result()` on the poller
+            object to return the result of the long running operation.
         :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.RecognizedForm]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
+
         cls = kwargs.pop("cls", None)
         content_type = kwargs.pop("content_type", None)
         if content_type == "application/json":
@@ -212,16 +227,19 @@ class FormRecognizerClient(object):
     @distributed_trace
     def begin_recognize_custom_forms_from_url(self, model_id, url, **kwargs):
         # type: (str, str, Any) -> LROPoller
-        """Analyze Form.
+        """Analyze a custom form with a model trained with or without labels.
+        The input document must be the location (Url) of the document to be analyzed.
 
         :param str model_id: Model identifier.
         :param url: The url of the document.
         :type url: str
         :keyword bool include_text_content: Include text lines and element references in the result.
-        :return: LROPoller
+        :return: An instance of an LROPoller. Call `result()` on the poller
+            object to return the result of the long running operation.
         :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.RecognizedForm]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
+
         cls = kwargs.pop("cls", None)
         include_text_content = kwargs.pop("include_text_content", False)
 

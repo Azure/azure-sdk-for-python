@@ -30,7 +30,10 @@ from ._models import (
     FieldText,
     FormPage,
     FormLine,
-    FormWord
+    FormWord,
+    CustomFormModel,
+    CustomFormSubModel,
+    CustomFormModelField
 )
 
 
@@ -58,7 +61,10 @@ __all__ = [
     'FieldText',
     'FormPage',
     'FormLine',
-    'FormWord'
+    'FormWord',
+    'CustomFormModel',
+    'CustomFormSubModel',
+    'CustomFormModelField'
 ]
 
 __VERSION__ = VERSION
