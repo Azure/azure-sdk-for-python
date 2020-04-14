@@ -162,3 +162,9 @@
 | **AUTO %**                             | **16.51**  |
 | **NONE**                               | **40**     |
 | **NONE %**                             | **36.70**  |
+
+"nn.nn" - coverage (%) of automatic test from swagger
+"-" - no test coverage
+"M" - manual only test coverage
+"- (S)" - no package generated
+"- (R)" - no Python readme settings, no package generated
