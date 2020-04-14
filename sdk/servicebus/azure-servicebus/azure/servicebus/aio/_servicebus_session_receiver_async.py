@@ -79,7 +79,7 @@ class ServiceBusSessionReceiver(ServiceBusReceiver, SessionReceiverMixin):
         credential: "TokenCredential",
         **kwargs: Any
     ):
-        super().__init__(fully_qualified_namespace, credential, **kwargs)
+        super(ServiceBusSessionReceiver, self).__init__(fully_qualified_namespace, credential, **kwargs)
         self._create_session_attributes(**kwargs)
         self._session = ServiceBusSession(self._session_id, self, self._config.encoding)
 
@@ -134,7 +134,7 @@ class ServiceBusSessionReceiver(ServiceBusReceiver, SessionReceiverMixin):
                 :caption: Create a new instance of the ServiceBusReceiver from connection string.
 
         """
-        return super().from_connection_string(conn_str, **kwargs)
+        return super(ServiceBusSessionReceiver, self).from_connection_string(conn_str, **kwargs)
 
 
     @property
