@@ -227,7 +227,7 @@ model = poller.result()
 print("Model ID: {}".format(model.model_id))
 print("Status: {}".format(model.status))
 print("Created on: {}".format(model.created_on))
-print("Last updated on: {}".format(model.last_updated_on))
+print("Last modified: {}".format(model.last_modified))
 
 print("Recognized fields:")
 # looping through the submodels, which contains the fields they were trained on
@@ -296,7 +296,7 @@ custom_model = client.get_custom_model(model_id=model_id)
 print("Model ID: {}".format(custom_model.model_id))
 print("Status: {}".format(custom_model.status))
 print("Created on: {}".format(custom_model.created_on))
-print("Last updated on: {}".format(custom_model.last_updated_on))
+print("Last modified: {}".format(custom_model.last_modified))
 
 # Finally, we will delete this model by ID
 form_training_client.delete_model(model_id=custom_model.model_id)
