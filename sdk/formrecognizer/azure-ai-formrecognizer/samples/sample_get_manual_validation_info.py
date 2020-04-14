@@ -44,7 +44,7 @@ class GetValidationInfoSample(object):
         forms = poller.result()
 
         for idx, form in enumerate(forms):
-            print("--------Recognizing Form #{}--------".format(idx))
+            print("--------RECOGNIZING FORM #{}--------".format(idx))
             print("Form has type {}".format(form.form_type))
             for label, field in form.fields.items():
                 # each field is of type FormField
@@ -58,8 +58,9 @@ class GetValidationInfoSample(object):
                     field.confidence
                 ))
             for page in form.pages:
-                print("Page {} has width '{}' and height '{}' measure with unit: {}, and has text angle '{}'".format(
-                    page.page_number, page.width, page.height, page.unit, page.text_angle
+                print("-------Recognizing Page #{} of Form #{}-------".format(page.page_number, idx))
+                print("Has width '{}' and height '{}' measure with unit: {}, and has text angle '{}'".format(
+                    page.width, page.height, page.unit, page.text_angle
                 ))
                 for table in page.tables:
                     for cell in table.cells:
@@ -74,6 +75,7 @@ class GetValidationInfoSample(object):
                                 ", ".join(["[{}, {}]".format(p.x, p.y) for p in word.bounding_box]) if word.bounding_box else "N/A",
                                 word.confidence
                             ))
+                print("---------------------------------------------------")
             print("-----------------------------------")
 
 
