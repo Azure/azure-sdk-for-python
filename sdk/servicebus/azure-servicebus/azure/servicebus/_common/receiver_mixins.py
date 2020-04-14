@@ -17,6 +17,7 @@ from ..exceptions import (
     _ServiceBusErrorPolicy,
     SessionLockExpired
 )
+from .utils import utc_from_timestamp, utc_now
 from uamqp import Source
 
 
