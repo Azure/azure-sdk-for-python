@@ -26,7 +26,7 @@ class TestTraining(FormRecognizerTest):
 
         self.assertIsNotNone(model.model_id)
         self.assertIsNotNone(model.created_on)
-        self.assertIsNotNone(model.last_updated_on)
+        self.assertIsNotNone(model.last_modified)
         self.assertEqual(model.errors, [])
         self.assertEqual(model.status, "ready")
         for doc in model.training_documents:
@@ -68,7 +68,7 @@ class TestTraining(FormRecognizerTest):
 
         self.assertIsNotNone(model.model_id)
         self.assertIsNotNone(model.created_on)
-        self.assertIsNotNone(model.last_updated_on)
+        self.assertIsNotNone(model.last_modified)
         self.assertEqual(model.errors, [])
         self.assertEqual(model.status, "ready")
         for doc in model.training_documents:
@@ -110,7 +110,7 @@ class TestTraining(FormRecognizerTest):
 
         self.assertIsNotNone(model.model_id)
         self.assertIsNotNone(model.created_on)
-        self.assertIsNotNone(model.last_updated_on)
+        self.assertIsNotNone(model.last_modified)
         self.assertEqual(model.errors, [])
         self.assertEqual(model.status, "ready")
         for doc in model.training_documents:

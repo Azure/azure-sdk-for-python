@@ -42,7 +42,7 @@ class TestManagement(FormRecognizerTest):
         self.assertEqual(unlabeled_model_from_train.model_id, unlabeled_model_from_get.model_id)
         self.assertEqual(unlabeled_model_from_train.status, unlabeled_model_from_get.status)
         self.assertEqual(unlabeled_model_from_train.created_on, unlabeled_model_from_get.created_on)
-        self.assertEqual(unlabeled_model_from_train.last_updated_on, unlabeled_model_from_get.last_updated_on)
+        self.assertEqual(unlabeled_model_from_train.last_modified, unlabeled_model_from_get.last_modified)
         self.assertEqual(unlabeled_model_from_train.errors, unlabeled_model_from_get.errors)
         for a, b in zip(unlabeled_model_from_train.training_documents, unlabeled_model_from_get.training_documents):
             self.assertEqual(a.document_name, b.document_name)
@@ -56,7 +56,7 @@ class TestManagement(FormRecognizerTest):
         self.assertEqual(labeled_model_from_train.model_id, labeled_model_from_get.model_id)
         self.assertEqual(labeled_model_from_train.status, labeled_model_from_get.status)
         self.assertEqual(labeled_model_from_train.created_on, labeled_model_from_get.created_on)
-        self.assertEqual(labeled_model_from_train.last_updated_on, labeled_model_from_get.last_updated_on)
+        self.assertEqual(labeled_model_from_train.last_modified, labeled_model_from_get.last_modified)
         self.assertEqual(labeled_model_from_train.errors, labeled_model_from_get.errors)
         for a, b in zip(labeled_model_from_train.training_documents, labeled_model_from_get.training_documents):
             self.assertEqual(a.document_name, b.document_name)
@@ -70,10 +70,10 @@ class TestManagement(FormRecognizerTest):
 
         models_list = client.list_model_infos()
         for model in models_list:
-            self.assertIn(model.model_id, [unlabeled_model_from_train.model_id, labeled_model_from_train.model_id])
+            self.assertIsNotNone(model.model_id)
             self.assertEqual(model.status, "ready")
-            self.assertIn(model.created_on, [unlabeled_model_from_train.created_on, labeled_model_from_train.created_on])
-            self.assertIn(model.last_updated_on, [unlabeled_model_from_train.last_updated_on, labeled_model_from_train.last_updated_on])
+            self.assertIsNotNone(model.created_on)
+            self.assertIsNotNone(model.last_modified)
 
         client.delete_model(unlabeled_model_from_train.model_id)
         client.delete_model(labeled_model_from_train.model_id)
