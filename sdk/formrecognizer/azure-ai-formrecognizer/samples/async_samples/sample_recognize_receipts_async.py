@@ -36,7 +36,9 @@ class RecognizeReceiptsSampleAsync(object):
         # TODO: this can be used as examples in sphinx
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer.aio import FormRecognizerClient
-        async with FormRecognizerClient(endpoint=self.endpoint, credential=AzureKeyCredential(self.key)) as form_recognizer_client:
+        async with FormRecognizerClient(
+            endpoint=self.endpoint, credential=AzureKeyCredential(self.key)
+        ) as form_recognizer_client:
 
             with open(path_to_sample_forms, "rb") as f:
                 receipts = await form_recognizer_client.recognize_receipts(stream=f.read())

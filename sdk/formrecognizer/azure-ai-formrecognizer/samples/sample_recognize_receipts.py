@@ -32,7 +32,9 @@ class RecognizeReceiptsSample(object):
         # TODO: this can be used as examples in sphinx
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer import FormRecognizerClient
-        form_recognizer_client = FormRecognizerClient(endpoint=self.endpoint, credential=AzureKeyCredential(self.key))
+        form_recognizer_client = FormRecognizerClient(
+            endpoint=self.endpoint, credential=AzureKeyCredential(self.key)
+        )
         with open("sample_forms/receipt/contoso-allinone.jpg", "rb") as f:
             poller = form_recognizer_client.begin_recognize_receipts(stream=f.read())
         receipts = poller.result()

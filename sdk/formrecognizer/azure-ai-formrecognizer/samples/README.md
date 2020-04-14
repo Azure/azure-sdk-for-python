@@ -35,7 +35,7 @@ These sample programs show common scenarios for the Form Recognizer client's off
 1. Install the Azure Form Recognizer client library for Python with [pip][pip]:
 
 ```bash
-pip install azure-ai-formrecognizer --pre
+pip install azure-ai-formrecognizer
 ```
 * If authenticating with Azure Active Directory, make sure you have [azure-identity][azure_identity_pip] installed:
   ```bash

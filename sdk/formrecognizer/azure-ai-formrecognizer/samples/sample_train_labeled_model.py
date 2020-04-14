@@ -18,7 +18,7 @@ USAGE:
     Set the environment variables with your own values before running the sample:
     1) AZURE_FORM_RECOGNIZER_ENDPOINT - the endpoint to your Cognitive Services resource.
     2) AZURE_FORM_RECOGNIZER_KEY - your Form Recognizer subscription key
-    3) BLOB_SAS_URL - The shared access signature (SAS) Url of your Azure Blob Storage container with your labeled data.
+    3) CONTAINER_SAS_URL - The shared access signature (SAS) Url of your Azure Blob Storage container with your labeled data.
                       See https://docs.microsoft.com/en-us/azure/cognitive-services/form-recognizer/quickstarts/label-tool#connect-to-the-sample-labeling-tool
                       for more detailed descriptions on how to get it.
 """
@@ -30,7 +30,7 @@ class TrainlabeledModelSample(object):
 
     endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
     key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
-    blob_sas_url = os.environ["BLOB_SAS_URL"]
+    container_sas_url = os.environ["CONTAINER_SAS_URL"]
 
     def train_labeled_model(self):
         from azure.ai.formrecognizer import FormTrainingClient
@@ -38,7 +38,7 @@ class TrainlabeledModelSample(object):
 
         form_training_client = FormTrainingClient(self.endpoint, AzureKeyCredential(self.key))
 
-        poller = form_training_client.begin_training(self.blob_sas_url, use_labels=True)
+        poller = form_training_client.begin_training(self.container_sas_url, use_labels=True)
         model = poller.result()
 
         # Custom model information

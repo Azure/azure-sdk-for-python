@@ -32,7 +32,9 @@ class RecognizeReceiptsFromURLSample(object):
         # TODO: this can be used as examples in sphinx
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer import FormRecognizerClient
-        form_recognizer_client = FormRecognizerClient(endpoint=self.endpoint, credential=AzureKeyCredential(self.key))
+        form_recognizer_client = FormRecognizerClient(
+            endpoint=self.endpoint, credential=AzureKeyCredential(self.key)
+        )
         url = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/receipt/contoso-receipt.png"
         poller = form_recognizer_client.begin_recognize_receipts_from_url(url=url)
         receipts = poller.result()

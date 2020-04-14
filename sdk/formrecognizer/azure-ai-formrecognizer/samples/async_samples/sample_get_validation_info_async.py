@@ -7,14 +7,13 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_recognize_custom_forms_async.py
+FILE: sample_get_validation_info_async.py
 
 DESCRIPTION:
-    This sample demonstrates how to analyze a form from a document with a custom
-    trained model. To learn how to train your own models, look at
-    sample_train_unlabeled_model_async.py and sample_train_labeled_model_async.py
+    This sample demonstrates how to output the information that will help with manually
+    validating your output from recognize custom forms.
 USAGE:
-    python sample_recognize_custom_forms_async.py
+    python sample_get_validation_info_async.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_FORM_RECOGNIZER_ENDPOINT - the endpoint to your Cognitive Services resource.
@@ -27,16 +26,15 @@ import asyncio
 from pathlib import Path
 
 
-class RecognizeCustomFormsSampleAsync(object):
+class GetValidationInfoSampleAsync(object):
 
     endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
     key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
     model_id = os.environ["CUSTOM_TRAINED_MODEL_ID"]
 
-    async def recognize_custom_forms(self):
+    async def get_validation_info_from_recognize_custom_forms(self):
         # the sample forms are located in this file's parent's parent's files.
         path_to_sample_forms = Path(__file__).parent.parent.absolute() / Path("sample_forms/forms/Form_1.jpg")
-        # TODO: this can be used as examples in sphinx
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer.aio import FormRecognizerClient
         async with FormRecognizerClient(
@@ -44,7 +42,7 @@ class RecognizeCustomFormsSampleAsync(object):
         ) as form_recognizer_client:
             with open(path_to_sample_forms, "rb") as f:
                 forms = await form_recognizer_client.recognize_custom_forms(
-                    model_id=self.model_id, stream=f.read()
+                    model_id=self.model_id, stream=f.read(), include_text_content=True
                 )
 
             for idx, form in enumerate(forms):
@@ -61,12 +59,29 @@ class RecognizeCustomFormsSampleAsync(object):
                         ", ".join(["[{}, {}]".format(p.x, p.y) for p in field.value_data.bounding_box]) if field.value_data.bounding_box else "N/A",
                         field.confidence
                     ))
+                for page in form.pages:
+                    print("Page {} has width '{}' and height '{}' measure with unit: {}, and has text angle '{}'".format(
+                        page.page_number, page.width, page.height, page.unit, page.text_angle
+                    ))
+                    for table in page.tables:
+                        for cell in table.cells:
+                            print("Cell[{}][{}] has text '{}' with confidence {} based on the following words: ".format(
+                                cell.row_index, cell.column_index, cell.text, cell.confidence
+                            ))
+                            # text_content only exists if you set include_text_content to True in your function call to recognize_custom_forms
+                            # It is also a list of FormWords and FormLines, but in this example, we only deal with FormWords
+                            for word in cell.text_content:
+                                print("'{}' within bounding box '{}' with a confidence of {}".format(
+                                    word.text,
+                                    ", ".join(["[{}, {}]".format(p.x, p.y) for p in word.bounding_box]) if word.bounding_box else "N/A",
+                                    word.confidence
+                                ))
                 print("-----------------------------------")
 
 
 async def main():
-    sample = RecognizeCustomFormsSampleAsync()
-    await sample.recognize_custom_forms()
+    sample = GetValidationInfoSampleAsync()
+    await sample.get_validation_info_from_recognize_custom_forms()
 
 
 if __name__ == '__main__':

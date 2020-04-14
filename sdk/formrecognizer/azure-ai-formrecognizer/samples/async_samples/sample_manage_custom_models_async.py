@@ -34,7 +34,9 @@ class ManageCustomModelsSampleAsync(object):
         from azure.core.exceptions import ResourceNotFoundError
         from azure.ai.formrecognizer.aio import FormTrainingClient
 
-        async with FormTrainingClient(endpoint=self.endpoint, credential=AzureKeyCredential(self.key)) as form_training_client:
+        async with FormTrainingClient(
+            endpoint=self.endpoint, credential=AzureKeyCredential(self.key)
+        ) as form_training_client:
             # First, we see how many custom models we have, and what our limit is
             account_properties = await form_training_client.get_account_properties()
             print("Our account has {} custom models, and we can have at most {} custom models".format(
