@@ -8,13 +8,14 @@ print("|----------------------------------------|------------|")
 pattern = ".\/sdk\/[a-z]+\/azure-mgmt-[a-z-]+$" 
 dirs = [x[0] for x in walk(".") if re.match(pattern, x[0])]
 dirs.sort(key=lambda x: x.split("/").pop())
-total = 0
+total_rps = 0
+total_packages = 0
 manual = 0
 auto = 0
 none = 0
 all = {}
 for d in dirs:
-  total += 1
+  total_packages += 1
   coverage = "-"
   test_dir = join(d, "tests")
   if exists(test_dir):
@@ -47,7 +48,7 @@ if exists("../azure-rest-api-specs/specification"):
   missing = []
   for d in dirs:
     rp_name = d.split('/')[-2]
-    total += 1
+    total_rps += 1
     readme_files = [f for f in listdir(d) if f in ['readme.md', 'readme.python.md']]
     readme_file = None
     if 'readme.python.md' in readme_files:
@@ -76,12 +77,13 @@ for p in packages:
   print("| {:38} | {:10} |".format(p, coverage if coverage in ["- (R)", "- (S)", "-" , "A", "M"] else "{:4.2f}".format(coverage)))
 
 print("| {:38} | {:10} |".format("", ""))
-print("| {:38} | {:10} |".format("**TOTAL**", "**{}**".format(total)))
+print("| {:38} | {:10} |".format("**TOTAL RPS**", "**{}**".format(total_rps)))
+print("| {:38} | {:10} |".format("**TOTAL PACKAGES**", "**{}**".format(total_packages)))
 print("| {:38} | {:10} |".format("**MANUAL**", "**{}**".format(manual)))
-print("| {:38} | {:10} |".format("**MANUAL %**", "**{:4.2f}**".format(100 * manual / total)))
+print("| {:38} | {:10} |".format("**MANUAL %**", "**{:4.2f}**".format(100 * manual / total_packages)))
 print("| {:38} | {:10} |".format("**AUTO**", "**{}**".format(auto)))
-print("| {:38} | {:10} |".format("**AUTO %**", "**{:4.2f}**".format(100 * auto / total)))
+print("| {:38} | {:10} |".format("**AUTO %**", "**{:4.2f}**".format(100 * auto / total_packages)))
 print("| {:38} | {:10} |".format("**NONE**", "**{}**".format(none)))
-print("| {:38} | {:10} |".format("**NONE %**", "**{:4.2f}**".format(100 * none / total)))
+print("| {:38} | {:10} |".format("**NONE %**", "**{:4.2f}**".format(100 * none / total_packages)))
 
 
