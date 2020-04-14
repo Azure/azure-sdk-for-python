@@ -25,6 +25,8 @@ class BatchAccountPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(BatchAccountPaged, self).__init__(*args, **kwargs)
+
+
 class ApplicationPackagePaged(Paged):
     """
     A paging container for iterating over a list of :class:`ApplicationPackage <azure.mgmt.batch.models.ApplicationPackage>` object
@@ -38,6 +40,8 @@ class ApplicationPackagePaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(ApplicationPackagePaged, self).__init__(*args, **kwargs)
+
+
 class ApplicationPaged(Paged):
     """
     A paging container for iterating over a list of :class:`Application <azure.mgmt.batch.models.Application>` object
@@ -51,6 +55,8 @@ class ApplicationPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(ApplicationPaged, self).__init__(*args, **kwargs)
+
+
 class OperationPaged(Paged):
     """
     A paging container for iterating over a list of :class:`Operation <azure.mgmt.batch.models.Operation>` object
@@ -64,6 +70,8 @@ class OperationPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(OperationPaged, self).__init__(*args, **kwargs)
+
+
 class CertificatePaged(Paged):
     """
     A paging container for iterating over a list of :class:`Certificate <azure.mgmt.batch.models.Certificate>` object
@@ -77,6 +85,8 @@ class CertificatePaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(CertificatePaged, self).__init__(*args, **kwargs)
+
+
 class PrivateLinkResourcePaged(Paged):
     """
     A paging container for iterating over a list of :class:`PrivateLinkResource <azure.mgmt.batch.models.PrivateLinkResource>` object
@@ -90,6 +100,8 @@ class PrivateLinkResourcePaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(PrivateLinkResourcePaged, self).__init__(*args, **kwargs)
+
+
 class PrivateEndpointConnectionPaged(Paged):
     """
     A paging container for iterating over a list of :class:`PrivateEndpointConnection <azure.mgmt.batch.models.PrivateEndpointConnection>` object
@@ -103,6 +115,8 @@ class PrivateEndpointConnectionPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(PrivateEndpointConnectionPaged, self).__init__(*args, **kwargs)
+
+
 class PoolPaged(Paged):
     """
     A paging container for iterating over a list of :class:`Pool <azure.mgmt.batch.models.Pool>` object
