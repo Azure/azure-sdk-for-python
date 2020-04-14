@@ -12,7 +12,8 @@ from uamqp.message import MessageProperties
 from .._base_handler import BaseHandler, _generate_sas_token
 from .._common.constants import (
     TOKEN_TYPE_SASTOKEN,
-    MGMT_REQUEST_OP_TYPE_ENTITY_MGMT
+    MGMT_REQUEST_OP_TYPE_ENTITY_MGMT,
+    ASSOCIATEDLINKPROPERTYNAME
 )
 from ..exceptions import (
     InvalidHandlerState,
@@ -136,17 +137,26 @@ class BaseHandlerAsync(BaseHandler):
         )
         raise last_exception
 
-    async def _mgmt_request_response(self, mgmt_operation, message, callback, **kwargs):
+    async def _mgmt_request_response(self, mgmt_operation, message, callback, keep_alive_associated_link=True, **kwargs):
         await self._open()
         if not self._running:
             raise InvalidHandlerState("Client connection is closed.")
+
+        application_properties = {}
+        # Some mgmt calls do not support an associated link name (such as list_sessions).  Most do, so on by default.
+        if keep_alive_associated_link:
+            try:
+                application_properties = {ASSOCIATEDLINKPROPERTYNAME:self._handler.message_handler.name}
+            except AttributeError:
+                pass
 
         mgmt_msg = uamqp.Message(
             body=message,
             properties=MessageProperties(
                 reply_to=self._mgmt_target,
                 encoding=self._config.encoding,
-                **kwargs))
+                **kwargs),
+            application_properties=application_properties)
         try:
             return await self._handler.mgmt_request_async(
                 mgmt_msg,
