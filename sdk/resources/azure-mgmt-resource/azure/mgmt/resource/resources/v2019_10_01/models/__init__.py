@@ -59,10 +59,10 @@ try:
     from ._models_py3 import SubResource
     from ._models_py3 import TagCount
     from ._models_py3 import TagDetails
-    from ._models_py3 import TagValue
     from ._models_py3 import Tags
     from ._models_py3 import TagsPatchResource
     from ._models_py3 import TagsResource
+    from ._models_py3 import TagValue
     from ._models_py3 import TargetResource
     from ._models_py3 import TemplateHashResult
     from ._models_py3 import TemplateLink
@@ -119,10 +119,10 @@ except (SyntaxError, ImportError):
     from ._models import SubResource
     from ._models import TagCount
     from ._models import TagDetails
-    from ._models import TagValue
     from ._models import Tags
     from ._models import TagsPatchResource
     from ._models import TagsResource
+    from ._models import TagValue
     from ._models import TargetResource
     from ._models import TemplateHashResult
     from ._models import TemplateLink
@@ -143,6 +143,7 @@ from ._resource_management_client_enums import (
     AliasPatternType,
     AliasType,
     ResourceIdentityType,
+    ProvisioningOperation,
     PropertyChangeType,
     ChangeType,
 )
@@ -197,10 +198,10 @@ __all__ = [
     'SubResource',
     'TagCount',
     'TagDetails',
-    'TagValue',
     'Tags',
     'TagsPatchResource',
     'TagsResource',
+    'TagValue',
     'TargetResource',
     'TemplateHashResult',
     'TemplateLink',
@@ -220,6 +221,7 @@ __all__ = [
     'AliasPatternType',
     'AliasType',
     'ResourceIdentityType',
+    'ProvisioningOperation',
     'PropertyChangeType',
     'ChangeType',
 ]

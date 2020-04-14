@@ -15,8 +15,8 @@ try:
     from ._models_py3 import AzureResourceBase
     from ._models_py3 import ContainerConfiguration
     from ._models_py3 import DeploymentScript
-    from ._models_py3 import DeploymentScriptUpdateParameter
     from ._models_py3 import DeploymentScriptsError, DeploymentScriptsErrorException
+    from ._models_py3 import DeploymentScriptUpdateParameter
     from ._models_py3 import EnvironmentVariable
     from ._models_py3 import ErrorAdditionalInfo
     from ._models_py3 import ErrorResponse
@@ -32,8 +32,8 @@ except (SyntaxError, ImportError):
     from ._models import AzureResourceBase
     from ._models import ContainerConfiguration
     from ._models import DeploymentScript
-    from ._models import DeploymentScriptUpdateParameter
     from ._models import DeploymentScriptsError, DeploymentScriptsErrorException
+    from ._models import DeploymentScriptUpdateParameter
     from ._models import EnvironmentVariable
     from ._models import ErrorAdditionalInfo
     from ._models import ErrorResponse
@@ -57,8 +57,8 @@ __all__ = [
     'AzureResourceBase',
     'ContainerConfiguration',
     'DeploymentScript',
-    'DeploymentScriptUpdateParameter',
     'DeploymentScriptsError', 'DeploymentScriptsErrorException',
+    'DeploymentScriptUpdateParameter',
     'EnvironmentVariable',
     'ErrorAdditionalInfo',
     'ErrorResponse',

@@ -475,6 +475,35 @@ class DeploymentScriptPropertiesBase(Model):
         self.outputs = None
 
 
+class DeploymentScriptsError(Model):
+    """Deployment scripts error response.
+
+    :param error:
+    :type error:
+     ~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.ErrorResponse
+    """
+
+    _attribute_map = {
+        'error': {'key': 'error', 'type': 'ErrorResponse'},
+    }
+
+    def __init__(self, *, error=None, **kwargs) -> None:
+        super(DeploymentScriptsError, self).__init__(**kwargs)
+        self.error = error
+
+
+class DeploymentScriptsErrorException(HttpOperationError):
+    """Server responsed with exception of type: 'DeploymentScriptsError'.
+
+    :param deserialize: A deserializer
+    :param response: Server response to be deserialized.
+    """
+
+    def __init__(self, deserialize, response, *args):
+
+        super(DeploymentScriptsErrorException, self).__init__(deserialize, response, 'DeploymentScriptsError', *args)
+
+
 class DeploymentScriptUpdateParameter(AzureResourceBase):
     """Deployment script parameters to be updated. .
 
@@ -507,35 +536,6 @@ class DeploymentScriptUpdateParameter(AzureResourceBase):
     def __init__(self, *, tags=None, **kwargs) -> None:
         super(DeploymentScriptUpdateParameter, self).__init__(**kwargs)
         self.tags = tags
-
-
-class DeploymentScriptsError(Model):
-    """Deployment scripts error response.
-
-    :param error:
-    :type error:
-     ~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.ErrorResponse
-    """
-
-    _attribute_map = {
-        'error': {'key': 'error', 'type': 'ErrorResponse'},
-    }
-
-    def __init__(self, *, error=None, **kwargs) -> None:
-        super(DeploymentScriptsError, self).__init__(**kwargs)
-        self.error = error
-
-
-class DeploymentScriptsErrorException(HttpOperationError):
-    """Server responsed with exception of type: 'DeploymentScriptsError'.
-
-    :param deserialize: A deserializer
-    :param response: Server response to be deserialized.
-    """
-
-    def __init__(self, deserialize, response, *args):
-
-        super(DeploymentScriptsErrorException, self).__init__(deserialize, response, 'DeploymentScriptsError', *args)
 
 
 class EnvironmentVariable(Model):
