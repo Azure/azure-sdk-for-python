@@ -16,13 +16,13 @@ interactions:
       string: '{"error":{"code":"1001","message":"Specified model not found or not
         ready, Model Id: xx"}}'
     headers:
-      apim-request-id: e6f2c6d0-a18a-46ea-b9c4-f2cd092acb56
+      apim-request-id: a3bc63cd-7eb5-4984-90ce-14cbdbbf4429
       content-type: application/json; charset=utf-8
-      date: Mon, 13 Apr 2020 21:01:01 GMT
+      date: Tue, 14 Apr 2020 22:20:54 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '16'
+      x-envoy-upstream-service-time: '14'
     status:
       code: 400
       message: Bad Request

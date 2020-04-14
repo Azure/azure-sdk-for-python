@@ -6,7 +6,6 @@
 
 import functools
 from azure.core.pipeline.transport import AioHttpTransport
-from multidict import CIMultiDict, CIMultiDictProxy
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import ResourceNotFoundError
 from azure.ai.formrecognizer.aio import FormTrainingClient, FormRecognizerClient
@@ -15,22 +14,7 @@ from testcase import GlobalTrainingAccountPreparer as _GlobalTrainingAccountPrep
 from asynctestcase import AsyncFormRecognizerTest
 
 
-GlobalTrainingAccountPreparer = functools.partial(_GlobalTrainingAccountPreparer, FormRecognizerClient)
-
-
-class AiohttpTestTransport(AioHttpTransport):
-    """Workaround to vcrpy==3.0.0 bug
-
-    # records location header as a list of char instead of str
-    """
-
-    async def send(self, request, **config):
-        response = await super(AiohttpTestTransport, self).send(request, **config)
-        if response.headers.get("location") and isinstance(response.headers["location"], list):
-            response_dict = {header: value for header, value in response.headers.items()}
-            response_dict["location"] = "".join(response.headers.get("location"))
-            response.headers = CIMultiDictProxy(CIMultiDict(response_dict))
-        return response
+GlobalTrainingAccountPreparer = functools.partial(_GlobalTrainingAccountPreparer, FormTrainingClient)
 
 
 class TestManagementAsync(AsyncFormRecognizerTest):
@@ -46,13 +30,12 @@ class TestManagementAsync(AsyncFormRecognizerTest):
     @GlobalFormAndStorageAccountPreparer()
     @GlobalTrainingAccountPreparer()
     async def test_mgmt_model(self, client, container_sas_url):
-        training_client = client.get_form_training_client(transport=AiohttpTestTransport())
-        unlabeled_model_from_train = await training_client.training(container_sas_url)
+        unlabeled_model_from_train = await client.training(container_sas_url)
 
-        labeled_model_from_train = await training_client.training(container_sas_url, use_labels=True)
+        labeled_model_from_train = await client.training(container_sas_url, use_labels=True)
 
-        unlabeled_model_from_get = await training_client.get_custom_model(unlabeled_model_from_train.model_id)
-        labeled_model_from_get = await training_client.get_custom_model(labeled_model_from_train.model_id)
+        unlabeled_model_from_get = await client.get_custom_model(unlabeled_model_from_train.model_id)
+        labeled_model_from_get = await client.get_custom_model(labeled_model_from_train.model_id)
 
         self.assertEqual(unlabeled_model_from_train.model_id, unlabeled_model_from_get.model_id)
         self.assertEqual(unlabeled_model_from_train.status, unlabeled_model_from_get.status)
@@ -83,21 +66,21 @@ class TestManagementAsync(AsyncFormRecognizerTest):
                 self.assertEqual(a.fields[field1[0]].name, b.fields[field2[0]].name)
                 self.assertEqual(a.fields[field1[0]].accuracy, b.fields[field2[0]].accuracy)
 
-        models_list = training_client.list_model_infos()
+        models_list = client.list_model_infos()
         async for model in models_list:
             self.assertIsNotNone(model.model_id)
             self.assertEqual(model.status, "ready")
             self.assertIsNotNone(model.created_on)
             self.assertIsNotNone(model.last_modified)
 
-        await training_client.delete_model(unlabeled_model_from_train.model_id)
-        await training_client.delete_model(labeled_model_from_train.model_id)
+        await client.delete_model(unlabeled_model_from_train.model_id)
+        await client.delete_model(labeled_model_from_train.model_id)
 
         with self.assertRaises(ResourceNotFoundError):
-            await training_client.get_custom_model(unlabeled_model_from_train.model_id)
+            await client.get_custom_model(unlabeled_model_from_train.model_id)
 
         with self.assertRaises(ResourceNotFoundError):
-            await training_client.get_custom_model(labeled_model_from_train.model_id)
+            await client.get_custom_model(labeled_model_from_train.model_id)
 
     @GlobalFormRecognizerAccountPreparer()
     async def test_get_form_training_client(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):

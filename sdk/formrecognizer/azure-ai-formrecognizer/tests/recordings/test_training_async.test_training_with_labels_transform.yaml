@@ -16,152 +16,17 @@ interactions:
     body:
       string: ''
     headers:
-      apim-request-id: d5b17692-cdc3-472c-b585-48e63a4dfa18
+      apim-request-id: 4ceeea19-ded8-42a5-b502-2a0a3fc72596
       content-length: '0'
-      date: Sat, 11 Apr 2020 18:47:46 GMT
-      location:
-      - h
-      - t
-      - t
-      - p
-      - s
-      - ':'
-      - /
-      - /
-      - c
-      - e
-      - n
-      - t
-      - r
-      - a
-      - l
-      - u
-      - s
-      - e
-      - u
-      - a
-      - p
-      - .
-      - a
-      - p
-      - i
-      - .
-      - c
-      - o
-      - g
-      - n
-      - i
-      - t
-      - i
-      - v
-      - e
-      - .
-      - m
-      - i
-      - c
-      - r
-      - o
-      - s
-      - o
-      - f
-      - t
-      - .
-      - c
-      - o
-      - m
-      - /
-      - f
-      - o
-      - r
-      - m
-      - r
-      - e
-      - c
-      - o
-      - g
-      - n
-      - i
-      - z
-      - e
-      - r
-      - /
-      - v
-      - '2'
-      - .
-      - '0'
-      - '-'
-      - p
-      - r
-      - e
-      - v
-      - i
-      - e
-      - w
-      - /
-      - c
-      - u
-      - s
-      - t
-      - o
-      - m
-      - /
-      - m
-      - o
-      - d
-      - e
-      - l
-      - s
-      - /
-      - a
-      - f
-      - '9'
-      - '2'
-      - '5'
-      - '5'
-      - '7'
-      - b
-      - '-'
-      - c
-      - '2'
-      - '4'
-      - '6'
-      - '-'
-      - '4'
-      - '0'
-      - b
-      - '8'
-      - '-'
-      - '8'
-      - '1'
-      - '5'
-      - b
-      - '-'
-      - '4'
-      - d
-      - f
-      - '4'
-      - '2'
-      - '1'
-      - '5'
-      - b
-      - b
-      - '0'
-      - '4'
-      - '3'
+      date: Tue, 14 Apr 2020 22:30:52 GMT
+      location: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/805229a6-d108-4946-88d0-f2bb55f8b073
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '26'
+      x-envoy-upstream-service-time: '28'
     status:
       code: 201
       message: Created
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - centraluseuap.api.cognitive.microsoft.com
-        - //formrecognizer/v2.0-preview/custom/models
-        - ''
-        - ''
+    url: https://centraluseuap.api.cognitive.microsoft.com//formrecognizer/v2.0-preview/custom/models
 - request:
     body: null
     headers:
@@ -169,27 +34,20 @@ interactions:
       - azsdk-python-ai-formrecognizer/1.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
         Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: GET
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/af92557b-c246-40b8-815b-4df4215bb043?includeKeys=true
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/805229a6-d108-4946-88d0-f2bb55f8b073?includeKeys=true
   response:
     body:
-      string: '{"modelInfo":{"modelId":"af92557b-c246-40b8-815b-4df4215bb043","status":"ready","createdDateTime":"2020-04-11T18:47:46Z","lastUpdatedDateTime":"2020-04-11T18:47:49Z"},"trainResult":{"averageModelAccuracy":0.973,"trainingDocuments":[{"documentName":"Form_1.jpg","pages":1,"status":"succeeded"},{"documentName":"Form_2.jpg","pages":1,"status":"succeeded"},{"documentName":"Form_3.jpg","pages":1,"status":"succeeded"},{"documentName":"Form_4.jpg","pages":1,"status":"succeeded"},{"documentName":"Form_5.jpg","pages":1,"status":"succeeded"}],"fields":[{"fieldName":"CompanyAddress","accuracy":0.8},{"fieldName":"CompanyName","accuracy":1.0},{"fieldName":"CompanyPhoneNumber","accuracy":1.0},{"fieldName":"DatedAs","accuracy":1.0},{"fieldName":"Email","accuracy":0.8},{"fieldName":"Merchant","accuracy":1.0},{"fieldName":"PhoneNumber","accuracy":1.0},{"fieldName":"PurchaseOrderNumber","accuracy":1.0},{"fieldName":"Quantity","accuracy":1.0},{"fieldName":"Signature","accuracy":1.0},{"fieldName":"Subtotal","accuracy":1.0},{"fieldName":"Tax","accuracy":1.0},{"fieldName":"Total","accuracy":1.0},{"fieldName":"VendorName","accuracy":1.0},{"fieldName":"Website","accuracy":1.0}],"errors":[]}}'
+      string: '{"modelInfo":{"modelId":"805229a6-d108-4946-88d0-f2bb55f8b073","status":"ready","createdDateTime":"2020-04-14T22:30:52Z","lastUpdatedDateTime":"2020-04-14T22:30:56Z"},"trainResult":{"averageModelAccuracy":0.973,"trainingDocuments":[{"documentName":"Form_1.jpg","pages":1,"status":"succeeded"},{"documentName":"Form_2.jpg","pages":1,"status":"succeeded"},{"documentName":"Form_3.jpg","pages":1,"status":"succeeded"},{"documentName":"Form_4.jpg","pages":1,"status":"succeeded"},{"documentName":"Form_5.jpg","pages":1,"status":"succeeded"}],"fields":[{"fieldName":"CompanyAddress","accuracy":0.8},{"fieldName":"CompanyName","accuracy":1.0},{"fieldName":"CompanyPhoneNumber","accuracy":1.0},{"fieldName":"DatedAs","accuracy":1.0},{"fieldName":"Email","accuracy":0.8},{"fieldName":"Merchant","accuracy":1.0},{"fieldName":"PhoneNumber","accuracy":1.0},{"fieldName":"PurchaseOrderNumber","accuracy":1.0},{"fieldName":"Quantity","accuracy":1.0},{"fieldName":"Signature","accuracy":1.0},{"fieldName":"Subtotal","accuracy":1.0},{"fieldName":"Tax","accuracy":1.0},{"fieldName":"Total","accuracy":1.0},{"fieldName":"VendorName","accuracy":1.0},{"fieldName":"Website","accuracy":1.0}],"errors":[]}}'
     headers:
-      apim-request-id: 4930f0ee-3c12-4991-b7e0-8db38268bfeb
+      apim-request-id: 9b3ee816-44a9-413a-88d2-3d68b8a16d20
       content-type: application/json; charset=utf-8
-      date: Sat, 11 Apr 2020 18:47:51 GMT
+      date: Tue, 14 Apr 2020 22:30:57 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '25'
+      x-envoy-upstream-service-time: '22'
     status:
       code: 200
       message: OK
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - centraluseuap.api.cognitive.microsoft.com
-        - /formrecognizer/v2.0-preview/custom/models/af92557b-c246-40b8-815b-4df4215bb043
-        - includeKeys=true
-        - ''
+    url: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/805229a6-d108-4946-88d0-f2bb55f8b073?includeKeys=true
 version: 1

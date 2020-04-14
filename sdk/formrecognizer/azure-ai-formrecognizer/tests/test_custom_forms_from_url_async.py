@@ -5,8 +5,6 @@
 # ------------------------------------
 
 import functools
-from azure.core.pipeline.transport import AioHttpTransport
-from multidict import CIMultiDict, CIMultiDictProxy
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import HttpResponseError, ServiceRequestError
 from azure.ai.formrecognizer.aio import FormRecognizerClient
@@ -17,21 +15,6 @@ from testcase import GlobalTrainingAccountPreparer as _GlobalTrainingAccountPrep
 from asynctestcase import AsyncFormRecognizerTest
 
 GlobalTrainingAccountPreparer = functools.partial(_GlobalTrainingAccountPreparer, FormRecognizerClient)
-
-
-class AiohttpTestTransport(AioHttpTransport):
-    """Workaround to vcrpy==3.0.0 bug
-
-    # records location header as a list of char instead of str
-    """
-
-    async def send(self, request, **config):
-        response = await super(AiohttpTestTransport, self).send(request, **config)
-        if response.headers.get("location") and isinstance(response.headers["location"], list):
-            response_dict = {header: value for header, value in response.headers.items()}
-            response_dict["location"] = "".join(response.headers.get("location"))
-            response.headers = CIMultiDictProxy(CIMultiDict(response_dict))
-        return response
 
 
 class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
@@ -69,7 +52,7 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
     @GlobalFormAndStorageAccountPreparer()
     @GlobalTrainingAccountPreparer()
     async def test_form_unlabeled(self, client, container_sas_url):
-        training_client = client.get_form_training_client(transport=AiohttpTestTransport())
+        training_client = client.get_form_training_client()
 
         model = await training_client.training(container_sas_url)
 
@@ -88,7 +71,7 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
     @GlobalFormAndStorageAccountPreparer()
     @GlobalTrainingAccountPreparer()
     async def test_form_labeled(self, client, container_sas_url):
-        training_client = client.get_form_training_client(transport=AiohttpTestTransport())
+        training_client = client.get_form_training_client()
 
         model = await training_client.training(container_sas_url, use_labels=True)
 
@@ -106,7 +89,7 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
     @GlobalFormAndStorageAccountPreparer()
     @GlobalTrainingAccountPreparer()
     async def test_fr_unlbld_trnsfrm(self, client, container_sas_url):
-        training_client = client.get_form_training_client(transport=AiohttpTestTransport())
+        training_client = client.get_form_training_client()
 
         model = await training_client.training(container_sas_url)
 
@@ -139,7 +122,7 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
     @GlobalFormAndStorageAccountPreparer()
     @GlobalTrainingAccountPreparer()
     async def test_fr_lbld_transform(self, client, container_sas_url):
-        training_client = client.get_form_training_client(transport=AiohttpTestTransport())
+        training_client = client.get_form_training_client()
 
         model = await training_client.training(container_sas_url, use_labels=True)
 

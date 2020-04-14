@@ -4,7 +4,7 @@ interactions:
       false}, "useLabelFile": false}'''
     headers:
       Content-Length:
-      - '318'
+      - '316'
       Content-Type:
       - application/json
       User-Agent:
@@ -16,141 +16,13 @@ interactions:
     body:
       string: ''
     headers:
-      apim-request-id: e2c73965-424c-4786-9ed5-b7fcc69ea192
+      apim-request-id: f71d5bf1-ea68-4865-949e-a15d4e399ad6
       content-length: '0'
-      date: Mon, 13 Apr 2020 21:00:50 GMT
-      location:
-      - h
-      - t
-      - t
-      - p
-      - s
-      - ':'
-      - /
-      - /
-      - c
-      - e
-      - n
-      - t
-      - r
-      - a
-      - l
-      - u
-      - s
-      - e
-      - u
-      - a
-      - p
-      - .
-      - a
-      - p
-      - i
-      - .
-      - c
-      - o
-      - g
-      - n
-      - i
-      - t
-      - i
-      - v
-      - e
-      - .
-      - m
-      - i
-      - c
-      - r
-      - o
-      - s
-      - o
-      - f
-      - t
-      - .
-      - c
-      - o
-      - m
-      - /
-      - f
-      - o
-      - r
-      - m
-      - r
-      - e
-      - c
-      - o
-      - g
-      - n
-      - i
-      - z
-      - e
-      - r
-      - /
-      - v
-      - '2'
-      - .
-      - '0'
-      - '-'
-      - p
-      - r
-      - e
-      - v
-      - i
-      - e
-      - w
-      - /
-      - c
-      - u
-      - s
-      - t
-      - o
-      - m
-      - /
-      - m
-      - o
-      - d
-      - e
-      - l
-      - s
-      - /
-      - '4'
-      - '2'
-      - '4'
-      - '3'
-      - f
-      - e
-      - '6'
-      - '0'
-      - '-'
-      - c
-      - '5'
-      - '1'
-      - '5'
-      - '-'
-      - '4'
-      - '1'
-      - e
-      - '3'
-      - '-'
-      - b
-      - '2'
-      - b
-      - e
-      - '-'
-      - f
-      - '8'
-      - '9'
-      - c
-      - '7'
-      - '6'
-      - a
-      - d
-      - '1'
-      - '6'
-      - '0'
-      - d
+      date: Tue, 14 Apr 2020 22:19:01 GMT
+      location: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/48652381-98ff-41be-b937-931691f9519f
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '33'
+      x-envoy-upstream-service-time: '29'
     status:
       code: 201
       message: Created
@@ -162,22 +34,22 @@ interactions:
       - azsdk-python-ai-formrecognizer/1.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
         Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: GET
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/4243fe60-c515-41e3-b2be-f89c76ad160d?includeKeys=true
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/48652381-98ff-41be-b937-931691f9519f?includeKeys=true
   response:
     body:
-      string: '{"modelInfo":{"modelId":"4243fe60-c515-41e3-b2be-f89c76ad160d","status":"creating","createdDateTime":"2020-04-13T21:00:50Z","lastUpdatedDateTime":"2020-04-13T21:00:50Z"}}'
+      string: '{"modelInfo":{"modelId":"48652381-98ff-41be-b937-931691f9519f","status":"creating","createdDateTime":"2020-04-14T22:19:01Z","lastUpdatedDateTime":"2020-04-14T22:19:01Z"}}'
     headers:
-      apim-request-id: 4702365c-39cc-479c-8117-4a24f0514670
+      apim-request-id: f5ba0989-e83b-40a5-b26c-bfb047f34eeb
       content-type: application/json; charset=utf-8
-      date: Mon, 13 Apr 2020 21:00:55 GMT
+      date: Tue, 14 Apr 2020 22:19:06 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '26'
+      x-envoy-upstream-service-time: '25'
     status:
       code: 200
       message: OK
-    url: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/4243fe60-c515-41e3-b2be-f89c76ad160d?includeKeys=true
+    url: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/48652381-98ff-41be-b937-931691f9519f?includeKeys=true
 - request:
     body: null
     headers:
@@ -185,26 +57,26 @@ interactions:
       - azsdk-python-ai-formrecognizer/1.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
         Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: GET
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/4243fe60-c515-41e3-b2be-f89c76ad160d?includeKeys=true
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/48652381-98ff-41be-b937-931691f9519f?includeKeys=true
   response:
     body:
-      string: '{"modelInfo":{"modelId":"4243fe60-c515-41e3-b2be-f89c76ad160d","status":"ready","createdDateTime":"2020-04-13T21:00:50Z","lastUpdatedDateTime":"2020-04-13T21:00:58Z"},"keys":{"clusters":{"0":["Additional
+      string: '{"modelInfo":{"modelId":"48652381-98ff-41be-b937-931691f9519f","status":"ready","createdDateTime":"2020-04-14T22:19:01Z","lastUpdatedDateTime":"2020-04-14T22:19:10Z"},"keys":{"clusters":{"0":["Additional
         Notes:","Address:","Address:","Company Name:","Company Phone:","Dated As:","Email:","Hero
         Limited","Name:","Phone:","Purchase Order","Purchase Order","Purchase Order
         #:","SUBTOTAL","Seattle, WA 93849 Phone:","Shipped From","Shipped To","TAX","TOTAL","Vendor
         Name:","Website:"]}},"trainResult":{"trainingDocuments":[{"documentName":"Form_1.jpg","pages":1,"errors":[],"status":"succeeded"},{"documentName":"Form_2.jpg","pages":1,"errors":[],"status":"succeeded"},{"documentName":"Form_3.jpg","pages":1,"errors":[],"status":"succeeded"},{"documentName":"Form_4.jpg","pages":1,"errors":[],"status":"succeeded"},{"documentName":"Form_5.jpg","pages":1,"errors":[],"status":"succeeded"}],"errors":[]}}'
     headers:
-      apim-request-id: 175698a4-bab5-4e14-b2db-8cffa569383f
+      apim-request-id: 6f9b4303-f764-4a00-9b11-e27598a1d1c5
       content-type: application/json; charset=utf-8
-      date: Mon, 13 Apr 2020 21:01:20 GMT
+      date: Tue, 14 Apr 2020 22:19:12 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '20071'
+      x-envoy-upstream-service-time: '25'
     status:
       code: 200
       message: OK
-    url: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/4243fe60-c515-41e3-b2be-f89c76ad160d?includeKeys=true
+    url: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/48652381-98ff-41be-b937-931691f9519f?includeKeys=true
 - request:
     body: '{"source": "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/Form_1.jpg"}'
     headers:
@@ -216,22 +88,22 @@ interactions:
       - azsdk-python-ai-formrecognizer/1.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
         Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: POST
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/4243fe60-c515-41e3-b2be-f89c76ad160d/analyze?includeTextDetails=false
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/48652381-98ff-41be-b937-931691f9519f/analyze?includeTextDetails=false
   response:
     body:
       string: ''
     headers:
-      apim-request-id: a1a8fccd-2fff-4aec-9612-9eedc194f30d
+      apim-request-id: 5505c9f3-9876-41e3-ac93-283ec0acb3ca
       content-length: '0'
-      date: Mon, 13 Apr 2020 21:01:20 GMT
-      operation-location: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/4243fe60-c515-41e3-b2be-f89c76ad160d/analyzeresults/9113ec87-8efe-49b1-a5d8-beb89190341b
+      date: Tue, 14 Apr 2020 22:19:12 GMT
+      operation-location: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/48652381-98ff-41be-b937-931691f9519f/analyzeresults/34d1c8c3-4e35-4d61-9378-1e2ae7ce14a3
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '58'
+      x-envoy-upstream-service-time: '46'
     status:
       code: 202
       message: Accepted
-    url: https://centraluseuap.api.cognitive.microsoft.com//formrecognizer/v2.0-preview/custom/models/4243fe60-c515-41e3-b2be-f89c76ad160d/analyze?includeTextDetails=false
+    url: https://centraluseuap.api.cognitive.microsoft.com//formrecognizer/v2.0-preview/custom/models/48652381-98ff-41be-b937-931691f9519f/analyze?includeTextDetails=false
 - request:
     body: null
     headers:
@@ -239,10 +111,10 @@ interactions:
       - azsdk-python-ai-formrecognizer/1.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
         Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: GET
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/4243fe60-c515-41e3-b2be-f89c76ad160d/analyzeresults/9113ec87-8efe-49b1-a5d8-beb89190341b
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/48652381-98ff-41be-b937-931691f9519f/analyzeresults/34d1c8c3-4e35-4d61-9378-1e2ae7ce14a3
   response:
     body:
-      string: '{"status":"succeeded","createdDateTime":"2020-04-13T21:01:21Z","lastUpdatedDateTime":"2020-04-13T21:01:25Z","analyzeResult":{"version":"2.0.0","readResults":[{"page":1,"angle":0.12,"width":1700,"height":2200,"unit":"pixel","lines":[]}],"pageResults":[{"page":1,"keyValuePairs":[{"key":{"text":"Hero
+      string: '{"status":"succeeded","createdDateTime":"2020-04-14T22:19:12Z","lastUpdatedDateTime":"2020-04-14T22:19:16Z","analyzeResult":{"version":"2.0.0","readResults":[{"page":1,"angle":0.12,"width":1700,"height":2200,"unit":"pixel","lines":[]}],"pageResults":[{"page":1,"keyValuePairs":[{"key":{"text":"Hero
         Limited","boundingBox":[620,203,1078,203,1078,271,620,271],"elements":null},"value":{"text":"","boundingBox":null,"elements":null},"confidence":0.5},{"key":{"text":"Company
         Phone:","boundingBox":[167,351,365,351,365,381,167,381],"elements":null},"value":{"text":"555-348-6512","boundingBox":[371,351,528,351,528,381,371,381],"elements":null},"confidence":1.0},{"key":{"text":"Website:","boundingBox":[167,392,269,392,269,420,167,420],"elements":null},"value":{"text":"www.herolimited.com","boundingBox":[275,392,528,392,528,420,275,420],"elements":null},"confidence":1.0},{"key":{"text":"Dated
         As:","boundingBox":[1025,418,1161,418,1161,451,1025,451],"elements":null},"value":{"text":"12/20/2020","boundingBox":[1168,418,1319,418,1319,451,1168,451],"elements":null},"confidence":1.0},{"key":{"text":"Email:","boundingBox":[167,431,240,431,240,458,167,458],"elements":null},"value":{"text":"accounts@herolimited.com","boundingBox":[168,480,476,480,476,505,168,505],"elements":null},"confidence":1.0},{"key":{"text":"Purchase
@@ -271,9 +143,9 @@ interactions:
         Bookmark","rowIndex":3,"columnIndex":0,"boundingBox":[172,1179,403,1179,403,1205,172,1205],"confidence":1.0,"rowSpan":1,"columnSpan":1,"elements":null,"isHeader":false,"isFooter":false},{"text":"20","rowIndex":3,"columnIndex":1,"boundingBox":[863,1177,888,1177,888,1199,863,1199],"confidence":1.0,"rowSpan":1,"columnSpan":1,"elements":null,"isHeader":false,"isFooter":false},{"text":"5.00","rowIndex":3,"columnIndex":2,"boundingBox":[1243,1179,1298,1179,1298,1205,1243,1205],"confidence":1.0,"rowSpan":1,"columnSpan":1,"elements":null,"isHeader":false,"isFooter":false},{"text":"100.00","rowIndex":3,"columnIndex":3,"boundingBox":[1448,1180,1530,1180,1530,1205,1448,1205],"confidence":1.0,"rowSpan":1,"columnSpan":1,"elements":null,"isHeader":false,"isFooter":false},{"text":"Copper
         Swirl Marker","rowIndex":4,"columnIndex":0,"boundingBox":[171,1224,426,1224,426,1248,171,1248],"confidence":1.0,"rowSpan":1,"columnSpan":1,"elements":null,"isHeader":false,"isFooter":false},{"text":"20","rowIndex":4,"columnIndex":1,"boundingBox":[863,1221,888,1221,888,1244,863,1244],"confidence":1.0,"rowSpan":1,"columnSpan":1,"elements":null,"isHeader":false,"isFooter":false},{"text":"5.00","rowIndex":4,"columnIndex":2,"boundingBox":[1242,1222,1291,1222,1291,1248,1242,1248],"confidence":1.0,"rowSpan":1,"columnSpan":1,"elements":null,"isHeader":false,"isFooter":false},{"text":"100.00","rowIndex":4,"columnIndex":3,"boundingBox":[1449,1225,1530,1225,1530,1248,1449,1248],"confidence":1.0,"rowSpan":1,"columnSpan":1,"elements":null,"isHeader":false,"isFooter":false}]}],"clusterId":0}],"documentResults":[],"errors":[]}}'
     headers:
-      apim-request-id: fd8fbed2-959c-44ea-acdc-b0cb2819ac74
+      apim-request-id: 906fbdfc-45be-498b-a384-58e334701b07
       content-type: application/json; charset=utf-8
-      date: Mon, 13 Apr 2020 21:01:25 GMT
+      date: Tue, 14 Apr 2020 22:19:17 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
@@ -281,5 +153,5 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/4243fe60-c515-41e3-b2be-f89c76ad160d/analyzeresults/9113ec87-8efe-49b1-a5d8-beb89190341b
+    url: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/48652381-98ff-41be-b937-931691f9519f/analyzeresults/34d1c8c3-4e35-4d61-9378-1e2ae7ce14a3
 version: 1

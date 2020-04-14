@@ -13,19 +13,14 @@ interactions:
     uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/xx/analyze?includeTextDetails=false
   response:
     body:
-      string: '{"error":{"code":"401","message": "Access denied due to invalid subscription
+      string: '{"error":{"code":"401","message":"Access denied due to invalid subscription
         key or wrong API endpoint. Make sure to provide a valid key for an active
         subscription and use a correct regional API endpoint for your resource."}}'
     headers:
-      apim-request-id: 40ba13ae-a675-4ac4-81b3-ffd7fd5d2089
-      content-length: '225'
-      content-type: application/json
-      date: Mon, 13 Apr 2020 21:00:57 GMT
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      www-authenticate: AzureApiManagementKey realm="https://centraluseuap.api.cognitive.microsoft.com/formrecognizer",name="Ocp-Apim-Subscription-Key",type="header"
-      x-content-type-options: nosniff
+      content-length: '224'
+      date: Tue, 14 Apr 2020 22:20:54 GMT
     status:
       code: 401
-      message: Access Denied
+      message: PermissionDenied
     url: https://centraluseuap.api.cognitive.microsoft.com//formrecognizer/v2.0-preview/custom/models/xx/analyze?includeTextDetails=false
 version: 1
