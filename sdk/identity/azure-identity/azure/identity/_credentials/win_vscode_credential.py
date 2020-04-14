@@ -3,10 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import os
-import sys
 import json
-import ctypes as ct
-import ctypes.wintypes as wt
 import win32cred
 from azure.core.exceptions import ClientAuthenticationError
 from .._constants import (
