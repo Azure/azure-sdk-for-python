@@ -280,7 +280,7 @@ class SearchServiceClient(HeadersMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_analyze_text.py
+            .. literalinclude:: ../samples/async_samples/sample_analyze_text_async.py
                 :start-after: [START simple_analyze_text_async]
                 :end-before: [END simple_analyze_text_async]
                 :language: python
