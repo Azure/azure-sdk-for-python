@@ -12,7 +12,7 @@ FILE: sample_recognize_custom_forms_async.py
 DESCRIPTION:
     This sample demonstrates how to analyze a form from a document with a custom
     trained model. To learn how to train your own models, look at
-    sample_train_unlabelled_model_async.py and sample_train_labelled_model_async.py
+    sample_train_unlabeled_model_async.py and sample_train_labeled_model_async.py
 USAGE:
     python sample_recognize_custom_forms_async.py
 

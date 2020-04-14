@@ -7,18 +7,18 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_train_labelled_model_async.py
+FILE: sample_train_unlabeled_model_async.py
 
 DESCRIPTION:
-    This sample demonstrates how to train a model with labelled data. See sample_recognize_custom_forms_async.py
+    This sample demonstrates how to train a model with unlabeled data. See sample_recognize_custom_forms_async.py
     to recognize forms with your custom model.
 USAGE:
-    python sample_train_labelled_model_async.py
+    python sample_train_unlabeled_model_async.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_FORM_RECOGNIZER_ENDPOINT - the endpoint to your Cognitive Services resource.
     2) AZURE_FORM_RECOGNIZER_KEY - your Form Recognizer subscription key
-    3) BLOB_SAS_URL - The shared access signature (SAS) Url of your Azure Blob Storage container with your labelled data.
+    3) BLOB_SAS_URL - The shared access signature (SAS) Url of your Azure Blob Storage container with your unlabeled data.
                       See https://docs.microsoft.com/en-us/azure/cognitive-services/form-recognizer/quickstarts/label-tool#connect-to-the-sample-labeling-tool
                       for more detailed descriptions on how to get it.
 """
@@ -27,19 +27,19 @@ import os
 import asyncio
 
 
-class TrainLabelledModelSampleAsync(object):
+class TrainUnlabeledModelSampleAsync(object):
 
     endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
     key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
     blob_sas_url = os.environ["BLOB_SAS_URL"]
 
-    async def train_labelled_model(self):
+    async def train_unlabeled_model(self):
         from azure.ai.formrecognizer.aio import FormTrainingClient
         from azure.core.credentials import AzureKeyCredential
 
-        async with FormTrainingClient(endpoint=self.endpoint, credential=AzureKeyCredential(self.key)) as form_training_client:
+        async with FormTrainingClient(self.endpoint, AzureKeyCredential(self.key)) as form_training_client:
 
-            model = await form_training_client.training(self.blob_sas_url, use_labels=True)
+            model = await form_training_client.training(self.blob_sas_url, use_labels=False)
 
             # Custom model information
             print("Model ID: {}".format(model.model_id))
@@ -49,14 +49,13 @@ class TrainLabelledModelSampleAsync(object):
 
             print("Recognized fields:")
             # looping through the submodels, which contains the fields they were trained on
-            # The labels are based on the ones you gave the training document.
+            # Since the given training documents are unlabeled, we still group them but they do not have a label.
             for submodel in model.models:
-                # Since the data is labelled, we are able to return the accuracy of the model
-                print("The submodel has accuracy '{}'".format(submodel.accuracy))
+                # Since the training data is unlabeled, we are unable to return the accuracy of this model
                 print("We have recognized the following fields:")
                 for label, field in submodel.fields.items():
-                    print("The model found field '{}' to have name '{}' with an accuracy of {}".format(
-                        label, field.name, field.accuracy
+                    print("The model found field '{}' to have label '{}'".format(
+                        label, field.label
                     ))
 
             # Training result information
@@ -67,8 +66,8 @@ class TrainLabelledModelSampleAsync(object):
                 print("Document errors: {}".format(doc.errors))
 
 async def main():
-    sample = TrainLabelledModelSampleAsync()
-    await sample.train_labelled_model()
+    sample = TrainUnlabeledModelSampleAsync()
+    await sample.train_unlabeled_model()
 
 
 if __name__ == '__main__':
