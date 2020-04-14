@@ -18,6 +18,8 @@ In v7 we've simplified the API surface, making two distinct clients, rather than
 and [Async API](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/7.0.0b1/azure.servicebus.aio.html#azure.servicebus.aio.ServiceBusSender)
 * `ServiceBusReceiver` for receiving messages. [Sync API](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/7.0.0b1/azure.servicebus.html#azure.servicebus.ServiceBusReceiver)
 and [Async API](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/7.0.0b1/azure.servicebus.aio.html#azure.servicebus.aio.ServiceBusReceiver)
+* `ServiceBusSessionReceiver` for receiving messages from a session. [Sync API](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/7.0.0b1/azure.servicebus.html#azure.servicebus.ServiceBusSessionReceiver)
+and [Async API](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/7.0.0b1/azure.servicebus.aio.html#azure.servicebus.aio.ServiceBusSessionReceiver)
 
 As a user this will be largely transparent to you, as initialization will still occur primarily via the top level ServiceBusClient,
 the primary difference will be that rather than creating a queue_client, for instance, and then a sender off of that, you would simply
@@ -52,8 +54,8 @@ semantics with the sender or receiver lifetime.
 | In v0.50 | Equivalent in v7 | Sample |
 |---|---|---|
 | `queue_client.send(message, session='foo')  and queue_client.get_sender(session='foo').send(message)`| `sb_client.get_queue_sender().send(Message('body', session_id='foo'))`| [Send a message to a session](./samples/sync_samples/session_send_receive.py) |
-| `AutoLockRenew().register(queue_client.get_receiver(session_id='foo'))`| `AutoLockRenew().register(sb_client.get_queue_receiver(session_id='foo').session)`| [Access a session and ensure its lock is auto-renewed](./samples/sync_samples/session_send_receive.py) |
-
+| `AutoLockRenew().register(queue_client.get_receiver(session='foo'))`| `AutoLockRenew().register(sb_client.get_queue_session_receiver(session_id='foo').session)`| [Access a session and ensure its lock is auto-renewed](./samples/sync_samples/session_send_receive.py) |
+| `receiver.get_session_state()` | `receiver.session.get_session_state()` | [Perform session specific operations on a receiver](./samples/sync_samples/session_send_receive.py)
 
 ## Migration samples
 
@@ -68,6 +70,8 @@ batch of messages, or iterate over the receiver to receive continuously.
 
 In v7, users should initialize the client via `ServiceBusClient.get_queue_receiver`.  Single-batch-receive
 has been renamed to `receive`, iterating over the receiver for continual message consumption has not changed.
+It should also be noted that if a session receiver is desired, to use the `get_<queue/subscription>_session_receiver`
+function.
 
 For example, this code which keeps receiving from a partition in v0.50:
 

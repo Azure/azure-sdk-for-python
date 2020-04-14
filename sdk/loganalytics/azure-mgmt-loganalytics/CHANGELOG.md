@@ -1,5 +1,65 @@
 # Release History
 
+## 0.3.0 (2020-04-08)
+
+**Features**
+
+  - Model OperationDisplay has a new parameter description
+  - Model LinkedService has a new parameter write_access_resource_id
+  - Model Workspace has a new parameter public_network_access_for_ingestion
+  - Model Workspace has a new parameter public_network_access_for_query
+  - Model Workspace has a new parameter private_link_scoped_resources
+  - Added operation group DataExportsOperations
+  - Added operation group LinkedStorageAccountsOperations
+  - Added operation group OperationalInsightsManagementClientOperationsMixin
+  - Added operation group ClustersOperations
+
+**Breaking changes**
+
+  - Parameter location of model Workspace is now required
+  - Operation LinkedServicesOperations.create_or_update has a new signature
+  - Operation SavedSearchesOperations.delete has a new signature
+  - Operation SavedSearchesOperations.create_or_update has a new signature
+  - Operation SavedSearchesOperations.get has a new signature
+  - Operation LinkedServicesOperations.create_or_update has a new signature
+  - Model ProxyResource no longer has parameter tags
+  - Model SavedSearchesListResult no longer has parameter metadata
+  - Model Resource no longer has parameter location
+  - Model Resource no longer has parameter tags
+  - Model Workspace no longer has parameter source
+  - Model Workspace no longer has parameter portal_url
+  - Removed operation WorkspacesOperations.purge
+  - Removed operation WorkspacesOperations.get_search_results
+  - Removed operation WorkspacesOperations.list_link_targets
+  - Removed operation WorkspacesOperations.get_schema
+  - Removed operation WorkspacesOperations.update_search_results
+
+**General Breaking Changes**
+
+This version uses a next-generation code generator that *might*
+introduce breaking changes. In summary, some modules were incorrectly
+visible/importable and have been renamed. This fixed several issues
+caused by usage of classes that were not supposed to be used in the
+first place.
+
+  - LogAnalyticsManagementClient cannot be imported from
+    `azure.mgmt.loganalytics.log_analytics_management_client` anymore 
+    (import OperationalInsightsManagementClient from 
+    `azure.mgmt.loganalytics` works like before)
+  - LogAnalyticsManagementClientConfiguration import has been moved from
+    `azure.mgmt.loganalytics.log_analytics_management_client` to `azure.mgmt.loganalytics`
+  - A model `MyClass` from a "models" sub-module cannot be imported
+    anymore using `azure.mgmt.loganalytics.models.my_class` (import from
+    `azure.mgmt.loganalytics.models` works like before)
+  - An operation class `MyClassOperations` from an `operations`
+    sub-module cannot be imported anymore using
+    `azure.mgmt.loganalytics.operations.my_class_operations` (import from
+    `azure.mgmt.loganalytics.operations` works like before)
+
+Last but not least, HTTP connection pooling is now enabled by default.
+You should always use a client as a context manager, or call close(), or
+use no more than one client per process.
+
 ## 0.2.0 (2018-05-29)
 
 **Features**
