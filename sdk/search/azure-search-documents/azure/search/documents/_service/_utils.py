@@ -144,3 +144,9 @@ def listize_flags_for_index(index):
             for x in index.tokenizers
         ]
     return index
+
+
+def listize_synonyms(synonym_map):
+    # type: (dict) -> dict
+    synonym_map["synonyms"] = synonym_map["synonyms"].split("\n")
+    return synonym_map
