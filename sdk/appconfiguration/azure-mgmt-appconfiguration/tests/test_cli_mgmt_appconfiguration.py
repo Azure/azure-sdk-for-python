@@ -6,6 +6,16 @@
 # license information.
 #--------------------------------------------------------------------------
 
+
+# TEST SCENARIO COVERAGE
+# ----------------------
+# Methods Total   : 17
+# Methods Covered : 17
+# Examples Total  : 19
+# Examples Tested : 0
+# Coverage %      : 0
+# ----------------------
+
 import unittest
 
 import azure.mgmt.appconfiguration
@@ -24,39 +34,11 @@ class MgmtAppConfigurationTest(AzureMgmtTestCase):
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_appconfiguration(self, resource_group):
 
-        SERVICE_NAME = "myapimrndxyz"
-        CONFIGURATION_STORE_NAME = "contoso1"
-
-        # ConfigurationStores_Create[put]
-        BODY = {
-          "location": "westus",
-          "sku": {
-            "name": "Free"
-          },
-          "tags": {
-            "my_tag": "myTagValue"
-          }
-        }
-        result = self.mgmt_client.configuration_stores.create(resource_group.name, CONFIGURATION_STORE_NAME, BODY)
-        result = result.result()
-        self.assertEqual(result.name, CONFIGURATION_STORE_NAME)
-        self.assertEqual(result.provisioning_state, "Succeeded")
-
-        # ConfigurationStores_Get[get]
-        result = self.mgmt_client.configuration_stores.get(resource_group.name, CONFIGURATION_STORE_NAME)
-        self.assertEqual(result.name, CONFIGURATION_STORE_NAME)
-        self.assertEqual(result.provisioning_state, "Succeeded")
-
-        # ConfigurationStores_CheckNameAvailable[post]
-        result = self.mgmt_client.operations.check_name_availability(CONFIGURATION_STORE_NAME)
-        self.assertEqual(result.name_available, False)
-
-        # ConfigurationStores_ListKeys[post]
-        BODY = {}
-        result = self.mgmt_client.configuration_stores.list_keys(resource_group.name, CONFIGURATION_STORE_NAME)
-
-        # ConfigurationStores_List[get]
-        result = self.mgmt_client.configuration_stores.list()
+        SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
+        RESOURCE_GROUP = resource_group.name
+        CONFIGURATION_STORE_NAME = "myConfigurationStore"
+        PRIVATE_ENDPOINT_CONNECTION_NAME = "myPrivateEndpointConnection"
+        PRIVATE_LINK_RESOURCE_NAME = "myPrivateLinkResource"
 
 
 #------------------------------------------------------------------------------
