@@ -71,7 +71,6 @@ if exists("../azure-rest-api-specs/specification"):
           all[rp_name] = "- (R)"
 
 packages = sorted([x for x in all.keys()])
-print(packages)
 for p in packages:
   coverage = all[p]
   print("| {:38} | {:10} |".format(p, coverage if coverage in ["- (R)", "- (S)", "-" , "A", "M"] else "{:4.2f}".format(coverage)))
