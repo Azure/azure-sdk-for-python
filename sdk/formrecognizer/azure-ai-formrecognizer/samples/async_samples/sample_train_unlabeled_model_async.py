@@ -47,7 +47,7 @@ class TrainUnlabeledModelSampleAsync(object):
             print("Model ID: {}".format(model.model_id))
             print("Status: {}".format(model.status))
             print("Created on: {}".format(model.created_on))
-            print("Last updated on: {}".format(model.last_updated_on))
+            print("Last modified: {}".format(model.last_modified))
 
             print("Recognized fields:")
             # looping through the submodels, which contains the fields they were trained on

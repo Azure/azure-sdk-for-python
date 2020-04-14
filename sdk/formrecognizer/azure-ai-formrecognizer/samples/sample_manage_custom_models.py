@@ -56,15 +56,15 @@ class ManageCustomModelsSample(object):
         print("Model ID: {}".format(custom_model.model_id))
         print("Status: {}".format(custom_model.status))
         print("Created on: {}".format(custom_model.created_on))
-        print("Last updated on: {}".format(custom_model.last_updated_on))
+        print("Last modified: {}".format(custom_model.last_modified))
 
         # Finally, we will delete this model by ID
-        form_training_client.delete_model(model_id=custom_model.model_id)
+        # form_training_client.delete_model(model_id=custom_model.model_id)
 
-        try:
-            form_training_client.get_custom_model(model_id=custom_model.model_id)
-        except ResourceNotFoundError:
-            print("Successfully deleted model with id {}".format(custom_model.model_id))
+        # try:
+        #     form_training_client.get_custom_model(model_id=custom_model.model_id)
+        # except ResourceNotFoundError:
+        #     print("Successfully deleted model with id {}".format(custom_model.model_id))
 
 if __name__ == '__main__':
     sample = ManageCustomModelsSample()
