@@ -14,7 +14,7 @@ interactions:
       - application/json; charset=utf-8
       User-Agent:
       - python/3.7.3 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.6.2
-        azure-mgmt-batch/2020-03-01 Azure-SDK-For-Python
+        azure-mgmt-batch/8.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
@@ -28,11 +28,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 10 Apr 2020 21:09:34 GMT
+      - Tue, 14 Apr 2020 15:36:58 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_account3e1b0fe5/providers/Microsoft.Batch/batchAccounts/batch3e1b0fe5/operationResults/7d5ee281-b2cd-4af6-a557-6509293d6f90?api-version=2020-03-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_account3e1b0fe5/providers/Microsoft.Batch/batchAccounts/batch3e1b0fe5/operationResults/a4f17142-743a-4052-ba45-8b09bc57ba33?api-version=2020-03-01
       pragma:
       - no-cache
       server:
@@ -57,9 +57,9 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.7.3 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.6.2
-        azure-mgmt-batch/2020-03-01 Azure-SDK-For-Python
+        azure-mgmt-batch/8.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_account3e1b0fe5/providers/Microsoft.Batch/batchAccounts/batch3e1b0fe5/operationResults/7d5ee281-b2cd-4af6-a557-6509293d6f90?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_account3e1b0fe5/providers/Microsoft.Batch/batchAccounts/batch3e1b0fe5/operationResults/a4f17142-743a-4052-ba45-8b09bc57ba33?api-version=2020-03-01
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_account3e1b0fe5/providers/Microsoft.Batch/batchAccounts/batch3e1b0fe5","name":"batch3e1b0fe5","type":"Microsoft.Batch/batchAccounts","location":"westcentralus","properties":{"accountEndpoint":"batch3e1b0fe5.westcentralus.batch.azure.com","provisioningState":"Succeeded","dedicatedCoreQuota":0,"dedicatedCoreQuotaPerVMFamily":[{"name":"standardAv2Family","coreQuota":0},{"name":"standardDv2Family","coreQuota":0},{"name":"standardDv3Family","coreQuota":0},{"name":"standardEv3Family","coreQuota":0},{"name":"standardDSv2Family","coreQuota":0},{"name":"standardDSv3Family","coreQuota":0},{"name":"standardESv3Family","coreQuota":0},{"name":"standardFFamily","coreQuota":0},{"name":"standardFSFamily","coreQuota":0},{"name":"standardA0_A7Family","coreQuota":0},{"name":"standardA8_A11Family","coreQuota":0},{"name":"standardDFamily","coreQuota":0},{"name":"standardGFamily","coreQuota":0},{"name":"basicAFamily","coreQuota":0},{"name":"standardNVFamily","coreQuota":0},{"name":"standardNVPromoFamily","coreQuota":0},{"name":"standardNCFamily","coreQuota":0},{"name":"standardNCPromoFamily","coreQuota":0},{"name":"standardHFamily","coreQuota":0},{"name":"standardHPromoFamily","coreQuota":0},{"name":"standardMSFamily","coreQuota":0},{"name":"standardDSFamily","coreQuota":0},{"name":"standardGSFamily","coreQuota":0},{"name":"standardLSFamily","coreQuota":0},{"name":"standardNCSv2Family","coreQuota":0},{"name":"standardNDSFamily","coreQuota":0},{"name":"standardNCSv3Family","coreQuota":0},{"name":"standardFSv2Family","coreQuota":0},{"name":"standardHBSFamily","coreQuota":0},{"name":"standardHCSFamily","coreQuota":0},{"name":"standardNVSv3Family","coreQuota":0},{"name":"standardHBrsv2Family","coreQuota":0}],"dedicatedCoreQuotaPerVMFamilyEnforced":false,"lowPriorityCoreQuota":0,"poolQuota":100,"activeJobAndJobScheduleQuota":300,"poolAllocationMode":"BatchService","publicNetworkAccess":"Enabled","encryption":{"keySource":"Microsoft.Batch"}}}'
@@ -71,13 +71,13 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 10 Apr 2020 21:09:49 GMT
+      - Tue, 14 Apr 2020 15:37:14 GMT
       etag:
-      - '"0x8D7DD9381835E5A"'
+      - '"0x8D7E089B54CE314"'
       expires:
       - '-1'
       last-modified:
-      - Fri, 10 Apr 2020 21:09:49 GMT
+      - Tue, 14 Apr 2020 15:37:15 GMT
       pragma:
       - no-cache
       server:
@@ -104,7 +104,7 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.7.3 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.6.2
-        azure-mgmt-batch/2020-03-01 Azure-SDK-For-Python
+        azure-mgmt-batch/8.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
@@ -120,13 +120,13 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 10 Apr 2020 21:09:49 GMT
+      - Tue, 14 Apr 2020 15:37:14 GMT
       etag:
-      - '"0x8D7DD9377EFB6EE"'
+      - '"0x8D7E089ABE20AF0"'
       expires:
       - '-1'
       last-modified:
-      - Fri, 10 Apr 2020 21:09:33 GMT
+      - Tue, 14 Apr 2020 15:36:59 GMT
       pragma:
       - no-cache
       server:
@@ -153,7 +153,7 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.7.3 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.6.2
-        azure-mgmt-batch/2020-03-01 Azure-SDK-For-Python
+        azure-mgmt-batch/8.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
@@ -169,7 +169,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 10 Apr 2020 21:09:49 GMT
+      - Tue, 14 Apr 2020 15:37:14 GMT
       expires:
       - '-1'
       pragma:
@@ -200,14 +200,14 @@ interactions:
       - '0'
       User-Agent:
       - python/3.7.3 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.6.2
-        azure-mgmt-batch/2020-03-01 Azure-SDK-For-Python
+        azure-mgmt-batch/8.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_account3e1b0fe5/providers/Microsoft.Batch/batchAccounts/batch3e1b0fe5/listKeys?api-version=2020-03-01
   response:
     body:
-      string: '{"accountName":"batch3e1b0fe5","primary":"3b8UIOkNsV1oTZ6CyYjAXlEYid+QqQWZtnnC3dXhTmed9nbhw9KlVHjmpTUwO1dvf29s/AZtuTqbEJxuL6sVag==","secondary":"2Wtws2OL2oUGpLPumck4DIkb85ARTRO9iauBpVpvc1N39Rg6TTROs6ERynMfO14ZkrAfcsrtBJVoMHGUurD+Fw=="}'
+      string: '{"accountName":"batch3e1b0fe5","primary":"+TotCbnKwezopOqQLBkSBt8+6luiAzUmr/2TB4I29h9txnHCFL027szjj7Eo10/kRYD/uH46oZoTVz7EgCDotw==","secondary":"85KlXkMDdlZv3co1wiG1yjwYsj2YbIsObRkaQuGIVbb+s8wxQPwX+evoJ55NPEHjjMefX/I2w8Zev/2h5euc4g=="}'
     headers:
       cache-control:
       - no-cache
@@ -216,7 +216,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 10 Apr 2020 21:09:50 GMT
+      - Tue, 14 Apr 2020 15:37:14 GMT
       expires:
       - '-1'
       pragma:
@@ -251,14 +251,14 @@ interactions:
       - application/json; charset=utf-8
       User-Agent:
       - python/3.7.3 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.6.2
-        azure-mgmt-batch/2020-03-01 Azure-SDK-For-Python
+        azure-mgmt-batch/8.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_account3e1b0fe5/providers/Microsoft.Batch/batchAccounts/batch3e1b0fe5/regenerateKeys?api-version=2020-03-01
   response:
     body:
-      string: '{"accountName":"batch3e1b0fe5","primary":"3b8UIOkNsV1oTZ6CyYjAXlEYid+QqQWZtnnC3dXhTmed9nbhw9KlVHjmpTUwO1dvf29s/AZtuTqbEJxuL6sVag==","secondary":"gsIFu1FQhqJVtf8qYlKWHcxE6kDZ1EGQ3/ON1wXYR5wu7Cqctkpiro6K16XDq0owJv1clPbiL+Ll6QsZ3yiAGA=="}'
+      string: '{"accountName":"batch3e1b0fe5","primary":"+TotCbnKwezopOqQLBkSBt8+6luiAzUmr/2TB4I29h9txnHCFL027szjj7Eo10/kRYD/uH46oZoTVz7EgCDotw==","secondary":"muz4FMDwClx0yCr9c+3sp4w26epWlr3eylUNpceTZYk32zuLHvZZ277LaxWPh908mn8e+lrKmvKqtFcLEFga/A=="}'
     headers:
       cache-control:
       - no-cache
@@ -267,7 +267,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 10 Apr 2020 21:09:50 GMT
+      - Tue, 14 Apr 2020 15:37:14 GMT
       expires:
       - '-1'
       pragma:
@@ -302,7 +302,7 @@ interactions:
       - application/json; charset=utf-8
       User-Agent:
       - python/3.7.3 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.6.2
-        azure-mgmt-batch/2020-03-01 Azure-SDK-For-Python
+        azure-mgmt-batch/8.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PATCH
@@ -318,13 +318,13 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 10 Apr 2020 21:09:51 GMT
+      - Tue, 14 Apr 2020 15:37:16 GMT
       etag:
-      - '"0x8D7DD938250EF31"'
+      - '"0x8D7E089B62AB538"'
       expires:
       - '-1'
       last-modified:
-      - Fri, 10 Apr 2020 21:09:51 GMT
+      - Tue, 14 Apr 2020 15:37:16 GMT
       pragma:
       - no-cache
       server:
@@ -355,7 +355,7 @@ interactions:
       - '0'
       User-Agent:
       - python/3.7.3 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.6.2
-        azure-mgmt-batch/2020-03-01 Azure-SDK-For-Python
+        azure-mgmt-batch/8.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: DELETE
@@ -369,11 +369,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 10 Apr 2020 21:09:51 GMT
+      - Tue, 14 Apr 2020 15:37:16 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Batch/locations/westcentralus/accountOperationResults/batch3e1b0fe5-38e290eb-987d-4bb3-93e7-0d4a509e6fa0?api-version=2020-03-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Batch/locations/westcentralus/accountOperationResults/batch3e1b0fe5-1495797e-f9af-436d-ad44-ec39195f19a5?api-version=2020-03-01
       pragma:
       - no-cache
       server:
@@ -398,9 +398,9 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.7.3 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.6.2
-        azure-mgmt-batch/2020-03-01 Azure-SDK-For-Python
+        azure-mgmt-batch/8.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Batch/locations/westcentralus/accountOperationResults/batch3e1b0fe5-38e290eb-987d-4bb3-93e7-0d4a509e6fa0?api-version=2020-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Batch/locations/westcentralus/accountOperationResults/batch3e1b0fe5-1495797e-f9af-436d-ad44-ec39195f19a5?api-version=2020-03-01
   response:
     body:
       string: ''
@@ -410,7 +410,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 10 Apr 2020 21:10:06 GMT
+      - Tue, 14 Apr 2020 15:37:32 GMT
       expires:
       - '-1'
       pragma:

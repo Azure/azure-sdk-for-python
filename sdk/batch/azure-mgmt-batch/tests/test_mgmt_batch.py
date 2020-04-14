@@ -139,7 +139,7 @@ class MgmtBatchTest(AzureMgmtTestCase):
         self.assertFalse(keys.secondary == secondary)
 
         # Test Update Account
-        update_tags = {'tags': {'Name': 'tagName', 'Value': 'tagValue'}}
+        update_tags = {'Name': 'tagName', 'Value': 'tagValue'}
         updated = self.mgmt_batch_client.batch_account.update(resource_group.name, account_name, update_tags)
         self.assertIsInstance(updated, models.BatchAccount)
         self.assertEqual(updated.tags['Name'], 'tagName')
