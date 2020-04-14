@@ -368,8 +368,8 @@ with Form Recognizer and require Python 3.5 or later.
 * Recognize receipts from a URL: [sample_recognize_receipts_from_url.py][sample_recognize_receipts_from_url] ([async version][sample_recognize_receipts_from_url_async])
 * Recognize content: [sample_recognize_content.py][sample_recognize_content] ([async version][sample_recognize_content_async])
 * Recognize custom forms: [sample_recognize_custom_forms.py][sample_recognize_custom_forms] ([async version][sample_recognize_custom_forms_async])
-* Train a model without labels: [sample_train_unlabelled_model.py][sample_train_unlabelled_model] ([async version][sample_train_unlabelled_model_async])
-* Train a model with labels: [sample_train_labelled_model.py][sample_train_labelled_model] ([async version][sample_train_labelled_model_async])
+* Train a model without labels: [sample_train_unlabeled_model.py][sample_train_unlabeled_model] ([async version][sample_train_unlabeled_model_async])
+* Train a model with labels: [sample_train_labeled_model.py][sample_train_labeled_model] ([async version][sample_train_labeled_model_async])
 * Manage custom models: [sample_manage_custom_models.py][sample_manage_custom_models] ([async_version][sample_manage_custom_models_async])
 
 ### Additional documentation
@@ -422,8 +422,8 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [coc_faq]: https://opensource.microsoft.com/codeofconduct/faq/
 [coc_contact]: mailto:opencode@microsoft.com
 
-[sample_differentiate_custom_forms_with_labelled_and_unlabelled_models]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_differentiate_custom_forms_with_labelled_and_unlabelled_models.py
-[sample_differentiate_custom_forms_with_labelled_and_unlabelled_models_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/async_samples/sample_differentiate_custom_forms_with_labelled_and_unlabelled_models_async.py
+[sample_differentiate_custom_forms_with_labeled_and_unlabeled_models]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_differentiate_custom_forms_with_labeled_and_unlabeled_models.py
+[sample_differentiate_custom_forms_with_labeled_and_unlabeled_models_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/async_samples/sample_differentiate_custom_forms_with_labeled_and_unlabeled_models_async.py
 [sample_get_validation_info]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_get_validation_info.py
 [sample_get_validation_info_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/async_samples/sample_get_validation_info_async.py
 [sample_manage_custom_models]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_manage_custom_models.py
@@ -436,7 +436,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [sample_recognize_receipts_from_url_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/async_samples/sample_recognize_receipts_from_url_async.py
 [sample_recognize_receipts]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_recognize_receipts.py
 [sample_recognize_receipts_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/async_samples/sample_recognize_receipts_async.py
-[sample_train_labelled_model]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_train_labelled_model.py
-[sample_train_labelled_model_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/async_samples/sample_train_labelled_model_async.py
-[sample_train_unlabelled_model]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_train_unlabelled_model.py
-[sample_train_unlabelled_model_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/async_samples/sample_train_unlabelled_model_async.py
+[sample_train_labeled_model]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_train_labeled_model.py
+[sample_train_labeled_model_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/async_samples/sample_train_labeled_model_async.py
+[sample_train_unlabeled_model]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_train_unlabeled_model.py
+[sample_train_unlabeled_model_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/async_samples/sample_train_unlabeled_model_async.py
