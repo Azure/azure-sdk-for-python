@@ -7,13 +7,13 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_get_validation_info.py
+FILE: sample_get_manual_validation_info.py
 
 DESCRIPTION:
     This sample demonstrates how to output the information that will help with manually
     validating your output from recognize custom forms.
 USAGE:
-    python sample_get_validation_info.py
+    python sample_get_manual_validation_info.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_FORM_RECOGNIZER_ENDPOINT - the endpoint to your Cognitive Services resource.
@@ -30,7 +30,7 @@ class GetValidationInfoSample(object):
     key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
     model_id = os.environ["CUSTOM_TRAINED_MODEL_ID"]
 
-    def get_validation_info_from_recognize_custom_forms(self):
+    def get_manual_validation_info_from_recognize_custom_forms(self):
         # TODO: this can be used as examples in sphinx
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer import FormRecognizerClient
@@ -79,4 +79,4 @@ class GetValidationInfoSample(object):
 
 if __name__ == '__main__':
     sample = GetValidationInfoSample()
-    sample.get_validation_info_from_recognize_custom_forms()
+    sample.get_manual_validation_info_from_recognize_custom_forms()

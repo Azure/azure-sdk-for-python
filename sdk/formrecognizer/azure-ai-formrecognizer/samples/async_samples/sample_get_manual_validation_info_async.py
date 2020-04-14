@@ -7,13 +7,13 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_get_validation_info_async.py
+FILE: sample_get_manual_validation_info_async.py
 
 DESCRIPTION:
     This sample demonstrates how to output the information that will help with manually
     validating your output from recognize custom forms.
 USAGE:
-    python sample_get_validation_info_async.py
+    python sample_get_manual_validation_info_async.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_FORM_RECOGNIZER_ENDPOINT - the endpoint to your Cognitive Services resource.
@@ -32,7 +32,7 @@ class GetValidationInfoSampleAsync(object):
     key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
     model_id = os.environ["CUSTOM_TRAINED_MODEL_ID"]
 
-    async def get_validation_info_from_recognize_custom_forms(self):
+    async def get_manual_validation_info_from_recognize_custom_forms(self):
         # the sample forms are located in this file's parent's parent's files.
         path_to_sample_forms = Path(__file__).parent.parent.absolute() / Path("sample_forms/forms/Form_1.jpg")
         from azure.core.credentials import AzureKeyCredential
@@ -81,7 +81,7 @@ class GetValidationInfoSampleAsync(object):
 
 async def main():
     sample = GetValidationInfoSampleAsync()
-    await sample.get_validation_info_from_recognize_custom_forms()
+    await sample.get_manual_validation_info_from_recognize_custom_forms()
 
 
 if __name__ == '__main__':
