@@ -20,7 +20,8 @@ from .._common.constants import (
     MESSAGE_DEAD_LETTER,
     MESSAGE_ABANDON,
     MESSAGE_DEFER,
-    MESSAGE_RENEW_LOCK
+    MESSAGE_RENEW_LOCK,
+    DEADLETTERNAME
 )
 from .._common.utils import get_running_loop, utc_from_timestamp
 from ..exceptions import MessageSettleFailed
@@ -79,13 +80,17 @@ class ReceivedMessage(sync_message.ReceivedMessage):
             MGMT_REQUEST_DEAD_LETTER_REASON: str(reason) if reason else "",
             MGMT_REQUEST_DEAD_LETTER_DESCRIPTION: str(description) if description else ""}
         try:
-            # note: message.reject() can not set reason and description properly due to the issue
-            # https://github.com/Azure/azure-uamqp-python/issues/155
-            await self._receiver._settle_message(
-                SETTLEMENT_DEADLETTER,
-                [self.lock_token],
-                dead_letter_details=details
-            )
+            if self._is_deferred_message:
+                await self._receiver._settle_message(
+                    SETTLEMENT_DEADLETTER,
+                    [self.lock_token],
+                    dead_letter_details=details
+                )
+            else:
+                # note: message.reject() can not set reason and description properly due to the issue
+                # https://github.com/Azure/azure-uamqp-python/issues/155
+                reject = functools.partial(self.message.reject, condition=DEADLETTERNAME, description=description)
+                await self._loop.run_in_executor(None, reject)
         except Exception as e:
             raise MessageSettleFailed(MESSAGE_DEAD_LETTER, e)
         self._settled = True
