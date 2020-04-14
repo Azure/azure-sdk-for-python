@@ -16,7 +16,12 @@ Both [sync version](./sync_samples) and [async version](./async_samples) of samp
 - [send_queue.py](./sync_samples/send_queue.py) ([async version](./async_samples/send_queue_async.py)) - Examples to send messages to a service bus queue:
     - From a connection string
     - Enabling Logging
+- [send_topic.py](./sync_samples/send_topic.py) ([async version](./async_samples/send_topic_async.py)) - Examples to send messages to a service bus topic:
+    - From a connection string
+    - Enabling Logging
 - [receive_queue.py](./sync_samples/receive_queue.py) ([async_version](./async_samples/receive_queue_async.py)) - Examples to receive messages from a service bus queue:
+    - Receive messages
+- [receive_subscription.py](./sync_samples/receive_subscription.py) ([async_version](./async_samples/receive_subscription_async.py)) - Examples to receive messages from a service bus subscription:
     - Receive messages
 - [receive_peek.py](./sync_samples/receive_peek.py) ([async_version](./async_samples/receive_peek_async.py)) - Examples to peek messages from a service bus queue:
     - Peek messages
@@ -30,6 +35,8 @@ Both [sync version](./sync_samples) and [async version](./async_samples) of samp
     - Receive messages from session-enabled queue
 - [client_identity_authentication.py](./sync_samples/client_identity_authentication.py) ([async_version](./async_samples/client_identity_authentication_async.py)) - Examples to authenticate the client by Azure Activate Directory
     - Authenticate and create the client utilizing the `azure.identity` library
+- [proxy.py](./sync_samples/proxy.py) ([async_version](./async_samples/proxy_async.py)) - Examples to send message behind a proxy:
+    - Send message behind a proxy
 
 
 ## Prerequisites

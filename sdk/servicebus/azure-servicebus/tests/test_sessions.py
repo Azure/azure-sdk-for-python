@@ -29,7 +29,12 @@ from azure.servicebus.exceptions import (
     MessageSettleFailed)
 
 from devtools_testutils import AzureMgmtTestCase, CachedResourceGroupPreparer
-from servicebus_preparer import CachedServiceBusNamespacePreparer, ServiceBusTopicPreparer, ServiceBusQueuePreparer
+from servicebus_preparer import (
+    CachedServiceBusNamespacePreparer,
+    ServiceBusTopicPreparer,
+    ServiceBusQueuePreparer,
+    ServiceBusSubscriptionPreparer
+)
 from utilities import get_logger, print_message
 
 _logger = get_logger(logging.DEBUG)
@@ -865,5 +870,30 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                 second_message = receiver.next()
                 assert second_message.sequence_number == 1
 
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusTopicPreparer(name_prefix='servicebustest')
+    @ServiceBusSubscriptionPreparer(name_prefix='servicebustest', requires_session=True)
+    def test_session_basic_topic_subscription_send_and_receive(self, servicebus_namespace_connection_string, servicebus_topic, servicebus_subscription, **kwargs):
+        with ServiceBusClient.from_connection_string(
+                servicebus_namespace_connection_string,
+                logging_enable=False
+        ) as sb_client:
+            with sb_client.get_topic_sender(topic_name=servicebus_topic.name) as sender:
+                message = Message(b"Sample topic message", session_id='test_session')
+                sender.send(message)
 
+            with sb_client.get_subscription_receiver(
+                topic_name=servicebus_topic.name,
+                subscription_name=servicebus_subscription.name,
+                session_id='test_session',
+                idle_timeout=5
+            ) as receiver:
+                count = 0
+                for message in receiver:
+                    count += 1
+                    message.complete()
+            assert count == 1
 

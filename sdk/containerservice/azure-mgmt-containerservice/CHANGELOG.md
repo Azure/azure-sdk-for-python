@@ -1,5 +1,11 @@
 # Release History
 
+## 9.0.1 (2020-04-09)
+
+**Bugfixes**
+  
+  - Switch field type to string to avoid unmarshal errors 
+
 ## 9.0.0 (2020-03-24)
 
 **Features**
