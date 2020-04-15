@@ -11,6 +11,10 @@
 
 * Fig bug where http_proxy and transport_type in ServiceBusClient are not propagated into Sender/Receiver creation properly.
 
+**Breaking Changes**
+
+* Session receivers are now created via their own top level functions, e.g. `get_queue_sesison_receiver` and `get_subscription_session_receiver`.  Non session receivers no longer take session_id as a paramter.
+
 ## 7.0.0b1 (2020-04-06)
 
 Version 7.0.0b1 is a preview of our efforts to create a client library that is user friendly and idiomatic to the Python ecosystem. The reasons for most of the changes in this update can be found in the Azure SDK Design Guidelines for Python. For more information, please visit https://aka.ms/azure-sdk-preview1-python.
@@ -36,6 +40,7 @@ Version 7.0.0b1 is a preview of our efforts to create a client library that is u
     * `get_queue` no longer exists, utilize `get_queue_sender/receiver` instead.
     * `peek` and other `queue_client` functions have moved to their respective sender/receiver.
     * Renamed `fetch_next` to `receive`.
+    * Renamed `session` to `session_id` to normalize naming when requesting a receiver against a given session.
     * `reconnect` no longer exists, and is performed implicitly if needed.
     * `open` no longer exists, and is performed implicitly if needed.
 * Normalized top level client parameters with idiomatic and consistent naming.

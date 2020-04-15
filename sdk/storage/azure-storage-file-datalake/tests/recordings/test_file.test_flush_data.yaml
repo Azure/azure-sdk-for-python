@@ -11,11 +11,11 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-dfs/12.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-dfs/12.0.1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-client-request-id:
-      - 2acd2fe4-10b9-11ea-934d-001a7dda7113
+      - 805966ee-7925-11ea-8bae-001a7dda7113
       x-ms-date:
-      - Wed, 27 Nov 2019 01:56:46 GMT
+      - Tue, 07 Apr 2020 23:14:16 GMT
       x-ms-properties:
       - ''
       x-ms-version:
@@ -29,15 +29,15 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Wed, 27 Nov 2019 01:56:46 GMT
+      - Tue, 07 Apr 2020 23:14:16 GMT
       ETag:
-      - '"0x8D772DD0F36037C"'
+      - '"0x8D7DB4964B1DB7C"'
       Last-Modified:
-      - Wed, 27 Nov 2019 01:56:46 GMT
+      - Tue, 07 Apr 2020 23:14:16 GMT
       Server:
       - Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-id:
-      - b12b3733-701f-003a-10c5-a457ec000000
+      - d83dce9f-901f-001d-6232-0d4028000000
       x-ms-version:
       - '2019-02-02'
     status:
@@ -55,11 +55,11 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-dfs/12.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-dfs/12.0.1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-client-request-id:
-      - 2b06ad68-10b9-11ea-8d4a-001a7dda7113
+      - 8088e1d8-7925-11ea-a3cd-001a7dda7113
       x-ms-date:
-      - Wed, 27 Nov 2019 01:56:46 GMT
+      - Tue, 07 Apr 2020 23:14:16 GMT
       x-ms-properties:
       - ''
       x-ms-version:
@@ -73,15 +73,15 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Wed, 27 Nov 2019 01:56:46 GMT
+      - Tue, 07 Apr 2020 23:14:16 GMT
       ETag:
-      - '"0x8D772DD0F4D7679"'
+      - '"0x8D7DB4964C2E081"'
       Last-Modified:
-      - Wed, 27 Nov 2019 01:56:46 GMT
+      - Tue, 07 Apr 2020 23:14:16 GMT
       Server:
       - Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-id:
-      - b12b3734-701f-003a-11c5-a457ec000000
+      - d83dcea0-901f-001d-6332-0d4028000000
       x-ms-version:
       - '2019-02-02'
     status:
@@ -101,11 +101,11 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - azsdk-python-storage-dfs/12.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-dfs/12.0.1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-client-request-id:
-      - 2b1bc092-10b9-11ea-821b-001a7dda7113
+      - 8099c652-7925-11ea-8c90-001a7dda7113
       x-ms-date:
-      - Wed, 27 Nov 2019 01:56:46 GMT
+      - Tue, 07 Apr 2020 23:14:16 GMT
       x-ms-version:
       - '2019-02-02'
     method: PATCH
@@ -117,11 +117,11 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Wed, 27 Nov 2019 01:56:46 GMT
+      - Tue, 07 Apr 2020 23:14:16 GMT
       Server:
       - Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-id:
-      - b12b3735-701f-003a-12c5-a457ec000000
+      - d83dcea1-901f-001d-6432-0d4028000000
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
@@ -141,11 +141,11 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-dfs/12.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-dfs/12.0.1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-client-request-id:
-      - 2b28a018-10b9-11ea-b9e6-001a7dda7113
+      - 80a63f9e-7925-11ea-9e69-001a7dda7113
       x-ms-date:
-      - Wed, 27 Nov 2019 01:56:46 GMT
+      - Tue, 07 Apr 2020 23:14:16 GMT
       x-ms-version:
       - '2019-02-02'
     method: PATCH
@@ -157,15 +157,15 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Wed, 27 Nov 2019 01:56:46 GMT
+      - Tue, 07 Apr 2020 23:14:16 GMT
       ETag:
-      - '"0x8D772DD0F6A16A6"'
+      - '"0x8D7DB4964DD0111"'
       Last-Modified:
-      - Wed, 27 Nov 2019 01:56:46 GMT
+      - Tue, 07 Apr 2020 23:14:16 GMT
       Server:
       - Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-id:
-      - b12b3736-701f-003a-13c5-a457ec000000
+      - d83dcea2-901f-001d-6532-0d4028000000
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
@@ -183,15 +183,15 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-dfs/12.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-dfs/12.0.1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-client-request-id:
-      - 2b3a56ba-10b9-11ea-ab40-001a7dda7113
+      - 80b418da-7925-11ea-ae9f-001a7dda7113
       x-ms-date:
-      - Wed, 27 Nov 2019 01:56:46 GMT
+      - Tue, 07 Apr 2020 23:14:16 GMT
       x-ms-version:
-      - '2019-02-02'
+      - '2019-07-07'
     method: HEAD
-    uri: https://storagename.blob.core.windows.net/filesystem84770a28/directory84770a28%2Ffilename
+    uri: https://storagename.blob.core.windows.net/filesystem84770a28/directory84770a28/filename
   response:
     body:
       string: ''
@@ -203,11 +203,11 @@ interactions:
       Content-Type:
       - application/octet-stream
       Date:
-      - Wed, 27 Nov 2019 01:56:46 GMT
+      - Tue, 07 Apr 2020 23:14:16 GMT
       ETag:
-      - '"0x8D772DD0F6A16A6"'
+      - '"0x8D7DB4964DD0111"'
       Last-Modified:
-      - Wed, 27 Nov 2019 01:56:46 GMT
+      - Tue, 07 Apr 2020 23:14:16 GMT
       Server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-access-tier:
@@ -217,17 +217,17 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-creation-time:
-      - Wed, 27 Nov 2019 01:56:46 GMT
+      - Tue, 07 Apr 2020 23:14:16 GMT
       x-ms-lease-state:
       - available
       x-ms-lease-status:
       - unlocked
       x-ms-request-id:
-      - faa42d54-401e-006c-53c5-a4a603000000
+      - ebbb924b-601e-0009-2432-0d0847000000
       x-ms-server-encrypted:
       - 'true'
       x-ms-version:
-      - '2019-02-02'
+      - '2019-07-07'
     status:
       code: 200
       message: OK

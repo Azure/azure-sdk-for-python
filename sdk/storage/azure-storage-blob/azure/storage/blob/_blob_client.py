@@ -168,7 +168,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             self.scheme,
             hostname,
             quote(container_name),
-            quote(self.blob_name, safe='~'),
+            quote(self.blob_name, safe='~/'),
             self._query_str)
 
     @classmethod

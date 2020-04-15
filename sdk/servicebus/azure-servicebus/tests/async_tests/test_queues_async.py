@@ -55,7 +55,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                     await sender.send(message)
 
             with pytest.raises(ServiceBusConnectionError):
-                await (sb_client.get_queue_receiver(servicebus_queue.name, session_id="test", idle_timeout=5))._open_with_retry()
+                await (sb_client.get_queue_session_receiver(servicebus_queue.name, session_id="test", idle_timeout=5))._open_with_retry()
 
             async with sb_client.get_queue_receiver(servicebus_queue.name, idle_timeout=5) as receiver:
                 count = 0
@@ -537,10 +537,10 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
             servicebus_namespace_connection_string, logging_enable=False) as sb_client:
 
             with pytest.raises(ServiceBusConnectionError):
-                await sb_client.get_queue_receiver(servicebus_queue.name, session_id="test")._open_with_retry()
+                await sb_client.get_queue_session_receiver(servicebus_queue.name, session_id="test")._open_with_retry()
 
-            async with sb_client.get_queue_sender(servicebus_queue.name, session_id="test") as sender:
-                await sender.send(Message("test session sender"))
+            async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
+                await sender.send(Message("test session sender", session_id="test"))
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
