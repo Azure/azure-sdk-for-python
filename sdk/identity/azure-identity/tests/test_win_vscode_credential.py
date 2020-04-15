@@ -5,7 +5,6 @@
 import sys
 import pytest
 from azure.core.credentials import AccessToken
-from azure.core.exceptions import ClientAuthenticationError
 from azure.identity._credentials.win_vscode_credential import WinVSCodeCredential
 try:
     from unittest.mock import Mock

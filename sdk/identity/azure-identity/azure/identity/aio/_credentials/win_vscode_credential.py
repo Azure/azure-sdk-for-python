@@ -11,7 +11,10 @@ from ..._constants import (
     AZURE_VSCODE_TENANT_ID,
 )
 from .._internal.aad_client import AadClient
-from ..._credentials.win_vscode_credential import _read_credential, _get_user_settings
+try:
+    from ..._credentials.win_vscode_credential import _read_credential, _get_user_settings
+except ImportError: # pylint:disable=try-except-raise
+    raise
 
 class WinVSCodeCredential(AsyncCredentialBase):
     """Authenticates by redeeming a refresh token previously saved by VS Code

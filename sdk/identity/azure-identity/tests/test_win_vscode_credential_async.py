@@ -5,7 +5,6 @@
 import sys
 import pytest
 from azure.core.credentials import AccessToken
-from azure.core.exceptions import ClientAuthenticationError
 from azure.identity.aio._credentials.win_vscode_credential import WinVSCodeCredential
 from helpers_async import wrap_in_future
 try:
