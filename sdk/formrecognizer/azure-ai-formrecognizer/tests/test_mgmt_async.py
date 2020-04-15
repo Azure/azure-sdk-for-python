@@ -29,27 +29,11 @@ class TestManagementAsync(AsyncFormRecognizerTest):
 
     @GlobalFormAndStorageAccountPreparer()
     @GlobalTrainingAccountPreparer()
-    async def test_mgmt_model(self, client, container_sas_url):
-        unlabeled_model_from_train = await client.training(container_sas_url)
+    async def test_mgmt_model_labeled(self, client, container_sas_url):
 
         labeled_model_from_train = await client.training(container_sas_url, use_labels=True)
 
-        unlabeled_model_from_get = await client.get_custom_model(unlabeled_model_from_train.model_id)
         labeled_model_from_get = await client.get_custom_model(labeled_model_from_train.model_id)
-
-        self.assertEqual(unlabeled_model_from_train.model_id, unlabeled_model_from_get.model_id)
-        self.assertEqual(unlabeled_model_from_train.status, unlabeled_model_from_get.status)
-        self.assertEqual(unlabeled_model_from_train.created_on, unlabeled_model_from_get.created_on)
-        self.assertEqual(unlabeled_model_from_train.last_modified, unlabeled_model_from_get.last_modified)
-        self.assertEqual(unlabeled_model_from_train.errors, unlabeled_model_from_get.errors)
-        for a, b in zip(unlabeled_model_from_train.training_documents, unlabeled_model_from_get.training_documents):
-            self.assertEqual(a.document_name, b.document_name)
-            self.assertEqual(a.errors, b.errors)
-            self.assertEqual(a.page_count, b.page_count)
-            self.assertEqual(a.status, b.status)
-        for a, b in zip(unlabeled_model_from_train.models, unlabeled_model_from_get.models):
-            for field1, field2 in zip(a.fields.items(), b.fields.items()):
-                self.assertEqual(a.fields[field1[0]].label, b.fields[field2[0]].label)
 
         self.assertEqual(labeled_model_from_train.model_id, labeled_model_from_get.model_id)
         self.assertEqual(labeled_model_from_train.status, labeled_model_from_get.status)
@@ -73,14 +57,43 @@ class TestManagementAsync(AsyncFormRecognizerTest):
             self.assertIsNotNone(model.created_on)
             self.assertIsNotNone(model.last_modified)
 
-        await client.delete_model(unlabeled_model_from_train.model_id)
         await client.delete_model(labeled_model_from_train.model_id)
 
         with self.assertRaises(ResourceNotFoundError):
-            await client.get_custom_model(unlabeled_model_from_train.model_id)
+            await client.get_custom_model(labeled_model_from_train.model_id)
+
+    @GlobalFormAndStorageAccountPreparer()
+    @GlobalTrainingAccountPreparer()
+    async def test_mgmt_model_unlabeled(self, client, container_sas_url):
+        unlabeled_model_from_train = await client.training(container_sas_url)
+
+        unlabeled_model_from_get = await client.get_custom_model(unlabeled_model_from_train.model_id)
+
+        self.assertEqual(unlabeled_model_from_train.model_id, unlabeled_model_from_get.model_id)
+        self.assertEqual(unlabeled_model_from_train.status, unlabeled_model_from_get.status)
+        self.assertEqual(unlabeled_model_from_train.created_on, unlabeled_model_from_get.created_on)
+        self.assertEqual(unlabeled_model_from_train.last_modified, unlabeled_model_from_get.last_modified)
+        self.assertEqual(unlabeled_model_from_train.errors, unlabeled_model_from_get.errors)
+        for a, b in zip(unlabeled_model_from_train.training_documents, unlabeled_model_from_get.training_documents):
+            self.assertEqual(a.document_name, b.document_name)
+            self.assertEqual(a.errors, b.errors)
+            self.assertEqual(a.page_count, b.page_count)
+            self.assertEqual(a.status, b.status)
+        for a, b in zip(unlabeled_model_from_train.models, unlabeled_model_from_get.models):
+            for field1, field2 in zip(a.fields.items(), b.fields.items()):
+                self.assertEqual(a.fields[field1[0]].label, b.fields[field2[0]].label)
+
+        models_list = client.list_model_infos()
+        async for model in models_list:
+            self.assertIsNotNone(model.model_id)
+            self.assertEqual(model.status, "ready")
+            self.assertIsNotNone(model.created_on)
+            self.assertIsNotNone(model.last_modified)
+
+        await client.delete_model(unlabeled_model_from_train.model_id)
 
         with self.assertRaises(ResourceNotFoundError):
-            await client.get_custom_model(labeled_model_from_train.model_id)
+            await client.get_custom_model(unlabeled_model_from_train.model_id)
 
     @GlobalFormRecognizerAccountPreparer()
     async def test_get_form_training_client(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):

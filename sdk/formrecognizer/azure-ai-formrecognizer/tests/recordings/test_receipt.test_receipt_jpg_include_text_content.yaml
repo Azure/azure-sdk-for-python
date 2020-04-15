@@ -2727,25 +2727,25 @@ interactions:
       - azsdk-python-ai-formrecognizer/1.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
         Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: POST
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/prebuilt/receipt/analyze?includeTextDetails=true
+    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/prebuilt/receipt/analyze?includeTextDetails=true
   response:
     body:
       string: ''
     headers:
       apim-request-id:
-      - df9f843f-6266-4cba-bdd6-1157c09b2846
+      - 67de47ff-3f7d-47df-930f-ee645aa29253
       content-length:
       - '0'
       date:
-      - Sat, 04 Apr 2020 02:19:51 GMT
+      - Wed, 15 Apr 2020 18:59:25 GMT
       operation-location:
-      - https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/prebuilt/receipt/analyzeResults/df9f843f-6266-4cba-bdd6-1157c09b2846
+      - https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/prebuilt/receipt/analyzeResults/67de47ff-3f7d-47df-930f-ee645aa29253
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '214'
+      - '305'
     status:
       code: 202
       message: Accepted
@@ -2762,10 +2762,10 @@ interactions:
       - azsdk-python-ai-formrecognizer/1.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
         Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: GET
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/prebuilt/receipt/analyzeResults/df9f843f-6266-4cba-bdd6-1157c09b2846
+    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/prebuilt/receipt/analyzeResults/67de47ff-3f7d-47df-930f-ee645aa29253
   response:
     body:
-      string: '{"status":"succeeded","createdDateTime":"2020-04-04T02:19:51Z","lastUpdatedDateTime":"2020-04-04T02:19:52Z","analyzeResult":{"version":"2.0.0","readResults":[{"page":1,"angle":0.6893,"width":1688,"height":3000,"unit":"pixel","language":"en","lines":[{"text":"Contoso","boundingBox":[635,510,1086,461,1098,558,643,604],"words":[{"text":"Contoso","boundingBox":[639,510,1087,461,1098,551,646,604],"confidence":0.955}]},{"text":"Contoso","boundingBox":[305,574,519,624,504,686,291,634],"words":[{"text":"Contoso","boundingBox":[311,575,517,623,503,686,297,636],"confidence":0.435}]},{"text":"123
+      string: '{"status":"succeeded","createdDateTime":"2020-04-15T18:59:26Z","lastUpdatedDateTime":"2020-04-15T18:59:27Z","analyzeResult":{"version":"2.0.0","readResults":[{"page":1,"angle":0.6893,"width":1688,"height":3000,"unit":"pixel","language":"en","lines":[{"text":"Contoso","boundingBox":[635,510,1086,461,1098,558,643,604],"words":[{"text":"Contoso","boundingBox":[639,510,1087,461,1098,551,646,604],"confidence":0.955}]},{"text":"Contoso","boundingBox":[305,574,519,624,504,686,291,634],"words":[{"text":"Contoso","boundingBox":[311,575,517,623,503,686,297,636],"confidence":0.435}]},{"text":"123
         Main Street","boundingBox":[300,675,703,767,686,844,284,749],"words":[{"text":"123","boundingBox":[302,676,390,695,375,770,287,751],"confidence":0.935},{"text":"Main","boundingBox":[405,698,528,726,512,802,390,774],"confidence":0.958},{"text":"Street","boundingBox":[542,730,702,767,685,845,527,806],"confidence":0.959}]},{"text":"Redmond,
         WA 98052","boundingBox":[290,784,828,850,820,933,279,868],"words":[{"text":"Redmond,","boundingBox":[293,784,550,826,540,905,280,856],"confidence":0.762},{"text":"WA","boundingBox":[565,828,645,837,637,917,555,907],"confidence":0.943},{"text":"98052","boundingBox":[660,838,824,849,818,933,651,919],"confidence":0.959}]},{"text":"987-654-3210","boundingBox":[275,1003,656,1055,646,1123,269,1073],"words":[{"text":"987-654-3210","boundingBox":[278,1004,656,1057,647,1123,271,1075],"confidence":0.939}]},{"text":"6/10/2019
         13:59","boundingBox":[265,1228,678,1258,671,1344,258,1311],"words":[{"text":"6/10/2019","boundingBox":[267,1229,525,1247,517,1332,259,1313],"confidence":0.762},{"text":"13:59","boundingBox":[541,1248,677,1263,669,1345,533,1333],"confidence":0.958}]},{"text":"Sales
@@ -2780,11 +2780,11 @@ interactions:
         & EGGS","text":"BACON & EGGS","boundingBox":[308,1836,746,1841.4,745,1925.4,307,1920],"page":1,"confidence":0.916,"elements":["#/readResults/0/lines/9/words/1","#/readResults/0/lines/9/words/2","#/readResults/0/lines/9/words/3"]},"TotalPrice":{"type":"number","text":"$9.5","boundingBox":[1133.9,1955,1257,1952,1259.1,2036,1136,2039],"page":1,"confidence":0.916,"elements":["#/readResults/0/lines/11/words/0"]}}}]},"Subtotal":{"type":"number","valueNumber":11.7,"text":"11.70","boundingBox":[1146,2221,1297.3,2223,1296,2319,1144.7,2317],"page":1,"confidence":0.955,"elements":["#/readResults/0/lines/13/words/1"]},"Tax":{"type":"number","valueNumber":1.17,"text":"1.17","boundingBox":[1190,2359,1304,2359,1304,2456,1190,2456],"page":1,"confidence":0.979,"elements":["#/readResults/0/lines/15/words/1"]},"Tip":{"type":"number","valueNumber":1.63,"text":"1.63","boundingBox":[1094,2479,1267.7,2485,1264,2591,1090.3,2585],"page":1,"confidence":0.941,"elements":["#/readResults/0/lines/17/words/1"]},"Total":{"type":"number","valueNumber":14.5,"text":"$14.50","boundingBox":[1034.2,2617,1387.5,2638.2,1380,2763,1026.7,2741.8],"page":1,"confidence":0.985,"elements":["#/readResults/0/lines/19/words/0"]}}}]}}'
     headers:
       apim-request-id:
-      - 53e504c3-c27b-49e1-a91e-584e6b0c21aa
+      - db2a3636-57cf-4e3a-93f3-034dfd03c5f2
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 04 Apr 2020 02:19:55 GMT
+      - Wed, 15 Apr 2020 18:59:30 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -2792,7 +2792,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '74'
+      - '139'
     status:
       code: 200
       message: OK

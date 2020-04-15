@@ -11,22 +11,22 @@ interactions:
       - azsdk-python-ai-formrecognizer/1.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
         Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: POST
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models
+    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models
   response:
     body:
       string: ''
     headers:
-      apim-request-id: 8bf62e13-65e0-493a-bdba-398218538965
+      apim-request-id: 001e3528-a2b8-4711-a393-21f79f84ea57
       content-length: '0'
-      date: Tue, 14 Apr 2020 22:08:06 GMT
-      location: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/8810877a-df00-45ae-a3fd-57bf7e9dd986
+      date: Wed, 15 Apr 2020 19:32:26 GMT
+      location: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/e9e5ce71-3f8e-40fd-98ec-c72743423970
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '28'
+      x-envoy-upstream-service-time: '35'
     status:
       code: 201
       message: Created
-    url: https://centraluseuap.api.cognitive.microsoft.com//formrecognizer/v2.0-preview/custom/models
+    url: https://westus.api.cognitive.microsoft.com//formrecognizer/v2.0-preview/custom/models
 - request:
     body: null
     headers:
@@ -34,22 +34,22 @@ interactions:
       - azsdk-python-ai-formrecognizer/1.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
         Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: GET
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/8810877a-df00-45ae-a3fd-57bf7e9dd986?includeKeys=true
+    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/e9e5ce71-3f8e-40fd-98ec-c72743423970?includeKeys=true
   response:
     body:
-      string: '{"modelInfo":{"modelId":"8810877a-df00-45ae-a3fd-57bf7e9dd986","status":"creating","createdDateTime":"2020-04-14T22:08:06Z","lastUpdatedDateTime":"2020-04-14T22:08:06Z"}}'
+      string: '{"modelInfo":{"modelId":"e9e5ce71-3f8e-40fd-98ec-c72743423970","status":"creating","createdDateTime":"2020-04-15T19:32:26Z","lastUpdatedDateTime":"2020-04-15T19:32:26Z"}}'
     headers:
-      apim-request-id: 8e942a54-94dd-4038-8920-be01ca916f22
+      apim-request-id: c1030a4c-8a7a-48ac-bf4d-b67a82f3c751
       content-type: application/json; charset=utf-8
-      date: Tue, 14 Apr 2020 22:08:10 GMT
+      date: Wed, 15 Apr 2020 19:32:31 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '24'
+      x-envoy-upstream-service-time: '30'
     status:
       code: 200
       message: OK
-    url: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/8810877a-df00-45ae-a3fd-57bf7e9dd986?includeKeys=true
+    url: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/e9e5ce71-3f8e-40fd-98ec-c72743423970?includeKeys=true
 - request:
     body: null
     headers:
@@ -57,26 +57,26 @@ interactions:
       - azsdk-python-ai-formrecognizer/1.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
         Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: GET
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/8810877a-df00-45ae-a3fd-57bf7e9dd986?includeKeys=true
+    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/e9e5ce71-3f8e-40fd-98ec-c72743423970?includeKeys=true
   response:
     body:
-      string: '{"modelInfo":{"modelId":"8810877a-df00-45ae-a3fd-57bf7e9dd986","status":"ready","createdDateTime":"2020-04-14T22:08:06Z","lastUpdatedDateTime":"2020-04-14T22:08:16Z"},"keys":{"clusters":{"0":["Additional
+      string: '{"modelInfo":{"modelId":"e9e5ce71-3f8e-40fd-98ec-c72743423970","status":"ready","createdDateTime":"2020-04-15T19:32:26Z","lastUpdatedDateTime":"2020-04-15T19:32:35Z"},"keys":{"clusters":{"0":["Additional
         Notes:","Address:","Address:","Company Name:","Company Phone:","Dated As:","Email:","Hero
         Limited","Name:","Phone:","Phone:","Purchase Order","Purchase Order","Purchase
         Order #:","SUBTOTAL","Seattle, WA 93849 Phone:","Shipped From","Shipped To","TAX","TOTAL","Vendor
         Name:","Website:"]}},"trainResult":{"trainingDocuments":[{"documentName":"Form_1.jpg","pages":1,"errors":[],"status":"succeeded"},{"documentName":"Form_2.jpg","pages":1,"errors":[],"status":"succeeded"},{"documentName":"Form_3.jpg","pages":1,"errors":[],"status":"succeeded"},{"documentName":"Form_4.jpg","pages":1,"errors":[],"status":"succeeded"},{"documentName":"Form_5.jpg","pages":1,"errors":[],"status":"succeeded"}],"errors":[]}}'
     headers:
-      apim-request-id: 4312e35d-67d1-4659-ba73-9fd608258970
+      apim-request-id: 2c850e4a-8ecd-48ad-8873-afe94442705e
       content-type: application/json; charset=utf-8
-      date: Tue, 14 Apr 2020 22:08:16 GMT
+      date: Wed, 15 Apr 2020 19:32:36 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '21'
+      x-envoy-upstream-service-time: '28'
     status:
       code: 200
       message: OK
-    url: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/8810877a-df00-45ae-a3fd-57bf7e9dd986?includeKeys=true
+    url: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/e9e5ce71-3f8e-40fd-98ec-c72743423970?includeKeys=true
 - request:
     body: !!binary |
       /9j/4AAQSkZJRgABAQEAyADIAAD/4QBmRXhpZgAATU0AKgAAAAgABAEaAAUAAAABAAAAPgEbAAUA
@@ -8495,22 +8495,22 @@ interactions:
       - azsdk-python-ai-formrecognizer/1.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
         Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: POST
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/8810877a-df00-45ae-a3fd-57bf7e9dd986/analyze?includeTextDetails=false
+    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/e9e5ce71-3f8e-40fd-98ec-c72743423970/analyze?includeTextDetails=false
   response:
     body:
       string: ''
     headers:
-      apim-request-id: 3e34feb5-ec7c-4fe0-9e71-abf86d8e94c5
+      apim-request-id: e508583e-0a8e-4e58-b295-ed124d2e92e0
       content-length: '0'
-      date: Tue, 14 Apr 2020 22:08:18 GMT
-      operation-location: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/8810877a-df00-45ae-a3fd-57bf7e9dd986/analyzeresults/754482e3-0ccd-4643-8ac8-58141efbeca9
+      date: Wed, 15 Apr 2020 19:32:37 GMT
+      operation-location: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/e9e5ce71-3f8e-40fd-98ec-c72743423970/analyzeresults/dd3003c0-64fa-43c9-bb65-8da3b6a455a2
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '71'
+      x-envoy-upstream-service-time: '278'
     status:
       code: 202
       message: Accepted
-    url: https://centraluseuap.api.cognitive.microsoft.com//formrecognizer/v2.0-preview/custom/models/8810877a-df00-45ae-a3fd-57bf7e9dd986/analyze?includeTextDetails=false
+    url: https://westus.api.cognitive.microsoft.com//formrecognizer/v2.0-preview/custom/models/e9e5ce71-3f8e-40fd-98ec-c72743423970/analyze?includeTextDetails=false
 - request:
     body: null
     headers:
@@ -8518,10 +8518,10 @@ interactions:
       - azsdk-python-ai-formrecognizer/1.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
         Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: GET
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/8810877a-df00-45ae-a3fd-57bf7e9dd986/analyzeresults/754482e3-0ccd-4643-8ac8-58141efbeca9
+    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/e9e5ce71-3f8e-40fd-98ec-c72743423970/analyzeresults/dd3003c0-64fa-43c9-bb65-8da3b6a455a2
   response:
     body:
-      string: '{"status":"succeeded","createdDateTime":"2020-04-14T22:08:18Z","lastUpdatedDateTime":"2020-04-14T22:08:21Z","analyzeResult":{"version":"2.0.0","readResults":[{"page":1,"angle":0.12,"width":1700,"height":2200,"unit":"pixel","lines":[]}],"pageResults":[{"page":1,"keyValuePairs":[{"key":{"text":"Hero
+      string: '{"status":"succeeded","createdDateTime":"2020-04-15T19:32:38Z","lastUpdatedDateTime":"2020-04-15T19:32:41Z","analyzeResult":{"version":"2.0.0","readResults":[{"page":1,"angle":0.12,"width":1700,"height":2200,"unit":"pixel","lines":[]}],"pageResults":[{"page":1,"keyValuePairs":[{"key":{"text":"Hero
         Limited","boundingBox":[620,203,1078,203,1078,271,620,271],"elements":null},"value":{"text":"","boundingBox":null,"elements":null},"confidence":0.5},{"key":{"text":"Company
         Phone:","boundingBox":[167,351,365,351,365,381,167,381],"elements":null},"value":{"text":"555-348-6512","boundingBox":[371,351,528,351,528,381,371,381],"elements":null},"confidence":1.0},{"key":{"text":"Website:","boundingBox":[167,392,269,392,269,420,167,420],"elements":null},"value":{"text":"www.herolimited.com","boundingBox":[275,392,528,392,528,420,275,420],"elements":null},"confidence":1.0},{"key":{"text":"Dated
         As:","boundingBox":[1025,418,1161,418,1161,451,1025,451],"elements":null},"value":{"text":"12/20/2020","boundingBox":[1168,418,1319,418,1319,451,1168,451],"elements":null},"confidence":1.0},{"key":{"text":"Email:","boundingBox":[167,431,240,431,240,458,167,458],"elements":null},"value":{"text":"accounts@herolimited.com","boundingBox":[168,480,476,480,476,505,168,505],"elements":null},"confidence":1.0},{"key":{"text":"Purchase
@@ -8550,15 +8550,15 @@ interactions:
         Bookmark","rowIndex":3,"columnIndex":0,"boundingBox":[172,1179,403,1179,403,1205,172,1205],"confidence":1.0,"rowSpan":1,"columnSpan":1,"elements":null,"isHeader":false,"isFooter":false},{"text":"20","rowIndex":3,"columnIndex":1,"boundingBox":[863,1177,888,1177,888,1199,863,1199],"confidence":1.0,"rowSpan":1,"columnSpan":1,"elements":null,"isHeader":false,"isFooter":false},{"text":"5.00","rowIndex":3,"columnIndex":2,"boundingBox":[1243,1179,1298,1179,1298,1205,1243,1205],"confidence":1.0,"rowSpan":1,"columnSpan":1,"elements":null,"isHeader":false,"isFooter":false},{"text":"100.00","rowIndex":3,"columnIndex":3,"boundingBox":[1448,1180,1530,1180,1530,1205,1448,1205],"confidence":1.0,"rowSpan":1,"columnSpan":1,"elements":null,"isHeader":false,"isFooter":false},{"text":"Copper
         Swirl Marker","rowIndex":4,"columnIndex":0,"boundingBox":[171,1224,426,1224,426,1248,171,1248],"confidence":1.0,"rowSpan":1,"columnSpan":1,"elements":null,"isHeader":false,"isFooter":false},{"text":"20","rowIndex":4,"columnIndex":1,"boundingBox":[863,1221,888,1221,888,1244,863,1244],"confidence":1.0,"rowSpan":1,"columnSpan":1,"elements":null,"isHeader":false,"isFooter":false},{"text":"5.00","rowIndex":4,"columnIndex":2,"boundingBox":[1242,1222,1291,1222,1291,1248,1242,1248],"confidence":1.0,"rowSpan":1,"columnSpan":1,"elements":null,"isHeader":false,"isFooter":false},{"text":"100.00","rowIndex":4,"columnIndex":3,"boundingBox":[1449,1225,1530,1225,1530,1248,1449,1248],"confidence":1.0,"rowSpan":1,"columnSpan":1,"elements":null,"isHeader":false,"isFooter":false}]}],"clusterId":0}],"documentResults":[],"errors":[]}}'
     headers:
-      apim-request-id: 998ea440-7776-4502-bcc1-05e6e957c539
+      apim-request-id: 8cfa5aaf-5324-48c5-b1d7-22b62d36fb1e
       content-type: application/json; charset=utf-8
-      date: Tue, 14 Apr 2020 22:08:22 GMT
+      date: Wed, 15 Apr 2020 19:32:42 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '17'
+      x-envoy-upstream-service-time: '51'
     status:
       code: 200
       message: OK
-    url: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/8810877a-df00-45ae-a3fd-57bf7e9dd986/analyzeresults/754482e3-0ccd-4643-8ac8-58141efbeca9
+    url: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/e9e5ce71-3f8e-40fd-98ec-c72743423970/analyzeresults/dd3003c0-64fa-43c9-bb65-8da3b6a455a2
 version: 1

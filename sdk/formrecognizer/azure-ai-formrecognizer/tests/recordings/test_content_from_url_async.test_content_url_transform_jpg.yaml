@@ -1,38 +1,31 @@
 interactions:
 - request:
-    body: '{"source": "https://krpraticstorageacc.blob.core.windows.net/form-recognizer-blobs/Form_1.jpg"}'
+    body: '{"source": "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/Form_1.jpg"}'
     headers:
       Content-Length:
-      - '95'
+      - '160'
       Content-Type:
       - application/json
       User-Agent:
       - azsdk-python-ai-formrecognizer/1.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
         Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: POST
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/layout/analyze
+    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/layout/analyze
   response:
     body:
       string: ''
     headers:
-      apim-request-id: 3017879f-453f-4a88-95bf-e583759651b5
+      apim-request-id: e36353d7-d9ca-4e31-b492-3118015c76c3
       content-length: '0'
-      date: Sun, 05 Apr 2020 01:00:36 GMT
-      operation-location: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/layout/analyzeResults/3017879f-453f-4a88-95bf-e583759651b5
+      date: Wed, 15 Apr 2020 18:44:43 GMT
+      operation-location: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/layout/analyzeResults/e36353d7-d9ca-4e31-b492-3118015c76c3
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '561'
+      x-envoy-upstream-service-time: '215'
     status:
       code: 202
       message: Accepted
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - centraluseuap.api.cognitive.microsoft.com
-        - //formrecognizer/v2.0-preview/layout/analyze
-        - ''
-        - ''
+    url: https://westus.api.cognitive.microsoft.com//formrecognizer/v2.0-preview/layout/analyze
 - request:
     body: null
     headers:
@@ -40,10 +33,10 @@ interactions:
       - azsdk-python-ai-formrecognizer/1.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
         Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: GET
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/layout/analyzeResults/3017879f-453f-4a88-95bf-e583759651b5
+    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/layout/analyzeResults/e36353d7-d9ca-4e31-b492-3118015c76c3
   response:
     body:
-      string: '{"status":"succeeded","createdDateTime":"2020-04-05T01:00:36Z","lastUpdatedDateTime":"2020-04-05T01:00:38Z","analyzeResult":{"version":"2.0.0","readResults":[{"page":1,"language":"en","angle":0,"width":1700,"height":2200,"unit":"pixel","lines":[{"language":"en","boundingBox":[137,140,351,140,351,167,137,166],"text":"Purchase
+      string: '{"status":"succeeded","createdDateTime":"2020-04-15T18:44:43Z","lastUpdatedDateTime":"2020-04-15T18:44:46Z","analyzeResult":{"version":"2.0.0","readResults":[{"page":1,"language":"en","angle":0,"width":1700,"height":2200,"unit":"pixel","lines":[{"language":"en","boundingBox":[137,140,351,140,351,167,137,166],"text":"Purchase
         Order","words":[{"boundingBox":[137,140,263,140,263,168,138,166],"text":"Purchase","confidence":0.959},{"boundingBox":[271,140,351,140,351,168,272,168],"text":"Order","confidence":0.959}]},{"language":"en","boundingBox":[620,204,1073,201,1074,264,620,266],"text":"Hero
         Limited","words":[{"boundingBox":[622,207,788,204,787,266,621,266],"text":"Hero","confidence":0.959},{"boundingBox":[811,204,1075,202,1075,266,811,266],"text":"Limited","confidence":0.959}]},{"language":"en","boundingBox":[165,351,529,350,530,377,165,379],"text":"Company
         Phone: 555-348-6512","words":[{"boundingBox":[167,352,275,351,275,379,167,379],"text":"Company","confidence":0.959},{"boundingBox":[281,351,362,351,362,378,280,379],"text":"Phone:","confidence":0.958},{"boundingBox":[367,351,529,352,529,374,367,378],"text":"555-348-6512","confidence":0.946}]},{"language":"en","boundingBox":[1114,320,1551,320,1551,370,1114,370],"text":"Purchase
@@ -80,22 +73,15 @@ interactions:
         Bookmark","boundingBox":[156,1172,847,1172,847,1216,156,1216],"elements":["#/readResults/0/lines/33/words/0","#/readResults/0/lines/33/words/1"]},{"rowIndex":3,"columnIndex":1,"text":"20","boundingBox":[847,1172,1072,1172,1072,1216,847,1216],"elements":["#/readResults/0/lines/34/words/0"]},{"rowIndex":3,"columnIndex":2,"text":"5,00","boundingBox":[1072,1172,1309,1172,1309,1216,1072,1216],"elements":["#/readResults/0/lines/35/words/0"]},{"rowIndex":3,"columnIndex":3,"text":"100.00","boundingBox":[1309,1172,1544,1172,1544,1216,1309,1216],"elements":["#/readResults/0/lines/36/words/0"]},{"rowIndex":4,"columnIndex":0,"text":"Copper
         Swirl Marker","boundingBox":[156,1216,847,1216,847,1260,156,1260],"elements":["#/readResults/0/lines/37/words/0","#/readResults/0/lines/37/words/1","#/readResults/0/lines/37/words/2"]},{"rowIndex":4,"columnIndex":1,"text":"20","boundingBox":[847,1216,1072,1216,1072,1260,847,1260],"elements":["#/readResults/0/lines/38/words/0"]},{"rowIndex":4,"columnIndex":2,"text":"5,00","boundingBox":[1072,1216,1309,1216,1309,1260,1072,1260],"elements":["#/readResults/0/lines/39/words/0"]},{"rowIndex":4,"columnIndex":3,"text":"100.00","boundingBox":[1309,1216,1544,1216,1544,1260,1309,1260],"elements":["#/readResults/0/lines/40/words/0"]}]}]}]}}'
     headers:
-      apim-request-id: 25558358-4fe7-4da3-b2dc-7e344ca1bfd9
+      apim-request-id: 14357ffe-2ca9-4654-b488-a4910e0df9b4
       content-type: application/json; charset=utf-8
-      date: Sun, 05 Apr 2020 01:00:40 GMT
+      date: Wed, 15 Apr 2020 18:44:48 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '32'
+      x-envoy-upstream-service-time: '164'
     status:
       code: 200
       message: OK
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - centraluseuap.api.cognitive.microsoft.com
-        - /formrecognizer/v2.0-preview/layout/analyzeResults/3017879f-453f-4a88-95bf-e583759651b5
-        - ''
-        - ''
+    url: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/layout/analyzeResults/e36353d7-d9ca-4e31-b492-3118015c76c3
 version: 1

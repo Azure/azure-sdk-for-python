@@ -10,21 +10,21 @@ interactions:
       - azsdk-python-ai-formrecognizer/1.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
         Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: POST
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/xx/analyze?includeTextDetails=false
+    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/xx/analyze?includeTextDetails=false
   response:
     body:
       string: '{"error":{"code":"1001","message":"Specified model not found or not
         ready, Model Id: xx"}}'
     headers:
-      apim-request-id: a3bc63cd-7eb5-4984-90ce-14cbdbbf4429
+      apim-request-id: bd0317b3-68dc-4c5a-aed7-8eafce9203e7
       content-type: application/json; charset=utf-8
-      date: Tue, 14 Apr 2020 22:20:54 GMT
+      date: Wed, 15 Apr 2020 18:57:06 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '14'
+      x-envoy-upstream-service-time: '5102'
     status:
       code: 400
       message: Bad Request
-    url: https://centraluseuap.api.cognitive.microsoft.com//formrecognizer/v2.0-preview/custom/models/xx/analyze?includeTextDetails=false
+    url: https://westus.api.cognitive.microsoft.com//formrecognizer/v2.0-preview/custom/models/xx/analyze?includeTextDetails=false
 version: 1

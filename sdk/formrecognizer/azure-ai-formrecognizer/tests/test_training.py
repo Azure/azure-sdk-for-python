@@ -31,7 +31,7 @@ class TestTraining(FormRecognizerTest):
         self.assertEqual(model.status, "ready")
         for doc in model.training_documents:
             self.assertIsNotNone(doc.document_name)
-            self.assertEqual(doc.page_count, 1)
+            self.assertIsNotNone(doc.page_count)
             self.assertEqual(doc.status, "succeeded")
             self.assertEqual(doc.errors, [])
         for sub in model.models:
@@ -73,7 +73,7 @@ class TestTraining(FormRecognizerTest):
         self.assertEqual(model.status, "ready")
         for doc in model.training_documents:
             self.assertIsNotNone(doc.document_name)
-            self.assertEqual(doc.page_count, 1)
+            self.assertIsNotNone(doc.page_count)
             self.assertEqual(doc.status, "succeeded")
             self.assertEqual(doc.errors, [])
         for sub in model.models:
@@ -115,7 +115,7 @@ class TestTraining(FormRecognizerTest):
         self.assertEqual(model.status, "ready")
         for doc in model.training_documents:
             self.assertIsNotNone(doc.document_name)
-            self.assertEqual(doc.page_count, 1)
+            self.assertIsNotNone(doc.page_count)
             self.assertEqual(doc.status, "succeeded")
             self.assertEqual(doc.errors, [])
         self.assertEqual(model.training_documents[-1].document_name, "subfolder/Form_6.jpg")  # we traversed subfolders

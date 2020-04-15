@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: '{"source": "https://krpraticstorageacc.blob.core.windows.net/form-recognizer-blobs/Invoice_1.pdf"}'
+    body: '{"source": "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/Invoice_1.pdf"}'
     headers:
       Accept:
       - '*/*'
@@ -9,14 +9,14 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '98'
+      - '163'
       Content-Type:
       - application/json
       User-Agent:
       - azsdk-python-ai-formrecognizer/1.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
         Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: POST
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/layout/analyze
+    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/layout/analyze
   response:
     body:
       string: '{"error":{"code":"401","message": "Access denied due to invalid subscription
@@ -24,17 +24,17 @@ interactions:
         subscription and use a correct regional API endpoint for your resource."}}'
     headers:
       apim-request-id:
-      - ecd3b2b8-ac90-458e-8075-86e34d434931
+      - 5a4b7543-48f5-4364-b8aa-94a444d1499d
       content-length:
       - '225'
       content-type:
       - application/json
       date:
-      - Sun, 05 Apr 2020 00:01:40 GMT
+      - Wed, 15 Apr 2020 18:43:09 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       www-authenticate:
-      - AzureApiManagementKey realm="https://centraluseuap.api.cognitive.microsoft.com/formrecognizer",name="Ocp-Apim-Subscription-Key",type="header"
+      - AzureApiManagementKey realm="https://westus.api.cognitive.microsoft.com/formrecognizer",name="Ocp-Apim-Subscription-Key",type="header"
       x-content-type-options:
       - nosniff
     status:

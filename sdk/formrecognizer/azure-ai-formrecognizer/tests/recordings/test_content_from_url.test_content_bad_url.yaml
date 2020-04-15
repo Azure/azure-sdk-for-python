@@ -16,18 +16,18 @@ interactions:
       - azsdk-python-ai-formrecognizer/1.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
         Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: POST
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/layout/analyze
+    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/layout/analyze
   response:
     body:
       string: '{"error":{"code":"FailedToDownloadImage","message":"Failed to download
         image from input URL."}}'
     headers:
       apim-request-id:
-      - 6e3a64f4-9131-42d2-8128-c0c3628b08dd
+      - a68ab827-3556-4692-b5bd-7cdba7adc46b
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sun, 05 Apr 2020 00:01:39 GMT
+      - Wed, 15 Apr 2020 18:43:13 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -35,7 +35,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '53'
+      - '45'
     status:
       code: 400
       message: Bad Request

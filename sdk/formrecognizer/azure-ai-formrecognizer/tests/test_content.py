@@ -8,7 +8,7 @@ from azure.core.exceptions import HttpResponseError, ServiceRequestError
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer._generated.models import AnalyzeOperationResult
 from azure.ai.formrecognizer._response_handlers import prepare_content_result
-from azure.ai.formrecognizer import FormRecognizerClient
+from azure.ai.formrecognizer import FormRecognizerClient, FormContentType
 from testcase import FormRecognizerTest, GlobalFormRecognizerAccountPreparer
 
 
@@ -37,6 +37,18 @@ class TestContentFromStream(FormRecognizerTest):
             myfile = fd.read()
         with self.assertRaises(HttpResponseError):
             poller = client.begin_recognize_content(myfile)
+
+    @GlobalFormRecognizerAccountPreparer()
+    def test_passing_enum_content_type(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
+        client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
+        with open(self.invoice_pdf, "rb") as fd:
+            myfile = fd.read()
+        poller = client.begin_recognize_content(
+            myfile,
+            content_type=FormContentType.application_pdf
+        )
+        result = poller.result()
+        self.assertIsNotNone(result)
 
     @GlobalFormRecognizerAccountPreparer()
     def test_passing_bad_content_type_param_passed(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):

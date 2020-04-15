@@ -8425,25 +8425,25 @@ interactions:
       - azsdk-python-ai-formrecognizer/1.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
         Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: POST
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/layout/analyze
+    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/layout/analyze
   response:
     body:
       string: ''
     headers:
       apim-request-id:
-      - 8980590f-e977-42dd-99c1-93c9ce387c29
+      - 81a1838e-f7b2-4b26-8d80-8567ec55f1df
       content-length:
       - '0'
       date:
-      - Sun, 05 Apr 2020 00:41:23 GMT
+      - Wed, 15 Apr 2020 18:37:33 GMT
       operation-location:
-      - https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/layout/analyzeResults/8980590f-e977-42dd-99c1-93c9ce387c29
+      - https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/layout/analyzeResults/81a1838e-f7b2-4b26-8d80-8567ec55f1df
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '138'
+      - '112'
     status:
       code: 202
       message: Accepted
@@ -8460,10 +8460,10 @@ interactions:
       - azsdk-python-ai-formrecognizer/1.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
         Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: GET
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/layout/analyzeResults/8980590f-e977-42dd-99c1-93c9ce387c29
+    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/layout/analyzeResults/81a1838e-f7b2-4b26-8d80-8567ec55f1df
   response:
     body:
-      string: '{"status":"succeeded","createdDateTime":"2020-04-05T00:41:24Z","lastUpdatedDateTime":"2020-04-05T00:41:27Z","analyzeResult":{"version":"2.0.0","readResults":[{"page":1,"language":"en","angle":0,"width":1700,"height":2200,"unit":"pixel","lines":[{"language":"en","boundingBox":[137,140,351,140,351,167,137,166],"text":"Purchase
+      string: '{"status":"succeeded","createdDateTime":"2020-04-15T18:37:34Z","lastUpdatedDateTime":"2020-04-15T18:37:37Z","analyzeResult":{"version":"2.0.0","readResults":[{"page":1,"language":"en","angle":0,"width":1700,"height":2200,"unit":"pixel","lines":[{"language":"en","boundingBox":[137,140,351,140,351,167,137,166],"text":"Purchase
         Order","words":[{"boundingBox":[137,140,263,140,263,168,138,166],"text":"Purchase","confidence":0.959},{"boundingBox":[271,140,351,140,351,168,272,168],"text":"Order","confidence":0.959}]},{"language":"en","boundingBox":[620,204,1073,201,1074,264,620,266],"text":"Hero
         Limited","words":[{"boundingBox":[622,207,788,204,787,266,621,266],"text":"Hero","confidence":0.959},{"boundingBox":[811,204,1075,202,1075,266,811,266],"text":"Limited","confidence":0.959}]},{"language":"en","boundingBox":[165,351,529,350,530,377,165,379],"text":"Company
         Phone: 555-348-6512","words":[{"boundingBox":[167,352,275,351,275,379,167,379],"text":"Company","confidence":0.959},{"boundingBox":[281,351,362,351,362,378,280,379],"text":"Phone:","confidence":0.958},{"boundingBox":[367,351,529,352,529,374,367,378],"text":"555-348-6512","confidence":0.946}]},{"language":"en","boundingBox":[1114,320,1551,320,1551,370,1114,370],"text":"Purchase
@@ -8501,11 +8501,11 @@ interactions:
         Swirl Marker","boundingBox":[156,1216,847,1216,847,1260,156,1260],"elements":["#/readResults/0/lines/37/words/0","#/readResults/0/lines/37/words/1","#/readResults/0/lines/37/words/2"]},{"rowIndex":4,"columnIndex":1,"text":"20","boundingBox":[847,1216,1072,1216,1072,1260,847,1260],"elements":["#/readResults/0/lines/38/words/0"]},{"rowIndex":4,"columnIndex":2,"text":"5,00","boundingBox":[1072,1216,1309,1216,1309,1260,1072,1260],"elements":["#/readResults/0/lines/39/words/0"]},{"rowIndex":4,"columnIndex":3,"text":"100.00","boundingBox":[1309,1216,1544,1216,1544,1260,1309,1260],"elements":["#/readResults/0/lines/40/words/0"]}]}]}]}}'
     headers:
       apim-request-id:
-      - e918f484-4b44-4158-9920-2b4805ae9986
+      - 86c15ac3-08ef-4ab1-9e94-297b2eccb202
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sun, 05 Apr 2020 00:41:29 GMT
+      - Wed, 15 Apr 2020 18:37:39 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -8513,7 +8513,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '60'
+      - '30'
     status:
       code: 200
       message: OK

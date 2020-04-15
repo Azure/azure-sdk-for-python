@@ -1,38 +1,31 @@
 interactions:
 - request:
-    body: '{"source": "https://krpraticstorageacc.blob.core.windows.net/form-recognizer-blobs/Invoice_1.pdf"}'
+    body: '{"source": "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/Invoice_1.pdf"}'
     headers:
       Content-Length:
-      - '98'
+      - '163'
       Content-Type:
       - application/json
       User-Agent:
       - azsdk-python-ai-formrecognizer/1.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
         Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: POST
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/layout/analyze
+    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/layout/analyze
   response:
     body:
       string: ''
     headers:
-      apim-request-id: 5982992e-6271-480f-a896-1639308afb4a
+      apim-request-id: 7729be50-a7c6-45c0-b96b-87928e8715d1
       content-length: '0'
-      date: Sun, 05 Apr 2020 00:07:34 GMT
-      operation-location: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/layout/analyzeResults/5982992e-6271-480f-a896-1639308afb4a
+      date: Wed, 15 Apr 2020 18:44:42 GMT
+      operation-location: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/layout/analyzeResults/7729be50-a7c6-45c0-b96b-87928e8715d1
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '534'
+      x-envoy-upstream-service-time: '279'
     status:
       code: 202
       message: Accepted
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - centraluseuap.api.cognitive.microsoft.com
-        - //formrecognizer/v2.0-preview/layout/analyze
-        - ''
-        - ''
+    url: https://westus.api.cognitive.microsoft.com//formrecognizer/v2.0-preview/layout/analyze
 - request:
     body: null
     headers:
@@ -40,10 +33,10 @@ interactions:
       - azsdk-python-ai-formrecognizer/1.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
         Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: GET
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/layout/analyzeResults/5982992e-6271-480f-a896-1639308afb4a
+    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/layout/analyzeResults/7729be50-a7c6-45c0-b96b-87928e8715d1
   response:
     body:
-      string: '{"status":"succeeded","createdDateTime":"2020-04-05T00:07:35Z","lastUpdatedDateTime":"2020-04-05T00:07:38Z","analyzeResult":{"version":"2.0.0","readResults":[{"page":1,"language":"en","angle":0,"width":8.5,"height":11,"unit":"inch","lines":[{"language":"en","boundingBox":[0.5384,1.1583,1.4466,1.1583,1.4466,1.3534,0.5384,1.3534],"text":"Contoso","words":[{"boundingBox":[0.5384,1.1583,1.4466,1.1583,1.4466,1.3534,0.5384,1.3534],"text":"Contoso","confidence":1}]},{"language":"en","boundingBox":[0.7994,1.5143,1.3836,1.5143,1.3836,1.6154,0.7994,1.6154],"text":"Address:","words":[{"boundingBox":[0.7994,1.5143,1.3836,1.5143,1.3836,1.6154,0.7994,1.6154],"text":"Address:","confidence":1}]},{"language":"en","boundingBox":[4.4033,1.5114,5.8155,1.5114,5.8155,1.6155,4.4033,1.6155],"text":"Invoice
+      string: '{"status":"succeeded","createdDateTime":"2020-04-15T18:44:43Z","lastUpdatedDateTime":"2020-04-15T18:44:47Z","analyzeResult":{"version":"2.0.0","readResults":[{"page":1,"language":"en","angle":0,"width":8.5,"height":11,"unit":"inch","lines":[{"language":"en","boundingBox":[0.5384,1.1583,1.4466,1.1583,1.4466,1.3534,0.5384,1.3534],"text":"Contoso","words":[{"boundingBox":[0.5384,1.1583,1.4466,1.1583,1.4466,1.3534,0.5384,1.3534],"text":"Contoso","confidence":1}]},{"language":"en","boundingBox":[0.7994,1.5143,1.3836,1.5143,1.3836,1.6154,0.7994,1.6154],"text":"Address:","words":[{"boundingBox":[0.7994,1.5143,1.3836,1.5143,1.3836,1.6154,0.7994,1.6154],"text":"Address:","confidence":1}]},{"language":"en","boundingBox":[4.4033,1.5114,5.8155,1.5114,5.8155,1.6155,4.4033,1.6155],"text":"Invoice
         For: Microsoft","words":[{"boundingBox":[4.4033,1.5143,4.8234,1.5143,4.8234,1.6155,4.4033,1.6155],"text":"Invoice","confidence":1},{"boundingBox":[4.8793,1.5143,5.1013,1.5143,5.1013,1.6154,4.8793,1.6154],"text":"For:","confidence":1},{"boundingBox":[5.2045,1.5114,5.8155,1.5114,5.8155,1.6151,5.2045,1.6151],"text":"Microsoft","confidence":1}]},{"language":"en","boundingBox":[0.8106,1.7033,2.1445,1.7033,2.1445,1.8342,0.8106,1.8342],"text":"1
         Redmond way Suite","words":[{"boundingBox":[0.8106,1.7080,0.8463,1.7080,0.8463,1.8053,0.8106,1.8053],"text":"1","confidence":1},{"boundingBox":[0.9230,1.7047,1.5018,1.7047,1.5018,1.8068,0.9230,1.8068],"text":"Redmond","confidence":1},{"boundingBox":[1.5506,1.7309,1.7949,1.7309,1.7949,1.8342,1.5506,1.8342],"text":"way","confidence":1},{"boundingBox":[1.8415,1.7033,2.1445,1.7033,2.1445,1.8078,1.8415,1.8078],"text":"Suite","confidence":1}]},{"language":"en","boundingBox":[5.2036,1.7160,6.5436,1.7160,6.5436,1.8459,5.2036,1.8459],"text":"1020
         Enterprise Way","words":[{"boundingBox":[5.2036,1.7160,5.4935,1.7160,5.4935,1.8185,5.2036,1.8185],"text":"1020","confidence":1},{"boundingBox":[5.5488,1.7164,6.2178,1.7164,6.2178,1.8441,5.5488,1.8441],"text":"Enterprise","confidence":1},{"boundingBox":[6.2618,1.7164,6.5436,1.7164,6.5436,1.8459,6.2618,1.8459],"text":"Way","confidence":1}]},{"language":"en","boundingBox":[0.8019,1.8960,2.0384,1.8960,2.0384,2.0171,0.8019,2.0171],"text":"6000
@@ -58,22 +51,15 @@ interactions:
         Due Date","boundingBox":[3.3074,2.8088,4.7074,2.8088,4.7074,3.3219,3.3074,3.3219],"elements":["#/readResults/0/lines/10/words/0","#/readResults/0/lines/10/words/1","#/readResults/0/lines/10/words/2"]},{"rowIndex":0,"columnIndex":3,"text":"Charges","boundingBox":[4.7074,2.8088,5.386,2.8088,5.386,3.3219,4.7074,3.3219],"elements":["#/readResults/0/lines/11/words/0"]},{"rowIndex":0,"columnIndex":5,"text":"VAT
         ID","boundingBox":[6.1051,2.8088,7.5038,2.8088,7.5038,3.3219,6.1051,3.3219],"elements":["#/readResults/0/lines/12/words/0","#/readResults/0/lines/12/words/1"]},{"rowIndex":1,"columnIndex":0,"text":"34278587","boundingBox":[0.5075,3.3219,1.9061,3.3219,1.9061,3.8590,0.5075,3.8590],"elements":["#/readResults/0/lines/13/words/0"]},{"rowIndex":1,"columnIndex":1,"text":"6/18/2017","boundingBox":[1.9061,3.3219,3.3074,3.3219,3.3074,3.8590,1.9061,3.8590],"elements":["#/readResults/0/lines/14/words/0"]},{"rowIndex":1,"columnIndex":2,"text":"6/24/2017","boundingBox":[3.3074,3.3219,4.7074,3.3219,4.7074,3.8590,3.3074,3.8590],"elements":["#/readResults/0/lines/15/words/0"]},{"rowIndex":1,"columnIndex":3,"columnSpan":2,"text":"$56,651.49","boundingBox":[4.7074,3.3219,6.1051,3.3219,6.1051,3.8590,4.7074,3.8590],"elements":["#/readResults/0/lines/16/words/0"]},{"rowIndex":1,"columnIndex":5,"text":"PT","boundingBox":[6.1051,3.3219,7.5038,3.3219,7.5038,3.8590,6.1051,3.8590],"elements":["#/readResults/0/lines/17/words/0"]}]}]}]}}'
     headers:
-      apim-request-id: dd738d73-6aab-4e2d-a19e-d259d03d2d58
+      apim-request-id: 5341c022-2069-4ceb-a247-81661bc223c6
       content-type: application/json; charset=utf-8
-      date: Sun, 05 Apr 2020 00:07:39 GMT
+      date: Wed, 15 Apr 2020 18:44:48 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '50'
+      x-envoy-upstream-service-time: '180'
     status:
       code: 200
       message: OK
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - centraluseuap.api.cognitive.microsoft.com
-        - /formrecognizer/v2.0-preview/layout/analyzeResults/5982992e-6271-480f-a896-1639308afb4a
-        - ''
-        - ''
+    url: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/layout/analyzeResults/7729be50-a7c6-45c0-b96b-87928e8715d1
 version: 1

@@ -4,29 +4,29 @@ interactions:
       false}, "useLabelFile": true}'''
     headers:
       Content-Length:
-      - '310'
+      - '308'
       Content-Type:
       - application/json
       User-Agent:
       - azsdk-python-ai-formrecognizer/1.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
         Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: POST
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models
+    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models
   response:
     body:
       string: ''
     headers:
-      apim-request-id: 2c9b3cca-bd46-4dfc-8b7f-6b148b97795c
+      apim-request-id: 86c60ded-b6e6-4bbc-9914-954aeee63608
       content-length: '0'
-      date: Tue, 14 Apr 2020 22:30:14 GMT
-      location: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/eef0f3d5-fefc-4f56-adee-6245be8c3a9f
+      date: Wed, 15 Apr 2020 19:15:37 GMT
+      location: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/a13aed5c-a106-4843-9feb-3fd9143353e7
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '30'
+      x-envoy-upstream-service-time: '5059'
     status:
       code: 201
       message: Created
-    url: https://centraluseuap.api.cognitive.microsoft.com//formrecognizer/v2.0-preview/custom/models
+    url: https://westus.api.cognitive.microsoft.com//formrecognizer/v2.0-preview/custom/models
 - request:
     body: null
     headers:
@@ -34,43 +34,20 @@ interactions:
       - azsdk-python-ai-formrecognizer/1.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
         Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: GET
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/eef0f3d5-fefc-4f56-adee-6245be8c3a9f?includeKeys=true
+    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/a13aed5c-a106-4843-9feb-3fd9143353e7?includeKeys=true
   response:
     body:
-      string: '{"modelInfo":{"modelId":"eef0f3d5-fefc-4f56-adee-6245be8c3a9f","status":"creating","createdDateTime":"2020-04-14T22:30:15Z","lastUpdatedDateTime":"2020-04-14T22:30:15Z"}}'
+      string: '{"modelInfo":{"modelId":"a13aed5c-a106-4843-9feb-3fd9143353e7","status":"ready","createdDateTime":"2020-04-15T19:15:37Z","lastUpdatedDateTime":"2020-04-15T19:15:39Z"},"trainResult":{"averageModelAccuracy":0.973,"trainingDocuments":[{"documentName":"Form_1.jpg","pages":1,"status":"succeeded"},{"documentName":"Form_2.jpg","pages":1,"status":"succeeded"},{"documentName":"Form_3.jpg","pages":1,"status":"succeeded"},{"documentName":"Form_4.jpg","pages":1,"status":"succeeded"},{"documentName":"Form_5.jpg","pages":1,"status":"succeeded"}],"fields":[{"fieldName":"CompanyAddress","accuracy":0.8},{"fieldName":"CompanyName","accuracy":1.0},{"fieldName":"CompanyPhoneNumber","accuracy":1.0},{"fieldName":"DatedAs","accuracy":1.0},{"fieldName":"Email","accuracy":0.8},{"fieldName":"Merchant","accuracy":1.0},{"fieldName":"PhoneNumber","accuracy":1.0},{"fieldName":"PurchaseOrderNumber","accuracy":1.0},{"fieldName":"Quantity","accuracy":1.0},{"fieldName":"Signature","accuracy":1.0},{"fieldName":"Subtotal","accuracy":1.0},{"fieldName":"Tax","accuracy":1.0},{"fieldName":"Total","accuracy":1.0},{"fieldName":"VendorName","accuracy":1.0},{"fieldName":"Website","accuracy":1.0}],"errors":[]}}'
     headers:
-      apim-request-id: ccfec301-9dc3-4eb4-9b7a-58448107e8b1
+      apim-request-id: 7acf4098-bd9f-484d-b23d-38b8631f366f
       content-type: application/json; charset=utf-8
-      date: Tue, 14 Apr 2020 22:30:20 GMT
+      date: Wed, 15 Apr 2020 19:15:42 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '24'
+      x-envoy-upstream-service-time: '125'
     status:
       code: 200
       message: OK
-    url: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/eef0f3d5-fefc-4f56-adee-6245be8c3a9f?includeKeys=true
-- request:
-    body: null
-    headers:
-      User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-        Python/3.7.3 (Windows-10-10.0.18362-SP0)
-    method: GET
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/eef0f3d5-fefc-4f56-adee-6245be8c3a9f?includeKeys=true
-  response:
-    body:
-      string: '{"modelInfo":{"modelId":"eef0f3d5-fefc-4f56-adee-6245be8c3a9f","status":"ready","createdDateTime":"2020-04-14T22:30:15Z","lastUpdatedDateTime":"2020-04-14T22:30:23Z"},"trainResult":{"averageModelAccuracy":0.973,"trainingDocuments":[{"documentName":"Form_1.jpg","pages":1,"status":"succeeded"},{"documentName":"Form_2.jpg","pages":1,"status":"succeeded"},{"documentName":"Form_3.jpg","pages":1,"status":"succeeded"},{"documentName":"Form_4.jpg","pages":1,"status":"succeeded"},{"documentName":"Form_5.jpg","pages":1,"status":"succeeded"}],"fields":[{"fieldName":"CompanyAddress","accuracy":0.8},{"fieldName":"CompanyName","accuracy":1.0},{"fieldName":"CompanyPhoneNumber","accuracy":1.0},{"fieldName":"DatedAs","accuracy":1.0},{"fieldName":"Email","accuracy":0.8},{"fieldName":"Merchant","accuracy":1.0},{"fieldName":"PhoneNumber","accuracy":1.0},{"fieldName":"PurchaseOrderNumber","accuracy":1.0},{"fieldName":"Quantity","accuracy":1.0},{"fieldName":"Signature","accuracy":1.0},{"fieldName":"Subtotal","accuracy":1.0},{"fieldName":"Tax","accuracy":1.0},{"fieldName":"Total","accuracy":1.0},{"fieldName":"VendorName","accuracy":1.0},{"fieldName":"Website","accuracy":1.0}],"errors":[]}}'
-    headers:
-      apim-request-id: cb3d5b55-23da-490e-add2-4d087e72bb09
-      content-type: application/json; charset=utf-8
-      date: Tue, 14 Apr 2020 22:30:45 GMT
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      transfer-encoding: chunked
-      x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '20117'
-    status:
-      code: 200
-      message: OK
-    url: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/eef0f3d5-fefc-4f56-adee-6245be8c3a9f?includeKeys=true
+    url: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/a13aed5c-a106-4843-9feb-3fd9143353e7?includeKeys=true
 version: 1

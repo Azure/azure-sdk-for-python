@@ -7,7 +7,8 @@
 import functools
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import HttpResponseError, ServiceRequestError
-from azure.ai.formrecognizer.aio import FormRecognizerClient, FormTrainingClient
+from azure.ai.formrecognizer import FormContentType
+from azure.ai.formrecognizer.aio import FormRecognizerClient
 from azure.ai.formrecognizer._generated.models import AnalyzeOperationResult
 from azure.ai.formrecognizer._response_handlers import prepare_form_result
 from testcase import GlobalFormRecognizerAccountPreparer, GlobalFormAndStorageAccountPreparer
@@ -66,7 +67,7 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
         with open(self.form_jpg, "rb") as fd:
             myfile = fd.read()
 
-        form = await client.recognize_custom_forms(model.model_id, myfile)
+        form = await client.recognize_custom_forms(model.model_id, myfile, content_type=FormContentType.image_jpeg)
 
         self.assertEqual(form[0].form_type, "form-0")
         self.assertFormPagesHasValues(form[0].pages)
@@ -88,7 +89,7 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
         with open(self.form_jpg, "rb") as fd:
             myfile = fd.read()
 
-        form = await client.recognize_custom_forms(model.model_id, myfile)
+        form = await client.recognize_custom_forms(model.model_id, myfile, content_type=FormContentType.image_jpeg)
 
         self.assertEqual(form[0].form_type, "form-"+model.model_id)
         self.assertFormPagesHasValues(form[0].pages)

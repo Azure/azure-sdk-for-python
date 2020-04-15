@@ -236,6 +236,10 @@ class FormRecognizerTest(AzureTestCase):
                 self.assertTextContentHasValues(item.name.value_data.text_content, page_number)
                 self.assertTextContentHasValues(item.name.value_data.text_content, page_number)
                 self.assertTextContentHasValues(item.name.value_data.text_content, page_number)
+            else:
+                self.assertIsNone(item.name.value_data.text_content)
+                self.assertIsNone(item.name.value_data.text_content)
+                self.assertIsNone(item.name.value_data.text_content)
 
     def assertBoundingBoxHasPoints(self, box):
         if box is None:

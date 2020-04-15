@@ -10,28 +10,21 @@ interactions:
       - azsdk-python-ai-formrecognizer/1.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
         Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: POST
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/prebuilt/receipt/analyze?includeTextDetails=false
+    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/prebuilt/receipt/analyze?includeTextDetails=false
   response:
     body:
-      string: '{"error":{"code":"FailedToDownloadImage","innerError":{"requestId":"6b8eb116-0e11-4185-9727-c7a59fa3e748"},"message":"Failed
+      string: '{"error":{"code":"FailedToDownloadImage","innerError":{"requestId":"20b1bd46-7905-4cc3-9394-f3e6c938505b"},"message":"Failed
         to download image from input URL."}}'
     headers:
-      apim-request-id: 6b8eb116-0e11-4185-9727-c7a59fa3e748
+      apim-request-id: 20b1bd46-7905-4cc3-9394-f3e6c938505b
       content-type: application/json; charset=utf-8
-      date: Sat, 04 Apr 2020 18:01:37 GMT
+      date: Wed, 15 Apr 2020 19:05:52 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '3085'
+      x-envoy-upstream-service-time: '3153'
     status:
       code: 400
       message: Bad Request
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - centraluseuap.api.cognitive.microsoft.com
-        - //formrecognizer/v2.0-preview/prebuilt/receipt/analyze
-        - includeTextDetails=false
-        - ''
+    url: https://westus.api.cognitive.microsoft.com//formrecognizer/v2.0-preview/prebuilt/receipt/analyze?includeTextDetails=false
 version: 1

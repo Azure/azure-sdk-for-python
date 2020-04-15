@@ -7,7 +7,7 @@
 import functools
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import HttpResponseError, ServiceRequestError
-from azure.ai.formrecognizer import FormRecognizerClient
+from azure.ai.formrecognizer import FormRecognizerClient, FormContentType
 from azure.ai.formrecognizer._generated.models import AnalyzeOperationResult
 from azure.ai.formrecognizer._response_handlers import prepare_form_result
 from testcase import FormRecognizerTest, GlobalFormRecognizerAccountPreparer, GlobalFormAndStorageAccountPreparer
@@ -66,7 +66,11 @@ class TestCustomForms(FormRecognizerTest):
         with open(self.form_jpg, "rb") as fd:
             myfile = fd.read()
 
-        poller = client.begin_recognize_custom_forms(model.model_id, myfile)
+        poller = client.begin_recognize_custom_forms(
+            model.model_id,
+            myfile,
+            content_type=FormContentType.image_jpeg
+        )
         form = poller.result()
 
         self.assertEqual(form[0].form_type, "form-0")
@@ -84,13 +88,16 @@ class TestCustomForms(FormRecognizerTest):
     def test_custom_form_labeled(self, client, container_sas_url):
         training_client = client.get_form_training_client()
 
-        poller = training_client.begin_training(container_sas_url, use_labels=True)
+        poller = training_client.begin_training(
+            container_sas_url,
+            use_labels=True
+        )
         model = poller.result()
 
         with open(self.form_jpg, "rb") as fd:
             myfile = fd.read()
 
-        poller = client.begin_recognize_custom_forms(model.model_id, myfile)
+        poller = client.begin_recognize_custom_forms(model.model_id, myfile, content_type=FormContentType.image_jpeg)
         form = poller.result()
 
         self.assertEqual(form[0].form_type, "form-"+model.model_id)
