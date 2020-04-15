@@ -10,7 +10,7 @@
 FILE: sample_recognize_receipts_from_url_async.py
 
 DESCRIPTION:
-    This sample demonstrates how to analyze receipts from a URL.
+    This sample demonstrates how to recognize US sales receipts from a URL.
 
 USAGE:
     python sample_recognize_receipts_from_url_async.py
@@ -48,7 +48,8 @@ class RecognizeReceiptsFromURLSampleAsync(object):
                 for item in receipt.receipt_items:
                     print("Item Name: {}\nconfidence: {}".format(item.name.value, item.name.confidence))
                     print("Item Quantity: {}\nconfidence: {}".format(item.quantity.value, item.quantity.confidence))
-                    print("Total Price: {}\nconfidence: {}\n".format(item.total_price.value, item.total_price.confidence))
+                    print("Individual Item Price: {}\nconfidence: {}".format(item.price.value, item.price.confidence))
+                    print("Total Item Price: {}\nconfidence: {}\n".format(item.total_price.value, item.total_price.confidence))
                 print("Subtotal: {}\nconfidence: {}\n".format(receipt.subtotal.value, receipt.subtotal.confidence))
                 print("Tax: {}\nconfidence: {}\n".format(receipt.tax.value, receipt.tax.confidence))
                 print("Tip: {}\nconfidence: {}\n".format(receipt.tip.value, receipt.tip.confidence))
