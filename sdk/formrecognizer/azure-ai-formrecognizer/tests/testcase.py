@@ -430,7 +430,7 @@ def form_recognizer_account():
         random_name_enabled=True,
         kind="formrecognizer",
         name_prefix='pycog',
-        location="centraluseuap"
+        location="westus"
     )
 
     try:
@@ -461,7 +461,7 @@ def form_recognizer_and_storage_account():
         random_name_enabled=True,
         kind="formrecognizer",
         name_prefix='pycog',
-        location="centraluseuap"
+        location="westus"
     )
     storage_account_preparer = StorageAccountPreparer(
         random_name_enabled=True,
