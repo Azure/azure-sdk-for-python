@@ -1,11 +1,11 @@
 # Azure Form Recognizer client library for Python
 
-Azure Cognitive Services Form Recognizer is a cloud service that uses machine learning to extract text and table data
+Azure Cognitive Services Form Recognizer is a cloud service that uses machine learning to recognize text and table data
 from form documents. Form Recognizer is made up of the following services:
 
-* Custom models - Extract name/value pairs and table data from forms. These models are trained with your own data, so they're tailored to your forms.
-* Prebuilt receipt model - Extract data from USA sales receipts using a prebuilt model.
-* Layout API - Extract text and table structures, along with their bounding box coordinates, from documents.
+* Prebuilt receipt model - Recognize data from USA sales receipts using a prebuilt model.
+* Custom models - Recognize name/value pairs and table data from forms. These models are trained with your own data, so they're tailored to your forms. You can then take these custom models and recognize forms. You can also manage the custom models you've created and see how close you are to the limit of custom models your account can hold.
+* Content API - Recognize text and table structures, along with their bounding box coordinates, from documents.
 
 [Source code][python-fr-src] | [Package (PyPI)][python-fr-pypi] | [API reference documentation][python-fr-ref-docs]| [Product documentation][python-fr-product-docs] | [Samples][python-fr-samples]
 
@@ -86,7 +86,7 @@ client = FormRecognizerClient(endpoint, credential)
 
 ### FormRecognizerClient
 A `FormRecognizerClient` is the Form Recognizer interface to use for analyzing receipts, recognizing content from
-forms, and recognizing data from forms using custom trained models.  It provides different methods
+forms, and recognizing data from forms using custom trained models. It provides different methods
 based on inputs from a URL and inputs from a stream.
 
 ### FormTrainingClient
@@ -99,13 +99,13 @@ Long-running operations are operations which consist of an initial request sent 
 followed by polling the service at intervals to determine whether the operation has completed or failed, and if it has
 succeeded, to get the result.
 
-Methods that train models or recognize values from forms are modeled as long-running operations.  The client exposes
-a `begin_<method-name>` method that returns an `LROPoller`.  Callers should wait for the operation to complete by
-calling `result()` on the operation returned from the `begin_<method-name>` method.  Sample code snippets are provided
+Methods that train models or recognize values from forms are modeled as long-running operations. The client exposes
+a `begin_<method-name>` method that returns an `LROPoller`. Callers should wait for the operation to complete by
+calling `result()` on the operation returned from the `begin_<method-name>` method. Sample code snippets are provided
 to illustrate using long-running operations [below](#Examples).
 
 ### Training models
-Using the `FormTrainingClient`, you can train a machine-learned model on your own form type.  The resulting model will
+Using the `FormTrainingClient`, you can train a machine-learned model on your own form type. The resulting model will
 be able to recognize values from the types of forms it was trained on.
 
 #### Training without labels
@@ -125,17 +125,17 @@ This approach can result in better-performing models, and those models can work 
 
 ### Recognizing values from forms
 Using the `FormRecognizerClient`, you can use your own trained models to recognize field values and locations, as well as
-table data, from forms of the type you trained your models on.  The output of models trained with and without labels
+table data, from forms of the type you trained your models on. The output of models trained with and without labels
 differs as described below.
 
 #### Using models trained without labels
-Models trained without labels consider each form page to be a different form type.  For example, if you train your
-model on 3-page forms, it will learn that these are three different types of forms.  When you send a form to it for
+Models trained without labels consider each form page to be a different form type. For example, if you train your
+model on 3-page forms, it will learn that these are three different types of forms. When you send a form to it for
 analysis, it will return a collection of three pages, where each page contains the field names, values, and locations,
 as well as table data, found on that page.
 
 #### Using models trained with labels
-Models trained with labels consider a form as a single unit.  For example, if you train your model on 3-page forms
+Models trained with labels consider a form as a single unit. For example, if you train your model on 3-page forms
 with labels, it will learn to recognize field values from the locations you've labeled across all pages in the form.
 If you sent a document containing two forms to it for analysis, it would return a collection of two forms,
 where each form contains the field names, values, and locations, as well as table data, found in that form.
@@ -377,7 +377,7 @@ with Form Recognizer and require Python 3.5 or later.
 For more extensive documentation on Azure Cognitive Services Form Recognizer, see the [Form Recognizer documentation][python-fr-product-docs] on docs.microsoft.com.
 
 ## Contributing
-This project welcomes contributions and suggestions.  Most contributions require you to agree to a Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us the rights to use your contribution. For details, visit [cla.microsoft.com][cla].
+This project welcomes contributions and suggestions. Most contributions require you to agree to a Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us the rights to use your contribution. For details, visit [cla.microsoft.com][cla].
 
 When you submit a pull request, a CLA-bot will automatically determine whether you need to provide a CLA and decorate the PR appropriately (e.g., label, comment). Simply follow the instructions provided by the bot. You will only need to do this once across all repos using our CLA.
 
