@@ -4,7 +4,7 @@
 # ------------------------------------
 import os
 import json
-import win32cred
+from win32cred import CredRead
 from azure.core.exceptions import ClientAuthenticationError
 from .._constants import (
     VSCODE_CREDENTIALS_SECTION,
@@ -15,7 +15,7 @@ from .._internal.aad_client import AadClient
 
 def _read_credential(service_name, account_name):
     target = u"{}/{}".format(service_name, account_name)
-    res = win32cred.CredRead(
+    res = CredRead(
         TargetName=target, Type=0x1)
     cred = res["CredentialBlob"].decode('utf-16')
     return cred
@@ -31,7 +31,7 @@ def _get_user_settings():
             data = json.load(file)
             environment_name = data.get("azure.cloud", "Azure")
             return environment_name
-    except: #pylint: disable=broad-except
+    except IOError:
         return "Azure"
 
 class WinVSCodeCredential(object):
