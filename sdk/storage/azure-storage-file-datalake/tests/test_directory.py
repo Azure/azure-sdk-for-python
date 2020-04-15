@@ -334,11 +334,9 @@ class DirectoryTest(StorageTestCase):
         source_directory_client = source_directory_client.create_sub_directory("subdir")
 
         # rename dir2 under file system2 to dir1 under file system1
-        res = source_directory_client.rename_directory('/' + destination_file_system_name + '/' + destination_dir_name, permissions="0777", umask="0000")
+        res = source_directory_client.rename_directory('/' + destination_file_system_name + '/' + destination_dir_name)
 
         # the source directory has been renamed to destination directory, so it cannot be found
-        resp = res.get_access_control()
-
         with self.assertRaises(HttpResponseError):
             source_directory_client.get_directory_properties()
 
