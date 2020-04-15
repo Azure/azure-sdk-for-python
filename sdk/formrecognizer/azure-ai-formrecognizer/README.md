@@ -180,7 +180,8 @@ print("Receipt items:")
 for item in r.receipt_items:
     print("Item Name: {}\nconfidence: {}".format(item.name.value, item.name.confidence))
     print("Item Quantity: {}\nconfidence: {}".format(item.quantity.value, item.quantity.confidence))
-    print("Total Price: {}\nconfidence: {}\n".format(item.total_price.value, item.total_price.confidence))
+    print("Individual Item Price: {}\nconfidence: {}".format(item.price.value, item.price.confidence))
+    print("Total Item Price: {}\nconfidence: {}\n".format(item.total_price.value, item.total_price.confidence))
 print("Subtotal: {}\nconfidence: {}\n".format(r.subtotal.value, r.subtotal.confidence))
 print("Tax: {}\nconfidence: {}\n".format(r.tax.value, r.tax.confidence))
 print("Tip: {}\nconfidence: {}\n".format(r.tip.value, r.tip.confidence))
@@ -245,7 +246,7 @@ for doc in model.training_documents:
 ```
 
 ### Recognize Forms Using a Custom Model
-Recognize name/value pairs and table data from forms. These models are trained with your own data, so they're tailored to your forms.
+Recognize name/value pairs and table data from forms. These models are trained with your own data, so they're tailored to your forms. You should only recognize forms of the same form type that the custom model was trained on.
 
 ```python
 from azure.ai.formrecognizer import FormRecognizerClient
@@ -254,7 +255,8 @@ from azure.core.credentials import AzureKeyCredential
 client = FormRecognizerClient(endpoint, AzureKeyCredential(key))
 model_id = "<model id from the above sample>"
 
-with open("sample_forms/forms/Form_1.jpg", "rb") as fd:
+# Make sure the form type is the same type as the forms your custom model was trained on
+with open("<path to your form>", "rb") as fd:
     form = fd.read()
 
 poller = client.begin_recognize_custom_forms(model_id=model_id, stream=form)
