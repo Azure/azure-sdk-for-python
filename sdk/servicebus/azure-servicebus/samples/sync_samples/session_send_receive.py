@@ -60,7 +60,7 @@ if __name__ == '__main__':
 
         print("Send message is done.")
 
-        receiver = servicebus_client.get_queue_receiver(queue_name=QUEUE_NAME, session_id=SESSION_ID, prefetch=10)
+        receiver = servicebus_client.get_queue_session_receiver(queue_name=QUEUE_NAME, session_id=SESSION_ID, prefetch=10)
         with receiver:
             receive_batch_message(receiver)
 

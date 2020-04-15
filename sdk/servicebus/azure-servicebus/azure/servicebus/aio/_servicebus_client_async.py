@@ -10,6 +10,7 @@ from .._base_handler import _parse_conn_str
 from ._base_handler_async import ServiceBusSharedKeyCredential
 from ._servicebus_sender_async import ServiceBusSender
 from ._servicebus_receiver_async import ServiceBusReceiver
+from ._servicebus_session_receiver_async import ServiceBusSessionReceiver
 from .._common._configuration import Configuration
 from ._async_utils import create_authentication
 
@@ -157,7 +158,7 @@ class ServiceBusClient(object):
 
         """
         # pylint: disable=protected-access
-        sender = ServiceBusSender(
+        return ServiceBusSender(
             fully_qualified_namespace=self.fully_qualified_namespace,
             queue_name=queue_name,
             credential=self._credential,
@@ -167,8 +168,6 @@ class ServiceBusClient(object):
             connection=self._connection,
             **kwargs
         )
-
-        return sender
 
     def get_queue_receiver(self, queue_name, **kwargs):
         # type: (str, Any) -> ServiceBusReceiver
@@ -181,10 +180,6 @@ class ServiceBusClient(object):
          will be immediately removed from the queue, and cannot be subsequently rejected or re-received if
          the client fails to process the message. The default mode is PeekLock.
         :paramtype mode: ~azure.servicebus.ReceiveSettleMode
-        :keyword session_id: A specific session from which to receive. This must be specified for a
-         sessionful entity, otherwise it must be None. In order to receive messages from the next available
-         session, set this to NEXT_AVAILABLE.
-        :paramtype session_id: str or ~azure.servicebus.NEXT_AVAILABLE
         :keyword int prefetch: The maximum number of messages to cache with each request to the service.
          The default value is 0, meaning messages will be received from the service and processed
          one at a time. Increasing this value will improve message throughput performance but increase
@@ -208,7 +203,7 @@ class ServiceBusClient(object):
 
         """
         # pylint: disable=protected-access
-        receiver = ServiceBusReceiver(
+        return ServiceBusReceiver(
             fully_qualified_namespace=self.fully_qualified_namespace,
             queue_name=queue_name,
             credential=self._credential,
@@ -218,8 +213,6 @@ class ServiceBusClient(object):
             connection=self._connection,
             **kwargs
         )
-
-        return receiver
 
     def get_topic_sender(self, topic_name, **kwargs):
         # type: (str, Any) -> ServiceBusSender
@@ -243,7 +236,7 @@ class ServiceBusClient(object):
                 :caption: Create a new instance of the ServiceBusSender from ServiceBusClient.
 
         """
-        sender = ServiceBusSender(
+        return ServiceBusSender(
             fully_qualified_namespace=self.fully_qualified_namespace,
             topic_name=topic_name,
             credential=self._credential,
@@ -253,8 +246,6 @@ class ServiceBusClient(object):
             connection=self._connection,
             **kwargs
         )
-
-        return sender
 
     def get_subscription_receiver(self, topic_name, subscription_name, **kwargs):
         # type: (str, str, Any) -> ServiceBusReceiver
@@ -269,10 +260,6 @@ class ServiceBusClient(object):
          will be immediately removed from the subscription, and cannot be subsequently rejected or re-received if
          the client fails to process the message. The default mode is PeekLock.
         :paramtype mode: ~azure.servicebus.ReceiveSettleMode
-        :keyword session_id: A specific session from which to receive. This must be specified for a
-         sessionful entity, otherwise it must be None. In order to receive messages from the next available
-         session, set this to NEXT_AVAILABLE.
-        :paramtype session_id: str or ~azure.servicebus.NEXT_AVAILABLE
         :keyword int prefetch: The maximum number of messages to cache with each request to the service.
          The default value is 0, meaning messages will be received from the service and processed
          one at a time. Increasing this value will improve message throughput performance but increase
@@ -298,7 +285,7 @@ class ServiceBusClient(object):
 
         """
         # pylint: disable=protected-access
-        receiver = ServiceBusReceiver(
+        return ServiceBusReceiver(
             fully_qualified_namespace=self.fully_qualified_namespace,
             topic_name=topic_name,
             subscription_name=subscription_name,
@@ -310,4 +297,105 @@ class ServiceBusClient(object):
             **kwargs
         )
 
-        return receiver
+    def get_subscription_session_receiver(self, topic_name, subscription_name, session_id=None, **kwargs):
+        # type: (str, str, Any) -> ServiceBusReceiver
+        """Get ServiceBusReceiver for the specific subscription under the topic.
+
+        :param str topic_name: The name of specific Service Bus Topic the client connects to.
+        :param str subscription_name: The name of specific Service Bus Subscription
+         under the given Service Bus Topic.
+        :param str session_id: A specific session from which to receive. This must be specified for a
+         sessionful entity, otherwise it must be None. In order to receive messages from the next available
+         session, set this to None.  The default is None.
+        :keyword mode: The mode with which messages will be retrieved from the entity. The two options
+         are PeekLock and ReceiveAndDelete. Messages received with PeekLock must be settled within a given
+         lock period before they will be removed from the subscription. Messages received with ReceiveAndDelete
+         will be immediately removed from the subscription, and cannot be subsequently rejected or re-received if
+         the client fails to process the message. The default mode is PeekLock.
+        :paramtype mode: ~azure.servicebus.ReceiveSettleMode
+        :keyword int prefetch: The maximum number of messages to cache with each request to the service.
+         The default value is 0, meaning messages will be received from the service and processed
+         one at a time. Increasing this value will improve message throughput performance but increase
+         the change that messages will expire while they are cached if they're not processed fast enough.
+        :keyword float idle_timeout: The timeout in seconds between received messages after which the receiver will
+         automatically shutdown. The default value is 0, meaning no timeout.
+        :keyword int retry_total: The total number of attempts to redo a failed operation when an error occurs.
+         Default value is 3.
+        :keyword float retry_backoff_factor: Delta back-off internal in the unit of second between retries.
+         Default value is 0.8.
+        :keyword float retry_backoff_max: Maximum back-off interval in the unit of second. Default value is 120.
+        :rtype: ~azure.servicebus.ServiceBusReceiver
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_code_servicebus_async.py
+                :start-after: [START create_subscription_receiver_from_sb_client_async]
+                :end-before: [END create_subscription_receiver_from_sb_client_async]
+                :language: python
+                :dedent: 4
+                :caption: Create a new instance of the ServiceBusReceiver from ServiceBusClient.
+
+
+        """
+        # pylint: disable=protected-access
+        return ServiceBusSessionReceiver(
+            fully_qualified_namespace=self.fully_qualified_namespace,
+            topic_name=topic_name,
+            subscription_name=subscription_name,
+            credential=self._credential,
+            logging_enable=self._config.logging_enable,
+            transport_type=self._config.transport_type,
+            http_proxy=self._config.http_proxy,
+            connection=self._connection,
+            session_id=session_id,
+            **kwargs
+        )
+
+    def get_queue_session_receiver(self, queue_name, session_id=None, **kwargs):
+        # type: (str, str, Any) -> ServiceBusSessionReceiver
+        """Get ServiceBusSessionReceiver for the specific queue.
+
+        :param str queue_name: The path of specific Service Bus Queue the client connects to.
+        :param str session_id: A specific session from which to receive. This must be specified for a
+         sessionful entity, otherwise it must be None. In order to receive messages from the next available
+         session, set this to None.  The default is None.
+        :keyword mode: The mode with which messages will be retrieved from the entity. The two options
+         are PeekLock and ReceiveAndDelete. Messages received with PeekLock must be settled within a given
+         lock period before they will be removed from the queue. Messages received with ReceiveAndDelete
+         will be immediately removed from the queue, and cannot be subsequently rejected or re-received if
+         the client fails to process the message. The default mode is PeekLock.
+        :paramtype mode: ~azure.servicebus.ReceiveSettleMode
+        :keyword int prefetch: The maximum number of messages to cache with each request to the service.
+         The default value is 0, meaning messages will be received from the service and processed
+         one at a time. Increasing this value will improve message throughput performance but increase
+         the change that messages will expire while they are cached if they're not processed fast enough.
+        :keyword float idle_timeout: The timeout in seconds between received messages after which the receiver will
+         automatically shutdown. The default value is 0, meaning no timeout.
+        :keyword int retry_total: The total number of attempts to redo a failed operation when an error occurs.
+         Default value is 3.
+        :rtype: ~azure.servicebus.aio.ServiceBusSessionReceiver
+        :raises: :class:`ServiceBusConnectionError`
+         :class:`ServiceBusAuthorizationError`
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_code_servicebus_async.py
+                :start-after: [START create_servicebus_sender_from_sb_client_async]
+                :end-before: [END create_servicebus_sender_from_sb_client_async]
+                :language: python
+                :dedent: 4
+                :caption: Create a new instance of the ServiceBusSender from ServiceBusClient.
+
+        """
+        # pylint: disable=protected-access
+        return ServiceBusSessionReceiver(
+            fully_qualified_namespace=self.fully_qualified_namespace,
+            queue_name=queue_name,
+            credential=self._credential,
+            logging_enable=self._config.logging_enable,
+            connection=self._connection,
+            session_id=session_id,
+            transport_type=self._config.transport_type,
+            http_proxy=self._config.http_proxy,
+            **kwargs
+        )

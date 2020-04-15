@@ -10,7 +10,9 @@ __version__ = VERSION
 
 from ._servicebus_client import ServiceBusClient
 from ._servicebus_sender import ServiceBusSender
-from ._servicebus_receiver import ServiceBusReceiver, ServiceBusSession
+from ._servicebus_receiver import ServiceBusReceiver
+from ._servicebus_session_receiver import ServiceBusSessionReceiver
+from ._servicebus_session import ServiceBusSession
 from ._base_handler import ServiceBusSharedKeyCredential
 from ._common.message import Message, BatchMessage, PeekMessage, ReceivedMessage
 from ._common.constants import ReceiveSettleMode, NEXT_AVAILABLE
@@ -28,7 +30,8 @@ from .exceptions import (
     MessageLockExpired,
     SessionLockExpired,
     AutoLockRenewFailed,
-    AutoLockRenewTimeout,)
+    AutoLockRenewTimeout
+)
 
 
 TransportType = constants.TransportType
@@ -55,9 +58,10 @@ __all__ = [
     'AutoLockRenewTimeout',
     'ServiceBusClient',
     'ServiceBusReceiver',
+    'ServiceBusSessionReceiver',
+    'ServiceBusSession',
     'ServiceBusSender',
     'ServiceBusSharedKeyCredential',
     'TransportType',
-    'AutoLockRenew',
-    'ServiceBusSession'
+    'AutoLockRenew'
 ]
