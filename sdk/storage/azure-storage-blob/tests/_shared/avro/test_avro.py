@@ -9,7 +9,7 @@
 import inspect
 import os
 import unittest
-from io import open
+from io import BytesIO, open
 from azure.storage.blob._shared.avro.datafile import DataFileReader
 from azure.storage.blob._shared.avro.avro_io import DatumReader
 
@@ -77,6 +77,23 @@ class AvroReaderTests(unittest.TestCase):
                 with open(file_path, 'rb') as reader:
                     datum_reader = DatumReader()
                     with DataFileReader(reader, datum_reader) as dfr:
+                        round_trip_data = list(dfr)
+                        if ([datum] * nitems) == round_trip_data:
+                            correct += 1
+        self.assertEqual(
+            correct,
+            len(CODECS_TO_VALIDATE) * len(SCHEMAS_TO_VALIDATE))
+
+    def test_reader_with_bytes_io(self):
+        correct = 0
+        nitems = 10
+        for iexample, (writer_schema, datum) in enumerate(SCHEMAS_TO_VALIDATE):
+            for codec in CODECS_TO_VALIDATE:
+                file_path = os.path.join(AvroReaderTests._samples_dir_root, 'test_' + codec + '_' + str(iexample) + '.avro')
+                with open(file_path, 'rb') as reader:
+                    data = BytesIO(reader.read())
+                    datum_reader = DatumReader()
+                    with DataFileReader(data, datum_reader) as dfr:
                         round_trip_data = list(dfr)
                         if ([datum] * nitems) == round_trip_data:
                             correct += 1

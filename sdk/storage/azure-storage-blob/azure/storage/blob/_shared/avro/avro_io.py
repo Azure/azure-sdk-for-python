@@ -148,6 +148,8 @@ class BinaryDecoder(object):
         """
         assert (n >= 0), n
         input_bytes = self.reader.read(n)
+        if n > 0 and not input_bytes:
+            raise StopIteration
         assert (len(input_bytes) == n), input_bytes
         return input_bytes
 

@@ -110,8 +110,6 @@ class DataFileReader(object):
         if self.codec not in VALID_CODECS:
             raise DataFileException('Unknown codec: %s.' % self.codec)
 
-        self._file_length = self._GetInputFileLength()
-
         # get ready to read
         self._block_count = 0
         self.datum_reader.writer_schema = (
@@ -153,11 +151,6 @@ class DataFileReader(object):
     def meta(self):
         return self._meta
 
-    @property
-    def file_length(self):
-        """Length of the input file, in bytes."""
-        return self._file_length
-
     # read/write properties
     @property
     def block_count(self):
@@ -183,23 +176,6 @@ class DataFileReader(object):
         if isinstance(value, str):
             value = value.encode('utf-8')
         self._meta[key] = value
-
-    def _GetInputFileLength(self):
-        """Reports the length of the input file, in bytes.
-
-        Leaves the current position unmodified.
-
-        Returns:
-          The length of the input file, in bytes.
-        """
-        current_pos = self.reader.tell()
-        self.reader.seek(0, 2)
-        file_length = self.reader.tell()
-        self.reader.seek(current_pos)
-        return file_length
-
-    def is_EOF(self):
-        return self.reader.tell() == self.file_length
 
     def _read_header(self):
         # seek to the beginning of the file to get magic block
@@ -244,6 +220,8 @@ class DataFileReader(object):
         return True. Otherwise, seek back to where we started and return False.
         """
         proposed_sync_marker = self.reader.read(SYNC_SIZE)
+        if SYNC_SIZE > 0 and not proposed_sync_marker:
+            raise StopIteration
         if proposed_sync_marker != self.sync_marker:
             self.reader.seek(-SYNC_SIZE, 1)
             return False
@@ -252,11 +230,7 @@ class DataFileReader(object):
     def __next__(self):
         """Return the next datum in the file."""
         if self.block_count == 0:
-            if self.is_EOF():
-                raise StopIteration
             if self._skip_sync():
-                if self.is_EOF():
-                    raise StopIteration
                 self._read_block_header()
             else:
                 self._read_block_header()
