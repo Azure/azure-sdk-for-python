@@ -13,8 +13,8 @@ from ..._constants import (
 from .._internal.aad_client import AadClient
 try:
     from ..._credentials.win_vscode_credential import _read_credential, _get_user_settings
-except ImportError: # pylint:disable=try-except-raise
-    raise
+except ImportError:
+    pass
 
 class WinVSCodeCredential(AsyncCredentialBase):
     """Authenticates by redeeming a refresh token previously saved by VS Code

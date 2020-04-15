@@ -13,8 +13,8 @@ from .._constants import (
 from .._internal.aad_client import AadClient
 try:
     from win32cred import CredRead
-except ImportError: # pylint:disable=try-except-raise
-    raise
+except ImportError:
+    pass
 
 def _read_credential(service_name, account_name):
     target = u"{}/{}".format(service_name, account_name)
