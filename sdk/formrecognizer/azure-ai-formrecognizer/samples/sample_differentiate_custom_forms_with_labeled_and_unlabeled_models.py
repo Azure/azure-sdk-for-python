@@ -38,6 +38,8 @@ class DifferentiateCustomFormsWithLabeledAndUnlabeledModels(object):
         form_recognizer_client = FormRecognizerClient(
             endpoint=self.endpoint, credential=AzureKeyCredential(self.key)
         )
+
+        # The form you are recognizing must be of the same type as the forms the custom model was trained on
         with open("sample_forms/forms/Form_1.jpg", "rb") as f:
             stream = f.read()
         forms_with_labeled_model = form_recognizer_client.begin_recognize_custom_forms(

@@ -40,6 +40,8 @@ class GetValidationInfoSampleAsync(object):
         async with FormRecognizerClient(
             endpoint=self.endpoint, credential=AzureKeyCredential(self.key)
         ) as form_recognizer_client:
+
+            # The form you are recognizing must be of the same type as the forms the custom model was trained on
             with open(path_to_sample_forms, "rb") as f:
                 forms = await form_recognizer_client.recognize_custom_forms(
                     model_id=self.model_id, stream=f.read(), include_text_content=True
