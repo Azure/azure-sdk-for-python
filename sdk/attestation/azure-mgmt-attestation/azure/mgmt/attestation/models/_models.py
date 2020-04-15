@@ -147,6 +147,22 @@ class AttestationProvider(TrackedResource):
         self.attest_uri = kwargs.get('attest_uri', None)
 
 
+class AttestationProviderListResult(Model):
+    """Attestation Providers List.
+
+    :param value: Attestation Provider array.
+    :type value: list[~azure.mgmt.attestation.models.AttestationProvider]
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[AttestationProvider]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(AttestationProviderListResult, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+
+
 class AttestationServiceCreationParams(Model):
     """Parameters for creating an attestation service instance.
 

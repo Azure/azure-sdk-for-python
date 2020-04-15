@@ -11,6 +11,7 @@
 
 try:
     from ._models_py3 import AttestationProvider
+    from ._models_py3 import AttestationProviderListResult
     from ._models_py3 import AttestationServiceCreationParams
     from ._models_py3 import AttestationServiceCreationSpecificParams
     from ._models_py3 import AttestationServicePatchParams
@@ -25,6 +26,7 @@ try:
     from ._models_py3 import TrackedResource
 except (SyntaxError, ImportError):
     from ._models import AttestationProvider
+    from ._models import AttestationProviderListResult
     from ._models import AttestationServiceCreationParams
     from ._models import AttestationServiceCreationSpecificParams
     from ._models import AttestationServicePatchParams
@@ -43,6 +45,7 @@ from ._attestation_management_client_enums import (
 
 __all__ = [
     'AttestationProvider',
+    'AttestationProviderListResult',
     'AttestationServiceCreationParams',
     'AttestationServiceCreationSpecificParams',
     'AttestationServicePatchParams',

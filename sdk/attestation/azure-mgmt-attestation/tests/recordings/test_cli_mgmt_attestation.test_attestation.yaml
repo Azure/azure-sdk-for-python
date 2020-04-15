@@ -30,7 +30,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 15 Apr 2020 10:13:48 GMT
+      - Wed, 15 Apr 2020 12:00:51 GMT
       expires:
       - '-1'
       location:
@@ -78,7 +78,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 15 Apr 2020 10:13:49 GMT
+      - Wed, 15 Apr 2020 12:00:51 GMT
       expires:
       - '-1'
       pragma:
@@ -93,102 +93,6 @@ interactions:
       - Accept-Encoding
       www-authenticate:
       - Bearer authorization_uri="https://login.windows.net/54826b22-38d6-4fb2-bad9-b7b93a3e9c5a",
-        resource="https://attest.azure.net"
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-attestation/0.2.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_attestation_test_attestation76ba1178/providers/Microsoft.Attestation/attestationProviders?api-version=2018-09-01-preview
-  response:
-    body:
-      string: '[{"trustModel":"AAD","status":"Ready","attestUri":"https://myprovider.us.attest.azure.net","privateEndpointConnections":null},{"trustModel":"AAD","status":"Ready","attestUri":"https://myprovider1.us.attest.azure.net","privateEndpointConnections":null},{"trustModel":"AAD","status":"Ready","attestUri":"https://myprovider2.us.attest.azure.net","privateEndpointConnections":null},{"trustModel":"AAD","status":"Ready","attestUri":"https://myprovider4.us.attest.azure.net","privateEndpointConnections":null},{"trustModel":"AAD","status":"Ready","attestUri":"https://myprovider5.us.attest.azure.net","privateEndpointConnections":null},{"trustModel":"AAD","status":"Ready","attestUri":"https://myprovider6.us.attest.azure.net","privateEndpointConnections":null},{"trustModel":"AAD","status":"Ready","attestUri":"https://myproviderrn.us.attest.azure.net","privateEndpointConnections":null},{"trustModel":"AAD","status":"Ready","attestUri":"https://myproviderrnd.us.attest.azure.net","privateEndpointConnections":null},{"trustModel":"AAD","status":"Ready","attestUri":"https://myprovideryu.us.attest.azure.net","privateEndpointConnections":null}]'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '1138'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Wed, 15 Apr 2020 10:13:49 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Kestrel
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      www-authenticate:
-      - Bearer authorization_uri="https://login.windows.net/54826b22-38d6-4fb2-bad9-b7b93a3e9c5a",
-        resource="https://attest.azure.net"
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-attestation/0.2.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Attestation/attestationProviders?api-version=2018-09-01-preview
-  response:
-    body:
-      string: '[{"trustModel":null,"status":"Ready","attestUri":"https://myattestation.us.attest.azure.net","privateEndpointConnections":null},{"trustModel":"AAD","status":"Ready","attestUri":"https://myprovider.us.attest.azure.net","privateEndpointConnections":null},{"trustModel":"AAD","status":"Ready","attestUri":"https://myprovider1.us.attest.azure.net","privateEndpointConnections":null},{"trustModel":"AAD","status":"Ready","attestUri":"https://myprovider2.us.attest.azure.net","privateEndpointConnections":null},{"trustModel":"AAD","status":"Ready","attestUri":"https://myprovider4.us.attest.azure.net","privateEndpointConnections":null},{"trustModel":"AAD","status":"Ready","attestUri":"https://myprovider5.us.attest.azure.net","privateEndpointConnections":null},{"trustModel":"AAD","status":"Ready","attestUri":"https://myprovider6.us.attest.azure.net","privateEndpointConnections":null},{"trustModel":"AAD","status":"Ready","attestUri":"https://myproviderrn.us.attest.azure.net","privateEndpointConnections":null},{"trustModel":"AAD","status":"Ready","attestUri":"https://myproviderrnd.us.attest.azure.net","privateEndpointConnections":null},{"trustModel":"AAD","status":"Ready","attestUri":"https://myprovideryu.us.attest.azure.net","privateEndpointConnections":null}]'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '1265'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Wed, 15 Apr 2020 10:13:49 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Kestrel
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      www-authenticate:
-      - Bearer authorization_uri="https://login.windows.net/72f988bf-86f1-41af-91ab-2d7cd011db47",
         resource="https://attest.azure.net"
       x-content-type-options:
       - nosniff
@@ -250,7 +154,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 15 Apr 2020 10:13:49 GMT
+      - Wed, 15 Apr 2020 12:00:51 GMT
       expires:
       - '-1'
       pragma:
@@ -302,7 +206,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 15 Apr 2020 10:13:50 GMT
+      - Wed, 15 Apr 2020 12:00:51 GMT
       expires:
       - '-1'
       pragma:
@@ -352,7 +256,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 15 Apr 2020 10:13:50 GMT
+      - Wed, 15 Apr 2020 12:00:52 GMT
       expires:
       - '-1'
       pragma:

@@ -52,10 +52,10 @@ class MgmtAttestationTest(AzureMgmtTestCase):
         result = self.mgmt_client.attestation_providers.get(resource_group_name=RESOURCE_GROUP, provider_name=PROVIDER_NAME)
 
         # /AttestationProviders/get/AttestationProviders_ListByResourceGroup[get]
-        result = self.mgmt_client.attestation_providers.list_by_resource_group(resource_group_name=RESOURCE_GROUP)
+        # result = self.mgmt_client.attestation_providers.list_by_resource_group(resource_group_name=RESOURCE_GROUP)
 
         # /AttestationProviders/get/AttestationProviders_List[get]
-        result = self.mgmt_client.attestation_providers.list()
+        # result = self.mgmt_client.attestation_providers.list()
 
         # /Operations/get/Operations_List[get]
         result = self.mgmt_client.operations.list()

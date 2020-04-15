@@ -306,9 +306,10 @@ class AttestationProvidersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: list or ClientRawResponse if raw=true
-        :rtype: list[~azure.mgmt.attestation.models.AttestationProvider] or
-         ~msrest.pipeline.ClientRawResponse
+        :return: AttestationProviderListResult or ClientRawResponse if
+         raw=true
+        :rtype: ~azure.mgmt.attestation.models.AttestationProviderListResult
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -343,7 +344,7 @@ class AttestationProvidersOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('[AttestationProvider]', response)
+            deserialized = self._deserialize('AttestationProviderListResult', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -364,9 +365,10 @@ class AttestationProvidersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: list or ClientRawResponse if raw=true
-        :rtype: list[~azure.mgmt.attestation.models.AttestationProvider] or
-         ~msrest.pipeline.ClientRawResponse
+        :return: AttestationProviderListResult or ClientRawResponse if
+         raw=true
+        :rtype: ~azure.mgmt.attestation.models.AttestationProviderListResult
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -402,7 +404,7 @@ class AttestationProvidersOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('[AttestationProvider]', response)
+            deserialized = self._deserialize('AttestationProviderListResult', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
