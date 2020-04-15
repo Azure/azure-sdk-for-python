@@ -4,7 +4,6 @@
 # ------------------------------------
 import os
 import json
-import sys
 from azure.core.exceptions import ClientAuthenticationError
 from .._constants import (
     VSCODE_CREDENTIALS_SECTION,
@@ -14,7 +13,7 @@ from .._constants import (
 from .._internal.aad_client import AadClient
 try:
     from win32cred import CredRead
-except ImportError:
+except ImportError: # pylint:disable=try-except-raise
     raise
 
 def _read_credential(service_name, account_name):
