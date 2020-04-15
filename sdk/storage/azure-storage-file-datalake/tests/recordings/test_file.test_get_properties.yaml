@@ -11,11 +11,11 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-dfs/12.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-dfs/12.0.1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-client-request-id:
-      - d98a7f34-ff4f-11e9-b804-001a7dda7113
+      - 812bb6ee-7925-11ea-b70b-001a7dda7113
       x-ms-date:
-      - Mon, 04 Nov 2019 22:10:02 GMT
+      - Tue, 07 Apr 2020 23:14:17 GMT
       x-ms-properties:
       - ''
       x-ms-version:
@@ -29,15 +29,15 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Mon, 04 Nov 2019 22:10:02 GMT
+      - Tue, 07 Apr 2020 23:14:17 GMT
       ETag:
-      - '"0x8D76173BDE3A554"'
+      - '"0x8D7DB496584E6C8"'
       Last-Modified:
-      - Mon, 04 Nov 2019 22:10:03 GMT
+      - Tue, 07 Apr 2020 23:14:17 GMT
       Server:
       - Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-id:
-      - 94389b96-301f-0049-475c-930f7f000000
+      - 1267393c-601f-0019-5a32-0dcd2f000000
       x-ms-version:
       - '2019-02-02'
     status:
@@ -55,15 +55,15 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-dfs/12.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-dfs/12.0.1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-client-request-id:
-      - d9b82802-ff4f-11e9-83a7-001a7dda7113
+      - 815c107a-7925-11ea-94a4-001a7dda7113
       x-ms-content-disposition:
       - inline
       x-ms-content-language:
       - spanish
       x-ms-date:
-      - Mon, 04 Nov 2019 22:10:03 GMT
+      - Tue, 07 Apr 2020 23:14:17 GMT
       x-ms-properties:
       - hello=d29ybGQ=,number=NDI=
       x-ms-version:
@@ -77,15 +77,15 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Mon, 04 Nov 2019 22:10:03 GMT
+      - Tue, 07 Apr 2020 23:14:17 GMT
       ETag:
-      - '"0x8D76173BDF7DCD5"'
+      - '"0x8D7DB4965950E81"'
       Last-Modified:
-      - Mon, 04 Nov 2019 22:10:03 GMT
+      - Tue, 07 Apr 2020 23:14:17 GMT
       Server:
       - Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-id:
-      - 94389b97-301f-0049-485c-930f7f000000
+      - 12673944-601f-0019-6232-0dcd2f000000
       x-ms-version:
       - '2019-02-02'
     status:
@@ -105,11 +105,11 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - azsdk-python-storage-dfs/12.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-dfs/12.0.1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-client-request-id:
-      - d9cb2c74-ff4f-11e9-b894-001a7dda7113
+      - 816c0af8-7925-11ea-9c27-001a7dda7113
       x-ms-date:
-      - Mon, 04 Nov 2019 22:10:03 GMT
+      - Tue, 07 Apr 2020 23:14:18 GMT
       x-ms-version:
       - '2019-02-02'
     method: PATCH
@@ -121,11 +121,11 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Mon, 04 Nov 2019 22:10:03 GMT
+      - Tue, 07 Apr 2020 23:14:17 GMT
       Server:
       - Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-id:
-      - 94389b98-301f-0049-495c-930f7f000000
+      - 1267394f-601f-0019-6d32-0dcd2f000000
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
@@ -145,11 +145,11 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-dfs/12.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-dfs/12.0.1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-client-request-id:
-      - d9d92db6-ff4f-11e9-b3a2-001a7dda7113
+      - 81785e94-7925-11ea-8f95-001a7dda7113
       x-ms-date:
-      - Mon, 04 Nov 2019 22:10:03 GMT
+      - Tue, 07 Apr 2020 23:14:18 GMT
       x-ms-version:
       - '2019-02-02'
     method: PATCH
@@ -161,15 +161,15 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Mon, 04 Nov 2019 22:10:03 GMT
+      - Tue, 07 Apr 2020 23:14:17 GMT
       ETag:
-      - '"0x8D76173BE121F0A"'
+      - '"0x8D7DB4965AF41F3"'
       Last-Modified:
-      - Mon, 04 Nov 2019 22:10:03 GMT
+      - Tue, 07 Apr 2020 23:14:18 GMT
       Server:
       - Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-id:
-      - 94389b99-301f-0049-4a5c-930f7f000000
+      - 12673956-601f-0019-7432-0dcd2f000000
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
@@ -187,15 +187,15 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-dfs/12.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-dfs/12.0.1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-client-request-id:
-      - d9e58152-ff4f-11e9-96e1-001a7dda7113
+      - 81864de4-7925-11ea-9ac1-001a7dda7113
       x-ms-date:
-      - Mon, 04 Nov 2019 22:10:03 GMT
+      - Tue, 07 Apr 2020 23:14:18 GMT
       x-ms-version:
-      - '2019-02-02'
+      - '2019-07-07'
     method: HEAD
-    uri: https://storagename.blob.core.windows.net/filesystemb1e10bf9/directoryb1e10bf9%2Fnewfile
+    uri: https://storagename.blob.core.windows.net/filesystemb1e10bf9/directoryb1e10bf9/newfile
   response:
     body:
       string: ''
@@ -211,11 +211,11 @@ interactions:
       Content-Type:
       - application/octet-stream
       Date:
-      - Mon, 04 Nov 2019 22:10:02 GMT
+      - Tue, 07 Apr 2020 23:14:17 GMT
       ETag:
-      - '"0x8D76173BE121F0A"'
+      - '"0x8D7DB4965AF41F3"'
       Last-Modified:
-      - Mon, 04 Nov 2019 22:10:03 GMT
+      - Tue, 07 Apr 2020 23:14:18 GMT
       Server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-access-tier:
@@ -225,7 +225,7 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-creation-time:
-      - Mon, 04 Nov 2019 22:10:03 GMT
+      - Tue, 07 Apr 2020 23:14:17 GMT
       x-ms-lease-state:
       - available
       x-ms-lease-status:
@@ -235,11 +235,11 @@ interactions:
       x-ms-meta-number:
       - '42'
       x-ms-request-id:
-      - 69069d84-101e-0071-665c-93abbf000000
+      - 9d5a3a20-401e-0053-1f32-0d6ea0000000
       x-ms-server-encrypted:
       - 'true'
       x-ms-version:
-      - '2019-02-02'
+      - '2019-07-07'
     status:
       code: 200
       message: OK
