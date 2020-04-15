@@ -396,6 +396,8 @@ class PathClient(StorageAccountHostsMixin):
         # type: (Optional[ContentSettings], Optional[Dict[str, str]], **Any) -> Dict[str, Any]
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
+        if metadata or kwargs.pop('permissions', None) or kwargs.pop('umask', None):
+            raise ValueError("metadata, permissions, umask is not supported for this operation")
 
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         source_lease_id = get_lease_id(kwargs.pop('source_lease', None))
@@ -408,9 +410,9 @@ class PathClient(StorageAccountHostsMixin):
 
         options = {
             'rename_source': rename_source,
-            'properties': add_metadata_headers(metadata),
-            'permissions': kwargs.pop('permissions', None),
-            'umask': kwargs.pop('umask', None),
+            'properties': None,
+            'permissions': None,
+            'umask': None,
             'path_http_headers': path_http_headers,
             'lease_access_conditions': access_conditions,
             'source_lease_id': source_lease_id,
@@ -431,31 +433,17 @@ class PathClient(StorageAccountHostsMixin):
         :param rename_source:
             The value must have the following format: "/{filesystem}/{path}".
         :type rename_source: str
+        :keyword ~azure.storage.filedatalake.ContentSettings content_settings:
+            ContentSettings object used to set path properties.
         :keyword source_lease:
             A lease ID for the source path. If specified,
             the source path must have an active lease and the leaase ID must
             match.
         :paramtype source_lease: ~azure.storage.filedatalake.DataLakeLeaseClient or str
-        :keyword ~azure.storage.filedatalake.ContentSettings content_settings:
-            ContentSettings object used to set path properties.
         :keyword lease:
             Required if the file/directory has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
         :paramtype lease: ~azure.storage.filedatalake.DataLakeLeaseClient or str
-        :keyword str umask: Optional and only valid if Hierarchical Namespace is enabled for the account.
-            When creating a file or directory and the parent folder does not have a default ACL,
-            the umask restricts the permissions of the file or directory to be created.
-            The resulting permission is given by p & ^u, where p is the permission and u is the umask.
-            For example, if p is 0777 and u is 0057, then the resulting permission is 0720.
-            The default permission is 0777 for a directory and 0666 for a file. The default umask is 0027.
-            The umask must be specified in 4-digit octal notation (e.g. 0766).
-        :keyword permissions: Optional and only valid if Hierarchical Namespace
-         is enabled for the account. Sets POSIX access permissions for the file
-         owner, the file owning group, and others. Each class may be granted
-         read, write, or execute permission.  The sticky bit is also supported.
-         Both symbolic (rwxrw-rw-) and 4-digit octal notation (e.g. 0766) are
-         supported.
-        :type permissions: str
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
