@@ -27,7 +27,7 @@ class PrivateLinkScopedResourcesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version to use for this operation. Constant value: "2019-10-17-preview".
+    :ivar api_version: Client Api Version. Constant value: "2019-10-17-preview".
     """
 
     models = models
@@ -45,11 +45,10 @@ class PrivateLinkScopedResourcesOperations(object):
             self, resource_group_name, scope_name, name, custom_headers=None, raw=False, **operation_config):
         """Gets a scoped resource in a private link scope.
 
-        :param resource_group_name: The name of the resource group. The name
-         is case insensitive.
+        :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param scope_name: Name of the Azure Monitor PrivateLinkScope that
-         will contain the datasource
+        :param scope_name: The name of the Azure Monitor PrivateLinkScope
+         resource.
         :type scope_name: str
         :param name: The name of the scoped resource object.
         :type name: str
@@ -66,8 +65,8 @@ class PrivateLinkScopedResourcesOperations(object):
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'scopeName': self._serialize.url("scope_name", scope_name, 'str'),
             'name': self._serialize.url("name", name, 'str')
         }
@@ -75,7 +74,7 @@ class PrivateLinkScopedResourcesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -109,14 +108,14 @@ class PrivateLinkScopedResourcesOperations(object):
 
 
     def _create_or_update_initial(
-            self, resource_group_name, scope_name, name, tags=None, linked_resource_id=None, custom_headers=None, raw=False, **operation_config):
-        parameters = models.ScopedResource(tags=tags, linked_resource_id=linked_resource_id)
+            self, resource_group_name, scope_name, name, linked_resource_id=None, custom_headers=None, raw=False, **operation_config):
+        parameters = models.ScopedResource(linked_resource_id=linked_resource_id)
 
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'scopeName': self._serialize.url("scope_name", scope_name, 'str'),
             'name': self._serialize.url("name", name, 'str')
         }
@@ -124,7 +123,7 @@ class PrivateLinkScopedResourcesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -144,7 +143,7 @@ class PrivateLinkScopedResourcesOperations(object):
         request = self._client.put(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 202]:
+        if response.status_code not in [200, 201, 202]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
@@ -152,6 +151,8 @@ class PrivateLinkScopedResourcesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
+            deserialized = self._deserialize('ScopedResource', response)
+        if response.status_code == 201:
             deserialized = self._deserialize('ScopedResource', response)
 
         if raw:
@@ -161,19 +162,16 @@ class PrivateLinkScopedResourcesOperations(object):
         return deserialized
 
     def create_or_update(
-            self, resource_group_name, scope_name, name, tags=None, linked_resource_id=None, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, scope_name, name, linked_resource_id=None, custom_headers=None, raw=False, polling=True, **operation_config):
         """Approve or reject a private endpoint connection with a given name.
 
-        :param resource_group_name: The name of the resource group. The name
-         is case insensitive.
+        :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param scope_name: Name of the Azure Monitor PrivateLinkScope that
-         will contain the datasource
+        :param scope_name: The name of the Azure Monitor PrivateLinkScope
+         resource.
         :type scope_name: str
         :param name: The name of the scoped resource object.
         :type name: str
-        :param tags: Resource tags
-        :type tags: dict[str, str]
         :param linked_resource_id: The resource id of the scoped Azure monitor
          resource.
         :type linked_resource_id: str
@@ -194,7 +192,6 @@ class PrivateLinkScopedResourcesOperations(object):
             resource_group_name=resource_group_name,
             scope_name=scope_name,
             name=name,
-            tags=tags,
             linked_resource_id=linked_resource_id,
             custom_headers=custom_headers,
             raw=True,
@@ -225,8 +222,8 @@ class PrivateLinkScopedResourcesOperations(object):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'scopeName': self._serialize.url("scope_name", scope_name, 'str'),
             'name': self._serialize.url("name", name, 'str')
         }
@@ -234,7 +231,7 @@ class PrivateLinkScopedResourcesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -262,11 +259,10 @@ class PrivateLinkScopedResourcesOperations(object):
             self, resource_group_name, scope_name, name, custom_headers=None, raw=False, polling=True, **operation_config):
         """Deletes a private endpoint connection with a given name.
 
-        :param resource_group_name: The name of the resource group. The name
-         is case insensitive.
+        :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param scope_name: Name of the Azure Monitor PrivateLinkScope that
-         will contain the datasource
+        :param scope_name: The name of the Azure Monitor PrivateLinkScope
+         resource.
         :type scope_name: str
         :param name: The name of the scoped resource object.
         :type name: str
@@ -308,11 +304,10 @@ class PrivateLinkScopedResourcesOperations(object):
             self, resource_group_name, scope_name, custom_headers=None, raw=False, **operation_config):
         """Gets all private endpoint connections on a private link scope.
 
-        :param resource_group_name: The name of the resource group. The name
-         is case insensitive.
+        :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param scope_name: Name of the Azure Monitor PrivateLinkScope that
-         will contain the datasource
+        :param scope_name: The name of the Azure Monitor PrivateLinkScope
+         resource.
         :type scope_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -329,15 +324,15 @@ class PrivateLinkScopedResourcesOperations(object):
                 # Construct URL
                 url = self.list_by_private_link_scope.metadata['url']
                 path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
                     'scopeName': self._serialize.url("scope_name", scope_name, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link

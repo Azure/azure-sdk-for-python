@@ -85,6 +85,17 @@ def example_create_servicebus_sender_sync():
     with servicebus_client:
         queue_sender = servicebus_client.get_queue_sender(queue_name=queue_name)
     # [END create_servicebus_sender_from_sb_client_sync]
+
+    # [START create_topic_sender_from_sb_client_sync]
+    import os
+    from azure.servicebus import ServiceBusClient
+    servicebus_connection_str = os.environ['SERVICE_BUS_CONNECTION_STR']
+    topic_name = os.environ['SERVICE_BUS_TOPIC_NAME']
+    servicebus_client = ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str)
+    with servicebus_client:
+        queue_sender = servicebus_client.get_topic_sender(topic_name=topic_name)
+    # [END create_topic_sender_from_sb_client_sync]
+
     return queue_sender
 
 
@@ -128,6 +139,20 @@ def example_create_servicebus_receiver_sync():
     with servicebus_client:
         queue_receiver = servicebus_client.get_queue_receiver(queue_name=queue_name)
     # [END create_servicebus_receiver_from_sb_client_sync]
+
+    # [START create_subscription_receiver_from_sb_client_sync]
+    import os
+    from azure.servicebus import ServiceBusClient
+    servicebus_connection_str = os.environ['SERVICE_BUS_CONNECTION_STR']
+    topic_name = os.environ["SERVICE_BUS_TOPIC_NAME"]
+    subscription_name = os.environ["SERVICE_BUS_SUBSCRIPTION_NAME"]
+    servicebus_client = ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str)
+    with servicebus_client:
+        subscription_receiver = servicebus_client.get_subscription_receiver(
+            topic_name=topic_name,
+            subscription_name=subscription_name,
+        )
+    # [END create_subscription_receiver_from_sb_client_sync]
 
     return queue_receiver
 
@@ -233,24 +258,24 @@ def example_session_ops_sync():
 
     with ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str) as servicebus_client:
         # [START get_session_sync]
-        with servicebus_client.get_queue_receiver(queue_name=queue_name, session_id=session_id) as receiver:
+        with servicebus_client.get_queue_session_receiver(queue_name=queue_name, session_id=session_id) as receiver:
             session = receiver.session
         # [END get_session_sync]
 
         # [START get_session_state_sync]
-        with servicebus_client.get_queue_receiver(queue_name=queue_name, session_id=session_id) as receiver:
+        with servicebus_client.get_queue_session_receiver(queue_name=queue_name, session_id=session_id) as receiver:
             session = receiver.session
             session_state = session.get_session_state()
         # [END get_session_state_sync]
 
         # [START set_session_state_sync]
-        with servicebus_client.get_queue_receiver(queue_name=queue_name, session_id=session_id) as receiver:
+        with servicebus_client.get_queue_session_receiver(queue_name=queue_name, session_id=session_id) as receiver:
             session = receiver.session
             session_state = session.set_session_state("START")
         # [END set_session_state_sync]
 
         # [START session_renew_lock_sync]
-        with servicebus_client.get_queue_receiver(queue_name=queue_name, session_id=session_id) as receiver:
+        with servicebus_client.get_queue_session_receiver(queue_name=queue_name, session_id=session_id) as receiver:
             session = receiver.session
             session_state = session.renew_lock()
         # [END session_renew_lock_sync]
@@ -259,7 +284,7 @@ def example_session_ops_sync():
         from azure.servicebus import AutoLockRenew
 
         lock_renewal = AutoLockRenew(max_workers=4)
-        with servicebus_client.get_queue_receiver(queue_name=queue_name, session_id=session_id) as receiver:
+        with servicebus_client.get_queue_session_receiver(queue_name=queue_name, session_id=session_id) as receiver:
             session = receiver.session
             # Auto renew session lock for 2 minutes
             lock_renewal.register(session, timeout=120)

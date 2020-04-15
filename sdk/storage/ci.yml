@@ -59,3 +59,5 @@ stages:
       safeName: azuremgmtstoragecache
     - name: azure_mgmt_storagesync
       safeName: azuremgmtstoragesync
+    - name: azure_mgmt_storageimportexport
+      safeName: azuremgmtstorageimportexport

@@ -38,14 +38,13 @@ async def suggest_query():
 
     query = SuggestQuery(search_text="coffee", suggester_name="sg")
 
-    results = await search_client.suggest(query=query)
+    async with search_client:
+        results = await search_client.suggest(query=query)
 
-    print("Search suggestions for 'coffee'")
-    for result in results:
-        hotel = await search_client.get_document(key=result["HotelId"])
-        print("    Text: {} for Hotel: {}".format(repr(result["text"]), hotel["HotelName"]))
-
-    await search_client.close()
+        print("Search suggestions for 'coffee'")
+        for result in results:
+            hotel = await search_client.get_document(key=result["HotelId"])
+            print("    Text: {} for Hotel: {}".format(repr(result["text"]), hotel["HotelName"]))
     # [END suggest_query_async]
 
 if __name__ == '__main__':

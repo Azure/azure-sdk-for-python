@@ -27,7 +27,7 @@ class PrivateEndpointConnectionsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version to use for this operation. Constant value: "2019-10-17-preview".
+    :ivar api_version: Client Api Version. Constant value: "2019-10-17-preview".
     """
 
     models = models
@@ -45,11 +45,10 @@ class PrivateEndpointConnectionsOperations(object):
             self, resource_group_name, scope_name, private_endpoint_connection_name, custom_headers=None, raw=False, **operation_config):
         """Gets a private endpoint connection.
 
-        :param resource_group_name: The name of the resource group. The name
-         is case insensitive.
+        :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param scope_name: Name of the Azure Monitor PrivateLinkScope that
-         will contain the datasource
+        :param scope_name: The name of the Azure Monitor PrivateLinkScope
+         resource.
         :type scope_name: str
         :param private_endpoint_connection_name: The name of the private
          endpoint connection.
@@ -68,8 +67,8 @@ class PrivateEndpointConnectionsOperations(object):
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'scopeName': self._serialize.url("scope_name", scope_name, 'str'),
             'privateEndpointConnectionName': self._serialize.url("private_endpoint_connection_name", private_endpoint_connection_name, 'str')
         }
@@ -77,7 +76,7 @@ class PrivateEndpointConnectionsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -111,12 +110,14 @@ class PrivateEndpointConnectionsOperations(object):
 
 
     def _create_or_update_initial(
-            self, resource_group_name, scope_name, private_endpoint_connection_name, parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, scope_name, private_endpoint_connection_name, private_endpoint=None, private_link_service_connection_state=None, custom_headers=None, raw=False, **operation_config):
+        parameters = models.PrivateEndpointConnection(private_endpoint=private_endpoint, private_link_service_connection_state=private_link_service_connection_state)
+
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'scopeName': self._serialize.url("scope_name", scope_name, 'str'),
             'privateEndpointConnectionName': self._serialize.url("private_endpoint_connection_name", private_endpoint_connection_name, 'str')
         }
@@ -124,7 +125,7 @@ class PrivateEndpointConnectionsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -161,21 +162,25 @@ class PrivateEndpointConnectionsOperations(object):
         return deserialized
 
     def create_or_update(
-            self, resource_group_name, scope_name, private_endpoint_connection_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, scope_name, private_endpoint_connection_name, private_endpoint=None, private_link_service_connection_state=None, custom_headers=None, raw=False, polling=True, **operation_config):
         """Approve or reject a private endpoint connection with a given name.
 
-        :param resource_group_name: The name of the resource group. The name
-         is case insensitive.
+        :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param scope_name: Name of the Azure Monitor PrivateLinkScope that
-         will contain the datasource
+        :param scope_name: The name of the Azure Monitor PrivateLinkScope
+         resource.
         :type scope_name: str
         :param private_endpoint_connection_name: The name of the private
          endpoint connection.
         :type private_endpoint_connection_name: str
-        :param parameters:
-        :type parameters:
-         ~azure.mgmt.monitor.v2019_10_17.models.PrivateEndpointConnection
+        :param private_endpoint: Private endpoint which the connection belongs
+         to.
+        :type private_endpoint:
+         ~azure.mgmt.monitor.v2019_10_17.models.PrivateEndpointProperty
+        :param private_link_service_connection_state: Connection state of the
+         private endpoint connection.
+        :type private_link_service_connection_state:
+         ~azure.mgmt.monitor.v2019_10_17.models.PrivateLinkServiceConnectionStateProperty
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -194,7 +199,8 @@ class PrivateEndpointConnectionsOperations(object):
             resource_group_name=resource_group_name,
             scope_name=scope_name,
             private_endpoint_connection_name=private_endpoint_connection_name,
-            parameters=parameters,
+            private_endpoint=private_endpoint,
+            private_link_service_connection_state=private_link_service_connection_state,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
@@ -224,8 +230,8 @@ class PrivateEndpointConnectionsOperations(object):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'scopeName': self._serialize.url("scope_name", scope_name, 'str'),
             'privateEndpointConnectionName': self._serialize.url("private_endpoint_connection_name", private_endpoint_connection_name, 'str')
         }
@@ -233,7 +239,7 @@ class PrivateEndpointConnectionsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -261,11 +267,10 @@ class PrivateEndpointConnectionsOperations(object):
             self, resource_group_name, scope_name, private_endpoint_connection_name, custom_headers=None, raw=False, polling=True, **operation_config):
         """Deletes a private endpoint connection with a given name.
 
-        :param resource_group_name: The name of the resource group. The name
-         is case insensitive.
+        :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param scope_name: Name of the Azure Monitor PrivateLinkScope that
-         will contain the datasource
+        :param scope_name: The name of the Azure Monitor PrivateLinkScope
+         resource.
         :type scope_name: str
         :param private_endpoint_connection_name: The name of the private
          endpoint connection.
@@ -308,11 +313,10 @@ class PrivateEndpointConnectionsOperations(object):
             self, resource_group_name, scope_name, custom_headers=None, raw=False, **operation_config):
         """Gets all private endpoint connections on a private link scope.
 
-        :param resource_group_name: The name of the resource group. The name
-         is case insensitive.
+        :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param scope_name: Name of the Azure Monitor PrivateLinkScope that
-         will contain the datasource
+        :param scope_name: The name of the Azure Monitor PrivateLinkScope
+         resource.
         :type scope_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -329,15 +333,15 @@ class PrivateEndpointConnectionsOperations(object):
                 # Construct URL
                 url = self.list_by_private_link_scope.metadata['url']
                 path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
                     'scopeName': self._serialize.url("scope_name", scope_name, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link

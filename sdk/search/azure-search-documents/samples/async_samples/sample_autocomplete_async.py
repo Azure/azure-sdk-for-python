@@ -38,13 +38,12 @@ async def autocomplete_query():
 
     query = AutocompleteQuery(search_text="bo", suggester_name="sg")
 
-    results = await search_client.autocomplete(query=query)
+    async with search_client:
+        results = await search_client.autocomplete(query=query)
 
-    print("Autocomplete suggestions for 'bo'")
-    for result in results:
-        print("    Completion: {}".format(result["text"]))
-
-    await search_client.close()
+        print("Autocomplete suggestions for 'bo'")
+        for result in results:
+            print("    Completion: {}".format(result["text"]))
     # [END autocomplete_query_async]
 
 if __name__ == '__main__':

@@ -96,7 +96,7 @@ else:
 nspkg_packages = [p for p in packages.keys() if "nspkg" in p]
 nspkg_packages.sort(key=lambda x: len([c for c in x if c == "-"]))
 
-# Manually push meta-packages at the end, in reverse dependency order
+# Meta-packages to ignore
 meta_packages = ["azure-keyvault", "azure-mgmt", "azure"]
 
 content_packages = sorted(
