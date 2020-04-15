@@ -4,28 +4,18 @@
 # ------------------------------------
 import os
 import json
+from msal_extensions.osx import Keychain
 from .._exceptions import CredentialUnavailableError
 from .._constants import (
     VSCODE_CREDENTIALS_SECTION,
     AZURE_VSCODE_CLIENT_ID,
 )
 from .._internal.aad_client import AadClient
-try:
-    from win32cred import CredRead
-except ImportError:
-    pass
-
-
-def _read_credential(service_name, account_name):
-    target = u"{}/{}".format(service_name, account_name)
-    res = CredRead(TargetName=target, Type=0x1)
-    cred = res["CredentialBlob"].decode('utf-16')
-    return cred
 
 
 def _get_user_settings_path():
-    app_data_folder = os.environ['APPDATA']
-    return os.path.join(app_data_folder, "Code", "User", "settings.json")
+    app_data_folder = os.environ['USERPROFILE']
+    return os.path.join(app_data_folder, "Library", "Application Support", "Code", "User", "settings.json")
 
 
 def _get_user_settings():
@@ -35,14 +25,14 @@ def _get_user_settings():
             data = json.load(file)
             environment_name = data.get("azure.cloud", "Azure")
             return environment_name
-    except IOError:
+    except:  # pylint: disable=broad-except
         return "Azure"
 
 
-class WinVSCodeCredential(object):
+class MacOSVSCodeCredential(object):
     """Authenticates by redeeming a refresh token previously saved by VS Code
 
-        """
+            """
     def __init__(self, **kwargs):
         self._client = kwargs.pop("client", None) or AadClient("organizations", AZURE_VSCODE_CLIENT_ID, **kwargs)
 
@@ -52,8 +42,9 @@ class WinVSCodeCredential(object):
 
         .. note:: This method is called by Azure SDK clients. It isn't intended for use in application code.
 
-        When this method is called, the credential will try to get the refresh token saved by VS Code. If a refresh
-        token can be found, it will redeem the refresh token for an access token and return the access token.
+        The first time this method is called, the credential will redeem its authorization code. On subsequent calls
+        the credential will return a cached access token or redeem a refresh token, if it acquired a refresh token upon
+        redeeming the authorization code.
 
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
         :rtype: :class:`azure.core.credentials.AccessToken`
@@ -63,7 +54,8 @@ class WinVSCodeCredential(object):
             raise ValueError("'get_token' requires at least one scope")
 
         environment_name = _get_user_settings()
-        refresh_token = _read_credential(VSCODE_CREDENTIALS_SECTION, environment_name)
+        key_chain = Keychain()
+        refresh_token = key_chain.get_generic_password(VSCODE_CREDENTIALS_SECTION, environment_name)
         if not refresh_token:
             raise CredentialUnavailableError(
                 message="No token available."
