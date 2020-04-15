@@ -5,7 +5,7 @@ from form documents. Form Recognizer is made up of the following services:
 
 * Prebuilt receipt model - Recognize data from USA sales receipts using a prebuilt model.
 * Custom models - Recognize name/value pairs and table data from forms. These models are trained with your own data, so they're tailored to your forms. You can then take these custom models and recognize forms. You can also manage the custom models you've created and see how close you are to the limit of custom models your account can hold.
-* Content API - Recognize text and table structures, along with their bounding box coordinates, from documents.
+* Layout API - Recognize text and table structures, along with their bounding box coordinates, from documents.
 
 [Source code][python-fr-src] | [Package (PyPI)][python-fr-pypi] | [API reference documentation][python-fr-ref-docs]| [Product documentation][python-fr-product-docs] | [Samples][python-fr-samples]
 
@@ -90,7 +90,7 @@ forms, and recognizing data from forms using custom trained models. It provides 
 based on inputs from a URL and inputs from a stream.
 
 ### FormTrainingClient
-A `FormTrainingClient` is the Form Recognizer interface to use for creating, using, and managing custom machine-learned models.
+A `FormTrainingClient` is the Form Recognizer interface to use for creating and managing custom machine-learned models.
 It provides operations for training models on forms you provide and operations for viewing and deleting models, as well as
 understanding how close you are to reaching subscription limits for the number of models you can train.
 
@@ -109,7 +109,7 @@ Using the `FormTrainingClient`, you can train a machine-learned model on your ow
 be able to recognize values from the types of forms it was trained on.
 
 #### Training without labels
-A model trained without labels uses unsupervised learning to understand the layout and relationships between field
+A model trained without labels uses machine learning to understand the layout and relationships between field
 names and values in your forms. The learning algorithm clusters the training forms by type and learns what fields and
 tables are present in each form type.
 
@@ -117,7 +117,7 @@ This approach doesn't require manual data labeling or intensive coding and maint
 method first when training custom models.
 
 #### Training with labels
-A model trained with labels uses supervised learning to recognize values you specify by adding labels to your training forms.
+A model trained with labels uses machine learning to recognize values you specify by adding labels to your training forms.
 The learning algorithm uses a label file you provide to learn what fields are found at various locations in the form,
 and learns to recognize just those values.
 
@@ -207,6 +207,7 @@ table = page[0].tables[0] # page 1, table 1
 for cell in table.cells:
     print(cell.text)
     print(cell.bounding_box)
+    print(cell.confidence)
 ```
 
 ### Train a model
@@ -220,8 +221,8 @@ from azure.core.credentials import AzureKeyCredential
 
 client = FormTrainingClient(endpoint, AzureKeyCredential(key))
 
-blob_sas_url = "xxx"  # training documents uploaded to blob storage
-poller = client.begin_training(blob_sas_url)
+container_sas_url = "xxx"  # training documents uploaded to blob storage
+poller = client.begin_training(container_sas_url)
 model = poller.result()
 
 # Custom model information
