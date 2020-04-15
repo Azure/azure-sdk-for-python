@@ -197,11 +197,12 @@ class FormRecognizerClient(object):
             stream: Union[bytes, IO[bytes]],
             **kwargs: Any
     ) -> List["RecognizedForm"]:
-        """Analyze a custom form with a model trained with or without labels.
+        """Analyze a custom form with a model trained with or without labels. The form
+        to analyze should be of the same type as the forms that were used to train the model.
         The input document must be of one of the supported content types - 'application/pdf',
         'image/jpeg', 'image/png' or 'image/tiff'.
 
-        :param str model_id: Model identifier.
+        :param str model_id: Custom model identifier.
         :param stream: .pdf, .jpg, .png or .tiff type file stream.
         :type stream: stream
         :keyword bool include_text_content: Include text lines and element references in the result.
@@ -245,10 +246,11 @@ class FormRecognizerClient(object):
             url: str,
             **kwargs: Any
     ) -> List["RecognizedForm"]:
-        """Analyze a custom form with a model trained with or without labels.
+        """Analyze a custom form with a model trained with or without labels. The form
+        to analyze should be of the same type as the forms that were used to train the model.
         The input document must be the location (Url) of the document to be analyzed.
 
-        :param str model_id: Model identifier.
+        :param str model_id: Custom model identifier.
         :param url: The url of the document.
         :type url: str
         :keyword bool include_text_content: Include text lines and element references in the result.
