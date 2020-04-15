@@ -5,8 +5,6 @@
 import os
 import json
 import sys
-if sys.platform.startswith('win'):
-    from win32cred import CredRead
 from azure.core.exceptions import ClientAuthenticationError
 from .._constants import (
     VSCODE_CREDENTIALS_SECTION,
@@ -14,14 +12,16 @@ from .._constants import (
     AZURE_VSCODE_TENANT_ID,
 )
 from .._internal.aad_client import AadClient
+try:
+    from win32cred import CredRead
+except ImportError:
+    raise
 
 def _read_credential(service_name, account_name):
     target = u"{}/{}".format(service_name, account_name)
-    if sys.platform.startswith('win'):
-        res = CredRead(TargetName=target, Type=0x1)
-        cred = res["CredentialBlob"].decode('utf-16')
-        return cred
-    return None
+    res = CredRead(TargetName=target, Type=0x1)
+    cred = res["CredentialBlob"].decode('utf-16')
+    return cred
 
 def _get_user_settings_path():
     app_data_folder = os.environ['APPDATA']
