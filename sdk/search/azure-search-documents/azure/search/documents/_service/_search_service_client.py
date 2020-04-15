@@ -14,7 +14,7 @@ from azure.core.exceptions import (
     ResourceNotModifiedError,
 )
 from ._generated import SearchServiceClient as _SearchServiceClient
-from ._generated.models import AccessCondition, SynonymMap
+from ._generated.models import AccessCondition, Skillset, SynonymMap
 from .._headers_mixin import HeadersMixin
 from .._version import SDK_MONIKER
 from ._utils import (
@@ -23,12 +23,14 @@ from ._utils import (
     listize_synonyms,
     prep_if_match,
     prep_if_none_match,
+    skillset_as_dict,
 )
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
     from typing import Any, List, Sequence, Union
     from azure.core.credentials import AzureKeyCredential
+    from ._generated.models import Skill
     from .. import Index, AnalyzeResult, AnalyzeRequest
 
 
@@ -411,3 +413,128 @@ class SearchServiceClient(HeadersMixin):
         synonym_map = SynonymMap(name=name, synonyms=solr_format_synonyms)
         result = self._client.synonym_maps.create_or_update(name, synonym_map, **kwargs)
         return listize_synonyms(result.as_dict())
+
+    # Skillset Operations
+
+    @distributed_trace
+    def list_skillsets(self, **kwargs):
+        # type: (**Any) -> List[dict]
+        """List the Skillsets in an Azure Search service.
+
+        :return: List of Skillsets
+        :rtype: list[dict]
+        :raises: ~azure.core.exceptions.HttpResponseError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_skillset_operations.py
+                :start-after: [START list_skillsets]
+                :end-before: [END list_skillsets]
+                :language: python
+                :dedent: 4
+                :caption: List Skillsets
+
+        """
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        result = self._client.skillsets.list(**kwargs)
+        return [skillset_as_dict(x) for x in result.skillsets]
+
+    @distributed_trace
+    def get_skillset(self, name, **kwargs):
+        # type: (str, **Any) -> dict
+        """Retrieve a named Skillset in an Azure Search service
+
+        :param name: The name of the Skillset to get
+        :type name: str
+        :return: The retrieved Skillset
+        :rtype: dict
+        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_skillset_operations.py
+                :start-after: [START get_skillset]
+                :end-before: [END get_skillset]
+                :language: python
+                :dedent: 4
+                :caption: Get a Skillset
+
+        """
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        result = self._client.skillsets.get(name, **kwargs)
+        return skillset_as_dict(result)
+
+    @distributed_trace
+    def delete_skillset(self, name, **kwargs):
+        # type: (str, **Any) -> None
+        """Delete a named Skillset in an Azure Search service
+
+        :param name: The name of the Skillset to delete
+        :type name: str
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_skillset_operations.py
+                :start-after: [START delete_skillset]
+                :end-before: [END delete_skillset]
+                :language: python
+                :dedent: 4
+                :caption: Delete a Skillset
+
+        """
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        self._client.skillsets.delete(name, **kwargs)
+
+    @distributed_trace
+    def create_skillset(self, name, skills, description, **kwargs):
+        # type: (str, Sequence[Skill], str, **Any) -> dict
+        """Create a new Skillset in an Azure Search service
+
+        :param name: The name of the Skillset to create
+        :type name: str
+        :param skills: A list of Skill objects to include in the Skillset
+        :type skills: List[Skill]]
+        :param description: A description for the Skillset
+        :type description: Optional[str]
+        :return: The created Skillset
+        :rtype: dict
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_skillset_operations.py
+                :start-after: [START create_skillset]
+                :end-before: [END create_skillset]
+                :language: python
+                :dedent: 4
+                :caption: Create a Skillset
+
+        """
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+
+        skillset = Skillset(name=name, skills=list(skills), description=description)
+
+        result = self._client.skillsets.create(skillset, **kwargs)
+        return skillset_as_dict(result)
+
+    @distributed_trace
+    def create_or_update_skillset(self, name, skills, description, **kwargs):
+        # type: (str, Sequence[Skill], str, **Any) -> dict
+        """Create a new Skillset in an Azure Search service, or update an
+        existing one.
+
+        :param name: The name of the Skillset to create or update
+        :type name: str
+        :param skills: A list of Skill objects to include in the Skillset
+        :type skills: List[Skill]
+        :param description: A description for the Skillset
+        :type description: Optional[str]
+        :return: The created or updated Skillset
+        :rtype: dict
+
+        """
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+
+        skillset = Skillset(name=name, skills=list(skills), description=description)
+
+        result = self._client.skillsets.create_or_update(name, skillset, **kwargs)
+        return skillset_as_dict(result)

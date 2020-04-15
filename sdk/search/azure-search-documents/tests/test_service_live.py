@@ -16,13 +16,16 @@ from search_service_preparer import SearchServicePreparer
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import HttpResponseError
 from azure.search.documents import(
-    SearchServiceClient,
-    Field,
-    Index,
     AnalyzeRequest,
     AnalyzeResult,
-    ScoringProfile,
     CorsOptions,
+    EntityRecognitionSkill,
+    Field,
+    Index,
+    InputFieldMappingEntry,
+    OutputFieldMappingEntry,
+    SearchServiceClient,
+    ScoringProfile,
 )
 
 CWD = dirname(realpath(__file__))
@@ -30,7 +33,7 @@ SCHEMA = open(join(CWD, "hotel_schema.json")).read()
 BATCH = json.load(open(join(CWD, "hotel_small.json")))
 TIME_TO_SLEEP = 5
 
-class SearchIndexClientTest(AzureMgmtTestCase):
+class SearchServiceClientTest(AzureMgmtTestCase):
     @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer()
     def test_get_service_statistics(self, api_key, endpoint, **kwargs):
@@ -38,6 +41,8 @@ class SearchIndexClientTest(AzureMgmtTestCase):
         result = client.get_service_statistics()
         assert isinstance(result, dict)
         assert set(result.keys()) == {"counters", "limits"}
+
+    # Index operations
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer()
@@ -162,6 +167,8 @@ class SearchIndexClientTest(AzureMgmtTestCase):
         result = client.analyze_text(index_name, analyze_request)
         assert len(result.tokens) == 2
 
+    # Synonym Map operations
+
     @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_create_synonym_map(self, api_key, endpoint, index_name, **kwargs):
@@ -240,3 +247,84 @@ class SearchIndexClientTest(AzureMgmtTestCase):
         assert result["synonyms"] == [
             "Washington, Wash. => WA",
         ]
+
+    # Skillset operations
+
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
+    def test_create_skillset(self, api_key, endpoint, index_name, **kwargs):
+        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key))
+
+        s = EntityRecognitionSkill(inputs=[InputFieldMappingEntry(name="text", source="/document/content")],
+                                   outputs=[OutputFieldMappingEntry(name="organizations", target_name="organizations")])
+
+        result = client.create_skillset(name='test-ss', skills=[s], description="desc")
+        assert isinstance(result, dict)
+        assert result["name"] == "test-ss"
+        assert result["description"] == "desc"
+        assert result.get("e_tag")
+        assert len(result["skills"]) == 1
+        assert isinstance(result["skills"][0], EntityRecognitionSkill)
+
+        assert len(client.list_skillsets()) == 1
+
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
+    def test_delete_skillset(self, api_key, endpoint, index_name, **kwargs):
+        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key))
+        s = EntityRecognitionSkill(inputs=[InputFieldMappingEntry(name="text", source="/document/content")],
+                                   outputs=[OutputFieldMappingEntry(name="organizations", target_name="organizations")])
+
+        result = client.create_skillset(name='test-ss', skills=[s], description="desc")
+        assert len(client.list_skillsets()) == 1
+
+        client.delete_skillset("test-ss")
+        assert len(client.list_skillsets()) == 0
+
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
+    def test_get_skillset(self, api_key, endpoint, index_name, **kwargs):
+        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key))
+        s = EntityRecognitionSkill(inputs=[InputFieldMappingEntry(name="text", source="/document/content")],
+                                   outputs=[OutputFieldMappingEntry(name="organizations", target_name="organizations")])
+
+        client.create_skillset(name='test-ss', skills=[s], description="desc")
+        assert len(client.list_skillsets()) == 1
+
+        result = client.get_skillset("test-ss")
+        assert isinstance(result, dict)
+        assert result["name"] == "test-ss"
+        assert result["description"] == "desc"
+        assert result.get("e_tag")
+        assert len(result["skills"]) == 1
+        assert isinstance(result["skills"][0], EntityRecognitionSkill)
+
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
+    def test_list_skillsets(self, api_key, endpoint, index_name, **kwargs):
+        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key))
+        s = EntityRecognitionSkill(inputs=[InputFieldMappingEntry(name="text", source="/document/content")],
+                                   outputs=[OutputFieldMappingEntry(name="organizations", target_name="organizations")])
+
+        client.create_skillset(name='test-ss-1', skills=[s], description="desc1")
+        client.create_skillset(name='test-ss-2', skills=[s], description="desc2")
+        result = client.list_skillsets()
+        assert isinstance(result, list)
+        assert all(isinstance(x, dict) for x in result)
+        assert set(x['name'] for x in result) == {"test-ss-1", "test-ss-2"}
+
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
+    def test_create_or_update_skillset(self, api_key, endpoint, index_name, **kwargs):
+        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key))
+        s = EntityRecognitionSkill(inputs=[InputFieldMappingEntry(name="text", source="/document/content")],
+                                   outputs=[OutputFieldMappingEntry(name="organizations", target_name="organizations")])
+
+        client.create_or_update_skillset(name='test-ss', skills=[s], description="desc1")
+        client.create_or_update_skillset(name='test-ss', skills=[s], description="desc2")
+        assert len(client.list_skillsets()) == 1
+
+        result = client.get_skillset("test-ss")
+        assert isinstance(result, dict)
+        assert result["name"] == "test-ss"
+        assert result["description"] == "desc2"
