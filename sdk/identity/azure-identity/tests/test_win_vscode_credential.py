@@ -4,8 +4,9 @@
 # ------------------------------------
 import sys
 import pytest
-from azure.identity._credentials.win_vscode_credential import _read_credential
-import win32cred
+if sys.platform.startswith('win'):
+    from azure.identity._credentials.win_vscode_credential import _read_credential
+    import win32cred
 
 @pytest.mark.skipif(not sys.platform.startswith('win'), reason="This test only runs on Windows")
 def test_win_vscode_credential():
