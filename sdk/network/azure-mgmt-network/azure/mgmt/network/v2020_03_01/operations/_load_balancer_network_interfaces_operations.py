@@ -16,8 +16,8 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class MountTargetsOperations(object):
-    """MountTargetsOperations operations.
+class LoadBalancerNetworkInterfacesOperations(object):
+    """LoadBalancerNetworkInterfacesOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
@@ -25,7 +25,7 @@ class MountTargetsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. Constant value: "2019-10-01".
+    :ivar api_version: Client API version. Constant value: "2020-03-01".
     """
 
     models = models
@@ -35,32 +35,26 @@ class MountTargetsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-10-01"
+        self.api_version = "2020-03-01"
 
         self.config = config
 
     def list(
-            self, resource_group_name, account_name, pool_name, volume_name, custom_headers=None, raw=False, **operation_config):
-        """Describe all mount targets.
-
-        List all mount targets associated with the volume.
+            self, resource_group_name, load_balancer_name, custom_headers=None, raw=False, **operation_config):
+        """Gets associated load balancer network interfaces.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param account_name: The name of the NetApp account
-        :type account_name: str
-        :param pool_name: The name of the capacity pool
-        :type pool_name: str
-        :param volume_name: The name of the volume
-        :type volume_name: str
+        :param load_balancer_name: The name of the load balancer.
+        :type load_balancer_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of MountTarget
+        :return: An iterator like instance of NetworkInterface
         :rtype:
-         ~azure.mgmt.netapp.models.MountTargetPaged[~azure.mgmt.netapp.models.MountTarget]
+         ~azure.mgmt.network.v2020_03_01.models.NetworkInterfacePaged[~azure.mgmt.network.v2020_03_01.models.NetworkInterface]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
@@ -68,11 +62,9 @@ class MountTargetsOperations(object):
                 # Construct URL
                 url = self.list.metadata['url']
                 path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-                    'accountName': self._serialize.url("account_name", account_name, 'str'),
-                    'poolName': self._serialize.url("pool_name", pool_name, 'str'),
-                    'volumeName': self._serialize.url("volume_name", volume_name, 'str')
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                    'loadBalancerName': self._serialize.url("load_balancer_name", load_balancer_name, 'str'),
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -114,7 +106,7 @@ class MountTargetsOperations(object):
         header_dict = None
         if raw:
             header_dict = {}
-        deserialized = models.MountTargetPaged(internal_paging, self._deserialize.dependencies, header_dict)
+        deserialized = models.NetworkInterfacePaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/mountTargets'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancerName}/networkInterfaces'}

@@ -18,7 +18,7 @@ class FormRecognizerClient(FormRecognizerClientOperationsMixin):
     """Extracts information from forms and images into structured data.
 
     :param credential: Credential needed for the client to connect to Azure.
-    :type credential: azure.core.credentials.TokenCredential
+    :type credential: ~azure.core.credentials.TokenCredential
     :param endpoint: Supported Cognitive Services endpoints (protocol and hostname, for example: https://westus2.api.cognitive.microsoft.com).
     :type endpoint: str
     """
@@ -36,6 +36,7 @@ class FormRecognizerClient(FormRecognizerClientOperationsMixin):
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
+        self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
 
 

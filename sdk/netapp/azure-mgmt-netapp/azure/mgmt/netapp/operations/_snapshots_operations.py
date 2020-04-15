@@ -27,7 +27,7 @@ class SnapshotsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. Constant value: "2019-10-01".
+    :ivar api_version: Version of the API to be used with the client request. Constant value: "2019-11-01".
     """
 
     models = models
@@ -37,7 +37,7 @@ class SnapshotsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-10-01"
+        self.api_version = "2019-11-01"
 
         self.config = config
 
@@ -73,8 +73,8 @@ class SnapshotsOperations(object):
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
                     'accountName': self._serialize.url("account_name", account_name, 'str'),
-                    'poolName': self._serialize.url("pool_name", pool_name, 'str'),
-                    'volumeName': self._serialize.url("volume_name", volume_name, 'str')
+                    'poolName': self._serialize.url("pool_name", pool_name, 'str', max_length=64, min_length=1, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,63}$'),
+                    'volumeName': self._serialize.url("volume_name", volume_name, 'str', max_length=64, min_length=1, pattern=r'^[a-zA-Z][a-zA-Z0-9\-_]{0,63}$')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -153,8 +153,8 @@ class SnapshotsOperations(object):
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str'),
-            'poolName': self._serialize.url("pool_name", pool_name, 'str'),
-            'volumeName': self._serialize.url("volume_name", volume_name, 'str'),
+            'poolName': self._serialize.url("pool_name", pool_name, 'str', max_length=64, min_length=1, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,63}$'),
+            'volumeName': self._serialize.url("volume_name", volume_name, 'str', max_length=64, min_length=1, pattern=r'^[a-zA-Z][a-zA-Z0-9\-_]{0,63}$'),
             'snapshotName': self._serialize.url("snapshot_name", snapshot_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -195,15 +195,17 @@ class SnapshotsOperations(object):
 
 
     def _create_initial(
-            self, body, resource_group_name, account_name, pool_name, volume_name, snapshot_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, account_name, pool_name, volume_name, snapshot_name, location, file_system_id=None, custom_headers=None, raw=False, **operation_config):
+        body = models.Snapshot(location=location, file_system_id=file_system_id)
+
         # Construct URL
         url = self.create.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str'),
-            'poolName': self._serialize.url("pool_name", pool_name, 'str'),
-            'volumeName': self._serialize.url("volume_name", volume_name, 'str'),
+            'poolName': self._serialize.url("pool_name", pool_name, 'str', max_length=64, min_length=1, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,63}$'),
+            'volumeName': self._serialize.url("volume_name", volume_name, 'str', max_length=64, min_length=1, pattern=r'^[a-zA-Z][a-zA-Z0-9\-_]{0,63}$'),
             'snapshotName': self._serialize.url("snapshot_name", snapshot_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -247,13 +249,131 @@ class SnapshotsOperations(object):
         return deserialized
 
     def create(
-            self, body, resource_group_name, account_name, pool_name, volume_name, snapshot_name, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, account_name, pool_name, volume_name, snapshot_name, location, file_system_id=None, custom_headers=None, raw=False, polling=True, **operation_config):
         """Create a snapshot.
 
         Create the specified snapshot within the given volume.
 
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param account_name: The name of the NetApp account
+        :type account_name: str
+        :param pool_name: The name of the capacity pool
+        :type pool_name: str
+        :param volume_name: The name of the volume
+        :type volume_name: str
+        :param snapshot_name: The name of the mount target
+        :type snapshot_name: str
+        :param location: Resource location
+        :type location: str
+        :param file_system_id: fileSystemId UUID v4 used to identify the
+         FileSystem
+        :type file_system_id: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns Snapshot or
+         ClientRawResponse<Snapshot> if raw==True
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.netapp.models.Snapshot]
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.netapp.models.Snapshot]]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._create_initial(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            pool_name=pool_name,
+            volume_name=volume_name,
+            snapshot_name=snapshot_name,
+            location=location,
+            file_system_id=file_system_id,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            deserialized = self._deserialize('Snapshot', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                return client_raw_response
+
+            return deserialized
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/snapshots/{snapshotName}'}
+
+
+    def _update_initial(
+            self, body, resource_group_name, account_name, pool_name, volume_name, snapshot_name, custom_headers=None, raw=False, **operation_config):
+        # Construct URL
+        url = self.update.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'accountName': self._serialize.url("account_name", account_name, 'str'),
+            'poolName': self._serialize.url("pool_name", pool_name, 'str', max_length=64, min_length=1, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,63}$'),
+            'volumeName': self._serialize.url("volume_name", volume_name, 'str', max_length=64, min_length=1, pattern=r'^[a-zA-Z][a-zA-Z0-9\-_]{0,63}$'),
+            'snapshotName': self._serialize.url("snapshot_name", snapshot_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(body, 'object')
+
+        # Construct and send request
+        request = self._client.patch(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200, 202]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('Snapshot', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def update(
+            self, body, resource_group_name, account_name, pool_name, volume_name, snapshot_name, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Update a snapshot.
+
+        Patch a snapshot.
+
         :param body: Snapshot object supplied in the body of the operation.
-        :type body: ~azure.mgmt.netapp.models.Snapshot
+        :type body: object
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param account_name: The name of the NetApp account
@@ -277,7 +397,7 @@ class SnapshotsOperations(object):
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.netapp.models.Snapshot]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        raw_result = self._create_initial(
+        raw_result = self._update_initial(
             body=body,
             resource_group_name=resource_group_name,
             account_name=account_name,
@@ -305,86 +425,6 @@ class SnapshotsOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/snapshots/{snapshotName}'}
-
-    def update(
-            self, resource_group_name, account_name, pool_name, volume_name, snapshot_name, tags=None, custom_headers=None, raw=False, **operation_config):
-        """Update a snapshot.
-
-        Patch a snapshot.
-
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param account_name: The name of the NetApp account
-        :type account_name: str
-        :param pool_name: The name of the capacity pool
-        :type pool_name: str
-        :param volume_name: The name of the volume
-        :type volume_name: str
-        :param snapshot_name: The name of the mount target
-        :type snapshot_name: str
-        :param tags: Resource tags
-        :type tags: dict[str, str]
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: Snapshot or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.netapp.models.Snapshot or
-         ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        body = models.SnapshotPatch(tags=tags)
-
-        # Construct URL
-        url = self.update.metadata['url']
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'accountName': self._serialize.url("account_name", account_name, 'str'),
-            'poolName': self._serialize.url("pool_name", pool_name, 'str'),
-            'volumeName': self._serialize.url("volume_name", volume_name, 'str'),
-            'snapshotName': self._serialize.url("snapshot_name", snapshot_name, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct body
-        body_content = self._serialize.body(body, 'SnapshotPatch')
-
-        # Construct and send request
-        request = self._client.patch(url, query_parameters, header_parameters, body_content)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200, 202]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('Snapshot', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
     update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/snapshots/{snapshotName}'}
 
 
@@ -396,8 +436,8 @@ class SnapshotsOperations(object):
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str'),
-            'poolName': self._serialize.url("pool_name", pool_name, 'str'),
-            'volumeName': self._serialize.url("volume_name", volume_name, 'str'),
+            'poolName': self._serialize.url("pool_name", pool_name, 'str', max_length=64, min_length=1, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,63}$'),
+            'volumeName': self._serialize.url("volume_name", volume_name, 'str', max_length=64, min_length=1, pattern=r'^[a-zA-Z][a-zA-Z0-9\-_]{0,63}$'),
             'snapshotName': self._serialize.url("snapshot_name", snapshot_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
