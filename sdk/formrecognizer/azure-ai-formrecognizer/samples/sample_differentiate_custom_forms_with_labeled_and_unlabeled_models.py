@@ -25,7 +25,7 @@ USAGE:
 import os
 
 
-class DifferentiateCustomFormsWithlabeledAndUnlabeledModels(object):
+class DifferentiateCustomFormsWithLabeledAndUnlabeledModels(object):
 
     endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
     key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
@@ -85,5 +85,5 @@ class DifferentiateCustomFormsWithlabeledAndUnlabeledModels(object):
 
 
 if __name__ == '__main__':
-    sample = DifferentiateCustomFormsWithlabeledAndUnlabeledModels()
+    sample = DifferentiateCustomFormsWithLabeledAndUnlabeledModels()
     sample.recognize_custom_forms()

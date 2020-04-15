@@ -26,7 +26,7 @@ import os
 import asyncio
 
 
-class DifferentiateCustomFormsWithlabeledAndUnlabeledModelsAsync(object):
+class DifferentiateCustomFormsWithLabeledAndUnlabeledModelsAsync(object):
 
     endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
     key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
@@ -86,7 +86,7 @@ class DifferentiateCustomFormsWithlabeledAndUnlabeledModelsAsync(object):
 
 
 async def main():
-    sample = DifferentiateCustomFormsWithlabeledAndUnlabeledModelsAsync()
+    sample = DifferentiateCustomFormsWithLabeledAndUnlabeledModelsAsync()
     await sample.recognize_custom_forms()
 
 

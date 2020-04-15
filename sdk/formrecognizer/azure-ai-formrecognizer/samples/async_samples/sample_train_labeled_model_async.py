@@ -27,7 +27,7 @@ import os
 import asyncio
 
 
-class TrainlabeledModelSampleAsync(object):
+class TrainLabeledModelSampleAsync(object):
 
     endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
     key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
@@ -69,7 +69,7 @@ class TrainlabeledModelSampleAsync(object):
                 print("Document errors: {}".format(doc.errors))
 
 async def main():
-    sample = TrainlabeledModelSampleAsync()
+    sample = TrainLabeledModelSampleAsync()
     await sample.train_labeled_model()
 
 

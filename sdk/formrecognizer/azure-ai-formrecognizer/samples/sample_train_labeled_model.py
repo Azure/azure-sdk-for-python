@@ -26,7 +26,7 @@ USAGE:
 import os
 
 
-class TrainlabeledModelSample(object):
+class TrainLabeledModelSample(object):
 
     endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
     key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
@@ -67,5 +67,5 @@ class TrainlabeledModelSample(object):
             print("Document errors: {}".format(doc.errors))
 
 if __name__ == '__main__':
-    sample = TrainlabeledModelSample()
+    sample = TrainLabeledModelSample()
     sample.train_labeled_model()
