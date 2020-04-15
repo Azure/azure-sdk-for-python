@@ -4,6 +4,13 @@
 # ------------------------------------
 import sys
 import pytest
+from azure.core.credentials import AccessToken
+from azure.core.exceptions import ClientAuthenticationError
+from azure.identity._credentials.win_vscode_credential import WinVSCodeCredential
+try:
+    from unittest.mock import Mock
+except ImportError:  # python < 3.3
+    from mock import Mock  # type: ignore
 if sys.platform.startswith('win'):
     from azure.identity._credentials.win_vscode_credential import _read_credential
     import win32cred
@@ -25,3 +32,22 @@ def test_win_vscode_credential():
     win32cred.CredWrite(credential)
     token_read = _read_credential(service_name, account_name)
     assert token_read == token_written
+
+@pytest.mark.skipif(not sys.platform.startswith('win'), reason="This test only runs on Windows")
+def test_get_token():
+    client_id = "client id"
+    tenant_id = "tenant"
+    expected_token = AccessToken("token", 42)
+
+    mock_client = Mock(spec=object)
+    mock_client.obtain_token_by_refresh_token = Mock(return_value=expected_token)
+
+    credential = WinVSCodeCredential(
+        client_id=client_id,
+        tenant_id=tenant_id,
+        client=mock_client,
+    )
+
+    token = credential.get_token("scope")
+    assert token is expected_token
+    assert mock_client.obtain_token_by_refresh_token.call_count == 1
