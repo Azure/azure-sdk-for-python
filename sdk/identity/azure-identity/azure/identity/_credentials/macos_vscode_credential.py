@@ -25,7 +25,7 @@ def _get_user_settings():
             data = json.load(file)
             environment_name = data.get("azure.cloud", "Azure")
             return environment_name
-    except:  # pylint: disable=broad-except
+    except IOError:
         return "Azure"
 
 
