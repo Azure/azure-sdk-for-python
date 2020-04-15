@@ -568,7 +568,7 @@ class CustomFormModel(object):
     :ivar list[~azure.ai.formrecognizer.FormRecognizerError] errors:
         List of any training errors.
     :ivar ~azure.ai.formrecognizer.TrainingDocumentInfo training_documents:
-         Meta-data about each of the documents used to train the model.
+         Metadata about each of the documents used to train the model.
     """
 
     def __init__(self, **kwargs):

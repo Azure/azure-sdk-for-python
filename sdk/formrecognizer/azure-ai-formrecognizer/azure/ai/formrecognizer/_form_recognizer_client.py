@@ -9,6 +9,7 @@
 from typing import (  # pylint: disable=unused-import
     Any,
     IO,
+    Union,
     TYPE_CHECKING,
 )
 from azure.core.tracing.decorator import distributed_trace
@@ -61,7 +62,7 @@ class FormRecognizerClient(object):
 
     @distributed_trace
     def begin_recognize_receipts(self, stream, **kwargs):
-        # type: (IO[bytes], Any) -> LROPoller
+        # type: (Union[bytes, IO[bytes]], Any) -> LROPoller
         """Extract field text and semantic values from a given US sales receipt.
         The input document must be of one of the supported content types - 'application/pdf',
         'image/jpeg', 'image/png' or 'image/tiff'.
@@ -74,7 +75,7 @@ class FormRecognizerClient(object):
             auto-detected, but can be overridden by passing this keyword argument. For options,
             see :class:`~azure.ai.formrecognizer.FormContentType`.
         :return: An instance of an LROPoller. Call `result()` on the poller
-            object to return the result of the long running operation.
+            object to return a list[:class:`~azure.ai.formrecognizer.USReceipt`].
         :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.USReceipt]]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
@@ -107,7 +108,7 @@ class FormRecognizerClient(object):
         :type url: str
         :keyword bool include_text_content: Include text lines and text content references in the result.
         :return: An instance of an LROPoller. Call `result()` on the poller
-            object to return the result of the long running operation.
+            object to return a list[:class:`~azure.ai.formrecognizer.USReceipt`].
         :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.USReceipt]]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
@@ -128,7 +129,7 @@ class FormRecognizerClient(object):
 
     @distributed_trace
     def begin_recognize_content(self, stream, **kwargs):
-        # type: (IO[bytes], Any) -> LROPoller
+        # type: (Union[bytes, IO[bytes]], Any) -> LROPoller
         """Extract text and content/layout information from a given document.
         The input document must be of one of the supported content types - 'application/pdf',
         'image/jpeg', 'image/png' or 'image/tiff'.
@@ -139,7 +140,7 @@ class FormRecognizerClient(object):
             auto-detected, but can be overridden by passing this keyword argument. For options,
             see :class:`~azure.ai.formrecognizer.FormContentType`.
         :return: An instance of an LROPoller. Call `result()` on the poller
-            object to return the result of the long running operation.
+            object to return a list[:class:`~azure.ai.formrecognizer.FormPage`].
         :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.FormPage]]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
@@ -168,7 +169,7 @@ class FormRecognizerClient(object):
         :param url: The url of the document.
         :type url: str
         :return: An instance of an LROPoller. Call `result()` on the poller
-            object to return the result of the long running operation.
+            object to return a list[:class:`~azure.ai.formrecognizer.FormPage`].
         :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.FormPage]]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
@@ -182,12 +183,13 @@ class FormRecognizerClient(object):
 
     @distributed_trace
     def begin_recognize_custom_forms(self, model_id, stream, **kwargs):
-        # type: (str, IO[bytes], Any) -> LROPoller
-        """Analyze a custom form with a model trained with or without labels.
+        # type: (str, Union[bytes, IO[bytes]], Any) -> LROPoller
+        """Analyze a custom form with a model trained with or without labels. The form
+        to analyze should be of the same type as the forms that were used to train the model.
         The input document must be of one of the supported content types - 'application/pdf',
         'image/jpeg', 'image/png' or 'image/tiff'.
 
-        :param str model_id: Model identifier.
+        :param str model_id: Custom model identifier.
         :param stream: .pdf, .jpg, .png or .tiff type file stream.
         :type stream: stream
         :keyword bool include_text_content: Include text lines and element references in the result.
@@ -195,7 +197,7 @@ class FormRecognizerClient(object):
             auto-detected, but can be overridden by passing this keyword argument. For options,
             see :class:`~azure.ai.formrecognizer.FormContentType`.
         :return: An instance of an LROPoller. Call `result()` on the poller
-            object to return the result of the long running operation.
+            object to return a list[:class:`~azure.ai.formrecognizer.RecognizedForm`].
         :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.RecognizedForm]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
@@ -227,15 +229,16 @@ class FormRecognizerClient(object):
     @distributed_trace
     def begin_recognize_custom_forms_from_url(self, model_id, url, **kwargs):
         # type: (str, str, Any) -> LROPoller
-        """Analyze a custom form with a model trained with or without labels.
+        """Analyze a custom form with a model trained with or without labels. The form
+        to analyze should be of the same type as the forms that were used to train the model.
         The input document must be the location (Url) of the document to be analyzed.
 
-        :param str model_id: Model identifier.
+        :param str model_id: Custom model identifier.
         :param url: The url of the document.
         :type url: str
         :keyword bool include_text_content: Include text lines and element references in the result.
         :return: An instance of an LROPoller. Call `result()` on the poller
-            object to return the result of the long running operation.
+            object to return a list[:class:`~azure.ai.formrecognizer.RecognizedForm`].
         :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.RecognizedForm]
         :raises ~azure.core.exceptions.HttpResponseError:
         """

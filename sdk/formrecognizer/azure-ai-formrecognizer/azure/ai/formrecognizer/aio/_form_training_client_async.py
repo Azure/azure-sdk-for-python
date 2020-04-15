@@ -71,7 +71,7 @@ class FormTrainingClient(object):
         Models are trained using documents that are of the following content type - 'application/pdf',
         'image/jpeg', 'image/png', 'image/tiff'. Other type of content in the container is ignored.
 
-        :param str training_files: An Azure Storage blob container SAS URI.
+        :param str training_files: An Azure Storage blob container's SAS URI.
         :param bool use_labels: Whether to train with labels or not. Corresponding labeled files must
             exist in the blob container.
         :keyword str prefix: A case-sensitive prefix string to filter documents for training.

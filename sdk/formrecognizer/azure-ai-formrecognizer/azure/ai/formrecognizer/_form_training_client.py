@@ -62,7 +62,7 @@ class FormTrainingClient(object):
         Models are trained using documents that are of the following content type - 'application/pdf',
         'image/jpeg', 'image/png', 'image/tiff'. Other type of content in the container is ignored.
 
-        :param str training_files: An Azure Storage blob container SAS URI.
+        :param str training_files: An Azure Storage blob container's SAS URI.
         :param bool use_labels: Whether to train with labels or not. Corresponding labeled files must
             exist in the blob container.
         :keyword str prefix: A case-sensitive prefix string to filter documents for training.
@@ -72,7 +72,7 @@ class FormTrainingClient(object):
             will also need to be included when searching for content to be preprocessed.
             Use with prefix to filter for only certain sub folders. Not supported if training with labels.
         :return: An instance of an LROPoller. Call `result()` on the poller
-            object to return the result of the long running operation.
+            object to return a :class:`~azure.ai.formrecognizer.CustomFormModel`.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.formrecognizer.CustomFormModel]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
