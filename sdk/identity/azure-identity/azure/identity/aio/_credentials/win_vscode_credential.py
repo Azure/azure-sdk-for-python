@@ -3,12 +3,11 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import asyncio
-from azure.core.exceptions import ClientAuthenticationError
+from ..._exceptions import CredentialUnavailableError
 from .._credentials.base import AsyncCredentialBase
 from ..._constants import (
     VSCODE_CREDENTIALS_SECTION,
     AZURE_VSCODE_CLIENT_ID,
-    AZURE_VSCODE_TENANT_ID,
 )
 from .._internal.aad_client import AadClient
 try:
@@ -19,14 +18,9 @@ except ImportError:
 class WinVSCodeCredential(AsyncCredentialBase):
     """Authenticates by redeeming a refresh token previously saved by VS Code
 
-        :keyword str tenant_id: ID of the application's Azure Active Directory tenant. Also called its 'directory' ID.
-        :keyword str client_id: the application's client ID
-
         """
     def __init__(self, **kwargs):
-        client_id = kwargs.pop("client_id", AZURE_VSCODE_CLIENT_ID)
-        tenant_id = kwargs.pop("tenant_id", AZURE_VSCODE_TENANT_ID)
-        self._client = self._client = kwargs.pop("client", None) or AadClient(tenant_id, client_id, **kwargs)
+        self._client = kwargs.pop("client", None) or AadClient("organizations", AZURE_VSCODE_CLIENT_ID, **kwargs)
 
     async def __aenter__(self):
         if self._client:
@@ -50,9 +44,7 @@ class WinVSCodeCredential(AsyncCredentialBase):
 
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
         :rtype: :class:`azure.core.credentials.AccessToken`
-        :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The error's ``message``
-          attribute gives a reason. Any error response from Azure Active Directory is available as the error's
-          ``response`` attribute.
+        :raises ~azure.identity.CredentialUnavailableError: fail to get refresh token.
         """
         if not scopes:
             raise ValueError("'get_token' requires at least one scope")
@@ -60,7 +52,7 @@ class WinVSCodeCredential(AsyncCredentialBase):
         environment_name = _get_user_settings()
         refresh_token = _read_credential(VSCODE_CREDENTIALS_SECTION, environment_name)
         if not refresh_token:
-            raise ClientAuthenticationError(
+            raise CredentialUnavailableError(
                 message="No token available."
             )
         loop = kwargs.pop("loop", None) or asyncio.get_event_loop()
