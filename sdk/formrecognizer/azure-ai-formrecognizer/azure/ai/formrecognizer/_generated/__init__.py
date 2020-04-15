@@ -9,3 +9,9 @@ from ._version import VERSION
 
 __version__ = VERSION
 __all__ = ['FormRecognizerClient']
+
+try:
+    from .patch import patch_sdk
+    patch_sdk()
+except ImportError:
+    pass

@@ -13,8 +13,8 @@ class AnalyzeOperationResult(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param status: Required. Operation status. Possible values include: 'notStarted', 'running',
-     'succeeded', 'failed'.
+    :param status: Required. Operation status. Possible values include: "notStarted", "running",
+     "succeeded", "failed".
     :type status: str or ~azure.ai.formrecognizer.models.OperationStatus
     :param created_date_time: Required. Date and time (UTC) when the analyze operation was
      submitted.
@@ -43,9 +43,9 @@ class AnalyzeOperationResult(msrest.serialization.Model):
         **kwargs
     ):
         super(AnalyzeOperationResult, self).__init__(**kwargs)
-        self.status = kwargs.get('status', None)
-        self.created_date_time = kwargs.get('created_date_time', None)
-        self.last_updated_date_time = kwargs.get('last_updated_date_time', None)
+        self.status = kwargs['status']
+        self.created_date_time = kwargs['created_date_time']
+        self.last_updated_date_time = kwargs['last_updated_date_time']
         self.analyze_result = kwargs.get('analyze_result', None)
 
 
@@ -84,8 +84,8 @@ class AnalyzeResult(msrest.serialization.Model):
         **kwargs
     ):
         super(AnalyzeResult, self).__init__(**kwargs)
-        self.version = kwargs.get('version', None)
-        self.read_results = kwargs.get('read_results', None)
+        self.version = kwargs['version']
+        self.read_results = kwargs['read_results']
         self.page_results = kwargs.get('page_results', None)
         self.document_results = kwargs.get('document_results', None)
         self.errors = kwargs.get('errors', None)
@@ -121,9 +121,9 @@ class DataTable(msrest.serialization.Model):
         **kwargs
     ):
         super(DataTable, self).__init__(**kwargs)
-        self.rows = kwargs.get('rows', None)
-        self.columns = kwargs.get('columns', None)
-        self.cells = kwargs.get('cells', None)
+        self.rows = kwargs['rows']
+        self.columns = kwargs['columns']
+        self.cells = kwargs['cells']
 
 
 class DataTableCell(msrest.serialization.Model):
@@ -182,13 +182,13 @@ class DataTableCell(msrest.serialization.Model):
         **kwargs
     ):
         super(DataTableCell, self).__init__(**kwargs)
-        self.row_index = kwargs.get('row_index', None)
-        self.column_index = kwargs.get('column_index', None)
+        self.row_index = kwargs['row_index']
+        self.column_index = kwargs['column_index']
         self.row_span = kwargs.get('row_span', 1)
         self.column_span = kwargs.get('column_span', 1)
-        self.text = kwargs.get('text', None)
-        self.bounding_box = kwargs.get('bounding_box', None)
-        self.confidence = kwargs.get('confidence', None)
+        self.text = kwargs['text']
+        self.bounding_box = kwargs['bounding_box']
+        self.confidence = kwargs['confidence']
         self.elements = kwargs.get('elements', None)
         self.is_header = kwargs.get('is_header', False)
         self.is_footer = kwargs.get('is_footer', False)
@@ -224,9 +224,9 @@ class DocumentResult(msrest.serialization.Model):
         **kwargs
     ):
         super(DocumentResult, self).__init__(**kwargs)
-        self.doc_type = kwargs.get('doc_type', None)
-        self.page_range = kwargs.get('page_range', None)
-        self.fields = kwargs.get('fields', None)
+        self.doc_type = kwargs['doc_type']
+        self.page_range = kwargs['page_range']
+        self.fields = kwargs['fields']
 
 
 class ErrorInformation(msrest.serialization.Model):
@@ -255,8 +255,8 @@ class ErrorInformation(msrest.serialization.Model):
         **kwargs
     ):
         super(ErrorInformation, self).__init__(**kwargs)
-        self.code = kwargs.get('code', None)
-        self.message = kwargs.get('message', None)
+        self.code = kwargs['code']
+        self.message = kwargs['message']
 
 
 class ErrorResponse(msrest.serialization.Model):
@@ -281,7 +281,7 @@ class ErrorResponse(msrest.serialization.Model):
         **kwargs
     ):
         super(ErrorResponse, self).__init__(**kwargs)
-        self.error = kwargs.get('error', None)
+        self.error = kwargs['error']
 
 
 class FieldValue(msrest.serialization.Model):
@@ -289,15 +289,15 @@ class FieldValue(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Type of field value. Possible values include: 'string', 'date', 'time',
-     'phoneNumber', 'number', 'integer', 'array', 'object'.
+    :param type: Required. Type of field value. Possible values include: "string", "date", "time",
+     "phoneNumber", "number", "integer", "array", "object".
     :type type: str or ~azure.ai.formrecognizer.models.FieldValueType
     :param value_string: String value.
     :type value_string: str
     :param value_date: Date value.
     :type value_date: ~datetime.date
     :param value_time: Time value.
-    :type value_time: str
+    :type value_time: ~datetime.time
     :param value_phone_number: Phone number value.
     :type value_phone_number: str
     :param value_number: Floating point value.
@@ -332,7 +332,7 @@ class FieldValue(msrest.serialization.Model):
         'type': {'key': 'type', 'type': 'str'},
         'value_string': {'key': 'valueString', 'type': 'str'},
         'value_date': {'key': 'valueDate', 'type': 'date'},
-        'value_time': {'key': 'valueTime', 'type': 'str'},
+        'value_time': {'key': 'valueTime', 'type': 'time'},
         'value_phone_number': {'key': 'valuePhoneNumber', 'type': 'str'},
         'value_number': {'key': 'valueNumber', 'type': 'float'},
         'value_integer': {'key': 'valueInteger', 'type': 'int'},
@@ -350,7 +350,7 @@ class FieldValue(msrest.serialization.Model):
         **kwargs
     ):
         super(FieldValue, self).__init__(**kwargs)
-        self.type = kwargs.get('type', None)
+        self.type = kwargs['type']
         self.value_string = kwargs.get('value_string', None)
         self.value_date = kwargs.get('value_date', None)
         self.value_time = kwargs.get('value_time', None)
@@ -392,8 +392,8 @@ class FormFieldsReport(msrest.serialization.Model):
         **kwargs
     ):
         super(FormFieldsReport, self).__init__(**kwargs)
-        self.field_name = kwargs.get('field_name', None)
-        self.accuracy = kwargs.get('accuracy', None)
+        self.field_name = kwargs['field_name']
+        self.accuracy = kwargs['accuracy']
 
 
 class KeysResult(msrest.serialization.Model):
@@ -418,7 +418,7 @@ class KeysResult(msrest.serialization.Model):
         **kwargs
     ):
         super(KeysResult, self).__init__(**kwargs)
-        self.clusters = kwargs.get('clusters', None)
+        self.clusters = kwargs['clusters']
 
 
 class KeyValueElement(msrest.serialization.Model):
@@ -451,7 +451,7 @@ class KeyValueElement(msrest.serialization.Model):
         **kwargs
     ):
         super(KeyValueElement, self).__init__(**kwargs)
-        self.text = kwargs.get('text', None)
+        self.text = kwargs['text']
         self.bounding_box = kwargs.get('bounding_box', None)
         self.elements = kwargs.get('elements', None)
 
@@ -490,9 +490,9 @@ class KeyValuePair(msrest.serialization.Model):
     ):
         super(KeyValuePair, self).__init__(**kwargs)
         self.label = kwargs.get('label', None)
-        self.key = kwargs.get('key', None)
-        self.value = kwargs.get('value', None)
-        self.confidence = kwargs.get('confidence', None)
+        self.key = kwargs['key']
+        self.value = kwargs['value']
+        self.confidence = kwargs['confidence']
 
 
 class Model(msrest.serialization.Model):
@@ -523,7 +523,7 @@ class Model(msrest.serialization.Model):
         **kwargs
     ):
         super(Model, self).__init__(**kwargs)
-        self.model_info = kwargs.get('model_info', None)
+        self.model_info = kwargs['model_info']
         self.keys = kwargs.get('keys', None)
         self.train_result = kwargs.get('train_result', None)
 
@@ -535,8 +535,8 @@ class ModelInfo(msrest.serialization.Model):
 
     :param model_id: Required. Model identifier.
     :type model_id: str
-    :param status: Required. Status of the model. Possible values include: 'creating', 'ready',
-     'invalid'.
+    :param status: Required. Status of the model. Possible values include: "creating", "ready",
+     "invalid".
     :type status: str or ~azure.ai.formrecognizer.models.ModelStatus
     :param created_date_time: Required. Date and time (UTC) when the model was created.
     :type created_date_time: ~datetime.datetime
@@ -563,10 +563,10 @@ class ModelInfo(msrest.serialization.Model):
         **kwargs
     ):
         super(ModelInfo, self).__init__(**kwargs)
-        self.model_id = kwargs.get('model_id', None)
-        self.status = kwargs.get('status', None)
-        self.created_date_time = kwargs.get('created_date_time', None)
-        self.last_updated_date_time = kwargs.get('last_updated_date_time', None)
+        self.model_id = kwargs['model_id']
+        self.status = kwargs['status']
+        self.created_date_time = kwargs['created_date_time']
+        self.last_updated_date_time = kwargs['last_updated_date_time']
 
 
 class Models(msrest.serialization.Model):
@@ -626,9 +626,9 @@ class ModelsSummary(msrest.serialization.Model):
         **kwargs
     ):
         super(ModelsSummary, self).__init__(**kwargs)
-        self.count = kwargs.get('count', None)
-        self.limit = kwargs.get('limit', None)
-        self.last_updated_date_time = kwargs.get('last_updated_date_time', None)
+        self.count = kwargs['count']
+        self.limit = kwargs['limit']
+        self.last_updated_date_time = kwargs['last_updated_date_time']
 
 
 class PageResult(msrest.serialization.Model):
@@ -663,7 +663,7 @@ class PageResult(msrest.serialization.Model):
         **kwargs
     ):
         super(PageResult, self).__init__(**kwargs)
-        self.page = kwargs.get('page', None)
+        self.page = kwargs['page']
         self.cluster_id = kwargs.get('cluster_id', None)
         self.key_value_pairs = kwargs.get('key_value_pairs', None)
         self.tables = kwargs.get('tables', None)
@@ -684,11 +684,11 @@ class ReadResult(msrest.serialization.Model):
     :param height: Required. The height of the image/PDF in pixels/inches, respectively.
     :type height: float
     :param unit: Required. The unit used by the width, height and boundingBox properties. For
-     images, the unit is "pixel". For PDF, the unit is "inch". Possible values include: 'pixel',
-     'inch'.
+     images, the unit is "pixel". For PDF, the unit is "inch". Possible values include: "pixel",
+     "inch".
     :type unit: str or ~azure.ai.formrecognizer.models.LengthUnit
-    :param language: The detected language on the page overall. Possible values include: 'en',
-     'es'.
+    :param language: The detected language on the page overall. Possible values include: "en",
+     "es".
     :type language: str or ~azure.ai.formrecognizer.models.Language
     :param lines: When includeTextDetails is set to true, a list of recognized text lines. The
      maximum number of lines returned is 300 per page. The lines are sorted top to bottom, left to
@@ -721,11 +721,11 @@ class ReadResult(msrest.serialization.Model):
         **kwargs
     ):
         super(ReadResult, self).__init__(**kwargs)
-        self.page = kwargs.get('page', None)
-        self.angle = kwargs.get('angle', None)
-        self.width = kwargs.get('width', None)
-        self.height = kwargs.get('height', None)
-        self.unit = kwargs.get('unit', None)
+        self.page = kwargs['page']
+        self.angle = kwargs['angle']
+        self.width = kwargs['width']
+        self.height = kwargs['height']
+        self.unit = kwargs['unit']
         self.language = kwargs.get('language', None)
         self.lines = kwargs.get('lines', None)
 
@@ -763,7 +763,7 @@ class TextLine(msrest.serialization.Model):
     :param bounding_box: Required. Bounding box of an extracted line.
     :type bounding_box: list[float]
     :param language: The detected language of this line, if different from the overall page
-     language. Possible values include: 'en', 'es'.
+     language. Possible values include: "en", "es".
     :type language: str or ~azure.ai.formrecognizer.models.Language
     :param words: Required. List of words in the text line.
     :type words: list[~azure.ai.formrecognizer.models.TextWord]
@@ -787,10 +787,10 @@ class TextLine(msrest.serialization.Model):
         **kwargs
     ):
         super(TextLine, self).__init__(**kwargs)
-        self.text = kwargs.get('text', None)
-        self.bounding_box = kwargs.get('bounding_box', None)
+        self.text = kwargs['text']
+        self.bounding_box = kwargs['bounding_box']
         self.language = kwargs.get('language', None)
-        self.words = kwargs.get('words', None)
+        self.words = kwargs['words']
 
 
 class TextWord(msrest.serialization.Model):
@@ -823,8 +823,8 @@ class TextWord(msrest.serialization.Model):
         **kwargs
     ):
         super(TextWord, self).__init__(**kwargs)
-        self.text = kwargs.get('text', None)
-        self.bounding_box = kwargs.get('bounding_box', None)
+        self.text = kwargs['text']
+        self.bounding_box = kwargs['bounding_box']
         self.confidence = kwargs.get('confidence', None)
 
 
@@ -840,7 +840,7 @@ class TrainingDocumentInfo(msrest.serialization.Model):
     :param errors: Required. List of errors.
     :type errors: list[~azure.ai.formrecognizer.models.ErrorInformation]
     :param status: Required. Status of the training operation. Possible values include:
-     'succeeded', 'partiallySucceeded', 'failed'.
+     "succeeded", "partiallySucceeded", "failed".
     :type status: str or ~azure.ai.formrecognizer.models.TrainStatus
     """
 
@@ -863,10 +863,10 @@ class TrainingDocumentInfo(msrest.serialization.Model):
         **kwargs
     ):
         super(TrainingDocumentInfo, self).__init__(**kwargs)
-        self.document_name = kwargs.get('document_name', None)
-        self.pages = kwargs.get('pages', None)
-        self.errors = kwargs.get('errors', None)
-        self.status = kwargs.get('status', None)
+        self.document_name = kwargs['document_name']
+        self.pages = kwargs['pages']
+        self.errors = kwargs['errors']
+        self.status = kwargs['status']
 
 
 class TrainRequest(msrest.serialization.Model):
@@ -897,7 +897,7 @@ class TrainRequest(msrest.serialization.Model):
         **kwargs
     ):
         super(TrainRequest, self).__init__(**kwargs)
-        self.source = kwargs.get('source', None)
+        self.source = kwargs['source']
         self.source_filter = kwargs.get('source_filter', None)
         self.use_label_file = kwargs.get('use_label_file', False)
 
@@ -935,7 +935,7 @@ class TrainResult(msrest.serialization.Model):
         **kwargs
     ):
         super(TrainResult, self).__init__(**kwargs)
-        self.training_documents = kwargs.get('training_documents', None)
+        self.training_documents = kwargs['training_documents']
         self.fields = kwargs.get('fields', None)
         self.average_model_accuracy = kwargs.get('average_model_accuracy', None)
         self.errors = kwargs.get('errors', None)
