@@ -3,13 +3,13 @@ interactions:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-dfs/12.0.0b7 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-dfs/12.0.1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-client-request-id:
-      - 921e7170-3cb9-11ea-8290-001a7dda7113
+      - 01cf359e-7929-11ea-b80b-001a7dda7113
       x-ms-date:
-      - Wed, 22 Jan 2020 01:50:30 GMT
+      - Tue, 07 Apr 2020 23:39:21 GMT
       x-ms-version:
-      - '2019-02-02'
+      - '2019-07-07'
     method: PUT
     uri: https://storagename.blob.core.windows.net/destfilesystem9fa32555?restype=container
   response:
@@ -21,18 +21,18 @@ interactions:
       : '0'
       ? !!python/object/new:multidict._multidict.istr
       - Date
-      : Wed, 22 Jan 2020 01:50:30 GMT
+      : Tue, 07 Apr 2020 23:39:21 GMT
       ? !!python/object/new:multidict._multidict.istr
       - Etag
-      : '"0x8D79EDD764B65F8"'
+      : '"0x8D7DB4CE5FF4621"'
       ? !!python/object/new:multidict._multidict.istr
       - Last-Modified
-      : Wed, 22 Jan 2020 01:50:30 GMT
+      : Tue, 07 Apr 2020 23:39:21 GMT
       ? !!python/object/new:multidict._multidict.istr
       - Server
       : Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: f6af14a3-f01e-0046-45c6-d07913000000
-      x-ms-version: '2019-02-02'
+      x-ms-request-id: cc6805dd-301e-0066-1835-0d02b4000000
+      x-ms-version: '2019-07-07'
     status:
       code: 201
       message: Created
@@ -48,11 +48,11 @@ interactions:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-dfs/12.0.0b7 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-dfs/12.0.1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-client-request-id:
-      - 92283e76-3cb9-11ea-8c0b-001a7dda7113
+      - 01d85db4-7929-11ea-af9f-001a7dda7113
       x-ms-date:
-      - Wed, 22 Jan 2020 01:50:30 GMT
+      - Tue, 07 Apr 2020 23:39:21 GMT
       x-ms-properties:
       - ''
       x-ms-version:
@@ -68,17 +68,17 @@ interactions:
       : '0'
       ? !!python/object/new:multidict._multidict.istr
       - Date
-      : Wed, 22 Jan 2020 01:50:30 GMT
+      : Tue, 07 Apr 2020 23:39:21 GMT
       ? !!python/object/new:multidict._multidict.istr
       - Etag
-      : '"0x8D79EDD766C5764"'
+      : '"0x8D7DB4CE621CDD6"'
       ? !!python/object/new:multidict._multidict.istr
       - Last-Modified
-      : Wed, 22 Jan 2020 01:50:30 GMT
+      : Tue, 07 Apr 2020 23:39:22 GMT
       ? !!python/object/new:multidict._multidict.istr
       - Server
       : Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: 7d430736-c01f-0000-40c6-d04d94000000
+      x-ms-request-id: f567223e-f01f-0024-3835-0dbb34000000
       x-ms-version: '2019-02-02'
     status:
       code: 201
@@ -95,11 +95,11 @@ interactions:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-dfs/12.0.0b7 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-dfs/12.0.1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-client-request-id:
-      - 92471eb6-3cb9-11ea-8c8c-001a7dda7113
+      - 01f9acf8-7929-11ea-9db8-001a7dda7113
       x-ms-date:
-      - Wed, 22 Jan 2020 01:50:30 GMT
+      - Tue, 07 Apr 2020 23:39:22 GMT
       x-ms-properties:
       - ''
       x-ms-version:
@@ -115,17 +115,17 @@ interactions:
       : '0'
       ? !!python/object/new:multidict._multidict.istr
       - Date
-      : Wed, 22 Jan 2020 01:50:30 GMT
+      : Tue, 07 Apr 2020 23:39:22 GMT
       ? !!python/object/new:multidict._multidict.istr
       - Etag
-      : '"0x8D79EDD7674A594"'
+      : '"0x8D7DB4CE62A85E8"'
       ? !!python/object/new:multidict._multidict.istr
       - Last-Modified
-      : Wed, 22 Jan 2020 01:50:30 GMT
+      : Tue, 07 Apr 2020 23:39:22 GMT
       ? !!python/object/new:multidict._multidict.istr
       - Server
       : Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: 7d430737-c01f-0000-41c6-d04d94000000
+      x-ms-request-id: f567223f-f01f-0024-3935-0dbb34000000
       x-ms-version: '2019-02-02'
     status:
       code: 201
@@ -142,11 +142,11 @@ interactions:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-dfs/12.0.0b7 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-dfs/12.0.1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-client-request-id:
-      - 924fa126-3cb9-11ea-b0c0-001a7dda7113
+      - 02029052-7929-11ea-9c26-001a7dda7113
       x-ms-date:
-      - Wed, 22 Jan 2020 01:50:30 GMT
+      - Tue, 07 Apr 2020 23:39:22 GMT
       x-ms-properties:
       - ''
       x-ms-rename-source:
@@ -166,11 +166,11 @@ interactions:
       : '0'
       ? !!python/object/new:multidict._multidict.istr
       - Date
-      : Wed, 22 Jan 2020 01:50:30 GMT
+      : Tue, 07 Apr 2020 23:39:22 GMT
       ? !!python/object/new:multidict._multidict.istr
       - Server
       : Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: 7d430738-c01f-0000-42c6-d04d94000000
+      x-ms-request-id: f5672240-f01f-0024-3a35-0dbb34000000
       x-ms-version: '2019-02-02'
     status:
       code: 201
@@ -187,22 +187,22 @@ interactions:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-dfs/12.0.0b7 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-dfs/12.0.1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-client-request-id:
-      - 925c36c8-3cb9-11ea-823e-001a7dda7113
+      - 020ec2ee-7929-11ea-8cfe-001a7dda7113
       x-ms-date:
-      - Wed, 22 Jan 2020 01:50:31 GMT
+      - Tue, 07 Apr 2020 23:39:22 GMT
       x-ms-version:
-      - '2019-02-02'
+      - '2019-07-07'
     method: HEAD
-    uri: https://storagename.blob.core.windows.net/filesystem9fa32555/source%2Fsubdir
+    uri: https://storagename.blob.core.windows.net/filesystem9fa32555/source/subdir
   response:
     body:
       string: ''
     headers:
       ? !!python/object/new:multidict._multidict.istr
       - Date
-      : Wed, 22 Jan 2020 01:50:30 GMT
+      : Tue, 07 Apr 2020 23:39:21 GMT
       ? !!python/object/new:multidict._multidict.istr
       - Server
       : Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
@@ -210,8 +210,8 @@ interactions:
       - Transfer-Encoding
       : chunked
       x-ms-error-code: BlobNotFound
-      x-ms-request-id: f6af1545-f01e-0046-58c6-d07913000000
-      x-ms-version: '2019-02-02'
+      x-ms-request-id: cc680759-301e-0066-7e35-0d02b4000000
+      x-ms-version: '2019-07-07'
     status:
       code: 404
       message: The specified blob does not exist.
@@ -220,7 +220,7 @@ interactions:
       - !!python/object/new:urllib.parse.SplitResult
         - https
         - xiafuhns.blob.core.windows.net
-        - /filesystem9fa32555/source%2Fsubdir
+        - /filesystem9fa32555/source/subdir
         - ''
         - ''
 version: 1
