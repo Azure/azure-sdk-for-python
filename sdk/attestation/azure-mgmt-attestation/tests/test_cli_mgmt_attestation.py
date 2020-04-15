@@ -36,7 +36,7 @@ class MgmtAttestationTest(AzureMgmtTestCase):
 
         SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
         RESOURCE_GROUP = resource_group.name
-        PROVIDER_NAME = "myprovider4"
+        PROVIDER_NAME = "myprovider6"
 
         CREATION_PARAMS = {
           'properties': {
@@ -52,10 +52,10 @@ class MgmtAttestationTest(AzureMgmtTestCase):
         result = self.mgmt_client.attestation_providers.get(resource_group_name=RESOURCE_GROUP, provider_name=PROVIDER_NAME)
 
         # /AttestationProviders/get/AttestationProviders_ListByResourceGroup[get]
-        # result = self.mgmt_client.attestation_providers.list_by_resource_group(resource_group_name=RESOURCE_GROUP)
+        result = self.mgmt_client.attestation_providers.list_by_resource_group(resource_group_name=RESOURCE_GROUP)
 
         # /AttestationProviders/get/AttestationProviders_List[get]
-        # result = self.mgmt_client.attestation_providers.list()
+        result = self.mgmt_client.attestation_providers.list()
 
         # /Operations/get/Operations_List[get]
         result = self.mgmt_client.operations.list()

@@ -14,14 +14,14 @@ interactions:
       - application/json; charset=utf-8
       User-Agent:
       - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-attestation/0.1.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-attestation/0.2.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_attestation_test_attestation76ba1178/providers/Microsoft.Attestation/attestationProviders/myprovider4?api-version=2018-09-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_attestation_test_attestation76ba1178/providers/Microsoft.Attestation/attestationProviders/myprovider6?api-version=2018-09-01-preview
   response:
     body:
-      string: '{"id":"subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_attestation_test_attestation76ba1178/providers/Microsoft.Attestation/attestationProviders/myprovider4","name":"myprovider4","type":"Microsoft.Attestation/attestationProviders","location":"eastus","tags":null,"properties":{"trustModel":"AAD","status":"Ready","attestUri":"https://myprovider4.us.attest.azure.net"}}'
+      string: '{"id":"subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_attestation_test_attestation76ba1178/providers/Microsoft.Attestation/attestationProviders/myprovider6","name":"myprovider6","type":"Microsoft.Attestation/attestationProviders","location":"eastus","tags":null,"properties":{"trustModel":"AAD","status":"Ready","attestUri":"https://myprovider6.us.attest.azure.net"}}'
     headers:
       cache-control:
       - no-cache
@@ -30,11 +30,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 15 Apr 2020 09:22:35 GMT
+      - Wed, 15 Apr 2020 10:13:48 GMT
       expires:
       - '-1'
       location:
-      - https://myprovider4.us.attest.azure.net/
+      - https://myprovider6.us.attest.azure.net/
       pragma:
       - no-cache
       server:
@@ -47,7 +47,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1198'
+      - '1199'
     status:
       code: 201
       message: Created
@@ -62,14 +62,14 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-attestation/0.1.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-attestation/0.2.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_attestation_test_attestation76ba1178/providers/Microsoft.Attestation/attestationProviders/myprovider4?api-version=2018-09-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_attestation_test_attestation76ba1178/providers/Microsoft.Attestation/attestationProviders/myprovider6?api-version=2018-09-01-preview
   response:
     body:
-      string: '{"id":"subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_attestation_test_attestation76ba1178/providers/Microsoft.Attestation/attestationProviders/myprovider4","name":"myprovider4","type":"Microsoft.Attestation/attestationProviders","location":"eastus","tags":null,"properties":{"trustModel":"AAD","status":"Ready","attestUri":"https://myprovider4.us.attest.azure.net"}}'
+      string: '{"id":"subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_attestation_test_attestation76ba1178/providers/Microsoft.Attestation/attestationProviders/myprovider6","name":"myprovider6","type":"Microsoft.Attestation/attestationProviders","location":"eastus","tags":null,"properties":{"trustModel":"AAD","status":"Ready","attestUri":"https://myprovider6.us.attest.azure.net"}}'
     headers:
       cache-control:
       - no-cache
@@ -78,7 +78,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 15 Apr 2020 09:22:35 GMT
+      - Wed, 15 Apr 2020 10:13:49 GMT
       expires:
       - '-1'
       pragma:
@@ -110,7 +110,103 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-attestation/0.1.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-attestation/0.2.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_attestation_test_attestation76ba1178/providers/Microsoft.Attestation/attestationProviders?api-version=2018-09-01-preview
+  response:
+    body:
+      string: '[{"trustModel":"AAD","status":"Ready","attestUri":"https://myprovider.us.attest.azure.net","privateEndpointConnections":null},{"trustModel":"AAD","status":"Ready","attestUri":"https://myprovider1.us.attest.azure.net","privateEndpointConnections":null},{"trustModel":"AAD","status":"Ready","attestUri":"https://myprovider2.us.attest.azure.net","privateEndpointConnections":null},{"trustModel":"AAD","status":"Ready","attestUri":"https://myprovider4.us.attest.azure.net","privateEndpointConnections":null},{"trustModel":"AAD","status":"Ready","attestUri":"https://myprovider5.us.attest.azure.net","privateEndpointConnections":null},{"trustModel":"AAD","status":"Ready","attestUri":"https://myprovider6.us.attest.azure.net","privateEndpointConnections":null},{"trustModel":"AAD","status":"Ready","attestUri":"https://myproviderrn.us.attest.azure.net","privateEndpointConnections":null},{"trustModel":"AAD","status":"Ready","attestUri":"https://myproviderrnd.us.attest.azure.net","privateEndpointConnections":null},{"trustModel":"AAD","status":"Ready","attestUri":"https://myprovideryu.us.attest.azure.net","privateEndpointConnections":null}]'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1138'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 15 Apr 2020 10:13:49 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      www-authenticate:
+      - Bearer authorization_uri="https://login.windows.net/54826b22-38d6-4fb2-bad9-b7b93a3e9c5a",
+        resource="https://attest.azure.net"
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-attestation/0.2.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Attestation/attestationProviders?api-version=2018-09-01-preview
+  response:
+    body:
+      string: '[{"trustModel":null,"status":"Ready","attestUri":"https://myattestation.us.attest.azure.net","privateEndpointConnections":null},{"trustModel":"AAD","status":"Ready","attestUri":"https://myprovider.us.attest.azure.net","privateEndpointConnections":null},{"trustModel":"AAD","status":"Ready","attestUri":"https://myprovider1.us.attest.azure.net","privateEndpointConnections":null},{"trustModel":"AAD","status":"Ready","attestUri":"https://myprovider2.us.attest.azure.net","privateEndpointConnections":null},{"trustModel":"AAD","status":"Ready","attestUri":"https://myprovider4.us.attest.azure.net","privateEndpointConnections":null},{"trustModel":"AAD","status":"Ready","attestUri":"https://myprovider5.us.attest.azure.net","privateEndpointConnections":null},{"trustModel":"AAD","status":"Ready","attestUri":"https://myprovider6.us.attest.azure.net","privateEndpointConnections":null},{"trustModel":"AAD","status":"Ready","attestUri":"https://myproviderrn.us.attest.azure.net","privateEndpointConnections":null},{"trustModel":"AAD","status":"Ready","attestUri":"https://myproviderrnd.us.attest.azure.net","privateEndpointConnections":null},{"trustModel":"AAD","status":"Ready","attestUri":"https://myprovideryu.us.attest.azure.net","privateEndpointConnections":null}]'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1265'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 15 Apr 2020 10:13:49 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      www-authenticate:
+      - Bearer authorization_uri="https://login.windows.net/72f988bf-86f1-41af-91ab-2d7cd011db47",
+        resource="https://attest.azure.net"
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-attestation/0.2.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
@@ -154,7 +250,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 15 Apr 2020 09:22:35 GMT
+      - Wed, 15 Apr 2020 10:13:49 GMT
       expires:
       - '-1'
       pragma:
@@ -190,14 +286,14 @@ interactions:
       - application/json; charset=utf-8
       User-Agent:
       - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-attestation/0.1.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-attestation/0.2.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PATCH
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_attestation_test_attestation76ba1178/providers/Microsoft.Attestation/attestationProviders/myprovider4?api-version=2018-09-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_attestation_test_attestation76ba1178/providers/Microsoft.Attestation/attestationProviders/myprovider6?api-version=2018-09-01-preview
   response:
     body:
-      string: '{"id":"subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_attestation_test_attestation76ba1178/providers/Microsoft.Attestation/attestationProviders/myprovider4","name":"myprovider4","type":"Microsoft.Attestation/attestationProviders","location":"eastus","tags":{"property1":"Value1","property2":"Value2","property3":"Value3"},"properties":{"trustModel":"AAD","status":"Ready","attestUri":"https://myprovider4.us.attest.azure.net"}}'
+      string: '{"id":"subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_attestation_test_attestation76ba1178/providers/Microsoft.Attestation/attestationProviders/myprovider6","name":"myprovider6","type":"Microsoft.Attestation/attestationProviders","location":"eastus","tags":{"property1":"Value1","property2":"Value2","property3":"Value3"},"properties":{"trustModel":"AAD","status":"Ready","attestUri":"https://myprovider6.us.attest.azure.net"}}'
     headers:
       cache-control:
       - no-cache
@@ -206,7 +302,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 15 Apr 2020 09:22:35 GMT
+      - Wed, 15 Apr 2020 10:13:50 GMT
       expires:
       - '-1'
       pragma:
@@ -225,7 +321,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1197'
+      - '1198'
     status:
       code: 200
       message: OK
@@ -242,11 +338,11 @@ interactions:
       - '0'
       User-Agent:
       - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-attestation/0.1.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-attestation/0.2.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_attestation_test_attestation76ba1178/providers/Microsoft.Attestation/attestationProviders/myprovider4?api-version=2018-09-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_attestation_test_attestation76ba1178/providers/Microsoft.Attestation/attestationProviders/myprovider6?api-version=2018-09-01-preview
   response:
     body:
       string: ''
@@ -256,7 +352,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 15 Apr 2020 09:22:36 GMT
+      - Wed, 15 Apr 2020 10:13:50 GMT
       expires:
       - '-1'
       pragma:
@@ -271,7 +367,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-deletes:
-      - '14998'
+      - '14999'
     status:
       code: 202
       message: Accepted
