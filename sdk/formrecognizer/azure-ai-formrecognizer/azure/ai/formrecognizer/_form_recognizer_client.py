@@ -9,6 +9,7 @@
 from typing import (  # pylint: disable=unused-import
     Any,
     IO,
+    Union,
     TYPE_CHECKING,
 )
 from azure.core.tracing.decorator import distributed_trace
@@ -61,7 +62,7 @@ class FormRecognizerClient(object):
 
     @distributed_trace
     def begin_recognize_receipts(self, stream, **kwargs):
-        # type: (IO[bytes], Any) -> LROPoller
+        # type: (Union[bytes, IO[bytes]], Any) -> LROPoller
         """Extract field text and semantic values from a given US sales receipt.
         The input document must be of one of the supported content types - 'application/pdf',
         'image/jpeg', 'image/png' or 'image/tiff'.
@@ -128,7 +129,7 @@ class FormRecognizerClient(object):
 
     @distributed_trace
     def begin_recognize_content(self, stream, **kwargs):
-        # type: (IO[bytes], Any) -> LROPoller
+        # type: (Union[bytes, IO[bytes]], Any) -> LROPoller
         """Extract text and content/layout information from a given document.
         The input document must be of one of the supported content types - 'application/pdf',
         'image/jpeg', 'image/png' or 'image/tiff'.
@@ -182,7 +183,7 @@ class FormRecognizerClient(object):
 
     @distributed_trace
     def begin_recognize_custom_forms(self, model_id, stream, **kwargs):
-        # type: (str, IO[bytes], Any) -> LROPoller
+        # type: (str, Union[bytes, IO[bytes]], Any) -> LROPoller
         """Analyze a custom form with a model trained with or without labels.
         The input document must be of one of the supported content types - 'application/pdf',
         'image/jpeg', 'image/png' or 'image/tiff'.
