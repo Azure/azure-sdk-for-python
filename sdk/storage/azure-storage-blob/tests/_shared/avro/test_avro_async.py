@@ -49,7 +49,9 @@ class AvroReaderTestsAsync(unittest.TestCase):
                     datum_reader = AsyncDatumReader()
                     async_reader = AsyncBufferedReaderWrapper(reader)
                     async with await AsyncDataFileReader(async_reader, datum_reader).init() as dfr:
-                        round_trip_data = [x async for x in dfr]
+                        round_trip_data = []
+                        async for x in dfr:
+                            round_trip_data.append(x)
                         if ([datum] * nitems) == round_trip_data:
                             correct += 1
         self.assertEqual(
@@ -63,7 +65,9 @@ class AvroReaderTestsAsync(unittest.TestCase):
             datum_reader = AsyncDatumReader()
             async_reader = AsyncBufferedReaderWrapper(reader)
             async with await AsyncDataFileReader(async_reader, datum_reader).init() as dfr:
-                data = [x async for x in dfr]
+                data = []
+                async for x in dfr:
+                    data.append(x)
                 self.assertEqual(1, len(data))
                 expectedRecord = {
                     'data': {
