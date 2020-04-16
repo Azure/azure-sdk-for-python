@@ -78,8 +78,9 @@ Use the key as the credential parameter to authenticate the client:
 from azure.ai.formrecognizer import FormRecognizerClient
 from azure.core.credentials import AzureKeyCredential
 
+endpoint = "https://<region>.api.cognitive.microsoft.com/"
 credential = AzureKeyCredential("<api_key>")
-client = FormRecognizerClient(endpoint, credential)
+form_recognizer_client = FormRecognizerClient(endpoint, credential)
 ```
 
 ## Key concepts
@@ -175,14 +176,17 @@ Recognize name/value pairs and table data from forms. These models are trained w
 from azure.ai.formrecognizer import FormRecognizerClient
 from azure.core.credentials import AzureKeyCredential
 
-client = FormRecognizerClient(endpoint, AzureKeyCredential(key))
+endpoint = "https://<region>.api.cognitive.microsoft.com/"
+credential = AzureKeyCredential("<api_key>")
+
+form_recognizer_client = FormRecognizerClient(endpoint, credential)
 model_id = "<model id from the above sample>"
 
 # Make sure the form type is one of the types of forms your custom model can recognize
 with open("<path to your form>", "rb") as fd:
     form = fd.read()
 
-poller = client.begin_recognize_custom_forms(model_id=model_id, stream=form)
+poller = form_recognizer_client.begin_recognize_custom_forms(model_id=model_id, stream=form)
 result = poller.result()
 
 for recognized_form in result:
@@ -200,12 +204,15 @@ Recognize text and table structures, along with their bounding box coordinates, 
 from azure.ai.formrecognizer import FormRecognizerClient
 from azure.core.credentials import AzureKeyCredential
 
-client = FormRecognizerClient(endpoint, AzureKeyCredential(key))
+endpoint = "https://<region>.api.cognitive.microsoft.com/"
+credential = AzureKeyCredential("<api_key>")
+
+form_recognizer_client = FormRecognizerClient(endpoint, credential)
 
 with open("<path to your form>", "rb") as fd:
     form = fd.read()
 
-poller = client.begin_recognize_content(form)
+poller = form_recognizer_client.begin_recognize_content(form)
 page = poller.result()
 
 table = page[0].tables[0] # page 1, table 1
@@ -221,12 +228,16 @@ Recognize data from USA sales receipts using a prebuilt model.
 ```python
 from azure.ai.formrecognizer import FormRecognizerClient
 from azure.core.credentials import AzureKeyCredential
-client = FormRecognizerClient(endpoint, AzureKeyCredential(key))
+
+endpoint = "https://<region>.api.cognitive.microsoft.com/"
+credential = AzureKeyCredential("<api_key>")
+
+form_recognizer_client = FormRecognizerClient(endpoint, credential)
 
 with open("<path to your receipt>", "rb") as fd:
     receipt = fd.read()
 
-poller = client.begin_recognize_receipts(receipt)
+poller = form_recognizer_client.begin_recognize_receipts(receipt)
 result = poller.result()
 
 r = result[0]
@@ -255,10 +266,13 @@ in the [service quickstart documentation][quickstart_training].
 from azure.ai.formrecognizer import FormTrainingClient
 from azure.core.credentials import AzureKeyCredential
 
-client = FormTrainingClient(endpoint, AzureKeyCredential(key))
+endpoint = "https://<region>.api.cognitive.microsoft.com/"
+credential = AzureKeyCredential("<api_key>")
+
+form_training_client = FormTrainingClient(endpoint, credential)
 
 container_sas_url = "xxx"  # training documents uploaded to blob storage
-poller = client.begin_training(container_sas_url)
+poller = form_training_client.begin_training(container_sas_url)
 model = poller.result()
 
 # Custom model information
@@ -290,7 +304,10 @@ from azure.ai.formrecognizer import FormTrainingClient
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import ResourceNotFoundError
 
-client = FormTrainingClient(endpoint, AzureKeyCredential(key))
+endpoint = "https://<region>.api.cognitive.microsoft.com/"
+credential = AzureKeyCredential("<api_key>")
+
+form_training_client = FormTrainingClient(endpoint, credential)
 
 account_properties = form_training_client.get_account_properties()
 print("Our account has {} custom models, and we can have at most {} custom models".format(
@@ -306,7 +323,7 @@ print("We have models with the following ids: {}".format(
 # Now we get the custom model from the "Train a model" sample
 model_id = "<model id from the Train a Model sample>"
 
-custom_model = client.get_custom_model(model_id=model_id)
+custom_model = form_training_client.get_custom_model(model_id=model_id)
 print("Model ID: {}".format(custom_model.model_id))
 print("Status: {}".format(custom_model.status))
 print("Created on: {}".format(custom_model.created_on))
@@ -358,13 +375,13 @@ endpoint = "https://<my-custom-subdomain>.cognitiveservices.azure.com/"
 credential = AzureKeyCredential("<api_key>")
 
 # This client will log detailed information about its HTTP sessions, at DEBUG level
-client = FormRecognizerClient(endpoint, credential, logging_enable=True)
+form_recognizer_client = FormRecognizerClient(endpoint, credential, logging_enable=True)
 ```
 
 Similarly, `logging_enable` can enable detailed logging for a single operation,
 even when it isn't enabled for the client:
 ```python
-poller = client.begin_recognize_receipts(receipt, logging_enable=True)
+poller = form_recognizer_client.begin_recognize_receipts(receipt, logging_enable=True)
 ```
 
 ## Next steps
