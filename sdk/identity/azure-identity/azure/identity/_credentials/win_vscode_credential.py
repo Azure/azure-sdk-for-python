@@ -67,12 +67,19 @@ _advapi.CredWriteW.restype = wt.BOOL
 _advapi.CredReadW.argtypes = [wt.LPCWSTR, wt.DWORD, wt.DWORD, ct.POINTER(_PCREDENTIAL)]
 _advapi.CredReadW.restype = wt.BOOL
 _advapi.CredFree.argtypes = [_PCREDENTIAL]
+_advapi.CredDeleteW.restype = wt.BOOL
+_advapi.CredDeleteW.argtypes = [wt.LPCWSTR, wt.DWORD, wt.DWORD]
 
 
 def _cred_write(credential):
     creds = _CREDENTIAL.from_dict(credential)
     cred_ptr = _PCREDENTIAL(creds)
     _advapi.CredWriteW(cred_ptr, 0)
+
+
+def _cred_delete(service_name, account_name):
+    target = u"{}/{}".format(service_name, account_name)
+    _advapi.CredDeleteW(target, 1, 0)
 
 
 def _read_credential(service_name, account_name):

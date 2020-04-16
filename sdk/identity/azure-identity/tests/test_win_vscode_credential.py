@@ -5,12 +5,18 @@
 import sys
 import pytest
 from azure.core.credentials import AccessToken
+from azure.identity import CredentialUnavailableError
 try:
     from unittest.mock import Mock
 except ImportError:  # python < 3.3
     from mock import Mock  # type: ignore
 if sys.platform.startswith('win'):
-    from azure.identity._credentials.win_vscode_credential import WinVSCodeCredential, _read_credential, _cred_write
+    from azure.identity._credentials.win_vscode_credential import (
+        WinVSCodeCredential,
+        _read_credential,
+        _cred_write,
+        _cred_delete,
+    )
 
 @pytest.mark.skipif(not sys.platform.startswith('win'), reason="This test only runs on Windows")
 def test_win_vscode_credential():
@@ -31,7 +37,30 @@ def test_win_vscode_credential():
     assert token_read == token_written
 
 @pytest.mark.skipif(not sys.platform.startswith('win'), reason="This test only runs on Windows")
+def test_credential_unavailable_error():
+    service_name = u"VS Code Azure"
+    account_name = u"Azure"
+    _cred_delete(service_name, account_name)
+    credential = WinVSCodeCredential()
+    with pytest.raises(CredentialUnavailableError):
+        token = credential.get_token("scope")
+
+@pytest.mark.skipif(not sys.platform.startswith('win'), reason="This test only runs on Windows")
 def test_get_token():
+    service_name = u"VS Code Azure"
+    account_name = u"Azure"
+    target = u"{}/{}".format(service_name, account_name)
+    comment = u"comment"
+    token_written = u"test_refresh_token"
+    user_name = u"Azure"
+    credential = {"Type": 0x1,
+                  "TargetName": target,
+                  "UserName": user_name,
+                  "CredentialBlob": token_written,
+                  "Comment": comment,
+                  "Persist": 0x2}
+    _cred_write(credential)
+
     expected_token = AccessToken("token", 42)
 
     mock_client = Mock(spec=object)
