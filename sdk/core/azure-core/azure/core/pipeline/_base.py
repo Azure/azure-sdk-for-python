@@ -163,7 +163,7 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
 
         Does nothing if "set_multipart_mixed" was never called.
         """
-        multipart_mixed_info = getattr(request, 'multipart_mixed_info')
+        multipart_mixed_info = request.multipart_mixed_info # type: ignore
         if not multipart_mixed_info:
             return
 

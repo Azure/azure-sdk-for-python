@@ -168,7 +168,7 @@ def _serialize_request(http_request):
 
 
 class HttpTransport(
-    AbstractContextManager, ABC, Generic[HTTPRequestType, HTTPResponseType]
+    AbstractContextManager, ABC
 ):
     """An http sender ABC.
     """

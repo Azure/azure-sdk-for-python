@@ -30,7 +30,7 @@ try:
 except ImportError:
     from urllib.parse import urlparse
 
-from typing import Any, Callable, Union, List, Optional, cast, TYPE_CHECKING
+from typing import Any, Callable, Union, List, Optional, cast, TypeVar, Generic, TYPE_CHECKING
 from azure.core.pipeline.transport._base import HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.common import with_current_context
@@ -39,6 +39,9 @@ if TYPE_CHECKING:
     import requests
     from msrest.serialization import Model # pylint: disable=unused-import
     DeserializationCallbackType = Union[Model, Callable[[requests.Response], Model]]
+
+HTTPResponseType = TypeVar("HTTPResponseType")
+HTTPRequestType = TypeVar("HTTPRequestType")
 
 
 class PollingMethod(object):
@@ -102,7 +105,7 @@ class NoPolling(PollingMethod):
         return self._deserialization_callback(self._initial_response)
 
 
-class LROPoller(object):
+class LROPoller(Generic[HTTPRequestType, HTTPResponseType]):
     """Poller for long running operations.
 
     :param client: A pipeline service client
@@ -126,7 +129,7 @@ class LROPoller(object):
 
         # This implicit test avoids bringing in an explicit dependency on Model directly
         try:
-            deserialization_callback = getattr(deserialization_callback, 'deserialize')
+            deserialization_callback = deserialization_callback.deserialize # type: ignore
         except AttributeError:
             pass
 
