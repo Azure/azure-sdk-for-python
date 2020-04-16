@@ -665,6 +665,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                         await asyncio.sleep(60)
                         print("Finished first sleep", message.locked_until_utc)
                         assert not message.expired
+                        await asyncio.sleep(15) #generate autolockrenewtimeout error by going one iteration past.
                         sleep_until_expired(message)
                         print("Finished second sleep", message.locked_until_utc, utc_now())
                         assert message.expired
