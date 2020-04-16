@@ -12,16 +12,34 @@
 # Methods Total   : 17
 # Methods Covered : 16
 # Examples Total  : 19
-# Examples Tested : 6
-# Coverage %      : 30
+# Examples Tested : 19
+# Coverage %      : 94.11764705882352
 # ----------------------
 
+# covered ops:
+#   configuration_stores: 9/9
+#   operations: 2/2
+#   private_endpoint_connections: 4/4
+#   private_link_resources: 2/2
+
+import time
 import unittest
 
 import azure.mgmt.appconfiguration
+import azure.mgmt.network
+from azure.appconfiguration import (
+    AzureAppConfigurationClient,
+    ConfigurationSetting
+)
 from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 
 AZURE_LOCATION = 'eastus'
+KEY_UUID = "test_key_a6af8952-54a6-11e9-b600-2816a84d0309"
+LABEL_UUID = "1d7b2b28-549e-11e9-b51c-2816a84d0309"
+KEY = "PYTHON_UNIT_" + KEY_UUID
+LABEL = "test_label1_" + LABEL_UUID
+TEST_CONTENT_TYPE = "test content type"
+TEST_VALUE = "test value"
 
 class MgmtAppConfigurationTest(AzureMgmtTestCase):
 
@@ -30,87 +48,207 @@ class MgmtAppConfigurationTest(AzureMgmtTestCase):
         self.mgmt_client = self.create_mgmt_client(
             azure.mgmt.appconfiguration.AppConfigurationManagementClient
         )
-    
+
+        self.network_client = self.create_mgmt_client(
+          azure.mgmt.network.NetworkManagementClient
+        )
+
+    def create_kv(self, connection_str):
+        app_config_client = AzureAppConfigurationClient.from_connection_string(connection_str)
+        kv = ConfigurationSetting(
+            key=KEY,
+            label=LABEL,
+            value=TEST_VALUE,
+            content_type=TEST_CONTENT_TYPE,
+            tags={"tag1": "tag1", "tag2": "tag2"}
+        )
+        created_kv = app_config_client.add_configuration_setting(kv)
+        return created_kv
+        
+
+    # TODO: update to track 2 version later
+    def create_endpoint(self, group_name, vnet_name, sub_net, endpoint_name, conf_store_id):
+        # Create VNet
+        async_vnet_creation = self.network_client.virtual_networks.create_or_update(
+            group_name,
+            vnet_name,
+            {
+                'location': AZURE_LOCATION,
+                'address_space': {
+                    'address_prefixes': ['10.0.0.0/16']
+                }
+            }
+        )
+        async_vnet_creation.wait()
+
+        # Create Subnet
+        async_subnet_creation = self.network_client.subnets.create_or_update(
+            group_name,
+            vnet_name,
+            sub_net,
+            {
+              'address_prefix': '10.0.0.0/24',
+               'private_link_service_network_policies': 'disabled',
+               'private_endpoint_network_policies': 'disabled'
+            }
+        )
+        subnet_info = async_subnet_creation.result()
+
+        # Create private endpoint
+        BODY = {
+          "location": "eastus",
+          "properties": {
+            "privateLinkServiceConnections": [
+              # {
+              #   "name": PRIVATE_LINK_SERVICES,  # TODO: This is needed, but was not showed in swagger.
+              #   "private_link_service_id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/privateLinkServices/" + PRIVATE_LINK_SERVICES,
+              # },
+              {
+                "name": "myconnection",
+                # "private_link_service_id": "/subscriptions/" + self.settings.SUBSCRIPTION_ID + "/resourceGroups/" + group_name + "/providers/Microsoft.Storage/storageAccounts/" + STORAGE_ACCOUNT_NAME + ""
+                "private_link_service_id": conf_store_id,
+                "group_ids": ["configurationStores"]
+              }
+            ],
+            "subnet": {
+              "id": "/subscriptions/" + self.settings.SUBSCRIPTION_ID + "/resourceGroups/" + group_name + "/providers/Microsoft.Network/virtualNetworks/" + vnet_name + "/subnets/" + sub_net
+            }
+          }
+        }
+        result = self.network_client.private_endpoints.create_or_update(group_name, endpoint_name, BODY)
+
+        return result.result()
+
+    @ResourceGroupPreparer(location=AZURE_LOCATION)
+    def test_appconfiguration_list_key_values(self, resource_group):
+        CONFIGURATION_STORE_NAME = self.get_resource_name("configuration")
+
+        # ConfigurationStores_Create[put]
+        BODY = {
+          "location": "westus",
+          "sku": {
+            "name": "Standard"  # Free can not use private endpoint
+          },
+          "tags": {
+            "my_tag": "myTagValue"
+          }
+        }
+        result = self.mgmt_client.configuration_stores.begin_create(resource_group.name, CONFIGURATION_STORE_NAME, BODY)
+        conf_store = result.result()
+
+        # ConfigurationStores_ListKeys[post]
+        keys = list(self.mgmt_client.configuration_stores.list_keys(resource_group.name, CONFIGURATION_STORE_NAME))
+
+        # ConfigurationStores_RegenerateKey[post]
+        BODY = {
+          "id": keys[0].id
+        }
+        key = self.mgmt_client.configuration_stores.regenerate_key(resource_group.name, CONFIGURATION_STORE_NAME, BODY["id"])
+
+        # create key-value
+        self.create_kv(key.connection_string)
+
+        # ConfigurationStores_ListKeyValue[post]
+        BODY = {
+          "key": KEY,
+          "label": LABEL
+        }
+        result = self.mgmt_client.configuration_stores.list_key_value(resource_group.name, CONFIGURATION_STORE_NAME, BODY["key"], BODY["label"])
+
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_appconfiguration(self, resource_group):
 
-        SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
-        RESOURCE_GROUP = resource_group.name
-        CONFIG_STORE_NAME = "myConfigStore"
-        PRIVATE_ENDPOINT_CONNECTION_NAME = "myPrivateEndpointConnection"
-        GROUP_NAME = "myGroup"
+        SERVICE_NAME = "myapimrndxyz"
+        VNET_NAME = "vnetname"
+        SUB_NET = "subnetname"
+        ENDPOINT_NAME = "endpointxyz"
+        CONFIGURATION_STORE_NAME = self.get_resource_name("configuration")
+        PRIVATE_ENDPOINT_CONNECTION_NAME = self.get_resource_name("privateendpoint")
 
-        # /ConfigurationStores/put/ConfigurationStores_Create[put]
+        # ConfigurationStores_Create[put]
         BODY = {
           "location": "westus",
           "sku": {
-            "name": "Standard"
+            "name": "Standard"  # Free can not use private endpoint
           },
           "tags": {
             "my_tag": "myTagValue"
           }
         }
-        result = self.mgmt_client.configuration_stores.create(resource_group_name=RESOURCE_GROUP, config_store_name=CONFIG_STORE_NAME, config_store_creation_parameters=BODY)
-        result = result.result()
+        result = self.mgmt_client.configuration_stores.begin_create(resource_group.name, CONFIGURATION_STORE_NAME, BODY)
+        conf_store = result.result()
 
-        # /ConfigurationStores/put/ConfigurationStores_Create_WithIdentity[put]
-        BODY = {
-          "location": "westus",
-          "sku": {
-            "name": "Standard"
-          },
-          "tags": {
-            "my_tag": "myTagValue"
-          },
-          "identity": {
-            "type": "SystemAssigned, UserAssigned",
-            "user_assigned_identities": {}
-          }
-        }
-        # result = self.mgmt_client.configuration_stores.create(resource_group_name=RESOURCE_GROUP, config_store_name=CONFIG_STORE_NAME, config_store_creation_parameters=BODY)
+        # create endpoint
+        endpoint = self.create_endpoint(resource_group.name, VNET_NAME, SUB_NET, ENDPOINT_NAME, conf_store.id)
+
+        # ConfigurationStores_Create_WithIdentity[put]
+        # BODY = {
+        #   "location": "westus",
+        #   "sku": {
+        #     "name": "Free"
+        #   },
+        #   "tags": {
+        #     "my_tag": "myTagValue"
+        #   },
+        #   "identity": {
+        #     "type": "SystemAssigned, UserAssigned",
+        #     "user_assigned_identities": {}
+        #   }
+        # }
+        # result = self.mgmt_client.configuration_stores.begin_create(resource_group.name, CONFIGURATION_STORE_NAME, BODY)
         # result = result.result()
 
-        # /PrivateEndpointConnections/put/PrivateEndpointConnection_CreateOrUpdate[put]
+        # ConfigurationStores_Get[get]
+        conf_store = self.mgmt_client.configuration_stores.get(resource_group.name, CONFIGURATION_STORE_NAME)
+        PRIVATE_ENDPOINT_CONNECTION_NAME = conf_store.private_endpoint_connections[0].name
+        private_connection_id = conf_store.private_endpoint_connections[0].id
+
+        # TODO: azure.core.exceptions.HttpResponseError: (InvalidProperty) Some of the properties of 'PrivateEndpointConnection' are invalid. Errors: 'Missing required property 'Id'.'
+        # PrivateEndpointConnection_CreateOrUpdate[put]
         BODY = {
+          # "id": "https://management.azure.com/subscriptions/" + self.settings.SUBSCRIPTION_ID + "/resourceGroups/" + resource_group.name + "/providers/Microsoft.AppConfiguration/configurationStores/" + CONFIGURATION_STORE_NAME + "/privateEndpointConnections/" + PRIVATE_ENDPOINT_CONNECTION_NAME,
+          "id": private_connection_id,
+          "private_endpoint": {
+            "id": "/subscriptions/" + self.settings.SUBSCRIPTION_ID + "/resourceGroups/" + resource_group.name + "/providers/Microsoft.Network/privateEndpoints/" + ENDPOINT_NAME,
+          },
           "private_link_service_connection_state": {
             "status": "Approved",
             "description": "Auto-Approved"
           }
         }
-        # result = self.mgmt_client.private_endpoint_connections.create_or_update(resource_group_name=RESOURCE_GROUP, config_store_name=CONFIG_STORE_NAME, private_endpoint_connection_name=PRIVATE_ENDPOINT_CONNECTION_NAME, private_endpoint_connection=BODY)
-        # result = result.result()
+        result = self.mgmt_client.private_endpoint_connections.begin_create_or_update(
+            resource_group.name,
+            CONFIGURATION_STORE_NAME,
+            PRIVATE_ENDPOINT_CONNECTION_NAME,
+            BODY)
+            # id=BODY["id"],
+            # private_endpoint=BODY["private_endpoint"],
+            # private_link_service_connection_state=BODY["private_link_service_connection_state"])
+        result = result.result()
+          
+        # PrivateEndpointConnection_GetConnection[get]
+        result = self.mgmt_client.private_endpoint_connections.get(resource_group.name, CONFIGURATION_STORE_NAME, PRIVATE_ENDPOINT_CONNECTION_NAME)
 
-        # /PrivateEndpointConnections/get/PrivateEndpointConnection_GetConnection[get]
-        # result = self.mgmt_client.private_endpoint_connections.get(resource_group_name=RESOURCE_GROUP, config_store_name=CONFIG_STORE_NAME, private_endpoint_connection_name=PRIVATE_ENDPOINT_CONNECTION_NAME)
+        # PrivateLinkResources_ListGroupIds[get]
+        privatelinks = list(self.mgmt_client.private_link_resources.list_by_configuration_store(resource_group.name, CONFIGURATION_STORE_NAME))
+        PRIVATE_LINK_RESOURCE_NAME = privatelinks[0].name
 
-        # /PrivateLinkResources/get/PrivateLinkResources_Get[get]
-        # result = self.mgmt_client.private_link_resources.get(resource_group_name=RESOURCE_GROUP, config_store_name=CONFIG_STORE_NAME, group_name=GROUP_NAME)
+        # PrivateLinkResources_Get[get]
+        result = self.mgmt_client.private_link_resources.get(resource_group.name, CONFIGURATION_STORE_NAME, PRIVATE_LINK_RESOURCE_NAME)
 
-        # /PrivateEndpointConnections/get/PrivateEndpointConnection_List[get]
-        # result = self.mgmt_client.private_endpoint_connections.list_by_configuration_store(resource_group_name=RESOURCE_GROUP, config_store_name=CONFIG_STORE_NAME)
+        # PrivateEndpointConnection_List[get]
+        result = list(self.mgmt_client.private_endpoint_connections.list_by_configuration_store(resource_group.name, CONFIGURATION_STORE_NAME))
 
-        # /PrivateLinkResources/get/PrivateLinkResources_ListGroupIds[get]
-        # result = self.mgmt_client.private_link_resources.list_by_configuration_store(resource_group_name=RESOURCE_GROUP, config_store_name=CONFIG_STORE_NAME)
+        # List the operations available
+        result = self.mgmt_client.operations.list()
 
-        # /ConfigurationStores/get/ConfigurationStores_Get[get]
-        result = self.mgmt_client.configuration_stores.get(resource_group_name=RESOURCE_GROUP, config_store_name=CONFIG_STORE_NAME)
+        # ConfigurationStores_ListByResourceGroup[get]
+        result = self.mgmt_client.configuration_stores.list_by_resource_group(resource_group.name)
 
-        # /ConfigurationStores/get/ConfigurationStores_ListByResourceGroup[get]
-        result = self.mgmt_client.configuration_stores.list_by_resource_group(resource_group_name=RESOURCE_GROUP)
-
-        # /ConfigurationStores/get/ConfigurationStores_List[get]
+        # ConfigurationStores_List[get]
         result = self.mgmt_client.configuration_stores.list()
 
-        # /ConfigurationStores/post/ConfigurationStores_RegenerateKey[post]
-        # result = self.mgmt_client.configuration_stores.regenerate_key(resource_group_name=RESOURCE_GROUP, config_store_name=CONFIG_STORE_NAME, id="439AD01B4BE67DB1")
-
-        # /ConfigurationStores/post/ConfigurationStores_ListKeyValue[post]
-        # result = self.mgmt_client.configuration_stores.list_key_value(resource_group_name=RESOURCE_GROUP, config_store_name=CONFIG_STORE_NAME, key="MaxRequests", label="dev")
-
-        # /ConfigurationStores/post/ConfigurationStores_ListKeys[post]
-        result = self.mgmt_client.configuration_stores.list_keys(resource_group_name=RESOURCE_GROUP, config_store_name=CONFIG_STORE_NAME)
-
-        # /ConfigurationStores/patch/ConfigurationStores_Update[patch]
+        # ConfigurationStores_Update[patch]
         BODY = {
           "tags": {
             "category": "Marketing"
@@ -119,37 +257,45 @@ class MgmtAppConfigurationTest(AzureMgmtTestCase):
             "name": "Standard"
           }
         }
-        # result = self.mgmt_client.configuration_stores.update(resource_group_name=RESOURCE_GROUP, config_store_name=CONFIG_STORE_NAME, config_store_update_parameters=BODY)
+        result = self.mgmt_client.configuration_stores.begin_update(resource_group.name, CONFIGURATION_STORE_NAME, BODY)
+        result = result.result()
+
+        # ConfigurationStores_Update_WithIdentity[patch]
+        # BODY = {
+        #   "tags": {
+        #     "category": "Marketing"
+        #   },
+        #   "sku": {
+        #     "name": "Standard"
+        #   },
+        #   "identity": {
+        #     "type": "SystemAssigned, UserAssigned",
+        #     "user_assigned_identities": {}
+        #   }
+        # }
+        # result = self.mgmt_client.configuration_stores.begin_update(resource_group.name, CONFIGURATION_STORE_NAME, BODY)
         # result = result.result()
 
-        # /ConfigurationStores/patch/ConfigurationStores_Update_WithIdentity[patch]
+        # ConfigurationStores_CheckNameNotAvailable[post]
         BODY = {
-          "tags": {
-            "category": "Marketing"
-          },
-          "sku": {
-            "name": "Standard"
-          },
-          "identity": {
-            "type": "SystemAssigned, UserAssigned",
-            "user_assigned_identities": {}
-          }
+          "name": "contoso",
+          "type": "Microsoft.AppConfiguration/configurationStores"
         }
-        # result = self.mgmt_client.configuration_stores.update(resource_group_name=RESOURCE_GROUP, config_store_name=CONFIG_STORE_NAME, config_store_update_parameters=BODY)
-        # result = result.result()
+        result = self.mgmt_client.operations.check_name_availability(BODY["name"])
 
-        # /Operations/post/ConfigurationStores_CheckNameNotAvailable[post]
-        # result = self.mgmt_client.operations.check_name_availability(name="contoso", type="Microsoft.AppConfiguration/configurationStores")
+        # ConfigurationStores_CheckNameAvailable[post]
+        # BODY = {
+        #   "name": "contoso",
+        #   "type": "Microsoft.AppConfiguration/configurationStores"
+        # }
+        # result = self.mgmt_client.operations.check_name_availability(BODY["name"])
 
-        # /Operations/post/ConfigurationStores_CheckNameAvailable[post]
-        # result = self.mgmt_client.operations.check_name_availability(name="contoso", type="Microsoft.AppConfiguration/configurationStores")
+        # PrivateEndpointConnections_Delete[delete]
+        result = self.mgmt_client.private_endpoint_connections.begin_delete(resource_group.name, CONFIGURATION_STORE_NAME, PRIVATE_ENDPOINT_CONNECTION_NAME)
+        result = result.result()
 
-        # /PrivateEndpointConnections/delete/PrivateEndpointConnections_Delete[delete]
-        # result = self.mgmt_client.private_endpoint_connections.delete(resource_group_name=RESOURCE_GROUP, config_store_name=CONFIG_STORE_NAME, private_endpoint_connection_name=PRIVATE_ENDPOINT_CONNECTION_NAME)
-        # result = result.result()
-
-        # /ConfigurationStores/delete/ConfigurationStores_Delete[delete]
-        result = self.mgmt_client.configuration_stores.delete(resource_group_name=RESOURCE_GROUP, config_store_name=CONFIG_STORE_NAME)
+        # ConfigurationStores_Delete[delete]
+        result = self.mgmt_client.configuration_stores.begin_delete(resource_group.name, CONFIGURATION_STORE_NAME)
         result = result.result()
 
 
