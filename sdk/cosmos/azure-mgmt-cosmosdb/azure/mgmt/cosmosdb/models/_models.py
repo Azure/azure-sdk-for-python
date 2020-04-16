@@ -3129,6 +3129,10 @@ class PrivateEndpointConnection(ProxyResource):
      Private Endpoint Connection.
     :type private_link_service_connection_state:
      ~azure.mgmt.cosmosdb.models.PrivateLinkServiceConnectionStateProperty
+    :param group_id: Group id of the private endpoint.
+    :type group_id: str
+    :param provisioning_state: Provisioning state of the private endpoint.
+    :type provisioning_state: str
     """
 
     _validation = {
@@ -3143,12 +3147,16 @@ class PrivateEndpointConnection(ProxyResource):
         'type': {'key': 'type', 'type': 'str'},
         'private_endpoint': {'key': 'properties.privateEndpoint', 'type': 'PrivateEndpointProperty'},
         'private_link_service_connection_state': {'key': 'properties.privateLinkServiceConnectionState', 'type': 'PrivateLinkServiceConnectionStateProperty'},
+        'group_id': {'key': 'properties.groupId', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(PrivateEndpointConnection, self).__init__(**kwargs)
         self.private_endpoint = kwargs.get('private_endpoint', None)
         self.private_link_service_connection_state = kwargs.get('private_link_service_connection_state', None)
+        self.group_id = kwargs.get('group_id', None)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
 
 
 class PrivateEndpointProperty(Model):
@@ -3183,6 +3191,8 @@ class PrivateLinkResource(ARMProxyResource):
     :vartype group_id: str
     :ivar required_members: The private link resource required member names.
     :vartype required_members: list[str]
+    :ivar required_zone_names: The private link resource required zone names.
+    :vartype required_zone_names: list[str]
     """
 
     _validation = {
@@ -3191,6 +3201,7 @@ class PrivateLinkResource(ARMProxyResource):
         'type': {'readonly': True},
         'group_id': {'readonly': True},
         'required_members': {'readonly': True},
+        'required_zone_names': {'readonly': True},
     }
 
     _attribute_map = {
@@ -3199,12 +3210,14 @@ class PrivateLinkResource(ARMProxyResource):
         'type': {'key': 'type', 'type': 'str'},
         'group_id': {'key': 'properties.groupId', 'type': 'str'},
         'required_members': {'key': 'properties.requiredMembers', 'type': '[str]'},
+        'required_zone_names': {'key': 'properties.requiredZoneNames', 'type': '[str]'},
     }
 
     def __init__(self, **kwargs):
         super(PrivateLinkResource, self).__init__(**kwargs)
         self.group_id = None
         self.required_members = None
+        self.required_zone_names = None
 
 
 class PrivateLinkServiceConnectionStateProperty(Model):
