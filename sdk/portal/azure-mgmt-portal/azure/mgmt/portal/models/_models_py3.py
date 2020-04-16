@@ -136,13 +136,13 @@ class DashboardPartsPosition(Model):
     All required parameters must be populated in order to send to Azure.
 
     :param x: Required. The dashboard's part x coordinate.
-    :type x: float
+    :type x: int
     :param y: Required. The dashboard's part y coordinate.
-    :type y: float
+    :type y: int
     :param row_span: Required. The dashboard's part row span.
-    :type row_span: float
+    :type row_span: int
     :param col_span: Required. The dashboard's part column span.
-    :type col_span: float
+    :type col_span: int
     :param metadata: The dashboard part's metadata.
     :type metadata: dict[str, object]
     """
@@ -155,14 +155,14 @@ class DashboardPartsPosition(Model):
     }
 
     _attribute_map = {
-        'x': {'key': 'x', 'type': 'float'},
-        'y': {'key': 'y', 'type': 'float'},
-        'row_span': {'key': 'rowSpan', 'type': 'float'},
-        'col_span': {'key': 'colSpan', 'type': 'float'},
+        'x': {'key': 'x', 'type': 'int'},
+        'y': {'key': 'y', 'type': 'int'},
+        'row_span': {'key': 'rowSpan', 'type': 'int'},
+        'col_span': {'key': 'colSpan', 'type': 'int'},
         'metadata': {'key': 'metadata', 'type': '{object}'},
     }
 
-    def __init__(self, *, x: float, y: float, row_span: float, col_span: float, metadata=None, **kwargs) -> None:
+    def __init__(self, *, x: int, y: int, row_span: int, col_span: int, metadata=None, **kwargs) -> None:
         super(DashboardPartsPosition, self).__init__(**kwargs)
         self.x = x
         self.y = y
