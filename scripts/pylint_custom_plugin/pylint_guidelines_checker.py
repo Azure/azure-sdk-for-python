@@ -1650,8 +1650,8 @@ class CheckDocstringAdmonitionNewline(BaseChecker):
 
     def check_for_admonition(self, node):
         """Parse the docstring for an admonition statement.
-        If found, checks that the example line is followed by
-        two newlines.
+        If found, checks that the literalinclude statement has
+        two newlines above it.
 
         :param node: ast.ClassDef or ast.FunctionDef
         :return: None
@@ -1660,12 +1660,17 @@ class CheckDocstringAdmonitionNewline(BaseChecker):
         try:
             # not every class/method will have a docstring so don't crash here, just return
             if node.doc.find("admonition") != -1:
-                admonition = node.doc.split("admonition")[1]
-                example = admonition.split("Example:")[1]
-                if example[0:2] != "\n\n":
-                    self.add_message(
-                        "docstring-admonition-needs-newline", node=node, confidence=None
-                    )
+                literal_include = node.doc.split(".. literalinclude")[0]
+                chars_list = list(reversed(literal_include))
+                for idx, char in enumerate(chars_list):
+                    if char == '\n':
+                        if chars_list[idx+1] == '\n':
+                            break
+                        else:
+                            self.add_message(
+                                "docstring-admonition-needs-newline", node=node, confidence=None
+                            )
+                            break
         except Exception:
             return
 
