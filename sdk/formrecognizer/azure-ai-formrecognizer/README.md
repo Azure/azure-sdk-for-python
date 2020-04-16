@@ -180,7 +180,7 @@ endpoint = "https://<region>.api.cognitive.microsoft.com/"
 credential = AzureKeyCredential("<api_key>")
 
 form_recognizer_client = FormRecognizerClient(endpoint, credential)
-model_id = "<model id from the above sample>"
+model_id = "<your custom model id>"
 
 # Make sure the form type is one of the types of forms your custom model can recognize
 with open("<path to your form>", "rb") as fd:
