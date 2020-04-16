@@ -76,6 +76,7 @@ setup(
         "msal<2.0.0,>=1.0.0",
         "msal-extensions~=0.1.3",
         "six>=1.6",
+        "pygobject>=3,<4;platform_system=='Linux'",
     ],
     extras_require={
         ":python_version<'3.0'": ["azure-nspkg"],
