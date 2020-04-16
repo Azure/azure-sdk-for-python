@@ -25,17 +25,20 @@ __all__ = [
 ]
 
 if sys.platform.startswith('win'):
+    # pylint:disable=unused-import
     from .win_vscode_credential import WinVSCodeCredential as VSCodeCredential
     __all__.extend([
         'VSCodeCredential',
     ])
 elif sys.platform.startswith('darwin'):
+    # pylint:disable=unused-import
     from .macos_vscode_credential import MacOSVSCodeCredential as VSCodeCredential
     __all__.extend([
         'VSCodeCredential',
     ])
 else:
     try:
+        # pylint:disable=unused-import
         from .linux_vscode_credential import LinuxVSCodeCredential as VSCodeCredential
         __all__.extend([
             'VSCodeCredential',

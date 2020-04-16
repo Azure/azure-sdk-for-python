@@ -4,6 +4,7 @@
 # ------------------------------------
 import os
 import json
+# pylint:disable=import-error
 import gi  # https://pygobject.readthedocs.io/en/latest/getting_started.html
 # pylint: disable=no-name-in-module
 gi.require_version("Secret", "1")  # Would require a package gir1.2-secret-1

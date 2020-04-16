@@ -37,6 +37,7 @@ __all__ = [
 ]
 
 try:
+    # pylint:disable=unused-import
     from ._credentials import VSCodeCredential
     __all__.extend([
         'VSCodeCredential',
