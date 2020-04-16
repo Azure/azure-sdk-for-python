@@ -194,7 +194,10 @@ The following section provides several code snippets covering some of the most c
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.textanalytics import TextAnalyticsClient
 
-text_analytics_client = TextAnalyticsClient(endpoint, AzureKeyCredential(key))
+credential = AzureKeyCredential("<api_key>")
+endpoint="https://<region>.api.cognitive.microsoft.com/"
+
+text_analytics_client = TextAnalyticsClient(endpoint, credential)
 
 documents = [
     "I did not like the restaurant. The food was too spicy.",
@@ -225,7 +228,10 @@ Please refer to the service documentation for a conceptual discussion of [sentim
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.textanalytics import TextAnalyticsClient
 
-text_analytics_client = TextAnalyticsClient(endpoint, AzureKeyCredential(key))
+credential = AzureKeyCredential("<api_key>")
+endpoint="https://<region>.api.cognitive.microsoft.com/"
+
+text_analytics_client = TextAnalyticsClient(endpoint, credential)
 
 documents = [
     "Microsoft was founded by Bill Gates and Paul Allen.",
@@ -256,7 +262,10 @@ Roman god of war). Recognized entities are associated with URLs to a well-known 
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.textanalytics import TextAnalyticsClient
 
-text_analytics_client = TextAnalyticsClient(endpoint, AzureKeyCredential(key))
+credential = AzureKeyCredential("<api_key>")
+endpoint="https://<region>.api.cognitive.microsoft.com/"
+
+text_analytics_client = TextAnalyticsClient(endpoint, credential)
 
 documents = [
     "Microsoft was founded by Bill Gates and Paul Allen.",
@@ -288,7 +297,10 @@ and [supported types][linked_entities_categories].
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.textanalytics import TextAnalyticsClient
 
-text_analytics_client = TextAnalyticsClient(endpoint, AzureKeyCredential(key))
+credential = AzureKeyCredential("<api_key>")
+endpoint="https://<region>.api.cognitive.microsoft.com/"
+
+text_analytics_client = TextAnalyticsClient(endpoint, credential)
 
 documents = [
     "Redmond is a city in King County, Washington, United States, located 15 miles east of Seattle.",
@@ -314,7 +326,10 @@ Please refer to the service documentation for a conceptual discussion of [key ph
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.textanalytics import TextAnalyticsClient
 
-text_analytics_client = TextAnalyticsClient(endpoint, AzureKeyCredential(key))
+credential = AzureKeyCredential("<api_key>")
+endpoint="https://<region>.api.cognitive.microsoft.com/"
+
+text_analytics_client = TextAnalyticsClient(endpoint, credential)
 
 documents = [
     "This is written in English.",
