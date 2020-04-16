@@ -1,5 +1,23 @@
 # Release History
 
+## 10.1.0 (2020-04-10)
+
+**Features**
+
+  - Model VpnConnection has a new parameter dpd_timeout_seconds
+  - Model FirewallPolicy has a new parameter intrusion_system_mode
+  - Model Subnet has a new parameter ip_allocations
+  - Model ApplicationGateway has a new parameter force_firewall_policy_association
+  - Model PrivateEndpoint has a new parameter custom_dns_configs
+  - Model VirtualNetworkGatewayConnection has a new parameter dpd_timeout_seconds
+  - Model VpnClientConfiguration has a new parameter radius_servers
+  - Model VirtualNetwork has a new parameter ip_allocations
+  - Model VirtualHub has a new parameter security_partner_provider
+  - Model VpnServerConfiguration has a new parameter radius_servers
+  - Added operation group PrivateDnsZoneGroupsOperations
+  - Added operation group SecurityPartnerProvidersOperations
+  - Added operation group IpAllocationsOperations
+
 ## 10.0.0 (2020-03-31)
 
 **Features**

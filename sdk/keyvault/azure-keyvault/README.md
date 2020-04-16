@@ -5,9 +5,9 @@ This is the Microsoft Azure Key Vault libraries bundle.
 This package does not contain any code in itself. It installs a set
 of packages that provide APIs for Key Vault operations:
 
-- [azure-keyvault-keys v4.0.x](https://pypi.python.org/pypi/azure-keyvault-keys)
-- [azure-keyvault-secrets v4.0.x](https://pypi.python.org/pypi/azure-keyvault-secrets)
-- [azure-keyvault-certificates v4.0.x](https://pypi.python.org/pypi/azure-keyvault-certificates)
+- [azure-keyvault-keys v4.x](https://pypi.python.org/pypi/azure-keyvault-keys)
+- [azure-keyvault-secrets v4.x](https://pypi.python.org/pypi/azure-keyvault-secrets)
+- [azure-keyvault-certificates v4.x](https://pypi.python.org/pypi/azure-keyvault-certificates)
 
 
 ## Install the package

@@ -30,7 +30,8 @@ from ._common.constants import (
     CONTAINER_PREFIX,
     MANAGEMENT_PATH_SUFFIX,
     TOKEN_TYPE_SASTOKEN,
-    MGMT_REQUEST_OP_TYPE_ENTITY_MGMT
+    MGMT_REQUEST_OP_TYPE_ENTITY_MGMT,
+    ASSOCIATEDLINKPROPERTYNAME
 )
 
 if TYPE_CHECKING:
@@ -120,7 +121,10 @@ class BaseHandler(object):  # pylint:disable=too-many-instance-attributes
     ):
         self.fully_qualified_namespace = fully_qualified_namespace
         self._entity_name = entity_name
-        self._mgmt_target = self._entity_name + MANAGEMENT_PATH_SUFFIX
+
+        subscription_name = kwargs.get("subscription_name")
+        self._mgmt_target = self._entity_name + (("/Subscriptions/" + subscription_name) if subscription_name else '')
+        self._mgmt_target = "{}{}".format(self._mgmt_target, MANAGEMENT_PATH_SUFFIX)
         self._credential = credential
         self._container_id = CONTAINER_PREFIX + str(uuid.uuid4())[:8]
         self._config = Configuration(**kwargs)
@@ -230,10 +234,18 @@ class BaseHandler(object):  # pylint:disable=too-many-instance-attributes
         )
         raise last_exception
 
-    def _mgmt_request_response(self, mgmt_operation, message, callback, **kwargs):
+    def _mgmt_request_response(self, mgmt_operation, message, callback, keep_alive_associated_link=True, **kwargs):
         self._open()
         if not self._running:
             raise InvalidHandlerState("Client connection is closed.")
+
+        application_properties = {}
+        # Some mgmt calls do not support an associated link name (such as list_sessions).  Most do, so on by default.
+        if keep_alive_associated_link:
+            try:
+                application_properties = {ASSOCIATEDLINKPROPERTYNAME:self._handler.message_handler.name}
+            except AttributeError:
+                pass
 
         mgmt_msg = uamqp.Message(
             body=message,
@@ -241,7 +253,8 @@ class BaseHandler(object):  # pylint:disable=too-many-instance-attributes
                 reply_to=self._mgmt_target,
                 encoding=self._config.encoding,
                 **kwargs
-            )
+            ),
+            application_properties=application_properties
         )
         try:
             return self._handler.mgmt_request(
