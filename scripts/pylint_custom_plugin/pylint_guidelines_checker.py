@@ -1628,7 +1628,7 @@ class CheckDocstringAdmonitionNewline(BaseChecker):
     priority = -1
     msgs = {
         "C4744": (
-            '".. admonition:: Example:" in docstring needs another newline after statement.',
+            "The .. literalinclude statement needs a blank line above it. ",
             "docstring-admonition-needs-newline",
             "Put a newline after the example and before the literalinclude.",
         ),
