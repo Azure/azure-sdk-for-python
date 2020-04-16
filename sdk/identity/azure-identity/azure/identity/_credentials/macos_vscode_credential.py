@@ -58,7 +58,7 @@ class MacOSVSCodeCredential(object):
         refresh_token = key_chain.get_generic_password(VSCODE_CREDENTIALS_SECTION, environment_name)
         if not refresh_token:
             raise CredentialUnavailableError(
-                message="No token available."
+                message="No Azure user is logged in to Visual Studio Code."
             )
         token = self._client.obtain_token_by_refresh_token(refresh_token, scopes, **kwargs)
         return token

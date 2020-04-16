@@ -18,9 +18,7 @@ from ._credentials import (
     ManagedIdentityCredential,
     SharedTokenCacheCredential,
     UsernamePasswordCredential,
-    VSCodeCredential,
 )
-
 
 __all__ = [
     "AuthorizationCodeCredential",
@@ -36,8 +34,15 @@ __all__ = [
     "ManagedIdentityCredential",
     "SharedTokenCacheCredential",
     "UsernamePasswordCredential",
-    "VSCodeCredential",
 ]
+
+try:
+    from ._credentials import VSCodeCredential
+    __all__.extend([
+        'VSCodeCredential',
+    ])
+except ImportError:
+    pass
 
 from ._version import VERSION
 
