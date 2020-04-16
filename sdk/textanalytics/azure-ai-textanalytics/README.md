@@ -93,7 +93,7 @@ cognitive services.
     from azure.ai.textanalytics import TextAnalyticsClient
 
     credential = AzureKeyCredential("<api_key>")
-    text = TextAnalyticsClient(endpoint="https://<region>.api.cognitive.microsoft.com/", credential=credential)
+    text_analytics_client = TextAnalyticsClient(endpoint="https://<region>.api.cognitive.microsoft.com/", credential=credential)
     ```
 
 2. To use an [Azure Active Directory (AAD) token credential][cognitive_authentication_aad],
@@ -384,7 +384,7 @@ logger.setLevel(logging.DEBUG)
 handler = logging.StreamHandler(stream=sys.stdout)
 logger.addHandler(handler)
 
-endpoint = "https://<my-custom-subdomain>.cognitiveservices.azure.com/"
+endpoint = "https://<region>.cognitiveservices.azure.com/"
 credential = DefaultAzureCredential()
 
 # This client will log detailed information about its HTTP sessions, at DEBUG level
