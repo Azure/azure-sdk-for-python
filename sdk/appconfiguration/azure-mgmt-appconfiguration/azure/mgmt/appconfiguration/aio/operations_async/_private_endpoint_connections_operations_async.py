@@ -8,21 +8,21 @@
 from typing import Any, Callable, Dict, Generic, Optional, TypeVar, Union
 import warnings
 
+from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
-from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpRequest, HttpResponse
-from azure.core.polling import LROPoller, NoPolling, PollingMethod
+from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
+from azure.core.polling import AsyncNoPolling, AsyncPollingMethod, async_poller
 from azure.mgmt.core.exceptions import ARMErrorFormat
-from azure.mgmt.core.polling.arm_polling import ARMPolling
+from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from .. import models
+from ... import models
 
 T = TypeVar('T')
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class PrivateEndpointConnectionsOperations(object):
-    """PrivateEndpointConnectionsOperations operations.
+class PrivateEndpointConnectionsOperations:
+    """PrivateEndpointConnectionsOperations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -37,7 +37,7 @@ class PrivateEndpointConnectionsOperations(object):
 
     models = models
 
-    def __init__(self, client, config, serializer, deserializer):
+    def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
@@ -45,11 +45,10 @@ class PrivateEndpointConnectionsOperations(object):
 
     def list_by_configuration_store(
         self,
-        resource_group_name,  # type: str
-        config_store_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.PrivateEndpointConnectionListResult"
+        resource_group_name: str,
+        config_store_name: str,
+        **kwargs
+    ) -> "models.PrivateEndpointConnectionListResult":
         """Lists all private endpoint connections for a configuration store.
 
         :param resource_group_name: The name of the resource group to which the container registry
@@ -91,17 +90,17 @@ class PrivateEndpointConnectionsOperations(object):
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('PrivateEndpointConnectionListResult', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link or None, iter(list_of_elem)
+            return deserialized.next_link or None, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -111,19 +110,18 @@ class PrivateEndpointConnectionsOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list_by_configuration_store.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppConfiguration/configurationStores/{configStoreName}/privateEndpointConnections'}
 
-    def get(
+    async def get(
         self,
-        resource_group_name,  # type: str
-        config_store_name,  # type: str
-        private_endpoint_connection_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.PrivateEndpointConnection"
+        resource_group_name: str,
+        config_store_name: str,
+        private_endpoint_connection_name: str,
+        **kwargs
+    ) -> "models.PrivateEndpointConnection":
         """Gets the specified private endpoint connection associated with the configuration store.
 
         :param resource_group_name: The name of the resource group to which the container registry
@@ -162,7 +160,7 @@ class PrivateEndpointConnectionsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -178,15 +176,14 @@ class PrivateEndpointConnectionsOperations(object):
         return deserialized
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppConfiguration/configurationStores/{configStoreName}/privateEndpointConnections/{privateEndpointConnectionName}'}
 
-    def _create_or_update_initial(
+    async def _create_or_update_initial(
         self,
-        resource_group_name,  # type: str
-        config_store_name,  # type: str
-        private_endpoint_connection_name,  # type: str
-        private_endpoint_connection,  # type: "models.PrivateEndpointConnection"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.PrivateEndpointConnection"
+        resource_group_name: str,
+        config_store_name: str,
+        private_endpoint_connection_name: str,
+        private_endpoint_connection: "models.PrivateEndpointConnection",
+        **kwargs
+    ) -> "models.PrivateEndpointConnection":
         cls = kwargs.pop('cls', None)  # type: ClsType["models.PrivateEndpointConnection"]
         error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-11-01-preview"
@@ -217,7 +214,7 @@ class PrivateEndpointConnectionsOperations(object):
         body_content_kwargs['content'] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
 
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 201]:
@@ -238,15 +235,14 @@ class PrivateEndpointConnectionsOperations(object):
         return deserialized
     _create_or_update_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppConfiguration/configurationStores/{configStoreName}/privateEndpointConnections/{privateEndpointConnectionName}'}
 
-    def begin_create_or_update(
+    async def create_or_update(
         self,
-        resource_group_name,  # type: str
-        config_store_name,  # type: str
-        private_endpoint_connection_name,  # type: str
-        private_endpoint_connection,  # type: "models.PrivateEndpointConnection"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.PrivateEndpointConnection"
+        resource_group_name: str,
+        config_store_name: str,
+        private_endpoint_connection_name: str,
+        private_endpoint_connection: "models.PrivateEndpointConnection",
+        **kwargs
+    ) -> "models.PrivateEndpointConnection":
         """Update the state of the specified private endpoint connection associated with the configuration store.
 
         :param resource_group_name: The name of the resource group to which the container registry
@@ -261,15 +257,15 @@ class PrivateEndpointConnectionsOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :return: An instance of LROPoller that returns PrivateEndpointConnection
         :rtype: ~azure.core.polling.LROPoller[~app_configuration_management_client.models.PrivateEndpointConnection]
 
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
+        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["models.PrivateEndpointConnection"]
-        raw_result = self._create_or_update_initial(
+        raw_result = await self._create_or_update_initial(
             resource_group_name=resource_group_name,
             config_store_name=config_store_name,
             private_endpoint_connection_name=private_endpoint_connection_name,
@@ -289,20 +285,19 @@ class PrivateEndpointConnectionsOperations(object):
             'polling_interval',
             self._config.polling_interval
         )
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
-        elif polling is False: polling_method = NoPolling()
+        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppConfiguration/configurationStores/{configStoreName}/privateEndpointConnections/{privateEndpointConnectionName}'}
+        return await async_poller(self._client, raw_result, get_long_running_output, polling_method)
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppConfiguration/configurationStores/{configStoreName}/privateEndpointConnections/{privateEndpointConnectionName}'}
 
-    def _delete_initial(
+    async def _delete_initial(
         self,
-        resource_group_name,  # type: str
-        config_store_name,  # type: str
-        private_endpoint_connection_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        resource_group_name: str,
+        config_store_name: str,
+        private_endpoint_connection_name: str,
+        **kwargs
+    ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
         api_version = "2019-11-01-preview"
@@ -326,7 +321,7 @@ class PrivateEndpointConnectionsOperations(object):
 
         # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202, 204]:
@@ -339,14 +334,13 @@ class PrivateEndpointConnectionsOperations(object):
 
     _delete_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppConfiguration/configurationStores/{configStoreName}/privateEndpointConnections/{privateEndpointConnectionName}'}
 
-    def begin_delete(
+    async def delete(
         self,
-        resource_group_name,  # type: str
-        config_store_name,  # type: str
-        private_endpoint_connection_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        resource_group_name: str,
+        config_store_name: str,
+        private_endpoint_connection_name: str,
+        **kwargs
+    ) -> None:
         """Deletes a private endpoint connection.
 
         :param resource_group_name: The name of the resource group to which the container registry
@@ -359,15 +353,15 @@ class PrivateEndpointConnectionsOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
 
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
+        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        raw_result = self._delete_initial(
+        raw_result = await self._delete_initial(
             resource_group_name=resource_group_name,
             config_store_name=config_store_name,
             private_endpoint_connection_name=private_endpoint_connection_name,
@@ -383,8 +377,8 @@ class PrivateEndpointConnectionsOperations(object):
             'polling_interval',
             self._config.polling_interval
         )
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
-        elif polling is False: polling_method = NoPolling()
+        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppConfiguration/configurationStores/{configStoreName}/privateEndpointConnections/{privateEndpointConnectionName}'}
+        return await async_poller(self._client, raw_result, get_long_running_output, polling_method)
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppConfiguration/configurationStores/{configStoreName}/privateEndpointConnections/{privateEndpointConnectionName}'}

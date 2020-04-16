@@ -1,0 +1,41 @@
+{
+    "chosen_version": "2019-11-01-preview",
+    "total_api_version_list": ["2019-11-01-preview"],
+    "client": {
+        "name": "AppConfigurationManagementClient",
+        "filename": "_app_configuration_management_client",
+        "description": "AppConfigurationManagementClient.",
+        "has_subscription_id": true
+    },
+    "config": {
+        "credential": true,
+        "credential_scopes": ["https://management.azure.com/.default"],
+        "package_version": true,
+        "global_parameters": {
+            "method": {
+                "credential": {
+                    "method_signature": "credential,  # type: \"TokenCredential\"",
+                    "description": "Credential needed for the client to connect to Azure.",
+                    "docstring_type": "azure.core.credentials.TokenCredential",
+                    "required": true
+                },
+                "subscription_id": {
+                    "method_signature": "subscription_id,  # type: str",
+                    "description": "The Microsoft Azure subscription ID.",
+                    "docstring_type": "str",
+                    "required": true
+                }
+            },
+            "constant": {
+            }
+        }
+    },
+    "operation_groups": {
+        "configuration_stores": "ConfigurationStoresOperations",
+        "operations": "Operations",
+        "private_endpoint_connections": "PrivateEndpointConnectionsOperations",
+        "private_link_resources": "PrivateLinkResourcesOperations"
+    },
+    "operation_mixins": {
+    }
+}
