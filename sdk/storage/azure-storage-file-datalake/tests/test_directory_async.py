@@ -345,7 +345,9 @@ class DirectoryTest(StorageTestCase):
         loop.run_until_complete(self._test_get_access_control_with_match_conditions())
 
     async def _test_rename_from(self):
-        metadata = {'hello': 'world', 'number': '42'}
+        content_settings = ContentSettings(
+            content_language='spanish',
+            content_disposition='inline')
         directory_name = self._get_directory_reference()
         directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
         await directory_client.create_directory()
@@ -354,10 +356,12 @@ class DirectoryTest(StorageTestCase):
 
         new_directory_client = self.dsc.get_directory_client(self.file_system_name, new_name)
 
-        await new_directory_client._rename_path('/' + self.file_system_name + '/' + directory_name, metadata=metadata)
+        await new_directory_client._rename_path('/' + self.file_system_name + '/' + directory_name,
+                                                content_settings=content_settings)
         properties = await new_directory_client.get_directory_properties()
 
         self.assertIsNotNone(properties)
+        self.assertIsNone(properties.get('content_settings'))
 
     @record
     def test_rename_from_async(self):
