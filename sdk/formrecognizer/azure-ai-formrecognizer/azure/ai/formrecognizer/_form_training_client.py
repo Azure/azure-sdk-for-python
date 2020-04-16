@@ -6,7 +6,7 @@
 
 # pylint: disable=protected-access
 
-from typing import (  # pylint: disable=unused-import
+from typing import (
     Optional,
     Any,
     Iterable,
@@ -29,6 +29,8 @@ from ._polling import TrainingPolling
 from ._user_agent import USER_AGENT
 if TYPE_CHECKING:
     from azure.core.credentials import AzureKeyCredential
+    from azure.core.pipeline.transport import HttpResponse
+    PipelineResponseType = HttpResponse
 
 
 class FormTrainingClient(object):
@@ -78,7 +80,7 @@ class FormTrainingClient(object):
         """
 
         cls = kwargs.pop("cls", None)
-        response = self._client.train_custom_model_async(
+        response = self._client.train_custom_model_async(  # type: ignore
             train_request=TrainRequest(
                 source=training_files,
                 use_label_file=use_labels,
@@ -89,7 +91,7 @@ class FormTrainingClient(object):
             ),
             cls=lambda pipeline_response, _, response_headers: pipeline_response,
             **kwargs
-        )
+        )  # type: PipelineResponseType
 
         def callback(raw_response):
             model = self._client._deserialize(Model, raw_response)

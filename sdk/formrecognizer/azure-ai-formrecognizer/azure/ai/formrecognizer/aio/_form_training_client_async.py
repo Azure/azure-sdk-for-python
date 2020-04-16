@@ -6,7 +6,7 @@
 
 # pylint: disable=protected-access
 
-from typing import (  # pylint: disable=unused-import
+from typing import (
     Optional,
     Any,
     AsyncIterable,

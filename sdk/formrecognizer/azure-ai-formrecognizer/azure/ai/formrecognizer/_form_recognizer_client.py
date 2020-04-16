@@ -6,7 +6,7 @@
 
 # pylint: disable=protected-access
 
-from typing import (  # pylint: disable=unused-import
+from typing import (
     Any,
     IO,
     Union,
@@ -89,7 +89,7 @@ class FormRecognizerClient(object):
         if content_type is None:
             content_type = get_content_type(stream)
 
-        return self._client.begin_analyze_receipt_async(
+        return self._client.begin_analyze_receipt_async(  # type: ignore
             file_stream=stream,
             content_type=content_type,
             include_text_details=include_text_content,
@@ -115,7 +115,7 @@ class FormRecognizerClient(object):
 
         include_text_content = kwargs.pop("include_text_content", False)
 
-        return self._client.begin_analyze_receipt_async(
+        return self._client.begin_analyze_receipt_async(  # type: ignore
             file_stream={"source": url},
             include_text_details=include_text_content,
             cls=kwargs.pop("cls", self._receipt_callback),
@@ -152,7 +152,7 @@ class FormRecognizerClient(object):
         if content_type is None:
             content_type = get_content_type(stream)
 
-        return self._client.begin_analyze_layout_async(
+        return self._client.begin_analyze_layout_async(  # type: ignore
             file_stream=stream,
             content_type=content_type,
             cls=kwargs.pop("cls", self._content_callback),
@@ -174,7 +174,7 @@ class FormRecognizerClient(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        return self._client.begin_analyze_layout_async(
+        return self._client.begin_analyze_layout_async(  # type: ignore
             file_stream={"source": url},
             cls=kwargs.pop("cls", self._content_callback),
             polling=LROBasePolling(timeout=POLLING_INTERVAL, **kwargs),
@@ -216,7 +216,7 @@ class FormRecognizerClient(object):
             return prepare_form_result(analyze_result, model_id)
 
         deserialization_callback = cls if cls else analyze_callback
-        return self._client.begin_analyze_with_custom_model(
+        return self._client.begin_analyze_with_custom_model(  # type: ignore
             file_stream=stream,
             model_id=model_id,
             include_text_details=include_text_content,
@@ -251,7 +251,7 @@ class FormRecognizerClient(object):
             return prepare_form_result(analyze_result, model_id)
 
         deserialization_callback = cls if cls else analyze_callback
-        return self._client.begin_analyze_with_custom_model(
+        return self._client.begin_analyze_with_custom_model(  # type: ignore
             file_stream={"source": url},
             model_id=model_id,
             include_text_details=include_text_content,
