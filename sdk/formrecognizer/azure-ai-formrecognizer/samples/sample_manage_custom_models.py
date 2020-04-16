@@ -10,7 +10,9 @@
 FILE: sample_manage_custom_models.py
 
 DESCRIPTION:
-    This sample demonstrates how to manage the custom models on your account.
+    This sample demonstrates how to manage the custom models on your account. To learn
+    how to create and train a custom model, look at sample_train_unlabeled_model.py and
+    sample_train_labeled_model.py.
 USAGE:
     python sample_manage_custom_models.py
 
@@ -57,7 +59,7 @@ class ManageCustomModelsSample(object):
         print("Created on: {}".format(custom_model.created_on))
         print("Last modified: {}".format(custom_model.last_modified))
 
-        Finally, we will delete this model by ID
+        # Finally, we will delete this model by ID
         form_training_client.delete_model(model_id=custom_model.model_id)
 
         try:

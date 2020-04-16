@@ -10,7 +10,9 @@
 FILE: sample_manage_custom_models_async.py
 
 DESCRIPTION:
-    This sample demonstrates how to manage the custom models on your account.
+    This sample demonstrates how to manage the custom models on your account. To learn
+    how to create and train a custom model, look at sample_train_unlabeled_model.py and
+    sample_train_labeled_model.py.
 USAGE:
     python sample_manage_custom_models_async.py
 
