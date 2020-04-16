@@ -3,7 +3,7 @@
 Azure Cognitive Services Form Recognizer is a cloud service that uses machine learning to recognize text and table data
 from form documents. It includes the following main functionalities:
 
-* Custom models - Recognize name/value pairs and table data from forms. These models are trained with your own data, so they're tailored to your forms. You can then take these custom models and recognize forms. You can also manage the custom models you've created and see how close you are to the limit of custom models your account can hold.
+* Custom models - Recognize field values and table data from forms. These models are trained with your own data, so they're tailored to your forms. You can then take these custom models and recognize forms. You can also manage the custom models you've created and see how close you are to the limit of custom models your account can hold.
 * Content API - Recognize text and table structures, along with their bounding box coordinates, from documents. Corresponds to the REST service's Layout API.
 * Prebuilt receipt model - Recognize data from USA sales receipts using a prebuilt model.
 
@@ -86,26 +86,25 @@ client = FormRecognizerClient(endpoint, credential)
 
 ### FormRecognizerClient
 A `FormRecognizerClient` is the Form Recognizer interface to use for recognizing data from forms using custom trained models,
-recognizing content and layout from forms, and analyzing receipts. It provides different methods
-based on inputs from a URL and inputs from a stream.
+recognizing content from forms, and analyzing receipts. It provides different methods for providing the input document, allowing you to pass it in as a file stream or through a URL path to the document.
 
 #### Recognizing Custom Forms
-Our endpoint for recognizing custom forms takes in the ID of a custom model. The model can be trained either using this [library](#training-models "Training models")
+Our method for recognizing custom forms takes in the ID of a custom model. The model can be trained either using the FormTrainingClient in our [library](#training-models "Training models")
 or via a UI such as the service's [labeling tool][fr-labeling-tool].
-Be sure to note that the form type you are recognizing should be the included in the types of forms used to train this custom model.
 
-#### Recognizing Content and Layout in Forms
-This endpoint recognizes text and table structures, along with their bounding box coordinates, from documents. An object's bounding boxes refer to the coordinates wherein the object can be found.
+#### Recognizing Content in Forms
+This method recognizes text and table structures, along with their bounding box coordinates, from documents. An object's bounding boxes refer to the coordinates wherein the object can be found.
 
 #### Recognizing US receipts
-This endpoint is used for analyzing receipts. It provides operations to extract receipt field values and locations from receipts from the United States.
+This method is used for analyzing receipts. It provides operations to extract receipt field values and locations from receipts from the United States.
 
 #### RecognizedForm
 `RecognizedForm` is what our service returns when it recognizes a [form](#recognizing-custom-forms "Recognizing Custom Forms"). It contains the type of the form(`form_type`),
 the [fields](#FormField "FormField") found in the form (`fields`), and information about each [page](#FormPage "FormPage") in the form document (`pages`).
 
 #### FormField
-Each field in a form contains the unique name of the field (`name`), information about the labels and values (`label_data` and `value_data`), and its own strongly-typed recognized value (`value`).
+Each field in a form contains the unique identifier of the field (`name`), the recognized value of the field (`value`), and information about its label and value (`label_data` and `value_data`). If the form is recognized with an unlabelled model, the label of the field will be denoted with indices, and if it's recognized with a labeled model,
+the label will be the same as specified in the custom model's training documents.
 
 #### FormPage
 Contains the recognized metadata, text lines (`lines`), and tables (`tables`) found on a single page of the form document.
@@ -127,9 +126,8 @@ understanding how close you are to reaching subscription limits for the number o
 
 #### Training models
 Using the `FormTrainingClient`, you can train a machine-learned model on your own form types. The resulting model will
-be able to recognize values from the types of forms it was trained on. If you are not looking to train your own models, you can
-use the service's [labeling tool][fr-labeling-tool]. There are multiple form types available to train your custom model with,
-but be sure to deploy your models only on forms that are of the same type as the model's training forms.
+be able to recognize values from the types of forms it was trained on. You can train your custom model with multiple form types. Once trained, you can use your custom models to recognize forms of these form types. If you prefer a graphical user interface to do that training, you can
+use the service's [labeling tool][fr-labeling-tool].
 
 ##### Training without labels
 A model trained without labels uses machine learning to understand the layout and relationships between field
@@ -148,26 +146,13 @@ This approach can result in better-performing models, and those models can work 
 
 You can also use the [labeling tool][fr-labeling-tool] to create labels.
 
-#### Using models trained without labels
-Models trained without labels consider each form page to be a different form type. For example, if you train your
-model on 3-page forms, it will learn that these are three different types of forms. When you send a form to it for
-analysis, it will return a collection of three pages, where each page contains the field names, values, and locations,
-as well as table data, found on that page.
-
-#### Using models trained with labels
-Models trained with labels consider a form as a single unit. For example, if you train your model on 3-page forms
-with labels, it will learn to recognize field values from the locations you've labeled across all pages in the form.
-If you sent a document containing two forms to it for analysis, it would return a collection of two forms,
-where each form contains the field names, values, and locations, as well as table data, found in that form.
-Fields and tables have page numbers to identify the pages where they were found.
-
 #### Managing Custom Models
 Using the `FormTrainingClient`, you can get, list, and delete the custom models you've trained.
 You can also view the count of models you've trained and the maximum number of models your subscription will
 allow you to store.
 
 #### CustomFormModel
-This is the object we use to contain all of the necessary information of your custom model. It has its own model id (`model_id`)
+This object contains all the necessary information of your custom model. It has its own model id (`model_id`)
 and displays its status (`status`). It also has a [submodel](#CustomFormSubmodel "CustomFormSubmodel") for every form type it can recognize.
 
 #### CustomFormSubModel
