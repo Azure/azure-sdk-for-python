@@ -23,7 +23,7 @@ interactions:
       accept-language:
       - en-US
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_kubernetesconfiguration_test_kubernetesconfiguration96801b78/providers/Microsoft.ContainerService/managedClusters/myCluster/providers/Microsoft.KubernetesConfiguration/sourceControlConfigurations/mySourceControlConfiguration?api-version=2019-11-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_kubernetesconfiguration_test_kubernetesconfiguration96801b78/providers/Microsoft.ContainerService/managedClusters/zimscluster/providers/Microsoft.KubernetesConfiguration/sourceControlConfigurations/mySourceControlConfiguration?api-version=2019-11-01-preview
   response:
     body:
       string: '{"error":{"code":"InvalidResourceNamespace","message":"The resource
@@ -36,7 +36,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 16 Apr 2020 14:42:21 GMT
+      - Thu, 16 Apr 2020 17:30:56 GMT
       expires:
       - '-1'
       pragma:

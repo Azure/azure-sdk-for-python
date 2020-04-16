@@ -38,7 +38,7 @@ class MgmtSourceControlConfigurationClientTest(AzureMgmtTestCase):
         RESOURCE_GROUP = resource_group.name
         CLUSTER_RP = "Microsoft.ContainerService"
         CLUSTER_RESOURCE_NAME = "managedClusters"
-        CLUSTER_NAME = "myCluster"
+        CLUSTER_NAME = "zimscluster"
         SOURCE_CONTROL_CONFIGURATION_NAME = "mySourceControlConfiguration"
 
         # /SourceControlConfigurations/put/Create Source Control Configuration[put]
