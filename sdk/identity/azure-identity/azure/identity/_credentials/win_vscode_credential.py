@@ -5,14 +5,16 @@
 import os
 import json
 import ctypes as ct
-import ctypes.wintypes as wt
 from .._exceptions import CredentialUnavailableError
 from .._constants import (
     VSCODE_CREDENTIALS_SECTION,
     AZURE_VSCODE_CLIENT_ID,
 )
 from .._internal.aad_client import AadClient
-
+try:
+    import ctypes.wintypes as wt
+except IOError:
+    pass
 
 SUPPORTED_CREDKEYS = set((
     'Type', 'TargetName', 'Persist',
@@ -36,6 +38,7 @@ class _CREDENTIAL(ct.Structure):
 
     @classmethod
     def from_dict(cls, credential):
+        # pylint:disable=attribute-defined-outside-init
         creds = cls()
         pcreds = _PCREDENTIAL(creds)
 
