@@ -72,7 +72,7 @@ class SearchServiceClient(HeadersMixin):
 
     async def __aexit__(self, *args):
         # type: (*Any) -> None
-        await self._client.__aexit__(*args)  # pylint:disable=no-member
+        return await self._client.__aexit__(*args)  # pylint:disable=no-member
 
     async def close(self):
         # type: () -> None

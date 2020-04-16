@@ -72,7 +72,7 @@ class SearchServiceClient(HeadersMixin):
 
     def __exit__(self, *args):
         # type: (*Any) -> None
-        self._client.__exit__(*args)  # pylint:disable=no-member
+        return self._client.__exit__(*args)  # pylint:disable=no-member
 
     def close(self):
         # type: () -> None
