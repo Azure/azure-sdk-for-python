@@ -29,7 +29,6 @@ class RecognizeReceiptsFromURLSample(object):
     key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
 
     def recognize_receipts_from_url(self):
-        # TODO: this can be used as examples in sphinx
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer import FormRecognizerClient
         form_recognizer_client = FormRecognizerClient(

@@ -33,7 +33,6 @@ class RecognizeCustomForms(object):
     model_id = os.environ["CUSTOM_TRAINED_MODEL_ID"]
 
     def recognize_custom_forms(self):
-        # TODO: this can be used as examples in sphinx
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer import FormRecognizerClient
         form_recognizer_client = FormRecognizerClient(

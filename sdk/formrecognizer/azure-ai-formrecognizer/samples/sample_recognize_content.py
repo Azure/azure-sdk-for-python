@@ -10,7 +10,7 @@
 FILE: sample_recognize_content.py
 
 DESCRIPTION:
-    This sample demonstrates how to extact text and layout information from a document
+    This sample demonstrates how to extact text and content information from a document
     given through a file.
 USAGE:
     python sample_recognize_content.py
@@ -29,7 +29,6 @@ class RecognizeContentSample(object):
     key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
 
     def recognize_content(self):
-        # TODO: this can be used as examples in sphinx
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer import FormRecognizerClient
         form_recognizer_client = FormRecognizerClient(endpoint=self.endpoint, credential=AzureKeyCredential(self.key))

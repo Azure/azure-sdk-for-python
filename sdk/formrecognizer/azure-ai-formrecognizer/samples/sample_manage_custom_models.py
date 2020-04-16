@@ -28,7 +28,6 @@ class ManageCustomModelsSample(object):
     key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
 
     def manage_custom_models(self):
-        # TODO: this can be used as examples in sphinx
         from azure.core.credentials import AzureKeyCredential
         from azure.core.exceptions import ResourceNotFoundError
         from azure.ai.formrecognizer import FormTrainingClient

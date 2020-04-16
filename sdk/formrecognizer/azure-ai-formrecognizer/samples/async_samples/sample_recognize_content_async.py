@@ -10,7 +10,7 @@
 FILE: sample_recognize_content_async.py
 
 DESCRIPTION:
-    This sample demonstrates how to extact text and layout information from a document
+    This sample demonstrates how to extact text and content information from a document
     given through a file.
 
 USAGE:
@@ -34,7 +34,6 @@ class RecognizeContentSampleAsync(object):
     async def recognize_content(self):
         # the sample forms are located in this file's parent's parent's files.
         path_to_sample_forms = Path(__file__).parent.parent.absolute() / Path("sample_forms/forms/Invoice_1.pdf")
-        # TODO: this can be used as examples in sphinx
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer.aio import FormRecognizerClient
         async with FormRecognizerClient(

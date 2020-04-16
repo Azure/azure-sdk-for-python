@@ -33,7 +33,6 @@ class RecognizeReceiptsSampleAsync(object):
     async def recognize_receipts(self):
         # the sample forms are located in this file's parent's parent's files.
         path_to_sample_forms = Path(__file__).parent.parent.absolute() / Path("sample_forms/receipt/contoso-allinone.jpg")
-        # TODO: this can be used as examples in sphinx
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer.aio import FormRecognizerClient
         async with FormRecognizerClient(
