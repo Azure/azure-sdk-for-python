@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import sys
 from .authorization_code import AuthorizationCodeCredential
 from .browser import InteractiveBrowserCredential
 from .chained import ChainedTokenCredential
@@ -12,7 +13,6 @@ from .managed_identity import ManagedIdentityCredential
 from .shared_cache import SharedTokenCacheCredential
 from .azure_cli import AzureCliCredential
 from .user import DeviceCodeCredential, UsernamePasswordCredential
-import sys
 
 __all__ = [
     "AuthorizationCodeCredential",
