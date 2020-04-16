@@ -28,7 +28,7 @@ import asyncio
 import abc
 from collections.abc import AsyncIterator
 
-from typing import AsyncIterator as AsyncIteratorType, Generic, TypeVar
+from typing import AsyncIterator as AsyncIteratorType
 from ._base import (
     _HttpResponseBase,
     _HttpClientTransportResponse,
@@ -51,11 +51,6 @@ except ImportError:  # Python <= 3.7
         async def __aexit__(self, exc_type, exc_value, traceback):
             """Raise any exception triggered within the runtime context."""
             return None
-
-
-AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType")
-HTTPResponseType = TypeVar("HTTPResponseType")
-HTTPRequestType = TypeVar("HTTPRequestType")
 
 
 class _ResponseStopIteration(Exception):
@@ -162,8 +157,7 @@ class AsyncHttpClientTransportResponse(_HttpClientTransportResponse, AsyncHttpRe
 
 class AsyncHttpTransport(
     AbstractAsyncContextManager,
-    abc.ABC,
-    Generic[HTTPRequestType, AsyncHTTPResponseType],
+    abc.ABC
 ):
     """An http sender ABC.
     """
