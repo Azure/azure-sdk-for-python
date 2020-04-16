@@ -43,4 +43,4 @@ def print_message(_logger, message):
 
 
 def sleep_until_expired(entity):
-    time.sleep(max(0,(entity._locked_until_utc - utc_now()).total_seconds()+1))
+    time.sleep(max(0,(entity.locked_until_utc - utc_now()).total_seconds()+1))
