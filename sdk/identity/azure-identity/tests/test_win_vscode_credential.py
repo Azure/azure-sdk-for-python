@@ -5,13 +5,12 @@
 import sys
 import pytest
 from azure.core.credentials import AccessToken
-from azure.identity._credentials.win_vscode_credential import WinVSCodeCredential
 try:
     from unittest.mock import Mock
 except ImportError:  # python < 3.3
     from mock import Mock  # type: ignore
 if sys.platform.startswith('win'):
-    from azure.identity._credentials.win_vscode_credential import _read_credential, _cred_write
+    from azure.identity._credentials.win_vscode_credential import WinVSCodeCredential, _read_credential, _cred_write
 
 @pytest.mark.skipif(not sys.platform.startswith('win'), reason="This test only runs on Windows")
 def test_win_vscode_credential():

@@ -5,8 +5,9 @@
 import sys
 import pytest
 from azure.core.credentials import AccessToken
-from azure.identity.aio._credentials.win_vscode_credential import WinVSCodeCredential
 from helpers_async import wrap_in_future
+if sys.platform.startswith('win'):
+    from azure.identity.aio._credentials.win_vscode_credential import WinVSCodeCredential
 try:
     from unittest.mock import Mock
 except ImportError:  # python < 3.3
