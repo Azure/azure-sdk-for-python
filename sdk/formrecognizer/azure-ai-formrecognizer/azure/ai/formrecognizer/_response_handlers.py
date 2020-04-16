@@ -6,6 +6,7 @@
 
 # pylint: disable=protected-access
 
+from azure.core.exceptions import HttpResponseError
 from ._models import (
     USReceipt,
     USReceiptType,
@@ -20,7 +21,22 @@ from ._models import (
 )
 
 
+def raise_on_errors(response):
+    """Raise on any errors found in AnalyzeOperationResult.
+
+    :param response: AnalyzeOperationResult
+    :raises HttpResponseError:
+    """
+    message = ""
+    if response.analyze_result.errors:
+        for err in response.analyze_result.errors:
+            message += "({}) {}\n".format(err.code, err.message)
+        raise HttpResponseError(message)
+
+
 def prepare_us_receipt(response):
+    raise_on_errors(response)
+
     receipts = []
     read_result = response.analyze_result.read_results
     document_result = response.analyze_result.document_results
@@ -95,6 +111,8 @@ def prepare_tables(page, read_result):
 
 
 def prepare_content_result(response):
+    raise_on_errors(response)
+
     pages = []
     read_result = response.analyze_result.read_results
     page_result = response.analyze_result.page_results
@@ -114,6 +132,8 @@ def prepare_content_result(response):
 
 
 def prepare_form_result(response, model_id):
+    raise_on_errors(response)
+
     document_result = response.analyze_result.document_results
     if document_result:
         return prepare_labeled_result(response, model_id)
