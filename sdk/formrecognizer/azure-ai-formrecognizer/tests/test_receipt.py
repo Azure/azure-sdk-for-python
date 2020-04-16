@@ -5,7 +5,7 @@
 # ------------------------------------
 
 from datetime import date, time
-from azure.core.exceptions import HttpResponseError, ServiceRequestError
+from azure.core.exceptions import ClientAuthenticationError, ServiceRequestError
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer._generated.models import AnalyzeOperationResult
 from azure.ai.formrecognizer._response_handlers import prepare_us_receipt
@@ -34,10 +34,8 @@ class TestReceiptFromStream(FormRecognizerTest):
     @GlobalFormRecognizerAccountPreparer()
     def test_authentication_bad_key(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
         client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential("xxxx"))
-        with open(self.receipt_jpg, "rb") as fd:
-            myfile = fd.read()
-        with self.assertRaises(HttpResponseError):
-            poller = client.begin_recognize_receipts(myfile)
+        with self.assertRaises(ClientAuthenticationError):
+            poller = client.begin_recognize_receipts(b"xx", content_type="image/jpeg")
 
     @GlobalFormRecognizerAccountPreparer()
     def test_passing_enum_content_type(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):

@@ -5,7 +5,7 @@
 # ------------------------------------
 
 from datetime import date, time
-from azure.core.exceptions import HttpResponseError, ServiceRequestError
+from azure.core.exceptions import HttpResponseError, ServiceRequestError, ClientAuthenticationError
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer._generated.models import AnalyzeOperationResult
 from azure.ai.formrecognizer._response_handlers import prepare_us_receipt
@@ -34,7 +34,7 @@ class TestReceiptFromUrlAsync(AsyncFormRecognizerTest):
     @GlobalFormRecognizerAccountPreparer()
     async def test_receipt_url_auth_bad_key(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
         client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential("xxxx"))
-        with self.assertRaises(HttpResponseError):
+        with self.assertRaises(ClientAuthenticationError):
             result = await client.recognize_receipts_from_url(
                 self.receipt_url_jpg
             )

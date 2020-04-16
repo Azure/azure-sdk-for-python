@@ -5,6 +5,8 @@
 # ------------------------------------
 
 import functools
+from azure.core.credentials import AzureKeyCredential
+from azure.core.exceptions import ClientAuthenticationError
 from azure.ai.formrecognizer._generated.models import Model
 from azure.ai.formrecognizer._models import CustomFormModel
 from azure.ai.formrecognizer.aio import FormTrainingClient
@@ -16,6 +18,12 @@ GlobalTrainingAccountPreparer = functools.partial(_GlobalTrainingAccountPreparer
 
 
 class TestTrainingAsync(AsyncFormRecognizerTest):
+
+    @GlobalFormRecognizerAccountPreparer()
+    async def test_training_auth_bad_key(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
+        client = FormTrainingClient(form_recognizer_account, AzureKeyCredential("xxxx"))
+        with self.assertRaises(ClientAuthenticationError):
+            result = await client.training("xx")
 
     @GlobalFormAndStorageAccountPreparer()
     @GlobalTrainingAccountPreparer()

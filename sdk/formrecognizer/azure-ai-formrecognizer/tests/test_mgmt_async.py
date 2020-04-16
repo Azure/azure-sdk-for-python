@@ -7,7 +7,7 @@
 import functools
 from azure.core.pipeline.transport import AioHttpTransport
 from azure.core.credentials import AzureKeyCredential
-from azure.core.exceptions import ResourceNotFoundError
+from azure.core.exceptions import ResourceNotFoundError, ClientAuthenticationError
 from azure.ai.formrecognizer.aio import FormTrainingClient, FormRecognizerClient
 from testcase import FormRecognizerTest, GlobalFormRecognizerAccountPreparer, GlobalFormAndStorageAccountPreparer
 from testcase import GlobalTrainingAccountPreparer as _GlobalTrainingAccountPreparer
@@ -18,6 +18,32 @@ GlobalTrainingAccountPreparer = functools.partial(_GlobalTrainingAccountPreparer
 
 
 class TestManagementAsync(AsyncFormRecognizerTest):
+
+    @GlobalFormRecognizerAccountPreparer()
+    async def test_account_properties_auth_bad_key(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
+        client = FormTrainingClient(form_recognizer_account, AzureKeyCredential("xxxx"))
+        with self.assertRaises(ClientAuthenticationError):
+            result = await client.get_account_properties()
+
+    @GlobalFormRecognizerAccountPreparer()
+    async def test_get_model_auth_bad_key(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
+        client = FormTrainingClient(form_recognizer_account, AzureKeyCredential("xxxx"))
+        with self.assertRaises(ClientAuthenticationError):
+            result = await client.get_custom_model("xx")
+
+    @GlobalFormRecognizerAccountPreparer()
+    async def test_list_model_auth_bad_key(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
+        client = FormTrainingClient(form_recognizer_account, AzureKeyCredential("xxxx"))
+        with self.assertRaises(ClientAuthenticationError):
+            result = client.list_model_infos()
+            async for res in result:
+                test = res
+
+    @GlobalFormRecognizerAccountPreparer()
+    async def test_delete_model_auth_bad_key(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
+        client = FormTrainingClient(form_recognizer_account, AzureKeyCredential("xxxx"))
+        with self.assertRaises(ClientAuthenticationError):
+            result = await client.delete_model("xx")
 
     @GlobalFormRecognizerAccountPreparer()
     async def test_account_properties(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
