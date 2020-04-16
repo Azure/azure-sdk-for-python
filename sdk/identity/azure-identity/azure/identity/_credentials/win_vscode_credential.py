@@ -13,7 +13,7 @@ from .._constants import (
 from .._internal.aad_client import AadClient
 try:
     import ctypes.wintypes as wt
-except IOError:
+except (IOError, ValueError):
     pass
 
 SUPPORTED_CREDKEYS = set((
