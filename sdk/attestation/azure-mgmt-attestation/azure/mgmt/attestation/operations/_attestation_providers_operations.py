@@ -102,7 +102,7 @@ class AttestationProvidersOperations(object):
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Attestation/attestationProviders/{providerName}'}
 
     def create(
-            self, resource_group_name, provider_name, attestation_policy=None, policy_signing_certificates=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, provider_name, creation_params, custom_headers=None, raw=False, **operation_config):
         """Creates or updates the Attestation Provider.
 
         :param resource_group_name: The name of the resource group. The name
@@ -110,13 +110,9 @@ class AttestationProvidersOperations(object):
         :type resource_group_name: str
         :param provider_name: Name of the attestation service
         :type provider_name: str
-        :param attestation_policy: Name of attestation policy.
-        :type attestation_policy: str
-        :param policy_signing_certificates: JSON Web Key Set defining a set of
-         X.509 Certificates that will represent the parent certificate for the
-         signing certificate used for policy operations
-        :type policy_signing_certificates:
-         ~azure.mgmt.attestation.models.JSONWebKeySet
+        :param creation_params: Client supplied parameters.
+        :type creation_params:
+         ~azure.mgmt.attestation.models.AttestationServiceCreationParams
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -127,10 +123,6 @@ class AttestationProvidersOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        creation_params = None
-        if attestation_policy is not None or policy_signing_certificates is not None:
-            creation_params = models.AttestationServiceCreationParams(attestation_policy=attestation_policy, policy_signing_certificates=policy_signing_certificates)
-
         # Construct URL
         url = self.create.metadata['url']
         path_format_arguments = {
@@ -156,10 +148,7 @@ class AttestationProvidersOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        if creation_params is not None:
-            body_content = self._serialize.body(creation_params, 'AttestationServiceCreationParams')
-        else:
-            body_content = None
+        body_content = self._serialize.body(creation_params, 'AttestationServiceCreationParams')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -182,6 +171,77 @@ class AttestationProvidersOperations(object):
 
         return deserialized
     create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Attestation/attestationProviders/{providerName}'}
+
+    def update(
+            self, resource_group_name, provider_name, tags=None, custom_headers=None, raw=False, **operation_config):
+        """Updates the Attestation Provider.
+
+        :param resource_group_name: The name of the resource group. The name
+         is case insensitive.
+        :type resource_group_name: str
+        :param provider_name: Name of the attestation service
+        :type provider_name: str
+        :param tags: The tags that will be assigned to the attestation service
+         instance.
+        :type tags: dict[str, str]
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: AttestationProvider or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.attestation.models.AttestationProvider or
+         ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        update_params = models.AttestationServicePatchParams(tags=tags)
+
+        # Construct URL
+        url = self.update.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'providerName': self._serialize.url("provider_name", provider_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(update_params, 'AttestationServicePatchParams')
+
+        # Construct and send request
+        request = self._client.patch(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('AttestationProvider', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Attestation/attestationProviders/{providerName}'}
 
     def delete(
             self, resource_group_name, provider_name, custom_headers=None, raw=False, **operation_config):
