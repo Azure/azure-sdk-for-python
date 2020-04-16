@@ -31,6 +31,7 @@ from .operations import MongoDBResourcesOperations
 from .operations import TableResourcesOperations
 from .operations import CassandraResourcesOperations
 from .operations import GremlinResourcesOperations
+from .operations import NotebookWorkspacesOperations
 from .operations import PrivateLinkResourcesOperations
 from .operations import PrivateEndpointConnectionsOperations
 from . import models
@@ -78,6 +79,8 @@ class CosmosDBManagementClient(SDKClient):
     :vartype cassandra_resources: azure.mgmt.cosmosdb.operations.CassandraResourcesOperations
     :ivar gremlin_resources: GremlinResources operations
     :vartype gremlin_resources: azure.mgmt.cosmosdb.operations.GremlinResourcesOperations
+    :ivar notebook_workspaces: NotebookWorkspaces operations
+    :vartype notebook_workspaces: azure.mgmt.cosmosdb.operations.NotebookWorkspacesOperations
     :ivar private_link_resources: PrivateLinkResources operations
     :vartype private_link_resources: azure.mgmt.cosmosdb.operations.PrivateLinkResourcesOperations
     :ivar private_endpoint_connections: PrivateEndpointConnections operations
@@ -88,13 +91,15 @@ class CosmosDBManagementClient(SDKClient):
      object<msrestazure.azure_active_directory>`
     :param subscription_id: Azure subscription ID.
     :type subscription_id: str
+    :param subscription_id1: The ID of the target subscription.
+    :type subscription_id1: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, base_url=None):
+            self, credentials, subscription_id, subscription_id1, base_url=None):
 
-        self.config = CosmosDBManagementClientConfiguration(credentials, subscription_id, base_url)
+        self.config = CosmosDBManagementClientConfiguration(credentials, subscription_id, subscription_id1, base_url)
         super(CosmosDBManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -136,6 +141,8 @@ class CosmosDBManagementClient(SDKClient):
         self.cassandra_resources = CassandraResourcesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.gremlin_resources = GremlinResourcesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.notebook_workspaces = NotebookWorkspacesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.private_link_resources = PrivateLinkResourcesOperations(
             self._client, self.config, self._serialize, self._deserialize)
