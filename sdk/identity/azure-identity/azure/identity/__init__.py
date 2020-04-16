@@ -18,6 +18,7 @@ from ._credentials import (
     ManagedIdentityCredential,
     SharedTokenCacheCredential,
     UsernamePasswordCredential,
+    VSCodeCredential,
 )
 
 
@@ -35,6 +36,7 @@ __all__ = [
     "ManagedIdentityCredential",
     "SharedTokenCacheCredential",
     "UsernamePasswordCredential",
+    "VSCodeCredential",
 ]
 
 from ._version import VERSION
