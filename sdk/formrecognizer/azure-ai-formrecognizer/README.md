@@ -91,7 +91,7 @@ based on inputs from a URL and inputs from a stream.
 
 #### Recognizing Custom Forms
 Our endpoint for recognizing custom forms takes in the ID of a custom model. The model can be trained either using this [library](#training-models "Training models")
-or via a UI such as the service's [labelling tool][fr-labelling-tool].
+or via a UI such as the service's [labeling tool][fr-labeling-tool].
 Be sure to note that the form type you are recognizing should be the included in the types of forms used to train this custom model.
 
 #### Recognizing Content and Layout in Forms
@@ -128,7 +128,7 @@ understanding how close you are to reaching subscription limits for the number o
 #### Training models
 Using the `FormTrainingClient`, you can train a machine-learned model on your own form types. The resulting model will
 be able to recognize values from the types of forms it was trained on. If you are not looking to train your own models, you can
-use the service's [labelling tool][fr-labelling-tool]. There are multiple form types available to train your custom model with,
+use the service's [labeling tool][fr-labeling-tool]. There are multiple form types available to train your custom model with,
 but be sure to deploy your models only on forms that are of the same type as the model's training forms.
 
 ##### Training without labels
@@ -146,7 +146,7 @@ and learns to recognize just those values you are interested in.
 
 This approach can result in better-performing models, and those models can work with more complex form structures.
 
-You can also use the [labelling tool][fr-labelling-tool] to create labels.
+You can also use the [labeling tool][fr-labeling-tool] to create labels.
 
 #### Using models trained without labels
 Models trained without labels consider each form page to be a different form type. For example, if you train your
@@ -427,7 +427,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [azure_portal_create_FR_resource]: https://ms.portal.azure.com/#create/Microsoft.CognitiveServicesFormRecognizer
 [azure_cli_create_FR_resource]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account-cli?tabs=windows
 [azure-key-credential]: https://aka.ms/azsdk-python-core-azurekeycredential
-[fr-labelling-tool]: https://docs.microsoft.com/en-us/azure/cognitive-services/form-recognizer/quickstarts/label-tool
+[fr-labeling-tool]: https://docs.microsoft.com/en-us/azure/cognitive-services/form-recognizer/quickstarts/label-tool
 
 [azure_core]: ../../core/azure-core/README.md
 [azure_core_ref_docs]: https://aka.ms/azsdk-python-azure-core
