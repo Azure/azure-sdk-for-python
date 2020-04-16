@@ -11,8 +11,7 @@ try:
 except ImportError:  # python < 3.3
     from mock import Mock  # type: ignore
 if sys.platform.startswith('win'):
-    from azure.identity._credentials.win_vscode_credential import _read_credential
-    import win32cred
+    from azure.identity._credentials.win_vscode_credential import _read_credential, _cred_write
 
 @pytest.mark.skipif(not sys.platform.startswith('win'), reason="This test only runs on Windows")
 def test_win_vscode_credential():
@@ -28,7 +27,7 @@ def test_win_vscode_credential():
                    "CredentialBlob": token_written,
                    "Comment": comment,
                    "Persist": 0x2}
-    win32cred.CredWrite(credential)
+    _cred_write(credential)
     token_read = _read_credential(service_name, account_name)
     assert token_read == token_written
 

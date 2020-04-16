@@ -4,23 +4,86 @@
 # ------------------------------------
 import os
 import json
+import ctypes as ct
+import ctypes.wintypes as wt
 from .._exceptions import CredentialUnavailableError
 from .._constants import (
     VSCODE_CREDENTIALS_SECTION,
     AZURE_VSCODE_CLIENT_ID,
 )
 from .._internal.aad_client import AadClient
-try:
-    from win32cred import CredRead
-except ImportError:
-    pass
+
+
+SUPPORTED_CREDKEYS = set((
+    'Type', 'TargetName', 'Persist',
+    'UserName', 'Comment', 'CredentialBlob'))
+
+
+class _CREDENTIAL(ct.Structure):
+    _fields_ = [
+        ("Flags", wt.DWORD),
+        ("Type", wt.DWORD),
+        ("TargetName", ct.c_wchar_p),
+        ("Comment", ct.c_wchar_p),
+        ("LastWritten", wt.FILETIME),
+        ("CredentialBlobSize", wt.DWORD),
+        ("CredentialBlob", wt.LPBYTE),
+        ("Persist", wt.DWORD),
+        ("AttributeCount", wt.DWORD),
+        ("Attributes", ct.c_void_p),
+        ("TargetAlias", ct.c_wchar_p),
+        ("UserName", ct.c_wchar_p)]
+
+    @classmethod
+    def from_dict(cls, credential):
+        creds = cls()
+        pcreds = _PCREDENTIAL(creds)
+
+        ct.memset(pcreds, 0, ct.sizeof(creds))
+
+        for key in SUPPORTED_CREDKEYS:
+            if key in credential:
+                if key != 'CredentialBlob':
+                    setattr(creds, key, credential[key])
+                else:
+                    blob = credential['CredentialBlob']
+                    blob_data = ct.create_unicode_buffer(blob)
+                    creds.CredentialBlobSize = \
+                        ct.sizeof(blob_data) - \
+                        ct.sizeof(ct.c_wchar)
+                    creds.CredentialBlob = ct.cast(blob_data, wt.LPBYTE)
+        return creds
+
+
+_PCREDENTIAL = ct.POINTER(_CREDENTIAL)
+
+
+_advapi = ct.WinDLL('advapi32')
+_advapi.CredWriteW.argtypes = [_PCREDENTIAL, wt.DWORD]
+_advapi.CredWriteW.restype = wt.BOOL
+_advapi.CredReadW.argtypes = [wt.LPCWSTR, wt.DWORD, wt.DWORD, ct.POINTER(_PCREDENTIAL)]
+_advapi.CredReadW.restype = wt.BOOL
+_advapi.CredFree.argtypes = [_PCREDENTIAL]
+
+
+def _cred_write(credential):
+    creds = _CREDENTIAL.from_dict(credential)
+    cred_ptr = _PCREDENTIAL(creds)
+    _advapi.CredWriteW(cred_ptr, 0)
 
 
 def _read_credential(service_name, account_name):
     target = u"{}/{}".format(service_name, account_name)
-    res = CredRead(TargetName=target, Type=0x1)
-    cred = res["CredentialBlob"].decode('utf-16')
-    return cred
+    cred_ptr = _PCREDENTIAL()
+    if _advapi.CredReadW(target, 1, 0, ct.byref(cred_ptr)):
+        cred_blob = cred_ptr.contents.CredentialBlob
+        cred_blob_size = cred_ptr.contents.CredentialBlobSize
+        password_as_list = [int.from_bytes(cred_blob[pos:pos + 2], 'little')
+                            for pos in range(0, cred_blob_size, 2)]
+        cred = ''.join(map(chr, password_as_list))
+        _advapi.CredFree(cred_ptr)
+        return cred
+    return None
 
 
 def _get_user_settings_path():

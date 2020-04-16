@@ -76,7 +76,6 @@ setup(
         "msal<2.0.0,>=1.0.0",
         "msal-extensions~=0.1.3",
         "six>=1.6",
-        "pywin32;platform_system=='Windows'",
     ],
     extras_require={
         ":python_version<'3.0'": ["azure-nspkg"],
