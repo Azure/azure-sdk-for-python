@@ -7,13 +7,39 @@
 # --------------------------------------------------------------------------
 
 from ._monitoring_operations import MonitoringOperations
-from ._spark_batch_operations import SparkBatchOperations
 from ._spark_session_operations import SparkSessionOperations
-from ._workspace_acl_operations import WorkspaceAclOperations
+from ._roles_operations import RolesOperations
+from ._role_assignments_operations import RoleAssignmentsOperations
+from ._linked_services_operations import LinkedServicesOperations
+from ._datasets_operations import DatasetsOperations
+from ._pipelines_operations import PipelinesOperations
+from ._pipeline_runs_operations import PipelineRunsOperations
+from ._activity_runs_operations import ActivityRunsOperations
+from ._triggers_operations import TriggersOperations
+from ._trigger_runs_operations import TriggerRunsOperations
+from ._data_flows_operations import DataFlowsOperations
+from ._data_flow_debug_session_operations import DataFlowDebugSessionOperations
+from ._sql_scripts_operations import SqlScriptsOperations
+from ._spark_job_definitions_operations import SparkJobDefinitionsOperations
+from ._note_books_operations import NoteBooksOperations
+from ._spark_batch_operations import SparkBatchOperations
 
 __all__ = [
     'MonitoringOperations',
-    'SparkBatchOperations',
     'SparkSessionOperations',
-    'WorkspaceAclOperations',
+    'RolesOperations',
+    'RoleAssignmentsOperations',
+    'LinkedServicesOperations',
+    'DatasetsOperations',
+    'PipelinesOperations',
+    'PipelineRunsOperations',
+    'ActivityRunsOperations',
+    'TriggersOperations',
+    'TriggerRunsOperations',
+    'DataFlowsOperations',
+    'DataFlowDebugSessionOperations',
+    'SqlScriptsOperations',
+    'SparkJobDefinitionsOperations',
+    'NoteBooksOperations',
+    'SparkBatchOperations',
 ]

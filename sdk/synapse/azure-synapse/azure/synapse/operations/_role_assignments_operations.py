@@ -16,13 +16,13 @@ from .. import models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Optional, TypeVar
+    from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar
 
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
-class SparkBatchOperations(object):
-    """SparkBatchOperations operations.
+class RoleAssignmentsOperations(object):
+    """RoleAssignmentsOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -43,59 +43,54 @@ class SparkBatchOperations(object):
         self._deserialize = deserializer
         self._config = config
 
-    def list(
+    def list_role_assignments(
         self,
         workspace_name,  # type: str
-        spark_pool_name,  # type: str
-        from_parameter=None,  # type: Optional[int]
-        size=None,  # type: Optional[int]
-        detailed=None,  # type: Optional[bool]
+        role_id=None,  # type: Optional[str]
+        principal_id=None,  # type: Optional[str]
+        x_ms_continuation=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ExtendedLivyListBatchResponse"
-        """List all spark batch jobs which are running under a particular spark pool.
+        # type: (...) -> List["RoleAssignmentDetails"]
+        """List role assignments.
 
         :param workspace_name: The name of the workspace to execute operations on.
         :type workspace_name: str
-        :param spark_pool_name: Name of the spark pool. "ondemand" targets the ondemand pool.
-        :type spark_pool_name: str
-        :param from_parameter: Optional param specifying which index the list should begin from.
-        :type from_parameter: int
-        :param size: Optional param specifying the size of the returned list.
-                     By default it is 20 and that is the maximum.
-        :type size: int
-        :param detailed: Optional query param specifying whether detailed response is returned beyond
-         plain livy.
-        :type detailed: bool
+        :param role_id: Synapse Built-In Role Id.
+        :type role_id: str
+        :param principal_id: Object ID of the AAD principal or security-group.
+        :type principal_id: str
+        :param x_ms_continuation: Continuation token.
+        :type x_ms_continuation: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ExtendedLivyListBatchResponse or the result of cls(response)
-        :rtype: ~azure.synapse.models.ExtendedLivyListBatchResponse
+        :return: list or the result of cls(response)
+        :rtype: list[~azure.synapse.models.RoleAssignmentDetails]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ExtendedLivyListBatchResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[List["RoleAssignmentDetails"]]
         error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
+        api_version = "2019-11-01-preview"
 
         # Construct URL
-        url = self.list.metadata['url']
+        url = self.list_role_assignments.metadata['url']
         path_format_arguments = {
             'SynapseDnsSuffix': self._serialize.url("self._config.synapse_dns_suffix", self._config.synapse_dns_suffix, 'str', skip_quote=True),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str', skip_quote=True),
-            'livyApiVersion': self._serialize.url("self._config.livy_api_version", self._config.livy_api_version, 'str', skip_quote=True),
-            'sparkPoolName': self._serialize.url("spark_pool_name", spark_pool_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        if from_parameter is not None:
-            query_parameters['from'] = self._serialize.query("from_parameter", from_parameter, 'int')
-        if size is not None:
-            query_parameters['size'] = self._serialize.query("size", size, 'int')
-        if detailed is not None:
-            query_parameters['detailed'] = self._serialize.query("detailed", detailed, 'bool')
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if role_id is not None:
+            query_parameters['roleId'] = self._serialize.query("role_id", role_id, 'str')
+        if principal_id is not None:
+            query_parameters['principalId'] = self._serialize.query("principal_id", principal_id, 'str')
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
+        if x_ms_continuation is not None:
+            header_parameters['x-ms-continuation'] = self._serialize.header("x_ms_continuation", x_ms_continuation, 'str')
         header_parameters['Accept'] = 'application/json'
 
         # Construct and send request
@@ -105,59 +100,53 @@ class SparkBatchOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize(models.ErrorContract, response)
+            raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('ExtendedLivyListBatchResponse', pipeline_response)
+        response_headers = {}
+        response_headers['x-ms-continuation']=self._deserialize('str', response.headers.get('x-ms-continuation'))
+        deserialized = self._deserialize('[RoleAssignmentDetails]', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+          return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
-    list.metadata = {'url': '/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}/batches'}
+    list_role_assignments.metadata = {'url': '/rbac/roleAssignments'}
 
-    def create(
+    def create_role_assignment(
         self,
         workspace_name,  # type: str
-        spark_pool_name,  # type: str
-        livy_request,  # type: "models.ExtendedLivyBatchRequest"
-        detailed=None,  # type: Optional[bool]
+        request,  # type: "models.RoleAssignmentRequest"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ExtendedLivyBatchResponse"
-        """Create new spark batch job.
+        # type: (...) -> "models.RoleAssignmentDetails"
+        """Create role assignment.
 
         :param workspace_name: The name of the workspace to execute operations on.
         :type workspace_name: str
-        :param spark_pool_name: Name of the spark pool. "ondemand" targets the ondemand pool.
-        :type spark_pool_name: str
-        :param livy_request: Livy compatible batch job request payload.
-        :type livy_request: ~azure.synapse.models.ExtendedLivyBatchRequest
-        :param detailed: Optional query param specifying whether detailed response is returned beyond
-         plain livy.
-        :type detailed: bool
+        :param request: Details of role id and object id.
+        :type request: ~azure.synapse.models.RoleAssignmentRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ExtendedLivyBatchResponse or the result of cls(response)
-        :rtype: ~azure.synapse.models.ExtendedLivyBatchResponse
+        :return: RoleAssignmentDetails or the result of cls(response)
+        :rtype: ~azure.synapse.models.RoleAssignmentDetails
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ExtendedLivyBatchResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.RoleAssignmentDetails"]
         error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
+        api_version = "2019-11-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
-        url = self.create.metadata['url']
+        url = self.create_role_assignment.metadata['url']
         path_format_arguments = {
             'SynapseDnsSuffix': self._serialize.url("self._config.synapse_dns_suffix", self._config.synapse_dns_suffix, 'str', skip_quote=True),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str', skip_quote=True),
-            'livyApiVersion': self._serialize.url("self._config.livy_api_version", self._config.livy_api_version, 'str', skip_quote=True),
-            'sparkPoolName': self._serialize.url("spark_pool_name", spark_pool_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        if detailed is not None:
-            query_parameters['detailed'] = self._serialize.query("detailed", detailed, 'bool')
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
@@ -166,7 +155,7 @@ class SparkBatchOperations(object):
 
         # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(livy_request, 'ExtendedLivyBatchRequest')
+        body_content = self._serialize.body(request, 'RoleAssignmentRequest')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
 
@@ -175,32 +164,30 @@ class SparkBatchOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize(models.ErrorContract, response)
+            raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('ExtendedLivyBatchResponse', pipeline_response)
+        deserialized = self._deserialize('RoleAssignmentDetails', pipeline_response)
 
         if cls:
           return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    create.metadata = {'url': '/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}/batches'}
+    create_role_assignment.metadata = {'url': '/rbac/roleAssignments'}
 
-    def delete(
+    def delete_role_assignment_by_id(
         self,
         workspace_name,  # type: str
-        spark_pool_name,  # type: str
-        batch_id,  # type: int
+        role_assignment_id,  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        """Cancels a running spark batch job.
+        """Delete role assignment by role assignment Id.
 
         :param workspace_name: The name of the workspace to execute operations on.
         :type workspace_name: str
-        :param spark_pool_name: Name of the spark pool. "ondemand" targets the ondemand pool.
-        :type spark_pool_name: str
-        :param batch_id: Identifier for the batch job.
-        :type batch_id: int
+        :param role_assignment_id: The ID of the role assignment.
+        :type role_assignment_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
@@ -210,13 +197,11 @@ class SparkBatchOperations(object):
         error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
 
         # Construct URL
-        url = self.delete.metadata['url']
+        url = self.delete_role_assignment_by_id.metadata['url']
         path_format_arguments = {
             'SynapseDnsSuffix': self._serialize.url("self._config.synapse_dns_suffix", self._config.synapse_dns_suffix, 'str', skip_quote=True),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str', skip_quote=True),
-            'livyApiVersion': self._serialize.url("self._config.livy_api_version", self._config.livy_api_version, 'str', skip_quote=True),
-            'sparkPoolName': self._serialize.url("spark_pool_name", spark_pool_name, 'str'),
-            'batchId': self._serialize.url("batch_id", batch_id, 'int'),
+            'roleAssignmentId': self._serialize.url("role_assignment_id", role_assignment_id, 'str', min_length=1),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -231,58 +216,48 @@ class SparkBatchOperations(object):
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize(models.ErrorContract, response)
+            raise HttpResponseError(response=response, model=error)
 
         if cls:
           return cls(pipeline_response, None, {})
 
-    delete.metadata = {'url': '/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}/batches/{batchId}'}
+    delete_role_assignment_by_id.metadata = {'url': '/rbac/roleAssignments/{roleAssignmentId}'}
 
-    def get(
+    def get_role_assignment_by_id(
         self,
         workspace_name,  # type: str
-        spark_pool_name,  # type: str
-        batch_id,  # type: int
-        detailed=None,  # type: Optional[bool]
+        role_assignment_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ExtendedLivyBatchResponse"
-        """Gets a single spark batch job.
+        # type: (...) -> "models.RoleAssignmentDetails"
+        """Get role assignment by role assignment Id.
 
         :param workspace_name: The name of the workspace to execute operations on.
         :type workspace_name: str
-        :param spark_pool_name: Name of the spark pool. "ondemand" targets the ondemand pool.
-        :type spark_pool_name: str
-        :param batch_id: Identifier for the batch job.
-        :type batch_id: int
-        :param detailed: Optional query param specifying whether detailed response is returned beyond
-         plain livy.
-        :type detailed: bool
+        :param role_assignment_id: The ID of the role assignment.
+        :type role_assignment_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ExtendedLivyBatchResponse or the result of cls(response)
-        :rtype: ~azure.synapse.models.ExtendedLivyBatchResponse
+        :return: RoleAssignmentDetails or the result of cls(response)
+        :rtype: ~azure.synapse.models.RoleAssignmentDetails
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ExtendedLivyBatchResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.RoleAssignmentDetails"]
         error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
 
         # Construct URL
-        url = self.get.metadata['url']
+        url = self.get_role_assignment_by_id.metadata['url']
         path_format_arguments = {
             'SynapseDnsSuffix': self._serialize.url("self._config.synapse_dns_suffix", self._config.synapse_dns_suffix, 'str', skip_quote=True),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str', skip_quote=True),
-            'livyApiVersion': self._serialize.url("self._config.livy_api_version", self._config.livy_api_version, 'str', skip_quote=True),
-            'sparkPoolName': self._serialize.url("spark_pool_name", spark_pool_name, 'str'),
-            'batchId': self._serialize.url("batch_id", batch_id, 'int'),
+            'roleAssignmentId': self._serialize.url("role_assignment_id", role_assignment_id, 'str', min_length=1),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        if detailed is not None:
-            query_parameters['detailed'] = self._serialize.query("detailed", detailed, 'bool')
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
@@ -295,12 +270,66 @@ class SparkBatchOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize(models.ErrorContract, response)
+            raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('ExtendedLivyBatchResponse', pipeline_response)
+        deserialized = self._deserialize('RoleAssignmentDetails', pipeline_response)
 
         if cls:
           return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get.metadata = {'url': '/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}/batches/{batchId}'}
+    get_role_assignment_by_id.metadata = {'url': '/rbac/roleAssignments/{roleAssignmentId}'}
+
+    def list_caller_role_assignments(
+        self,
+        workspace_name,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> List[str]
+        """List role assignments of the caller.
+
+        :param workspace_name: The name of the workspace to execute operations on.
+        :type workspace_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: list or the result of cls(response)
+        :rtype: list[str]
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[List[str]]
+        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
+        api_version = "2019-11-01-preview"
+
+        # Construct URL
+        url = self.list_caller_role_assignments.metadata['url']
+        path_format_arguments = {
+            'SynapseDnsSuffix': self._serialize.url("self._config.synapse_dns_suffix", self._config.synapse_dns_suffix, 'str', skip_quote=True),
+            'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str', skip_quote=True),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = 'application/json'
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize(models.ErrorContract, response)
+            raise HttpResponseError(response=response, model=error)
+
+        deserialized = self._deserialize('[str]', pipeline_response)
+
+        if cls:
+          return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    list_caller_role_assignments.metadata = {'url': '/rbac/getMyAssignedRoles'}

@@ -6,32 +6,75 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any
+from typing import TYPE_CHECKING
 
 from azure.core import PipelineClient
 from msrest import Deserializer, Serializer
 
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from typing import Any
+
 from ._configuration import SynapseClientConfiguration
 from .operations import MonitoringOperations
-from .operations import SparkBatchOperations
 from .operations import SparkSessionOperations
-from .operations import WorkspaceAclOperations
+from .operations import RolesOperations
+from .operations import RoleAssignmentsOperations
+from .operations import LinkedServicesOperations
+from .operations import DatasetsOperations
+from .operations import PipelinesOperations
+from .operations import PipelineRunsOperations
+from .operations import ActivityRunsOperations
+from .operations import TriggersOperations
+from .operations import TriggerRunsOperations
+from .operations import DataFlowsOperations
+from .operations import DataFlowDebugSessionOperations
+from .operations import SqlScriptsOperations
+from .operations import SparkJobDefinitionsOperations
+from .operations import NoteBooksOperations
+from .operations import SparkBatchOperations
 from . import models
 
 
 class SynapseClient(object):
-    """
+    """SynapseClient.
 
     :ivar monitoring: MonitoringOperations operations
     :vartype monitoring: azure.synapse.operations.MonitoringOperations
-    :ivar spark_batch: SparkBatchOperations operations
-    :vartype spark_batch: azure.synapse.operations.SparkBatchOperations
     :ivar spark_session: SparkSessionOperations operations
     :vartype spark_session: azure.synapse.operations.SparkSessionOperations
-    :ivar workspace_acl: WorkspaceAclOperations operations
-    :vartype workspace_acl: azure.synapse.operations.WorkspaceAclOperations
+    :ivar roles: RolesOperations operations
+    :vartype roles: azure.synapse.operations.RolesOperations
+    :ivar role_assignments: RoleAssignmentsOperations operations
+    :vartype role_assignments: azure.synapse.operations.RoleAssignmentsOperations
+    :ivar linked_services: LinkedServicesOperations operations
+    :vartype linked_services: azure.synapse.operations.LinkedServicesOperations
+    :ivar datasets: DatasetsOperations operations
+    :vartype datasets: azure.synapse.operations.DatasetsOperations
+    :ivar pipelines: PipelinesOperations operations
+    :vartype pipelines: azure.synapse.operations.PipelinesOperations
+    :ivar pipeline_runs: PipelineRunsOperations operations
+    :vartype pipeline_runs: azure.synapse.operations.PipelineRunsOperations
+    :ivar activity_runs: ActivityRunsOperations operations
+    :vartype activity_runs: azure.synapse.operations.ActivityRunsOperations
+    :ivar triggers: TriggersOperations operations
+    :vartype triggers: azure.synapse.operations.TriggersOperations
+    :ivar trigger_runs: TriggerRunsOperations operations
+    :vartype trigger_runs: azure.synapse.operations.TriggerRunsOperations
+    :ivar data_flows: DataFlowsOperations operations
+    :vartype data_flows: azure.synapse.operations.DataFlowsOperations
+    :ivar data_flow_debug_session: DataFlowDebugSessionOperations operations
+    :vartype data_flow_debug_session: azure.synapse.operations.DataFlowDebugSessionOperations
+    :ivar sql_scripts: SqlScriptsOperations operations
+    :vartype sql_scripts: azure.synapse.operations.SqlScriptsOperations
+    :ivar spark_job_definitions: SparkJobDefinitionsOperations operations
+    :vartype spark_job_definitions: azure.synapse.operations.SparkJobDefinitionsOperations
+    :ivar note_books: NoteBooksOperations operations
+    :vartype note_books: azure.synapse.operations.NoteBooksOperations
+    :ivar spark_batch: SparkBatchOperations operations
+    :vartype spark_batch: azure.synapse.operations.SparkBatchOperations
     :param credential: Credential needed for the client to connect to Azure.
-    :type credential: azure.core.credentials.TokenCredential
+    :type credential: ~azure.core.credentials.TokenCredential
     :param synapse_dns_suffix: Gets the DNS suffix used as the base for all Synapse service requests.
     :type synapse_dns_suffix: str
     :param livy_api_version: Valid api-version for the request.
@@ -56,11 +99,37 @@ class SynapseClient(object):
 
         self.monitoring = MonitoringOperations(
             self._client, self._config, self._serialize, self._deserialize)
-        self.spark_batch = SparkBatchOperations(
-            self._client, self._config, self._serialize, self._deserialize)
         self.spark_session = SparkSessionOperations(
             self._client, self._config, self._serialize, self._deserialize)
-        self.workspace_acl = WorkspaceAclOperations(
+        self.roles = RolesOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.role_assignments = RoleAssignmentsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.linked_services = LinkedServicesOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.datasets = DatasetsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.pipelines = PipelinesOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.pipeline_runs = PipelineRunsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.activity_runs = ActivityRunsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.triggers = TriggersOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.trigger_runs = TriggerRunsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.data_flows = DataFlowsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.data_flow_debug_session = DataFlowDebugSessionOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.sql_scripts = SqlScriptsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.spark_job_definitions = SparkJobDefinitionsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.note_books = NoteBooksOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.spark_batch = SparkBatchOperations(
             self._client, self._config, self._serialize, self._deserialize)
 
     def close(self):

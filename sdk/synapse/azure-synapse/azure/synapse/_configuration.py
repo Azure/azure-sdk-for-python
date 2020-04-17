@@ -6,21 +6,28 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any
+from typing import TYPE_CHECKING
 
 from azure.core.configuration import Configuration
 from azure.core.pipeline import policies
 
 from ._version import VERSION
 
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from typing import Any
+
+    from azure.core.credentials import TokenCredential
+
 
 class SynapseClientConfiguration(Configuration):
-    """Configuration for SynapseClient
+    """Configuration for SynapseClient.
+
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
     :param credential: Credential needed for the client to connect to Azure.
-    :type credential: azure.core.credentials.TokenCredential
+    :type credential: ~azure.core.credentials.TokenCredential
     :param synapse_dns_suffix: Gets the DNS suffix used as the base for all Synapse service requests.
     :type synapse_dns_suffix: str
     :param livy_api_version: Valid api-version for the request.
@@ -48,8 +55,8 @@ class SynapseClientConfiguration(Configuration):
         self.livy_api_version = livy_api_version
         self.api_version = "2019-11-01-preview"
         self.credential_scopes = ['https://dev.azuresynapse.net/.default']
+        kwargs.setdefault('sdk_moniker', 'synapse/{}'.format(VERSION))
         self._configure(**kwargs)
-        self.user_agent_policy.add_user_agent('azsdk-python-synapseclient/{}'.format(VERSION))
 
     def _configure(
         self,

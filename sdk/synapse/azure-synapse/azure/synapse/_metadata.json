@@ -1,0 +1,61 @@
+{
+    "chosen_version": "2019-11-01-preview",
+    "total_api_version_list": ["2019-11-01-preview"],
+    "client": {
+        "name": "SynapseClient",
+        "filename": "_synapse_client",
+        "description": "SynapseClient.",
+        "has_subscription_id": false
+    },
+    "global_parameters": {
+        "method": {
+            "credential": {
+                "method_signature": "credential,  # type: \"TokenCredential\"",
+                "description": "Credential needed for the client to connect to Azure.",
+                "docstring_type": "~azure.core.credentials.TokenCredential",
+                "required": true
+            },
+            "synapse_dns_suffix": {
+                "method_signature": "synapse_dns_suffix=\"dev.azuresynapse.net\",  # type: str",
+                "description": "Gets the DNS suffix used as the base for all Synapse service requests.",
+                "docstring_type": "str",
+                "required": true
+            },
+            "livy_api_version": {
+                "method_signature": "livy_api_version=\"2019-11-01-preview\",  # type: str",
+                "description": "Valid api-version for the request.",
+                "docstring_type": "str",
+                "required": true
+            }
+        },
+        "constant": {
+        },
+        "call": "credential, synapse_dns_suffix, livy_api_version"
+    },
+    "config": {
+        "credential": true,
+        "credential_scopes": ["https://dev.azuresynapse.net/.default"]
+
+    },
+    "operation_groups": {
+        "monitoring": "MonitoringOperations",
+        "spark_session": "SparkSessionOperations",
+        "roles": "RolesOperations",
+        "role_assignments": "RoleAssignmentsOperations",
+        "linked_services": "LinkedServicesOperations",
+        "datasets": "DatasetsOperations",
+        "pipelines": "PipelinesOperations",
+        "pipeline_runs": "PipelineRunsOperations",
+        "activity_runs": "ActivityRunsOperations",
+        "triggers": "TriggersOperations",
+        "trigger_runs": "TriggerRunsOperations",
+        "data_flows": "DataFlowsOperations",
+        "data_flow_debug_session": "DataFlowDebugSessionOperations",
+        "sql_scripts": "SqlScriptsOperations",
+        "spark_job_definitions": "SparkJobDefinitionsOperations",
+        "note_books": "NoteBooksOperations",
+        "spark_batch": "SparkBatchOperations"
+    },
+    "operation_mixins": {
+    }
+}
