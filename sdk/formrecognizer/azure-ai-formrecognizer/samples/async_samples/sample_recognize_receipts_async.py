@@ -48,7 +48,6 @@ class RecognizeReceiptsSampleAsync(object):
                 print("Receipt Type: {}\nconfidence: {}\n".format(receipt.receipt_type.type, receipt.receipt_type.confidence))
                 print("Merchant Name: {}\nconfidence: {}\n".format(receipt.merchant_name.value, receipt.merchant_name.confidence))
                 print("Transaction Date: {}\nconfidence: {}\n".format(receipt.transaction_date.value, receipt.transaction_date.confidence))
-        # [END recognize_receipts_async]
                 print("Receipt items:")
                 for item in receipt.receipt_items:
                     print("Item Name: {}\nconfidence: {}".format(item.name.value, item.name.confidence))
@@ -60,6 +59,7 @@ class RecognizeReceiptsSampleAsync(object):
                 print("Tip: {}\nconfidence: {}\n".format(receipt.tip.value, receipt.tip.confidence))
                 print("Total: {}\nconfidence: {}\n".format(receipt.total.value, receipt.total.confidence))
                 print("--------------------------------------")
+        # [END recognize_receipts_async]
 
 
 async def main():
