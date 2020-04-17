@@ -127,6 +127,7 @@ class FormRecognizerClient(object):
             include_text_details=include_text_content,
             cls=kwargs.pop("cls", self._receipt_callback),
             polling=LROBasePolling(timeout=polling_interval, **kwargs),
+            error_map=error_map,
             **kwargs
         )
 
