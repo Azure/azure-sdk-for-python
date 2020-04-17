@@ -52,7 +52,7 @@ class FormTrainingClient(object):
             :end-before: [END create_form_training_client]
             :language: python
             :dedent: 8
-            :caption: Creating the FormTrainingClient with endpoint and API key.
+            :caption: Creating the FormTrainingClient with an endpoint and API key.
     """
 
     def __init__(self, endpoint, credential, **kwargs):

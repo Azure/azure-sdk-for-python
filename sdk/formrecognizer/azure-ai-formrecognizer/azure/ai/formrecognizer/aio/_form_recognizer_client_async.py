@@ -55,7 +55,7 @@ class FormRecognizerClient(object):
             :end-before: [END create_form_recognizer_client_async]
             :language: python
             :dedent: 8
-            :caption: Creating the FormRecognizerClient with endpoint and API key.
+            :caption: Creating the FormRecognizerClient with an endpoint and API key.
     """
 
     def __init__(
