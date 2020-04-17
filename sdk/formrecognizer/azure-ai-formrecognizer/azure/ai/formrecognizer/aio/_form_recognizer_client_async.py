@@ -24,7 +24,7 @@ from .._response_handlers import (
     prepare_form_result
 )
 from .._generated.models import AnalyzeOperationResult
-from .._helpers import get_content_type, POLLING_INTERVAL, COGNITIVE_KEY_HEADER
+from .._helpers import get_content_type, error_map, POLLING_INTERVAL, COGNITIVE_KEY_HEADER
 from .._user_agent import USER_AGENT
 from .._polling import AnalyzePolling
 if TYPE_CHECKING:
@@ -109,6 +109,7 @@ class FormRecognizerClient(object):
             include_text_details=include_text_content,
             cls=kwargs.pop("cls", self._receipt_callback),
             polling=AsyncLROBasePolling(timeout=polling_interval, **kwargs),
+            error_map=error_map,
             **kwargs
         )
 
@@ -139,6 +140,7 @@ class FormRecognizerClient(object):
             include_text_details=include_text_content,
             cls=kwargs.pop("cls", self._receipt_callback),
             polling=AsyncLROBasePolling(timeout=polling_interval, **kwargs),
+            error_map=error_map,
             **kwargs
         )
 
@@ -177,6 +179,7 @@ class FormRecognizerClient(object):
             content_type=content_type,
             cls=kwargs.pop("cls", self._content_callback),
             polling=AsyncLROBasePolling(timeout=polling_interval, **kwargs),
+            error_map=error_map,
             **kwargs
         )
 
@@ -199,6 +202,7 @@ class FormRecognizerClient(object):
             file_stream={"source": url},
             cls=kwargs.pop("cls", self._content_callback),
             polling=AsyncLROBasePolling(timeout=polling_interval, **kwargs),
+            error_map=error_map,
             **kwargs
         )
 
@@ -251,6 +255,7 @@ class FormRecognizerClient(object):
             content_type=content_type,
             cls=deserialization_callback,
             polling=AsyncLROBasePolling(timeout=polling_interval, lro_algorithms=[AnalyzePolling()], **kwargs),
+            error_map=error_map,
             **kwargs
         )
 
@@ -291,6 +296,7 @@ class FormRecognizerClient(object):
             include_text_details=include_text_content,
             cls=deserialization_callback,
             polling=AsyncLROBasePolling(timeout=polling_interval, lro_algorithms=[AnalyzePolling()], **kwargs),
+            error_map=error_map,
             **kwargs
         )
 

@@ -4,8 +4,21 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
+from azure.core.exceptions import (
+    ResourceNotFoundError,
+    ResourceExistsError,
+    ClientAuthenticationError
+)
+
 POLLING_INTERVAL = 5
 COGNITIVE_KEY_HEADER = "Ocp-Apim-Subscription-Key"
+
+
+error_map = {
+    404: ResourceNotFoundError,
+    409: ResourceExistsError,
+    401: ClientAuthenticationError
+}
 
 
 def get_content_type(form):
