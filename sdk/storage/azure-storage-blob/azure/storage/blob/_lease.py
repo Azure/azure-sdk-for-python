@@ -25,9 +25,9 @@ if TYPE_CHECKING:
 def get_access_conditions(lease):
     # type: (Optional[Union[BlobLeaseClient, str]]) -> Union[LeaseAccessConditions, None]
     try:
-        lease_id = lease.id
+        lease_id = cast(BlobLeaseClient, lease).id
     except AttributeError:
-        lease_id = lease
+        lease_id = cast(str, lease)
     return LeaseAccessConditions(lease_id=lease_id) if lease_id else None
 
 
