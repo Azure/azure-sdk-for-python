@@ -43,10 +43,13 @@ def _get_user_settings():
         return "Azure"
 
 
+def _get_refresh_token(service_name, account_name):
+    return Secret.password_lookup_sync(_SECRET, {"service": service_name,
+                                                 "account": account_name})
+
 class LinuxVSCodeCredential(object):
     def __init__(self, **kwargs):
         self._client = kwargs.pop("_client", None) or AadClient("organizations", AZURE_VSCODE_CLIENT_ID, **kwargs)
-        self._schema = _SECRET
 
     def get_token(self, *scopes, **kwargs):
         # type: (*str, **Any) -> AccessToken
@@ -65,8 +68,7 @@ class LinuxVSCodeCredential(object):
             raise ValueError("'get_token' requires at least one scope")
 
         environment_name = _get_user_settings()
-        refresh_token = Secret.password_lookup_sync(self._schema, {"service": VSCODE_CREDENTIALS_SECTION,
-                                                                   "account": environment_name})
+        refresh_token = _get_refresh_token(VSCODE_CREDENTIALS_SECTION, environment_name)
         if not refresh_token:
             raise CredentialUnavailableError(
                 message="No Azure user is logged in to Visual Studio Code."

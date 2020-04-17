@@ -33,6 +33,11 @@ def _get_user_settings():
         return "Azure"
 
 
+def _get_refresh_token(service_name, account_name):
+    key_chain = Keychain()
+    return key_chain.get_generic_password(service_name, account_name)
+
+
 class MacOSVSCodeCredential(object):
     """Authenticates by redeeming a refresh token previously saved by VS Code
 
@@ -57,8 +62,7 @@ class MacOSVSCodeCredential(object):
             raise ValueError("'get_token' requires at least one scope")
 
         environment_name = _get_user_settings()
-        key_chain = Keychain()
-        refresh_token = key_chain.get_generic_password(VSCODE_CREDENTIALS_SECTION, environment_name)
+        refresh_token = _get_refresh_token(VSCODE_CREDENTIALS_SECTION, environment_name)
         if not refresh_token:
             raise CredentialUnavailableError(
                 message="No Azure user is logged in to Visual Studio Code."

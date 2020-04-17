@@ -12,7 +12,7 @@ from ..._constants import (
 )
 from .._internal.aad_client import AadClient
 try:
-    from ..._credentials.win_vscode_credential import _read_credential, _get_user_settings
+    from ..._credentials.win_vscode_credential import _get_user_settings, _get_refresh_token
 except ImportError:
     pass
 if TYPE_CHECKING:
@@ -55,7 +55,7 @@ class WinVSCodeCredential(AsyncCredentialBase):
             raise ValueError("'get_token' requires at least one scope")
 
         environment_name = _get_user_settings()
-        refresh_token = _read_credential(VSCODE_CREDENTIALS_SECTION, environment_name)
+        refresh_token = _get_refresh_token(VSCODE_CREDENTIALS_SECTION, environment_name)
         if not refresh_token:
             raise CredentialUnavailableError(
                 message="No Azure user is logged in to Visual Studio Code."

@@ -4,7 +4,6 @@
 # ------------------------------------
 from typing import TYPE_CHECKING
 import asyncio
-from msal_extensions.osx import Keychain
 from ..._exceptions import CredentialUnavailableError
 from .._credentials.base import AsyncCredentialBase
 from ..._constants import (
@@ -12,7 +11,7 @@ from ..._constants import (
     AZURE_VSCODE_CLIENT_ID,
 )
 from .._internal.aad_client import AadClient
-from ..._credentials.macos_vscode_credential import _get_user_settings
+from ..._credentials.macos_vscode_credential import _get_user_settings, _get_refresh_token
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
     from typing import Any, Iterable, Optional
@@ -55,8 +54,7 @@ class MacOSVSCodeCredential(AsyncCredentialBase):
             raise ValueError("'get_token' requires at least one scope")
 
         environment_name = _get_user_settings()
-        key_chain = Keychain()
-        refresh_token = key_chain.get_generic_password(VSCODE_CREDENTIALS_SECTION, environment_name)
+        refresh_token = _get_refresh_token(VSCODE_CREDENTIALS_SECTION, environment_name)
         if not refresh_token:
             raise CredentialUnavailableError(
                 message="No Azure user is logged in to Visual Studio Code."
