@@ -78,15 +78,15 @@ class AsyncStorageAccountHostsMixin(object):
         config = kwargs.get('_configuration') or create_configuration(**kwargs)
         if kwargs.get('_pipeline'):
             return config, kwargs['_pipeline']
-        setattr(config, 'transport', kwargs.get("transport"))
+        config.transport = kwargs.get("transport")
         kwargs.setdefault("connection_timeout", CONNECTION_TIMEOUT)
         kwargs.setdefault("read_timeout", READ_TIMEOUT)
-        if not getattr(config, 'transport'):
+        if not config.transport:
             try:
                 from azure.core.pipeline.transport import AioHttpTransport
             except ImportError:
                 raise ImportError("Unable to create async transport. Please check aiohttp is installed.")
-            setattr(config, 'transport', AioHttpTransport(**kwargs))
+            config.transport = AioHttpTransport(**kwargs)
         policies = [
             QueueMessagePolicy(),
             config.headers_policy,
@@ -97,14 +97,14 @@ class AsyncStorageAccountHostsMixin(object):
             self._credential_policy,
             ContentDecodePolicy(response_encoding="utf-8"),
             AsyncRedirectPolicy(**kwargs),
-            StorageHosts(hosts=getattr(self, "_hosts"), **kwargs),
+            StorageHosts(hosts=self._hosts, **kwargs),
             config.retry_policy,
             config.logging_policy,
             AsyncStorageResponseHook(**kwargs),
             DistributedTracingPolicy(**kwargs),
             HttpLoggingPolicy(**kwargs),
         ]
-        return config, AsyncPipeline(getattr(config, 'transport'), policies=policies)
+        return config, AsyncPipeline(config.transport, policies=policies)
 
     async def _batch_send(
         self, *reqs,
