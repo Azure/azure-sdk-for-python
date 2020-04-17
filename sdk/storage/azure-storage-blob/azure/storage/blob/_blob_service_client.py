@@ -522,7 +522,7 @@ class BlobServiceClient(BlobServiceClientBase):
         container_name = None
         if isinstance(container, ContainerProperties):
             container_name = container.name
-        elif isinstance(container, str):
+        else:
             container_name = container
         _pipeline = Pipeline(
             transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
@@ -573,11 +573,11 @@ class BlobServiceClient(BlobServiceClientBase):
         blob_name = None
         if isinstance(container, ContainerProperties):
             container_name = container.name
-        elif isinstance(container, str):
+        else:
             container_name = container
         if isinstance(blob, BlobProperties):
             blob_name = blob.name
-        elif isinstance(blob, str):
+        else:
             blob_name = blob
         _pipeline = Pipeline(
             transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
