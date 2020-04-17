@@ -13,6 +13,7 @@ from .shared_cache import SharedTokenCacheCredential
 from .azure_cli import AzureCliCredential
 from .user import DeviceCodeCredential, UsernamePasswordCredential
 
+
 __all__ = [
     "AuthorizationCodeCredential",
     "CertificateCredential",

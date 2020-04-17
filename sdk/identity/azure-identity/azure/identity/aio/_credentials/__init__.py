@@ -11,6 +11,7 @@ from .client_credential import CertificateCredential, ClientSecretCredential
 from .shared_cache import SharedTokenCacheCredential
 from .azure_cli import AzureCliCredential
 
+
 __all__ = [
     "AuthorizationCodeCredential",
     "AzureCliCredential",

@@ -20,6 +20,7 @@ from ._credentials import (
     UsernamePasswordCredential,
 )
 
+
 __all__ = [
     "AuthorizationCodeCredential",
     "CertificateCredential",
