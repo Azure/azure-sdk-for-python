@@ -64,7 +64,6 @@ class LinuxVSCodeCredential(AsyncCredentialBase):
             raise CredentialUnavailableError(
                 message="No Azure user is logged in to Visual Studio Code."
             )
-        loop = kwargs.pop("loop", None) or asyncio.get_event_loop()
         token = await self._client.obtain_token_by_refresh_token(
-            refresh_token, scopes, loop=loop, **kwargs)
+            refresh_token, scopes, **kwargs)
         return token
