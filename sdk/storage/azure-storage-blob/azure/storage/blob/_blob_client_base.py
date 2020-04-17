@@ -143,13 +143,13 @@ class BlobClientBase(StorageAccountHostsMixin):  # pylint: disable=too-many-publ
         try:
             self.snapshot = snapshot.snapshot # type: ignore
         except AttributeError:
-            if isinstance(snapshot, Dict):
-                self.snapshot = snapshot['snapshot']
-            else:
+            try:
+                self.snapshot = snapshot['snapshot'] # type: ignore
+            except TypeError:
                 self.snapshot = snapshot or path_snapshot
 
         self._query_str, credential = self._format_query_string(sas_token, credential, snapshot=self.snapshot)
-        super(BlobClientBase, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)
+        super(BlobClient, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)
         self._client = AzureBlobStorage(self.url, pipeline=self._pipeline)
         self._client._config.version = get_api_version(kwargs, VERSION)  # pylint: disable=protected-access
 
@@ -161,7 +161,7 @@ class BlobClientBase(StorageAccountHostsMixin):  # pylint: disable=too-many-publ
             self.scheme,
             hostname,
             quote(container_name),
-            quote(self.blob_name, safe='~'),
+            quote(self.blob_name, safe='~/'),
             self._query_str)
 
     def _upload_blob_options(  # pylint:disable=too-many-statements
