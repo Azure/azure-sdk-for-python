@@ -217,3 +217,38 @@ with sb_client:
             msg.complete()
             session.renew_lock()
         session.set_session_state("END")
+
+### Rule operation
+
+# 1. get rules
+subscription_rule_manager = sb_client.get_subscription_rule_manager("topic_name", "subscription_name")
+rules = subscription_rule_manager.get_rules()
+for rule in rules:
+    print(rule.name)
+    print(rule.filter)  # If it's type of correlation, print the detail info
+    print(rule.action)
+
+# 2. add rule
+
+# 2.1 add boolean filter rule
+
+subscription_rule_manager.add_rule("rule_name", filter=True, sql_rule_action_expression=None)
+
+# 2.2 add sql filter rule
+
+message = Message("msg")
+message.correlation_id = 2
+message.user_properties = {"priority" : 2}
+subscription_rule_manager.add_rule("rule_name", filter="priority >= 1 AND sys.correlation-id = 2", sql_rule_action_expression=None)
+
+# 2.3 add correlation filter rule
+
+message = Message("msg")
+message.correlation_id = 2
+message.user_properties = {"key" : "value"}
+
+correlation_filter = CorrelationFilter()
+correlation_filter.user_properties = {"key": "value"}
+correlation_filter.correlation_id = 2
+
+subscription_rule_manager.add_rule("rule_name", filter=CorrelationFilter, sql_rule_action_expression="SET key = 'new value'")

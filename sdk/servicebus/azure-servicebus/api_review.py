@@ -214,6 +214,9 @@ class ServiceBusSharedKeyCredential:
 
 
 class SubscriptionRuleManager:
+    # sql and correlation filter apply to user properties and system properties
+    # https://docs.microsoft.com/en-us/azure/service-bus-messaging/topic-filters
+    # rule action: https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-messaging-sql-rule-action
     def __init__(
         self,
         fully_qualified_namespace: str,
