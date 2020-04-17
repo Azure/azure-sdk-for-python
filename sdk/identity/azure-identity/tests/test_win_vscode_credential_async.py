@@ -6,13 +6,10 @@ import sys
 import pytest
 from azure.core.credentials import AccessToken
 from helpers_async import wrap_in_future
+from unittest.mock import Mock
 if sys.platform.startswith('win'):
     from azure.identity.aio._credentials.win_vscode_credential import WinVSCodeCredential
     from azure.identity._credentials.win_vscode_credential import _cred_write
-try:
-    from unittest.mock import Mock
-except ImportError:  # python < 3.3
-    from mock import Mock  # type: ignore
 
 @pytest.mark.skipif(not sys.platform.startswith('win'), reason="This test only runs on Windows")
 @pytest.mark.asyncio
@@ -38,7 +35,7 @@ async def test_get_token():
     mock_client.obtain_token_by_refresh_token = wrap_in_future(token_by_refresh_token)
 
     credential = WinVSCodeCredential(
-        client=mock_client,
+        _client=mock_client,
     )
 
     token = await credential.get_token("scope")
