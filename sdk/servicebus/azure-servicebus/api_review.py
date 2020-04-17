@@ -143,13 +143,15 @@ class ServiceBusSession:
 
 
 class Message:
-    def __init__(self, body : str, encoding : str = 'UTF-8', **kwargs) -> None:
+    def __init__(self, body : str, encoding : str = 'UTF-8', session_id : str = None, **kwargs) -> None:
     def __str__(self):
 
     # @properties
     def body(self) -> Union[bytes, Generator[bytes]]:  # read-only
     def partition_key(self, value : str):
     def partition_key(self) -> str:
+    def session_id(self, value : str):
+    def session_id(self) -> str:
     def via_partition_key(self, value: str):
     def via_partition_key(self) -> str:
     def time_to_live(self, value : Union[float, timedelta]):
@@ -213,6 +215,15 @@ class ServiceBusSharedKeyCredential:
     def get_token(self, *scopes, **kwargs):
 
 
+class AutoLockRenew:
+    def __init__(self, executor=None, max_workers=None):
+        def __enter__(self):
+
+            def __exit__(self, *args):
+
+            def register(self, renewable, timeout=300):
+
+
 class SubscriptionRuleManager:
     # sql and correlation filter apply to user properties and system properties
     # https://docs.microsoft.com/en-us/azure/service-bus-messaging/topic-filters
@@ -269,3 +280,6 @@ class CorrelationFilter:
     def content_type(self) -> str:
     def user_properties(self, val: dict):
     def user_properties(self) -> dict:
+
+
+
