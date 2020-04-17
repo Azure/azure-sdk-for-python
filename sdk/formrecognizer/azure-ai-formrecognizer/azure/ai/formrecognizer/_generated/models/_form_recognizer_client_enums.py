@@ -6,13 +6,27 @@
 
 from enum import Enum
 
-class TrainStatus(str, Enum):
-    """Status of the training operation.
+class ContentType(str, Enum):
+    """Content type for upload
     """
 
-    succeeded = "succeeded"
-    partially_succeeded = "partiallySucceeded"
-    failed = "failed"
+    application_pdf = "application/pdf"  #: Content Type 'application/pdf'.
+    image_jpeg = "image/jpeg"  #: Content Type 'image/jpeg'.
+    image_png = "image/png"  #: Content Type 'image/png'.
+    image_tiff = "image/tiff"  #: Content Type 'image/tiff'.
+
+class FieldValueType(str, Enum):
+    """Semantic data type of the field value.
+    """
+
+    string = "string"
+    date = "date"
+    time = "time"
+    phone_number = "phoneNumber"
+    number = "number"
+    integer = "integer"
+    array = "array"
+    object = "object"
 
 class Language(str, Enum):
     """Language code
@@ -28,19 +42,6 @@ class LengthUnit(str, Enum):
 
     pixel = "pixel"
     inch = "inch"
-
-class FieldValueType(str, Enum):
-    """Semantic data type of the field value.
-    """
-
-    string = "string"
-    date = "date"
-    time = "time"
-    phone_number = "phoneNumber"
-    number = "number"
-    integer = "integer"
-    array = "array"
-    object = "object"
 
 class ModelStatus(str, Enum):
     """Status of the model.
@@ -59,11 +60,10 @@ class OperationStatus(str, Enum):
     succeeded = "succeeded"
     failed = "failed"
 
-class ContentType(str, Enum):
-    """Content type for upload
+class TrainStatus(str, Enum):
+    """Status of the training operation.
     """
 
-    application_pdf = "application/pdf"  #: Content Type 'application/pdf'.
-    image_jpeg = "image/jpeg"  #: Content Type 'image/jpeg'.
-    image_png = "image/png"  #: Content Type 'image/png'.
-    image_tiff = "image/tiff"  #: Content Type 'image/tiff'.
+    succeeded = "succeeded"
+    partially_succeeded = "partiallySucceeded"
+    failed = "failed"

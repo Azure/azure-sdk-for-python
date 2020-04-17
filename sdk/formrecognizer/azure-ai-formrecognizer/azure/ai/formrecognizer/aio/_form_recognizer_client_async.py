@@ -6,7 +6,7 @@
 
 # pylint: disable=protected-access
 
-from typing import (  # pylint: disable=unused-import
+from typing import (
     Any,
     List,
     IO,
@@ -95,6 +95,8 @@ class FormRecognizerClient(object):
         :keyword str content_type: Media type of the body sent to the API. Content-type is
             auto-detected, but can be overridden by passing this keyword argument. For options,
             see :class:`~azure.ai.formrecognizer.FormContentType`.
+        :keyword int polling_interval: Waiting time between two polls for LRO operations
+            if no Retry-After header is present. Defaults to 5 seconds.
         :return: A list of USReceipt.
         :rtype: list[~azure.ai.formrecognizer.USReceipt]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -109,6 +111,7 @@ class FormRecognizerClient(object):
                 :caption: Recognize US sales receipt fields.
         """
 
+        polling_interval = kwargs.pop("polling_interval", POLLING_INTERVAL)
         content_type = kwargs.pop("content_type", None)
         if content_type == "application/json":
             raise TypeError("Call begin_recognize_receipts_from_url() to analyze a receipt from a url.")
@@ -118,12 +121,12 @@ class FormRecognizerClient(object):
         if content_type is None:
             content_type = get_content_type(stream)
 
-        return await self._client.analyze_receipt_async(
+        return await self._client.analyze_receipt_async(  # type: ignore
             file_stream=stream,
             content_type=content_type,
             include_text_details=include_text_content,
             cls=kwargs.pop("cls", self._receipt_callback),
-            polling=AsyncLROBasePolling(timeout=POLLING_INTERVAL, **kwargs),
+            polling=AsyncLROBasePolling(timeout=polling_interval, **kwargs),
             error_map=error_map,
             **kwargs
         )
@@ -140,6 +143,8 @@ class FormRecognizerClient(object):
         :param url: The url of the receipt. Currently only supports US sales receipts.
         :type url: str
         :keyword bool include_text_content: Include text lines and text content references in the result.
+        :keyword int polling_interval: Waiting time between two polls for LRO operations
+            if no Retry-After header is present. Defaults to 5 seconds.
         :return: A list of USReceipt.
         :rtype: list[~azure.ai.formrecognizer.USReceipt]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -154,13 +159,14 @@ class FormRecognizerClient(object):
                 :caption: Recognize US sales receipt fields from a URL.
         """
 
+        polling_interval = kwargs.pop("polling_interval", POLLING_INTERVAL)
         include_text_content = kwargs.pop("include_text_content", False)
 
-        return await self._client.analyze_receipt_async(
+        return await self._client.analyze_receipt_async(  # type: ignore
             file_stream={"source": url},
             include_text_details=include_text_content,
             cls=kwargs.pop("cls", self._receipt_callback),
-            polling=AsyncLROBasePolling(timeout=POLLING_INTERVAL, **kwargs),
+            polling=AsyncLROBasePolling(timeout=polling_interval, **kwargs),
             error_map=error_map,
             **kwargs
         )
@@ -180,6 +186,8 @@ class FormRecognizerClient(object):
         :keyword str content_type: Media type of the body sent to the API. Content-type is
             auto-detected, but can be overridden by passing this keyword argument. For options,
             see :class:`~azure.ai.formrecognizer.FormContentType`.
+        :keyword int polling_interval: Waiting time between two polls for LRO operations
+            if no Retry-After header is present. Defaults to 5 seconds.
         :return: A list of FormPage.
         :rtype: list[~azure.ai.formrecognizer.FormPage]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -194,6 +202,7 @@ class FormRecognizerClient(object):
                 :caption: Recognize text and content/layout information from a form.
         """
 
+        polling_interval = kwargs.pop("polling_interval", POLLING_INTERVAL)
         content_type = kwargs.pop("content_type", None)
         if content_type == "application/json":
             raise TypeError("Call begin_recognize_content_from_url() to analyze a document from a url.")
@@ -201,11 +210,11 @@ class FormRecognizerClient(object):
         if content_type is None:
             content_type = get_content_type(stream)
 
-        return await self._client.analyze_layout_async(
+        return await self._client.analyze_layout_async(  # type: ignore
             file_stream=stream,
             content_type=content_type,
             cls=kwargs.pop("cls", self._content_callback),
-            polling=AsyncLROBasePolling(timeout=POLLING_INTERVAL, **kwargs),
+            polling=AsyncLROBasePolling(timeout=polling_interval, **kwargs),
             error_map=error_map,
             **kwargs
         )
@@ -217,15 +226,18 @@ class FormRecognizerClient(object):
 
         :param url: The url of the document.
         :type url: str
+        :keyword int polling_interval: Waiting time between two polls for LRO operations
+            if no Retry-After header is present. Defaults to 5 seconds.
         :return: A list of FormPage.
         :rtype: list[~azure.ai.formrecognizer.FormPage]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        return await self._client.analyze_layout_async(
+        polling_interval = kwargs.pop("polling_interval", POLLING_INTERVAL)
+        return await self._client.analyze_layout_async(  # type: ignore
             file_stream={"source": url},
             cls=kwargs.pop("cls", self._content_callback),
-            polling=AsyncLROBasePolling(timeout=POLLING_INTERVAL, **kwargs),
+            polling=AsyncLROBasePolling(timeout=polling_interval, **kwargs),
             error_map=error_map,
             **kwargs
         )
@@ -249,6 +261,8 @@ class FormRecognizerClient(object):
         :keyword str content_type: Media type of the body sent to the API. Content-type is
             auto-detected, but can be overridden by passing this keyword argument. For options,
             see :class:`~azure.ai.formrecognizer.FormContentType`.
+        :keyword int polling_interval: Waiting time between two polls for LRO operations
+            if no Retry-After header is present. Defaults to 5 seconds.
         :return: A list of RecognizedForm.
         :rtype: list[~azure.ai.formrecognizer.RecognizedForm]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -264,6 +278,7 @@ class FormRecognizerClient(object):
         """
 
         cls = kwargs.pop("cls", None)
+        polling_interval = kwargs.pop("polling_interval", POLLING_INTERVAL)
         content_type = kwargs.pop("content_type", None)
         if content_type == "application/json":
             raise TypeError("Call begin_recognize_custom_forms_from_url() to analyze a document from a url.")
@@ -278,13 +293,13 @@ class FormRecognizerClient(object):
             return prepare_form_result(analyze_result, model_id)
 
         deserialization_callback = cls if cls else analyze_callback
-        return await self._client.analyze_with_custom_model(
+        return await self._client.analyze_with_custom_model(  # type: ignore
             file_stream=stream,
             model_id=model_id,
             include_text_details=include_text_content,
             content_type=content_type,
             cls=deserialization_callback,
-            polling=AsyncLROBasePolling(timeout=POLLING_INTERVAL, lro_algorithms=[AnalyzePolling()], **kwargs),
+            polling=AsyncLROBasePolling(timeout=polling_interval, lro_algorithms=[AnalyzePolling()], **kwargs),
             error_map=error_map,
             **kwargs
         )
@@ -304,12 +319,15 @@ class FormRecognizerClient(object):
         :param url: The url of the document.
         :type url: str
         :keyword bool include_text_content: Include text lines and element references in the result.
+        :keyword int polling_interval: Waiting time between two polls for LRO operations
+            if no Retry-After header is present. Defaults to 5 seconds.
         :return: A list of RecognizedForm.
         :rtype: list[~azure.ai.formrecognizer.RecognizedForm]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
         cls = kwargs.pop("cls", None)
+        polling_interval = kwargs.pop("polling_interval", POLLING_INTERVAL)
         include_text_content = kwargs.pop("include_text_content", False)
 
         def analyze_callback(raw_response, _, headers):  # pylint: disable=unused-argument
@@ -317,17 +335,17 @@ class FormRecognizerClient(object):
             return prepare_form_result(analyze_result, model_id)
 
         deserialization_callback = cls if cls else analyze_callback
-        return await self._client.analyze_with_custom_model(
+        return await self._client.analyze_with_custom_model(  # type: ignore
             file_stream={"source": url},
             model_id=model_id,
             include_text_details=include_text_content,
             cls=deserialization_callback,
-            polling=AsyncLROBasePolling(timeout=POLLING_INTERVAL, lro_algorithms=[AnalyzePolling()], **kwargs),
+            polling=AsyncLROBasePolling(timeout=polling_interval, lro_algorithms=[AnalyzePolling()], **kwargs),
             error_map=error_map,
             **kwargs
         )
 
-    def get_form_training_client(self, **kwargs) -> FormTrainingClient:
+    def get_form_training_client(self, **kwargs: Any) -> FormTrainingClient:
         """Get an instance of a FormTrainingClient from FormRecognizerClient.
 
         :rtype: ~azure.ai.formrecognizer.aio.FormTrainingClient

@@ -6,7 +6,7 @@
 
 # pylint: disable=protected-access
 
-from typing import (  # pylint: disable=unused-import
+from typing import (
     Optional,
     Any,
     Iterable,
@@ -29,6 +29,8 @@ from ._polling import TrainingPolling
 from ._user_agent import USER_AGENT
 if TYPE_CHECKING:
     from azure.core.credentials import AzureKeyCredential
+    from azure.core.pipeline.transport import HttpResponse
+    PipelineResponseType = HttpResponse
 
 
 class FormTrainingClient(object):
@@ -80,6 +82,8 @@ class FormTrainingClient(object):
         :keyword bool include_sub_folders: A flag to indicate if sub folders
             will also need to be included when searching for content to be preprocessed.
             Use with `prefix` to filter for only certain sub folders. Not supported if training with labels.
+        :keyword int polling_interval: Waiting time between two polls for LRO operations
+            if no Retry-After header is present. Defaults to 5 seconds.
         :return: An instance of an LROPoller. Call `result()` on the poller
             object to return a :class:`~azure.ai.formrecognizer.CustomFormModel`.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.formrecognizer.CustomFormModel]
@@ -96,7 +100,8 @@ class FormTrainingClient(object):
         """
 
         cls = kwargs.pop("cls", None)
-        response = self._client.train_custom_model_async(
+        polling_interval = kwargs.pop("polling_interval", POLLING_INTERVAL)
+        response = self._client.train_custom_model_async(  # type: ignore
             train_request=TrainRequest(
                 source=training_files,
                 use_label_file=use_labels,
@@ -108,7 +113,7 @@ class FormTrainingClient(object):
             cls=lambda pipeline_response, _, response_headers: pipeline_response,
             error_map=error_map,
             **kwargs
-        )
+        )  # type: PipelineResponseType
 
         def callback(raw_response):
             model = self._client._deserialize(Model, raw_response)
@@ -119,7 +124,7 @@ class FormTrainingClient(object):
             self._client._client,
             response,
             deserialization_callback,
-            LROBasePolling(timeout=POLLING_INTERVAL, lro_algorithms=[TrainingPolling()], **kwargs)
+            LROBasePolling(timeout=polling_interval, lro_algorithms=[TrainingPolling()], **kwargs)
         )
 
     @distributed_trace
@@ -155,7 +160,8 @@ class FormTrainingClient(object):
         """List information for each model, including model id,
         model status, and when it was created and last modified.
 
-        :return: ItemPaged[~azure.ai.formrecognizer.CustomFormModelInfo]
+        :return: ItemPaged[:class:`~azure.ai.formrecognizer.CustomFormModelInfo`]
+        :rtype: ~azure.core.paging.ItemPaged
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:

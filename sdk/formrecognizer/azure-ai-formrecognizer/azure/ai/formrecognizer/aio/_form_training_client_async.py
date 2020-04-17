@@ -6,7 +6,7 @@
 
 # pylint: disable=protected-access
 
-from typing import (  # pylint: disable=unused-import
+from typing import (
     Optional,
     Any,
     AsyncIterable,
@@ -89,6 +89,8 @@ class FormTrainingClient(object):
         :keyword bool include_sub_folders: A flag to indicate if sub folders
             will also need to be included when searching for content to be preprocessed.
             Use with `prefix` to filter for only certain sub folders. Not supported if training with labels.
+        :keyword int polling_interval: Waiting time between two polls for LRO operations
+            if no Retry-After header is present. Defaults to 5 seconds.
         :return: CustomFormModel
         :rtype: ~azure.ai.formrecognizer.CustomFormModel
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -104,6 +106,7 @@ class FormTrainingClient(object):
         """
 
         cls = kwargs.pop("cls", None)
+        polling_interval = kwargs.pop("polling_interval", POLLING_INTERVAL)
         response = await self._client.train_custom_model_async(
             train_request=TrainRequest(
                 source=training_files,
@@ -127,7 +130,7 @@ class FormTrainingClient(object):
             self._client._client,
             response,
             deserialization_callback,
-            AsyncLROBasePolling(timeout=POLLING_INTERVAL, lro_algorithms=[TrainingPolling()], **kwargs)
+            AsyncLROBasePolling(timeout=polling_interval, lro_algorithms=[TrainingPolling()], **kwargs)
         )
 
     @distributed_trace_async
@@ -160,7 +163,8 @@ class FormTrainingClient(object):
         """List information for each model, including model id,
         model status, and when it was created and last modified.
 
-        :return: AsyncItemPaged[~azure.ai.formrecognizer.CustomFormModelInfo]
+        :return: AsyncItemPaged[:class:`~azure.ai.formrecognizer.CustomFormModelInfo`]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
