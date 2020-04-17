@@ -51,7 +51,6 @@ class RecognizeContentSampleAsync(object):
                     content.height,
                     content.unit
                 ))
-        # [END recognize_content_async]
                 for table_idx, table in enumerate(content.tables):
                     print("Table # {} has {} rows and {} columns".format(table_idx, table.row_count, table.column_count))
                     for cell in table.cells:
@@ -62,6 +61,7 @@ class RecognizeContentSampleAsync(object):
                             ", ".join(["[{}, {}]".format(p.x, p.y) for p in cell.bounding_box]),
                         ))
                 print("----------------------------------------")
+        # [END recognize_content_async]
 
 
 async def main():
