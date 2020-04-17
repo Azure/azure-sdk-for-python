@@ -9,7 +9,6 @@ import gi  # https://pygobject.readthedocs.io/en/latest/getting_started.html
 # pylint: disable=no-name-in-module
 gi.require_version("Secret", "1")  # Would require a package gir1.2-secret-1
 # pylint: disable=wrong-import-position
-from gi.repository import Secret  # Would require a package gir1.2-secret-1
 from ..._exceptions import CredentialUnavailableError
 from .._credentials.base import AsyncCredentialBase
 from ..._constants import (
