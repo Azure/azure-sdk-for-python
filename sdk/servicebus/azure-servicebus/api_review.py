@@ -21,6 +21,11 @@ class ServiceBusClient:
     def get_topic_sender(self, topic_name, **kwargs) -> ServiceBusSender:
     def get_subscription_receiver(self, topic_name, subscription_name, **kwargs) -> ServiceBusReceiver:
 
+    def get_queue_session_receiver(self, queue_name, session_id, **kwargs) -> ServiceBusSessionReceiver:
+    def get_subscription_session_receiver(self, topic_name, subscription_name, session_id, **kwargs) -> ServiceBusSessionReceiver:
+
+    def get_subscription_rule_manager(self, topic_name, subscription_name) -> SubscriptionRuleManager:
+
 class ServiceBusSender:
     def __init__(
         self,
@@ -121,6 +126,8 @@ class ServiceBusReceiver:
         timeout : float = None,
     ) -> List[ReceivedMessage]:  # Pull mode receive
 
+
+class ServiceBusSessionReceiver(ServiceBusReceiver):
     @property
     def session(self) -> ServiceBusSession:
 
@@ -204,3 +211,58 @@ class TransportType(Enum):
 class ServiceBusSharedKeyCredential:
     def __init__(self, policy, key):
     def get_token(self, *scopes, **kwargs):
+
+
+class SubscriptionRuleManager:
+    def __init__(
+        self,
+        fully_qualified_namespace: str,
+        topic_name: str,
+        subscription_name: str,
+        credential: TokenCredential,
+        logging_enable: bool = False,
+        http_proxy: dict = None,
+        transport_type: TransportType = TransportType.Amqp
+    ) -> SubscriptionRuleManager
+
+    @classmethod
+    def from_connection_string(cls, conn_str, subscription_name, topic_name=None, **kwargs) -> SubscriptionRuleManager:
+
+    def get_rules(self, timeout: float = None) -> list[RuleDescription]:
+    def add_rule(self, rule_name: str, filter: Union(bool, str, CorrelationFilter), sql_rule_action_expression: str, timeout: float = None):
+    def remove_rule(self, rule_name: str, timeout: float = None):
+
+
+class RuleDescription:
+    #TODO: is it necessary to make it separate class or just a list[dict]?
+    def __init__(self):
+    @property
+    def filter(self) -> Union(str, CorrelationFilter):  # TODO: return multiple types OK?
+    def action(self) -> str:
+    def name(self) -> str:
+
+
+class CorrelationFilter:
+    # TODO: is it necessary to make it separate class, depending on the fact that there're so many fields,
+    #  and how people would use this, I personally prefer it being a class
+    def __init__(self):
+
+    @property
+    def correlation_id(self, val : str):
+    def correlation_id(self) -> str:
+    def message_id(self, val : str):
+    def message_id(self) -> str:
+    def to(self, val: str):
+    def to(self) -> str:
+    def reply_to(self, val : str):
+    def reply_to(self) -> str:
+    def label(self, val: str):
+    def label(self) -> str:
+    def session_id(self, val: str):
+    def session_id(self) -> str:
+    def reply_to_session_id(self, val: str):
+    def reply_to_session_id(self) -> str:
+    def content_type(self, val: str):
+    def content_type(self) -> str:
+    def user_properties(self, val: dict):
+    def user_properties(self) -> dict:
