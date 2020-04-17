@@ -4,7 +4,6 @@
 # license information.
 # --------------------------------------------------------------------------
 # pylint: disable=no-self-use
-
 from typing import (  # pylint: disable=unused-import
     Tuple, Dict, List,
     TYPE_CHECKING

@@ -12,7 +12,12 @@ from ._generated.models import (
     ModifiedAccessConditions,
     SourceModifiedAccessConditions,
     CpkScopeInfo,
-    ContainerCpkScopeInfo
+    ContainerCpkScopeInfo,
+    QuickQueryFormat,
+    QuickQuerySerialization,
+    DelimitedTextConfiguration,
+    JsonTextConfiguration,
+    QuickQueryFormatType
 )
 
 
@@ -103,3 +108,18 @@ def get_api_version(kwargs, default):
         versions = '\n'.join(_SUPPORTED_API_VERSIONS)
         raise ValueError("Unsupported API version '{}'. Please select from:\n{}".format(api_version, versions))
     return api_version or default
+
+
+def get_quick_query_serialization_info(serialization_settings=None):
+    if serialization_settings:
+        if isinstance(serialization_settings, DelimitedTextConfiguration):
+            qq_format = QuickQueryFormat(type=QuickQueryFormatType.delimited,
+                                         delimited_text_configuration=serialization_settings)
+        elif isinstance(serialization_settings, JsonTextConfiguration):
+            qq_format = QuickQueryFormat(type=QuickQueryFormatType.delimited,
+                                         json_text_configuration=serialization_settings)
+        else:
+            raise ValueError("the class type of serialization settings should be either DelimitedTextConfiguration"
+                             "or JsonTextConfiguration")
+        return QuickQuerySerialization(format=qq_format)
+    return None

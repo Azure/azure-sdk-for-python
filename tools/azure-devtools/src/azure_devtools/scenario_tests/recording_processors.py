@@ -186,7 +186,9 @@ class GeneralNameReplacer(RecordingProcessor):
     def process_response(self, response):
         for old, new in self.names_name:
             if is_text_payload(response) and response['body']['string']:
-                response['body']['string'] = response['body']['string'].replace(old, new)
+                # If the body is not in str format, no need to scrub the data. This case is for when data in avro format
+                if not isinstance(response['body']['string'], bytes):
+                    response['body']['string'] = response['body']['string'].replace(old, new)
 
             self.replace_header(response, 'location', old, new)
             self.replace_header(response, 'azure-asyncoperation', old, new)
