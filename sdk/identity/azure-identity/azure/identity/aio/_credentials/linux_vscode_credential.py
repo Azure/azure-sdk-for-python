@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+from typing import TYPE_CHECKING
 import asyncio
 # pylint:disable=import-error
 import gi  # https://pygobject.readthedocs.io/en/latest/getting_started.html
@@ -20,6 +21,10 @@ try:
     from ..._credentials.linux_vscode_credential import _get_user_settings, _SECRET
 except ImportError:
     pass
+if TYPE_CHECKING:
+    # pylint:disable=unused-import,ungrouped-imports
+    from typing import Any, Iterable, Optional
+    from azure.core.credentials import AccessToken
 
 
 class LinuxVSCodeCredential(AsyncCredentialBase):

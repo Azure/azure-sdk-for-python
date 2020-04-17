@@ -4,6 +4,7 @@
 # ------------------------------------
 import os
 import json
+from typing import TYPE_CHECKING
 # pylint:disable=import-error
 import gi  # https://pygobject.readthedocs.io/en/latest/getting_started.html
 # pylint: disable=no-name-in-module
@@ -16,6 +17,11 @@ from .._constants import (
     AZURE_VSCODE_CLIENT_ID,
 )
 from .._internal.aad_client import AadClient
+
+if TYPE_CHECKING:
+    # pylint:disable=unused-import,ungrouped-imports
+    from typing import Any, Iterable, Optional
+    from azure.core.credentials import AccessToken
 
 _SECRET = Secret.Schema.new("org.freedesktop.Secret.Generic", Secret.SchemaFlags.NONE, {
     "service": Secret.SchemaAttributeType.STRING,

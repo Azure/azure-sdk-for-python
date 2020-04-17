@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+from typing import TYPE_CHECKING
 import asyncio
 from ..._exceptions import CredentialUnavailableError
 from .._credentials.base import AsyncCredentialBase
@@ -14,7 +15,10 @@ try:
     from ..._credentials.win_vscode_credential import _read_credential, _get_user_settings
 except ImportError:
     pass
-
+if TYPE_CHECKING:
+    # pylint:disable=unused-import,ungrouped-imports
+    from typing import Any, Iterable, Optional
+    from azure.core.credentials import AccessToken
 
 class WinVSCodeCredential(AsyncCredentialBase):
     """Authenticates by redeeming a refresh token previously saved by VS Code

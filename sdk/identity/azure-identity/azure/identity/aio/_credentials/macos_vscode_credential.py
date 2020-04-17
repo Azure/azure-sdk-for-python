@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+from typing import TYPE_CHECKING
 import asyncio
 from msal_extensions.osx import Keychain
 from ..._exceptions import CredentialUnavailableError
@@ -12,6 +13,10 @@ from ..._constants import (
 )
 from .._internal.aad_client import AadClient
 from ..._credentials.macos_vscode_credential import _get_user_settings
+if TYPE_CHECKING:
+    # pylint:disable=unused-import,ungrouped-imports
+    from typing import Any, Iterable, Optional
+    from azure.core.credentials import AccessToken
 
 
 class MacOSVSCodeCredential(AsyncCredentialBase):
