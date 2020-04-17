@@ -14,6 +14,14 @@ try:
 except ImportError:  # python < 3.3
     from mock import Mock  # type: ignore
 
+@pytest.mark.skipif(not sys.platform.startswith('darwin'), reason="This test only runs on MacOS")
+def test_no_scopes():
+    """The credential should raise ValueError when get_token is called with no scopes"""
+
+    credential = MacOSVSCodeCredential()
+    with pytest.raises(ValueError):
+        credential.get_token()
+
 
 @pytest.mark.skipif(not sys.platform.startswith('darwin'), reason="This test only runs on MacOS")
 def test_get_token():

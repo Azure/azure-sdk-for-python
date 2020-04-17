@@ -117,7 +117,7 @@ class WinVSCodeCredential(object):
 
         """
     def __init__(self, **kwargs):
-        self._client = kwargs.pop("client", None) or AadClient("organizations", AZURE_VSCODE_CLIENT_ID, **kwargs)
+        self._client = kwargs.pop("_client", None) or AadClient("organizations", AZURE_VSCODE_CLIENT_ID, **kwargs)
 
     def get_token(self, *scopes, **kwargs):
         # type: (*str, **Any) -> AccessToken

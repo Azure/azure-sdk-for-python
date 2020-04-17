@@ -17,6 +17,9 @@ from .._constants import (
 )
 from .._internal.aad_client import AadClient
 
+_SECRET = Secret.Schema.new("org.freedesktop.Secret.Generic", Secret.SchemaFlags.NONE, {
+    "service": Secret.SchemaAttributeType.STRING,
+    "account": Secret.SchemaAttributeType.STRING})
 
 def _get_user_settings_path():
     app_data_folder = os.environ['APPDATA']
@@ -37,9 +40,7 @@ def _get_user_settings():
 class LinuxVSCodeCredential(object):
     def __init__(self, **kwargs):
         self._client = kwargs.pop("_client", None) or AadClient("organizations", AZURE_VSCODE_CLIENT_ID, **kwargs)
-        self._schema = Secret.Schema.new("org.freedesktop.Secret.Generic", Secret.SchemaFlags.NONE, {
-            "service": Secret.SchemaAttributeType.STRING,
-            "account": Secret.SchemaAttributeType.STRING})
+        self._schema = _SECRET
 
     def get_token(self, *scopes, **kwargs):
         # type: (*str, **Any) -> AccessToken

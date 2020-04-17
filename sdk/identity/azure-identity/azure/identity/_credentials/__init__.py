@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import sys
 from .authorization_code import AuthorizationCodeCredential
 from .browser import InteractiveBrowserCredential
 from .chained import ChainedTokenCredential

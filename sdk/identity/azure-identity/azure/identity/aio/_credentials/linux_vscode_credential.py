@@ -17,7 +17,7 @@ from ..._constants import (
 )
 from .._internal.aad_client import AadClient
 try:
-    from ..._credentials.linux_vscode_credential import _get_user_settings
+    from ..._credentials.linux_vscode_credential import _get_user_settings, _SECRET
 except ImportError:
     pass
 
@@ -25,9 +25,7 @@ except ImportError:
 class LinuxVSCodeCredential(AsyncCredentialBase):
     def __init__(self, **kwargs):
         self._client = kwargs.pop("_client", None) or AadClient("organizations", AZURE_VSCODE_CLIENT_ID, **kwargs)
-        self._schema = Secret.Schema.new("org.freedesktop.Secret.Generic", Secret.SchemaFlags.NONE, {
-            "service": Secret.SchemaAttributeType.STRING,
-            "account": Secret.SchemaAttributeType.STRING})
+        self._schema = _SECRET
 
     async def __aenter__(self):
         if self._client:

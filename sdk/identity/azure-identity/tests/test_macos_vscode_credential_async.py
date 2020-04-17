@@ -12,6 +12,17 @@ try:
 except (ImportError, OSError):
     pass
 
+
+@pytest.mark.skipif(not sys.platform.startswith('darwin'), reason="This test only runs on MacOS")
+@pytest.mark.asyncio
+async def test_no_scopes():
+    """The credential should raise ValueError when get_token is called with no scopes"""
+
+    credential = MacOSVSCodeCredential()
+    with pytest.raises(ValueError):
+        await credential.get_token()
+
+
 @pytest.mark.skipif(not sys.platform.startswith('darwin'), reason="This test only runs on MacOS")
 @pytest.mark.asyncio
 async def test_get_token():
