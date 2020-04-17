@@ -4,7 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from azure.core.exceptions import HttpResponseError, ServiceRequestError
+from azure.core.exceptions import ServiceRequestError, ClientAuthenticationError
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer._generated.models import AnalyzeOperationResult
 from azure.ai.formrecognizer._response_handlers import prepare_content_result
@@ -33,10 +33,8 @@ class TestContentFromStream(FormRecognizerTest):
     @GlobalFormRecognizerAccountPreparer()
     def test_content_authentication_bad_key(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
         client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential("xxxx"))
-        with open(self.invoice_pdf, "rb") as fd:
-            myfile = fd.read()
-        with self.assertRaises(HttpResponseError):
-            poller = client.begin_recognize_content(myfile)
+        with self.assertRaises(ClientAuthenticationError):
+            poller = client.begin_recognize_content(b"xx", content_type="application/pdf")
 
     @GlobalFormRecognizerAccountPreparer()
     def test_passing_enum_content_type(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):

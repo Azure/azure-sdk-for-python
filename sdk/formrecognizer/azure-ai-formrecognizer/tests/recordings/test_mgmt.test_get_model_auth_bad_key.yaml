@@ -1,22 +1,18 @@
 interactions:
 - request:
-    body: xx
+    body: null
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
-      Content-Length:
-      - '2'
-      Content-Type:
-      - application/pdf
       User-Agent:
       - azsdk-python-ai-formrecognizer/1.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
         Python/3.7.3 (Windows-10-10.0.18362-SP0)
-    method: POST
-    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/layout/analyze
+    method: GET
+    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/xx?includeKeys=true
   response:
     body:
       string: '{"error":{"code":"401","message": "Access denied due to invalid subscription
@@ -24,13 +20,13 @@ interactions:
         subscription and use a correct regional API endpoint for your resource."}}'
     headers:
       apim-request-id:
-      - a58ab15c-9d2c-4420-9dee-7537eca4cb25
+      - 2a3ebbc9-8e48-44bf-9902-c1326af8e81f
       content-length:
       - '225'
       content-type:
       - application/json
       date:
-      - Thu, 16 Apr 2020 17:59:57 GMT
+      - Thu, 16 Apr 2020 17:45:25 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       www-authenticate:

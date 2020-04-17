@@ -6,7 +6,7 @@
 
 import functools
 from azure.core.credentials import AzureKeyCredential
-from azure.core.exceptions import ResourceNotFoundError
+from azure.core.exceptions import ResourceNotFoundError, ClientAuthenticationError
 from azure.core.pipeline.transport import RequestsTransport
 from azure.ai.formrecognizer import FormTrainingClient, FormRecognizerClient
 from testcase import FormRecognizerTest, GlobalFormRecognizerAccountPreparer, GlobalFormAndStorageAccountPreparer
@@ -17,6 +17,32 @@ GlobalTrainingAccountPreparer = functools.partial(_GlobalTrainingAccountPreparer
 
 
 class TestManagement(FormRecognizerTest):
+
+    @GlobalFormRecognizerAccountPreparer()
+    def test_account_properties_auth_bad_key(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
+        client = FormTrainingClient(form_recognizer_account, AzureKeyCredential("xxxx"))
+        with self.assertRaises(ClientAuthenticationError):
+            result = client.get_account_properties()
+
+    @GlobalFormRecognizerAccountPreparer()
+    def test_get_model_auth_bad_key(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
+        client = FormTrainingClient(form_recognizer_account, AzureKeyCredential("xxxx"))
+        with self.assertRaises(ClientAuthenticationError):
+            result = client.get_custom_model("xx")
+
+    @GlobalFormRecognizerAccountPreparer()
+    def test_list_model_auth_bad_key(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
+        client = FormTrainingClient(form_recognizer_account, AzureKeyCredential("xxxx"))
+        with self.assertRaises(ClientAuthenticationError):
+            result = client.list_model_infos()
+            for res in result:
+                test = res
+
+    @GlobalFormRecognizerAccountPreparer()
+    def test_delete_model_auth_bad_key(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
+        client = FormTrainingClient(form_recognizer_account, AzureKeyCredential("xxxx"))
+        with self.assertRaises(ClientAuthenticationError):
+            client.delete_model("xx")
 
     @GlobalFormRecognizerAccountPreparer()
     def test_account_properties(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):

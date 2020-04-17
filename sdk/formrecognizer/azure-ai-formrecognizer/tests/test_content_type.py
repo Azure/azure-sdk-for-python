@@ -45,13 +45,11 @@ class TestContentType(FormRecognizerTest):
         self.assertEqual(content_type, "image/png")
 
     def test_tiff(self):
-        pytest.skip("file not in repo yet, will fail")
         with open(self.invoice_tiff, "rb") as fd:
             content_type = get_content_type(fd)
         self.assertEqual(content_type, "image/tiff")
 
     def test_tiff_bytes(self):
-        pytest.skip("file not in repo yet, will fail")
         with open(self.invoice_tiff, "rb") as fd:
             myfile = fd.read()
         content_type = get_content_type(myfile)
