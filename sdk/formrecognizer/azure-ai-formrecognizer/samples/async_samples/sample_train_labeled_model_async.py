@@ -34,15 +34,17 @@ class TrainLabeledModelSampleAsync(object):
     container_sas_url = os.environ["CONTAINER_SAS_URL"]
 
     async def train_labeled_model(self):
+        # [START create_form_training_client_async]
         from azure.ai.formrecognizer.aio import FormTrainingClient
         from azure.core.credentials import AzureKeyCredential
 
-        async with FormTrainingClient(
+        form_training_client = FormTrainingClient(
             endpoint=self.endpoint, credential=AzureKeyCredential(self.key)
-        ) as form_training_client:
+        )
+        # [END create_form_training_client_async]
+        async with form_training_client:
 
             model = await form_training_client.training(self.container_sas_url, use_labels=True)
-
             # Custom model information
             print("Model ID: {}".format(model.model_id))
             print("Status: {}".format(model.status))

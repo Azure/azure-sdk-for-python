@@ -35,11 +35,15 @@ class GetValidationInfoSampleAsync(object):
     async def get_manual_validation_info_from_recognize_custom_forms(self):
         # the sample forms are located in this file's parent's parent's files.
         path_to_sample_forms = Path(__file__).parent.parent.absolute() / Path("sample_forms/forms/Form_1.jpg")
+        # [START create_form_recognizer_client_async]
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer.aio import FormRecognizerClient
-        async with FormRecognizerClient(
+
+        form_recognizer_client = FormRecognizerClient(
             endpoint=self.endpoint, credential=AzureKeyCredential(self.key)
-        ) as form_recognizer_client:
+        )
+        # [END create_form_recognizer_client_async]
+        async with form_recognizer_client:
 
             # The form you are recognizing must be of the same type as the forms the custom model was trained on
             with open(path_to_sample_forms, "rb") as f:

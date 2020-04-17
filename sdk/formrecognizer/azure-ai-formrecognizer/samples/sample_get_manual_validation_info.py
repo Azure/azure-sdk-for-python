@@ -31,11 +31,13 @@ class GetValidationInfoSample(object):
     model_id = os.environ["CUSTOM_TRAINED_MODEL_ID"]
 
     def get_manual_validation_info_from_recognize_custom_forms(self):
+        # [START create_form_recognizer_client]
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer import FormRecognizerClient
         form_recognizer_client = FormRecognizerClient(
             endpoint=self.endpoint, credential=AzureKeyCredential(self.key)
         )
+        # [END create_form_recognizer_client]
 
         # The form you are recognizing must be of the same type as the forms the custom model was trained on
         with open("sample_forms/forms/Form_1.jpg", "rb") as f:
