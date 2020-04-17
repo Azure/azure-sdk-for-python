@@ -234,11 +234,11 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         config = kwargs.get("_configuration") or create_configuration(**kwargs)
         if kwargs.get("_pipeline"):
             return config, kwargs["_pipeline"]
-        config.transport = kwargs.get("transport")
+        _transport = kwargs.get("transport")
         kwargs.setdefault("connection_timeout", CONNECTION_TIMEOUT)
         kwargs.setdefault("read_timeout", READ_TIMEOUT)
-        if not config.transport:
-            config.transport = RequestsTransport(**kwargs)
+        if not _transport:
+            _transport = RequestsTransport(**kwargs)
         policies = [
             QueueMessagePolicy(),
             config.headers_policy,
@@ -256,7 +256,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
             DistributedTracingPolicy(**kwargs),
             HttpLoggingPolicy(**kwargs)
         ]
-        return config, Pipeline(config.transport, policies=policies)
+        return config, Pipeline(_transport, policies=policies)
 
     def _batch_send(
         self, *reqs, # type: HttpRequest
@@ -404,7 +404,10 @@ def create_configuration(**kwargs):
 
     # Block blob uploads
     config.max_block_size = kwargs.get("max_block_size", 4 * 1024 * 1024)
-    config.min_large_block_upload_threshold = kwargs.get("min_large_block_upload_threshold", 4 * 1024 * 1024 + 1)
+    config.min_large_block_upload_threshold = kwargs.get(
+        "min_large_block_upload_threshold",
+        4 * 1024 * 1024 + 1
+    )
     config.use_byte_buffer = kwargs.get("use_byte_buffer", False)
 
     # Page blob uploads

@@ -38,7 +38,7 @@ from ._generated.models import ( # pylint: disable=unused-import
     CpkInfo)
 from ._serialize import get_modify_conditions, get_source_conditions, get_cpk_scope_info, get_api_version
 from ._deserialize import deserialize_blob_stream
-from ._models import BlobType, BlobBlock, BlobProperties
+from ._models import BlobType, BlobBlock, BlobProperties, PremiumPageBlobTier
 from ._lease import get_access_conditions
 
 if TYPE_CHECKING:
@@ -48,7 +48,6 @@ if TYPE_CHECKING:
         ContainerProperties,
         BlobSasPermissions,
         ContentSettings,
-        PremiumPageBlobTier,
         StandardBlobTier,
         SequenceNumberAction
     )
