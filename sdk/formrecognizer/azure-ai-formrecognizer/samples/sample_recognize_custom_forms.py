@@ -33,6 +33,7 @@ class RecognizeCustomForms(object):
     model_id = os.environ["CUSTOM_TRAINED_MODEL_ID"]
 
     def recognize_custom_forms(self):
+        # [START recognize_custom_forms]
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer import FormRecognizerClient
         form_recognizer_client = FormRecognizerClient(
@@ -57,6 +58,7 @@ class RecognizeCustomForms(object):
                     label, field.value, field.confidence
                 ))
             print("-----------------------------------")
+        # [END recognize_custom_forms]
 
 
 if __name__ == '__main__':

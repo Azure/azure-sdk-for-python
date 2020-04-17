@@ -34,6 +34,7 @@ class TrainUnlabeledModelSampleAsync(object):
     container_sas_url = os.environ["CONTAINER_SAS_URL"]
 
     async def train_unlabeled_model(self):
+        # [START training_async]
         from azure.ai.formrecognizer.aio import FormTrainingClient
         from azure.core.credentials import AzureKeyCredential
 
@@ -41,7 +42,8 @@ class TrainUnlabeledModelSampleAsync(object):
             self.endpoint, AzureKeyCredential(self.key)
         ) as form_training_client:
 
-            model = await form_training_client.training(self.container_sas_url, use_labels=False)
+            # Default for training is unlabeled
+            model = await form_training_client.training(self.container_sas_url)
 
             # Custom model information
             print("Model ID: {}".format(model.model_id))
@@ -59,7 +61,7 @@ class TrainUnlabeledModelSampleAsync(object):
                     print("The model found field '{}' to have label '{}'".format(
                         label, field.label
                     ))
-
+        # [END training_async]
             # Training result information
             for doc in model.training_documents:
                 print("Document name: {}".format(doc.document_name))

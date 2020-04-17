@@ -34,6 +34,7 @@ class RecognizeContentSampleAsync(object):
     async def recognize_content(self):
         # the sample forms are located in this file's parent's parent's files.
         path_to_sample_forms = Path(__file__).parent.parent.absolute() / Path("sample_forms/forms/Invoice_1.pdf")
+        # [START recognize_content_async]
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer.aio import FormRecognizerClient
         async with FormRecognizerClient(
@@ -50,6 +51,7 @@ class RecognizeContentSampleAsync(object):
                     content.height,
                     content.unit
                 ))
+        # [END recognize_content_async]
                 for table_idx, table in enumerate(content.tables):
                     print("Table # {} has {} rows and {} columns".format(table_idx, table.row_count, table.column_count))
                     for cell in table.cells:

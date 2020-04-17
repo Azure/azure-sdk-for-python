@@ -37,6 +37,7 @@ class RecognizeCustomFormsSampleAsync(object):
     async def recognize_custom_forms(self):
         # the sample forms are located in this file's parent's parent's files.
         path_to_sample_forms = Path(__file__).parent.parent.absolute() / Path("sample_forms/forms/Form_1.jpg")
+        # [START recognize_custom_forms_async]
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer.aio import FormRecognizerClient
         async with FormRecognizerClient(
@@ -64,6 +65,7 @@ class RecognizeCustomFormsSampleAsync(object):
                         field.confidence
                     ))
                 print("-----------------------------------")
+        # [END recognize_custom_forms_async]
 
 
 async def main():

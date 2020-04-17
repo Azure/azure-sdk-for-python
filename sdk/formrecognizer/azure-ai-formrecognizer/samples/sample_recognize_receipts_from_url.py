@@ -29,6 +29,7 @@ class RecognizeReceiptsFromURLSample(object):
     key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
 
     def recognize_receipts_from_url(self):
+        # [START recognize_receipts_from_url]
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer import FormRecognizerClient
         form_recognizer_client = FormRecognizerClient(
@@ -43,6 +44,7 @@ class RecognizeReceiptsFromURLSample(object):
             print("Receipt Type: {}\nconfidence: {}\n".format(receipt.receipt_type.type, receipt.receipt_type.confidence))
             print("Merchant Name: {}\nconfidence: {}\n".format(receipt.merchant_name.value, receipt.merchant_name.confidence))
             print("Transaction Date: {}\nconfidence: {}\n".format(receipt.transaction_date.value, receipt.transaction_date.confidence))
+        # [END recognize_receipts_from_url]
             print("Receipt items:")
             for item in receipt.receipt_items:
                 print("Item Name: {}\nconfidence: {}".format(item.name.value, item.name.confidence))

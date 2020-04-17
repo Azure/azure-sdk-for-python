@@ -31,6 +31,7 @@ class ManageCustomModelsSampleAsync(object):
     key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
 
     async def manage_custom_models(self):
+        # [START get_account_properties_async]
         from azure.core.credentials import AzureKeyCredential
         from azure.core.exceptions import ResourceNotFoundError
         from azure.ai.formrecognizer.aio import FormTrainingClient
@@ -43,8 +44,10 @@ class ManageCustomModelsSampleAsync(object):
             print("Our account has {} custom models, and we can have at most {} custom models".format(
                 account_properties.custom_model_count, account_properties.custom_model_limit
             ))
+            # [END get_account_properties_async]
 
             # Next, we get a paged list of all of our custom models
+            # [START list_model_infos_async]
             custom_models = form_training_client.list_model_infos()
 
             print("We have models with the following ids:")
@@ -55,21 +58,26 @@ class ManageCustomModelsSampleAsync(object):
                 print(model.model_id)
                 if not first_model:
                     first_model = model
+            # [END list_model_infos_async]
 
             # Now we'll get the first custom model in the paged list
+            # [START get_custom_model_async]
             custom_model = await form_training_client.get_custom_model(model_id=first_model.model_id)
             print("Model ID: {}".format(custom_model.model_id))
             print("Status: {}".format(custom_model.status))
             print("Created on: {}".format(custom_model.created_on))
             print("Last modified: {}".format(custom_model.last_modified))
+            # [END get_custom_model_async]
 
             # Finally, we will delete this model by ID
+            # [START delete_model_async]
             await form_training_client.delete_model(model_id=custom_model.model_id)
 
             try:
                 await form_training_client.get_custom_model(model_id=custom_model.model_id)
             except ResourceNotFoundError:
                 print("Successfully deleted model with id {}".format(custom_model.model_id))
+            # [END delete_model_async]
 
 async def main():
     sample = ManageCustomModelsSampleAsync()

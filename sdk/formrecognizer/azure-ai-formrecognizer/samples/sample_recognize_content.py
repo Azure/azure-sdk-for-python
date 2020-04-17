@@ -29,6 +29,7 @@ class RecognizeContentSample(object):
     key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
 
     def recognize_content(self):
+        # [START recognize_content]
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer import FormRecognizerClient
         form_recognizer_client = FormRecognizerClient(endpoint=self.endpoint, credential=AzureKeyCredential(self.key))
@@ -43,6 +44,7 @@ class RecognizeContentSample(object):
                 content.height,
                 content.unit
             ))
+        # [END recognize_content]
             for table_idx, table in enumerate(content.tables):
                 print("Table # {} has {} rows and {} columns".format(table_idx, table.row_count, table.column_count))
                 for cell in table.cells:

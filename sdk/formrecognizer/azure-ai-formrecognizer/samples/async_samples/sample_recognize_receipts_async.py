@@ -33,6 +33,7 @@ class RecognizeReceiptsSampleAsync(object):
     async def recognize_receipts(self):
         # the sample forms are located in this file's parent's parent's files.
         path_to_sample_forms = Path(__file__).parent.parent.absolute() / Path("sample_forms/receipt/contoso-allinone.jpg")
+        # [START recognize_receipts_async]
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer.aio import FormRecognizerClient
         async with FormRecognizerClient(
@@ -47,6 +48,7 @@ class RecognizeReceiptsSampleAsync(object):
                 print("Receipt Type: {}\nconfidence: {}\n".format(receipt.receipt_type.type, receipt.receipt_type.confidence))
                 print("Merchant Name: {}\nconfidence: {}\n".format(receipt.merchant_name.value, receipt.merchant_name.confidence))
                 print("Transaction Date: {}\nconfidence: {}\n".format(receipt.transaction_date.value, receipt.transaction_date.confidence))
+        # [END recognize_receipts_async]
                 print("Receipt items:")
                 for item in receipt.receipt_items:
                     print("Item Name: {}\nconfidence: {}".format(item.name.value, item.name.confidence))
