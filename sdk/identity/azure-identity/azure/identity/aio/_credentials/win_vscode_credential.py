@@ -3,7 +3,6 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from typing import TYPE_CHECKING
-import asyncio
 from ..._exceptions import CredentialUnavailableError
 from .._credentials.base import AsyncCredentialBase
 from ..._constants import (

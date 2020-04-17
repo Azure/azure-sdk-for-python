@@ -5,12 +5,7 @@
 import os
 import json
 from typing import TYPE_CHECKING
-# pylint:disable=import-error
-import gi  # https://pygobject.readthedocs.io/en/latest/getting_started.html
-# pylint: disable=no-name-in-module
-gi.require_version("Secret", "1")  # Would require a package gir1.2-secret-1
-# pylint: disable=wrong-import-position
-from gi.repository import Secret  # Would require a package gir1.2-secret-1
+import ctypes as ct
 from .._exceptions import CredentialUnavailableError
 from .._constants import (
     VSCODE_CREDENTIALS_SECTION,
@@ -23,9 +18,14 @@ if TYPE_CHECKING:
     from typing import Any, Iterable, Optional
     from azure.core.credentials import AccessToken
 
-_SECRET = Secret.Schema.new("org.freedesktop.Secret.Generic", Secret.SchemaFlags.NONE, {
-    "service": Secret.SchemaAttributeType.STRING,
-    "account": Secret.SchemaAttributeType.STRING})
+def _c_str(string):
+    return ct.c_char_p(string.encode('utf-8'))
+
+_libsecret = ct.cdll.LoadLibrary('libsecret-1.so.0')
+_libsecret.secret_schema_new.argtypes = \
+    [ct.c_char_p, ct.c_uint, ct.c_char_p, ct.c_uint, ct.c_char_p, ct.c_uint, ct.c_void_p]
+_libsecret.secret_password_lookup_sync.argtypes = \
+    [ct.c_void_p, ct.c_void_p, ct.c_void_p, ct.c_char_p, ct.c_char_p, ct.c_char_p, ct.c_char_p, ct.c_void_p]
 
 def _get_user_settings_path():
     app_data_folder = os.environ['APPDATA']
@@ -44,8 +44,10 @@ def _get_user_settings():
 
 
 def _get_refresh_token(service_name, account_name):
-    return Secret.password_lookup_sync(_SECRET, {"service": service_name,
-                                                 "account": account_name})
+    schema = _libsecret.secret_schema_new(_c_str("org.freedesktop.Secret.Generic"), 2,
+                                          _c_str("service"), 0, _c_str("account"), 0, None)
+    return _libsecret.secret_password_lookup_sync(schema, None, None, _c_str("service"), _c_str(service_name),
+                                                  _c_str("account"), _c_str(account_name), None)
 
 class LinuxVSCodeCredential(object):
     def __init__(self, **kwargs):
