@@ -10,6 +10,8 @@ from typing import Dict, List, Optional, Union
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
+from ._form_recognizer_client_enums import *
+
 
 class AnalyzeOperationResult(msrest.serialization.Model):
     """Status and result of the queued analyze operation.
