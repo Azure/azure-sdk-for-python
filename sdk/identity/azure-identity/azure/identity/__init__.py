@@ -36,15 +36,6 @@ __all__ = [
     "UsernamePasswordCredential",
 ]
 
-try:
-    # pylint:disable=unused-import
-    from ._credentials import VSCodeCredential
-    __all__.extend([
-        'VSCodeCredential',
-    ])
-except ImportError:
-    pass
-
 from ._version import VERSION
 
 __version__ = VERSION

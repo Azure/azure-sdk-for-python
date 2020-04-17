@@ -67,7 +67,7 @@ def test_get_token():
     mock_client.obtain_token_by_refresh_token = Mock(return_value=expected_token)
 
     credential = WinVSCodeCredential(
-        client=mock_client,
+        _client=mock_client,
     )
 
     token = credential.get_token("scope")

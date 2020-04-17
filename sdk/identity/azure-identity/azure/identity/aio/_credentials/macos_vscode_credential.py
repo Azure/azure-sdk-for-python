@@ -19,7 +19,7 @@ class MacOSVSCodeCredential(AsyncCredentialBase):
 
             """
     def __init__(self, **kwargs):
-        self._client = kwargs.pop("client", None) or AadClient("organizations", AZURE_VSCODE_CLIENT_ID, **kwargs)
+        self._client = kwargs.pop("_client", None) or AadClient("organizations", AZURE_VSCODE_CLIENT_ID, **kwargs)
 
     async def __aenter__(self):
         if self._client:
