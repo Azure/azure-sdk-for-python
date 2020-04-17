@@ -1659,7 +1659,7 @@ class CheckDocstringAdmonitionNewline(BaseChecker):
 
         try:
             # not every class/method will have a docstring so don't crash here, just return
-            if node.doc.find("admonition") != -1:
+            if node.doc.find("admonition") != -1 and node.doc.find(".. literalinclude") != -1:
                 literal_include = node.doc.split(".. literalinclude")[0]
                 chars_list = list(reversed(literal_include))
                 for idx, char in enumerate(chars_list):
