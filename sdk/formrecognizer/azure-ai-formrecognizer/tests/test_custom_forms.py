@@ -6,7 +6,7 @@
 
 import functools
 from azure.core.credentials import AzureKeyCredential
-from azure.core.exceptions import HttpResponseError, ServiceRequestError
+from azure.core.exceptions import ServiceRequestError, ClientAuthenticationError
 from azure.ai.formrecognizer import FormRecognizerClient, FormContentType
 from azure.ai.formrecognizer._generated.models import AnalyzeOperationResult
 from azure.ai.formrecognizer._response_handlers import prepare_form_result
@@ -30,10 +30,8 @@ class TestCustomForms(FormRecognizerTest):
     @GlobalFormRecognizerAccountPreparer()
     def test_authentication_bad_key(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
         client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential("xxxx"))
-        with open(self.form_jpg, "rb") as fd:
-            myfile = fd.read()
-        with self.assertRaises(HttpResponseError):
-            poller = client.begin_recognize_custom_forms(model_id="xx", stream=myfile)
+        with self.assertRaises(ClientAuthenticationError):
+            poller = client.begin_recognize_custom_forms(model_id="xx", stream=b"xx", content_type="image/jpeg")
 
     @GlobalFormRecognizerAccountPreparer()
     def test_passing_unsupported_url_content_type(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):

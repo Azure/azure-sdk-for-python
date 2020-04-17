@@ -17,10 +17,10 @@ interactions:
         key or wrong API endpoint. Make sure to provide a valid key for an active
         subscription and use a correct regional API endpoint for your resource."}}'
     headers:
-      apim-request-id: a08af1f0-4c1b-4871-89af-357565cf58e0
+      apim-request-id: 94d26759-6254-4d2e-8aaa-5e7c45a94157
       content-length: '225'
       content-type: application/json
-      date: Wed, 15 Apr 2020 18:57:06 GMT
+      date: Thu, 16 Apr 2020 17:46:54 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       www-authenticate: AzureApiManagementKey realm="https://westus.api.cognitive.microsoft.com/formrecognizer",name="Ocp-Apim-Subscription-Key",type="header"
       x-content-type-options: nosniff

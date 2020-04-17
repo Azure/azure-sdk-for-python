@@ -6,7 +6,7 @@
 
 import functools
 from azure.core.credentials import AzureKeyCredential
-from azure.core.exceptions import HttpResponseError, ServiceRequestError
+from azure.core.exceptions import HttpResponseError, ServiceRequestError, ClientAuthenticationError
 from azure.ai.formrecognizer.aio import FormRecognizerClient
 from azure.ai.formrecognizer._generated.models import AnalyzeOperationResult
 from azure.ai.formrecognizer._response_handlers import prepare_form_result
@@ -28,7 +28,7 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
     @GlobalFormRecognizerAccountPreparer()
     async def test_url_authentication_bad_key(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
         client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential("xxxx"))
-        with self.assertRaises(HttpResponseError):
+        with self.assertRaises(ClientAuthenticationError):
             result = await client.recognize_custom_forms_from_url(model_id="xx", url=self.form_url_jpg)
 
     @GlobalFormRecognizerAccountPreparer()
