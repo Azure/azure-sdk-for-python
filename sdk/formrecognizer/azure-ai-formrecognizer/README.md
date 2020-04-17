@@ -110,16 +110,6 @@ the label will be the same as specified in the custom model's training documents
 #### FormPage
 Contains the recognized metadata, text lines (`lines`), and tables (`tables`) found on a single page of the form document.
 
-### Long-Running Operations
-Long-running operations are operations which consist of an initial request sent to the service to start an operation,
-followed by polling the service at intervals to determine whether the operation has completed or failed, and if it has
-succeeded, to get the result.
-
-Methods that train models or recognize values from forms are modeled as long-running operations. The client exposes
-a `begin_<method-name>` method that returns an `LROPoller`. Callers should wait for the operation to complete by
-calling `result()` on the operation returned from the `begin_<method-name>` method. Sample code snippets are provided
-to illustrate using long-running operations [below](#Examples).
-
 ### FormTrainingClient
 A `FormTrainingClient` is the Form Recognizer interface to use for creating and managing custom machine-learned models.
 It provides operations for training models on forms you provide and operations for viewing and deleting models, as well as
@@ -129,23 +119,6 @@ understanding how close you are to reaching subscription limits for the number o
 Using the `FormTrainingClient`, you can train a machine-learned model on your own form types. The resulting model will
 be able to recognize values from the types of forms it was trained on. You can train your custom model with multiple form types. Once trained, you can use your custom models to recognize forms of these form types. If you prefer a graphical user interface to do that training, you can
 use the service's [labeling tool][fr-labeling-tool].
-
-##### Training without labels
-A model trained without labels uses machine learning to understand the layout and relationships between field
-names and values in your forms. The learning algorithm clusters the training forms by type and learns what fields and
-tables are present in each form type.
-
-This approach doesn't require manual data labeling or intensive coding and maintenance, and we recommend you try this
-method first when training custom models.
-
-##### Training with labels
-A model trained with labels uses machine learning to recognize values you specify by adding labels to your training forms.
-The learning algorithm uses a label file you provide to learn what fields are found at various locations in the form,
-and learns to recognize just those values you are interested in.
-
-This approach can result in better-performing models, and those models can work with more complex form structures.
-
-You can also use the [labeling tool][fr-labeling-tool] to create labels.
 
 #### Managing Custom Models
 Using the `FormTrainingClient`, you can get, list, and delete the custom models you've trained.
@@ -158,6 +131,17 @@ and displays its status (`status`). It also has a [submodel](#CustomFormSubmodel
 
 #### CustomFormSubModel
 Each submodel recognizes a specific form type (`form_type`) and includes a list of the fields (`fields`) that this submodel will recognize in forms.
+
+### Long-Running Operations
+Long-running operations are operations which consist of an initial request sent to the service to start an operation,
+followed by polling the service at intervals to determine whether the operation has completed or failed, and if it has
+succeeded, to get the result.
+
+Methods that train models or recognize values from forms are modeled as long-running operations. The client exposes
+a `begin_<method-name>` method that returns an `LROPoller`. Callers should wait for the operation to complete by
+calling `result()` on the operation returned from the `begin_<method-name>` method. Sample code snippets are provided
+to illustrate using long-running operations [below](#Examples).
+
 
 ## Examples
 
