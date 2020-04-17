@@ -17,12 +17,12 @@ These sample programs show common scenarios for the Form Recognizer client's off
 
 |**File Name**|**Description**|
 |----------------|-------------|
+|[sample_recognize_custom_forms.py][sample_recognize_custom_forms] and [sample_recognize_custom_forms_async.py][sample_recognize_custom_forms_async]|Recognize forms with your custom model|
+|[sample_recognize_content.py][sample_recognize_content] and [sample_recognize_content_async.py][sample_recognize_content_async]|Recognize text and table structures of a document|
 |[sample_recognize_receipts.py][sample_recognize_receipts] and [sample_recognize_receipts_async.py][sample_recognize_receipts_async]|Recognize data from a file of a US sales receipt using a prebuilt model|
 |[sample_recognize_receipts_from_url.py][sample_recognize_receipts_from_url] and [sample_recognize_receipts_from_url_async.py][sample_recognize_receipts_from_url_async]|Recognize data from a URL of a US sales receipt using a prebuilt model|
-|[sample_recognize_content.py][sample_recognize_content] and [sample_recognize_content_async.py][sample_recognize_content_async]|Recognize text and table structures of a document|
-|[sample_recognize_custom_forms.py][sample_recognize_custom_forms] and [sample_recognize_custom_forms_async.py][sample_recognize_custom_forms_async]|Recognize forms with your custom model|
-|[sample_train_labeled_model.py][sample_train_labeled_model] and [sample_train_labeled_model_async.py][sample_train_labeled_model_async]|Train a custom model with labeled data|
 |[sample_train_unlabeled_model.py][sample_train_unlabeled_model] and [sample_train_unlabeled_model_async.py][sample_train_unlabeled_model_async]|Train a custom model with unlabeled data|
+|[sample_train_labeled_model.py][sample_train_labeled_model] and [sample_train_labeled_model_async.py][sample_train_labeled_model_async]|Train a custom model with labeled data|
 |[sample_manage_custom_models.py][sample_manage_custom_models] and [sample_manage_custom_models_async.py][sample_manage_custom_models_async]|Manage the custom models in your account|
 
 ## Prerequisites
