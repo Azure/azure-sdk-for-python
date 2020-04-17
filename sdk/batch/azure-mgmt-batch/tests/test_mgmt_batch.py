@@ -43,7 +43,7 @@ class MgmtBatchTest(AzureMgmtTestCase):
     def test_mgmt_batch_list_operations(self):
         operations = self.mgmt_batch_client.operations.list()
         all_ops = list(operations)
-        self.assertEqual(len(all_ops), 41)
+        self.assertEqual(len(all_ops), 48)
         self.assertEqual(all_ops[0].name, 'Microsoft.Batch/batchAccounts/providers/Microsoft.Insights/diagnosticSettings/read')
         self.assertEqual(all_ops[0].origin, 'system')
         self.assertEqual(all_ops[0].display.provider, 'Microsoft Batch')
@@ -52,7 +52,7 @@ class MgmtBatchTest(AzureMgmtTestCase):
     def test_mgmt_batch_subscription_quota(self):
         quotas = self.mgmt_batch_client.location.get_quotas(AZURE_LOCATION)
         self.assertIsInstance(quotas, models.BatchLocationQuota)
-        self.assertEqual(quotas.account_quota, 1)
+        self.assertEqual(quotas.account_quota, 3)
 
     def test_mgmt_batch_account_name(self):
         # Test Invalid Account Name
@@ -117,8 +117,8 @@ class MgmtBatchTest(AzureMgmtTestCase):
 
         # Test Get Account
         account = self.mgmt_batch_client.batch_account.get(resource_group.name, account_name)
-        self.assertEqual(account.dedicated_core_quota, 700)
-        self.assertEqual(account.low_priority_core_quota, 500)
+        self.assertEqual(account.dedicated_core_quota, 0)
+        self.assertEqual(account.low_priority_core_quota, 0)
         self.assertEqual(account.pool_quota, 100)
         self.assertEqual(account.pool_allocation_mode.value, 'BatchService')
 
@@ -357,7 +357,8 @@ class MgmtBatchTest(AzureMgmtTestCase):
         parameters = models.Pool(
             scale_settings=models.ScaleSettings(
                 auto_scale=models.AutoScaleSettings(
-                    formula='$TargetDedicatedNodes=1'
+                    # Change this to a value once accounts get default quotas
+                    formula='$TargetDedicatedNodes=0'
                 )
             )
         )
@@ -371,7 +372,8 @@ class MgmtBatchTest(AzureMgmtTestCase):
         self.assertIsInstance(pool, models.Pool)
         self.assertEqual(pool.vm_size, 'STANDARD_A1'),
         self.assertIsNone(pool.display_name),
-        self.assertEqual(pool.allocation_state, models.AllocationState.resizing)
+        # This assert should be reintroduced when targetDedidicated nodes can be 1+
+        # self.assertEqual(pool.allocation_state, models.AllocationState.resizing)
         self.assertEqual(
             pool.deployment_configuration.virtual_machine_configuration.node_agent_sku_id,
             'batch.node.windows amd64')
@@ -390,3 +392,13 @@ class MgmtBatchTest(AzureMgmtTestCase):
         response = self.mgmt_batch_client.pool.delete(
             resource_group.name, batch_account.name, iaas_pool)
         self.assertIsNone(response.result())
+
+    @ResourceGroupPreparer(location=AZURE_LOCATION)
+    @SimpleBatchPreparer(location=AZURE_LOCATION)
+    def test_mgmt_batch_private_endpoint_and_link(self, resource_group, location, batch_account):
+        result = self.mgmt_batch_client.private_link_resource.list_by_batch_account(
+            resource_group_name=resource_group,
+            account_name=batch_account)
+        result = self.mgmt_batch_client.private_endpoint_connection.list_by_batch_account(
+            resource_group_name=resource_group,
+            account_name=batch_account)

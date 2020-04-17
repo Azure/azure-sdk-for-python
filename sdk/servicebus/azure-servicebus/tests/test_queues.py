@@ -28,7 +28,7 @@ from azure.servicebus.exceptions import (
 
 from devtools_testutils import AzureMgmtTestCase, CachedResourceGroupPreparer
 from servicebus_preparer import CachedServiceBusNamespacePreparer, ServiceBusQueuePreparer, CachedServiceBusQueuePreparer
-from utilities import get_logger, print_message
+from utilities import get_logger, print_message, sleep_until_expired
 
 _logger = get_logger(logging.DEBUG)
 
@@ -801,10 +801,11 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                         assert not message.expired
                         renewer.register(message, timeout=60)
                         print("Registered lock renew thread", message.locked_until_utc, utc_now())
-                        time.sleep(50)
+                        time.sleep(60)
                         print("Finished first sleep", message.locked_until_utc)
                         assert not message.expired
-                        time.sleep((message.locked_until_utc - utc_now()).total_seconds()+1)
+                        time.sleep(15) #generate autolockrenewtimeout error by going one iteration past.
+                        sleep_until_expired(message)
                         print("Finished second sleep", message.locked_until_utc, utc_now())
                         assert message.expired
                         try:

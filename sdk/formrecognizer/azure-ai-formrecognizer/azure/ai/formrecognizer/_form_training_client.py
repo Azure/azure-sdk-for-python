@@ -19,7 +19,7 @@ from azure.core.pipeline.policies import AzureKeyCredentialPolicy
 from ._generated.models import Model
 from ._generated._form_recognizer_client import FormRecognizerClient as FormRecognizer
 from ._generated.models import TrainRequest, TrainSourceFilter
-from ._helpers import POLLING_INTERVAL, COGNITIVE_KEY_HEADER
+from ._helpers import error_map, POLLING_INTERVAL, COGNITIVE_KEY_HEADER
 from ._models import (
     CustomFormModelInfo,
     AccountProperties,
@@ -88,6 +88,7 @@ class FormTrainingClient(object):
                 )
             ),
             cls=lambda pipeline_response, _, response_headers: pipeline_response,
+            error_map=error_map,
             **kwargs
         )
 
@@ -117,6 +118,7 @@ class FormTrainingClient(object):
 
         self._client.delete_custom_model(
             model_id=model_id,
+            error_map=error_map,
             **kwargs
         )
 
@@ -131,6 +133,7 @@ class FormTrainingClient(object):
         """
         return self._client.list_custom_models(
             cls=kwargs.pop("cls", lambda objs: [CustomFormModelInfo._from_generated(x) for x in objs]),
+            error_map=error_map,
             **kwargs
         )
 
@@ -143,7 +146,7 @@ class FormTrainingClient(object):
         :rtype: ~azure.ai.formrecognizer.AccountProperties
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        response = self._client.get_custom_models(**kwargs)
+        response = self._client.get_custom_models(error_map=error_map, **kwargs)
         return AccountProperties._from_generated(response.summary)
 
     @distributed_trace
@@ -157,7 +160,7 @@ class FormTrainingClient(object):
         :rtype: ~azure.ai.formrecognizer.CustomFormModel
         :raises ~azure.core.exceptions.HttpResponseError or ~azure.core.exceptions.ResourceNotFoundError:
         """
-        response = self._client.get_custom_model(model_id=model_id, include_keys=True, **kwargs)
+        response = self._client.get_custom_model(model_id=model_id, include_keys=True, error_map=error_map, **kwargs)
         return CustomFormModel._from_generated(response)
 
     def close(self):
