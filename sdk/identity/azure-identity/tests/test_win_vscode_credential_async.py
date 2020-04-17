@@ -6,13 +6,14 @@ import sys
 import pytest
 from azure.core.credentials import AccessToken
 from azure.identity._internal.user_agent import USER_AGENT
+from azure.identity import CredentialUnavailableError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from helpers import build_aad_response, mock_response, Request
 from helpers_async import async_validating_transport, AsyncMockTransport, wrap_in_future
 from unittest.mock import Mock
 if sys.platform.startswith('win'):
     from azure.identity.aio._credentials.win_vscode_credential import WinVSCodeCredential
-    from azure.identity._credentials.win_vscode_credential import _cred_write
+    from azure.identity._credentials.win_vscode_credential import _cred_write, _cred_delete
 
 
 @pytest.mark.skipif(not sys.platform.startswith('win'), reason="This test only runs on Windows")
@@ -28,12 +29,12 @@ async def test_no_scopes():
 @pytest.mark.skipif(not sys.platform.startswith('win'), reason="This test only runs on Windows")
 @pytest.mark.asyncio
 async def test_policies_configurable():
-    service_name = u"VS Code Azure"
-    account_name = u"Azure"
-    target = u"{}/{}".format(service_name, account_name)
-    comment = u"comment"
-    token_written = u"test_refresh_token"
-    user_name = u"Azure"
+    service_name = "VS Code Azure"
+    account_name = "Azure"
+    target = "{}/{}".format(service_name, account_name)
+    comment = "comment"
+    token_written = "test_refresh_token"
+    user_name = "Azure"
     credential = {"Type": 0x1,
                   "TargetName": target,
                   "UserName": user_name,
@@ -57,12 +58,12 @@ async def test_policies_configurable():
 @pytest.mark.skipif(not sys.platform.startswith('win'), reason="This test only runs on Windows")
 @pytest.mark.asyncio
 async def test_user_agent():
-    service_name = u"VS Code Azure"
-    account_name = u"Azure"
-    target = u"{}/{}".format(service_name, account_name)
-    comment = u"comment"
-    token_written = u"test_refresh_token"
-    user_name = u"Azure"
+    service_name = "VS Code Azure"
+    account_name = "Azure"
+    target = "{}/{}".format(service_name, account_name)
+    comment = "comment"
+    token_written = "test_refresh_token"
+    user_name = "Azure"
     credential = {"Type": 0x1,
                   "TargetName": target,
                   "UserName": user_name,
@@ -81,16 +82,26 @@ async def test_user_agent():
     await credential.get_token("scope")
 
 
+@pytest.mark.skipif(not sys.platform.startswith('win'), reason="This test only runs on Windows")
+@pytest.mark.asyncio
+async def test_credential_unavailable_error():
+    service_name = "VS Code Azure"
+    account_name = "Azure"
+    _cred_delete(service_name, account_name)
+    credential = WinVSCodeCredential()
+    with pytest.raises(CredentialUnavailableError):
+        token = await credential.get_token("scope")
+
 
 @pytest.mark.skipif(not sys.platform.startswith('win'), reason="This test only runs on Windows")
 @pytest.mark.asyncio
 async def test_get_token():
-    service_name = u"VS Code Azure"
-    account_name = u"Azure"
-    target = u"{}/{}".format(service_name, account_name)
-    comment = u"comment"
-    token_written = u"test_refresh_token"
-    user_name = u"Azure"
+    service_name = "VS Code Azure"
+    account_name = "Azure"
+    target = "{}/{}".format(service_name, account_name)
+    comment = "comment"
+    token_written = "test_refresh_token"
+    user_name = "Azure"
     credential = {"Type": 0x1,
                   "TargetName": target,
                   "UserName": user_name,
