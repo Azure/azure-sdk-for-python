@@ -42,6 +42,15 @@ class FormRecognizerClient(object):
     :param credential: Credentials needed for the client to connect to Azure.
         This is an instance of AzureKeyCredential if using an API key.
     :type credential: ~azure.core.credentials.AzureKeyCredential
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/sample_get_manual_validation_info.py
+            :start-after: [START create_form_recognizer_client]
+            :end-before: [END create_form_recognizer_client]
+            :language: python
+            :dedent: 8
+            :caption: Creating the FormRecognizerClient with endpoint and API key.
     """
 
     def __init__(self, endpoint, credential, **kwargs):
@@ -78,6 +87,15 @@ class FormRecognizerClient(object):
             object to return a list[:class:`~azure.ai.formrecognizer.USReceipt`].
         :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.USReceipt]]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_recognize_receipts.py
+                :start-after: [START recognize_receipts]
+                :end-before: [END recognize_receipts]
+                :language: python
+                :dedent: 8
+                :caption: Recognize US sales receipt fields.
         """
 
         content_type = kwargs.pop("content_type", None)
@@ -112,6 +130,15 @@ class FormRecognizerClient(object):
             object to return a list[:class:`~azure.ai.formrecognizer.USReceipt`].
         :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.USReceipt]]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_recognize_receipts_from_url.py
+                :start-after: [START recognize_receipts_from_url]
+                :end-before: [END recognize_receipts_from_url]
+                :language: python
+                :dedent: 8
+                :caption: Recognize US sales receipt fields from a URL.
         """
 
         include_text_content = kwargs.pop("include_text_content", False)
@@ -145,6 +172,15 @@ class FormRecognizerClient(object):
             object to return a list[:class:`~azure.ai.formrecognizer.FormPage`].
         :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.FormPage]]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_recognize_content.py
+                :start-after: [START recognize_content]
+                :end-before: [END recognize_content]
+                :language: python
+                :dedent: 8
+                :caption: Recognize text and content/layout information from a form.
         """
 
         content_type = kwargs.pop("content_type", None)
@@ -204,6 +240,15 @@ class FormRecognizerClient(object):
             object to return a list[:class:`~azure.ai.formrecognizer.RecognizedForm`].
         :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.RecognizedForm]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_recognize_custom_forms.py
+                :start-after: [START recognize_custom_forms]
+                :end-before: [END recognize_custom_forms]
+                :language: python
+                :dedent: 8
+                :caption: Recognize fields and values from a custom form.
         """
 
         cls = kwargs.pop("cls", None)
