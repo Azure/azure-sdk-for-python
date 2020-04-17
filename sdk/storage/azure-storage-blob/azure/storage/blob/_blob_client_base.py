@@ -143,7 +143,7 @@ class BlobClientBase(StorageAccountHostsMixin):  # pylint: disable=too-many-publ
         try:
             self.snapshot = snapshot.snapshot # type: ignore
         except AttributeError:
-            if isinstance(snapshot, Dict)::
+            if isinstance(snapshot, Dict):
                 self.snapshot = snapshot['snapshot']
             else:
                 self.snapshot = snapshot or path_snapshot
