@@ -1,5 +1,0 @@
-[packaging]
-package_name = "azure-mgmt-keyvault"
-package_pprint_name = "Key Vault Management"
-package_doc_id = "key-vault"
-is_stable = false
