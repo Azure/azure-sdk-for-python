@@ -11,7 +11,6 @@ from azure.core.pipeline.policies import SansIOHTTPPolicy
 from helpers import build_aad_response, mock_response, Request
 from helpers_async import async_validating_transport, AsyncMockTransport, wrap_in_future
 from unittest import mock
-from unittest.mock import Mock
 try:
     from azure.identity.aio._credentials.linux_vscode_credential import LinuxVSCodeCredential
 except (ImportError, OSError):
@@ -31,13 +30,13 @@ async def test_no_scopes():
 @pytest.mark.skipif(sys.platform.startswith('darwin') or sys.platform.startswith('win') , reason="This test only runs on Linux")
 @pytest.mark.asyncio
 async def test_policies_configurable():
-    policy = Mock(spec_set=SansIOHTTPPolicy, on_request=Mock())
+    policy = mock.Mock(spec_set=SansIOHTTPPolicy, on_request=mock.Mock())
 
     async def send(*_, **__):
         return mock_response(json_payload=build_aad_response(access_token="**"))
 
     with mock.patch('azure.identity._credentials.linux_vscode_credential._get_refresh_token', return_value="VALUE"):
-        credential = LinuxVSCodeCredential(policies=[policy], transport=Mock(send=send))
+        credential = LinuxVSCodeCredential(policies=[policy], transport=mock.Mock(send=send))
         await credential.get_token("scope")
         assert policy.on_request.called
 
@@ -68,8 +67,8 @@ async def test_credential_unavailable_error():
 async def test_get_token():
     expected_token = AccessToken("token", 42)
 
-    mock_client = Mock(spec=object)
-    token_by_refresh_token = Mock(return_value=expected_token)
+    mock_client = mock.Mock(spec=object)
+    token_by_refresh_token = mock.Mock(return_value=expected_token)
     mock_client.obtain_token_by_refresh_token = wrap_in_future(token_by_refresh_token)
 
     with mock.patch('azure.identity._credentials.linux_vscode_credential._get_refresh_token', return_value="VALUE"):

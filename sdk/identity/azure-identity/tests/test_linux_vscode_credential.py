@@ -15,10 +15,8 @@ except (ImportError, OSError):
     pass
 try:
     from unittest import mock
-    from unittest.mock import Mock
 except ImportError:  # python < 3.3
     import mock
-    from mock import Mock  # type: ignore
 
 @pytest.mark.skipif(sys.platform.startswith('darwin') or sys.platform.startswith('win') , reason="This test only runs on Linux")
 def test_no_scopes():
@@ -31,13 +29,13 @@ def test_no_scopes():
 
 @pytest.mark.skipif(sys.platform.startswith('darwin') or sys.platform.startswith('win') , reason="This test only runs on Linux")
 def test_policies_configurable():
-    policy = Mock(spec_set=SansIOHTTPPolicy, on_request=Mock())
+    policy = mock.Mock(spec_set=SansIOHTTPPolicy, on_request=mock.Mock())
 
     def send(*_, **__):
         return mock_response(json_payload=build_aad_response(access_token="**"))
 
     with mock.patch('azure.identity._credentials.linux_vscode_credential._get_refresh_token', return_value="VALUE"):
-        credential = LinuxVSCodeCredential(policies=[policy], transport=Mock(send=send))
+        credential = LinuxVSCodeCredential(policies=[policy], transport=mock.Mock(send=send))
         credential.get_token("scope")
         assert policy.on_request.called
 
@@ -66,8 +64,8 @@ def test_credential_unavailable_error():
 def test_get_token():
     expected_token = AccessToken("token", 42)
 
-    mock_client = Mock(spec=object)
-    mock_client.obtain_token_by_refresh_token = Mock(return_value=expected_token)
+    mock_client = mock.Mock(spec=object)
+    mock_client.obtain_token_by_refresh_token = mock.Mock(return_value=expected_token)
 
     with mock.patch('azure.identity._credentials.linux_vscode_credential._get_refresh_token', return_value="VALUE"):
         credential = LinuxVSCodeCredential(_client=mock_client)

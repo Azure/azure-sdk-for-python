@@ -16,10 +16,9 @@ except (ImportError, OSError):
     pass
 try:
     from unittest import mock
-    from unittest.mock import Mock
 except ImportError:  # python < 3.3
     import mock
-    from mock import Mock  # type: ignore
+
 
 @pytest.mark.skipif(not sys.platform.startswith('darwin'), reason="This test only runs on MacOS")
 def test_no_scopes():
@@ -32,13 +31,13 @@ def test_no_scopes():
 
 @pytest.mark.skipif(not sys.platform.startswith('darwin'), reason="This test only runs on MacOS")
 def test_policies_configurable():
-    policy = Mock(spec_set=SansIOHTTPPolicy, on_request=Mock())
+    policy = mock.Mock(spec_set=SansIOHTTPPolicy, on_request=mock.Mock())
 
     def send(*_, **__):
         return mock_response(json_payload=build_aad_response(access_token="**"))
 
     with mock.patch('Keychain.get_generic_password', return_value="VALUE"):
-        credential = MacOSVSCodeCredential(policies=[policy], transport=Mock(send=send))
+        credential = MacOSVSCodeCredential(policies=[policy], transport=mock.Mock(send=send))
         credential.get_token("scope")
         assert policy.on_request.called
 
@@ -67,8 +66,8 @@ def test_credential_unavailable_error():
 def test_get_token():
     expected_token = AccessToken("token", 42)
 
-    mock_client = Mock(spec=object)
-    mock_client.obtain_token_by_refresh_token = Mock(return_value=expected_token)
+    mock_client = mock.Mock(spec=object)
+    mock_client.obtain_token_by_refresh_token = mock.Mock(return_value=expected_token)
 
     with mock.patch('Keychain.get_generic_password', return_value="VALUE"):
         credential = MacOSVSCodeCredential(_client=mock_client)
