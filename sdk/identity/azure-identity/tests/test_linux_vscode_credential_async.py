@@ -27,7 +27,7 @@ async def test_no_scopes():
         await credential.get_token()
 
 
-@pytest.mark.skipif(sys.platform.startswith('darwin') or sys.platform.startswith('win') , reason="This test only runs on Linux")
+@pytest.mark.skipif(sys.platform.startswith('darwin') or sys.platform.startswith('win') or sys.version_info >= (3, 8), reason="This test only runs on Linux")
 @pytest.mark.asyncio
 async def test_policies_configurable():
     policy = mock.Mock(spec_set=SansIOHTTPPolicy, on_request=mock.Mock())
@@ -41,7 +41,7 @@ async def test_policies_configurable():
         assert policy.on_request.called
 
 
-@pytest.mark.skipif(sys.platform.startswith('darwin') or sys.platform.startswith('win') , reason="This test only runs on Linux")
+@pytest.mark.skipif(sys.platform.startswith('darwin') or sys.platform.startswith('win') or sys.version_info >= (3, 8), reason="This test only runs on Linux")
 @pytest.mark.asyncio
 async def test_user_agent():
     transport = async_validating_transport(
@@ -53,7 +53,7 @@ async def test_user_agent():
         credential = LinuxVSCodeCredential(transport=transport)
         await credential.get_token("scope")
 
-@pytest.mark.skipif(sys.platform.startswith('darwin') or sys.platform.startswith('win') , reason="This test only runs on Linux")
+@pytest.mark.skipif(sys.platform.startswith('darwin') or sys.platform.startswith('win') or sys.version_info >= (3, 8), reason="This test only runs on Linux")
 @pytest.mark.asyncio
 async def test_credential_unavailable_error():
     with mock.patch('azure.identity._credentials.linux_vscode_credential._get_refresh_token', return_value=None):
@@ -62,7 +62,7 @@ async def test_credential_unavailable_error():
             await credential.get_token("scope")
 
 
-@pytest.mark.skipif(sys.platform.startswith('darwin') or sys.platform.startswith('win') , reason="This test only runs on Linux")
+@pytest.mark.skipif(sys.platform.startswith('darwin') or sys.platform.startswith('win') or sys.version_info >= (3, 8), reason="This test only runs on Linux")
 @pytest.mark.asyncio
 async def test_get_token():
     expected_token = AccessToken("token", 42)
