@@ -5,7 +5,7 @@
 import os
 import json
 from typing import TYPE_CHECKING
-from msal_extensions.osx import Keychain, KeyChainError
+from msal_extensions.osx import Keychain, KeychainError
 from .._exceptions import CredentialUnavailableError
 from .._constants import (
     VSCODE_CREDENTIALS_SECTION,
@@ -37,7 +37,7 @@ def _get_refresh_token(service_name, account_name):
     key_chain = Keychain()
     try:
         return key_chain.get_generic_password(service_name, account_name)
-    except KeyChainError:
+    except KeychainError:
         return None
 
 
