@@ -5,7 +5,7 @@
 import os
 import json
 from typing import TYPE_CHECKING
-from msal_extensions.osx import Keychain
+from msal_extensions.osx import Keychain, KeyChainError
 from .._exceptions import CredentialUnavailableError
 from .._constants import (
     VSCODE_CREDENTIALS_SECTION,
@@ -35,7 +35,10 @@ def _get_user_settings():
 
 def _get_refresh_token(service_name, account_name):
     key_chain = Keychain()
-    return key_chain.get_generic_password(service_name, account_name)
+    try:
+        return key_chain.get_generic_password(service_name, account_name)
+    except KeyChainError:
+        return None
 
 
 class MacOSVSCodeCredential(object):
