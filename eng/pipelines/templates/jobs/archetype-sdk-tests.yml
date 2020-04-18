@@ -71,7 +71,8 @@ jobs:
           ServiceDirectory: ${{ parameters.ServiceDirectory }}
           CoverageArg: $(CoverageArg)
           EnvVars:
-            AZURE_RUN_MODE: 'Live' #Record, Playback
+            # AZURE_RUN_MODE options: Live Record, Playback
+            AZURE_RUN_MODE: Live
             ${{ insert }}: ${{ parameters.EnvVars }}
           BeforeTestSteps: ${{ parameters.BeforeTestSteps }}
           AfterTestSteps: ${{ parameters.AfterTestSteps }}
