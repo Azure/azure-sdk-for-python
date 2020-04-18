@@ -12,7 +12,7 @@ jobs:
     parameters:
       ServiceDirectory: keyvault
       BuildTargetingString: azure-keyvault-keys
-      JobName: Test_Keys_(AzureUSGovernment)
+      JobName: Test_Keys_AzureUSGovernment
       EnvVars:
         AZURE_TEST_RUN_LIVE: true
         AZURE_SUBSCRIPTION_ID: $(azure-subscription-id-gov)
@@ -25,7 +25,7 @@ jobs:
     parameters:
       ServiceDirectory: keyvault
       BuildTargetingString: azure-keyvault-secrets
-      JobName: Test_Secrets_(AzureUSGovernment)
+      JobName: Test_Secrets_AzureUSGovernment
       EnvVars:
         AZURE_TEST_RUN_LIVE: true
         AZURE_SUBSCRIPTION_ID: $(azure-subscription-id-gov)
@@ -38,7 +38,7 @@ jobs:
     parameters:
       ServiceDirectory: keyvault
       BuildTargetingString: azure-keyvault-certificates
-      JobName: Test_Certificates_(AzureUSGovernment)
+      JobName: Test_Certificates_AzureUSGovernment
       EnvVars:
         AZURE_TEST_RUN_LIVE: true
         AZURE_SUBSCRIPTION_ID: $(azure-subscription-id-gov)
@@ -51,7 +51,7 @@ jobs:
     parameters:
       ServiceDirectory: keyvault
       BuildTargetingString: azure-keyvault-keys
-      JobName: Test_Keys_(AzureChinaCloud)
+      JobName: Test_Keys_AzureChinaCloud
       EnvVars:
         AZURE_TEST_RUN_LIVE: true
         AZURE_SUBSCRIPTION_ID: $(azure-subscription-id-cn)
@@ -64,7 +64,7 @@ jobs:
     parameters:
       ServiceDirectory: keyvault
       BuildTargetingString: azure-keyvault-secrets
-      JobName: Test_Secrets_(AzureChinaCloud)
+      JobName: Test_Secrets_AzureChinaCloud
       EnvVars:
         AZURE_TEST_RUN_LIVE: true
         AZURE_SUBSCRIPTION_ID: $(azure-subscription-id-cn)
@@ -77,7 +77,7 @@ jobs:
     parameters:
       ServiceDirectory: keyvault
       BuildTargetingString: azure-keyvault-certificates
-      JobName: Test_Certificates_(AzureChinaCloud)
+      JobName: Test_Certificates_AzureChinaCloud
       EnvVars:
         AZURE_TEST_RUN_LIVE: true
         AZURE_SUBSCRIPTION_ID: $(azure-subscription-id-cn)
