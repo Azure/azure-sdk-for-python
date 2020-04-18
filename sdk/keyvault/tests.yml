@@ -20,6 +20,7 @@ jobs:
         AZURE_CLIENT_ID: $(aad-azure-sdk-test-client-id-gov)
         AZURE_CLIENT_SECRET: $(aad-azure-sdk-test-client-secret-gov)
         AZURE_CLIENT_OID: $(aad-azure-sdk-test-client-oid-gov)
+        AZURE_AUTHORITY_HOST: $(aad-azure-sdk-test-authority-host-gov)
 
   - template: ../../eng/pipelines/templates/jobs/archetype-sdk-tests.yml
     parameters:
@@ -33,6 +34,7 @@ jobs:
         AZURE_CLIENT_ID: $(aad-azure-sdk-test-client-id-gov)
         AZURE_CLIENT_SECRET: $(aad-azure-sdk-test-client-secret-gov)
         AZURE_CLIENT_OID: $(aad-azure-sdk-test-client-oid-gov)
+        AZURE_AUTHORITY_HOST: $(aad-azure-sdk-test-authority-host-gov)
 
   - template: ../../eng/pipelines/templates/jobs/archetype-sdk-tests.yml
     parameters:
@@ -46,6 +48,7 @@ jobs:
         AZURE_CLIENT_ID: $(aad-azure-sdk-test-client-id-gov)
         AZURE_CLIENT_SECRET: $(aad-azure-sdk-test-client-secret-gov)
         AZURE_CLIENT_OID: $(aad-azure-sdk-test-client-oid-gov)
+        AZURE_AUTHORITY_HOST: $(aad-azure-sdk-test-authority-host-gov)
 
   - template: ../../eng/pipelines/templates/jobs/archetype-sdk-tests.yml
     parameters:
@@ -59,6 +62,7 @@ jobs:
         AZURE_CLIENT_ID: $(aad-azure-sdk-test-client-id-cn)
         AZURE_CLIENT_SECRET: $(aad-azure-sdk-test-client-secret-cn)
         AZURE_CLIENT_OID: $(aad-azure-sdk-test-client-oid-cn)
+        AZURE_AUTHORITY_HOST: $(aad-azure-sdk-test-authority-host-cn)
 
   - template: ../../eng/pipelines/templates/jobs/archetype-sdk-tests.yml
     parameters:
@@ -72,6 +76,7 @@ jobs:
         AZURE_CLIENT_ID: $(aad-azure-sdk-test-client-id-cn)
         AZURE_CLIENT_SECRET: $(aad-azure-sdk-test-client-secret-cn)
         AZURE_CLIENT_OID: $(aad-azure-sdk-test-client-oid-cn)
+        AZURE_AUTHORITY_HOST: $(aad-azure-sdk-test-authority-host-cn)
 
   - template: ../../eng/pipelines/templates/jobs/archetype-sdk-tests.yml
     parameters:
@@ -85,3 +90,4 @@ jobs:
         AZURE_CLIENT_ID: $(aad-azure-sdk-test-client-id-cn)
         AZURE_CLIENT_SECRET: $(aad-azure-sdk-test-client-secret-cn)
         AZURE_CLIENT_OID: $(aad-azure-sdk-test-client-oid-cn)
+        AZURE_AUTHORITY_HOST: $(aad-azure-sdk-test-authority-host-cn)
