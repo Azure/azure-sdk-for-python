@@ -529,7 +529,8 @@ class ImageReference(Model):
     about platform images, marketplace images, or virtual machine images. This
     element is required when you want to use a platform image, marketplace
     image, or virtual machine image, but is not used in other creation
-    operations.
+    operations. NOTE: Image reference publisher and offer can only be set when
+    you create the scale set.
 
     :param publisher: The image publisher.
     :type publisher: str
@@ -1058,7 +1059,9 @@ class PurchasePlan(Model):
 
 
 class Sku(Model):
-    """Describes a virtual machine scale set sku.
+    """Describes a virtual machine scale set sku. NOTE: If the new VM SKU is not
+    supported on the hardware the scale set is currently on, you need to
+    deallocate the VMs in the scale set before you modify the SKU name.
 
     :param name: The sku name.
     :type name: str
