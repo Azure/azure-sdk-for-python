@@ -1615,7 +1615,7 @@ class GalleryArtifactPublishingProfileBase(Model):
     :type end_of_life_date: datetime
     :param storage_account_type: Specifies the storage account type to be used
      to store the image. This property is not updatable. Possible values
-     include: 'Standard_LRS', 'Standard_ZRS'
+     include: 'Standard_LRS', 'Standard_ZRS', 'Premium_LRS'
     :type storage_account_type: str or
      ~azure.mgmt.compute.v2019_12_01.models.StorageAccountType
     """
@@ -1671,7 +1671,7 @@ class GalleryApplicationVersionPublishingProfile(GalleryArtifactPublishingProfil
     :type end_of_life_date: datetime
     :param storage_account_type: Specifies the storage account type to be used
      to store the image. This property is not updatable. Possible values
-     include: 'Standard_LRS', 'Standard_ZRS'
+     include: 'Standard_LRS', 'Standard_ZRS', 'Premium_LRS'
     :type storage_account_type: str or
      ~azure.mgmt.compute.v2019_12_01.models.StorageAccountType
     :param source: Required.
@@ -2265,7 +2265,7 @@ class GalleryImageVersionPublishingProfile(GalleryArtifactPublishingProfileBase)
     :type end_of_life_date: datetime
     :param storage_account_type: Specifies the storage account type to be used
      to store the image. This property is not updatable. Possible values
-     include: 'Standard_LRS', 'Standard_ZRS'
+     include: 'Standard_LRS', 'Standard_ZRS', 'Premium_LRS'
     :type storage_account_type: str or
      ~azure.mgmt.compute.v2019_12_01.models.StorageAccountType
     """
@@ -4721,7 +4721,7 @@ class TargetRegion(Model):
     :type regional_replica_count: int
     :param storage_account_type: Specifies the storage account type to be used
      to store the image. This property is not updatable. Possible values
-     include: 'Standard_LRS', 'Standard_ZRS'
+     include: 'Standard_LRS', 'Standard_ZRS', 'Premium_LRS'
     :type storage_account_type: str or
      ~azure.mgmt.compute.v2019_12_01.models.StorageAccountType
     :param encryption:

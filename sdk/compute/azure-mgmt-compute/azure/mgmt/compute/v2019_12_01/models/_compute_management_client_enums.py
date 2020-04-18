@@ -424,6 +424,7 @@ class StorageAccountType(str, Enum):
 
     standard_lrs = "Standard_LRS"
     standard_zrs = "Standard_ZRS"
+    premium_lrs = "Premium_LRS"
 
 
 class HostCaching(str, Enum):
