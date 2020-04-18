@@ -22,7 +22,7 @@ except ImportError:
     TYPE_CHECKING = False
 
 if TYPE_CHECKING:
-    from typing import Dict, Optional, Union, Callable
+    from typing import Dict, Optional, Union, Callable, Sequence
 
     from azure.core.pipeline.transport import HttpRequest, HttpResponse
     AttributeValue = Union[
