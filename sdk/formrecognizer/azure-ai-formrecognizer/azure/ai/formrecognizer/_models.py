@@ -110,7 +110,7 @@ class Point(namedtuple("Point", "x y")):
 
 
 class PageRange(namedtuple("PageRange", "first_page last_page")):
-    """The 1 based page range of the document.
+    """The 1-based page range of the document.
 
     :ivar int first_page: The first page number of the document.
     :ivar int last_page: The last page number of the document.
@@ -227,7 +227,7 @@ class FormField(object):
     :ivar value:
         The value for the recognized field. Possible types include: 'string',
         'date', 'time', 'phoneNumber', 'number', 'integer', 'object', or 'array'.
-    :vartype value: str, int, float, ~datetime.date, ~datetime.time,
+    :vartype value: str, int, float, :class:`~datetime.date`, :class:`~datetime.time`,
         :class:`~azure.ai.formrecognizer.FormField`, or list[:class:`~azure.ai.formrecognizer.FormField`]
     :ivar float confidence: Confidence score.
     :ivar int page_number:

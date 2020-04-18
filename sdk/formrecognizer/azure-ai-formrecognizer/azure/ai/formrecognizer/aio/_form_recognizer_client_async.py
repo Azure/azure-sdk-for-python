@@ -47,6 +47,15 @@ class FormRecognizerClient(object):
     :param credential: Credentials needed for the client to connect to Azure.
         This is an instance of AzureKeyCredential if using an API key.
     :type credential: ~azure.core.credentials.AzureKeyCredential
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/async_samples/sample_get_manual_validation_info_async.py
+            :start-after: [START create_form_recognizer_client_async]
+            :end-before: [END create_form_recognizer_client_async]
+            :language: python
+            :dedent: 8
+            :caption: Creating the FormRecognizerClient with an endpoint and API key.
     """
 
     def __init__(
@@ -91,6 +100,15 @@ class FormRecognizerClient(object):
         :return: A list of USReceipt.
         :rtype: list[~azure.ai.formrecognizer.USReceipt]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_recognize_receipts_async.py
+                :start-after: [START recognize_receipts_async]
+                :end-before: [END recognize_receipts_async]
+                :language: python
+                :dedent: 8
+                :caption: Recognize US sales receipt fields.
         """
 
         polling_interval = kwargs.pop("polling_interval", POLLING_INTERVAL)
@@ -130,6 +148,15 @@ class FormRecognizerClient(object):
         :return: A list of USReceipt.
         :rtype: list[~azure.ai.formrecognizer.USReceipt]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_recognize_receipts_from_url_async.py
+                :start-after: [START recognize_receipts_from_url_async]
+                :end-before: [END recognize_receipts_from_url_async]
+                :language: python
+                :dedent: 8
+                :caption: Recognize US sales receipt fields from a URL.
         """
 
         polling_interval = kwargs.pop("polling_interval", POLLING_INTERVAL)
@@ -164,6 +191,15 @@ class FormRecognizerClient(object):
         :return: A list of FormPage.
         :rtype: list[~azure.ai.formrecognizer.FormPage]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_recognize_content_async.py
+                :start-after: [START recognize_content_async]
+                :end-before: [END recognize_content_async]
+                :language: python
+                :dedent: 8
+                :caption: Recognize text and content/layout information from a form.
         """
 
         polling_interval = kwargs.pop("polling_interval", POLLING_INTERVAL)
@@ -230,6 +266,15 @@ class FormRecognizerClient(object):
         :return: A list of RecognizedForm.
         :rtype: list[~azure.ai.formrecognizer.RecognizedForm]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_recognize_custom_forms_async.py
+                :start-after: [START recognize_custom_forms_async]
+                :end-before: [END recognize_custom_forms_async]
+                :language: python
+                :dedent: 8
+                :caption: Recognize fields and values from a custom form.
         """
 
         cls = kwargs.pop("cls", None)
