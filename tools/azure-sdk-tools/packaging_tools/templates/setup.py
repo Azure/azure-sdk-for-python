@@ -84,6 +84,10 @@ setup(
         'msrestazure>=0.4.32,<2.0.0',
         {%- endif %}
         'azure-common~=1.1',
+        {%- if need_azurecore %}
+        'azure-core>=1.4.1',<'2.0.0',
+        'azure-mgmt-core>=1.0.0',<'2.0.0',
+        {%- endif %}
     ],
     extras_require={
         ":python_version<'3.0'": ['{{package_nspkg}}'],
