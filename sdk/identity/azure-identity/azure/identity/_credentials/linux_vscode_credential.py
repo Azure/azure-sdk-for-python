@@ -18,8 +18,10 @@ if TYPE_CHECKING:
     from typing import Any, Iterable, Optional
     from azure.core.credentials import AccessToken
 
+
 def _c_str(string):
     return ct.c_char_p(string.encode('utf-8'))
+
 
 _libsecret = ct.cdll.LoadLibrary('libsecret-1.so.0')
 _libsecret.secret_schema_new.argtypes = \
@@ -27,9 +29,10 @@ _libsecret.secret_schema_new.argtypes = \
 _libsecret.secret_password_lookup_sync.argtypes = \
     [ct.c_void_p, ct.c_void_p, ct.c_void_p, ct.c_char_p, ct.c_char_p, ct.c_char_p, ct.c_char_p, ct.c_void_p]
 
+
 def _get_user_settings_path():
-    app_data_folder = os.environ['APPDATA']
-    return os.path.join(app_data_folder, "Code", "User", "settings.json")
+    app_data_folder = os.environ['HOME']
+    return os.path.join(app_data_folder, ".config", "Code", "User", "settings.json")
 
 
 def _get_user_settings():
@@ -48,6 +51,7 @@ def _get_refresh_token(service_name, account_name):
                                           _c_str("service"), 0, _c_str("account"), 0, None)
     return _libsecret.secret_password_lookup_sync(schema, None, None, _c_str("service"), _c_str(service_name),
                                                   _c_str("account"), _c_str(account_name), None)
+
 
 class LinuxVSCodeCredential(object):
     def __init__(self, **kwargs):
