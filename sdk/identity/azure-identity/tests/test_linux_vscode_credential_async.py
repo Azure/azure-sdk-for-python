@@ -14,7 +14,6 @@ from unittest import mock
 from unittest.mock import Mock
 try:
     from azure.identity.aio._credentials.linux_vscode_credential import LinuxVSCodeCredential
-    from msal_extensions.osx import Keychain
 except (ImportError, OSError):
     pass
 

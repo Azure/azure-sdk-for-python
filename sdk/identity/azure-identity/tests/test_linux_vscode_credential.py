@@ -11,7 +11,6 @@ from azure.identity._internal.user_agent import USER_AGENT
 from helpers import build_aad_response, mock_response, Request, validating_transport
 try:
     from azure.identity._credentials.linux_vscode_credential import LinuxVSCodeCredential
-    from msal_extensions.osx import Keychain
 except (ImportError, OSError):
     pass
 try:

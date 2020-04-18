@@ -18,27 +18,7 @@ except ImportError:  # python < 3.3
 if sys.platform.startswith('win'):
     from azure.identity._credentials.win_vscode_credential import (
         WinVSCodeCredential,
-        _read_credential,
-        _cred_write,
     )
-
-@pytest.mark.skipif(not sys.platform.startswith('win'), reason="This test only runs on Windows")
-def test_win_vscode_credential():
-    service_name = "VS Code Azure"
-    account_name = "Azure"
-    target = "{}/{}".format(service_name, account_name)
-    comment = "comment"
-    token_written = "test_refresh_token"
-    user_name = "Azure"
-    credential = {"Type": 0x1,
-                   "TargetName": target,
-                   "UserName": user_name,
-                   "CredentialBlob": token_written,
-                   "Comment": comment,
-                   "Persist": 0x2}
-    _cred_write(credential)
-    token_read = _read_credential(service_name, account_name)
-    assert token_read == token_written
 
 
 @pytest.mark.skipif(not sys.platform.startswith('win'), reason="This test only runs on Windows")
