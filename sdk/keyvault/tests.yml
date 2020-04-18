@@ -12,37 +12,76 @@ jobs:
     parameters:
       ServiceDirectory: keyvault
       BuildTargetingString: azure-keyvault-keys
-      JobName: Test_Keys
+      JobName: Test_Keys (AzureUSGovernment)
       EnvVars:
         AZURE_TEST_RUN_LIVE: true
-        AZURE_SUBSCRIPTION_ID: $(azure-subscription-id)
-        AZURE_TENANT_ID: $(aad-azure-sdk-test-tenant-id)
-        AZURE_CLIENT_ID: $(aad-azure-sdk-test-client-id)
-        AZURE_CLIENT_SECRET: $(aad-azure-sdk-test-client-secret)
-        AZURE_CLIENT_OID: $(aad-azure-sdk-test-client-oid)
+        AZURE_SUBSCRIPTION_ID: $(azure-subscription-id-gov)
+        AZURE_TENANT_ID: $(aad-azure-sdk-test-tenant-id-gov)
+        AZURE_CLIENT_ID: $(aad-azure-sdk-test-client-id-gov)
+        AZURE_CLIENT_SECRET: $(aad-azure-sdk-test-client-secret-gov)
+        AZURE_CLIENT_OID: $(aad-azure-sdk-test-client-oid-gov)
 
   - template: ../../eng/pipelines/templates/jobs/archetype-sdk-tests.yml
     parameters:
       ServiceDirectory: keyvault
       BuildTargetingString: azure-keyvault-secrets
-      JobName: Test_Secrets
+      JobName: Test_Secrets (AzureUSGovernment)
       EnvVars:
         AZURE_TEST_RUN_LIVE: true
-        AZURE_SUBSCRIPTION_ID: $(azure-subscription-id)
-        AZURE_TENANT_ID: $(aad-azure-sdk-test-tenant-id)
-        AZURE_CLIENT_ID: $(aad-azure-sdk-test-client-id)
-        AZURE_CLIENT_SECRET: $(aad-azure-sdk-test-client-secret)
-        AZURE_CLIENT_OID: $(aad-azure-sdk-test-client-oid)
+        AZURE_SUBSCRIPTION_ID: $(azure-subscription-id-gov)
+        AZURE_TENANT_ID: $(aad-azure-sdk-test-tenant-id-gov)
+        AZURE_CLIENT_ID: $(aad-azure-sdk-test-client-id-gov)
+        AZURE_CLIENT_SECRET: $(aad-azure-sdk-test-client-secret-gov)
+        AZURE_CLIENT_OID: $(aad-azure-sdk-test-client-oid-gov)
 
   - template: ../../eng/pipelines/templates/jobs/archetype-sdk-tests.yml
     parameters:
       ServiceDirectory: keyvault
       BuildTargetingString: azure-keyvault-certificates
-      JobName: Test_Certificates
+      JobName: Test_Certificates (AzureUSGovernment)
       EnvVars:
         AZURE_TEST_RUN_LIVE: true
-        AZURE_SUBSCRIPTION_ID: $(azure-subscription-id)
-        AZURE_TENANT_ID: $(aad-azure-sdk-test-tenant-id)
-        AZURE_CLIENT_ID: $(aad-azure-sdk-test-client-id)
-        AZURE_CLIENT_SECRET: $(aad-azure-sdk-test-client-secret)
-        AZURE_CLIENT_OID: $(aad-azure-sdk-test-client-oid)
+        AZURE_SUBSCRIPTION_ID: $(azure-subscription-id-gov)
+        AZURE_TENANT_ID: $(aad-azure-sdk-test-tenant-id-gov)
+        AZURE_CLIENT_ID: $(aad-azure-sdk-test-client-id-gov)
+        AZURE_CLIENT_SECRET: $(aad-azure-sdk-test-client-secret-gov)
+        AZURE_CLIENT_OID: $(aad-azure-sdk-test-client-oid-gov)
+
+  - template: ../../eng/pipelines/templates/jobs/archetype-sdk-tests.yml
+    parameters:
+      ServiceDirectory: keyvault
+      BuildTargetingString: azure-keyvault-keys
+      JobName: Test_Keys (AzureChinaCloud)
+      EnvVars:
+        AZURE_TEST_RUN_LIVE: true
+        AZURE_SUBSCRIPTION_ID: $(azure-subscription-id-cn)
+        AZURE_TENANT_ID: $(aad-azure-sdk-test-tenant-id-cn)
+        AZURE_CLIENT_ID: $(aad-azure-sdk-test-client-id-cn)
+        AZURE_CLIENT_SECRET: $(aad-azure-sdk-test-client-secret-cn)
+        AZURE_CLIENT_OID: $(aad-azure-sdk-test-client-oid-cn)
+
+  - template: ../../eng/pipelines/templates/jobs/archetype-sdk-tests.yml
+    parameters:
+      ServiceDirectory: keyvault
+      BuildTargetingString: azure-keyvault-secrets
+      JobName: Test_Secrets (AzureChinaCloud)
+      EnvVars:
+        AZURE_TEST_RUN_LIVE: true
+        AZURE_SUBSCRIPTION_ID: $(azure-subscription-id-cn)
+        AZURE_TENANT_ID: $(aad-azure-sdk-test-tenant-id-cn)
+        AZURE_CLIENT_ID: $(aad-azure-sdk-test-client-id-cn)
+        AZURE_CLIENT_SECRET: $(aad-azure-sdk-test-client-secret-cn)
+        AZURE_CLIENT_OID: $(aad-azure-sdk-test-client-oid-cn)
+
+  - template: ../../eng/pipelines/templates/jobs/archetype-sdk-tests.yml
+    parameters:
+      ServiceDirectory: keyvault
+      BuildTargetingString: azure-keyvault-certificates
+      JobName: Test_Certificates (AzureChinaCloud)
+      EnvVars:
+        AZURE_TEST_RUN_LIVE: true
+        AZURE_SUBSCRIPTION_ID: $(azure-subscription-id-cn)
+        AZURE_TENANT_ID: $(aad-azure-sdk-test-tenant-id-cn)
+        AZURE_CLIENT_ID: $(aad-azure-sdk-test-client-id-cn)
+        AZURE_CLIENT_SECRET: $(aad-azure-sdk-test-client-secret-cn)
+        AZURE_CLIENT_OID: $(aad-azure-sdk-test-client-oid-cn)
