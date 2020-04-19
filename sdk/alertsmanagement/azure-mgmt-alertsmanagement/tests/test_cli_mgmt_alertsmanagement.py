@@ -48,7 +48,7 @@ class MgmtAlertsTest(AzureMgmtTestCase):
             "scope": {
               "scope_type": "ResourceGroup",
               "values": [
-                "/subscriptions/1e3ff1c0-771a-4119-a03b-be82a51e232d/resourceGroups/alertscorrelationrg"
+                "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP
               ]
             },
             "conditions": {
@@ -118,10 +118,10 @@ class MgmtAlertsTest(AzureMgmtTestCase):
             "duration": "PT20M"
           }
         }
-        result = self.mgmt_client.smart_detector_alert_rules.create_or_update(resource_group_name=RESOURCE_GROUP, alert_rule_name=ALERT_RULE_NAME, parameters=BODY)
+        # result = self.mgmt_client.smart_detector_alert_rules.create_or_update(resource_group_name=RESOURCE_GROUP, alert_rule_name=ALERT_RULE_NAME, parameters=BODY)
 
         # /SmartDetectorAlertRules/get/Get a Smart Detector alert rule[get]
-        result = self.mgmt_client.smart_detector_alert_rules.get(resource_group_name=RESOURCE_GROUP, alert_rule_name=ALERT_RULE_NAME)
+        # result = self.mgmt_client.smart_detector_alert_rules.get(resource_group_name=RESOURCE_GROUP, alert_rule_name=ALERT_RULE_NAME)
 
         # /ActionRules/get/GetActionRuleById[get]
         result = self.mgmt_client.action_rules.get_by_name(resource_group_name=RESOURCE_GROUP, action_rule_name=ACTION_RULE_NAME)
@@ -133,16 +133,16 @@ class MgmtAlertsTest(AzureMgmtTestCase):
         result = self.mgmt_client.action_rules.list_by_resource_group(resource_group_name=RESOURCE_GROUP)
 
         # /SmartGroups/get/Resolve[get]
-        result = self.mgmt_client.smart_groups.get_history(smart_group_id=SMART_GROUP_ID)
+        # result = self.mgmt_client.smart_groups.get_history(smart_group_id=SMART_GROUP_ID)
 
         # /SmartGroups/get/Get[get]
-        result = self.mgmt_client.smart_groups.get_by_id(smart_group_id=SMART_GROUP_ID)
+        # result = self.mgmt_client.smart_groups.get_by_id(smart_group_id=SMART_GROUP_ID)
 
         # /SmartDetectorAlertRules/get/List Smart Detector alert rules[get]
         result = self.mgmt_client.smart_detector_alert_rules.list()
 
         # /Alerts/get/GetById[get]
-        result = self.mgmt_client.alerts.get_by_id(alert_id=ALERT_ID)
+        # result = self.mgmt_client.alerts.get_by_id(alert_id=ALERT_ID)
 
         # /Alerts/get/Summary[get]
         result = self.mgmt_client.alerts.get_summary(groupby="severity,alertState")
@@ -157,7 +157,7 @@ class MgmtAlertsTest(AzureMgmtTestCase):
         result = self.mgmt_client.alerts.get_all()
 
         # /Alerts/get/MonService[get]
-        result = self.mgmt_client.alerts.meta_data(identifier="MonitorServiceList")
+        # result = self.mgmt_client.alerts.meta_data(identifier="MonitorServiceList")
 
         # /SmartDetectorAlertRules/patch/Patch alert rules[patch]
         BODY = {
@@ -167,7 +167,7 @@ class MgmtAlertsTest(AzureMgmtTestCase):
           "description": "New description for patching",
           "frequency": "PT1M"
         }
-        result = self.mgmt_client.smart_detector_alert_rules.patch(resource_group_name=RESOURCE_GROUP, alert_rule_name=ALERT_RULE_NAME, parameters=BODY)
+        # result = self.mgmt_client.smart_detector_alert_rules.patch(resource_group_name=RESOURCE_GROUP, alert_rule_name=ALERT_RULE_NAME, parameters=BODY)
 
         # /ActionRules/patch/PatchActionRule[patch]
         BODY = {
@@ -177,22 +177,22 @@ class MgmtAlertsTest(AzureMgmtTestCase):
           },
           "status": "Disabled"
         }
-        result = self.mgmt_client.action_rules.update(resource_group_name=RESOURCE_GROUP, action_rule_name=ACTION_RULE_NAME, action_rule_patch=BODY)
+        # result = self.mgmt_client.action_rules.update(resource_group_name=RESOURCE_GROUP, action_rule_name=ACTION_RULE_NAME, action_rule_patch=BODY)
 
         # /SmartGroups/post/changestate[post]
         BODY = {
           "comments": "Acknowledging smart group"
         }
-        result = self.mgmt_client.smart_groups.change_state(smart_group_id=SMART_GROUP_ID, body=BODY, new_state="Acknowledged")
+        # result = self.mgmt_client.smart_groups.change_state(smart_group_id=SMART_GROUP_ID, body=BODY, new_state="Acknowledged")
 
         # /Alerts/post/Resolve[post]
         BODY = {
           "comments": "Acknowledging alert"
         }
-        result = self.mgmt_client.alerts.change_state(alert_id=ALERT_ID, body=BODY, new_state="Acknowledged")
+        # result = self.mgmt_client.alerts.change_state(alert_id=ALERT_ID, body=BODY, new_state="Acknowledged")
 
         # /SmartDetectorAlertRules/delete/Delete a Smart Detector alert rule[delete]
-        result = self.mgmt_client.smart_detector_alert_rules.delete(resource_group_name=RESOURCE_GROUP, alert_rule_name=ALERT_RULE_NAME)
+        # result = self.mgmt_client.smart_detector_alert_rules.delete(resource_group_name=RESOURCE_GROUP, alert_rule_name=ALERT_RULE_NAME)
 
         # /ActionRules/delete/DeleteActionRule[delete]
         result = self.mgmt_client.action_rules.delete(resource_group_name=RESOURCE_GROUP, action_rule_name=ACTION_RULE_NAME)
