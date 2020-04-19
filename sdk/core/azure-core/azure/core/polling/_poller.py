@@ -206,7 +206,8 @@ class LROPoller(Generic[HTTPRequestType, HTTPResponseType]):
         self._thread.join(timeout=timeout)
         try:
             # Let's handle possible None in forgiveness here
-            raise cast(Exception, self._exception)
+            # https://github.com/python/mypy/issues/8165
+            raise self._exception # type: ignore
         except TypeError: # Was None
             pass
 

@@ -72,14 +72,13 @@ def convert_bool(value):
     :raises ValueError: If conversion to bool fails
 
     """
-    if isinstance(value, bool):
-        return value
-    if isinstance(value, str):
-        val = value.lower()
-        if val in ["yes", "1", "on", "true", "True"]:
-            return True
-        if val in ["no", "0", "off", "false", "False"]:
-            return False
+    if value in (True, False):
+        return cast(bool, value)
+    val = cast(str, value).lower()
+    if val in ["yes", "1", "on", "true", "True"]:
+        return True
+    if val in ["no", "0", "off", "false", "False"]:
+        return False
     raise ValueError("Cannot convert {} to boolean value".format(value))
 
 
@@ -113,9 +112,7 @@ def convert_logging(value):
     """
     if value in set(_levels.values()):
         return cast(int, value)
-    val = ""
-    if isinstance(value, str):
-        val = value.upper()
+    val = cast(str, value).upper()
     level = _levels.get(val)
     if not level:
         raise ValueError("Cannot convert {} to log level, valid values are: {}".format(value, ", ".join(_levels)))

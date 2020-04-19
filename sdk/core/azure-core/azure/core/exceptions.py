@@ -65,7 +65,9 @@ def raise_with_traceback(exception, *args, **kwargs):
     message = kwargs.pop("message", "")
     exc_type, exc_value, exc_traceback = sys.exc_info()
     # If not called inside a "except", exc_type will be None. Assume it will not happen
-    exc_msg = "{}, {}: {}".format(message, exc_type.__name__, exc_value) # type: ignore
+    if exc_type is None:
+        raise ValueError("raise_with_traceback can only be used in except clauses")
+    exc_msg = "{}, {}: {}".format(message, exc_type.__name__, exc_value)
     error = exception(exc_msg, *args, **kwargs)
     try:
         raise error.with_traceback(exc_traceback)
