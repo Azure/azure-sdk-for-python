@@ -74,7 +74,7 @@ class MgmtWebSiteTest(AzureMgmtTestCase):
         # /AppServicePlans/put/Create Or Update App Service plan[put]
         BODY = {
           "kind": "app",
-          "location": "westus",
+          "location": "westus2",
           "sku": {
             "name": "P1",
             "tier": "Premium",
