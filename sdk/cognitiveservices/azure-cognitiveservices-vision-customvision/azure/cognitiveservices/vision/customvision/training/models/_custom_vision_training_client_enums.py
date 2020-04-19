@@ -12,77 +12,6 @@
 from enum import Enum
 
 
-class DomainType(str, Enum):
-
-    classification = "Classification"
-    object_detection = "ObjectDetection"
-
-
-class ImageCreateStatus(str, Enum):
-
-    ok = "OK"
-    ok_duplicate = "OKDuplicate"
-    error_source = "ErrorSource"
-    error_image_format = "ErrorImageFormat"
-    error_image_size = "ErrorImageSize"
-    error_storage = "ErrorStorage"
-    error_limit_exceed = "ErrorLimitExceed"
-    error_tag_limit_exceed = "ErrorTagLimitExceed"
-    error_region_limit_exceed = "ErrorRegionLimitExceed"
-    error_unknown = "ErrorUnknown"
-    error_negative_and_regular_tag_on_same_image = "ErrorNegativeAndRegularTagOnSameImage"
-
-
-class OrderBy(str, Enum):
-
-    newest = "Newest"
-    oldest = "Oldest"
-    suggested = "Suggested"
-
-
-class Classifier(str, Enum):
-
-    multiclass = "Multiclass"
-    multilabel = "Multilabel"
-
-
-class TrainingType(str, Enum):
-
-    regular = "Regular"
-    advanced = "Advanced"
-
-
-class ExportPlatform(str, Enum):
-
-    core_ml = "CoreML"
-    tensor_flow = "TensorFlow"
-    docker_file = "DockerFile"
-    onnx = "ONNX"
-    vaidk = "VAIDK"
-
-
-class ExportStatus(str, Enum):
-
-    exporting = "Exporting"
-    failed = "Failed"
-    done = "Done"
-
-
-class ExportFlavor(str, Enum):
-
-    linux = "Linux"
-    windows = "Windows"
-    onnx10 = "ONNX10"
-    onnx12 = "ONNX12"
-    arm = "ARM"
-
-
-class TagType(str, Enum):
-
-    regular = "Regular"
-    negative = "Negative"
-
-
 class CustomVisionErrorCodes(str, Enum):
 
     no_error = "NoError"
@@ -97,10 +26,13 @@ class CustomVisionErrorCodes(str, Enum):
     bad_request_project_unknown_classification = "BadRequestProjectUnknownClassification"
     bad_request_project_unsupported_domain_type_change = "BadRequestProjectUnsupportedDomainTypeChange"
     bad_request_project_unsupported_export_platform = "BadRequestProjectUnsupportedExportPlatform"
+    bad_request_project_image_preprocessing_settings = "BadRequestProjectImagePreprocessingSettings"
+    bad_request_project_duplicated = "BadRequestProjectDuplicated"
     bad_request_iteration_name = "BadRequestIterationName"
     bad_request_iteration_name_not_unique = "BadRequestIterationNameNotUnique"
     bad_request_iteration_description = "BadRequestIterationDescription"
     bad_request_iteration_is_not_trained = "BadRequestIterationIsNotTrained"
+    bad_request_iteration_validation_failed = "BadRequestIterationValidationFailed"
     bad_request_workspace_cannot_be_modified = "BadRequestWorkspaceCannotBeModified"
     bad_request_workspace_not_deletable = "BadRequestWorkspaceNotDeletable"
     bad_request_tag_name = "BadRequestTagName"
@@ -152,6 +84,8 @@ class CustomVisionErrorCodes(str, Enum):
     bad_request_prediction_results_exceeded_count = "BadRequestPredictionResultsExceededCount"
     bad_request_prediction_invalid_application_name = "BadRequestPredictionInvalidApplicationName"
     bad_request_prediction_invalid_query_parameters = "BadRequestPredictionInvalidQueryParameters"
+    bad_request_invalid_import_token = "BadRequestInvalidImportToken"
+    bad_request_export_while_training = "BadRequestExportWhileTraining"
     bad_request_invalid = "BadRequestInvalid"
     unsupported_media_type = "UnsupportedMediaType"
     forbidden = "Forbidden"
@@ -177,10 +111,13 @@ class CustomVisionErrorCodes(str, Enum):
     conflict = "Conflict"
     conflict_invalid = "ConflictInvalid"
     error_unknown = "ErrorUnknown"
+    error_iteration_copy_failed = "ErrorIterationCopyFailed"
+    error_prepare_performance_migration_failed = "ErrorPreparePerformanceMigrationFailed"
     error_project_invalid_workspace = "ErrorProjectInvalidWorkspace"
     error_project_invalid_pipeline_configuration = "ErrorProjectInvalidPipelineConfiguration"
     error_project_invalid_domain = "ErrorProjectInvalidDomain"
     error_project_training_request_failed = "ErrorProjectTrainingRequestFailed"
+    error_project_import_request_failed = "ErrorProjectImportRequestFailed"
     error_project_export_request_failed = "ErrorProjectExportRequestFailed"
     error_featurization_service_unavailable = "ErrorFeaturizationServiceUnavailable"
     error_featurization_queue_timeout = "ErrorFeaturizationQueueTimeout"
@@ -198,3 +135,89 @@ class CustomVisionErrorCodes(str, Enum):
     error_prediction_storage = "ErrorPredictionStorage"
     error_region_proposal = "ErrorRegionProposal"
     error_invalid = "ErrorInvalid"
+
+
+class DomainType(str, Enum):
+
+    classification = "Classification"
+    object_detection = "ObjectDetection"
+
+
+class ExportPlatform(str, Enum):
+
+    core_ml = "CoreML"
+    tensor_flow = "TensorFlow"
+    docker_file = "DockerFile"
+    onnx = "ONNX"
+    vaidk = "VAIDK"
+
+
+class ExportStatus(str, Enum):
+
+    exporting = "Exporting"
+    failed = "Failed"
+    done = "Done"
+
+
+class ExportFlavor(str, Enum):
+
+    linux = "Linux"
+    windows = "Windows"
+    onnx10 = "ONNX10"
+    onnx12 = "ONNX12"
+    arm = "ARM"
+    tensor_flow_normal = "TensorFlowNormal"
+    tensor_flow_lite = "TensorFlowLite"
+
+
+class ImageCreateStatus(str, Enum):
+
+    ok = "OK"
+    ok_duplicate = "OKDuplicate"
+    error_source = "ErrorSource"
+    error_image_format = "ErrorImageFormat"
+    error_image_size = "ErrorImageSize"
+    error_storage = "ErrorStorage"
+    error_limit_exceed = "ErrorLimitExceed"
+    error_tag_limit_exceed = "ErrorTagLimitExceed"
+    error_region_limit_exceed = "ErrorRegionLimitExceed"
+    error_unknown = "ErrorUnknown"
+    error_negative_and_regular_tag_on_same_image = "ErrorNegativeAndRegularTagOnSameImage"
+
+
+class Classifier(str, Enum):
+
+    multiclass = "Multiclass"
+    multilabel = "Multilabel"
+
+
+class TrainingType(str, Enum):
+
+    regular = "Regular"
+    advanced = "Advanced"
+
+
+class OrderBy(str, Enum):
+
+    newest = "Newest"
+    oldest = "Oldest"
+    suggested = "Suggested"
+
+
+class ProjectStatus(str, Enum):
+
+    succeeded = "Succeeded"
+    importing = "Importing"
+    failed = "Failed"
+
+
+class SortBy(str, Enum):
+
+    uncertainty_ascending = "UncertaintyAscending"
+    uncertainty_descending = "UncertaintyDescending"
+
+
+class TagType(str, Enum):
+
+    regular = "Regular"
+    negative = "Negative"
