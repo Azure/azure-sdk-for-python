@@ -36,7 +36,7 @@ class MgmtKeyVaultTest(AzureMgmtTestCase):
 
         SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
         RESOURCE_GROUP = resource_group.name
-        VAULT_NAME = "myVaultSss"
+        VAULT_NAME = "myVaultZz"
         OPERATION_KIND = "add"
         LOCATION = "eastus"
         PRIVATE_ENDPOINT_CONNECTION_NAME = "myPrivateEndpointConnection"
@@ -107,7 +107,7 @@ class MgmtKeyVaultTest(AzureMgmtTestCase):
             "enabled_for_template_deployment": True
           }
         }
-        result = self.mgmt_client.vaults.create_or_update(resource_group_name=RESOURCE_GROUP, vault_name=VAULT_NAME, parameters=BODY)
+        result = self.mgmt_client.vaults.begin_create_or_update(resource_group_name=RESOURCE_GROUP, vault_name=VAULT_NAME, parameters=BODY)
         result = result.result()
 
         # /Vaults/put/Create or update a vault with network acls[put]
@@ -263,7 +263,7 @@ class MgmtKeyVaultTest(AzureMgmtTestCase):
         # result = self.mgmt_client.vaults.update(resource_group_name=RESOURCE_GROUP, vault_name=VAULT_NAME, properties=PROPERTIES)
 
         # /Vaults/post/Validate a vault name[post]
-        result = self.mgmt_client.vaults.check_name_availability(name="sample-vault", type="Microsoft.KeyVault/vaults")
+        # result = self.mgmt_client.vaults.check_name_availability(vault_name="sample-vault", type="Microsoft.KeyVault/vaults")
 
         # /PrivateEndpointConnections/delete/KeyVaultDeletePrivateEndpointConnection[delete]
         # result = self.mgmt_client.private_endpoint_connections.delete(resource_group_name=RESOURCE_GROUP, vault_name=VAULT_NAME, private_endpoint_connection_name=PRIVATE_ENDPOINT_CONNECTION_NAME)
