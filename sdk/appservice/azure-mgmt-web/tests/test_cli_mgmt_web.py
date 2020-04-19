@@ -37,7 +37,7 @@ class MgmtWebSiteTest(AzureMgmtTestCase):
         SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
         RESOURCE_GROUP = resource_group.name
         DOMAIN_NAME = "myDomain"
-        NAME = "my"
+        NAME = "myappxyza"
         LOCATION = "myLocation"
         DELETED_SITE_ID = "myDeletedSiteId"
         DETECTOR_NAME = "myDetector"
