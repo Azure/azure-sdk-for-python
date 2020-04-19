@@ -85,8 +85,8 @@ setup(
         {%- endif %}
         'azure-common~=1.1',
         {%- if need_azurecore %}
-        'azure-core>=1.4.1',<'2.0.0',
-        'azure-mgmt-core>=1.0.0',<'2.0.0',
+        'azure-mgmt-core>=1.0.0,<2.0.0',
+        'azure-identity>=1.3.1,<2.0.0',
         {%- endif %}
     ],
     extras_require={
