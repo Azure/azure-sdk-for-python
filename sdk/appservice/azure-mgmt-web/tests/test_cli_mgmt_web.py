@@ -69,7 +69,7 @@ class MgmtWebSiteTest(AzureMgmtTestCase):
             "app_artifact_location": "build"
           }
         }
-        # result = self.mgmt_client.static_sites.create_or_update_static_site(resource_group_name=RESOURCE_GROUP, name=NAME, static_site_envelope=BODY)
+        result = self.mgmt_client.static_sites.create_or_update_static_site(resource_group_name=RESOURCE_GROUP, name=NAME, static_site_envelope=BODY)
 
         # /AppServicePlans/put/Create Or Update App Service plan[put]
         BODY = {
