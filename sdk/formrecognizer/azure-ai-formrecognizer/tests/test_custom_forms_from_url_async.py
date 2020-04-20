@@ -54,7 +54,7 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
     async def test_form_unlabeled(self, client, container_sas_url):
         training_client = client.get_form_training_client()
 
-        model = await training_client.training(container_sas_url)
+        model = await training_client.train_model(container_sas_url)
 
         form = await client.recognize_custom_forms_from_url(model.model_id, self.form_url_jpg)
 
@@ -73,7 +73,7 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
     async def test_form_labeled(self, client, container_sas_url):
         training_client = client.get_form_training_client()
 
-        model = await training_client.training(container_sas_url, use_labels=True)
+        model = await training_client.train_model(container_sas_url, use_labels=True)
 
         form = await client.recognize_custom_forms_from_url(model.model_id, self.form_url_jpg)
 
@@ -91,7 +91,7 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
     async def test_fr_unlbld_trnsfrm(self, client, container_sas_url):
         training_client = client.get_form_training_client()
 
-        model = await training_client.training(container_sas_url)
+        model = await training_client.train_model(container_sas_url)
 
         responses = []
 
@@ -124,7 +124,7 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
     async def test_fr_lbld_transform(self, client, container_sas_url):
         training_client = client.get_form_training_client()
 
-        model = await training_client.training(container_sas_url, use_labels=True)
+        model = await training_client.train_model(container_sas_url, use_labels=True)
 
         responses = []
 

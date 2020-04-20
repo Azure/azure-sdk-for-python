@@ -54,7 +54,7 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
     def test_custom_form_unlabeled(self, client, container_sas_url):
         training_client = client.get_form_training_client()
 
-        poller = training_client.begin_training(container_sas_url)
+        poller = training_client.begin_train_model(container_sas_url)
         model = poller.result()
 
         poller = client.begin_recognize_custom_forms_from_url(model.model_id, self.form_url_jpg)
@@ -75,7 +75,7 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
     def test_custom_form_labeled(self, client, container_sas_url):
         training_client = client.get_form_training_client()
 
-        poller = training_client.begin_training(container_sas_url, use_labels=True)
+        poller = training_client.begin_train_model(container_sas_url, use_labels=True)
         model = poller.result()
 
         poller = client.begin_recognize_custom_forms_from_url(model.model_id, self.form_url_jpg)
@@ -95,7 +95,7 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
     def test_form_unlbld_transform(self, client, container_sas_url):
         training_client = client.get_form_training_client()
 
-        poller = training_client.begin_training(container_sas_url)
+        poller = training_client.begin_train_model(container_sas_url)
         model = poller.result()
 
         responses = []
@@ -129,7 +129,7 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
     def test_form_labeled_transform(self, client, container_sas_url):
         training_client = client.get_form_training_client()
 
-        poller = training_client.begin_training(container_sas_url, use_labels=True)
+        poller = training_client.begin_train_model(container_sas_url, use_labels=True)
         model = poller.result()
 
         responses = []

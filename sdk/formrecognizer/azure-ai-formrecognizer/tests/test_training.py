@@ -23,13 +23,13 @@ class TestTraining(FormRecognizerTest):
     def test_training_auth_bad_key(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
         client = FormTrainingClient(form_recognizer_account, AzureKeyCredential("xxxx"))
         with self.assertRaises(ClientAuthenticationError):
-            poller = client.begin_training("xx")
+            poller = client.begin_train_model("xx")
 
     @GlobalFormAndStorageAccountPreparer()
     @GlobalTrainingAccountPreparer()
     def test_training(self, client, container_sas_url):
 
-        poller = client.begin_training(container_sas_url)
+        poller = client.begin_train_model(container_sas_url)
         model = poller.result()
 
         self.assertIsNotNone(model.model_id)
@@ -60,7 +60,7 @@ class TestTraining(FormRecognizerTest):
             raw_response.append(raw_model)
             raw_response.append(custom_model)
 
-        poller = client.begin_training(container_sas_url, cls=callback)
+        poller = client.begin_train_model(container_sas_url, cls=callback)
         model = poller.result()
 
         raw_model = raw_response[0]
@@ -71,7 +71,7 @@ class TestTraining(FormRecognizerTest):
     @GlobalTrainingAccountPreparer()
     def test_training_with_labels(self, client, container_sas_url):
 
-        poller = client.begin_training(container_sas_url, use_labels=True)
+        poller = client.begin_train_model(container_sas_url, use_labels=True)
         model = poller.result()
 
         self.assertIsNotNone(model.model_id)
@@ -102,7 +102,7 @@ class TestTraining(FormRecognizerTest):
             raw_response.append(raw_model)
             raw_response.append(custom_model)
 
-        poller = client.begin_training(container_sas_url, use_labels=True, cls=callback)
+        poller = client.begin_train_model(container_sas_url, use_labels=True, cls=callback)
         model = poller.result()
 
         raw_model = raw_response[0]
@@ -113,7 +113,7 @@ class TestTraining(FormRecognizerTest):
     @GlobalTrainingAccountPreparer()
     def test_training_with_files_filter(self, client, container_sas_url):
 
-        poller = client.begin_training(container_sas_url, include_sub_folders=True)
+        poller = client.begin_train_model(container_sas_url, include_sub_folders=True)
         model = poller.result()
 
         self.assertIsNotNone(model.model_id)
