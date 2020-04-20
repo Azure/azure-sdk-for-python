@@ -39,7 +39,7 @@ if TYPE_CHECKING:
     import requests
     from msrest.serialization import Model # pylint: disable=unused-import
     DeserializationCallbackType = Union[Model, Callable[[requests.Response], Model]]
-    PollingMethodType = TypeVar("PollingMethodType")
+PollingMethodType = TypeVar("PollingMethodType")
 
 class PollingMethod(object):
     """ABC class for polling method.

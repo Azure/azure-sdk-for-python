@@ -33,7 +33,6 @@ from azure.core.pipeline import (
     PipelineContext,
 )
 from azure.core.pipeline.policies import HTTPPolicy, SansIOHTTPPolicy
-from azure.core.pipeline.transport import HttpRequest
 
 HTTPResponseType = TypeVar("HTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")
@@ -164,9 +163,7 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
 
         Does nothing if "set_multipart_mixed" was never called.
         """
-        # since we know multipart is only supported for HttpRequest, assume request
-        # here is a http request and tell mypy the same.
-        multipart_mixed_info = cast(HttpRequest, request).multipart_mixed_info
+        multipart_mixed_info = request.multipart_mixed_info # type: ignore
         if not multipart_mixed_info:
             return
 
