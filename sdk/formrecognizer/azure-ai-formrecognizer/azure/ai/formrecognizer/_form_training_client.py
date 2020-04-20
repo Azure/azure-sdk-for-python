@@ -66,7 +66,7 @@ class FormTrainingClient(object):
         )
 
     @distributed_trace
-    def begin_training(self, training_files, use_labels=False, **kwargs):
+    def begin_train_model(self, training_files, use_labels=False, **kwargs):
         # type: (str, Optional[bool], Any) -> LROPoller
         """Create and train a custom model. The request must include a `training_files` parameter that is an
         externally accessible Azure storage blob container Uri (preferably a Shared Access Signature Uri).
