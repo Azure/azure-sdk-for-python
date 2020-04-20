@@ -25,7 +25,7 @@
 # --------------------------------------------------------------------------
 
 import logging
-from typing import Generic, TypeVar, List, Union, Any, Dict
+from typing import Generic, TypeVar, List, Union, Any, Dict, cast
 from azure.core.pipeline import (
     AbstractContextManager,
     PipelineRequest,
@@ -33,6 +33,7 @@ from azure.core.pipeline import (
     PipelineContext,
 )
 from azure.core.pipeline.policies import HTTPPolicy, SansIOHTTPPolicy
+from azure.core.pipeline.transport import HttpRequest
 
 HTTPResponseType = TypeVar("HTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")
@@ -163,7 +164,9 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
 
         Does nothing if "set_multipart_mixed" was never called.
         """
-        multipart_mixed_info = request.multipart_mixed_info # type: ignore
+        # since we know multipart is only supported for HttpRequest, assume request
+        # here is a http request and tell mypy the same.
+        multipart_mixed_info = cast(HttpRequest, request).multipart_mixed_info
         if not multipart_mixed_info:
             return
 

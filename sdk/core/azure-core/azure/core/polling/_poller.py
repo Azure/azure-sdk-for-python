@@ -39,10 +39,7 @@ if TYPE_CHECKING:
     import requests
     from msrest.serialization import Model # pylint: disable=unused-import
     DeserializationCallbackType = Union[Model, Callable[[requests.Response], Model]]
-
-HTTPResponseType = TypeVar("HTTPResponseType")
-HTTPRequestType = TypeVar("HTTPRequestType")
-
+    PollingMethodType = TypeVar("PollingMethodType")
 
 class PollingMethod(object):
     """ABC class for polling method.
@@ -105,7 +102,7 @@ class NoPolling(PollingMethod):
         return self._deserialization_callback(self._initial_response)
 
 
-class LROPoller(Generic[HTTPRequestType, HTTPResponseType]):
+class LROPoller(Generic[PollingMethodType]):
     """Poller for long running operations.
 
     :param client: A pipeline service client
