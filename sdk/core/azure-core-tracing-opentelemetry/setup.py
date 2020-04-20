@@ -41,7 +41,7 @@ setup(
     author_email='azpysdkhelp@microsoft.com',
     url='https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/core/azure-core-tracing-opentelemetry',
     classifiers=[
-        'Development Status :: 4 - Beta',
+        "Development Status :: 4 - Beta",
         'Programming Language :: Python',
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
@@ -58,7 +58,7 @@ setup(
     ],
     python_requires=">=3.5.0",
     install_requires=[
-        'opentelemetry-api==0.3a0',
+        'opentelemetry-api==0.6b0',
         'azure-core<2.0.0,>=1.0.0',
     ],
     extras_require={

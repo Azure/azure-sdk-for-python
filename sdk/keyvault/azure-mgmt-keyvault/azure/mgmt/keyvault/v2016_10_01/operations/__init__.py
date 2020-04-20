@@ -9,8 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .vaults_operations import VaultsOperations
-from .operations import Operations
+from ._vaults_operations import VaultsOperations
+from ._operations import Operations
 
 __all__ = [
     'VaultsOperations',

@@ -1,5 +1,102 @@
 # Release History
 
+## 12.0.0 (2020-03-23)
+
+**Features**
+
+- Model VirtualMachineScaleSetInstanceView has a new parameter orchestration_services
+- Added operation VirtualMachineScaleSetsOperations.set_orchestration_service_state
+- Added operation group SshPublicKeysOperations
+
+**Breaking changes**
+
+- Model AvailabilitySetUpdate no longer has parameter id
+- Model AvailabilitySetUpdate no longer has parameter name
+- Model AvailabilitySetUpdate no longer has parameter type
+- Model VirtualMachineScaleSetUpdate no longer has parameter id
+- Model VirtualMachineScaleSetUpdate no longer has parameter name
+- Model VirtualMachineScaleSetUpdate no longer has parameter type
+- Model DedicatedHostGroupUpdate no longer has parameter id
+- Model DedicatedHostGroupUpdate no longer has parameter name
+- Model DedicatedHostGroupUpdate no longer has parameter type
+- Model VirtualMachineUpdate no longer has parameter id
+- Model VirtualMachineUpdate no longer has parameter name
+- Model VirtualMachineUpdate no longer has parameter type
+- Model DedicatedHostUpdate no longer has parameter id
+- Model DedicatedHostUpdate no longer has parameter name
+- Model DedicatedHostUpdate no longer has parameter type
+- Model ImageUpdate no longer has parameter id
+- Model ImageUpdate no longer has parameter name
+- Model ImageUpdate no longer has parameter type
+- Model VirtualMachineExtensionUpdate no longer has parameter virtual_machine_extension_update_type
+- Model VirtualMachineExtensionUpdate no longer has parameter id
+- Model VirtualMachineExtensionUpdate no longer has parameter name
+- Model ProximityPlacementGroupUpdate has a new signature
+- Model UpdateResource has a new signature
+
+## 11.1.0 (2020-03-09)
+
+**Features**
+
+- Operation VirtualMachineImagesOperations.list has a new parameter $expand
+
+**Bugfixes**
+
+- remove not-working $filter in Operation VirtualMachineImagesOperations.list
+
+## 11.0.0 (2020-02-27)
+
+**Features**
+
+  - Model AvailabilitySetUpdate has a new parameter name
+  - Model AvailabilitySetUpdate has a new parameter id
+  - Model AvailabilitySetUpdate has a new parameter type
+  - Model DedicatedHostGroupUpdate has a new parameter name
+  - Model DedicatedHostGroupUpdate has a new parameter id
+  - Model DedicatedHostGroupUpdate has a new parameter type
+  - Model ImageReference has a new parameter exact_version
+  - Model SnapshotUpdate has a new parameter encryption
+  - Model ProximityPlacementGroup has a new parameter colocation_status
+  - Model ImageUpdate has a new parameter name
+  - Model ImageUpdate has a new parameter id
+  - Model ImageUpdate has a new parameter type
+  - Model VirtualMachineExtensionUpdate has a new parameter name
+  - Model VirtualMachineExtensionUpdate has a new parameter id
+  - Model VirtualMachineExtensionUpdate has a new parameter virtual_machine_extension_update_type
+  - Model Disk has a new parameter share_info
+  - Model Disk has a new parameter disk_mbps_read_only
+  - Model Disk has a new parameter managed_by_extended
+  - Model Disk has a new parameter max_shares
+  - Model Disk has a new parameter disk_iops_read_only
+  - Model CreationData has a new parameter gallery_image_reference
+  - Model DiskUpdate has a new parameter max_shares
+  - Model DiskUpdate has a new parameter encryption
+  - Model DiskUpdate has a new parameter disk_mbps_read_only
+  - Model DiskUpdate has a new parameter disk_iops_read_only
+  - Model VirtualMachineScaleSetUpdate has a new parameter name
+  - Model VirtualMachineScaleSetUpdate has a new parameter id
+  - Model VirtualMachineScaleSetUpdate has a new parameter type
+  - Model DedicatedHostUpdate has a new parameter name
+  - Model DedicatedHostUpdate has a new parameter id
+  - Model DedicatedHostUpdate has a new parameter type
+  - Model TargetRegion has a new parameter encryption
+  - Model VirtualMachineUpdate has a new parameter name
+  - Model VirtualMachineUpdate has a new parameter id
+  - Model VirtualMachineUpdate has a new parameter type
+  - Model VirtualMachineScaleSetExtension has a new parameter type1
+  - Added operation GalleriesOperations.update
+  - Added operation GalleryImagesOperations.update
+  - Added operation GalleryImageVersionsOperations.update
+  - Added operation VirtualMachineScaleSetExtensionsOperations.update
+  - Added operation GalleryApplicationVersionsOperations.update
+  - Added operation GalleryApplicationsOperations.update
+
+**Breaking changes**
+
+  - Model AutomaticRepairsPolicy no longer has parameter max_instance_repairs_percent
+  - Model ProximityPlacementGroupUpdate has a new signature
+  - Model UpdateResource has a new signature
+
 ## 10.0.0 (2019-11-18)
 
 **Features**

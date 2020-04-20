@@ -1,0 +1,52 @@
+interactions:
+- request:
+    body: '{"filter": "category eq ''Budget''", "orderby": "hotelName desc", "search":
+      "WiFi", "select": "hotelName,category,description"}'
+    headers:
+      Accept:
+      - application/json;odata.metadata=none
+      Content-Length:
+      - '125'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-search-documents/1.0.0b2 Python/3.6.3 (Windows-10-10.0.18362-SP0)
+      api-key:
+      - 81BF5C912304D2087DCA94B9E5020A34
+    method: POST
+    uri: https://search9776120b.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2019-05-06-Preview
+  response:
+    body:
+      string: '{"value":[{"@search.score":0.19169211,"hotelName":"Express Rooms","description":"Pretty
+        good hotel","category":"Budget"},{"@search.score":0.19169211,"hotelName":"EconoStay","description":"Very
+        popular hotel in town","category":"Budget"},{"@search.score":0.2423066,"hotelName":"Countryside
+        Hotel","description":"Save up to 50% off traditional hotels.  Free WiFi, great
+        location near downtown, full kitchen, washer & dryer, 24/7 support, bowling
+        alley, fitness center and more.","category":"Budget"},{"@search.score":0.19169211,"hotelName":"Comfy
+        Place","description":"Another good hotel","category":"Budget"}]}'
+    headers:
+      cache-control: no-cache
+      content-encoding: gzip
+      content-length: '441'
+      content-type: application/json; odata.metadata=none
+      date: Tue, 31 Mar 2020 17:43:11 GMT
+      elapsed-time: '185'
+      expires: '-1'
+      odata-version: '4.0'
+      pragma: no-cache
+      preference-applied: odata.include-annotations="*"
+      request-id: 179286b0-7377-11ea-92d3-5cf37071153c
+      strict-transport-security: max-age=15724800; includeSubDomains
+      vary: Accept-Encoding
+    status:
+      code: 200
+      message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - search9776120b.search.windows.net
+        - /indexes('drgqefsg')/docs/search.post.search
+        - api-version=2019-05-06-Preview
+        - ''
+version: 1

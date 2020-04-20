@@ -12,7 +12,7 @@ import azure.mgmt.servicebus.models
 from azure.mgmt.servicebus.models import SBNamespace,SBSku,SkuName,SBTopic,SBSubscription
 from azure.common.credentials import ServicePrincipalCredentials
 
-from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
+from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPreparer
 
 
 class MgmtServiceBusTest(AzureMgmtTestCase):
@@ -24,13 +24,13 @@ class MgmtServiceBusTest(AzureMgmtTestCase):
             azure.mgmt.servicebus.ServiceBusManagementClient
         )
 
-    @ResourceGroupPreparer()
+    @RandomNameResourceGroupPreparer()
     def test_sb_subscription_curd(self, resource_group, location):
         # List all topic types
         resource_group_name = resource_group.name  # "ardsouza-resourcemovetest-group2"
 
         # Create a Namespace
-        namespace_name = "testingpythontestcasesubscription"
+        namespace_name = self.get_replayable_random_resource_name("testingpythontestcasesubscription")
 
         namespaceparameter = SBNamespace(location=location, tags={'tag1': 'value1', 'tag2': 'value2'}, sku=SBSku(name=SkuName.standard))
         creatednamespace = self.servicebus_client.namespaces.create_or_update(resource_group_name, namespace_name, namespaceparameter).result()
@@ -42,7 +42,7 @@ class MgmtServiceBusTest(AzureMgmtTestCase):
             continue
 
         # Create a Topic
-        topic_name = "testingpythonsdktopic"
+        topic_name = self.get_replayable_random_resource_name("testingpythonsdktopic")
         createtopicresponse = self.servicebus_client.topics.create_or_update(resource_group_name, namespace_name,topic_name,SBTopic())
         self.assertEqual(createtopicresponse.name, topic_name)
 
@@ -51,7 +51,7 @@ class MgmtServiceBusTest(AzureMgmtTestCase):
         self.assertEqual(gettopicresponse.name, topic_name)
 
         # Create subscription
-        subscription_name = "testingpythonsdksubscription"
+        subscription_name = self.get_replayable_random_resource_name("testingpythonsdksubscription")
         createsubscriptionresponse =self.servicebus_client.subscriptions.create_or_update(resource_group_name, namespace_name,topic_name,subscription_name,SBSubscription())
         self.assertEqual(createsubscriptionresponse.name, subscription_name)
 

@@ -2,9 +2,10 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 from urllib.parse import urlparse
 
+from azure.identity._constants import EnvironmentVariables
 from azure.identity.aio._internal.aad_client import AadClient
 import pytest
 
@@ -55,5 +56,11 @@ async def test_request_url():
 
     client = AadClient(tenant, "client id", transport=Mock(send=send), authority=authority)
 
+    await client.obtain_token_by_authorization_code("code", "uri", "scope")
+    await client.obtain_token_by_refresh_token("refresh token", "scope")
+
+    # authority can be configured via environment variable
+    with patch.dict("os.environ", {EnvironmentVariables.AZURE_AUTHORITY_HOST: authority}, clear=True):
+        client = AadClient(tenant_id=tenant, client_id="client id", transport=Mock(send=send))
     await client.obtain_token_by_authorization_code("code", "uri", "scope")
     await client.obtain_token_by_refresh_token("refresh token", "scope")

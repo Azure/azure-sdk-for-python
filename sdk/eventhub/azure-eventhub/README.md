@@ -13,9 +13,19 @@ The Azure Event Hubs client library allows for publishing and consuming of Azure
 - Observe interesting operations and interactions happening within your business or other ecosystem, allowing loosely coupled systems to interact without the need to bind them together.
 - Receive events from one or more publishers, transform them to better meet the needs of your ecosystem, then publish the transformed events to a new stream for consumers to observe.
 
-[Source code](./) | [Package (PyPi)](https://pypi.org/project/azure-eventhub/5.0.0) | [API reference documentation](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/5.0.0/azure.eventhub.html) | [Product documentation](https://docs.microsoft.com/en-us/azure/event-hubs/)
-
+[Source code](./) | [Package (PyPi)](https://pypi.org/project/azure-eventhub/5.1.0b1) | [API reference documentation](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/5.1.0b1/azure.eventhub.html) | [Product documentation](https://docs.microsoft.com/en-us/azure/event-hubs/) | [Samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub/samples)
 ## Getting started
+
+### Prerequisites
+
+- Python 2.7, 3.5.3 or later.
+- **Microsoft Azure Subscription:**  To use Azure services, including Azure Event Hubs, you'll need a subscription.
+If you do not have an existing Azure account, you may sign up for a free trial or use your MSDN subscriber benefits when you [create an account](https://account.windowsazure.com/Home/Index).
+
+- **Event Hubs namespace with an Event Hub:** To interact with Azure Event Hubs, you'll also need to have a namespace and Event Hub  available.
+If you are not familiar with creating Azure resources, you may wish to follow the step-by-step guide
+for [creating an Event Hub using the Azure portal](https://docs.microsoft.com/en-us/azure/event-hubs/event-hubs-create).
+There, you can also find detailed instructions for using the Azure CLI, Azure PowerShell, or Azure Resource Manager (ARM) templates to create an Event Hub.
 
 ### Install the package
 
@@ -24,17 +34,6 @@ Install the Azure Event Hubs client library for Python with pip:
 ```
 $ pip install azure-eventhub
 ```
-
-**Prerequisites**
-
-- Python 2.7, 3.5 or later.
-- **Microsoft Azure Subscription:**  To use Azure services, including Azure Event Hubs, you'll need a subscription.
-If you do not have an existing Azure account, you may sign up for a free trial or use your MSDN subscriber benefits when you [create an account](https://account.windowsazure.com/Home/Index).
-
-- **Event Hubs namespace with an Event Hub:** To interact with Azure Event Hubs, you'll also need to have a namespace and Event Hub  available.
-If you are not familiar with creating Azure resources, you may wish to follow the step-by-step guide
-for [creating an Event Hub using the Azure portal](https://docs.microsoft.com/en-us/azure/event-hubs/event-hubs-create).
-There, you can also find detailed instructions for using the Azure CLI, Azure PowerShell, or Azure Resource Manager (ARM) templates to create an Event Hub.
 
 ### Authenticate the client
 
@@ -97,7 +96,7 @@ like Azure Stream Analytics, Apache Spark, or Apache Storm.
 
 - A **partition** is an ordered sequence of events that is held in an Event Hub. Azure Event Hubs provides message streaming
 through a partitioned consumer pattern in which each consumer only reads a specific subset, or partition, of the message stream.
-As newer events arrive, they are added to the end of this sequence. The number of partitions is specified at the time anEvent Hub is created and cannot be changed.
+As newer events arrive, they are added to the end of this sequence. The number of partitions is specified at the time an Event Hub is created and cannot be changed.
 
 - A **consumer group** is a view of an entire Event Hub. Consumer groups enable multiple consuming applications to each
 have a separate view of the event stream, and to read the stream independently at their own pace and from their own position.
@@ -115,8 +114,10 @@ The following sections provide several code snippets covering some of the most c
 - [Inspect an Event Hub](#inspect-an-event-hub)
 - [Publish events to an Event Hub](#publish-events-to-an-event-hub)
 - [Consume events from an Event Hub](#consume-events-from-an-event-hub)
+- [Consume events from an Event Hub in batches](#consume-events-from-an-event-hub-in-batches)
 - [Publish events to an Event Hub asynchronously](#publish-events-to-an-event-hub-asynchronously)
 - [Consume events from an Event Hub asynchronously](#consume-events-from-an-event-hub-asynchronously)
+- [Consume events from an Event Hub in batches asynchronously](#consume-events-from-an-event-hub-in-batches-asynchronously)
 - [Consume events and save checkpoints using a checkpoint store](#consume-events-and-save-checkpoints-using-a-checkpoint-store)
 - [Use EventHubConsumerClient to work with IoT Hub](#use-eventhubconsumerclient-to-work-with-iot-hub)
 
@@ -136,7 +137,6 @@ partition_ids = client.get_partition_ids()
 
 ### Publish events to an Event Hub
 
-Publish events to an Event Hub.
 Use the `create_batch` method on `EventHubProducerClient` to create an `EventDataBatch` object which can then be sent using the `send_batch` method.
 Events may be added to the `EventDataBatch` using the `add` method until the maximum batch size limit in bytes has been reached.
 ```python
@@ -159,8 +159,6 @@ with client:
 ```
 
 ### Consume events from an Event Hub
-
-Consume events from an Event Hub.
 
 ```python
 import logging
@@ -187,9 +185,35 @@ with client:
     # client.receive(on_event=on_event, partition_id='0')
 ```
 
+### Consume events from an Event Hub in batches
+
+```python
+import logging
+from azure.eventhub import EventHubConsumerClient
+
+connection_str = '<< CONNECTION STRING FOR THE EVENT HUBS NAMESPACE >>'
+consumer_group = '<< CONSUMER GROUP >>'
+eventhub_name = '<< NAME OF THE EVENT HUB >>'
+client = EventHubConsumerClient.from_connection_string(connection_str, consumer_group, eventhub_name=eventhub_name)
+
+logger = logging.getLogger("azure.eventhub")
+logging.basicConfig(level=logging.INFO)
+
+def on_event_batch(partition_context, events):
+    logger.info("Received event from partition {}".format(partition_context.partition_id))
+    partition_context.update_checkpoint()
+
+with client:
+    client.receive_batch(
+        on_event_batch=on_event_batch, 
+        starting_position="-1",  # "-1" is from the beginning of the partition.
+    )
+    # receive events from specified partition:
+    # client.receive_batch(on_event_batch=on_event_batch, partition_id='0')
+```
+
 ### Publish events to an Event Hub asynchronously
 
-Publish events to an Event Hub asynchronously
 Use the `create_batch` method on `EventHubProcuer` to create an `EventDataBatch` object which can then be sent using the `send_batch` method.
 Events may be added to the `EventDataBatch` using the `add` method until the maximum batch size limit in bytes has been reached.
 ```python
@@ -224,8 +248,6 @@ if __name__ == '__main__':
 
 ### Consume events from an Event Hub asynchronously
 
-Consume events asynchronously from an EventHub.
-
 ```python
 import logging
 import asyncio
@@ -255,6 +277,39 @@ async def receive():
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
     loop.run_until_complete(receive())
+```
+
+### Consume events from an Event Hub in batches asynchronously
+
+```python
+import logging
+import asyncio
+from azure.eventhub.aio import EventHubConsumerClient
+
+connection_str = '<< CONNECTION STRING FOR THE EVENT HUBS NAMESPACE >>'
+consumer_group = '<< CONSUMER GROUP >>'
+eventhub_name = '<< NAME OF THE EVENT HUB >>'
+
+logger = logging.getLogger("azure.eventhub")
+logging.basicConfig(level=logging.INFO)
+
+async def on_event_batch(partition_context, events):
+    logger.info("Received event from partition {}".format(partition_context.partition_id))
+    await partition_context.update_checkpoint()
+
+async def receive_batch():
+    client = EventHubConsumerClient.from_connection_string(connection_str, consumer_group, eventhub_name=eventhub_name)
+    async with client:
+        await client.receive_batch(
+            on_event_batch=on_event_batch,
+            starting_position="-1",  # "-1" is from the beginning of the partition.
+        )
+        # receive events from specified partition:
+        # await client.receive_batch(on_event_batch=on_event_batch, partition_id='0')
+
+if __name__ == '__main__':
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(receive_batch())
 ```
 
 ### Consume events and save checkpoints using a checkpoint store
@@ -323,10 +378,11 @@ if __name__ == '__main__':
 You can use `EventHubConsumerClient` to work with IoT Hub as well. This is useful for receiving telemetry data of IoT Hub from the
 linked EventHub. The associated connection string will not have send claims, hence sending events is not possible.
 
-- Please notice that the connection string needs to be for an
-  [Event Hub-compatible endpoint](https://docs.microsoft.com/en-us/azure/iot-hub/iot-hub-devguide-messages-read-builtin)
-  e.g. "Endpoint=sb://my-iothub-namespace-[uid].servicebus.windows.net/;SharedAccessKeyName=my-SA-name;SharedAccessKey=my-SA-key;EntityPath=my-iot-hub-name"
+Please notice that the connection string needs to be for an [Event Hub-compatible endpoint](https://docs.microsoft.com/en-us/azure/iot-hub/iot-hub-devguide-messages-read-builtin), 
+e.g. "Endpoint=sb://my-iothub-namespace-[uid].servicebus.windows.net/;SharedAccessKeyName=my-SA-name;SharedAccessKey=my-SA-key;EntityPath=my-iot-hub-name"
 
+There are two ways to get the Event Hubs compatible endpoint:
+- Manually get the "Built-in endpoints" of the IoT Hub in Azure Portal and receive from it.
 ```python
 from azure.eventhub import EventHubConsumerClient
 
@@ -336,6 +392,8 @@ client = EventHubConsumerClient.from_connection_string(connection_str, consumer_
 
 partition_ids = client.get_partition_ids()
 ```
+- Programmatically retrieve the built-in Event Hubs compatible endpoint.
+Refer to [IoT Hub Connection String Sample](./samples/async_samples/iot_hub_connection_string_receive_async.py).
 
 ## Troubleshooting
 
@@ -351,6 +409,12 @@ The Event Hubs APIs generate the following exceptions in azure.eventhub.exceptio
 - **OperationTimeoutError:** EventHubConsumer.send() times out.
 - **EventHubError:** All other Eventhubs related errors. It is also the root error class of all the errors described above.
 
+### Logging
+
+- Enable `azure.eventhub` logger to collect traces from the library.
+- Enable `uamqp` logger to collect traces from the underlying uAMQP library.
+- Enable AMQP frame level trace by setting `logging_enable=True` when creating the client.
+
 ## Next steps
 
 ### More sample code
@@ -359,13 +423,7 @@ Please take a look at the [samples](./samples) directory for detailed examples o
 
 ### Documentation
 
-Reference documentation is available [here](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/5.0.0/azure.eventhub.html).
-
-### Logging
-
-- Enable `azure.eventhub` logger to collect traces from the library.
-- Enable `uamqp` logger to collect traces from the underlying uAMQP library.
-- Enable AMQP frame level trace by setting `logging_enable=True` when creating the client.
+Reference documentation is available [here](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/5.1.0b1/azure.eventhub.html).
 
 ### Provide Feedback
 

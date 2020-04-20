@@ -39,6 +39,18 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
         self._client = DataLakeStorageClient(self.url, file_system_name, path_name, pipeline=self._pipeline)
         self._loop = kwargs.get('loop', None)
 
+    async def __aexit__(self, *args):
+        await self._blob_client.close()
+        await super(PathClient, self).__aexit__(*args)
+
+    async def close(self):
+        # type: () -> None
+        """ This method is to close the sockets opened by the client.
+        It need not be used when using with a context manager.
+        """
+        await self._blob_client.close()
+        await self.__aexit__()
+
     async def _create(self, resource_type, content_settings=None, metadata=None, **kwargs):
         # type: (...) -> Dict[str, Union[str, datetime]]
         """
@@ -55,9 +67,9 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
             Name-value pairs associated with the file/directory as metadata.
         :type metadata: dict(str, str)
         :keyword lease:
-            Required if the file/directory has an active lease. Value can be a LeaseClient object
+            Required if the file/directory has an active lease. Value can be a DataLakeLeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.filedatalake.DataLakeLeaseClient or str
+        :paramtype lease: ~azure.storage.filedatalake.aio.DataLakeLeaseClient or str
         :keyword str umask:
             Optional and only valid if Hierarchical Namespace is enabled for the account.
             When creating a file or directory and the parent folder does not have a default ACL,
@@ -113,14 +125,14 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
         :keyword lease:
             Required if the file/directory has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.filedatalake.DataLakeLeaseClient or str
-        :param ~datetime.datetime if_modified_since:
+        :paramtype lease: ~azure.storage.filedatalake.aio.DataLakeLeaseClient or str
+        :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :param ~datetime.datetime if_unmodified_since:
+        :keyword ~datetime.datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
@@ -131,7 +143,7 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :return: None
         """
@@ -176,7 +188,7 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
         :keyword lease:
             Required if the file/directory has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.filedatalake.DataLakeLeaseClient or str
+        :paramtype lease: ~azure.storage.filedatalake.aio.DataLakeLeaseClient or str
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -223,7 +235,7 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
         :keyword lease:
             Required if the file/directory has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.filedatalake.DataLakeLeaseClient or str
+        :paramtype lease: ~azure.storage.filedatalake.aio.DataLakeLeaseClient or str
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -259,37 +271,23 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
 
         :param rename_source: The value must have the following format: "/{filesystem}/{path}".
         :type rename_source: str
-        :param source_lease: A lease ID for the source path. If specified,
+        :keyword ~azure.storage.filedatalake.ContentSettings content_settings:
+            ContentSettings object used to set path properties.
+        :keyword source_lease: A lease ID for the source path. If specified,
             the source path must have an active lease and the leaase ID must
             match.
-        :type source_lease: ~azure.storage.filedatalake.DataLakeLeaseClient or str
-        :param ~azure.storage.filedatalake.ContentSettings content_settings:
-            ContentSettings object used to set path properties.
-        :param lease:
+        :paramtype source_lease: ~azure.storage.filedatalake.aio.DataLakeLeaseClient or str
+        :keyword lease:
             Required if the file/directory has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.filedatalake.DataLakeLeaseClient or str
-        :param str umask: Optional and only valid if Hierarchical Namespace is enabled for the account.
-            When creating a file or directory and the parent folder does not have a default ACL,
-            the umask restricts the permissions of the file or directory to be created.
-            The resulting permission is given by p & ^u, where p is the permission and u is the umask.
-            For example, if p is 0777 and u is 0057, then the resulting permission is 0720.
-            The default permission is 0777 for a directory and 0666 for a file. The default umask is 0027.
-            The umask must be specified in 4-digit octal notation (e.g. 0766).
-        :param permissions: Optional and only valid if Hierarchical Namespace
-            is enabled for the account. Sets POSIX access permissions for the file
-            owner, the file owning group, and others. Each class may be granted
-            read, write, or execute permission.  The sticky bit is also supported.
-            Both symbolic (rwxrw-rw-) and 4-digit octal notation (e.g. 0766) are
-            supported.
-        :type permissions: str
-        :param ~datetime.datetime if_modified_since:
+        :paramtype lease: ~azure.storage.filedatalake.aio.DataLakeLeaseClient or str
+        :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :param ~datetime.datetime if_unmodified_since:
+        :keyword ~datetime.datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
@@ -300,13 +298,13 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
-        :param ~datetime.datetime source_if_modified_since:
+        :keyword ~datetime.datetime source_if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :param ~datetime.datetime source_if_unmodified_since:
+        :keyword ~datetime.datetime source_if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
@@ -317,9 +315,8 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions source_match_condition:
             The source match condition to use upon the etag.
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :return:
         """
         options = self._rename_path_options(
             rename_source,
@@ -337,7 +334,7 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
         :keyword lease:
             Required if the directory or file has an active lease. Value can be a DataLakeLeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.filedatalake.DataLakeLeaseClient or str
+        :paramtype lease: ~azure.storage.filedatalake.aio.DataLakeLeaseClient or str
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -358,21 +355,12 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: DirectoryProperties or FileProperties
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../tests/test_blob_samples_common.py
-                :start-after: [START get_blob_properties]
-                :end-before: [END get_blob_properties]
-                :language: python
-                :dedent: 8
-                :caption: Getting the properties for a file/directory.
         """
         path_properties = await self._blob_client.get_blob_properties(**kwargs)
         path_properties.__class__ = DirectoryProperties
         return path_properties
 
-    async def set_metadata(self, metadata=None,  # type: Optional[Dict[str, str]]
+    async def set_metadata(self, metadata,  # type: Dict[str, str]
                            **kwargs):
         # type: (...) -> Dict[str, Union[str, datetime]]
         """Sets one or more user-defined name-value pairs for the specified
@@ -384,9 +372,10 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
             A dict containing name-value pairs to associate with the file system as
             metadata. Example: {'category':'test'}
         :type metadata: dict[str, str]
-        :keyword str or ~azure.storage.filedatalake.DataLakeLeaseClient lease:
+        :keyword lease:
             If specified, set_file_system_metadata only succeeds if the
             file system's lease is active and matches this ID.
+        :paramtype lease: ~azure.storage.filedatalake.aio.DataLakeLeaseClient or str
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -407,15 +396,6 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: file system-updated property dict (Etag and last modified).
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/test_file_system_samples.py
-                :start-after: [START set_file_system_metadata]
-                :end-before: [END set_file_system_metadata]
-                :language: python
-                :dedent: 12
-                :caption: Setting metadata on the container.
         """
         return await self._blob_client.set_blob_metadata(metadata=metadata, **kwargs)
 
@@ -428,9 +408,10 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
 
         :param ~azure.storage.filedatalake.ContentSettings content_settings:
             ContentSettings object used to set file/directory properties.
-        :keyword str or ~azure.storage.filedatalake.DataLakeLeaseClient lease:
+        :keyword lease:
             If specified, set_file_system_metadata only succeeds if the
             file system's lease is active and matches this ID.
+        :paramtype lease: ~azure.storage.filedatalake.aio.DataLakeLeaseClient or str
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -492,7 +473,7 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: A DataLakeLeaseClient object, that can be run in a context manager.
-        :rtype: ~azure.storage.filedatalake.DataLakeLeaseClient
+        :rtype: ~azure.storage.filedatalake.aio.DataLakeLeaseClient
 
         .. admonition:: Example:
 

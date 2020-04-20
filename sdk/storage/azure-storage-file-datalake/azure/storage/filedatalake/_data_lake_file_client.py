@@ -3,14 +3,18 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from io import BytesIO
 import six
 
 from ._shared.base_client import parse_connection_str
 from ._shared.request_handlers import get_length, read_length
 from ._shared.response_handlers import return_response_headers
+from ._shared.uploads import IterStreamer
+from ._upload_helper import upload_datalake_file
 from ._generated.models import StorageErrorException
+from ._download import StorageStreamDownloader
 from ._path_client import PathClient
-from ._serialize import get_mod_conditions, get_path_http_headers, get_access_conditions
+from ._serialize import get_mod_conditions, get_path_http_headers, get_access_conditions, add_metadata_headers
 from ._deserialize import process_storage_error
 from ._models import FileProperties
 
@@ -41,19 +45,12 @@ class DataLakeFileClient(PathClient):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../samples/test_datalake_authentication_samples.py
-            :start-after: [START create_datalake_service_client]
-            :end-before: [END create_datalake_service_client]
+        .. literalinclude:: ../samples/datalake_samples_instantiate_client.py
+            :start-after: [START instantiate_file_client_from_conn_str]
+            :end-before: [END instantiate_file_client_from_conn_str]
             :language: python
-            :dedent: 8
-            :caption: Creating the DataLakeServiceClient with account url and credential.
-
-        .. literalinclude:: ../samples/test_datalake_authentication_samples.py
-            :start-after: [START create_datalake_service_client_oauth]
-            :end-before: [END create_datalake_service_client_oauth]
-            :language: python
-            :dedent: 8
-            :caption: Creating the DataLakeServiceClient with Azure Identity credentials.
+            :dedent: 4
+            :caption: Creating the DataLakeServiceClient from connection string.
     """
     def __init__(
         self, account_url,  # type: str
@@ -94,9 +91,7 @@ class DataLakeFileClient(PathClient):
         :return a DataLakeFileClient
         :rtype ~azure.storage.filedatalake.DataLakeFileClient
         """
-        account_url, secondary, credential = parse_connection_str(conn_str, credential, 'dfs')
-        if 'secondary_hostname' not in kwargs:
-            kwargs['secondary_hostname'] = secondary
+        account_url, _, credential = parse_connection_str(conn_str, credential, 'dfs')
         return cls(
             account_url, file_system_name=file_system_name, file_path=file_path,
             credential=credential, **kwargs)
@@ -111,24 +106,27 @@ class DataLakeFileClient(PathClient):
         :param ~azure.storage.filedatalake.ContentSettings content_settings:
             ContentSettings object used to set path properties.
         :param metadata:
-            Name-value pairs associated with the blob as metadata.
+            Name-value pairs associated with the file as metadata.
         :type metadata: dict(str, str)
-        :keyword ~azure.storage.filedatalake.DataLakeLeaseClient or str lease:
-            Required if the blob has an active lease. Value can be a DataLakeLeaseClient object
+        :keyword lease:
+            Required if the file has an active lease. Value can be a DataLakeLeaseClient object
             or the lease ID as a string.
-        :keyword str umask: Optional and only valid if Hierarchical Namespace is enabled for the account.
+        :paramtype lease: ~azure.storage.filedatalake.DataLakeLeaseClient or str
+        :keyword str umask:
+            Optional and only valid if Hierarchical Namespace is enabled for the account.
             When creating a file or directory and the parent folder does not have a default ACL,
             the umask restricts the permissions of the file or directory to be created.
             The resulting permission is given by p & ^u, where p is the permission and u is the umask.
             For example, if p is 0777 and u is 0057, then the resulting permission is 0720.
             The default permission is 0777 for a directory and 0666 for a file. The default umask is 0027.
             The umask must be specified in 4-digit octal notation (e.g. 0766).
-        :keyword str permissions: Optional and only valid if Hierarchical Namespace
-         is enabled for the account. Sets POSIX access permissions for the file
-         owner, the file owning group, and others. Each class may be granted
-         read, write, or execute permission.  The sticky bit is also supported.
-         Both symbolic (rwxrw-rw-) and 4-digit octal notation (e.g. 0766) are
-         supported.
+        :keyword str permissions:
+            Optional and only valid if Hierarchical Namespace
+            is enabled for the account. Sets POSIX access permissions for the file
+            owner, the file owning group, and others. Each class may be granted
+            read, write, or execute permission.  The sticky bit is also supported.
+            Both symbolic (rwxrw-rw-) and 4-digit octal notation (e.g. 0766) are
+            supported.
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -149,6 +147,15 @@ class DataLakeFileClient(PathClient):
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :return: response dict (Etag and last modified).
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/datalake_samples_upload_download.py
+                :start-after: [START create_file]
+                :end-before: [END create_file]
+                :language: python
+                :dedent: 4
+                :caption: Create file.
         """
         return self._create('file', content_settings=content_settings, metadata=metadata, **kwargs)
 
@@ -158,9 +165,9 @@ class DataLakeFileClient(PathClient):
         Marks the specified file for deletion.
 
         :keyword lease:
-            Required if the blob has an active lease. Value can be a LeaseClient object
+            Required if the file has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.LeaseClient or str
+        :paramtype lease: ~azure.storage.filedatalake.DataLakeLeaseClient or str
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -181,6 +188,15 @@ class DataLakeFileClient(PathClient):
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :return: None
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/datalake_samples_upload_download.py
+                :start-after: [START delete_file]
+                :end-before: [END delete_file]
+                :language: python
+                :dedent: 4
+                :caption: Delete file.
         """
         return self._delete(**kwargs)
 
@@ -216,15 +232,119 @@ class DataLakeFileClient(PathClient):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_blob_samples_common.py
-                :start-after: [START get_blob_properties]
-                :end-before: [END get_blob_properties]
+            .. literalinclude:: ../samples/datalake_samples_upload_download.py
+                :start-after: [START get_file_properties]
+                :end-before: [END get_file_properties]
                 :language: python
-                :dedent: 8
-                :caption: Getting the properties for a file/directory.
+                :dedent: 4
+                :caption: Getting the properties for a file.
         """
         blob_properties = self._get_path_properties(**kwargs)
         return FileProperties._from_blob_properties(blob_properties)  # pylint: disable=protected-access
+
+    def _upload_options(  # pylint:disable=too-many-statements
+            self, data,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
+            length=None,  # type: Optional[int]
+            **kwargs
+        ):
+        # type: (...) -> Dict[str, Any]
+
+        encoding = kwargs.pop('encoding', 'UTF-8')
+        if isinstance(data, six.text_type):
+            data = data.encode(encoding) # type: ignore
+        if length is None:
+            length = get_length(data)
+        if isinstance(data, bytes):
+            data = data[:length]
+
+        if isinstance(data, bytes):
+            stream = BytesIO(data)
+        elif hasattr(data, 'read'):
+            stream = data
+        elif hasattr(data, '__iter__'):
+            stream = IterStreamer(data, encoding=encoding)
+        else:
+            raise TypeError("Unsupported data type: {}".format(type(data)))
+
+        validate_content = kwargs.pop('validate_content', False)
+        content_settings = kwargs.pop('content_settings', None)
+        metadata = kwargs.pop('metadata', None)
+        max_concurrency = kwargs.pop('max_concurrency', 1)
+
+        kwargs['properties'] = add_metadata_headers(metadata)
+        kwargs['lease_access_conditions'] = get_access_conditions(kwargs.pop('lease', None))
+        kwargs['modified_access_conditions'] = get_mod_conditions(kwargs)
+
+        if content_settings:
+            kwargs['path_http_headers'] = get_path_http_headers(content_settings)
+
+        kwargs['stream'] = stream
+        kwargs['length'] = length
+        kwargs['validate_content'] = validate_content
+        kwargs['max_concurrency'] = max_concurrency
+        kwargs['client'] = self._client.path
+
+        return kwargs
+
+    def upload_data(self, data,  # type: Union[AnyStr, Iterable[AnyStr], IO[AnyStr]]
+                    length=None,  # type: Optional[int]
+                    overwrite=False,  # type: Optional[bool]
+                    **kwargs):
+        # type: (...) -> Dict[str, Any]
+        """
+        Upload data to a file.
+
+        :param data: Content to be uploaded to file
+        :param int length: Size of the data in bytes.
+        :param bool overwrite: to overwrite an existing file or not.
+        :keyword ~azure.storage.filedatalake.ContentSettings content_settings:
+            ContentSettings object used to set path properties.
+        :keyword metadata:
+            Name-value pairs associated with the blob as metadata.
+        :paramtype metadata: dict(str, str)
+        :keyword ~azure.storage.filedatalake.DataLakeLeaseClient or str lease:
+            Required if the blob has an active lease. Value can be a DataLakeLeaseClient object
+            or the lease ID as a string.
+        :keyword str umaskoverwrite: Optional and only valid if Hierarchical Namespace is enabled for the account.
+            When creating a file or directory and the parent folder does not have a default ACL,
+            the umask restricts the permissions of the file or directory to be created.
+            The resulting permission is given by p & ^u, where p is the permission and u is the umask.
+            For example, if p is 0777 and u is 0057, then the resulting permission is 0720.
+            The default permission is 0777 for a directory and 0666 for a file. The default umask is 0027.
+            The umask must be specified in 4-digit octal notation (e.g. 0766).
+        :keyword str permissions: Optional and only valid if Hierarchical Namespace
+         is enabled for the account. Sets POSIX access permissions for the file
+         owner, the file owning group, and others. Each class may be granted
+         read, write, or execute permission.  The sticky bit is also supported.
+         Both symbolic (rwxrw-rw-) and 4-digit octal notation (e.g. 0766) are
+         supported.
+        :keyword ~datetime.datetime if_modified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only
+            if the resource has been modified since the specified time.
+        :keyword ~datetime.datetime if_unmodified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only if
+            the resource has not been modified since the specified date/time.
+        :keyword str etag:
+            An ETag value, or the wildcard character (*). Used to check if the resource has changed,
+            and act according to the condition specified by the `match_condition` parameter.
+        :keyword ~azure.core.MatchConditions match_condition:
+            The match condition to use upon the etag.
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :return: response dict (Etag and last modified).
+        """
+        options = self._upload_options(
+            data,
+            length=length,
+            overwrite=overwrite,
+            **kwargs)
+        return upload_datalake_file(**options)
 
     @staticmethod
     def _append_data_options(data, offset, length=None, **kwargs):
@@ -268,12 +388,21 @@ class DataLakeFileClient(PathClient):
             with the hash that was sent. This is primarily valuable for detecting
             bitflips on the wire if using http instead of https as https (the default)
             will already validate. Note that this MD5 hash is not stored with the
-            blob.
+            file.
         :keyword lease:
-            Required if the blob has an active lease. Value can be a LeaseClient object
+            Required if the file has an active lease. Value can be a DataLakeLeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.filedatalake.DataLakeLeaseClient or str
+        :paramtype lease: ~azure.storage.filedatalake.DataLakeLeaseClient or str
         :return: dict of the response header
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/datalake_samples_upload_download.py
+                :start-after: [START append_data]
+                :end-before: [END append_data]
+                :language: python
+                :dedent: 4
+                :caption: Append data to the file.
         """
         options = self._append_data_options(
             data,
@@ -324,6 +453,8 @@ class DataLakeFileClient(PathClient):
             specified position are written to the file when flush succeeds, but
             this optional parameter allows data after the flush position to be
             retained for a future flush operation.
+        :keyword ~azure.storage.filedatalake.ContentSettings content_settings:
+            ContentSettings object used to set path properties.
         :keyword bool close: Azure Storage Events allow applications to receive
             notifications when files change. When Azure Storage Events are
             enabled, a file changed event is raised. This event has a property
@@ -356,6 +487,15 @@ class DataLakeFileClient(PathClient):
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
         :return: response header in dict
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/datalake_samples_file_system.py
+                :start-after: [START upload_file_to_file_system]
+                :end-before: [END upload_file_to_file_system]
+                :language: python
+                :dedent: 8
+                :caption: Commit the previous appended data.
         """
         options = self._flush_data_options(
             offset,
@@ -365,13 +505,11 @@ class DataLakeFileClient(PathClient):
         except StorageErrorException as error:
             process_storage_error(error)
 
-    def read_file(self, offset=None,   # type: Optional[int]
-                  length=None,   # type: Optional[int]
-                  stream=None,  # type: Optional[IO]
-                  **kwargs):
-        # type: (...) -> Union[int, byte]
-        """Download a file from the service. Return the downloaded data in bytes or
-        write the downloaded data into user provided stream and return the written size.
+    def download_file(self, offset=None, length=None, **kwargs):
+        # type: (Optional[int], Optional[int], Any) -> StorageStreamDownloader
+        """Downloads a file to the StorageStreamDownloader. The readall() method must
+        be used to read all the content, or readinto() must be used to download the file into
+        a stream.
 
         :param int offset:
             Start of byte range to use for downloading a section of the file.
@@ -379,12 +517,10 @@ class DataLakeFileClient(PathClient):
         :param int length:
             Number of bytes to read from the stream. This is optional, but
             should be supplied for optimal performance.
-        :param int stream:
-            User provided stream to write the downloaded data into.
         :keyword lease:
-            If specified, download_blob only succeeds if the blob's lease is active
-            and matches this ID. Required if the blob has an active lease.
-        :type lease: ~azure.storage.blob.LeaseClient or str
+            If specified, download only succeeds if the file's lease is active
+            and matches this ID. Required if the file has an active lease.
+        :paramtype lease: ~azure.storage.filedatalake.DataLakeLeaseClient or str
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -408,22 +544,20 @@ class DataLakeFileClient(PathClient):
             The timeout parameter is expressed in seconds. This method may make
             multiple calls to the Azure service and the timeout will apply to
             each call individually.
-        :returns: downloaded data or the size of data written into the provided stream
-        :rtype: bytes or int
+        :returns: A streaming object (StorageStreamDownloader)
+        :rtype: ~azure.storage.filedatalake.StorageStreamDownloader
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_blob_samples_hello_world.py
-                :start-after: [START download_a_blob]
-                :end-before: [END download_a_blob]
+            .. literalinclude:: ../samples/datalake_samples_upload_download.py
+                :start-after: [START read_file]
+                :end-before: [END read_file]
                 :language: python
-                :dedent: 12
-                :caption: Download a blob.
+                :dedent: 4
+                :caption: Return the downloaded data.
         """
         downloader = self._blob_client.download_blob(offset=offset, length=length, **kwargs)
-        if stream:
-            return downloader.readinto(stream)
-        return downloader.readall()
+        return StorageStreamDownloader(downloader)
 
     def rename_file(self, new_name,  # type: str
                     **kwargs):
@@ -433,30 +567,16 @@ class DataLakeFileClient(PathClient):
 
         :param str new_name: the new file name the user want to rename to.
             The value must have the following format: "{filesystem}/{directory}/{subdirectory}/{file}".
+        :keyword ~azure.storage.filedatalake.ContentSettings content_settings:
+            ContentSettings object used to set path properties.
         :keyword source_lease: A lease ID for the source path. If specified,
          the source path must have an active lease and the leaase ID must
          match.
-        :keyword source_lease: ~azure.storage.filedatalake.DataLakeLeaseClient or str
-        :param ~azure.storage.filedatalake.ContentSettings content_settings:
-            ContentSettings object used to set path properties.
+        :paramtype source_lease: ~azure.storage.filedatalake.DataLakeLeaseClient or str
         :keyword lease:
             Required if the file/directory has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
         :type lease: ~azure.storage.filedatalake.DataLakeLeaseClient or str
-        :keyword str umask: Optional and only valid if Hierarchical Namespace is enabled for the account.
-            When creating a file or directory and the parent folder does not have a default ACL,
-            the umask restricts the permissions of the file or directory to be created.
-            The resulting permission is given by p & ^u, where p is the permission and u is the umask.
-            For example, if p is 0777 and u is 0057, then the resulting permission is 0720.
-            The default permission is 0777 for a directory and 0666 for a file. The default umask is 0027.
-            The umask must be specified in 4-digit octal notation (e.g. 0766).
-        :keyword permissions: Optional and only valid if Hierarchical Namespace
-         is enabled for the account. Sets POSIX access permissions for the file
-         owner, the file owning group, and others. Each class may be granted
-         read, write, or execute permission.  The sticky bit is also supported.
-         Both symbolic (rwxrw-rw-) and 4-digit octal notation (e.g. 0766) are
-         supported.
-        :type permissions: str
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -493,7 +613,17 @@ class DataLakeFileClient(PathClient):
             The source match condition to use upon the etag.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :return:
+        :return: the renamed file client
+        :rtype: DataLakeFileClient
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/datalake_samples_upload_download.py
+                :start-after: [START rename_file]
+                :end-before: [END rename_file]
+                :language: python
+                :dedent: 4
+                :caption: Rename the source file.
         """
         new_name = new_name.strip('/')
         new_file_system = new_name.split('/')[0]

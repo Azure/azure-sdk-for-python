@@ -63,7 +63,7 @@ _SERVICE_PARAMS = {
     "blob": {"primary": "BlobEndpoint", "secondary": "BlobSecondaryEndpoint"},
     "queue": {"primary": "QueueEndpoint", "secondary": "QueueSecondaryEndpoint"},
     "file": {"primary": "FileEndpoint", "secondary": "FileSecondaryEndpoint"},
-    "dfs": {"primary": "BlobEndpoint", "secondary": "BlobSecondaryEndpoint"},
+    "dfs": {"primary": "BlobEndpoint", "secondary": "BlobEndpoint"},
 }
 
 
@@ -268,7 +268,8 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
             policies=[
                 StorageHeadersPolicy(),
                 self._credential_policy
-            ]
+            ],
+            enforce_https=False
         )
 
         pipeline_response = self._pipeline.run(

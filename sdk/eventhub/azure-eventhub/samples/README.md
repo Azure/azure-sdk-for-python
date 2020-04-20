@@ -11,51 +11,57 @@ urlFragment: eventhub-samples
 # Azure Event Hubs client library for Python Samples
 
 These are code samples that show common scenario operations with the Azure Event Hubs client library.
-Both [sync version](./sync_samples) and [async version](./async_samples) of samples are provided, async samples require Python 3.5 or later.
+Both [sync version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub/samples/sync_samples) and [async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub/samples/async_samples) of samples are provided, async samples require Python 3.5 or later.
 
-- [client_creation.py](./sync_samples/client_creation.py) ([async version](./async_samples/client_creation_async.py)) - Examples to create EventHubProducerClient and EventHubConsumerClient:
+- [client_creation.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub/samples/sync_samples/client_creation.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub/samples/async_samples/client_creation_async.py)) - Examples to create EventHubProducerClient and EventHubConsumerClient:
     - From a connection string
     - From a shared access key
     - Creation with configuration parameters
 
-- [send.py](./sync_samples/send.py) ([async version](./async_samples/send_async.py)) - Examples to send events:
+- [send.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub/samples/sync_samples/send.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub/samples/async_samples/send_async.py)) - Examples to send events:
     - Send event data batch
     - Send event data batch within limited size
     - Send event data batch to a specific partition determined by partition key
     - Send event data batch to a specific partition by partition id
     - Send event data batch with customized properties
 
-- [send_stream.py](./sync_samples/send_stream.py) ([async version](./async_samples/send_stream_async.py)) - Examples to do streaming sending:
+- [send_stream.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub/samples/sync_samples/send_stream.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub/samples/async_samples/send_stream_async.py)) - Examples to do streaming sending:
     - Send in a stream
 
-- [recv.py](./sync_samples/recv.py) ([async version](./async_samples/recv_async.py)) - Examples to receive events:
+- [recv.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub/samples/sync_samples/recv.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub/samples/async_samples/recv_async.py)) - Examples to receive events:
     - Receive events
 
-- [recv_track_last_enqueued_event_prop.py](./sync_samples/recv_track_last_enqueued_event_prop.py) ([async version](./async_samples/recv_track_last_enqueued_event_prop_async.py)) - Examples to get the latest enqueued event properties of a partition while receiving:
+- [recv_track_last_enqueued_event_prop.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub/samples/sync_samples/recv_track_last_enqueued_event_prop.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub/samples/async_samples/recv_track_last_enqueued_event_prop_async.py)) - Examples to get the latest enqueued event properties of a partition while receiving:
     - Get the latest enqueued event properties of a partition while receiving
 
-- [recv_with_custom_starting_position.py](./sync_samples/recv_with_custom_starting_position.py) ([async version](./async_samples/recv_with_custom_starting_position_async.py)) - Examples to start receiving from a specific position:
+- [recv_with_custom_starting_position.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub/samples/sync_samples/recv_with_custom_starting_position.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub/samples/async_samples/recv_with_custom_starting_position_async.py)) - Examples to start receiving from a specific position:
     - Start receiving from a specific position
 
-- [recv_with_checkpoint_store.py](./sync_samples/recv_with_checkpoint_store.py) ([async version](./async_samples/recv_with_checkpoint_store_async.py)) - Examples to receive events and do checkpoint using blob checkpoint store:
+- [recv_with_checkpoint_store.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub/samples/sync_samples/recv_with_checkpoint_store.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub/samples/async_samples/recv_with_checkpoint_store_async.py)) - Examples to receive events and do checkpoint using blob checkpoint store:
     - Receive events and do checkpoint using blob checkpoint store
 
-- [recv_with_checkpoint_by_batch.py](./sync_samples/recv_with_checkpoint_by_batch.py) ([async version](./async_samples/recv_with_checkpoint_by_batch_async.py)) - Examples to receive events and do checkpoint by batch using blob checkpoint store:
+- [recv_with_checkpoint_by_batch.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub/samples/sync_samples/recv_with_checkpoint_by_batch.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub/samples/async_samples/recv_with_checkpoint_by_batch_async.py)) - Examples to receive events and do checkpoint by batch using blob checkpoint store:
     - Receive events and do checkpoint every fixed amount of events (e.g. checkpoint every 20 events) using blob checkpoint store
 
-- [recv_with_checkpoint_by_time_interval.py](./sync_samples/recv_with_checkpoint_by_time_interval.py) ([async version](./async_samples/recv_with_checkpoint_by_time_interval_async.py)) - Examples to receive events and do checkpoint by time interval using blob checkpoint store:
+- [receive_batch_with_checkpoint.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub/samples/sync_samples/receive_batch_with_checkpoint.py) ([async_version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub/samples/async_samples/receive_batch_with_checkpoint_async.py)) - Examples to receive events in batches and do checkpoint by the batch:
+    - Receive events in batches by calling `EventHubConsumer.receive_batch` and do checkpoint with the last event of that batch.
+
+- [recv_with_checkpoint_by_time_interval.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub/samples/sync_samples/recv_with_checkpoint_by_time_interval.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub/samples/async_samples/recv_with_checkpoint_by_time_interval_async.py)) - Examples to receive events and do checkpoint by time interval using blob checkpoint store:
     - Receive events and do checkpoint every fixed time interval (e.g. checkpoint every 20 seconds) using blob checkpoint store
 
-- [recv_for_period.py](./sync_samples/recv_for_period.py) ([async version](./async_samples/recv_for_period_async.py)) - Examples to receive events for a period of time:
+- [recv_for_period.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub/samples/sync_samples/recv_for_period.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub/samples/async_samples/recv_for_period_async.py)) - Examples to receive events for a period of time:
     - Receive events for a period of time
 
 
-- [client_identity_authentication.py](./sync_samples/client_identity_authentication.py) ([async version](./async_samples/client_identity_authentication_async.py)) - Examples for authentication by Azure Active Directory:
+- [client_identity_authentication.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub/samples/sync_samples/client_identity_authentication.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub/samples/async_samples/client_identity_authentication_async.py)) - Examples for authentication by Azure Active Directory:
     - Authenticating and creating the client utilizing the `azure.identity` library
 
 
-- [proxy.py](./sync_samples/proxy.py) ([async version](./async_samples/proxy_async.py)) - Examples to send and receive events behind a proxy:
+- [proxy.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub/samples/sync_samples/proxy.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub/samples/async_samples/proxy_async.py)) - Examples to send and receive events behind a proxy:
     - Send and receive events behind a proxy
+
+- [iot_hub_connection_string_receive_async.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub/samples/async_samples/iot_hub_connection_string_receive_async.py) - Examples to receive events from an IoT Hub:
+    - Convert an IoT Hub connection string to the built-in Event Hub endpoint and receive events from it
 
 ## Prerequisites
 - Python 2.7, 3.5 or later.

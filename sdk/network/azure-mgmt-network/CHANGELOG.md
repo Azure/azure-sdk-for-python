@@ -1,5 +1,50 @@
 # Release History
 
+## 10.1.0 (2020-04-10)
+
+**Features**
+
+  - Model VpnConnection has a new parameter dpd_timeout_seconds
+  - Model FirewallPolicy has a new parameter intrusion_system_mode
+  - Model Subnet has a new parameter ip_allocations
+  - Model ApplicationGateway has a new parameter force_firewall_policy_association
+  - Model PrivateEndpoint has a new parameter custom_dns_configs
+  - Model VirtualNetworkGatewayConnection has a new parameter dpd_timeout_seconds
+  - Model VpnClientConfiguration has a new parameter radius_servers
+  - Model VirtualNetwork has a new parameter ip_allocations
+  - Model VirtualHub has a new parameter security_partner_provider
+  - Model VpnServerConfiguration has a new parameter radius_servers
+  - Added operation group PrivateDnsZoneGroupsOperations
+  - Added operation group SecurityPartnerProvidersOperations
+  - Added operation group IpAllocationsOperations
+
+## 10.0.0 (2020-03-31)
+
+**Features**
+
+  - Model VirtualNetworkGatewayConnection has a new parameter use_local_azure_ip_address
+  - Model NetworkRuleCondition has a new parameter source_ip_groups
+  - Model NetworkRuleCondition has a new parameter destination_ip_groups
+  - Model VirtualNetworkGatewayIPConfiguration has a new parameter private_ip_address
+  - Model BgpSettings has a new parameter bgp_peering_addresses
+  - Model ExpressRouteCircuitConnection has a new parameter ipv6_circuit_connection_config
+  - Model ApplicationGatewayHttpListener has a new parameter host_names
+  - Model ApplicationRuleCondition has a new parameter source_ip_groups
+  - Model VirtualNetworkGateway has a new parameter enable_private_ip_address
+  - Model LocalNetworkGateway has a new parameter fqdn
+  - Model VpnSiteLink has a new parameter fqdn
+  - Model NetworkSecurityGroup has a new parameter flow_logs
+  - Added operation NetworkManagementClientOperationsMixin.put_bastion_shareable_link
+  - Added operation NetworkManagementClientOperationsMixin.get_bastion_shareable_link
+  - Added operation NetworkManagementClientOperationsMixin.delete_bastion_shareable_link
+  - Added operation NetworkManagementClientOperationsMixin.disconnect_active_sessions
+  - Added operation NetworkManagementClientOperationsMixin.get_active_sessions
+  - Added operation group NetworkVirtualAppliancesOperations
+
+**Breaking changes**
+
+  - Model ApplicationGatewayHttpListener no longer has parameter hostnames
+
 ## 9.0.0 (2020-01-17)
 
 **Features**

@@ -21,9 +21,12 @@ try:
     from ._models_py3 import CognitiveServicesAccountKeys
     from ._models_py3 import CognitiveServicesAccountProperties
     from ._models_py3 import CognitiveServicesResourceAndSku
+    from ._models_py3 import Encryption
     from ._models_py3 import Error, ErrorException
     from ._models_py3 import ErrorBody
+    from ._models_py3 import Identity
     from ._models_py3 import IpRule
+    from ._models_py3 import KeyVaultProperties
     from ._models_py3 import MetricName
     from ._models_py3 import NetworkRuleSet
     from ._models_py3 import OperationDisplayInfo
@@ -35,6 +38,8 @@ try:
     from ._models_py3 import Sku
     from ._models_py3 import Usage
     from ._models_py3 import UsagesResult
+    from ._models_py3 import UserAssignedIdentity
+    from ._models_py3 import UserOwnedStorage
     from ._models_py3 import VirtualNetworkRule
 except (SyntaxError, ImportError):
     from ._models import CheckDomainAvailabilityParameter
@@ -48,9 +53,12 @@ except (SyntaxError, ImportError):
     from ._models import CognitiveServicesAccountKeys
     from ._models import CognitiveServicesAccountProperties
     from ._models import CognitiveServicesResourceAndSku
+    from ._models import Encryption
     from ._models import Error, ErrorException
     from ._models import ErrorBody
+    from ._models import Identity
     from ._models import IpRule
+    from ._models import KeyVaultProperties
     from ._models import MetricName
     from ._models import NetworkRuleSet
     from ._models import OperationDisplayInfo
@@ -62,6 +70,8 @@ except (SyntaxError, ImportError):
     from ._models import Sku
     from ._models import Usage
     from ._models import UsagesResult
+    from ._models import UserAssignedIdentity
+    from ._models import UserOwnedStorage
     from ._models import VirtualNetworkRule
 from ._paged_models import CognitiveServicesAccountPaged
 from ._paged_models import OperationEntityPaged
@@ -70,6 +80,8 @@ from ._cognitive_services_management_client_enums import (
     SkuTier,
     ProvisioningState,
     NetworkRuleAction,
+    KeySource,
+    IdentityType,
     KeyName,
     UnitType,
     QuotaUsageStatus,
@@ -89,9 +101,12 @@ __all__ = [
     'CognitiveServicesAccountKeys',
     'CognitiveServicesAccountProperties',
     'CognitiveServicesResourceAndSku',
+    'Encryption',
     'Error', 'ErrorException',
     'ErrorBody',
+    'Identity',
     'IpRule',
+    'KeyVaultProperties',
     'MetricName',
     'NetworkRuleSet',
     'OperationDisplayInfo',
@@ -103,6 +118,8 @@ __all__ = [
     'Sku',
     'Usage',
     'UsagesResult',
+    'UserAssignedIdentity',
+    'UserOwnedStorage',
     'VirtualNetworkRule',
     'CognitiveServicesAccountPaged',
     'ResourceSkuPaged',
@@ -110,6 +127,8 @@ __all__ = [
     'SkuTier',
     'ProvisioningState',
     'NetworkRuleAction',
+    'KeySource',
+    'IdentityType',
     'KeyName',
     'UnitType',
     'QuotaUsageStatus',

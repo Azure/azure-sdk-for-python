@@ -1,6 +1,20 @@
 # Release History
 
-## 12.2.1 (Unreleased)
+## 12.3.1 (Unreleased)
+
+**Fixes**
+- Fixed issue where batch requests could not be combined with token credentials (#9534)
+
+
+## 12.3.0 (2020-03-10)
+
+**New features**
+
+- `stage_block` now propagates the response from the service.
+
+**Fixes**
+- Fixed a bug where a new transport is being passed in the `get_blob_client` method instead
+of using the existing one in the `ContainerClient`.
 
 **Notes**
 - The `StorageUserAgentPolicy` is now replaced with the `UserAgentPolicy` from azure-core. With this, the custom user agents are now added as a prefix instead of being appended.

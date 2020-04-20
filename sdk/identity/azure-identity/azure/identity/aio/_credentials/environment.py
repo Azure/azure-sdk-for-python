@@ -7,7 +7,6 @@ from typing import TYPE_CHECKING
 
 from ... import CredentialUnavailableError
 from ..._constants import EnvironmentVariables
-from ..._credentials.environment import get_credential_unavailable_message
 from .client_credential import CertificateCredential, ClientSecretCredential
 from .base import AsyncCredentialBase
 
@@ -36,7 +35,6 @@ class EnvironmentCredential(AsyncCredentialBase):
 
     def __init__(self, **kwargs: "Any") -> None:
         self._credential = None  # type: Optional[Union[CertificateCredential, ClientSecretCredential]]
-        self._unavailable_message = ""
 
         if all(os.environ.get(v) is not None for v in EnvironmentVariables.CLIENT_SECRET_VARS):
             self._credential = ClientSecretCredential(
@@ -52,9 +50,6 @@ class EnvironmentCredential(AsyncCredentialBase):
                 certificate_path=os.environ[EnvironmentVariables.AZURE_CLIENT_CERTIFICATE_PATH],
                 **kwargs
             )
-
-        if not self._credential:
-            self._unavailable_message = get_credential_unavailable_message()
 
     async def __aenter__(self):
         if self._credential:
@@ -72,10 +67,13 @@ class EnvironmentCredential(AsyncCredentialBase):
 
         .. note:: This method is called by Azure SDK clients. It isn't intended for use in application code.
 
-        :param str scopes: desired scopes for the token
+        :param str scopes: desired scopes for the access token. This method requires at least one scope.
         :rtype: :class:`azure.core.credentials.AccessToken`
         :raises ~azure.identity.CredentialUnavailableError: environment variable configuration is incomplete
         """
         if not self._credential:
-            raise CredentialUnavailableError(message=self._unavailable_message)
+            message = (
+                "EnvironmentCredential authentication unavailable. Environment variables are not fully configured."
+            )
+            raise CredentialUnavailableError(message=message)
         return await self._credential.get_token(*scopes, **kwargs)

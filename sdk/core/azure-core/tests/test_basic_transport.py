@@ -92,7 +92,7 @@ def test_http_client_response():
     # Don't assume too much in those assert, since we reach a real server
     assert response.internal_response is r1
     assert response.reason is not None
-    assert response.status_code == 200
+    assert isinstance(response.status_code, int)
     assert len(response.headers.keys()) != 0
     assert len(response.text()) != 0
     assert "content-type" in response.headers
@@ -137,7 +137,7 @@ def test_response_deserialization():
 
     response = _deserialize_response(body, request)
 
-    assert response.status_code == 200
+    assert isinstance(response.status_code, int)
     assert response.reason == "OK"
     assert response.headers == {
         'x-ms-request-id': '778fdc83-801e-0000-62ff-0334671e284f',
@@ -204,6 +204,55 @@ def test_multipart_send():
         b'\r\n'
         b'DELETE /container1/blob1 HTTP/1.1\r\n'
         b'x-ms-date: Thu, 14 Jun 2018 16:46:54 GMT\r\n'
+        b'\r\n'
+        b'\r\n'
+        b'--batch_357de4f7-6d0b-4e02-8cd2-6361411a9525--\r\n'
+    )
+
+
+@pytest.mark.skipif(sys.version_info < (3, 0), reason="Multipart serialization not supported on 2.7")
+def test_multipart_send_with_context():
+
+    transport = mock.MagicMock(spec=HttpTransport)
+
+    header_policy = HeadersPolicy({
+        'x-ms-date': 'Thu, 14 Jun 2018 16:46:54 GMT'
+    })
+
+    req0 = HttpRequest("DELETE", "/container0/blob0")
+    req1 = HttpRequest("DELETE", "/container1/blob1")
+
+    request = HttpRequest("POST", "http://account.blob.core.windows.net/?comp=batch")
+    request.set_multipart_mixed(
+        req0,
+        req1,
+        policies=[header_policy],
+        boundary="batch_357de4f7-6d0b-4e02-8cd2-6361411a9525", # Fix it so test are deterministic
+        headers={'Accept': 'application/json'}
+    )
+
+    with Pipeline(transport) as pipeline:
+        pipeline.run(request)
+
+    assert request.body == (
+        b'--batch_357de4f7-6d0b-4e02-8cd2-6361411a9525\r\n'
+        b'Content-Type: application/http\r\n'
+        b'Content-Transfer-Encoding: binary\r\n'
+        b'Content-ID: 0\r\n'
+        b'\r\n'
+        b'DELETE /container0/blob0 HTTP/1.1\r\n'
+        b'x-ms-date: Thu, 14 Jun 2018 16:46:54 GMT\r\n'
+        b'Accept: application/json\r\n'
+        b'\r\n'
+        b'\r\n'
+        b'--batch_357de4f7-6d0b-4e02-8cd2-6361411a9525\r\n'
+        b'Content-Type: application/http\r\n'
+        b'Content-Transfer-Encoding: binary\r\n'
+        b'Content-ID: 1\r\n'
+        b'\r\n'
+        b'DELETE /container1/blob1 HTTP/1.1\r\n'
+        b'x-ms-date: Thu, 14 Jun 2018 16:46:54 GMT\r\n'
+        b'Accept: application/json\r\n'
         b'\r\n'
         b'\r\n'
         b'--batch_357de4f7-6d0b-4e02-8cd2-6361411a9525--\r\n'

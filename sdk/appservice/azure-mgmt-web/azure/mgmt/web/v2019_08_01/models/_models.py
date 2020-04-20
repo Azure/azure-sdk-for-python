@@ -1979,6 +1979,29 @@ class AppServicePlanPatchResource(ProxyOnlyResource):
         self.provisioning_state = None
 
 
+class ArmIdWrapper(Model):
+    """A wrapper for an ARM resource id.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id:
+    :vartype id: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ArmIdWrapper, self).__init__(**kwargs)
+        self.id = None
+
+
 class AutoHealActions(Model):
     """Actions which to take by the auto-heal module when a rule is triggered.
 
@@ -5717,6 +5740,30 @@ class HostingEnvironmentProfile(Model):
         self.type = None
 
 
+class HostKeys(Model):
+    """Functions host level keys.
+
+    :param master_key: Secret key.
+    :type master_key: str
+    :param function_keys: Host level function keys.
+    :type function_keys: dict[str, str]
+    :param system_keys: System keys.
+    :type system_keys: dict[str, str]
+    """
+
+    _attribute_map = {
+        'master_key': {'key': 'masterKey', 'type': 'str'},
+        'function_keys': {'key': 'functionKeys', 'type': '{str}'},
+        'system_keys': {'key': 'systemKeys', 'type': '{str}'},
+    }
+
+    def __init__(self, **kwargs):
+        super(HostKeys, self).__init__(**kwargs)
+        self.master_key = kwargs.get('master_key', None)
+        self.function_keys = kwargs.get('function_keys', None)
+        self.system_keys = kwargs.get('system_keys', None)
+
+
 class HostName(Model):
     """Details of a hostname derived from a domain.
 
@@ -6180,6 +6227,26 @@ class IpSecurityRestriction(Model):
         self.priority = kwargs.get('priority', None)
         self.name = kwargs.get('name', None)
         self.description = kwargs.get('description', None)
+
+
+class KeyInfo(Model):
+    """Function key info.
+
+    :param name: Key name
+    :type name: str
+    :param value: Key value
+    :type value: str
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(KeyInfo, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.value = kwargs.get('value', None)
 
 
 class KeyVaultReferenceCollection(ProxyOnlyResource):
@@ -7392,6 +7459,209 @@ class PrivateAccessVirtualNetwork(Model):
         self.key = kwargs.get('key', None)
         self.resource_id = kwargs.get('resource_id', None)
         self.subnets = kwargs.get('subnets', None)
+
+
+class PrivateEndpointConnectionResource(ProxyOnlyResource):
+    """Private Endpoint Connection ARM resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource Name.
+    :vartype name: str
+    :param kind: Kind of resource.
+    :type kind: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar provisioning_state:
+    :vartype provisioning_state: str
+    :param private_endpoint: PrivateEndpoint of a remote private endpoint
+     connection
+    :type private_endpoint: ~azure.mgmt.web.v2019_08_01.models.ArmIdWrapper
+    :param private_link_service_connection_state:
+    :type private_link_service_connection_state:
+     ~azure.mgmt.web.v2019_08_01.models.PrivateLinkConnectionState
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'private_endpoint': {'key': 'properties.privateEndpoint', 'type': 'ArmIdWrapper'},
+        'private_link_service_connection_state': {'key': 'properties.privateLinkServiceConnectionState', 'type': 'PrivateLinkConnectionState'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PrivateEndpointConnectionResource, self).__init__(**kwargs)
+        self.provisioning_state = None
+        self.private_endpoint = kwargs.get('private_endpoint', None)
+        self.private_link_service_connection_state = kwargs.get('private_link_service_connection_state', None)
+
+
+class PrivateLinkConnectionApprovalRequestResource(ProxyOnlyResource):
+    """Private Endpoint Connection Approval ARM resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource Name.
+    :vartype name: str
+    :param kind: Kind of resource.
+    :type kind: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :param private_link_service_connection_state:
+    :type private_link_service_connection_state:
+     ~azure.mgmt.web.v2019_08_01.models.PrivateLinkConnectionState
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'private_link_service_connection_state': {'key': 'properties.privateLinkServiceConnectionState', 'type': 'PrivateLinkConnectionState'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PrivateLinkConnectionApprovalRequestResource, self).__init__(**kwargs)
+        self.private_link_service_connection_state = kwargs.get('private_link_service_connection_state', None)
+
+
+class PrivateLinkConnectionState(Model):
+    """The state of a private link connection.
+
+    :param status: Status of a private link connection
+    :type status: str
+    :param description: Description of a private link connection
+    :type description: str
+    :param actions_required: ActionsRequired for a private link connection
+    :type actions_required: str
+    """
+
+    _attribute_map = {
+        'status': {'key': 'status', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'actions_required': {'key': 'actionsRequired', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PrivateLinkConnectionState, self).__init__(**kwargs)
+        self.status = kwargs.get('status', None)
+        self.description = kwargs.get('description', None)
+        self.actions_required = kwargs.get('actions_required', None)
+
+
+class PrivateLinkResource(Model):
+    """A private link resource.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param id: Required.
+    :type id: str
+    :param name: Required. Name of a private link resource
+    :type name: str
+    :param type: Required.
+    :type type: str
+    :param properties: Required. Properties of a private link resource
+    :type properties:
+     ~azure.mgmt.web.v2019_08_01.models.PrivateLinkResourceProperties
+    """
+
+    _validation = {
+        'id': {'required': True},
+        'name': {'required': True},
+        'type': {'required': True},
+        'properties': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'PrivateLinkResourceProperties'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PrivateLinkResource, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.name = kwargs.get('name', None)
+        self.type = kwargs.get('type', None)
+        self.properties = kwargs.get('properties', None)
+
+
+class PrivateLinkResourceProperties(Model):
+    """Properties of a private link resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar group_id: GroupId of a private link resource
+    :vartype group_id: str
+    :ivar required_members: RequiredMembers of a private link resource
+    :vartype required_members: list[str]
+    :ivar required_zone_names: RequiredZoneNames of a private link resource
+    :vartype required_zone_names: list[str]
+    """
+
+    _validation = {
+        'group_id': {'readonly': True},
+        'required_members': {'readonly': True},
+        'required_zone_names': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'group_id': {'key': 'groupId', 'type': 'str'},
+        'required_members': {'key': 'requiredMembers', 'type': '[str]'},
+        'required_zone_names': {'key': 'requiredZoneNames', 'type': '[str]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PrivateLinkResourceProperties, self).__init__(**kwargs)
+        self.group_id = None
+        self.required_members = None
+        self.required_zone_names = None
+
+
+class PrivateLinkResourcesWrapper(Model):
+    """Wrapper for a collection of private link resources.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param value: Required.
+    :type value: list[~azure.mgmt.web.v2019_08_01.models.PrivateLinkResource]
+    """
+
+    _validation = {
+        'value': {'required': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[PrivateLinkResource]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PrivateLinkResourcesWrapper, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
 
 
 class ProcessInfo(ProxyOnlyResource):
@@ -9239,6 +9509,8 @@ class SiteConfig(Model):
     :type python_version: str
     :param node_version: Version of Node.js.
     :type node_version: str
+    :param power_shell_version: Version of PowerShell.
+    :type power_shell_version: str
     :param linux_fx_version: Linux App Framework and version
     :type linux_fx_version: str
     :param windows_fx_version: Xenon App Framework and version
@@ -9380,6 +9652,7 @@ class SiteConfig(Model):
         'php_version': {'key': 'phpVersion', 'type': 'str'},
         'python_version': {'key': 'pythonVersion', 'type': 'str'},
         'node_version': {'key': 'nodeVersion', 'type': 'str'},
+        'power_shell_version': {'key': 'powerShellVersion', 'type': 'str'},
         'linux_fx_version': {'key': 'linuxFxVersion', 'type': 'str'},
         'windows_fx_version': {'key': 'windowsFxVersion', 'type': 'str'},
         'request_tracing_enabled': {'key': 'requestTracingEnabled', 'type': 'bool'},
@@ -9438,6 +9711,7 @@ class SiteConfig(Model):
         self.php_version = kwargs.get('php_version', None)
         self.python_version = kwargs.get('python_version', None)
         self.node_version = kwargs.get('node_version', None)
+        self.power_shell_version = kwargs.get('power_shell_version', None)
         self.linux_fx_version = kwargs.get('linux_fx_version', None)
         self.windows_fx_version = kwargs.get('windows_fx_version', None)
         self.request_tracing_enabled = kwargs.get('request_tracing_enabled', None)
@@ -9515,6 +9789,8 @@ class SiteConfigResource(ProxyOnlyResource):
     :type python_version: str
     :param node_version: Version of Node.js.
     :type node_version: str
+    :param power_shell_version: Version of PowerShell.
+    :type power_shell_version: str
     :param linux_fx_version: Linux App Framework and version
     :type linux_fx_version: str
     :param windows_fx_version: Xenon App Framework and version
@@ -9663,6 +9939,7 @@ class SiteConfigResource(ProxyOnlyResource):
         'php_version': {'key': 'properties.phpVersion', 'type': 'str'},
         'python_version': {'key': 'properties.pythonVersion', 'type': 'str'},
         'node_version': {'key': 'properties.nodeVersion', 'type': 'str'},
+        'power_shell_version': {'key': 'properties.powerShellVersion', 'type': 'str'},
         'linux_fx_version': {'key': 'properties.linuxFxVersion', 'type': 'str'},
         'windows_fx_version': {'key': 'properties.windowsFxVersion', 'type': 'str'},
         'request_tracing_enabled': {'key': 'properties.requestTracingEnabled', 'type': 'bool'},
@@ -9721,6 +9998,7 @@ class SiteConfigResource(ProxyOnlyResource):
         self.php_version = kwargs.get('php_version', None)
         self.python_version = kwargs.get('python_version', None)
         self.node_version = kwargs.get('node_version', None)
+        self.power_shell_version = kwargs.get('power_shell_version', None)
         self.linux_fx_version = kwargs.get('linux_fx_version', None)
         self.windows_fx_version = kwargs.get('windows_fx_version', None)
         self.request_tracing_enabled = kwargs.get('request_tracing_enabled', None)
@@ -11126,6 +11404,522 @@ class StampCapacity(Model):
         self.is_applicable_for_all_compute_modes = kwargs.get('is_applicable_for_all_compute_modes', None)
         self.site_mode = kwargs.get('site_mode', None)
         self.is_linux = kwargs.get('is_linux', None)
+
+
+class StaticSiteARMResource(Resource):
+    """Static Site ARM resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource Name.
+    :vartype name: str
+    :param kind: Kind of resource.
+    :type kind: str
+    :param location: Required. Resource Location.
+    :type location: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :param tags: Resource tags.
+    :type tags: dict[str, str]
+    :ivar default_hostname: The default autogenerated hostname for the static
+     site.
+    :vartype default_hostname: str
+    :param repository_url: URL for the repository of the static site.
+    :type repository_url: str
+    :param branch: The target branch in the repository.
+    :type branch: str
+    :ivar custom_domains: The custom domains associated with this static site.
+    :vartype custom_domains: list[str]
+    :param repository_token: A user's github repository token. This is used to
+     setup the Github Actions workflow file and API secrets.
+    :type repository_token: str
+    :param build_properties: Build properties to configure on the repository.
+    :type build_properties:
+     ~azure.mgmt.web.v2019_08_01.models.StaticSiteBuildProperties
+    :param sku:
+    :type sku: ~azure.mgmt.web.v2019_08_01.models.SkuDescription
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'location': {'required': True},
+        'type': {'readonly': True},
+        'default_hostname': {'readonly': True},
+        'custom_domains': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'default_hostname': {'key': 'properties.defaultHostname', 'type': 'str'},
+        'repository_url': {'key': 'properties.repositoryUrl', 'type': 'str'},
+        'branch': {'key': 'properties.branch', 'type': 'str'},
+        'custom_domains': {'key': 'properties.customDomains', 'type': '[str]'},
+        'repository_token': {'key': 'properties.repositoryToken', 'type': 'str'},
+        'build_properties': {'key': 'properties.buildProperties', 'type': 'StaticSiteBuildProperties'},
+        'sku': {'key': 'sku', 'type': 'SkuDescription'},
+    }
+
+    def __init__(self, **kwargs):
+        super(StaticSiteARMResource, self).__init__(**kwargs)
+        self.default_hostname = None
+        self.repository_url = kwargs.get('repository_url', None)
+        self.branch = kwargs.get('branch', None)
+        self.custom_domains = None
+        self.repository_token = kwargs.get('repository_token', None)
+        self.build_properties = kwargs.get('build_properties', None)
+        self.sku = kwargs.get('sku', None)
+
+
+class StaticSiteBuildARMResource(ProxyOnlyResource):
+    """Static Site Build ARM resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource Name.
+    :vartype name: str
+    :param kind: Kind of resource.
+    :type kind: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar build_id: An identifier for the static site build.
+    :vartype build_id: str
+    :ivar source_branch: The source branch.
+    :vartype source_branch: str
+    :ivar pull_request_title: The title of a pull request that a static site
+     build is related to.
+    :vartype pull_request_title: str
+    :ivar hostname: The hostname for a static site build.
+    :vartype hostname: str
+    :ivar created_time_utc: When this build was created.
+    :vartype created_time_utc: datetime
+    :ivar last_updated_on: When this build was updated.
+    :vartype last_updated_on: datetime
+    :ivar status: The status of the static site build. Possible values
+     include: 'WaitingForDeployment', 'Uploading', 'Deploying', 'Ready',
+     'Failed', 'Deleting', 'Detached'
+    :vartype status: str or ~azure.mgmt.web.v2019_08_01.models.BuildStatus
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'build_id': {'readonly': True},
+        'source_branch': {'readonly': True},
+        'pull_request_title': {'readonly': True},
+        'hostname': {'readonly': True},
+        'created_time_utc': {'readonly': True},
+        'last_updated_on': {'readonly': True},
+        'status': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'build_id': {'key': 'properties.buildId', 'type': 'str'},
+        'source_branch': {'key': 'properties.sourceBranch', 'type': 'str'},
+        'pull_request_title': {'key': 'properties.pullRequestTitle', 'type': 'str'},
+        'hostname': {'key': 'properties.hostname', 'type': 'str'},
+        'created_time_utc': {'key': 'properties.createdTimeUtc', 'type': 'iso-8601'},
+        'last_updated_on': {'key': 'properties.lastUpdatedOn', 'type': 'iso-8601'},
+        'status': {'key': 'properties.status', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(StaticSiteBuildARMResource, self).__init__(**kwargs)
+        self.build_id = None
+        self.source_branch = None
+        self.pull_request_title = None
+        self.hostname = None
+        self.created_time_utc = None
+        self.last_updated_on = None
+        self.status = None
+
+
+class StaticSiteBuildProperties(Model):
+    """Build properties for the static site.
+
+    :param app_location: The path to the app code within the repository.
+    :type app_location: str
+    :param api_location: The path to the api code within the repository.
+    :type api_location: str
+    :param app_artifact_location: The path of the app artifacts after
+     building.
+    :type app_artifact_location: str
+    """
+
+    _attribute_map = {
+        'app_location': {'key': 'appLocation', 'type': 'str'},
+        'api_location': {'key': 'apiLocation', 'type': 'str'},
+        'app_artifact_location': {'key': 'appArtifactLocation', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(StaticSiteBuildProperties, self).__init__(**kwargs)
+        self.app_location = kwargs.get('app_location', None)
+        self.api_location = kwargs.get('api_location', None)
+        self.app_artifact_location = kwargs.get('app_artifact_location', None)
+
+
+class StaticSiteCustomDomainOverviewARMResource(ProxyOnlyResource):
+    """Static Site Custom Domain Overview ARM resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource Name.
+    :vartype name: str
+    :param kind: Kind of resource.
+    :type kind: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar domain_name: The domain name for the static site custom domain.
+    :vartype domain_name: str
+    :ivar created_on: The date and time on which the custom domain was created
+     for the static site.
+    :vartype created_on: datetime
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'domain_name': {'readonly': True},
+        'created_on': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'domain_name': {'key': 'properties.domainName', 'type': 'str'},
+        'created_on': {'key': 'properties.createdOn', 'type': 'iso-8601'},
+    }
+
+    def __init__(self, **kwargs):
+        super(StaticSiteCustomDomainOverviewARMResource, self).__init__(**kwargs)
+        self.domain_name = None
+        self.created_on = None
+
+
+class StaticSiteFunctionOverviewARMResource(ProxyOnlyResource):
+    """Static Site Function Overview ARM resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource Name.
+    :vartype name: str
+    :param kind: Kind of resource.
+    :type kind: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar function_name: The name for the function
+    :vartype function_name: str
+    :ivar trigger_type: The trigger type of the function. Possible values
+     include: 'HttpTrigger', 'Unknown'
+    :vartype trigger_type: str or
+     ~azure.mgmt.web.v2019_08_01.models.TriggerTypes
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'function_name': {'readonly': True},
+        'trigger_type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'function_name': {'key': 'properties.functionName', 'type': 'str'},
+        'trigger_type': {'key': 'properties.triggerType', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(StaticSiteFunctionOverviewARMResource, self).__init__(**kwargs)
+        self.function_name = None
+        self.trigger_type = None
+
+
+class StaticSitePatchResource(ProxyOnlyResource):
+    """ARM resource for a static site when patching.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource Name.
+    :vartype name: str
+    :param kind: Kind of resource.
+    :type kind: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar default_hostname: The default autogenerated hostname for the static
+     site.
+    :vartype default_hostname: str
+    :param repository_url: URL for the repository of the static site.
+    :type repository_url: str
+    :param branch: The target branch in the repository.
+    :type branch: str
+    :ivar custom_domains: The custom domains associated with this static site.
+    :vartype custom_domains: list[str]
+    :param repository_token: A user's github repository token. This is used to
+     setup the Github Actions workflow file and API secrets.
+    :type repository_token: str
+    :param build_properties: Build properties to configure on the repository.
+    :type build_properties:
+     ~azure.mgmt.web.v2019_08_01.models.StaticSiteBuildProperties
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'default_hostname': {'readonly': True},
+        'custom_domains': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'default_hostname': {'key': 'properties.defaultHostname', 'type': 'str'},
+        'repository_url': {'key': 'properties.repositoryUrl', 'type': 'str'},
+        'branch': {'key': 'properties.branch', 'type': 'str'},
+        'custom_domains': {'key': 'properties.customDomains', 'type': '[str]'},
+        'repository_token': {'key': 'properties.repositoryToken', 'type': 'str'},
+        'build_properties': {'key': 'properties.buildProperties', 'type': 'StaticSiteBuildProperties'},
+    }
+
+    def __init__(self, **kwargs):
+        super(StaticSitePatchResource, self).__init__(**kwargs)
+        self.default_hostname = None
+        self.repository_url = kwargs.get('repository_url', None)
+        self.branch = kwargs.get('branch', None)
+        self.custom_domains = None
+        self.repository_token = kwargs.get('repository_token', None)
+        self.build_properties = kwargs.get('build_properties', None)
+
+
+class StaticSiteResetPropertiesARMResource(ProxyOnlyResource):
+    """Static Site Reset Properties ARM resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource Name.
+    :vartype name: str
+    :param kind: Kind of resource.
+    :type kind: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :param repository_token: The token which proves admin privileges to the
+     repository.
+    :type repository_token: str
+    :param should_update_repository: Determines whether the repository should
+     be updated with the new properties.
+    :type should_update_repository: bool
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'repository_token': {'key': 'properties.repositoryToken', 'type': 'str'},
+        'should_update_repository': {'key': 'properties.shouldUpdateRepository', 'type': 'bool'},
+    }
+
+    def __init__(self, **kwargs):
+        super(StaticSiteResetPropertiesARMResource, self).__init__(**kwargs)
+        self.repository_token = kwargs.get('repository_token', None)
+        self.should_update_repository = kwargs.get('should_update_repository', None)
+
+
+class StaticSiteUserARMResource(ProxyOnlyResource):
+    """Static Site User ARM resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource Name.
+    :vartype name: str
+    :param kind: Kind of resource.
+    :type kind: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar provider: The identity provider for the static site user.
+    :vartype provider: str
+    :ivar user_id: The user id for the static site user.
+    :vartype user_id: str
+    :ivar display_name: The display name for the static site user.
+    :vartype display_name: str
+    :param roles: The roles for the static site user, in free-form string
+     format
+    :type roles: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'provider': {'readonly': True},
+        'user_id': {'readonly': True},
+        'display_name': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'provider': {'key': 'properties.provider', 'type': 'str'},
+        'user_id': {'key': 'properties.userId', 'type': 'str'},
+        'display_name': {'key': 'properties.displayName', 'type': 'str'},
+        'roles': {'key': 'properties.roles', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(StaticSiteUserARMResource, self).__init__(**kwargs)
+        self.provider = None
+        self.user_id = None
+        self.display_name = None
+        self.roles = kwargs.get('roles', None)
+
+
+class StaticSiteUserInvitationRequestResource(ProxyOnlyResource):
+    """Static sites user roles invitation resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource Name.
+    :vartype name: str
+    :param kind: Kind of resource.
+    :type kind: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :param domain: The domain name for the static site custom domain.
+    :type domain: str
+    :param provider: The identity provider for the static site user.
+    :type provider: str
+    :param user_details: The user id for the static site user.
+    :type user_details: str
+    :param roles: The roles for the static site user, in free-form string
+     format
+    :type roles: str
+    :param num_hours_to_expiration: The number of hours the sas token stays
+     valid
+    :type num_hours_to_expiration: int
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'domain': {'key': 'properties.domain', 'type': 'str'},
+        'provider': {'key': 'properties.provider', 'type': 'str'},
+        'user_details': {'key': 'properties.userDetails', 'type': 'str'},
+        'roles': {'key': 'properties.roles', 'type': 'str'},
+        'num_hours_to_expiration': {'key': 'properties.numHoursToExpiration', 'type': 'int'},
+    }
+
+    def __init__(self, **kwargs):
+        super(StaticSiteUserInvitationRequestResource, self).__init__(**kwargs)
+        self.domain = kwargs.get('domain', None)
+        self.provider = kwargs.get('provider', None)
+        self.user_details = kwargs.get('user_details', None)
+        self.roles = kwargs.get('roles', None)
+        self.num_hours_to_expiration = kwargs.get('num_hours_to_expiration', None)
+
+
+class StaticSiteUserInvitationResponseResource(ProxyOnlyResource):
+    """Static sites user roles invitation link resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource Name.
+    :vartype name: str
+    :param kind: Kind of resource.
+    :type kind: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar expires_on: The expiration time of the invitation
+    :vartype expires_on: datetime
+    :ivar invitation_url: The url for the invitation link
+    :vartype invitation_url: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'expires_on': {'readonly': True},
+        'invitation_url': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'expires_on': {'key': 'properties.expiresOn', 'type': 'iso-8601'},
+        'invitation_url': {'key': 'properties.invitationUrl', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(StaticSiteUserInvitationResponseResource, self).__init__(**kwargs)
+        self.expires_on = None
+        self.invitation_url = None
 
 
 class StatusCodesBasedTrigger(Model):

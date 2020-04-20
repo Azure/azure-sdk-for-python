@@ -18,3 +18,4 @@ from .v2018_09_01.models import *
 from .v2018_11_27_preview.models import *
 from .v2019_03_01.models import *
 from .v2019_06_01.models import *
+from .v2019_10_17.models import *

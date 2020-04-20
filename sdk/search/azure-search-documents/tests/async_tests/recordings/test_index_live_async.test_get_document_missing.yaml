@@ -1,0 +1,36 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json;odata.metadata=none
+      User-Agent:
+      - azsdk-python-search-documents/1.0.0b2 Python/3.6.3 (Windows-10-10.0.18362-SP0)
+      api-key:
+      - 4A8AB8FCAA193891F875DA3C11F937AA
+    method: GET
+    uri: https://searchd1281368.search.windows.net/indexes('drgqefsg')/docs('1000')?api-version=2019-05-06-Preview
+  response:
+    body:
+      string: ''
+    headers:
+      cache-control: no-cache
+      content-length: '0'
+      date: Tue, 31 Mar 2020 17:41:56 GMT
+      elapsed-time: '127'
+      expires: '-1'
+      pragma: no-cache
+      request-id: ea8868ee-7376-11ea-9a1e-5cf37071153c
+      strict-transport-security: max-age=15724800; includeSubDomains
+    status:
+      code: 404
+      message: Not Found
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - searchd1281368.search.windows.net
+        - /indexes('drgqefsg')/docs('1000')
+        - api-version=2019-05-06-Preview
+        - ''
+version: 1

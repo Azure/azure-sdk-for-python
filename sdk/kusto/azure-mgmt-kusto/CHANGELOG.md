@@ -1,5 +1,17 @@
 # Release History
 
+## 0.7.0 (2020-03-20)
+
+**Features**
+
+- Model ClusterUpdate has a new parameter enable_purge
+- Model ClusterUpdate has a new parameter language_extensions
+- Model Cluster has a new parameter enable_purge
+- Model Cluster has a new parameter language_extensions
+- Added operation ClustersOperations.add_language_extensions
+- Added operation ClustersOperations.remove_language_extensions
+- Added operation ClustersOperations.list_language_extensions
+
 ## 0.6.0 (2020-01-31)
 
 **Features**

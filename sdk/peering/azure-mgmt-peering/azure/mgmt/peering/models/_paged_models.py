@@ -64,6 +64,45 @@ class PeeringLocationPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(PeeringLocationPaged, self).__init__(*args, **kwargs)
+class PeeringRegisteredAsnPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`PeeringRegisteredAsn <azure.mgmt.peering.models.PeeringRegisteredAsn>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[PeeringRegisteredAsn]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(PeeringRegisteredAsnPaged, self).__init__(*args, **kwargs)
+class PeeringRegisteredPrefixPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`PeeringRegisteredPrefix <azure.mgmt.peering.models.PeeringRegisteredPrefix>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[PeeringRegisteredPrefix]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(PeeringRegisteredPrefixPaged, self).__init__(*args, **kwargs)
+class PeeringServiceCountryPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`PeeringServiceCountry <azure.mgmt.peering.models.PeeringServiceCountry>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[PeeringServiceCountry]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(PeeringServiceCountryPaged, self).__init__(*args, **kwargs)
 class PeeringServiceLocationPaged(Paged):
     """
     A paging container for iterating over a list of :class:`PeeringServiceLocation <azure.mgmt.peering.models.PeeringServiceLocation>` object

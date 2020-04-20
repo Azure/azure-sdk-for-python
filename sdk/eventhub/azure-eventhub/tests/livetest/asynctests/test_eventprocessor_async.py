@@ -51,7 +51,7 @@ async def test_loadbalancer_balance():
             self.stop = False
             self._on_event_received = kwargs.get("on_event_received")
 
-        async def receive(self):
+        async def receive(self, *args, **kwargs):
             await asyncio.sleep(0.1)
             await self._on_event_received(EventData("mock events"))
 
@@ -198,7 +198,7 @@ async def test_partition_processor():
             self.stop = False
             self._on_event_received = kwargs.get("on_event_received")
 
-        async def receive(self):
+        async def receive(self, *args, **kwargs):
             await asyncio.sleep(0.1)
             await self._on_event_received(EventData("mock events"))
 
@@ -283,7 +283,7 @@ async def test_partition_processor_process_events_error():
             self.stop = False
             self._on_event_received = kwargs.get("on_event_received")
 
-        async def receive(self):
+        async def receive(self, *args, **kwargs):
             await asyncio.sleep(0.1)
             await self._on_event_received(EventData("mock events"))
 
@@ -350,7 +350,7 @@ async def test_partition_processor_process_eventhub_consumer_error():
             self.stop = False
             self._on_event_received = kwargs.get("on_event_received")
 
-        async def receive(self):
+        async def receive(self, *args, **kwargs):
             raise EventHubError("Mock EventHubConsumer EventHubError")
 
         async def close(self):
@@ -412,7 +412,7 @@ async def test_partition_processor_process_error_close_error():
             self.stop = False
             self._on_event_received = kwargs.get("on_event_received")
 
-        async def receive(self):
+        async def receive(self, *args, **kwargs):
             await asyncio.sleep(0.1)
             await self._on_event_received(EventData("mock events"))
 

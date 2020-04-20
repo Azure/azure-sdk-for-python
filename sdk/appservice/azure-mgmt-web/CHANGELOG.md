@@ -1,5 +1,38 @@
 # Release History
 
+## 0.46.0 (2020-04-10)
+
+**Features**
+
+  - Model SiteConfig has a new parameter power_shell_version
+  - Model SiteConfigResource has a new parameter power_shell_version
+  - Added operation WebAppsOperations.get_private_endpoint_connection
+  - Added operation WebAppsOperations.get_private_link_resources
+  - Added operation WebAppsOperations.delete_private_endpoint_connection
+  - Added operation WebAppsOperations.approve_or_reject_private_endpoint_connection
+
+## 0.45.0 (2020-03-20)
+
+**Features**
+
+  - Added operation WebAppsOperations.list_host_keys
+  - Added operation WebAppsOperations.sync_functions
+  - Added operation WebAppsOperations.list_function_keys_slot
+  - Added operation WebAppsOperations.sync_functions_slot
+  - Added operation WebAppsOperations.delete_function_secret
+  - Added operation WebAppsOperations.delete_host_secret_slot
+  - Added operation WebAppsOperations.list_host_keys_slot
+  - Added operation WebAppsOperations.delete_function_secret_slot
+  - Added operation WebAppsOperations.create_or_update_host_secret
+  - Added operation WebAppsOperations.list_sync_status
+  - Added operation WebAppsOperations.list_sync_status_slot
+  - Added operation WebAppsOperations.create_or_update_function_secret_slot
+  - Added operation WebAppsOperations.list_function_keys
+  - Added operation WebAppsOperations.create_or_update_host_secret_slot
+  - Added operation WebAppsOperations.create_or_update_function_secret
+  - Added operation WebAppsOperations.delete_host_secret
+  - Added operation group StaticSitesOperations
+
 ## 0.44.0 (2019-11-08)
 
 **Features**

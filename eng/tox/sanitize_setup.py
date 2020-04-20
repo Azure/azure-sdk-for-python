@@ -22,6 +22,7 @@ setup_parser_path = os.path.abspath(os.path.join(root_dir, "eng", "versioning"))
 sys.path.append(setup_parser_path)
 from setup_parser import get_install_requires, parse_setup
 
+DEV_BUILD_IDENTIFIER = ".dev"
 
 def update_requires(setup_py_path, requires_dict):
     # This method changes package requirement by overriding the specifier
@@ -52,6 +53,12 @@ def get_version(pkg_name):
     if paths:
         setup_py_path = paths[0]
         _, version, _ = parse_setup(setup_py_path)
+        # Remove dev build part if version for this package is already updated to dev build
+        # When building package with dev build version, version for packages in same service is updated to dev build 
+        # and other packages will not have dev build number
+        # strip dev build number so we can check if package exists in PyPI and replace
+        if DEV_BUILD_IDENTIFIER in version:
+            version = version[:version.find(DEV_BUILD_IDENTIFIER)]
         return version
     else:
         logging.error("setyp.py is not found for package {} to identify current version".format(pkg_name))
@@ -73,7 +80,9 @@ def process_requires(setup_py_path):
         if not is_required_version_on_pypi(pkg_name, spec):
             old_req = str(req)
             version = get_version(pkg_name)
+            logging.info("Updating version {0} in requirement {1} to dev build version".format(version, old_req))
             new_req = old_req.replace(version, "{}.dev".format(version))
+            logging.info("New requirement for package {0}: {1}".format(pkg_name, new_req))
             requirement_to_update[old_req] = new_req
 
     if not requirement_to_update:

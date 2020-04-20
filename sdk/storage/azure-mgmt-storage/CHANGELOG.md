@@ -1,5 +1,39 @@
 # Release History
 
+## 9.0.0 (2020-03-27)
+
+**Features**
+
+  - Model BlobContainer has a new parameter default_encryption_scope
+  - Model BlobContainer has a new parameter deny_encryption_scope_override
+  - Model ListContainerItem has a new parameter default_encryption_scope
+  - Model ListContainerItem has a new parameter deny_encryption_scope_override
+  - Model KeyVaultProperties has a new parameter last_key_rotation_timestamp
+  - Model KeyVaultProperties has a new parameter current_versioned_key_identifier
+
+**Breaking changes**
+
+  - Operation BlobContainersOperations.update has a new signature
+  - Operation BlobContainersOperations.create has a new signature
+  - Operation BlobContainersOperations.update has a new signature
+  - Operation BlobContainersOperations.create has a new signature
+
+## 8.0.0 (2020-02-27)
+
+**Features**
+
+- Model ImmutabilityPolicyProperties has a new parameter allow_protected_append_writes
+- Model BlobServiceProperties has a new parameter container_delete_retention_policy
+- Model BlobServiceProperties has a new parameter is_versioning_enabled
+- Model ImmutabilityPolicy has a new parameter allow_protected_append_writes
+- Added operation group EncryptionScopesOperations
+
+**Breaking changes**
+
+- Operation BlobContainersOperations.create_or_update_immutability_policy has a new signature
+- Operation BlobContainersOperations.extend_immutability_policy has a new signature
+- Operation BlobContainersOperations.create_or_update_immutability_policy has a new signature
+
 ## 7.2.0 (2020-02-10)
 
 **Features**

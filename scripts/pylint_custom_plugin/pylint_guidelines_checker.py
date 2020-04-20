@@ -4,7 +4,7 @@
 # ------------------------------------
 
 """
-Pylint custom checkers for SDK guidelines: C4717 - C4738
+Pylint custom checkers for SDK guidelines: C4717 - C4744
 """
 
 import logging
@@ -53,7 +53,7 @@ class ClientConstructorTakesCorrectParameters(BaseChecker):
             },
         ),
     )
-    ignore_clients = ["PipelineClient", "AsyncPipelineClient"]
+    ignore_clients = ["PipelineClient", "AsyncPipelineClient", "ARMPipelineClient", "AsyncARMPipelineClient"]
 
     def __init__(self, linter=None):
         super(ClientConstructorTakesCorrectParameters, self).__init__(linter)
@@ -162,7 +162,7 @@ class ClientHasApprovedMethodNamePrefix(BaseChecker):
         ),
     )
 
-    ignore_clients = ["PipelineClient", "AsyncPipelineClient"]
+    ignore_clients = ["PipelineClient", "AsyncPipelineClient", "ARMPipelineClient", "AsyncARMPipelineClient"]
 
     def __init__(self, linter=None):
         super(ClientHasApprovedMethodNamePrefix, self).__init__(linter)
@@ -222,7 +222,7 @@ class ClientMethodsUseKwargsWithMultipleParameters(BaseChecker):
         ),
     )
 
-    ignore_clients = ["PipelineClient", "AsyncPipelineClient"]
+    ignore_clients = ["PipelineClient", "AsyncPipelineClient", "ARMPipelineClient", "AsyncARMPipelineClient"]
 
     def __init__(self, linter=None):
         super(ClientMethodsUseKwargsWithMultipleParameters, self).__init__(linter)
@@ -276,7 +276,7 @@ class ClientMethodsHaveTypeAnnotations(BaseChecker):
             },
         ),
     )
-    ignore_clients = ["PipelineClient", "AsyncPipelineClient"]
+    ignore_clients = ["PipelineClient", "AsyncPipelineClient", "ARMPipelineClient", "AsyncARMPipelineClient"]
 
     def __init__(self, linter=None):
         super(ClientMethodsHaveTypeAnnotations, self).__init__(linter)
@@ -356,7 +356,7 @@ class ClientMethodsHaveTracingDecorators(BaseChecker):
             },
         ),
     )
-    ignore_clients = ["PipelineClient", "AsyncPipelineClient"]
+    ignore_clients = ["PipelineClient", "AsyncPipelineClient", "ARMPipelineClient", "AsyncARMPipelineClient"]
 
     def __init__(self, linter=None):
         super(ClientMethodsHaveTracingDecorators, self).__init__(linter)
@@ -428,7 +428,7 @@ class ClientsDoNotUseStaticMethods(BaseChecker):
             },
         ),
     )
-    ignore_clients = ["PipelineClient", "AsyncPipelineClient"]
+    ignore_clients = ["PipelineClient", "AsyncPipelineClient", "ARMPipelineClient", "AsyncARMPipelineClient"]
 
     def __init__(self, linter=None):
         super(ClientsDoNotUseStaticMethods, self).__init__(linter)
@@ -526,7 +526,7 @@ class ClientUsesCorrectNamingConventions(BaseChecker):
             },
         ),
     )
-    ignore_clients = ["PipelineClient", "AsyncPipelineClient"]
+    ignore_clients = ["PipelineClient", "AsyncPipelineClient", "ARMPipelineClient", "AsyncARMPipelineClient"]
 
     def __init__(self, linter=None):
         super(ClientUsesCorrectNamingConventions, self).__init__(linter)
@@ -596,7 +596,7 @@ class ClientMethodsHaveKwargsParameter(BaseChecker):
             },
         ),
     )
-    ignore_clients = ["PipelineClient", "AsyncPipelineClient"]
+    ignore_clients = ["PipelineClient", "AsyncPipelineClient", "ARMPipelineClient", "AsyncARMPipelineClient"]
 
     def __init__(self, linter=None):
         super(ClientMethodsHaveKwargsParameter, self).__init__(linter)
@@ -652,7 +652,7 @@ class ClientMethodNamesDoNotUseDoubleUnderscorePrefix(BaseChecker):
             },
         ),
     )
-    ignore_clients = ["PipelineClient", "AsyncPipelineClient"]
+    ignore_clients = ["PipelineClient", "AsyncPipelineClient", "ARMPipelineClient", "AsyncARMPipelineClient"]
     acceptable_names = ["__init__", "__enter__", "__exit__", "__aenter__", "__aexit__", "__repr__"]
 
     def __init__(self, linter=None):
@@ -703,7 +703,7 @@ class ClientDocstringUsesLiteralIncludeForCodeExample(BaseChecker):
         ),
     )
 
-    ignore_clients = ["PipelineClient", "AsyncPipelineClient"]
+    ignore_clients = ["PipelineClient", "AsyncPipelineClient", "ARMPipelineClient", "AsyncARMPipelineClient"]
 
     def __init__(self, linter=None):
         super(ClientDocstringUsesLiteralIncludeForCodeExample, self).__init__(linter)
@@ -771,7 +771,7 @@ class AsyncClientCorrectNaming(BaseChecker):
             },
         ),
     )
-    ignore_clients = ["PipelineClient", "AsyncPipelineClient"]
+    ignore_clients = ["PipelineClient", "AsyncPipelineClient", "ARMPipelineClient", "AsyncARMPipelineClient"]
 
     def __init__(self, linter=None):
         super(AsyncClientCorrectNaming, self).__init__(linter)
@@ -820,7 +820,7 @@ class SpecifyParameterNamesInCall(BaseChecker):
             },
         ),
     )
-    ignore_clients = ["PipelineClient", "AsyncPipelineClient"]
+    ignore_clients = ["PipelineClient", "AsyncPipelineClient", "ARMPipelineClient", "AsyncARMPipelineClient"]
 
     def __init__(self, linter=None):
         super(SpecifyParameterNamesInCall, self).__init__(linter)
@@ -871,7 +871,7 @@ class ClientListMethodsUseCorePaging(BaseChecker):
             },
         ),
     )
-    ignore_clients = ["PipelineClient", "AsyncPipelineClient"]
+    ignore_clients = ["PipelineClient", "AsyncPipelineClient", "ARMPipelineClient", "AsyncARMPipelineClient"]
 
     def __init__(self, linter=None):
         super(ClientListMethodsUseCorePaging, self).__init__(linter)
@@ -926,7 +926,7 @@ class ClientLROMethodsUseCorePolling(BaseChecker):
             },
         ),
     )
-    ignore_clients = ["PipelineClient", "AsyncPipelineClient"]
+    ignore_clients = ["PipelineClient", "AsyncPipelineClient", "ARMPipelineClient", "AsyncARMPipelineClient"]
 
     def __init__(self, linter=None):
         super(ClientLROMethodsUseCorePolling, self).__init__(linter)
@@ -981,7 +981,7 @@ class ClientLROMethodsUseCorrectNaming(BaseChecker):
             },
         ),
     )
-    ignore_clients = ["PipelineClient", "AsyncPipelineClient"]
+    ignore_clients = ["PipelineClient", "AsyncPipelineClient", "ARMPipelineClient", "AsyncARMPipelineClient"]
 
     def __init__(self, linter=None):
         super(ClientLROMethodsUseCorrectNaming, self).__init__(linter)
@@ -1039,7 +1039,7 @@ class ClientConstructorDoesNotHaveConnectionStringParam(BaseChecker):
             },
         ),
     )
-    ignore_clients = ["PipelineClient", "AsyncPipelineClient"]
+    ignore_clients = ["PipelineClient", "AsyncPipelineClient", "ARMPipelineClient", "AsyncARMPipelineClient"]
 
     def __init__(self, linter=None):
         super(ClientConstructorDoesNotHaveConnectionStringParam, self).__init__(linter)
@@ -1621,6 +1621,91 @@ class CheckForPolicyUse(BaseChecker):
                     )
 
 
+class CheckDocstringAdmonitionNewline(BaseChecker):
+    __implements__ = IAstroidChecker
+
+    name = "check-admonition"
+    priority = -1
+    msgs = {
+        "C4744": (
+            "The .. literalinclude statement needs a blank line above it. ",
+            "docstring-admonition-needs-newline",
+            "Put a newline after the example and before the literalinclude.",
+        ),
+    }
+    options = (
+        (
+            "ignore-docstring-admonition-needs-newline",
+            {
+                "default": False,
+                "type": "yn",
+                "metavar": "<y_or_n>",
+                "help": "Allow a docstring to not have newline after admonition example.",
+            },
+        ),
+    )
+
+    def __init__(self, linter=None):
+        super(CheckDocstringAdmonitionNewline, self).__init__(linter)
+
+    def check_for_admonition(self, node):
+        """Parse the docstring for an admonition statement.
+        If found, checks that the literalinclude statement has
+        two newlines above it.
+
+        :param node: ast.ClassDef or ast.FunctionDef
+        :return: None
+        """
+
+        try:
+            # not every class/method will have a docstring so don't crash here, just return
+            if node.doc.find("admonition") != -1 and node.doc.find(".. literalinclude") != -1:
+                literal_include = node.doc.split(".. literalinclude")[0]
+                chars_list = list(reversed(literal_include))
+                for idx, char in enumerate(chars_list):
+                    if char == '\n':
+                        if chars_list[idx+1] == '\n':
+                            break
+                        else:
+                            self.add_message(
+                                "docstring-admonition-needs-newline", node=node, confidence=None
+                            )
+                            break
+        except Exception:
+            return
+
+    def visit_classdef(self, node):
+        """Visits every class docstring.
+
+        :param node: ast.ClassDef
+        :return: None
+        """
+        try:
+            for func in node.body:
+                if isinstance(func, astroid.FunctionDef) and func.name == "__init__":
+                    self.check_for_admonition(node)
+        except Exception:
+            logger.debug("Pylint custom checker failed to check docstrings.")
+            pass
+
+    def visit_functiondef(self, node):
+        """Visits every method docstring.
+
+        :param node: ast.FunctionDef
+        :return: None
+        """
+        try:
+            if node.name == "__init__":
+                return
+            self.check_for_admonition(node)
+        except Exception:
+            logger.debug("Pylint custom checker failed to check docstrings.")
+            pass
+
+    # this line makes it work for async functions
+    visit_asyncfunctiondef = visit_functiondef
+
+
 # if a linter is registered in this function then it will be checked with pylint
 def register(linter):
     linter.register_checker(ClientsDoNotUseStaticMethods(linter))
@@ -1637,6 +1722,7 @@ def register(linter):
     linter.register_checker(ClientConstructorDoesNotHaveConnectionStringParam(linter))
     linter.register_checker(PackageNameDoesNotUseUnderscoreOrPeriod(linter))
     linter.register_checker(ServiceClientUsesNameWithClientSuffix(linter))
+    linter.register_checker(CheckDocstringAdmonitionNewline(linter))
 
     # disabled by default, use pylint --enable=check-docstrings if you want to use it
     linter.register_checker(CheckDocstringParameters(linter))
@@ -1649,5 +1735,3 @@ def register(linter):
     # linter.register_checker(ClientListMethodsUseCorePaging(linter))
     # linter.register_checker(ClientLROMethodsUseCorePolling(linter))
     # linter.register_checker(ClientLROMethodsUseCorrectNaming(linter))
-
-

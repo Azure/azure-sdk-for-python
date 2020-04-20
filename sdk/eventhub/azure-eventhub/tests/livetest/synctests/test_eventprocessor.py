@@ -46,7 +46,7 @@ def test_loadbalancer_balance():
             self.stop = False
             self._on_event_received = kwargs.get("on_event_received")
 
-        def receive(self):
+        def receive(self, *args, **kwargs):
             time.sleep(0.1)
             self._on_event_received(EventData(""))
 
@@ -114,7 +114,7 @@ def test_loadbalancer_list_ownership_error():
             self.stop = False
             self._on_event_received = kwargs.get("on_event_received")
 
-        def receive(self):
+        def receive(self, *args, **kwargs):
             time.sleep(0.1)
 
         def close(self):
@@ -184,7 +184,7 @@ def test_partition_processor():
             self.stop = False
             self._on_event_received = kwargs.get("on_event_received")
 
-        def receive(self):
+        def receive(self, *args, **kwargs):
             time.sleep(0.5)
             self._on_event_received(EventData("test data"))
 
@@ -213,7 +213,7 @@ def test_partition_processor():
     thread.join()
     assert ep_partitions == 2
     assert assert_map["initialize"] == "called"
-    assert event_map['0'] > 1 and event_map['1'] > 1
+    assert event_map['0'] >= 1 and event_map['1'] >= 1
     assert assert_map["checkpoint"] == "checkpoint called"
     assert "error" not in assert_map
     assert assert_map["close_reason"] == CloseReason.SHUTDOWN
@@ -253,7 +253,7 @@ def test_partition_processor_process_events_error():
             self.stop = False
             self._on_event_received = kwargs.get("on_event_received")
 
-        def receive(self):
+        def receive(self, *args, **kwargs):
             time.sleep(0.5)
             self._on_event_received(EventData("test data"))
 
@@ -306,7 +306,7 @@ def test_partition_processor_process_eventhub_consumer_error():
             self.stop = False
             self._on_event_received = kwargs.get("on_event_received")
 
-        def receive(self):
+        def receive(self, *args, **kwargs):
             time.sleep(0.5)
             raise EventHubError("Mock EventHubConsumer EventHubError")
         def close(self):
@@ -368,7 +368,7 @@ def test_partition_processor_process_error_close_error():
             self.stop = False
             self._on_event_received = kwargs.get("on_event_received")
 
-        def receive(self):
+        def receive(self, *args, **kwargs):
             time.sleep(0.5)
             self._on_event_received(EventData("test data"))
 
@@ -441,7 +441,7 @@ def test_partition_processor_process_update_checkpoint_error():
             self.stop = False
             self._on_event_received = kwargs.get("on_event_received")
 
-        def receive(self):
+        def receive(self, *args, **kwargs):
             time.sleep(0.5)
             self._on_event_received(EventData("test data"))
 

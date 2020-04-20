@@ -3,10 +3,11 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import asyncio
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 from urllib.parse import urlparse
 
 import pytest
+from azure.identity._constants import EnvironmentVariables
 from azure.identity.aio._authn_client import AsyncAuthnClient
 
 from helpers import mock_response
@@ -27,3 +28,8 @@ async def test_request_url():
 
     client = AsyncAuthnClient(tenant=tenant, transport=Mock(send=wrap_in_future(mock_send)), authority=authority)
     await client.request_token(("scope",))
+
+    # authority can be configured via environment variable
+    with patch.dict("os.environ", {EnvironmentVariables.AZURE_AUTHORITY_HOST: authority}, clear=True):
+        client = AsyncAuthnClient(tenant=tenant, transport=Mock(send=wrap_in_future(mock_send)))
+        await client.request_token(("scope",))

@@ -6,6 +6,7 @@ from azure.core.credentials import AccessToken
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.identity import AuthorizationCodeCredential
 from azure.identity._internal.user_agent import USER_AGENT
+import pytest
 
 from helpers import build_aad_response, mock_response, Request, validating_transport
 
@@ -13,6 +14,14 @@ try:
     from unittest.mock import Mock
 except ImportError:  # python < 3.3
     from mock import Mock  # type: ignore
+
+
+def test_no_scopes():
+    """The credential should raise ValueError when get_token is called with no scopes"""
+
+    credential = AuthorizationCodeCredential("tenant-id", "client-id", "auth-code", "http://localhost")
+    with pytest.raises(ValueError):
+        credential.get_token()
 
 
 def test_policies_configurable():

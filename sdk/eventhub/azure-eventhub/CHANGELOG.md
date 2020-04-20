@@ -1,10 +1,24 @@
 # Release History
 
-## 5.0.1 (Unreleased)
+## 5.1.0b2 (Unreleased)
+
+
+## 5.1.0b1 (2020-04-06)
+
+**New Features**
+- Added `EventHubConsumerClient.receive_batch()` to receive and process events in batches instead of one by one. #9184
+- `EventHubConsumerCliuent.receive()` has a new param `max_wait_time`. 
+`on_event` is called every `max_wait_time` when no events are received and `max_wait_time` is not `None` or 0.
+- Param event of `PartitionContext.update_checkpoint` is now optional. The last received event is used when param event is not passed in.
+- `EventData.system_properties` has added missing properties when consuming messages from IotHub. #10408
+
+## 5.0.1 (2020-03-09)
 
 **Bug fixes**
 
-- Fixed a bug that `azure.eventhub.EventHubConsumerClient.receive()` doesn't call error handler callback on_error #9660
+- Fixed a bug that swallowed errors when receiving events with `azure.eventhub.EventHubConsumerClient`  #9660
+- Fixed a bug that caused `get_eventhub_properties`, `get_partition_ids`, and `get_partition_properties` to raise
+an error on Azure Stack #9920 
 
 ## 5.0.0 (2020-01-13)
 

@@ -1,0 +1,5 @@
+[packaging]
+package_name = "azure-mgmt-customproviders"
+package_pprint_name = "CustomProviders Management"
+package_doc_id = "customproviders"
+is_stable = false

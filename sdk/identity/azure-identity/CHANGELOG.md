@@ -1,6 +1,42 @@
 # Release History
 
-## 1.3.1 (Unreleased)
+## 1.4.0b3 (Unreleased)
+
+
+## 1.4.0b2 (2020-04-06)
+- After an instance of `DefaultAzureCredential` successfully authenticates, it
+uses the same authentication method for every subsequent token request. This
+makes subsequent requests more efficient, and prevents unexpected changes of
+authentication method.
+([#10349](https://github.com/Azure/azure-sdk-for-python/pull/10349))
+- All `get_token` methods consistently require at least one scope argument,
+raising an error when none is passed. Although `get_token()` may sometimes
+have succeeded in prior versions, it couldn't do so consistently because its
+behavior was undefined, and dependened on the credential's type and internal
+state. ([#10243](https://github.com/Azure/azure-sdk-for-python/issues/10243))
+- `SharedTokenCacheCredential` raises `CredentialUnavailableError` when the
+cache is available but contains ambiguous or insufficient information. This
+causes `ChainedTokenCredential` to correctly try the next credential in the
+chain. ([#10631](https://github.com/Azure/azure-sdk-for-python/issues/10631))
+- The host of the Active Directory endpoint credentials should use can be set
+in the environment variable `AZURE_AUTHORITY_HOST`. See
+`azure.identity.KnownAuthorities` for a list of common values.
+([#8094](https://github.com/Azure/azure-sdk-for-python/issues/8094))
+
+
+## 1.3.1 (2020-03-30)
+
+- `ManagedIdentityCredential` raises `CredentialUnavailableError` when no
+identity is configured for an IMDS endpoint. This causes
+`ChainedTokenCredential` to correctly try the next credential in the chain.
+([#10488](https://github.com/Azure/azure-sdk-for-python/issues/10488))
+
+
+## 1.4.0b1 (2020-03-10)
+- `DefaultAzureCredential` can now authenticate using the identity logged in to
+the Azure CLI, unless explicitly disabled with a keyword argument:
+`DefaultAzureCredential(exclude_cli_credential=True)`
+([#10092](https://github.com/Azure/azure-sdk-for-python/pull/10092))
 
 
 ## 1.3.0 (2020-02-11)
