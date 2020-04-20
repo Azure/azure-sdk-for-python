@@ -42,7 +42,7 @@ class TrainModelWithLabelsSample(object):
         form_training_client = FormTrainingClient(self.endpoint, AzureKeyCredential(self.key))
         # [END create_form_training_client]
 
-        poller = form_training_client.begin_training(self.container_sas_url, use_labels=True)
+        poller = form_training_client.begin_train_model(self.container_sas_url, use_labels=True)
         model = poller.result()
 
         # Custom model information

@@ -46,7 +46,7 @@ class TrainModelWithLabelsSampleAsync(object):
         # [END create_form_training_client_async]
         async with form_training_client:
 
-            model = await form_training_client.training(self.container_sas_url, use_labels=True)
+            model = await form_training_client.train_model(self.container_sas_url, use_labels=True)
             # Custom model information
             print("Model ID: {}".format(model.model_id))
             print("Status: {}".format(model.status))

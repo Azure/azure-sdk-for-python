@@ -42,8 +42,8 @@ class TrainUnlabeledModelSampleAsync(object):
             self.endpoint, AzureKeyCredential(self.key)
         ) as form_training_client:
 
-            # Default for training is `use_labels=False`
-            model = await form_training_client.training(self.container_sas_url)
+            # Default for train_model is `use_labels=False`
+            model = await form_training_client.train_model(self.container_sas_url)
 
             # Custom model information
             print("Model ID: {}".format(model.model_id))
