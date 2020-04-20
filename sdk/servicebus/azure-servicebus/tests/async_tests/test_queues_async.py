@@ -32,7 +32,7 @@ from azure.servicebus.exceptions import (
     MessageSettleFailed)
 from devtools_testutils import AzureMgmtTestCase, CachedResourceGroupPreparer
 from servicebus_preparer import CachedServiceBusNamespacePreparer, CachedServiceBusQueuePreparer, ServiceBusQueuePreparer
-from utilities import get_logger, print_message
+from utilities import get_logger, print_message, sleep_until_expired
 
 _logger = get_logger(logging.DEBUG)
 
@@ -662,11 +662,11 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                         assert not message.expired
                         renewer.register(message, timeout=60)
                         print("Registered lock renew thread", message.locked_until_utc, utc_now())
-                        await asyncio.sleep(50)
+                        await asyncio.sleep(60)
                         print("Finished first sleep", message.locked_until_utc)
                         assert not message.expired
-                        await asyncio.sleep(25)
-                        await asyncio.sleep(max(0,(message.locked_until_utc - utc_now()).total_seconds()))
+                        await asyncio.sleep(15) #generate autolockrenewtimeout error by going one iteration past.
+                        sleep_until_expired(message)
                         print("Finished second sleep", message.locked_until_utc, utc_now())
                         assert message.expired
                         try:

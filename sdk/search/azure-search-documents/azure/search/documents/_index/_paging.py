@@ -30,13 +30,9 @@ def pack_continuation_token(response):
         token = {
             "apiVersion": api_version,
             "nextLink": response.next_link,
-            "nextPageParameters": response.next_page_parameters.serialize()
+            "nextPageParameters": response.next_page_parameters.serialize(),
         }
-        return base64.b64encode(
-            json.dumps(
-                token
-            ).encode("utf-8")
-        )
+        return base64.b64encode(json.dumps(token).encode("utf-8"))
     return None
 
 

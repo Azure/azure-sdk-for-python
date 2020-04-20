@@ -4,6 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
+from typing import TYPE_CHECKING
 from azure.core.exceptions import HttpResponseError
 from azure.core.polling.base_polling import (
     LocationPolling,
@@ -12,6 +13,8 @@ from azure.core.polling.base_polling import (
     _as_json,
     BadResponse
 )
+if TYPE_CHECKING:
+    from azure.core.pipeline import PipelineResponse
 
 
 class TrainingPolling(LocationPolling):
@@ -25,10 +28,10 @@ class TrainingPolling(LocationPolling):
         return self._location_url + "?includeKeys=true"
 
     def get_status(self, pipeline_response):  # pylint: disable=no-self-use
-        # type: (PipelineResponseType) -> str
+        # type: (PipelineResponse) -> str
         """Process the latest status update retrieved from a 'location' header.
 
-        :param azure.core.pipeline.PipelineResponse response: latest REST call response.
+        :param azure.core.pipeline.PipelineResponse pipeline_response: latest REST call response.
         :raises: BadResponse if response has no body.
         """
         response = pipeline_response.http_response
@@ -52,11 +55,11 @@ class AnalyzePolling(OperationResourcePolling):
     """
 
     def get_status(self, pipeline_response):  # pylint: disable=no-self-use
-        # type: (PipelineResponseType) -> str
+        # type: (PipelineResponse) -> str
         """Process the latest status update retrieved from an "Operation-Location" header.
         Raise errors for issues with input document.
 
-        :param azure.core.pipeline.PipelineResponse response: The response to extract the status.
+        :param azure.core.pipeline.PipelineResponse pipeline_response: The response to extract the status.
         :raises: BadResponse if response has no body, or body does not contain status.
             HttpResponseError if there is an error with the input document.
         """

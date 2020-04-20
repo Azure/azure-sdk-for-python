@@ -10,14 +10,16 @@ from typing import Dict, List, Optional, Union
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
+from ._form_recognizer_client_enums import *
+
 
 class AnalyzeOperationResult(msrest.serialization.Model):
     """Status and result of the queued analyze operation.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param status: Required. Operation status. Possible values include: 'notStarted', 'running',
-     'succeeded', 'failed'.
+    :param status: Required. Operation status. Possible values include: "notStarted", "running",
+     "succeeded", "failed".
     :type status: str or ~azure.ai.formrecognizer.models.OperationStatus
     :param created_date_time: Required. Date and time (UTC) when the analyze operation was
      submitted.
@@ -327,15 +329,15 @@ class FieldValue(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Type of field value. Possible values include: 'string', 'date', 'time',
-     'phoneNumber', 'number', 'integer', 'array', 'object'.
+    :param type: Required. Type of field value. Possible values include: "string", "date", "time",
+     "phoneNumber", "number", "integer", "array", "object".
     :type type: str or ~azure.ai.formrecognizer.models.FieldValueType
     :param value_string: String value.
     :type value_string: str
     :param value_date: Date value.
     :type value_date: ~datetime.date
     :param value_time: Time value.
-    :type value_time: str
+    :type value_time: ~datetime.time
     :param value_phone_number: Phone number value.
     :type value_phone_number: str
     :param value_number: Floating point value.
@@ -370,7 +372,7 @@ class FieldValue(msrest.serialization.Model):
         'type': {'key': 'type', 'type': 'str'},
         'value_string': {'key': 'valueString', 'type': 'str'},
         'value_date': {'key': 'valueDate', 'type': 'date'},
-        'value_time': {'key': 'valueTime', 'type': 'str'},
+        'value_time': {'key': 'valueTime', 'type': 'time'},
         'value_phone_number': {'key': 'valuePhoneNumber', 'type': 'str'},
         'value_number': {'key': 'valueNumber', 'type': 'float'},
         'value_integer': {'key': 'valueInteger', 'type': 'int'},
@@ -389,7 +391,7 @@ class FieldValue(msrest.serialization.Model):
         type: Union[str, "FieldValueType"],
         value_string: Optional[str] = None,
         value_date: Optional[datetime.date] = None,
-        value_time: Optional[str] = None,
+        value_time: Optional[datetime.time] = None,
         value_phone_number: Optional[str] = None,
         value_number: Optional[float] = None,
         value_integer: Optional[int] = None,
@@ -606,8 +608,8 @@ class ModelInfo(msrest.serialization.Model):
 
     :param model_id: Required. Model identifier.
     :type model_id: str
-    :param status: Required. Status of the model. Possible values include: 'creating', 'ready',
-     'invalid'.
+    :param status: Required. Status of the model. Possible values include: "creating", "ready",
+     "invalid".
     :type status: str or ~azure.ai.formrecognizer.models.ModelStatus
     :param created_date_time: Required. Date and time (UTC) when the model was created.
     :type created_date_time: ~datetime.datetime
@@ -773,11 +775,11 @@ class ReadResult(msrest.serialization.Model):
     :param height: Required. The height of the image/PDF in pixels/inches, respectively.
     :type height: float
     :param unit: Required. The unit used by the width, height and boundingBox properties. For
-     images, the unit is "pixel". For PDF, the unit is "inch". Possible values include: 'pixel',
-     'inch'.
+     images, the unit is "pixel". For PDF, the unit is "inch". Possible values include: "pixel",
+     "inch".
     :type unit: str or ~azure.ai.formrecognizer.models.LengthUnit
-    :param language: The detected language on the page overall. Possible values include: 'en',
-     'es'.
+    :param language: The detected language on the page overall. Possible values include: "en",
+     "es".
     :type language: str or ~azure.ai.formrecognizer.models.Language
     :param lines: When includeTextDetails is set to true, a list of recognized text lines. The
      maximum number of lines returned is 300 per page. The lines are sorted top to bottom, left to
@@ -862,7 +864,7 @@ class TextLine(msrest.serialization.Model):
     :param bounding_box: Required. Bounding box of an extracted line.
     :type bounding_box: list[float]
     :param language: The detected language of this line, if different from the overall page
-     language. Possible values include: 'en', 'es'.
+     language. Possible values include: "en", "es".
     :type language: str or ~azure.ai.formrecognizer.models.Language
     :param words: Required. List of words in the text line.
     :type words: list[~azure.ai.formrecognizer.models.TextWord]
@@ -948,7 +950,7 @@ class TrainingDocumentInfo(msrest.serialization.Model):
     :param errors: Required. List of errors.
     :type errors: list[~azure.ai.formrecognizer.models.ErrorInformation]
     :param status: Required. Status of the training operation. Possible values include:
-     'succeeded', 'partiallySucceeded', 'failed'.
+     "succeeded", "partiallySucceeded", "failed".
     :type status: str or ~azure.ai.formrecognizer.models.TrainStatus
     """
 

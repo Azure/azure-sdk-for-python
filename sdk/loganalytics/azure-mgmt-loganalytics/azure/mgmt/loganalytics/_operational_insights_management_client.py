@@ -13,20 +13,27 @@ from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 
 from ._configuration import OperationalInsightsManagementClientConfiguration
-from .operations import OperationalInsightsManagementClientOperationsMixin
 from .operations import DataExportsOperations
 from .operations import DataSourcesOperations
-from .operations import WorkspacesOperations
+from .operations import IntelligencePacksOperations
 from .operations import LinkedServicesOperations
 from .operations import LinkedStorageAccountsOperations
+from .operations import ManagementGroupsOperations
 from .operations import Operations
+from .operations import OperationStatusesOperations
+from .operations import SharedKeysOperations
+from .operations import UsagesOperations
+from .operations import WorkspacesOperations
 from .operations import ClustersOperations
-from .operations import StorageInsightsOperations
+from .operations import StorageInsightConfigsOperations
 from .operations import SavedSearchesOperations
+from .operations import GatewaysOperations
+from .operations import SchemaOperations
+from .operations import WorkspacePurgeOperations
 from . import models
 
 
-class OperationalInsightsManagementClient(OperationalInsightsManagementClientOperationsMixin, SDKClient):
+class OperationalInsightsManagementClient(SDKClient):
     """Operational Insights Client
 
     :ivar config: Configuration for client.
@@ -36,20 +43,36 @@ class OperationalInsightsManagementClient(OperationalInsightsManagementClientOpe
     :vartype data_exports: azure.mgmt.loganalytics.operations.DataExportsOperations
     :ivar data_sources: DataSources operations
     :vartype data_sources: azure.mgmt.loganalytics.operations.DataSourcesOperations
-    :ivar workspaces: Workspaces operations
-    :vartype workspaces: azure.mgmt.loganalytics.operations.WorkspacesOperations
+    :ivar intelligence_packs: IntelligencePacks operations
+    :vartype intelligence_packs: azure.mgmt.loganalytics.operations.IntelligencePacksOperations
     :ivar linked_services: LinkedServices operations
     :vartype linked_services: azure.mgmt.loganalytics.operations.LinkedServicesOperations
     :ivar linked_storage_accounts: LinkedStorageAccounts operations
     :vartype linked_storage_accounts: azure.mgmt.loganalytics.operations.LinkedStorageAccountsOperations
+    :ivar management_groups: ManagementGroups operations
+    :vartype management_groups: azure.mgmt.loganalytics.operations.ManagementGroupsOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.loganalytics.operations.Operations
+    :ivar operation_statuses: OperationStatuses operations
+    :vartype operation_statuses: azure.mgmt.loganalytics.operations.OperationStatusesOperations
+    :ivar shared_keys: SharedKeys operations
+    :vartype shared_keys: azure.mgmt.loganalytics.operations.SharedKeysOperations
+    :ivar usages: Usages operations
+    :vartype usages: azure.mgmt.loganalytics.operations.UsagesOperations
+    :ivar workspaces: Workspaces operations
+    :vartype workspaces: azure.mgmt.loganalytics.operations.WorkspacesOperations
     :ivar clusters: Clusters operations
     :vartype clusters: azure.mgmt.loganalytics.operations.ClustersOperations
-    :ivar storage_insights: StorageInsights operations
-    :vartype storage_insights: azure.mgmt.loganalytics.operations.StorageInsightsOperations
+    :ivar storage_insight_configs: StorageInsightConfigs operations
+    :vartype storage_insight_configs: azure.mgmt.loganalytics.operations.StorageInsightConfigsOperations
     :ivar saved_searches: SavedSearches operations
     :vartype saved_searches: azure.mgmt.loganalytics.operations.SavedSearchesOperations
+    :ivar gateways: Gateways operations
+    :vartype gateways: azure.mgmt.loganalytics.operations.GatewaysOperations
+    :ivar schema: Schema operations
+    :vartype schema: azure.mgmt.loganalytics.operations.SchemaOperations
+    :ivar workspace_purge: WorkspacePurge operations
+    :vartype workspace_purge: azure.mgmt.loganalytics.operations.WorkspacePurgeOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -74,17 +97,33 @@ class OperationalInsightsManagementClient(OperationalInsightsManagementClientOpe
             self._client, self.config, self._serialize, self._deserialize)
         self.data_sources = DataSourcesOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.workspaces = WorkspacesOperations(
+        self.intelligence_packs = IntelligencePacksOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.linked_services = LinkedServicesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.linked_storage_accounts = LinkedStorageAccountsOperations(
             self._client, self.config, self._serialize, self._deserialize)
+        self.management_groups = ManagementGroupsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.operation_statuses = OperationStatusesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.shared_keys = SharedKeysOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.usages = UsagesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.workspaces = WorkspacesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.clusters = ClustersOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.storage_insights = StorageInsightsOperations(
+        self.storage_insight_configs = StorageInsightConfigsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.saved_searches = SavedSearchesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.gateways = GatewaysOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.schema = SchemaOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.workspace_purge = WorkspacePurgeOperations(
             self._client, self.config, self._serialize, self._deserialize)
