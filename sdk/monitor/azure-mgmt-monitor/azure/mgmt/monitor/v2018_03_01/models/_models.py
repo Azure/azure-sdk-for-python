@@ -674,6 +674,7 @@ class MetricAlertCriteria(Model):
 
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: MetricAlertSingleResourceMultipleMetricCriteria,
+    WebtestLocationAvailabilityCriteria,
     MetricAlertMultipleResourceMultipleMetricCriteria
 
     All required parameters must be populated in order to send to Azure.
@@ -695,7 +696,7 @@ class MetricAlertCriteria(Model):
     }
 
     _subtype_map = {
-        'odatatype': {'Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria': 'MetricAlertSingleResourceMultipleMetricCriteria', 'Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria': 'MetricAlertMultipleResourceMultipleMetricCriteria'}
+        'odatatype': {'Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria': 'MetricAlertSingleResourceMultipleMetricCriteria', 'Microsoft.Azure.Monitor.WebtestLocationAvailabilityCriteria': 'WebtestLocationAvailabilityCriteria', 'Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria': 'MetricAlertMultipleResourceMultipleMetricCriteria'}
     }
 
     def __init__(self, **kwargs):
@@ -1232,11 +1233,16 @@ class WebhookReceiver(Model):
         self.service_uri = kwargs.get('service_uri', None)
 
 
-class WebtestLocationAvailabilityCriteria(Model):
+class WebtestLocationAvailabilityCriteria(MetricAlertCriteria):
     """Specifies the metric alert rule criteria for a web test resource.
 
     All required parameters must be populated in order to send to Azure.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param odatatype: Required. Constant filled by server.
+    :type odatatype: str
     :param web_test_id: Required. The Application Insights web test Id.
     :type web_test_id: str
     :param component_id: Required. The Application Insights resource Id.
@@ -1246,12 +1252,15 @@ class WebtestLocationAvailabilityCriteria(Model):
     """
 
     _validation = {
+        'odatatype': {'required': True},
         'web_test_id': {'required': True},
         'component_id': {'required': True},
         'failed_location_count': {'required': True},
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'odatatype': {'key': 'odata\\.type', 'type': 'str'},
         'web_test_id': {'key': 'webTestId', 'type': 'str'},
         'component_id': {'key': 'componentId', 'type': 'str'},
         'failed_location_count': {'key': 'failedLocationCount', 'type': 'float'},
@@ -1262,3 +1271,4 @@ class WebtestLocationAvailabilityCriteria(Model):
         self.web_test_id = kwargs.get('web_test_id', None)
         self.component_id = kwargs.get('component_id', None)
         self.failed_location_count = kwargs.get('failed_location_count', None)
+        self.odatatype = 'Microsoft.Azure.Monitor.WebtestLocationAvailabilityCriteria'
