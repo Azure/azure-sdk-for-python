@@ -1004,10 +1004,10 @@ class VaultProperties(Model):
     :type tenant_id: str
     :param sku: Required. SKU details
     :type sku: ~azure.mgmt.keyvault.v2019_09_01.models.Sku
-    :param access_policies: An array of 0 to 16 identities that have access to
-     the key vault. All identities in the array must use the same tenant ID as
-     the key vault's tenant ID. When `createMode` is set to `recover`, access
-     policies are not required. Otherwise, access policies are required.
+    :param access_policies: An array of 0 to 1024 identities that have access
+     to the key vault. All identities in the array must use the same tenant ID
+     as the key vault's tenant ID. When `createMode` is set to `recover`,
+     access policies are not required. Otherwise, access policies are required.
     :type access_policies:
      list[~azure.mgmt.keyvault.v2019_09_01.models.AccessPolicyEntry]
     :param vault_uri: The URI of the vault for performing operations on keys
