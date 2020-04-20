@@ -60,20 +60,12 @@ class DifferentiateOutputModelsTrainedWithAndWithoutLabels(object):
         forms_with_unlabeled_model = forms_with_unlabeled_model_poller.result()
 
 
-        # The main difference is found in the names we have for the fields. Fields is returned as a dictionary, with the 'name'
-        # key being the unique identifier of the form field.
-        # With a form recognized by a model trained with labels, this 'name' key will be its training-time label. Otherwise,
-        # the 'name' key is denoted with indices.
-        #
-        # When we access a field's 'label' property, we are referring to the title of the form field in the form, so do not
-        # confuse a field's 'label' property with the unique identifier of a form field.
+        # With a form recognized by a model trained with labels, this 'name' key will be its
+        # training-time label, otherwise it will be denoted by numeric indices.
+        # Label data is not returned for model trained with labels.
         print("---------Recognizing forms with models trained with labeled data---------")
         for labeled_form in forms_with_labeled_model:
             for name, field in labeled_form.fields.items():
-                # With your custom model trained with labels, you will not get back label data but will get back value data
-                # This is because your custom model didn't have to use any machine learning to deduce the label,
-                # the label was directly provided to it
-                # The training-time label is returned as the field's name
                 print("...Field '{}' has value '{}' based on '{}' within bounding box '{}', with a confidence score of {}".format(
                     name,
                     field.value,
@@ -86,7 +78,6 @@ class DifferentiateOutputModelsTrainedWithAndWithoutLabels(object):
         print("-------Recognizing forms with models trained with unlabeled data-------")
         for unlabeled_form in forms_with_unlabeled_model:
             for name, field in unlabeled_form.fields.items():
-                # The form recognized with a model trained with forms only will also include data about your labels
                 print("...Field '{}' has label '{}' within bounding box '{}', with a confidence score of {}".format(
                     name,
                     field.label_data.text,

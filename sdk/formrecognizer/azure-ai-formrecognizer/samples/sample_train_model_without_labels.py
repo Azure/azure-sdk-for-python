@@ -50,10 +50,8 @@ class TrainModelWithoutLabelsSample(object):
         print("Last modified: {}".format(model.last_modified))
 
         print("Recognized fields:")
-        # looping through the submodels, which contains the fields they were trained on
-        # Since the given training documents are unlabeled, we still group them but they do not have a label.
+        # Looping through the submodels, which contains the fields they were trained on
         for submodel in model.models:
-            # Since the training data is unlabeled, we are unable to return the accuracy of this model
             for name, field in submodel.fields.items():
                 print("...The model found field '{}' to have label '{}'".format(
                     name, field.label

@@ -59,24 +59,12 @@ class RecognizeContentSample(object):
                         format_bounding_box(cell.bounding_box)
                     ))
                     # [END recognize_content_async]
-                    for content in cell.text_content:
-                        if isinstance(content, FormWord):
-                            print("......Word '{}' within bounding box '{}' has a confidence of {}".format(
-                                content.text,
-                                format_bounding_box(content.bounding_box),
-                                content.confidence
-                            ))
-                        elif isinstance(content, FormLine):
-                            print("......Line '{}' within bounding box '{}' has the following words: ".format(
-                                content.text,
-                                format_bounding_box(content.bounding_box)
-                            ))
-                            for word in content.words:
-                                print(".........Word '{}' within bounding box '{}' has a confidence of {}".format(
-                                    word.text,
-                                    format_bounding_box(word.bounding_box),
-                                    word.confidence
-                                ))
+            for line_idx, line in enumerate(content.lines):
+                print("Line # {} has text '{}' within bounding box '{}'".format(
+                    line_idx,
+                    line.text,
+                    format_bounding_box(line.bounding_box)
+                ))
             print("----------------------------------------")
 
 
