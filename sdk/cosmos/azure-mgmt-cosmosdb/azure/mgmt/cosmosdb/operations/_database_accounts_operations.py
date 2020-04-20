@@ -27,7 +27,7 @@ class DatabaseAccountsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. The current version is 2019-08-01. Constant value: "2019-12-12".
+    :ivar api_version: Version of the API to be used with the client request. The current version is 2019-08-01. Constant value: "2020-03-01".
     """
 
     models = models
@@ -37,7 +37,7 @@ class DatabaseAccountsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-12-12"
+        self.api_version = "2020-03-01"
 
         self.config = config
 
@@ -87,7 +87,7 @@ class DatabaseAccountsOperations(object):
         request = self._client.get(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 404]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp

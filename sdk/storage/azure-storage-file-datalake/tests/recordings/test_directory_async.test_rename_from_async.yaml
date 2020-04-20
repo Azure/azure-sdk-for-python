@@ -3,11 +3,11 @@ interactions:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-dfs/12.0.0b7 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-dfs/12.0.1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-client-request-id:
-      - 9161b0a4-3cb9-11ea-a2cd-001a7dda7113
+      - 6da12340-7f52-11ea-a1c1-001a7dda7113
       x-ms-date:
-      - Wed, 22 Jan 2020 01:50:29 GMT
+      - Wed, 15 Apr 2020 19:50:59 GMT
       x-ms-properties:
       - ''
       x-ms-version:
@@ -23,17 +23,17 @@ interactions:
       : '0'
       ? !!python/object/new:multidict._multidict.istr
       - Date
-      : Wed, 22 Jan 2020 01:50:29 GMT
+      : Wed, 15 Apr 2020 19:50:58 GMT
       ? !!python/object/new:multidict._multidict.istr
       - Etag
-      : '"0x8D79EDD75A4F64E"'
+      : '"0x8D7E17651E90DF2"'
       ? !!python/object/new:multidict._multidict.istr
       - Last-Modified
-      : Wed, 22 Jan 2020 01:50:29 GMT
+      : Wed, 15 Apr 2020 19:50:59 GMT
       ? !!python/object/new:multidict._multidict.istr
       - Server
       : Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: e0722108-901f-0022-09c6-d0888b000000
+      x-ms-request-id: ac70a57c-201f-0008-765f-13579b000000
       x-ms-version: '2019-02-02'
     status:
       code: 201
@@ -50,13 +50,15 @@ interactions:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-dfs/12.0.0b7 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-dfs/12.0.1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-client-request-id:
-      - 917f8412-3cb9-11ea-839b-001a7dda7113
+      - 6dc1ea06-7f52-11ea-9b59-001a7dda7113
+      x-ms-content-disposition:
+      - inline
+      x-ms-content-language:
+      - spanish
       x-ms-date:
-      - Wed, 22 Jan 2020 01:50:29 GMT
-      x-ms-properties:
-      - hello=d29ybGQ=,number=NDI=
+      - Wed, 15 Apr 2020 19:50:59 GMT
       x-ms-rename-source:
       - /filesystem889911c7/directory889911c7
       x-ms-source-lease-id:
@@ -74,11 +76,11 @@ interactions:
       : '0'
       ? !!python/object/new:multidict._multidict.istr
       - Date
-      : Wed, 22 Jan 2020 01:50:29 GMT
+      : Wed, 15 Apr 2020 19:50:58 GMT
       ? !!python/object/new:multidict._multidict.istr
       - Server
       : Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: e0722109-901f-0022-0ac6-d0888b000000
+      x-ms-request-id: ac70a57d-201f-0008-775f-13579b000000
       x-ms-version: '2019-02-02'
     status:
       code: 201
@@ -95,13 +97,13 @@ interactions:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-dfs/12.0.0b7 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-dfs/12.0.1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-client-request-id:
-      - 918ab8f0-3cb9-11ea-a178-001a7dda7113
+      - 6dcd128c-7f52-11ea-a47a-001a7dda7113
       x-ms-date:
-      - Wed, 22 Jan 2020 01:50:29 GMT
+      - Wed, 15 Apr 2020 19:50:59 GMT
       x-ms-version:
-      - '2019-02-02'
+      - '2019-07-07'
     method: HEAD
     uri: https://storagename.blob.core.windows.net/filesystem889911c7/newname
   response:
@@ -119,26 +121,26 @@ interactions:
       : application/octet-stream
       ? !!python/object/new:multidict._multidict.istr
       - Date
-      : Wed, 22 Jan 2020 01:50:28 GMT
+      : Wed, 15 Apr 2020 19:50:58 GMT
       ? !!python/object/new:multidict._multidict.istr
       - Etag
-      : '"0x8D79EDD75A4F64E"'
+      : '"0x8D7E17651E90DF2"'
       ? !!python/object/new:multidict._multidict.istr
       - Last-Modified
-      : Wed, 22 Jan 2020 01:50:29 GMT
+      : Wed, 15 Apr 2020 19:50:59 GMT
       ? !!python/object/new:multidict._multidict.istr
       - Server
       : Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-access-tier: Hot
       x-ms-access-tier-inferred: 'true'
       x-ms-blob-type: BlockBlob
-      x-ms-creation-time: Wed, 22 Jan 2020 01:50:29 GMT
+      x-ms-creation-time: Wed, 15 Apr 2020 19:50:59 GMT
       x-ms-lease-state: available
       x-ms-lease-status: unlocked
       x-ms-meta-hdi_isfolder: 'true'
-      x-ms-request-id: 0e1e3960-a01e-005b-23c6-d074af000000
+      x-ms-request-id: c4211aed-f01e-0056-7c5f-13bc7b000000
       x-ms-server-encrypted: 'true'
-      x-ms-version: '2019-02-02'
+      x-ms-version: '2019-07-07'
     status:
       code: 200
       message: OK
