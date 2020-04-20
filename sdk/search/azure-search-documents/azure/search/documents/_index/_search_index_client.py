@@ -11,7 +11,7 @@ from azure.core.tracing.decorator import distributed_trace
 from ._generated import SearchIndexClient as _SearchIndexClient
 from ._generated.models import IndexBatch, IndexingResult
 from ._index_documents_batch import IndexDocumentsBatch
-from ._paging import SearchItemPaged, SearchPageIterator
+from ._paging import SearchItemPaged
 from ._queries import AutocompleteQuery, SearchQuery, SuggestQuery
 from .._headers_mixin import HeadersMixin
 from .._version import SDK_MONIKER
