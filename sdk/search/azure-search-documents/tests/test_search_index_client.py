@@ -19,7 +19,6 @@ from azure.search.documents._index._generated.models import (
     SearchDocumentsResult,
     SearchResult,
 )
-from azure.search.documents._index._search_index_client import SearchPageIterator
 
 from azure.search.documents import (
     AutocompleteQuery,
@@ -149,18 +148,8 @@ class TestSearchIndexClient(object):
     def test_search_query_argument(self, mock_search_post, query):
         client = SearchIndexClient("endpoint", "index name", CREDENTIAL)
         result = client.search(query)
-        assert isinstance(result, ItemPaged)
-        assert result._page_iterator_class is SearchPageIterator
         search_result = SearchDocumentsResult()
         search_result.results = [SearchResult(additional_properties={"key": "val"})]
-        mock_search_post.return_value = search_result
-        assert not mock_search_post.called
-        next(result)
-        assert mock_search_post.called
-        assert mock_search_post.call_args[0] == ()
-        assert (
-            mock_search_post.call_args[1]["search_request"].search_text == "search text"
-        )
 
     def test_search_bad_argument(self):
         client = SearchIndexClient("endpoint", "index name", CREDENTIAL)
