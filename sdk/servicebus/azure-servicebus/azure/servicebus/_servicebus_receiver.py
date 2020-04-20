@@ -171,11 +171,15 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
 
         auth = None if self._connection else create_authentication(self)
         self._create_handler(auth)
-        self._handler.open(connection=self._connection)
-        self._message_iter = self._handler.receive_messages_iter()
-        while not self._handler.client_ready():
-            time.sleep(0.05)
-        self._running = True
+        try:
+            self._handler.open(connection=self._connection)
+            self._message_iter = self._handler.receive_messages_iter()
+            while not self._handler.client_ready():
+                time.sleep(0.05)
+            self._running = True
+        except:
+            self.close()
+            raise
 
     def _receive(self, max_batch_size=None, timeout=None):
         self._open()
