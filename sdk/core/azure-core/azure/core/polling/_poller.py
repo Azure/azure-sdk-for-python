@@ -30,7 +30,7 @@ try:
 except ImportError:
     from urllib.parse import urlparse
 
-from typing import Any, Callable, Union, List, Optional, cast, TypeVar, Generic, TYPE_CHECKING
+from typing import Any, Callable, Union, List, Optional, TypeVar, Generic, TYPE_CHECKING
 from azure.core.pipeline.transport._base import HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.common import with_current_context

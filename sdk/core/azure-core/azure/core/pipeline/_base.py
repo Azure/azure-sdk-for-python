@@ -25,7 +25,7 @@
 # --------------------------------------------------------------------------
 
 import logging
-from typing import Generic, TypeVar, List, Union, Any, Dict, cast
+from typing import Generic, TypeVar, List, Union, Any, Dict
 from azure.core.pipeline import (
     AbstractContextManager,
     PipelineRequest,
@@ -163,7 +163,7 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
 
         Does nothing if "set_multipart_mixed" was never called.
         """
-        multipart_mixed_info = request.multipart_mixed_info # type: ignore
+        multipart_mixed_info = request.multipart_mixed_info
         if not multipart_mixed_info:
             return
 
