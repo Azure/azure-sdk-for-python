@@ -15,11 +15,39 @@ from ._paging import SearchItemPaged, SearchPageIterator
 from ._queries import AutocompleteQuery, SearchQuery, SuggestQuery
 from .._headers_mixin import HeadersMixin
 from .._version import SDK_MONIKER
+import base64
+import json
+from ._generated.models import SearchRequest, SearchDocumentsResult
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
     from typing import Any, Union
     from azure.core.credentials import AzureKeyCredential
+
+def pack_continuation_token(response):
+    api_version = "2019-05-06-Preview"
+    if response.next_page_parameters is not None:
+        token = {
+            "apiVersion": api_version,
+            "nextLink": response.next_link,
+            "nextPageParameters": response.next_page_parameters.serialize(),
+        }
+        return base64.b64encode(json.dumps(token).encode("utf-8"))
+    return None
+
+
+def unpack_continuation_token(token):
+    unpacked_token = json.loads(base64.b64decode(token))
+    next_link = unpacked_token["nextLink"]
+    next_page_parameters = unpacked_token["nextPageParameters"]
+    next_page_request = SearchRequest.deserialize(next_page_parameters)
+    return next_link
+
+def convert_search_result(result):
+    ret = result.additional_properties
+    ret["@search.score"] = result.score
+    ret["@search.highlights"] = result.highlights
+    return ret
 
 
 def odata(statement, **kwargs):
@@ -167,6 +195,17 @@ class SearchIndexClient(HeadersMixin):
                 :dedent: 4
                 :caption: Get search result facets.
         """
+
+        def _extract_data_cb(response):  # pylint:disable=no-self-use
+            _response = SearchDocumentsResult.deserialize(response)
+            continuation_token = pack_continuation_token(_response)
+            results = [convert_search_result(r) for r in _response.results]
+            return continuation_token, results
+
+        def _unpack_next_link(next_link=None):  # pylint:disable=no-self-use
+            _next_link, _ = unpack_continuation_token(next_link)
+            return _next_link
+
         if isinstance(query, six.string_types):
             query = SearchQuery(search_text=query)
         elif not isinstance(query, SearchQuery):
@@ -177,9 +216,13 @@ class SearchIndexClient(HeadersMixin):
             )
 
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        return SearchItemPaged(
-            self._client, query, kwargs, page_iterator_class=SearchPageIterator
-        )
+        return self._client.documents.search_post(query.request,
+                                                  extract_data=_extract_data_cb,
+                                                  unpack_next_link=_unpack_next_link,
+                                                  item_paged=SearchItemPaged)
+        #return SearchItemPaged(
+        #    self._client, query, kwargs, page_iterator_class=SearchPageIterator
+        #)
 
     @distributed_trace
     def suggest(self, query, **kwargs):
