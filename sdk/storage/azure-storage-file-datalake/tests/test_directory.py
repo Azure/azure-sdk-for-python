@@ -411,11 +411,11 @@ class DirectoryTest(StorageTestCase):
         running_tally = AccessControlChangeCounters(0, 0, 0)
         result = AccessControlChangeResult(None, "")
         iteration_count = 0
-        max_batch = 2
+        max_batches = 2
         batch_size = 2
 
         while result.continuation is not None:
-            result = directory_client.set_access_control_recursive(acl=acl, batch_size=batch_size, max_batch=max_batch,
+            result = directory_client.set_access_control_recursive(acl=acl, batch_size=batch_size, max_batches=max_batches,
                                                                    continuation=result.continuation)
 
             running_tally.directories_successful += result.counters.directories_successful

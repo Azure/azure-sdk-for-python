@@ -430,7 +430,7 @@ class PathClient(StorageAccountHostsMixin):
             Optional. If data set size exceeds batch size then operation will be split into multiple
             requests so that progress can be tracked. Batch size should be between 1 and 2000.
             The default when unspecified is 2000.
-        :keyword int max_batch:
+        :keyword int max_batches:
             Optional. Defines maximum number of batches that single change Access Control operation can execute.
             If maximum is reached before all sub-paths are processed,
             then continuation token can be used to resume operation.
@@ -445,10 +445,10 @@ class PathClient(StorageAccountHostsMixin):
             raise ValueError("The Access Control List must be set for this operation")
 
         progress_callback = kwargs.pop('progress_callback', None)
-        max_batch = kwargs.pop('max_batch', None)
+        max_batches = kwargs.pop('max_batches', None)
         options = self._set_access_control_recursive_options(mode='set', acl=acl, **kwargs)
         return self._set_access_control_internal(options=options, progress_callback=progress_callback,
-                                                 max_batch=max_batch)
+                                                 max_batches=max_batches)
 
     def update_access_control_recursive(self,
                                         acl,
@@ -473,7 +473,7 @@ class PathClient(StorageAccountHostsMixin):
             Optional. If data set size exceeds batch size then operation will be split into multiple
             requests so that progress can be tracked. Batch size should be between 1 and 2000.
             The default when unspecified is 2000.
-        :keyword int max_batch:
+        :keyword int max_batches:
             Optional. Defines maximum number of batches that single change Access Control operation can execute.
             If maximum is reached before all sub-paths are processed,
             then continuation token can be used to resume operation.
@@ -488,10 +488,10 @@ class PathClient(StorageAccountHostsMixin):
             raise ValueError("The Access Control List must be set for this operation")
 
         progress_callback = kwargs.pop('progress_callback', None)
-        max_batch = kwargs.pop('max_batch', None)
+        max_batches = kwargs.pop('max_batches', None)
         options = self._set_access_control_recursive_options(mode='modify', acl=acl, **kwargs)
         return self._set_access_control_internal(options=options, progress_callback=progress_callback,
-                                                 max_batch=max_batch)
+                                                 max_batches=max_batches)
 
     def remove_access_control_recursive(self,
                                         acl,
@@ -515,7 +515,7 @@ class PathClient(StorageAccountHostsMixin):
             Optional. If data set size exceeds batch size then operation will be split into multiple
             requests so that progress can be tracked. Batch size should be between 1 and 2000.
             The default when unspecified is 2000.
-        :keyword int max_batch:
+        :keyword int max_batches:
             Optional. Defines maximum number of batches that single change Access Control operation can execute.
             If maximum is reached before all sub-paths are processed then,
             continuation token can be used to resume operation.
@@ -530,12 +530,12 @@ class PathClient(StorageAccountHostsMixin):
             raise ValueError("The Access Control List must be set for this operation")
 
         progress_callback = kwargs.pop('progress_callback', None)
-        max_batch = kwargs.pop('max_batch', None)
+        max_batches = kwargs.pop('max_batches', None)
         options = self._set_access_control_recursive_options(mode='remove', acl=acl, **kwargs)
         return self._set_access_control_internal(options=options, progress_callback=progress_callback,
-                                                 max_batch=max_batch)
+                                                 max_batches=max_batches)
 
-    def _set_access_control_internal(self, options, progress_callback, max_batch=None):
+    def _set_access_control_internal(self, options, progress_callback, max_batches=None):
         try:
             total_directories_successful = 0
             total_files_success = 0
@@ -576,8 +576,8 @@ class PathClient(StorageAccountHostsMixin):
                         continuation=last_continuation_token))
 
                 # update the continuation token, if there are more operations that cannot be completed in a single call
-                max_batch_satisfied = (max_batch is not None and batch_count == max_batch)
-                continue_operation = bool(current_continuation_token) and not max_batch_satisfied
+                max_batches_satisfied = (max_batches is not None and batch_count == max_batches)
+                continue_operation = bool(current_continuation_token) and not max_batches_satisfied
                 options['continuation'] = current_continuation_token
 
             # currently the service stops on any failure, so we should send back the last continuation token
