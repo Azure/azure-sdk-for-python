@@ -5,6 +5,7 @@
 # -------------------------------------------------------------------------
 
 import uamqp
+from uamqp import c_uamqp
 
 from .message import PeekMessage, ReceivedMessage
 from ..exceptions import ServiceBusError, MessageLockExpired
@@ -83,6 +84,33 @@ def schedule_op(status_code, message, description):
     if status_code == 200:
         return message.get_data()[b'sequence-numbers']
     error = "Scheduling messages failed with status code: {}.\n".format(status_code)
+    if description:
+        error += "{}.".format(description)
+    raise ServiceBusError(error)
+
+
+def add_rule_op(status_code, message, description):
+    if status_code == 200:
+        return
+    error = "Adding rule failed with status code: {}.\n".format(status_code)
+    if description:
+        error += "{}.".format(description)
+    raise ServiceBusError(error)
+
+
+def delete_rule_op(status_code, message, description):
+    if status_code == 200:
+        return
+    error = "Deleting rule failed with status code: {}.\n".format(status_code)
+    if description:
+        error += "{}.".format(description)
+    raise ServiceBusError(error)
+
+
+def list_rules_op(status_code, message, description):
+    if status_code == 200:
+        return message
+    error = "Listing rule failed with status code: {}.\n".format(status_code)
     if description:
         error += "{}.".format(description)
     raise ServiceBusError(error)
