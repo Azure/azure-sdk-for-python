@@ -57,6 +57,14 @@ class RecognizeCustomForms(object):
                 print("...Field '{}' has value '{}' with a confidence score of {}".format(
                     name, field.value, field.confidence
                 ))
+                # label data is populated if you are using a model trained with unlabeled data, since the service needs to make predictions for
+                # labels if not explicitly given to it.
+                if field.label_data:
+                    print("...Field '{}' has label '{}' with a confidence score of {}".format(
+                        name,
+                        field.label_data.text,
+                        field.confidence
+                    ))
             print("-----------------------------------")
         # [END recognize_custom_forms]
 
