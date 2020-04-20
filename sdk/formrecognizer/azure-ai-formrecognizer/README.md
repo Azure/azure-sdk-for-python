@@ -194,19 +194,19 @@ result = poller.result()
 
 r = result[0]
 print("Receipt contained the following values with confidences: ")
-print("Receipt Type: {} has confidence: {}\n".format(r.receipt_type.type, r.receipt_type.confidence))
-print("Merchant Name: {} has confidence: {}\n".format(r.merchant_name.value, r.merchant_name.confidence))
-print("Transaction Date: {} has confidence: {}\n".format(r.transaction_date.value, r.transaction_date.confidence))
+print("Receipt Type: {} has confidence: {}".format(r.receipt_type.type, r.receipt_type.confidence))
+print("Merchant Name: {} has confidence: {}".format(r.merchant_name.value, r.merchant_name.confidence))
+print("Transaction Date: {} has confidence: {}".format(r.transaction_date.value, r.transaction_date.confidence))
 print("Receipt items:")
 for item in r.receipt_items:
     print("...Item Name: {} has confidence: {}".format(item.name.value, item.name.confidence))
     print("...Item Quantity: {} has confidence: {}".format(item.quantity.value, item.quantity.confidence))
     print("...Individual Item Price: {} has confidence: {}".format(item.price.value, item.price.confidence))
-    print("...Total Item Price: {} has confidence: {}\n".format(item.total_price.value, item.total_price.confidence))
-print("Subtotal: {} has confidence: {}\n".format(r.subtotal.value, r.subtotal.confidence))
-print("Tax: {} has confidence: {}\n".format(r.tax.value, r.tax.confidence))
-print("Tip: {} has confidence: {}\n".format(r.tip.value, r.tip.confidence))
-print("Total: {} has confidence: {}\n".format(r.total.value, r.total.confidence))
+    print("...Total Item Price: {} has confidence: {}".format(item.total_price.value, item.total_price.confidence))
+print("Subtotal: {} has confidence: {}".format(r.subtotal.value, r.subtotal.confidence))
+print("Tax: {} has confidence: {}".format(r.tax.value, r.tax.confidence))
+print("Tip: {} has confidence: {}".format(r.tip.value, r.tip.confidence))
+print("Total: {} has confidence: {}".format(r.total.value, r.total.confidence))
 ```
 
 ### Train a model
