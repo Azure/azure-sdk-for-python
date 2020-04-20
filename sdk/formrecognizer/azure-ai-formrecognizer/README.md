@@ -194,19 +194,19 @@ result = poller.result()
 
 r = result[0]
 print("Receipt contained the following values with confidences: ")
-print("Receipt Type: {}\nconfidence: {}\n".format(r.receipt_type.type, r.receipt_type.confidence))
-print("Merchant Name: {}\nconfidence: {}\n".format(r.merchant_name.value, r.merchant_name.confidence))
-print("Transaction Date: {}\nconfidence: {}\n".format(r.transaction_date.value, r.transaction_date.confidence))
+print("Receipt Type: {} has confidence: {}\n".format(r.receipt_type.type, r.receipt_type.confidence))
+print("Merchant Name: {} has confidence: {}\n".format(r.merchant_name.value, r.merchant_name.confidence))
+print("Transaction Date: {} has confidence: {}\n".format(r.transaction_date.value, r.transaction_date.confidence))
 print("Receipt items:")
 for item in r.receipt_items:
-    print("...Item Name: {}\nconfidence: {}".format(item.name.value, item.name.confidence))
-    print("...Item Quantity: {}\nconfidence: {}".format(item.quantity.value, item.quantity.confidence))
-    print("...Individual Item Price: {}\nconfidence: {}".format(item.price.value, item.price.confidence))
-    print("...Total Item Price: {}\nconfidence: {}\n".format(item.total_price.value, item.total_price.confidence))
-print("Subtotal: {}\nconfidence: {}\n".format(r.subtotal.value, r.subtotal.confidence))
-print("Tax: {}\nconfidence: {}\n".format(r.tax.value, r.tax.confidence))
-print("Tip: {}\nconfidence: {}\n".format(r.tip.value, r.tip.confidence))
-print("Total: {}\nconfidence: {}\n".format(r.total.value, r.total.confidence))
+    print("...Item Name: {} has confidence: {}".format(item.name.value, item.name.confidence))
+    print("...Item Quantity: {} has confidence: {}".format(item.quantity.value, item.quantity.confidence))
+    print("...Individual Item Price: {} has confidence: {}".format(item.price.value, item.price.confidence))
+    print("...Total Item Price: {} has confidence: {}\n".format(item.total_price.value, item.total_price.confidence))
+print("Subtotal: {} has confidence: {}\n".format(r.subtotal.value, r.subtotal.confidence))
+print("Tax: {} has confidence: {}\n".format(r.tax.value, r.tax.confidence))
+print("Tip: {} has confidence: {}\n".format(r.tip.value, r.tip.confidence))
+print("Total: {} has confidence: {}\n".format(r.total.value, r.total.confidence))
 ```
 
 ### Train a model
@@ -350,7 +350,7 @@ with Form Recognizer and require Python 3.5 or later.
 * Recognize receipts from a URL: [sample_recognize_receipts_from_url.py][sample_recognize_receipts_from_url] ([async version][sample_recognize_receipts_from_url_async])
 * Recognize content: [sample_recognize_content.py][sample_recognize_content] ([async version][sample_recognize_content_async])
 * Recognize custom forms: [sample_recognize_custom_forms.py][sample_recognize_custom_forms] ([async version][sample_recognize_custom_forms_async])
-* Train a model with forms only: [sample_train_model_with_forms_only.py][sample_train_model_with_forms_only] ([async version][sample_train_model_with_forms_only_async])
+* Train a model without labels: [sample_train_model_without_labels.py][sample_train_model_without_labels] ([async version][sample_train_model_without_labels_async])
 * Train a model with labels: [sample_train_model_with_labels.py][sample_train_model_with_labels] ([async version][sample_train_model_with_labels_async])
 * Manage custom models: [sample_manage_custom_models.py][sample_manage_custom_models] ([async_version][sample_manage_custom_models_async])
 
@@ -407,10 +407,6 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [coc_faq]: https://opensource.microsoft.com/codeofconduct/faq/
 [coc_contact]: mailto:opencode@microsoft.com
 
-[sample_differentiate_custom_forms_with_labeled_and_unlabeled_models]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_differentiate_custom_forms_with_labeled_and_unlabeled_models.py
-[sample_differentiate_custom_forms_with_labeled_and_unlabeled_models_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/async_samples/sample_differentiate_custom_forms_with_labeled_and_unlabeled_models_async.py
-[sample_get_bounding_boxes]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_get_bounding_boxes.py
-[sample_get_bounding_boxes_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/async_samples/sample_get_bounding_boxes_async.py
 [sample_manage_custom_models]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_manage_custom_models.py
 [sample_manage_custom_models_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/async_samples/sample_manage_custom_models_async.py
 [sample_recognize_content]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_recognize_content.py
@@ -423,5 +419,5 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [sample_recognize_receipts_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/async_samples/sample_recognize_receipts_async.py
 [sample_train_model_with_labels]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_train_model_with_labels.py
 [sample_train_model_with_labels_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/async_samples/sample_train_model_with_labels_async.py
-[sample_train_model_with_forms_only]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_train_model_with_forms_only.py
-[sample_train_model_with_forms_only_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/async_samples/sample_train_model_with_forms_only_async.py
+[sample_train_model_without_labels]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_train_model_without_labels.py
+[sample_train_model_without_labels_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/async_samples/sample_train_model_without_labels_async.py
