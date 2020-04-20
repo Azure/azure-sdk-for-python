@@ -23,7 +23,6 @@ from ._utils import (
     listize_synonyms,
     prep_if_match,
     prep_if_none_match,
-    skillset_as_dict,
 )
 
 if TYPE_CHECKING:
@@ -418,7 +417,7 @@ class SearchServiceClient(HeadersMixin):
 
     @distributed_trace
     def list_skillsets(self, **kwargs):
-        # type: (**Any) -> List[dict]
+        # type: (**Any) -> List[Skillset]
         """List the Skillsets in an Azure Search service.
 
         :return: List of Skillsets
@@ -437,11 +436,11 @@ class SearchServiceClient(HeadersMixin):
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = self._client.skillsets.list(**kwargs)
-        return [skillset_as_dict(x) for x in result.skillsets]
+        return result.skillsets
 
     @distributed_trace
     def get_skillset(self, name, **kwargs):
-        # type: (str, **Any) -> dict
+        # type: (str, **Any) -> Skillset
         """Retrieve a named Skillset in an Azure Search service
 
         :param name: The name of the Skillset to get
@@ -461,8 +460,7 @@ class SearchServiceClient(HeadersMixin):
 
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        result = self._client.skillsets.get(name, **kwargs)
-        return skillset_as_dict(result)
+        return self._client.skillsets.get(name, **kwargs)
 
     @distributed_trace
     def delete_skillset(self, name, **kwargs):
@@ -487,7 +485,7 @@ class SearchServiceClient(HeadersMixin):
 
     @distributed_trace
     def create_skillset(self, name, skills, description, **kwargs):
-        # type: (str, Sequence[Skill], str, **Any) -> dict
+        # type: (str, Sequence[Skill], str, **Any) -> Skillset
         """Create a new Skillset in an Azure Search service
 
         :param name: The name of the Skillset to create
@@ -513,12 +511,11 @@ class SearchServiceClient(HeadersMixin):
 
         skillset = Skillset(name=name, skills=list(skills), description=description)
 
-        result = self._client.skillsets.create(skillset, **kwargs)
-        return skillset_as_dict(result)
+        return self._client.skillsets.create(skillset, **kwargs)
 
     @distributed_trace
     def create_or_update_skillset(self, name, skills, description, **kwargs):
-        # type: (str, Sequence[Skill], str, **Any) -> dict
+        # type: (str, Sequence[Skill], str, **Any) -> Skillset
         """Create a new Skillset in an Azure Search service, or update an
         existing one.
 
@@ -536,5 +533,4 @@ class SearchServiceClient(HeadersMixin):
 
         skillset = Skillset(name=name, skills=list(skills), description=description)
 
-        result = self._client.skillsets.create_or_update(name, skillset, **kwargs)
-        return skillset_as_dict(result)
+        return self._client.skillsets.create_or_update(name, skillset, **kwargs)

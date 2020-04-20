@@ -26,6 +26,7 @@ from azure.search.documents import(
     OutputFieldMappingEntry,
     SearchServiceClient,
     ScoringProfile,
+    Skillset,
 )
 
 CWD = dirname(realpath(__file__))
@@ -259,12 +260,12 @@ class SearchServiceClientTest(AzureMgmtTestCase):
                                    outputs=[OutputFieldMappingEntry(name="organizations", target_name="organizations")])
 
         result = client.create_skillset(name='test-ss', skills=[s], description="desc")
-        assert isinstance(result, dict)
-        assert result["name"] == "test-ss"
-        assert result["description"] == "desc"
-        assert result.get("e_tag")
-        assert len(result["skills"]) == 1
-        assert isinstance(result["skills"][0], EntityRecognitionSkill)
+        assert isinstance(result, Skillset)
+        assert result.name == "test-ss"
+        assert result.description == "desc"
+        assert result.e_tag
+        assert len(result.skills) == 1
+        assert isinstance(result.skills[0], EntityRecognitionSkill)
 
         assert len(client.list_skillsets()) == 1
 
@@ -292,12 +293,12 @@ class SearchServiceClientTest(AzureMgmtTestCase):
         assert len(client.list_skillsets()) == 1
 
         result = client.get_skillset("test-ss")
-        assert isinstance(result, dict)
-        assert result["name"] == "test-ss"
-        assert result["description"] == "desc"
-        assert result.get("e_tag")
-        assert len(result["skills"]) == 1
-        assert isinstance(result["skills"][0], EntityRecognitionSkill)
+        assert isinstance(result, Skillset)
+        assert result.name == "test-ss"
+        assert result.description == "desc"
+        assert result.e_tag
+        assert len(result.skills) == 1
+        assert isinstance(result.skills[0], EntityRecognitionSkill)
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
@@ -310,8 +311,8 @@ class SearchServiceClientTest(AzureMgmtTestCase):
         client.create_skillset(name='test-ss-2', skills=[s], description="desc2")
         result = client.list_skillsets()
         assert isinstance(result, list)
-        assert all(isinstance(x, dict) for x in result)
-        assert set(x['name'] for x in result) == {"test-ss-1", "test-ss-2"}
+        assert all(isinstance(x, Skillset) for x in result)
+        assert set(x.name for x in result) == {"test-ss-1", "test-ss-2"}
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
@@ -325,6 +326,6 @@ class SearchServiceClientTest(AzureMgmtTestCase):
         assert len(client.list_skillsets()) == 1
 
         result = client.get_skillset("test-ss")
-        assert isinstance(result, dict)
-        assert result["name"] == "test-ss"
-        assert result["description"] == "desc2"
+        assert isinstance(result, Skillset)
+        assert result.name == "test-ss"
+        assert result.description == "desc2"

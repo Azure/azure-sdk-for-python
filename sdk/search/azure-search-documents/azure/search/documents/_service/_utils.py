@@ -151,13 +151,3 @@ def listize_synonyms(synonym_map):
     # type: (dict) -> dict
     synonym_map["synonyms"] = synonym_map["synonyms"].split("\n")
     return synonym_map
-
-
-def skillset_as_dict(skillset):
-    # type: (Skillset) -> dict
-    result = {"name": skillset.name, "skills": skillset.skills}
-    if skillset.description:
-        result["description"] = skillset.description
-    if skillset.e_tag:
-        result["e_tag"] = skillset.e_tag
-    return result
