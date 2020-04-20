@@ -24,9 +24,28 @@
 #
 # --------------------------------------------------------------------------
 
+from azure.core.pipeline.policies import HttpLoggingPolicy
 from ._base import ARMAutoResourceProviderRegistrationPolicy
 
-__all__ = ["ARMAutoResourceProviderRegistrationPolicy"]
+
+class ARMHttpLoggingPolicy(HttpLoggingPolicy):
+    """HttpLoggingPolicy with ARM specific safe headers fopr loggers.
+    """
+
+    DEFAULT_HEADERS_WHITELIST = HttpLoggingPolicy.DEFAULT_HEADERS_WHITELIST + set(
+        # https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/request-limits-and-throttling#remaining-requests
+        "x-ms-ratelimit-remaining-subscription-reads",
+        "x-ms-ratelimit-remaining-subscription-writes",
+        "x-ms-ratelimit-remaining-tenant-reads",
+        "x-ms-ratelimit-remaining-tenant-writes",
+        "x-ms-ratelimit-remaining-subscription-resource-requests",
+        "x-ms-ratelimit-remaining-subscription-resource-entities-read",
+        "x-ms-ratelimit-remaining-tenant-resource-requests",
+        "x-ms-ratelimit-remaining-tenant-resource-entities-read"
+    )
+
+
+__all__ = ["ARMAutoResourceProviderRegistrationPolicy", "ARMHttpLoggingPolicy"]
 
 try:
     from ._base_async import (  # pylint: disable=unused-import
