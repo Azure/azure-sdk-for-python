@@ -10,7 +10,7 @@ import itertools
 import json
 
 from azure.core.paging import ItemPaged, PageIterator, ReturnType
-from ._generated.models import SearchRequest
+from ._generated.models import SearchRequest, SearchDocumentsResult
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
@@ -66,7 +66,17 @@ class SearchItemPaged(ItemPaged[ReturnType]):
         """Return any facet results if faceting was requested.
 
         """
-        return self._first_iterator_instance().get_facets()
+        page_iterator = self._first_iterator_instance()
+        if page_iterator._current_page is None:
+            response = page_iterator._get_next(page_iterator.continuation_token)
+            _response = SearchDocumentsResult.deserialize(response)
+            facets = _response.facets
+            if facets is not None:
+                _facets = {k: [x.as_dict() for x in v] for k, v in facets.items()}
+                return _facets
+            return None
+        return page_iterator.response.facets
+
 
     def get_coverage(self):
         # type: () -> float
@@ -74,7 +84,12 @@ class SearchItemPaged(ItemPaged[ReturnType]):
         specificied for the query.
 
         """
-        return self._first_iterator_instance().get_coverage()
+        page_iterator = self._first_iterator_instance()
+        if page_iterator._current_page is None:
+            response = page_iterator._get_next(page_iterator.continuation_token)
+            _response = SearchDocumentsResult.deserialize(response)
+            return _response.coverage
+        return page_iterator.response.coverage
 
     def get_count(self):
         # type: () -> float
@@ -82,7 +97,12 @@ class SearchItemPaged(ItemPaged[ReturnType]):
         set for the query.
 
         """
-        return self._first_iterator_instance().get_count()
+        page_iterator = self._first_iterator_instance()
+        if page_iterator._current_page is None:
+            response = page_iterator._get_next(page_iterator.continuation_token)
+            _response = SearchDocumentsResult.deserialize(response)
+            return _response.count
+        return page_iterator.response.count
 
 
 # The pylint error silenced below seems spurious, as the inner wrapper does, in
