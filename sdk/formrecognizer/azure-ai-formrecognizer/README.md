@@ -86,52 +86,20 @@ form_recognizer_client = FormRecognizerClient(endpoint, credential)
 ## Key concepts
 
 ### FormRecognizerClient
-A `FormRecognizerClient` is the Form Recognizer interface to use for recognizing data from forms using custom trained models,
-recognizing content from forms, and analyzing receipts. It provides different methods for providing the input document, allowing you to pass it in as a file stream or through a URL path to the document.
+`FormRecognizerClient` provides operations for:
 
-#### Recognizing Custom Forms
-Our method for recognizing custom forms takes in the ID of a custom model. The model can be trained either using the FormTrainingClient in our [library](#training-models "Training models")
-or via a UI such as the service's [labeling tool][fr-labeling-tool].
-
-#### Recognizing Content in Forms
-This method recognizes text and table structures, along with their bounding box coordinates, from documents. An object's bounding boxes refer to the coordinates wherein the object can be found.
-
-#### Recognizing US receipts
-This method is used for analyzing receipts. It provides operations to extract receipt field values and locations from receipts from the United States.
-
-#### RecognizedForm
-`RecognizedForm` is what our service returns when it recognizes a [form](#recognizing-custom-forms "Recognizing Custom Forms"). It contains the type of the form(`form_type`),
-the [fields](#FormField "FormField") found in the form (`fields`), and information about each [page](#FormPage "FormPage") in the form document (`pages`).
-
-#### FormField
-Each field in a form contains the unique identifier of the field (`name`), the recognized value of the field (`value`), and information about its label and value (`label_data` and `value_data`). If the form is recognized with an unlabelled model, the label of the field will be denoted with indices, and if it's recognized with a labeled model,
-the label will be the same as specified in the custom model's training documents.
-
-#### FormPage
-Contains the recognized metadata, text lines (`lines`), and tables (`tables`) found on a single page of the form document.
+ - Recognizing form fields and content using custom models trained to recognize your custom forms. These values are returned in a collection of `RecognizedForm` objects.
+ - Recognizing form content, including tables, lines and words, without the need to train a model. Form content is returned in a collection of `RecognizedPage` objects.
+ - Recognizing common fields from US receipts, using a pre-trained receipt model on the Form Recognizer service. These fields and meta-data are returned in a collection of `RecognizeReceipt` objects.
 
 ### FormTrainingClient
-A `FormTrainingClient` is the Form Recognizer interface to use for creating and managing custom machine-learned models.
-It provides operations for training models on forms you provide and operations for viewing and deleting models, as well as
-understanding how close you are to reaching subscription limits for the number of models you can train.
+`FormTrainingClient` provides operations for:
 
-#### Training models
-Using the `FormTrainingClient`, you can train a machine-learned model on your own form types. The resulting model will
-be able to recognize values from the types of forms it was trained on. You can train your custom model with multiple form types. Once trained, you can use your custom models to recognize forms of these form types. If you prefer a graphical user interface to do that training, you can
-use the service's [labeling tool][fr-labeling-tool].
+- Training custom models to recognize all fields and values found in your custom forms. A `CustomFormModel` is returned indicating the form types the model will recognize, and the fields it will extract for each form type. See the [service's documents][fr-train-without-labels] for a more detailed explanation.
+- Training custom models to recognize specific fields and values you specify by labeling your custom forms. A `CustomFormModel` is returned indicating the fields the model will extract, as well as the estimated accuracy for each field. See the [service's documents][fr-train-with-labels] for a more detailed explanation.
+- Managing models created in your account.
 
-#### Managing Custom Models
-Using the `FormTrainingClient`, you can get, list, and delete the custom models you've trained.
-You can also view the count of models you've trained and the maximum number of models your subscription will
-allow you to store.
-
-#### CustomFormModel
-This object contains all the necessary information of your custom model. It has its own model id (`model_id`)
-and displays its status (`status`). It also has a [submodel](#CustomFormSubmodel "CustomFormSubmodel") for every form type it can recognize.
-
-#### CustomFormSubModel
-Each submodel recognizes a specific form type (`form_type`) and includes a list of the fields (`fields`) that this submodel will recognize in forms.
-
+Please note that models can also be trained using a graphical user interface such as the [Form Recognizer Labeling Tool][fr-labeling-tool].
 ### Long-Running Operations
 Long-running operations are operations which consist of an initial request sent to the service to start an operation,
 followed by polling the service at intervals to determine whether the operation has completed or failed, and if it has
@@ -231,10 +199,10 @@ print("Merchant Name: {}\nconfidence: {}\n".format(r.merchant_name.value, r.merc
 print("Transaction Date: {}\nconfidence: {}\n".format(r.transaction_date.value, r.transaction_date.confidence))
 print("Receipt items:")
 for item in r.receipt_items:
-    print("Item Name: {}\nconfidence: {}".format(item.name.value, item.name.confidence))
-    print("Item Quantity: {}\nconfidence: {}".format(item.quantity.value, item.quantity.confidence))
-    print("Individual Item Price: {}\nconfidence: {}".format(item.price.value, item.price.confidence))
-    print("Total Item Price: {}\nconfidence: {}\n".format(item.total_price.value, item.total_price.confidence))
+    print("...Item Name: {}\nconfidence: {}".format(item.name.value, item.name.confidence))
+    print("...Item Quantity: {}\nconfidence: {}".format(item.quantity.value, item.quantity.confidence))
+    print("...Individual Item Price: {}\nconfidence: {}".format(item.price.value, item.price.confidence))
+    print("...Total Item Price: {}\nconfidence: {}\n".format(item.total_price.value, item.total_price.confidence))
 print("Subtotal: {}\nconfidence: {}\n".format(r.subtotal.value, r.subtotal.confidence))
 print("Tax: {}\nconfidence: {}\n".format(r.tax.value, r.tax.confidence))
 print("Tip: {}\nconfidence: {}\n".format(r.tip.value, r.tip.confidence))
@@ -256,7 +224,7 @@ credential = AzureKeyCredential("<api_key>")
 form_training_client = FormTrainingClient(endpoint, credential)
 
 container_sas_url = "xxx"  # training documents uploaded to blob storage
-poller = form_training_client.begin_training(container_sas_url)
+poller = form_training_client.begin_train_model(container_sas_url)
 model = poller.result()
 
 # Custom model information
@@ -382,8 +350,8 @@ with Form Recognizer and require Python 3.5 or later.
 * Recognize receipts from a URL: [sample_recognize_receipts_from_url.py][sample_recognize_receipts_from_url] ([async version][sample_recognize_receipts_from_url_async])
 * Recognize content: [sample_recognize_content.py][sample_recognize_content] ([async version][sample_recognize_content_async])
 * Recognize custom forms: [sample_recognize_custom_forms.py][sample_recognize_custom_forms] ([async version][sample_recognize_custom_forms_async])
-* Train a model without labels: [sample_train_unlabeled_model.py][sample_train_unlabeled_model] ([async version][sample_train_unlabeled_model_async])
-* Train a model with labels: [sample_train_labeled_model.py][sample_train_labeled_model] ([async version][sample_train_labeled_model_async])
+* Train a model with forms only: [sample_train_model_with_forms_only.py][sample_train_model_with_forms_only] ([async version][sample_train_model_with_forms_only_async])
+* Train a model with labels: [sample_train_model_with_labels.py][sample_train_model_with_labels] ([async version][sample_train_model_with_labels_async])
 * Manage custom models: [sample_manage_custom_models.py][sample_manage_custom_models] ([async_version][sample_manage_custom_models_async])
 
 ### Additional documentation
@@ -414,6 +382,8 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [azure_cli_create_FR_resource]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account-cli?tabs=windows
 [azure-key-credential]: https://aka.ms/azsdk-python-core-azurekeycredential
 [fr-labeling-tool]: https://docs.microsoft.com/en-us/azure/cognitive-services/form-recognizer/quickstarts/label-tool
+[fr-train-without-labels]: https://docs.microsoft.com/en-us/azure/cognitive-services/form-recognizer/overview#train-without-labels
+[fr-train-with-labels]: https://docs.microsoft.com/en-us/azure/cognitive-services/form-recognizer/overview#train-with-labels
 
 [azure_core]: ../../core/azure-core/README.md
 [azure_core_ref_docs]: https://aka.ms/azsdk-python-azure-core
@@ -439,8 +409,8 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 
 [sample_differentiate_custom_forms_with_labeled_and_unlabeled_models]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_differentiate_custom_forms_with_labeled_and_unlabeled_models.py
 [sample_differentiate_custom_forms_with_labeled_and_unlabeled_models_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/async_samples/sample_differentiate_custom_forms_with_labeled_and_unlabeled_models_async.py
-[sample_get_manual_validation_info]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_get_manual_validation_info.py
-[sample_get_manual_validation_info_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/async_samples/sample_get_manual_validation_info_async.py
+[sample_get_bounding_boxes]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_get_bounding_boxes.py
+[sample_get_bounding_boxes_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/async_samples/sample_get_bounding_boxes_async.py
 [sample_manage_custom_models]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_manage_custom_models.py
 [sample_manage_custom_models_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/async_samples/sample_manage_custom_models_async.py
 [sample_recognize_content]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_recognize_content.py
@@ -451,7 +421,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [sample_recognize_receipts_from_url_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/async_samples/sample_recognize_receipts_from_url_async.py
 [sample_recognize_receipts]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_recognize_receipts.py
 [sample_recognize_receipts_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/async_samples/sample_recognize_receipts_async.py
-[sample_train_labeled_model]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_train_labeled_model.py
-[sample_train_labeled_model_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/async_samples/sample_train_labeled_model_async.py
-[sample_train_unlabeled_model]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_train_unlabeled_model.py
-[sample_train_unlabeled_model_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/async_samples/sample_train_unlabeled_model_async.py
+[sample_train_model_with_labels]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_train_model_with_labels.py
+[sample_train_model_with_labels_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/async_samples/sample_train_model_with_labels_async.py
+[sample_train_model_with_forms_only]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_train_model_with_forms_only.py
+[sample_train_model_with_forms_only_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/async_samples/sample_train_model_with_forms_only_async.py
