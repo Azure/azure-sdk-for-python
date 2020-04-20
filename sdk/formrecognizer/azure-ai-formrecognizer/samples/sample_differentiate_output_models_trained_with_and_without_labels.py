@@ -7,20 +7,20 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_differentiate_custom_forms_with_labeled_and_unlabeled_models.py
+FILE: sample_differentiate_output_models_trained_with_and_without_labels.py
 
 DESCRIPTION:
     This sample demonstrates the differences in output that arise when recognize_custom_forms
     is called with custom models trained with labeled and unlabeled data. For a more general
     example of recognizing custom forms, see sample_recognize_custom_forms.py
 USAGE:
-    python sample_differentiate_custom_forms_with_labeled_and_unlabeled_models.py
+    python sample_differentiate_output_models_trained_with_and_without_labels.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_FORM_RECOGNIZER_ENDPOINT - the endpoint to your Cognitive Services resource.
     2) AZURE_FORM_RECOGNIZER_KEY - your Form Recognizer API key
-    3) ID_OF_MODEL_TRAINED_WITH_LABELS - the ID of your custom model trained with labeled data
-    4) ID_OF_MODEL_TRAINED_WITH_FORMS_ONLY - the ID of your custom model trained with unlabeled data
+    3) ID_OF_MODEL_TRAINED_WITH_LABELS - the ID of your custom model trained with labels
+    4) ID_OF_MODEL_TRAINED_WITHOUT_LABELS - the ID of your custom model trained without labels
 """
 
 import os
@@ -31,12 +31,12 @@ def format_bounding_box(bounding_box):
         return "N/A"
     return ", ".join(["[{}, {}]".format(p.x, p.y) for p in bounding_box])
 
-class DifferentiateCustomFormsWithLabeledAndUnlabeledModels(object):
+class DifferentiateOutputModelsTrainedWithAndWithoutLabels(object):
 
     endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
     key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
     model_trained_with_labels_id = os.environ["ID_OF_MODEL_TRAINED_WITH_LABELS"]
-    model_trained_with_forms_only_id = os.environ["ID_OF_MODEL_TRAINED_WITH_FORMS_ONLY"]
+    model_trained_without_labels_id = os.environ["ID_OF_MODEL_TRAINED_WITHOUT_LABELS"]
 
     def recognize_custom_forms(self):
         from azure.core.credentials import AzureKeyCredential
@@ -48,12 +48,17 @@ class DifferentiateCustomFormsWithLabeledAndUnlabeledModels(object):
         # Make sure your form's type is included in the list of form types the custom model can recognize
         with open("sample_forms/forms/Form_1.jpg", "rb") as f:
             stream = f.read()
-        forms_with_labeled_model = form_recognizer_client.begin_recognize_custom_forms(
+        forms_with_labeled_model_poller = form_recognizer_client.begin_recognize_custom_forms(
             model_id=self.model_trained_with_labels_id, stream=stream
-        ).result()
-        forms_with_unlabeled_model = form_recognizer_client.begin_recognize_custom_forms(
-            model_id=self.model_trained_with_forms_only_id, stream=stream
-        ).result()
+        )
+        forms_with_unlabeled_model_poller = form_recognizer_client.begin_recognize_custom_forms(
+            model_id=self.model_trained_without_labels_id, stream=stream
+        )
+
+        # Calling result after kicking off each call allows for server-side paralellization
+        forms_with_labeled_model = forms_with_labeled_model_poller.result()
+        forms_with_unlabeled_model = forms_with_unlabeled_model_poller.result()
+
 
         # The main difference is found in the names we have for the fields. Fields is returned as a dictionary, with the 'name'
         # key being the unique identifier of the form field.
@@ -62,7 +67,7 @@ class DifferentiateCustomFormsWithLabeledAndUnlabeledModels(object):
         #
         # When we access a field's 'label' property, we are referring to the title of the form field in the form, so do not
         # confuse a field's 'label' property with the unique identifier of a form field.
-        print("--------Recognizing forms with models trained with labels--------")
+        print("---------Recognizing forms with models trained with labeled data---------")
         for labeled_form in forms_with_labeled_model:
             for name, field in labeled_form.fields.items():
                 # With your custom model trained with labels, you will not get back label data but will get back value data
@@ -77,8 +82,8 @@ class DifferentiateCustomFormsWithLabeledAndUnlabeledModels(object):
                     field.confidence
                 ))
 
-        print("-------------------------------------------------------------------")
-        print("-------Recognizing forms with models trained with forms only-------")
+        print("-----------------------------------------------------------------------")
+        print("-------Recognizing forms with models trained with unlabeled data-------")
         for unlabeled_form in forms_with_unlabeled_model:
             for name, field in unlabeled_form.fields.items():
                 # The form recognized with a model trained with forms only will also include data about your labels
@@ -98,5 +103,5 @@ class DifferentiateCustomFormsWithLabeledAndUnlabeledModels(object):
 
 
 if __name__ == '__main__':
-    sample = DifferentiateCustomFormsWithLabeledAndUnlabeledModels()
+    sample = DifferentiateOutputModelsTrainedWithAndWithoutLabels()
     sample.recognize_custom_forms()

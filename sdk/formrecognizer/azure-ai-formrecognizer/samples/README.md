@@ -23,7 +23,7 @@ All of these samples need the endpoint to your Form Recognizer resource ([instru
 |[sample_recognize_receipts.py][sample_recognize_receipts] and [sample_recognize_receipts_async.py][sample_recognize_receipts_async]|Recognize data from a file of a US sales receipt using a prebuilt model|
 |[sample_recognize_receipts_from_url.py][sample_recognize_receipts_from_url] and [sample_recognize_receipts_from_url_async.py][sample_recognize_receipts_from_url_async]|Recognize data from a URL of a US sales receipt using a prebuilt model|
 |[sample_recognize_custom_forms.py][sample_recognize_custom_forms] and [sample_recognize_custom_forms_async.py][sample_recognize_custom_forms_async]|Recognize forms with your custom model|
-|[sample_train_model_with_forms_only.py][sample_train_model_with_forms_only] and [sample_train_model_with_forms_only_async.py][sample_train_model_with_forms_only_async]|Train a custom model with unlabeled data|
+|[sample_train_model_without_labels.py][sample_train_model_without_labels] and [sample_train_model_without_labels_async.py][sample_train_model_without_labels_async]|Train a custom model with unlabeled data|
 |[sample_train_model_with_labels.py][sample_train_model_with_labels] and [sample_train_model_with_labels_async.py][sample_train_model_with_labels_async]|Train a custom model with labeled data|
 |[sample_manage_custom_models.py][sample_manage_custom_models] and [sample_manage_custom_models_async.py][sample_manage_custom_models_async]|Manage the custom models in your account|
 
@@ -57,7 +57,7 @@ what you can do with the Azure Form Recognizer client library.
 |**Advanced Sample File Name**|**Description**|
 |----------------|-------------|
 |[sample_get_bounding_boxes.py][sample_get_bounding_boxes] and [sample_get_bounding_boxes_async.py][sample_get_bounding_boxes_async]|Get info to visualize the outlines of form content and fields, which can be used for manual validation|
-|[sample_differentiate_custom_forms_with_labeled_and_unlabeled_models.py][sample_differentiate_custom_forms_with_labeled_and_unlabeled_models] and [sample_differentiate_custom_forms_with_labeled_and_unlabeled_models_async.py][sample_differentiate_custom_forms_with_labeled_and_unlabeled_models_async]|See the differences in output when using a custom model trained with labeled data and one trained with unlabeled data|
+|[sample_differentiate_output_models_trained_with_and_without_labels.py][sample_differentiate_output_models_trained_with_and_without_labels] and [sample_differentiate_output_models_trained_with_and_without_labels_async.py][sample_differentiate_output_models_trained_with_and_without_labels_async]|See the differences in output when using a custom model trained with labeled data and one trained with unlabeled data|
 
 [azure_identity]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity
 
@@ -69,8 +69,8 @@ what you can do with the Azure Form Recognizer client library.
 [get-endpoint-instructions]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/formrecognizer/azure-ai-formrecognizer/README.md#looking-up-the-endpoint
 [get-key-instructions]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/formrecognizer/azure-ai-formrecognizer/README.md#types-of-credentials
 
-[sample_differentiate_custom_forms_with_labeled_and_unlabeled_models]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_differentiate_custom_forms_with_labeled_and_unlabeled_models.py
-[sample_differentiate_custom_forms_with_labeled_and_unlabeled_models_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/async_samples/sample_differentiate_custom_forms_with_labeled_and_unlabeled_models_async.py
+[sample_differentiate_output_models_trained_with_and_without_labels]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_differentiate_output_models_trained_with_and_without_labels.py
+[sample_differentiate_output_models_trained_with_and_without_labels_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/async_samples/sample_differentiate_output_models_trained_with_and_without_labels_async.py
 [sample_get_bounding_boxes]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_get_bounding_boxes.py
 [sample_get_bounding_boxes_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/async_samples/sample_get_bounding_boxes_async.py
 [sample_manage_custom_models]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_manage_custom_models.py
@@ -85,5 +85,5 @@ what you can do with the Azure Form Recognizer client library.
 [sample_recognize_receipts_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/async_samples/sample_recognize_receipts_async.py
 [sample_train_model_with_labels]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_train_model_with_labels.py
 [sample_train_model_with_labels_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/async_samples/sample_train_model_with_labels_async.py
-[sample_train_model_with_forms_only]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_train_model_with_forms_only.py
-[sample_train_model_with_forms_only_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/async_samples/sample_train_model_with_forms_only_async.py
+[sample_train_model_without_labels]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_train_model_without_labels.py
+[sample_train_model_without_labels_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/async_samples/sample_train_model_without_labels_async.py

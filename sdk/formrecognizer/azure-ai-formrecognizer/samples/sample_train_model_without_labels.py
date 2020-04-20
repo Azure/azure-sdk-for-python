@@ -7,13 +7,13 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_train_model_with_forms_only.py
+FILE: sample_train_model_without_labels.py
 
 DESCRIPTION:
-    This sample demonstrates how to train a model with forms only. See sample_recognize_custom_forms.py
+    This sample demonstrates how to train a model with unlabelled data. See sample_recognize_custom_forms.py
     to recognize forms with your custom model.
 USAGE:
-    python sample_train_model_with_forms_only.py
+    python sample_train_model_without_labels.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_FORM_RECOGNIZER_ENDPOINT - the endpoint to your Cognitive Services resource.
@@ -26,13 +26,13 @@ USAGE:
 import os
 
 
-class TrainModelWithFormsOnly(object):
+class TrainModelWithoutLabelsSample(object):
 
     endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
     key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
     container_sas_url = os.environ["CONTAINER_SAS_URL"]
 
-    def train_model_with_forms_only(self):
+    def train_model_without_labels(self):
         # [START training]
         from azure.ai.formrecognizer import FormTrainingClient
         from azure.core.credentials import AzureKeyCredential
@@ -67,5 +67,5 @@ class TrainModelWithFormsOnly(object):
             print("Document errors: {}".format(doc.errors))
 
 if __name__ == '__main__':
-    sample = TrainModelWithFormsOnly()
-    sample.train_model_with_forms_only()
+    sample = TrainModelWithoutLabelsSample()
+    sample.train_model_without_labels()

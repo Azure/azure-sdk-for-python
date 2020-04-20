@@ -7,13 +7,13 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_train_model_with_forms_only_async.py
+FILE: sample_train_model_without_labels_async.py
 
 DESCRIPTION:
-    This sample demonstrates how to train a model with forms only. See sample_recognize_custom_forms_async.py
+    This sample demonstrates how to train a model with unlabeled data. See sample_recognize_custom_forms_async.py
     to recognize forms with your custom model.
 USAGE:
-    python sample_train_model_with_forms_only_async.py
+    python sample_train_model_without_labels_async.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_FORM_RECOGNIZER_ENDPOINT - the endpoint to your Cognitive Services resource.
@@ -27,13 +27,13 @@ import os
 import asyncio
 
 
-class TrainUnlabeledModelSampleAsync(object):
+class TrainModelWithoutLabelsSampleAsync(object):
 
     endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
     key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
     container_sas_url = os.environ["CONTAINER_SAS_URL"]
 
-    async def train_unlabeled_model(self):
+    async def train_model_without_labels(self):
         # [START training_async]
         from azure.ai.formrecognizer.aio import FormTrainingClient
         from azure.core.credentials import AzureKeyCredential
@@ -69,8 +69,8 @@ class TrainUnlabeledModelSampleAsync(object):
                 print("Document errors: {}".format(doc.errors))
 
 async def main():
-    sample = TrainUnlabeledModelSampleAsync()
-    await sample.train_unlabeled_model()
+    sample = TrainModelWithoutLabelsSampleAsync()
+    await sample.train_model_without_labels()
 
 
 if __name__ == '__main__':
