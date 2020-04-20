@@ -77,7 +77,7 @@ class SearchServiceClient(HeadersMixin):
 
     async def close(self):
         # type: () -> None
-        """Close the :class:`~azure.search.SearchServiceClient` session.
+        """Close the :class:`~azure.search.documents.SearchServiceClient` session.
 
         """
         return await self._client.close()
@@ -516,7 +516,7 @@ class SearchServiceClient(HeadersMixin):
         return await self._client.skillsets.create(skillset, **kwargs)
 
     @distributed_trace_async
-    async def create_or_update_skillset(self, name, skills, description, **kwargs):
+    async def create_or_update_skillset(self, name, **kwargs):
         # type: (str, Sequence[Skill], str, **Any) -> Skillset
         """Create a new Skillset in an Azure Search service, or update an
         existing one.
@@ -527,12 +527,31 @@ class SearchServiceClient(HeadersMixin):
         :type skills: List[Skill]
         :param description: A description for the Skillset
         :type description: Optional[str]
+        :param skillset: A Skillset to create or update.
+        :type skillset: :class:`~azure.search.documents.Skillset`
         :return: The created or updated Skillset
         :rtype: dict
+
+        If a `skillset` is passed in, any optional `skills`, or
+        `description` parameter values will override it.
+
 
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
 
-        skillset = Skillset(name=name, skills=list(skills), description=description)
+        if "skillset" in kwargs:
+            skillset = kwargs.pop("skillset")
+            skillset = Skillset.deserialize(skillset.serialize())
+            skillset.name = name
+            for param in ("description", "skills"):
+                if param in kwargs:
+                    setattr(skillset, param, kwargs.pop(param))
+        else:
+
+            skillset = Skillset(
+                name=name,
+                description=kwargs.pop("description", None),
+                skills=kwargs.pop("skills", None),
+            )
 
         return await self._client.skillsets.create_or_update(name, skillset, **kwargs)

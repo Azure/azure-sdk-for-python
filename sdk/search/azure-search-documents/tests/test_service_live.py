@@ -329,3 +329,19 @@ class SearchServiceClientTest(AzureMgmtTestCase):
         assert isinstance(result, Skillset)
         assert result.name == "test-ss"
         assert result.description == "desc2"
+
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
+    def test_create_or_update_skillset_inplace(self, api_key, endpoint, index_name, **kwargs):
+        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key))
+        s = EntityRecognitionSkill(inputs=[InputFieldMappingEntry(name="text", source="/document/content")],
+                                   outputs=[OutputFieldMappingEntry(name="organizations", target_name="organizations")])
+
+        ss = client.create_or_update_skillset(name='test-ss', skills=[s], description="desc1")
+        client.create_or_update_skillset(name='test-ss', skills=[s], description="desc2", skillset=ss)
+        assert len(client.list_skillsets()) == 1
+
+        result = client.get_skillset("test-ss")
+        assert isinstance(result, Skillset)
+        assert result.name == "test-ss"
+        assert result.description == "desc2"
