@@ -5,4 +5,5 @@ package_pprint_name = "MyService Management"
 package_doc_id = ""
 is_stable = false
 is_arm = true
-need_msrestazure = true
+need_msrestazure = false
+need_azurecore = true
