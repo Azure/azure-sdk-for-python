@@ -7,32 +7,34 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_train_labeled_model.py
+FILE: sample_train_model_with_labels.py
 
 DESCRIPTION:
-    This sample demonstrates how to train a model with labeled data. See sample_recognize_custom_forms.py
-    to recognize forms with your custom model.
+    This sample demonstrates how to train a model with labeled data. To see how to label your documents. You can use the service's labeling tool
+    to label your documents: https://docs.microsoft.com/en-us/azure/cognitive-services/form-recognizer/quickstarts/label-tool, and follow their
+    instructions to store these labeled files in your blob container with the other form files.
+    See sample_recognize_custom_forms.py to recognize forms with your custom model.
 USAGE:
-    python sample_train_labeled_model.py
+    python sample_train_model_with_labels.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_FORM_RECOGNIZER_ENDPOINT - the endpoint to your Cognitive Services resource.
-    2) AZURE_FORM_RECOGNIZER_KEY - your Form Recognizer subscription key
+    2) AZURE_FORM_RECOGNIZER_KEY - your Form Recognizer API key
     3) CONTAINER_SAS_URL - The shared access signature (SAS) Url of your Azure Blob Storage container with your labeled data.
-                      See https://docs.microsoft.com/en-us/azure/cognitive-services/form-recognizer/quickstarts/label-tool#connect-to-the-sample-labeling-tool
+                      See https://docs.microsoft.com/en-us/azure/cognitive-services/form-recognizer/quickstarts/python-labeled-data#train-a-model-using-labeled-data
                       for more detailed descriptions on how to get it.
 """
 
 import os
 
 
-class TrainLabeledModelSample(object):
+class TrainModelWithLabelsSample(object):
 
     endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
     key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
     container_sas_url = os.environ["CONTAINER_SAS_URL"]
 
-    def train_labeled_model(self):
+    def train_model_with_labels(self):
         # [START create_form_training_client]
         from azure.ai.formrecognizer import FormTrainingClient
         from azure.core.credentials import AzureKeyCredential
@@ -54,11 +56,10 @@ class TrainLabeledModelSample(object):
         # The labels are based on the ones you gave the training document.
         for submodel in model.models:
             # Since the data is labeled, we are able to return the accuracy of the model
-            print("The submodel has accuracy '{}'".format(submodel.accuracy))
-            print("We have recognized the following fields:")
-            for label, field in submodel.fields.items():
-                print("The model found field '{}' to have name '{}' with an accuracy of {}".format(
-                    label, field.name, field.accuracy
+            print("...The submodel has accuracy '{}'".format(submodel.accuracy))
+            for name, field in submodel.fields.items():
+                print("...The model found field '{}' to have name '{}' with an accuracy of {}".format(
+                    name, field.name, field.accuracy
                 ))
 
         # Training result information
@@ -69,5 +70,5 @@ class TrainLabeledModelSample(object):
             print("Document errors: {}".format(doc.errors))
 
 if __name__ == '__main__':
-    sample = TrainLabeledModelSample()
-    sample.train_labeled_model()
+    sample = TrainModelWithLabelsSample()
+    sample.train_model_with_labels()

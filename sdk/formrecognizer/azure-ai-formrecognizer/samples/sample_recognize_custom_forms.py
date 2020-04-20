@@ -19,7 +19,7 @@ USAGE:
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_FORM_RECOGNIZER_ENDPOINT - the endpoint to your Cognitive Services resource.
-    2) AZURE_FORM_RECOGNIZER_KEY - your Form Recognizer subscription key
+    2) AZURE_FORM_RECOGNIZER_KEY - your Form Recognizer API key
     3) CUSTOM_TRAINED_MODEL_ID - the ID of your custom trained model
 """
 
@@ -40,7 +40,7 @@ class RecognizeCustomForms(object):
             endpoint=self.endpoint, credential=AzureKeyCredential(self.key)
         )
 
-        # The form you are recognizing must be of the same type as the forms the custom model was trained on
+        # Make sure your form's type is included in the list of form types the custom model can recognize
         with open("sample_forms/forms/Form_1.jpg", "rb") as f:
             poller = form_recognizer_client.begin_recognize_custom_forms(
                 model_id=self.model_id, stream=f.read()
@@ -50,12 +50,12 @@ class RecognizeCustomForms(object):
         for idx, form in enumerate(forms):
             print("--------Recognizing Form #{}--------".format(idx))
             print("Form {} has type {}".format(idx, form.form_type))
-            for label, field in form.fields.items():
+            for name, field in form.fields.items():
                 # each field is of type FormField
                 # The value of the field can also be a FormField, or a list of FormFields
-                # In our sample, it is not.
-                print("Field '{}' has value '{}' with a confidence score of {}".format(
-                    label, field.value, field.confidence
+                # In our sample, it is just a FormField.
+                print("...Field '{}' has value '{}' with a confidence score of {}".format(
+                    name, field.value, field.confidence
                 ))
             print("-----------------------------------")
         # [END recognize_custom_forms]

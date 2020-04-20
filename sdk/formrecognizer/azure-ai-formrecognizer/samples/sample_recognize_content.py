@@ -17,11 +17,15 @@ USAGE:
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_FORM_RECOGNIZER_ENDPOINT - the endpoint to your Cognitive Services resource.
-    2) AZURE_FORM_RECOGNIZER_KEY - your Form Recognizer subscription key
+    2) AZURE_FORM_RECOGNIZER_KEY - your Form Recognizer API key
 """
 
 import os
 
+def format_bounding_box(bounding_box):
+    if not bounding_box:
+        return "N/A"
+    return ", ".join(["[{}, {}]".format(p.x, p.y) for p in bounding_box])
 
 class RecognizeContentSample(object):
 
@@ -29,6 +33,7 @@ class RecognizeContentSample(object):
     key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
 
     def recognize_content(self):
+        from azure.ai.formrecognizer import FormWord, FormLine
         # [START recognize_content]
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer import FormRecognizerClient
@@ -47,14 +52,32 @@ class RecognizeContentSample(object):
             for table_idx, table in enumerate(content.tables):
                 print("Table # {} has {} rows and {} columns".format(table_idx, table.row_count, table.column_count))
                 for cell in table.cells:
-                    print("Cell[{}][{}] has text '{}' within bounding box '{}'".format(
+                    print("...Cell[{}][{}] has text '{}' within bounding box '{}'".format(
                         cell.row_index,
                         cell.column_index,
                         cell.text,
-                        ", ".join(["[{}, {}]".format(p.x, p.y) for p in cell.bounding_box]),
+                        format_bounding_box(cell.bounding_box)
                     ))
+                    # [END recognize_content_async]
+                    for content in cell.text_content:
+                        if isinstance(content, FormWord):
+                            print("......Word '{}' within bounding box '{}' has a confidence of {}".format(
+                                content.text,
+                                format_bounding_box(content.bounding_box),
+                                content.confidence
+                            ))
+                        elif isinstance(content, FormLine):
+                            print("......Line '{}' within bounding box '{}' has the following words: ".format(
+                                content.text,
+                                format_bounding_box(content.bounding_box)
+                            ))
+                            for word in content.words:
+                                print(".........Word '{}' within bounding box '{}' has a confidence of {}".format(
+                                    word.text,
+                                    format_bounding_box(word.bounding_box),
+                                    word.confidence
+                                ))
             print("----------------------------------------")
-        # [END recognize_content]
 
 
 if __name__ == '__main__':

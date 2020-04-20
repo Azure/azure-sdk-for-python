@@ -15,14 +15,16 @@ The async versions of the samples require Python 3.5 or later.
 
 These sample programs show common scenarios for the Form Recognizer client's offerings.
 
+All of these samples need the endpoint to your Form Recognizer resource ([instructions on how to get endpoint][get-endpoint-instructions]), and your Form Recognizer API key ([instructions on how to get key][get-key-instructions]).
+
 |**File Name**|**Description**|
 |----------------|-------------|
-|[sample_recognize_custom_forms.py][sample_recognize_custom_forms] and [sample_recognize_custom_forms_async.py][sample_recognize_custom_forms_async]|Recognize forms with your custom model|
 |[sample_recognize_content.py][sample_recognize_content] and [sample_recognize_content_async.py][sample_recognize_content_async]|Recognize text and table structures of a document|
 |[sample_recognize_receipts.py][sample_recognize_receipts] and [sample_recognize_receipts_async.py][sample_recognize_receipts_async]|Recognize data from a file of a US sales receipt using a prebuilt model|
 |[sample_recognize_receipts_from_url.py][sample_recognize_receipts_from_url] and [sample_recognize_receipts_from_url_async.py][sample_recognize_receipts_from_url_async]|Recognize data from a URL of a US sales receipt using a prebuilt model|
-|[sample_train_unlabeled_model.py][sample_train_unlabeled_model] and [sample_train_unlabeled_model_async.py][sample_train_unlabeled_model_async]|Train a custom model with unlabeled data|
-|[sample_train_labeled_model.py][sample_train_labeled_model] and [sample_train_labeled_model_async.py][sample_train_labeled_model_async]|Train a custom model with labeled data|
+|[sample_recognize_custom_forms.py][sample_recognize_custom_forms] and [sample_recognize_custom_forms_async.py][sample_recognize_custom_forms_async]|Recognize forms with your custom model|
+|[sample_train_model_with_forms_only.py][sample_train_model_with_forms_only] and [sample_train_model_with_forms_only_async.py][sample_train_model_with_forms_only_async]|Train a custom model with unlabeled data|
+|[sample_train_model_with_labels.py][sample_train_model_with_labels] and [sample_train_model_with_labels_async.py][sample_train_model_with_labels_async]|Train a custom model with labeled data|
 |[sample_manage_custom_models.py][sample_manage_custom_models] and [sample_manage_custom_models_async.py][sample_manage_custom_models_async]|Manage the custom models in your account|
 
 ## Prerequisites
@@ -37,10 +39,6 @@ These sample programs show common scenarios for the Form Recognizer client's off
 ```bash
 pip install azure-ai-formrecognizer
 ```
-* If authenticating with Azure Active Directory, make sure you have [azure-identity][azure_identity_pip] installed:
-  ```bash
-  pip install azure-identity
-  ```
 
 2. Clone or download this sample repository
 3. Open the sample folder in Visual Studio Code or your IDE of choice.
@@ -58,7 +56,7 @@ what you can do with the Azure Form Recognizer client library.
 
 |**Advanced Sample File Name**|**Description**|
 |----------------|-------------|
-|[sample_get_manual_validation_info.py][sample_get_manual_validation_info] and [sample_get_manual_validation_info_async.py][sample_get_manual_validation_info_async]|Get info to help with manually validating the output of the `FormRecognizer` client|
+|[sample_get_bounding_boxes.py][sample_get_bounding_boxes] and [sample_get_bounding_boxes_async.py][sample_get_bounding_boxes_async]|Get info to visualize the outlines of form content and fields, which can be used for manual validation|
 |[sample_differentiate_custom_forms_with_labeled_and_unlabeled_models.py][sample_differentiate_custom_forms_with_labeled_and_unlabeled_models] and [sample_differentiate_custom_forms_with_labeled_and_unlabeled_models_async.py][sample_differentiate_custom_forms_with_labeled_and_unlabeled_models_async]|See the differences in output when using a custom model trained with labeled data and one trained with unlabeled data|
 
 [azure_identity]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity
@@ -68,11 +66,13 @@ what you can do with the Azure Form Recognizer client library.
 [azure_form_recognizer_account]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account?tabs=singleservice%2Cwindows
 [azure_identity_pip]: https://pypi.org/project/azure-identity/
 [python-fr-ref-docs]: https://aka.ms/azsdk-python-formrecognizer-ref-docs
+[get-endpoint-instructions]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/formrecognizer/azure-ai-formrecognizer/README.md#looking-up-the-endpoint
+[get-key-instructions]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/formrecognizer/azure-ai-formrecognizer/README.md#types-of-credentials
 
 [sample_differentiate_custom_forms_with_labeled_and_unlabeled_models]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_differentiate_custom_forms_with_labeled_and_unlabeled_models.py
 [sample_differentiate_custom_forms_with_labeled_and_unlabeled_models_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/async_samples/sample_differentiate_custom_forms_with_labeled_and_unlabeled_models_async.py
-[sample_get_manual_validation_info]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_get_manual_validation_info.py
-[sample_get_manual_validation_info_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/async_samples/sample_get_manual_validation_info_async.py
+[sample_get_bounding_boxes]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_get_bounding_boxes.py
+[sample_get_bounding_boxes_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/async_samples/sample_get_bounding_boxes_async.py
 [sample_manage_custom_models]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_manage_custom_models.py
 [sample_manage_custom_models_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/async_samples/sample_manage_custom_models_async.py
 [sample_recognize_content]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_recognize_content.py
@@ -83,7 +83,7 @@ what you can do with the Azure Form Recognizer client library.
 [sample_recognize_receipts_from_url_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/async_samples/sample_recognize_receipts_from_url_async.py
 [sample_recognize_receipts]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_recognize_receipts.py
 [sample_recognize_receipts_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/async_samples/sample_recognize_receipts_async.py
-[sample_train_labeled_model]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_train_labeled_model.py
-[sample_train_labeled_model_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/async_samples/sample_train_labeled_model_async.py
-[sample_train_unlabeled_model]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_train_unlabeled_model.py
-[sample_train_unlabeled_model_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/async_samples/sample_train_unlabeled_model_async.py
+[sample_train_model_with_labels]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_train_model_with_labels.py
+[sample_train_model_with_labels_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/async_samples/sample_train_model_with_labels_async.py
+[sample_train_model_with_forms_only]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_train_model_with_forms_only.py
+[sample_train_model_with_forms_only_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/async_samples/sample_train_model_with_forms_only_async.py

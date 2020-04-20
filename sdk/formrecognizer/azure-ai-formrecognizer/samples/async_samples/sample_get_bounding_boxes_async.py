@@ -7,17 +7,17 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_get_manual_validation_info_async.py
+FILE: sample_get_bounding_boxes_async.py
 
 DESCRIPTION:
-    This sample demonstrates how to output the information that will help with manually
-    validating your output from recognize custom forms.
+    This sample demonstrates how to get detailed information to visualize the outlines of
+    form content and fields, which can be used for manual validation and drawing UI as part of an application.
 USAGE:
-    python sample_get_manual_validation_info_async.py
+    python sample_get_bounding_boxes_async.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_FORM_RECOGNIZER_ENDPOINT - the endpoint to your Cognitive Services resource.
-    2) AZURE_FORM_RECOGNIZER_KEY - your Form Recognizer subscription key
+    2) AZURE_FORM_RECOGNIZER_KEY - your Form Recognizer API key
     3) CUSTOM_TRAINED_MODEL_ID - the ID of your custom trained model
 """
 
@@ -26,15 +26,21 @@ import asyncio
 from pathlib import Path
 
 
-class GetValidationInfoSampleAsync(object):
+def format_bounding_box(bounding_box):
+    if not bounding_box:
+        return "N/A"
+    return ", ".join(["[{}, {}]".format(p.x, p.y) for p in bounding_box])
+
+class GetBoundingBoxesSampleAsync(object):
 
     endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
     key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
     model_id = os.environ["CUSTOM_TRAINED_MODEL_ID"]
 
-    async def get_manual_validation_info_from_recognize_custom_forms(self):
+    async def get_bounding_boxes(self):
         # the sample forms are located in this file's parent's parent's files.
         path_to_sample_forms = Path(__file__).parent.parent.absolute() / Path("sample_forms/forms/Form_1.jpg")
+        from azure.ai.formrecognizer import FormWord, FormLine
         # [START create_form_recognizer_client_async]
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer.aio import FormRecognizerClient
@@ -45,7 +51,7 @@ class GetValidationInfoSampleAsync(object):
         # [END create_form_recognizer_client_async]
         async with form_recognizer_client:
 
-            # The form you are recognizing must be of the same type as the forms the custom model was trained on
+            # Make sure your form's type is included in the list of form types the custom model can recognize
             with open(path_to_sample_forms, "rb") as f:
                 forms = await form_recognizer_client.recognize_custom_forms(
                     model_id=self.model_id, stream=f.read(), include_text_content=True
@@ -54,15 +60,15 @@ class GetValidationInfoSampleAsync(object):
             for idx, form in enumerate(forms):
                 print("--------RECOGNIZING FORM #{}--------".format(idx))
                 print("Form has type {}".format(form.form_type))
-                for label, field in form.fields.items():
+                for name, field in form.fields.items():
                     # each field is of type FormField
                     # The value of the field can also be a FormField, or a list of FormFields
                     # In our sample, it is not.
-                    print("Field '{}' has value '{}' based on '{}' within bounding box '{}', with a confidence score of {}".format(
-                        label,
+                    print("...Field '{}' has value '{}' based on '{}' within bounding box '{}', with a confidence score of {}".format(
+                        name,
                         field.value,
                         field.value_data.text,
-                        ", ".join(["[{}, {}]".format(p.x, p.y) for p in field.value_data.bounding_box]) if field.value_data.bounding_box else "N/A",
+                        format_bounding_box(field.value_data.bounding_box),
                         field.confidence
                     ))
                 for page in form.pages:
@@ -72,24 +78,37 @@ class GetValidationInfoSampleAsync(object):
                     ))
                     for table in page.tables:
                         for cell in table.cells:
-                            print("Cell[{}][{}] has text '{}' with confidence {} based on the following words: ".format(
+                            print("...Cell[{}][{}] has text '{}' with confidence {} based on the following words: ".format(
                                 cell.row_index, cell.column_index, cell.text, cell.confidence
                             ))
-                            # text_content only exists if you set include_text_content to True in your function call to recognize_custom_forms
-                            # It is also a list of FormWords and FormLines, but in this example, we only deal with FormWords
-                            for word in cell.text_content:
-                                print("'{}' within bounding box '{}' with a confidence of {}".format(
-                                    word.text,
-                                    ", ".join(["[{}, {}]".format(p.x, p.y) for p in word.bounding_box]) if word.bounding_box else "N/A",
-                                    word.confidence
-                                ))
+                            # text_content is only populated if you set include_text_content to True in your function call to recognize_custom_forms
+                            # It is a list of FormWords or a list of FormLines
+                            for content in cell.text_content:
+                                if isinstance(content, FormWord):
+                                    print("......Word '{}' within bounding box '{}' has a confidence of {}".format(
+                                        content.text,
+                                        format_bounding_box(content.bounding_box),
+                                        content.confidence
+                                    ))
+                                elif isinstance(content, FormLine):
+                                    print("......Line '{}' within bounding box '{}' has the following words: ".format(
+                                        content.text,
+                                        format_bounding_box(content.bounding_box)
+                                    ))
+                                    for word in content.words:
+                                        print(".........Word '{}' within bounding box '{}' has a confidence of {}".format(
+                                            word.text,
+                                            format_bounding_box(word.bounding_box),
+                                            word.confidence
+                                        ))
+
                     print("---------------------------------------------------")
                 print("-----------------------------------")
 
 
 async def main():
-    sample = GetValidationInfoSampleAsync()
-    await sample.get_manual_validation_info_from_recognize_custom_forms()
+    sample = GetBoundingBoxesSampleAsync()
+    await sample.get_bounding_boxes()
 
 
 if __name__ == '__main__':
