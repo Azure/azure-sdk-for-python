@@ -202,7 +202,7 @@ class SearchIndexClientTest(AzureMgmtTestCase):
             "USA, United States, United States of America",
             "Washington, Wash. => WA",
         ]
-        assert len(await client.list_synonym_maps()) == 1
+        assert len(await client.get_synonym_maps()) == 1
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
@@ -212,9 +212,9 @@ class SearchIndexClientTest(AzureMgmtTestCase):
             "USA, United States, United States of America",
             "Washington, Wash. => WA",
         ])
-        assert len(await client.list_synonym_maps()) == 1
+        assert len(await client.get_synonym_maps()) == 1
         await client.delete_synonym_map("test-syn-map")
-        assert len(await client.list_synonym_maps()) == 0
+        assert len(await client.get_synonym_maps()) == 0
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
@@ -224,7 +224,7 @@ class SearchIndexClientTest(AzureMgmtTestCase):
             "USA, United States, United States of America",
             "Washington, Wash. => WA",
         ])
-        assert len(await client.list_synonym_maps()) == 1
+        assert len(await client.get_synonym_maps()) == 1
         result = await client.get_synonym_map("test-syn-map")
         assert isinstance(result, dict)
         assert result["name"] == "test-syn-map"
@@ -235,7 +235,7 @@ class SearchIndexClientTest(AzureMgmtTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
-    async def test_list_synonym_map(self, api_key, endpoint, index_name, **kwargs):
+    async def test_get_synonym_maps(self, api_key, endpoint, index_name, **kwargs):
         client = SearchServiceClient(endpoint, AzureKeyCredential(api_key))
         await client.create_synonym_map("test-syn-map-1", [
             "USA, United States, United States of America",
@@ -243,7 +243,7 @@ class SearchIndexClientTest(AzureMgmtTestCase):
         await client.create_synonym_map("test-syn-map-2", [
             "Washington, Wash. => WA",
         ])
-        result = await client.list_synonym_maps()
+        result = await client.get_synonym_maps()
         assert isinstance(result, list)
         assert all(isinstance(x, dict) for x in result)
         assert set(x['name'] for x in result) == {"test-syn-map-1", "test-syn-map-2"}
@@ -255,11 +255,11 @@ class SearchIndexClientTest(AzureMgmtTestCase):
         await client.create_synonym_map("test-syn-map", [
             "USA, United States, United States of America",
         ])
-        assert len(await client.list_synonym_maps()) == 1
+        assert len(await client.get_synonym_maps()) == 1
         await client.create_or_update_synonym_map("test-syn-map", [
             "Washington, Wash. => WA",
         ])
-        assert len(await client.list_synonym_maps()) == 1
+        assert len(await client.get_synonym_maps()) == 1
         result = await client.get_synonym_map("test-syn-map")
         assert isinstance(result, dict)
         assert result["name"] == "test-syn-map"

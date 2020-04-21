@@ -38,12 +38,12 @@ async def create_synonym_map():
     print("Create new Synonym Map 'test-syn-map succeeded")
     # [END create_synonym_map_async]
 
-async def list_synonym_maps():
-    # [START list_synonym_map_async]
-    result = await service_client.list_synonym_maps()
+async def get_synonym_maps():
+    # [START get_synonym_maps_async]
+    result = await service_client.get_synonym_maps()
     names = [x["name"] for x in result]
     print("Found {} Synonym Maps in the service: {}".format(len(result), ", ".join(names)))
-    # [END list_synonym_map_async]
+    # [END get_synonym_maps_async]
 
 async def get_synonym_map():
     # [START get_synonym_map_async]
@@ -61,7 +61,7 @@ async def delete_synonym_map():
 
 async def main():
     await create_synonym_map()
-    await list_synonym_maps()
+    await get_synonym_maps()
     await get_synonym_map()
     await delete_synonym_map()
     await service_client.close()

@@ -297,7 +297,7 @@ class SearchServiceClient(HeadersMixin):
     # Synonym Maps Operations
 
     @distributed_trace
-    def list_synonym_maps(self, **kwargs):
+    def get_synonym_maps(self, **kwargs):
         # type: (**Any) -> List[Index]
         """List the Synonym Maps in an Azure Search service.
 
@@ -308,8 +308,8 @@ class SearchServiceClient(HeadersMixin):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/sample_synonym_map_operations.py
-                :start-after: [START list_synonym_map]
-                :end-before: [END list_synonym_map]
+                :start-after: [START get_synonym_maps]
+                :end-before: [END get_synonym_maps]
                 :language: python
                 :dedent: 4
                 :caption: List Synonym Maps
