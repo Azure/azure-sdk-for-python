@@ -39,7 +39,7 @@ jobs:
           versionSpec: $(PythonVersion)
 
       - script: |
-          pip install eng/autorest_req.txt
+          pip install -r eng/autorest_req.txt
           pip install $(Build.SourcesDirectory)/$(source_path)
         displayName: 'Prepare Environment'
 
