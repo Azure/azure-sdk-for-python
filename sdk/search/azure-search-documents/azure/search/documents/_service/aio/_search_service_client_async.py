@@ -97,7 +97,7 @@ class SearchServiceClient(HeadersMixin):
     ### Index Operations
 
     @distributed_trace_async
-    async def list_indexes(self, **kwargs):
+    async def get_indexes(self, **kwargs):
         # type: (**Any) -> List[Index]
         """List the indexes in an Azure Search service.
 
