@@ -17,7 +17,7 @@ from ._paging import SearchItemPaged
 from ._queries import AutocompleteQuery, SearchQuery, SuggestQuery
 from .._headers_mixin import HeadersMixin
 from .._version import SDK_MONIKER
-from ._generated.models import SearchRequest, SearchDocumentsResult
+from ._generated.models import SearchDocumentsResult
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
