@@ -1779,7 +1779,7 @@ class ManagedClusterPropertiesAutoScalerProfile(Model):
     """Parameters to be applied to the cluster-autoscaler when enabled.
 
     :param balance_similar_node_groups:
-    :type balance_similar_node_groups: bool
+    :type balance_similar_node_groups: str
     :param scan_interval:
     :type scan_interval: str
     :param scale_down_delay_after_add:
@@ -1799,7 +1799,7 @@ class ManagedClusterPropertiesAutoScalerProfile(Model):
     """
 
     _attribute_map = {
-        'balance_similar_node_groups': {'key': 'balance-similar-node-groups', 'type': 'bool'},
+        'balance_similar_node_groups': {'key': 'balance-similar-node-groups', 'type': 'str'},
         'scan_interval': {'key': 'scan-interval', 'type': 'str'},
         'scale_down_delay_after_add': {'key': 'scale-down-delay-after-add', 'type': 'str'},
         'scale_down_delay_after_delete': {'key': 'scale-down-delay-after-delete', 'type': 'str'},

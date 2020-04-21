@@ -54,7 +54,7 @@ def order_results(response, combined):
     :param combined: A combined list of the results | errors
     :return: In order list of results | errors (if any)
     """
-    request = json.loads(response.request.body)["documents"]
+    request = json.loads(response.http_response.request.body)["documents"]
     mapping = {item.id: item for item in combined}
     ordered_response = [mapping[item["id"]] for item in request]
     return ordered_response
@@ -118,7 +118,7 @@ def key_phrases_result(phrases):
 def sentiment_result(sentiment):
     return AnalyzeSentimentResult(
         id=sentiment.id,
-        sentiment=sentiment.sentiment.value,
+        sentiment=sentiment.sentiment,
         statistics=TextDocumentStatistics._from_generated(sentiment.statistics),  # pylint: disable=protected-access
         confidence_scores=SentimentConfidenceScores._from_generated(sentiment.document_scores),  # pylint: disable=protected-access
         sentences=[SentenceSentiment._from_generated(s) for s in sentiment.sentences],  # pylint: disable=protected-access

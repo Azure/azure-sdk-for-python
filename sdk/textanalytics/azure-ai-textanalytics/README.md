@@ -23,7 +23,8 @@ Install the Azure Text Analytics client library for Python with [pip][pip]:
 pip install azure-ai-textanalytics --pre
 ```
 
-### Create a Cognitive Services or Text Analytics resource
+### Authenticate the client
+#### Create a Cognitive Services or Text Analytics resource
 Text Analytics supports both [multi-service and single-service access][multi_and_single_service].
 Create a Cognitive Services resource if you plan to access multiple cognitive services under a single endpoint/key. For Text Analytics access only, create a Text Analytics resource.
 
@@ -51,7 +52,6 @@ az cognitiveservices account create \
     --yes
 ```
 
-### Authenticate the client
 Interaction with this service begins with an instance of a [client](#client "ta-client").
 To create a client object, you will need the cognitive services or text analytics `endpoint` to
 your resource and a `credential` that allows you access:
@@ -93,7 +93,7 @@ cognitive services.
     from azure.ai.textanalytics import TextAnalyticsClient
 
     credential = AzureKeyCredential("<api_key>")
-    text = TextAnalyticsClient(endpoint="https://<region>.api.cognitive.microsoft.com/", credential=credential)
+    text_analytics_client = TextAnalyticsClient(endpoint="https://<region>.api.cognitive.microsoft.com/", credential=credential)
     ```
 
 2. To use an [Azure Active Directory (AAD) token credential][cognitive_authentication_aad],
@@ -194,7 +194,10 @@ The following section provides several code snippets covering some of the most c
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.textanalytics import TextAnalyticsClient
 
-text_analytics_client = TextAnalyticsClient(endpoint, AzureKeyCredential(key))
+credential = AzureKeyCredential("<api_key>")
+endpoint="https://<region>.api.cognitive.microsoft.com/"
+
+text_analytics_client = TextAnalyticsClient(endpoint, credential)
 
 documents = [
     "I did not like the restaurant. The food was too spicy.",
@@ -225,7 +228,10 @@ Please refer to the service documentation for a conceptual discussion of [sentim
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.textanalytics import TextAnalyticsClient
 
-text_analytics_client = TextAnalyticsClient(endpoint, AzureKeyCredential(key))
+credential = AzureKeyCredential("<api_key>")
+endpoint="https://<region>.api.cognitive.microsoft.com/"
+
+text_analytics_client = TextAnalyticsClient(endpoint, credential)
 
 documents = [
     "Microsoft was founded by Bill Gates and Paul Allen.",
@@ -256,7 +262,10 @@ Roman god of war). Recognized entities are associated with URLs to a well-known 
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.textanalytics import TextAnalyticsClient
 
-text_analytics_client = TextAnalyticsClient(endpoint, AzureKeyCredential(key))
+credential = AzureKeyCredential("<api_key>")
+endpoint="https://<region>.api.cognitive.microsoft.com/"
+
+text_analytics_client = TextAnalyticsClient(endpoint, credential)
 
 documents = [
     "Microsoft was founded by Bill Gates and Paul Allen.",
@@ -288,7 +297,10 @@ and [supported types][linked_entities_categories].
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.textanalytics import TextAnalyticsClient
 
-text_analytics_client = TextAnalyticsClient(endpoint, AzureKeyCredential(key))
+credential = AzureKeyCredential("<api_key>")
+endpoint="https://<region>.api.cognitive.microsoft.com/"
+
+text_analytics_client = TextAnalyticsClient(endpoint, credential)
 
 documents = [
     "Redmond is a city in King County, Washington, United States, located 15 miles east of Seattle.",
@@ -314,7 +326,10 @@ Please refer to the service documentation for a conceptual discussion of [key ph
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.textanalytics import TextAnalyticsClient
 
-text_analytics_client = TextAnalyticsClient(endpoint, AzureKeyCredential(key))
+credential = AzureKeyCredential("<api_key>")
+endpoint="https://<region>.api.cognitive.microsoft.com/"
+
+text_analytics_client = TextAnalyticsClient(endpoint, credential)
 
 documents = [
     "This is written in English.",
@@ -369,7 +384,7 @@ logger.setLevel(logging.DEBUG)
 handler = logging.StreamHandler(stream=sys.stdout)
 logger.addHandler(handler)
 
-endpoint = "https://<my-custom-subdomain>.cognitiveservices.azure.com/"
+endpoint = "https://<region>.cognitiveservices.azure.com/"
 credential = DefaultAzureCredential()
 
 # This client will log detailed information about its HTTP sessions, at DEBUG level
@@ -463,7 +478,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [named_entity_recognition]: https://docs.microsoft.com/azure/cognitive-services/text-analytics/how-tos/text-analytics-how-to-entity-linking
 [named_entity_categories]: https://docs.microsoft.com/azure/cognitive-services/text-analytics/named-entity-types?tabs=general
 
-[azure_core_ref_docs]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-core/1.2.1/azure.core.pipeline.policies.html
+[azure_core_ref_docs]: https://aka.ms/azsdk-python-core-policies
 [azure_core]: ../../core/azure-core/README.md
 [azure_identity]: ../../identity/azure-identity
 [python_logging]: https://docs.python.org/3.5/library/logging.html

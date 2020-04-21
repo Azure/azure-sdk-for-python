@@ -2,10 +2,11 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 from urllib.parse import urlparse
 
 from azure.core.pipeline.policies import ContentDecodePolicy, SansIOHTTPPolicy
+from azure.identity._constants import EnvironmentVariables
 from azure.identity._internal.user_agent import USER_AGENT
 from azure.identity.aio import CertificateCredential
 
@@ -96,6 +97,14 @@ async def test_request_url(cert_path, cert_password):
         tenant_id, "client-id", cert_path, password=cert_password, transport=Mock(send=mock_send), authority=authority
     )
     token = await cred.get_token("scope")
+    assert token.token == access_token
+
+    # authority can be configured via environment variable
+    with patch.dict("os.environ", {EnvironmentVariables.AZURE_AUTHORITY_HOST: authority}, clear=True):
+        credential = CertificateCredential(
+            tenant_id, "client-id", cert_path, password=cert_password, transport=Mock(send=mock_send)
+        )
+        await credential.get_token("scope")
     assert token.token == access_token
 
 

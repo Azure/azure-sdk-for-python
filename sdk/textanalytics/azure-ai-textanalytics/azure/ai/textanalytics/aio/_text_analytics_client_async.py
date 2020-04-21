@@ -13,8 +13,7 @@ from typing import (  # pylint: disable=unused-import
     TYPE_CHECKING
 )
 from azure.core.tracing.decorator_async import distributed_trace_async
-from .._generated.models import TextAnalyticsErrorException
-from .._generated.aio._text_analytics_client_async import TextAnalyticsClient as TextAnalytics
+from azure.core.exceptions import HttpResponseError
 from ._base_client_async import AsyncTextAnalyticsClientBase
 from .._request_handlers import _validate_batch_input
 from .._response_handlers import (
@@ -87,9 +86,10 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         credential: Union["AzureKeyCredential", "AsyncTokenCredential"],
         **kwargs: Any
     ) -> None:
-        super(TextAnalyticsClient, self).__init__(credential=credential, **kwargs)
-        self._client = TextAnalytics(
-            endpoint=endpoint, credentials=credential, pipeline=self._pipeline
+        super(TextAnalyticsClient, self).__init__(
+            endpoint=endpoint,
+            credential=credential,
+            **kwargs
         )
         self._default_language = kwargs.pop("default_language", "en")
         self._default_country_hint = kwargs.pop("default_country_hint", "US")
@@ -130,7 +130,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             were passed in.
         :rtype: list[~azure.ai.textanalytics.DetectLanguageResult,
             ~azure.ai.textanalytics.DocumentError]
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError:
 
         .. admonition:: Example:
 
@@ -151,10 +151,10 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 documents=docs,
                 model_version=model_version,
                 show_stats=show_stats,
-                cls=language_result,
+                cls=kwargs.pop("cls", language_result),
                 **kwargs
             )
-        except TextAnalyticsErrorException as error:
+        except HttpResponseError as error:
             process_batch_error(error)
 
     @distributed_trace_async
@@ -193,7 +193,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             passed in.
         :rtype: list[~azure.ai.textanalytics.RecognizeEntitiesResult,
             ~azure.ai.textanalytics.DocumentError]
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError:
 
         .. admonition:: Example:
 
@@ -214,10 +214,10 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 documents=docs,
                 model_version=model_version,
                 show_stats=show_stats,
-                cls=entities_result,
+                cls=kwargs.pop("cls", entities_result),
                 **kwargs
             )
-        except TextAnalyticsErrorException as error:
+        except HttpResponseError as error:
             process_batch_error(error)
 
     @distributed_trace_async
@@ -257,7 +257,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             were passed in.
         :rtype: list[~azure.ai.textanalytics.RecognizeLinkedEntitiesResult,
             ~azure.ai.textanalytics.DocumentError]
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError:
 
         .. admonition:: Example:
 
@@ -278,10 +278,10 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 documents=docs,
                 model_version=model_version,
                 show_stats=show_stats,
-                cls=linked_entities_result,
+                cls=kwargs.pop("cls", linked_entities_result),
                 **kwargs
             )
-        except TextAnalyticsErrorException as error:
+        except HttpResponseError as error:
             process_batch_error(error)
 
     @distributed_trace_async
@@ -321,7 +321,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             passed in.
         :rtype: list[~azure.ai.textanalytics.ExtractKeyPhrasesResult,
             ~azure.ai.textanalytics.DocumentError]
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError:
 
         .. admonition:: Example:
 
@@ -342,10 +342,10 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 documents=docs,
                 model_version=model_version,
                 show_stats=show_stats,
-                cls=key_phrases_result,
+                cls=kwargs.pop("cls", key_phrases_result),
                 **kwargs
             )
-        except TextAnalyticsErrorException as error:
+        except HttpResponseError as error:
             process_batch_error(error)
 
     @distributed_trace_async
@@ -384,7 +384,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             passed in.
         :rtype: list[~azure.ai.textanalytics.AnalyzeSentimentResult,
             ~azure.ai.textanalytics.DocumentError]
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError:
 
         .. admonition:: Example:
 
@@ -405,8 +405,8 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 documents=docs,
                 model_version=model_version,
                 show_stats=show_stats,
-                cls=sentiment_result,
+                cls=kwargs.pop("cls", sentiment_result),
                 **kwargs
             )
-        except TextAnalyticsErrorException as error:
+        except HttpResponseError as error:
             process_batch_error(error)

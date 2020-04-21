@@ -50,7 +50,7 @@ steps:
     displayName: 'Generate Packages'
     inputs:
       scriptPath: 'scripts/devops_tasks/build_packages.py'
-      arguments: '-d "$(Build.ArtifactStagingDirectory)" "${{ parameters.BuildTargetingString }}" --service=${{parameters.ServiceDirectory}}'
+      arguments: '-d "$(Build.ArtifactStagingDirectory)" "${{ parameters.BuildTargetingString }}" --service=${{parameters.ServiceDirectory}} --devbuild="$(SetDevVersion)"'
 
   - script: |
       twine check $(Build.ArtifactStagingDirectory)/*

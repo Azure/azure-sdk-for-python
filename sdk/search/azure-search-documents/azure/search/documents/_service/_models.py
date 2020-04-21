@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 from ._generated.models import Analyzer, Tokenizer
 
+
 class PatternAnalyzer(Analyzer):
     """Flexibly separates text into terms via a regular expression.
     This analyzer is implemented using Apache Lucene.
@@ -28,30 +29,25 @@ class PatternAnalyzer(Analyzer):
     :type stopwords: list[str]
     """
 
-    _validation = {
-        'odata_type': {'required': True},
-        'name': {'required': True},
-    }
+    _validation = {"odata_type": {"required": True}, "name": {"required": True}}
 
     _attribute_map = {
-        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'lower_case_terms': {'key': 'lowercase', 'type': 'bool'},
-        'pattern': {'key': 'pattern', 'type': 'str'},
-        'flags': {'key': 'flags', 'type': '[str]'},
-        'stopwords': {'key': 'stopwords', 'type': '[str]'},
+        "odata_type": {"key": "@odata\\.type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "lower_case_terms": {"key": "lowercase", "type": "bool"},
+        "pattern": {"key": "pattern", "type": "str"},
+        "flags": {"key": "flags", "type": "[str]"},
+        "stopwords": {"key": "stopwords", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(PatternAnalyzer, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Azure.Search.PatternAnalyzer'
-        self.lower_case_terms = kwargs.get('lower_case_terms', True)
-        self.pattern = kwargs.get('pattern', r"\W+")
-        self.flags = kwargs.get('flags', None)
-        self.stopwords = kwargs.get('stopwords', None)
+        self.odata_type = "#Microsoft.Azure.Search.PatternAnalyzer"
+        self.lower_case_terms = kwargs.get("lower_case_terms", True)
+        self.pattern = kwargs.get("pattern", r"\W+")
+        self.flags = kwargs.get("flags", None)
+        self.stopwords = kwargs.get("stopwords", None)
+
 
 class PatternTokenizer(Tokenizer):
     """Tokenizer that uses regex pattern matching to construct distinct tokens.
@@ -75,25 +71,19 @@ class PatternTokenizer(Tokenizer):
     :type group: int
     """
 
-    _validation = {
-        'odata_type': {'required': True},
-        'name': {'required': True},
-    }
+    _validation = {"odata_type": {"required": True}, "name": {"required": True}}
 
     _attribute_map = {
-        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'pattern': {'key': 'pattern', 'type': 'str'},
-        'flags': {'key': 'flags', 'type': '[str]'},
-        'group': {'key': 'group', 'type': 'int'},
+        "odata_type": {"key": "@odata\\.type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "pattern": {"key": "pattern", "type": "str"},
+        "flags": {"key": "flags", "type": "[str]"},
+        "group": {"key": "group", "type": "int"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(PatternTokenizer, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Azure.Search.PatternTokenizer'
-        self.pattern = kwargs.get('pattern', r"\W+")
-        self.flags = kwargs.get('flags', None)
-        self.group = kwargs.get('group', -1)
+        self.odata_type = "#Microsoft.Azure.Search.PatternTokenizer"
+        self.pattern = kwargs.get("pattern", r"\W+")
+        self.flags = kwargs.get("flags", None)
+        self.group = kwargs.get("group", -1)

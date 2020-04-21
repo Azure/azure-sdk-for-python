@@ -23,8 +23,6 @@ class CosmosDBManagementClientConfiguration(AzureConfiguration):
      object<msrestazure.azure_active_directory>`
     :param subscription_id: Azure subscription ID.
     :type subscription_id: str
-    :param subscription_id1: The ID of the target subscription.
-    :type subscription_id1: str
     :param str base_url: Service URL
     """
 

@@ -379,7 +379,7 @@ class TestDetectLanguage(TextAnalyticsTest):
     @TextAnalyticsClientPreparer()
     def test_user_agent(self, client):
         def callback(resp):
-            self.assertIn("azsdk-python-azure-ai-textanalytics/{} Python/{} ({})".format(
+            self.assertIn("azsdk-python-ai-textanalytics/{} Python/{} ({})".format(
                 VERSION, platform.python_version(), platform.platform()),
                 resp.http_request.headers["User-Agent"]
             )
@@ -409,7 +409,7 @@ class TestDetectLanguage(TextAnalyticsTest):
                 custom_error.args[0],
                 '\'DocumentError\' object has no attribute \'primary_language\'. '
                 'The service was unable to process this document:\nDocument Id: 1\nError: '
-                'invalidDocument - Document text is empty.\n'
+                'InvalidDocument - Document text is empty.\n'
             )
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -449,20 +449,18 @@ class TestDetectLanguage(TextAnalyticsTest):
                 {"id": "2", "text": text}]
 
         doc_errors = client.detect_language(docs)
-        self.assertEqual(doc_errors[0].error.code, "invalidDocument")
+        self.assertEqual(doc_errors[0].error.code, "InvalidDocument")
         self.assertIsNotNone(doc_errors[0].error.message)
-        self.assertEqual(doc_errors[1].error.code, "invalidDocument")
+        self.assertEqual(doc_errors[1].error.code, "InvalidDocument")
         self.assertIsNotNone(doc_errors[1].error.message)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
     def test_missing_input_records_error(self, client):
         docs = []
-        try:
-            result = client.detect_language(docs)
-        except HttpResponseError as err:
-            self.assertEqual(err.error.code, "MissingInputRecords")
-            self.assertIsNotNone(err.error.message)
+        with pytest.raises(ValueError) as excinfo:
+            client.detect_language(docs)
+        assert "Input documents can not be empty" in str(excinfo.value)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -537,3 +535,14 @@ class TestDetectLanguage(TextAnalyticsTest):
             country_hint="ES",
             raw_response_hook=callback
         )
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    def test_pass_cls(self, client):
+        def callback(pipeline_response, deserialized, _):
+            return "cls result"
+        res = client.detect_language(
+            documents=["Test passing cls to endpoint"],
+            cls=callback
+        )
+        assert res == "cls result"

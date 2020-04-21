@@ -33,6 +33,7 @@ class SearchIndexClient(HeadersMixin):
     :type credential: ~azure.core.credentials.AzureKeyCredential
 
     .. admonition:: Example:
+
         .. literalinclude:: ../samples/async_samples/sample_authentication_async.py
             :start-after: [START create_search_client_with_key_async]
             :end-before: [END create_search_client_with_key_async]

@@ -161,3 +161,82 @@ class SearchIndexClientTest(AzureMgmtTestCase):
         analyze_request = AnalyzeRequest(text="One's <two/>", analyzer="standard.lucene")
         result = client.analyze_text(index_name, analyze_request)
         assert len(result.tokens) == 2
+
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
+    def test_create_synonym_map(self, api_key, endpoint, index_name, **kwargs):
+        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key))
+        result = client.create_synonym_map("test-syn-map", [
+            "USA, United States, United States of America",
+            "Washington, Wash. => WA",
+        ])
+        assert isinstance(result, dict)
+        assert result["name"] == "test-syn-map"
+        assert result["synonyms"] == [
+            "USA, United States, United States of America",
+            "Washington, Wash. => WA",
+        ]
+        assert len(client.list_synonym_maps()) == 1
+
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
+    def test_delete_synonym_map(self, api_key, endpoint, index_name, **kwargs):
+        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key))
+        result = client.create_synonym_map("test-syn-map", [
+            "USA, United States, United States of America",
+            "Washington, Wash. => WA",
+        ])
+        assert len(client.list_synonym_maps()) == 1
+        client.delete_synonym_map("test-syn-map")
+        assert len(client.list_synonym_maps()) == 0
+
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
+    def test_get_synonym_map(self, api_key, endpoint, index_name, **kwargs):
+        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key))
+        client.create_synonym_map("test-syn-map", [
+            "USA, United States, United States of America",
+            "Washington, Wash. => WA",
+        ])
+        assert len(client.list_synonym_maps()) == 1
+        result = client.get_synonym_map("test-syn-map")
+        assert isinstance(result, dict)
+        assert result["name"] == "test-syn-map"
+        assert result["synonyms"] == [
+            "USA, United States, United States of America",
+            "Washington, Wash. => WA",
+        ]
+
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
+    def test_list_synonym_map(self, api_key, endpoint, index_name, **kwargs):
+        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key))
+        client.create_synonym_map("test-syn-map-1", [
+            "USA, United States, United States of America",
+        ])
+        client.create_synonym_map("test-syn-map-2", [
+            "Washington, Wash. => WA",
+        ])
+        result = client.list_synonym_maps()
+        assert isinstance(result, list)
+        assert all(isinstance(x, dict) for x in result)
+        assert set(x['name'] for x in result) == {"test-syn-map-1", "test-syn-map-2"}
+
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
+    def test_create_or_update_synonym_map(self, api_key, endpoint, index_name, **kwargs):
+        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key))
+        client.create_synonym_map("test-syn-map", [
+            "USA, United States, United States of America",
+        ])
+        assert len(client.list_synonym_maps()) == 1
+        client.create_or_update_synonym_map("test-syn-map", [
+            "Washington, Wash. => WA",
+        ])
+        assert len(client.list_synonym_maps()) == 1
+        result = client.get_synonym_map("test-syn-map")
+        assert isinstance(result, dict)
+        assert result["name"] == "test-syn-map"
+        assert result["synonyms"] == [
+            "Washington, Wash. => WA",
+        ]

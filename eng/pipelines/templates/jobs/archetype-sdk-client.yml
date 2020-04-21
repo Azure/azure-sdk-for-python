@@ -19,7 +19,7 @@ parameters:
       OSVmImage: 'ubuntu-16.04'
       PythonVersion: '3.5'
       CoverageArg: ''
-      RunForPR: true
+      RunForPR: false
     Linux_Python36:
       OSName: 'Linux'
       OSVmImage: 'ubuntu-16.04'
@@ -43,7 +43,7 @@ parameters:
       OSVmImage: 'windows-2019'
       PythonVersion: '3.5'
       CoverageArg: ''
-      RunForPR: false
+      RunForPR: true
     MacOS_Python27:
       OSName: 'MacOS'
       OSVmImage: 'macOS-10.15'

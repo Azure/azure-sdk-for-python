@@ -1,7 +1,17 @@
 
 # Release History
 
-## 1.4.0 (Unreleased)
+## 1.4.1 (Unreleased)
+
+### Features
+
+- Support "x-ms-retry-after-ms" in response header   #10743
+
+### Bug fixes
+
+- Not retry if the status code is less than 400 #10778
+
+## 1.4.0 (2020-04-06)
 
 ### Features
 
