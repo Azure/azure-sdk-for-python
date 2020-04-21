@@ -1089,18 +1089,18 @@ class AppWhitelistingGroup(Model):
     :type enforcement_mode: str or ~azure.mgmt.security.models.enum
     :param protection_mode:
     :type protection_mode: ~azure.mgmt.security.models.ProtectionMode
-    :param configuration_status: Possible values include: 'Configured',
+    :ivar configuration_status: Possible values include: 'Configured',
      'NotConfigured', 'InProgress', 'Failed', 'NoStatus'
-    :type configuration_status: str or ~azure.mgmt.security.models.enum
-    :param recommendation_status: Possible values include: 'Recommended',
+    :vartype configuration_status: str or ~azure.mgmt.security.models.enum
+    :ivar recommendation_status: Possible values include: 'Recommended',
      'NotRecommended', 'NotAvailable', 'NoStatus'
-    :type recommendation_status: str or ~azure.mgmt.security.models.enum
-    :param issues:
-    :type issues:
+    :vartype recommendation_status: str or ~azure.mgmt.security.models.enum
+    :ivar issues:
+    :vartype issues:
      list[~azure.mgmt.security.models.AppWhitelistingIssueSummary]
-    :param source_system: Possible values include: 'Azure_AppLocker',
+    :ivar source_system: Possible values include: 'Azure_AppLocker',
      'Azure_AuditD', 'NonAzure_AppLocker', 'NonAzure_AuditD', 'None'
-    :type source_system: str or ~azure.mgmt.security.models.enum
+    :vartype source_system: str or ~azure.mgmt.security.models.enum
     :param vm_recommendations:
     :type vm_recommendations:
      list[~azure.mgmt.security.models.VmRecommendation]
@@ -1114,6 +1114,10 @@ class AppWhitelistingGroup(Model):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'readonly': True},
+        'configuration_status': {'readonly': True},
+        'recommendation_status': {'readonly': True},
+        'issues': {'readonly': True},
+        'source_system': {'readonly': True},
     }
 
     _attribute_map = {
@@ -1139,10 +1143,10 @@ class AppWhitelistingGroup(Model):
         self.location = None
         self.enforcement_mode = kwargs.get('enforcement_mode', None)
         self.protection_mode = kwargs.get('protection_mode', None)
-        self.configuration_status = kwargs.get('configuration_status', None)
-        self.recommendation_status = kwargs.get('recommendation_status', None)
-        self.issues = kwargs.get('issues', None)
-        self.source_system = kwargs.get('source_system', None)
+        self.configuration_status = None
+        self.recommendation_status = None
+        self.issues = None
+        self.source_system = None
         self.vm_recommendations = kwargs.get('vm_recommendations', None)
         self.path_recommendations = kwargs.get('path_recommendations', None)
 
@@ -1186,40 +1190,6 @@ class AppWhitelistingIssueSummary(Model):
         super(AppWhitelistingIssueSummary, self).__init__(**kwargs)
         self.issue = kwargs.get('issue', None)
         self.number_of_vms = kwargs.get('number_of_vms', None)
-
-
-class AppWhitelistingPutGroupData(Model):
-    """The altered data of the recommended VM/server group policy.
-
-    :param enforcement_mode: The enforcement mode of the group. Can also be
-     defined per collection type by using ProtectionMode. Possible values
-     include: 'Audit', 'Enforce', 'None'
-    :type enforcement_mode: str or ~azure.mgmt.security.models.enum
-    :param protection_mode: The protection mode of the group per collection
-     type. Can also be defined for all collection types by using
-     EnforcementMode
-    :type protection_mode: ~azure.mgmt.security.models.ProtectionMode
-    :param vm_recommendations:
-    :type vm_recommendations:
-     list[~azure.mgmt.security.models.VmRecommendation]
-    :param path_recommendations:
-    :type path_recommendations:
-     list[~azure.mgmt.security.models.PathRecommendation]
-    """
-
-    _attribute_map = {
-        'enforcement_mode': {'key': 'enforcementMode', 'type': 'str'},
-        'protection_mode': {'key': 'protectionMode', 'type': 'ProtectionMode'},
-        'vm_recommendations': {'key': 'vmRecommendations', 'type': '[VmRecommendation]'},
-        'path_recommendations': {'key': 'pathRecommendations', 'type': '[PathRecommendation]'},
-    }
-
-    def __init__(self, **kwargs):
-        super(AppWhitelistingPutGroupData, self).__init__(**kwargs)
-        self.enforcement_mode = kwargs.get('enforcement_mode', None)
-        self.protection_mode = kwargs.get('protection_mode', None)
-        self.vm_recommendations = kwargs.get('vm_recommendations', None)
-        self.path_recommendations = kwargs.get('path_recommendations', None)
 
 
 class AscLocation(Resource):

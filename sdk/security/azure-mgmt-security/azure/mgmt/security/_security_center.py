@@ -25,7 +25,6 @@ from .operations import IotSecuritySolutionsAnalyticsAggregatedAlertOperations
 from .operations import IotSecuritySolutionsAnalyticsRecommendationOperations
 from .operations import DiscoveredSecuritySolutionsOperations
 from .operations import ExternalSecuritySolutionsOperations
-from .operations import AdaptiveApplicationControlsOperations
 from .operations import LocationsOperations
 from .operations import Operations
 from .operations import TasksOperations
@@ -42,6 +41,7 @@ from .operations import SubAssessmentsOperations
 from .operations import AutomationsOperations
 from .operations import AssessmentsMetadataOperations
 from .operations import AssessmentsOperations
+from .operations import AdaptiveApplicationControlsOperations
 from .operations import AdaptiveNetworkHardeningsOperations
 from .operations import AllowedConnectionsOperations
 from .operations import TopologyOperations
@@ -79,8 +79,6 @@ class SecurityCenter(SDKClient):
     :vartype discovered_security_solutions: azure.mgmt.security.operations.DiscoveredSecuritySolutionsOperations
     :ivar external_security_solutions: ExternalSecuritySolutions operations
     :vartype external_security_solutions: azure.mgmt.security.operations.ExternalSecuritySolutionsOperations
-    :ivar adaptive_application_controls: AdaptiveApplicationControls operations
-    :vartype adaptive_application_controls: azure.mgmt.security.operations.AdaptiveApplicationControlsOperations
     :ivar locations: Locations operations
     :vartype locations: azure.mgmt.security.operations.LocationsOperations
     :ivar operations: Operations operations
@@ -113,6 +111,8 @@ class SecurityCenter(SDKClient):
     :vartype assessments_metadata: azure.mgmt.security.operations.AssessmentsMetadataOperations
     :ivar assessments: Assessments operations
     :vartype assessments: azure.mgmt.security.operations.AssessmentsOperations
+    :ivar adaptive_application_controls: AdaptiveApplicationControls operations
+    :vartype adaptive_application_controls: azure.mgmt.security.operations.AdaptiveApplicationControlsOperations
     :ivar adaptive_network_hardenings: AdaptiveNetworkHardenings operations
     :vartype adaptive_network_hardenings: azure.mgmt.security.operations.AdaptiveNetworkHardeningsOperations
     :ivar allowed_connections: AllowedConnections operations
@@ -167,8 +167,6 @@ class SecurityCenter(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.external_security_solutions = ExternalSecuritySolutionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.adaptive_application_controls = AdaptiveApplicationControlsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
         self.locations = LocationsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
@@ -200,6 +198,8 @@ class SecurityCenter(SDKClient):
         self.assessments_metadata = AssessmentsMetadataOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.assessments = AssessmentsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.adaptive_application_controls = AdaptiveApplicationControlsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.adaptive_network_hardenings = AdaptiveNetworkHardeningsOperations(
             self._client, self.config, self._serialize, self._deserialize)

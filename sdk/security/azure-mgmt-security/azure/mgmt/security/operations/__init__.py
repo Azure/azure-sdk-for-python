@@ -21,7 +21,6 @@ from ._iot_security_solutions_analytics_aggregated_alert_operations import IotSe
 from ._iot_security_solutions_analytics_recommendation_operations import IotSecuritySolutionsAnalyticsRecommendationOperations
 from ._discovered_security_solutions_operations import DiscoveredSecuritySolutionsOperations
 from ._external_security_solutions_operations import ExternalSecuritySolutionsOperations
-from ._adaptive_application_controls_operations import AdaptiveApplicationControlsOperations
 from ._locations_operations import LocationsOperations
 from ._operations import Operations
 from ._tasks_operations import TasksOperations
@@ -38,6 +37,7 @@ from ._sub_assessments_operations import SubAssessmentsOperations
 from ._automations_operations import AutomationsOperations
 from ._assessments_metadata_operations import AssessmentsMetadataOperations
 from ._assessments_operations import AssessmentsOperations
+from ._adaptive_application_controls_operations import AdaptiveApplicationControlsOperations
 from ._adaptive_network_hardenings_operations import AdaptiveNetworkHardeningsOperations
 from ._allowed_connections_operations import AllowedConnectionsOperations
 from ._topology_operations import TopologyOperations
@@ -56,7 +56,6 @@ __all__ = [
     'IotSecuritySolutionsAnalyticsRecommendationOperations',
     'DiscoveredSecuritySolutionsOperations',
     'ExternalSecuritySolutionsOperations',
-    'AdaptiveApplicationControlsOperations',
     'LocationsOperations',
     'Operations',
     'TasksOperations',
@@ -73,6 +72,7 @@ __all__ = [
     'AutomationsOperations',
     'AssessmentsMetadataOperations',
     'AssessmentsOperations',
+    'AdaptiveApplicationControlsOperations',
     'AdaptiveNetworkHardeningsOperations',
     'AllowedConnectionsOperations',
     'TopologyOperations',

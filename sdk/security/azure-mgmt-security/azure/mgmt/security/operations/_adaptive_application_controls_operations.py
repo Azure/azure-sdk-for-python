@@ -25,7 +25,7 @@ class AdaptiveApplicationControlsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: API version for the operation. Constant value: "2015-06-01-preview".
+    :ivar api_version: API version for the operation. Constant value: "2020-01-01".
     """
 
     models = models
@@ -35,7 +35,7 @@ class AdaptiveApplicationControlsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2015-06-01-preview"
+        self.api_version = "2020-01-01"
 
         self.config = config
 
@@ -168,8 +168,8 @@ class AdaptiveApplicationControlsOperations(object):
 
         :param group_name: Name of an application control VM/server group
         :type group_name: str
-        :param body: The updated VM/server group data
-        :type body: ~azure.mgmt.security.models.AppWhitelistingPutGroupData
+        :param body:
+        :type body: ~azure.mgmt.security.models.AppWhitelistingGroup
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -205,7 +205,7 @@ class AdaptiveApplicationControlsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(body, 'AppWhitelistingPutGroupData')
+        body_content = self._serialize.body(body, 'AppWhitelistingGroup')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)

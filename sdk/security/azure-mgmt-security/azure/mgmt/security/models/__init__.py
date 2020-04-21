@@ -29,7 +29,6 @@ try:
     from ._models_py3 import AppWhitelistingGroup
     from ._models_py3 import AppWhitelistingGroups
     from ._models_py3 import AppWhitelistingIssueSummary
-    from ._models_py3 import AppWhitelistingPutGroupData
     from ._models_py3 import AscLocation
     from ._models_py3 import AssessmentLinks
     from ._models_py3 import AssessmentStatus
@@ -176,7 +175,6 @@ except (SyntaxError, ImportError):
     from ._models import AppWhitelistingGroup
     from ._models import AppWhitelistingGroups
     from ._models import AppWhitelistingIssueSummary
-    from ._models import AppWhitelistingPutGroupData
     from ._models import AscLocation
     from ._models import AssessmentLinks
     from ._models import AssessmentStatus
@@ -391,7 +389,6 @@ __all__ = [
     'AppWhitelistingGroup',
     'AppWhitelistingGroups',
     'AppWhitelistingIssueSummary',
-    'AppWhitelistingPutGroupData',
     'AscLocation',
     'AssessmentLinks',
     'AssessmentStatus',
