@@ -5,6 +5,8 @@
 # --------------------------------------------------------------------------
 from typing import cast, List, TYPE_CHECKING
 
+import base64
+import json
 import six
 
 from azure.core.tracing.decorator import distributed_trace
@@ -15,8 +17,6 @@ from ._paging import SearchItemPaged
 from ._queries import AutocompleteQuery, SearchQuery, SuggestQuery
 from .._headers_mixin import HeadersMixin
 from .._version import SDK_MONIKER
-import base64
-import json
 from ._generated.models import SearchRequest, SearchDocumentsResult
 
 if TYPE_CHECKING:
@@ -46,8 +46,6 @@ def extract_data_cb(response):  # pylint:disable=no-self-use
 def _unpack_continuation_token(token):
     unpacked_token = json.loads(base64.b64decode(token))
     next_link = unpacked_token["nextLink"]
-    next_page_parameters = unpacked_token["nextPageParameters"]
-    next_page_request = SearchRequest.deserialize(next_page_parameters)
     return next_link
 
 

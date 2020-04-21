@@ -68,7 +68,6 @@ class SearchItemPaged(ItemPaged[ReturnType]):
         """
         response = self._first_iterator_instance().response
         _response = SearchDocumentsResult.deserialize(response)
-        page_iterator = self._first_iterator_instance()
         facets = _response.facets
         if facets is not None:
             _facets = {k: [x.as_dict() for x in v] for k, v in facets.items()}
@@ -95,4 +94,3 @@ class SearchItemPaged(ItemPaged[ReturnType]):
         response = self._first_iterator_instance().response
         _response = SearchDocumentsResult.deserialize(response)
         return _response.count
-
