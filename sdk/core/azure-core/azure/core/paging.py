@@ -69,6 +69,8 @@ class PageIterator(Iterator[Iterator[ReturnType]]):
     @property
     def response(self):
         """The last response."""
+        if not self._response:
+            self._response = self._get_next(self.continuation_token)
         return self._response
 
     def __next__(self):

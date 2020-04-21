@@ -5,13 +5,8 @@
 # --------------------------------------------------------------------------
 from typing import Union
 
-from azure.core.async_paging import AsyncItemPaged, AsyncPageIterator, ReturnType
-from .._generated.models import SearchRequest, SearchDocumentsResult
-from .._paging import (
-    convert_search_result,
-    pack_continuation_token,
-    unpack_continuation_token,
-)
+from azure.core.async_paging import AsyncItemPaged, ReturnType
+from .._generated.models import SearchDocumentsResult
 
 
 class AsyncSearchItemPaged(AsyncItemPaged[ReturnType]):
@@ -45,16 +40,13 @@ class AsyncSearchItemPaged(AsyncItemPaged[ReturnType]):
 
         """
 
-        page_iterator = self._first_iterator_instance()
-        if page_iterator._current_page is None:
-            response = await page_iterator._get_next(page_iterator.continuation_token)
-            _response = SearchDocumentsResult.deserialize(response)
-            facets = _response.facets
-            if facets is not None:
-                _facets = {k: [x.as_dict() for x in v] for k, v in facets.items()}
-                return _facets
-            return None
-        return page_iterator.response.facets
+        response = await self._first_iterator_instance().response
+        _response = SearchDocumentsResult.deserialize(response)
+        facets = _response.facets
+        if facets is not None:
+            _facets = {k: [x.as_dict() for x in v] for k, v in facets.items()}
+            return _facets
+        return None
 
     async def get_coverage(self):
         # type: () -> float
@@ -62,12 +54,9 @@ class AsyncSearchItemPaged(AsyncItemPaged[ReturnType]):
         specificied for the query.
 
         """
-        page_iterator = self._first_iterator_instance()
-        if page_iterator._current_page is None:
-            response = await page_iterator._get_next(page_iterator.continuation_token)
-            _response = SearchDocumentsResult.deserialize(response)
-            return _response.coverage
-        return page_iterator.response.coverage
+        response = await self._first_iterator_instance().response
+        _response = SearchDocumentsResult.deserialize(response)
+        return _response.coverage
 
     async def get_count(self):
         # type: () -> float
@@ -75,9 +64,6 @@ class AsyncSearchItemPaged(AsyncItemPaged[ReturnType]):
         set for the query.
 
         """
-        page_iterator = self._first_iterator_instance()
-        if page_iterator._current_page is None:
-            response = await page_iterator._get_next(page_iterator.continuation_token)
-            _response = SearchDocumentsResult.deserialize(response)
-            return _response.count
-        return page_iterator.response.count
+        response = await self._first_iterator_instance().response
+        _response = SearchDocumentsResult.deserialize(response)
+        return _response.count

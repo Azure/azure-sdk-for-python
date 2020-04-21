@@ -90,6 +90,13 @@ class AsyncPageIterator(AsyncIterator[AsyncIterator[ReturnType]]):
         self._response = None
         self._current_page = None
 
+    @property
+    async def response(self):
+        """The last response."""
+        if not self._response:
+            self._response = await self._get_next(self.continuation_token)
+        return self._response
+
     async def __anext__(self):
         if self.continuation_token is None and self._did_a_call_already:
             raise StopAsyncIteration("End of paging")
