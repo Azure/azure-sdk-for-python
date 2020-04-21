@@ -33,7 +33,7 @@ class ARMHttpLoggingPolicy(HttpLoggingPolicy):
     """
 
     DEFAULT_HEADERS_WHITELIST = HttpLoggingPolicy.DEFAULT_HEADERS_WHITELIST | set([
-        # https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/request-limits-and-throttling#remaining-requests
+        # https://docs.microsoft.com/azure/azure-resource-manager/management/request-limits-and-throttling#remaining-requests
         "x-ms-ratelimit-remaining-subscription-reads",
         "x-ms-ratelimit-remaining-subscription-writes",
         "x-ms-ratelimit-remaining-tenant-reads",
@@ -42,6 +42,9 @@ class ARMHttpLoggingPolicy(HttpLoggingPolicy):
         "x-ms-ratelimit-remaining-subscription-resource-entities-read",
         "x-ms-ratelimit-remaining-tenant-resource-requests",
         "x-ms-ratelimit-remaining-tenant-resource-entities-read",
+        # https://docs.microsoft.com/azure/virtual-machines/troubleshooting/troubleshooting-throttling-errors#call-rate-informational-response-headers
+        "x-ms-ratelimit-remaining-resource",
+        "x-ms-request-charge",
     ])
 
 
