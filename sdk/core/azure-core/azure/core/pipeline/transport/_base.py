@@ -60,6 +60,7 @@ from typing import (
     Optional,
     Tuple,
     Iterator,
+    Type
 )
 
 from six.moves.http_client import HTTPConnection, HTTPResponse as _HTTPResponse
@@ -421,7 +422,6 @@ class HttpRequest(object):
                 payload = req.serialize()
                 # We need to remove the ~HTTP/1.1 prefix along with the added content-length
                 payload = payload[payload.index(b'--'):]
-                
             else:
                 part_message.add_header("Content-Type", "application/http")
                 part_message.add_header("Content-Transfer-Encoding", "binary")
