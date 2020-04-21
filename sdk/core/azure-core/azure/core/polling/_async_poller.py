@@ -48,11 +48,19 @@ class AsyncPollingMethod(object):
         raise NotImplementedError("This method needs to be implemented")
 
     def get_continuation_token(self) -> str:
-        raise NotImplementedError("This polling method doesn't support get_continuation_token")
+        raise TypeError(
+            "Polling method '{}' doesn't support get_continuation_token".format(
+                self.__class__.__name__
+            )
+        )
 
     @classmethod
     def from_continuation_token(cls, continuation_token: str, **kwargs) -> Tuple[Any, Any, Callable]:
-        raise NotImplementedError("This polling method doesn't support from_continuation_token")
+        raise TypeError(
+            "Polling method '{}' doesn't support from_continuation_token".format(
+                cls.__name__
+            )
+        )
 
 
 class AsyncNoPolling(_NoPolling):
