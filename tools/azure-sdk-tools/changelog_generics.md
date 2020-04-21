@@ -64,7 +64,7 @@ This version uses a next-generation code generator that introduces important bre
 
 - Credential system has been completly revamped:
 
-  - `azure.common.credentials` or `msrestazure.azure_active_directoty` instances are no longer supported, use the `azure-identity` classes instead: https://pypi.org/project/azure-identity/
+  - `azure.common.credentials` or `msrestazure.azure_active_directory` instances are no longer supported, use the `azure-identity` classes instead: https://pypi.org/project/azure-identity/
   - `credentials` parameter has been renamed `credential`
 
 - The `config` attribute no longer exists on a client, configuration should be passed as kwarg. Example: `MyClient(credential, subscription_id, enable_logging=True)`. For a complete set of
@@ -80,5 +80,6 @@ This version uses a next-generation code generator that introduces important bre
 
 ## General new features
 
+- Type annotations support using `typing`. SDKs are mypy ready.
 - This client has now stable and official support for async. Check the `aio` namespace of your package to find the async client.
 - This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/core/azure-core-tracing-opentelemetry) for an overview.
