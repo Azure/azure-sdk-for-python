@@ -242,10 +242,9 @@ class TestReceiptFromStream(FormRecognizerTest):
     def test_receipt_png(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
         client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
 
-        with open(self.receipt_png, "rb") as fd:
-            receipt = fd.read()
+        with open(self.receipt_png, "rb") as stream:
+            poller = client.begin_recognize_receipts(stream)
 
-        poller = client.begin_recognize_receipts(receipt)
         result = poller.result()
         self.assertEqual(len(result), 1)
         receipt = result[0]
