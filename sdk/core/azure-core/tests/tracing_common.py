@@ -5,7 +5,18 @@
 """Fake implementation of AbstractSpan for tests."""
 from contextlib import contextmanager
 from azure.core.tracing import HttpSpanMixin, SpanKind
-
+from typing import Union, Sequence, Optional, Dict
+AttributeValue = Union[
+    str,
+    bool,
+    int,
+    float,
+    Sequence[str],
+    Sequence[bool],
+    Sequence[int],
+    Sequence[float],
+]
+Attributes = Optional[Dict[str, AttributeValue]]
 
 class FakeSpan(HttpSpanMixin, object):
     # Keep a fake context of the current one
@@ -126,8 +137,8 @@ class FakeSpan(HttpSpanMixin, object):
         return self.to_header()['traceparent']
 
     @classmethod
-    def link(cls, traceparent):
-        # type: (str) -> None
+    def link(cls, traceparent, attributes=None):
+        # type: (str, Attributes) -> None
         """
         Links the context to the current tracer.
 
@@ -139,17 +150,15 @@ class FakeSpan(HttpSpanMixin, object):
         })
 
     @classmethod
-    def link_from_headers(cls, headers):
-        # type: (Dict[str, str]) -> None
+    def link_from_headers(cls, headers, attributes=None):
+        # type: (Dict[str, str], Attributes) -> None
         """
         Given a dictionary, extracts the context and links the context to the current tracer.
 
         :param headers: A key value pair dictionary
         :type headers: dict
         """
-        ctx = extract(_get_headers_from_http_request_headers, headers)
-        current_span = cls.get_current_span()
-        current_span.add_link(ctx)
+        raise NotImplementedError("This method needs to be implemented")
 
     @classmethod
     def get_current_span(cls):

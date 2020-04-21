@@ -6,6 +6,7 @@
 ### Features
 
 - Support "x-ms-retry-after-ms" in response header   #10743
+- `link` and `link_from_headers` now accepts attributes   #10765
 
 ### Bug fixes
 
