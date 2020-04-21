@@ -5,7 +5,7 @@
 
 ### Features
 
-- Info logger now logs ARM throttling information  # 10940
+- Info logger now logs ARM throttling information  #10940
 
 
 ## 1.0.0 (2020-04-09)
