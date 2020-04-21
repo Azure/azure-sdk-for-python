@@ -258,7 +258,7 @@ class NetworkWatchersOperations:
         self,
         resource_group_name: str,
         network_watcher_name: str,
-        tags: Optional[Dict[str, str]] = None,
+        parameters: "models.TagsObject",
         **kwargs
     ) -> "models.NetworkWatcher":
         """Updates a network watcher tags.
@@ -267,8 +267,8 @@ class NetworkWatchersOperations:
         :type resource_group_name: str
         :param network_watcher_name: The name of the network watcher.
         :type network_watcher_name: str
-        :param tags: Resource tags.
-        :type tags: dict[str, str]
+        :param parameters: Parameters supplied to update network watcher tags.
+        :type parameters: ~azure.mgmt.network.v2019_12_01.models.TagsObject
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: NetworkWatcher or the result of cls(response)
         :rtype: ~azure.mgmt.network.v2019_12_01.models.NetworkWatcher
@@ -276,8 +276,6 @@ class NetworkWatchersOperations:
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.NetworkWatcher"]
         error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
-
-        _parameters = models.TagsObject(tags=tags)
         api_version = "2019-12-01"
         content_type = kwargs.pop("content_type", "application/json")
 
@@ -301,7 +299,7 @@ class NetworkWatchersOperations:
 
         # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_parameters, 'TagsObject')
+        body_content = self._serialize.body(parameters, 'TagsObject')
         body_content_kwargs['content'] = body_content
         request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
 
@@ -736,13 +734,11 @@ class NetworkWatchersOperations:
         self,
         resource_group_name: str,
         network_watcher_name: str,
-        target_resource_id: str,
+        parameters: "models.SecurityGroupViewParameters",
         **kwargs
     ) -> "models.SecurityGroupViewResult":
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SecurityGroupViewResult"]
         error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
-
-        _parameters = models.SecurityGroupViewParameters(target_resource_id=target_resource_id)
         api_version = "2019-12-01"
         content_type = kwargs.pop("content_type", "application/json")
 
@@ -766,7 +762,7 @@ class NetworkWatchersOperations:
 
         # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_parameters, 'SecurityGroupViewParameters')
+        body_content = self._serialize.body(parameters, 'SecurityGroupViewParameters')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
 
@@ -795,7 +791,7 @@ class NetworkWatchersOperations:
         self,
         resource_group_name: str,
         network_watcher_name: str,
-        target_resource_id: str,
+        parameters: "models.SecurityGroupViewParameters",
         **kwargs
     ) -> "models.SecurityGroupViewResult":
         """Gets the configured and effective security group rules on the specified VM.
@@ -804,8 +800,8 @@ class NetworkWatchersOperations:
         :type resource_group_name: str
         :param network_watcher_name: The name of the network watcher.
         :type network_watcher_name: str
-        :param target_resource_id: ID of the target VM.
-        :type target_resource_id: str
+        :param parameters: Parameters that define the VM to check security groups for.
+        :type parameters: ~azure.mgmt.network.v2019_12_01.models.SecurityGroupViewParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
@@ -820,7 +816,7 @@ class NetworkWatchersOperations:
         raw_result = await self._get_vm_security_rules_initial(
             resource_group_name=resource_group_name,
             network_watcher_name=network_watcher_name,
-            target_resource_id=target_resource_id,
+            parameters=parameters,
             cls=lambda x,y,z: x,
             **kwargs
         )
@@ -954,13 +950,11 @@ class NetworkWatchersOperations:
         self,
         resource_group_name: str,
         network_watcher_name: str,
-        target_resource_id: str,
+        parameters: "models.QueryTroubleshootingParameters",
         **kwargs
     ) -> "models.TroubleshootingResult":
         cls = kwargs.pop('cls', None)  # type: ClsType["models.TroubleshootingResult"]
         error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
-
-        _parameters = models.QueryTroubleshootingParameters(target_resource_id=target_resource_id)
         api_version = "2019-12-01"
         content_type = kwargs.pop("content_type", "application/json")
 
@@ -984,7 +978,7 @@ class NetworkWatchersOperations:
 
         # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_parameters, 'QueryTroubleshootingParameters')
+        body_content = self._serialize.body(parameters, 'QueryTroubleshootingParameters')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
 
@@ -1013,7 +1007,7 @@ class NetworkWatchersOperations:
         self,
         resource_group_name: str,
         network_watcher_name: str,
-        target_resource_id: str,
+        parameters: "models.QueryTroubleshootingParameters",
         **kwargs
     ) -> "models.TroubleshootingResult":
         """Get the last completed troubleshooting result on a specified resource.
@@ -1022,8 +1016,8 @@ class NetworkWatchersOperations:
         :type resource_group_name: str
         :param network_watcher_name: The name of the network watcher resource.
         :type network_watcher_name: str
-        :param target_resource_id: The target resource ID to query the troubleshooting result.
-        :type target_resource_id: str
+        :param parameters: Parameters that define the resource to query the troubleshooting result.
+        :type parameters: ~azure.mgmt.network.v2019_12_01.models.QueryTroubleshootingParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
@@ -1038,7 +1032,7 @@ class NetworkWatchersOperations:
         raw_result = await self._get_troubleshooting_result_initial(
             resource_group_name=resource_group_name,
             network_watcher_name=network_watcher_name,
-            target_resource_id=target_resource_id,
+            parameters=parameters,
             cls=lambda x,y,z: x,
             **kwargs
         )
@@ -1172,13 +1166,11 @@ class NetworkWatchersOperations:
         self,
         resource_group_name: str,
         network_watcher_name: str,
-        target_resource_id: str,
+        parameters: "models.FlowLogStatusParameters",
         **kwargs
     ) -> "models.FlowLogInformation":
         cls = kwargs.pop('cls', None)  # type: ClsType["models.FlowLogInformation"]
         error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
-
-        _parameters = models.FlowLogStatusParameters(target_resource_id=target_resource_id)
         api_version = "2019-12-01"
         content_type = kwargs.pop("content_type", "application/json")
 
@@ -1202,7 +1194,7 @@ class NetworkWatchersOperations:
 
         # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_parameters, 'FlowLogStatusParameters')
+        body_content = self._serialize.body(parameters, 'FlowLogStatusParameters')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
 
@@ -1231,7 +1223,7 @@ class NetworkWatchersOperations:
         self,
         resource_group_name: str,
         network_watcher_name: str,
-        target_resource_id: str,
+        parameters: "models.FlowLogStatusParameters",
         **kwargs
     ) -> "models.FlowLogInformation":
         """Queries status of flow log and traffic analytics (optional) on a specified resource.
@@ -1240,9 +1232,9 @@ class NetworkWatchersOperations:
         :type resource_group_name: str
         :param network_watcher_name: The name of the network watcher resource.
         :type network_watcher_name: str
-        :param target_resource_id: The target resource where getting the flow log and traffic analytics
+        :param parameters: Parameters that define a resource to query flow log and traffic analytics
      (optional) status.
-        :type target_resource_id: str
+        :type parameters: ~azure.mgmt.network.v2019_12_01.models.FlowLogStatusParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
@@ -1257,7 +1249,7 @@ class NetworkWatchersOperations:
         raw_result = await self._get_flow_log_status_initial(
             resource_group_name=resource_group_name,
             network_watcher_name=network_watcher_name,
-            target_resource_id=target_resource_id,
+            parameters=parameters,
             cls=lambda x,y,z: x,
             **kwargs
         )

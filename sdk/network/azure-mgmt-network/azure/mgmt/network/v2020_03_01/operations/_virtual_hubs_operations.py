@@ -212,7 +212,7 @@ class VirtualHubsOperations(object):
         self,
         resource_group_name,  # type: str
         virtual_hub_name,  # type: str
-        tags=None,  # type: Optional[Dict[str, str]]
+        virtual_hub_parameters,  # type: "models.TagsObject"
         **kwargs  # type: Any
     ):
         # type: (...) -> "models.VirtualHub"
@@ -222,8 +222,8 @@ class VirtualHubsOperations(object):
         :type resource_group_name: str
         :param virtual_hub_name: The name of the VirtualHub.
         :type virtual_hub_name: str
-        :param tags: Resource tags.
-        :type tags: dict[str, str]
+        :param virtual_hub_parameters: Parameters supplied to update VirtualHub tags.
+        :type virtual_hub_parameters: ~azure.mgmt.network.v2020_03_01.models.TagsObject
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: VirtualHub or the result of cls(response)
         :rtype: ~azure.mgmt.network.v2020_03_01.models.VirtualHub
@@ -231,8 +231,6 @@ class VirtualHubsOperations(object):
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.VirtualHub"]
         error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
-
-        _virtual_hub_parameters = models.TagsObject(tags=tags)
         api_version = "2020-03-01"
         content_type = kwargs.pop("content_type", "application/json")
 
@@ -256,7 +254,7 @@ class VirtualHubsOperations(object):
 
         # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_virtual_hub_parameters, 'TagsObject')
+        body_content = self._serialize.body(virtual_hub_parameters, 'TagsObject')
         body_content_kwargs['content'] = body_content
         request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
 

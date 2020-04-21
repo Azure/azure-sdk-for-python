@@ -302,14 +302,12 @@ class VirtualNetworkGatewayConnectionsOperations(object):
         self,
         resource_group_name,  # type: str
         virtual_network_gateway_connection_name,  # type: str
-        tags=None,  # type: Optional[Dict[str, str]]
+        parameters,  # type: "models.TagsObject"
         **kwargs  # type: Any
     ):
         # type: (...) -> "models.VirtualNetworkGatewayConnection"
         cls = kwargs.pop('cls', None)  # type: ClsType["models.VirtualNetworkGatewayConnection"]
         error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
-
-        _parameters = models.TagsObject(tags=tags)
         api_version = "2019-12-01"
         content_type = kwargs.pop("content_type", "application/json")
 
@@ -333,7 +331,7 @@ class VirtualNetworkGatewayConnectionsOperations(object):
 
         # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_parameters, 'TagsObject')
+        body_content = self._serialize.body(parameters, 'TagsObject')
         body_content_kwargs['content'] = body_content
         request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
 
@@ -358,7 +356,7 @@ class VirtualNetworkGatewayConnectionsOperations(object):
         self,
         resource_group_name,  # type: str
         virtual_network_gateway_connection_name,  # type: str
-        tags=None,  # type: Optional[Dict[str, str]]
+        parameters,  # type: "models.TagsObject"
         **kwargs  # type: Any
     ):
         # type: (...) -> "models.VirtualNetworkGatewayConnection"
@@ -369,8 +367,8 @@ class VirtualNetworkGatewayConnectionsOperations(object):
         :param virtual_network_gateway_connection_name: The name of the virtual network gateway
      connection.
         :type virtual_network_gateway_connection_name: str
-        :param tags: Resource tags.
-        :type tags: dict[str, str]
+        :param parameters: Parameters supplied to update virtual network gateway connection tags.
+        :type parameters: ~azure.mgmt.network.v2019_12_01.models.TagsObject
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
@@ -385,7 +383,7 @@ class VirtualNetworkGatewayConnectionsOperations(object):
         raw_result = self._update_tags_initial(
             resource_group_name=resource_group_name,
             virtual_network_gateway_connection_name=virtual_network_gateway_connection_name,
-            tags=tags,
+            parameters=parameters,
             cls=lambda x,y,z: x,
             **kwargs
         )
@@ -411,15 +409,12 @@ class VirtualNetworkGatewayConnectionsOperations(object):
         self,
         resource_group_name,  # type: str
         virtual_network_gateway_connection_name,  # type: str
-        value,  # type: str
-        id=None,  # type: Optional[str]
+        parameters,  # type: "models.ConnectionSharedKey"
         **kwargs  # type: Any
     ):
         # type: (...) -> "models.ConnectionSharedKey"
         cls = kwargs.pop('cls', None)  # type: ClsType["models.ConnectionSharedKey"]
         error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
-
-        _parameters = models.ConnectionSharedKey(id=id, value=value)
         api_version = "2019-12-01"
         content_type = kwargs.pop("content_type", "application/json")
 
@@ -443,7 +438,7 @@ class VirtualNetworkGatewayConnectionsOperations(object):
 
         # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_parameters, 'ConnectionSharedKey')
+        body_content = self._serialize.body(parameters, 'ConnectionSharedKey')
         body_content_kwargs['content'] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
 
@@ -471,8 +466,7 @@ class VirtualNetworkGatewayConnectionsOperations(object):
         self,
         resource_group_name,  # type: str
         virtual_network_gateway_connection_name,  # type: str
-        value,  # type: str
-        id=None,  # type: Optional[str]
+        parameters,  # type: "models.ConnectionSharedKey"
         **kwargs  # type: Any
     ):
         # type: (...) -> "models.ConnectionSharedKey"
@@ -482,10 +476,9 @@ class VirtualNetworkGatewayConnectionsOperations(object):
         :type resource_group_name: str
         :param virtual_network_gateway_connection_name: The virtual network gateway connection name.
         :type virtual_network_gateway_connection_name: str
-        :param value: The virtual network connection shared key value.
-        :type value: str
-        :param id: Resource ID.
-        :type id: str
+        :param parameters: Parameters supplied to the Begin Set Virtual Network Gateway connection
+     Shared key operation throughNetwork resource provider.
+        :type parameters: ~azure.mgmt.network.v2019_12_01.models.ConnectionSharedKey
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
@@ -500,8 +493,7 @@ class VirtualNetworkGatewayConnectionsOperations(object):
         raw_result = self._set_shared_key_initial(
             resource_group_name=resource_group_name,
             virtual_network_gateway_connection_name=virtual_network_gateway_connection_name,
-            value=value,
-            id=id,
+            parameters=parameters,
             cls=lambda x,y,z: x,
             **kwargs
         )
@@ -651,14 +643,12 @@ class VirtualNetworkGatewayConnectionsOperations(object):
         self,
         resource_group_name,  # type: str
         virtual_network_gateway_connection_name,  # type: str
-        key_length,  # type: int
+        parameters,  # type: "models.ConnectionResetSharedKey"
         **kwargs  # type: Any
     ):
         # type: (...) -> "models.ConnectionResetSharedKey"
         cls = kwargs.pop('cls', None)  # type: ClsType["models.ConnectionResetSharedKey"]
         error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
-
-        _parameters = models.ConnectionResetSharedKey(key_length=key_length)
         api_version = "2019-12-01"
         content_type = kwargs.pop("content_type", "application/json")
 
@@ -682,7 +672,7 @@ class VirtualNetworkGatewayConnectionsOperations(object):
 
         # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_parameters, 'ConnectionResetSharedKey')
+        body_content = self._serialize.body(parameters, 'ConnectionResetSharedKey')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
 
@@ -707,7 +697,7 @@ class VirtualNetworkGatewayConnectionsOperations(object):
         self,
         resource_group_name,  # type: str
         virtual_network_gateway_connection_name,  # type: str
-        key_length,  # type: int
+        parameters,  # type: "models.ConnectionResetSharedKey"
         **kwargs  # type: Any
     ):
         # type: (...) -> "models.ConnectionResetSharedKey"
@@ -718,9 +708,9 @@ class VirtualNetworkGatewayConnectionsOperations(object):
         :param virtual_network_gateway_connection_name: The virtual network gateway connection reset
      shared key Name.
         :type virtual_network_gateway_connection_name: str
-        :param key_length: The virtual network connection reset shared key length, should between 1 and
-     128.
-        :type key_length: int
+        :param parameters: Parameters supplied to the begin reset virtual network gateway connection
+     shared key operation through network resource provider.
+        :type parameters: ~azure.mgmt.network.v2019_12_01.models.ConnectionResetSharedKey
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
@@ -735,7 +725,7 @@ class VirtualNetworkGatewayConnectionsOperations(object):
         raw_result = self._reset_shared_key_initial(
             resource_group_name=resource_group_name,
             virtual_network_gateway_connection_name=virtual_network_gateway_connection_name,
-            key_length=key_length,
+            parameters=parameters,
             cls=lambda x,y,z: x,
             **kwargs
         )
@@ -761,14 +751,12 @@ class VirtualNetworkGatewayConnectionsOperations(object):
         self,
         resource_group_name,  # type: str
         virtual_network_gateway_connection_name,  # type: str
-        filter_data=None,  # type: Optional[str]
+        parameters=None,  # type: Optional["models.VpnPacketCaptureStartParameters"]
         **kwargs  # type: Any
     ):
         # type: (...) -> str
         cls = kwargs.pop('cls', None)  # type: ClsType[str]
         error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
-
-        _parameters = models.VpnPacketCaptureStartParameters(filter_data=filter_data)
         api_version = "2019-12-01"
         content_type = kwargs.pop("content_type", "application/json")
 
@@ -792,8 +780,8 @@ class VirtualNetworkGatewayConnectionsOperations(object):
 
         # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
-        if _parameters is not None:
-            body_content = self._serialize.body(_parameters, 'VpnPacketCaptureStartParameters')
+        if parameters is not None:
+            body_content = self._serialize.body(parameters, 'VpnPacketCaptureStartParameters')
         else:
             body_content = None
         body_content_kwargs['content'] = body_content
@@ -821,7 +809,7 @@ class VirtualNetworkGatewayConnectionsOperations(object):
         self,
         resource_group_name,  # type: str
         virtual_network_gateway_connection_name,  # type: str
-        filter_data=None,  # type: Optional[str]
+        parameters=None,  # type: Optional["models.VpnPacketCaptureStartParameters"]
         **kwargs  # type: Any
     ):
         # type: (...) -> str
@@ -832,8 +820,9 @@ class VirtualNetworkGatewayConnectionsOperations(object):
         :param virtual_network_gateway_connection_name: The name of the virtual network gateway
      connection.
         :type virtual_network_gateway_connection_name: str
-        :param filter_data: Start Packet capture parameters.
-        :type filter_data: str
+        :param parameters: Virtual network gateway packet capture parameters supplied to start packet
+     capture on gateway connection.
+        :type parameters: ~azure.mgmt.network.v2019_12_01.models.VpnPacketCaptureStartParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
@@ -848,7 +837,7 @@ class VirtualNetworkGatewayConnectionsOperations(object):
         raw_result = self._start_packet_capture_initial(
             resource_group_name=resource_group_name,
             virtual_network_gateway_connection_name=virtual_network_gateway_connection_name,
-            filter_data=filter_data,
+            parameters=parameters,
             cls=lambda x,y,z: x,
             **kwargs
         )
@@ -874,14 +863,12 @@ class VirtualNetworkGatewayConnectionsOperations(object):
         self,
         resource_group_name,  # type: str
         virtual_network_gateway_connection_name,  # type: str
-        sas_url=None,  # type: Optional[str]
+        parameters,  # type: "models.VpnPacketCaptureStopParameters"
         **kwargs  # type: Any
     ):
         # type: (...) -> str
         cls = kwargs.pop('cls', None)  # type: ClsType[str]
         error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
-
-        _parameters = models.VpnPacketCaptureStopParameters(sas_url=sas_url)
         api_version = "2019-12-01"
         content_type = kwargs.pop("content_type", "application/json")
 
@@ -905,7 +892,7 @@ class VirtualNetworkGatewayConnectionsOperations(object):
 
         # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_parameters, 'VpnPacketCaptureStopParameters')
+        body_content = self._serialize.body(parameters, 'VpnPacketCaptureStopParameters')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
 
@@ -931,7 +918,7 @@ class VirtualNetworkGatewayConnectionsOperations(object):
         self,
         resource_group_name,  # type: str
         virtual_network_gateway_connection_name,  # type: str
-        sas_url=None,  # type: Optional[str]
+        parameters,  # type: "models.VpnPacketCaptureStopParameters"
         **kwargs  # type: Any
     ):
         # type: (...) -> str
@@ -942,8 +929,9 @@ class VirtualNetworkGatewayConnectionsOperations(object):
         :param virtual_network_gateway_connection_name: The name of the virtual network gateway
      Connection.
         :type virtual_network_gateway_connection_name: str
-        :param sas_url: SAS url for packet capture on virtual network gateway.
-        :type sas_url: str
+        :param parameters: Virtual network gateway packet capture parameters supplied to stop packet
+     capture on gateway connection.
+        :type parameters: ~azure.mgmt.network.v2019_12_01.models.VpnPacketCaptureStopParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
@@ -958,7 +946,7 @@ class VirtualNetworkGatewayConnectionsOperations(object):
         raw_result = self._stop_packet_capture_initial(
             resource_group_name=resource_group_name,
             virtual_network_gateway_connection_name=virtual_network_gateway_connection_name,
-            sas_url=sas_url,
+            parameters=parameters,
             cls=lambda x,y,z: x,
             **kwargs
         )

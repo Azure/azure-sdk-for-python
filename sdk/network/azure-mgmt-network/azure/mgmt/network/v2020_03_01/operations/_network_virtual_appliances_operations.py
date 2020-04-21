@@ -194,7 +194,7 @@ class NetworkVirtualAppliancesOperations(object):
         self,
         resource_group_name,  # type: str
         network_virtual_appliance_name,  # type: str
-        tags=None,  # type: Optional[Dict[str, str]]
+        parameters,  # type: "models.TagsObject"
         **kwargs  # type: Any
     ):
         # type: (...) -> "models.NetworkVirtualAppliance"
@@ -204,8 +204,8 @@ class NetworkVirtualAppliancesOperations(object):
         :type resource_group_name: str
         :param network_virtual_appliance_name: The name of Network Virtual Appliance being updated.
         :type network_virtual_appliance_name: str
-        :param tags: Resource tags.
-        :type tags: dict[str, str]
+        :param parameters: Parameters supplied to Update Network Virtual Appliance Tags.
+        :type parameters: ~azure.mgmt.network.v2020_03_01.models.TagsObject
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: NetworkVirtualAppliance or the result of cls(response)
         :rtype: ~azure.mgmt.network.v2020_03_01.models.NetworkVirtualAppliance
@@ -213,8 +213,6 @@ class NetworkVirtualAppliancesOperations(object):
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.NetworkVirtualAppliance"]
         error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
-
-        _parameters = models.TagsObject(tags=tags)
         api_version = "2020-03-01"
         content_type = kwargs.pop("content_type", "application/json")
 
@@ -238,7 +236,7 @@ class NetworkVirtualAppliancesOperations(object):
 
         # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_parameters, 'TagsObject')
+        body_content = self._serialize.body(parameters, 'TagsObject')
         body_content_kwargs['content'] = body_content
         request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
 

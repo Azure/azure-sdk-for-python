@@ -299,7 +299,7 @@ class RouteFiltersOperations:
         self,
         resource_group_name: str,
         route_filter_name: str,
-        tags: Optional[Dict[str, str]] = None,
+        parameters: "models.TagsObject",
         **kwargs
     ) -> "models.RouteFilter":
         """Updates tags of a route filter.
@@ -308,8 +308,8 @@ class RouteFiltersOperations:
         :type resource_group_name: str
         :param route_filter_name: The name of the route filter.
         :type route_filter_name: str
-        :param tags: Resource tags.
-        :type tags: dict[str, str]
+        :param parameters: Parameters supplied to update route filter tags.
+        :type parameters: ~azure.mgmt.network.v2020_03_01.models.TagsObject
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: RouteFilter or the result of cls(response)
         :rtype: ~azure.mgmt.network.v2020_03_01.models.RouteFilter
@@ -317,8 +317,6 @@ class RouteFiltersOperations:
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.RouteFilter"]
         error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
-
-        _parameters = models.TagsObject(tags=tags)
         api_version = "2020-03-01"
         content_type = kwargs.pop("content_type", "application/json")
 
@@ -342,7 +340,7 @@ class RouteFiltersOperations:
 
         # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_parameters, 'TagsObject')
+        body_content = self._serialize.body(parameters, 'TagsObject')
         body_content_kwargs['content'] = body_content
         request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
 

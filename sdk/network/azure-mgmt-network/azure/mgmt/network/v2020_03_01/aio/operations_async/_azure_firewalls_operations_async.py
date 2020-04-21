@@ -293,13 +293,11 @@ class AzureFirewallsOperations:
         self,
         resource_group_name: str,
         azure_firewall_name: str,
-        tags: Optional[Dict[str, str]] = None,
+        parameters: "models.TagsObject",
         **kwargs
     ) -> "models.AzureFirewall":
         cls = kwargs.pop('cls', None)  # type: ClsType["models.AzureFirewall"]
         error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
-
-        _parameters = models.TagsObject(tags=tags)
         api_version = "2020-03-01"
         content_type = kwargs.pop("content_type", "application/json")
 
@@ -323,7 +321,7 @@ class AzureFirewallsOperations:
 
         # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_parameters, 'TagsObject')
+        body_content = self._serialize.body(parameters, 'TagsObject')
         body_content_kwargs['content'] = body_content
         request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
 
@@ -348,7 +346,7 @@ class AzureFirewallsOperations:
         self,
         resource_group_name: str,
         azure_firewall_name: str,
-        tags: Optional[Dict[str, str]] = None,
+        parameters: "models.TagsObject",
         **kwargs
     ) -> "models.AzureFirewall":
         """Updates tags of an Azure Firewall resource.
@@ -357,8 +355,8 @@ class AzureFirewallsOperations:
         :type resource_group_name: str
         :param azure_firewall_name: The name of the Azure Firewall.
         :type azure_firewall_name: str
-        :param tags: Resource tags.
-        :type tags: dict[str, str]
+        :param parameters: Parameters supplied to update azure firewall tags.
+        :type parameters: ~azure.mgmt.network.v2020_03_01.models.TagsObject
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
@@ -373,7 +371,7 @@ class AzureFirewallsOperations:
         raw_result = await self._update_tags_initial(
             resource_group_name=resource_group_name,
             azure_firewall_name=azure_firewall_name,
-            tags=tags,
+            parameters=parameters,
             cls=lambda x,y,z: x,
             **kwargs
         )

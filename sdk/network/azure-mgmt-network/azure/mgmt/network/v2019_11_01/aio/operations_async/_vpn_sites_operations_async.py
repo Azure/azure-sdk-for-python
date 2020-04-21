@@ -209,7 +209,7 @@ class VpnSitesOperations:
         self,
         resource_group_name: str,
         vpn_site_name: str,
-        tags: Optional[Dict[str, str]] = None,
+        vpn_site_parameters: "models.TagsObject",
         **kwargs
     ) -> "models.VpnSite":
         """Updates VpnSite tags.
@@ -218,8 +218,8 @@ class VpnSitesOperations:
         :type resource_group_name: str
         :param vpn_site_name: The name of the VpnSite being updated.
         :type vpn_site_name: str
-        :param tags: Resource tags.
-        :type tags: dict[str, str]
+        :param vpn_site_parameters: Parameters supplied to update VpnSite tags.
+        :type vpn_site_parameters: ~azure.mgmt.network.v2019_11_01.models.TagsObject
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: VpnSite or the result of cls(response)
         :rtype: ~azure.mgmt.network.v2019_11_01.models.VpnSite
@@ -227,8 +227,6 @@ class VpnSitesOperations:
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.VpnSite"]
         error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
-
-        _vpn_site_parameters = models.TagsObject(tags=tags)
         api_version = "2019-11-01"
         content_type = kwargs.pop("content_type", "application/json")
 
@@ -252,7 +250,7 @@ class VpnSitesOperations:
 
         # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_vpn_site_parameters, 'TagsObject')
+        body_content = self._serialize.body(vpn_site_parameters, 'TagsObject')
         body_content_kwargs['content'] = body_content
         request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
 

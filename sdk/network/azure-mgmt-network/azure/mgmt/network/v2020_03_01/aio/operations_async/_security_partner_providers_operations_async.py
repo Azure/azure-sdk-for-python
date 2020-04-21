@@ -294,7 +294,7 @@ class SecurityPartnerProvidersOperations:
         self,
         resource_group_name: str,
         security_partner_provider_name: str,
-        tags: Optional[Dict[str, str]] = None,
+        parameters: "models.TagsObject",
         **kwargs
     ) -> "models.SecurityPartnerProvider":
         """Updates tags of a Security Partner Provider resource.
@@ -303,8 +303,8 @@ class SecurityPartnerProvidersOperations:
         :type resource_group_name: str
         :param security_partner_provider_name: The name of the Security Partner Provider.
         :type security_partner_provider_name: str
-        :param tags: Resource tags.
-        :type tags: dict[str, str]
+        :param parameters: Parameters supplied to update Security Partner Provider tags.
+        :type parameters: ~azure.mgmt.network.v2020_03_01.models.TagsObject
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SecurityPartnerProvider or the result of cls(response)
         :rtype: ~azure.mgmt.network.v2020_03_01.models.SecurityPartnerProvider
@@ -312,8 +312,6 @@ class SecurityPartnerProvidersOperations:
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SecurityPartnerProvider"]
         error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
-
-        _parameters = models.TagsObject(tags=tags)
         api_version = "2020-03-01"
         content_type = kwargs.pop("content_type", "application/json")
 
@@ -337,7 +335,7 @@ class SecurityPartnerProvidersOperations:
 
         # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_parameters, 'TagsObject')
+        body_content = self._serialize.body(parameters, 'TagsObject')
         body_content_kwargs['content'] = body_content
         request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
 

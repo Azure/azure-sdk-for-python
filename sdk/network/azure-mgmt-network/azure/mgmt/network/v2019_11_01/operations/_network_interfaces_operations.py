@@ -303,7 +303,7 @@ class NetworkInterfacesOperations(object):
         self,
         resource_group_name,  # type: str
         network_interface_name,  # type: str
-        tags=None,  # type: Optional[Dict[str, str]]
+        parameters,  # type: "models.TagsObject"
         **kwargs  # type: Any
     ):
         # type: (...) -> "models.NetworkInterface"
@@ -313,8 +313,8 @@ class NetworkInterfacesOperations(object):
         :type resource_group_name: str
         :param network_interface_name: The name of the network interface.
         :type network_interface_name: str
-        :param tags: Resource tags.
-        :type tags: dict[str, str]
+        :param parameters: Parameters supplied to update network interface tags.
+        :type parameters: ~azure.mgmt.network.v2019_11_01.models.TagsObject
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: NetworkInterface or the result of cls(response)
         :rtype: ~azure.mgmt.network.v2019_11_01.models.NetworkInterface
@@ -322,8 +322,6 @@ class NetworkInterfacesOperations(object):
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.NetworkInterface"]
         error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
-
-        _parameters = models.TagsObject(tags=tags)
         api_version = "2019-11-01"
         content_type = kwargs.pop("content_type", "application/json")
 
@@ -347,7 +345,7 @@ class NetworkInterfacesOperations(object):
 
         # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_parameters, 'TagsObject')
+        body_content = self._serialize.body(parameters, 'TagsObject')
         body_content_kwargs['content'] = body_content
         request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
 

@@ -298,7 +298,7 @@ class VirtualNetworkTapsOperations(object):
         self,
         resource_group_name,  # type: str
         tap_name,  # type: str
-        tags=None,  # type: Optional[Dict[str, str]]
+        tap_parameters,  # type: "models.TagsObject"
         **kwargs  # type: Any
     ):
         # type: (...) -> "models.VirtualNetworkTap"
@@ -308,8 +308,8 @@ class VirtualNetworkTapsOperations(object):
         :type resource_group_name: str
         :param tap_name: The name of the tap.
         :type tap_name: str
-        :param tags: Resource tags.
-        :type tags: dict[str, str]
+        :param tap_parameters: Parameters supplied to update VirtualNetworkTap tags.
+        :type tap_parameters: ~azure.mgmt.network.v2020_03_01.models.TagsObject
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: VirtualNetworkTap or the result of cls(response)
         :rtype: ~azure.mgmt.network.v2020_03_01.models.VirtualNetworkTap
@@ -317,8 +317,6 @@ class VirtualNetworkTapsOperations(object):
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.VirtualNetworkTap"]
         error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
-
-        _tap_parameters = models.TagsObject(tags=tags)
         api_version = "2020-03-01"
         content_type = kwargs.pop("content_type", "application/json")
 
@@ -342,7 +340,7 @@ class VirtualNetworkTapsOperations(object):
 
         # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_tap_parameters, 'TagsObject')
+        body_content = self._serialize.body(tap_parameters, 'TagsObject')
         body_content_kwargs['content'] = body_content
         request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
 

@@ -186,14 +186,11 @@ class DdosProtectionPlansOperations:
         self,
         resource_group_name: str,
         ddos_protection_plan_name: str,
-        location: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
+        parameters: "models.DdosProtectionPlan",
         **kwargs
     ) -> "models.DdosProtectionPlan":
         cls = kwargs.pop('cls', None)  # type: ClsType["models.DdosProtectionPlan"]
         error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
-
-        _parameters = models.DdosProtectionPlan(location=location, tags=tags)
         api_version = "2020-03-01"
         content_type = kwargs.pop("content_type", "application/json")
 
@@ -217,7 +214,7 @@ class DdosProtectionPlansOperations:
 
         # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_parameters, 'DdosProtectionPlan')
+        body_content = self._serialize.body(parameters, 'DdosProtectionPlan')
         body_content_kwargs['content'] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
 
@@ -245,8 +242,7 @@ class DdosProtectionPlansOperations:
         self,
         resource_group_name: str,
         ddos_protection_plan_name: str,
-        location: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
+        parameters: "models.DdosProtectionPlan",
         **kwargs
     ) -> "models.DdosProtectionPlan":
         """Creates or updates a DDoS protection plan.
@@ -255,10 +251,8 @@ class DdosProtectionPlansOperations:
         :type resource_group_name: str
         :param ddos_protection_plan_name: The name of the DDoS protection plan.
         :type ddos_protection_plan_name: str
-        :param location: Resource location.
-        :type location: str
-        :param tags: Resource tags.
-        :type tags: dict[str, str]
+        :param parameters: Parameters supplied to the create or update operation.
+        :type parameters: ~azure.mgmt.network.v2020_03_01.models.DdosProtectionPlan
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
@@ -273,8 +267,7 @@ class DdosProtectionPlansOperations:
         raw_result = await self._create_or_update_initial(
             resource_group_name=resource_group_name,
             ddos_protection_plan_name=ddos_protection_plan_name,
-            location=location,
-            tags=tags,
+            parameters=parameters,
             cls=lambda x,y,z: x,
             **kwargs
         )
@@ -300,7 +293,7 @@ class DdosProtectionPlansOperations:
         self,
         resource_group_name: str,
         ddos_protection_plan_name: str,
-        tags: Optional[Dict[str, str]] = None,
+        parameters: "models.TagsObject",
         **kwargs
     ) -> "models.DdosProtectionPlan":
         """Update a DDoS protection plan tags.
@@ -309,8 +302,8 @@ class DdosProtectionPlansOperations:
         :type resource_group_name: str
         :param ddos_protection_plan_name: The name of the DDoS protection plan.
         :type ddos_protection_plan_name: str
-        :param tags: Resource tags.
-        :type tags: dict[str, str]
+        :param parameters: Parameters supplied to the update DDoS protection plan resource tags.
+        :type parameters: ~azure.mgmt.network.v2020_03_01.models.TagsObject
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DdosProtectionPlan or the result of cls(response)
         :rtype: ~azure.mgmt.network.v2020_03_01.models.DdosProtectionPlan
@@ -318,8 +311,6 @@ class DdosProtectionPlansOperations:
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.DdosProtectionPlan"]
         error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
-
-        _parameters = models.TagsObject(tags=tags)
         api_version = "2020-03-01"
         content_type = kwargs.pop("content_type", "application/json")
 
@@ -343,7 +334,7 @@ class DdosProtectionPlansOperations:
 
         # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_parameters, 'TagsObject')
+        body_content = self._serialize.body(parameters, 'TagsObject')
         body_content_kwargs['content'] = body_content
         request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
 

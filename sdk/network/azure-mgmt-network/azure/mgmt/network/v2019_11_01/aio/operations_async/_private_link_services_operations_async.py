@@ -726,15 +726,15 @@ class PrivateLinkServicesOperations:
     async def check_private_link_service_visibility(
         self,
         location: str,
-        private_link_service_alias: Optional[str] = None,
+        parameters: "models.CheckPrivateLinkServiceVisibilityRequest",
         **kwargs
     ) -> "models.PrivateLinkServiceVisibility":
         """Checks whether the subscription is visible to private link service.
 
         :param location: The location of the domain name.
         :type location: str
-        :param private_link_service_alias: The alias of the private link service.
-        :type private_link_service_alias: str
+        :param parameters: The request body of CheckPrivateLinkService API call.
+        :type parameters: ~azure.mgmt.network.v2019_11_01.models.CheckPrivateLinkServiceVisibilityRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PrivateLinkServiceVisibility or the result of cls(response)
         :rtype: ~azure.mgmt.network.v2019_11_01.models.PrivateLinkServiceVisibility
@@ -742,8 +742,6 @@ class PrivateLinkServicesOperations:
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.PrivateLinkServiceVisibility"]
         error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
-
-        _parameters = models.CheckPrivateLinkServiceVisibilityRequest(private_link_service_alias=private_link_service_alias)
         api_version = "2019-11-01"
         content_type = kwargs.pop("content_type", "application/json")
 
@@ -766,7 +764,7 @@ class PrivateLinkServicesOperations:
 
         # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_parameters, 'CheckPrivateLinkServiceVisibilityRequest')
+        body_content = self._serialize.body(parameters, 'CheckPrivateLinkServiceVisibilityRequest')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
 
@@ -789,7 +787,7 @@ class PrivateLinkServicesOperations:
         self,
         location: str,
         resource_group_name: str,
-        private_link_service_alias: Optional[str] = None,
+        parameters: "models.CheckPrivateLinkServiceVisibilityRequest",
         **kwargs
     ) -> "models.PrivateLinkServiceVisibility":
         """Checks whether the subscription is visible to private link service in the specified resource group.
@@ -798,8 +796,8 @@ class PrivateLinkServicesOperations:
         :type location: str
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param private_link_service_alias: The alias of the private link service.
-        :type private_link_service_alias: str
+        :param parameters: The request body of CheckPrivateLinkService API call.
+        :type parameters: ~azure.mgmt.network.v2019_11_01.models.CheckPrivateLinkServiceVisibilityRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PrivateLinkServiceVisibility or the result of cls(response)
         :rtype: ~azure.mgmt.network.v2019_11_01.models.PrivateLinkServiceVisibility
@@ -807,8 +805,6 @@ class PrivateLinkServicesOperations:
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.PrivateLinkServiceVisibility"]
         error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
-
-        _parameters = models.CheckPrivateLinkServiceVisibilityRequest(private_link_service_alias=private_link_service_alias)
         api_version = "2019-11-01"
         content_type = kwargs.pop("content_type", "application/json")
 
@@ -832,7 +828,7 @@ class PrivateLinkServicesOperations:
 
         # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_parameters, 'CheckPrivateLinkServiceVisibilityRequest')
+        body_content = self._serialize.body(parameters, 'CheckPrivateLinkServiceVisibilityRequest')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
 

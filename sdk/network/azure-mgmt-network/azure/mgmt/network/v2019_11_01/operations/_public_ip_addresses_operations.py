@@ -303,7 +303,7 @@ class PublicIPAddressesOperations(object):
         self,
         resource_group_name,  # type: str
         public_ip_address_name,  # type: str
-        tags=None,  # type: Optional[Dict[str, str]]
+        parameters,  # type: "models.TagsObject"
         **kwargs  # type: Any
     ):
         # type: (...) -> "models.PublicIPAddress"
@@ -313,8 +313,8 @@ class PublicIPAddressesOperations(object):
         :type resource_group_name: str
         :param public_ip_address_name: The name of the public IP address.
         :type public_ip_address_name: str
-        :param tags: Resource tags.
-        :type tags: dict[str, str]
+        :param parameters: Parameters supplied to update public IP address tags.
+        :type parameters: ~azure.mgmt.network.v2019_11_01.models.TagsObject
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PublicIPAddress or the result of cls(response)
         :rtype: ~azure.mgmt.network.v2019_11_01.models.PublicIPAddress
@@ -322,8 +322,6 @@ class PublicIPAddressesOperations(object):
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.PublicIPAddress"]
         error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
-
-        _parameters = models.TagsObject(tags=tags)
         api_version = "2019-11-01"
         content_type = kwargs.pop("content_type", "application/json")
 
@@ -347,7 +345,7 @@ class PublicIPAddressesOperations(object):
 
         # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_parameters, 'TagsObject')
+        body_content = self._serialize.body(parameters, 'TagsObject')
         body_content_kwargs['content'] = body_content
         request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
 

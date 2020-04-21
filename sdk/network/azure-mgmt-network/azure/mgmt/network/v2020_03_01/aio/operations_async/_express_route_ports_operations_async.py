@@ -293,7 +293,7 @@ class ExpressRoutePortsOperations:
         self,
         resource_group_name: str,
         express_route_port_name: str,
-        tags: Optional[Dict[str, str]] = None,
+        parameters: "models.TagsObject",
         **kwargs
     ) -> "models.ExpressRoutePort":
         """Update ExpressRoutePort tags.
@@ -302,8 +302,8 @@ class ExpressRoutePortsOperations:
         :type resource_group_name: str
         :param express_route_port_name: The name of the ExpressRoutePort resource.
         :type express_route_port_name: str
-        :param tags: Resource tags.
-        :type tags: dict[str, str]
+        :param parameters: Parameters supplied to update ExpressRoutePort resource tags.
+        :type parameters: ~azure.mgmt.network.v2020_03_01.models.TagsObject
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ExpressRoutePort or the result of cls(response)
         :rtype: ~azure.mgmt.network.v2020_03_01.models.ExpressRoutePort
@@ -311,8 +311,6 @@ class ExpressRoutePortsOperations:
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.ExpressRoutePort"]
         error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
-
-        _parameters = models.TagsObject(tags=tags)
         api_version = "2020-03-01"
         content_type = kwargs.pop("content_type", "application/json")
 
@@ -336,7 +334,7 @@ class ExpressRoutePortsOperations:
 
         # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_parameters, 'TagsObject')
+        body_content = self._serialize.body(parameters, 'TagsObject')
         body_content_kwargs['content'] = body_content
         request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
 

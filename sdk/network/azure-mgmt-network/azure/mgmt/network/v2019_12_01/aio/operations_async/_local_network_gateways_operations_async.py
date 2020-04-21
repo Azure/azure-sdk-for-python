@@ -293,7 +293,7 @@ class LocalNetworkGatewaysOperations:
         self,
         resource_group_name: str,
         local_network_gateway_name: str,
-        tags: Optional[Dict[str, str]] = None,
+        parameters: "models.TagsObject",
         **kwargs
     ) -> "models.LocalNetworkGateway":
         """Updates a local network gateway tags.
@@ -302,8 +302,8 @@ class LocalNetworkGatewaysOperations:
         :type resource_group_name: str
         :param local_network_gateway_name: The name of the local network gateway.
         :type local_network_gateway_name: str
-        :param tags: Resource tags.
-        :type tags: dict[str, str]
+        :param parameters: Parameters supplied to update local network gateway tags.
+        :type parameters: ~azure.mgmt.network.v2019_12_01.models.TagsObject
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: LocalNetworkGateway or the result of cls(response)
         :rtype: ~azure.mgmt.network.v2019_12_01.models.LocalNetworkGateway
@@ -311,8 +311,6 @@ class LocalNetworkGatewaysOperations:
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.LocalNetworkGateway"]
         error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
-
-        _parameters = models.TagsObject(tags=tags)
         api_version = "2019-12-01"
         content_type = kwargs.pop("content_type", "application/json")
 
@@ -336,7 +334,7 @@ class LocalNetworkGatewaysOperations:
 
         # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_parameters, 'TagsObject')
+        body_content = self._serialize.body(parameters, 'TagsObject')
         body_content_kwargs['content'] = body_content
         request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
 

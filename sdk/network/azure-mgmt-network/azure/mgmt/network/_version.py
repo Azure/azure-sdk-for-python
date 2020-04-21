@@ -4,4 +4,5 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from .v2020_03_01.models import *
+
+VERSION = "0.1.0"

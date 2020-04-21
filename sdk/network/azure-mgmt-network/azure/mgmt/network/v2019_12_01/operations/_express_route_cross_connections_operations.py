@@ -338,7 +338,7 @@ class ExpressRouteCrossConnectionsOperations(object):
         self,
         resource_group_name,  # type: str
         cross_connection_name,  # type: str
-        tags=None,  # type: Optional[Dict[str, str]]
+        cross_connection_parameters,  # type: "models.TagsObject"
         **kwargs  # type: Any
     ):
         # type: (...) -> "models.ExpressRouteCrossConnection"
@@ -348,8 +348,9 @@ class ExpressRouteCrossConnectionsOperations(object):
         :type resource_group_name: str
         :param cross_connection_name: The name of the cross connection.
         :type cross_connection_name: str
-        :param tags: Resource tags.
-        :type tags: dict[str, str]
+        :param cross_connection_parameters: Parameters supplied to update express route cross
+         connection tags.
+        :type cross_connection_parameters: ~azure.mgmt.network.v2019_12_01.models.TagsObject
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ExpressRouteCrossConnection or the result of cls(response)
         :rtype: ~azure.mgmt.network.v2019_12_01.models.ExpressRouteCrossConnection
@@ -357,8 +358,6 @@ class ExpressRouteCrossConnectionsOperations(object):
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.ExpressRouteCrossConnection"]
         error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
-
-        _cross_connection_parameters = models.TagsObject(tags=tags)
         api_version = "2019-12-01"
         content_type = kwargs.pop("content_type", "application/json")
 
@@ -382,7 +381,7 @@ class ExpressRouteCrossConnectionsOperations(object):
 
         # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_cross_connection_parameters, 'TagsObject')
+        body_content = self._serialize.body(cross_connection_parameters, 'TagsObject')
         body_content_kwargs['content'] = body_content
         request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
 

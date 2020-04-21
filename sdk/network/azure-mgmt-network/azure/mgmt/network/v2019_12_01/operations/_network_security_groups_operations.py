@@ -304,7 +304,7 @@ class NetworkSecurityGroupsOperations(object):
         self,
         resource_group_name,  # type: str
         network_security_group_name,  # type: str
-        tags=None,  # type: Optional[Dict[str, str]]
+        parameters,  # type: "models.TagsObject"
         **kwargs  # type: Any
     ):
         # type: (...) -> "models.NetworkSecurityGroup"
@@ -314,8 +314,8 @@ class NetworkSecurityGroupsOperations(object):
         :type resource_group_name: str
         :param network_security_group_name: The name of the network security group.
         :type network_security_group_name: str
-        :param tags: Resource tags.
-        :type tags: dict[str, str]
+        :param parameters: Parameters supplied to update network security group tags.
+        :type parameters: ~azure.mgmt.network.v2019_12_01.models.TagsObject
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: NetworkSecurityGroup or the result of cls(response)
         :rtype: ~azure.mgmt.network.v2019_12_01.models.NetworkSecurityGroup
@@ -323,8 +323,6 @@ class NetworkSecurityGroupsOperations(object):
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.NetworkSecurityGroup"]
         error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
-
-        _parameters = models.TagsObject(tags=tags)
         api_version = "2019-12-01"
         content_type = kwargs.pop("content_type", "application/json")
 
@@ -348,7 +346,7 @@ class NetworkSecurityGroupsOperations(object):
 
         # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_parameters, 'TagsObject')
+        body_content = self._serialize.body(parameters, 'TagsObject')
         body_content_kwargs['content'] = body_content
         request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
 

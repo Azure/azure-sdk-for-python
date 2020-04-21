@@ -333,7 +333,7 @@ class ExpressRouteCrossConnectionsOperations:
         self,
         resource_group_name: str,
         cross_connection_name: str,
-        tags: Optional[Dict[str, str]] = None,
+        cross_connection_parameters: "models.TagsObject",
         **kwargs
     ) -> "models.ExpressRouteCrossConnection":
         """Updates an express route cross connection tags.
@@ -342,8 +342,9 @@ class ExpressRouteCrossConnectionsOperations:
         :type resource_group_name: str
         :param cross_connection_name: The name of the cross connection.
         :type cross_connection_name: str
-        :param tags: Resource tags.
-        :type tags: dict[str, str]
+        :param cross_connection_parameters: Parameters supplied to update express route cross
+         connection tags.
+        :type cross_connection_parameters: ~azure.mgmt.network.v2020_03_01.models.TagsObject
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ExpressRouteCrossConnection or the result of cls(response)
         :rtype: ~azure.mgmt.network.v2020_03_01.models.ExpressRouteCrossConnection
@@ -351,8 +352,6 @@ class ExpressRouteCrossConnectionsOperations:
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.ExpressRouteCrossConnection"]
         error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
-
-        _cross_connection_parameters = models.TagsObject(tags=tags)
         api_version = "2020-03-01"
         content_type = kwargs.pop("content_type", "application/json")
 
@@ -376,7 +375,7 @@ class ExpressRouteCrossConnectionsOperations:
 
         # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_cross_connection_parameters, 'TagsObject')
+        body_content = self._serialize.body(cross_connection_parameters, 'TagsObject')
         body_content_kwargs['content'] = body_content
         request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
 
