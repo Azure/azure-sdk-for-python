@@ -46,7 +46,7 @@ class FormTrainingClient(object):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../samples/async_samples/sample_train_labeled_model_async.py
+        .. literalinclude:: ../samples/async_samples/sample_train_model_with_labels_async.py
             :start-after: [START create_form_training_client_async]
             :end-before: [END create_form_training_client_async]
             :language: python
@@ -97,7 +97,7 @@ class FormTrainingClient(object):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_train_unlabeled_model_async.py
+            .. literalinclude:: ../samples/async_samples/sample_train_model_without_labels_async.py
                 :start-after: [START training_async]
                 :end-before: [END training_async]
                 :language: python

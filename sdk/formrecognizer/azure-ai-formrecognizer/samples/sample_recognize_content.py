@@ -58,7 +58,7 @@ class RecognizeContentSample(object):
                         cell.text,
                         format_bounding_box(cell.bounding_box)
                     ))
-                    # [END recognize_content_async]
+                    # [END recognize_content]
             for line_idx, line in enumerate(content.lines):
                 print("Line # {} has text '{}' within bounding box '{}'".format(
                     line_idx,

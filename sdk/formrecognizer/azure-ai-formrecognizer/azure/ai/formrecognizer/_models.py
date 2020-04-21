@@ -334,11 +334,12 @@ class FormPage(object):
     :ivar list[~azure.ai.formrecognizer.FormTable] tables:
         A list of extracted tables contained in a page.
     :ivar list[~azure.ai.formrecognizer.FormLine] lines:
-        When `include_text_content` is set to true, a list of recognized text lines. The
-        maximum number of lines returned is 300 per page. The lines are sorted top to bottom, left to
-        right, although in certain cases proximity is treated with higher priority. As the sorting
-        order depends on the detected text, it may change across images and OCR version updates. Thus,
-        business logic should be built upon the actual line location instead of order.
+        When `include_text_content` is set to true, a list of recognized text lines is returned.
+        For calls to recognize content, this list is always populated. The maximum number of lines
+        returned is 300 per page. The lines are sorted top to bottom, left to right, although in
+        certain cases proximity is treated with higher priority. As the sorting order depends on
+        the detected text, it may change across images and OCR version updates. Thus, business
+        logic should be built upon the actual line location instead of order.
     """
 
     def __init__(self, **kwargs):
@@ -513,7 +514,8 @@ class FormTableCell(FormContent):
     :ivar int page_number: The 1-based page number in the input document.
     :ivar text_content:
         When `include_text_content` is set to true, a list of references to the text
-        elements constituting this cell is returned.
+        elements constituting this cell is returned. For calls to recognize content,
+        this list is always populated.
     :vartype text_content: list[~azure.ai.formrecognizer.FormWord, ~azure.ai.formrecognizer.FormLine]
     """
 

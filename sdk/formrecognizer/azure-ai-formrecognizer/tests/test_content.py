@@ -146,10 +146,8 @@ class TestContentFromStream(FormRecognizerTest):
     def test_content_stream_jpg(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
         client = FormRecognizerClient(form_recognizer_account,
                                       AzureKeyCredential(form_recognizer_account_key))
-        with open(self.form_jpg, "rb") as fd:
-            myform = fd.read()
-
-        poller = client.begin_recognize_content(myform)
+        with open(self.form_jpg, "rb") as stream:
+            poller = client.begin_recognize_content(stream)
         result = poller.result()
         self.assertEqual(len(result), 1)
         layout = result[0]
