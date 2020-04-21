@@ -267,7 +267,7 @@ class SearchServiceClientTest(AzureMgmtTestCase):
         assert len(result.skills) == 1
         assert isinstance(result.skills[0], EntityRecognitionSkill)
 
-        assert len(client.list_skillsets()) == 1
+        assert len(client.get_skillsets()) == 1
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
@@ -277,10 +277,10 @@ class SearchServiceClientTest(AzureMgmtTestCase):
                                    outputs=[OutputFieldMappingEntry(name="organizations", target_name="organizations")])
 
         result = client.create_skillset(name='test-ss', skills=[s], description="desc")
-        assert len(client.list_skillsets()) == 1
+        assert len(client.get_skillsets()) == 1
 
         client.delete_skillset("test-ss")
-        assert len(client.list_skillsets()) == 0
+        assert len(client.get_skillsets()) == 0
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
@@ -290,7 +290,7 @@ class SearchServiceClientTest(AzureMgmtTestCase):
                                    outputs=[OutputFieldMappingEntry(name="organizations", target_name="organizations")])
 
         client.create_skillset(name='test-ss', skills=[s], description="desc")
-        assert len(client.list_skillsets()) == 1
+        assert len(client.get_skillsets()) == 1
 
         result = client.get_skillset("test-ss")
         assert isinstance(result, Skillset)
@@ -302,14 +302,14 @@ class SearchServiceClientTest(AzureMgmtTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
-    def test_list_skillsets(self, api_key, endpoint, index_name, **kwargs):
+    def test_get_skillsets(self, api_key, endpoint, index_name, **kwargs):
         client = SearchServiceClient(endpoint, AzureKeyCredential(api_key))
         s = EntityRecognitionSkill(inputs=[InputFieldMappingEntry(name="text", source="/document/content")],
                                    outputs=[OutputFieldMappingEntry(name="organizations", target_name="organizations")])
 
         client.create_skillset(name='test-ss-1', skills=[s], description="desc1")
         client.create_skillset(name='test-ss-2', skills=[s], description="desc2")
-        result = client.list_skillsets()
+        result = client.get_skillsets()
         assert isinstance(result, list)
         assert all(isinstance(x, Skillset) for x in result)
         assert set(x.name for x in result) == {"test-ss-1", "test-ss-2"}
@@ -323,7 +323,7 @@ class SearchServiceClientTest(AzureMgmtTestCase):
 
         client.create_or_update_skillset(name='test-ss', skills=[s], description="desc1")
         client.create_or_update_skillset(name='test-ss', skills=[s], description="desc2")
-        assert len(client.list_skillsets()) == 1
+        assert len(client.get_skillsets()) == 1
 
         result = client.get_skillset("test-ss")
         assert isinstance(result, Skillset)
@@ -339,7 +339,7 @@ class SearchServiceClientTest(AzureMgmtTestCase):
 
         ss = client.create_or_update_skillset(name='test-ss', skills=[s], description="desc1")
         client.create_or_update_skillset(name='test-ss', skills=[s], description="desc2", skillset=ss)
-        assert len(client.list_skillsets()) == 1
+        assert len(client.get_skillsets()) == 1
 
         result = client.get_skillset("test-ss")
         assert isinstance(result, Skillset)

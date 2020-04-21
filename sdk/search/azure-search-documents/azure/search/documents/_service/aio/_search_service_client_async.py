@@ -418,7 +418,7 @@ class SearchServiceClient(HeadersMixin):
     # Skillset Operations
 
     @distributed_trace_async
-    async def list_skillsets(self, **kwargs):
+    async def get_skillsets(self, **kwargs):
         # type: (**Any) -> List[Skillset]
         """List the Skillsets in an Azure Search service.
 
@@ -429,8 +429,8 @@ class SearchServiceClient(HeadersMixin):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/async_samples/sample_skillset_operations_async.py
-                :start-after: [START list_skillsets]
-                :end-before: [END list_skillsets]
+                :start-after: [START get_skillsets]
+                :end-before: [END get_skillsets]
                 :language: python
                 :dedent: 4
                 :caption: List Skillsets

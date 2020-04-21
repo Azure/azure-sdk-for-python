@@ -285,7 +285,7 @@ class SearchIndexClientTest(AzureMgmtTestCase):
         assert len(result.skills) == 1
         assert isinstance(result.skills[0], EntityRecognitionSkill)
 
-        assert len(await client.list_skillsets()) == 1
+        assert len(await client.get_skillsets()) == 1
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
@@ -295,12 +295,12 @@ class SearchIndexClientTest(AzureMgmtTestCase):
                                    outputs=[OutputFieldMappingEntry(name="organizations", target_name="organizations")])
 
         result = await client.create_skillset(name='test-ss', skills=[s], description="desc")
-        assert len(await client.list_skillsets()) == 1
+        assert len(await client.get_skillsets()) == 1
 
         await client.delete_skillset("test-ss")
         if self.is_live:
             time.sleep(TIME_TO_SLEEP)
-        assert len(await client.list_skillsets()) == 0
+        assert len(await client.get_skillsets()) == 0
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
@@ -310,7 +310,7 @@ class SearchIndexClientTest(AzureMgmtTestCase):
                                    outputs=[OutputFieldMappingEntry(name="organizations", target_name="organizations")])
 
         await client.create_skillset(name='test-ss', skills=[s], description="desc")
-        assert len(await client.list_skillsets()) == 1
+        assert len(await client.get_skillsets()) == 1
 
         result = await client.get_skillset("test-ss")
         assert isinstance(result, Skillset)
@@ -322,14 +322,14 @@ class SearchIndexClientTest(AzureMgmtTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
-    async def test_list_skillsets(self, api_key, endpoint, index_name, **kwargs):
+    async def test_get_skillsets(self, api_key, endpoint, index_name, **kwargs):
         client = SearchServiceClient(endpoint, AzureKeyCredential(api_key))
         s = EntityRecognitionSkill(inputs=[InputFieldMappingEntry(name="text", source="/document/content")],
                                    outputs=[OutputFieldMappingEntry(name="organizations", target_name="organizations")])
 
         await client.create_skillset(name='test-ss-1', skills=[s], description="desc1")
         await client.create_skillset(name='test-ss-2', skills=[s], description="desc2")
-        result = await client.list_skillsets()
+        result = await client.get_skillsets()
         assert isinstance(result, list)
         assert all(isinstance(x, Skillset) for x in result)
         assert set(x.name for x in result) == {"test-ss-1", "test-ss-2"}
@@ -343,7 +343,7 @@ class SearchIndexClientTest(AzureMgmtTestCase):
 
         await client.create_or_update_skillset(name='test-ss', skills=[s], description="desc1")
         await client.create_or_update_skillset(name='test-ss', skills=[s], description="desc2")
-        assert len(await client.list_skillsets()) == 1
+        assert len(await client.get_skillsets()) == 1
 
         result = await client.get_skillset("test-ss")
         assert isinstance(result, Skillset)
@@ -359,7 +359,7 @@ class SearchIndexClientTest(AzureMgmtTestCase):
 
         ss = await client.create_or_update_skillset(name='test-ss', skills=[s], description="desc1")
         await client.create_or_update_skillset(name='test-ss', skills=[s], description="desc2", skillset=ss)
-        assert len(await client.list_skillsets()) == 1
+        assert len(await client.get_skillsets()) == 1
 
         result = await client.get_skillset("test-ss")
         assert isinstance(result, Skillset)
