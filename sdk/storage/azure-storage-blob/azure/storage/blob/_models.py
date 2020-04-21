@@ -21,7 +21,7 @@ from ._generated.models import CorsRule as GeneratedCorsRule
 from ._generated.models import AccessPolicy as GenAccessPolicy
 from ._generated.models import StorageErrorException
 from ._generated.models import BlobPrefix as GenBlobPrefix
-from ._generated.models import BlobItem
+from ._generated.models import BlobItemInternal
 
 
 class BlobType(str, Enum):
@@ -615,7 +615,7 @@ class BlobPropertiesPaged(PageIterator):
     def _build_item(self, item):
         if isinstance(item, BlobProperties):
             return item
-        if isinstance(item, BlobItem):
+        if isinstance(item, BlobItemInternal):
             blob = BlobProperties._from_generated(item)  # pylint: disable=protected-access
             blob.container = self.container
             return blob
