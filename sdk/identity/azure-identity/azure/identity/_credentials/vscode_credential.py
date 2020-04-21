@@ -4,21 +4,15 @@
 # ------------------------------------
 import sys
 from typing import TYPE_CHECKING
+from .._exceptions import CredentialUnavailableError
+from .._constants import AZURE_VSCODE_CLIENT_ID
+from .._internal.aad_client import AadClient
 if sys.platform.startswith('win'):
     from .win_vscode_adapter import get_credentials
 elif sys.platform.startswith('darwin'):
     from .macos_vscode_adapter import get_credentials
 else:
     from .linux_vscode_adapter import get_credentials
-from .._exceptions import CredentialUnavailableError
-from .._constants import (
-    AZURE_VSCODE_CLIENT_ID,
-)
-from .._internal.aad_client import AadClient
-try:
-    import ctypes.wintypes as wt
-except (IOError, ValueError):
-    pass
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports

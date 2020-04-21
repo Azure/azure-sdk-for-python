@@ -4,18 +4,9 @@
 # ------------------------------------
 import os
 import json
-from typing import TYPE_CHECKING
 from msal_extensions.osx import Keychain, KeychainError
-from .._exceptions import CredentialUnavailableError
-from .._constants import (
-    VSCODE_CREDENTIALS_SECTION,
-    AZURE_VSCODE_CLIENT_ID,
-)
-from .._internal.aad_client import AadClient
-if TYPE_CHECKING:
-    # pylint:disable=unused-import,ungrouped-imports
-    from typing import Any, Iterable, Optional
-    from azure.core.credentials import AccessToken
+from .._constants import VSCODE_CREDENTIALS_SECTION
+
 
 def _get_user_settings_path():
     app_data_folder = os.environ['USERPROFILE']

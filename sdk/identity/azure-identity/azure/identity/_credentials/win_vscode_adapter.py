@@ -4,23 +4,13 @@
 # ------------------------------------
 import os
 import json
-from typing import TYPE_CHECKING
 import ctypes as ct
-from .._exceptions import CredentialUnavailableError
-from .._constants import (
-    VSCODE_CREDENTIALS_SECTION,
-    AZURE_VSCODE_CLIENT_ID,
-)
-from .._internal.aad_client import AadClient
+from .._constants import VSCODE_CREDENTIALS_SECTION
 try:
     import ctypes.wintypes as wt
 except (IOError, ValueError):
     pass
 
-if TYPE_CHECKING:
-    # pylint:disable=unused-import,ungrouped-imports
-    from typing import Any, Iterable, Optional
-    from azure.core.credentials import AccessToken
 
 SUPPORTED_CREDKEYS = set((
     'Type', 'TargetName', 'Persist',
