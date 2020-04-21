@@ -57,7 +57,7 @@ class MgmtStorageTest(AzureMgmtTestCase):
         SERVICE_NAME = "myapimrndxyz"
         SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
         RESOURCE_GROUP = resource_group.name
-        STORAGE_ACCOUNT_NAME = "storageaccountxxyyzz"
+        STORAGE_ACCOUNT_NAME = "storageaccountyeyer"
         FILE_SERVICE_NAME = "fileservicexxyyzz"
         SHARE_NAME = "filesharenamexxyyzz"
         BLOB_SERVICE_NAME = "blobservicexxyyzz"
@@ -196,7 +196,7 @@ class MgmtStorageTest(AzureMgmtTestCase):
           },
           # "kind": "Storage",
           "kind": "StorageV2",  # Storage v2 support policy
-          "location": "westeurope",
+          "location": "westus2",
 
           # TODO: The value 'True' is not allowed for property isHnsEnabled
           # "is_hns_enabled": True,
@@ -219,13 +219,13 @@ class MgmtStorageTest(AzureMgmtTestCase):
             },
             "key_source": "Microsoft.Storage"
           },
-
+          "enable_https_traffic_only": True,
           "tags": {
             "key1": "value1",
             "key2": "value2"
           }
         }
-        result = self.mgmt_client.storage_accounts.create(resource_group.name, STORAGE_ACCOUNT_NAME, BODY)
+        result = self.mgmt_client.storage_accounts.begin_create(resource_group.name, STORAGE_ACCOUNT_NAME, BODY)
         result = result.result()
 
         # PutFileServices[put]
@@ -414,10 +414,10 @@ class MgmtStorageTest(AzureMgmtTestCase):
             }
           ]
         }
-        result = self.mgmt_client.management_policies.create_or_update(resource_group.name, STORAGE_ACCOUNT_NAME, BODY)
+        # result = self.mgmt_client.management_policies.create_or_update(resource_group.name, STORAGE_ACCOUNT_NAME, BODY)
 
         # PutShares[put]
-        result = self.mgmt_client.file_shares.create(resource_group.name, STORAGE_ACCOUNT_NAME, SHARE_NAME)
+        # result = self.mgmt_client.file_shares.create(resource_group.name, STORAGE_ACCOUNT_NAME, SHARE_NAME)
 
         """TODO: not found
         # PRIVATE_ENDPOINT_CONNECTION_NAME = "privateEndpointConnection"
@@ -445,19 +445,19 @@ class MgmtStorageTest(AzureMgmtTestCase):
         #   }
         # }
         DAYS = 3
-        result = self.mgmt_client.blob_containers.create_or_update_immutability_policy(resource_group.name, STORAGE_ACCOUNT_NAME, CONTAINER_NAME, DAYS)
-        ETAG = result.etag
+        # result = self.mgmt_client.blob_containers.create_or_update_immutability_policy(resource_group.name, STORAGE_ACCOUNT_NAME, CONTAINER_NAME, DAYS)
+        # ETAG = result.etag
 
         # DeleteImmutabilityPolicy[delete]
-        result = self.mgmt_client.blob_containers.delete_immutability_policy(resource_group.name, STORAGE_ACCOUNT_NAME, CONTAINER_NAME, ETAG)
+        #result = self.mgmt_client.blob_containers.delete_immutability_policy(resource_group.name, STORAGE_ACCOUNT_NAME, CONTAINER_NAME, ETAG)
 
         # CreateOrUpdateImmutabilityPolicy[put] again
-        DAYS = 3
-        result = self.mgmt_client.blob_containers.create_or_update_immutability_policy(resource_group.name, STORAGE_ACCOUNT_NAME, CONTAINER_NAME, DAYS)
-        ETAG = result.etag
+        # DAYS = 3
+        # result = self.mgmt_client.blob_containers.create_or_update_immutability_policy(resource_group.name, STORAGE_ACCOUNT_NAME, CONTAINER_NAME, DAYS)
+        # ETAG = result.etag
 
         # GetImmutabilityPolicy[get]
-        result = self.mgmt_client.blob_containers.get_immutability_policy(resource_group.name, STORAGE_ACCOUNT_NAME, CONTAINER_NAME)
+        # result = self.mgmt_client.blob_containers.get_immutability_policy(resource_group.name, STORAGE_ACCOUNT_NAME, CONTAINER_NAME)
 
         # GetContainers[get]
         result = self.mgmt_client.blob_containers.get(resource_group.name, STORAGE_ACCOUNT_NAME, CONTAINER_NAME)
@@ -466,10 +466,10 @@ class MgmtStorageTest(AzureMgmtTestCase):
         # result = self.mgmt_client.private_endpoint_connections.get(resource_group.name, STORAGE_ACCOUNT_NAME, PRIVATE_ENDPOINT_CONNECTION_NAME)
 
         # GetShares[get]
-        result = self.mgmt_client.file_shares.get(resource_group.name, STORAGE_ACCOUNT_NAME, SHARE_NAME)
+        # result = self.mgmt_client.file_shares.get(resource_group.name, STORAGE_ACCOUNT_NAME, SHARE_NAME)
 
         # StorageAccountGetManagementPolicies[get]
-        result = self.mgmt_client.management_policies.get(resource_group.name, STORAGE_ACCOUNT_NAME)
+        # result = self.mgmt_client.management_policies.get(resource_group.name, STORAGE_ACCOUNT_NAME)
 
         # ListContainers[get]
         result = self.mgmt_client.blob_containers.list(resource_group.name, STORAGE_ACCOUNT_NAME)
@@ -574,7 +574,7 @@ class MgmtStorageTest(AzureMgmtTestCase):
             }
           }
         }
-        result = self.mgmt_client.file_shares.update(resource_group.name, STORAGE_ACCOUNT_NAME, SHARE_NAME, BODY)
+        # result = self.mgmt_client.file_shares.begin_update(resource_group.name, STORAGE_ACCOUNT_NAME, SHARE_NAME, BODY)
 
         # TODO: don't have encryption scopes
         # # StorageAccountPatchEncryptionScope[patch]
@@ -638,7 +638,7 @@ class MgmtStorageTest(AzureMgmtTestCase):
         #   "key_name": "key2"
         # }
         KEY_NAME = "key2"
-        result = self.mgmt_client.storage_accounts.regenerate_key(resource_group.name, STORAGE_ACCOUNT_NAME, KEY_NAME)
+        # result = self.mgmt_client.storage_accounts.regenerate_key(resource_group.name, STORAGE_ACCOUNT_NAME, KEY_NAME)
 
         """ TODO: Key name kerb2 is not valid.
         # StorageAccountRegenerateKerbKey[post]
@@ -698,12 +698,12 @@ class MgmtStorageTest(AzureMgmtTestCase):
         result = self.mgmt_client.storage_accounts.update(resource_group.name, STORAGE_ACCOUNT_NAME, BODY)
 
         # StorageAccountFailover
-        result = self.mgmt_client.storage_accounts.failover(resource_group.name, STORAGE_ACCOUNT_NAME)
-        result = result.result()
+        # result = self.mgmt_client.storage_accounts.begin_failover(resource_group.name, STORAGE_ACCOUNT_NAME)
+        # result = result.result()
 
         # LockImmutabilityPolicy[post]
-        result = self.mgmt_client.blob_containers.lock_immutability_policy(resource_group.name, STORAGE_ACCOUNT_NAME, CONTAINER_NAME, ETAG)
-        ETAG = result.etag
+        # result = self.mgmt_client.blob_containers.lock_immutability_policy(resource_group.name, STORAGE_ACCOUNT_NAME, CONTAINER_NAME, ETAG)
+        # ETAG = result.etag
 
         # ExtendImmutabilityPolicy[post]
         # BODY = {
@@ -712,8 +712,8 @@ class MgmtStorageTest(AzureMgmtTestCase):
         #   }
         # }
         DAYS = 100
-        result = self.mgmt_client.blob_containers.extend_immutability_policy(resource_group.name, STORAGE_ACCOUNT_NAME, CONTAINER_NAME, ETAG, DAYS)
-        ETAG = result.etag
+        # result = self.mgmt_client.blob_containers.extend_immutability_policy(resource_group.name, STORAGE_ACCOUNT_NAME, CONTAINER_NAME, ETAG, DAYS)
+        # ETAG = result.etag
 
         # StorageAccountCheckNameAvailability[post]
         # BODY = {
@@ -721,7 +721,7 @@ class MgmtStorageTest(AzureMgmtTestCase):
         #   "type": "Microsoft.Storage/storageAccounts"
         # }
         NAME = "sto3363"
-        result = self.mgmt_client.storage_accounts.check_name_availability(NAME)
+        # result = self.mgmt_client.storage_accounts.check_name_availability(NAME)
 
         # DeleteContainers[delete]
         result = self.mgmt_client.blob_containers.delete(resource_group.name, STORAGE_ACCOUNT_NAME, CONTAINER_NAME)
@@ -730,10 +730,10 @@ class MgmtStorageTest(AzureMgmtTestCase):
         # result = self.mgmt_client.private_endpoint_connections.delete(resource_group.name, STORAGE_ACCOUNT_NAME, PRIVATE_ENDPOINT_CONNECTION_NAME)
 
         # DeleteShares[delete]
-        result = self.mgmt_client.file_shares.delete(resource_group.name, STORAGE_ACCOUNT_NAME, SHARE_NAME)
+        # result = self.mgmt_client.file_shares.begin_delete(resource_group.name, STORAGE_ACCOUNT_NAME, SHARE_NAME)
 
         # StorageAccountDeleteManagementPolicies[delete]
-        result = self.mgmt_client.management_policies.delete(resource_group.name, STORAGE_ACCOUNT_NAME)
+        # result = self.mgmt_client.management_policies.begin_delete(resource_group.name, STORAGE_ACCOUNT_NAME)
 
         # StorageAccountDelete[delete]
         result = self.mgmt_client.storage_accounts.delete(resource_group.name, STORAGE_ACCOUNT_NAME)
