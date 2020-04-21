@@ -50,7 +50,7 @@ class FormRecognizerClient(object):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../samples/async_samples/sample_get_manual_validation_info_async.py
+        .. literalinclude:: ../samples/async_samples/sample_get_bounding_boxes_async.py
             :start-after: [START create_form_recognizer_client_async]
             :end-before: [END create_form_recognizer_client_async]
             :language: python

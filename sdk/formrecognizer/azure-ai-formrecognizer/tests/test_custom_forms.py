@@ -61,14 +61,12 @@ class TestCustomForms(FormRecognizerTest):
         poller = training_client.begin_train_model(container_sas_url)
         model = poller.result()
 
-        with open(self.form_jpg, "rb") as fd:
-            myfile = fd.read()
-
-        poller = client.begin_recognize_custom_forms(
-            model.model_id,
-            myfile,
-            content_type=FormContentType.image_jpeg
-        )
+        with open(self.form_jpg, "rb") as stream:
+            poller = client.begin_recognize_custom_forms(
+                model.model_id,
+                stream,
+                content_type=FormContentType.image_jpeg
+            )
         form = poller.result()
 
         self.assertEqual(form[0].form_type, "form-0")

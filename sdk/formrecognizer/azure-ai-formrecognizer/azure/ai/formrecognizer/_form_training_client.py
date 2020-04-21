@@ -47,7 +47,7 @@ class FormTrainingClient(object):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../samples/sample_train_labeled_model.py
+        .. literalinclude:: ../samples/sample_train_model_with_labels.py
             :start-after: [START create_form_training_client]
             :end-before: [END create_form_training_client]
             :language: python
@@ -91,7 +91,7 @@ class FormTrainingClient(object):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_train_unlabeled_model.py
+            .. literalinclude:: ../samples/sample_train_model_without_labels.py
                 :start-after: [START training]
                 :end-before: [END training]
                 :language: python

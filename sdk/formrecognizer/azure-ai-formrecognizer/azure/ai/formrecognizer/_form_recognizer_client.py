@@ -45,7 +45,7 @@ class FormRecognizerClient(object):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../samples/sample_get_manual_validation_info.py
+        .. literalinclude:: ../samples/sample_get_bounding_boxes.py
             :start-after: [START create_form_recognizer_client]
             :end-before: [END create_form_recognizer_client]
             :language: python
