@@ -116,7 +116,7 @@ class TestOpencensusWrapper(unittest.TestCase):
             link = wrapped_class.span_instance.links[0]
             assert link.trace_id == "2578531519ed94423ceae67588eff2c9"
             assert link.span_id == "231ebdc614cb9ddd"
-            assert link.attributes = attributes
+            assert link.attributes == attributes
             assert "attr1" in link.attributes
 
     def test_add_attribute(self):
