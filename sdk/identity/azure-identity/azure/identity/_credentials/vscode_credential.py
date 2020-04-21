@@ -2,40 +2,38 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import sys
 from typing import TYPE_CHECKING
-from ..._exceptions import CredentialUnavailableError
-from .._credentials.base import AsyncCredentialBase
-from ..._constants import (
-    VSCODE_CREDENTIALS_SECTION,
+if sys.platform.startswith('win'):
+    from .win_vscode_adapter import get_credentials
+elif sys.platform.startswith('darwin'):
+    from .macos_vscode_adapter import get_credentials
+else:
+    from .linux_vscode_adapter import get_credentials
+from .._exceptions import CredentialUnavailableError
+from .._constants import (
     AZURE_VSCODE_CLIENT_ID,
 )
 from .._internal.aad_client import AadClient
-from ..._credentials.macos_vscode_credential import _get_user_settings, _get_refresh_token
+try:
+    import ctypes.wintypes as wt
+except (IOError, ValueError):
+    pass
+
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
     from typing import Any, Iterable, Optional
     from azure.core.credentials import AccessToken
 
 
-class MacOSVSCodeCredential(AsyncCredentialBase):
+class VSCodeCredential(object):
     """Authenticates by redeeming a refresh token previously saved by VS Code
 
-            """
+        """
     def __init__(self, **kwargs):
         self._client = kwargs.pop("_client", None) or AadClient("organizations", AZURE_VSCODE_CLIENT_ID, **kwargs)
 
-    async def __aenter__(self):
-        if self._client:
-            await self._client.__aenter__()
-        return self
-
-    async def close(self):
-        """Close the credential's transport session."""
-
-        if self._client:
-            await self._client.__aexit__()
-
-    async def get_token(self, *scopes, **kwargs):
+    def get_token(self, *scopes, **kwargs):
         # type: (*str, **Any) -> AccessToken
         """Request an access token for `scopes`.
 
@@ -51,12 +49,10 @@ class MacOSVSCodeCredential(AsyncCredentialBase):
         if not scopes:
             raise ValueError("'get_token' requires at least one scope")
 
-        environment_name = _get_user_settings()
-        refresh_token = _get_refresh_token(VSCODE_CREDENTIALS_SECTION, environment_name)
+        refresh_token = get_credentials()
         if not refresh_token:
             raise CredentialUnavailableError(
                 message="No Azure user is logged in to Visual Studio Code."
             )
-        token = await self._client.obtain_token_by_refresh_token(
-            refresh_token, scopes, **kwargs)
+        token = self._client.obtain_token_by_refresh_token(refresh_token, scopes, **kwargs)
         return token

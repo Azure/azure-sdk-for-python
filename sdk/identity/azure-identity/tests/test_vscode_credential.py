@@ -13,63 +13,55 @@ try:
     from unittest import mock
 except ImportError:  # python < 3.3
     import mock
-if sys.platform.startswith('win'):
-    from azure.identity._credentials.win_vscode_credential import (
-        WinVSCodeCredential,
-    )
+from azure.identity._credentials.vscode_credential import VSCodeCredential
 
 
-@pytest.mark.skipif(not sys.platform.startswith('win'), reason="This test only runs on Windows")
 def test_no_scopes():
     """The credential should raise ValueError when get_token is called with no scopes"""
 
-    credential = WinVSCodeCredential()
+    credential = VSCodeCredential()
     with pytest.raises(ValueError):
         credential.get_token()
 
 
-@pytest.mark.skipif(not sys.platform.startswith('win'), reason="This test only runs on Windows")
 def test_policies_configurable():
     policy = mock.Mock(spec_set=SansIOHTTPPolicy, on_request=mock.Mock())
 
     def send(*_, **__):
         return mock_response(json_payload=build_aad_response(access_token="**"))
 
-    with mock.patch('azure.identity._credentials.win_vscode_credential._read_credential', return_value="VALUE"):
-        credential = WinVSCodeCredential(policies=[policy], transport=mock.Mock(send=send))
+    with mock.patch('azure.identity._credentials.vscode_credential.get_credentials', return_value="VALUE"):
+        credential = VSCodeCredential(policies=[policy], transport=mock.Mock(send=send))
         credential.get_token("scope")
         assert policy.on_request.called
 
 
-@pytest.mark.skipif(not sys.platform.startswith('win'), reason="This test only runs on Windows")
 def test_user_agent():
     transport = validating_transport(
         requests=[Request(required_headers={"User-Agent": USER_AGENT})],
         responses=[mock_response(json_payload=build_aad_response(access_token="**"))],
     )
 
-    with mock.patch('azure.identity._credentials.win_vscode_credential._read_credential', return_value="VALUE"):
-        credential = WinVSCodeCredential(transport=transport)
+    with mock.patch('azure.identity._credentials.vscode_credential.get_credentials', return_value="VALUE"):
+        credential = VSCodeCredential(transport=transport)
         credential.get_token("scope")
 
 
-@pytest.mark.skipif(not sys.platform.startswith('win'), reason="This test only runs on Windows")
 def test_credential_unavailable_error():
-    with mock.patch('azure.identity._credentials.win_vscode_credential._read_credential', return_value=None):
-        credential = WinVSCodeCredential()
+    with mock.patch('azure.identity._credentials.vscode_credential.get_credentials', return_value=None):
+        credential = VSCodeCredential()
         with pytest.raises(CredentialUnavailableError):
             token = credential.get_token("scope")
 
 
-@pytest.mark.skipif(not sys.platform.startswith('win'), reason="This test only runs on Windows")
 def test_get_token():
     expected_token = AccessToken("token", 42)
 
     mock_client = mock.Mock(spec=object)
     mock_client.obtain_token_by_refresh_token = mock.Mock(return_value=expected_token)
 
-    with mock.patch('azure.identity._credentials.win_vscode_credential._read_credential', return_value="VALUE"):
-        credential = WinVSCodeCredential(_client=mock_client)
+    with mock.patch('azure.identity._credentials.vscode_credential.get_credentials', return_value="VALUE"):
+        credential = VSCodeCredential(_client=mock_client)
         token = credential.get_token("scope")
         assert token is expected_token
         assert mock_client.obtain_token_by_refresh_token.call_count == 1

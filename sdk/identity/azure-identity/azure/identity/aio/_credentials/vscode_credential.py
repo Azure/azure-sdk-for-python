@@ -5,11 +5,9 @@
 from typing import TYPE_CHECKING
 from ..._exceptions import CredentialUnavailableError
 from .._credentials.base import AsyncCredentialBase
-from ..._constants import (
-    VSCODE_CREDENTIALS_SECTION,
-    AZURE_VSCODE_CLIENT_ID,
-)
+from ..._constants import AZURE_VSCODE_CLIENT_ID
 from .._internal.aad_client import AadClient
+from ..._credentials.vscode_credential import get_credentials
 try:
     from ..._credentials.win_vscode_credential import _get_user_settings, _get_refresh_token
 except ImportError:
@@ -19,7 +17,7 @@ if TYPE_CHECKING:
     from typing import Any, Iterable, Optional
     from azure.core.credentials import AccessToken
 
-class WinVSCodeCredential(AsyncCredentialBase):
+class VSCodeCredential(AsyncCredentialBase):
     """Authenticates by redeeming a refresh token previously saved by VS Code
 
         """
@@ -53,8 +51,7 @@ class WinVSCodeCredential(AsyncCredentialBase):
         if not scopes:
             raise ValueError("'get_token' requires at least one scope")
 
-        environment_name = _get_user_settings()
-        refresh_token = _get_refresh_token(VSCODE_CREDENTIALS_SECTION, environment_name)
+        refresh_token = get_credentials()
         if not refresh_token:
             raise CredentialUnavailableError(
                 message="No Azure user is logged in to Visual Studio Code."
