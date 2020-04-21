@@ -10,6 +10,7 @@
 ### Bug fixes
 
 - Not retry if the status code is less than 400 #10778
+- "x-ms-request-id" is not considered safe header for logging #10967
 
 ## 1.4.0 (2020-04-06)
 
