@@ -8,9 +8,9 @@ except ImportError:  # python < 3.3
     from mock import Mock
 
 from azure.core.credentials import AccessToken
-from azure.identity import EnvironmentCredential
+from azure.identity import DefaultAzureCredential, KnownAuthorities
 from devtools_testutils import AzureMgmtPreparer
-
+import os
 
 class KeyVaultClientPreparer(AzureMgmtPreparer):
     def __init__(self, client_cls, name_prefix="vault", random_name_enabled=True, **kwargs):
@@ -19,7 +19,7 @@ class KeyVaultClientPreparer(AzureMgmtPreparer):
 
     def create_credential(self):
         if self.is_live:
-            return EnvironmentCredential()
+            return DefaultAzureCredential(authority=os.environ.get('AZURE_AUTHORITY_HOST', KnownAuthorities.AZURE_PUBLIC_CLOUD))
 
         return Mock(get_token=lambda *_: AccessToken("fake-token", 0))
 
