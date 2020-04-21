@@ -70,7 +70,7 @@ class PollingMethod(object):
 
     @classmethod
     def from_continuation_token(cls, continuation_token, **kwargs):
-        # type(str, Any) -> PollingMethod
+        # type(str, Any) -> Tuple[Any, Any, Callable]
         raise NotImplementedError("This polling method doesn't support from_continuation_token")
 
 
@@ -201,7 +201,7 @@ class LROPoller(object):
 
     @classmethod
     def from_continuation_token(cls, polling_method, continuation_token, **kwargs):
-        # type: (str, Any) -> LROPoller
+        # type: (PollingMethod, str, Any) -> LROPoller
         client, initial_response, deserialization_callback = polling_method.from_continuation_token(
             continuation_token, **kwargs
         )

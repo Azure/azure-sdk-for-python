@@ -24,6 +24,8 @@
 #
 # --------------------------------------------------------------------------
 from collections.abc import Awaitable
+from typing import Callable, Any, Tuple
+
 
 from ._poller import NoPolling as _NoPolling
 
@@ -45,13 +47,11 @@ class AsyncPollingMethod(object):
     def resource(self):
         raise NotImplementedError("This method needs to be implemented")
 
-    def get_continuation_token(self):
-        # type() -> str
+    def get_continuation_token(self) -> str:
         raise NotImplementedError("This polling method doesn't support get_continuation_token")
 
     @classmethod
-    def from_continuation_token(cls, continuation_token, **kwargs):
-        # type(str, Any) -> PollingMethod
+    def from_continuation_token(cls, continuation_token: str, **kwargs) -> Tuple[Any, Any, Callable]:
         raise NotImplementedError("This polling method doesn't support from_continuation_token")
 
 
@@ -98,8 +98,13 @@ class AsyncLROPoller(Awaitable):
     :type polling_method: ~azure.core.polling.PollingMethod
     """
 
-    def __init__(self, client, initial_response, deserialization_callback, polling_method):
-        # type: (Any, HttpResponse, DeserializationCallbackType, PollingMethod) -> None
+    def __init__(
+            self,
+            client: Any,
+            initial_response: Any,
+            deserialization_callback: Callable,
+            polling_method: AsyncPollingMethod
+        ):
         self._polling_method = polling_method
 
         # This implicit test avoids bringing in an explicit dependency on Model directly
@@ -108,7 +113,6 @@ class AsyncLROPoller(Awaitable):
         except AttributeError:
             pass
 
-        # Might raise a CloudError
         self._polling_method.initialize(client, initial_response, deserialization_callback)
 
     async def _start(self):
@@ -120,8 +124,7 @@ class AsyncLROPoller(Awaitable):
     def __await__(self):
         return self._start().__await__()
 
-    def continuation_token(self):
-        # type: () -> str
+    def continuation_token(self) -> str:
         """Return a continuation token that allows to restart the poller later.
 
         :returns: An opaque continuation token
@@ -130,8 +133,12 @@ class AsyncLROPoller(Awaitable):
         return self._polling_method.get_continuation_token()
 
     @classmethod
-    def from_continuation_token(cls, polling_method, continuation_token, **kwargs):
-        # type: (str, Any) -> LROPoller
+    def from_continuation_token(
+            cls,
+            polling_method: AsyncPollingMethod,
+            continuation_token: str,
+            **kwargs
+        ) -> "AsyncLROPoller":
         client, initial_response, deserialization_callback = polling_method.from_continuation_token(
             continuation_token, **kwargs
         )
