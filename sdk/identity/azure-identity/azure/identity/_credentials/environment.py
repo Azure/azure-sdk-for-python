@@ -53,10 +53,12 @@ class EnvironmentCredential(object):
         self._credential = None  # type: Optional[EnvironmentCredentialTypes]
 
         if all(os.environ.get(v) is not None for v in EnvironmentVariables.CLIENT_SECRET_VARS):
+            print("AZURE_AUTHORITY_HOST = " + os.environ[EnvironmentVariables.AZURE_AUTHORITY_HOST])
             self._credential = ClientSecretCredential(
                 client_id=os.environ[EnvironmentVariables.AZURE_CLIENT_ID],
                 client_secret=os.environ[EnvironmentVariables.AZURE_CLIENT_SECRET],
                 tenant_id=os.environ[EnvironmentVariables.AZURE_TENANT_ID],
+                authority=os.environ[EnvironmentVariables.AZURE_AUTHORITY_HOST],
                 **kwargs
             )
         elif all(os.environ.get(v) is not None for v in EnvironmentVariables.CERT_VARS):
