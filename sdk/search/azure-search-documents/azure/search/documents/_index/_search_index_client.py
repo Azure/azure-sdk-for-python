@@ -36,12 +36,25 @@ def pack_continuation_token(response):
     return None
 
 
-def unpack_continuation_token(token):
+def extract_data_cb(response):  # pylint:disable=no-self-use
+    _response = SearchDocumentsResult.deserialize(response)
+    continuation_token = pack_continuation_token(_response)
+    results = [convert_search_result(r) for r in _response.results]
+    return continuation_token, results
+
+
+def _unpack_continuation_token(token):
     unpacked_token = json.loads(base64.b64decode(token))
     next_link = unpacked_token["nextLink"]
     next_page_parameters = unpacked_token["nextPageParameters"]
     next_page_request = SearchRequest.deserialize(next_page_parameters)
     return next_link
+
+
+def unpack_next_link(next_link=None):  # pylint:disable=no-self-use
+    _next_link, _ = _unpack_continuation_token(next_link)
+    return _next_link
+
 
 def convert_search_result(result):
     ret = result.additional_properties
@@ -196,16 +209,6 @@ class SearchIndexClient(HeadersMixin):
                 :caption: Get search result facets.
         """
 
-        def _extract_data_cb(response):  # pylint:disable=no-self-use
-            _response = SearchDocumentsResult.deserialize(response)
-            continuation_token = pack_continuation_token(_response)
-            results = [convert_search_result(r) for r in _response.results]
-            return continuation_token, results
-
-        def _unpack_next_link(next_link=None):  # pylint:disable=no-self-use
-            _next_link, _ = unpack_continuation_token(next_link)
-            return _next_link
-
         if isinstance(query, six.string_types):
             query = SearchQuery(search_text=query)
         elif not isinstance(query, SearchQuery):
@@ -217,8 +220,8 @@ class SearchIndexClient(HeadersMixin):
 
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         return self._client.documents.search_post(query.request,
-                                                  extract_data=_extract_data_cb,
-                                                  unpack_next_link=_unpack_next_link,
+                                                  extract_data=extract_data_cb,
+                                                  unpack_next_link=unpack_next_link,
                                                   item_paged=SearchItemPaged)
         #return SearchItemPaged(
         #    self._client, query, kwargs, page_iterator_class=SearchPageIterator

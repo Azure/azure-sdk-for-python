@@ -8,18 +8,27 @@ from typing import cast, List, TYPE_CHECKING
 import six
 
 from azure.core.tracing.decorator_async import distributed_trace_async
-from ._paging import AsyncSearchItemPaged, AsyncSearchPageIterator
+from ._paging import AsyncSearchItemPaged
 from .._generated.aio import SearchIndexClient as _SearchIndexClient
-from .._generated.models import IndexBatch, IndexingResult, SearchRequest
+from .._generated.models import IndexBatch, IndexingResult, SearchRequest, SearchDocumentsResult
 from .._index_documents_batch import IndexDocumentsBatch
 from .._queries import AutocompleteQuery, SearchQuery, SuggestQuery
 from ..._headers_mixin import HeadersMixin
 from ..._version import SDK_MONIKER
+from .._search_index_client import convert_search_result, unpack_next_link, pack_continuation_token
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
     from typing import Any, Union
     from azure.core.credentials import AzureKeyCredential
+
+
+async def extract_data_cb(response):  # pylint:disable=no-self-use
+    _response = SearchDocumentsResult.deserialize(response)
+    continuation_token = pack_continuation_token(_response)
+    results = [convert_search_result(r) for r in _response.results]
+    return continuation_token, results
+
 
 
 class SearchIndexClient(HeadersMixin):
@@ -148,9 +157,10 @@ class SearchIndexClient(HeadersMixin):
                 )
             )
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        return AsyncSearchItemPaged(
-            self._client, query, kwargs, page_iterator_class=AsyncSearchPageIterator
-        )
+        return self._client.documents.search_post(query.request,
+                                                  extract_data=extract_data_cb,
+                                                  unpack_next_link=unpack_next_link,
+                                                  item_paged=AsyncSearchItemPaged)
 
     @distributed_trace_async
     async def suggest(self, query, **kwargs):

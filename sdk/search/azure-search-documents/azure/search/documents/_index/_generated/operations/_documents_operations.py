@@ -255,7 +255,6 @@ class DocumentsOperations(object):
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
         api_version = "2019-05-06-Preview"
-
         def unpack_next_link(next_link):
             return next_link
 

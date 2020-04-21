@@ -252,6 +252,8 @@ class DocumentsOperations:
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
         api_version = "2019-05-06-Preview"
+        def unpack_next_link(next_link):
+            return next_link
 
         def prepare_request(next_link=None):
             if not next_link:
@@ -263,7 +265,7 @@ class DocumentsOperations:
                 }
                 url = self._client.format_url(url, **path_format_arguments)
             else:
-                url = next_link
+                url = unpack_next_link(next_link)
                 path_format_arguments = {
                     'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                     'indexName': self._serialize.url("self._config.index_name", self._config.index_name, 'str'),
@@ -311,6 +313,9 @@ class DocumentsOperations:
 
         get_next_method = kwargs.pop('get_next', get_next)
         extract_data_method = kwargs.pop('extract_data', extract_data)
+        unpack_next_link_method = kwargs.pop('unpack_next_link', None)
+        if not unpack_next_link_method:
+            unpack_next_link = unpack_next_link_method
         item_paged_class = kwargs.pop('item_paged', AsyncItemPaged)
         return item_paged_class(
             get_next_method, extract_data_method
