@@ -354,7 +354,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
                 :dedent: 16
                 :caption: Listing the containers in the blob service.
         """
-        include = 'metadata' if include_metadata else None
+        include = ['metadata'] if include_metadata else None
         timeout = kwargs.pop('timeout', None)
         results_per_page = kwargs.pop('results_per_page', None)
         command = functools.partial(

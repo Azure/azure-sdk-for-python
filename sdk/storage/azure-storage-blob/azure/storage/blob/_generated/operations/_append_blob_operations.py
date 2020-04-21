@@ -24,7 +24,6 @@ class AppendBlobOperations(object):
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
     :ivar x_ms_blob_type: Specifies the type of blob to create: block blob, page blob, or append blob. Constant value: "AppendBlob".
-    :ivar comp: . Constant value: "appendblock".
     """
 
     models = models
@@ -37,9 +36,8 @@ class AppendBlobOperations(object):
 
         self._config = config
         self.x_ms_blob_type = "AppendBlob"
-        self.comp = "appendblock"
 
-    def create(self, content_length, timeout=None, metadata=None, request_id=None, blob_http_headers=None, lease_access_conditions=None, cpk_info=None, cpk_scope_info=None, modified_access_conditions=None, cls=None, **kwargs):
+    def create(self, content_length, timeout=None, metadata=None, request_id=None, blob_tags_string=None, blob_http_headers=None, lease_access_conditions=None, cpk_info=None, cpk_scope_info=None, modified_access_conditions=None, cls=None, **kwargs):
         """The Create Append Blob operation creates a new append blob.
 
         :param content_length: The length of the request.
@@ -63,6 +61,9 @@ class AppendBlobOperations(object):
          KB character limit that is recorded in the analytics logs when storage
          analytics logging is enabled.
         :type request_id: str
+        :param blob_tags_string: Optional.  Used to set blob tags in various
+         blob operations.
+        :type blob_tags_string: str
         :param blob_http_headers: Additional parameters for the operation
         :type blob_http_headers: ~azure.storage.blob.models.BlobHTTPHeaders
         :param lease_access_conditions: Additional parameters for the
@@ -151,6 +152,8 @@ class AppendBlobOperations(object):
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if request_id is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id", request_id, 'str')
+        if blob_tags_string is not None:
+            header_parameters['x-ms-tags'] = self._serialize.header("blob_tags_string", blob_tags_string, 'str')
         header_parameters['x-ms-blob-type'] = self._serialize.header("self.x_ms_blob_type", self.x_ms_blob_type, 'str')
         if blob_content_type is not None:
             header_parameters['x-ms-blob-content-type'] = self._serialize.header("blob_content_type", blob_content_type, 'str')
@@ -293,6 +296,8 @@ class AppendBlobOperations(object):
         if modified_access_conditions is not None:
             if_none_match = modified_access_conditions.if_none_match
 
+        comp = "appendblock"
+
         # Construct URL
         url = self.append_block.metadata['url']
         path_format_arguments = {
@@ -304,7 +309,7 @@ class AppendBlobOperations(object):
         query_parameters = {}
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
-        query_parameters['comp'] = self._serialize.query("self.comp", self.comp, 'str')
+        query_parameters['comp'] = self._serialize.query("comp", comp, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -476,6 +481,8 @@ class AppendBlobOperations(object):
         if source_modified_access_conditions is not None:
             source_if_none_match = source_modified_access_conditions.source_if_none_match
 
+        comp = "appendblock"
+
         # Construct URL
         url = self.append_block_from_url.metadata['url']
         path_format_arguments = {
@@ -487,7 +494,7 @@ class AppendBlobOperations(object):
         query_parameters = {}
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
-        query_parameters['comp'] = self._serialize.query("self.comp", self.comp, 'str')
+        query_parameters['comp'] = self._serialize.query("comp", comp, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -562,3 +569,111 @@ class AppendBlobOperations(object):
             }
             return cls(response, None, response_headers)
     append_block_from_url.metadata = {'url': '/{containerName}/{blob}'}
+
+    def seal(self, timeout=None, request_id=None, lease_access_conditions=None, modified_access_conditions=None, append_position_access_conditions=None, cls=None, **kwargs):
+        """The Seal operation seals the Append Blob to make it read-only. Seal is
+        supported only on version 2019-12-12 version or later.
+
+        :param timeout: The timeout parameter is expressed in seconds. For
+         more information, see <a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>
+        :type timeout: int
+        :param request_id: Provides a client-generated, opaque value with a 1
+         KB character limit that is recorded in the analytics logs when storage
+         analytics logging is enabled.
+        :type request_id: str
+        :param lease_access_conditions: Additional parameters for the
+         operation
+        :type lease_access_conditions:
+         ~azure.storage.blob.models.LeaseAccessConditions
+        :param modified_access_conditions: Additional parameters for the
+         operation
+        :type modified_access_conditions:
+         ~azure.storage.blob.models.ModifiedAccessConditions
+        :param append_position_access_conditions: Additional parameters for
+         the operation
+        :type append_position_access_conditions:
+         ~azure.storage.blob.models.AppendPositionAccessConditions
+        :param callable cls: A custom type or function that will be passed the
+         direct response
+        :return: None or the result of cls(response)
+        :rtype: None
+        :raises:
+         :class:`StorageErrorException<azure.storage.blob.models.StorageErrorException>`
+        """
+        error_map = kwargs.pop('error_map', None)
+        lease_id = None
+        if lease_access_conditions is not None:
+            lease_id = lease_access_conditions.lease_id
+        if_modified_since = None
+        if modified_access_conditions is not None:
+            if_modified_since = modified_access_conditions.if_modified_since
+        if_unmodified_since = None
+        if modified_access_conditions is not None:
+            if_unmodified_since = modified_access_conditions.if_unmodified_since
+        if_match = None
+        if modified_access_conditions is not None:
+            if_match = modified_access_conditions.if_match
+        if_none_match = None
+        if modified_access_conditions is not None:
+            if_none_match = modified_access_conditions.if_none_match
+        append_position = None
+        if append_position_access_conditions is not None:
+            append_position = append_position_access_conditions.append_position
+
+        comp = "seal"
+
+        # Construct URL
+        url = self.seal.metadata['url']
+        path_format_arguments = {
+            'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
+        query_parameters['comp'] = self._serialize.query("comp", comp, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
+        if request_id is not None:
+            header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id", request_id, 'str')
+        if lease_id is not None:
+            header_parameters['x-ms-lease-id'] = self._serialize.header("lease_id", lease_id, 'str')
+        if if_modified_since is not None:
+            header_parameters['If-Modified-Since'] = self._serialize.header("if_modified_since", if_modified_since, 'rfc-1123')
+        if if_unmodified_since is not None:
+            header_parameters['If-Unmodified-Since'] = self._serialize.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
+        if if_match is not None:
+            header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
+        if if_none_match is not None:
+            header_parameters['If-None-Match'] = self._serialize.header("if_none_match", if_none_match, 'str')
+        if append_position is not None:
+            header_parameters['x-ms-blob-condition-appendpos'] = self._serialize.header("append_position", append_position, 'long')
+
+        # Construct and send request
+        request = self._client.put(url, query_parameters, header_parameters)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise models.StorageErrorException(response, self._deserialize)
+
+        if cls:
+            response_headers = {
+                'ETag': self._deserialize('str', response.headers.get('ETag')),
+                'Last-Modified': self._deserialize('rfc-1123', response.headers.get('Last-Modified')),
+                'x-ms-client-request-id': self._deserialize('str', response.headers.get('x-ms-client-request-id')),
+                'x-ms-request-id': self._deserialize('str', response.headers.get('x-ms-request-id')),
+                'x-ms-version': self._deserialize('str', response.headers.get('x-ms-version')),
+                'Date': self._deserialize('rfc-1123', response.headers.get('Date')),
+                'x-ms-blob-sealed': self._deserialize('bool', response.headers.get('x-ms-blob-sealed')),
+                'x-ms-error-code': self._deserialize('str', response.headers.get('x-ms-error-code')),
+            }
+            return cls(response, None, response_headers)
+    seal.metadata = {'url': '/{containerName}/{blob}'}

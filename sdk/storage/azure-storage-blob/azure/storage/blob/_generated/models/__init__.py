@@ -15,10 +15,12 @@ try:
     from ._models_py3 import BlobFlatListSegment
     from ._models_py3 import BlobHierarchyListSegment
     from ._models_py3 import BlobHTTPHeaders
-    from ._models_py3 import BlobItem
+    from ._models_py3 import BlobItemInternal
     from ._models_py3 import BlobMetadata
     from ._models_py3 import BlobPrefix
     from ._models_py3 import BlobProperties
+    from ._models_py3 import BlobTag
+    from ._models_py3 import BlobTags
     from ._models_py3 import Block
     from ._models_py3 import BlockList
     from ._models_py3 import BlockLookupList
@@ -33,6 +35,8 @@ try:
     from ._models_py3 import DataLakeStorageErrorError
     from ._models_py3 import DelimitedTextConfiguration
     from ._models_py3 import DirectoryHttpHeaders
+    from ._models_py3 import FilterBlobItem
+    from ._models_py3 import FilterBlobSegment
     from ._models_py3 import GeoReplication
     from ._models_py3 import JsonTextConfiguration
     from ._models_py3 import KeyInfo
@@ -63,10 +67,12 @@ except (SyntaxError, ImportError):
     from ._models import BlobFlatListSegment
     from ._models import BlobHierarchyListSegment
     from ._models import BlobHTTPHeaders
-    from ._models import BlobItem
+    from ._models import BlobItemInternal
     from ._models import BlobMetadata
     from ._models import BlobPrefix
     from ._models import BlobProperties
+    from ._models import BlobTag
+    from ._models import BlobTags
     from ._models import Block
     from ._models import BlockList
     from ._models import BlockLookupList
@@ -81,6 +87,8 @@ except (SyntaxError, ImportError):
     from ._models import DataLakeStorageErrorError
     from ._models import DelimitedTextConfiguration
     from ._models import DirectoryHttpHeaders
+    from ._models import FilterBlobItem
+    from ._models import FilterBlobSegment
     from ._models import GeoReplication
     from ._models import JsonTextConfiguration
     from ._models import KeyInfo
@@ -111,6 +119,7 @@ from ._azure_blob_storage_enums import (
     AccessTierRequired,
     AccountKind,
     ArchiveStatus,
+    BlobExpiryOptions,
     BlobType,
     BlockListType,
     CopyStatusType,
@@ -125,7 +134,7 @@ from ._azure_blob_storage_enums import (
     PathRenameMode,
     PremiumPageBlobAccessTier,
     PublicAccessType,
-    QuickQueryType,
+    QuickQueryFormatType,
     RehydratePriority,
     SequenceNumberActionType,
     SkuName,
@@ -139,10 +148,12 @@ __all__ = [
     'BlobFlatListSegment',
     'BlobHierarchyListSegment',
     'BlobHTTPHeaders',
-    'BlobItem',
+    'BlobItemInternal',
     'BlobMetadata',
     'BlobPrefix',
     'BlobProperties',
+    'BlobTag',
+    'BlobTags',
     'Block',
     'BlockList',
     'BlockLookupList',
@@ -157,6 +168,8 @@ __all__ = [
     'DataLakeStorageErrorError',
     'DelimitedTextConfiguration',
     'DirectoryHttpHeaders',
+    'FilterBlobItem',
+    'FilterBlobSegment',
     'GeoReplication',
     'JsonTextConfiguration',
     'KeyInfo',
@@ -191,11 +204,12 @@ __all__ = [
     'BlobType',
     'StorageErrorCode',
     'GeoReplicationStatusType',
-    'QuickQueryType',
+    'QuickQueryFormatType',
     'AccessTierRequired',
     'AccessTierOptional',
     'PremiumPageBlobAccessTier',
     'RehydratePriority',
+    'BlobExpiryOptions',
     'BlockListType',
     'DeleteSnapshotsOptionType',
     'EncryptionAlgorithmType',

@@ -41,7 +41,7 @@ class AccessPolicy(Model):
 
 class AppendPositionAccessConditions(Model):
     """Additional parameters for a set of operations, such as:
-    AppendBlob_append_block, AppendBlob_append_block_from_url.
+    AppendBlob_append_block, AppendBlob_append_block_from_url, AppendBlob_seal.
 
     :param max_size: Optional conditional header. The max length in bytes
      permitted for the append blob. If the Append Block operation would cause
@@ -78,7 +78,7 @@ class BlobFlatListSegment(Model):
     All required parameters must be populated in order to send to Azure.
 
     :param blob_items: Required.
-    :type blob_items: list[~azure.storage.blob.models.BlobItem]
+    :type blob_items: list[~azure.storage.blob.models.BlobItemInternal]
     """
 
     _validation = {
@@ -86,7 +86,7 @@ class BlobFlatListSegment(Model):
     }
 
     _attribute_map = {
-        'blob_items': {'key': 'BlobItems', 'type': '[BlobItem]', 'xml': {'name': 'BlobItems', 'itemsName': 'Blob'}},
+        'blob_items': {'key': 'BlobItems', 'type': '[BlobItemInternal]', 'xml': {'name': 'BlobItems', 'itemsName': 'Blob'}},
     }
     _xml_map = {
         'name': 'Blobs'
@@ -105,7 +105,7 @@ class BlobHierarchyListSegment(Model):
     :param blob_prefixes:
     :type blob_prefixes: list[~azure.storage.blob.models.BlobPrefix]
     :param blob_items: Required.
-    :type blob_items: list[~azure.storage.blob.models.BlobItem]
+    :type blob_items: list[~azure.storage.blob.models.BlobItemInternal]
     """
 
     _validation = {
@@ -114,7 +114,7 @@ class BlobHierarchyListSegment(Model):
 
     _attribute_map = {
         'blob_prefixes': {'key': 'BlobPrefixes', 'type': '[BlobPrefix]', 'xml': {'name': 'BlobPrefix', 'itemsName': 'BlobPrefix'}},
-        'blob_items': {'key': 'BlobItems', 'type': '[BlobItem]', 'xml': {'name': 'Blob', 'itemsName': 'Blob'}},
+        'blob_items': {'key': 'BlobItems', 'type': '[BlobItemInternal]', 'xml': {'name': 'Blob', 'itemsName': 'Blob'}},
     }
     _xml_map = {
         'name': 'Blobs'
@@ -175,7 +175,7 @@ class BlobHTTPHeaders(Model):
         self.blob_content_disposition = kwargs.get('blob_content_disposition', None)
 
 
-class BlobItem(Model):
+class BlobItemInternal(Model):
     """An Azure Storage blob.
 
     All required parameters must be populated in order to send to Azure.
@@ -194,6 +194,12 @@ class BlobItem(Model):
     :type properties: ~azure.storage.blob.models.BlobProperties
     :param metadata:
     :type metadata: ~azure.storage.blob.models.BlobMetadata
+    :param blob_tags:
+    :type blob_tags: ~azure.storage.blob.models.BlobTags
+    :param object_replication_policy_id:
+    :type object_replication_policy_id: str
+    :param object_replication_rule_status:
+    :type object_replication_rule_status: dict[str, str]
     """
 
     _validation = {
@@ -211,13 +217,16 @@ class BlobItem(Model):
         'is_current_version': {'key': 'IsCurrentVersion', 'type': 'bool', 'xml': {'name': 'IsCurrentVersion'}},
         'properties': {'key': 'Properties', 'type': 'BlobProperties', 'xml': {'name': 'Properties'}},
         'metadata': {'key': 'Metadata', 'type': 'BlobMetadata', 'xml': {'name': 'Metadata'}},
+        'blob_tags': {'key': 'BlobTags', 'type': 'BlobTags', 'xml': {'name': 'BlobTags'}},
+        'object_replication_policy_id': {'key': 'ObjectReplicationPolicyId', 'type': 'str', 'xml': {'name': 'ObjectReplicationPolicyId'}},
+        'object_replication_rule_status': {'key': 'ObjectReplicationRuleStatus', 'type': '{str}', 'xml': {'name': 'ObjectReplicationRuleStatus'}},
     }
     _xml_map = {
         'name': 'Blob'
     }
 
     def __init__(self, **kwargs):
-        super(BlobItem, self).__init__(**kwargs)
+        super(BlobItemInternal, self).__init__(**kwargs)
         self.name = kwargs.get('name', None)
         self.deleted = kwargs.get('deleted', None)
         self.snapshot = kwargs.get('snapshot', None)
@@ -225,6 +234,9 @@ class BlobItem(Model):
         self.is_current_version = kwargs.get('is_current_version', None)
         self.properties = kwargs.get('properties', None)
         self.metadata = kwargs.get('metadata', None)
+        self.blob_tags = kwargs.get('blob_tags', None)
+        self.object_replication_policy_id = kwargs.get('object_replication_policy_id', None)
+        self.object_replication_rule_status = kwargs.get('object_replication_rule_status', None)
 
 
 class BlobMetadata(Model):
@@ -350,6 +362,12 @@ class BlobProperties(Model):
     :type encryption_scope: str
     :param access_tier_change_time:
     :type access_tier_change_time: datetime
+    :param tag_count:
+    :type tag_count: int
+    :param expires_on:
+    :type expires_on: datetime
+    :param is_sealed:
+    :type is_sealed: bool
     """
 
     _validation = {
@@ -390,6 +408,9 @@ class BlobProperties(Model):
         'customer_provided_key_sha256': {'key': 'CustomerProvidedKeySha256', 'type': 'str', 'xml': {'name': 'CustomerProvidedKeySha256'}},
         'encryption_scope': {'key': 'EncryptionScope', 'type': 'str', 'xml': {'name': 'EncryptionScope'}},
         'access_tier_change_time': {'key': 'AccessTierChangeTime', 'type': 'rfc-1123', 'xml': {'name': 'AccessTierChangeTime'}},
+        'tag_count': {'key': 'TagCount', 'type': 'int', 'xml': {'name': 'TagCount'}},
+        'expires_on': {'key': 'Expiry-Time', 'type': 'rfc-1123', 'xml': {'name': 'Expiry-Time'}},
+        'is_sealed': {'key': 'IsSealed', 'type': 'bool', 'xml': {'name': 'IsSealed'}},
     }
     _xml_map = {
         'name': 'Properties'
@@ -429,6 +450,64 @@ class BlobProperties(Model):
         self.customer_provided_key_sha256 = kwargs.get('customer_provided_key_sha256', None)
         self.encryption_scope = kwargs.get('encryption_scope', None)
         self.access_tier_change_time = kwargs.get('access_tier_change_time', None)
+        self.tag_count = kwargs.get('tag_count', None)
+        self.expires_on = kwargs.get('expires_on', None)
+        self.is_sealed = kwargs.get('is_sealed', None)
+
+
+class BlobTag(Model):
+    """BlobTag.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param key: Required.
+    :type key: str
+    :param value: Required.
+    :type value: str
+    """
+
+    _validation = {
+        'key': {'required': True},
+        'value': {'required': True},
+    }
+
+    _attribute_map = {
+        'key': {'key': 'Key', 'type': 'str', 'xml': {'name': 'Key'}},
+        'value': {'key': 'Value', 'type': 'str', 'xml': {'name': 'Value'}},
+    }
+    _xml_map = {
+        'name': 'Tag'
+    }
+
+    def __init__(self, **kwargs):
+        super(BlobTag, self).__init__(**kwargs)
+        self.key = kwargs.get('key', None)
+        self.value = kwargs.get('value', None)
+
+
+class BlobTags(Model):
+    """Blob tags.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param blob_tag_set: Required.
+    :type blob_tag_set: list[~azure.storage.blob.models.BlobTag]
+    """
+
+    _validation = {
+        'blob_tag_set': {'required': True},
+    }
+
+    _attribute_map = {
+        'blob_tag_set': {'key': 'BlobTagSet', 'type': '[BlobTag]', 'xml': {'name': 'TagSet', 'itemsName': 'TagSet', 'wrapped': True}},
+    }
+    _xml_map = {
+        'name': 'Tags'
+    }
+
+    def __init__(self, **kwargs):
+        super(BlobTags, self).__init__(**kwargs)
+        self.blob_tag_set = kwargs.get('blob_tag_set', None)
 
 
 class Block(Model):
@@ -573,6 +652,10 @@ class ContainerItem(Model):
 
     :param name: Required.
     :type name: str
+    :param deleted:
+    :type deleted: bool
+    :param version:
+    :type version: str
     :param properties: Required.
     :type properties: ~azure.storage.blob.models.ContainerProperties
     :param metadata:
@@ -586,6 +669,8 @@ class ContainerItem(Model):
 
     _attribute_map = {
         'name': {'key': 'Name', 'type': 'str', 'xml': {'name': 'Name'}},
+        'deleted': {'key': 'Deleted', 'type': 'bool', 'xml': {'name': 'Deleted'}},
+        'version': {'key': 'Version', 'type': 'str', 'xml': {'name': 'Version'}},
         'properties': {'key': 'Properties', 'type': 'ContainerProperties', 'xml': {'name': 'Properties'}},
         'metadata': {'key': 'Metadata', 'type': '{str}', 'xml': {'name': 'Metadata'}},
     }
@@ -596,6 +681,8 @@ class ContainerItem(Model):
     def __init__(self, **kwargs):
         super(ContainerItem, self).__init__(**kwargs)
         self.name = kwargs.get('name', None)
+        self.deleted = kwargs.get('deleted', None)
+        self.version = kwargs.get('version', None)
         self.properties = kwargs.get('properties', None)
         self.metadata = kwargs.get('metadata', None)
 
@@ -626,6 +713,10 @@ class ContainerProperties(Model):
     :type default_encryption_scope: str
     :param prevent_encryption_scope_override:
     :type prevent_encryption_scope_override: bool
+    :param deleted_time:
+    :type deleted_time: datetime
+    :param remaining_retention_days:
+    :type remaining_retention_days: int
     """
 
     _validation = {
@@ -644,6 +735,8 @@ class ContainerProperties(Model):
         'has_legal_hold': {'key': 'HasLegalHold', 'type': 'bool', 'xml': {'name': 'HasLegalHold'}},
         'default_encryption_scope': {'key': 'DefaultEncryptionScope', 'type': 'str', 'xml': {'name': 'DefaultEncryptionScope'}},
         'prevent_encryption_scope_override': {'key': 'DenyEncryptionScopeOverride', 'type': 'bool', 'xml': {'name': 'DenyEncryptionScopeOverride'}},
+        'deleted_time': {'key': 'DeletedTime', 'type': 'rfc-1123', 'xml': {'name': 'DeletedTime'}},
+        'remaining_retention_days': {'key': 'RemainingRetentionDays', 'type': 'int', 'xml': {'name': 'RemainingRetentionDays'}},
     }
     _xml_map = {
     }
@@ -660,6 +753,8 @@ class ContainerProperties(Model):
         self.has_legal_hold = kwargs.get('has_legal_hold', None)
         self.default_encryption_scope = kwargs.get('default_encryption_scope', None)
         self.prevent_encryption_scope_override = kwargs.get('prevent_encryption_scope_override', None)
+        self.deleted_time = kwargs.get('deleted_time', None)
+        self.remaining_retention_days = kwargs.get('remaining_retention_days', None)
 
 
 class CorsRule(Model):
@@ -845,8 +940,8 @@ class DelimitedTextConfiguration(Model):
     :type record_separator: str
     :param escape_char: Required. escape char
     :type escape_char: str
-    :param has_headers: Required. has headers
-    :type has_headers: str
+    :param headers_present: Required. has headers
+    :type headers_present: bool
     """
 
     _validation = {
@@ -854,7 +949,7 @@ class DelimitedTextConfiguration(Model):
         'field_quote': {'required': True},
         'record_separator': {'required': True},
         'escape_char': {'required': True},
-        'has_headers': {'required': True},
+        'headers_present': {'required': True},
     }
 
     _attribute_map = {
@@ -862,7 +957,7 @@ class DelimitedTextConfiguration(Model):
         'field_quote': {'key': 'FieldQuote', 'type': 'str', 'xml': {'name': 'FieldQuote'}},
         'record_separator': {'key': 'RecordSeparator', 'type': 'str', 'xml': {'name': 'RecordSeparator'}},
         'escape_char': {'key': 'EscapeChar', 'type': 'str', 'xml': {'name': 'EscapeChar'}},
-        'has_headers': {'key': 'HasHeaders', 'type': 'str', 'xml': {'name': 'HasHeaders'}},
+        'headers_present': {'key': 'HeadersPresent', 'type': 'bool', 'xml': {'name': 'HasHeaders'}},
     }
     _xml_map = {
         'name': 'DelimitedTextConfiguration'
@@ -874,7 +969,7 @@ class DelimitedTextConfiguration(Model):
         self.field_quote = kwargs.get('field_quote', None)
         self.record_separator = kwargs.get('record_separator', None)
         self.escape_char = kwargs.get('escape_char', None)
-        self.has_headers = kwargs.get('has_headers', None)
+        self.headers_present = kwargs.get('headers_present', None)
 
 
 class DirectoryHttpHeaders(Model):
@@ -910,6 +1005,80 @@ class DirectoryHttpHeaders(Model):
         self.content_encoding = kwargs.get('content_encoding', None)
         self.content_language = kwargs.get('content_language', None)
         self.content_disposition = kwargs.get('content_disposition', None)
+
+
+class FilterBlobItem(Model):
+    """Blob info from a Filter Blobs API call.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required.
+    :type name: str
+    :param container_name: Required.
+    :type container_name: str
+    :param tag_value: Required.
+    :type tag_value: str
+    """
+
+    _validation = {
+        'name': {'required': True},
+        'container_name': {'required': True},
+        'tag_value': {'required': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'Name', 'type': 'str', 'xml': {'name': 'Name'}},
+        'container_name': {'key': 'ContainerName', 'type': 'str', 'xml': {'name': 'ContainerName'}},
+        'tag_value': {'key': 'TagValue', 'type': 'str', 'xml': {'name': 'TagValue'}},
+    }
+    _xml_map = {
+        'name': 'Blob'
+    }
+
+    def __init__(self, **kwargs):
+        super(FilterBlobItem, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.container_name = kwargs.get('container_name', None)
+        self.tag_value = kwargs.get('tag_value', None)
+
+
+class FilterBlobSegment(Model):
+    """The result of a Filter Blobs API call.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param service_endpoint: Required.
+    :type service_endpoint: str
+    :param where: Required.
+    :type where: str
+    :param blobs: Required.
+    :type blobs: list[~azure.storage.blob.models.FilterBlobItem]
+    :param next_marker:
+    :type next_marker: str
+    """
+
+    _validation = {
+        'service_endpoint': {'required': True},
+        'where': {'required': True},
+        'blobs': {'required': True},
+    }
+
+    _attribute_map = {
+        'service_endpoint': {'key': 'ServiceEndpoint', 'type': 'str', 'xml': {'name': 'ServiceEndpoint', 'attr': True}},
+        'where': {'key': 'Where', 'type': 'str', 'xml': {'name': 'Where'}},
+        'blobs': {'key': 'Blobs', 'type': '[FilterBlobItem]', 'xml': {'name': 'Blobs', 'itemsName': 'Blobs', 'wrapped': True}},
+        'next_marker': {'key': 'NextMarker', 'type': 'str', 'xml': {'name': 'NextMarker'}},
+    }
+    _xml_map = {
+        'name': 'EnumerationResults'
+    }
+
+    def __init__(self, **kwargs):
+        super(FilterBlobSegment, self).__init__(**kwargs)
+        self.service_endpoint = kwargs.get('service_endpoint', None)
+        self.where = kwargs.get('where', None)
+        self.blobs = kwargs.get('blobs', None)
+        self.next_marker = kwargs.get('next_marker', None)
 
 
 class GeoReplication(Model):
@@ -1391,11 +1560,8 @@ class QueryRequest(Model):
 class QuickQueryFormat(Model):
     """QuickQueryFormat.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param quick_query_type: Required. Possible values include: 'delimited',
-     'json'
-    :type quick_query_type: str or ~azure.storage.blob.models.QuickQueryType
+    :param type: Possible values include: 'delimited', 'json'
+    :type type: str or ~azure.storage.blob.models.QuickQueryFormatType
     :param delimited_text_configuration:
     :type delimited_text_configuration:
      ~azure.storage.blob.models.DelimitedTextConfiguration
@@ -1404,12 +1570,8 @@ class QuickQueryFormat(Model):
      ~azure.storage.blob.models.JsonTextConfiguration
     """
 
-    _validation = {
-        'quick_query_type': {'required': True},
-    }
-
     _attribute_map = {
-        'quick_query_type': {'key': 'QuickQueryType', 'type': 'QuickQueryType', 'xml': {'name': 'QuickQueryType'}},
+        'type': {'key': 'Type', 'type': 'QuickQueryFormatType', 'xml': {'name': 'Type'}},
         'delimited_text_configuration': {'key': 'DelimitedTextConfiguration', 'type': 'DelimitedTextConfiguration', 'xml': {'name': 'DelimitedTextConfiguration'}},
         'json_text_configuration': {'key': 'JsonTextConfiguration', 'type': 'JsonTextConfiguration', 'xml': {'name': 'JsonTextConfiguration'}},
     }
@@ -1418,7 +1580,7 @@ class QuickQueryFormat(Model):
 
     def __init__(self, **kwargs):
         super(QuickQueryFormat, self).__init__(**kwargs)
-        self.quick_query_type = kwargs.get('quick_query_type', None)
+        self.type = kwargs.get('type', None)
         self.delimited_text_configuration = kwargs.get('delimited_text_configuration', None)
         self.json_text_configuration = kwargs.get('json_text_configuration', None)
 
