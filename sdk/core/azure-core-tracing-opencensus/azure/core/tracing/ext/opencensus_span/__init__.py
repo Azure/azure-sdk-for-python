@@ -194,7 +194,11 @@ class OpenCensusSpan(HttpSpanMixin, object):
         """
         ctx = trace_context_http_header_format.TraceContextPropagator().from_headers(headers)
         current_span = cls.get_current_span()
-        current_span.add_link(Link(ctx.trace_id, ctx.span_id, attributes))
+        current_span.add_link(Link(
+            trace_id=ctx.trace_id,
+            span_id=ctx.span_id,
+            attributes=attributes
+        ))
 
     @classmethod
     def get_current_span(cls):
