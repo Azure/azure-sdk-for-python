@@ -10,6 +10,8 @@ from typing import Dict, List, Optional, Union
 
 import msrest.serialization
 
+from ._key_vault_management_client_enums import *
+
 
 class AccessPolicyEntry(msrest.serialization.Model):
     """An identity that have access to the key vault. All identities in the array must use the same tenant ID as the key vault's tenant ID.
@@ -68,8 +70,8 @@ class CheckNameAvailabilityResult(msrest.serialization.Model):
      and cannot be used.
     :vartype name_available: bool
     :ivar reason: The reason that a vault name could not be used. The Reason element is only
-     returned if NameAvailable is false. Possible values include: 'AccountNameInvalid',
-     'AlreadyExists'.
+     returned if NameAvailable is false. Possible values include: "AccountNameInvalid",
+     "AlreadyExists".
     :vartype reason: str or ~azure.mgmt.keyvault.v2016_10_01.models.Reason
     :ivar message: An error message explaining the Reason value in more detail.
     :vartype message: str
@@ -480,7 +482,7 @@ class Sku(msrest.serialization.Model):
     :ivar family: Required. SKU family name. Default value: "A".
     :vartype family: str
     :param name: Required. SKU name to specify whether the key vault is a standard vault or a
-     premium vault. Possible values include: 'standard', 'premium'.
+     premium vault. Possible values include: "standard", "premium".
     :type name: str or ~azure.mgmt.keyvault.v2016_10_01.models.SkuName
     """
 
@@ -783,7 +785,7 @@ class VaultPatchProperties(msrest.serialization.Model):
      enabled for this key vault. The property may not be set to false.
     :type enable_soft_delete: bool
     :param create_mode: The vault's create mode to indicate whether the vault need to be recovered
-     or not. Possible values include: 'recover', 'default'.
+     or not. Possible values include: "recover", "default".
     :type create_mode: str or ~azure.mgmt.keyvault.v2016_10_01.models.CreateMode
     :param enable_purge_protection: Property specifying whether protection against purge is enabled
      for this vault; it is only effective if soft delete is also enabled. Once activated, the
@@ -861,7 +863,7 @@ class VaultProperties(msrest.serialization.Model):
      that is, the property does not accept false as its value.
     :type enable_soft_delete: bool
     :param create_mode: The vault's create mode to indicate whether the vault need to be recovered
-     or not. Possible values include: 'recover', 'default'.
+     or not. Possible values include: "recover", "default".
     :type create_mode: str or ~azure.mgmt.keyvault.v2016_10_01.models.CreateMode
     :param enable_purge_protection: Property specifying whether protection against purge is enabled
      for this vault. Setting this property to true activates protection against purge for this vault

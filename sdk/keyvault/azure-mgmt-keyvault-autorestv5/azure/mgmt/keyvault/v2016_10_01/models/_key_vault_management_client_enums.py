@@ -8,6 +8,36 @@
 
 from enum import Enum
 
+class AccessPolicyUpdateKind(str, Enum):
+
+    add = "add"
+    replace = "replace"
+    remove = "remove"
+
+class CertificatePermissions(str, Enum):
+
+    get = "get"
+    list = "list"
+    delete = "delete"
+    create = "create"
+    import_enum = "import"
+    update = "update"
+    managecontacts = "managecontacts"
+    getissuers = "getissuers"
+    listissuers = "listissuers"
+    setissuers = "setissuers"
+    deleteissuers = "deleteissuers"
+    manageissuers = "manageissuers"
+    recover = "recover"
+    purge = "purge"
+
+class CreateMode(str, Enum):
+    """The vault's create mode to indicate whether the vault need to be recovered or not.
+    """
+
+    recover = "recover"
+    default = "default"
+
 class KeyPermissions(str, Enum):
 
     encrypt = "encrypt"
@@ -27,6 +57,14 @@ class KeyPermissions(str, Enum):
     recover = "recover"
     purge = "purge"
 
+class Reason(str, Enum):
+    """The reason that a vault name could not be used. The Reason element is only returned if
+    NameAvailable is false.
+    """
+
+    account_name_invalid = "AccountNameInvalid"
+    already_exists = "AlreadyExists"
+
 class SecretPermissions(str, Enum):
 
     get = "get"
@@ -38,22 +76,12 @@ class SecretPermissions(str, Enum):
     recover = "recover"
     purge = "purge"
 
-class CertificatePermissions(str, Enum):
+class SkuName(str, Enum):
+    """SKU name to specify whether the key vault is a standard vault or a premium vault.
+    """
 
-    get = "get"
-    list = "list"
-    delete = "delete"
-    create = "create"
-    import_enum = "import"
-    update = "update"
-    managecontacts = "managecontacts"
-    getissuers = "getissuers"
-    listissuers = "listissuers"
-    setissuers = "setissuers"
-    deleteissuers = "deleteissuers"
-    manageissuers = "manageissuers"
-    recover = "recover"
-    purge = "purge"
+    standard = "standard"
+    premium = "premium"
 
 class StoragePermissions(str, Enum):
 
@@ -71,31 +99,3 @@ class StoragePermissions(str, Enum):
     listsas = "listsas"
     getsas = "getsas"
     deletesas = "deletesas"
-
-class SkuName(str, Enum):
-    """SKU name to specify whether the key vault is a standard vault or a premium vault.
-    """
-
-    standard = "standard"
-    premium = "premium"
-
-class CreateMode(str, Enum):
-    """The vault's create mode to indicate whether the vault need to be recovered or not.
-    """
-
-    recover = "recover"
-    default = "default"
-
-class Reason(str, Enum):
-    """The reason that a vault name could not be used. The Reason element is only returned if
-    NameAvailable is false.
-    """
-
-    account_name_invalid = "AccountNameInvalid"
-    already_exists = "AlreadyExists"
-
-class AccessPolicyUpdateKind(str, Enum):
-
-    add = "add"
-    replace = "replace"
-    remove = "remove"

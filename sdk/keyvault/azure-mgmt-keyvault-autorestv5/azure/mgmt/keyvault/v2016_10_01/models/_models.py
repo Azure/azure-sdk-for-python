@@ -45,10 +45,10 @@ class AccessPolicyEntry(msrest.serialization.Model):
         **kwargs
     ):
         super(AccessPolicyEntry, self).__init__(**kwargs)
-        self.tenant_id = kwargs.get('tenant_id', None)
-        self.object_id = kwargs.get('object_id', None)
+        self.tenant_id = kwargs['tenant_id']
+        self.object_id = kwargs['object_id']
         self.application_id = kwargs.get('application_id', None)
-        self.permissions = kwargs.get('permissions', None)
+        self.permissions = kwargs['permissions']
 
 
 class CheckNameAvailabilityResult(msrest.serialization.Model):
@@ -61,8 +61,8 @@ class CheckNameAvailabilityResult(msrest.serialization.Model):
      and cannot be used.
     :vartype name_available: bool
     :ivar reason: The reason that a vault name could not be used. The Reason element is only
-     returned if NameAvailable is false. Possible values include: 'AccountNameInvalid',
-     'AlreadyExists'.
+     returned if NameAvailable is false. Possible values include: "AccountNameInvalid",
+     "AlreadyExists".
     :vartype reason: str or ~azure.mgmt.keyvault.v2016_10_01.models.Reason
     :ivar message: An error message explaining the Reason value in more detail.
     :vartype message: str
@@ -382,7 +382,7 @@ class Resource(msrest.serialization.Model):
         self.id = None
         self.name = None
         self.type = None
-        self.location = kwargs.get('location', None)
+        self.location = kwargs['location']
         self.tags = kwargs.get('tags', None)
 
 
@@ -438,7 +438,7 @@ class Sku(msrest.serialization.Model):
     :ivar family: Required. SKU family name. Default value: "A".
     :vartype family: str
     :param name: Required. SKU name to specify whether the key vault is a standard vault or a
-     premium vault. Possible values include: 'standard', 'premium'.
+     premium vault. Possible values include: "standard", "premium".
     :type name: str or ~azure.mgmt.keyvault.v2016_10_01.models.SkuName
     """
 
@@ -459,7 +459,7 @@ class Sku(msrest.serialization.Model):
         **kwargs
     ):
         super(Sku, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
+        self.name = kwargs['name']
 
 
 class Vault(Resource):
@@ -505,7 +505,7 @@ class Vault(Resource):
         **kwargs
     ):
         super(Vault, self).__init__(**kwargs)
-        self.properties = kwargs.get('properties', None)
+        self.properties = kwargs['properties']
 
 
 class VaultAccessPolicyParameters(msrest.serialization.Model):
@@ -552,7 +552,7 @@ class VaultAccessPolicyParameters(msrest.serialization.Model):
         self.name = None
         self.type = None
         self.location = None
-        self.properties = kwargs.get('properties', None)
+        self.properties = kwargs['properties']
 
 
 class VaultAccessPolicyProperties(msrest.serialization.Model):
@@ -578,7 +578,7 @@ class VaultAccessPolicyProperties(msrest.serialization.Model):
         **kwargs
     ):
         super(VaultAccessPolicyProperties, self).__init__(**kwargs)
-        self.access_policies = kwargs.get('access_policies', None)
+        self.access_policies = kwargs['access_policies']
 
 
 class VaultCheckNameAvailabilityParameters(msrest.serialization.Model):
@@ -612,7 +612,7 @@ class VaultCheckNameAvailabilityParameters(msrest.serialization.Model):
         **kwargs
     ):
         super(VaultCheckNameAvailabilityParameters, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
+        self.name = kwargs['name']
 
 
 class VaultCreateOrUpdateParameters(msrest.serialization.Model):
@@ -644,9 +644,9 @@ class VaultCreateOrUpdateParameters(msrest.serialization.Model):
         **kwargs
     ):
         super(VaultCreateOrUpdateParameters, self).__init__(**kwargs)
-        self.location = kwargs.get('location', None)
+        self.location = kwargs['location']
         self.tags = kwargs.get('tags', None)
-        self.properties = kwargs.get('properties', None)
+        self.properties = kwargs['properties']
 
 
 class VaultListResult(msrest.serialization.Model):
@@ -719,7 +719,7 @@ class VaultPatchProperties(msrest.serialization.Model):
      enabled for this key vault. The property may not be set to false.
     :type enable_soft_delete: bool
     :param create_mode: The vault's create mode to indicate whether the vault need to be recovered
-     or not. Possible values include: 'recover', 'default'.
+     or not. Possible values include: "recover", "default".
     :type create_mode: str or ~azure.mgmt.keyvault.v2016_10_01.models.CreateMode
     :param enable_purge_protection: Property specifying whether protection against purge is enabled
      for this vault; it is only effective if soft delete is also enabled. Once activated, the
@@ -787,7 +787,7 @@ class VaultProperties(msrest.serialization.Model):
      that is, the property does not accept false as its value.
     :type enable_soft_delete: bool
     :param create_mode: The vault's create mode to indicate whether the vault need to be recovered
-     or not. Possible values include: 'recover', 'default'.
+     or not. Possible values include: "recover", "default".
     :type create_mode: str or ~azure.mgmt.keyvault.v2016_10_01.models.CreateMode
     :param enable_purge_protection: Property specifying whether protection against purge is enabled
      for this vault. Setting this property to true activates protection against purge for this vault
@@ -820,8 +820,8 @@ class VaultProperties(msrest.serialization.Model):
         **kwargs
     ):
         super(VaultProperties, self).__init__(**kwargs)
-        self.tenant_id = kwargs.get('tenant_id', None)
-        self.sku = kwargs.get('sku', None)
+        self.tenant_id = kwargs['tenant_id']
+        self.sku = kwargs['sku']
         self.access_policies = kwargs.get('access_policies', None)
         self.vault_uri = kwargs.get('vault_uri', None)
         self.enabled_for_deployment = kwargs.get('enabled_for_deployment', None)
