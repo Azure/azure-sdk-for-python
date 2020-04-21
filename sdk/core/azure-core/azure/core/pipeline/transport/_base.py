@@ -48,6 +48,7 @@ import xml.etree.ElementTree as ET
 
 from typing import (
     TYPE_CHECKING,
+    Generic,
     TypeVar,
     cast,
     IO,
@@ -76,6 +77,8 @@ from .._base import _await_result
 if TYPE_CHECKING:
     from ..policies import SansIOHTTPPolicy
 
+HTTPResponseType = TypeVar("HTTPResponseType")
+HTTPRequestType = TypeVar("HTTPRequestType")
 PipelineType = TypeVar("PipelineType")
 
 _LOGGER = logging.getLogger(__name__)
@@ -165,8 +168,8 @@ def _serialize_request(http_request):
 
 
 class HttpTransport(
-    AbstractContextManager, ABC
-):
+    AbstractContextManager, ABC, Generic[HTTPRequestType, HTTPResponseType]
+):  # type: ignore
     """An http sender ABC.
     """
 
