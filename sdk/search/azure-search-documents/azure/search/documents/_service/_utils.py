@@ -16,6 +16,7 @@ from ._models import PatternAnalyzer, PatternTokenizer
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
     from typing import Optional
+    from ._generated.models import Skillset
 
 DELIMITER = "|"
 
