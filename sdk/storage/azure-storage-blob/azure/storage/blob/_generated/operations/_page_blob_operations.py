@@ -37,7 +37,7 @@ class PageBlobOperations(object):
         self._config = config
         self.x_ms_blob_type = "PageBlob"
 
-    def create(self, content_length, blob_content_length, timeout=None, tier=None, metadata=None, blob_sequence_number=0, request_id=None, blob_http_headers=None, lease_access_conditions=None, cpk_info=None, cpk_scope_info=None, modified_access_conditions=None, cls=None, **kwargs):
+    def create(self, content_length, blob_content_length, timeout=None, tier=None, metadata=None, blob_sequence_number=0, request_id=None, blob_tags_string=None, blob_http_headers=None, lease_access_conditions=None, cpk_info=None, cpk_scope_info=None, modified_access_conditions=None, cls=None, **kwargs):
         """The Create operation creates a new page blob.
 
         :param content_length: The length of the request.
@@ -74,6 +74,9 @@ class PageBlobOperations(object):
          KB character limit that is recorded in the analytics logs when storage
          analytics logging is enabled.
         :type request_id: str
+        :param blob_tags_string: Optional.  Used to set blob tags in various
+         blob operations.
+        :type blob_tags_string: str
         :param blob_http_headers: Additional parameters for the operation
         :type blob_http_headers: ~azure.storage.blob.models.BlobHTTPHeaders
         :param lease_access_conditions: Additional parameters for the
@@ -167,6 +170,8 @@ class PageBlobOperations(object):
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if request_id is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id", request_id, 'str')
+        if blob_tags_string is not None:
+            header_parameters['x-ms-tags'] = self._serialize.header("blob_tags_string", blob_tags_string, 'str')
         header_parameters['x-ms-blob-type'] = self._serialize.header("self.x_ms_blob_type", self.x_ms_blob_type, 'str')
         if blob_content_type is not None:
             header_parameters['x-ms-blob-content-type'] = self._serialize.header("blob_content_type", blob_content_type, 'str')
