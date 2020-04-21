@@ -6,7 +6,8 @@
 
 import logging
 import sys
-
+import time
+from azure.servicebus._common.utils import utc_now
 
 def get_logger(level):
     azure_logger = logging.getLogger("azure")
@@ -39,3 +40,7 @@ def print_message(_logger, message):
     except (TypeError, AttributeError):
         pass
     _logger.debug("Enqueued time: {}".format(message.enqueued_time_utc))
+
+
+def sleep_until_expired(entity):
+    time.sleep(max(0,(entity.locked_until_utc - utc_now()).total_seconds()+1))

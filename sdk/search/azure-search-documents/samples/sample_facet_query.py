@@ -42,7 +42,7 @@ def filter_query():
     print("Catgory facet counts for hotels:")
     for facet in facets["Category"]:
         print("    {}".format(facet))
-    # [END filter_query]
+    # [END facet_query]
 
 if __name__ == '__main__':
     filter_query()

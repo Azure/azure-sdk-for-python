@@ -265,7 +265,9 @@ class DirectoryTest(StorageTestCase):
 
     @record
     def test_rename_from(self):
-        metadata = {'hello': 'world', 'number': '42'}
+        content_settings = ContentSettings(
+            content_language='spanish',
+            content_disposition='inline')
         directory_name = self._get_directory_reference()
         directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
         directory_client.create_directory()
@@ -274,10 +276,12 @@ class DirectoryTest(StorageTestCase):
 
         new_directory_client = self.dsc.get_directory_client(self.file_system_name, new_name)
 
-        new_directory_client._rename_path('/' + self.file_system_name + '/' + directory_name, metadata=metadata)
+        new_directory_client._rename_path('/' + self.file_system_name + '/' + directory_name,
+                                          content_settings=content_settings)
         properties = new_directory_client.get_directory_properties()
 
         self.assertIsNotNone(properties)
+        self.assertIsNone(properties.get('content_settings'))
 
     @record
     def test_rename_from_a_shorter_directory_to_longer_directory(self):

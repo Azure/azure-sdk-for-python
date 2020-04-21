@@ -9,12 +9,12 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-5.0.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-network/10.0.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.13
+        msrest_azure/0.6.3 azure-mgmt-network/10.1.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/expressRouteServiceProviders?api-version=2019-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/expressRouteServiceProviders?api-version=2020-03-01
   response:
     body:
       string: "{\r\n  \"value\": [\r\n    {\r\n      \"name\": \"AARNet\",\r\n   \
@@ -294,17 +294,17 @@ interactions:
         \      \"Chicago\",\r\n          \"Frankfurt\",\r\n          \"Hong Kong\"\
         ,\r\n          \"Las Vegas\",\r\n          \"London2\",\r\n          \"Montreal\"\
         ,\r\n          \"New York\",\r\n          \"Paris\",\r\n          \"San Antonio\"\
-        ,\r\n          \"Silicon Valley\",\r\n          \"Tokyo\",\r\n          \"\
-        Toronto\",\r\n          \"Washington DC\",\r\n          \"Washington DC2\"\
-        \r\n        ],\r\n        \"bandwidthsOffered\": [\r\n          {\r\n    \
-        \        \"offerName\": \"50Mbps\",\r\n            \"valueInMbps\": 50\r\n\
-        \          },\r\n          {\r\n            \"offerName\": \"100Mbps\",\r\n\
-        \            \"valueInMbps\": 100\r\n          },\r\n          {\r\n     \
-        \       \"offerName\": \"200Mbps\",\r\n            \"valueInMbps\": 200\r\n\
-        \          },\r\n          {\r\n            \"offerName\": \"500Mbps\",\r\n\
-        \            \"valueInMbps\": 500\r\n          },\r\n          {\r\n     \
-        \       \"offerName\": \"1Gbps\",\r\n            \"valueInMbps\": 1000\r\n\
-        \          },\r\n          {\r\n            \"offerName\": \"2Gbps\",\r\n\
+        ,\r\n          \"Seattle\",\r\n          \"Silicon Valley\",\r\n         \
+        \ \"Tokyo\",\r\n          \"Toronto\",\r\n          \"Washington DC\",\r\n\
+        \          \"Washington DC2\"\r\n        ],\r\n        \"bandwidthsOffered\"\
+        : [\r\n          {\r\n            \"offerName\": \"50Mbps\",\r\n         \
+        \   \"valueInMbps\": 50\r\n          },\r\n          {\r\n            \"offerName\"\
+        : \"100Mbps\",\r\n            \"valueInMbps\": 100\r\n          },\r\n   \
+        \       {\r\n            \"offerName\": \"200Mbps\",\r\n            \"valueInMbps\"\
+        : 200\r\n          },\r\n          {\r\n            \"offerName\": \"500Mbps\"\
+        ,\r\n            \"valueInMbps\": 500\r\n          },\r\n          {\r\n \
+        \           \"offerName\": \"1Gbps\",\r\n            \"valueInMbps\": 1000\r\
+        \n          },\r\n          {\r\n            \"offerName\": \"2Gbps\",\r\n\
         \            \"valueInMbps\": 2000\r\n          },\r\n          {\r\n    \
         \        \"offerName\": \"5Gbps\",\r\n            \"valueInMbps\": 5000\r\n\
         \          },\r\n          {\r\n            \"offerName\": \"10Gbps\",\r\n\
@@ -418,21 +418,21 @@ interactions:
         \n      \"properties\": {\r\n        \"provisioningState\": \"Succeeded\"\
         ,\r\n        \"peeringLocations\": [\r\n          \"Chicago\",\r\n       \
         \   \"Dallas\",\r\n          \"Montreal\",\r\n          \"Toronto\",\r\n \
-        \         \"Washington DC\"\r\n        ],\r\n        \"bandwidthsOffered\"\
-        : [\r\n          {\r\n            \"offerName\": \"50Mbps\",\r\n         \
-        \   \"valueInMbps\": 50\r\n          },\r\n          {\r\n            \"offerName\"\
-        : \"100Mbps\",\r\n            \"valueInMbps\": 100\r\n          },\r\n   \
-        \       {\r\n            \"offerName\": \"200Mbps\",\r\n            \"valueInMbps\"\
-        : 200\r\n          },\r\n          {\r\n            \"offerName\": \"500Mbps\"\
-        ,\r\n            \"valueInMbps\": 500\r\n          },\r\n          {\r\n \
-        \           \"offerName\": \"1Gbps\",\r\n            \"valueInMbps\": 1000\r\
-        \n          },\r\n          {\r\n            \"offerName\": \"2Gbps\",\r\n\
-        \            \"valueInMbps\": 2000\r\n          },\r\n          {\r\n    \
-        \        \"offerName\": \"5Gbps\",\r\n            \"valueInMbps\": 5000\r\n\
-        \          },\r\n          {\r\n            \"offerName\": \"10Gbps\",\r\n\
-        \            \"valueInMbps\": 10000\r\n          }\r\n        ]\r\n      }\r\
-        \n    },\r\n    {\r\n      \"name\": \"Colt Ethernet\",\r\n      \"id\": \"\
-        /subscriptions//resourceGroups//providers/Microsoft.Network/expressRouteServiceProviders/\"\
+        \         \"Vancouver\",\r\n          \"Washington DC\"\r\n        ],\r\n\
+        \        \"bandwidthsOffered\": [\r\n          {\r\n            \"offerName\"\
+        : \"50Mbps\",\r\n            \"valueInMbps\": 50\r\n          },\r\n     \
+        \     {\r\n            \"offerName\": \"100Mbps\",\r\n            \"valueInMbps\"\
+        : 100\r\n          },\r\n          {\r\n            \"offerName\": \"200Mbps\"\
+        ,\r\n            \"valueInMbps\": 200\r\n          },\r\n          {\r\n \
+        \           \"offerName\": \"500Mbps\",\r\n            \"valueInMbps\": 500\r\
+        \n          },\r\n          {\r\n            \"offerName\": \"1Gbps\",\r\n\
+        \            \"valueInMbps\": 1000\r\n          },\r\n          {\r\n    \
+        \        \"offerName\": \"2Gbps\",\r\n            \"valueInMbps\": 2000\r\n\
+        \          },\r\n          {\r\n            \"offerName\": \"5Gbps\",\r\n\
+        \            \"valueInMbps\": 5000\r\n          },\r\n          {\r\n    \
+        \        \"offerName\": \"10Gbps\",\r\n            \"valueInMbps\": 10000\r\
+        \n          }\r\n        ]\r\n      }\r\n    },\r\n    {\r\n      \"name\"\
+        : \"Colt Ethernet\",\r\n      \"id\": \"/subscriptions//resourceGroups//providers/Microsoft.Network/expressRouteServiceProviders/\"\
         ,\r\n      \"type\": \"Microsoft.Network/expressRouteServiceProviders\",\r\
         \n      \"properties\": {\r\n        \"provisioningState\": \"Succeeded\"\
         ,\r\n        \"peeringLocations\": [\r\n          \"Amsterdam\",\r\n     \
@@ -517,21 +517,21 @@ interactions:
         ,\r\n      \"type\": \"Microsoft.Network/expressRouteServiceProviders\",\r\
         \n      \"properties\": {\r\n        \"provisioningState\": \"Succeeded\"\
         ,\r\n        \"peeringLocations\": [\r\n          \"Amsterdam2\",\r\n    \
-        \      \"Frankfurt\",\r\n          \"Marseille\"\r\n        ],\r\n       \
-        \ \"bandwidthsOffered\": [\r\n          {\r\n            \"offerName\": \"\
-        50Mbps\",\r\n            \"valueInMbps\": 50\r\n          },\r\n         \
-        \ {\r\n            \"offerName\": \"100Mbps\",\r\n            \"valueInMbps\"\
-        : 100\r\n          },\r\n          {\r\n            \"offerName\": \"200Mbps\"\
-        ,\r\n            \"valueInMbps\": 200\r\n          },\r\n          {\r\n \
-        \           \"offerName\": \"500Mbps\",\r\n            \"valueInMbps\": 500\r\
-        \n          },\r\n          {\r\n            \"offerName\": \"1Gbps\",\r\n\
-        \            \"valueInMbps\": 1000\r\n          },\r\n          {\r\n    \
-        \        \"offerName\": \"2Gbps\",\r\n            \"valueInMbps\": 2000\r\n\
-        \          },\r\n          {\r\n            \"offerName\": \"5Gbps\",\r\n\
-        \            \"valueInMbps\": 5000\r\n          },\r\n          {\r\n    \
-        \        \"offerName\": \"10Gbps\",\r\n            \"valueInMbps\": 10000\r\
-        \n          }\r\n        ]\r\n      }\r\n    },\r\n    {\r\n      \"name\"\
-        : \"Devoli\",\r\n      \"id\": \"/subscriptions//resourceGroups//providers/Microsoft.Network/expressRouteServiceProviders/\"\
+        \      \"Dubai2\",\r\n          \"Frankfurt\",\r\n          \"Marseille\"\r\
+        \n        ],\r\n        \"bandwidthsOffered\": [\r\n          {\r\n      \
+        \      \"offerName\": \"50Mbps\",\r\n            \"valueInMbps\": 50\r\n \
+        \         },\r\n          {\r\n            \"offerName\": \"100Mbps\",\r\n\
+        \            \"valueInMbps\": 100\r\n          },\r\n          {\r\n     \
+        \       \"offerName\": \"200Mbps\",\r\n            \"valueInMbps\": 200\r\n\
+        \          },\r\n          {\r\n            \"offerName\": \"500Mbps\",\r\n\
+        \            \"valueInMbps\": 500\r\n          },\r\n          {\r\n     \
+        \       \"offerName\": \"1Gbps\",\r\n            \"valueInMbps\": 1000\r\n\
+        \          },\r\n          {\r\n            \"offerName\": \"2Gbps\",\r\n\
+        \            \"valueInMbps\": 2000\r\n          },\r\n          {\r\n    \
+        \        \"offerName\": \"5Gbps\",\r\n            \"valueInMbps\": 5000\r\n\
+        \          },\r\n          {\r\n            \"offerName\": \"10Gbps\",\r\n\
+        \            \"valueInMbps\": 10000\r\n          }\r\n        ]\r\n      }\r\
+        \n    },\r\n    {\r\n      \"name\": \"Devoli\",\r\n      \"id\": \"/subscriptions//resourceGroups//providers/Microsoft.Network/expressRouteServiceProviders/\"\
         ,\r\n      \"type\": \"Microsoft.Network/expressRouteServiceProviders\",\r\
         \n      \"properties\": {\r\n        \"provisioningState\": \"Succeeded\"\
         ,\r\n        \"peeringLocations\": [\r\n          \"Auckland\",\r\n      \
@@ -1316,7 +1316,27 @@ interactions:
         \        \"offerName\": \"5Gbps\",\r\n            \"valueInMbps\": 5000\r\n\
         \          },\r\n          {\r\n            \"offerName\": \"10Gbps\",\r\n\
         \            \"valueInMbps\": 10000\r\n          }\r\n        ]\r\n      }\r\
-        \n    },\r\n    {\r\n      \"name\": \"Orange\",\r\n      \"id\": \"/subscriptions//resourceGroups//providers/Microsoft.Network/expressRouteServiceProviders/\"\
+        \n    },\r\n    {\r\n      \"name\": \"Oracle Cloud FastConnect\",\r\n   \
+        \   \"id\": \"/subscriptions//resourceGroups//providers/Microsoft.Network/expressRouteServiceProviders/\"\
+        ,\r\n      \"type\": \"Microsoft.Network/expressRouteServiceProviders\",\r\
+        \n      \"properties\": {\r\n        \"provisioningState\": \"Succeeded\"\
+        ,\r\n        \"peeringLocations\": [\r\n          \"Amsterdam2\",\r\n    \
+        \      \"London\",\r\n          \"Tokyo\",\r\n          \"Toronto\",\r\n \
+        \         \"Washington DC\",\r\n          \"Washington DC2\"\r\n        ],\r\
+        \n        \"bandwidthsOffered\": [\r\n          {\r\n            \"offerName\"\
+        : \"50Mbps\",\r\n            \"valueInMbps\": 50\r\n          },\r\n     \
+        \     {\r\n            \"offerName\": \"100Mbps\",\r\n            \"valueInMbps\"\
+        : 100\r\n          },\r\n          {\r\n            \"offerName\": \"200Mbps\"\
+        ,\r\n            \"valueInMbps\": 200\r\n          },\r\n          {\r\n \
+        \           \"offerName\": \"500Mbps\",\r\n            \"valueInMbps\": 500\r\
+        \n          },\r\n          {\r\n            \"offerName\": \"1Gbps\",\r\n\
+        \            \"valueInMbps\": 1000\r\n          },\r\n          {\r\n    \
+        \        \"offerName\": \"2Gbps\",\r\n            \"valueInMbps\": 2000\r\n\
+        \          },\r\n          {\r\n            \"offerName\": \"5Gbps\",\r\n\
+        \            \"valueInMbps\": 5000\r\n          },\r\n          {\r\n    \
+        \        \"offerName\": \"10Gbps\",\r\n            \"valueInMbps\": 10000\r\
+        \n          }\r\n        ]\r\n      }\r\n    },\r\n    {\r\n      \"name\"\
+        : \"Orange\",\r\n      \"id\": \"/subscriptions//resourceGroups//providers/Microsoft.Network/expressRouteServiceProviders/\"\
         ,\r\n      \"type\": \"Microsoft.Network/expressRouteServiceProviders\",\r\
         \n      \"properties\": {\r\n        \"provisioningState\": \"Succeeded\"\
         ,\r\n        \"peeringLocations\": [\r\n          \"Amsterdam\",\r\n     \
@@ -1847,6 +1867,23 @@ interactions:
         \            \"valueInMbps\": 5000\r\n          },\r\n          {\r\n    \
         \        \"offerName\": \"10Gbps\",\r\n            \"valueInMbps\": 10000\r\
         \n          }\r\n        ]\r\n      }\r\n    },\r\n    {\r\n      \"name\"\
+        : \"UIH\",\r\n      \"id\": \"/subscriptions//resourceGroups//providers/Microsoft.Network/expressRouteServiceProviders/\"\
+        ,\r\n      \"type\": \"Microsoft.Network/expressRouteServiceProviders\",\r\
+        \n      \"properties\": {\r\n        \"provisioningState\": \"Succeeded\"\
+        ,\r\n        \"peeringLocations\": [\r\n          \"Bangkok\"\r\n        ],\r\
+        \n        \"bandwidthsOffered\": [\r\n          {\r\n            \"offerName\"\
+        : \"50Mbps\",\r\n            \"valueInMbps\": 50\r\n          },\r\n     \
+        \     {\r\n            \"offerName\": \"100Mbps\",\r\n            \"valueInMbps\"\
+        : 100\r\n          },\r\n          {\r\n            \"offerName\": \"200Mbps\"\
+        ,\r\n            \"valueInMbps\": 200\r\n          },\r\n          {\r\n \
+        \           \"offerName\": \"500Mbps\",\r\n            \"valueInMbps\": 500\r\
+        \n          },\r\n          {\r\n            \"offerName\": \"1Gbps\",\r\n\
+        \            \"valueInMbps\": 1000\r\n          },\r\n          {\r\n    \
+        \        \"offerName\": \"2Gbps\",\r\n            \"valueInMbps\": 2000\r\n\
+        \          },\r\n          {\r\n            \"offerName\": \"5Gbps\",\r\n\
+        \            \"valueInMbps\": 5000\r\n          },\r\n          {\r\n    \
+        \        \"offerName\": \"10Gbps\",\r\n            \"valueInMbps\": 10000\r\
+        \n          }\r\n        ]\r\n      }\r\n    },\r\n    {\r\n      \"name\"\
         : \"UOLDIVEO\",\r\n      \"id\": \"/subscriptions//resourceGroups//providers/Microsoft.Network/expressRouteServiceProviders/\"\
         ,\r\n      \"type\": \"Microsoft.Network/expressRouteServiceProviders\",\r\
         \n      \"properties\": {\r\n        \"provisioningState\": \"Succeeded\"\
@@ -2000,11 +2037,11 @@ interactions:
       cache-control:
       - no-cache
       content-length:
-      - '134258'
+      - '136775'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 20 Mar 2020 10:16:22 GMT
+      - Tue, 14 Apr 2020 09:34:36 GMT
       expires:
       - '-1'
       pragma:
@@ -2021,7 +2058,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - f4f4d83b-255f-41e8-b3d9-6d3f2b1967d3
+      - 7790a628-7cda-478a-aee3-49c44dcbc35e
     status:
       code: 200
       message: OK

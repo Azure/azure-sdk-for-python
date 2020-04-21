@@ -42,7 +42,7 @@ from ._index import (
 
 from ._service import SearchServiceClient
 from ._service._models import PatternAnalyzer, PatternTokenizer
-from ._service._generated.models import(
+from ._service._generated.models import (
     Field,
     TextWeights,
     ScoringFunction,

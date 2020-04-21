@@ -96,7 +96,7 @@ like Azure Stream Analytics, Apache Spark, or Apache Storm.
 
 - A **partition** is an ordered sequence of events that is held in an Event Hub. Azure Event Hubs provides message streaming
 through a partitioned consumer pattern in which each consumer only reads a specific subset, or partition, of the message stream.
-As newer events arrive, they are added to the end of this sequence. The number of partitions is specified at the time anEvent Hub is created and cannot be changed.
+As newer events arrive, they are added to the end of this sequence. The number of partitions is specified at the time an Event Hub is created and cannot be changed.
 
 - A **consumer group** is a view of an entire Event Hub. Consumer groups enable multiple consuming applications to each
 have a separate view of the event stream, and to read the stream independently at their own pace and from their own position.

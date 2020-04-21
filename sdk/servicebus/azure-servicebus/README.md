@@ -100,22 +100,25 @@ The following sections provide several code snippets covering some of the most c
 * [Receive a message from a queue](#receive-from-a-queue)
 * [Defer a message on receipt](#defer-a-message)
 
+To perform management tasks such as creating and deleting queues/topics/subscriptions, please utilize the azure-mgmt-servicebus library, available [here][servicebus_management_repository].
+
 
 ### Send to a queue
 
 This example sends a message to a queue that is assumed to already exist, created via the Azure portal or az commands.
 
 ```Python
-from azure.servicebus import ServiceBusClient
+from azure.servicebus import ServiceBusClient, Message
 
 import os
 connstr = os.environ['SERVICE_BUS_CONN_STR']
+queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
 
 with ServiceBusClient.from_connection_string(connstr) as client:
-    with client.get_queue_sender(queue_name):
+    with client.get_queue_sender(queue_name) as sender:
 
         message = Message("Single message")
-        queue_sender.send(message)
+        sender.send(message)
 ```
 
 ### Receive from a queue
@@ -127,6 +130,7 @@ from azure.servicebus import ServiceBusClient
 
 import os
 connstr = os.environ['SERVICE_BUS_CONN_STR']
+queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
 
 with ServiceBusClient.from_connection_string(connstr) as client:
     with client.get_queue_receiver(queue_name) as receiver:
@@ -161,6 +165,20 @@ with ServiceBusClient.from_connection_string(connstr) as client:
 - Enable `azure.servicebus` logger to collect traces from the library.
 - Enable `uamqp` logger to collect traces from the underlying uAMQP library.
 - Enable AMQP frame level trace by setting `logging_enable=True` when creating the client.
+
+### Timeouts
+
+There are various timeouts a user should be aware of within the library.
+- 10 minute service side link closure:  A link, once opened, will be closed after 10 minutes idle to protect the service against resource leakage.  This should largely
+be transparent to a user, but if you notice a reconnect occuring after such a duration, this is why.  Performing any operations, including management operations, on the
+link will extend this timeout.
+- idle_timeout: Provided on creation of a receiver, the time after which the underlying UAMQP link will be closed after no traffic.  This primarily dictates the length
+a generator-style receive will run for before exiting if there are no messages.  Passing None (default) will wait forever, up until the 10 minute threshold if no other action is taken.
+- max_wait_time: Provided when calling receive() to fetch a batch of messages.  Dictates how long the receive() will wait for more messages before returning, similarly up to the aformentioned limits.
+
+### Common Exceptions
+
+Please view the [exceptions](./azure/servicebus/exceptions.py) file for detailed descriptions of our common Exception types.
 
 ## Next steps
 
@@ -207,3 +225,4 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 [topic_concept]: https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-messaging-overview#topics
 [subscription_concept]: https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-queues-topics-subscriptions#topics-and-subscriptions
 [azure_namespace_creation]: https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-create-namespace-portal
+[servicebus_management_repository]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-mgmt-servicebus

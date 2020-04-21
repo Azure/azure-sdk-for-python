@@ -114,6 +114,33 @@ async def test_retry_on_429():
     assert transport._count == 2
 
 @pytest.mark.asyncio
+async def test_no_retry_on_201():
+    class MockTransport(AsyncHttpTransport):
+        def __init__(self):
+            self._count = 0
+        async def __aexit__(self, exc_type, exc_val, exc_tb):
+            pass
+        async def close(self):
+            pass
+        async def open(self):
+            pass
+
+        async def send(self, request, **kwargs):  # type: (PipelineRequest, Any) -> PipelineResponse
+            self._count += 1
+            response = HttpResponse(request, None)
+            response.status_code = 201
+            headers = {"Retry-After": "1"}
+            response.headers = headers
+            return response
+
+    http_request = HttpRequest('GET', 'http://127.0.0.1/')
+    http_retry = AsyncRetryPolicy(retry_total = 1)
+    transport = MockTransport()
+    pipeline = AsyncPipeline(transport, [http_retry])
+    await pipeline.run(http_request)
+    assert transport._count == 1
+
+@pytest.mark.asyncio
 async def test_retry_seekable_stream():
     class MockTransport(AsyncHttpTransport):
         def __init__(self):
@@ -132,7 +159,9 @@ async def test_retry_seekable_stream():
                 raise AzureError('fail on first')
             position = request.body.tell()
             assert position == 0
-            return HttpResponse(request, None)
+            response = HttpResponse(request, None)
+            response.status_code = 400
+            return response
 
     data = BytesIO(b"Lots of dataaaa")
     http_request = HttpRequest('GET', 'http://127.0.0.1/')
@@ -166,7 +195,9 @@ async def test_retry_seekable_file():
                 if name and body and hasattr(body, 'read'):
                     position = body.tell()
                     assert not position
-                    return HttpResponse(request, None)
+                    response = HttpResponse(request, None)
+                    response.status_code = 400
+                    return response
 
     file = tempfile.NamedTemporaryFile(delete=False)
     file.write(b'Lots of dataaaa')
