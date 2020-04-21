@@ -60,7 +60,6 @@ from typing import (
     Optional,
     Tuple,
     Iterator,
-    Type
 )
 
 from six.moves.http_client import HTTPConnection, HTTPResponse as _HTTPResponse
@@ -137,37 +136,6 @@ def _urljoin(base_url, stub_url):
     parsed = urlparse(base_url)
     parsed = parsed._replace(path=parsed.path + "/" + stub_url)
     return parsed.geturl()
-
-
-def _calculate_changesets(changesets):
-    # type: (List[Union[Tuple[int, int, str], Tuple[int, int]]]) -> Tuple[Dict[int, Optional[str]], List[int]]
-    """Convert the changeset ranges into start/end indexes."""
-    start = {}
-    end = []
-    validate_indexes = []
-    boundary = None  # type: Optional[str]
-    for changeset in changesets:
-        try:
-            start_index, end_index, boundary = cast('Tuple[int, int, str]', changeset)
-        except ValueError:
-            start_index, end_index = cast('Tuple[int, int]', changeset)
-        validate_indexes.extend(list(range(start_index, end_index + 1)))
-        start[start_index] = boundary
-        end.append(end_index)
-    if len(validate_indexes) != len(set(validate_indexes)):
-        raise ValueError("Changesets must not overlap.")
-    return start, end
-
-
-def _add_message_part(index, message, request):
-    # type: (int, Message, HttpRequest) -> None
-    """Add each request to the message batch."""
-    part_message = Message()
-    part_message.add_header("Content-Type", "application/http")
-    part_message.add_header("Content-Transfer-Encoding", "binary")
-    part_message.add_header("Content-ID", str(index))
-    part_message.set_payload(request.serialize())
-    message.attach(part_message)
 
 
 class _HTTPSerializer(HTTPConnection, object):
@@ -411,36 +379,33 @@ class HttpRequest(object):
 
         :keyword list[SansIOHTTPPolicy] policies: SansIOPolicy to apply at preparation time
         :keyword str boundary: Optional boundary
-        :keyword changesets: Optional list of tuples marking the change sets within the request list.
-         Each tuple should contain two integers: the start and inclusive-end indexes of each change set
-         within the request list. Optionally, the tuple can also contain a changeset boundary string.
-         Any request that fall outside the changeset ranges will be added to the batch normally.
-         Change set ranges must not overlap.
-        :paramtype changesets: List[Union[Tuple[int, int, str], Tuple[int, int]]]
         :param requests: HttpRequests object
         """
         self.multipart_mixed_info = (
             requests,
             kwargs.pop("policies", []),
-            kwargs.pop("boundary", []),
+            kwargs.pop("boundary", None),
             kwargs
         )
 
-    def prepare_multipart_body(self):
-        # type: () -> None
+    def prepare_multipart_body(self, content_index=0):
+        # type: (int) -> int
         """Will prepare the body of this request according to the multipart information.
 
         This call assumes the on_request policies have been applied already in their
         correct context (sync/async)
 
         Does nothing if "set_multipart_mixed" was never called.
+
+        :param int content_index: The current index of parts within the batch message.
+        :returns: The updated index after all parts in this request have been added.
+        :rtype: int
         """
         if not self.multipart_mixed_info:
-            return
+            return 0
 
-        boundary = self.multipart_mixed_info[2]  # type: Optional[str]
         requests = self.multipart_mixed_info[0]  # type: List[HttpRequest]
-        start_changeset, end_changeset = _calculate_changesets(self.multipart_mixed_info[3])
+        boundary = self.multipart_mixed_info[2]  # type: Optional[str]
 
         # Update the main request with the body
         main_message = Message()
@@ -448,18 +413,23 @@ class HttpRequest(object):
         if boundary:
             main_message.set_boundary(boundary)
 
-        working_message = main_message
-        for index, request in enumerate(requests):
-            if index in start_changeset:
-                working_message = Message()
-                working_message.add_header("Content-Type", "multipart/mixed")
-                changeset_boundary = start_changeset[index]
-                if changeset_boundary:
-                    working_message.set_boundary(changeset_boundary)
-            _add_message_part(index, working_message, request)
-            if index in end_changeset:
-                main_message.attach(working_message)
-                working_message = main_message
+        for req in requests:
+            part_message = Message()
+            if req.multipart_mixed_info:
+                content_index = req.prepare_multipart_body(content_index=content_index)
+                part_message.add_header("Content-Type", req.headers['Content-Type'])
+                payload = req.serialize()
+                # We need to remove the ~HTTP/1.1 prefix along with the added content-length
+                payload = payload[payload.index(b'--'):]
+                
+            else:
+                part_message.add_header("Content-Type", "application/http")
+                part_message.add_header("Content-Transfer-Encoding", "binary")
+                part_message.add_header("Content-ID", str(content_index))
+                payload = req.serialize()
+                content_index += 1
+            part_message.set_payload(payload)
+            main_message.attach(part_message)
 
         try:
             from email.policy import HTTP
@@ -479,6 +449,7 @@ class HttpRequest(object):
         self.headers["Content-Type"] = (
             "multipart/mixed; boundary=" + main_message.get_boundary()
         )
+        return content_index
 
     def serialize(self):
         # type: () -> bytes

@@ -155,12 +155,16 @@ async def test_multipart_send_with_one_changeset():
         HttpRequest("DELETE", "/container0/blob0"),
         HttpRequest("DELETE", "/container1/blob1")
     ]
+    changeset = HttpRequest(None, None)
+    changeset.set_multipart_mixed(
+        *requests,
+        boundary="changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525"
+    )
 
     request = HttpRequest("POST", "http://account.blob.core.windows.net/?comp=batch")
     request.set_multipart_mixed(
-        *requests,
-        boundary="batch_357de4f7-6d0b-4e02-8cd2-6361411a9525",
-        changesets=[(0, 1, "changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525")]
+        changeset,
+        boundary="batch_357de4f7-6d0b-4e02-8cd2-6361411a9525"
     )
 
     async with AsyncPipeline(transport) as pipeline:
@@ -168,7 +172,7 @@ async def test_multipart_send_with_one_changeset():
 
     assert request.body == (
         b'--batch_357de4f7-6d0b-4e02-8cd2-6361411a9525\r\n'
-        b'Content-Type: multipart/mixed; boundary="changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525"\r\n'
+        b'Content-Type: multipart/mixed; boundary=changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525\r\n'
         b'\r\n'
         b'--changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525\r\n'
         b'Content-Type: application/http\r\n'
@@ -195,20 +199,24 @@ async def test_multipart_send_with_one_changeset():
 @pytest.mark.asyncio
 async def test_multipart_send_with_multiple_changesets():
     transport = MockAsyncHttpTransport()
-    requests = [
+    changeset1 = HttpRequest(None, None)
+    changeset1.set_multipart_mixed(
         HttpRequest("DELETE", "/container0/blob0"),
         HttpRequest("DELETE", "/container1/blob1"),
+        boundary="changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525"
+    )
+    changeset2 = HttpRequest(None, None)
+    changeset2.set_multipart_mixed(
         HttpRequest("DELETE", "/container2/blob2"),
-        HttpRequest("DELETE", "/container3/blob3")
-    ]
+        HttpRequest("DELETE", "/container3/blob3"),
+        boundary="changeset_8b9e487e-a353-4dcb-a6f4-0688191e0314"
+    )
 
     request = HttpRequest("POST", "http://account.blob.core.windows.net/?comp=batch")
     request.set_multipart_mixed(
-        *requests,
+        changeset1,
+        changeset2,
         boundary="batch_357de4f7-6d0b-4e02-8cd2-6361411a9525",
-        changesets=[
-            (0, 1, "changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525"),
-            (2, 3, "changeset_8b9e487e-a353-4dcb-a6f4-0688191e0314")]
     )
 
     async with AsyncPipeline(transport) as pipeline:
@@ -216,7 +224,7 @@ async def test_multipart_send_with_multiple_changesets():
 
     assert request.body == (
         b'--batch_357de4f7-6d0b-4e02-8cd2-6361411a9525\r\n'
-        b'Content-Type: multipart/mixed; boundary="changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525"\r\n'
+        b'Content-Type: multipart/mixed; boundary=changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525\r\n'
         b'\r\n'
         b'--changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525\r\n'
         b'Content-Type: application/http\r\n'
@@ -237,7 +245,7 @@ async def test_multipart_send_with_multiple_changesets():
         b'--changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525--\r\n'
         b'\r\n'
         b'--batch_357de4f7-6d0b-4e02-8cd2-6361411a9525\r\n'
-        b'Content-Type: multipart/mixed; boundary="changeset_8b9e487e-a353-4dcb-a6f4-0688191e0314"\r\n'
+        b'Content-Type: multipart/mixed; boundary=changeset_8b9e487e-a353-4dcb-a6f4-0688191e0314\r\n'
         b'\r\n'
         b'--changeset_8b9e487e-a353-4dcb-a6f4-0688191e0314\r\n'
         b'Content-Type: application/http\r\n'
@@ -264,17 +272,18 @@ async def test_multipart_send_with_multiple_changesets():
 @pytest.mark.asyncio
 async def test_multipart_send_with_combination_changeset_first():
     transport = MockAsyncHttpTransport()
-    requests = [
+
+    changeset = HttpRequest(None, None)
+    changeset.set_multipart_mixed(
         HttpRequest("DELETE", "/container0/blob0"),
         HttpRequest("DELETE", "/container1/blob1"),
-        HttpRequest("DELETE", "/container2/blob2")
-    ]
-
+        boundary="changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525"
+    )
     request = HttpRequest("POST", "http://account.blob.core.windows.net/?comp=batch")
     request.set_multipart_mixed(
-        *requests,
-        boundary="batch_357de4f7-6d0b-4e02-8cd2-6361411a9525",
-        changesets=[(0, 1, "changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525")]
+        changeset,
+        HttpRequest("DELETE", "/container2/blob2"),
+        boundary="batch_357de4f7-6d0b-4e02-8cd2-6361411a9525"
     )
 
     async with AsyncPipeline(transport) as pipeline:
@@ -282,7 +291,7 @@ async def test_multipart_send_with_combination_changeset_first():
 
     assert request.body == (
         b'--batch_357de4f7-6d0b-4e02-8cd2-6361411a9525\r\n'
-        b'Content-Type: multipart/mixed; boundary="changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525"\r\n'
+        b'Content-Type: multipart/mixed; boundary=changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525\r\n'
         b'\r\n'
         b'--changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525\r\n'
         b'Content-Type: application/http\r\n'
@@ -317,17 +326,17 @@ async def test_multipart_send_with_combination_changeset_first():
 @pytest.mark.asyncio
 async def test_multipart_send_with_combination_changeset_last():
     transport = MockAsyncHttpTransport()
-    requests = [
-        HttpRequest("DELETE", "/container0/blob0"),
+    changeset = HttpRequest(None, None)
+    changeset.set_multipart_mixed(
         HttpRequest("DELETE", "/container1/blob1"),
-        HttpRequest("DELETE", "/container2/blob2")
-    ]
-
+        HttpRequest("DELETE", "/container2/blob2"),
+        boundary="changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525"
+    )
     request = HttpRequest("POST", "http://account.blob.core.windows.net/?comp=batch")
     request.set_multipart_mixed(
-        *requests,
-        boundary="batch_357de4f7-6d0b-4e02-8cd2-6361411a9525",
-        changesets=[(1, 2, "changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525")]
+        HttpRequest("DELETE", "/container0/blob0"),
+        changeset,
+        boundary="batch_357de4f7-6d0b-4e02-8cd2-6361411a9525"
     )
 
     async with AsyncPipeline(transport) as pipeline:
@@ -343,7 +352,7 @@ async def test_multipart_send_with_combination_changeset_last():
         b'\r\n'
         b'\r\n'
         b'--batch_357de4f7-6d0b-4e02-8cd2-6361411a9525\r\n'
-        b'Content-Type: multipart/mixed; boundary="changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525"\r\n'
+        b'Content-Type: multipart/mixed; boundary=changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525\r\n'
         b'\r\n'
         b'--changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525\r\n'
         b'Content-Type: application/http\r\n'
@@ -370,17 +379,17 @@ async def test_multipart_send_with_combination_changeset_last():
 @pytest.mark.asyncio
 async def test_multipart_send_with_combination_changeset_middle():
     transport = MockAsyncHttpTransport()
-    requests = [
-        HttpRequest("DELETE", "/container0/blob0"),
+    changeset = HttpRequest(None, None)
+    changeset.set_multipart_mixed(
         HttpRequest("DELETE", "/container1/blob1"),
-        HttpRequest("DELETE", "/container2/blob2")
-    ]
-
+        boundary="changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525"
+    )
     request = HttpRequest("POST", "http://account.blob.core.windows.net/?comp=batch")
     request.set_multipart_mixed(
-        *requests,
-        boundary="batch_357de4f7-6d0b-4e02-8cd2-6361411a9525",
-        changesets=[(1, 1, "changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525")]
+        HttpRequest("DELETE", "/container0/blob0"),
+        changeset,
+        HttpRequest("DELETE", "/container2/blob2"),
+        boundary="batch_357de4f7-6d0b-4e02-8cd2-6361411a9525"
     )
 
     async with AsyncPipeline(transport) as pipeline:
@@ -396,7 +405,7 @@ async def test_multipart_send_with_combination_changeset_middle():
         b'\r\n'
         b'\r\n'
         b'--batch_357de4f7-6d0b-4e02-8cd2-6361411a9525\r\n'
-        b'Content-Type: multipart/mixed; boundary="changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525"\r\n'
+        b'Content-Type: multipart/mixed; boundary=changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525\r\n'
         b'\r\n'
         b'--changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525\r\n'
         b'Content-Type: application/http\r\n'
@@ -418,30 +427,6 @@ async def test_multipart_send_with_combination_changeset_middle():
         b'\r\n'
         b'--batch_357de4f7-6d0b-4e02-8cd2-6361411a9525--\r\n'
     )
-
-
-@pytest.mark.asyncio
-async def test_multipart_send_with_changeset_overlap():
-    transport = MockAsyncHttpTransport()
-    requests = [
-        HttpRequest("DELETE", "/container0/blob0"),
-        HttpRequest("DELETE", "/container1/blob1"),
-        HttpRequest("DELETE", "/container2/blob2")
-    ]
-
-    request = HttpRequest("POST", "http://account.blob.core.windows.net/?comp=batch")
-    request.set_multipart_mixed(
-        *requests,
-        boundary="batch_357de4f7-6d0b-4e02-8cd2-6361411a9525",
-        changesets=[
-            (0, 2, "changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525"),
-            (1, 2, "changeset_8b9e487e-a353-4dcb-a6f4-0688191e0314")]
-    )
-
-    async with AsyncPipeline(transport) as pipeline:
-        with pytest.raises(ValueError) as e:
-            await pipeline.run(request)
-    assert str(e.value) == "Changesets must not overlap."
 
 
 @pytest.mark.asyncio
