@@ -8,10 +8,6 @@ from .._credentials.base import AsyncCredentialBase
 from ..._constants import AZURE_VSCODE_CLIENT_ID
 from .._internal.aad_client import AadClient
 from ..._credentials.vscode_credential import get_credentials
-try:
-    from ..._credentials.win_vscode_credential import _get_user_settings, _get_refresh_token
-except ImportError:
-    pass
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
     from typing import Any, Iterable, Optional
