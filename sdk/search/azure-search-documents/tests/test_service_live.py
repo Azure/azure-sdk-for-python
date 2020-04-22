@@ -9,9 +9,9 @@ import time
 
 import pytest
 
-from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
+from devtools_testutils import AzureMgmtTestCase
 
-from search_service_preparer import SearchServicePreparer
+from search_service_preparer import GlobalResourceGroupPreparer, SearchServicePreparer
 
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import HttpResponseError
@@ -35,7 +35,7 @@ BATCH = json.load(open(join(CWD, "hotel_small.json")))
 TIME_TO_SLEEP = 5
 
 class SearchServiceClientTest(AzureMgmtTestCase):
-    @ResourceGroupPreparer(random_name_enabled=True)
+    @GlobalResourceGroupPreparer()
     @SearchServicePreparer()
     def test_get_service_statistics(self, api_key, endpoint, **kwargs):
         client = SearchServiceClient(endpoint, AzureKeyCredential(api_key))
@@ -45,14 +45,14 @@ class SearchServiceClientTest(AzureMgmtTestCase):
 
     # Index operations
 
-    @ResourceGroupPreparer(random_name_enabled=True)
+    @GlobalResourceGroupPreparer()
     @SearchServicePreparer()
     def test_get_indexes_empty(self, api_key, endpoint, **kwargs):
         client = SearchServiceClient(endpoint, AzureKeyCredential(api_key))
         result = client.get_indexes()
         assert len(result) == 0
 
-    @ResourceGroupPreparer(random_name_enabled=True)
+    @GlobalResourceGroupPreparer()
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_get_indexes(self, api_key, endpoint, index_name, **kwargs):
         client = SearchServiceClient(endpoint, AzureKeyCredential(api_key))
@@ -60,21 +60,21 @@ class SearchServiceClientTest(AzureMgmtTestCase):
         assert len(result) == 1
         assert result[0].name == index_name
 
-    @ResourceGroupPreparer(random_name_enabled=True)
+    @GlobalResourceGroupPreparer()
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_get_index(self, api_key, endpoint, index_name, **kwargs):
         client = SearchServiceClient(endpoint, AzureKeyCredential(api_key))
         result = client.get_index(index_name)
         assert result.name == index_name
 
-    @ResourceGroupPreparer(random_name_enabled=True)
+    @GlobalResourceGroupPreparer()
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_get_index_statistics(self, api_key, endpoint, index_name, **kwargs):
         client = SearchServiceClient(endpoint, AzureKeyCredential(api_key))
         result = client.get_index_statistics(index_name)
         assert set(result.keys()) == {'document_count', 'storage_size'}
 
-    @ResourceGroupPreparer(random_name_enabled=True)
+    @GlobalResourceGroupPreparer()
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_delete_indexes(self, api_key, endpoint, index_name, **kwargs):
         client = SearchServiceClient(endpoint, AzureKeyCredential(api_key))
@@ -85,7 +85,7 @@ class SearchServiceClientTest(AzureMgmtTestCase):
         result = client.get_indexes()
         assert len(result) == 0
 
-    @ResourceGroupPreparer(random_name_enabled=True)
+    @GlobalResourceGroupPreparer()
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_create_index(self, api_key, endpoint, index_name, **kwargs):
         name = "hotels"
@@ -118,7 +118,7 @@ class SearchServiceClientTest(AzureMgmtTestCase):
         assert result.cors_options.allowed_origins == cors_options.allowed_origins
         assert result.cors_options.max_age_in_seconds == cors_options.max_age_in_seconds
 
-    @ResourceGroupPreparer(random_name_enabled=True)
+    @GlobalResourceGroupPreparer()
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_create_or_update_index(self, api_key, endpoint, index_name, **kwargs):
         name = "hotels"
@@ -160,7 +160,7 @@ class SearchServiceClientTest(AzureMgmtTestCase):
         assert result.cors_options.allowed_origins == cors_options.allowed_origins
         assert result.cors_options.max_age_in_seconds == cors_options.max_age_in_seconds
 
-    @ResourceGroupPreparer(random_name_enabled=True)
+    @GlobalResourceGroupPreparer()
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_analyze_text(self, api_key, endpoint, index_name, **kwargs):
         client = SearchServiceClient(endpoint, AzureKeyCredential(api_key))
@@ -170,7 +170,7 @@ class SearchServiceClientTest(AzureMgmtTestCase):
 
     # Synonym Map operations
 
-    @ResourceGroupPreparer(random_name_enabled=True)
+    @GlobalResourceGroupPreparer()
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_create_synonym_map(self, api_key, endpoint, index_name, **kwargs):
         client = SearchServiceClient(endpoint, AzureKeyCredential(api_key))
@@ -185,8 +185,9 @@ class SearchServiceClientTest(AzureMgmtTestCase):
             "Washington, Wash. => WA",
         ]
         assert len(client.get_synonym_maps()) == 1
+        client.delete_synonym_map("test-syn-map")
 
-    @ResourceGroupPreparer(random_name_enabled=True)
+    @GlobalResourceGroupPreparer()
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_delete_synonym_map(self, api_key, endpoint, index_name, **kwargs):
         client = SearchServiceClient(endpoint, AzureKeyCredential(api_key))
@@ -198,7 +199,7 @@ class SearchServiceClientTest(AzureMgmtTestCase):
         client.delete_synonym_map("test-syn-map")
         assert len(client.get_synonym_maps()) == 0
 
-    @ResourceGroupPreparer(random_name_enabled=True)
+    @GlobalResourceGroupPreparer()
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_get_synonym_map(self, api_key, endpoint, index_name, **kwargs):
         client = SearchServiceClient(endpoint, AzureKeyCredential(api_key))
@@ -214,8 +215,9 @@ class SearchServiceClientTest(AzureMgmtTestCase):
             "USA, United States, United States of America",
             "Washington, Wash. => WA",
         ]
+        client.delete_synonym_map("test-syn-map")
 
-    @ResourceGroupPreparer(random_name_enabled=True)
+    @GlobalResourceGroupPreparer()
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_get_synonym_maps(self, api_key, endpoint, index_name, **kwargs):
         client = SearchServiceClient(endpoint, AzureKeyCredential(api_key))
@@ -229,8 +231,10 @@ class SearchServiceClientTest(AzureMgmtTestCase):
         assert isinstance(result, list)
         assert all(isinstance(x, dict) for x in result)
         assert set(x['name'] for x in result) == {"test-syn-map-1", "test-syn-map-2"}
+        client.delete_synonym_map("test-syn-map-1")
+        client.delete_synonym_map("test-syn-map-2")
 
-    @ResourceGroupPreparer(random_name_enabled=True)
+    @GlobalResourceGroupPreparer()
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_create_or_update_synonym_map(self, api_key, endpoint, index_name, **kwargs):
         client = SearchServiceClient(endpoint, AzureKeyCredential(api_key))
@@ -248,10 +252,11 @@ class SearchServiceClientTest(AzureMgmtTestCase):
         assert result["synonyms"] == [
             "Washington, Wash. => WA",
         ]
+        client.delete_synonym_map("test-syn-map")
 
     # Skillset operations
 
-    @ResourceGroupPreparer(random_name_enabled=True)
+    @GlobalResourceGroupPreparer()
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_create_skillset(self, api_key, endpoint, index_name, **kwargs):
         client = SearchServiceClient(endpoint, AzureKeyCredential(api_key))
@@ -269,7 +274,7 @@ class SearchServiceClientTest(AzureMgmtTestCase):
 
         assert len(client.get_skillsets()) == 1
 
-    @ResourceGroupPreparer(random_name_enabled=True)
+    @GlobalResourceGroupPreparer()
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_delete_skillset(self, api_key, endpoint, index_name, **kwargs):
         client = SearchServiceClient(endpoint, AzureKeyCredential(api_key))
@@ -282,7 +287,7 @@ class SearchServiceClientTest(AzureMgmtTestCase):
         client.delete_skillset("test-ss")
         assert len(client.get_skillsets()) == 0
 
-    @ResourceGroupPreparer(random_name_enabled=True)
+    @GlobalResourceGroupPreparer()
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_get_skillset(self, api_key, endpoint, index_name, **kwargs):
         client = SearchServiceClient(endpoint, AzureKeyCredential(api_key))
@@ -300,7 +305,7 @@ class SearchServiceClientTest(AzureMgmtTestCase):
         assert len(result.skills) == 1
         assert isinstance(result.skills[0], EntityRecognitionSkill)
 
-    @ResourceGroupPreparer(random_name_enabled=True)
+    @GlobalResourceGroupPreparer()
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_get_skillsets(self, api_key, endpoint, index_name, **kwargs):
         client = SearchServiceClient(endpoint, AzureKeyCredential(api_key))
@@ -314,7 +319,7 @@ class SearchServiceClientTest(AzureMgmtTestCase):
         assert all(isinstance(x, Skillset) for x in result)
         assert set(x.name for x in result) == {"test-ss-1", "test-ss-2"}
 
-    @ResourceGroupPreparer(random_name_enabled=True)
+    @GlobalResourceGroupPreparer()
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_create_or_update_skillset(self, api_key, endpoint, index_name, **kwargs):
         client = SearchServiceClient(endpoint, AzureKeyCredential(api_key))
@@ -330,7 +335,7 @@ class SearchServiceClientTest(AzureMgmtTestCase):
         assert result.name == "test-ss"
         assert result.description == "desc2"
 
-    @ResourceGroupPreparer(random_name_enabled=True)
+    @GlobalResourceGroupPreparer()
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_create_or_update_skillset_inplace(self, api_key, endpoint, index_name, **kwargs):
         client = SearchServiceClient(endpoint, AzureKeyCredential(api_key))

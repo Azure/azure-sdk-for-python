@@ -16,12 +16,12 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/1.0.0b3 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
       api-key:
-      - 61C79770176807E3449AEAB2E522C509
+      - 96E0D099D7A73EA0B9EF99B53F038E31
     method: POST
-    uri: https://search33580fc6.search.windows.net/synonymmaps?api-version=2019-05-06-Preview
+    uri: https://search2351151c.search.windows.net/synonymmaps?api-version=2019-05-06-Preview
   response:
     body:
-      string: '{"@odata.context":"https://search33580fc6.search.windows.net/$metadata#synonymmaps/$entity","@odata.etag":"\"0x8D7E0972DD66E22\"","name":"test-syn-map","format":"solr","synonyms":"USA,
+      string: '{"@odata.context":"https://search2351151c.search.windows.net/$metadata#synonymmaps/$entity","@odata.etag":"\"0x8D7E712211A63F8\"","name":"test-syn-map","format":"solr","synonyms":"USA,
         United States, United States of America\nWashington, Wash. => WA","encryptionKey":null}'
     headers:
       cache-control:
@@ -31,15 +31,15 @@ interactions:
       content-type:
       - application/json; odata.metadata=minimal
       date:
-      - Tue, 14 Apr 2020 17:13:40 GMT
+      - Wed, 22 Apr 2020 23:08:54 GMT
       elapsed-time:
-      - '52'
+      - '22'
       etag:
-      - W/"0x8D7E0972DD66E22"
+      - W/"0x8D7E712211A63F8"
       expires:
       - '-1'
       location:
-      - https://search33580fc6.search.windows.net/synonymmaps('test-syn-map')?api-version=2019-05-06-Preview
+      - https://search2351151c.search.windows.net/synonymmaps('test-syn-map')?api-version=2019-05-06-Preview
       odata-version:
       - '4.0'
       pragma:
@@ -47,7 +47,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - 4987392c-7e73-11ea-a11f-8c8590507855
+      - 3cb970c6-84ee-11ea-bafc-8c8590507855
       strict-transport-security:
       - max-age=15724800; includeSubDomains
     status:
@@ -65,12 +65,12 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/1.0.0b3 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
       api-key:
-      - 61C79770176807E3449AEAB2E522C509
+      - 96E0D099D7A73EA0B9EF99B53F038E31
     method: GET
-    uri: https://search33580fc6.search.windows.net/synonymmaps?api-version=2019-05-06-Preview
+    uri: https://search2351151c.search.windows.net/synonymmaps?api-version=2019-05-06-Preview
   response:
     body:
-      string: '{"@odata.context":"https://search33580fc6.search.windows.net/$metadata#synonymmaps","value":[{"@odata.etag":"\"0x8D7E0972DD66E22\"","name":"test-syn-map","format":"solr","synonyms":"USA,
+      string: '{"@odata.context":"https://search2351151c.search.windows.net/$metadata#synonymmaps","value":[{"@odata.etag":"\"0x8D7E712211A63F8\"","name":"test-syn-map","format":"solr","synonyms":"USA,
         United States, United States of America\nWashington, Wash. => WA","encryptionKey":null}]}'
     headers:
       cache-control:
@@ -80,9 +80,9 @@ interactions:
       content-type:
       - application/json; odata.metadata=minimal
       date:
-      - Tue, 14 Apr 2020 17:13:40 GMT
+      - Wed, 22 Apr 2020 23:08:54 GMT
       elapsed-time:
-      - '13'
+      - '9'
       expires:
       - '-1'
       odata-version:
@@ -92,7 +92,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - 49a5cd7e-7e73-11ea-a11f-8c8590507855
+      - 3cd45058-84ee-11ea-bafc-8c8590507855
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:
@@ -112,12 +112,12 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/1.0.0b3 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
       api-key:
-      - 61C79770176807E3449AEAB2E522C509
+      - 96E0D099D7A73EA0B9EF99B53F038E31
     method: GET
-    uri: https://search33580fc6.search.windows.net/synonymmaps('test-syn-map')?api-version=2019-05-06-Preview
+    uri: https://search2351151c.search.windows.net/synonymmaps('test-syn-map')?api-version=2019-05-06-Preview
   response:
     body:
-      string: '{"@odata.context":"https://search33580fc6.search.windows.net/$metadata#synonymmaps/$entity","@odata.etag":"\"0x8D7E0972DD66E22\"","name":"test-syn-map","format":"solr","synonyms":"USA,
+      string: '{"@odata.context":"https://search2351151c.search.windows.net/$metadata#synonymmaps/$entity","@odata.etag":"\"0x8D7E712211A63F8\"","name":"test-syn-map","format":"solr","synonyms":"USA,
         United States, United States of America\nWashington, Wash. => WA","encryptionKey":null}'
     headers:
       cache-control:
@@ -127,11 +127,11 @@ interactions:
       content-type:
       - application/json; odata.metadata=minimal
       date:
-      - Tue, 14 Apr 2020 17:13:40 GMT
+      - Wed, 22 Apr 2020 23:08:54 GMT
       elapsed-time:
-      - '10'
+      - '9'
       etag:
-      - W/"0x8D7E0972DD66E22"
+      - W/"0x8D7E712211A63F8"
       expires:
       - '-1'
       odata-version:
@@ -141,7 +141,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - 49ae13bc-7e73-11ea-a11f-8c8590507855
+      - 3cdbd7a6-84ee-11ea-bafc-8c8590507855
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:
@@ -149,4 +149,42 @@ interactions:
     status:
       code: 200
       message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json;odata.metadata=minimal
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-search-documents/1.0.0b3 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
+      api-key:
+      - 96E0D099D7A73EA0B9EF99B53F038E31
+    method: DELETE
+    uri: https://search2351151c.search.windows.net/synonymmaps('test-syn-map')?api-version=2019-05-06-Preview
+  response:
+    body:
+      string: ''
+    headers:
+      cache-control:
+      - no-cache
+      date:
+      - Wed, 22 Apr 2020 23:08:54 GMT
+      elapsed-time:
+      - '14'
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-id:
+      - 3ce4582c-84ee-11ea-bafc-8c8590507855
+      strict-transport-security:
+      - max-age=15724800; includeSubDomains
+    status:
+      code: 204
+      message: No Content
 version: 1
