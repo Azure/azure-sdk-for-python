@@ -189,10 +189,10 @@ def read_config_from_github(sdk_id, branch="master", gh_token=None):
         ))
     return json.loads(response.text)
 
-def extract_conf_from_readmes(swagger_files_in_pr, restapi_git_folder, sdk_git_id, config):
+def extract_conf_from_readmes(swagger_files_in_pr, restapi_git_folder, sdk_git_id, config, force_generation=False):
     readme_files_in_pr = {readme for readme in swagger_files_in_pr if getattr(readme, "name", readme).lower().endswith("readme.md")}
     for readme_file in readme_files_in_pr:
-        build_swaggertosdk_conf_from_json_readme(readme_file, sdk_git_id, config, base_folder=restapi_git_folder)
+        build_swaggertosdk_conf_from_json_readme(readme_file, sdk_git_id, config, base_folder=restapi_git_folder, force_generation=force_generation)
 
 def get_readme_path(readme_file, base_folder='.'):
     """Get a readable Readme path.
@@ -207,7 +207,7 @@ def get_readme_path(readme_file, base_folder='.'):
             base_folder='.'
         return str(Path(base_folder) / Path(readme_file))
 
-def build_swaggertosdk_conf_from_json_readme(readme_file, sdk_git_id, config, base_folder='.'):
+def build_swaggertosdk_conf_from_json_readme(readme_file, sdk_git_id, config, base_folder='.', force_generation=False):
     """Get the JSON conf of this README, and create SwaggerToSdk conf.
 
     Readme path can be any readme syntax accepted by autorest.
@@ -215,7 +215,8 @@ def build_swaggertosdk_conf_from_json_readme(readme_file, sdk_git_id, config, ba
 
     :param str readme_file: A path that Autorest accepts. Raw GH link or absolute path.
     :param str sdk_dit_id: Repo ID. IF org/login is provided, will be stripped.
-    :config dict config: Config where to update the "projects" key.
+    :param dict config: Config where to update the "projects" key.
+    :param bool force_generation: If no Swagger to SDK section is found, force once with the Readme as input
     """
     readme_full_path = get_readme_path(readme_file, base_folder)
     with tempfile.TemporaryDirectory() as temp_dir:
@@ -223,6 +224,9 @@ def build_swaggertosdk_conf_from_json_readme(readme_file, sdk_git_id, config, ba
             readme_full_path,
             temp_dir
         )
+    generated_config = {
+        "markdown": readme_full_path,
+    }
     sdk_git_short_id = sdk_git_id.split("/")[-1].lower()
     _LOGGER.info("Looking for tag {} in readme {}".format(sdk_git_short_id, readme_file))
     for swagger_to_sdk_conf in readme_as_conf:
@@ -230,16 +234,19 @@ def build_swaggertosdk_conf_from_json_readme(readme_file, sdk_git_id, config, ba
         repo = repo.split("/")[-1].lower() # Be sure there is no org/login part
         if repo == sdk_git_short_id:
             _LOGGER.info("This Readme contains a swagger-to-sdk section for repo {}".format(repo))
-            generated_config = {
-                "markdown": readme_full_path,
+            generated_config.update({
                 "autorest_options": swagger_to_sdk_conf.get("autorest_options", {}),
                 "after_scripts": swagger_to_sdk_conf.get("after_scripts", []),
-            }
+            })
             config.setdefault("projects", {})[str(readme_file)] = generated_config
             return generated_config
         else:
             _LOGGER.info("Skip mismatch {} from {}".format(repo, sdk_git_short_id))
-    _LOGGER.info("Didn't find tag {} in readme {}. Did you forget to update the SwaggerToSdk section?".format(sdk_git_short_id, readme_file))
+    if not force_generation:
+        _LOGGER.info("Didn't find tag {} in readme {}. Did you forget to update the SwaggerToSdk section?".format(sdk_git_short_id, readme_file))
+    else:
+        _LOGGER.info("Didn't find tag {} in readme {}. Forcing it.".format(sdk_git_short_id, readme_file))
+        config.setdefault("projects", {})[str(readme_file)] = generated_config
 
 def get_input_paths(global_conf, local_conf):
     """Returns a 2-tuple:
