@@ -1,5 +1,11 @@
 # Release History
 
+## 0.5.0 (2020-04-22)
+
+**Breaking changes**
+
+  - Change the Client Name back from LogAnalyticsManagementClient
+
 ## 0.4.0 (2020-04-20)
 
 **Features**
