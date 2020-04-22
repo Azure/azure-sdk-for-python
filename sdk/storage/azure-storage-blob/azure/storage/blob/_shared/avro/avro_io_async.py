@@ -188,68 +188,13 @@ class AsyncBinaryDecoder(object):
 class AsyncDatumReader(object):
     """Deserialize Avro-encoded data into a Python data structure."""
 
-    @staticmethod
-    def check_props(schema_one, schema_two, prop_list):
-        for prop in prop_list:
-            if getattr(schema_one, prop) != getattr(schema_two, prop):
-                return False
-        return True
-
-    @staticmethod
-    def match_schemas(writer_schema, reader_schema):
-        w_type = writer_schema.type
-        r_type = reader_schema.type
-        if 'union' in [w_type, r_type] or 'error_union' in [w_type, r_type]:
-            result = True
-        elif (w_type in schema.PRIMITIVE_TYPES and r_type in schema.PRIMITIVE_TYPES
-              and w_type == r_type):
-            result = True
-        elif (w_type == r_type == 'record' and
-              AsyncDatumReader.check_props(writer_schema, reader_schema,
-                                      ['fullname'])):
-            result = True
-        elif (w_type == r_type == 'error' and
-              AsyncDatumReader.check_props(writer_schema, reader_schema,
-                                      ['fullname'])):
-            result = True
-        elif w_type == r_type == 'request':
-            return True
-        elif (w_type == r_type == 'fixed' and
-              AsyncDatumReader.check_props(writer_schema, reader_schema,
-                                      ['fullname', 'size'])):
-            result = True
-        elif (w_type == r_type == 'enum' and
-              AsyncDatumReader.check_props(writer_schema, reader_schema,
-                                      ['fullname'])):
-            result = True
-        elif (w_type == r_type == 'map' and
-              AsyncDatumReader.check_props(writer_schema.values,
-                                      reader_schema.values, ['type'])):
-            result = True
-        elif (w_type == r_type == 'array' and
-              AsyncDatumReader.check_props(writer_schema.items,
-                                      reader_schema.items, ['type'])):
-            result = True
-
-        # Handle schema promotion
-        elif w_type == 'int' and r_type in ['long', 'float', 'double']:
-            result = True
-        elif w_type == 'long' and r_type in ['float', 'double']:
-            result = True
-        elif w_type == 'float' and r_type == 'double':
-            result = True
-        else:
-            result = False
-        return result
-
-    def __init__(self, writer_schema=None, reader_schema=None):
+    def __init__(self, writer_schema=None):
         """
         As defined in the Avro specification, we call the schema encoded
         in the data the "writer's schema", and the schema expected by the
         reader the "reader's schema".
         """
         self._writer_schema = writer_schema
-        self._reader_schema = reader_schema
 
     # read/write properties
     def set_writer_schema(self, writer_schema):
@@ -258,32 +203,10 @@ class AsyncDatumReader(object):
     writer_schema = property(lambda self: self._writer_schema,
                              set_writer_schema)
 
-    def set_reader_schema(self, reader_schema):
-        self._reader_schema = reader_schema
-
-    reader_schema = property(lambda self: self._reader_schema,
-                             set_reader_schema)
-
     async def read(self, decoder):
-        if self.reader_schema is None:
-            self.reader_schema = self.writer_schema
-        return await self.read_data(self.writer_schema, self.reader_schema, decoder)
+        return await self.read_data(self.writer_schema, decoder)
 
-    async def read_data(self, writer_schema, reader_schema, decoder):
-        # schema matching
-        if not AsyncDatumReader.match_schemas(writer_schema, reader_schema):
-            fail_msg = 'Schemas do not match.'
-            raise SchemaResolutionException(fail_msg, writer_schema, reader_schema)
-
-        # schema resolution: reader's schema is a union, writer's schema is not
-        if (writer_schema.type not in ['union', 'error_union']
-                and reader_schema.type in ['union', 'error_union']):
-            for s in reader_schema.schemas:
-                if AsyncDatumReader.match_schemas(writer_schema, s):
-                    return await self.read_data(writer_schema, s, decoder)
-            fail_msg = 'Schemas do not match.'
-            raise SchemaResolutionException(fail_msg, writer_schema, reader_schema)
-
+    async def read_data(self, writer_schema, decoder):
         # function dispatch for reading data based on type of writer's schema
         if writer_schema.type == 'null':
             result = decoder.read_null()
@@ -304,15 +227,15 @@ class AsyncDatumReader(object):
         elif writer_schema.type == 'fixed':
             result = await self.read_fixed(writer_schema, decoder)
         elif writer_schema.type == 'enum':
-            result = await self.read_enum(writer_schema, reader_schema, decoder)
+            result = await self.read_enum(writer_schema, decoder)
         elif writer_schema.type == 'array':
-            result = await self.read_array(writer_schema, reader_schema, decoder)
+            result = await self.read_array(writer_schema, decoder)
         elif writer_schema.type == 'map':
-            result = await self.read_map(writer_schema, reader_schema, decoder)
+            result = await self.read_map(writer_schema, decoder)
         elif writer_schema.type in ['union', 'error_union']:
-            result = await self.read_union(writer_schema, reader_schema, decoder)
+            result = await self.read_union(writer_schema, decoder)
         elif writer_schema.type in ['record', 'error', 'request']:
-            result = await self.read_record(writer_schema, reader_schema, decoder)
+            result = await self.read_record(writer_schema, decoder)
         else:
             fail_msg = "Cannot read unknown schema type: %s" % writer_schema.type
             raise schema.AvroException(fail_msg)
@@ -368,7 +291,7 @@ class AsyncDatumReader(object):
         return await decoder.skip(writer_schema.size)
 
     @staticmethod
-    async def read_enum(writer_schema, reader_schema, decoder):
+    async def read_enum(writer_schema, decoder):
         """
         An enum is encoded by a int, representing the zero-based position
         of the symbol in the schema.
@@ -378,21 +301,15 @@ class AsyncDatumReader(object):
         if index_of_symbol >= len(writer_schema.symbols):
             fail_msg = "Can't access enum index %d for enum with %d symbols" \
                        % (index_of_symbol, len(writer_schema.symbols))
-            raise SchemaResolutionException(fail_msg, writer_schema, reader_schema)
+            raise SchemaResolutionException(fail_msg, writer_schema)
         read_symbol = writer_schema.symbols[index_of_symbol]
-
-        # schema resolution
-        if read_symbol not in reader_schema.symbols:
-            fail_msg = "Symbol %s not present in Reader's Schema" % read_symbol
-            raise SchemaResolutionException(fail_msg, writer_schema, reader_schema)
-
         return read_symbol
 
     @staticmethod
     async def skip_enum(decoder):
         return await decoder.skip_int()
 
-    async def read_array(self, writer_schema, reader_schema, decoder):
+    async def read_array(self, writer_schema, decoder):
         """
         Arrays are encoded as a series of blocks.
 
@@ -414,8 +331,7 @@ class AsyncDatumReader(object):
                 block_count = -block_count
                 await decoder.read_long()
             for _ in range(block_count):
-                read_items.append(await self.read_data(writer_schema.items,
-                                                 reader_schema.items, decoder))
+                read_items.append(await self.read_data(writer_schema.items, decoder))
             block_count = await decoder.read_long()
         return read_items
 
@@ -430,7 +346,7 @@ class AsyncDatumReader(object):
                     await self.skip_data(writer_schema.items, decoder)
             block_count = await decoder.read_long()
 
-    async def read_map(self, writer_schema, reader_schema, decoder):
+    async def read_map(self, writer_schema, decoder):
         """
         Maps are encoded as a series of blocks.
 
@@ -453,8 +369,7 @@ class AsyncDatumReader(object):
                 await decoder.read_long()
             for _ in range(block_count):
                 key = await decoder.read_utf8()
-                read_items[key] = await self.read_data(writer_schema.values,
-                                                 reader_schema.values, decoder)
+                read_items[key] = await self.read_data(writer_schema.values, decoder)
             block_count = await decoder.read_long()
         return read_items
 
@@ -470,7 +385,7 @@ class AsyncDatumReader(object):
                     await self.skip_data(writer_schema.values, decoder)
             block_count = await decoder.read_long()
 
-    async def read_union(self, writer_schema, reader_schema, decoder):
+    async def read_union(self, writer_schema, decoder):
         """
         A union is encoded by first writing a long value indicating
         the zero-based position within the union of the schema of its value.
@@ -481,11 +396,11 @@ class AsyncDatumReader(object):
         if index_of_schema >= len(writer_schema.schemas):
             fail_msg = "Can't access branch index %d for union with %d branches" \
                        % (index_of_schema, len(writer_schema.schemas))
-            raise SchemaResolutionException(fail_msg, writer_schema, reader_schema)
+            raise SchemaResolutionException(fail_msg, writer_schema)
         selected_writer_schema = writer_schema.schemas[index_of_schema]
 
         # read data
-        return await self.read_data(selected_writer_schema, reader_schema, decoder)
+        return await self.read_data(selected_writer_schema, decoder)
 
     async def skip_union(self, writer_schema, decoder):
         index_of_schema = int(await decoder.read_long())
@@ -495,7 +410,7 @@ class AsyncDatumReader(object):
             raise SchemaResolutionException(fail_msg, writer_schema)
         return await self.skip_data(writer_schema.schemas[index_of_schema], decoder)
 
-    async def read_record(self, writer_schema, reader_schema, decoder):
+    async def read_record(self, writer_schema, decoder):
         """
         A record is encoded by encoding the values of its fields
         in the order that they are declared. In other words, a record
@@ -516,28 +431,10 @@ class AsyncDatumReader(object):
            field's value is unset.
         """
         # schema resolution
-        readers_fields_dict = reader_schema.field_map
         read_record = {}
         for field in writer_schema.fields:
-            readers_field = readers_fields_dict.get(field.name)
-            if readers_field is not None:
-                field_val = await self.read_data(field.type, readers_field.type, decoder)
-                read_record[field.name] = field_val
-            else:
-                await self.skip_data(field.type, decoder)
-
-        # fill in default values
-        if len(readers_fields_dict) > len(read_record):
-            writers_fields_dict = writer_schema.field_map
-            for field_name, field in readers_fields_dict.items():
-                if field_name not in writers_fields_dict:
-                    if field.has_default:
-                        field_val = self._read_default_value(field.type, field.default)
-                        read_record[field.name] = field_val
-                    else:
-                        fail_msg = 'No default value for field %s' % field_name
-                        raise SchemaResolutionException(fail_msg, writer_schema,
-                                                        reader_schema)
+            field_val = await self.read_data(field.type, decoder)
+            read_record[field.name] = field_val
         return read_record
 
     async def skip_record(self, writer_schema, decoder):
