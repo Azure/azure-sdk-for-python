@@ -2149,6 +2149,10 @@ class ManagementPolicyFilter(Model):
     :param blob_types: Required. An array of predefined enum values. Only
      blockBlob is supported.
     :type blob_types: list[str]
+    :param blob_index_match: An array of blob index tag based filters, there
+     can be at most 10 tag filters
+    :type blob_index_match:
+     list[~azure.mgmt.storage.v2019_06_01.models.TagFilter]
     """
 
     _validation = {
@@ -2158,12 +2162,14 @@ class ManagementPolicyFilter(Model):
     _attribute_map = {
         'prefix_match': {'key': 'prefixMatch', 'type': '[str]'},
         'blob_types': {'key': 'blobTypes', 'type': '[str]'},
+        'blob_index_match': {'key': 'blobIndexMatch', 'type': '[TagFilter]'},
     }
 
     def __init__(self, **kwargs):
         super(ManagementPolicyFilter, self).__init__(**kwargs)
         self.prefix_match = kwargs.get('prefix_match', None)
         self.blob_types = kwargs.get('blob_types', None)
+        self.blob_index_match = kwargs.get('blob_index_match', None)
 
 
 class ManagementPolicyRule(Model):
@@ -3727,6 +3733,42 @@ class StorageAccountUpdateParameters(Model):
         self.large_file_shares_state = kwargs.get('large_file_shares_state', None)
         self.routing_preference = kwargs.get('routing_preference', None)
         self.kind = kwargs.get('kind', None)
+
+
+class TagFilter(Model):
+    """Blob index tag based filtering for blob objects.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. This is the filter tag name, it can have 1 - 128
+     characters
+    :type name: str
+    :param op: Required. This is the comparison operator which is used for
+     object comparison and filtering. Only == (equality operator) is currently
+     supported
+    :type op: str
+    :param value: Required. This is the filter tag value field used for tag
+     based filtering, it can have 0 - 256 characters
+    :type value: str
+    """
+
+    _validation = {
+        'name': {'required': True, 'max_length': 128, 'min_length': 1},
+        'op': {'required': True},
+        'value': {'required': True, 'max_length': 256, 'min_length': 0},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'op': {'key': 'op', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(TagFilter, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.op = kwargs.get('op', None)
+        self.value = kwargs.get('value', None)
 
 
 class TagProperty(Model):

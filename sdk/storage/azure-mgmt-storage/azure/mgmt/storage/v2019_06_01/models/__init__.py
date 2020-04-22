@@ -92,6 +92,7 @@ try:
     from ._models_py3 import StorageAccountMicrosoftEndpoints
     from ._models_py3 import StorageAccountRegenerateKeyParameters
     from ._models_py3 import StorageAccountUpdateParameters
+    from ._models_py3 import TagFilter
     from ._models_py3 import TagProperty
     from ._models_py3 import TrackedResource
     from ._models_py3 import UpdateHistoryProperty
@@ -181,6 +182,7 @@ except (SyntaxError, ImportError):
     from ._models import StorageAccountMicrosoftEndpoints
     from ._models import StorageAccountRegenerateKeyParameters
     from ._models import StorageAccountUpdateParameters
+    from ._models import TagFilter
     from ._models import TagProperty
     from ._models import TrackedResource
     from ._models import UpdateHistoryProperty
@@ -325,6 +327,7 @@ __all__ = [
     'StorageAccountMicrosoftEndpoints',
     'StorageAccountRegenerateKeyParameters',
     'StorageAccountUpdateParameters',
+    'TagFilter',
     'TagProperty',
     'TrackedResource',
     'UpdateHistoryProperty',
