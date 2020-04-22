@@ -3,8 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 #--------------------------------------------------------------------------
-from azure.core.profiles import ProfileDefinition, KnownProfiles
-from azure.core.profiles.multiapiclient import MultiApiClientMixin
+from azure.core.profiles import ProfileDefinition, KnownProfiles, MultiApiClientMixin
 
 import pytest
 

@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 #--------------------------------------------------------------------------
-from . import KnownProfiles, ProfileDefinition
+from .profile_definition import KnownProfiles, ProfileDefinition
 from ..exceptions import InvalidMultiApiClientError
 
 
@@ -51,7 +51,7 @@ class MultiApiClientMixin(object):
                 self._PROFILE_TAG + " dict"
             )
             if api_version:
-                self.profile._profile_dict[self._PROFILE_TAG][None] = api_version
+                self.profile.profile_dict[self._PROFILE_TAG][None] = api_version
         else:
             self.profile = profile
 
