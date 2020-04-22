@@ -21,7 +21,7 @@ class TextAnalyticsClientOperationsMixin:
 
     async def entities_recognition_general(
         self,
-        documents: List["MultiLanguageInput"],
+        documents: List["models.MultiLanguageInput"],
         model_version: Optional[str] = None,
         show_stats: Optional[bool] = None,
         **kwargs
@@ -44,13 +44,14 @@ class TextAnalyticsClientOperationsMixin:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.EntitiesResult"]
-        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop('error_map', {}))
 
         _input = models.MultiLanguageBatchInput(documents=documents)
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
-        url = self.entities_recognition_general.metadata['url']
+        url = self.entities_recognition_general.metadata['url']  # type: ignore
         path_format_arguments = {
             'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
@@ -88,82 +89,11 @@ class TextAnalyticsClientOperationsMixin:
           return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    entities_recognition_general.metadata = {'url': '/entities/recognition/general'}
-
-    async def entities_recognition_pii(
-        self,
-        documents: List["MultiLanguageInput"],
-        model_version: Optional[str] = None,
-        show_stats: Optional[bool] = None,
-        **kwargs
-    ) -> "models.EntitiesResult":
-        """The API returns a list of entities with personal information (\"SSN\", \"Bank Account\" etc) in the document. For the list of supported entity types, check :code:`<a href="https://aka.ms/tanerpii">Supported Entity Types in Text Analytics API</a>`. See the :code:`<a href="https://aka.ms/talangs">Supported languages in Text Analytics API</a>` for the list of enabled languages.
-
-        Entities containing personal information.
-
-        :param documents: The set of documents to process as part of this batch.
-        :type documents: list[~azure.ai.textanalytics.models.MultiLanguageInput]
-        :param model_version: (Optional) This value indicates which model will be used for scoring. If
-         a model-version is not specified, the API should default to the latest, non-preview version.
-        :type model_version: str
-        :param show_stats: (Optional) if set to true, response will contain input and document level
-         statistics.
-        :type show_stats: bool
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: EntitiesResult or the result of cls(response)
-        :rtype: ~azure.ai.textanalytics.models.EntitiesResult
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.EntitiesResult"]
-        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
-
-        _input = models.MultiLanguageBatchInput(documents=documents)
-        content_type = kwargs.pop("content_type", "application/json")
-
-        # Construct URL
-        url = self.entities_recognition_pii.metadata['url']
-        path_format_arguments = {
-            'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        if model_version is not None:
-            query_parameters['model-version'] = self._serialize.query("model_version", model_version, 'str')
-        if show_stats is not None:
-            query_parameters['showStats'] = self._serialize.query("show_stats", show_stats, 'bool')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = 'application/json'
-
-        # Construct and send request
-        body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_input, 'MultiLanguageBatchInput')
-        body_content_kwargs['content'] = body_content
-        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.TextAnalyticsError, response)
-            raise HttpResponseError(response=response, model=error)
-
-        deserialized = self._deserialize('EntitiesResult', pipeline_response)
-
-        if cls:
-          return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-    entities_recognition_pii.metadata = {'url': '/entities/recognition/pii'}
+    entities_recognition_general.metadata = {'url': '/entities/recognition/general'}  # type: ignore
 
     async def entities_linking(
         self,
-        documents: List["MultiLanguageInput"],
+        documents: List["models.MultiLanguageInput"],
         model_version: Optional[str] = None,
         show_stats: Optional[bool] = None,
         **kwargs
@@ -186,13 +116,14 @@ class TextAnalyticsClientOperationsMixin:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.EntityLinkingResult"]
-        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop('error_map', {}))
 
         _input = models.MultiLanguageBatchInput(documents=documents)
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
-        url = self.entities_linking.metadata['url']
+        url = self.entities_linking.metadata['url']  # type: ignore
         path_format_arguments = {
             'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
@@ -230,11 +161,11 @@ class TextAnalyticsClientOperationsMixin:
           return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    entities_linking.metadata = {'url': '/entities/linking'}
+    entities_linking.metadata = {'url': '/entities/linking'}  # type: ignore
 
     async def key_phrases(
         self,
-        documents: List["MultiLanguageInput"],
+        documents: List["models.MultiLanguageInput"],
         model_version: Optional[str] = None,
         show_stats: Optional[bool] = None,
         **kwargs
@@ -257,13 +188,14 @@ class TextAnalyticsClientOperationsMixin:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.KeyPhraseResult"]
-        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop('error_map', {}))
 
         _input = models.MultiLanguageBatchInput(documents=documents)
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
-        url = self.key_phrases.metadata['url']
+        url = self.key_phrases.metadata['url']  # type: ignore
         path_format_arguments = {
             'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
@@ -301,11 +233,11 @@ class TextAnalyticsClientOperationsMixin:
           return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    key_phrases.metadata = {'url': '/keyPhrases'}
+    key_phrases.metadata = {'url': '/keyPhrases'}  # type: ignore
 
     async def languages(
         self,
-        documents: List["LanguageInput"],
+        documents: List["models.LanguageInput"],
         model_version: Optional[str] = None,
         show_stats: Optional[bool] = None,
         **kwargs
@@ -328,13 +260,14 @@ class TextAnalyticsClientOperationsMixin:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.LanguageResult"]
-        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop('error_map', {}))
 
         _input = models.LanguageBatchInput(documents=documents)
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
-        url = self.languages.metadata['url']
+        url = self.languages.metadata['url']  # type: ignore
         path_format_arguments = {
             'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
@@ -372,11 +305,11 @@ class TextAnalyticsClientOperationsMixin:
           return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    languages.metadata = {'url': '/languages'}
+    languages.metadata = {'url': '/languages'}  # type: ignore
 
     async def sentiment(
         self,
-        documents: List["MultiLanguageInput"],
+        documents: List["models.MultiLanguageInput"],
         model_version: Optional[str] = None,
         show_stats: Optional[bool] = None,
         **kwargs
@@ -399,13 +332,14 @@ class TextAnalyticsClientOperationsMixin:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SentimentResponse"]
-        error_map = kwargs.pop('error_map', {404: ResourceNotFoundError, 409: ResourceExistsError})
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop('error_map', {}))
 
         _input = models.MultiLanguageBatchInput(documents=documents)
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
-        url = self.sentiment.metadata['url']
+        url = self.sentiment.metadata['url']  # type: ignore
         path_format_arguments = {
             'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
@@ -443,4 +377,4 @@ class TextAnalyticsClientOperationsMixin:
           return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    sentiment.metadata = {'url': '/sentiment'}
+    sentiment.metadata = {'url': '/sentiment'}  # type: ignore
