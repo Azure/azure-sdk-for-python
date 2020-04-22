@@ -74,8 +74,6 @@ class DataFileException(schema.AvroException):
 class DataFileReader(object):
     """Read files written by DataFileWriter."""
 
-    # TODO: allow user to specify expected schema?
-    # TODO: allow user to specify the encoder
     def __init__(self, reader, datum_reader):
         """Initializes a new data file reader.
 
@@ -92,7 +90,7 @@ class DataFileReader(object):
         self._read_header()
 
         # ensure codec is valid
-        avro_codec_raw = self.GetMeta('avro.codec')
+        avro_codec_raw = self.get_meta('avro.codec')
         if avro_codec_raw is None:
             self.codec = "null"
         else:
@@ -103,7 +101,7 @@ class DataFileReader(object):
         # get ready to read
         self._block_count = 0
         self.datum_reader.writer_schema = (
-            schema.parse(self.GetMeta(SCHEMA_KEY).decode('utf-8')))
+            schema.parse(self.get_meta(SCHEMA_KEY).decode('utf-8')))
 
     def __enter__(self):
         return self
@@ -146,7 +144,7 @@ class DataFileReader(object):
     def block_count(self):
         return self._block_count
 
-    def GetMeta(self, key):
+    def get_meta(self, key):
         """Reports the value of a given metadata key.
 
         Args:
@@ -155,17 +153,6 @@ class DataFileReader(object):
           Value associated to the metadata key, as bytes.
         """
         return self._meta.get(key)
-
-    def SetMeta(self, key, value):
-        """Sets a metadata.
-
-        Args:
-          key: Metadata key (string) to set.
-          value: Metadata value to set, as bytes.
-        """
-        if isinstance(value, str):
-            value = value.encode('utf-8')
-        self._meta[key] = value
 
     def _read_header(self):
         # seek to the beginning of the file to get magic block

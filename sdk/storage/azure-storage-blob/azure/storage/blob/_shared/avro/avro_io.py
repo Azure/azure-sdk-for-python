@@ -27,7 +27,6 @@ following mapping:
  - Schema booleans are implemented as bool.
 """
 
-import binascii
 import json
 import logging
 import struct
@@ -44,7 +43,6 @@ logger = logging.getLogger(__name__)
 
 STRUCT_FLOAT = struct.Struct('<f')  # little-endian float
 STRUCT_DOUBLE = struct.Struct('<d')  # little-endian double
-STRUCT_CRC32 = struct.Struct('>I')  # big-endian unsigned int
 
 # ------------------------------------------------------------------------------
 # Exceptions
@@ -58,7 +56,7 @@ class SchemaResolutionException(schema.AvroException):
         schema.AvroException.__init__(self, fail_msg)
 
 # ------------------------------------------------------------------------------
-# Decoder/Encoder
+# Decoder
 
 
 class BinaryDecoder(object):
@@ -164,11 +162,6 @@ class BinaryDecoder(object):
             # PY2
             return unicode(input_bytes, "utf-8") # pylint: disable=undefined-variable
 
-    def check_crc32(self, input_bytes):
-        checksum = STRUCT_CRC32.unpack(self.read(4))[0]
-        if binascii.crc32(input_bytes) & 0xffffffff != checksum:
-            raise schema.AvroException("Checksum failure")
-
     def skip_null(self):
         pass
 
@@ -200,7 +193,7 @@ class BinaryDecoder(object):
 
 
 # ------------------------------------------------------------------------------
-# DatumReader/Writer
+# DatumReader
 
 
 class DatumReader(object):

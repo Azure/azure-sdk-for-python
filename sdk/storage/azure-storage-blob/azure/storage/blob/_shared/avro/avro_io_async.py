@@ -27,20 +27,19 @@ following mapping:
  - Schema booleans are implemented as bool.
 """
 
-import binascii
 import logging
 import sys
 
 from ..avro import schema
 
-from .avro_io import STRUCT_FLOAT, STRUCT_DOUBLE, STRUCT_CRC32, SchemaResolutionException
+from .avro_io import STRUCT_FLOAT, STRUCT_DOUBLE, SchemaResolutionException
 
 PY3 = sys.version_info[0] == 3
 
 logger = logging.getLogger(__name__)
 
 # ------------------------------------------------------------------------------
-# Decoder/Encoder
+# Decoder
 
 
 class AsyncBinaryDecoder(object):
@@ -146,11 +145,6 @@ class AsyncBinaryDecoder(object):
             # PY2
             return unicode(input_bytes, "utf-8") # pylint: disable=undefined-variable
 
-    async def check_crc32(self, input_bytes):
-        checksum = STRUCT_CRC32.unpack(await self.read(4))[0]
-        if binascii.crc32(input_bytes) & 0xffffffff != checksum:
-            raise schema.AvroException("Checksum failure")
-
     def skip_null(self):
         pass
 
@@ -182,7 +176,7 @@ class AsyncBinaryDecoder(object):
 
 
 # ------------------------------------------------------------------------------
-# DatumReader/Writer
+# DatumReader
 
 
 class AsyncDatumReader(object):

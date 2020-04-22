@@ -192,7 +192,7 @@ class Schema(with_metaclass(abc.ABCMeta, object)):
     @property
     def other_props(self):
         """Returns: the dictionary of non-reserved properties."""
-        return dict(FilterKeysOut(items=self._props, keys=SCHEMA_RESERVED_PROPS))
+        return dict(filter_keys_out(items=self._props, keys=SCHEMA_RESERVED_PROPS))
 
     def __str__(self):
         """Returns: the JSON representation of this schema."""
@@ -311,7 +311,7 @@ class Names(object):
         """Returns: the default namespace, if any, or None."""
         return self._default_namespace
 
-    def NewWithDefaultNamespace(self, namespace):
+    def new_with_default_namespace(self, namespace):
         """Creates a new name tracker from this tracker, but with a new default ns.
 
         Args:
@@ -321,7 +321,7 @@ class Names(object):
         """
         return Names(names=self._names, default_namespace=namespace)
 
-    def GetName(self, name, namespace=None):
+    def get_name(self, name, namespace=None):
         """Resolves the Avro name according to this name tracker's state.
 
         Args:
@@ -334,15 +334,7 @@ class Names(object):
             namespace = self._default_namespace
         return Name(name=name, namespace=namespace)
 
-    def has_name(self, name, namespace=None):
-        avro_name = self.GetName(name=name, namespace=namespace)
-        return avro_name.fullname in self._names
-
-    def get_name(self, name, namespace=None):
-        avro_name = self.GetName(name=name, namespace=namespace)
-        return self._names.get(avro_name.fullname, None)
-
-    def GetSchema(self, name, namespace=None):
+    def get_schema(self, name, namespace=None):
         """Resolves an Avro schema by name.
 
         Args:
@@ -351,7 +343,7 @@ class Names(object):
         Returns:
           The schema with the specified name, if any, or None.
         """
-        avro_name = self.GetName(name=name, namespace=namespace)
+        avro_name = self.get_name(name=name, namespace=namespace)
         return self._names.get(avro_name.fullname, None)
 
     def prune_namespace(self, properties):
@@ -372,7 +364,7 @@ class Names(object):
         del prunable['namespace']
         return prunable
 
-    def Register(self, schema):
+    def register(self, schema):
         """Registers a new named schema in this tracker.
 
         Args:
@@ -416,11 +408,11 @@ class NamedSchema(Schema):
           other_props: Optional map of additional properties of the schema.
         """
         assert (data_type in NAMED_TYPES), ('Invalid named type: %r' % data_type)
-        self._avro_name = names.GetName(name=name, namespace=namespace)
+        self._avro_name = names.get_name(name=name, namespace=namespace)
 
         super(NamedSchema, self).__init__(data_type, other_props)
 
-        names.Register(self)
+        names.register(self)
 
         self._props['name'] = self.name
         if self.namespace:
@@ -513,7 +505,6 @@ class Field(object):
         self._type = self._props['type'] = data_type
         self._name = self._props['name'] = name
 
-        # TODO: check to ensure default is valid
         if has_default:
             self._props['default'] = default
 
@@ -560,7 +551,7 @@ class Field(object):
 
     @property
     def other_props(self):
-        return FilterKeysOut(items=self._props, keys=FIELD_RESERVED_PROPS)
+        return filter_keys_out(items=self._props, keys=FIELD_RESERVED_PROPS)
 
     def __str__(self):
         return json.dumps(self.to_json())
@@ -866,7 +857,6 @@ class ErrorUnionSchema(UnionSchema):
         Args:
           schema: collection of error schema.
         """
-        # TODO: check that string isn't already listed explicitly as an error.
         # Prepend "string" to handle system errors
         schemas = [PrimitiveSchema(data_type=STRING)] + list(schemas)
         super(ErrorUnionSchema, self).__init__(schemas=schemas)
@@ -890,7 +880,7 @@ class RecordSchema(NamedSchema):
     """Schema of a record."""
 
     @staticmethod
-    def _MakeField(index, field_desc, names):
+    def _make_field(index, field_desc, names):
         """Builds field schemas from a list of field JSON descriptors.
 
         Args:
@@ -899,12 +889,12 @@ class RecordSchema(NamedSchema):
         Return:
           The field schema.
         """
-        field_schema = SchemaFromJSONData(
+        field_schema = schema_from_json_data(
             json_data=field_desc['type'],
             names=names,
         )
         other_props = (
-            dict(FilterKeysOut(items=field_desc, keys=FIELD_RESERVED_PROPS)))
+            dict(filter_keys_out(items=field_desc, keys=FIELD_RESERVED_PROPS)))
         return Field(
             data_type=field_schema,
             name=field_desc['name'],
@@ -917,7 +907,7 @@ class RecordSchema(NamedSchema):
         )
 
     @staticmethod
-    def MakeFieldList(field_desc_list, names):
+    def make_field_list(field_desc_list, names):
         """Builds field schemas from a list of field JSON descriptors.
 
         Guarantees field name unicity.
@@ -929,10 +919,10 @@ class RecordSchema(NamedSchema):
           Field schemas.
         """
         for index, field_desc in enumerate(field_desc_list):
-            yield RecordSchema._MakeField(index, field_desc, names)
+            yield RecordSchema._make_field(index, field_desc, names)
 
     @staticmethod
-    def _MakeFieldMap(fields):
+    def _make_field_map(fields):
         """Builds the field map.
 
         Guarantees field name unicity.
@@ -997,8 +987,8 @@ class RecordSchema(NamedSchema):
                 'Invalid record type: %r.' % record_type)
 
         if record_type in [RECORD, ERROR]:
-            avro_name = names.GetName(name=name, namespace=namespace)
-            nested_names = names.NewWithDefaultNamespace(namespace=avro_name.namespace)
+            avro_name = names.get_name(name=name, namespace=namespace)
+            nested_names = names.new_with_default_namespace(namespace=avro_name.namespace)
         elif record_type == REQUEST:
             # Protocol request has no name: no need to change default namespace:
             nested_names = names
@@ -1009,7 +999,7 @@ class RecordSchema(NamedSchema):
             assert make_fields is None
         self._fields = tuple(fields)
 
-        self._field_map = RecordSchema._MakeFieldMap(self._fields)
+        self._field_map = RecordSchema._make_field_map(self._fields)
 
         self._props['fields'] = fields
         if doc is not None:
@@ -1049,7 +1039,7 @@ class RecordSchema(NamedSchema):
 # Module functions
 
 
-def FilterKeysOut(items, keys):
+def filter_keys_out(items, keys):
     """Filters a collection of (key, value) items.
 
     Exclude any item whose key belongs to keys.
@@ -1069,12 +1059,12 @@ def FilterKeysOut(items, keys):
 # ------------------------------------------------------------------------------
 
 
-def _SchemaFromJSONString(json_string, names):
+def _schema_from_json_string(json_string, names):
     if json_string in PRIMITIVE_TYPES:
         return PrimitiveSchema(data_type=json_string)
 
     # Look for a known named schema:
-    schema = names.GetSchema(name=json_string)
+    schema = names.get_schema(name=json_string)
     if schema is None:
         raise SchemaParseException(
             'Unknown named schema %r, known names: %r.'
@@ -1082,21 +1072,21 @@ def _SchemaFromJSONString(json_string, names):
     return schema
 
 
-def _SchemaFromJSONArray(json_array, names):
+def _schema_from_json_array(json_array, names):
     def MakeSchema(desc):
-        return SchemaFromJSONData(json_data=desc, names=names)
+        return schema_from_json_data(json_data=desc, names=names)
 
     return UnionSchema(map(MakeSchema, json_array))
 
 
-def _SchemaFromJSONObject(json_object, names):
+def _schema_from_json_object(json_object, names):
     data_type = json_object.get('type')
     if data_type is None:
         raise SchemaParseException(
             'Avro schema JSON descriptor has no "type" property: %r' % json_object)
 
     other_props = dict(
-        FilterKeysOut(items=json_object, keys=SCHEMA_RESERVED_PROPS))
+        filter_keys_out(items=json_object, keys=SCHEMA_RESERVED_PROPS))
 
     if data_type in PRIMITIVE_TYPES:
         # FIXME should not ignore other properties
@@ -1117,7 +1107,7 @@ def _SchemaFromJSONObject(json_object, names):
             field_desc_list = json_object.get('fields', ())
 
             def MakeFields(names):
-                return tuple(RecordSchema.MakeFieldList(field_desc_list, names))
+                return tuple(RecordSchema.make_field_list(field_desc_list, names))
 
             result = RecordSchema(
                 name=name,
@@ -1141,7 +1131,7 @@ def _SchemaFromJSONObject(json_object, names):
                     'Invalid array schema descriptor with no "items" : %r.'
                     % json_object)
             result = ArraySchema(
-                items=SchemaFromJSONData(items_desc, names),
+                items=schema_from_json_data(items_desc, names),
                 other_props=other_props,
             )
 
@@ -1152,7 +1142,7 @@ def _SchemaFromJSONObject(json_object, names):
                     'Invalid map schema descriptor with no "values" : %r.'
                     % json_object)
             result = MapSchema(
-                values=SchemaFromJSONData(values_desc, names=names),
+                values=schema_from_json_data(values_desc, names=names),
                 other_props=other_props,
             )
 
@@ -1160,7 +1150,7 @@ def _SchemaFromJSONObject(json_object, names):
             error_desc_list = json_object.get('declared_errors')
             assert error_desc_list is not None
             error_schemas = map(
-                lambda desc: SchemaFromJSONData(desc, names=names),
+                lambda desc: schema_from_json_data(desc, names=names),
                 error_desc_list)
             result = ErrorUnionSchema(schemas=error_schemas)
 
@@ -1174,13 +1164,13 @@ def _SchemaFromJSONObject(json_object, names):
 
 # Parsers for the JSON data types:
 _JSONDataParserTypeMap = {
-    _str: _SchemaFromJSONString,
-    list: _SchemaFromJSONArray,
-    dict: _SchemaFromJSONObject,
+    _str: _schema_from_json_string,
+    list: _schema_from_json_array,
+    dict: _schema_from_json_object,
 }
 
 
-def SchemaFromJSONData(json_data, names=None):
+def schema_from_json_data(json_data, names=None):
     """Builds an Avro Schema from its JSON descriptor.
 
     Args:
@@ -1228,4 +1218,4 @@ def parse(json_string):
     names = Names()
 
     # construct the Avro Schema object
-    return SchemaFromJSONData(json_data, names)
+    return schema_from_json_data(json_data, names)
