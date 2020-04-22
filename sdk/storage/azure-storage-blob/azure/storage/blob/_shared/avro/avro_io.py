@@ -100,7 +100,13 @@ class BinaryDecoder(object):
         a boolean is written as a single byte
         whose value is either 0 (false) or 1 (true).
         """
-        return ord(self.read(1)) == 1
+        b = ord(self.read(1))
+        if b == 1:
+            return True
+        if b == 0:
+            return False
+        fail_msg = "Invalid value for boolean: %s" % b
+        raise schema.AvroException(fail_msg)
 
     def read_int(self):
         """
