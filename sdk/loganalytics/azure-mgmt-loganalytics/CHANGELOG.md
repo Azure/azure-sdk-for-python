@@ -4,7 +4,7 @@
 
 **Breaking changes**
 
-  - Change the Client Name back from LogAnalyticsManagementClient
+  - Reverted client name back to LogAnalyticsManagementClient as previous change was not intentional
 
 ## 0.4.0 (2020-04-20)
 
