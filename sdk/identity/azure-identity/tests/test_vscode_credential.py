@@ -73,8 +73,8 @@ if sys.platform.startswith('win'):
 
 @pytest.mark.skipif(not sys.platform.startswith('win'), reason="This test only runs on Windows")
 def test_win_api():
-    service_name = u"VS Code test"
-    account_name = u"test"
+    service_name = u"VS Code Azure"
+    account_name = u"Azure"
     target = u"{}/{}".format(service_name, account_name)
     comment = u"comment"
     token_written = u"test_refresh_token"
