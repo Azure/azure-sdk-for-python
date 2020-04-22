@@ -13,7 +13,43 @@ from msrest.serialization import Model
 from msrest.exceptions import HttpOperationError
 
 
-class AliasPathType(Model):
+class Alias(Model):
+    """The alias type. .
+
+    :param name: The alias name.
+    :type name: str
+    :param paths: The paths for an alias.
+    :type paths:
+     list[~azure.mgmt.resource.resources.v2019_10_01.models.AliasPath]
+    :param type: The type of the alias. Possible values include:
+     'NotSpecified', 'PlainText', 'Mask'
+    :type type: str or
+     ~azure.mgmt.resource.resources.v2019_10_01.models.AliasType
+    :param default_path: The default path for an alias.
+    :type default_path: str
+    :param default_pattern: The default pattern for an alias.
+    :type default_pattern:
+     ~azure.mgmt.resource.resources.v2019_10_01.models.AliasPattern
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'paths': {'key': 'paths', 'type': '[AliasPath]'},
+        'type': {'key': 'type', 'type': 'AliasType'},
+        'default_path': {'key': 'defaultPath', 'type': 'str'},
+        'default_pattern': {'key': 'defaultPattern', 'type': 'AliasPattern'},
+    }
+
+    def __init__(self, *, name: str=None, paths=None, type=None, default_path: str=None, default_pattern=None, **kwargs) -> None:
+        super(Alias, self).__init__(**kwargs)
+        self.name = name
+        self.paths = paths
+        self.type = type
+        self.default_path = default_path
+        self.default_pattern = default_pattern
+
+
+class AliasPath(Model):
     """The type of the paths for alias.
 
     :param path: The path of an alias.
@@ -22,23 +58,23 @@ class AliasPathType(Model):
     :type api_versions: list[str]
     :param pattern: The pattern for an alias path.
     :type pattern:
-     ~azure.mgmt.resource.resources.v2019_10_01.models.AliasPatternType1
+     ~azure.mgmt.resource.resources.v2019_10_01.models.AliasPattern
     """
 
     _attribute_map = {
         'path': {'key': 'path', 'type': 'str'},
         'api_versions': {'key': 'apiVersions', 'type': '[str]'},
-        'pattern': {'key': 'pattern', 'type': 'AliasPatternType1'},
+        'pattern': {'key': 'pattern', 'type': 'AliasPattern'},
     }
 
     def __init__(self, *, path: str=None, api_versions=None, pattern=None, **kwargs) -> None:
-        super(AliasPathType, self).__init__(**kwargs)
+        super(AliasPath, self).__init__(**kwargs)
         self.path = path
         self.api_versions = api_versions
         self.pattern = pattern
 
 
-class AliasPatternType1(Model):
+class AliasPattern(Model):
     """The type of the pattern for an alias path.
 
     :param phrase: The alias pattern phrase.
@@ -58,46 +94,10 @@ class AliasPatternType1(Model):
     }
 
     def __init__(self, *, phrase: str=None, variable: str=None, type=None, **kwargs) -> None:
-        super(AliasPatternType1, self).__init__(**kwargs)
+        super(AliasPattern, self).__init__(**kwargs)
         self.phrase = phrase
         self.variable = variable
         self.type = type
-
-
-class AliasType1(Model):
-    """The alias type. .
-
-    :param name: The alias name.
-    :type name: str
-    :param paths: The paths for an alias.
-    :type paths:
-     list[~azure.mgmt.resource.resources.v2019_10_01.models.AliasPathType]
-    :param type: The type of the alias. Possible values include:
-     'NotSpecified', 'PlainText', 'Mask'
-    :type type: str or
-     ~azure.mgmt.resource.resources.v2019_10_01.models.AliasType
-    :param default_path: The default path for an alias.
-    :type default_path: str
-    :param default_pattern: The default pattern for an alias.
-    :type default_pattern:
-     ~azure.mgmt.resource.resources.v2019_10_01.models.AliasPatternType1
-    """
-
-    _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'paths': {'key': 'paths', 'type': '[AliasPathType]'},
-        'type': {'key': 'type', 'type': 'AliasType'},
-        'default_path': {'key': 'defaultPath', 'type': 'str'},
-        'default_pattern': {'key': 'defaultPattern', 'type': 'AliasPatternType1'},
-    }
-
-    def __init__(self, *, name: str=None, paths=None, type=None, default_path: str=None, default_pattern=None, **kwargs) -> None:
-        super(AliasType1, self).__init__(**kwargs)
-        self.name = name
-        self.paths = paths
-        self.type = type
-        self.default_path = default_path
-        self.default_pattern = default_pattern
 
 
 class BasicDependency(Model):
@@ -1348,7 +1348,7 @@ class ProviderResourceType(Model):
     :type locations: list[str]
     :param aliases: The aliases that are supported by this resource type.
     :type aliases:
-     list[~azure.mgmt.resource.resources.v2019_10_01.models.AliasType1]
+     list[~azure.mgmt.resource.resources.v2019_10_01.models.Alias]
     :param api_versions: The API version.
     :type api_versions: list[str]
     :param capabilities: The additional capabilities offered by this resource
@@ -1361,7 +1361,7 @@ class ProviderResourceType(Model):
     _attribute_map = {
         'resource_type': {'key': 'resourceType', 'type': 'str'},
         'locations': {'key': 'locations', 'type': '[str]'},
-        'aliases': {'key': 'aliases', 'type': '[AliasType1]'},
+        'aliases': {'key': 'aliases', 'type': '[Alias]'},
         'api_versions': {'key': 'apiVersions', 'type': '[str]'},
         'capabilities': {'key': 'capabilities', 'type': 'str'},
         'properties': {'key': 'properties', 'type': '{str}'},

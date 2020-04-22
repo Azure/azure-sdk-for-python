@@ -10,9 +10,9 @@
 # --------------------------------------------------------------------------
 
 try:
-    from ._models_py3 import AliasPathType
-    from ._models_py3 import AliasPatternType1
-    from ._models_py3 import AliasType1
+    from ._models_py3 import Alias
+    from ._models_py3 import AliasPath
+    from ._models_py3 import AliasPattern
     from ._models_py3 import BasicDependency
     from ._models_py3 import DebugSetting
     from ._models_py3 import Dependency
@@ -70,9 +70,9 @@ try:
     from ._models_py3 import WhatIfOperationResult
     from ._models_py3 import WhatIfPropertyChange
 except (SyntaxError, ImportError):
-    from ._models import AliasPathType
-    from ._models import AliasPatternType1
-    from ._models import AliasType1
+    from ._models import Alias
+    from ._models import AliasPath
+    from ._models import AliasPattern
     from ._models import BasicDependency
     from ._models import DebugSetting
     from ._models import Dependency
@@ -149,9 +149,9 @@ from ._resource_management_client_enums import (
 )
 
 __all__ = [
-    'AliasPathType',
-    'AliasPatternType1',
-    'AliasType1',
+    'Alias',
+    'AliasPath',
+    'AliasPattern',
     'BasicDependency',
     'DebugSetting',
     'Dependency',
