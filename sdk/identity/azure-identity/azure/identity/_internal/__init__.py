@@ -34,7 +34,7 @@ from .aad_client import AadClient
 from .aad_client_base import AadClientBase
 from .auth_code_redirect_handler import AuthCodeRedirectServer
 from .exception_wrapper import wrap_exceptions
-from .msal_credentials import ConfidentialClientCredential, PublicClientCredential
+from .msal_credentials import ConfidentialClientCredential, InteractiveCredential, PublicClientCredential
 from .msal_transport_adapter import MsalTransportAdapter, MsalTransportResponse
 
 
@@ -52,10 +52,13 @@ def _scopes_to_resource(*scopes):
 
 
 __all__ = [
+    "_scopes_to_resource",
     "AadClient",
     "AadClientBase",
     "AuthCodeRedirectServer",
     "ConfidentialClientCredential",
+    "get_default_authority",
+    "InteractiveCredential",
     "MsalTransportAdapter",
     "MsalTransportResponse",
     "PublicClientCredential",
