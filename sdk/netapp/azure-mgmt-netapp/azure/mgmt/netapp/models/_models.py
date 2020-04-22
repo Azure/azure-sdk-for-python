@@ -349,6 +349,20 @@ class MountTarget(Model):
     :type file_system_id: str
     :ivar ip_address: ipAddress. The mount target's IPv4 address
     :vartype ip_address: str
+    :param subnet: subnet. The subnet
+    :type subnet: str
+    :param start_ip: startIp. The start of IPv4 address range to use when
+     creating a new mount target
+    :type start_ip: str
+    :param end_ip: endIp. The end of IPv4 address range to use when creating a
+     new mount target
+    :type end_ip: str
+    :param gateway: gateway. The gateway of the IPv4 address range to use when
+     creating a new mount target
+    :type gateway: str
+    :param netmask: netmask. The netmask of the IPv4 address range to use when
+     creating a new mount target
+    :type netmask: str
     :param smb_server_fqdn: smbServerFQDN. The SMB server's Fully Qualified
      Domain Name, FQDN
     :type smb_server_fqdn: str
@@ -373,6 +387,11 @@ class MountTarget(Model):
         'mount_target_id': {'key': 'properties.mountTargetId', 'type': 'str'},
         'file_system_id': {'key': 'properties.fileSystemId', 'type': 'str'},
         'ip_address': {'key': 'properties.ipAddress', 'type': 'str'},
+        'subnet': {'key': 'properties.subnet', 'type': 'str'},
+        'start_ip': {'key': 'properties.startIp', 'type': 'str'},
+        'end_ip': {'key': 'properties.endIp', 'type': 'str'},
+        'gateway': {'key': 'properties.gateway', 'type': 'str'},
+        'netmask': {'key': 'properties.netmask', 'type': 'str'},
         'smb_server_fqdn': {'key': 'properties.smbServerFqdn', 'type': 'str'},
     }
 
@@ -386,23 +405,12 @@ class MountTarget(Model):
         self.mount_target_id = None
         self.file_system_id = kwargs.get('file_system_id', None)
         self.ip_address = None
+        self.subnet = kwargs.get('subnet', None)
+        self.start_ip = kwargs.get('start_ip', None)
+        self.end_ip = kwargs.get('end_ip', None)
+        self.gateway = kwargs.get('gateway', None)
+        self.netmask = kwargs.get('netmask', None)
         self.smb_server_fqdn = kwargs.get('smb_server_fqdn', None)
-
-
-class MountTargetList(Model):
-    """List of Mount Targets.
-
-    :param value: A list of Mount targets
-    :type value: list[~azure.mgmt.netapp.models.MountTarget]
-    """
-
-    _attribute_map = {
-        'value': {'key': 'value', 'type': '[MountTarget]'},
-    }
-
-    def __init__(self, **kwargs):
-        super(MountTargetList, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
 
 
 class NetAppAccount(Model):
