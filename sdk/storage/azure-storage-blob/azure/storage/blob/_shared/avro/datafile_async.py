@@ -153,16 +153,12 @@ class AsyncDataFileReader(object):
             raise StopAsyncIteration
         if proposed_sync_marker != self.sync_marker:
             await self.reader.seek(-SYNC_SIZE, 1)
-            return False
-        return True
 
     async def __anext__(self):
         """Return the next datum in the file."""
         if self.block_count == 0:
-            if await self._skip_sync():
-                await self._read_block_header()
-            else:
-                await self._read_block_header()
+            await self._skip_sync()
+            await self._read_block_header()
 
         datum = await self.datum_reader.read(self.datum_decoder)
         self._block_count -= 1

@@ -200,16 +200,12 @@ class DataFileReader(object):
             raise StopIteration
         if proposed_sync_marker != self.sync_marker:
             self.reader.seek(-SYNC_SIZE, 1)
-            return False
-        return True
 
     def __next__(self):
         """Return the next datum in the file."""
         if self.block_count == 0:
-            if self._skip_sync():
-                self._read_block_header()
-            else:
-                self._read_block_header()
+            self._skip_sync()
+            self._read_block_header()
 
         datum = self.datum_reader.read(self.datum_decoder)
         self._block_count -= 1
