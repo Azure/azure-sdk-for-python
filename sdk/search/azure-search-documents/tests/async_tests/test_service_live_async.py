@@ -30,6 +30,9 @@ from azure.search.documents import(
     SearchServiceClient,
     ScoringProfile,
     Skillset,
+    DataSourceCredentials,
+    DataSource,
+    DataContainer
 )
 from azure.search.documents.aio import SearchServiceClient
 
@@ -53,6 +56,17 @@ def await_prepared_test(test_fn):
 
 
 class SearchIndexClientTest(AzureMgmtTestCase):
+    def _create_datasource(self, name="sample-datasource"):
+        credentials = DataSourceCredentials(connection_string=self.get_settings_value("AZURE_STORAGE_CONNECTION_STRING"))
+        container = DataContainer(name='searchcontainer')
+        data_source = DataSource(
+            name=name,
+            type="azureblob",
+            credentials=credentials,
+            container=container
+        )
+        return data_source
+
     @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer()
     async def test_get_service_statistics(self, api_key, endpoint, **kwargs):
@@ -365,3 +379,59 @@ class SearchIndexClientTest(AzureMgmtTestCase):
         assert isinstance(result, Skillset)
         assert result.name == "test-ss"
         assert result.description == "desc2"
+
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
+    async def test_create_datasource_async(self, api_key, endpoint, index_name, **kwargs):
+        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key))
+        data_source = self._create_datasource()
+        result = await client.create_datasource(data_source)
+        assert isinstance(result, dict)
+        assert result["name"] == "sample-datasource"
+        assert result["type"] == "azureblob"
+
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
+    async def test_delete_datasource_async(self, api_key, endpoint, index_name, **kwargs):
+        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key))
+        data_source = self._create_datasource()
+        result = await client.create_datasource(data_source)
+        assert len(await client.list_datasources()) == 1
+        await client.delete_datasource("sample-datasource")
+        assert len(await client.list_datasources()) == 0
+
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
+    async def test_get_datasource_async(self, api_key, endpoint, index_name, **kwargs):
+        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key))
+        data_source = self._create_datasource()
+        created = await client.create_datasource(data_source)
+        result = await client.get_datasource("sample-datasource")
+        assert isinstance(result, dict)
+        assert result["name"] == "sample-datasource"
+
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
+    async def test_list_datasource_async(self, api_key, endpoint, index_name, **kwargs):
+        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key))
+        data_source1 = self._create_datasource()
+        data_source2 = self._create_datasource(name="another-sample")
+        created1 = await client.create_datasource(data_source1)
+        created2 = await client.create_datasource(data_source2)
+        result = await client.list_datasources()
+        assert isinstance(result, list)
+        assert all(isinstance(x, dict) for x in result)
+        assert set(x['name'] for x in result) == {"sample-datasource", "another-sample"}
+
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
+    async def test_create_or_update_datasource_async(self, api_key, endpoint, index_name, **kwargs):
+        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key))
+        data_source = self._create_datasource()
+        created = await client.create_datasource(data_source)
+        assert len(client.list_datasources()) == 1
+        await client.create_or_update_datasource(data_source, "updated-name")
+        assert len(client.list_datasources()) == 1
+        result = await client.get_datasource("updated-name")
+        assert isinstance(result, dict)
+        assert result["name"] == "updated-name"

@@ -49,6 +49,8 @@ from ._service._generated.models import (
     ConditionalSkill,
     CorsOptions,
     CustomAnalyzer,
+    DataSourceCredentials,
+    DataContainer,
     DictionaryDecompounderTokenFilter,
     DistanceScoringFunction,
     DistanceScoringParameters,
@@ -115,7 +117,7 @@ from ._service._generated.models import (
     WebApiSkill,
     WordDelimiterTokenFilter,
 )
-from ._service._models import PatternAnalyzer, PatternTokenizer
+from ._service._models import PatternAnalyzer, PatternTokenizer, DataSource
 from ._version import VERSION
 
 __version__ = VERSION

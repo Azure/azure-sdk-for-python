@@ -13,6 +13,7 @@ from azure.core.exceptions import (
     ResourceModifiedError,
     ResourceNotModifiedError,
 )
+from ._models import DataSource
 from ._generated import SearchServiceClient as _SearchServiceClient
 from ._generated.models import AccessCondition, Skillset, SynonymMap
 from .._headers_mixin import HeadersMixin
@@ -554,3 +555,109 @@ class SearchServiceClient(HeadersMixin):
             )
 
         return self._client.skillsets.create_or_update(name, skillset, **kwargs)
+
+    @distributed_trace
+    def create_datasource(self, data_source, **kwargs):
+        """Creates a new datasource.
+
+        :param data_source: The definition of the datasource to create.
+        :type data_source: ~search.models.DataSource
+        :return: The created DataSource
+        :rtype: dict
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_data_source_operations.py
+                :start-after: [START create_data_source]
+                :end-before: [END create_data_source]
+                :language: python
+                :dedent: 4
+                :caption: Create a Data Source
+        """
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        result = self._client.data_sources.create(data_source, **kwargs)
+        return result
+
+    @distributed_trace
+    def create_or_update_datasource(self, data_source, name=None, **kwargs):
+        """Creates a new datasource or updates a datasource if it already exists.
+
+        :param name: The name of the datasource to create or update.
+        :type name: str
+        :param data_source: The definition of the datasource to create or update.
+        :type data_source: ~search.models.DataSource
+        :return: The created DataSource
+        :rtype: dict
+        """
+        # TODO: access_condition
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+
+        if name is not None:
+            data_source.name = name
+        result = self._client.data_sources.create_or_update(data_source.name, data_source, **kwargs)
+        return result
+
+    @distributed_trace
+    def get_datasource(self, name, **kwargs):
+        """Retrieves a datasource definition.
+
+        :param name: The name of the datasource to retrieve.
+        :type name: str
+        :return: The DataSource that is fetched.
+        :rtype: dict
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_data_source_operations.py
+                :start-after: [START get_data_source]
+                :end-before: [END get_data_source]
+                :language: python
+                :dedent: 4
+                :caption: Retrieve a DataSource
+        """
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        result = self._client.data_sources.get(name, **kwargs)
+        return result
+
+    @distributed_trace
+    def list_datasources(self, **kwargs):
+        """Lists all datasources available for a search service.
+
+        :return: List of all the data sources.
+        :rtype: `list[dict]`
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_data_source_operations.py
+                :start-after: [START list_data_source]
+                :end-before: [END list_data_source]
+                :language: python
+                :dedent: 4
+                :caption: List all the DataSources
+        """
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        result = self._client.data_sources.list(**kwargs)
+        return result.data_sources
+
+    @distributed_trace
+    def delete_datasource(self, name, **kwargs):
+        """Deletes a datasource.
+
+        :param name: The name of the datasource to delete.
+        :type name: str
+
+        :return: None
+        :rtype: None
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_data_source_operations.py
+                :start-after: [START delete_data_source]
+                :end-before: [END delete_data_source]
+                :language: python
+                :dedent: 4
+                :caption: Delete a DataSource
+        """
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        result = self._client.data_sources.delete(name, **kwargs)
+        return result

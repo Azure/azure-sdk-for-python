@@ -3,7 +3,11 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from ._generated.models import Analyzer, Tokenizer
+from ._generated.models import (
+    Analyzer,
+    Tokenizer,
+    DataSource as _DataSource
+)
 
 
 class PatternAnalyzer(Analyzer):
@@ -87,3 +91,57 @@ class PatternTokenizer(Tokenizer):
         self.pattern = kwargs.get("pattern", r"\W+")
         self.flags = kwargs.get("flags", None)
         self.group = kwargs.get("group", -1)
+
+
+class DataSource(_DataSource):
+    """Represents a datasource definition, which can be used to configure an indexer.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The name of the datasource.
+    :type name: str
+    :param description: The description of the datasource.
+    :type description: str
+    :param type: Required. The type of the datasource. Possible values include: 'azuresql',
+     'cosmosdb', 'azureblob', 'azuretable', 'mysql'.
+    :type type: str or ~search_service_client.models.DataSourceType
+    :param credentials: Required. Credentials for the datasource.
+    :type credentials: ~search_service_client.models.DataSourceCredentials
+    :param container: Required. The data container for the datasource.
+    :type container: ~search_service_client.models.DataContainer
+    :param data_change_detection_policy: The data change detection policy for the datasource.
+    :type data_change_detection_policy: ~search_service_client.models.DataChangeDetectionPolicy
+    :param data_deletion_detection_policy: The data deletion detection policy for the datasource.
+    :type data_deletion_detection_policy: ~search_service_client.models.DataDeletionDetectionPolicy
+    :param e_tag: The ETag of the DataSource.
+    :type e_tag: str
+    """
+
+    _validation = {
+        'name': {'required': True},
+        'type': {'required': True},
+        'credentials': {'required': True},
+        'container': {'required': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'credentials': {'key': 'credentials', 'type': 'DataSourceCredentials'},
+        'container': {'key': 'container', 'type': 'DataContainer'},
+        'data_change_detection_policy': {'key': 'dataChangeDetectionPolicy', 'type': 'DataChangeDetectionPolicy'},
+        'data_deletion_detection_policy': {'key': 'dataDeletionDetectionPolicy', 'type': 'DataDeletionDetectionPolicy'},
+        'e_tag': {'key': '@odata\\.etag', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(DataSource, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.description = kwargs.get('description', None)
+        self.type = kwargs.get('type', None)
+        self.credentials = kwargs.get('credentials', None)
+        self.container = kwargs.get('container', None)
+        self.data_change_detection_policy = kwargs.get('data_change_detection_policy', None)
+        self.data_deletion_detection_policy = kwargs.get('data_deletion_detection_policy', None)
+        self.e_tag = kwargs.get('e_tag', None)
