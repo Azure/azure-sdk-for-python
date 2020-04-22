@@ -504,7 +504,6 @@ class _HttpResponseBase(object):
         # type: (Message, Type[_HttpResponseBase], List[HttpRequest]) -> List[HttpResponse]
         """Rebuild an HTTP response from pure string."""
         responses = []
-        offset = 0
         for index, raw_reponse in enumerate(message.get_payload()):
             content_type = raw_reponse.get_content_type()
             if content_type == "application/http":
@@ -517,8 +516,8 @@ class _HttpResponseBase(object):
                 )
             elif content_type == "multipart/mixed":
                 # The message batch contains one or more change sets
-                changeset_responses = self._decode_parts(raw_reponse, http_response_type, requests[offset:])
-                offset += len(changeset_responses)
+                changeset_requests = requests[index].multipart_mixed_info[0]
+                changeset_responses = self._decode_parts(raw_reponse, http_response_type, changeset_requests)
                 responses.extend(changeset_responses)
             else:
                 raise ValueError(
