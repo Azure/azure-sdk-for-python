@@ -91,14 +91,14 @@ def test_win_api():
 def test_mac_keychain():
     with mock.patch('Keychain.get_generic_password', return_value="VALUE"):
         credential = VSCodeCredential()
-        assert credential.get_credentials == "VALUE"
+        assert credential.get_credentials() == "VALUE"
 
 
 @pytest.mark.skipif(not sys.platform.startswith('darwin'), reason="This test only runs on MacOS")
 def test_mac_keychain():
     with mock.patch('Keychain.get_generic_password', return_value="VALUE"):
         credential = VSCodeCredential()
-        assert credential.get_credentials == "VALUE"
+        assert credential.get_credentials() == "VALUE"
 
 
 @pytest.mark.skipif(not sys.platform.startswith('darwin'), reason="This test only runs on MacOS")
@@ -114,4 +114,4 @@ def test_mac_keychain():
 def test_get_token():
     with mock.patch('azure.identity._credentials.linux_vscode_adapter._get_refresh_token', return_value="VALUE"):
         credential = VSCodeCredential()
-        assert credential.get_credentials == "VALUE"
+        assert credential.get_credentials() == "VALUE"
