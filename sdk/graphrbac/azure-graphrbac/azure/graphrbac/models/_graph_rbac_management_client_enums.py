@@ -9,11 +9,23 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from ._configuration import GraphRbacManagementClientConfiguration
-from ._graph_rbac_management_client import GraphRbacManagementClient
-__all__ = ['GraphRbacManagementClient', 'GraphRbacManagementClientConfiguration']
+from enum import Enum
 
-from .version import VERSION
 
-__version__ = VERSION
+class GroupMembershipClaimTypes(str, Enum):
 
+    none = "None"
+    security_group = "SecurityGroup"
+    all = "All"
+
+
+class UserType(str, Enum):
+
+    member = "Member"
+    guest = "Guest"
+
+
+class ConsentType(str, Enum):
+
+    all_principals = "AllPrincipals"
+    principal = "Principal"
