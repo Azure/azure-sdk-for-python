@@ -451,50 +451,6 @@ class DatumReader(object):
         for field in writer_schema.fields:
             self.skip_data(field.type, decoder)
 
-    def _read_default_value(self, field_schema, default_value):
-        """
-        Basically a JSON Decoder?
-        """
-        if field_schema.type == 'null':
-            result = None
-        elif field_schema.type == 'boolean':
-            result = bool(default_value)
-        elif field_schema.type == 'int':
-            result = int(default_value)
-        elif field_schema.type == 'long':
-            result = int(default_value)
-        elif field_schema.type in ['float', 'double']:
-            result = float(default_value)
-        elif field_schema.type in ['enum', 'fixed', 'string', 'bytes']:
-            result = default_value
-        elif field_schema.type == 'array':
-            read_array = []
-            for json_val in default_value:
-                item_val = self._read_default_value(field_schema.items, json_val)
-                read_array.append(item_val)
-            result = read_array
-        elif field_schema.type == 'map':
-            read_map = {}
-            for key, json_val in default_value.items():
-                map_val = self._read_default_value(field_schema.values, json_val)
-                read_map[key] = map_val
-            result = read_map
-        elif field_schema.type in ['union', 'error_union']:
-            result = self._read_default_value(field_schema.schemas[0], default_value)
-        elif field_schema.type == 'record':
-            read_record = {}
-            for field in field_schema.fields:
-                json_val = default_value.get(field.name)
-                if json_val is None:
-                    json_val = field.default
-                field_val = self._read_default_value(field.type, json_val)
-                read_record[field.name] = field_val
-            result = read_record
-        else:
-            fail_msg = 'Unknown type: %s' % field_schema.type
-            raise schema.AvroException(fail_msg)
-        return result
-
 
 # ------------------------------------------------------------------------------
 
