@@ -115,7 +115,7 @@ from ._paged_models import OperationPaged
 from ._paged_models import StorageInsightPaged
 from ._paged_models import UsageMetricPaged
 from ._paged_models import WorkspacePaged
-from ._operational_insights_management_client_enums import (
+from ._log_analytics_management_client_enums import (
     Type,
     DataSourceKind,
     LinkedServiceEntityStatus,
