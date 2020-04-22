@@ -8,7 +8,7 @@ import time
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
 
-from .._internal import PublicClientCredential, wrap_exceptions
+from .._internal import InteractiveCredential, PublicClientCredential, wrap_exceptions
 
 try:
     from typing import TYPE_CHECKING
@@ -17,17 +17,15 @@ except ImportError:
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Optional
+    from typing import Any, Optional
 
 
-class DeviceCodeCredential(PublicClientCredential):
+class DeviceCodeCredential(InteractiveCredential):
     """Authenticates users through the device code flow.
 
     When :func:`get_token` is called, this credential acquires a verification URL and code from Azure Active Directory.
     A user must browse to the URL, enter the code, and authenticate with Azure Active Directory. If the user
     authenticates successfully, the credential receives an access token.
-
-    This credential doesn't cache tokens--each :func:`get_token` call begins a new authentication flow.
 
     For more information about the device code flow, see Azure Active Directory documentation:
     https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-device-code
@@ -49,6 +47,10 @@ class DeviceCodeCredential(PublicClientCredential):
             - ``expires_on`` (datetime.datetime) the UTC time at which the code will expire
           If this argument isn't provided, the credential will print instructions to stdout.
     :paramtype prompt_callback: Callable[str, str, ~datetime.datetime]
+    :keyword AuthenticationRecord authentication_record: :class:`AuthenticationRecord` returned by :func:`authenticate`
+    :keyword bool disable_automatic_authentication: if True, :func:`get_token` will raise
+          :class:`AuthenticationRequiredError` when user interaction is required to acquire a token. Defaults to False.
+    :keyword bool disable_persistent_cache: if True, the credential will cache in memory only. Defaults to False.
     """
 
     def __init__(self, client_id, **kwargs):
@@ -58,26 +60,11 @@ class DeviceCodeCredential(PublicClientCredential):
         super(DeviceCodeCredential, self).__init__(client_id=client_id, **kwargs)
 
     @wrap_exceptions
-    def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
-        # type: (*str, **Any) -> AccessToken
-        """Request an access token for `scopes`.
-
-        This credential won't cache the token. Each call begins a new authentication flow.
-
-        .. note:: This method is called by Azure SDK clients. It isn't intended for use in application code.
-
-        :param str scopes: desired scopes for the access token. This method requires at least one scope.
-        :rtype: :class:`azure.core.credentials.AccessToken`
-        :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The error's ``message``
-          attribute gives a reason. Any error response from Azure Active Directory is available as the error's
-          ``response`` attribute.
-        """
-        if not scopes:
-            raise ValueError("'get_token' requires at least one scope")
+    def _request_token(self, *scopes, **kwargs):
+        # type: (*str, **Any) -> dict
 
         # MSAL requires scopes be a list
         scopes = list(scopes)  # type: ignore
-        now = int(time.time())
 
         app = self._get_app()
         flow = app.initiate_device_flow(scopes)
@@ -95,7 +82,7 @@ class DeviceCodeCredential(PublicClientCredential):
 
         if self._timeout is not None and self._timeout < flow["expires_in"]:
             # user specified an effective timeout we will observe
-            deadline = now + self._timeout
+            deadline = int(time.time()) + self._timeout
             result = app.acquire_token_by_device_flow(flow, exit_condition=lambda flow: time.time() > deadline)
         else:
             # MSAL will stop polling when the device code expires
@@ -108,8 +95,7 @@ class DeviceCodeCredential(PublicClientCredential):
                 message = "Authentication failed: {}".format(result.get("error_description") or result.get("error"))
             raise ClientAuthenticationError(message=message)
 
-        token = AccessToken(result["access_token"], now + int(result["expires_in"]))
-        return token
+        return result
 
 
 class UsernamePasswordCredential(PublicClientCredential):

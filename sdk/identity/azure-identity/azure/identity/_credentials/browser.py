@@ -3,16 +3,14 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import socket
-import time
 import uuid
 import webbrowser
 
-from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
 
 from .. import CredentialUnavailableError
 from .._constants import AZURE_CLI_CLIENT_ID
-from .._internal import AuthCodeRedirectServer, PublicClientCredential, wrap_exceptions
+from .._internal import AuthCodeRedirectServer, InteractiveCredential, wrap_exceptions
 
 try:
     from typing import TYPE_CHECKING
@@ -24,7 +22,7 @@ if TYPE_CHECKING:
     from typing import Any, List, Mapping
 
 
-class InteractiveBrowserCredential(PublicClientCredential):
+class InteractiveBrowserCredential(InteractiveCredential):
     """Opens a browser to interactively authenticate a user.
 
     :func:`~get_token` opens a browser to a login URL provided by Azure Active Directory and authenticates a user
@@ -38,6 +36,10 @@ class InteractiveBrowserCredential(PublicClientCredential):
           authenticate work or school accounts.
     :keyword str client_id: Client ID of the Azure Active Directory application users will sign in to. If
           unspecified, the Azure CLI's ID will be used.
+    :keyword AuthenticationRecord authentication_record: :class:`AuthenticationRecord` returned by :func:`authenticate`
+    :keyword bool disable_automatic_authentication: if True, :func:`get_token` will raise
+          :class:`AuthenticationRequiredError` when user interaction is required to acquire a token. Defaults to False.
+    :keyword bool disable_persistent_cache: if True, the credential will cache in memory only. Defaults to False.
     :keyword int timeout: seconds to wait for the user to complete authentication. Defaults to 300 (5 minutes).
     """
 
@@ -49,42 +51,9 @@ class InteractiveBrowserCredential(PublicClientCredential):
         super(InteractiveBrowserCredential, self).__init__(client_id=client_id, **kwargs)
 
     @wrap_exceptions
-    def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
-        # type: (*str, **Any) -> AccessToken
-        """Request an access token for `scopes`.
+    def _request_token(self, *scopes, **kwargs):
+        # type: (*str, **Any) -> dict
 
-        This will open a browser to a login page and listen on localhost for a request indicating authentication has
-        completed.
-
-        .. note:: This method is called by Azure SDK clients. It isn't intended for use in application code.
-
-        :param str scopes: desired scopes for the access token. This method requires at least one scope.
-        :rtype: :class:`azure.core.credentials.AccessToken`
-        :raises ~azure.identity.CredentialUnavailableError: the credential is unable to start an HTTP server on
-          localhost, or is unable to open a browser
-        :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The error's ``message``
-          attribute gives a reason. Any error response from Azure Active Directory is available as the error's
-          ``response`` attribute.
-        """
-        if not scopes:
-            raise ValueError("'get_token' requires at least one scope")
-
-        return self._get_token_from_cache(scopes, **kwargs) or self._get_token_by_auth_code(scopes, **kwargs)
-
-    def _get_token_from_cache(self, scopes, **kwargs):
-        """if the user has already signed in, we can redeem a refresh token for a new access token"""
-        app = self._get_app()
-        accounts = app.get_accounts()
-        if accounts:  # => user has already authenticated
-            # MSAL asserts scopes is a list
-            scopes = list(scopes)  # type: ignore
-            now = int(time.time())
-            token = app.acquire_token_silent(scopes, account=accounts[0], **kwargs)
-            if token and "access_token" in token and "expires_in" in token:
-                return AccessToken(token["access_token"], now + int(token["expires_in"]))
-        return None
-
-    def _get_token_by_auth_code(self, scopes, **kwargs):
         # start an HTTP server on localhost to receive the redirect
         for port in range(8400, 9000):
             try:
@@ -118,13 +87,8 @@ class InteractiveBrowserCredential(PublicClientCredential):
 
         # redeem the authorization code for a token
         code = self._parse_response(request_state, response)
-        now = int(time.time())
-        result = app.acquire_token_by_authorization_code(code, scopes=scopes, redirect_uri=redirect_uri, **kwargs)
+        return app.acquire_token_by_authorization_code(code, scopes=scopes, redirect_uri=redirect_uri, **kwargs)
 
-        if "access_token" not in result:
-            raise ClientAuthenticationError(message="Authentication failed: {}".format(result.get("error_description")))
-
-        return AccessToken(result["access_token"], now + int(result["expires_in"]))
 
     @staticmethod
     def _parse_response(request_state, response):
