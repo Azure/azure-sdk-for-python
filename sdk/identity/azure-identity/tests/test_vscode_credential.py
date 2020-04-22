@@ -67,12 +67,9 @@ def test_get_token():
         assert mock_client.obtain_token_by_refresh_token.call_count == 1
 
 
-if sys.platform.startswith('win'):
-    from azure.identity._credentials.win_vscode_adapter import _read_credential, _cred_write
-
-
 @pytest.mark.skipif(not sys.platform.startswith('win'), reason="This test only runs on Windows")
 def test_win_api():
+    from azure.identity._credentials.win_vscode_adapter import _read_credential, _cred_write
     service_name = u"VS Code Azure"
     account_name = u"Azure"
     target = u"{}/{}".format(service_name, account_name)
@@ -88,3 +85,33 @@ def test_win_api():
     _cred_write(credential)
     token_read = _read_credential(service_name, account_name)
     assert token_read == token_written
+
+
+@pytest.mark.skipif(not sys.platform.startswith('darwin'), reason="This test only runs on MacOS")
+def test_mac_keychain():
+    with mock.patch('Keychain.get_generic_password', return_value="VALUE"):
+        credential = VSCodeCredential()
+        assert credential.get_credentials == "VALUE"
+
+
+@pytest.mark.skipif(not sys.platform.startswith('darwin'), reason="This test only runs on MacOS")
+def test_mac_keychain():
+    with mock.patch('Keychain.get_generic_password', return_value="VALUE"):
+        credential = VSCodeCredential()
+        assert credential.get_credentials == "VALUE"
+
+
+@pytest.mark.skipif(not sys.platform.startswith('darwin'), reason="This test only runs on MacOS")
+def test_mac_keychain():
+    from msal_extensions.osx import Keychain, KeychainError
+    with mock.patch.object(Keychain, 'get_generic_password', side_effect=KeychainError()):
+        credential = VSCodeCredential()
+        with pytest.raises(CredentialUnavailableError):
+            token = credential.get_token("scope")
+
+
+@pytest.mark.skipif(sys.platform.startswith('darwin') or sys.platform.startswith('win') , reason="This test only runs on Linux")
+def test_get_token():
+    with mock.patch('aazure.identity._credentials.linux_vscode_adapter._get_refresh_token', return_value="VALUE"):
+        credential = VSCodeCredential()
+        assert credential.get_credentials == "VALUE"
