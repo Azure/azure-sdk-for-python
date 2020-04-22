@@ -11,13 +11,14 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
 
 from .. import models
 
 
-class WCFRelaysOperations(object):
-    """WCFRelaysOperations operations.
+class HybridConnectionsOperations(object):
+    """HybridConnectionsOperations operations.
+
+    You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -39,7 +40,7 @@ class WCFRelaysOperations(object):
 
     def list_by_namespace(
             self, resource_group_name, namespace_name, custom_headers=None, raw=False, **operation_config):
-        """Lists the WCF relays within the namespace.
+        """Lists the hybrid connection within the namespace.
 
         :param resource_group_name: Name of the Resource group within the
          Azure subscription.
@@ -51,14 +52,13 @@ class WCFRelaysOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of WcfRelay
+        :return: An iterator like instance of HybridConnection
         :rtype:
-         ~azure.mgmt.relay.models.WcfRelayPaged[~azure.mgmt.relay.models.WcfRelay]
+         ~azure.mgmt.relay.models.HybridConnectionPaged[~azure.mgmt.relay.models.HybridConnection]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.relay.models.ErrorResponseException>`
         """
-        def internal_paging(next_link=None, raw=False):
-
+        def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
                 url = self.list_by_namespace.metadata['url']
@@ -89,6 +89,11 @@ class WCFRelaysOperations(object):
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
@@ -97,46 +102,54 @@ class WCFRelaysOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.WcfRelayPaged(internal_paging, self._deserialize.dependencies)
-
+        header_dict = None
         if raw:
             header_dict = {}
-            client_raw_response = models.WcfRelayPaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
+        deserialized = models.HybridConnectionPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list_by_namespace.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Relay/namespaces/{namespaceName}/wcfRelays'}
+    list_by_namespace.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Relay/namespaces/{namespaceName}/hybridConnections'}
 
     def create_or_update(
-            self, resource_group_name, namespace_name, relay_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """Creates or updates a WCF relay. This operation is idempotent.
+            self, resource_group_name, namespace_name, hybrid_connection_name, requires_client_authorization=None, user_metadata=None, custom_headers=None, raw=False, **operation_config):
+        """Creates or updates a service hybrid connection. This operation is
+        idempotent.
 
         :param resource_group_name: Name of the Resource group within the
          Azure subscription.
         :type resource_group_name: str
         :param namespace_name: The namespace name
         :type namespace_name: str
-        :param relay_name: The relay name.
-        :type relay_name: str
-        :param parameters: Parameters supplied to create a WCF relay.
-        :type parameters: ~azure.mgmt.relay.models.WcfRelay
+        :param hybrid_connection_name: The hybrid connection name.
+        :type hybrid_connection_name: str
+        :param requires_client_authorization: Returns true if client
+         authorization is needed for this hybrid connection; otherwise, false.
+        :type requires_client_authorization: bool
+        :param user_metadata: The usermetadata is a placeholder to store
+         user-defined string data for the hybrid connection endpoint. For
+         example, it can be used to store descriptive data, such as a list of
+         teams and their contact information. Also, user-defined configuration
+         settings can be stored.
+        :type user_metadata: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: WcfRelay or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.relay.models.WcfRelay or
+        :return: HybridConnection or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.relay.models.HybridConnection or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.relay.models.ErrorResponseException>`
         """
+        parameters = models.HybridConnection(requires_client_authorization=requires_client_authorization, user_metadata=user_metadata)
+
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-            'relayName': self._serialize.url("relay_name", relay_name, 'str', min_length=1),
+            'hybridConnectionName': self._serialize.url("hybrid_connection_name", hybrid_connection_name, 'str', min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -157,7 +170,7 @@ class WCFRelaysOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'WcfRelay')
+        body_content = self._serialize.body(parameters, 'HybridConnection')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -167,28 +180,27 @@ class WCFRelaysOperations(object):
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
-            deserialized = self._deserialize('WcfRelay', response)
+            deserialized = self._deserialize('HybridConnection', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Relay/namespaces/{namespaceName}/wcfRelays/{relayName}'}
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Relay/namespaces/{namespaceName}/hybridConnections/{hybridConnectionName}'}
 
     def delete(
-            self, resource_group_name, namespace_name, relay_name, custom_headers=None, raw=False, **operation_config):
-        """Deletes a WCF relay.
+            self, resource_group_name, namespace_name, hybrid_connection_name, custom_headers=None, raw=False, **operation_config):
+        """Deletes a hybrid connection.
 
         :param resource_group_name: Name of the Resource group within the
          Azure subscription.
         :type resource_group_name: str
         :param namespace_name: The namespace name
         :type namespace_name: str
-        :param relay_name: The relay name.
-        :type relay_name: str
+        :param hybrid_connection_name: The hybrid connection name.
+        :type hybrid_connection_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -204,7 +216,7 @@ class WCFRelaysOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-            'relayName': self._serialize.url("relay_name", relay_name, 'str', min_length=1),
+            'hybridConnectionName': self._serialize.url("hybrid_connection_name", hybrid_connection_name, 'str', min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -232,26 +244,26 @@ class WCFRelaysOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Relay/namespaces/{namespaceName}/wcfRelays/{relayName}'}
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Relay/namespaces/{namespaceName}/hybridConnections/{hybridConnectionName}'}
 
     def get(
-            self, resource_group_name, namespace_name, relay_name, custom_headers=None, raw=False, **operation_config):
-        """Returns the description for the specified WCF relay.
+            self, resource_group_name, namespace_name, hybrid_connection_name, custom_headers=None, raw=False, **operation_config):
+        """Returns the description for the specified hybrid connection.
 
         :param resource_group_name: Name of the Resource group within the
          Azure subscription.
         :type resource_group_name: str
         :param namespace_name: The namespace name
         :type namespace_name: str
-        :param relay_name: The relay name.
-        :type relay_name: str
+        :param hybrid_connection_name: The hybrid connection name.
+        :type hybrid_connection_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: WcfRelay or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.relay.models.WcfRelay or
+        :return: HybridConnection or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.relay.models.HybridConnection or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.relay.models.ErrorResponseException>`
@@ -261,7 +273,7 @@ class WCFRelaysOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-            'relayName': self._serialize.url("relay_name", relay_name, 'str', min_length=1),
+            'hybridConnectionName': self._serialize.url("hybrid_connection_name", hybrid_connection_name, 'str', min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -284,32 +296,31 @@ class WCFRelaysOperations(object):
         request = self._client.get(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 204]:
+        if response.status_code not in [200]:
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
-            deserialized = self._deserialize('WcfRelay', response)
+            deserialized = self._deserialize('HybridConnection', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Relay/namespaces/{namespaceName}/wcfRelays/{relayName}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Relay/namespaces/{namespaceName}/hybridConnections/{hybridConnectionName}'}
 
     def list_authorization_rules(
-            self, resource_group_name, namespace_name, relay_name, custom_headers=None, raw=False, **operation_config):
-        """Authorization rules for a WCF relay.
+            self, resource_group_name, namespace_name, hybrid_connection_name, custom_headers=None, raw=False, **operation_config):
+        """Authorization rules for a hybrid connection.
 
         :param resource_group_name: Name of the Resource group within the
          Azure subscription.
         :type resource_group_name: str
         :param namespace_name: The namespace name
         :type namespace_name: str
-        :param relay_name: The relay name.
-        :type relay_name: str
+        :param hybrid_connection_name: The hybrid connection name.
+        :type hybrid_connection_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -318,17 +329,17 @@ class WCFRelaysOperations(object):
         :return: An iterator like instance of AuthorizationRule
         :rtype:
          ~azure.mgmt.relay.models.AuthorizationRulePaged[~azure.mgmt.relay.models.AuthorizationRule]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.relay.models.ErrorResponseException>`
         """
-        def internal_paging(next_link=None, raw=False):
-
+        def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
                 url = self.list_authorization_rules.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
                     'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-                    'relayName': self._serialize.url("relay_name", relay_name, 'str', min_length=1),
+                    'hybridConnectionName': self._serialize.url("hybrid_connection_name", hybrid_connection_name, 'str', min_length=1),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -353,37 +364,38 @@ class WCFRelaysOperations(object):
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.ErrorResponseException(self._deserialize, response)
 
             return response
 
         # Deserialize response
-        deserialized = models.AuthorizationRulePaged(internal_paging, self._deserialize.dependencies)
-
+        header_dict = None
         if raw:
             header_dict = {}
-            client_raw_response = models.AuthorizationRulePaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
+        deserialized = models.AuthorizationRulePaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list_authorization_rules.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Relay/namespaces/{namespaceName}/wcfRelays/{relayName}/authorizationRules'}
+    list_authorization_rules.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Relay/namespaces/{namespaceName}/hybridConnections/{hybridConnectionName}/authorizationRules'}
 
     def create_or_update_authorization_rule(
-            self, resource_group_name, namespace_name, relay_name, authorization_rule_name, rights, custom_headers=None, raw=False, **operation_config):
-        """Creates or updates an authorization rule for a WCF relay.
+            self, resource_group_name, namespace_name, hybrid_connection_name, authorization_rule_name, rights, custom_headers=None, raw=False, **operation_config):
+        """Creates or updates an authorization rule for a hybrid connection.
 
         :param resource_group_name: Name of the Resource group within the
          Azure subscription.
         :type resource_group_name: str
         :param namespace_name: The namespace name
         :type namespace_name: str
-        :param relay_name: The relay name.
-        :type relay_name: str
+        :param hybrid_connection_name: The hybrid connection name.
+        :type hybrid_connection_name: str
         :param authorization_rule_name: The authorization rule name.
         :type authorization_rule_name: str
         :param rights: The rights associated with the rule.
@@ -406,7 +418,7 @@ class WCFRelaysOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-            'relayName': self._serialize.url("relay_name", relay_name, 'str', min_length=1),
+            'hybridConnectionName': self._serialize.url("hybrid_connection_name", hybrid_connection_name, 'str', min_length=1),
             'authorizationRuleName': self._serialize.url("authorization_rule_name", authorization_rule_name, 'str', min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -438,7 +450,6 @@ class WCFRelaysOperations(object):
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('AuthorizationRule', response)
 
@@ -447,19 +458,19 @@ class WCFRelaysOperations(object):
             return client_raw_response
 
         return deserialized
-    create_or_update_authorization_rule.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Relay/namespaces/{namespaceName}/wcfRelays/{relayName}/authorizationRules/{authorizationRuleName}'}
+    create_or_update_authorization_rule.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Relay/namespaces/{namespaceName}/hybridConnections/{hybridConnectionName}/authorizationRules/{authorizationRuleName}'}
 
     def delete_authorization_rule(
-            self, resource_group_name, namespace_name, relay_name, authorization_rule_name, custom_headers=None, raw=False, **operation_config):
-        """Deletes a WCF relay authorization rule.
+            self, resource_group_name, namespace_name, hybrid_connection_name, authorization_rule_name, custom_headers=None, raw=False, **operation_config):
+        """Deletes a hybrid connection authorization rule.
 
         :param resource_group_name: Name of the Resource group within the
          Azure subscription.
         :type resource_group_name: str
         :param namespace_name: The namespace name
         :type namespace_name: str
-        :param relay_name: The relay name.
-        :type relay_name: str
+        :param hybrid_connection_name: The hybrid connection name.
+        :type hybrid_connection_name: str
         :param authorization_rule_name: The authorization rule name.
         :type authorization_rule_name: str
         :param dict custom_headers: headers that will be added to the request
@@ -477,7 +488,7 @@ class WCFRelaysOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-            'relayName': self._serialize.url("relay_name", relay_name, 'str', min_length=1),
+            'hybridConnectionName': self._serialize.url("hybrid_connection_name", hybrid_connection_name, 'str', min_length=1),
             'authorizationRuleName': self._serialize.url("authorization_rule_name", authorization_rule_name, 'str', min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -506,19 +517,19 @@ class WCFRelaysOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    delete_authorization_rule.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Relay/namespaces/{namespaceName}/wcfRelays/{relayName}/authorizationRules/{authorizationRuleName}'}
+    delete_authorization_rule.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Relay/namespaces/{namespaceName}/hybridConnections/{hybridConnectionName}/authorizationRules/{authorizationRuleName}'}
 
     def get_authorization_rule(
-            self, resource_group_name, namespace_name, relay_name, authorization_rule_name, custom_headers=None, raw=False, **operation_config):
-        """Get authorizationRule for a WCF relay by name.
+            self, resource_group_name, namespace_name, hybrid_connection_name, authorization_rule_name, custom_headers=None, raw=False, **operation_config):
+        """Hybrid connection authorization rule for a hybrid connection by name.
 
         :param resource_group_name: Name of the Resource group within the
          Azure subscription.
         :type resource_group_name: str
         :param namespace_name: The namespace name
         :type namespace_name: str
-        :param relay_name: The relay name.
-        :type relay_name: str
+        :param hybrid_connection_name: The hybrid connection name.
+        :type hybrid_connection_name: str
         :param authorization_rule_name: The authorization rule name.
         :type authorization_rule_name: str
         :param dict custom_headers: headers that will be added to the request
@@ -537,7 +548,7 @@ class WCFRelaysOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-            'relayName': self._serialize.url("relay_name", relay_name, 'str', min_length=1),
+            'hybridConnectionName': self._serialize.url("hybrid_connection_name", hybrid_connection_name, 'str', min_length=1),
             'authorizationRuleName': self._serialize.url("authorization_rule_name", authorization_rule_name, 'str', min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -565,7 +576,6 @@ class WCFRelaysOperations(object):
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('AuthorizationRule', response)
 
@@ -574,19 +584,19 @@ class WCFRelaysOperations(object):
             return client_raw_response
 
         return deserialized
-    get_authorization_rule.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Relay/namespaces/{namespaceName}/wcfRelays/{relayName}/authorizationRules/{authorizationRuleName}'}
+    get_authorization_rule.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Relay/namespaces/{namespaceName}/hybridConnections/{hybridConnectionName}/authorizationRules/{authorizationRuleName}'}
 
     def list_keys(
-            self, resource_group_name, namespace_name, relay_name, authorization_rule_name, custom_headers=None, raw=False, **operation_config):
-        """Primary and secondary connection strings to the WCF relay.
+            self, resource_group_name, namespace_name, hybrid_connection_name, authorization_rule_name, custom_headers=None, raw=False, **operation_config):
+        """Primary and secondary connection strings to the hybrid connection.
 
         :param resource_group_name: Name of the Resource group within the
          Azure subscription.
         :type resource_group_name: str
         :param namespace_name: The namespace name
         :type namespace_name: str
-        :param relay_name: The relay name.
-        :type relay_name: str
+        :param hybrid_connection_name: The hybrid connection name.
+        :type hybrid_connection_name: str
         :param authorization_rule_name: The authorization rule name.
         :type authorization_rule_name: str
         :param dict custom_headers: headers that will be added to the request
@@ -605,7 +615,7 @@ class WCFRelaysOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-            'relayName': self._serialize.url("relay_name", relay_name, 'str', min_length=1),
+            'hybridConnectionName': self._serialize.url("hybrid_connection_name", hybrid_connection_name, 'str', min_length=1),
             'authorizationRuleName': self._serialize.url("authorization_rule_name", authorization_rule_name, 'str', min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -633,7 +643,6 @@ class WCFRelaysOperations(object):
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('AccessKeys', response)
 
@@ -642,20 +651,20 @@ class WCFRelaysOperations(object):
             return client_raw_response
 
         return deserialized
-    list_keys.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Relay/namespaces/{namespaceName}/wcfRelays/{relayName}/authorizationRules/{authorizationRuleName}/listKeys'}
+    list_keys.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Relay/namespaces/{namespaceName}/hybridConnections/{hybridConnectionName}/authorizationRules/{authorizationRuleName}/listKeys'}
 
     def regenerate_keys(
-            self, resource_group_name, namespace_name, relay_name, authorization_rule_name, key_type, key=None, custom_headers=None, raw=False, **operation_config):
-        """Regenerates the primary or secondary connection strings to the WCF
-        relay.
+            self, resource_group_name, namespace_name, hybrid_connection_name, authorization_rule_name, key_type, key=None, custom_headers=None, raw=False, **operation_config):
+        """Regenerates the primary or secondary connection strings to the hybrid
+        connection.
 
         :param resource_group_name: Name of the Resource group within the
          Azure subscription.
         :type resource_group_name: str
         :param namespace_name: The namespace name
         :type namespace_name: str
-        :param relay_name: The relay name.
-        :type relay_name: str
+        :param hybrid_connection_name: The hybrid connection name.
+        :type hybrid_connection_name: str
         :param authorization_rule_name: The authorization rule name.
         :type authorization_rule_name: str
         :param key_type: The access key to regenerate. Possible values
@@ -682,7 +691,7 @@ class WCFRelaysOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-            'relayName': self._serialize.url("relay_name", relay_name, 'str', min_length=1),
+            'hybridConnectionName': self._serialize.url("hybrid_connection_name", hybrid_connection_name, 'str', min_length=1),
             'authorizationRuleName': self._serialize.url("authorization_rule_name", authorization_rule_name, 'str', min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -714,7 +723,6 @@ class WCFRelaysOperations(object):
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('AccessKeys', response)
 
@@ -723,4 +731,4 @@ class WCFRelaysOperations(object):
             return client_raw_response
 
         return deserialized
-    regenerate_keys.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Relay/namespaces/{namespaceName}/wcfRelays/{relayName}/authorizationRules/{authorizationRuleName}/regenerateKeys'}
+    regenerate_keys.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Relay/namespaces/{namespaceName}/hybridConnections/{hybridConnectionName}/authorizationRules/{authorizationRuleName}/regenerateKeys'}
