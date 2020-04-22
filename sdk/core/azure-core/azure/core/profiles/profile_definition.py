@@ -210,12 +210,12 @@ class KnownProfiles(Enum):
     def use(self, profile):
         if self is not type(self).default:
             raise ValueError("use can only be used for `default` profile")
-        self.value.use(profile)
+        self.value.use(profile) # pylint: disable=maybe-no-member
 
     def definition(self):
         if self is not type(self).default:
             raise ValueError("use can only be used for `default` profile")
-        return self.value.definition()
+        return self.value.definition()  # pylint: disable=maybe-no-member
 
     @classmethod
     def from_name(cls, profile_name):

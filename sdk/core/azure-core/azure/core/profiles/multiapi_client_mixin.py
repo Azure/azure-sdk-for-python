@@ -27,12 +27,14 @@ class MultiApiClientMixin(object):
         try:
             type(self).LATEST_PROFILE
         except AttributeError:
-            raise InvalidMultiApiClientError("To use this mixin, main client MUST define LATEST_PROFILE class attribute")
+            raise InvalidMultiApiClientError(
+                "To use this mixin, main client MUST define LATEST_PROFILE class attribute")
 
         try:
             type(self)._PROFILE_TAG
         except AttributeError:
-            raise InvalidMultiApiClientError("To use this mixin, main client MUST define _PROFILE_TAG class attribute")
+            raise InvalidMultiApiClientError(
+                "To use this mixin, main client MUST define _PROFILE_TAG class attribute")
 
         if api_version and profile is not KnownProfiles.default:
             raise ValueError("Cannot use api-version and profile parameters at the same time")
