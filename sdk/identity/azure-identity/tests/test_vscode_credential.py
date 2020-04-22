@@ -112,6 +112,6 @@ def test_mac_keychain():
 
 @pytest.mark.skipif(sys.platform.startswith('darwin') or sys.platform.startswith('win') , reason="This test only runs on Linux")
 def test_get_token():
-    with mock.patch('aazure.identity._credentials.linux_vscode_adapter._get_refresh_token', return_value="VALUE"):
+    with mock.patch('azure.identity._credentials.linux_vscode_adapter._get_refresh_token', return_value="VALUE"):
         credential = VSCodeCredential()
         assert credential.get_credentials == "VALUE"
