@@ -1120,8 +1120,8 @@ class OperationDetail(Model):
 
     :param name: Name of the operation
     :type name: str
-    :param data_action: Indicates whether the operation is a data action
-    :type data_action: bool
+    :param is_data_action: Indicates whether the operation is a data action
+    :type is_data_action: bool
     :param display: Display of the operation
     :type display: ~azure.mgmt.appplatform.models.OperationDisplay
     :param origin: Origin of the operation
@@ -1132,7 +1132,7 @@ class OperationDetail(Model):
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
-        'data_action': {'key': 'dataAction', 'type': 'bool'},
+        'is_data_action': {'key': 'isDataAction', 'type': 'bool'},
         'display': {'key': 'display', 'type': 'OperationDisplay'},
         'origin': {'key': 'origin', 'type': 'str'},
         'properties': {'key': 'properties', 'type': 'OperationProperties'},
@@ -1141,7 +1141,7 @@ class OperationDetail(Model):
     def __init__(self, **kwargs):
         super(OperationDetail, self).__init__(**kwargs)
         self.name = kwargs.get('name', None)
-        self.data_action = kwargs.get('data_action', None)
+        self.is_data_action = kwargs.get('is_data_action', None)
         self.display = kwargs.get('display', None)
         self.origin = kwargs.get('origin', None)
         self.properties = kwargs.get('properties', None)
