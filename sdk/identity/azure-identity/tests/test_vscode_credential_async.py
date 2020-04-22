@@ -30,7 +30,7 @@ async def test_policies_configurable():
     async def send(*_, **__):
         return mock_response(json_payload=build_aad_response(access_token="**"))
 
-    with mock.patch('azure.identity.aio._credentials.vscode_credential.get_credentials', return_value="VALUE"):
+    with mock.patch(VSCodeCredential.__module__ + ".get_credentials", return_value="VALUE"):
         credential = VSCodeCredential(policies=[policy], transport=mock.Mock(send=send))
         await credential.get_token("scope")
         assert policy.on_request.called
@@ -43,14 +43,14 @@ async def test_user_agent():
         responses=[mock_response(json_payload=build_aad_response(access_token="**"))],
     )
 
-    with mock.patch('azure.identity.aio._credentials.vscode_credential.get_credentials', return_value="VALUE"):
+    with mock.patch(VSCodeCredential.__module__ + ".get_credentials", return_value="VALUE"):
         credential = VSCodeCredential(transport=transport)
         await credential.get_token("scope")
 
 
 @pytest.mark.asyncio
 async def test_credential_unavailable_error():
-    with mock.patch('azure.identity.aio._credentials.vscode_credential.get_credentials', return_value=None):
+    with mock.patch(VSCodeCredential.__module__ + ".get_credentials", return_value=None):
         credential = VSCodeCredential()
         with pytest.raises(CredentialUnavailableError):
             token = await credential.get_token("scope")
@@ -64,7 +64,7 @@ async def test_get_token():
     token_by_refresh_token = mock.Mock(return_value=expected_token)
     mock_client.obtain_token_by_refresh_token = wrap_in_future(token_by_refresh_token)
 
-    with mock.patch('azure.identity.aio._credentials.vscode_credential.get_credentials', return_value="VALUE"):
+    with mock.patch(VSCodeCredential.__module__ + ".get_credentials", return_value="VALUE"):
         credential = VSCodeCredential(_client=mock_client)
         token = await credential.get_token("scope")
         assert token is expected_token
