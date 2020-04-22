@@ -14,10 +14,16 @@ try:
     from ._models_py3 import AppResourceProperties
     from ._models_py3 import BindingResource
     from ._models_py3 import BindingResourceProperties
+    from ._models_py3 import CertificateProperties
+    from ._models_py3 import CertificateResource
     from ._models_py3 import ClusterResourceProperties
     from ._models_py3 import ConfigServerGitProperty
     from ._models_py3 import ConfigServerProperties
     from ._models_py3 import ConfigServerSettings
+    from ._models_py3 import CustomDomainProperties
+    from ._models_py3 import CustomDomainResource
+    from ._models_py3 import CustomDomainValidatePayload
+    from ._models_py3 import CustomDomainValidateResult
     from ._models_py3 import DeploymentInstance
     from ._models_py3 import DeploymentResource
     from ._models_py3 import DeploymentResourceProperties
@@ -50,10 +56,16 @@ except (SyntaxError, ImportError):
     from ._models import AppResourceProperties
     from ._models import BindingResource
     from ._models import BindingResourceProperties
+    from ._models import CertificateProperties
+    from ._models import CertificateResource
     from ._models import ClusterResourceProperties
     from ._models import ConfigServerGitProperty
     from ._models import ConfigServerProperties
     from ._models import ConfigServerSettings
+    from ._models import CustomDomainProperties
+    from ._models import CustomDomainResource
+    from ._models import CustomDomainValidatePayload
+    from ._models import CustomDomainValidateResult
     from ._models import DeploymentInstance
     from ._models import DeploymentResource
     from ._models import DeploymentResourceProperties
@@ -83,6 +95,8 @@ except (SyntaxError, ImportError):
     from ._models import UserSourceInfo
 from ._paged_models import AppResourcePaged
 from ._paged_models import BindingResourcePaged
+from ._paged_models import CertificateResourcePaged
+from ._paged_models import CustomDomainResourcePaged
 from ._paged_models import DeploymentResourcePaged
 from ._paged_models import OperationDetailPaged
 from ._paged_models import ServiceResourcePaged
@@ -93,8 +107,8 @@ from ._app_platform_management_client_enums import (
     TestKeyType,
     AppResourceProvisioningState,
     UserSourceType,
-    DeploymentResourceProvisioningState,
     RuntimeVersion,
+    DeploymentResourceProvisioningState,
     DeploymentResourceStatus,
 )
 
@@ -103,10 +117,16 @@ __all__ = [
     'AppResourceProperties',
     'BindingResource',
     'BindingResourceProperties',
+    'CertificateProperties',
+    'CertificateResource',
     'ClusterResourceProperties',
     'ConfigServerGitProperty',
     'ConfigServerProperties',
     'ConfigServerSettings',
+    'CustomDomainProperties',
+    'CustomDomainResource',
+    'CustomDomainValidatePayload',
+    'CustomDomainValidateResult',
     'DeploymentInstance',
     'DeploymentResource',
     'DeploymentResourceProperties',
@@ -137,6 +157,8 @@ __all__ = [
     'ServiceResourcePaged',
     'AppResourcePaged',
     'BindingResourcePaged',
+    'CertificateResourcePaged',
+    'CustomDomainResourcePaged',
     'DeploymentResourcePaged',
     'OperationDetailPaged',
     'ProvisioningState',
@@ -145,7 +167,7 @@ __all__ = [
     'TestKeyType',
     'AppResourceProvisioningState',
     'UserSourceType',
-    'DeploymentResourceProvisioningState',
     'RuntimeVersion',
+    'DeploymentResourceProvisioningState',
     'DeploymentResourceStatus',
 ]
