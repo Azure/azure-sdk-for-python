@@ -125,7 +125,7 @@ class UsernamePasswordCredential(PublicClientCredential):
 
     def __init__(self, client_id, username, password, **kwargs):
         # type: (str, str, str, Any) -> None
-        super(UsernamePasswordCredential, self).__init__(client_id=client_id, **kwargs)
+        super(UsernamePasswordCredential, self).__init__(client_id=client_id, disable_persistent_cache=True, **kwargs)
         self._username = username
         self._password = password
 
