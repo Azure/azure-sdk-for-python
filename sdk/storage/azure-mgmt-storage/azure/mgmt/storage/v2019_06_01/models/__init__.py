@@ -26,6 +26,7 @@ try:
     from ._models_py3 import CustomDomain
     from ._models_py3 import DateAfterCreation
     from ._models_py3 import DateAfterModification
+    from ._models_py3 import DeletedShare
     from ._models_py3 import DeleteRetentionPolicy
     from ._models_py3 import Dimension
     from ._models_py3 import Encryption
@@ -114,6 +115,7 @@ except (SyntaxError, ImportError):
     from ._models import CustomDomain
     from ._models import DateAfterCreation
     from ._models import DateAfterModification
+    from ._models import DeletedShare
     from ._models import DeleteRetentionPolicy
     from ._models import Dimension
     from ._models import Encryption
@@ -231,8 +233,13 @@ from ._storage_management_client_enums import (
     LeaseDuration,
     ImmutabilityPolicyState,
     ImmutabilityPolicyUpdateType,
+    EnabledProtocols,
+    RootSquashType,
+    ShareAccessTier,
     StorageAccountExpand,
     ListKeyExpand,
+    ListSharesExpand,
+    GetShareExpand,
 )
 
 __all__ = [
@@ -252,6 +259,7 @@ __all__ = [
     'CustomDomain',
     'DateAfterCreation',
     'DateAfterModification',
+    'DeletedShare',
     'DeleteRetentionPolicy',
     'Dimension',
     'Encryption',
@@ -368,6 +376,11 @@ __all__ = [
     'LeaseDuration',
     'ImmutabilityPolicyState',
     'ImmutabilityPolicyUpdateType',
+    'EnabledProtocols',
+    'RootSquashType',
+    'ShareAccessTier',
     'StorageAccountExpand',
     'ListKeyExpand',
+    'ListSharesExpand',
+    'GetShareExpand',
 ]

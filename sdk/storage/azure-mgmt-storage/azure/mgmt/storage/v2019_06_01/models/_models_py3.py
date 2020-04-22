@@ -789,6 +789,35 @@ class DateAfterModification(Model):
         self.days_after_modification_greater_than = days_after_modification_greater_than
 
 
+class DeletedShare(Model):
+    """The deleted share to be restored.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param deleted_share_name: Required. Required. Identify the name of the
+     deleted share that will be restored.
+    :type deleted_share_name: str
+    :param deleted_share_version: Required. Required. Identify the version of
+     the deleted share that will be restored.
+    :type deleted_share_version: str
+    """
+
+    _validation = {
+        'deleted_share_name': {'required': True},
+        'deleted_share_version': {'required': True},
+    }
+
+    _attribute_map = {
+        'deleted_share_name': {'key': 'deletedShareName', 'type': 'str'},
+        'deleted_share_version': {'key': 'deletedShareVersion', 'type': 'str'},
+    }
+
+    def __init__(self, *, deleted_share_name: str, deleted_share_version: str, **kwargs) -> None:
+        super(DeletedShare, self).__init__(**kwargs)
+        self.deleted_share_name = deleted_share_name
+        self.deleted_share_version = deleted_share_version
+
+
 class DeleteRetentionPolicy(Model):
     """The service properties for soft delete.
 
@@ -1214,6 +1243,41 @@ class FileShare(AzureEntityResource):
      greater than 0, and less than or equal to 5TB (5120). For Large File
      Shares, the maximum size is 102400.
     :type share_quota: int
+    :param enabled_protocols: The authentication protocol that is used for the
+     file share. Can only be specified when creating a share. Possible values
+     include: 'SMB', 'NFS'
+    :type enabled_protocols: str or
+     ~azure.mgmt.storage.v2019_06_01.models.EnabledProtocols
+    :param root_squash: The property is for NFS share only. The default is
+     NoRootSquash. Possible values include: 'NoRootSquash', 'RootSquash',
+     'AllSquash'
+    :type root_squash: str or
+     ~azure.mgmt.storage.v2019_06_01.models.RootSquashType
+    :ivar version: The version of the share.
+    :vartype version: str
+    :ivar deleted: Indicates whether the share was deleted.
+    :vartype deleted: bool
+    :ivar deleted_time: The deleted time if the share was deleted.
+    :vartype deleted_time: datetime
+    :ivar remaining_retention_days: Remaining retention days for share that
+     was soft deleted.
+    :vartype remaining_retention_days: int
+    :param access_tier: Access tier for specific share. GpV2 account can
+     choose between TransactionOptimized (default), Hot, and Cool. FileStorage
+     account can choose Premium. Possible values include:
+     'TransactionOptimized', 'Hot', 'Cool', 'Premium'
+    :type access_tier: str or
+     ~azure.mgmt.storage.v2019_06_01.models.ShareAccessTier
+    :ivar access_tier_change_time: Indicates the last modification time for
+     share access tier.
+    :vartype access_tier_change_time: datetime
+    :ivar access_tier_status: Indicates if there is a pending transition for
+     access tier.
+    :vartype access_tier_status: str
+    :ivar share_usage_bytes: The approximate size of the data stored on the
+     share. Note that this value may not include all recently created or
+     recently resized files.
+    :vartype share_usage_bytes: int
     """
 
     _validation = {
@@ -1223,6 +1287,13 @@ class FileShare(AzureEntityResource):
         'etag': {'readonly': True},
         'last_modified_time': {'readonly': True},
         'share_quota': {'maximum': 102400, 'minimum': 1},
+        'version': {'readonly': True},
+        'deleted': {'readonly': True},
+        'deleted_time': {'readonly': True},
+        'remaining_retention_days': {'readonly': True},
+        'access_tier_change_time': {'readonly': True},
+        'access_tier_status': {'readonly': True},
+        'share_usage_bytes': {'readonly': True},
     }
 
     _attribute_map = {
@@ -1233,13 +1304,33 @@ class FileShare(AzureEntityResource):
         'last_modified_time': {'key': 'properties.lastModifiedTime', 'type': 'iso-8601'},
         'metadata': {'key': 'properties.metadata', 'type': '{str}'},
         'share_quota': {'key': 'properties.shareQuota', 'type': 'int'},
+        'enabled_protocols': {'key': 'properties.enabledProtocols', 'type': 'str'},
+        'root_squash': {'key': 'properties.rootSquash', 'type': 'str'},
+        'version': {'key': 'properties.version', 'type': 'str'},
+        'deleted': {'key': 'properties.deleted', 'type': 'bool'},
+        'deleted_time': {'key': 'properties.deletedTime', 'type': 'iso-8601'},
+        'remaining_retention_days': {'key': 'properties.remainingRetentionDays', 'type': 'int'},
+        'access_tier': {'key': 'properties.accessTier', 'type': 'str'},
+        'access_tier_change_time': {'key': 'properties.accessTierChangeTime', 'type': 'iso-8601'},
+        'access_tier_status': {'key': 'properties.accessTierStatus', 'type': 'str'},
+        'share_usage_bytes': {'key': 'properties.shareUsageBytes', 'type': 'int'},
     }
 
-    def __init__(self, *, metadata=None, share_quota: int=None, **kwargs) -> None:
+    def __init__(self, *, metadata=None, share_quota: int=None, enabled_protocols=None, root_squash=None, access_tier=None, **kwargs) -> None:
         super(FileShare, self).__init__(**kwargs)
         self.last_modified_time = None
         self.metadata = metadata
         self.share_quota = share_quota
+        self.enabled_protocols = enabled_protocols
+        self.root_squash = root_squash
+        self.version = None
+        self.deleted = None
+        self.deleted_time = None
+        self.remaining_retention_days = None
+        self.access_tier = access_tier
+        self.access_tier_change_time = None
+        self.access_tier_status = None
+        self.share_usage_bytes = None
 
 
 class FileShareItem(AzureEntityResource):
@@ -1268,6 +1359,41 @@ class FileShareItem(AzureEntityResource):
      greater than 0, and less than or equal to 5TB (5120). For Large File
      Shares, the maximum size is 102400.
     :type share_quota: int
+    :param enabled_protocols: The authentication protocol that is used for the
+     file share. Can only be specified when creating a share. Possible values
+     include: 'SMB', 'NFS'
+    :type enabled_protocols: str or
+     ~azure.mgmt.storage.v2019_06_01.models.EnabledProtocols
+    :param root_squash: The property is for NFS share only. The default is
+     NoRootSquash. Possible values include: 'NoRootSquash', 'RootSquash',
+     'AllSquash'
+    :type root_squash: str or
+     ~azure.mgmt.storage.v2019_06_01.models.RootSquashType
+    :ivar version: The version of the share.
+    :vartype version: str
+    :ivar deleted: Indicates whether the share was deleted.
+    :vartype deleted: bool
+    :ivar deleted_time: The deleted time if the share was deleted.
+    :vartype deleted_time: datetime
+    :ivar remaining_retention_days: Remaining retention days for share that
+     was soft deleted.
+    :vartype remaining_retention_days: int
+    :param access_tier: Access tier for specific share. GpV2 account can
+     choose between TransactionOptimized (default), Hot, and Cool. FileStorage
+     account can choose Premium. Possible values include:
+     'TransactionOptimized', 'Hot', 'Cool', 'Premium'
+    :type access_tier: str or
+     ~azure.mgmt.storage.v2019_06_01.models.ShareAccessTier
+    :ivar access_tier_change_time: Indicates the last modification time for
+     share access tier.
+    :vartype access_tier_change_time: datetime
+    :ivar access_tier_status: Indicates if there is a pending transition for
+     access tier.
+    :vartype access_tier_status: str
+    :ivar share_usage_bytes: The approximate size of the data stored on the
+     share. Note that this value may not include all recently created or
+     recently resized files.
+    :vartype share_usage_bytes: int
     """
 
     _validation = {
@@ -1277,6 +1403,13 @@ class FileShareItem(AzureEntityResource):
         'etag': {'readonly': True},
         'last_modified_time': {'readonly': True},
         'share_quota': {'maximum': 102400, 'minimum': 1},
+        'version': {'readonly': True},
+        'deleted': {'readonly': True},
+        'deleted_time': {'readonly': True},
+        'remaining_retention_days': {'readonly': True},
+        'access_tier_change_time': {'readonly': True},
+        'access_tier_status': {'readonly': True},
+        'share_usage_bytes': {'readonly': True},
     }
 
     _attribute_map = {
@@ -1287,13 +1420,33 @@ class FileShareItem(AzureEntityResource):
         'last_modified_time': {'key': 'properties.lastModifiedTime', 'type': 'iso-8601'},
         'metadata': {'key': 'properties.metadata', 'type': '{str}'},
         'share_quota': {'key': 'properties.shareQuota', 'type': 'int'},
+        'enabled_protocols': {'key': 'properties.enabledProtocols', 'type': 'str'},
+        'root_squash': {'key': 'properties.rootSquash', 'type': 'str'},
+        'version': {'key': 'properties.version', 'type': 'str'},
+        'deleted': {'key': 'properties.deleted', 'type': 'bool'},
+        'deleted_time': {'key': 'properties.deletedTime', 'type': 'iso-8601'},
+        'remaining_retention_days': {'key': 'properties.remainingRetentionDays', 'type': 'int'},
+        'access_tier': {'key': 'properties.accessTier', 'type': 'str'},
+        'access_tier_change_time': {'key': 'properties.accessTierChangeTime', 'type': 'iso-8601'},
+        'access_tier_status': {'key': 'properties.accessTierStatus', 'type': 'str'},
+        'share_usage_bytes': {'key': 'properties.shareUsageBytes', 'type': 'int'},
     }
 
-    def __init__(self, *, metadata=None, share_quota: int=None, **kwargs) -> None:
+    def __init__(self, *, metadata=None, share_quota: int=None, enabled_protocols=None, root_squash=None, access_tier=None, **kwargs) -> None:
         super(FileShareItem, self).__init__(**kwargs)
         self.last_modified_time = None
         self.metadata = metadata
         self.share_quota = share_quota
+        self.enabled_protocols = enabled_protocols
+        self.root_squash = root_squash
+        self.version = None
+        self.deleted = None
+        self.deleted_time = None
+        self.remaining_retention_days = None
+        self.access_tier = access_tier
+        self.access_tier_change_time = None
+        self.access_tier_status = None
+        self.share_usage_bytes = None
 
 
 class GeoReplicationStats(Model):
