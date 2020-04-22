@@ -514,9 +514,9 @@ class _HttpResponseBase(object):
                         http_response_type=http_response_type,
                     )
                 )
-            elif content_type == "multipart/mixed":
+            elif content_type == "multipart/mixed" and requests[index].multipart_mixed_info:
                 # The message batch contains one or more change sets
-                changeset_requests = requests[index].multipart_mixed_info[0]
+                changeset_requests = requests[index].multipart_mixed_info[0]  # type: ignore
                 changeset_responses = self._decode_parts(raw_reponse, http_response_type, changeset_requests)
                 responses.extend(changeset_responses)
             else:
