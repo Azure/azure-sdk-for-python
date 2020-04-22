@@ -3,17 +3,23 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from azure.core.exceptions import ClientAuthenticationError
-from azure.core.pipeline.policies import ContentDecodePolicy, SansIOHTTPPolicy
+from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.identity import UsernamePasswordCredential
 from azure.identity._internal.user_agent import USER_AGENT
 import pytest
 
-from helpers import build_aad_response, get_discovery_response, mock_response, Request, validating_transport
+from helpers import (
+    build_aad_response,
+    get_discovery_response,
+    mock_response,
+    Request,
+    validating_transport,
+)
 
 try:
-    from unittest.mock import Mock
+    from unittest.mock import Mock, patch
 except ImportError:  # python < 3.3
-    from mock import Mock  # type: ignore
+    from mock import Mock, patch  # type: ignore
 
 
 def test_no_scopes():
@@ -80,3 +86,15 @@ def test_username_password_credential():
 
     token = credential.get_token("scope")
     assert token.token == expected_token
+
+
+def test_cache_persistence():
+    """The credential should cache only in memory"""
+
+    expected_cache = Mock()
+    raise_when_called = Mock(side_effect=Exception("credential shouldn't attempt to load a persistent cache"))
+    with patch.multiple("msal_extensions.token_cache", WindowsTokenCache=raise_when_called):
+        with patch("msal.TokenCache", Mock(return_value=expected_cache)):
+            credential = UsernamePasswordCredential("...", "...", "...")
+
+    assert credential._cache is expected_cache
