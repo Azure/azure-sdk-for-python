@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 #--------------------------------------------------------------------------
-from .profile_definition import KnownProfiles, ProfileDefinition
+from ._profile_definition import KnownProfiles, ProfileDefinition
 from ..exceptions import InvalidMultiApiClientError
 
 
