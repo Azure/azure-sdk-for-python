@@ -22,8 +22,6 @@ class MultiApiClientMixin(object):
         api_version = kwargs.pop("api_version", None)
         profile = kwargs.pop("profile", KnownProfiles.default)
 
-        super(MultiApiClientMixin, self).__init__(*args, **kwargs)
-
         try:
             type(self).LATEST_PROFILE
         except AttributeError:
