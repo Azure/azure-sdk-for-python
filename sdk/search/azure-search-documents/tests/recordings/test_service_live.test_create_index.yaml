@@ -16,31 +16,31 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-search-documents/1.0.0b2 Python/3.6.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-search-documents/1.0.0b3 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
       api-key:
-      - EA2B41F1F9F9CD531EC80F4905A3189A
+      - F078F6A85D2ED703E08FBF8A5960F28F
     method: POST
-    uri: https://search3f00e58.search.windows.net/indexes?api-version=2019-05-06-Preview
+    uri: https://searche7b20da6.search.windows.net/indexes?api-version=2019-05-06-Preview
   response:
     body:
-      string: '{"@odata.context":"https://search3f00e58.search.windows.net/$metadata#indexes/$entity","@odata.etag":"\"0x8D7D59A543B59C4\"","name":"hotels","defaultScoringProfile":null,"fields":[{"name":"hotelId","type":"Edm.String","searchable":false,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":true,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"synonymMaps":[]},{"name":"baseRate","type":"Edm.Double","searchable":false,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":false,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"synonymMaps":[]}],"scoringProfiles":[{"name":"MyProfile","functionAggregation":null,"text":null,"functions":[]}],"corsOptions":{"allowedOrigins":["*"],"maxAgeInSeconds":60},"suggesters":[],"analyzers":[],"tokenizers":[],"tokenFilters":[],"charFilters":[],"encryptionKey":null,"similarity":null}'
+      string: '{"@odata.context":"https://searche7b20da6.search.windows.net/$metadata#indexes/$entity","@odata.etag":"\"0x8D7E7B4DC6F309A\"","name":"hotels","defaultScoringProfile":null,"fields":[{"name":"hotelId","type":"Edm.String","searchable":false,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":true,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"synonymMaps":[]},{"name":"baseRate","type":"Edm.Double","searchable":false,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":false,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"synonymMaps":[]}],"scoringProfiles":[{"name":"MyProfile","functionAggregation":null,"text":null,"functions":[]}],"corsOptions":{"allowedOrigins":["*"],"maxAgeInSeconds":60},"suggesters":[],"analyzers":[],"tokenizers":[],"tokenFilters":[],"charFilters":[],"encryptionKey":null,"similarity":null}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '889'
+      - '890'
       content-type:
       - application/json; odata.metadata=minimal
       date:
-      - Tue, 31 Mar 2020 17:38:31 GMT
+      - Thu, 23 Apr 2020 18:33:47 GMT
       elapsed-time:
-      - '2330'
+      - '692'
       etag:
-      - W/"0x8D7D59A543B59C4"
+      - W/"0x8D7E7B4DC6F309A"
       expires:
       - '-1'
       location:
-      - https://search3f00e58.search.windows.net/indexes('hotels')?api-version=2019-05-06-Preview
+      - https://searche7b20da6.search.windows.net/indexes('hotels')?api-version=2019-05-06-Preview
       odata-version:
       - '4.0'
       pragma:
@@ -48,10 +48,48 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - 6efa6738-7376-11ea-8516-5cf37071153c
+      - f7750450-8590-11ea-8d82-8c8590507855
       strict-transport-security:
       - max-age=15724800; includeSubDomains
     status:
       code: 201
       message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json;odata.metadata=minimal
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-search-documents/1.0.0b3 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
+      api-key:
+      - F078F6A85D2ED703E08FBF8A5960F28F
+    method: DELETE
+    uri: https://searche7b20da6.search.windows.net/indexes('hotels')?api-version=2019-05-06-Preview
+  response:
+    body:
+      string: ''
+    headers:
+      cache-control:
+      - no-cache
+      date:
+      - Thu, 23 Apr 2020 18:33:47 GMT
+      elapsed-time:
+      - '211'
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-id:
+      - f839bf5c-8590-11ea-8d82-8c8590507855
+      strict-transport-security:
+      - max-age=15724800; includeSubDomains
+    status:
+      code: 204
+      message: No Content
 version: 1

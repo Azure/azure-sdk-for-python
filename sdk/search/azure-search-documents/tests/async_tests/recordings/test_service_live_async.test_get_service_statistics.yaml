@@ -5,37 +5,30 @@ interactions:
       Accept:
       - application/json;odata.metadata=minimal
       User-Agent:
-      - azsdk-python-search-documents/1.0.0b2 Python/3.6.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-search-documents/1.0.0b3 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
       api-key:
-      - BCC2B5F7B4D46977C101187522DA6F26
+      - F078F6A85D2ED703E08FBF8A5960F28F
     method: GET
-    uri: https://search24f71524.search.windows.net/servicestats?api-version=2019-05-06-Preview
+    uri: https://searche7b20da6.search.windows.net/servicestats?api-version=2019-05-06-Preview
   response:
     body:
-      string: '{"@odata.context":"https://search24f71524.search.windows.net/$metadata#Microsoft.Azure.Search.V2019_05_06_Preview.ServiceStatistics","counters":{"documentCount":{"usage":0,"quota":null},"indexesCount":{"usage":0,"quota":3},"indexersCount":{"usage":0,"quota":3},"dataSourcesCount":{"usage":0,"quota":3},"storageSize":{"usage":0,"quota":52428800},"synonymMaps":{"usage":0,"quota":3},"skillsetCount":{"usage":0,"quota":3}},"limits":{"maxFieldsPerIndex":1000,"maxFieldNestingDepthPerIndex":10,"maxComplexCollectionFieldsPerIndex":40,"maxComplexObjectsInCollectionsPerDocument":3000}}'
+      string: '{"@odata.context":"https://searche7b20da6.search.windows.net/$metadata#Microsoft.Azure.Search.V2019_05_06_Preview.ServiceStatistics","counters":{"documentCount":{"usage":0,"quota":null},"indexesCount":{"usage":0,"quota":3},"indexersCount":{"usage":0,"quota":3},"dataSourcesCount":{"usage":0,"quota":3},"storageSize":{"usage":0,"quota":52428800},"synonymMaps":{"usage":0,"quota":3},"skillsetCount":{"usage":0,"quota":3}},"limits":{"maxFieldsPerIndex":1000,"maxFieldNestingDepthPerIndex":10,"maxComplexCollectionFieldsPerIndex":40,"maxComplexObjectsInCollectionsPerDocument":3000}}'
     headers:
       cache-control: no-cache
       content-encoding: gzip
-      content-length: '430'
+      content-length: '431'
       content-type: application/json; odata.metadata=minimal
-      date: Tue, 31 Mar 2020 17:47:26 GMT
-      elapsed-time: '99'
+      date: Thu, 23 Apr 2020 18:49:30 GMT
+      elapsed-time: '29'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: af77158a-7377-11ea-b9f9-5cf37071153c
+      request-id: 29b35140-8593-11ea-8d82-8c8590507855
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
       code: 200
       message: OK
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - search24f71524.search.windows.net
-        - /servicestats
-        - api-version=2019-05-06-Preview
-        - ''
+    url: https://searche7b20da6.search.windows.net/servicestats?api-version=2019-05-06-Preview
 version: 1

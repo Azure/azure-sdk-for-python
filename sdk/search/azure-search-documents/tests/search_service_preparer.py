@@ -70,6 +70,7 @@ class SearchServicePreparer(AzureMgmtPreparer):
         disable_recording=True,
         playback_fake_resource=None,
         client_kwargs=None,
+        auto_delete_index=True,
     ):
         super(SearchServicePreparer, self).__init__(
             name_prefix,
@@ -82,6 +83,7 @@ class SearchServicePreparer(AzureMgmtPreparer):
         self.schema = schema
         self.index_name = None
         self.index_batch = index_batch
+        self.auto_delete_index = auto_delete_index
 
     def _get_resource_group(self, **kwargs):
         try:
@@ -203,7 +205,7 @@ class SearchServicePreparer(AzureMgmtPreparer):
         if not self.is_live:
             return
 
-        if self.schema:
+        if self.schema and self.auto_delete_index:
             group_name = self._get_resource_group(**kwargs).name
             api_key = self.mgmt_client.admin_keys.get(
                 group_name, self.service_name

@@ -9,11 +9,11 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-search-documents/1.0.0b2 Python/3.6.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-search-documents/1.0.0b3 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
       api-key:
-      - FDB4DAA7451F9A85628E4F372DDD22BD
+      - F078F6A85D2ED703E08FBF8A5960F28F
     method: POST
-    uri: https://search42ca1023.search.windows.net/indexes('drgqefsg')/docs/search.post.autocomplete?api-version=2019-05-06-Preview
+    uri: https://searche7b20da6.search.windows.net/indexes('drgqefsg')/docs/search.post.autocomplete?api-version=2019-05-06-Preview
   response:
     body:
       string: '{"value":[{"text":"motel","queryPlusText":"motel"}]}'
@@ -22,24 +22,17 @@ interactions:
       content-encoding: gzip
       content-length: '163'
       content-type: application/json; odata.metadata=none
-      date: Tue, 31 Mar 2020 17:40:47 GMT
-      elapsed-time: '244'
+      date: Thu, 23 Apr 2020 18:44:12 GMT
+      elapsed-time: '209'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: c197169c-7376-11ea-b8de-5cf37071153c
+      request-id: 6cef5cc0-8592-11ea-8d82-8c8590507855
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
       code: 200
       message: OK
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - search42ca1023.search.windows.net
-        - /indexes('drgqefsg')/docs/search.post.autocomplete
-        - api-version=2019-05-06-Preview
-        - ''
+    url: https://searche7b20da6.search.windows.net/indexes('drgqefsg')/docs/search.post.autocomplete?api-version=2019-05-06-Preview
 version: 1

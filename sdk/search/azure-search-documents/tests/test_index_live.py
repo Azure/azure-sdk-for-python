@@ -9,9 +9,9 @@ import time
 
 import pytest
 
-from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
+from devtools_testutils import AzureMgmtTestCase
 
-from search_service_preparer import SearchServicePreparer
+from search_service_preparer import GlobalResourceGroupPreparer, SearchServicePreparer
 
 CWD = dirname(realpath(__file__))
 
@@ -30,7 +30,7 @@ from azure.search.documents import (
 TIME_TO_SLEEP = 3
 
 class SearchIndexClientTest(AzureMgmtTestCase):
-    @ResourceGroupPreparer(random_name_enabled=True)
+    @GlobalResourceGroupPreparer()
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_get_document_count(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexClient(
@@ -38,7 +38,7 @@ class SearchIndexClientTest(AzureMgmtTestCase):
         )
         assert client.get_document_count() == 10
 
-    @ResourceGroupPreparer(random_name_enabled=True)
+    @GlobalResourceGroupPreparer()
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_get_document(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexClient(
@@ -51,7 +51,7 @@ class SearchIndexClientTest(AzureMgmtTestCase):
             assert result.get("hotelName") == expected.get("hotelName")
             assert result.get("description") == expected.get("description")
 
-    @ResourceGroupPreparer(random_name_enabled=True)
+    @GlobalResourceGroupPreparer()
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_get_document_missing(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexClient(
@@ -60,7 +60,7 @@ class SearchIndexClientTest(AzureMgmtTestCase):
         with pytest.raises(HttpResponseError):
             client.get_document(key="1000")
 
-    @ResourceGroupPreparer(random_name_enabled=True)
+    @GlobalResourceGroupPreparer()
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_get_search_simple(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexClient(
@@ -72,7 +72,7 @@ class SearchIndexClientTest(AzureMgmtTestCase):
         results = list(client.search(query="motel"))
         assert len(results) == 2
 
-    @ResourceGroupPreparer(random_name_enabled=True)
+    @GlobalResourceGroupPreparer()
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_get_search_filter(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexClient(
@@ -98,7 +98,7 @@ class SearchIndexClientTest(AzureMgmtTestCase):
         assert all(set(x) == expected for x in results)
         assert all(x["category"] == "Budget" for x in results)
 
-    @ResourceGroupPreparer(random_name_enabled=True)
+    @GlobalResourceGroupPreparer()
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_get_search_counts(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexClient(
@@ -113,7 +113,7 @@ class SearchIndexClientTest(AzureMgmtTestCase):
         results = client.search(query=query)
         assert results.get_count() == 7
 
-    @ResourceGroupPreparer(random_name_enabled=True)
+    @GlobalResourceGroupPreparer()
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_get_search_coverage(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexClient(
@@ -130,7 +130,7 @@ class SearchIndexClientTest(AzureMgmtTestCase):
         assert isinstance(cov, float)
         assert cov >= 50.0
 
-    @ResourceGroupPreparer(random_name_enabled=True)
+    @GlobalResourceGroupPreparer()
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_get_search_facets_none(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexClient(
@@ -143,7 +143,7 @@ class SearchIndexClientTest(AzureMgmtTestCase):
         results = client.search(query=query)
         assert results.get_facets() is None
 
-    @ResourceGroupPreparer(random_name_enabled=True)
+    @GlobalResourceGroupPreparer()
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_get_search_facets_result(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexClient(
@@ -161,7 +161,7 @@ class SearchIndexClientTest(AzureMgmtTestCase):
             ]
         }
 
-    @ResourceGroupPreparer(random_name_enabled=True)
+    @GlobalResourceGroupPreparer()
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_autocomplete(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexClient(
@@ -171,7 +171,7 @@ class SearchIndexClientTest(AzureMgmtTestCase):
         results = client.autocomplete(query=query)
         assert results == [{"text": "motel", "query_plus_text": "motel"}]
 
-    @ResourceGroupPreparer(random_name_enabled=True)
+    @GlobalResourceGroupPreparer()
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_suggest(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexClient(
@@ -184,7 +184,7 @@ class SearchIndexClientTest(AzureMgmtTestCase):
             {"hotelId": "9", "text": "Secret Point Motel"},
         ]
 
-    @ResourceGroupPreparer(random_name_enabled=True)
+    @GlobalResourceGroupPreparer()
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_upload_documents_new(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexClient(
@@ -210,7 +210,7 @@ class SearchIndexClientTest(AzureMgmtTestCase):
             assert result["rating"] == doc["rating"]
             assert result["rooms"] == doc["rooms"]
 
-    @ResourceGroupPreparer(random_name_enabled=True)
+    @GlobalResourceGroupPreparer()
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_upload_documents_existing(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexClient(
@@ -224,7 +224,7 @@ class SearchIndexClientTest(AzureMgmtTestCase):
         assert len(results) == 2
         assert set(x.status_code for x in results) == {200, 201}
 
-    @ResourceGroupPreparer(random_name_enabled=True)
+    @GlobalResourceGroupPreparer()
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_delete_documents_existing(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexClient(
@@ -246,7 +246,7 @@ class SearchIndexClientTest(AzureMgmtTestCase):
         with pytest.raises(HttpResponseError):
             client.get_document(key="4")
 
-    @ResourceGroupPreparer(random_name_enabled=True)
+    @GlobalResourceGroupPreparer()
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_delete_documents_missing(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexClient(
@@ -268,7 +268,7 @@ class SearchIndexClientTest(AzureMgmtTestCase):
         with pytest.raises(HttpResponseError):
             client.get_document(key="4")
 
-    @ResourceGroupPreparer(random_name_enabled=True)
+    @GlobalResourceGroupPreparer()
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_merge_documents_existing(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexClient(
@@ -292,7 +292,7 @@ class SearchIndexClientTest(AzureMgmtTestCase):
         result = client.get_document(key="4")
         assert result["rating"] == 2
 
-    @ResourceGroupPreparer(random_name_enabled=True)
+    @GlobalResourceGroupPreparer()
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_merge_documents_missing(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexClient(
@@ -316,7 +316,7 @@ class SearchIndexClientTest(AzureMgmtTestCase):
         result = client.get_document(key="4")
         assert result["rating"] == 2
 
-    @ResourceGroupPreparer(random_name_enabled=True)
+    @GlobalResourceGroupPreparer()
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_merge_or_upload_documents(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexClient(

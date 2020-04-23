@@ -5,37 +5,30 @@ interactions:
       Accept:
       - application/json;odata.metadata=minimal
       User-Agent:
-      - azsdk-python-search-documents/1.0.0b2 Python/3.6.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-search-documents/1.0.0b3 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
       api-key:
-      - 2BFE2F92681F540133314EC0DC5B803C
+      - F078F6A85D2ED703E08FBF8A5960F28F
     method: GET
-    uri: https://searchfabb144b.search.windows.net/indexes('drgqefsg')/search.stats?api-version=2019-05-06-Preview
+    uri: https://searche7b20da6.search.windows.net/indexes('drgqefsg')/search.stats?api-version=2019-05-06-Preview
   response:
     body:
-      string: '{"@odata.context":"https://searchfabb144b.search.windows.net/$metadata#Microsoft.Azure.Search.V2019_05_06_Preview.IndexStatistics","documentCount":0,"storageSize":0}'
+      string: '{"@odata.context":"https://searche7b20da6.search.windows.net/$metadata#Microsoft.Azure.Search.V2019_05_06_Preview.IndexStatistics","documentCount":0,"storageSize":0}'
     headers:
       cache-control: no-cache
       content-encoding: gzip
       content-length: '263'
       content-type: application/json; odata.metadata=minimal
-      date: Tue, 31 Mar 2020 17:47:15 GMT
-      elapsed-time: '26'
+      date: Thu, 23 Apr 2020 18:49:21 GMT
+      elapsed-time: '21'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: a904a154-7377-11ea-8f36-5cf37071153c
+      request-id: 2412cd92-8593-11ea-8d82-8c8590507855
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
       code: 200
       message: OK
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - searchfabb144b.search.windows.net
-        - /indexes('drgqefsg')/search.stats
-        - api-version=2019-05-06-Preview
-        - ''
+    url: https://searche7b20da6.search.windows.net/indexes('drgqefsg')/search.stats?api-version=2019-05-06-Preview
 version: 1

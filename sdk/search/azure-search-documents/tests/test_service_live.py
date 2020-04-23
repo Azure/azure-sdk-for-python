@@ -75,11 +75,10 @@ class SearchServiceClientTest(AzureMgmtTestCase):
         assert set(result.keys()) == {'document_count', 'storage_size'}
 
     @GlobalResourceGroupPreparer()
-    @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
+    @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH, auto_delete_index=False)
     def test_delete_indexes(self, api_key, endpoint, index_name, **kwargs):
         client = SearchServiceClient(endpoint, AzureKeyCredential(api_key))
         client.delete_index(index_name)
-        import time
         if self.is_live:
             time.sleep(TIME_TO_SLEEP)
         result = client.get_indexes()
@@ -117,6 +116,9 @@ class SearchServiceClientTest(AzureMgmtTestCase):
         assert result.scoring_profiles[0].name == scoring_profile.name
         assert result.cors_options.allowed_origins == cors_options.allowed_origins
         assert result.cors_options.max_age_in_seconds == cors_options.max_age_in_seconds
+        client.delete_index("hotels")
+        if self.is_live:
+            time.sleep(TIME_TO_SLEEP)
 
     @GlobalResourceGroupPreparer()
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
@@ -159,6 +161,9 @@ class SearchServiceClientTest(AzureMgmtTestCase):
         assert result.scoring_profiles[0].name == scoring_profile.name
         assert result.cors_options.allowed_origins == cors_options.allowed_origins
         assert result.cors_options.max_age_in_seconds == cors_options.max_age_in_seconds
+        client.delete_index("hotels")
+        if self.is_live:
+            time.sleep(TIME_TO_SLEEP)
 
     @GlobalResourceGroupPreparer()
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
@@ -273,6 +278,7 @@ class SearchServiceClientTest(AzureMgmtTestCase):
         assert isinstance(result.skills[0], EntityRecognitionSkill)
 
         assert len(client.get_skillsets()) == 1
+        client.delete_skillset("test-ss")
 
     @GlobalResourceGroupPreparer()
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
@@ -304,6 +310,7 @@ class SearchServiceClientTest(AzureMgmtTestCase):
         assert result.e_tag
         assert len(result.skills) == 1
         assert isinstance(result.skills[0], EntityRecognitionSkill)
+        client.delete_skillset("test-ss")
 
     @GlobalResourceGroupPreparer()
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
@@ -318,6 +325,8 @@ class SearchServiceClientTest(AzureMgmtTestCase):
         assert isinstance(result, list)
         assert all(isinstance(x, Skillset) for x in result)
         assert set(x.name for x in result) == {"test-ss-1", "test-ss-2"}
+        client.delete_skillset("test-ss-1")
+        client.delete_skillset("test-ss-2")
 
     @GlobalResourceGroupPreparer()
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
@@ -334,6 +343,7 @@ class SearchServiceClientTest(AzureMgmtTestCase):
         assert isinstance(result, Skillset)
         assert result.name == "test-ss"
         assert result.description == "desc2"
+        client.delete_skillset("test-ss")
 
     @GlobalResourceGroupPreparer()
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
@@ -350,3 +360,4 @@ class SearchServiceClientTest(AzureMgmtTestCase):
         assert isinstance(result, Skillset)
         assert result.name == "test-ss"
         assert result.description == "desc2"
+        client.delete_skillset("test-ss")
