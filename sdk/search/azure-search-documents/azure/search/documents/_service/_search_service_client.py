@@ -13,7 +13,6 @@ from azure.core.exceptions import (
     ResourceModifiedError,
     ResourceNotModifiedError,
 )
-from ._models import DataSource
 from ._generated import SearchServiceClient as _SearchServiceClient
 from ._generated.models import AccessCondition, Skillset, SynonymMap
 from .._headers_mixin import HeadersMixin
@@ -28,13 +27,14 @@ from ._utils import (
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
+    from ._models import DataSource
     from typing import Any, List, Sequence, Union
     from azure.core.credentials import AzureKeyCredential
     from ._generated.models import Skill
     from .. import Index, AnalyzeResult, AnalyzeRequest
 
 
-class SearchServiceClient(HeadersMixin):
+class SearchServiceClient(HeadersMixin): # pylint: disable=too-many-public-methods
     """A client to interact with an existing Azure search service.
 
     :param endpoint: The URL endpoint of an Azure search service
@@ -558,6 +558,7 @@ class SearchServiceClient(HeadersMixin):
 
     @distributed_trace
     def create_datasource(self, data_source, **kwargs):
+        # type: (str, DataSource, **Any) -> Dict[str, Any]
         """Creates a new datasource.
 
         :param data_source: The definition of the datasource to create.
@@ -580,6 +581,7 @@ class SearchServiceClient(HeadersMixin):
 
     @distributed_trace
     def create_or_update_datasource(self, data_source, name=None, **kwargs):
+        # type: (str, DataSource, Optional[str], **Any) -> Dict[str, Any]
         """Creates a new datasource or updates a datasource if it already exists.
 
         :param name: The name of the datasource to create or update.
@@ -599,6 +601,7 @@ class SearchServiceClient(HeadersMixin):
 
     @distributed_trace
     def get_datasource(self, name, **kwargs):
+        # type: (str, **Any) -> Dict[str, Any]
         """Retrieves a datasource definition.
 
         :param name: The name of the datasource to retrieve.
@@ -621,6 +624,7 @@ class SearchServiceClient(HeadersMixin):
 
     @distributed_trace
     def list_datasources(self, **kwargs):
+        # type: (**Any) -> Sequence[DataSource]
         """Lists all datasources available for a search service.
 
         :return: List of all the data sources.
@@ -641,6 +645,7 @@ class SearchServiceClient(HeadersMixin):
 
     @distributed_trace
     def delete_datasource(self, name, **kwargs):
+        # type: (str, **Any) -> None
         """Deletes a datasource.
 
         :param name: The name of the datasource to delete.

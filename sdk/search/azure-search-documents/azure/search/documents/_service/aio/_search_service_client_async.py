@@ -33,7 +33,7 @@ if TYPE_CHECKING:
     from ... import Index, AnalyzeResult, AnalyzeRequest
 
 
-class SearchServiceClient(HeadersMixin):
+class SearchServiceClient(HeadersMixin): # pylint: disable=too-many-public-methods
     """A client to interact with an existing Azure search service.
 
     :param endpoint: The URL endpoint of an Azure search service
@@ -500,6 +500,7 @@ class SearchServiceClient(HeadersMixin):
         :rtype: dict
 
         .. admonition:: Example:
+
             .. literalinclude:: ../samples/async_samples/sample_skillset_operations_async.py
                 :start-after: [START create_skillset]
                 :end-before: [END create_skillset]
@@ -557,12 +558,15 @@ class SearchServiceClient(HeadersMixin):
 
     @distributed_trace_async
     async def create_datasource(self, data_source, **kwargs):
+        # type: (str, DataSource, **Any) -> Dict[str, Any]
         """Creates a new datasource.
         :param data_source: The definition of the datasource to create.
         :type data_source: ~search.models.DataSource
         :return: The created DataSource
         :rtype: dict
+
         .. admonition:: Example:
+
             .. literalinclude:: ../samples/async_samples/sample_data_source_operations_async.py
                 :start-after: [START create_data_source_async]
                 :end-before: [END create_data_source_async]
@@ -576,6 +580,7 @@ class SearchServiceClient(HeadersMixin):
 
     @distributed_trace_async
     async def create_or_update_datasource(self, data_source, name=None, **kwargs):
+        # type: (str, DataSource, Optional[str], **Any) -> Dict[str, Any]
         """Creates a new datasource or updates a datasource if it already exists.
 
         :param name: The name of the datasource to create or update.
@@ -594,6 +599,7 @@ class SearchServiceClient(HeadersMixin):
 
     @distributed_trace_async
     async def delete_datasource(self, name, **kwargs):
+        # type: (str, **Any) -> None
         """Deletes a datasource.
 
         :param name: The name of the datasource to delete.
@@ -617,11 +623,13 @@ class SearchServiceClient(HeadersMixin):
 
     @distributed_trace_async
     async def get_datasource(self, name, **kwargs):
+        # type: (str, **Any) -> Dict[str, Any]
         """Retrieves a datasource definition.
 
         :param name: The name of the datasource to retrieve.
         :type name: str
         :return: The DataSource that is fetched.
+
             .. literalinclude:: ../samples/async_samples/sample_data_source_operations_async.py
                 :start-after: [START get_data_source_async]
                 :end-before: [END get_data_source_async]
@@ -635,6 +643,7 @@ class SearchServiceClient(HeadersMixin):
 
     @distributed_trace_async
     async def list_datasources(self, **kwargs):
+        # type: (**Any) -> Sequence[DataSource]
         """Lists all datasources available for a search service.
 
         :return: List of all the data sources.
