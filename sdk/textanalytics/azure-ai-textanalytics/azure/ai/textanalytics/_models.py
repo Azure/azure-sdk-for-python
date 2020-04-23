@@ -182,11 +182,11 @@ class CategorizedEntity(DictMixin):
     def _from_generated(cls, entity):
         return cls(
             text=entity.text,
-            category=entity.type,
-            subcategory=entity.subtype,
+            category=entity.category,
+            subcategory=entity.subcategory,
             grapheme_offset=entity.offset,
             grapheme_length=entity.length,
-            confidence_score=entity.score,
+            confidence_score=entity.confidence_score,
         )
 
     def __repr__(self):
@@ -219,11 +219,11 @@ class TextAnalyticsError(DictMixin):
 
     @classmethod
     def _from_generated(cls, err):
-        if err.inner_error:
+        if err.innererror:
             return cls(
-                code=err.inner_error.code,
-                message=err.inner_error.message,
-                target=err.inner_error.target
+                code=err.innererror.code,
+                message=err.innererror.message,
+                target=err.innererror.target
             )
         return cls(
             code=err.code,
@@ -518,7 +518,7 @@ class LinkedEntityMatch(DictMixin):
     @classmethod
     def _from_generated(cls, match):
         return cls(
-            confidence_score=match.score,
+            confidence_score=match.confidence_score,
             text=match.text,
             grapheme_offset=match.offset,
             grapheme_length=match.length
@@ -624,10 +624,9 @@ class SentenceSentiment(DictMixin):
     def _from_generated(cls, sentence):
         return cls(
             sentiment=sentence.sentiment,
-            confidence_scores=SentimentConfidenceScores._from_generated(sentence.sentence_scores),  # pylint: disable=protected-access
+            confidence_scores=SentimentConfidenceScores._from_generated(sentence.confidence_scores),  # pylint: disable=protected-access
             grapheme_offset=sentence.offset,
-            grapheme_length=sentence.length,
-            warnings=sentence.warnings,
+            grapheme_length=sentence.length
         )
 
     def __repr__(self):

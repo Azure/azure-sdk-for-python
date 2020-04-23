@@ -6,6 +6,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import pytest
+import os
 
 from azure.core.credentials import AccessToken, AzureKeyCredential
 from devtools_testutils import (
@@ -128,15 +129,15 @@ class TextAnalyticsClientPreparer(AzureMgmtPreparer):
 def text_analytics_account():
     test_case = AzureTestCase("__init__")
     rg_preparer = ResourceGroupPreparer(random_name_enabled=True, name_prefix='pycog')
-    text_analytics_preparer = CognitiveServicesAccountPreparer(random_name_enabled=True, name_prefix='pycog')
+    text_analytics_preparer = CognitiveServicesAccountPreparer(random_name_enabled=True, name_prefix='pycog', sku='S0')
 
     try:
         rg_name, rg_kwargs = rg_preparer._prepare_create_resource(test_case)
         TextAnalyticsTest._RESOURCE_GROUP = rg_kwargs['resource_group']
         try:
             text_analytics_name, text_analytics_kwargs = text_analytics_preparer._prepare_create_resource(test_case, **rg_kwargs)
-            TextAnalyticsTest._TEXT_ANALYTICS_ACCOUNT = text_analytics_kwargs['cognitiveservices_account']
-            TextAnalyticsTest._TEXT_ANALYTICS_KEY = text_analytics_kwargs['cognitiveservices_account_key']
+            TextAnalyticsTest._TEXT_ANALYTICS_ACCOUNT = os.environ['AZURE_TEXT_ANALYTICS_ENDPOINT'] #text_analytics_kwargs['cognitiveservices_account']
+            TextAnalyticsTest._TEXT_ANALYTICS_KEY = os.environ['AZURE_TEXT_ANALYTICS_KEY'] # text_analytics_kwargs['cognitiveservices_account_key']
             yield
         finally:
             text_analytics_preparer.remove_resource(

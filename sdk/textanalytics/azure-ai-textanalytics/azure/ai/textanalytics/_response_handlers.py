@@ -26,14 +26,13 @@ from ._models import (
     TextAnalyticsError
 )
 
-
 class CSODataV4Format(ODataV4Format):
     INNERERROR_LABEL = "innerError"  # Service plans to fix casing ("innererror") to reflect ODataV4 error spec
 
     def __init__(self, odata_error):
         try:
-            if odata_error["error"]["innerError"]:
-                super(CSODataV4Format, self).__init__(odata_error["error"]["innerError"])
+            if odata_error["error"]["innererror"]:
+                super(CSODataV4Format, self).__init__(odata_error["error"]["innererror"])
         except KeyError:
             super(CSODataV4Format, self).__init__(odata_error)
 
@@ -45,7 +44,6 @@ def process_batch_error(error):
     if error.status_code == 401:
         raise_error = ClientAuthenticationError
     raise raise_error(response=error.response, error_format=CSODataV4Format)
-
 
 def order_results(response, combined):
     """Order results in the order the user passed them in.
@@ -120,6 +118,6 @@ def sentiment_result(sentiment):
         id=sentiment.id,
         sentiment=sentiment.sentiment,
         statistics=TextDocumentStatistics._from_generated(sentiment.statistics),  # pylint: disable=protected-access
-        confidence_scores=SentimentConfidenceScores._from_generated(sentiment.document_scores),  # pylint: disable=protected-access
+        confidence_scores=SentimentConfidenceScores._from_generated(sentiment.confidence_scores),  # pylint: disable=protected-access
         sentences=[SentenceSentiment._from_generated(s) for s in sentiment.sentences],  # pylint: disable=protected-access
     )
