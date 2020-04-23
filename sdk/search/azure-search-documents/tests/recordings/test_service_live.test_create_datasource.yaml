@@ -1,0 +1,56 @@
+interactions:
+- request:
+    body: '{"name": "sample-datasource", "type": "azureblob", "credentials": {"connectionString":
+      "DefaultEndpointsProtocol=https;AccountName=ragrsrakshith;AccountKey=sRkzuHuat3naczTACA6/9wsKMwpy56cMEev4jEEaPTJ7ULJQ0Wu8mOzzJ/bxl023ttAgLgOiQfqhoxGvExzE9w==;EndpointSuffix=core.windows.net"},
+      "container": {"name": "searchcontainer"}}'
+    headers:
+      Accept:
+      - application/json;odata.metadata=minimal
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '321'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-search-documents/1.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      api-key:
+      - DDE1EDE24EF47424F445923B65BE2C04
+    method: POST
+    uri: https://search51c7106b.search.windows.net/datasources?api-version=2019-05-06-Preview
+  response:
+    body:
+      string: '{"@odata.context":"https://search51c7106b.search.windows.net/$metadata#datasources/$entity","@odata.etag":"\"0x8D7E7659F543B33\"","name":"sample-datasource","description":null,"type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '370'
+      content-type:
+      - application/json; odata.metadata=minimal
+      date:
+      - Thu, 23 Apr 2020 09:06:34 GMT
+      elapsed-time:
+      - '74'
+      etag:
+      - W/"0x8D7E7659F543B33"
+      expires:
+      - '-1'
+      location:
+      - https://search51c7106b.search.windows.net/datasources('sample-datasource')?api-version=2019-05-06-Preview
+      odata-version:
+      - '4.0'
+      pragma:
+      - no-cache
+      preference-applied:
+      - odata.include-annotations="*"
+      request-id:
+      - ba637958-8541-11ea-bf15-2816a845e8c6
+      strict-transport-security:
+      - max-age=15724800; includeSubDomains
+    status:
+      code: 201
+      message: Created
+version: 1

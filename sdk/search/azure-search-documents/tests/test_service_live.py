@@ -366,9 +366,8 @@ class SearchServiceClientTest(AzureMgmtTestCase):
         client = SearchServiceClient(endpoint, AzureKeyCredential(api_key))
         data_source = self._create_datasource()
         result = client.create_datasource(data_source)
-        assert isinstance(result, dict)
-        assert result["name"] == "sample-datasource"
-        assert result["type"] == "azureblob"
+        assert result.name == "sample-datasource"
+        assert result.type == "azureblob"
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
@@ -387,8 +386,7 @@ class SearchServiceClientTest(AzureMgmtTestCase):
         data_source = self._create_datasource()
         created = client.create_datasource(data_source)
         result = client.get_datasource("sample-datasource")
-        assert isinstance(result, dict)
-        assert result["name"] == "sample-datasource"
+        assert result.name == "sample-datasource"
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
@@ -400,8 +398,7 @@ class SearchServiceClientTest(AzureMgmtTestCase):
         created2 = client.create_datasource(data_source2)
         result = client.list_datasources()
         assert isinstance(result, list)
-        assert all(isinstance(x, dict) for x in result)
-        assert set(x['name'] for x in result) == {"sample-datasource", "another-sample"}
+        assert set(x.name for x in result) == {"sample-datasource", "another-sample"}
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
@@ -410,8 +407,9 @@ class SearchServiceClientTest(AzureMgmtTestCase):
         data_source = self._create_datasource()
         created = client.create_datasource(data_source)
         assert len(client.list_datasources()) == 1
-        client.create_or_update_datasource(data_source, "updated-name")
+        data_source.description = "updated"
+        client.create_or_update_datasource(data_source)
         assert len(client.list_datasources()) == 1
-        result = client.get_datasource("updated-name")
-        assert isinstance(result, dict)
-        assert result["name"] == "updated-name"
+        result = client.get_datasource("sample-datasource")
+        assert result.name == "sample-datasource"
+        assert result.description == "updated"
