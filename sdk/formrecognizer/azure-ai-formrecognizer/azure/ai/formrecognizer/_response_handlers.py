@@ -126,7 +126,7 @@ def prepare_unlabeled_result(response):
     read_result = response.analyze_result.read_results
     page_result = response.analyze_result.page_results
 
-    for idx, page in enumerate(page_result):
+    for index, page in enumerate(page_result):
         unlabeled_fields = [FormField._from_generated_unlabeled(field, idx, page.page, read_result)
                             for idx, field in enumerate(page.key_value_pairs)] if page.key_value_pairs else None
         if unlabeled_fields:
@@ -138,7 +138,7 @@ def prepare_unlabeled_result(response):
             ),
             fields=unlabeled_fields,
             form_type="form-" + str(page.cluster_id) if page.cluster_id is not None else None,
-            pages=[form_pages[idx]]
+            pages=[form_pages[index]]
         )
         result.append(form)
 
