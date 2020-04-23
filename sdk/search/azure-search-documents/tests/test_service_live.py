@@ -36,10 +36,11 @@ CWD = dirname(realpath(__file__))
 SCHEMA = open(join(CWD, "hotel_schema.json")).read()
 BATCH = json.load(open(join(CWD, "hotel_small.json")))
 TIME_TO_SLEEP = 5
+CONNECTION_STRING = 'DefaultEndpointsProtocol=https;AccountName=storagename;AccountKey=NzhL3hKZbJBuJ2484dPTR+xF30kYaWSSCbs2BzLgVVI1woqeST/1IgqaLm6QAOTxtGvxctSNbIR/1hW8yH+bJg==;EndpointSuffix=core.windows.net'
 
 class SearchServiceClientTest(AzureMgmtTestCase):
     def _create_datasource(self, name="sample-datasource"):
-        credentials = DataSourceCredentials(connection_string=self.get_settings_value("AZURE_STORAGE_CONNECTION_STRING"))
+        credentials = DataSourceCredentials(connection_string=CONNECTION_STRING)
         container = DataContainer(name='searchcontainer')
         data_source = DataSource(
             name=name,
