@@ -12,7 +12,7 @@ from ..exceptions import ConnectError, EventHubError
 from ._client_base_async import ClientBaseAsync
 from ._producer_async import EventHubProducer
 from .._constants import ALL_PARTITIONS
-from .._common import EventDataBatch
+from .._common import EventDataBatch, EventData
 
 if TYPE_CHECKING:
     from uamqp.constants import TransportType
@@ -211,7 +211,9 @@ class EventHubProducerClient(ClientBaseAsync):
 
     async def send_batch(
         self,
-        event_data_batch: EventDataBatch,
+        event_data_batch: Union[EventDataBatch, List[EventData]],
+        partition_id: Optional[str] = None,
+        partition_key: Optional[str] = None,
         *,
         timeout: Optional[Union[int, float]] = None
     ) -> None:
