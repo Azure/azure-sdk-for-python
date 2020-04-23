@@ -609,8 +609,6 @@ class SentenceSentiment(DictMixin):
     :type grapheme_offset: int
     :param grapheme_length: The length of the sentence by Unicode standard.
     :type grapheme_length: int
-    :param warnings: The warnings generated for the sentence.
-    :type warnings: list[str]
     """
 
     def __init__(self, **kwargs):
@@ -618,7 +616,6 @@ class SentenceSentiment(DictMixin):
         self.confidence_scores = kwargs.get("confidence_scores", None)
         self.grapheme_offset = kwargs.get("grapheme_offset", None)
         self.grapheme_length = kwargs.get("grapheme_length", None)
-        self.warnings = kwargs.get("warnings", None)
 
     @classmethod
     def _from_generated(cls, sentence):
@@ -630,9 +627,9 @@ class SentenceSentiment(DictMixin):
         )
 
     def __repr__(self):
-        return "SentenceSentiment(sentiment={}, confidence_scores={}, grapheme_offset={}, grapheme_length={}, " \
-               "warnings={})".format(self.sentiment, repr(self.confidence_scores), self.grapheme_offset,
-                                     self.grapheme_length, self.warnings)[:1024]
+        return "SentenceSentiment(sentiment={}, confidence_scores={}, grapheme_offset={}, grapheme_length={})".format(
+            self.sentiment, repr(self.confidence_scores), self.grapheme_offset, self.grapheme_length
+        )[:1024]
 
 
 class SentimentConfidenceScores(DictMixin):

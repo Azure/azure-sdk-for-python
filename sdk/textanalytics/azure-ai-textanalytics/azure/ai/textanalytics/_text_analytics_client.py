@@ -13,7 +13,7 @@ from typing import (  # pylint: disable=unused-import
     TYPE_CHECKING,
 )
 from azure.core.tracing.decorator import distributed_trace
-from azure.core.exceptions import HttpResponseError, ClientAuthenticationError
+from azure.core.exceptions import HttpResponseError
 from ._base_client import TextAnalyticsClientBase
 from ._request_handlers import _validate_batch_input
 from ._response_handlers import (
@@ -148,7 +148,6 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 model_version=model_version,
                 show_stats=show_stats,
                 cls=kwargs.pop("cls", language_result),
-                error_map={401: ClientAuthenticationError},
                 **kwargs
             )
         except HttpResponseError as error:
@@ -213,7 +212,6 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 model_version=model_version,
                 show_stats=show_stats,
                 cls=kwargs.pop("cls", entities_result),
-                error_map={401: ClientAuthenticationError},
                 **kwargs
             )
         except HttpResponseError as error:
@@ -279,7 +277,6 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 model_version=model_version,
                 show_stats=show_stats,
                 cls=kwargs.pop("cls", linked_entities_result),
-                error_map={401: ClientAuthenticationError},
                 **kwargs
             )
         except HttpResponseError as error:
@@ -345,7 +342,6 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 model_version=model_version,
                 show_stats=show_stats,
                 cls=kwargs.pop("cls", key_phrases_result),
-                error_map={401: ClientAuthenticationError},
                 **kwargs
             )
         except HttpResponseError as error:
@@ -410,7 +406,6 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 model_version=model_version,
                 show_stats=show_stats,
                 cls=kwargs.pop("cls", sentiment_result),
-                error_map={401: ClientAuthenticationError},
                 **kwargs
             )
         except HttpResponseError as error:

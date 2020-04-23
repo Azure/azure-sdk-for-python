@@ -27,7 +27,6 @@ from ._models import (
 )
 
 class CSODataV4Format(ODataV4Format):
-    INNERERROR_LABEL = "innerError"  # Service plans to fix casing ("innererror") to reflect ODataV4 error spec
 
     def __init__(self, odata_error):
         try:
