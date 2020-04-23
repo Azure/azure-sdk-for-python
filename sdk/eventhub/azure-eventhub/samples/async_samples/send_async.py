@@ -33,8 +33,8 @@ async def send_event_data_list(producer):
     event_data_list = [EventData('Event Data {}'.format(i)) for i in range(10)]
     try:
         await producer.send_batch(event_data_list)
-    except ValueError:  # if size of the
-        print("Size of the event data list exceeds the Event Hub size limit")
+    except ValueError:  # Size exceeds limit. This shouldn't happen if you make sure before hand.
+        print("Size of the event data list exceeds the size limit of a single send")
     except EventHubError as eh_err:
         print("Sending error: ", eh_err)
 
