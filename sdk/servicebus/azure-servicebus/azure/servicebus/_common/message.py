@@ -240,6 +240,32 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
             self.header.time_to_live = int(value) * 1000
 
     @property
+    def scheduled_enqueue_time_utc(self):
+        # type: () -> Optional[datetime.datetime]
+        """Get or set the utc scheduled enqueue time to the message.
+        This property can be used for scheduling when sending a message through `ServiceBusSender.send` method.
+        Or you could use `ServiceBusSender.schedule` method to schedule messages which would return scheduled messages'
+        sequence numbers that can be used for future cancellation.
+
+        :rtype: ~datetime.datetime
+        """
+        if self.message.annotations:
+            timestamp = self.message.annotations.get(_X_OPT_SCHEDULED_ENQUEUE_TIME)
+            if timestamp:
+                in_seconds = timestamp/1000.0
+                return utc_from_timestamp(in_seconds)
+        return None
+
+    @scheduled_enqueue_time_utc.setter
+    def scheduled_enqueue_time_utc(self, value):
+        # type: (datetime.datetime) -> None
+        if not self.properties.message_id:
+            self.properties.message_id = str(uuid.uuid4())
+        if not self.message.annotations:
+            self.message.annotations = {}
+        self.message.annotations[types.AMQPSymbol(_X_OPT_SCHEDULED_ENQUEUE_TIME)] = value
+
+    @property
     def body(self):
         # type: () -> Union[bytes, Generator[bytes]]
         """The body of the Message.
@@ -247,20 +273,6 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
         :rtype: bytes or generator[bytes]
         """
         return self.message.get_data()
-
-    def schedule(self, schedule_time_utc):
-        # type: (datetime.datetime) -> None
-        """Add a specific utc enqueue time to the message.
-
-        :param schedule_time_utc: The scheduled utc time to enqueue the message.
-        :type schedule_time_utc: ~datetime.datetime
-        :rtype: None
-        """
-        if not self.properties.message_id:
-            self.properties.message_id = str(uuid.uuid4())
-        if not self.message.annotations:
-            self.message.annotations = {}
-        self.message.annotations[types.AMQPSymbol(_X_OPT_SCHEDULED_ENQUEUE_TIME)] = schedule_time_utc
 
 
 class BatchMessage(object):
@@ -394,20 +406,6 @@ class PeekMessage(Message):
         """
         if self.message.annotations:
             timestamp = self.message.annotations.get(_X_OPT_ENQUEUED_TIME)
-            if timestamp:
-                in_seconds = timestamp/1000.0
-                return utc_from_timestamp(in_seconds)
-        return None
-
-    @property
-    def scheduled_enqueue_time_utc(self):
-        # type: () -> Optional[datetime.datetime]
-        """
-
-        :rtype: ~datetime.datetime
-        """
-        if self.message.annotations:
-            timestamp = self.message.annotations.get(_X_OPT_SCHEDULED_ENQUEUE_TIME)
             if timestamp:
                 in_seconds = timestamp/1000.0
                 return utc_from_timestamp(in_seconds)
