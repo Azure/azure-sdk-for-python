@@ -1,4 +1,4 @@
-interactions:
+interactions: 
 - request:
     body: '{"location": "global", "tags": {"test": "true"}, "sku": {"name": "S0"}}'
     headers:
