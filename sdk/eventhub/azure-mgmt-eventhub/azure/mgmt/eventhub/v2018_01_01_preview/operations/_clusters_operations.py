@@ -26,7 +26,7 @@ class ClustersOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client API version. Constant value: "2018-01-01-preview".
+    :ivar api_version: Client API Version. Constant value: "2018-01-01-preview".
     """
 
     models = models
@@ -101,7 +101,7 @@ class ClustersOperations(object):
         """Lists the available Event Hubs Clusters within an ARM resource group.
 
         :param resource_group_name: Name of the resource group within the
-         Azure subscription.
+         azure subscription.
         :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -170,7 +170,7 @@ class ClustersOperations(object):
         """Gets the resource description of the specified Event Hubs Cluster.
 
         :param resource_group_name: Name of the resource group within the
-         Azure subscription.
+         azure subscription.
         :type resource_group_name: str
         :param cluster_name: The name of the Event Hubs Cluster.
         :type cluster_name: str
@@ -277,7 +277,7 @@ class ClustersOperations(object):
         """Creates or updates an instance of an Event Hubs Cluster.
 
         :param resource_group_name: Name of the resource group within the
-         Azure subscription.
+         azure subscription.
         :type resource_group_name: str
         :param cluster_name: The name of the Event Hubs Cluster.
         :type cluster_name: str
@@ -377,7 +377,7 @@ class ClustersOperations(object):
         is idempotent.
 
         :param resource_group_name: Name of the resource group within the
-         Azure subscription.
+         azure subscription.
         :type resource_group_name: str
         :param cluster_name: The name of the Event Hubs Cluster.
         :type cluster_name: str
@@ -467,7 +467,7 @@ class ClustersOperations(object):
         """Deletes an existing Event Hubs Cluster. This operation is idempotent.
 
         :param resource_group_name: Name of the resource group within the
-         Azure subscription.
+         azure subscription.
         :type resource_group_name: str
         :param cluster_name: The name of the Event Hubs Cluster.
         :type cluster_name: str
@@ -510,7 +510,7 @@ class ClustersOperations(object):
         """List all Event Hubs Namespace IDs in an Event Hubs Dedicated Cluster.
 
         :param resource_group_name: Name of the resource group within the
-         Azure subscription.
+         azure subscription.
         :type resource_group_name: str
         :param cluster_name: The name of the Event Hubs Cluster.
         :type cluster_name: str
