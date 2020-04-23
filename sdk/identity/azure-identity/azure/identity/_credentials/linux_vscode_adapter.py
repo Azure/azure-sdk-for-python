@@ -12,11 +12,14 @@ def _c_str(string):
     return ct.c_char_p(string.encode('utf-8'))
 
 
-_libsecret = ct.cdll.LoadLibrary('libsecret-1.so.0')
-_libsecret.secret_schema_new.argtypes = \
-    [ct.c_char_p, ct.c_uint, ct.c_char_p, ct.c_uint, ct.c_char_p, ct.c_uint, ct.c_void_p]
-_libsecret.secret_password_lookup_sync.argtypes = \
-    [ct.c_void_p, ct.c_void_p, ct.c_void_p, ct.c_char_p, ct.c_char_p, ct.c_char_p, ct.c_char_p, ct.c_void_p]
+try:
+    _libsecret = ct.cdll.LoadLibrary('libsecret-1.so.0')
+    _libsecret.secret_schema_new.argtypes = \
+        [ct.c_char_p, ct.c_uint, ct.c_char_p, ct.c_uint, ct.c_char_p, ct.c_uint, ct.c_void_p]
+    _libsecret.secret_password_lookup_sync.argtypes = \
+        [ct.c_void_p, ct.c_void_p, ct.c_void_p, ct.c_char_p, ct.c_char_p, ct.c_char_p, ct.c_char_p, ct.c_void_p]
+except OSError:
+    _libsecret = None
 
 
 def _get_user_settings_path():
@@ -36,6 +39,8 @@ def _get_user_settings():
 
 
 def _get_refresh_token(service_name, account_name):
+    if not _libsecret:
+        return None
     schema = _libsecret.secret_schema_new(_c_str("org.freedesktop.Secret.Generic"), 2,
                                           _c_str("service"), 0, _c_str("account"), 0, None)
     return _libsecret.secret_password_lookup_sync(schema, None, None, _c_str("service"), _c_str(service_name),
@@ -43,6 +48,9 @@ def _get_refresh_token(service_name, account_name):
 
 
 def get_credentials():
-    environment_name = _get_user_settings()
-    credentials = _get_refresh_token(VSCODE_CREDENTIALS_SECTION, environment_name)
-    return credentials
+    try:
+        environment_name = _get_user_settings()
+        credentials = _get_refresh_token(VSCODE_CREDENTIALS_SECTION, environment_name)
+        return credentials
+    except: #pylint: disable=broad-except
+        return None

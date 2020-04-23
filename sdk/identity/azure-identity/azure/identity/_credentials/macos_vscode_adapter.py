@@ -33,6 +33,9 @@ def _get_refresh_token(service_name, account_name):
 
 
 def get_credentials():
-    environment_name = _get_user_settings()
-    credentials = _get_refresh_token(VSCODE_CREDENTIALS_SECTION, environment_name)
-    return credentials
+    try:
+        environment_name = _get_user_settings()
+        credentials = _get_refresh_token(VSCODE_CREDENTIALS_SECTION, environment_name)
+        return credentials
+    except: #pylint: disable=broad-except
+        return None

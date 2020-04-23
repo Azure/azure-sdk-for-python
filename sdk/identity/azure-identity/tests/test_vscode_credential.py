@@ -54,7 +54,7 @@ def test_credential_unavailable_error():
             token = credential.get_token("scope")
 
 
-def test_get_token():
+def test_redeem_token():
     expected_token = AccessToken("token", 42)
 
     mock_client = mock.Mock(spec=object)
@@ -88,19 +88,13 @@ def test_win_api():
 
 
 @pytest.mark.skipif(not sys.platform.startswith('darwin'), reason="This test only runs on MacOS")
-def test_mac_keychain():
+def test_mac_keychain_valid_value():
     with mock.patch('Keychain.get_generic_password', return_value="VALUE"):
         assert get_credentials() == "VALUE"
 
 
 @pytest.mark.skipif(not sys.platform.startswith('darwin'), reason="This test only runs on MacOS")
-def test_mac_keychain():
-    with mock.patch('Keychain.get_generic_password', return_value="VALUE"):
-        assert get_credentials() == "VALUE"
-
-
-@pytest.mark.skipif(not sys.platform.startswith('darwin'), reason="This test only runs on MacOS")
-def test_mac_keychain():
+def test_mac_keychain_error():
     from msal_extensions.osx import Keychain, KeychainError
     with mock.patch.object(Keychain, 'get_generic_password', side_effect=KeychainError()):
         credential = VSCodeCredential()
