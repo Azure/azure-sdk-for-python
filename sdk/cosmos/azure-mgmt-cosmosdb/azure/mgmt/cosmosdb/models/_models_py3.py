@@ -1038,6 +1038,10 @@ class DatabaseAccountGetResults(ARMResourceProperties):
      for the Cosmos DB account.
     :type virtual_network_rules:
      list[~azure.mgmt.cosmosdb.models.VirtualNetworkRule]
+    :ivar private_endpoint_connections: List of Private Endpoint Connections
+     configured for the Cosmos DB account.
+    :vartype private_endpoint_connections:
+     list[~azure.mgmt.cosmosdb.models.PrivateEndpointConnection]
     :param enable_multiple_write_locations: Enables the account to write in
      multiple locations
     :type enable_multiple_write_locations: bool
@@ -1068,6 +1072,7 @@ class DatabaseAccountGetResults(ARMResourceProperties):
         'read_locations': {'readonly': True},
         'locations': {'readonly': True},
         'failover_policies': {'readonly': True},
+        'private_endpoint_connections': {'readonly': True},
     }
 
     _attribute_map = {
@@ -1090,6 +1095,7 @@ class DatabaseAccountGetResults(ARMResourceProperties):
         'locations': {'key': 'properties.locations', 'type': '[Location]'},
         'failover_policies': {'key': 'properties.failoverPolicies', 'type': '[FailoverPolicy]'},
         'virtual_network_rules': {'key': 'properties.virtualNetworkRules', 'type': '[VirtualNetworkRule]'},
+        'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
         'enable_multiple_write_locations': {'key': 'properties.enableMultipleWriteLocations', 'type': 'bool'},
         'enable_cassandra_connector': {'key': 'properties.enableCassandraConnector', 'type': 'bool'},
         'connector_offer': {'key': 'properties.connectorOffer', 'type': 'str'},
@@ -1114,6 +1120,7 @@ class DatabaseAccountGetResults(ARMResourceProperties):
         self.locations = None
         self.failover_policies = None
         self.virtual_network_rules = virtual_network_rules
+        self.private_endpoint_connections = None
         self.enable_multiple_write_locations = enable_multiple_write_locations
         self.enable_cassandra_connector = enable_cassandra_connector
         self.connector_offer = connector_offer
@@ -3228,11 +3235,11 @@ class PrivateLinkServiceConnectionStateProperty(Model):
 
     :param status: The private link service connection status.
     :type status: str
-    :param description: The private link service connection description.
-    :type description: str
     :ivar actions_required: Any action that is required beyond basic workflow
      (approve/ reject/ disconnect)
     :vartype actions_required: str
+    :param description: The private link service connection description.
+    :type description: str
     """
 
     _validation = {
@@ -3241,15 +3248,52 @@ class PrivateLinkServiceConnectionStateProperty(Model):
 
     _attribute_map = {
         'status': {'key': 'status', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
         'actions_required': {'key': 'actionsRequired', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
     }
 
     def __init__(self, *, status: str=None, description: str=None, **kwargs) -> None:
         super(PrivateLinkServiceConnectionStateProperty, self).__init__(**kwargs)
         self.status = status
-        self.description = description
         self.actions_required = None
+        self.description = description
+
+
+class ProvisionedThroughputSettingsResource(Model):
+    """Cosmos DB provisioned throughput settings object.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param max_throughput: Required. Represents maximum throughput container
+     can scale up to.
+    :type max_throughput: int
+    :param auto_upgrade_policy: Cosmos DB resource auto-upgrade policy
+    :type auto_upgrade_policy:
+     ~azure.mgmt.cosmosdb.models.AutoUpgradePolicyResource
+    :ivar target_max_throughput: Represents target maximum throughput
+     container can scale up to once offer is no longer in pending state.
+    :vartype target_max_throughput: int
+    """
+
+    _validation = {
+        'max_throughput': {'required': True},
+        'target_max_throughput': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'max_throughput': {'key': 'maxThroughput', 'type': 'int'},
+        'auto_upgrade_policy': {'key': 'autoUpgradePolicy', 'type': 'AutoUpgradePolicyResource'},
+        'target_max_throughput': {'key': 'targetMaxThroughput', 'type': 'int'},
+    }
+
+    def __init__(self, *, max_throughput: int, auto_upgrade_policy=None, **kwargs) -> None:
+        super(ProvisionedThroughputSettingsResource, self).__init__(**kwargs)
+        self.max_throughput = max_throughput
+        self.auto_upgrade_policy = auto_upgrade_policy
+        self.target_max_throughput = None
 
 
 class ProvisionedThroughputSettingsResource(Model):
