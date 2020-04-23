@@ -29,10 +29,8 @@ def test_multiapi_client():
             _PROFILE_TAG + " latest"
         )
 
-        def __init__(self, creds="creds", config="config", api_version=None, profile=KnownProfiles.default):
+        def __init__(self, api_version=None, profile=KnownProfiles.default):
             super(TestClient, self).__init__(
-                creds=creds,
-                config=config,
                 api_version=api_version,
                 profile=profile
             )
