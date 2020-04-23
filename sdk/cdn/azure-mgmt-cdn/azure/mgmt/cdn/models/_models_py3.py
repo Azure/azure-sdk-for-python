@@ -2292,12 +2292,12 @@ class MatchCondition(Model):
     All required parameters must be populated in order to send to Azure.
 
     :param match_variable: Required. Match variable to compare against.
-     Possible values include: 'RemoteAddr', 'Country', 'RequestMethod',
+     Possible values include: 'RemoteAddr', 'SocketAddr', 'RequestMethod',
      'RequestHeader', 'RequestUri', 'QueryString', 'RequestBody', 'Cookies',
      'PostArgs'
     :type match_variable: str or ~azure.mgmt.cdn.models.MatchVariable
     :param selector: Selector can used to match a specific key for
-     QueryString, RequestUri, RequestHeaders or RequestBody.
+     QueryString, Cookies, RequestHeader or PostArgs.
     :type selector: str
     :param operator: Required. Describes operator to be matched. Possible
      values include: 'Any', 'IPMatch', 'GeoMatch', 'Equal', 'Contains',
@@ -2523,7 +2523,6 @@ class PolicySettings(Model):
     """
 
     _validation = {
-        'default_custom_block_response_status_code': {'maximum': 599, 'minimum': 200},
         'default_custom_block_response_body': {'pattern': r'^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{4})$'},
     }
 
