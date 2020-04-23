@@ -17,7 +17,7 @@ class MultiApiClientMixin(object):
     This should not be used directly and will only provide private methods.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, **kwargs):
         # Consume "api_version" and "profile", to avoid sending them to base class
         api_version = kwargs.pop("api_version", None)
         profile = kwargs.pop("profile", KnownProfiles.default)
