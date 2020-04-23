@@ -193,13 +193,10 @@ def trace_link_message(events, parent_span=None):
                     if event.properties:
                         traceparent = event.properties.get(b"Diagnostic-Id", "").decode("ascii")
                         if traceparent:
-                            try:
-                                current_span.link(
-                                    traceparent,
-                                    attributes={"enqueuedTime": event.message.annotations.get(PROP_TIMESTAMP)}
-                                )
-                            except TypeError:  # "attributes" is only available after azure-core 1.5
-                                current_span.link(traceparent)
+                            current_span.link(
+                                traceparent,
+                                attributes={"enqueuedTime": event.message.annotations.get(PROP_TIMESTAMP)}
+                            )
     except Exception as exp:  # pylint:disable=broad-except
         _LOGGER.warning("trace_link_message had an exception %r", exp)
 
