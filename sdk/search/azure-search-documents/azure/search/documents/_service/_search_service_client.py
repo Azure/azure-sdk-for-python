@@ -594,9 +594,9 @@ class SearchServiceClient(HeadersMixin): # pylint: disable=too-many-public-metho
         # TODO: access_condition
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
 
-        if name is not None:
-            data_source.name = name
-        result = self._client.data_sources.create_or_update(data_source.name, data_source, **kwargs)
+        if not Name:
+            name = data_source.name
+        result = self._client.data_sources.create_or_update(name, data_source, **kwargs)
         return result
 
     @distributed_trace

@@ -60,6 +60,6 @@ def delete_data_source():
 
 if __name__ == '__main__':
     create_data_source()
-    # list_data_sources()
-    # get_data_source()
-    # delete_data_source()
+    list_data_sources()
+    get_data_source()
+    delete_data_source()
