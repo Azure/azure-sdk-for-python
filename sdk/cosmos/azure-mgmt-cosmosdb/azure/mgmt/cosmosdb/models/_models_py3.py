@@ -1038,6 +1038,10 @@ class DatabaseAccountGetResults(ARMResourceProperties):
      for the Cosmos DB account.
     :type virtual_network_rules:
      list[~azure.mgmt.cosmosdb.models.VirtualNetworkRule]
+    :ivar private_endpoint_connections: List of Private Endpoint Connections
+     configured for the Cosmos DB account.
+    :vartype private_endpoint_connections:
+     list[~azure.mgmt.cosmosdb.models.PrivateEndpointConnection]
     :param enable_multiple_write_locations: Enables the account to write in
      multiple locations
     :type enable_multiple_write_locations: bool
@@ -1068,6 +1072,7 @@ class DatabaseAccountGetResults(ARMResourceProperties):
         'read_locations': {'readonly': True},
         'locations': {'readonly': True},
         'failover_policies': {'readonly': True},
+        'private_endpoint_connections': {'readonly': True},
     }
 
     _attribute_map = {
@@ -1090,6 +1095,7 @@ class DatabaseAccountGetResults(ARMResourceProperties):
         'locations': {'key': 'properties.locations', 'type': '[Location]'},
         'failover_policies': {'key': 'properties.failoverPolicies', 'type': '[FailoverPolicy]'},
         'virtual_network_rules': {'key': 'properties.virtualNetworkRules', 'type': '[VirtualNetworkRule]'},
+        'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
         'enable_multiple_write_locations': {'key': 'properties.enableMultipleWriteLocations', 'type': 'bool'},
         'enable_cassandra_connector': {'key': 'properties.enableCassandraConnector', 'type': 'bool'},
         'connector_offer': {'key': 'properties.connectorOffer', 'type': 'str'},
@@ -1114,6 +1120,7 @@ class DatabaseAccountGetResults(ARMResourceProperties):
         self.locations = None
         self.failover_policies = None
         self.virtual_network_rules = virtual_network_rules
+        self.private_endpoint_connections = None
         self.enable_multiple_write_locations = enable_multiple_write_locations
         self.enable_cassandra_connector = enable_cassandra_connector
         self.connector_offer = connector_offer
@@ -3228,11 +3235,11 @@ class PrivateLinkServiceConnectionStateProperty(Model):
 
     :param status: The private link service connection status.
     :type status: str
-    :param description: The private link service connection description.
-    :type description: str
     :ivar actions_required: Any action that is required beyond basic workflow
      (approve/ reject/ disconnect)
     :vartype actions_required: str
+    :param description: The private link service connection description.
+    :type description: str
     """
 
     _validation = {
@@ -3241,15 +3248,15 @@ class PrivateLinkServiceConnectionStateProperty(Model):
 
     _attribute_map = {
         'status': {'key': 'status', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
         'actions_required': {'key': 'actionsRequired', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
     }
 
     def __init__(self, *, status: str=None, description: str=None, **kwargs) -> None:
         super(PrivateLinkServiceConnectionStateProperty, self).__init__(**kwargs)
         self.status = status
-        self.description = description
         self.actions_required = None
+        self.description = description
 
 
 class ProvisionedThroughputSettingsResource(Model):
