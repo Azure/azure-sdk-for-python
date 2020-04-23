@@ -350,6 +350,41 @@ class FileTest(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_upload_data_to_existing_file_with_content_settings_async())
 
+    async def _test_upload_data_to_existing_file_with_permissions_and_umask_async(self):
+        # etag in async recording file cannot be parsed properly
+        if TestMode.need_recording_file(self.test_mode):
+            return
+        directory_name = self._get_directory_reference()
+
+        # Create a directory to put the file under that
+        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        await directory_client.create_directory()
+
+        # create an existing file
+        file_client = directory_client.get_file_client('filename')
+        resp = await file_client.create_file()
+        etag = resp['etag']
+
+        # to override the existing file
+        data = self.get_random_bytes(100)
+
+        await file_client.upload_data(data,
+                                      overwrite=True, max_concurrency=5,
+                                      permissions='0777', umask="0000",
+                                      etag=etag,
+                                      match_condition=MatchConditions.IfNotModified)
+
+        downloaded_data = await (await file_client.download_file()).readall()
+        prop = await file_client.get_access_control()
+
+        self.assertEqual(data, downloaded_data)
+        self.assertEqual(prop['permissions'], 'rwxrwxrwx')
+
+    @record
+    def test_upload_data_to_existing_file_with_permission_and_umask_async(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_upload_data_to_existing_file_with_permissions_and_umask_async())
+
     async def _test_read_file(self):
         file_client = await self._create_file_and_return_client()
         data = self.get_random_bytes(1024)

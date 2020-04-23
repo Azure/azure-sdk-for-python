@@ -58,17 +58,15 @@ class TestCustomForms(FormRecognizerTest):
     def test_custom_form_unlabeled(self, client, container_sas_url):
         training_client = client.get_form_training_client()
 
-        poller = training_client.begin_training(container_sas_url)
+        poller = training_client.begin_train_model(container_sas_url)
         model = poller.result()
 
-        with open(self.form_jpg, "rb") as fd:
-            myfile = fd.read()
-
-        poller = client.begin_recognize_custom_forms(
-            model.model_id,
-            myfile,
-            content_type=FormContentType.image_jpeg
-        )
+        with open(self.form_jpg, "rb") as stream:
+            poller = client.begin_recognize_custom_forms(
+                model.model_id,
+                stream,
+                content_type=FormContentType.image_jpeg
+            )
         form = poller.result()
 
         self.assertEqual(form[0].form_type, "form-0")
@@ -86,7 +84,7 @@ class TestCustomForms(FormRecognizerTest):
     def test_custom_form_labeled(self, client, container_sas_url):
         training_client = client.get_form_training_client()
 
-        poller = training_client.begin_training(
+        poller = training_client.begin_train_model(
             container_sas_url,
             use_labels=True
         )
@@ -112,7 +110,7 @@ class TestCustomForms(FormRecognizerTest):
     def test_custom_form_unlabeled_transform(self, client, container_sas_url):
         training_client = client.get_form_training_client()
 
-        poller = training_client.begin_training(container_sas_url)
+        poller = training_client.begin_train_model(container_sas_url)
         model = poller.result()
 
         responses = []
@@ -149,7 +147,7 @@ class TestCustomForms(FormRecognizerTest):
     def test_custom_form_labeled_transform(self, client, container_sas_url):
         training_client = client.get_form_training_client()
 
-        poller = training_client.begin_training(container_sas_url, use_labels=True)
+        poller = training_client.begin_train_model(container_sas_url, use_labels=True)
         model = poller.result()
 
         responses = []

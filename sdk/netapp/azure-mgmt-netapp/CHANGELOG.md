@@ -1,5 +1,15 @@
 # Release History
 
+## 0.10.0 (2020-04-21)
+
+**Features**
+
+  - Model MountTarget has a new parameter end_ip
+  - Model MountTarget has a new parameter start_ip
+  - Model MountTarget has a new parameter netmask
+  - Model MountTarget has a new parameter gateway
+  - Model MountTarget has a new parameter subnet
+
 ## 0.9.0 (2020-04-02)
 
 **Features**

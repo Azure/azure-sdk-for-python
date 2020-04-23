@@ -11,10 +11,21 @@ except ImportError:
     TYPE_CHECKING = False
 
 if TYPE_CHECKING:
-    from typing import Any, Dict, Optional, Union, Callable, ContextManager
+    from typing import Any, Sequence, Dict, Optional, Union, Callable, ContextManager
 
     from azure.core.pipeline.transport import HttpRequest, HttpResponse, AsyncHttpResponse
     HttpResponseType = Union[HttpResponse, AsyncHttpResponse]
+    AttributeValue = Union[
+        str,
+        bool,
+        int,
+        float,
+        Sequence[str],
+        Sequence[bool],
+        Sequence[int],
+        Sequence[float],
+    ]
+    Attributes = Optional[Dict[str, AttributeValue]]
 
 try:
     from typing_extensions import Protocol
@@ -119,8 +130,8 @@ class AbstractSpan(Protocol):
         """
 
     @classmethod
-    def link(cls, traceparent):
-        # type: (Dict[str, str]) -> None
+    def link(cls, traceparent, attributes=None):
+        # type: (Dict[str, str], Attributes) -> None
         """
         Given a traceparent, extracts the context and links the context to the current tracer.
 
@@ -129,8 +140,8 @@ class AbstractSpan(Protocol):
         """
 
     @classmethod
-    def link_from_headers(cls, headers):
-        # type: (Dict[str, str]) -> None
+    def link_from_headers(cls, headers, attributes=None):
+        # type: (Dict[str, str], Attributes) -> None
         """
         Given a dictionary, extracts the context and links the context to the current tracer.
 
