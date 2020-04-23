@@ -4,8 +4,9 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
+from io import BytesIO
 from datetime import date, time
-from azure.core.exceptions import ClientAuthenticationError, ServiceRequestError
+from azure.core.exceptions import ClientAuthenticationError, ServiceRequestError, HttpResponseError
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer._generated.models import AnalyzeOperationResult
 from azure.ai.formrecognizer._response_handlers import prepare_us_receipt
@@ -45,6 +46,54 @@ class TestReceiptFromStream(FormRecognizerTest):
         poller = client.begin_recognize_receipts(
             myfile,
             content_type=FormContentType.image_png
+        )
+        result = poller.result()
+        self.assertIsNotNone(result)
+
+    @GlobalFormRecognizerAccountPreparer()
+    def test_damaged_file_passed_as_bytes(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
+        client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
+        damaged_pdf = b"\x25\x50\x44\x46\x55\x55\x55"  # still has correct bytes to be recognized as PDF
+        with self.assertRaises(HttpResponseError):
+            poller = client.begin_recognize_receipts(
+                damaged_pdf,
+            )
+
+    @GlobalFormRecognizerAccountPreparer()
+    def test_damaged_file_bytes_fails_autodetect(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
+        client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
+        damaged_pdf = b"\x50\x44\x46\x55\x55\x55"  # doesn't match any magic file numbers
+        with self.assertRaises(ValueError):
+            poller = client.begin_recognize_receipts(
+                damaged_pdf,
+            )
+
+    @GlobalFormRecognizerAccountPreparer()
+    def test_damaged_file_passed_as_bytes_io(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
+        client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
+        damaged_pdf = BytesIO(b"\x25\x50\x44\x46\x55\x55\x55")  # still has correct bytes to be recognized as PDF
+        with self.assertRaises(HttpResponseError):
+            poller = client.begin_recognize_receipts(
+                damaged_pdf,
+            )
+
+    @GlobalFormRecognizerAccountPreparer()
+    def test_damaged_file_bytes_io_fails_autodetect(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
+        client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
+        damaged_pdf = BytesIO(b"\x50\x44\x46\x55\x55\x55")  # doesn't match any magic file numbers
+        with self.assertRaises(ValueError):
+            poller = client.begin_recognize_receipts(
+                damaged_pdf,
+            )
+
+    @GlobalFormRecognizerAccountPreparer()
+    def test_blank_page(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
+        client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
+
+        with open(self.blank_pdf, "rb") as fd:
+            blank = fd.read()
+        poller = client.begin_recognize_receipts(
+            blank,
         )
         result = poller.result()
         self.assertIsNotNone(result)
