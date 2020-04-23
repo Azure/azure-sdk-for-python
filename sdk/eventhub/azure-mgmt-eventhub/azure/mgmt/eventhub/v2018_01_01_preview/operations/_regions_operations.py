@@ -15,8 +15,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class Operations(object):
-    """Operations operations.
+class RegionsOperations(object):
+    """RegionsOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
@@ -24,7 +24,7 @@ class Operations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client API Version. Constant value: "2018-01-01-preview".
+    :ivar api_version: Client API Version. Constant value: "2017-04-01".
     """
 
     models = models
@@ -34,29 +34,36 @@ class Operations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-01-01-preview"
+        self.api_version = "2017-04-01"
 
         self.config = config
 
-    def list(
-            self, custom_headers=None, raw=False, **operation_config):
-        """Lists all of the available Event Hub REST API operations.
+    def list_by_sku(
+            self, sku, custom_headers=None, raw=False, **operation_config):
+        """Gets the available Regions for a given sku.
 
+        :param sku: The sku type.
+        :type sku: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of Operation
+        :return: An iterator like instance of MessagingRegions
         :rtype:
-         ~azure.mgmt.eventhub.v2018_01_01_preview.models.OperationPaged[~azure.mgmt.eventhub.v2018_01_01_preview.models.Operation]
+         ~azure.mgmt.eventhub.v2018_01_01_preview.models.MessagingRegionsPaged[~azure.mgmt.eventhub.v2018_01_01_preview.models.MessagingRegions]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.eventhub.v2018_01_01_preview.models.ErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
-                url = self.list.metadata['url']
+                url = self.list_by_sku.metadata['url']
+                path_format_arguments = {
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+                    'sku': self._serialize.url("sku", sku, 'str', max_length=50, min_length=1)
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
@@ -94,7 +101,7 @@ class Operations(object):
         header_dict = None
         if raw:
             header_dict = {}
-        deserialized = models.OperationPaged(internal_paging, self._deserialize.dependencies, header_dict)
+        deserialized = models.MessagingRegionsPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list.metadata = {'url': '/providers/Microsoft.EventHub/operations'}
+    list_by_sku.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.EventHub/sku/{sku}/regions'}
