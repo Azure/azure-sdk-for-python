@@ -71,11 +71,11 @@ def test_redeem_token():
 def test_win_api():
     from azure.identity._credentials.win_vscode_adapter import _read_credential, _cred_write
     service_name = u"VS Code Azure"
-    account_name = u"Azure"
+    account_name = u"test"
     target = u"{}/{}".format(service_name, account_name)
     comment = u"comment"
     token_written = u"test_refresh_token"
-    user_name = u"Azure"
+    user_name = u"test"
     credential = {"Type": 0x1,
                    "TargetName": target,
                    "UserName": user_name,
