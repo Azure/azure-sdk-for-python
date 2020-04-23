@@ -212,15 +212,16 @@ class EventHubProducerClient(ClientBaseAsync):
     async def send_batch(
         self,
         event_data_batch: Union[EventDataBatch, List[EventData]],
+        *,
         partition_id: Optional[str] = None,
         partition_key: Optional[str] = None,
-        *,
         timeout: Optional[Union[int, float]] = None
     ) -> None:
         """Sends event data and blocks until acknowledgement is received or operation times out.
 
         :param event_data_batch: The EventDataBatch object to be sent.
         :type event_data_batch: ~azure.eventhub.EventDataBatch
+
         :param float timeout: The maximum wait time to send the event data.
          If not specified, the default wait time specified when the producer was created will be used.
         :rtype: None
