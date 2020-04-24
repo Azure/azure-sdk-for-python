@@ -11,7 +11,7 @@ import logging
 from typing import Optional, List, Union, Generator
 
 import uamqp
-from uamqp import types
+from uamqp import types, errors
 
 from .constants import (
     _BATCH_MESSAGE_OVERHEAD_COST,
@@ -472,20 +472,20 @@ class ReceivedMessage(PeekMessage):
         try:
             if not self._is_deferred_message:
                 try:
-                    self._get_settle_via_receiver_link(settle_operation, dead_letter_details)()
+                    self._settle_via_receiver_link(settle_operation, dead_letter_details)()
                     return
-                except Exception as exception:  # pylint: disable=broad-except
+                except RuntimeError as exception:
                     _LOGGER.info(
                         "Message settling: %r has encountered an exception (%r)."
                         "Trying to settle through management link",
                         settle_operation,
                         exception
                     )
-            self._get_settle_via_mgmt_link(settle_operation, dead_letter_details)()
+            self._settle_via_mgmt_link(settle_operation, dead_letter_details)()
         except Exception as e:
             raise MessageSettleFailed(settle_operation, e)
 
-    def _get_settle_via_mgmt_link(self, settle_operation, dead_letter_details=None):
+    def _settle_via_mgmt_link(self, settle_operation, dead_letter_details=None):
         # pylint: disable=protected-access
         if settle_operation == MESSAGE_COMPLETE:
             return functools.partial(
@@ -514,7 +514,7 @@ class ReceivedMessage(PeekMessage):
             )
         raise ValueError("Unsupported settle operation type: {}".format(settle_operation))
 
-    def _get_settle_via_receiver_link(self, settle_operation, dead_letter_details=None):
+    def _settle_via_receiver_link(self, settle_operation, dead_letter_details=None):
         if settle_operation == MESSAGE_COMPLETE:
             return functools.partial(self.message.accept)
         if settle_operation == MESSAGE_ABANDON:

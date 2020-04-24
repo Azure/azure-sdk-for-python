@@ -41,17 +41,17 @@ class ReceivedMessage(sync_message.ReceivedMessage):
                 try:
                     await self._loop.run_in_executor(
                         None,
-                        self._get_settle_via_receiver_link(settle_operation, dead_letter_details)
+                        self._settle_via_receiver_link(settle_operation, dead_letter_details)
                     )
                     return
-                except Exception as exception:  # pylint: disable=broad-except
+                except RuntimeError as exception:
                     _LOGGER.info(
                         "Message settling: %r has encountered an exception (%r)."
                         "Trying to settle through management link",
                         settle_operation,
                         exception
                     )
-            await self._get_settle_via_mgmt_link(settle_operation, dead_letter_details)()
+            await self._settle_via_mgmt_link(settle_operation, dead_letter_details)()
         except Exception as e:
             raise MessageSettleFailed(settle_operation, e)
 
