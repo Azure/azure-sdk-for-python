@@ -27,10 +27,9 @@ from ._utils import (
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
-    from ._models import DataSource
     from typing import Any, List, Sequence, Union
     from azure.core.credentials import AzureKeyCredential
-    from ._generated.models import Skill
+    from ._generated.models import Skill, DataSource
     from .. import Index, AnalyzeResult, AnalyzeRequest
 
 
