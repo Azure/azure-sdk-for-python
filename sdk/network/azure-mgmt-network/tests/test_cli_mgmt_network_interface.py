@@ -174,7 +174,7 @@ class MgmtNetworkTest(AzureMgmtTestCase):
         result = self.mgmt_client.network_interfaces.begin_create_or_update(resource_group_name=RESOURCE_GROUP, network_interface_name=NETWORK_INTERFACE_NAME, parameters=BODY)
         interface = result.result()
 
-        if test.is_live:
+        if self.is_live:
           self.create_vm(RESOURCE_GROUP, AZURE_LOCATION, VIRTUAL_MACHINE_NAME, interface.id)
 
         # /NetworkInterfaceTapConfigurations/put/Create Network Interface Tap Configurations[put]
@@ -233,7 +233,7 @@ class MgmtNetworkTest(AzureMgmtTestCase):
         # result = self.mgmt_client.network_interface_tap_configurations.begin_delete(resource_group_name=RESOURCE_GROUP, network_interface_name=NETWORK_INTERFACE_NAME, tap_configuration_name=TAP_CONFIGURATION_NAME)
         # result = result.result()
 
-        if test.is_live:
+        if self.is_live:
           self.delete_vm(RESOURCE_GROUP, VIRTUAL_MACHINE_NAME)
 
         # /NetworkInterfaces/delete/Delete network interface[delete]
