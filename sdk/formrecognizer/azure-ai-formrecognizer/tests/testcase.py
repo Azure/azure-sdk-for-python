@@ -41,7 +41,7 @@ class FormRecognizerTest(AzureTestCase):
         self.invoice_tiff = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/Invoice_1.tiff"))
         self.form_jpg = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/Form_1.jpg"))
         self.blank_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/blank.pdf"))
-        self.multipage_invoice_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/multipage_invoice.pdf"))
+        self.multipage_invoice_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/training_multipage/multipage_invoice1.pdf"))
         self.unsupported_content_py = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./conftest.py"))
 
     def assertModelTransformCorrect(self, model, actual, unlabeled=False):
@@ -73,8 +73,10 @@ class FormRecognizerTest(AzureTestCase):
                     self.assertEqual(model.models[0].form_type, "form-"+model.model_id)
                     self.assertEqual(model.models[0].accuracy, actual.train_result.average_model_accuracy)
 
-    def assertFormPagesTransformCorrect(self, pages, actual_read, page_result=None):
+    def assertFormPagesTransformCorrect(self, pages, actual_read, page_result=None, **kwargs):
         for page, actual_page in zip(pages, actual_read):
+            if hasattr(page, "pages"):  # this is necessary for how unlabeled forms are structured
+                page = page.pages[0]
             self.assertEqual(page.page_number, actual_page.page)
             self.assertEqual(page.text_angle, actual_page.angle)
             self.assertEqual(page.width, actual_page.width)
@@ -91,7 +93,9 @@ class FormRecognizerTest(AzureTestCase):
 
         if page_result:
             for page, actual_page in zip(pages, page_result):
-                self.assertTablesTransformCorrect(page.tables, actual_page.tables, actual_read)
+                if hasattr(page, "pages"):  # this is necessary for how unlabeled forms are structured
+                    page = page.pages[0]
+                self.assertTablesTransformCorrect(page.tables, actual_page.tables, actual_read, **kwargs)
 
     def assertBoundingBoxTransformCorrect(self, box, actual):
         if box is None and actual is None:
@@ -147,14 +151,14 @@ class FormRecognizerTest(AzureTestCase):
                     read_results
                 )
 
-    def assertUnlabeledFormFieldDictTransformCorrect(self, form_fields, actual_fields, read_results=None):
+    def assertUnlabeledFormFieldDictTransformCorrect(self, form_fields, actual_fields, read_results=None, **kwargs):
         if actual_fields is None:
             return
         for idx, a in enumerate(actual_fields):
             self.assertEqual(a.confidence, form_fields["field-"+str(idx)].confidence if a.confidence is not None else 1.0)
             self.assertEqual(a.key.text, form_fields["field-"+str(idx)].label_data.text)
             self.assertBoundingBoxTransformCorrect(form_fields["field-"+str(idx)].label_data.bounding_box, a.key.bounding_box)
-            if read_results:
+            if read_results and not kwargs.get("bug_skip_text_content", False):
                 self.assertTextContentTransformCorrect(
                     form_fields["field-"+str(idx)].label_data.text_content,
                     a.key.elements,
@@ -162,7 +166,7 @@ class FormRecognizerTest(AzureTestCase):
                 )
             self.assertEqual(a.value.text, form_fields["field-" + str(idx)].value_data.text)
             self.assertBoundingBoxTransformCorrect(form_fields["field-" + str(idx)].value_data.bounding_box, a.value.bounding_box)
-            if read_results:
+            if read_results and not kwargs.get("bug_skip_text_content", False):
                 self.assertTextContentTransformCorrect(
                     form_fields["field-"+str(idx)].value_data.text_content,
                     a.value.elements,
@@ -206,7 +210,7 @@ class FormRecognizerTest(AzureTestCase):
             self.assertFormFieldTransformCorrect(r.total_price, a.value_object.get("TotalPrice"), read_results)
             self.assertFormFieldTransformCorrect(r.price, a.value_object.get("Price"), read_results)
 
-    def assertTablesTransformCorrect(self, layout, actual_layout, read_results=None):
+    def assertTablesTransformCorrect(self, layout, actual_layout, read_results=None, **kwargs):
         for table, actual_table in zip(layout, actual_layout):
             self.assertEqual(table.row_count, actual_table.rows)
             self.assertEqual(table.column_count, actual_table.columns)
@@ -220,7 +224,8 @@ class FormRecognizerTest(AzureTestCase):
                 self.assertEqual(cell.is_header, actual_cell.is_header if actual_cell.is_header is not None else False)
                 self.assertEqual(cell.is_footer, actual_cell.is_footer if actual_cell.is_footer is not None else False)
                 self.assertBoundingBoxTransformCorrect(cell.bounding_box, actual_cell.bounding_box)
-                self.assertTextContentTransformCorrect(cell.text_content, actual_cell.elements, read_results)
+                if not kwargs.get("bug_skip_text_content", False):
+                    self.assertTextContentTransformCorrect(cell.text_content, actual_cell.elements, read_results)
 
     def assertReceiptItemsHasValues(self, items, page_number, include_text_content):
         for item in items:
@@ -347,6 +352,7 @@ class GlobalTrainingAccountPreparer(AzureMgmtPreparer):
         )
         self.client_kwargs = client_kwargs
         self.client_cls = client_cls
+        self.multipage_test = kwargs.get("multipage", False)
 
     def create_resource(self, name, **kwargs):
         client, container_sas_url = self.create_form_client_and_container_sas_url(**kwargs)
@@ -381,13 +387,20 @@ class GlobalTrainingAccountPreparer(AzureMgmtPreparer):
                                                storage_account_key)
             container_client.create_container()
 
-            training_path = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/training/"))
-            for path, folder, files in os.walk(training_path):
-                for document in files:
-                    with open(os.path.join(path, document), "rb") as data:
-                        if document == "Form_6.jpg":
-                            document = "subfolder/Form_6.jpg"  # create virtual subfolder in container
-                        container_client.upload_blob(name=document, data=data)
+            if self.multipage_test:
+                training_path = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/training_multipage/"))
+                for path, folder, files in os.walk(training_path):
+                    for document in files:
+                        with open(os.path.join(path, document), "rb") as data:
+                            container_client.upload_blob(name=document, data=data)
+            else:
+                training_path = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/training/"))
+                for path, folder, files in os.walk(training_path):
+                    for document in files:
+                        with open(os.path.join(path, document), "rb") as data:
+                            if document == "Form_6.jpg":
+                                document = "subfolder/Form_6.jpg"  # create virtual subfolder in container
+                            container_client.upload_blob(name=document, data=data)
 
             sas_token = generate_container_sas(
                 storage_account.name,
