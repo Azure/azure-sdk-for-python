@@ -23,6 +23,7 @@ from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 
 AZURE_LOCATION = 'eastus'
 
+
 class MgmtWebSiteTest(AzureMgmtTestCase):
 
     def setUp(self):
