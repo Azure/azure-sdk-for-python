@@ -53,12 +53,14 @@ class GetDetailedDiagnosticsInformationSampleAsync(object):
             _LOGGER.info("raw_response: {}".format(resp.raw_response))
 
         async with text_analytics_client:
-            result = await text_analytics_client.analyze_sentiment(
+            result = await text_analytics_client.extract_key_phrases(
                 documents,
                 show_stats=True,
                 model_version="latest",
                 raw_response_hook=callback
             )
+            for doc in result:
+                _LOGGER.warning("Doc with id {} has these warnings: {}".format(doc.id, doc.warnings))
 
 
 async def main():
