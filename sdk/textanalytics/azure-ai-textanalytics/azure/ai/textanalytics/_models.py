@@ -631,8 +631,9 @@ class SentenceSentiment(DictMixin):
         )
 
     def __repr__(self):
-        return "SentenceSentiment(text={}, sentiment={}, confidence_scores={}, grapheme_offset={}, grapheme_length={})".format(
-            self.text, self.sentiment, repr(self.confidence_scores), self.grapheme_offset, self.grapheme_length
+        return "SentenceSentiment(text={}, sentiment={}, confidence_scores={}, grapheme_offset={}, "\
+            "grapheme_length={})".format(self.text, self.sentiment, repr(self.confidence_scores),
+            self.grapheme_offset, self.grapheme_length
         )[:1024]
 
 
