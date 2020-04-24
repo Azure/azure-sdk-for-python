@@ -178,10 +178,6 @@ class ServiceBusAuthenticationError(ServiceBusError):
     """An error occured when authenticate the connection."""
 
 
-class InvalidHandlerState(ServiceBusError):
-    """An attempt to run a handler operation that the handler is not in the right state to perform."""
-
-
 class NoActiveSession(ServiceBusError):
     """No active Sessions are available to receive from."""
 

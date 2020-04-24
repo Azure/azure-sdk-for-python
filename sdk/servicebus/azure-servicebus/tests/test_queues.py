@@ -20,7 +20,6 @@ from azure.servicebus.exceptions import (
     ServiceBusConnectionError,
     ServiceBusError,
     MessageLockExpired,
-    InvalidHandlerState,
     MessageAlreadySettled,
     AutoLockRenewTimeout,
     MessageSendFailed,

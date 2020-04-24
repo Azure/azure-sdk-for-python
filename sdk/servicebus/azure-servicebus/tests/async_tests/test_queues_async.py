@@ -25,7 +25,6 @@ from azure.servicebus.exceptions import (
     ServiceBusConnectionError,
     ServiceBusError,
     MessageLockExpired,
-    InvalidHandlerState,
     MessageAlreadySettled,
     AutoLockRenewTimeout,
     MessageSendFailed,
@@ -513,9 +512,6 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                         await message.dead_letter(reason="Testing reason", description="Testing description")
                         count += 1
                     messages = await receiver.receive()
-
-                with pytest.raises(InvalidHandlerState):
-                    await receiver.receive()
 
             assert count == 10
 
