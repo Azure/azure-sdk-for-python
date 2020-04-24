@@ -24,16 +24,17 @@ from .._utils import (
     prep_if_match,
     prep_if_none_match,
 )
+from ._datasources_client import SearchDataSourcesClient
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
-    from typing import Any, List, Optional, Sequence, Union
+    from typing import Any, Dict, List, Optional, Sequence
     from azure.core.credentials import AzureKeyCredential
     from .._generated.models import Skill
     from ... import Index, AnalyzeResult, AnalyzeRequest
 
 
-class SearchServiceClient(HeadersMixin): # pylint: disable=too-many-public-methods
+class SearchServiceClient(HeadersMixin):  # pylint: disable=too-many-public-methods
     """A client to interact with an existing Azure search service.
 
     :param endpoint: The URL endpoint of an Azure search service
@@ -61,6 +62,10 @@ class SearchServiceClient(HeadersMixin): # pylint: disable=too-many-public-metho
         self._client = _SearchServiceClient(
             endpoint=endpoint, sdk_moniker=SDK_MONIKER, **kwargs
         )  # type: _SearchServiceClient
+
+        self._datasources_client = SearchDataSourcesClient(
+            endpoint, credential, **kwargs
+        )
 
     def __repr__(self):
         # type: () -> str
@@ -239,7 +244,7 @@ class SearchServiceClient(HeadersMixin): # pylint: disable=too-many-public-metho
                 :dedent: 4
                 :caption: Update an index.
         """
-        error_map = {404: ResourceNotFoundError}
+        error_map = {404: ResourceNotFoundError}  # type: Dict[int, Any]
         access_condition = None
         if index.e_tag:
             access_condition = AccessCondition()
@@ -298,7 +303,7 @@ class SearchServiceClient(HeadersMixin): # pylint: disable=too-many-public-metho
 
     @distributed_trace_async
     async def get_synonym_maps(self, **kwargs):
-        # type: (**Any) -> List[Index]
+        # type: (**Any) -> List[Dict[Any, Any]]
         """List the Synonym Maps in an Azure Search service.
 
         :return: List of synonym maps
@@ -517,7 +522,7 @@ class SearchServiceClient(HeadersMixin): # pylint: disable=too-many-public-metho
 
     @distributed_trace_async
     async def create_or_update_skillset(self, name, **kwargs):
-        # type: (str, Sequence[Skill], str, **Any) -> Skillset
+        # type: (str, **Any) -> Skillset
         """Create a new Skillset in an Azure Search service, or update an
         existing one.
 
@@ -556,108 +561,10 @@ class SearchServiceClient(HeadersMixin): # pylint: disable=too-many-public-metho
 
         return await self._client.skillsets.create_or_update(name, skillset, **kwargs)
 
-    @distributed_trace_async
-    async def create_datasource(self, data_source, **kwargs):
-        # type: (str, DataSource, **Any) -> Dict[str, Any]
-        """Creates a new datasource.
-        :param data_source: The definition of the datasource to create.
-        :type data_source: ~search.models.DataSource
-        :return: The created DataSource
-        :rtype: dict
+    def get_datasources_client(self) -> SearchDataSourcesClient:
+        """Return a client to perform operations on Data Sources.
 
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/async_samples/sample_data_source_operations_async.py
-                :start-after: [START create_data_source_async]
-                :end-before: [END create_data_source_async]
-                :language: python
-                :dedent: 4
-                :caption: Create a DataSource
+        :return: The Data Sources client
+        :rtype: DataSourcesClient
         """
-        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        result = await self._client.data_sources.create(data_source, **kwargs)
-        return result
-
-    @distributed_trace_async
-    async def create_or_update_datasource(self, data_source, name=None, **kwargs):
-        # type: (str, DataSource, Optional[str], **Any) -> Dict[str, Any]
-        """Creates a new datasource or updates a datasource if it already exists.
-
-        :param name: The name of the datasource to create or update.
-        :type name: str
-        :param data_source: The definition of the datasource to create or update.
-        :type data_source: ~search.models.DataSource
-        :return: The created DataSource
-        :rtype: dict
-        """
-        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-
-        if not name:
-            name = data_source.name
-        result = await self._client.data_sources.create_or_update(name, data_source, **kwargs)
-        return result
-
-    @distributed_trace_async
-    async def delete_datasource(self, name, **kwargs):
-        # type: (str, **Any) -> None
-        """Deletes a datasource.
-
-        :param name: The name of the datasource to delete.
-        :type name: str
-
-        :return: None
-        :rtype: None
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/async_samples/sample_data_source_operations_async.py
-                :start-after: [START delete_data_source_async]
-                :end-before: [END delete_data_source_async]
-                :language: python
-                :dedent: 4
-                :caption: Delete a DataSource
-        """
-        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        result = await self._client.data_sources.delete(name, **kwargs)
-        return result
-
-    @distributed_trace_async
-    async def get_datasource(self, name, **kwargs):
-        # type: (str, **Any) -> Dict[str, Any]
-        """Retrieves a datasource definition.
-
-        :param name: The name of the datasource to retrieve.
-        :type name: str
-        :return: The DataSource that is fetched.
-
-            .. literalinclude:: ../samples/async_samples/sample_data_source_operations_async.py
-                :start-after: [START get_data_source_async]
-                :end-before: [END get_data_source_async]
-                :language: python
-                :dedent: 4
-                :caption: Retrieve a DataSource
-        """
-        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        result = await self._client.data_sources.get(name, **kwargs)
-        return result
-
-    @distributed_trace_async
-    async def get_datasources(self, **kwargs):
-        # type: (**Any) -> Sequence[DataSource]
-        """Lists all datasources available for a search service.
-
-        :return: List of all the data sources.
-        :rtype: `list[dict]`
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/async_samples/sample_data_source_operations_async.py
-                :start-after: [START list_data_source_async]
-                :end-before: [END list_data_source_async]
-                :language: python
-                :dedent: 4
-                :caption: List all DataSources
-        """
-        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        result = await self._client.data_sources.list(**kwargs)
-        return result.data_sources
+        return self._datasources_client

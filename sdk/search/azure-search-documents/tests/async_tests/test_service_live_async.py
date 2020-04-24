@@ -55,19 +55,7 @@ def await_prepared_test(test_fn):
 
     return run
 
-
 class SearchClientTest(AzureMgmtTestCase):
-    def _create_datasource(self, name="sample-datasource"):
-        credentials = DataSourceCredentials(connection_string=CONNECTION_STRING)
-        container = DataContainer(name='searchcontainer')
-        data_source = DataSource(
-            name=name,
-            type="azureblob",
-            credentials=credentials,
-            container=container
-        )
-        return data_source
-
     @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer()
     async def test_get_service_statistics(self, api_key, endpoint, **kwargs):
@@ -381,10 +369,22 @@ class SearchClientTest(AzureMgmtTestCase):
         assert result.name == "test-ss"
         assert result.description == "desc2"
 
+class SearchDataSourcesClientTest(AzureMgmtTestCase):
+    def _create_datasource(self, name="sample-datasource"):
+        credentials = DataSourceCredentials(connection_string=CONNECTION_STRING)
+        container = DataContainer(name='searchcontainer')
+        data_source = DataSource(
+            name=name,
+            type="azureblob",
+            credentials=credentials,
+            container=container
+        )
+        return data_source
+
     @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     async def test_create_datasource_async(self, api_key, endpoint, index_name, **kwargs):
-        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key))
+        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key)).get_datasources_client()
         data_source = self._create_datasource()
         result = await client.create_datasource(data_source)
         assert result.name == "sample-datasource"
@@ -393,7 +393,7 @@ class SearchClientTest(AzureMgmtTestCase):
     @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     async def test_delete_datasource_async(self, api_key, endpoint, index_name, **kwargs):
-        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key))
+        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key)).get_datasources_client()
         data_source = self._create_datasource()
         result = await client.create_datasource(data_source)
         assert len(await client.get_datasources()) == 1
@@ -403,7 +403,7 @@ class SearchClientTest(AzureMgmtTestCase):
     @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     async def test_get_datasource_async(self, api_key, endpoint, index_name, **kwargs):
-        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key))
+        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key)).get_datasources_client()
         data_source = self._create_datasource()
         created = await client.create_datasource(data_source)
         result = await client.get_datasource("sample-datasource")
@@ -412,7 +412,7 @@ class SearchClientTest(AzureMgmtTestCase):
     @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     async def test_list_datasource_async(self, api_key, endpoint, index_name, **kwargs):
-        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key))
+        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key)).get_datasources_client()
         data_source1 = self._create_datasource()
         data_source2 = self._create_datasource(name="another-sample")
         created1 = await client.create_datasource(data_source1)
@@ -424,7 +424,7 @@ class SearchClientTest(AzureMgmtTestCase):
     @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     async def test_create_or_update_datasource_async(self, api_key, endpoint, index_name, **kwargs):
-        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key))
+        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key)).get_datasources_client()
         data_source = self._create_datasource()
         created = await client.create_datasource(data_source)
         assert len(await client.get_datasources()) == 1
