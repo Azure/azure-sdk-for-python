@@ -27,14 +27,29 @@ from azure.search.documents import(
     SearchServiceClient,
     ScoringProfile,
     Skillset,
+    DataSourceCredentials,
+    DataSource,
+    DataContainer
 )
 
 CWD = dirname(realpath(__file__))
 SCHEMA = open(join(CWD, "hotel_schema.json")).read()
 BATCH = json.load(open(join(CWD, "hotel_small.json")))
 TIME_TO_SLEEP = 5
+CONNECTION_STRING = 'DefaultEndpointsProtocol=https;AccountName=storagename;AccountKey=NzhL3hKZbJBuJ2484dPTR+xF30kYaWSSCbs2BzLgVVI1woqeST/1IgqaLm6QAOTxtGvxctSNbIR/1hW8yH+bJg==;EndpointSuffix=core.windows.net'
 
 class SearchClientTest(AzureMgmtTestCase):
+    def _create_datasource(self, name="sample-datasource"):
+        credentials = DataSourceCredentials(connection_string=CONNECTION_STRING)
+        container = DataContainer(name='searchcontainer')
+        data_source = DataSource(
+            name=name,
+            type="azureblob",
+            credentials=credentials,
+            container=container
+        )
+        return data_source
+
     @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer()
     def test_get_service_statistics(self, api_key, endpoint, **kwargs):
@@ -345,3 +360,57 @@ class SearchClientTest(AzureMgmtTestCase):
         assert isinstance(result, Skillset)
         assert result.name == "test-ss"
         assert result.description == "desc2"
+
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
+    def test_create_datasource(self, api_key, endpoint, index_name, **kwargs):
+        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key))
+        data_source = self._create_datasource()
+        result = client.create_datasource(data_source)
+        assert result.name == "sample-datasource"
+        assert result.type == "azureblob"
+
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
+    def test_delete_datasource(self, api_key, endpoint, index_name, **kwargs):
+        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key))
+        data_source = self._create_datasource()
+        result = client.create_datasource(data_source)
+        assert len(client.get_datasources()) == 1
+        client.delete_datasource("sample-datasource")
+        assert len(client.get_datasources()) == 0
+
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
+    def test_get_datasource(self, api_key, endpoint, index_name, **kwargs):
+        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key))
+        data_source = self._create_datasource()
+        created = client.create_datasource(data_source)
+        result = client.get_datasource("sample-datasource")
+        assert result.name == "sample-datasource"
+
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
+    def test_list_datasource(self, api_key, endpoint, index_name, **kwargs):
+        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key))
+        data_source1 = self._create_datasource()
+        data_source2 = self._create_datasource(name="another-sample")
+        created1 = client.create_datasource(data_source1)
+        created2 = client.create_datasource(data_source2)
+        result = client.get_datasources()
+        assert isinstance(result, list)
+        assert set(x.name for x in result) == {"sample-datasource", "another-sample"}
+
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
+    def test_create_or_update_datasource(self, api_key, endpoint, index_name, **kwargs):
+        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key))
+        data_source = self._create_datasource()
+        created = client.create_datasource(data_source)
+        assert len(client.get_datasources()) == 1
+        data_source.description = "updated"
+        client.create_or_update_datasource(data_source)
+        assert len(client.get_datasources()) == 1
+        result = client.get_datasource("sample-datasource")
+        assert result.name == "sample-datasource"
+        assert result.description == "updated"
