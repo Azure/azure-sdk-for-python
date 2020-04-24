@@ -71,11 +71,6 @@ class StorageLargestBlockBlobTest(StorageTestCase):
         blob.upload_blob(b'')
         return blob
 
-    def assertBlobEqual(self, container_name, blob_name, expected_data):
-        blob = self.bsc.get_blob_client(container_name, blob_name)
-        actual_data = blob.download_blob()
-        self.assertEqual(b"".join(list(actual_data.chunks())), expected_data)
-
     # --Test cases for block blobs --------------------------------------------
     @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
@@ -113,13 +108,14 @@ class StorageLargestBlockBlobTest(StorageTestCase):
         blob = self._create_blob()
 
         # Act
-        data = bytearray(self.get_random_bytes(1024))
-        stream = LargeStream(data, LARGEST_BLOCK_SIZE)
-        blockId = str(uuid.uuid4()).encode('utf-8')
+        stream = LargeStream(LARGEST_BLOCK_SIZE)
+        blockId = str(uuid.uuid4())
+        requestId = str(uuid.uuid4())
         resp = blob.stage_block(
             blockId,
             stream,
-            length=LARGEST_BLOCK_SIZE)
+            length=LARGEST_BLOCK_SIZE,
+            client_request_id=requestId)
         blob.commit_block_list([BlobBlock(blockId)])
         block_list = blob.get_block_list()
 
@@ -142,24 +138,31 @@ class StorageLargestBlockBlobTest(StorageTestCase):
         self._setup(storage_account, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
-        data = bytearray(urandom(LARGEST_BLOCK_SIZE))
         FILE_PATH = 'largest_blob_from_path.temp.{}.dat'.format(str(uuid.uuid4()))
         with open(FILE_PATH, 'wb') as stream:
-            stream.write(data)
+            largeStream = LargeStream(LARGEST_BLOCK_SIZE, 100 * 1024 * 1024)
+            chunk = largeStream.read()
+            while chunk:
+                stream.write(chunk)
+                chunk = largeStream.read()
 
         # Act
         with open(FILE_PATH, 'rb') as stream:
             blob.upload_blob(stream, max_concurrency=2)
+        block_list = blob.get_block_list()
 
         # Assert
-        self.assertBlobEqual(self.container_name, blob_name, data)
         self._teardown(FILE_PATH)
-
+        self.assertIsNotNone(block_list)
+        self.assertEqual(len(block_list), 2)
+        self.assertEqual(len(block_list[1]), 0)
+        self.assertEqual(len(block_list[0]), 1)
+        self.assertEqual(block_list[0][0].size, LARGEST_BLOCK_SIZE)
 
 class LargeStream:
-    def __init__(self, base_data, length):
-        self._base_data = base_data
-        self._base_data_length = len(base_data)
+    def __init__(self, length, initial_buffer_length=1024*1024):
+        self._base_data = urandom(initial_buffer_length)
+        self._base_data_length = initial_buffer_length
         self._position = 0
         self._remaining = length
 
@@ -168,15 +171,17 @@ class LargeStream:
             return None
 
         if size is None:
-            e = len(self._base_data)
+            e = self._base_data_length
         else:
             e = size
         e = min(e, self._remaining)
-        arr = bytearray(e)
-        for i in range(e):
-            arr[i] = self._base_data[self._position]
-            self._position = (self._position + 1) % self._base_data_length
-            self._remaining = self._remaining - 1
-        return arr
+        if e > self._base_data_length:
+            self._base_data = urandom(e)
+            self._base_data_length = e
+        self._remaining = self._remaining - e
+        return self._base_data[:e]
+
+    def remaining(self):
+        return self._remaining
 
 # ------------------------------------------------------------------------------
