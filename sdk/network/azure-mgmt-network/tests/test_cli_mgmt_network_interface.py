@@ -36,9 +36,6 @@ class MgmtNetworkTest(AzureMgmtTestCase):
         self.mgmt_client = self.create_mgmt_client(
             azure.mgmt.network.NetworkManagementClient
         )
-        self.compute_client = self.create_mgmt_client(
-            azure.mgmt.compute.ComputeManagementClient
-        )
 
     def create_virtual_network(self, group_name, location, network_name, subnet_name):
       
@@ -74,6 +71,9 @@ class MgmtNetworkTest(AzureMgmtTestCase):
 
     def create_vm(self, group_name, location, vm_name, nic_id):
         import azure.mgmt.compute
+        compute_client = self.create_mgmt_client(
+            azure.mgmt.compute.ComputeManagementClient
+        )
 
         # Create a vm with empty data disks.[put]
         BODY = {
@@ -128,12 +128,15 @@ class MgmtNetworkTest(AzureMgmtTestCase):
             ]
           }
         }
-        result = self.compute_client.virtual_machines.create_or_update(group_name, vm_name, BODY)
+        result = compute_client.virtual_machines.create_or_update(group_name, vm_name, BODY)
         result = result.result()
 
     def delete_vm(self, group_name, vm_name):
         import azure.mgmt.compute
-        result = self.compute_client.virtual_machines.delete(group_name, vm_name)
+        compute_client = self.create_mgmt_client(
+            azure.mgmt.compute.ComputeManagementClient
+        )
+        result = compute_client.virtual_machines.delete(group_name, vm_name)
         result = result.result()
     
     @ResourceGroupPreparer(location=AZURE_LOCATION)

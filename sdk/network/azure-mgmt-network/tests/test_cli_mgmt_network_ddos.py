@@ -40,9 +40,6 @@ class MgmtNetworkTest(AzureMgmtTestCase):
         self.mgmt_client = self.create_mgmt_client(
             azure.mgmt.network.NetworkManagementClient
         )
-        self.compute_client = self.create_mgmt_client(
-            azure.mgmt.compute.ComputeManagementClient
-        )
 
     def create_virtual_network(self, group_name, location, network_name, subnet_name):
       
@@ -89,6 +86,9 @@ class MgmtNetworkTest(AzureMgmtTestCase):
 
     def create_vm(self, group_name, location, vm_name, network_name, subnet_name, interface_name):
         import azure.mgmt.compute
+        self.compute_client = self.create_mgmt_client(
+            azure.mgmt.compute.ComputeManagementClient
+        )
         # create network
         subnet = self.create_virtual_network(group_name, location, network_name, subnet_name)
         nic_id = self.create_network_interface(group_name, location, interface_name, subnet)
