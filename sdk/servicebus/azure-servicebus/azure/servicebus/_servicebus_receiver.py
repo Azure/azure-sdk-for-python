@@ -29,6 +29,7 @@ from ._common.constants import (
 
 from ._common import mgmt_handlers
 from ._common.receiver_mixins import ReceiverMixin
+from .exceptions import MessageAlreadySettled, MessageSettleFailed
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -70,6 +71,9 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
      the client fails to process the message. The default mode is PeekLock.
     :paramtype mode: ~azure.servicebus.ReceiveSettleMode
     :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
+    :keyword bool auto_complete: When running in push-mode (with a generator) should messages be auto-completed,
+    calling `complete()` automatically if the generator's per-message scope is exited with no issues, abandon() if there is
+    an exception.
     :keyword int retry_total: The total number of attempts to redo a failed operation when an error occurs.
      Default value is 3.
     :keyword transport_type: The type of transport protocol that will be used for communicating with
@@ -125,9 +129,36 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         self._create_attribute(**kwargs)
         self._connection = kwargs.get("connection")
         self._prefetch = kwargs.get("prefetch")
+        self._auto_complete = kwargs.get("auto_complete")
 
     def __iter__(self):
-        return self
+        return self._iter_contextual_wrapper()
+
+    def _iter_contextual_wrapper(self):
+        message = None
+        try:
+            while True:
+                message = next(self)
+                yield message
+                if self._auto_complete and not message._settled:
+                    _LOGGER.info("Auto-completing message")
+                    message.complete()
+        except:
+            if message and self._auto_complete and not message._settled:
+                try:
+                    _LOGGER.info("Auto-abandoning message")
+                    message.abandon()
+                except (MessageAlreadySettled, MessageSettleFailed) as e:
+                    _LOGGER.info("Unable to auto-abandon message: " + str(e))
+            raise
+        finally:
+            # since the post-yield complete may not call if the loop is broken, need this here.
+            if message and self._auto_complete and not message._settled:
+                try:
+                    _LOGGER.info("Auto-completing message")
+                    message.complete()
+                except (MessageAlreadySettled, MessageSettleFailed):
+                    _LOGGER.info("Unable to auto-complete message: " + str(e))
 
     def __next__(self):
         self._can_run()
