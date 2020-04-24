@@ -7,14 +7,14 @@ from typing import cast, List, TYPE_CHECKING
 
 import six
 
-from azure.core.tracing.decorator import distributed_trace
-from ._generated import SearchIndexClient as _SearchIndexClient
-from ._generated.models import IndexBatch, IndexingResult
-from ._index_documents_batch import IndexDocumentsBatch
-from ._paging import SearchItemPaged, SearchPageIterator
-from ._queries import AutocompleteQuery, SearchQuery, SuggestQuery
-from .._headers_mixin import HeadersMixin
-from .._version import SDK_MONIKER
+from azure.core.tracing.decorator_async import distributed_trace_async
+from ._paging import AsyncSearchItemPaged, AsyncSearchPageIterator
+from .._generated.aio import SearchIndexClient
+from .._generated.models import IndexBatch, IndexingResult, SearchRequest
+from .._index_documents_batch import IndexDocumentsBatch
+from .._queries import AutocompleteQuery, SearchQuery, SuggestQuery
+from ..._headers_mixin import HeadersMixin
+from ..._version import SDK_MONIKER
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
@@ -22,35 +22,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import AzureKeyCredential
 
 
-def odata(statement, **kwargs):
-    """Escape an OData query string.
-
-    The statement to prepare should include fields to substitute given inside
-    braces, e.g. `{somevar}` and then pass the corresponing value as a keyword
-    argument, e.g. `somevar=10`.
-
-    :param statement: An OData query string to prepare
-    :type statement: str
-    :rtype: str
-
-    .. admonition:: Example:
-
-        >>> odata("name eq {name} and age eq {age}", name="O'Neil", age=37)
-        "name eq 'O''Neil' and age eq 37"
-
-
-    """
-    kw = dict(kwargs)
-    for key in kw:
-        value = kw[key]
-        if isinstance(value, six.string_types):
-            value = value.replace("'", "''")
-            if "'{{{}}}'".format(key) not in statement:
-                kw[key] = "'{}'".format(value)
-    return statement.format(**kw)
-
-
-class SearchIndexClient(HeadersMixin):
+class SearchClient(HeadersMixin):
     """A client to interact with an existing Azure search index.
 
     :param endpoint: The URL endpoint of an Azure search service
@@ -62,12 +34,12 @@ class SearchIndexClient(HeadersMixin):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../samples/sample_authentication.py
-            :start-after: [START create_search_client_with_key]
-            :end-before: [END create_search_client_with_key]
+        .. literalinclude:: ../samples/async_samples/sample_authentication_async.py
+            :start-after: [START create_search_client_with_key_async]
+            :end-before: [END create_search_client_with_key_async]
             :language: python
             :dedent: 4
-            :caption: Creating the SearchIndexClient with an API key.
+            :caption: Creating the SearchClient with an API key.
     """
 
     _ODATA_ACCEPT = "application/json;odata.metadata=none"  # type: str
@@ -78,35 +50,35 @@ class SearchIndexClient(HeadersMixin):
         self._endpoint = endpoint  # type: str
         self._index_name = index_name  # type: str
         self._credential = credential  # type: AzureKeyCredential
-        self._client = _SearchIndexClient(
+        self._client = SearchIndexClient(
             endpoint=endpoint, index_name=index_name, sdk_moniker=SDK_MONIKER, **kwargs
-        )  # type: _SearchIndexClient
+        )  # type: SearchIndexClient
 
     def __repr__(self):
         # type: () -> str
-        return "<SearchIndexClient [endpoint={}, index={}]>".format(
+        return "<SearchClient [endpoint={}, index={}]>".format(
             repr(self._endpoint), repr(self._index_name)
         )[:1024]
 
-    def close(self):
+    async def close(self):
         # type: () -> None
-        """Close the :class:`~azure.search.SearchIndexClient` session.
+        """Close the :class:`~azure.search.aio.SearchClient` session.
 
         """
-        return self._client.close()
+        return await self._client.close()
 
-    @distributed_trace
-    def get_document_count(self, **kwargs):
+    @distributed_trace_async
+    async def get_document_count(self, **kwargs):
         # type: (**Any) -> int
         """Return the number of documents in the Azure search index.
 
         :rtype: int
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        return int(self._client.documents.count(**kwargs))
+        return int(await self._client.documents.count(**kwargs))
 
-    @distributed_trace
-    def get_document(self, key, selected_fields=None, **kwargs):
+    @distributed_trace_async
+    async def get_document(self, key, selected_fields=None, **kwargs):
         # type: (str, List[str], **Any) -> dict
         """Retrieve a document from the Azure search index by its key.
 
@@ -118,51 +90,51 @@ class SearchIndexClient(HeadersMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_get_document.py
-                :start-after: [START get_document]
-                :end-before: [END get_document]
+            .. literalinclude:: ../samples/async_samples/sample_get_document_async.py
+                :start-after: [START get_document_async]
+                :end-before: [END get_document_async]
                 :language: python
                 :dedent: 4
                 :caption: Get a specific document from the search index.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        result = self._client.documents.get(
+        result = await self._client.documents.get(
             key=key, selected_fields=selected_fields, **kwargs
         )
         return cast(dict, result)
 
-    @distributed_trace
-    def search(self, query, **kwargs):
-        # type: (Union[str, SearchQuery], **Any) -> SearchItemPaged[dict]
+    @distributed_trace_async
+    async def search(self, query, **kwargs):
+        # type: (Union[str, SearchQuery], **Any) -> AsyncSearchItemPaged[dict]
         """Search the Azure search index for documents.
 
         :param query: An query for searching the index
         :type documents: str or SearchQuery
-        :rtype:  SearchItemPaged[dict]
+        :rtype:  AsyncSearchItemPaged[dict]
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_simple_query.py
-                :start-after: [START simple_query]
-                :end-before: [END simple_query]
+            .. literalinclude:: ../samples/async_samples/sample_simple_query_async.py
+                :start-after: [START simple_query_async]
+                :end-before: [END simple_query_async]
                 :language: python
                 :dedent: 4
                 :caption: Search on a simple text term.
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_filter_query.py
-                :start-after: [START filter_query]
-                :end-before: [END filter_query]
+            .. literalinclude:: ../samples/async_samples/sample_filter_query_async.py
+                :start-after: [START filter_query_async]
+                :end-before: [END filter_query_async]
                 :language: python
                 :dedent: 4
                 :caption: Filter and sort search results.
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_facet_query.py
-                :start-after: [START facet_query]
-                :end-before: [END facet_query]
+            .. literalinclude:: ../samples/async_samples/sample_facet_query_async.py
+                :start-after: [START facet_query_async]
+                :end-before: [END facet_query_async]
                 :language: python
                 :dedent: 4
                 :caption: Get search result facets.
@@ -175,15 +147,14 @@ class SearchIndexClient(HeadersMixin):
                     repr(query)
                 )
             )
-
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        return SearchItemPaged(
-            self._client, query, kwargs, page_iterator_class=SearchPageIterator
+        return AsyncSearchItemPaged(
+            self._client, query, kwargs, page_iterator_class=AsyncSearchPageIterator
         )
 
-    @distributed_trace
-    def suggest(self, query, **kwargs):
-        # type: (SuggestQuery, **Any) -> List[dict]
+    @distributed_trace_async
+    async def suggest(self, query, **kwargs):
+        # type: (Union[str, SuggestQuery], **Any) -> List[dict]
         """Get search suggestion results from the Azure search index.
 
         :param query: An query for search suggestions
@@ -192,9 +163,9 @@ class SearchIndexClient(HeadersMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_suggestions.py
-                :start-after: [START suggest_query]
-                :end-before: [END suggest_query]
+            .. literalinclude:: ../samples/async_samples/sample_suggestions_async.py
+                :start-after: [START suggest_query_async]
+                :end-before: [END suggest_query_async]
                 :language: python
                 :dedent: 4
                 :caption: Get search suggestions.
@@ -205,15 +176,15 @@ class SearchIndexClient(HeadersMixin):
             )
 
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        response = self._client.documents.suggest_post(
+        response = await self._client.documents.suggest_post(
             suggest_request=query.request, **kwargs
         )
         results = [r.as_dict() for r in response.results]
         return results
 
-    @distributed_trace
-    def autocomplete(self, query, **kwargs):
-        # type: (AutocompleteQuery, **Any) -> List[dict]
+    @distributed_trace_async
+    async def autocomplete(self, query, **kwargs):
+        # type: (Union[str, AutocompleteQuery], **Any) -> List[dict]
         """Get search auto-completion results from the Azure search index.
 
         :param query: An query for auto-completions
@@ -222,9 +193,9 @@ class SearchIndexClient(HeadersMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_autocomplete.py
-                :start-after: [START autocomplete_query]
-                :end-before: [END autocomplete_query]
+            .. literalinclude:: ../samples/async_samples/sample_autocomplete_async.py
+                :start-after: [START autocomplete_query_async]
+                :end-before: [END autocomplete_query_async]
                 :language: python
                 :dedent: 4
                 :caption: Get a auto-completions.
@@ -237,13 +208,13 @@ class SearchIndexClient(HeadersMixin):
             )
 
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        response = self._client.documents.autocomplete_post(
+        response = await self._client.documents.autocomplete_post(
             autocomplete_request=query.request, **kwargs
         )
         results = [r.as_dict() for r in response.results]
         return results
 
-    def upload_documents(self, documents, **kwargs):
+    async def upload_documents(self, documents, **kwargs):
         # type: (List[dict], **Any) -> List[IndexingResult]
         """Upload documents to the Azure search index.
 
@@ -257,9 +228,9 @@ class SearchIndexClient(HeadersMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_crud_operations.py
-                :start-after: [START upload_document]
-                :end-before: [END upload_document]
+            .. literalinclude:: ../samples/async_samples/sample_crud_operations_async.py
+                :start-after: [START upload_document_async]
+                :end-before: [END upload_document_async]
                 :language: python
                 :dedent: 4
                 :caption: Upload new documents to an index
@@ -268,10 +239,10 @@ class SearchIndexClient(HeadersMixin):
         batch.add_upload_documents(documents)
 
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        results = self.index_documents(batch, **kwargs)
+        results = await self.index_documents(batch, **kwargs)
         return cast(List[IndexingResult], results)
 
-    def delete_documents(self, documents, **kwargs):
+    async def delete_documents(self, documents, **kwargs):
         # type: (List[dict], **Any) -> List[IndexingResult]
         """Delete documents from the Azure search index
 
@@ -290,9 +261,9 @@ class SearchIndexClient(HeadersMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_crud_operations.py
-                :start-after: [START delete_document]
-                :end-before: [END delete_document]
+            .. literalinclude:: ../samples/async_samples/sample_crud_operations_async.py
+                :start-after: [START delete_document_async]
+                :end-before: [END delete_document_async]
                 :language: python
                 :dedent: 4
                 :caption: Delete existing documents to an index
@@ -301,10 +272,10 @@ class SearchIndexClient(HeadersMixin):
         batch.add_delete_documents(documents)
 
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        results = self.index_documents(batch, **kwargs)
+        results = await self.index_documents(batch, **kwargs)
         return cast(List[IndexingResult], results)
 
-    def merge_documents(self, documents, **kwargs):
+    async def merge_documents(self, documents, **kwargs):
         # type: (List[dict], **Any) -> List[IndexingResult]
         """Merge documents in to existing documents in the Azure search index.
 
@@ -319,9 +290,9 @@ class SearchIndexClient(HeadersMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_crud_operations.py
-                :start-after: [START merge_document]
-                :end-before: [END merge_document]
+            .. literalinclude:: ../samples/async_samples/sample_crud_operations_async.py
+                :start-after: [START merge_document_async]
+                :end-before: [END merge_document_async]
                 :language: python
                 :dedent: 4
                 :caption: Merge fields into existing documents to an index
@@ -330,10 +301,10 @@ class SearchIndexClient(HeadersMixin):
         batch.add_merge_documents(documents)
 
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        results = self.index_documents(batch, **kwargs)
+        results = await self.index_documents(batch, **kwargs)
         return cast(List[IndexingResult], results)
 
-    def merge_or_upload_documents(self, documents, **kwargs):
+    async def merge_or_upload_documents(self, documents, **kwargs):
         # type: (List[dict], **Any) -> List[IndexingResult]
         """Merge documents in to existing documents in the Azure search index,
         or upload them if they do not yet exist.
@@ -350,11 +321,11 @@ class SearchIndexClient(HeadersMixin):
         batch.add_merge_or_upload_documents(documents)
 
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        results = self.index_documents(batch, **kwargs)
+        results = await self.index_documents(batch, **kwargs)
         return cast(List[IndexingResult], results)
 
-    @distributed_trace
-    def index_documents(self, batch, **kwargs):
+    @distributed_trace_async
+    async def index_documents(self, batch, **kwargs):
         # type: (IndexDocumentsBatch, **Any) -> List[IndexingResult]
         """Specify a document operations to perform as a batch.
 
@@ -365,14 +336,16 @@ class SearchIndexClient(HeadersMixin):
         index_documents = IndexBatch(actions=batch.actions)
 
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        batch_response = self._client.documents.index(batch=index_documents, **kwargs)
+        batch_response = await self._client.documents.index(
+            batch=index_documents, **kwargs
+        )
         return cast(List[IndexingResult], batch_response.results)
 
-    def __enter__(self):
-        # type: () -> SearchIndexClient
-        self._client.__enter__()  # pylint:disable=no-member
+    async def __aenter__(self):
+        # type: () -> SearchClient
+        await self._client.__aenter__()  # pylint: disable=no-member
         return self
 
-    def __exit__(self, *args):
+    async def __aexit__(self, *args):
         # type: (*Any) -> None
-        self._client.__exit__(*args)  # pylint:disable=no-member
+        await self._client.__aexit__(*args)  # pylint: disable=no-member

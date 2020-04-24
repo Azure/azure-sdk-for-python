@@ -34,7 +34,7 @@ SCHEMA = open(join(CWD, "hotel_schema.json")).read()
 BATCH = json.load(open(join(CWD, "hotel_small.json")))
 TIME_TO_SLEEP = 5
 
-class SearchServiceClientTest(AzureMgmtTestCase):
+class SearchClientTest(AzureMgmtTestCase):
     @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer()
     def test_get_service_statistics(self, api_key, endpoint, **kwargs):

@@ -52,7 +52,7 @@ def await_prepared_test(test_fn):
     return run
 
 
-class SearchIndexClientTest(AzureMgmtTestCase):
+class SearchClientTest(AzureMgmtTestCase):
     @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer()
     async def test_get_service_statistics(self, api_key, endpoint, **kwargs):
