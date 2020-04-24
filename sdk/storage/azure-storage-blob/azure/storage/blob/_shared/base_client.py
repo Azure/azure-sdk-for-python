@@ -83,7 +83,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         if service not in ["blob", "queue", "file-share", "dfs"]:
             raise ValueError("Invalid service: {}".format(service))
         service_name = service.split('-')[0]
-        account = parsed_url.netloc.split(".{}.preprod.core.".format(service_name))
+        account = parsed_url.netloc.split(".{}.core.".format(service_name))
         self.account_name = account[0] if len(account) > 1 else None
         secondary_hostname = None
 
@@ -246,6 +246,8 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
             DistributedTracingPolicy(**kwargs),
             HttpLoggingPolicy(**kwargs)
         ]
+        if kwargs.get("_additional_pipeline_policies"):
+            policies = policies + kwargs.get("_additional_pipeline_policies")
         return config, Pipeline(config.transport, policies=policies)
 
     def _batch_send(
