@@ -17,7 +17,7 @@ from msal.oauth2cli.oauth2 import Client
 
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
-from . import get_default_authority
+from . import get_default_authority, normalize_authority
 
 try:
     ABC = abc.ABC
@@ -34,10 +34,10 @@ class AadClientBase(ABC):
 
     def __init__(self, tenant_id, client_id, cache=None, **kwargs):
         # type: (str, str, Optional[TokenCache], **Any) -> None
-        authority = kwargs.pop("authority", None) or get_default_authority()
-        if authority[-1] == "/":
-            authority = authority[:-1]
-        token_endpoint = "https://" + "/".join((authority, tenant_id, "oauth2/v2.0/token"))
+        authority = kwargs.pop("authority", None)
+        authority = normalize_authority(authority) if authority else get_default_authority()
+
+        token_endpoint = "/".join((authority, tenant_id, "oauth2/v2.0/token"))
         config = {"token_endpoint": token_endpoint}
 
         self._cache = cache or TokenCache()
