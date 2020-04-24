@@ -142,15 +142,13 @@ class TextAnalyticsTest(TestAnalyticsTestCase):
         self.assertEqual("SentimentConfidenceScores(positive=0.99, neutral=0.05, negative=0.02)",
                          repr(sentiment_confidence_score_per_label))
         self.assertEqual("SentenceSentiment(sentiment=neutral, confidence_scores=SentimentConfidenceScores("
-                         "positive=0.99, neutral=0.05, negative=0.02), grapheme_offset=0, grapheme_length=10, warnings="
-                         "['sentence was too short to find sentiment'])", repr(sentence_sentiment))
+                         "positive=0.99, neutral=0.05, negative=0.02), grapheme_offset=0, grapheme_length=10)", repr(sentence_sentiment))
         self.assertEqual("AnalyzeSentimentResult(id=1, sentiment=positive, statistics=TextDocumentStatistics("
                          "grapheme_count=14, transaction_count=18), confidence_scores=SentimentConfidenceScores"
                          "(positive=0.99, neutral=0.05, negative=0.02), "
                          "sentences=[SentenceSentiment(sentiment=neutral, confidence_scores="
                          "SentimentConfidenceScores(positive=0.99, neutral=0.05, negative=0.02), "
-                         "grapheme_offset=0, grapheme_length=10, "
-                         "warnings=['sentence was too short to find sentiment'])], is_error=False)",
+                         "grapheme_offset=0, grapheme_length=10)], is_error=False)",
                          repr(analyze_sentiment_result))
         self.assertEqual("DocumentError(id=1, error=TextAnalyticsError(code=invalidRequest, "
                          "message=The request is invalid, target=request), is_error=True)", repr(document_error))

@@ -87,14 +87,22 @@ class GlobalTextAnalyticsAccountPreparer(AzureMgmtPreparer):
         )
 
     def create_resource(self, name, **kwargs):
-        text_analytics_account = TextAnalyticsTest._TEXT_ANALYTICS_ACCOUNT
+        if self.is_live:
+            text_analytics_account = TextAnalyticsTest._TEXT_ANALYTICS_ACCOUNT
 
-        return {
-            'location': 'westus2',
-            'resource_group': TextAnalyticsTest._RESOURCE_GROUP,
-            'text_analytics_account': text_analytics_account,
-            'text_analytics_account_key': TextAnalyticsTest._TEXT_ANALYTICS_KEY,
-        }
+            return {
+                'location': 'westus2',
+                'resource_group': TextAnalyticsTest._RESOURCE_GROUP,
+                'text_analytics_account': text_analytics_account,
+                'text_analytics_account_key': TextAnalyticsTest._TEXT_ANALYTICS_KEY,
+            }
+        else:
+            return {
+                'location': 'westus2',
+                'resource_group': TextAnalyticsTest._RESOURCE_GROUP,
+                'text_analytics_account': "https://westus2.ppe.cognitiveservices.azure.com",
+                'text_analytics_account_key': "fake_key",
+            }
 
 class TextAnalyticsClientPreparer(AzureMgmtPreparer):
     def __init__(self, client_cls, client_kwargs={}, **kwargs):
