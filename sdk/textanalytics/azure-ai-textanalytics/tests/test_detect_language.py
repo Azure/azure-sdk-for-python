@@ -456,6 +456,19 @@ class TestDetectLanguage(TextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
+    def test_document_warnings(self, client):
+        # Can't find examples of warnings with detect_language. Will update when / if I do
+        docs = [
+            {"id": "1", "text": "This won't actually create a warning :'("},
+        ]
+
+        result = client.detect_language(docs)
+        for doc in result:
+            doc_warnings = doc.warnings
+            self.assertEqual(len(doc_warnings), 0)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
     def test_missing_input_records_error(self, client):
         docs = []
         with pytest.raises(ValueError) as excinfo:
