@@ -65,10 +65,25 @@ def _error_handler(error):
 def _create_servicebus_exception(logger, exception, handler):
     error_need_close_handler = True
     error_need_raise = False
-
-    if isinstance(exception, MessageSendFailed):
-        logger.info("Message send error (%r)", exception)
-        error = exception
+    if isinstance(
+        exception,
+        (
+            errors.MessageAccepted,
+            errors.MessageAlreadySettled,
+            errors.MessageModified,
+            errors.MessageRejected,
+            errors.MessageReleased,
+            errors.MessageContentTooLarge,
+            # TODO: which ones should be included. Do we need to separate MessageError from MessageSendFailed?
+        ),
+    ):
+        logger.info("Message error (%r)", exception)
+        error = MessageError(exception)
+        raise error
+    elif isinstance(exception, errors.MessageException):
+        logger.info("Message send failed (%r)", exception)
+        error = MessageSendFailed(exception)
+        raise error
     elif isinstance(exception, errors.LinkDetach) and exception.condition == SESSION_LOCK_LOST:
         try:
             session_id = handler._session_id  # pylint: disable=protected-access
@@ -81,7 +96,7 @@ def _create_servicebus_exception(logger, exception, handler):
         error_need_raise = True
     elif isinstance(exception, errors.AuthenticationException):
         logger.info("Authentication failed due to exception: (%r).", exception)
-        error = ServiceBusAuthorizationError(str(exception), exception)
+        error = ServiceBusAuthenticationError(str(exception), exception)
     elif isinstance(exception, (errors.LinkDetach, errors.ConnectionClose)):
         logger.info("Handler detached due to exception: (%r).", exception)
         if exception.condition == constants.ErrorCodes.UnauthorizedAccess:
@@ -159,6 +174,10 @@ class ServiceBusAuthorizationError(ServiceBusError):
     """An error occured when authorizing the connection."""
 
 
+class ServiceBusAuthenticationError(ServiceBusError):
+    """An error occured when authenticate the connection."""
+
+
 class InvalidHandlerState(ServiceBusError):
     """An attempt to run a handler operation that the handler is not in the right state to perform."""
 
@@ -193,6 +212,10 @@ class MessageSettleFailed(ServiceBusError):
         message = "Failed to {} message. Error: {}".format(action, inner_exception)
         self.inner_exception = inner_exception
         super(MessageSettleFailed, self).__init__(message, inner_exception)
+
+
+class MessageError(ServiceBusError):
+    """A message failed to send because the message is in a wrong state"""
 
 
 class MessageSendFailed(ServiceBusError):

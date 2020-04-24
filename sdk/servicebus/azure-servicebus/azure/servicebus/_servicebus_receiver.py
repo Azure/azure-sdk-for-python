@@ -305,6 +305,8 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
                 :caption: Receive messages from ServiceBus.
 
         """
+        if self._config.prefetch < max_batch_size:
+            raise ValueError("max_batch_size should be <= prefetch of ServiceBusClient.")
         self._can_run()
         return self._do_retryable_operation(
             self._receive,
