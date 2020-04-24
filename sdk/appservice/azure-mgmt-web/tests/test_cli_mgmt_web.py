@@ -13,7 +13,7 @@
 # Methods Covered : 106
 # Examples Total  : 126
 # Examples Tested : 7
-# Coverage %      : 1
+# Coverage %      : 2
 # ----------------------
 
 import unittest
