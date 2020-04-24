@@ -38,6 +38,7 @@ def message_processing(sb_client, queue_name, messages):
                         receiver.session.set_session_state("CLOSED")
                 renewer.shutdown()
         except NoActiveSession:
+            print("There are no non-empty sessions remaining; exiting.  This may present as a UserError in the azure portal.")
             return
 
 

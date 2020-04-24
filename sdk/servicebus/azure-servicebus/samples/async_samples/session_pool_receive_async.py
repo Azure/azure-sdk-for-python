@@ -39,6 +39,7 @@ async def message_processing(servicebus_client, queue_name):
                         break
                 renewer.shutdown()
         except NoActiveSession:
+            print("There are no non-empty sessions remaining; exiting.  This may present as a UserError in the azure portal.")
             return
 
 
