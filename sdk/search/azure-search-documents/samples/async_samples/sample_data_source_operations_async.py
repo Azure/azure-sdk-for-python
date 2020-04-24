@@ -44,7 +44,7 @@ async def create_data_source():
 async def list_data_sources():
     # [START list_data_source_async]
     async with service_client:
-        result = await service_client.list_datasources()
+        result = await service_client.get_datasources()
     names = [x.name for x in result]
     print("Found {} Data Sources in the service: {}".format(len(result), ", ".join(names)))
     # [END list_data_source_async]

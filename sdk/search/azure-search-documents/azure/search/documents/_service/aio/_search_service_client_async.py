@@ -642,7 +642,7 @@ class SearchServiceClient(HeadersMixin): # pylint: disable=too-many-public-metho
         return result
 
     @distributed_trace_async
-    async def list_datasources(self, **kwargs):
+    async def get_datasources(self, **kwargs):
         # type: (**Any) -> Sequence[DataSource]
         """Lists all datasources available for a search service.
 

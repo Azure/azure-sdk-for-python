@@ -396,9 +396,9 @@ class SearchIndexClientTest(AzureMgmtTestCase):
         client = SearchServiceClient(endpoint, AzureKeyCredential(api_key))
         data_source = self._create_datasource()
         result = await client.create_datasource(data_source)
-        assert len(await client.list_datasources()) == 1
+        assert len(await client.get_datasources()) == 1
         await client.delete_datasource("sample-datasource")
-        assert len(await client.list_datasources()) == 0
+        assert len(await client.get_datasources()) == 0
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
@@ -417,7 +417,7 @@ class SearchIndexClientTest(AzureMgmtTestCase):
         data_source2 = self._create_datasource(name="another-sample")
         created1 = await client.create_datasource(data_source1)
         created2 = await client.create_datasource(data_source2)
-        result = await client.list_datasources()
+        result = await client.get_datasources()
         assert isinstance(result, list)
         assert set(x.name for x in result) == {"sample-datasource", "another-sample"}
 
@@ -427,10 +427,10 @@ class SearchIndexClientTest(AzureMgmtTestCase):
         client = SearchServiceClient(endpoint, AzureKeyCredential(api_key))
         data_source = self._create_datasource()
         created = await client.create_datasource(data_source)
-        assert len(await client.list_datasources()) == 1
+        assert len(await client.get_datasources()) == 1
         data_source.description = "updated"
         await client.create_or_update_datasource(data_source)
-        assert len(await client.list_datasources()) == 1
+        assert len(await client.get_datasources()) == 1
         result = await client.get_datasource("sample-datasource")
         assert result.name == "sample-datasource"
         assert result.description == "updated"

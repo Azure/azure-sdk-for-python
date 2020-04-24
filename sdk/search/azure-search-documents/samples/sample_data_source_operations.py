@@ -41,7 +41,7 @@ def create_data_source():
 
 def list_data_sources():
     # [START list_data_source]
-    result = service_client.list_datasources()
+    result = service_client.get_datasources()
     names = [ds.name for ds in result]
     print("Found {} Data Sources in the service: {}".format(len(result), ", ".join(names)))
     # [END list_data_source]
