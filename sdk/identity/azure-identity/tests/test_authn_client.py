@@ -15,6 +15,7 @@ except ImportError:  # python < 3.3
 from azure.core.credentials import AccessToken
 from azure.identity._authn_client import AuthnClient
 from azure.identity._constants import EnvironmentVariables
+import pytest
 from six.moves.urllib_parse import urlparse
 from helpers import mock_response
 
@@ -205,28 +206,30 @@ def test_cache_scopes():
     assert not client.get_cached_token([scope_a, scope_b])
 
 
-def test_request_url():
-    authority = "localhost"
-    tenant = "expected_tenant"
+@pytest.mark.parametrize("authority", ("localhost", "https://localhost"))
+def test_request_url(authority):
+    tenant_id = "expected_tenant"
+    parsed_authority = urlparse(authority)
+    expected_netloc = parsed_authority.netloc or authority  # "localhost" parses to netloc "", path "localhost"
 
     def validate_url(url):
-        scheme, netloc, path, _, _, _ = urlparse(url)
-        assert scheme == "https"
-        assert netloc == authority
-        assert path.startswith("/" + tenant)
+        actual = urlparse(url)
+        assert actual.scheme == "https"
+        assert actual.netloc == expected_netloc
+        assert actual.path.startswith("/" + tenant_id)
 
     def mock_send(request, **kwargs):
         validate_url(request.url)
         return mock_response(json_payload={"token_type": "Bearer", "expires_in": 42, "access_token": "***"})
 
-    client = AuthnClient(tenant=tenant, transport=Mock(send=mock_send), authority=authority)
+    client = AuthnClient(tenant=tenant_id, transport=Mock(send=mock_send), authority=authority)
     client.request_token(("scope",))
     request = client.get_refresh_token_grant_request({"secret": "***"}, "scope")
     validate_url(request.url)
 
     # authority can be configured via environment variable
     with patch.dict("os.environ", {EnvironmentVariables.AZURE_AUTHORITY_HOST: authority}, clear=True):
-        client = AuthnClient(tenant=tenant, transport=Mock(send=mock_send))
+        client = AuthnClient(tenant=tenant_id, transport=Mock(send=mock_send))
         client.request_token(("scope",))
         request = client.get_refresh_token_grant_request({"secret": "***"}, "scope")
         validate_url(request.url)
