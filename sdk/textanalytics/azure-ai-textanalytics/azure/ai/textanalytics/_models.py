@@ -597,6 +597,8 @@ class SentenceSentiment(DictMixin):
     """SentenceSentiment contains the predicted sentiment and
     confidence scores for each individual sentence in the document.
 
+    :param text: The sentence text.
+    :type text: str
     :param sentiment: The predicted Sentiment for the sentence.
         Possible values include: 'positive', 'neutral', 'negative'
     :type sentiment: str
@@ -612,6 +614,7 @@ class SentenceSentiment(DictMixin):
     """
 
     def __init__(self, **kwargs):
+        self.text = kwargs.get("text", None)
         self.sentiment = kwargs.get("sentiment", None)
         self.confidence_scores = kwargs.get("confidence_scores", None)
         self.grapheme_offset = kwargs.get("grapheme_offset", None)
@@ -620,6 +623,7 @@ class SentenceSentiment(DictMixin):
     @classmethod
     def _from_generated(cls, sentence):
         return cls(
+            text=sentence.text,
             sentiment=sentence.sentiment,
             confidence_scores=SentimentConfidenceScores._from_generated(sentence.confidence_scores),  # pylint: disable=protected-access
             grapheme_offset=sentence.offset,
@@ -627,8 +631,8 @@ class SentenceSentiment(DictMixin):
         )
 
     def __repr__(self):
-        return "SentenceSentiment(sentiment={}, confidence_scores={}, grapheme_offset={}, grapheme_length={})".format(
-            self.sentiment, repr(self.confidence_scores), self.grapheme_offset, self.grapheme_length
+        return "SentenceSentiment(text={}, sentiment={}, confidence_scores={}, grapheme_offset={}, grapheme_length={})".format(
+            self.text, self.sentiment, repr(self.confidence_scores), self.grapheme_offset, self.grapheme_length
         )[:1024]
 
 

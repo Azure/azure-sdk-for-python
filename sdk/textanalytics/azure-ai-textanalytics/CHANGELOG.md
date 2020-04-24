@@ -2,6 +2,8 @@
 
 ## 1.0.0b5 (Unreleased)
 
+**New features**
+- Added `text` property to `SentenceSentiment`
 
 ## 1.0.0b4 (2020-04-07)
 
