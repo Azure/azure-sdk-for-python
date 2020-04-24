@@ -43,9 +43,9 @@ az servicebus namespace create --resource-group <resource-group-name> --name <se
 
 Interaction with Service Bus starts with an instance of the `ServiceBusClient` class. You either need a **connection string with SAS key**, or a **namespace** and one of its **account keys** to instantiate the client object.
 
-#### Get credentials
+#### Create client from connection string
 
-Use the [Azure CLI][azure_cli] snippet below to populate an environment variable with the service bus connection string (you can also find these values in the [Azure Portal][azure_portal] by following the step-by-step guide to [Get a service bus connection string][get_servicebus_conn_str]). The snippet is formatted for the Bash shell.
+- Get credentials: Use the [Azure CLI][azure_cli] snippet below to populate an environment variable with the service bus connection string (you can also find these values in the [Azure Portal][azure_portal] by following the step-by-step guide to [Get a service bus connection string][get_servicebus_conn_str]). The snippet is formatted for the Bash shell.
 
 ```Bash
 RES_GROUP=<resource-group-name>
@@ -53,8 +53,6 @@ NAMESPACE_NAME=<servicebus-namespace-name>
 
 export SERVICE_BUS_CONN_STR=$(az servicebus namespace authorization-rule keys list --resource-group $RES_GROUP --namespace-name $NAMESPACE_NAME --name RootManageSharedAccessKey --query primaryConnectionString --output tsv)
 ```
-
-#### Create client
 
 Once you've populated the `SERVICE_BUS_CONN_STR` environment variable, you can create the `ServiceBusClient`.
 
@@ -67,6 +65,28 @@ connstr = os.environ['SERVICE_BUS_CONN_STR']
 with ServiceBusClient.from_connection_string(connstr) as client:
     ...
 ```
+
+#### Create client using the azure-identity library:
+
+```python
+import os
+from azure.servicebus import ServiceBusClient
+from azure.identity import DefaultAzureCredential
+
+credential = DefaultAzureCredential()
+
+FULLY_QUALIFIED_NAMESPACE = os.environ['SERVICE_BUS_FULLY_QUALIFIED_NAMESPACE']
+with ServiceBusClient(FULLY_QUALIFIED_NAMESPACE, credential):
+    ...
+```
+
+- This constructor takes the fully qualified namespace of your Service Bus instance and credential that implements the
+[TokenCredential][token_credential_interface]
+protocol. There are implementations of the `TokenCredential` protocol available in the
+[azure-identity package][pypi_azure_identity]. The fully qualified namespace is of the format `<yournamespace.servicebus.windows.net>`.
+- When using Azure Active Directory, your principal must be assigned a role which allows access to Service Bus, such as the
+Azure Service Bus Data Owner role. For more information about using Azure Active Directory authorization with Service Bus,
+please refer to [the associated documentation][servicebus_aad_authentication].
 
 Note: client can be initialized without a context manager, but must be manually closed via client.close() to not leak resources.
 
@@ -228,3 +248,6 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 [azure_namespace_creation]: https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-create-namespace-portal
 [servicebus_management_repository]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-mgmt-servicebus
 [get_servicebus_conn_str]: https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-create-namespace-portal#get-the-connection-string
+[servicebus_aad_authentication]: https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-authentication-and-authorization
+[token_credential_interface]: ../../core/azure-core/azure/core/credentials.py
+[pypi_azure_identity]: https://pypi.org/project/azure-identity/
