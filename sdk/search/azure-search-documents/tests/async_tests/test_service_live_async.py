@@ -56,7 +56,7 @@ def await_prepared_test(test_fn):
     return run
 
 
-class SearchIndexClientTest(AzureMgmtTestCase):
+class SearchClientTest(AzureMgmtTestCase):
     def _create_datasource(self, name="sample-datasource"):
         credentials = DataSourceCredentials(connection_string=CONNECTION_STRING)
         container = DataContainer(name='searchcontainer')

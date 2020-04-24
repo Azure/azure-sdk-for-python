@@ -27,9 +27,9 @@ index_name = os.getenv("AZURE_SEARCH_INDEX_NAME")
 key = os.getenv("AZURE_SEARCH_API_KEY")
 
 from azure.core.credentials import AzureKeyCredential
-from azure.search.documents import SearchIndexClient
+from azure.search.documents import SearchClient
 
-search_client = SearchIndexClient(service_endpoint, index_name, AzureKeyCredential(key))
+search_client = SearchClient(service_endpoint, index_name, AzureKeyCredential(key))
 
 def upload_document():
     # [START upload_document]

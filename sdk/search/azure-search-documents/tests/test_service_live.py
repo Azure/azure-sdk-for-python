@@ -38,7 +38,7 @@ BATCH = json.load(open(join(CWD, "hotel_small.json")))
 TIME_TO_SLEEP = 5
 CONNECTION_STRING = 'DefaultEndpointsProtocol=https;AccountName=storagename;AccountKey=NzhL3hKZbJBuJ2484dPTR+xF30kYaWSSCbs2BzLgVVI1woqeST/1IgqaLm6QAOTxtGvxctSNbIR/1hW8yH+bJg==;EndpointSuffix=core.windows.net'
 
-class SearchServiceClientTest(AzureMgmtTestCase):
+class SearchClientTest(AzureMgmtTestCase):
     def _create_datasource(self, name="sample-datasource"):
         credentials = DataSourceCredentials(connection_string=CONNECTION_STRING)
         container = DataContainer(name='searchcontainer')
