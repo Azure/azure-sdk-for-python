@@ -151,8 +151,9 @@ class DetectLanguageResult(DictMixin):
         self.is_error = False
 
     def __repr__(self):
-        return "DetectLanguageResult(id={}, primary_language={}, warnings={}, statistics={}, is_error={})" \
-            .format(self.id, repr(self.primary_language), repr(self.warnings), repr(self.statistics), self.is_error)[:1024]
+        return "DetectLanguageResult(id={}, primary_language={}, warnings={}, statistics={}, "\
+            "is_error={})".format(self.id, repr(self.primary_language), repr(self.warnings),
+            repr(self.statistics), self.is_error)[:1024]
 
 
 class CategorizedEntity(DictMixin):
@@ -374,9 +375,10 @@ class AnalyzeSentimentResult(DictMixin):
         self.is_error = False
 
     def __repr__(self):
-        return "AnalyzeSentimentResult(id={}, sentiment={}, warnings={}, statistics={}, confidence_scores={}, sentences={}, " \
-               "is_error={})".format(self.id, self.sentiment, repr(self.warnings), repr(self.statistics), repr(self.confidence_scores),
-                                     repr(self.sentences), self.is_error)[:1024]
+        return "AnalyzeSentimentResult(id={}, sentiment={}, warnings={}, statistics={}, confidence_scores={}, "\
+                 "sentences={}, is_error={})".format(
+                 self.id, self.sentiment, repr(self.warnings), repr(self.statistics),
+                 repr(self.confidence_scores), repr(self.sentences), self.is_error)[:1024]
 
 
 class TextDocumentStatistics(DictMixin):
