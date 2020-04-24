@@ -28,7 +28,6 @@
 
 import unittest
 
-import azure.mgmt.compute
 import azure.mgmt.network
 from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 
@@ -89,6 +88,7 @@ class MgmtNetworkTest(AzureMgmtTestCase):
         return nic_info.id
 
     def create_vm(self, group_name, location, vm_name, network_name, subnet_name, interface_name):
+        import azure.mgmt.compute
         # create network
         subnet = self.create_virtual_network(group_name, location, network_name, subnet_name)
         nic_id = self.create_network_interface(group_name, location, interface_name, subnet)
@@ -185,7 +185,8 @@ class MgmtNetworkTest(AzureMgmtTestCase):
         DDOS_PROTECTION_PLAN_NAME = self.get_resource_name("ddosprotectionplan")
         DOMAINNAMELABEL = self.get_resource_name("testdns")
 
-        self.create_vm(RESOURCE_GROUP, AZURE_LOCATION, VIRTUAL_MACHINE_NAME, VIRTUAL_NETWORK_NAME, SUBNET_NAME, INTERFACE_NAME)
+        if self.is_live:
+          self.create_vm(RESOURCE_GROUP, AZURE_LOCATION, VIRTUAL_MACHINE_NAME, VIRTUAL_NETWORK_NAME, SUBNET_NAME, INTERFACE_NAME)
         self.create_public_ip_addresses(resource_group.name, AZURE_LOCATION, PUBLIC_IP_ADDRESS_NAME)
         self.create_virtual_network(RESOURCE_GROUP, AZURE_LOCATION, BASTION_VIRTUAL_NETWORK_NAME, BASTION_SUBNET_NAME)
 

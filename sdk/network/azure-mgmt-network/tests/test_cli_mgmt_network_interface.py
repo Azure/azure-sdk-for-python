@@ -24,7 +24,6 @@
 
 import unittest
 
-import azure.mgmt.compute
 import azure.mgmt.network
 from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 
@@ -74,6 +73,7 @@ class MgmtNetworkTest(AzureMgmtTestCase):
         result = result.result()
 
     def create_vm(self, group_name, location, vm_name, nic_id):
+        import azure.mgmt.compute
 
         # Create a vm with empty data disks.[put]
         BODY = {
@@ -132,6 +132,7 @@ class MgmtNetworkTest(AzureMgmtTestCase):
         result = result.result()
 
     def delete_vm(self, group_name, vm_name):
+        import azure.mgmt.compute
         result = self.compute_client.virtual_machines.delete(group_name, vm_name)
         result = result.result()
     
@@ -170,7 +171,8 @@ class MgmtNetworkTest(AzureMgmtTestCase):
         result = self.mgmt_client.network_interfaces.begin_create_or_update(resource_group_name=RESOURCE_GROUP, network_interface_name=NETWORK_INTERFACE_NAME, parameters=BODY)
         interface = result.result()
 
-        self.create_vm(RESOURCE_GROUP, AZURE_LOCATION, VIRTUAL_MACHINE_NAME, interface.id)
+        if test.is_live:
+          self.create_vm(RESOURCE_GROUP, AZURE_LOCATION, VIRTUAL_MACHINE_NAME, interface.id)
 
         # /NetworkInterfaceTapConfigurations/put/Create Network Interface Tap Configurations[put]
         # BODY = {
@@ -228,7 +230,8 @@ class MgmtNetworkTest(AzureMgmtTestCase):
         # result = self.mgmt_client.network_interface_tap_configurations.begin_delete(resource_group_name=RESOURCE_GROUP, network_interface_name=NETWORK_INTERFACE_NAME, tap_configuration_name=TAP_CONFIGURATION_NAME)
         # result = result.result()
 
-        self.delete_vm(RESOURCE_GROUP, VIRTUAL_MACHINE_NAME)
+        if test.is_live:
+          self.delete_vm(RESOURCE_GROUP, VIRTUAL_MACHINE_NAME)
 
         # /NetworkInterfaces/delete/Delete network interface[delete]
         result = self.mgmt_client.network_interfaces.begin_delete(resource_group_name=RESOURCE_GROUP, network_interface_name=NETWORK_INTERFACE_NAME)
