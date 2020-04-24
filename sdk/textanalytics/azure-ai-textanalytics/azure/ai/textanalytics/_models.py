@@ -101,6 +101,8 @@ class RecognizeEntitiesResult(DictMixin):
     :param entities: Recognized entities in the document.
     :type entities:
         list[~azure.ai.textanalytics.CategorizedEntity]
+    :param warnings: Warnings encountered while processing document.
+    :type warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
     :param statistics: If show_stats=true was specified in the request this
         field will contain information about the document payload.
     :type statistics:
@@ -112,12 +114,13 @@ class RecognizeEntitiesResult(DictMixin):
     def __init__(self, **kwargs):
         self.id = kwargs.get("id", None)
         self.entities = kwargs.get("entities", None)
+        self.warnings = kwargs.get("warnings", None)
         self.statistics = kwargs.get("statistics", None)
         self.is_error = False
 
     def __repr__(self):
-        return "RecognizeEntitiesResult(id={}, entities={}, statistics={}, is_error={})" \
-            .format(self.id, repr(self.entities), repr(self.statistics), self.is_error)[:1024]
+        return "RecognizeEntitiesResult(id={}, entities={}, warnings={}, statistics={}, is_error={})" \
+            .format(self.id, repr(self.entities), repr(self.warnings), repr(self.statistics), self.is_error)[:1024]
 
 
 class DetectLanguageResult(DictMixin):
@@ -130,6 +133,8 @@ class DetectLanguageResult(DictMixin):
     :type id: str
     :param primary_language: The primary language detected in the document.
     :type primary_language: ~azure.ai.textanalytics.DetectedLanguage
+    :param warnings: Warnings encountered while processing document.
+    :type warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
     :param statistics: If show_stats=true was specified in the request this
         field will contain information about the document payload.
     :type statistics:
@@ -141,12 +146,13 @@ class DetectLanguageResult(DictMixin):
     def __init__(self, **kwargs):
         self.id = kwargs.get("id", None)
         self.primary_language = kwargs.get("primary_language", None)
+        self.warnings = kwargs.get("warnings", None)
         self.statistics = kwargs.get("statistics", None)
         self.is_error = False
 
     def __repr__(self):
-        return "DetectLanguageResult(id={}, primary_language={}, statistics={}, is_error={})" \
-            .format(self.id, repr(self.primary_language), repr(self.statistics), self.is_error)[:1024]
+        return "DetectLanguageResult(id={}, primary_language={}, warnings={}, statistics={}, is_error={})" \
+            .format(self.id, repr(self.primary_language), repr(self.warnings), repr(self.statistics), self.is_error)[:1024]
 
 
 class CategorizedEntity(DictMixin):
@@ -235,6 +241,31 @@ class TextAnalyticsError(DictMixin):
         return "TextAnalyticsError(code={}, message={}, target={})" \
             .format(self.code, self.message, self.target)[:1024]
 
+class TextAnalyticsWarning(DictMixin):
+    """TextAnalyticsWarning contains the warning code, message, and
+    other details that explains why the response has a warning
+    :param code: Warning code. Possible values include: 'LongWordsInDocument',
+     'DocumentTruncated'.
+    :type code: str
+    :param message: Warning message.
+    :type message: str
+    """
+
+    def __init__(self, **kwargs):
+        self.code = kwargs.get('code', None)
+        self.message = kwargs.get('message', None)
+
+    @classmethod
+    def _from_generated(cls, warning):
+        return cls(
+            code=warning.code,
+            message=warning.message,
+        )
+
+    def __repr__(self):
+        return "TextAnalyticsWarning(code={}, message={})" \
+            .format(self.code, self.message)[:1024]
+
 
 class ExtractKeyPhrasesResult(DictMixin):
     """ExtractKeyPhrasesResult is a result object which contains
@@ -248,6 +279,8 @@ class ExtractKeyPhrasesResult(DictMixin):
         The number of key phrases returned is proportional to the number of words
         in the input document.
     :type key_phrases: list[str]
+    :param warnings: Warnings encountered while processing document.
+    :type warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
     :param statistics: If show_stats=true was specified in the request this
         field will contain information about the document payload.
     :type statistics:
@@ -259,12 +292,13 @@ class ExtractKeyPhrasesResult(DictMixin):
     def __init__(self, **kwargs):
         self.id = kwargs.get("id", None)
         self.key_phrases = kwargs.get("key_phrases", None)
+        self.warnings = kwargs.get("warnings", None)
         self.statistics = kwargs.get("statistics", None)
         self.is_error = False
 
     def __repr__(self):
-        return "ExtractKeyPhrasesResult(id={}, key_phrases={}, statistics={}, is_error={})" \
-            .format(self.id, self.key_phrases, repr(self.statistics), self.is_error)[:1024]
+        return "ExtractKeyPhrasesResult(id={}, key_phrases={}, warnings={}, statistics={}, is_error={})" \
+            .format(self.id, self.key_phrases, repr(self.warnings), repr(self.statistics), self.is_error)[:1024]
 
 
 class RecognizeLinkedEntitiesResult(DictMixin):
@@ -278,6 +312,8 @@ class RecognizeLinkedEntitiesResult(DictMixin):
     :param entities: Recognized well-known entities in the document.
     :type entities:
         list[~azure.ai.textanalytics.LinkedEntity]
+    :param warnings: Warnings encountered while processing document.
+    :type warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
     :param statistics: If show_stats=true was specified in the request this
         field will contain information about the document payload.
     :type statistics:
@@ -289,12 +325,13 @@ class RecognizeLinkedEntitiesResult(DictMixin):
     def __init__(self, **kwargs):
         self.id = kwargs.get("id", None)
         self.entities = kwargs.get("entities", None)
+        self.warnings = kwargs.get("warnings", None)
         self.statistics = kwargs.get("statistics", None)
         self.is_error = False
 
     def __repr__(self):
-        return "RecognizeLinkedEntitiesResult(id={}, entities={}, statistics={}, is_error={})" \
-            .format(self.id, repr(self.entities), repr(self.statistics), self.is_error)[:1024]
+        return "RecognizeLinkedEntitiesResult(id={}, entities={}, warnings={}, statistics={}, is_error={})" \
+            .format(self.id, repr(self.entities), repr(self.warnings), repr(self.statistics), self.is_error)[:1024]
 
 
 class AnalyzeSentimentResult(DictMixin):
@@ -310,6 +347,8 @@ class AnalyzeSentimentResult(DictMixin):
         Neutral, Positive, or Mixed). Possible values include: 'positive',
         'neutral', 'negative', 'mixed'
     :type sentiment: str
+    :param warnings: Warnings encountered while processing document.
+    :type warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
     :param statistics: If show_stats=true was specified in the request this
         field will contain information about the document payload.
     :type statistics:
@@ -328,14 +367,15 @@ class AnalyzeSentimentResult(DictMixin):
     def __init__(self, **kwargs):
         self.id = kwargs.get("id", None)
         self.sentiment = kwargs.get("sentiment", None)
+        self.warnings = kwargs.get("warnings", None)
         self.statistics = kwargs.get("statistics", None)
         self.confidence_scores = kwargs.get("confidence_scores", None)
         self.sentences = kwargs.get("sentences", None)
         self.is_error = False
 
     def __repr__(self):
-        return "AnalyzeSentimentResult(id={}, sentiment={}, statistics={}, confidence_scores={}, sentences={}, " \
-               "is_error={})".format(self.id, self.sentiment, repr(self.statistics), repr(self.confidence_scores),
+        return "AnalyzeSentimentResult(id={}, sentiment={}, warnings={}, statistics={}, confidence_scores={}, sentences={}, " \
+               "is_error={})".format(self.id, self.sentiment, repr(self.warnings), repr(self.statistics), repr(self.confidence_scores),
                                      repr(self.sentences), self.is_error)[:1024]
 
 

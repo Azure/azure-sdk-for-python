@@ -2,6 +2,9 @@
 
 ## 1.0.0b5 (Unreleased)
 
+**New features**
+- We now have a `warnings` property on each response returned from the endpoints. It is a list of `TextAnalyticsWarning`s.
+
 
 ## 1.0.0b4 (2020-04-07)
 

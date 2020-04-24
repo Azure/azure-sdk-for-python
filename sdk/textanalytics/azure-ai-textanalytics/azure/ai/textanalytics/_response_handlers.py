@@ -23,7 +23,8 @@ from ._models import (
     DetectedLanguage,
     DocumentError,
     SentimentConfidenceScores,
-    TextAnalyticsError
+    TextAnalyticsError,
+    TextAnalyticsWarning
 )
 
 class CSODataV4Format(ODataV4Format):
@@ -80,6 +81,7 @@ def language_result(language):
     return DetectLanguageResult(
         id=language.id,
         primary_language=DetectedLanguage._from_generated(language.detected_languages[0]),  # pylint: disable=protected-access
+        warnings=[TextAnalyticsWarning._from_generated(w) for w in language.warnings],  # pylint: disable=protected-access
         statistics=TextDocumentStatistics._from_generated(language.statistics),  # pylint: disable=protected-access
     )
 
@@ -89,6 +91,7 @@ def entities_result(entity):
     return RecognizeEntitiesResult(
         id=entity.id,
         entities=[CategorizedEntity._from_generated(e) for e in entity.entities],  # pylint: disable=protected-access
+        warnings=[TextAnalyticsWarning._from_generated(w) for w in entity.warnings],  # pylint: disable=protected-access
         statistics=TextDocumentStatistics._from_generated(entity.statistics),  # pylint: disable=protected-access
     )
 
@@ -98,6 +101,7 @@ def linked_entities_result(entity):
     return RecognizeLinkedEntitiesResult(
         id=entity.id,
         entities=[LinkedEntity._from_generated(e) for e in entity.entities],  # pylint: disable=protected-access
+        warnings=[TextAnalyticsWarning._from_generated(w) for w in entity.warnings],  # pylint: disable=protected-access
         statistics=TextDocumentStatistics._from_generated(entity.statistics),  # pylint: disable=protected-access
     )
 
@@ -107,6 +111,7 @@ def key_phrases_result(phrases):
     return ExtractKeyPhrasesResult(
         id=phrases.id,
         key_phrases=phrases.key_phrases,
+        warnings=[TextAnalyticsWarning._from_generated(w) for w in phrases.warnings],  # pylint: disable=protected-access
         statistics=TextDocumentStatistics._from_generated(phrases.statistics),  # pylint: disable=protected-access
     )
 
@@ -116,6 +121,7 @@ def sentiment_result(sentiment):
     return AnalyzeSentimentResult(
         id=sentiment.id,
         sentiment=sentiment.sentiment,
+        warnings=[TextAnalyticsWarning._from_generated(w) for w in sentiment.warnings],  # pylint: disable=protected-access
         statistics=TextDocumentStatistics._from_generated(sentiment.statistics),  # pylint: disable=protected-access
         confidence_scores=SentimentConfidenceScores._from_generated(sentiment.confidence_scores),  # pylint: disable=protected-access
         sentences=[SentenceSentiment._from_generated(s) for s in sentiment.sentences],  # pylint: disable=protected-access
