@@ -160,6 +160,45 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                                                   idle_timeout=5) as session:
                         session.open()
 
+
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
+    def test_session_connection_failure_is_idempotent(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+        #Technically this validates for all senders/receivers, not just session, but since it uses session to generate a recoverable failure, putting it in here.
+        with ServiceBusClient.from_connection_string(
+            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
+    
+            # First let's just try the naive failure cases.
+            receiver = sb_client.get_queue_receiver("THIS_IS_WRONG_ON_PURPOSE")
+            with pytest.raises(ServiceBusConnectionError):
+                receiver._open_with_retry()
+            assert not receiver._running
+            assert not receiver._handler
+    
+            sender = sb_client.get_queue_sender("THIS_IS_WRONG_ON_PURPOSE")
+            with pytest.raises(ServiceBusConnectionError):
+                sender._open_with_retry()
+            assert not receiver._running
+            assert not receiver._handler
+
+            # Then let's try a case we can recover from to make sure everything works on reestablishment.
+            receiver = sb_client.get_queue_session_receiver(servicebus_queue.name, session_id=NEXT_AVAILABLE)
+            with pytest.raises(NoActiveSession):
+                receiver._open_with_retry()
+
+            session_id = str(uuid.uuid4())
+            with sb_client.get_queue_sender(servicebus_queue.name) as sender:
+                sender.send(Message("test session sender", session_id=session_id))
+
+            with sb_client.get_queue_session_receiver(servicebus_queue.name, session_id=NEXT_AVAILABLE, idle_timeout=5) as receiver:
+                messages = []
+                for message in receiver:
+                    messages.append(message)
+                assert len(messages) == 1
+
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')

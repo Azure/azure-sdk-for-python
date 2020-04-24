@@ -340,6 +340,7 @@ class HttpLoggingPolicy(SansIOHTTPPolicy):
     """
 
     DEFAULT_HEADERS_WHITELIST = set([
+        "x-ms-request-id",
         "x-ms-client-request-id",
         "x-ms-return-client-request-id",
         "traceparent",
@@ -361,7 +362,7 @@ class HttpLoggingPolicy(SansIOHTTPPolicy):
         "Retry-After",
         "Server",
         "Transfer-Encoding",
-        "User-Agent"
+        "User-Agent",
     ])
     REDACTED_PLACEHOLDER = "REDACTED"
 

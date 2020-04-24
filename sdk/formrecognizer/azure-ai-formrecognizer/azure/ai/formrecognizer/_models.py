@@ -15,20 +15,23 @@ import six
 def get_elements(field, read_result):
     text_elements = []
 
-    for item in field.elements:
-        nums = [int(s) for s in re.findall(r"\d+", item)]
-        read = nums[0]
-        line = nums[1]
-        if len(nums) == 3:
-            word = nums[2]
-            ocr_word = read_result[read].lines[line].words[word]
-            extracted_word = FormWord._from_generated(ocr_word, page=read + 1)
-            text_elements.append(extracted_word)
-            continue
-        ocr_line = read_result[read].lines[line]
-        extracted_line = FormLine._from_generated(ocr_line, page=read + 1)
-        text_elements.append(extracted_line)
-    return text_elements
+    try:
+        for item in field.elements:
+            nums = [int(s) for s in re.findall(r"\d+", item)]
+            read = nums[0]
+            line = nums[1]
+            if len(nums) == 3:
+                word = nums[2]
+                ocr_word = read_result[read].lines[line].words[word]
+                extracted_word = FormWord._from_generated(ocr_word, page=read + 1)
+                text_elements.append(extracted_word)
+                continue
+            ocr_line = read_result[read].lines[line]
+            extracted_line = FormLine._from_generated(ocr_line, page=read + 1)
+            text_elements.append(extracted_line)
+        return text_elements
+    except IndexError:
+        return None  # https://github.com/Azure/azure-sdk-for-python/issues/11014
 
 
 def get_field_value(field, value, read_result):  # pylint: disable=too-many-return-statements
@@ -127,10 +130,12 @@ class FormContent(object):
 
     :ivar str text: The text content of the line.
     :ivar list[~azure.ai.formrecognizer.Point] bounding_box:
-        The quadrangle bounding box that outlines the text.
+        A list of 4 points representing the quadrilateral bounding box
+        that outlines the text. The points are listed in clockwise
+        order: top-left, top-right, bottom-right, bottom-left.
         Units are in pixels for images and inches for PDF.
     :ivar int page_number:
-        The 1-based page number in the input document.
+        The 1-based number of the page in which this content is present.
     """
     def __init__(self, **kwargs):
         self.bounding_box = kwargs.get("bounding_box", None)
@@ -139,18 +144,21 @@ class FormContent(object):
 
 
 class RecognizedForm(object):
-    """Represents a recognized form.
+    """Represents a form that has been recognized by a trained model.
 
-    :ivar str form_type: The type of form.
+    :ivar str form_type:
+        The type of form the model identified the submitted form to be.
     :ivar fields:
-        A dictionary of the fields found on the form.
+        A dictionary of the fields found on the form. The fields dictionary
+        keys are the `name` of the field. For models trained with labels,
+        this is the training-time label of the field. For models trained
+        without labels, a unique name is generated for each field.
     :vartype fields: dict[str, ~azure.ai.formrecognizer.FormField]
     :ivar ~azure.ai.formrecognizer.PageRange page_range:
         The first and last page of the input form.
     :ivar list[~azure.ai.formrecognizer.FormPage] pages:
-        Contains page metadata such as page width, length, text angle, unit.
-        If `include_text_content=True` is passed, contains a list
-        of extracted text lines for each page in the input document.
+        A list of pages recognized from the input document. Contains lines,
+        words, tables and page metadata.
     """
     def __init__(self, **kwargs):
         self.fields = kwargs.get("fields", None)
@@ -160,7 +168,8 @@ class RecognizedForm(object):
 
 
 class USReceipt(object):  # pylint: disable=too-many-instance-attributes
-    """Extracted fields and values found on the input US sales receipt.
+    """Extracted fields found on the US sales receipt. Provides
+    attributes for accessing common fields present in US sales receipts.
 
     :ivar ~azure.ai.formrecognizer.FormField merchant_address:
         The address of the merchant.
@@ -217,7 +226,7 @@ class USReceipt(object):  # pylint: disable=too-many-instance-attributes
 
 
 class FormField(object):
-    """Represents a recognized field and its value.
+    """Represents a field recognized in an input form.
 
     :ivar ~azure.ai.formrecognizer.FieldText label_data:
         Contains the text, bounding box, and text content of the field label.
@@ -229,9 +238,10 @@ class FormField(object):
         'date', 'time', 'phoneNumber', 'number', 'integer', 'object', or 'array'.
     :vartype value: str, int, float, :class:`~datetime.date`, :class:`~datetime.time`,
         :class:`~azure.ai.formrecognizer.FormField`, or list[:class:`~azure.ai.formrecognizer.FormField`]
-    :ivar float confidence: Confidence score.
+    :ivar float confidence:
+        Measures the degree of certainty of the recognition result. Value is between [0.0, 1.0].
     :ivar int page_number:
-        The 1-based page number in the input document.
+        The 1-based number of the page in which this content is present.
     """
 
     def __init__(self, **kwargs):
@@ -266,16 +276,20 @@ class FormField(object):
 
 
 class FieldText(FormContent):
-    """Represents the properties of a field or value.
+    """Represents the text that is part of a form field. This includes
+    the location of the text in the form and a collection of the
+    elements that make up the text.
 
     :ivar int page_number:
-        The 1-based page number in the input document.
+        The 1-based number of the page in which this content is present.
     :ivar str text: The string representation of the field or value.
     :ivar list[~azure.ai.formrecognizer.Point] bounding_box:
-        The quadrangle bounding box that outlines the text.
+        A list of 4 points representing the quadrilateral bounding box
+        that outlines the text. The points are listed in clockwise
+        order: top-left, top-right, bottom-right, bottom-left.
         Units are in pixels for images and inches for PDF.
     :ivar text_content:
-        When `include_text_content` is set to true, a list of references to the text
+        When `include_text_content` is set to true, a list of text
         elements constituting this field or value is returned.
     :vartype text_content: list[~azure.ai.formrecognizer.FormWord, ~azure.ai.formrecognizer.FormLine]
     """
@@ -316,10 +330,11 @@ class FieldText(FormContent):
 
 
 class FormPage(object):
-    """Page metadata, text lines, and tables extracted from a page in the input document.
+    """Represents a page recognized from the input document. Contains lines,
+    words, tables and page metadata.
 
     :ivar int page_number:
-        The 1-based page number in the input document.
+        The 1-based number of the page in which this content is present.
     :ivar float text_angle:
         The general orientation of the text in clockwise direction, measured in
         degrees between (-180, 180].
@@ -364,16 +379,18 @@ class FormPage(object):
 
 
 class FormLine(FormContent):
-    """An object representing an extracted text line.
+    """An object representing an extracted line of text.
 
     :ivar str text: The text content of the line.
     :ivar list[~azure.ai.formrecognizer.Point] bounding_box:
-        The quadrangle bounding box that outlines the text.
+        A list of 4 points representing the quadrilateral bounding box
+        that outlines the text. The points are listed in clockwise
+        order: top-left, top-right, bottom-right, bottom-left.
         Units are in pixels for images and inches for PDF.
     :ivar list[~azure.ai.formrecognizer.FormWord] words:
-        List of words in the text line.
+        A list of the words that make up the line.
     :ivar int page_number:
-        The 1-based page number in the input document.
+        The 1-based number of the page in which this content is present.
     """
 
     def __init__(self, **kwargs):
@@ -396,15 +413,18 @@ class FormLine(FormContent):
 
 
 class FormWord(FormContent):
-    """An object representing a word on the page.
+    """Represents a word recognized from the input document.
 
     :ivar str text: The text content of the word.
     :ivar list[~azure.ai.formrecognizer.Point] bounding_box:
-        The quadrangle bounding box that outlines the text.
+        A list of 4 points representing the quadrilateral bounding box
+        that outlines the text. The points are listed in clockwise
+        order: top-left, top-right, bottom-right, bottom-left.
         Units are in pixels for images and inches for PDF.
-    :ivar float confidence: Confidence value.
+    :ivar float confidence:
+        Measures the degree of certainty of the recognition result. Value is between [0.0, 1.0].
     :ivar int page_number:
-        The 1-based page number in the input document.
+        The 1-based number of the page in which this content is present.
     """
 
     def __init__(self, **kwargs):
@@ -432,7 +452,8 @@ class USReceiptType(object):
 
     :ivar str type: The type of the receipt. For example, "Itemized",
         "CreditCard", "Gas", "Parking", "Gas", "Other".
-    :ivar float confidence: The confidence score of the receipt type.
+    :ivar float confidence:
+        Measures the degree of certainty of the recognition result. Value is between [0.0, 1.0].
     """
 
     def __init__(self, **kwargs):
@@ -453,11 +474,11 @@ class USReceiptItem(object):
     :ivar ~azure.ai.formrecognizer.FormField name:
         The name of the item.
     :ivar ~azure.ai.formrecognizer.FormField quantity:
-        The quantity purchased of the item.
+        The quantity associated with this item.
     :ivar ~azure.ai.formrecognizer.FormField price:
-        The individual price of the item.
+        The price of a single unit of this item.
     :ivar ~azure.ai.formrecognizer.FormField total_price:
-        The total price of the item(s).
+        The total price of this item, taking the quantity into account.
     """
 
     def __init__(self, **kwargs):
@@ -498,7 +519,7 @@ class FormTable(object):
 
 
 class FormTableCell(FormContent):
-    """Information about the extracted cell in a table.
+    """Represents a cell contained in a table recognized from the input document.
 
     :ivar str text: Text content of the cell.
     :ivar int row_index: Row index of the cell.
@@ -506,16 +527,20 @@ class FormTableCell(FormContent):
     :ivar int row_span: Number of rows spanned by this cell.
     :ivar int column_span: Number of columns spanned by this cell.
     :ivar list[~azure.ai.formrecognizer.Point] bounding_box:
-        The quadrangle bounding box that outlines the cell text.
+        A list of 4 points representing the quadrilateral bounding box
+        that outlines the text. The points are listed in clockwise
+        order: top-left, top-right, bottom-right, bottom-left.
         Units are in pixels for images and inches for PDF.
-    :ivar float confidence: Confidence value.
+    :ivar float confidence:
+        Measures the degree of certainty of the recognition result. Value is between [0.0, 1.0].
     :ivar bool is_header: Whether the current cell is a header cell.
     :ivar bool is_footer: Whether the current cell is a footer cell.
-    :ivar int page_number: The 1-based page number in the input document.
+    :ivar int page_number:
+        The 1-based number of the page in which this content is present.
     :ivar text_content:
-        When `include_text_content` is set to true, a list of references to the text
-        elements constituting this cell is returned. For calls to recognize content,
-        this list is always populated.
+        When `include_text_content` is set to true, a list of text
+        elements constituting this cell is returned.
+        For calls to recognize content, this list is always populated.
     :vartype text_content: list[~azure.ai.formrecognizer.FormWord, ~azure.ai.formrecognizer.FormLine]
     """
 
@@ -555,18 +580,18 @@ class FormTableCell(FormContent):
 class CustomFormModel(object):
     """Represents a model trained from custom forms.
 
-    :ivar str model_id: Model identifier.
+    :ivar str model_id: The unique identifier of this model.
     :ivar str status:
         Status indicating the model's readiness for use,
         :class:`~azure.ai.formrecognizer.CustomFormModelStatus`.
         Possible values include: 'creating', 'ready', 'invalid'.
     :ivar ~datetime.datetime created_on:
-        Date and time (UTC) when the model was created.
+        The date and time (UTC) when model training was started.
     :ivar ~datetime.datetime last_modified:
         Date and time (UTC) when model training completed.
     :ivar list[~azure.ai.formrecognizer.CustomFormSubModel] models:
-        A list of submodels, each of which extract fields from
-        a different type of form.
+        A list of submodels that are part of this model, each of
+        which can recognize and extract fields from a different type of form.
     :ivar list[~azure.ai.formrecognizer.FormRecognizerError] errors:
         List of any training errors.
     :ivar ~azure.ai.formrecognizer.TrainingDocumentInfo training_documents:
@@ -601,8 +626,11 @@ class CustomFormSubModel(object):
     """Represents a submodel that extracts fields from a specific type of form.
 
     :ivar float accuracy: The mean of the model's field accuracies.
-    :ivar fields: Form fields that this submodel will extract when analyzing
-        this form type.
+    :ivar fields: A dictionary of the fields that this submodel will recognize
+        from the input document. The fields dictionary keys are the `name` of
+        the field. For models trained with labels, this is the training-time
+        label of the field. For models trained without labels, a unique name
+        is generated for each field.
     :vartype fields: dict[str, ~azure.ai.formrecognizer.CustomFormModelField]
     :ivar str form_type: Type of form this submodel recognizes.
     """
@@ -633,8 +661,8 @@ class CustomFormModelField(object):
     """A field that the model will extract from forms it analyzes.
 
     :ivar str label: The form fields label on the form.
-    :ivar str name: Unique name of the field.
-    :ivar float accuracy: Estimated extraction accuracy for this field.
+    :ivar str name: Canonical name; uniquely identifies a field within the form.
+    :ivar float accuracy: The estimated recognition accuracy for this field.
     """
     def __init__(self, **kwargs):
         self.label = kwargs.get("label", None)
@@ -709,12 +737,12 @@ class FormRecognizerError(object):
 class CustomFormModelInfo(object):
     """Custom model information.
 
-    :ivar str model_id: Model identifier.
+    :ivar str model_id: The unique identifier of the model.
     :ivar str status:
         The status of the model, :class:`~azure.ai.formrecognizer.CustomFormModelStatus`.
         Possible values include: 'creating', 'ready', 'invalid'.
     :ivar ~datetime.datetime created_on:
-        Date and time (UTC) when the model was created.
+        Date and time (UTC) when model training was started.
     :ivar ~datetime.datetime last_modified:
         Date and time (UTC) when model training completed.
     """
