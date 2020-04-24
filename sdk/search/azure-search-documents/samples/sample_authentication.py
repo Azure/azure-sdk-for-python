@@ -26,13 +26,13 @@ import os
 def authentication_with_api_key_credential():
     # [START create_search_client_with_key]
     from azure.core.credentials import AzureKeyCredential
-    from azure.search.documents import SearchIndexClient
+    from azure.search.documents import SearchClient
 
     service_endpoint = os.getenv("AZURE_SEARCH_SERVICE_ENDPOINT")
     index_name = os.getenv("AZURE_SEARCH_INDEX_NAME")
     key = os.getenv("AZURE_SEARCH_API_KEY")
 
-    search_client = SearchIndexClient(service_endpoint, index_name, AzureKeyCredential(key))
+    search_client = SearchClient(service_endpoint, index_name, AzureKeyCredential(key))
     # [END create_search_client_with_key]
 
     result = search_client.get_document_count()
