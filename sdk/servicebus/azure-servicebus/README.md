@@ -80,7 +80,7 @@ with ServiceBusClient(FULLY_QUALIFIED_NAMESPACE, credential):
     ...
 ```
 
-- This constructor takes the fully qualified namespace of your Service Bus instance and credential that implements the
+- This constructor takes the fully qualified namespace of your Service Bus instance and a credential that implements the
 [TokenCredential][token_credential_interface]
 protocol. There are implementations of the `TokenCredential` protocol available in the
 [azure-identity package][pypi_azure_identity]. The fully qualified namespace is of the format `<yournamespace.servicebus.windows.net>`.
