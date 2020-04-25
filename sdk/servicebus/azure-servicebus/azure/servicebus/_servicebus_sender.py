@@ -65,7 +65,7 @@ class SenderMixin(object):
     def _build_schedule_request(cls, schedule_time_utc, *messages):
         request_body = {MGMT_REQUEST_MESSAGES: []}
         for message in messages:
-            message.schedule(schedule_time_utc)
+            message.scheduled_enqueue_time_utc = schedule_time_utc
             message_data = {}
             message_data[MGMT_REQUEST_MESSAGE_ID] = message.properties.message_id
             if message.properties.group_id:
@@ -188,7 +188,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         except Exception as e:
             raise MessageSendFailed(e)
 
-    def _schedule(self, message, schedule_time_utc):
+    def schedule(self, message, schedule_time_utc):
         # type: (Union[Message, BatchMessage], datetime.datetime) -> List[int]
         """Send Message or BatchMessage to be enqueued at a specific time.
         Returns a list of the sequence numbers of the enqueued messages.
@@ -219,7 +219,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             mgmt_handlers.schedule_op
         )
 
-    def _cancel_scheduled_messages(self, sequence_numbers):
+    def cancel_scheduled_messages(self, sequence_numbers):
         # type: (Union[int, List[int]]) -> None
         """
         Cancel one or more messages that have previously been scheduled and are still pending.

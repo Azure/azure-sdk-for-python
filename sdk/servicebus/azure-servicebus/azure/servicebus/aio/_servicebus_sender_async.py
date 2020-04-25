@@ -139,7 +139,7 @@ class ServiceBusSender(BaseHandlerAsync, SenderMixin):
         except Exception as e:
             raise MessageSendFailed(e)
 
-    async def _schedule(self, message, schedule_time_utc):
+    async def schedule(self, message, schedule_time_utc):
         # type: (Union[Message, BatchMessage], datetime.datetime) -> List[int]
         """Send Message or BatchMessage to be enqueued at a specific time.
         Returns a list of the sequence numbers of the enqueued messages.
@@ -170,7 +170,7 @@ class ServiceBusSender(BaseHandlerAsync, SenderMixin):
             mgmt_handlers.schedule_op
         )
 
-    async def _cancel_scheduled_messages(self, sequence_numbers):
+    async def cancel_scheduled_messages(self, sequence_numbers):
         # type: (Union[int, List[int]]) -> None
         """
         Cancel one or more messages that have previously been scheduled and are still pending.
