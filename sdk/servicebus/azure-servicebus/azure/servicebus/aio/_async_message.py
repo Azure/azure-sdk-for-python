@@ -47,7 +47,7 @@ class ReceivedMessage(sync_message.ReceivedMessage):
         :raises: ~azure.servicebus.common.errors.MessageSettleFailed if message settle operation fails.
         """
         # pylint: disable=protected-access
-        self._is_live(MESSAGE_COMPLETE)
+        self._check_live(MESSAGE_COMPLETE)
         try:
             await self._receiver._settle_message(SETTLEMENT_COMPLETE, [self.lock_token])
         except Exception as e:
@@ -70,7 +70,7 @@ class ReceivedMessage(sync_message.ReceivedMessage):
         :raises: ~azure.servicebus.common.errors.MessageSettleFailed if message settle operation fails.
         """
         # pylint: disable=protected-access
-        self._is_live(MESSAGE_DEAD_LETTER)
+        self._check_live(MESSAGE_DEAD_LETTER)
         details = {
             MGMT_REQUEST_DEAD_LETTER_REASON: str(reason) if reason else "",
             MGMT_REQUEST_DEAD_LETTER_DESCRIPTION: str(description) if description else ""}
@@ -94,7 +94,7 @@ class ReceivedMessage(sync_message.ReceivedMessage):
         :raises: ~azure.servicebus.common.errors.MessageSettleFailed if message settle operation fails.
         """
         # pylint: disable=protected-access
-        self._is_live(MESSAGE_ABANDON)
+        self._check_live(MESSAGE_ABANDON)
         try:
             await self._receiver._settle_message(SETTLEMENT_ABANDON, [self.lock_token])
         except Exception as e:
@@ -111,7 +111,7 @@ class ReceivedMessage(sync_message.ReceivedMessage):
         :raises: ~azure.servicebus.common.errors.MessageSettleFailed if message settle operation fails.
         """
         # pylint: disable=protected-access
-        self._is_live(MESSAGE_DEFER)
+        self._check_live(MESSAGE_DEFER)
         try:
             await self._receiver._settle_message(SETTLEMENT_DEFER, [self.lock_token])
         except Exception as e:
@@ -140,7 +140,7 @@ class ReceivedMessage(sync_message.ReceivedMessage):
                 raise TypeError("Session messages cannot be renewed. Please renew the Session lock instead.")
         except AttributeError:
             pass
-        self._is_live(MESSAGE_RENEW_LOCK)
+        self._check_live(MESSAGE_RENEW_LOCK)
         token = self.lock_token
         if not token:
             raise ValueError("Unable to renew lock - no lock token found.")
