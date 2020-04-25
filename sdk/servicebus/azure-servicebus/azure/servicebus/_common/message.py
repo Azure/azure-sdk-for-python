@@ -522,7 +522,7 @@ class ReceivedMessage(PeekMessage):
         if settle_operation == MESSAGE_DEAD_LETTER:
             # note: message.reject() can not set reason and description properly due to the issue
             # https://github.com/Azure/azure-uamqp-python/issues/155
-            return functools.partial(self.message.reject, condition=DEADLETTERNAME, description=dead_letter_details)
+            return functools.partial(self.message.reject, condition=DEADLETTERNAME)
         if settle_operation == MESSAGE_DEFER:
             return functools.partial(self.message.modify, True, True)
         raise ValueError("Unsupported settle operation type: {}".format(settle_operation))
