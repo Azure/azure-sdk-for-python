@@ -1,0 +1,43 @@
+{
+    "chosen_version": "2015-12-01",
+    "total_api_version_list": ["2015-12-01"],
+    "client": {
+        "name": "FeatureClient",
+        "filename": "_feature_client",
+        "description": "Azure Feature Exposure Control (AFEC) provides a mechanism for the resource providers to control feature exposure to users. Resource providers typically use this mechanism to provide public/private preview for new features prior to making them generally available. Users need to explicitly register for AFEC features to get access to such functionality.",
+        "has_subscription_id": true
+    },
+    "config": {
+        "credential": true,
+        "credential_scopes": ["https://management.azure.com/.default"],
+        "package_version": false,
+        "global_parameters": {
+            "method": {
+                "credential": {
+                    "method_signature": "credential,  # type: \"TokenCredential\"",
+                    "description": "Credential needed for the client to connect to Azure.",
+                    "docstring_type": "azure.core.credentials.TokenCredential",
+                    "required": true
+                },
+                "subscription_id": {
+                    "method_signature": "subscription_id,  # type: str",
+                    "description": "The ID of the target subscription.",
+                    "docstring_type": "str",
+                    "required": true
+                }
+            },
+            "constant": {
+            }
+        }
+    },
+    "operation_groups": {
+        "features": "FeaturesOperations"
+    },
+    "operation_mixins": {
+        "list_operations" : {
+            "doc": "    \"\"\"Lists all of the available Microsoft.Features REST API operations.\n\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: OperationListResult or the result of cls(response)\n:rtype: ~azure.mgmt.resource.features.v2015_12_01.models.OperationListResult\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\"",
+            "signature": "def list_operations(\n    self,\n    **kwargs  # type: Any\n):\n",
+            "call": ""
+        }
+    }
+}
