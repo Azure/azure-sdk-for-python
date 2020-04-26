@@ -27,10 +27,6 @@ import unittest
 
 import azure.mgmt.appconfiguration
 # import azure.mgmt.network
-from azure.appconfiguration import (
-    AzureAppConfigurationClient,
-    ConfigurationSetting
-)
 from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 
 AZURE_LOCATION = 'eastus'
@@ -55,6 +51,10 @@ class MgmtAppConfigurationTest(AzureMgmtTestCase):
             )
 
     def create_kv(self, connection_str):
+        from azure.appconfiguration import (
+            AzureAppConfigurationClient,
+            ConfigurationSetting
+        )
         app_config_client = AzureAppConfigurationClient.from_connection_string(connection_str)
         kv = ConfigurationSetting(
             key=KEY,
@@ -146,8 +146,9 @@ class MgmtAppConfigurationTest(AzureMgmtTestCase):
         }
         key = self.mgmt_client.configuration_stores.regenerate_key(resource_group.name, CONFIGURATION_STORE_NAME, BODY)
 
-        # create key-value
-        self.create_kv(key.connection_string)
+        if self.is_live:
+            # create key-value
+            self.create_kv(key.connection_string)
 
         # ConfigurationStores_ListKeyValue[post]
         BODY = {
