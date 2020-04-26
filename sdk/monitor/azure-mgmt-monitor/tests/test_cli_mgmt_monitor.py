@@ -68,30 +68,32 @@ class MgmtMonitorClientTest(AzureMgmtTestCase):
         self.mgmt_client = self.create_mgmt_client(
             azure.mgmt.monitor.MonitorManagementClient
         )
-        self.storage_client = self.create_mgmt_client(
-            azure.mgmt.storage.StorageManagementClient
-        )
-        self.eventhub_client = self.create_mgmt_client(
-            azure.mgmt.eventhub.EventHubManagementClient
-        )
-        self.loganalytics_client = self.create_mgmt_client(
-            azure.mgmt.loganalytics.LogAnalyticsManagementClient
-        )
-        self.web_client = self.create_mgmt_client(
-            azure.mgmt.web.WebSiteManagementClient
-        )
-        self.vm_client = self.create_mgmt_client(
-            azure.mgmt.compute.ComputeManagementClient
-        )
-        self.network_client = self.create_mgmt_client(
-            azure.mgmt.network.NetworkManagementClient
-        )
-        self.insight_client = self.create_mgmt_client(
-            azure.mgmt.applicationinsights.ApplicationInsightsManagementClient
-        )
-        self.logic_client = self.create_mgmt_client(
-            azure.mgmt.logic.LogicManagementClient
-        )
+
+        if self.is_live:
+            self.storage_client = self.create_mgmt_client(
+                azure.mgmt.storage.StorageManagementClient
+            )
+            self.eventhub_client = self.create_mgmt_client(
+                azure.mgmt.eventhub.EventHubManagementClient
+            )
+            self.loganalytics_client = self.create_mgmt_client(
+                azure.mgmt.loganalytics.LogAnalyticsManagementClient
+            )
+            self.web_client = self.create_mgmt_client(
+                azure.mgmt.web.WebSiteManagementClient
+            )
+            self.vm_client = self.create_mgmt_client(
+                azure.mgmt.compute.ComputeManagementClient
+            )
+            self.network_client = self.create_mgmt_client(
+                azure.mgmt.network.NetworkManagementClient
+            )
+            self.insight_client = self.create_mgmt_client(
+                azure.mgmt.applicationinsights.ApplicationInsightsManagementClient
+            )
+            self.logic_client = self.create_mgmt_client(
+                azure.mgmt.logic.LogicManagementClient
+            )
 
     def create_workflow(self, group_name, location, workflow_name):
         workflow = self.logic_client.workflows.create_or_update(
@@ -163,7 +165,7 @@ class MgmtMonitorClientTest(AzureMgmtTestCase):
             "Manage"
           ]
         }
-        result = self.eventhub_client.namespaces.create_or_update_authorization_rule(group_name, name_space, authorization_rule, BODY["rights"])
+        result = self.eventhub_client.namespaces.create_or_update_authorization_rule(group_name, name_space, authorization_rule, "rights")
 
         # EventHubCreate[put]
         BODY = {
@@ -193,7 +195,7 @@ class MgmtMonitorClientTest(AzureMgmtTestCase):
             "Manage"
           ]
         }
-        result = self.eventhub_client.event_hubs.create_or_update_authorization_rule(group_name, name_space, eventhub, authorization_rule, BODY["rights"])
+        result = self.eventhub_client.event_hubs.create_or_update_authorization_rule(group_name, name_space, eventhub, authorization_rule, "rights")
 
     # use track 1 version
     def create_workspace(
@@ -449,12 +451,14 @@ class MgmtMonitorClientTest(AzureMgmtTestCase):
         WORKSPACE_NAME = self.get_resource_name("workspacex")
         WORKFLOW_NAME = self.get_resource_name("workflow")
 
-        storage_account_id = self.create_storage_account(RESOURCE_GROUP, AZURE_LOCATION, STORAGE_ACCOUNT_NAME)
-        self.create_event_hub_authorization_rule(RESOURCE_GROUP, AZURE_LOCATION, NAMESPACE_NAME, EVENTHUB_NAME, AUTHORIZATIONRULE_NAME, storage_account_id)
-        workspace = self.create_workspace(RESOURCE_GROUP, AZURE_LOCATION, WORKSPACE_NAME)
-        workflow = self.create_workflow(RESOURCE_GROUP, AZURE_LOCATION, WORKFLOW_NAME)
-
-        RESOURCE_URI = workflow.id
+        if self.is_live:
+            storage_account_id = self.create_storage_account(RESOURCE_GROUP, AZURE_LOCATION, STORAGE_ACCOUNT_NAME)
+            self.create_event_hub_authorization_rule(RESOURCE_GROUP, AZURE_LOCATION, NAMESPACE_NAME, EVENTHUB_NAME, AUTHORIZATIONRULE_NAME, storage_account_id)
+            workspace = self.create_workspace(RESOURCE_GROUP, AZURE_LOCATION, WORKSPACE_NAME)
+            workflow = self.create_workflow(RESOURCE_GROUP, AZURE_LOCATION, WORKFLOW_NAME)
+            RESOURCE_URI = workflow.id
+        else:
+            RESOURCE_URI = "xx"
 
         # Creates or Updates the diagnostic setting[put]
         BODY = {
@@ -517,7 +521,10 @@ class MgmtMonitorClientTest(AzureMgmtTestCase):
         LOGPROFILE_NAME  = self.get_resource_name("logprofilex")
         STORAGE_ACCOUNT_NAME = self.get_resource_name("storageaccountx")
 
-        storage_account_id = self.create_storage_account(RESOURCE_GROUP, AZURE_LOCATION, STORAGE_ACCOUNT_NAME)
+        if self.is_live:
+            storage_account_id = self.create_storage_account(RESOURCE_GROUP, AZURE_LOCATION, STORAGE_ACCOUNT_NAME)
+        else:
+            storage_account_id = "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Storage/storageAccounts/" + STORAGE_ACCOUNT_NAME
 
         # Create or update a log profile[put]
         BODY = {
@@ -582,8 +589,11 @@ class MgmtMonitorClientTest(AzureMgmtTestCase):
         SUBNET_NAME = "subnetx"
         INTERFACE_NAME = "interfacexx"
 
-        vm = self.create_vm(RESOURCE_GROUP, AZURE_LOCATION, VM_NAME, NETWORK_NAME, SUBNET_NAME, INTERFACE_NAME)
-        resource_id = vm.id
+        if self.is_live:
+            vm = self.create_vm(RESOURCE_GROUP, AZURE_LOCATION, VM_NAME, NETWORK_NAME, SUBNET_NAME, INTERFACE_NAME)
+            resource_id = vm.id
+        else:
+            resource_id = "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Compute/virtualMachines/" + VM_NAME
 
         # I need a subclass of "RuleDataSource"
         data_source = azure.mgmt.monitor.models.RuleMetricDataSource(
@@ -677,9 +687,11 @@ class MgmtMonitorClientTest(AzureMgmtTestCase):
         INTERFACE_NAME = "interfacexx"
         INSIGHT_NAME = "Percentage CPU"
 
-        vm = self.create_vm(RESOURCE_GROUP, AZURE_LOCATION, VM_NAME, NETWORK_NAME, SUBNET_NAME, INTERFACE_NAME)
-
-        RESOURCE_URI = vm.id
+        if self.is_live:
+            vm = self.create_vm(RESOURCE_GROUP, AZURE_LOCATION, VM_NAME, NETWORK_NAME, SUBNET_NAME, INTERFACE_NAME)
+            RESOURCE_URI = vm.id
+        else:
+            RESOURCE_URI = "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Compute/virtualMachines/" + VM_NAME
 
         # Get a list of operations for a resource provider[get]
         result = self.mgmt_client.operations.list()
@@ -867,7 +879,7 @@ class MgmtMonitorClientTest(AzureMgmtTestCase):
         BODY = {
           "receiver_name": "John Doe's mobile"
         }
-        result = self.mgmt_client.action_groups.enable_receiver(resource_group.name, ACTION_GROUP_NAME, BODY["receiver_name"])
+        result = self.mgmt_client.action_groups.enable_receiver(resource_group.name, ACTION_GROUP_NAME, BODY)
 
         # Patch an action group[patch]
         BODY = {
@@ -967,7 +979,8 @@ class MgmtMonitorClientTest(AzureMgmtTestCase):
         INTERFACE_NAME = "interfacexx"
         INSIGHT_NAME = "Percentage CPU"
 
-        vmss = self.create_vmss(RESOURCE_GROUP, AZURE_LOCATION, VMSS_NAME, NETWORK_NAME, SUBNET_NAME, INTERFACE_NAME)
+        if self.is_live:
+            vmss = self.create_vmss(RESOURCE_GROUP, AZURE_LOCATION, VMSS_NAME, NETWORK_NAME, SUBNET_NAME, INTERFACE_NAME)
 
         # Create or update an autoscale setting[put]
         BODY = {
@@ -1057,7 +1070,8 @@ class MgmtMonitorClientTest(AzureMgmtTestCase):
         WORKSPACE_NAME = self.get_resource_name("workspacex")
         SCHEDULED_QUERY_RULE_NAME = self.get_resource_name("scheduledqueryrule")
 
-        workspace = self.create_workspace(RESOURCE_GROUP, AZURE_LOCATION, WORKSPACE_NAME)
+        if self.is_live:
+            workspace = self.create_workspace(RESOURCE_GROUP, AZURE_LOCATION, WORKSPACE_NAME)
 
         # Create or Update rule - AlertingAction[put]
         BODY = {
