@@ -1089,7 +1089,7 @@ class MgmtMonitorClientTest(AzureMgmtTestCase):
           "source": {
             "query": "Heartbeat | summarize AggregatedValue = count() by bin(TimeGenerated, 5m)",
             # "data_source_id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.OperationalInsights/workspaces/" + WORKSPACE_NAME + "",
-            "data_source_id": workspace.id,
+            "data_source_id": workspace_id,
             "query_type": "ResultCount"
           },
           "schedule": {
