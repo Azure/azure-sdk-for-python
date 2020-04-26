@@ -706,7 +706,7 @@ class MgmtMonitorClientTest(AzureMgmtTestCase):
           "enabled": True,
           "scopes": [
             # "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/gigtest/providers/Microsoft.Compute/virtualMachines/gigwadme"
-            vm.id
+            RESOURCE_ID
           ],
           "evaluation_frequency": "PT1M",
           "window_size": "PT15M",
