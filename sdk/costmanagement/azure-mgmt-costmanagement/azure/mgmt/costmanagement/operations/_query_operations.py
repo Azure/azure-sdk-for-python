@@ -118,3 +118,77 @@ class QueryOperations(object):
 
         return deserialized
     usage.metadata = {'url': '/{scope}/providers/Microsoft.CostManagement/query'}
+
+    def usage_by_external_cloud_provider_type(
+            self, external_cloud_provider_type, external_cloud_provider_id, parameters, custom_headers=None, raw=False, **operation_config):
+        """Query the usage data for external cloud provider type defined.
+
+        :param external_cloud_provider_type: The external cloud provider type
+         associated with dimension/query operations. This includes
+         'externalSubscriptions' for linked account and
+         'externalBillingAccounts' for consolidated account. Possible values
+         include: 'externalSubscriptions', 'externalBillingAccounts'
+        :type external_cloud_provider_type: str or
+         ~azure.mgmt.costmanagement.models.ExternalCloudProviderType
+        :param external_cloud_provider_id: This can be
+         '{externalSubscriptionId}' for linked account or
+         '{externalBillingAccountId}' for consolidated account used with
+         dimension/query operations.
+        :type external_cloud_provider_id: str
+        :param parameters: Parameters supplied to the CreateOrUpdate Query
+         Config operation.
+        :type parameters: ~azure.mgmt.costmanagement.models.QueryDefinition
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: QueryResult or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.costmanagement.models.QueryResult or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.costmanagement.models.ErrorResponseException>`
+        """
+        # Construct URL
+        url = self.usage_by_external_cloud_provider_type.metadata['url']
+        path_format_arguments = {
+            'externalCloudProviderType': self._serialize.url("external_cloud_provider_type", external_cloud_provider_type, 'str'),
+            'externalCloudProviderId': self._serialize.url("external_cloud_provider_id", external_cloud_provider_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(parameters, 'QueryDefinition')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.ErrorResponseException(self._deserialize, response)
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('QueryResult', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    usage_by_external_cloud_provider_type.metadata = {'url': '/providers/Microsoft.CostManagement/{externalCloudProviderType}/{externalCloudProviderId}/query'}

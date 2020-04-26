@@ -73,6 +73,7 @@ from ._cost_management_client_enums import (
     FormatType,
     ExecutionType,
     ExecutionStatus,
+    ExternalCloudProviderType,
 )
 
 __all__ = [
@@ -112,4 +113,5 @@ __all__ = [
     'FormatType',
     'ExecutionType',
     'ExecutionStatus',
+    'ExternalCloudProviderType',
 ]

@@ -74,3 +74,9 @@ class ExecutionStatus(str, Enum):
     timeout = "Timeout"
     new_data_not_available = "NewDataNotAvailable"
     data_not_available = "DataNotAvailable"
+
+
+class ExternalCloudProviderType(str, Enum):
+
+    external_subscriptions = "externalSubscriptions"
+    external_billing_accounts = "externalBillingAccounts"
