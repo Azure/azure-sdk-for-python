@@ -706,7 +706,7 @@ class MgmtMonitorClientTest(AzureMgmtTestCase):
           "enabled": True,
           "scopes": [
             # "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/gigtest/providers/Microsoft.Compute/virtualMachines/gigwadme"
-            RESOURCE_ID
+            RESOURCE_URI
           ],
           "evaluation_frequency": "PT1M",
           "window_size": "PT15M",
@@ -983,6 +983,9 @@ class MgmtMonitorClientTest(AzureMgmtTestCase):
 
         if self.is_live:
             vmss = self.create_vmss(RESOURCE_GROUP, AZURE_LOCATION, VMSS_NAME, NETWORK_NAME, SUBNET_NAME, INTERFACE_NAME)
+            vmss_id = vmss.id
+        else:
+            vmss_id = "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Compute/virtualMachineScaleSets/" + VMSS_NAME
 
         # Create or update an autoscale setting[put]
         BODY = {
@@ -1000,7 +1003,7 @@ class MgmtMonitorClientTest(AzureMgmtTestCase):
             }
           ],
           "enabled": True,
-          "target_resource_uri": vmss.id,
+          "target_resource_uri": vmss_id,
           "notifications": [
             {
               "operation": "Scale",
