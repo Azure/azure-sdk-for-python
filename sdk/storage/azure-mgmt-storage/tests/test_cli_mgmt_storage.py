@@ -33,8 +33,7 @@
 import datetime as dt
 import unittest
 
-import azure.mgmt.storage
-import azure.mgmt.network
+import azure.mgmt.storage as az_storage
 from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 
 AZURE_LOCATION = 'westeurope'
@@ -57,11 +56,14 @@ class MgmtStorageTest(AzureMgmtTestCase):
     def setUp(self):
         super(MgmtStorageTest, self).setUp()
         self.mgmt_client = self.create_mgmt_client(
-            azure.mgmt.storage.StorageManagementClient
+            az_storage.StorageManagementClient
         )
-        self.network_client = self.create_mgmt_client(
-          azure.mgmt.network.NetworkManagementClient
-        )
+
+        if self.is_live:
+            import azure.mgmt.network as az_network
+            self.network_client = self.create_mgmt_client(
+              az_network.NetworkManagementClient
+            )
 
     # TODO: update to track 2 version later
     def create_endpoint(self, group_name, location, vnet_name, sub_net, endpoint_name, resource_id):
