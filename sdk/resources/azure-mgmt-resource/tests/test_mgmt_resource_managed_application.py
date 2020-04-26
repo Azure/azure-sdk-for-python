@@ -13,7 +13,7 @@
 import unittest
 
 import azure.mgmt.resource
-import azure.mgmt.managementgroups
+# import azure.mgmt.managementgroups
 from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 
 class MgmtResourceLinksTest(AzureMgmtTestCase):
@@ -28,10 +28,11 @@ class MgmtResourceLinksTest(AzureMgmtTestCase):
             azure.mgmt.resource.ResourceManagementClient
         )
 
-        # special client
-        self.mgmtgroup_client = azure.mgmt.managementgroups.ManagementGroupsAPI(
-            credentials=self.settings.get_credentials()
-        )
+        if self.is_live:
+            # special client
+            self.mgmtgroup_client = azure.mgmt.managementgroups.ManagementGroupsAPI(
+                credentials=self.settings.get_credentials()
+            )
 
     @ResourceGroupPreparer()
     def test_application_by_id(self, resource_group, location):

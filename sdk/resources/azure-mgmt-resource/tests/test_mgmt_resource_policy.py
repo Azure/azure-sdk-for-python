@@ -13,7 +13,7 @@
 
 import unittest
 
-import azure.mgmt.managementgroups
+# import azure.mgmt.managementgroups
 import azure.mgmt.resource
 from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 
@@ -25,10 +25,11 @@ class MgmtResourcePolicyTest(AzureMgmtTestCase):
             azure.mgmt.resource.PolicyClient
         )
 
-        # special client
-        self.mgmtgroup_client = azure.mgmt.managementgroups.ManagementGroupsAPI(
-            credentials=self.settings.get_credentials()
-        )
+        if self.is_live:
+            # special client
+            self.mgmtgroup_client = azure.mgmt.managementgroups.ManagementGroupsAPI(
+                credentials=self.settings.get_credentials()
+            )
 
     @ResourceGroupPreparer()
     def test_policy_definition_at_management_group(self, resource_group, location):
@@ -38,13 +39,15 @@ class MgmtResourcePolicyTest(AzureMgmtTestCase):
 
         # create management group use track 1 version
         group_id = "20000000-0001-0000-0000-000000000123"
-        result = self.mgmtgroup_client.management_groups.create_or_update(
-            group_id,
-            {
-              "name": group_id,
-            }
-        )
-        result = result.result()
+
+        if self.is_live:
+            result = self.mgmtgroup_client.management_groups.create_or_update(
+                group_id,
+                {
+                "name": group_id,
+                }
+            )
+            result = result.result()
 
         definition = self.policy_client.policy_definitions.create_or_update_at_management_group(
             policy_name,
@@ -205,9 +208,10 @@ class MgmtResourcePolicyTest(AzureMgmtTestCase):
             group_id
         )
 
-        # delete management group with track 1 version
-        result = self.mgmtgroup_client.management_groups.delete(group_id)
-        result = result.result()
+        if self.is_live:
+            # delete management group with track 1 version
+            result = self.mgmtgroup_client.management_groups.delete(group_id)
+            result = result.result()
 
     # @unittest.skip("Forbidden")
     @ResourceGroupPreparer()

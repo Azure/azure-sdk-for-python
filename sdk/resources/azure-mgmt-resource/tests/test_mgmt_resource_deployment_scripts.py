@@ -13,7 +13,7 @@ import unittest
 
 import azure.core.exceptions
 import azure.mgmt.resource
-import azure.mgmt.msi
+# import azure.mgmt.msi
 from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 
 class MgmtResourceDeploymentScriptTest(AzureMgmtTestCase):
@@ -23,9 +23,11 @@ class MgmtResourceDeploymentScriptTest(AzureMgmtTestCase):
         self.script_client = self.create_mgmt_client(
             azure.mgmt.resource.DeploymentScriptsClient
         )
-        self.msi_client = self.create_mgmt_client(
-            azure.mgmt.msi.ManagedServiceIdentityClient
-        )
+
+        if test.is_live:
+            self.msi_client = self.create_mgmt_client(
+                azure.mgmt.msi.ManagedServiceIdentityClient
+            )
 
     @ResourceGroupPreparer()
     def test_deployment_scripts(self, resource_group, location):
@@ -34,12 +36,13 @@ class MgmtResourceDeploymentScriptTest(AzureMgmtTestCase):
         identity_name = "uai"
 
         # Create identity
-        self.msi_client.user_assigned_identities.create_or_update(
-            resource_group.name,
-            identity_name,
-            "westus",
-            {"key1": "value1"}
-        )
+        if self.is_live:
+            self.msi_client.user_assigned_identities.create_or_update(
+                resource_group.name,
+                identity_name,
+                "westus",
+                {"key1": "value1"}
+            )
 
         # Create script
         result = self.script_client.deployment_scripts.begin_create(

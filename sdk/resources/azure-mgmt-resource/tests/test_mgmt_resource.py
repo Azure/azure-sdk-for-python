@@ -18,7 +18,7 @@
 
 import unittest
 
-import azure.mgmt.managementgroups
+# import azure.mgmt.managementgroups
 import azure.mgmt.resource.resources.v2019_07_01
 import azure.mgmt.resource.resources.v2019_10_01.models
 import azure.common.exceptions
@@ -71,10 +71,11 @@ class MgmtResourceTest(AzureMgmtTestCase):
             azure.mgmt.resource.resources.v2019_07_01.ResourceManagementClient
         )
 
-        # special client
-        self.mgmtgroup_client = azure.mgmt.managementgroups.ManagementGroupsAPI(
-            credentials=self.settings.get_credentials()
-        )
+        if self.is_live:
+            # special client
+            self.mgmtgroup_client = azure.mgmt.managementgroups.ManagementGroupsAPI(
+                credentials=self.settings.get_credentials()
+            )
 
     def test_tag_operations(self):
         tag_name = 'tagxyz'
@@ -140,8 +141,7 @@ class MgmtResourceTest(AzureMgmtTestCase):
         }
         tag = self.resource_client.tags.update_at_scope(
             SCOPE,
-            BODY["operation"],
-            BODY["properties"]
+            BODY
         )
 
         # TODO: need example file
@@ -581,13 +581,15 @@ class MgmtResourceTest(AzureMgmtTestCase):
     def test_deployments_at_management_group(self):
         # create management group use track 1 version
         group_id = "20000000-0001-0000-0000-000000000123"
-        result = self.mgmtgroup_client.management_groups.create_or_update(
-            group_id,
-            {
-              "name": group_id,
-            }
-        )
-        result = result.result()
+        
+        if self.is_live:
+            result = self.mgmtgroup_client.management_groups.create_or_update(
+                group_id,
+                {
+                "name": group_id,
+                }
+            )
+            result = result.result()
 
         # for more sample templates, see https://github.com/Azure/azure-quickstart-templates
         deployment_name = self.get_resource_name("pytestlinked")
@@ -689,9 +691,10 @@ class MgmtResourceTest(AzureMgmtTestCase):
         )
         async_delete.wait()
 
-        # delete management group with track 1 version
-        result = self.mgmtgroup_client.management_groups.delete(group_id)
-        result = result.result()
+        if self.is_live:
+            # delete management group with track 1 version
+            result = self.mgmtgroup_client.management_groups.delete(group_id)
+            result = result.result()
     
     def test_deployments_at_subscription(self):
         # for more sample templates, see https://github.com/Azure/azure-quickstart-templates
