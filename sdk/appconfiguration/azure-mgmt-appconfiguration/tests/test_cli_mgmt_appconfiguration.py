@@ -292,10 +292,10 @@ class MgmtAppConfigurationTest(AzureMgmtTestCase):
         # }
         # result = self.mgmt_client.operations.check_name_availability(BODY["name"])
 
-        if self.is_live:
-            # PrivateEndpointConnections_Delete[delete]
-            #result = self.mgmt_client.private_endpoint_connections.begin_delete(resource_group.name, CONFIGURATION_STORE_NAME, PRIVATE_ENDPOINT_CONNECTION_NAME)
-            #result = result.result()
+        # if self.is_live:
+          # PrivateEndpointConnections_Delete[delete]
+          # result = self.mgmt_client.private_endpoint_connections.begin_delete(resource_group.name, CONFIGURATION_STORE_NAME, PRIVATE_ENDPOINT_CONNECTION_NAME)
+          # result = result.result()
 
         # ConfigurationStores_Delete[delete]
         result = self.mgmt_client.configuration_stores.begin_delete(resource_group.name, CONFIGURATION_STORE_NAME)
