@@ -26,7 +26,7 @@ import time
 import unittest
 
 import azure.mgmt.appconfiguration
-import azure.mgmt.network
+# import azure.mgmt.network
 from azure.appconfiguration import (
     AzureAppConfigurationClient,
     ConfigurationSetting
@@ -49,9 +49,10 @@ class MgmtAppConfigurationTest(AzureMgmtTestCase):
             azure.mgmt.appconfiguration.AppConfigurationManagementClient
         )
 
-        self.network_client = self.create_mgmt_client(
-          azure.mgmt.network.NetworkManagementClient
-        )
+        if self.is_live:
+            self.network_client = self.create_mgmt_client(
+              azure.mgmt.network.NetworkManagementClient
+            )
 
     def create_kv(self, connection_str):
         app_config_client = AzureAppConfigurationClient.from_connection_string(connection_str)
@@ -178,8 +179,9 @@ class MgmtAppConfigurationTest(AzureMgmtTestCase):
         result = self.mgmt_client.configuration_stores.begin_create(resource_group.name, CONFIGURATION_STORE_NAME, BODY)
         conf_store = result.result()
 
-        # create endpoint
-        endpoint = self.create_endpoint(resource_group.name, VNET_NAME, SUB_NET, ENDPOINT_NAME, conf_store.id)
+        if self.is_live:
+            # create endpoint
+            endpoint = self.create_endpoint(resource_group.name, VNET_NAME, SUB_NET, ENDPOINT_NAME, conf_store.id)
 
         # ConfigurationStores_Create_WithIdentity[put]
         # BODY = {
@@ -290,9 +292,10 @@ class MgmtAppConfigurationTest(AzureMgmtTestCase):
         # }
         # result = self.mgmt_client.operations.check_name_availability(BODY["name"])
 
-        # PrivateEndpointConnections_Delete[delete]
-        #result = self.mgmt_client.private_endpoint_connections.begin_delete(resource_group.name, CONFIGURATION_STORE_NAME, PRIVATE_ENDPOINT_CONNECTION_NAME)
-        #result = result.result()
+        if self.is_live:
+            # PrivateEndpointConnections_Delete[delete]
+            #result = self.mgmt_client.private_endpoint_connections.begin_delete(resource_group.name, CONFIGURATION_STORE_NAME, PRIVATE_ENDPOINT_CONNECTION_NAME)
+            #result = result.result()
 
         # ConfigurationStores_Delete[delete]
         result = self.mgmt_client.configuration_stores.begin_delete(resource_group.name, CONFIGURATION_STORE_NAME)
