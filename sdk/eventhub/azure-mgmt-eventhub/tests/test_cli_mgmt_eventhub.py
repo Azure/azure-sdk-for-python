@@ -29,10 +29,10 @@ import unittest
 
 import azure.core
 import azure.mgmt.eventhub
-import azure.mgmt.network
-import azure.mgmt.network.models
-import azure.mgmt.storage
-import azure.mgmt.storage.models
+# import azure.mgmt.network
+# import azure.mgmt.network.models
+# import azure.mgmt.storage
+# import azure.mgmt.storage.models
 from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 
 AZURE_LOCATION = 'eastus'
@@ -44,15 +44,19 @@ class MgmtEventHubTest(AzureMgmtTestCase):
         self.mgmt_client = self.create_mgmt_client(
             azure.mgmt.eventhub.EventHubManagementClient
         )
-        self.storage_client = self.create_mgmt_client(
-            azure.mgmt.storage.StorageManagementClient
-        )
-        self.network_client = self.create_mgmt_client(
-            azure.mgmt.network.NetworkManagementClient
-        )
+
+        if self.is_live:
+            self.storage_client = self.create_mgmt_client(
+                azure.mgmt.storage.StorageManagementClient
+            )
+            self.network_client = self.create_mgmt_client(
+                azure.mgmt.network.NetworkManagementClient
+            )
 
     # TODO: use track 2 later
     def create_storage_account(self, group_name, location, storage_name):
+        import azure.mgmt.storage
+        import azure.mgmt.storage.models
         params_create = azure.mgmt.storage.models.StorageAccountCreateParameters(
             sku=azure.mgmt.storage.models.Sku(name=azure.mgmt.storage.models.SkuName.standard_lrs),
             kind=azure.mgmt.storage.models.Kind.storage,
@@ -67,6 +71,8 @@ class MgmtEventHubTest(AzureMgmtTestCase):
 
     # TODO: use track 2 later
     def create_virtual_network(self, group_name, location, network_name, subnet_name):
+        import azure.mgmt.network
+        import azure.mgmt.network.models
         params_create = azure.mgmt.network.models.VirtualNetwork(
             location=location,
             address_space=azure.mgmt.network.models.AddressSpace(
@@ -111,8 +117,9 @@ class MgmtEventHubTest(AzureMgmtTestCase):
         NETWORK_RULE_SET_NAME = self.get_resource_name("networkruleset")
         AUTHORIZATION_RULE_NAME = self.get_resource_name("authorizationrule")
 
-        self.create_storage_account(RESOURCE_GROUP, AZURE_LOCATION, STORAGE_ACCOUNT_NAME)
-        self.create_virtual_network(RESOURCE_GROUP, AZURE_LOCATION, VIRTUAL_NETWORK_NAME, SUBNET_NAME)
+        if self.is_live:
+            self.create_storage_account(RESOURCE_GROUP, AZURE_LOCATION, STORAGE_ACCOUNT_NAME)
+            self.create_virtual_network(RESOURCE_GROUP, AZURE_LOCATION, VIRTUAL_NETWORK_NAME, SUBNET_NAME)
 
         # NamespaceCreate[put]
         BODY = {
