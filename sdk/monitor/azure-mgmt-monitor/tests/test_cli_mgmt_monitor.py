@@ -457,14 +457,16 @@ class MgmtMonitorClientTest(AzureMgmtTestCase):
             workspace = self.create_workspace(RESOURCE_GROUP, AZURE_LOCATION, WORKSPACE_NAME)
             workflow = self.create_workflow(RESOURCE_GROUP, AZURE_LOCATION, WORKFLOW_NAME)
             RESOURCE_URI = workflow.id
+            workspace_id = workspace.id
         else:
             RESOURCE_URI = "xx"
+            workspace_id = "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.OperationalInsights/workspaces/" + WORKSPACE_NAME
 
         # Creates or Updates the diagnostic setting[put]
         BODY = {
           "storage_account_id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Storage/storageAccounts/" + STORAGE_ACCOUNT_NAME + "",
           # "workspace_id": "",
-          "workspace_id": workspace.id,
+          "workspace_id": workspace_id,
           # "event_hub_authorization_rule_id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/microsoft.eventhub/namespaces/" + NAMESPACE_NAME + "/eventhubs/" + EVENTHUB_NAME + "/authorizationrules/" + AUTHORIZATIONRULE_NAME + "",
           "event_hub_authorization_rule_id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/microsoft.eventhub/namespaces/" + NAMESPACE_NAME + "/authorizationrules/" + AUTHORIZATIONRULE_NAME,
           "event_hub_name": EVENTHUB_NAME,
@@ -1069,9 +1071,13 @@ class MgmtMonitorClientTest(AzureMgmtTestCase):
         RESOURCE_GROUP = resource_group.name
         WORKSPACE_NAME = self.get_resource_name("workspacex")
         SCHEDULED_QUERY_RULE_NAME = self.get_resource_name("scheduledqueryrule")
+        SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
 
         if self.is_live:
             workspace = self.create_workspace(RESOURCE_GROUP, AZURE_LOCATION, WORKSPACE_NAME)
+            workspace_id = workspace.id
+        else:
+            workspace_id = "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.OperationalInsights/workspaces/" + WORKSPACE_NAME
 
         # Create or Update rule - AlertingAction[put]
         BODY = {
