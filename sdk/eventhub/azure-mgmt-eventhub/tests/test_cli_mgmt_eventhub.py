@@ -179,13 +179,13 @@ class MgmtEventHubTest(AzureMgmtTestCase):
             "Send"
           ]
         }
-        result = self.mgmt_client.namespaces.create_or_update_authorization_rule(resource_group.name, NAMESPACE_NAME, AUTHORIZATION_RULE_NAME, BODY["rights"])
+        result = self.mgmt_client.namespaces.create_or_update_authorization_rule(resource_group.name, NAMESPACE_NAME, AUTHORIZATION_RULE_NAME, BODY)
 
         # ConsumerGroupCreate[put]
         BODY = {
           "user_metadata": "New consumergroup"
         }
-        result = self.mgmt_client.consumer_groups.create_or_update(resource_group.name, NAMESPACE_NAME, EVENTHUB_NAME, CONSUMERGROUP_NAME, BODY["user_metadata"])
+        result = self.mgmt_client.consumer_groups.create_or_update(resource_group.name, NAMESPACE_NAME, EVENTHUB_NAME, CONSUMERGROUP_NAME, BODY)
 
         # EventHubAuthorizationRuleCreate[put]
         BODY = {
@@ -194,7 +194,7 @@ class MgmtEventHubTest(AzureMgmtTestCase):
             "Send"
           ]
         }
-        result = self.mgmt_client.event_hubs.create_or_update_authorization_rule(resource_group.name, NAMESPACE_NAME, EVENTHUB_NAME, AUTHORIZATION_RULE_NAME, BODY["rights"])
+        result = self.mgmt_client.event_hubs.create_or_update_authorization_rule(resource_group.name, NAMESPACE_NAME, EVENTHUB_NAME, AUTHORIZATION_RULE_NAME, BODY)
 
         # NameSpaceAuthorizationRuleGet[get] TODO: need check
         result = self.mgmt_client.namespaces.get_authorization_rule(resource_group.name, NAMESPACE_NAME, AUTHORIZATION_RULE_NAME)
@@ -248,7 +248,7 @@ class MgmtEventHubTest(AzureMgmtTestCase):
         BODY = {
           "key_type": "PrimaryKey"
         }
-        result = self.mgmt_client.event_hubs.regenerate_keys(resource_group.name, NAMESPACE_NAME, EVENTHUB_NAME, AUTHORIZATION_RULE_NAME, BODY["key_type"])
+        result = self.mgmt_client.event_hubs.regenerate_keys(resource_group.name, NAMESPACE_NAME, EVENTHUB_NAME, AUTHORIZATION_RULE_NAME, BODY)
 
         # EventHubAuthorizationRuleListKey[post]
         result = self.mgmt_client.event_hubs.list_keys(resource_group.name, NAMESPACE_NAME, EVENTHUB_NAME, AUTHORIZATION_RULE_NAME)
@@ -257,7 +257,7 @@ class MgmtEventHubTest(AzureMgmtTestCase):
         BODY = {
           "key_type": "PrimaryKey"
         }
-        result = self.mgmt_client.namespaces.regenerate_keys(resource_group.name, NAMESPACE_NAME, AUTHORIZATION_RULE_NAME, BODY["key_type"])
+        result = self.mgmt_client.namespaces.regenerate_keys(resource_group.name, NAMESPACE_NAME, AUTHORIZATION_RULE_NAME, BODY)
 
         # NameSpaceAuthorizationRuleListKey[post] TODO: need check
         result = self.mgmt_client.namespaces.list_keys(resource_group.name, NAMESPACE_NAME, AUTHORIZATION_RULE_NAME)
@@ -276,7 +276,7 @@ class MgmtEventHubTest(AzureMgmtTestCase):
         BODY = {
           "name": "sdk-DisasterRecovery-9474"
         }
-        result = self.mgmt_client.namespaces.check_name_availability(BODY["name"])
+        result = self.mgmt_client.namespaces.check_name_availability(BODY)
 
         # EventHubAuthorizationRuleDelete[delete]
         result = self.mgmt_client.event_hubs.delete_authorization_rule(resource_group.name, NAMESPACE_NAME, EVENTHUB_NAME, AUTHORIZATION_RULE_NAME)
@@ -326,7 +326,7 @@ class MgmtEventHubTest(AzureMgmtTestCase):
             "Send"
           ]
         }
-        result = self.mgmt_client.namespaces.create_or_update_authorization_rule(resource_group.name, NAMESPACE_NAME, AUTHORIZATION_RULE_NAME, BODY["rights"])
+        result = self.mgmt_client.namespaces.create_or_update_authorization_rule(resource_group.name, NAMESPACE_NAME, AUTHORIZATION_RULE_NAME, BODY)
 
         # Second namespace [put]
         BODY = {
@@ -348,7 +348,7 @@ class MgmtEventHubTest(AzureMgmtTestCase):
           # "partner_namespace": NAMESPACE_NAME_2
           "partner_namespace": second_namespace.id
         }
-        result = self.mgmt_client.disaster_recovery_configs.create_or_update(resource_group.name, NAMESPACE_NAME, DISASTER_RECOVERY_CONFIG_NAME, BODY["partner_namespace"])
+        result = self.mgmt_client.disaster_recovery_configs.create_or_update(resource_group.name, NAMESPACE_NAME, DISASTER_RECOVERY_CONFIG_NAME, BODY)
 
         # EHAliasGet[get]
         result = self.mgmt_client.disaster_recovery_configs.get(resource_group.name, NAMESPACE_NAME, DISASTER_RECOVERY_CONFIG_NAME)
@@ -381,7 +381,7 @@ class MgmtEventHubTest(AzureMgmtTestCase):
         BODY = {
           "name": "sdk-DisasterRecovery-9474"
         }
-        result = self.mgmt_client.disaster_recovery_configs.check_name_availability(resource_group.name, NAMESPACE_NAME, BODY["name"])
+        result = self.mgmt_client.disaster_recovery_configs.check_name_availability(resource_group.name, NAMESPACE_NAME, BODY)
 
         # EHAliasDelete[delete]
         while True:
