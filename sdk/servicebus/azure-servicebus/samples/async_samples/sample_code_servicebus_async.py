@@ -35,7 +35,7 @@ def example_create_servicebus_client_async():
     # [START create_sb_client_async]
     import os
     from azure.servicebus.aio import ServiceBusClient, ServiceBusSharedKeyCredential
-    fully_qualified_namespace = os.environ['SERVICE_BUS_CONNECTION_STR']
+    fully_qualified_namespace = os.environ['SERVICE_BUS_FULLY_QUALIFIED_NAMESPACE']
     shared_access_policy = os.environ['SERVICE_BUS_SAS_POLICY']
     shared_access_key = os.environ['SERVICE_BUS_SAS_KEY']
     servicebus_client = ServiceBusClient(
@@ -65,7 +65,7 @@ async def example_create_servicebus_sender_async():
     # [START create_servicebus_sender_async]
     import os
     from azure.servicebus.aio import ServiceBusSender, ServiceBusSharedKeyCredential
-    fully_qualified_namespace = os.environ['SERVICE_BUS_CONNECTION_STR']
+    fully_qualified_namespace = os.environ['SERVICE_BUS_FULLY_QUALIFIED_NAMESPACE']
     shared_access_policy = os.environ['SERVICE_BUS_SAS_POLICY']
     shared_access_key = os.environ['SERVICE_BUS_SAS_KEY']
     queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
@@ -119,7 +119,7 @@ async def example_create_servicebus_receiver_async():
     # [START create_servicebus_receiver_async]
     import os
     from azure.servicebus.aio import ServiceBusReceiver, ServiceBusSharedKeyCredential
-    fully_qualified_namespace = os.environ['SERVICE_BUS_CONNECTION_STR']
+    fully_qualified_namespace = os.environ['SERVICE_BUS_FULLY_QUALIFIED_NAMESPACE']
     shared_access_policy = os.environ['SERVICE_BUS_SAS_POLICY']
     shared_access_key = os.environ['SERVICE_BUS_SAS_KEY']
     queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
