@@ -46,17 +46,17 @@
 
 import unittest
 
-import azure.mgmt.applicationinsights
-import azure.mgmt.compute
-import azure.mgmt.eventhub
-import azure.mgmt.loganalytics
-import azure.mgmt.logic
-import azure.mgmt.logic.models
+# import azure.mgmt.applicationinsights
+# import azure.mgmt.compute
+# import azure.mgmt.eventhub
+# import azure.mgmt.loganalytics
+# import azure.mgmt.logic
+# import azure.mgmt.logic.models
 import azure.mgmt.monitor
 import azure.mgmt.monitor.models
-import azure.mgmt.network
-import azure.mgmt.storage
-import azure.mgmt.web
+# import azure.mgmt.network
+# import azure.mgmt.storage
+# import azure.mgmt.web
 from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 
 AZURE_LOCATION = 'eastus'
