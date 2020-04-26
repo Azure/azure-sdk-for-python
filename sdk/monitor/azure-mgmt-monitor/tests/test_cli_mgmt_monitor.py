@@ -1047,7 +1047,7 @@ class MgmtMonitorClientTest(AzureMgmtTestCase):
             }
           ],
           "enabled": True,
-          "target_resource_uri": vmss.id,
+          "target_resource_uri": vmss_id,
           "notifications": [
             {
               "operation": "Scale",
