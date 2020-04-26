@@ -24,7 +24,7 @@
 
 import unittest
 
-import azure.mgmt.privatedns
+# import azure.mgmt.privatedns
 import azure.mgmt.network
 from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 
@@ -37,9 +37,11 @@ class MgmtNetworkTest(AzureMgmtTestCase):
         self.mgmt_client = self.create_mgmt_client(
             azure.mgmt.network.NetworkManagementClient
         )
-        self.dns_client = self.create_mgmt_client(
-            azure.mgmt.privatedns.PrivateDnsManagementClient
-        )
+
+        if self.is_live:
+            self.dns_client = self.create_mgmt_client(
+                azure.mgmt.privatedns.PrivateDnsManagementClient
+            )
 
     def create_load_balancer(self, group_name, location, load_balancer_name, ip_config_name, subnet_id):
         # Create load balancer
@@ -228,7 +230,8 @@ class MgmtNetworkTest(AzureMgmtTestCase):
         }
         result = self.mgmt_client.private_link_services.update_private_endpoint_connection(resource_group_name=RESOURCE_GROUP, service_name=SERVICE_NAME, pe_connection_name=PE_CONNECTION_NAME, parameters=BODY)
 
-        self.create_private_dns_zone(RESOURCE_GROUP, ZONE_NAME)
+        if self.is_live:
+            self.create_private_dns_zone(RESOURCE_GROUP, ZONE_NAME)
 
         # /PrivateDnsZoneGroups/put/Create private dns zone group[put]  TODO: example needs imporve
         BODY = {
