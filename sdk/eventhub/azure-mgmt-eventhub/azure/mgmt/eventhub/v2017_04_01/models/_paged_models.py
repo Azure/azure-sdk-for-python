@@ -12,32 +12,6 @@
 from msrest.paging import Paged
 
 
-class OperationPaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`Operation <azure.mgmt.eventhub.v2017_04_01.models.Operation>` object
-    """
-
-    _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[Operation]'}
-    }
-
-    def __init__(self, *args, **kwargs):
-
-        super(OperationPaged, self).__init__(*args, **kwargs)
-class EHNamespacePaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`EHNamespace <azure.mgmt.eventhub.v2017_04_01.models.EHNamespace>` object
-    """
-
-    _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[EHNamespace]'}
-    }
-
-    def __init__(self, *args, **kwargs):
-
-        super(EHNamespacePaged, self).__init__(*args, **kwargs)
 class AuthorizationRulePaged(Paged):
     """
     A paging container for iterating over a list of :class:`AuthorizationRule <azure.mgmt.eventhub.v2017_04_01.models.AuthorizationRule>` object
@@ -51,6 +25,32 @@ class AuthorizationRulePaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(AuthorizationRulePaged, self).__init__(*args, **kwargs)
+class EHNamespacePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`EHNamespace <azure.mgmt.eventhub.v2017_04_01.models.EHNamespace>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[EHNamespace]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(EHNamespacePaged, self).__init__(*args, **kwargs)
+class NetworkRuleSetPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`NetworkRuleSet <azure.mgmt.eventhub.v2017_04_01.models.NetworkRuleSet>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[NetworkRuleSet]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(NetworkRuleSetPaged, self).__init__(*args, **kwargs)
 class ArmDisasterRecoveryPaged(Paged):
     """
     A paging container for iterating over a list of :class:`ArmDisasterRecovery <azure.mgmt.eventhub.v2017_04_01.models.ArmDisasterRecovery>` object
@@ -90,6 +90,19 @@ class ConsumerGroupPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(ConsumerGroupPaged, self).__init__(*args, **kwargs)
+class OperationPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`Operation <azure.mgmt.eventhub.v2017_04_01.models.Operation>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Operation]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(OperationPaged, self).__init__(*args, **kwargs)
 class MessagingRegionsPaged(Paged):
     """
     A paging container for iterating over a list of :class:`MessagingRegions <azure.mgmt.eventhub.v2017_04_01.models.MessagingRegions>` object

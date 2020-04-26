@@ -65,17 +65,18 @@ from ._paged_models import ConsumerGroupPaged
 from ._paged_models import EHNamespacePaged
 from ._paged_models import EventhubPaged
 from ._paged_models import MessagingRegionsPaged
+from ._paged_models import NetworkRuleSetPaged
 from ._paged_models import OperationPaged
 from ._event_hub_management_client_enums import (
-    SkuName,
-    SkuTier,
     AccessRights,
     KeyType,
-    EntityStatus,
-    EncodingCaptureDescription,
     UnavailableReason,
     ProvisioningStateDR,
     RoleDisasterRecovery,
+    EncodingCaptureDescription,
+    EntityStatus,
+    SkuName,
+    SkuTier,
     NetworkRuleIPAction,
     DefaultAction,
 )
@@ -105,22 +106,23 @@ __all__ = [
     'Sku',
     'Subnet',
     'TrackedResource',
-    'OperationPaged',
-    'EHNamespacePaged',
     'AuthorizationRulePaged',
+    'EHNamespacePaged',
+    'NetworkRuleSetPaged',
     'ArmDisasterRecoveryPaged',
     'EventhubPaged',
     'ConsumerGroupPaged',
+    'OperationPaged',
     'MessagingRegionsPaged',
-    'SkuName',
-    'SkuTier',
     'AccessRights',
     'KeyType',
-    'EntityStatus',
-    'EncodingCaptureDescription',
     'UnavailableReason',
     'ProvisioningStateDR',
     'RoleDisasterRecovery',
+    'EncodingCaptureDescription',
+    'EntityStatus',
+    'SkuName',
+    'SkuTier',
     'NetworkRuleIPAction',
     'DefaultAction',
 ]
