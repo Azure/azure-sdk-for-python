@@ -459,7 +459,7 @@ class MgmtMonitorClientTest(AzureMgmtTestCase):
             RESOURCE_URI = workflow.id
             workspace_id = workspace.id
         else:
-            RESOURCE_URI = "xx"
+            RESOURCE_URI = "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Logic/workflows/" + WORKFLOW_NAME
             workspace_id = "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.OperationalInsights/workspaces/" + WORKSPACE_NAME
 
         # Creates or Updates the diagnostic setting[put]
