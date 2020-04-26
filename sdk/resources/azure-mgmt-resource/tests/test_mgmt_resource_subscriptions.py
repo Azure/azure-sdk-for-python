@@ -5,11 +5,15 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 #--------------------------------------------------------------------------
+
+# covered ops:
+#   operations: 1/1
+#   subscriptions: 3/3
+#   tenants: 1/1
+
 import unittest
 
-raise unittest.SkipTest("Skip since recording test failed in CI pipeline")
-
-import azure.mgmt.resource.subscriptions.models
+import azure.mgmt.resource.subscriptions
 from devtools_testutils import AzureMgmtTestCase
 
 class MgmtResourceSubscriptionsTest(AzureMgmtTestCase):
@@ -36,6 +40,9 @@ class MgmtResourceSubscriptionsTest(AzureMgmtTestCase):
         tenants = list(self.subscriptions_client.tenants.list())
         self.assertGreater(len(tenants), 0)
         self.assertTrue(all(isinstance(v, azure.mgmt.resource.subscriptions.models.TenantIdDescription) for v in tenants))
+
+    def test_operations(self):
+        self.subscriptions_client.operations.list()
 
 
 #------------------------------------------------------------------------------

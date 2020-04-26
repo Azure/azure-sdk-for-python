@@ -1,0 +1,168 @@
+interactions:
+- request:
+    body: '{"properties": {"level": "CanNotDelete"}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '41'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-mgmt-resource/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/locks/pylockrg?api-version=2016-09-01
+  response:
+    body:
+      string: '{"properties":{"level":"CanNotDelete"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/locks/pylockrg","type":"Microsoft.Authorization/locks","name":"pylockrg"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '204'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 15 Apr 2020 06:02:49 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1199'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-resource/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/locks/pylockrg?api-version=2016-09-01
+  response:
+    body:
+      string: '{"properties":{"level":"CanNotDelete"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/locks/pylockrg","type":"Microsoft.Authorization/locks","name":"pylockrg"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '204'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 15 Apr 2020 06:02:49 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-resource/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/locks?api-version=2016-09-01
+  response:
+    body:
+      string: '{"value":[{"properties":{"level":"CanNotDelete"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/locks/pylockrg","type":"Microsoft.Authorization/locks","name":"pylockrg"},{"properties":{"level":"CanNotDelete","notes":"Data
+        Box Service to copy data from device to storage account."},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_databox_test_databoxf3720dde/providers/Microsoft.Storage/storageAccounts/databoxaccountpqy/providers/Microsoft.Authorization/locks/DATABOX_SERVICE","type":"Microsoft.Authorization/locks","name":"DATABOX_SERVICE"},{"properties":{"level":"CanNotDelete","notes":"Data
+        Box Service to copy data from device to storage account."},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_databox_test_databoxf3720dde/providers/Microsoft.Storage/storageAccounts/databoxaccountxyz/providers/Microsoft.Authorization/locks/DATABOX_SERVICE","type":"Microsoft.Authorization/locks","name":"DATABOX_SERVICE"}]}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1038'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 15 Apr 2020 06:02:49 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-azure-mgmt-resource/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: DELETE
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/locks/pylockrg?api-version=2016-09-01
+  response:
+    body:
+      string: ''
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '0'
+      date:
+      - Wed, 15 Apr 2020 06:02:50 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-deletes:
+      - '14999'
+    status:
+      code: 200
+      message: OK
+version: 1

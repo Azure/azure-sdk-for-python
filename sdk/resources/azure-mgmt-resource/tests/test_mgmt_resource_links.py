@@ -5,9 +5,15 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 #--------------------------------------------------------------------------
+
+# covered ops:
+#   operations: 1/1
+#   resource_links: 5/5
+
 import unittest
 
 import azure.mgmt.resource
+import azure.mgmt.resource.resources.v2019_07_01
 from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 
 class MgmtResourceLinksTest(AzureMgmtTestCase):
@@ -18,20 +24,19 @@ class MgmtResourceLinksTest(AzureMgmtTestCase):
             azure.mgmt.resource.ManagementLinkClient
         )
         self.resource_client = self.create_mgmt_client(
-            azure.mgmt.resource.ResourceManagementClient
-        )            
+            azure.mgmt.resource.resources.v2019_07_01.ResourceManagementClient
+        )
 
     @ResourceGroupPreparer()
     def test_links(self, resource_group, location):
         if not self.is_playback():
             resource_name = self.get_resource_name("pytestavset")
-            create_result = self.resource_client.resources.create_or_update(
+            create_result = self.resource_client.resources.begin_create_or_update(
                 resource_group_name=resource_group.name,
                 resource_provider_namespace="Microsoft.Compute",
                 parent_resource_path="",
                 resource_type="availabilitySets",
                 resource_name=resource_name,
-                api_version="2015-05-01-preview",
                 parameters={'location': location}
             )
             result = create_result.result()
@@ -65,6 +70,9 @@ class MgmtResourceLinksTest(AzureMgmtTestCase):
         self.assertTrue(any(link.name=='myLink' for link in links))
 
         self.client.resource_links.delete(link.id)
+
+    def test_operations(self):
+        self.client.operations.list()
 
 #------------------------------------------------------------------------------
 if __name__ == '__main__':
