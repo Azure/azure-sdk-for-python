@@ -25,12 +25,14 @@ class MgmtComputeTest(AzureMgmtTestCase):
 
     def setUp(self):
         super(MgmtComputeTest, self).setUp()
+        from azure.mgmt.compute import ComputeManagementClient
         self.mgmt_client = self.create_mgmt_client(
-            azure.mgmt.compute.ComputeManagementClient
+            ComputeManagementClient
         )
         if self.is_live:
+            from azure.mgmt.network import NetworkManagementClient
             self.network_client = self.create_mgmt_client(
-                azure.mgmt.network.NetworkManagementClient
+                NetworkManagementClient
             )
 
     def create_virtual_network(self, group_name, location, network_name, subnet_name):
@@ -81,6 +83,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_compute_vm(self, resource_group):
 
+        SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
         RESOURCE_GROUP = resource_group.name
         VIRTUAL_MACHINE_NAME = self.get_resource_name("virtualmachinex")
         SUBNET_NAME = self.get_resource_name("subnetx")

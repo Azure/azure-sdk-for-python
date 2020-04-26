@@ -90,9 +90,11 @@ class MgmtComputeTestMultiVersion(AzureMgmtTestCase):
         result = result.result()
 
         # Grant acess disk
-        ACCESS = "Read"
-        DURATION_IN_SECONDS = 1800
-        result = self.mgmt_client.disks.begin_grant_access(resource_group.name, DISK_NAME, ACCESS, DURATION_IN_SECONDS)
+        BODY = {
+          "access": "Read",
+          "duration_in_seconds": "1800"
+        }
+        result = self.mgmt_client.disks.begin_grant_access(resource_group.name, DISK_NAME, BODY)
         result = result.result()
 
          # Revoke access disk
@@ -262,9 +264,11 @@ class MgmtComputeTest(AzureMgmtTestCase):
         result = result.result()
 
         # Grant acess snapshot (TODO: need swagger file)
-        ACCESS = "Read"
-        DURATION_IN_SECONDS = 1800
-        result = self.mgmt_client.snapshots.begin_grant_access(resource_group.name, SNAPSHOT_NAME, ACCESS, DURATION_IN_SECONDS)
+        BODY = {
+          "access": "Read",
+          "duration_in_seconds": "1800"
+        }
+        result = self.mgmt_client.snapshots.begin_grant_access(resource_group.name, SNAPSHOT_NAME, BODY)
         result = result.result()
 
         # Revoke access snapshot (TODO: need swagger file)
@@ -311,10 +315,12 @@ class MgmtComputeTest(AzureMgmtTestCase):
         result = self.mgmt_client.disks.begin_update(resource_group.name, DISK_NAME, BODY)
         result = result.result()
 
-        # Grant acess disk
-        ACCESS = "Read"
-        DURATION_IN_SECONDS = 1800
-        result = self.mgmt_client.disks.begin_grant_access(resource_group.name, DISK_NAME, ACCESS, DURATION_IN_SECONDS)
+        # Grant acess diski
+        BODY = {
+          "access": "Read",
+          "duration_in_seconds": "1800"
+        }
+        result = self.mgmt_client.disks.begin_grant_access(resource_group.name, DISK_NAME, BODY)
         result = result.result()
 
          # Revoke access disk
