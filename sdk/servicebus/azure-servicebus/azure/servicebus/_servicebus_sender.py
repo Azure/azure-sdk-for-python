@@ -291,11 +291,11 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         return cls(**constructor_args)
 
     def send(self, message):
-        # type: (Union[Message, BatchMessage], float) -> None
+        # type: (Union[Message, BatchMessage]) -> None
         """Sends message and blocks until acknowledgement is received or operation times out.
 
         :param message: The ServiceBus message to be sent.
-        :type message: ~azure.servicebus.Message
+        :type message: ~azure.servicebus.Message or ~azure.servicebus.BatchMessage
         :rtype: None
         :raises: ~azure.servicebus.common.errors.MessageSendFailed if the message fails to
          send or ~azure.servicebus.common.errors.OperationTimeoutError if sending times out.

@@ -4,24 +4,26 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-
+import os
 import asyncio
 import uuid
 
 from azure.servicebus.aio import ServiceBusClient, AutoLockRenew
-from azure.servicebus import NoActiveSession, Message
+from azure.servicebus import Message
+from azure.servicebus.exceptions import NoActiveSession
 
 
 CONNECTION_STR = os.environ['SERVICE_BUS_CONNECTION_STR']
 # Note: This must be a session-enabled queue.
 QUEUE_NAME = os.environ["SERVICE_BUS_QUEUE_NAME"]
 
+
 async def message_processing(servicebus_client, queue_name):
     while True:
         try:
             async with servicebus_client.get_queue_session_receiver(queue_name, idle_timeout=1) as receiver:
                 renewer = AutoLockRenew()
-                renewer.register(receiver.session, timeout=None)   
+                renewer.register(receiver.session)
                 await receiver.session.set_session_state("OPEN")
                 async for message in receiver:
                     print("Message: {}".format(message))
@@ -37,7 +39,7 @@ async def message_processing(servicebus_client, queue_name):
                     if str(message) == 'shutdown':
                         await receiver.session.set_session_state("CLOSED")
                         break
-                renewer.shutdown()
+                await renewer.shutdown()
         except NoActiveSession:
             print("There are no non-empty sessions remaining; exiting.  This may present as a UserError in the azure portal.")
             return
