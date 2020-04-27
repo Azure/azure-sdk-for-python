@@ -48,7 +48,7 @@ class SearchDataSourcesClient(HeadersMixin):
 
     def close(self):
         # type: () -> None
-        """Close the :class:`~azure.search.documents.DataSourcesClient` session.
+        """Close the :class:`~azure.search.documents.SearchDataSourcesClient` session.
 
         """
         return self._client.close()

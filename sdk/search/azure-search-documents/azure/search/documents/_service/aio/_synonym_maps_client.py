@@ -50,7 +50,7 @@ class SearchSynonymMapsClient(HeadersMixin):
 
     async def close(self):
         # type: () -> None
-        """Close the :class:`~azure.search.documents.DataSourcesClient` session.
+        """Close the :class:`~azure.search.documents.aio.SearchSynonymMapsClient` session.
 
         """
         return await self._client.close()

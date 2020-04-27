@@ -77,7 +77,7 @@ class SearchServiceClient(HeadersMixin):  # pylint: disable=too-many-public-meth
 
     async def close(self):
         # type: () -> None
-        """Close the :class:`~azure.search.documents.SearchServiceClient` session.
+        """Close the :class:`~azure.search.documents.aio.SearchServiceClient` session.
 
         """
         return await self._client.close()
