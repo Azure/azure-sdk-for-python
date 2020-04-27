@@ -38,9 +38,9 @@ pip install azure-search-documents --pre
 
 ## Key concepts
 
-Azure Cognitive Search has the concepts of search services and indexes and documents, where a search service contains 
-one or more indexes that provides persistent storage of searchable data, and data is loaded in the form of JSON documents. 
-Data can be pushed to an index from an external data source, but if you use an indexer, it's possible to crawl a data 
+Azure Cognitive Search has the concepts of search services and indexes and documents, where a search service contains
+one or more indexes that provides persistent storage of searchable data, and data is loaded in the form of JSON documents.
+Data can be pushed to an index from an external data source, but if you use an indexer, it's possible to crawl a data
 source to extract and load data into an index.
 
 There are several types of operations that can be executed against the service:
@@ -53,7 +53,7 @@ There are several types of operations that can be executed against the service:
 
 ### Authenticate the client
 
-In order to interact with the Cognitive Search service you'll need to create an instance of the Search Client class. 
+In order to interact with the Cognitive Search service you'll need to create an instance of the Search Client class.
 To make this possible you will need an [api-key of the Cognitive Search service](https://docs.microsoft.com/en-us/azure/search/search-security-api-keys).
 
 The SDK provides two clients.
@@ -63,12 +63,12 @@ The SDK provides two clients.
 
 ### Create a SearchServiceClient
 
-Once you have the values of the Cognitive Search Service [service endpoint](https://docs.microsoft.com/en-us/azure/search/search-create-service-portal#get-a-key-and-url-endpoint) 
+Once you have the values of the Cognitive Search Service [service endpoint](https://docs.microsoft.com/en-us/azure/search/search-create-service-portal#get-a-key-and-url-endpoint)
 and [api key](https://docs.microsoft.com/en-us/azure/search/search-security-api-keys) you can create the Search Service client:
 
 ```python
 from azure.core.credentials import AzureKeyCredential
-from azure.search import SearchServiceClient
+from azure.search.documents import SearchServiceClient
 
 credential = AzureKeyCredential("<api key>")
 
@@ -78,14 +78,14 @@ client = SearchServiceClient(endpoint="<service endpoint>"
 
 ### Create a SearchIndexClient
 
-To create a SearchIndexClient, you will need an existing index name as well as the values of the Cognitive Search Service 
-[service endpoint](https://docs.microsoft.com/en-us/azure/search/search-create-service-portal#get-a-key-and-url-endpoint) and 
+To create a SearchIndexClient, you will need an existing index name as well as the values of the Cognitive Search Service
+[service endpoint](https://docs.microsoft.com/en-us/azure/search/search-create-service-portal#get-a-key-and-url-endpoint) and
 [api key](https://docs.microsoft.com/en-us/azure/search/search-security-api-keys).
 Note that you will need an admin key to index documents (query keys only work for queries).
 
 ```python
 from azure.core.credentials import AzureKeyCredential
-from azure.search import SearchIndexClient
+from azure.search.documents import SearchIndexClient
 
 credential = AzureKeyCredential("<api key>")
 
@@ -129,7 +129,7 @@ name = "hotels"
 Add documents (or update existing ones), e.g add a new document for a new hotel:
 ```python
 from azure.core.credentials import AzureKeyCredential
-from azure.search import SearchIndexClient
+from azure.search.documents import SearchIndexClient
 search_client = SearchIndexClient(service_endpoint, index_name, AzureKeyCredential(key))
 
 DOCUMENT = {
@@ -149,7 +149,7 @@ print("Upload of new document succeeded: {}".format(result[0].succeeded))
 Get a specific document from the index, e.f. obtain the document for hotel "23":
 ```python
 from azure.core.credentials import AzureKeyCredential
-from azure.search import SearchIndexClient
+from azure.search.documents import SearchIndexClient
 search_client = SearchIndexClient(service_endpoint, index_name, AzureKeyCredential(key))
 
 result = search_client.get_document(key="23")
@@ -165,7 +165,7 @@ Search the entire index or documents matching a simple search text, e.g. find
 hotels with the text "spa":
 ```python
 from azure.core.credentials import AzureKeyCredential
-from azure.search import SearchIndexClient
+from azure.search.documents import SearchIndexClient
 search_client = SearchIndexClient(service_endpoint, index_name, AzureKeyCredential(key))
 
 results = search_client.search(query="spa")
@@ -181,7 +181,7 @@ Get search suggestions for related terms, e.g. find search suggestions for
 the term "coffee":
 ```python
 from azure.core.credentials import AzureKeyCredential
-from azure.search import SearchIndexClient, SuggestQuery
+from azure.search.documents import SearchIndexClient, SuggestQuery
 search_client = SearchIndexClient(service_endpoint, index_name, AzureKeyCredential(key))
 
 query = SuggestQuery(search_text="coffee", suggester_name="sg")
@@ -212,7 +212,7 @@ headers, can be enabled on a client with the `logging_enable` keyword argument:
 import sys
 import logging
 from azure.core.credentials import AzureKeyCredential
-from azure.search import SearchIndexClient
+from azure.search.documents import SearchIndexClient
 
 # Create a logger for the 'azure' SDK
 logger = logging.getLogger('azure')
