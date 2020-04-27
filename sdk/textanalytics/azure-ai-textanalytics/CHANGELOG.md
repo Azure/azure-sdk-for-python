@@ -2,6 +2,9 @@
 
 ## 1.0.0b5 (Unreleased)
 
+**New features**
+- Added `text` property to `SentenceSentiment`
+
 **Breaking changes**
 - `score` attribute of `DetectedLanguage` has been renamed to `confidence_score`
 
