@@ -259,6 +259,7 @@ class StorageLargestBlockBlobTestAsync(AsyncStorageTestCase):
         self.assertEqual(payload_dropping_policy.put_block_counter, 1)
         self.assertEqual(payload_dropping_policy.put_block_sizes[0], LARGEST_BLOCK_SIZE)
 
+    @pytest.mark.skip(reason="This takes really long time")
     @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
