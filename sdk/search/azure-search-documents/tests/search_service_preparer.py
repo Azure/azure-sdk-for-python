@@ -121,11 +121,11 @@ class SearchServicePreparer(AzureMgmtPreparer):
         # optionally load data into the index
         if self.index_batch and self.schema:
             from azure.core.credentials import AzureKeyCredential
-            from azure.search.documents import SearchIndexClient
+            from azure.search.documents import SearchClient
             from azure.search.documents._index._generated.models import IndexBatch
 
             batch = IndexBatch.deserialize(self.index_batch)
-            index_client = SearchIndexClient(
+            index_client = SearchClient(
                 self.endpoint, self.index_name, AzureKeyCredential(api_key)
             )
             results = index_client.index_documents(batch)
