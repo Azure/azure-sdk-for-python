@@ -213,17 +213,30 @@ class EventHubProducerClient(ClientBaseAsync):
         self,
         event_data_batch: Union[EventDataBatch, List[EventData]],
         *,
-        partition_id: Optional[str] = None,
-        partition_key: Optional[str] = None,
-        timeout: Optional[Union[int, float]] = None
+        timeout: Optional[Union[int, float]] = None,
+        **kwargs
     ) -> None:
         """Sends event data and blocks until acknowledgement is received or operation times out.
 
-        :param event_data_batch: The EventDataBatch object to be sent.
-        :type event_data_batch: ~azure.eventhub.EventDataBatch
+        If you're sending a finite list of `EventData` and you know it's within the size limit of the event hub
+        frame size limit, you can send them with a `send_batch` call. Otherwise, use :meth:`create_batch`
+        to create `EventDataBatch` and add `EventData` into the batch one by one until the size limit,
+        and then call this method to send out the batch.
 
-        :param float timeout: The maximum wait time to send the event data.
+        :param event_data_batch: The `EventDataBatch` object to be sent or a list of `EventData` to be sent
+         in a batch.
+        :type event_data_batch: Union[~azure.eventhub.EventDataBatch, List[~azure.eventhub.EventData]]
+        :keyword float timeout: The maximum wait time to send the event data.
          If not specified, the default wait time specified when the producer was created will be used.
+        :keyword str partition_id: The specific partition ID to send to. Default is None, in which case the service
+         will assign to all partitions using round-robin.
+         A `TypeError` will be raised if partition_id is specified and event_data_batch is an `EventDataBatch` because
+         `EventDataBatch` itself has partition_id.
+        :keyword str partition_key: With the given partition_key, event data will be sent to
+         a particular partition of the Event Hub decided by the service.
+         A `TypeError` will be raised if partition_key is specified and event_data_batch is an `EventDataBatch` because
+         `EventDataBatch` itself has partition_key.
+         If both partition_id and partition_key is provided, the partition_id will take precedence.
         :rtype: None
         :raises: :class:`AuthenticationError<azure.eventhub.exceptions.AuthenticationError>`
          :class:`ConnectError<azure.eventhub.exceptions.ConnectError>`
@@ -242,17 +255,36 @@ class EventHubProducerClient(ClientBaseAsync):
                 :caption: Asynchronously sends event data
 
         """
+        partition_id = kwargs.get("partition_id")
+        partition_key = kwargs.get("partition_key")
+        if isinstance(event_data_batch, EventDataBatch):
+            if partition_id or partition_key:
+                raise TypeError("partition_id and partition_key should be None when sending an EventDataBatch "
+                                "because type EventDataBatch itself may have partition_id or partition_key")
+            to_send_batch = event_data_batch
+        elif isinstance(event_data_batch, List):
+            to_send_batch = await self.create_batch(partition_id=partition_id, partition_key=partition_key)
+            for event_data in event_data_batch:
+                try:
+                    to_send_batch.add(event_data)
+                except ValueError:
+                    raise ValueError("The list of EventData exceeds the Event Hub frame size limit. "
+                                     "Please send a smaller list of EventData, or use EventDataBatch, "
+                                     "which is guaranteed to be under the frame size limit")
+        else:
+            raise TypeError("event_data_batch must be of type List[EventData] or EventDataBatch")
+
         partition_id = (
-            event_data_batch._partition_id or ALL_PARTITIONS  # pylint:disable=protected-access
+            to_send_batch._partition_id or ALL_PARTITIONS  # pylint:disable=protected-access
         )
         try:
             await cast(EventHubProducer, self._producers[partition_id]).send(
-                event_data_batch, timeout=timeout
+                to_send_batch, timeout=timeout
             )
         except (KeyError, AttributeError, EventHubError):
             await self._start_producer(partition_id, timeout)
             await cast(EventHubProducer, self._producers[partition_id]).send(
-                event_data_batch, timeout=timeout
+                to_send_batch, timeout=timeout
             )
 
     async def create_batch(
