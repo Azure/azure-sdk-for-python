@@ -13,7 +13,7 @@ from .._common.message import Message, BatchMessage
 from .._servicebus_sender import SenderMixin
 from ._base_handler_async import BaseHandlerAsync
 from ..exceptions import (
-    MessageSendFailed
+    MessageError
 )
 from .._common.constants import (
     REQUEST_RESPONSE_SCHEDULE_MESSAGE_OPERATION,
@@ -134,10 +134,7 @@ class ServiceBusSender(BaseHandlerAsync, SenderMixin):
     async def _send(self, message, timeout=None, last_exception=None):
         await self._open()
         self._set_msg_timeout(timeout, last_exception)
-        try:
-            await self._handler.send_message_async(message.message)
-        except Exception as e:
-            raise MessageSendFailed(e)
+        await self._handler.send_message_async(message.message)
 
     async def _schedule(self, message, schedule_time_utc):
         # type: (Union[Message, BatchMessage], datetime.datetime) -> List[int]
@@ -259,6 +256,11 @@ class ServiceBusSender(BaseHandlerAsync, SenderMixin):
                 :caption: Send message.
 
         """
+        if isinstance(message, BatchMessage):
+            if len(message) == 0:
+                raise MessageError("A BatchMessage must have at least one Message")
+        elif not isinstance(message, Message):
+            raise TypeError("message must be of type Message or BatchMessage")
         await self._do_retryable_operation(
             self._send,
             message=message,
