@@ -10,46 +10,35 @@ import pytest
 
 from os import path, remove, sys, urandom
 import platform
-import unittest
 import uuid
 
 from azure.core.pipeline.policies import HTTPPolicy
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from azure.storage.blob import (
     BlobServiceClient,
-    ContainerClient,
-    BlobClient,
-    BlobBlock,
-    ContentSettings
+    BlobBlock
 )
 from azure.storage.blob._shared.base_client import format_shared_key_credential
-
-if sys.version_info >= (3,):
-    from io import BytesIO
-else:
-    from cStringIO import StringIO as BytesIO
 
 from _shared.testcase import StorageTestCase, GlobalStorageAccountPreparer
 
 # ------------------------------------------------------------------------------
 TEST_BLOB_PREFIX = 'largestblob'
 LARGEST_BLOCK_SIZE = 4000 * 1024 * 1024
+LARGEST_SINGLE_UPLOAD_SIZE = 5000 * 1024 * 1024
 
 # ------------------------------------------------------------------------------
 if platform.python_implementation() == 'PyPy':
     pytest.skip("Skip tests for Pypy", allow_module_level=True)
 
 class StorageLargestBlockBlobTest(StorageTestCase):
-    def _setup(self, storage_account, key, additional_policies=None):
-        # test chunking functionality by reducing the threshold
-        # for chunking and the size of each chunk, otherwise
-        # the tests would take too long to execute
+    def _setup(self, storage_account, key, additional_policies=None, min_large_block_upload_threshold=1 * 1024 * 1024,
+               max_single_put_size=32 * 1024):
         self.bsc = BlobServiceClient(
             self.account_url(storage_account, "blob"),
             credential=key,
-            max_single_put_size=32 * 1024,
+            max_single_put_size=max_single_put_size,
             max_block_size=LARGEST_BLOCK_SIZE,
-            min_large_block_upload_threshold=1 * 1024 * 1024,
+            min_large_block_upload_threshold=min_large_block_upload_threshold,
             _additional_pipeline_policies=additional_policies)
         self.config = self.bsc._config
         self.container_name = self.get_resource_name('utcontainer')
@@ -79,7 +68,6 @@ class StorageLargestBlockBlobTest(StorageTestCase):
     @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     def test_put_block_bytes_largest(self, resource_group, location, storage_account, storage_account_key):
-
         self._setup(storage_account, storage_account_key)
         blob = self._create_blob()
 
@@ -137,7 +125,6 @@ class StorageLargestBlockBlobTest(StorageTestCase):
     @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     def test_put_block_stream_largest(self, resource_group, location, storage_account, storage_account_key):
-
         self._setup(storage_account, storage_account_key)
         blob = self._create_blob()
 
@@ -199,8 +186,6 @@ class StorageLargestBlockBlobTest(StorageTestCase):
     @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     def test_create_largest_blob_from_path(self, resource_group, location, storage_account, storage_account_key):
-        # parallel tests introduce random order of requests, can only run live
-
         self._setup(storage_account, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
@@ -222,7 +207,6 @@ class StorageLargestBlockBlobTest(StorageTestCase):
     @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     def test_create_largest_blob_from_path_without_network(self, resource_group, location, storage_account, storage_account_key):
-        # parallel tests introduce random order of requests, can only run live
         payload_dropping_policy = PayloadDroppingPolicy()
         credential_policy = format_shared_key_credential([storage_account.name, "dummy"], storage_account_key)
         self._setup(storage_account, storage_account_key, [payload_dropping_policy, credential_policy])
@@ -248,7 +232,6 @@ class StorageLargestBlockBlobTest(StorageTestCase):
     @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     def test_create_largest_blob_from_stream_without_network(self, resource_group, location, storage_account, storage_account_key):
-        # parallel tests introduce random order of requests, can only run live
         payload_dropping_policy = PayloadDroppingPolicy()
         credential_policy = format_shared_key_credential([storage_account.name, "dummy"], storage_account_key)
         self._setup(storage_account, storage_account_key, [payload_dropping_policy, credential_policy])
@@ -265,6 +248,25 @@ class StorageLargestBlockBlobTest(StorageTestCase):
         # Assert
         self.assertEqual(payload_dropping_policy.put_block_counter, number_of_blocks)
         self.assertEqual(payload_dropping_policy.put_block_sizes[0], LARGEST_BLOCK_SIZE)
+
+    @pytest.mark.live_test_only
+    @GlobalStorageAccountPreparer()
+    def test_create_largest_blob_from_stream_single_upload_without_network(self, resource_group, location, storage_account, storage_account_key):
+        payload_dropping_policy = PayloadDroppingPolicy()
+        credential_policy = format_shared_key_credential([storage_account.name, "dummy"], storage_account_key)
+        self._setup(storage_account, storage_account_key, [payload_dropping_policy, credential_policy],
+                    max_single_put_size=LARGEST_SINGLE_UPLOAD_SIZE)
+        blob_name = self._get_blob_reference()
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+
+        stream = LargeStream(LARGEST_SINGLE_UPLOAD_SIZE)
+
+        # Act
+        blob.upload_blob(stream, length=LARGEST_SINGLE_UPLOAD_SIZE, max_concurrency=1)
+
+        # Assert
+        self.assertEqual(payload_dropping_policy.put_block_counter, 0)
+        self.assertEqual(payload_dropping_policy.put_blob_counter, 1)
 
 
 class LargeStream:
@@ -298,11 +300,19 @@ class PayloadDroppingPolicy(HTTPPolicy):
         super().__init__()
         self.put_block_counter = 0
         self.put_block_sizes = []
+        self.put_blob_counter = 0
+        self.put_blob_sizes = []
 
     def send(self, request):  # type: (PipelineRequest) -> PipelineResponse
         if _is_put_block_request(request):
             self.put_block_counter = self.put_block_counter + 1
             self.put_block_sizes.append(_get_body_length(request))
+            replacement = "dummy_body"
+            request.http_request.body = replacement
+            request.http_request.headers["Content-Length"] = str(len(replacement))
+        elif _is_put_blob_request(request):
+            self.put_blob_counter = self.put_blob_counter + 1
+            self.put_blob_sizes.append(_get_body_length(request))
             replacement = "dummy_body"
             request.http_request.body = replacement
             request.http_request.headers["Content-Length"] = str(len(replacement))
@@ -313,6 +323,9 @@ def _is_put_block_request(request):
     query = request.http_request.query
     return query and "comp" in query and query["comp"] == "block"
 
+def _is_put_blob_request(request):
+    query = request.http_request.query
+    return request.http_request.method == "PUT" and not query
 
 def _get_body_length(request):
     body = request.http_request.body
