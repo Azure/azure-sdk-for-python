@@ -41,7 +41,7 @@ if TYPE_CHECKING:
     DeserializationCallbackType = Union[Model, Callable[[requests.Response], Model]]
 PollingReturnType = TypeVar("PollingReturnType")
 
-class PollingMethod(object):
+class PollingMethod(Generic[PollingReturnType]):
     """ABC class for polling method.
     """
     def initialize(self, client, initial_response, deserialization_callback):
@@ -61,7 +61,7 @@ class PollingMethod(object):
         raise NotImplementedError("This method needs to be implemented")
 
     def resource(self):
-        # type: () -> Any
+        # type: () -> PollingReturnType
         raise NotImplementedError("This method needs to be implemented")
 
 class NoPolling(PollingMethod):
@@ -176,7 +176,7 @@ class LROPoller(Generic[PollingReturnType]):
         return self._polling_method.status()
 
     def result(self, timeout=None):
-        # type: (Optional[int]) -> Model
+        # type: (Optional[int]) -> PollingReturnType
         """Return the result of the long running operation, or
         the result available after the specified timeout.
 

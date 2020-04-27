@@ -23,9 +23,14 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+from typing import Generic, TypeVar
 from ._poller import NoPolling as _NoPolling
 
-class AsyncPollingMethod(object):
+
+PollingReturnType = TypeVar("PollingReturnType")
+
+
+class AsyncPollingMethod(Generic[PollingReturnType]):
     """ABC class for polling method.
     """
     def initialize(self, client, initial_response, deserialization_callback):

@@ -193,6 +193,15 @@ class AsyncPipeline(
 
         await asyncio.gather(*[prepare_requests(req) for req in requests])
 
+    async def _prepare_multipart(self, request):
+        # type: (HTTPRequestType) -> None
+        # This code is fine as long as HTTPRequestType is actually
+        # azure.core.pipeline.transport.HTTPRequest, bu we don't check it in here
+        # since we didn't see (yet) pipeline usage where it's not this actual instance
+        # class used
+        await self._prepare_multipart_mixed_request(request)
+        request.prepare_multipart_body()  # type: ignore
+
     async def run(self, request: HTTPRequestType, **kwargs: Any):
         """Runs the HTTP Request through the chained policies.
 
@@ -201,8 +210,7 @@ class AsyncPipeline(
         :return: The PipelineResponse object.
         :rtype: ~azure.core.pipeline.PipelineResponse
         """
-        await self._prepare_multipart_mixed_request(request)
-        request.prepare_multipart_body()  # type: ignore
+        await self._prepare_multipart(request)
         context = PipelineContext(self._transport, **kwargs)
         pipeline_request = PipelineRequest(request, context)
         first_node = (
