@@ -50,12 +50,14 @@ class GetDetailedDiagnosticsInformationSample(object):
             _LOGGER.info("model_version: {}".format(resp.model_version))
             _LOGGER.info("raw_response: {}".format(resp.raw_response))
 
-        result = text_analytics_client.analyze_sentiment(
+        result = text_analytics_client.extract_key_phrases(
             documents,
             show_stats=True,
             model_version="latest",
             raw_response_hook=callback
         )
+        for doc in result:
+            _LOGGER.warning("Doc with id {} has these warnings: {}".format(doc.id, doc.warnings))
 
 
 if __name__ == '__main__':

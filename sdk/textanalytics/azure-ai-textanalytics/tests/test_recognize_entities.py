@@ -422,6 +422,19 @@ class TestRecognizeEntities(TextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
+    def test_document_warnings(self, client):
+        # No warnings actually returned for recognize_entities. Will update when they add
+        docs = [
+            {"id": "1", "text": "This won't actually create a warning :'("},
+        ]
+
+        result = client.recognize_entities(docs)
+        for doc in result:
+            doc_warnings = doc.warnings
+            self.assertEqual(len(doc_warnings), 0)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
     def test_missing_input_records_error(self, client):
         docs = []
         with pytest.raises(ValueError) as excinfo:

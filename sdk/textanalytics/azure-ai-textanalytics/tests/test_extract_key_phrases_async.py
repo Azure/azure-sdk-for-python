@@ -423,6 +423,19 @@ class TestExtractKeyPhrases(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
+    async def test_document_warnings(self, client):
+        docs = [
+            {"id": "1", "text": "Thisisaveryveryverylongtextwhichgoesonforalongtimeandwhichalmostdoesn'tseemtostopatanygivenpointintime.ThereasonforthistestistotryandseewhathappenswhenwesubmitaveryveryverylongtexttoLanguage.Thisshouldworkjustfinebutjustincaseitisalwaysgoodtohaveatestcase.ThisallowsustotestwhathappensifitisnotOK.Ofcourseitisgoingtobeokbutthenagainitisalsobettertobesure!"},
+        ]
+
+        result = await client.extract_key_phrases(docs)
+        for doc in result:
+            doc_warnings = doc.warnings
+            self.assertEqual(doc_warnings[0].code, "LongWordsInDocument")
+            self.assertIsNotNone(doc_warnings[0].message)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
     async def test_missing_input_records_error(self, client):
         docs = []
         with pytest.raises(ValueError) as excinfo:
