@@ -244,6 +244,7 @@ class EventHubProducerClient(ClientBaseAsync):
          :class:`EventDataError<azure.eventhub.exceptions.EventDataError>`
          :class:`EventDataSendError<azure.eventhub.exceptions.EventDataSendError>`
          :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
+         `ValueError`
 
         .. admonition:: Example:
 
