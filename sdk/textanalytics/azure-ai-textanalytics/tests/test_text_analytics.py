@@ -27,7 +27,7 @@ class TextAnalyticsTest(TestAnalyticsTestCase):
         self.assertEqual(response[0].primary_language.name, "English")
 
     def test_repr(self):
-        detected_language = _models.DetectedLanguage(name="English", iso6391_name="en", score=1.0)
+        detected_language = _models.DetectedLanguage(name="English", iso6391_name="en", confidence_score=1.0)
 
         categorized_entity = _models.CategorizedEntity(text="Bill Gates", category="Person", subcategory="Age",
                                                        grapheme_offset=0, grapheme_length=8, confidence_score=0.899)
@@ -108,7 +108,7 @@ class TextAnalyticsTest(TestAnalyticsTestCase):
             transaction_count=4
         )
 
-        self.assertEqual("DetectedLanguage(name=English, iso6391_name=en, score=1.0)", repr(detected_language))
+        self.assertEqual("DetectedLanguage(name=English, iso6391_name=en, confidence_score=1.0)", repr(detected_language))
         self.assertEqual("CategorizedEntity(text=Bill Gates, category=Person, subcategory=Age, grapheme_offset=0, "
                          "grapheme_length=8, confidence_score=0.899)",
                          repr(categorized_entity))
@@ -119,7 +119,7 @@ class TextAnalyticsTest(TestAnalyticsTestCase):
                          "statistics=TextDocumentStatistics(grapheme_count=14, transaction_count=18), "
                          "is_error=False)", repr(recognize_entities_result))
         self.assertEqual("DetectLanguageResult(id=1, primary_language=DetectedLanguage(name=English, "
-                         "iso6391_name=en, score=1.0), statistics=TextDocumentStatistics(grapheme_count=14, "
+                         "iso6391_name=en, confidence_score=1.0), statistics=TextDocumentStatistics(grapheme_count=14, "
                          "transaction_count=18), is_error=False)", repr(detect_language_result))
         self.assertEqual("TextAnalyticsError(code=invalidRequest, message=The request is invalid, target=request)",
                          repr(text_analytics_error))
