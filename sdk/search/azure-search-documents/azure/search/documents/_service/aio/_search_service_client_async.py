@@ -14,18 +14,18 @@ from azure.core.exceptions import (
     ResourceNotModifiedError,
 )
 from .._generated.aio import SearchServiceClient as _SearchServiceClient
-from .._generated.models import AccessCondition, Skillset, SynonymMap
+from .._generated.models import AccessCondition
 from ..._headers_mixin import HeadersMixin
 from ..._version import SDK_MONIKER
 from .._utils import (
     delistize_flags_for_index,
     listize_flags_for_index,
-    listize_synonyms,
     prep_if_match,
     prep_if_none_match,
 )
 from ._datasources_client import SearchDataSourcesClient
 from ._skillsets_client import SearchSkillsetsClient
+from ._synonym_maps_client import SearchSynonymMapsClient
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
@@ -63,6 +63,10 @@ class SearchServiceClient(HeadersMixin):  # pylint: disable=too-many-public-meth
         self._client = _SearchServiceClient(
             endpoint=endpoint, sdk_moniker=SDK_MONIKER, **kwargs
         )  # type: _SearchServiceClient
+
+        self._synonym_maps_client = SearchSynonymMapsClient(
+            endpoint, credential, **kwargs
+        )
 
         self._skillsets_client = SearchSkillsetsClient(endpoint, credential, **kwargs)
 
@@ -302,126 +306,14 @@ class SearchServiceClient(HeadersMixin):  # pylint: disable=too-many-public-meth
         )
         return result
 
-    # Synonym Maps Operations
+    def get_synonym_maps_client(self):
+        # type: () -> SearchSynonymMapsClient
+        """Return a client to perform operations on Synonym Maps.
 
-    @distributed_trace_async
-    async def get_synonym_maps(self, **kwargs):
-        # type: (**Any) -> List[Dict[Any, Any]]
-        """List the Synonym Maps in an Azure Search service.
-
-        :return: List of synonym maps
-        :rtype: list[dict]
-        :raises: ~azure.core.exceptions.HttpResponseError
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/async_samples/sample_synonym_map_operations_async.py
-                :start-after: [START get_synonym_maps_async]
-                :end-before: [END get_synonym_maps_async]
-                :language: python
-                :dedent: 4
-                :caption: List Synonym Maps
-
+        :return: The Synonym Maps client
+        :rtype: SearchSynonymMapsClient
         """
-        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        result = await self._client.synonym_maps.list(**kwargs)
-        return [listize_synonyms(x) for x in result.as_dict()["synonym_maps"]]
-
-    @distributed_trace_async
-    async def get_synonym_map(self, name, **kwargs):
-        # type: (str, **Any) -> dict
-        """Retrieve a named Synonym Map in an Azure Search service
-
-        :param name: The name of the Synonym Map to get
-        :type name: str
-        :return: The retrieved Synonym Map
-        :rtype: dict
-        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/async_samples/sample_synonym_map_operations_async.py
-                :start-after: [START get_synonym_map_async]
-                :end-before: [END get_synonym_map_async]
-                :language: python
-                :dedent: 4
-                :caption: Get a Synonym Map
-
-        """
-        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        result = await self._client.synonym_maps.get(name, **kwargs)
-        return listize_synonyms(result.as_dict())
-
-    @distributed_trace_async
-    async def delete_synonym_map(self, name, **kwargs):
-        # type: (str, **Any) -> None
-        """Delete a named Synonym Map in an Azure Search service
-
-        :param name: The name of the Synonym Map to delete
-        :type name: str
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/async_samples/sample_synonym_map_operations_async.py
-                :start-after: [START delete_synonym_map_async]
-                :end-before: [END delete_synonym_map_async]
-                :language: python
-                :dedent: 4
-                :caption: Delete a Synonym Map
-
-        """
-        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        await self._client.synonym_maps.delete(name, **kwargs)
-
-    @distributed_trace_async
-    async def create_synonym_map(self, name, synonyms, **kwargs):
-        # type: (str, Sequence[str], **Any) -> dict
-        """Create a new Synonym Map in an Azure Search service
-
-        :param name: The name of the Synonym Map to create
-        :type name: str
-        :param synonyms: A list of synonyms in SOLR format
-        :type synonyms: List[str]
-        :return: The created Synonym Map
-        :rtype: dict
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/async_samples/sample_synonym_map_operations_async.py
-                :start-after: [START create_synonym_map_async]
-                :end-before: [END create_synonym_map_async]
-                :language: python
-                :dedent: 4
-                :caption: Create a Synonym Map
-
-        """
-        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        solr_format_synonyms = "\n".join(synonyms)
-        synonym_map = SynonymMap(name=name, synonyms=solr_format_synonyms)
-        result = await self._client.synonym_maps.create(synonym_map, **kwargs)
-        return listize_synonyms(result.as_dict())
-
-    @distributed_trace_async
-    async def create_or_update_synonym_map(self, name, synonyms, **kwargs):
-        # type: (str, Sequence[str], **Any) -> dict
-        """Create a new Synonym Map in an Azure Search service, or update an
-        existing one.
-
-        :param name: The name of the Synonym Map to create or update
-        :type name: str
-        :param synonyms: A list of synonyms in SOLR format
-        :type synonyms: List[str]
-        :return: The created or updated Synonym Map
-        :rtype: dict
-
-        """
-        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        solr_format_synonyms = "\n".join(synonyms)
-        synonym_map = SynonymMap(name=name, synonyms=solr_format_synonyms)
-        result = await self._client.synonym_maps.create_or_update(
-            name, synonym_map, **kwargs
-        )
-        return listize_synonyms(result.as_dict())
+        return self._synonym_maps_client
 
     def get_skillsets_client(self) -> SearchSkillsetsClient:
         """Return a client to perform operations on Skillsets.
