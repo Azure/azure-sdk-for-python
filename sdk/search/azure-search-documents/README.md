@@ -36,20 +36,6 @@ Install the Azure Cognitive Search client library for Python with [pip](https://
 pip install azure-search-documents --pre
 ```
 
-## Key concepts
-
-Azure Cognitive Search has the concepts of search services and indexes and documents, where a search service contains
-one or more indexes that provides persistent storage of searchable data, and data is loaded in the form of JSON documents.
-Data can be pushed to an index from an external data source, but if you use an indexer, it's possible to crawl a data
-source to extract and load data into an index.
-
-There are several types of operations that can be executed against the service:
-
--   [Index management operations](https://docs.microsoft.com/en-us/rest/api/searchservice/index-operations). Create, delete, update, or configure a search index.
--   [Document operations](https://docs.microsoft.com/en-us/rest/api/searchservice/document-operations). Add, update, or delete documents in the index, query the index, or look up specific documents by ID.
--   [Indexer operations](https://docs.microsoft.com/en-us/rest/api/searchservice/indexer-operations). Automate aspects of an indexing operation by configuring a data source and an indexer that you can schedule or run on demand. This feature is supported for a limited number of data source types.
--   [Skillset operations](https://docs.microsoft.com/en-us/rest/api/searchservice/skillset-operations). Part of a cognitive search workload, a skillset defines a series of a series of enrichment processing steps. A skillset is consumed by an indexer.
--   [Synonym map operations](https://docs.microsoft.com/en-us/rest/api/searchservice/synonym-map-operations). A synonym map is a service-level resource that contains user-defined synonyms. This resource is maintained independently from search indexes. Once uploaded, you can point any searchable field to the synonym map (one per field).
 
 ### Authenticate the client
 
@@ -61,22 +47,7 @@ The SDK provides two clients.
 1. SearchClient for all document operations.
 2. SearchServiceClient for all CRUD operations on service resources.
 
-### Create a SearchServiceClient
-
-Once you have the values of the Cognitive Search Service [service endpoint](https://docs.microsoft.com/en-us/azure/search/search-create-service-portal#get-a-key-and-url-endpoint)
-and [api key](https://docs.microsoft.com/en-us/azure/search/search-security-api-keys) you can create the Search Service client:
-
-```python
-from azure.core.credentials import AzureKeyCredential
-from azure.search.documents import SearchServiceClient
-
-credential = AzureKeyCredential("<api key>")
-
-client = SearchServiceClient(endpoint="<service endpoint>"
-                             credential=credential)
-```
-
-### Create a SearchClient
+#### Create a SearchClient
 
 To create a SearchClient, you will need an existing index name as well as the values of the Cognitive Search Service
 [service endpoint](https://docs.microsoft.com/en-us/azure/search/search-create-service-portal#get-a-key-and-url-endpoint) and
@@ -93,6 +64,36 @@ client = SearchClient(endpoint="<service endpoint>",
                       index_name="<index name>",
                       credential=credential)
 ```
+
+#### Create a SearchServiceClient
+
+Once you have the values of the Cognitive Search Service [service endpoint](https://docs.microsoft.com/en-us/azure/search/search-create-service-portal#get-a-key-and-url-endpoint)
+and [api key](https://docs.microsoft.com/en-us/azure/search/search-security-api-keys) you can create the Search Service client:
+
+```python
+from azure.core.credentials import AzureKeyCredential
+from azure.search.documents import SearchServiceClient
+
+credential = AzureKeyCredential("<api key>")
+
+client = SearchServiceClient(endpoint="<service endpoint>"
+                             credential=credential)
+```
+
+## Key concepts
+
+Azure Cognitive Search has the concepts of search services and indexes and documents, where a search service contains
+one or more indexes that provides persistent storage of searchable data, and data is loaded in the form of JSON documents.
+Data can be pushed to an index from an external data source, but if you use an indexer, it's possible to crawl a data
+source to extract and load data into an index.
+
+There are several types of operations that can be executed against the service:
+
+-   [Index management operations](https://docs.microsoft.com/en-us/rest/api/searchservice/index-operations). Create, delete, update, or configure a search index.
+-   [Document operations](https://docs.microsoft.com/en-us/rest/api/searchservice/document-operations). Add, update, or delete documents in the index, query the index, or look up specific documents by ID.
+-   [Indexer operations](https://docs.microsoft.com/en-us/rest/api/searchservice/indexer-operations). Automate aspects of an indexing operation by configuring a data source and an indexer that you can schedule or run on demand. This feature is supported for a limited number of data source types.
+-   [Skillset operations](https://docs.microsoft.com/en-us/rest/api/searchservice/skillset-operations). Part of a cognitive search workload, a skillset defines a series of a series of enrichment processing steps. A skillset is consumed by an indexer.
+-   [Synonym map operations](https://docs.microsoft.com/en-us/rest/api/searchservice/synonym-map-operations). A synonym map is a service-level resource that contains user-defined synonyms. This resource is maintained independently from search indexes. Once uploaded, you can point any searchable field to the synonym map (one per field).
 
 ## Examples
 
