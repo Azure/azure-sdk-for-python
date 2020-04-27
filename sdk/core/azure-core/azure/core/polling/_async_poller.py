@@ -23,7 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import Generic, TypeVar
+from typing import Generic, TypeVar, Any
 from ._poller import NoPolling as _NoPolling
 
 
@@ -34,18 +34,23 @@ class AsyncPollingMethod(Generic[PollingReturnType]):
     """ABC class for polling method.
     """
     def initialize(self, client, initial_response, deserialization_callback):
+        # type: (Any, Any, Any) -> None
         raise NotImplementedError("This method needs to be implemented")
 
     async def run(self):
+        # type: () -> None
         raise NotImplementedError("This method needs to be implemented")
 
     def status(self):
+        # type: () -> str
         raise NotImplementedError("This method needs to be implemented")
 
     def finished(self):
+        # type: () -> bool
         raise NotImplementedError("This method needs to be implemented")
 
     def resource(self):
+        # type: () -> PollingReturnType
         raise NotImplementedError("This method needs to be implemented")
 
 
