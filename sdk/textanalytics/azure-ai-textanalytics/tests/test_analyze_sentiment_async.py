@@ -471,7 +471,7 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
     async def test_document_warnings(self, client):
-        # Can't find examples of warnings with analyze_sentiment. Will update when / if I do
+        # No warnings actually returned for analyze_sentiment. Will update when they add
         docs = [
             {"id": "1", "text": "This won't actually create a warning :'("},
         ]

@@ -423,7 +423,7 @@ class TestRecognizeEntities(TextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
     def test_document_warnings(self, client):
-        # Can't find examples of warnings with recognize_entities. Will update when / if I do
+        # No warnings actually returned for recognize_entities. Will update when they add
         docs = [
             {"id": "1", "text": "This won't actually create a warning :'("},
         ]

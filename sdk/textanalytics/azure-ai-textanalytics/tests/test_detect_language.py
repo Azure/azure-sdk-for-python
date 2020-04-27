@@ -457,7 +457,7 @@ class TestDetectLanguage(TextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
     def test_document_warnings(self, client):
-        # Can't find examples of warnings with detect_language. Will update when / if I do
+        # No warnings actually returned for detect_language. Will update when they add
         docs = [
             {"id": "1", "text": "This won't actually create a warning :'("},
         ]
