@@ -13,7 +13,7 @@
 
 import unittest
 
-import azure.mgmt.resource.subscriptions
+import azure.mgmt.resource
 from devtools_testutils import AzureMgmtTestCase
 
 class MgmtResourceSubscriptionsTest(AzureMgmtTestCase):

@@ -19,7 +19,7 @@
 import unittest
 
 # import azure.mgmt.managementgroups
-import azure.mgmt.resource.resources.v2019_07_01
+import azure.mgmt.resource
 import azure.mgmt.resource.resources.v2019_10_01.models
 import azure.common.exceptions
 from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
