@@ -69,25 +69,25 @@ class DetectedLanguage(DictMixin):
     :param iso6391_name: A two letter representation of the detected
         language according to the ISO 639-1 standard (e.g. en, fr).
     :type iso6391_name: str
-    :param score: A confidence score between 0 and 1. Scores close
+    :param confidence_score: A confidence score between 0 and 1. Scores close
         to 1 indicate 100% certainty that the identified language is true.
-    :type score: float
+    :type confidence_score: float
     """
 
     def __init__(self, **kwargs):
         self.name = kwargs.get("name", None)
         self.iso6391_name = kwargs.get("iso6391_name", None)
-        self.score = kwargs.get("score", None)
+        self.confidence_score = kwargs.get("confidence_score", None)
 
     @classmethod
     def _from_generated(cls, language):
         return cls(
-            name=language.name, iso6391_name=language.iso6391_name, score=language.score
+            name=language.name, iso6391_name=language.iso6391_name, confidence_score=language.confidence_score
         )
 
     def __repr__(self):
         return "DetectedLanguage(name={}, iso6391_name={}, score={})" \
-            .format(self.name, self.iso6391_name, self.score)[:1024]
+            .format(self.name, self.iso6391_name, self.confidence_score)[:1024]
 
 
 class RecognizeEntitiesResult(DictMixin):
