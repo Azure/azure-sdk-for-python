@@ -31,9 +31,9 @@ key = os.getenv("AZURE_SEARCH_API_KEY")
 async def autocomplete_query():
     # [START get_document_async]
     from azure.core.credentials import AzureKeyCredential
-    from azure.search.documents.aio import SearchIndexClient
+    from azure.search.documents.aio import SearchClient
 
-    search_client = SearchIndexClient(service_endpoint, index_name, AzureKeyCredential(key))
+    search_client = SearchClient(service_endpoint, index_name, AzureKeyCredential(key))
 
     async with search_client:
         result = await search_client.get_document(key="23")

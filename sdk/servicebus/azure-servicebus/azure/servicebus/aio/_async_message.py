@@ -3,18 +3,13 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
+import logging
 from typing import Optional
 
 from .._common import message as sync_message
 from .._common.constants import (
-    SETTLEMENT_ABANDON,
-    SETTLEMENT_COMPLETE,
-    SETTLEMENT_DEFER,
-    SETTLEMENT_DEADLETTER,
     ReceiveSettleMode,
     MGMT_RESPONSE_MESSAGE_EXPIRATION,
-    MGMT_REQUEST_DEAD_LETTER_REASON,
-    MGMT_REQUEST_DEAD_LETTER_DESCRIPTION,
     MESSAGE_COMPLETE,
     MESSAGE_DEAD_LETTER,
     MESSAGE_ABANDON,
@@ -24,15 +19,41 @@ from .._common.constants import (
 from .._common.utils import get_running_loop, utc_from_timestamp
 from ..exceptions import MessageSettleFailed
 
+_LOGGER = logging.getLogger(__name__)
+
 
 class ReceivedMessage(sync_message.ReceivedMessage):
     """A Service Bus Message received from service side.
 
     """
 
-    def __init__(self, message, mode=ReceiveSettleMode.PeekLock, loop=None):
+    def __init__(self, message, mode=ReceiveSettleMode.PeekLock, loop=None, **kwargs):
         self._loop = loop or get_running_loop()
-        super(ReceivedMessage, self).__init__(message=message, mode=mode)
+        super(ReceivedMessage, self).__init__(message=message, mode=mode, **kwargs)
+
+    async def _settle_message(
+            self,
+            settle_operation,
+            dead_letter_details=None
+    ):
+        try:
+            if not self._is_deferred_message:
+                try:
+                    await self._loop.run_in_executor(
+                        None,
+                        self._settle_via_receiver_link(settle_operation, dead_letter_details)
+                    )
+                    return
+                except RuntimeError as exception:
+                    _LOGGER.info(
+                        "Message settling: %r has encountered an exception (%r)."
+                        "Trying to settle through management link",
+                        settle_operation,
+                        exception
+                    )
+            await self._settle_via_mgmt_link(settle_operation, dead_letter_details)()
+        except Exception as e:
+            raise MessageSettleFailed(settle_operation, e)
 
     async def complete(self):
         # type: () -> None
@@ -47,11 +68,8 @@ class ReceivedMessage(sync_message.ReceivedMessage):
         :raises: ~azure.servicebus.common.errors.MessageSettleFailed if message settle operation fails.
         """
         # pylint: disable=protected-access
-        self._check_live(MESSAGE_COMPLETE)
-        try:
-            await self._receiver._settle_message(SETTLEMENT_COMPLETE, [self.lock_token])
-        except Exception as e:
-            raise MessageSettleFailed(MESSAGE_COMPLETE, e)
+        self._is_live(MESSAGE_COMPLETE)
+        await self._settle_message(MESSAGE_COMPLETE)
         self._settled = True
 
     async def dead_letter(self, reason=None, description=None):
@@ -70,18 +88,8 @@ class ReceivedMessage(sync_message.ReceivedMessage):
         :raises: ~azure.servicebus.common.errors.MessageSettleFailed if message settle operation fails.
         """
         # pylint: disable=protected-access
-        self._check_live(MESSAGE_DEAD_LETTER)
-        details = {
-            MGMT_REQUEST_DEAD_LETTER_REASON: str(reason) if reason else "",
-            MGMT_REQUEST_DEAD_LETTER_DESCRIPTION: str(description) if description else ""}
-        try:
-            await self._receiver._settle_message(
-                SETTLEMENT_DEADLETTER,
-                [self.lock_token],
-                dead_letter_details=details
-            )
-        except Exception as e:
-            raise MessageSettleFailed(MESSAGE_DEAD_LETTER, e)
+        self._is_live(MESSAGE_DEAD_LETTER)
+        await self._settle_message(MESSAGE_DEAD_LETTER)
         self._settled = True
 
     async def abandon(self):
@@ -94,11 +102,8 @@ class ReceivedMessage(sync_message.ReceivedMessage):
         :raises: ~azure.servicebus.common.errors.MessageSettleFailed if message settle operation fails.
         """
         # pylint: disable=protected-access
-        self._check_live(MESSAGE_ABANDON)
-        try:
-            await self._receiver._settle_message(SETTLEMENT_ABANDON, [self.lock_token])
-        except Exception as e:
-            raise MessageSettleFailed(MESSAGE_ABANDON, e)
+        self._is_live(MESSAGE_ABANDON)
+        await self._settle_message(MESSAGE_ABANDON)
         self._settled = True
 
     async def defer(self):
@@ -111,11 +116,8 @@ class ReceivedMessage(sync_message.ReceivedMessage):
         :raises: ~azure.servicebus.common.errors.MessageSettleFailed if message settle operation fails.
         """
         # pylint: disable=protected-access
-        self._check_live(MESSAGE_DEFER)
-        try:
-            await self._receiver._settle_message(SETTLEMENT_DEFER, [self.lock_token])
-        except Exception as e:
-            raise MessageSettleFailed(MESSAGE_DEFER, e)
+        self._is_live(MESSAGE_DEFER)
+        await self._settle_message(MESSAGE_DEFER)
         self._settled = True
 
     async def renew_lock(self):

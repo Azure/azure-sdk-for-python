@@ -235,13 +235,12 @@ class ServiceBusSender(BaseHandlerAsync, SenderMixin):
         )
         return cls(**constructor_args)
 
-    async def send(self, message, timeout=None):
-        # type: (Message, float) -> None
+    async def send(self, message):
+        # type: (Union[Message, BatchMessage]) -> None
         """Sends message and blocks until acknowledgement is received or operation times out.
 
         :param message: The ServiceBus message to be sent.
-        :type message: ~azure.servicebus.Message
-        :param float timeout: The maximum wait time to send the event data.
+        :type message: ~azure.servicebus.Message or ~azure.servicebus.BatchMessage
         :rtype: None
         :raises: ~azure.servicebus.common.errors.MessageSendFailed if the message fails to
          send or ~azure.servicebus.common.errors.OperationTimeoutError if sending times out.
@@ -264,7 +263,6 @@ class ServiceBusSender(BaseHandlerAsync, SenderMixin):
         await self._do_retryable_operation(
             self._send,
             message=message,
-            timeout=timeout,
             require_timeout=True,
             require_last_exception=True
         )

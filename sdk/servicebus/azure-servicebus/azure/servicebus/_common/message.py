@@ -6,10 +6,12 @@
 
 import datetime
 import uuid
+import functools
+import logging
 from typing import Optional, List, Union, Generator
 
 import uamqp
-from uamqp import types
+from uamqp import types, errors
 
 from .constants import (
     _BATCH_MESSAGE_OVERHEAD_COST,
@@ -34,7 +36,8 @@ from .constants import (
     MESSAGE_DEAD_LETTER,
     MESSAGE_ABANDON,
     MESSAGE_DEFER,
-    MESSAGE_RENEW_LOCK
+    MESSAGE_RENEW_LOCK,
+    DEADLETTERNAME
 )
 from ..exceptions import (
     MessageAlreadySettled,
@@ -43,6 +46,8 @@ from ..exceptions import (
     MessageSettleFailed
 )
 from .utils import utc_from_timestamp, utc_now
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class Message(object):  # pylint: disable=too-many-public-methods,too-many-instance-attributes
@@ -436,12 +441,13 @@ class ReceivedMessage(PeekMessage):
             :dedent: 4
             :caption: Checking the properties on a received message.
     """
-    def __init__(self, message, mode=ReceiveSettleMode.PeekLock):
+    def __init__(self, message, mode=ReceiveSettleMode.PeekLock, **kwargs):
         super(ReceivedMessage, self).__init__(message=message)
         self._settled = (mode == ReceiveSettleMode.ReceiveAndDelete)
+        self._is_deferred_message = kwargs.get("is_deferred_message", False)
         self.auto_renew_error = None
 
-    def _check_live(self, action):
+    def _is_live(self, action):
         # pylint: disable=no-member
         if not self._receiver or not self._receiver._running:  # pylint: disable=protected-access
             raise MessageSettleFailed(action, "Orphan message had no open connection.")
@@ -457,6 +463,69 @@ class ReceivedMessage(PeekMessage):
                 raise SessionLockExpired(inner_exception=self._receiver.session.auto_renew_error)
         except AttributeError:
             pass
+
+    def _settle_message(
+            self,
+            settle_operation,
+            dead_letter_details=None
+    ):
+        try:
+            if not self._is_deferred_message:
+                try:
+                    self._settle_via_receiver_link(settle_operation, dead_letter_details)()
+                    return
+                except RuntimeError as exception:
+                    _LOGGER.info(
+                        "Message settling: %r has encountered an exception (%r)."
+                        "Trying to settle through management link",
+                        settle_operation,
+                        exception
+                    )
+            self._settle_via_mgmt_link(settle_operation, dead_letter_details)()
+        except Exception as e:
+            raise MessageSettleFailed(settle_operation, e)
+
+    def _settle_via_mgmt_link(self, settle_operation, dead_letter_details=None):
+        # pylint: disable=protected-access
+        if settle_operation == MESSAGE_COMPLETE:
+            return functools.partial(
+                self._receiver._settle_message,
+                SETTLEMENT_COMPLETE,
+                [self.lock_token],
+            )
+        if settle_operation == MESSAGE_ABANDON:
+            return functools.partial(
+                self._receiver._settle_message,
+                SETTLEMENT_ABANDON,
+                [self.lock_token],
+            )
+        if settle_operation == MESSAGE_DEAD_LETTER:
+            return functools.partial(
+                self._receiver._settle_message,
+                SETTLEMENT_DEADLETTER,
+                [self.lock_token],
+                dead_letter_details=dead_letter_details
+            )
+        if settle_operation == MESSAGE_DEFER:
+            return functools.partial(
+                self._receiver._settle_message,
+                SETTLEMENT_DEFER,
+                [self.lock_token],
+            )
+        raise ValueError("Unsupported settle operation type: {}".format(settle_operation))
+
+    def _settle_via_receiver_link(self, settle_operation, dead_letter_details=None):
+        if settle_operation == MESSAGE_COMPLETE:
+            return functools.partial(self.message.accept)
+        if settle_operation == MESSAGE_ABANDON:
+            return functools.partial(self.message.modify, True, False)
+        if settle_operation == MESSAGE_DEAD_LETTER:
+            # note: message.reject() can not set reason and description properly due to the issue
+            # https://github.com/Azure/azure-uamqp-python/issues/155
+            return functools.partial(self.message.reject, condition=DEADLETTERNAME)
+        if settle_operation == MESSAGE_DEFER:
+            return functools.partial(self.message.modify, True, True)
+        raise ValueError("Unsupported settle operation type: {}".format(settle_operation))
 
     @property
     def settled(self):
@@ -535,11 +604,9 @@ class ReceivedMessage(PeekMessage):
         :raises: ~azure.servicebus.common.errors.SessionLockExpired if session lock has already expired.
         :raises: ~azure.servicebus.common.errors.MessageSettleFailed if message settle operation fails.
         """
-        self._check_live(MESSAGE_COMPLETE)
-        try:
-            self._receiver._settle_message(SETTLEMENT_COMPLETE, [self.lock_token])  # pylint: disable=protected-access
-        except Exception as e:
-            raise MessageSettleFailed(MESSAGE_COMPLETE, e)
+        # pylint: disable=protected-access
+        self._is_live(MESSAGE_COMPLETE)
+        self._settle_message(MESSAGE_COMPLETE)
         self._settled = True
 
     def dead_letter(self, reason=None, description=None):
@@ -559,18 +626,13 @@ class ReceivedMessage(PeekMessage):
         :raises: ~azure.servicebus.common.errors.MessageSettleFailed if message settle operation fails.
         """
         # pylint: disable=protected-access
-        self._check_live(MESSAGE_DEAD_LETTER)
+        self._is_live(MESSAGE_DEAD_LETTER)
+
         details = {
             MGMT_REQUEST_DEAD_LETTER_REASON: str(reason) if reason else "",
             MGMT_REQUEST_DEAD_LETTER_DESCRIPTION: str(description) if description else ""}
-        try:
-            self._receiver._settle_message(
-                SETTLEMENT_DEADLETTER,
-                [self.lock_token],
-                dead_letter_details=details
-            )
-        except Exception as e:
-            raise MessageSettleFailed(MESSAGE_DEAD_LETTER, e)
+
+        self._settle_message(MESSAGE_DEAD_LETTER, dead_letter_details=details)
         self._settled = True
 
     def abandon(self):
@@ -585,11 +647,9 @@ class ReceivedMessage(PeekMessage):
         :raises: ~azure.servicebus.common.errors.SessionLockExpired if session lock has already expired.
         :raises: ~azure.servicebus.common.errors.MessageSettleFailed if message settle operation fails.
         """
-        self._check_live(MESSAGE_ABANDON)
-        try:
-            self._receiver._settle_message(SETTLEMENT_ABANDON, [self.lock_token])  # pylint: disable=protected-access
-        except Exception as e:
-            raise MessageSettleFailed(MESSAGE_ABANDON, e)
+        # pylint: disable=protected-access
+        self._is_live(MESSAGE_ABANDON)
+        self._settle_message(MESSAGE_ABANDON)
         self._settled = True
 
     def defer(self):
@@ -605,11 +665,8 @@ class ReceivedMessage(PeekMessage):
         :raises: ~azure.servicebus.common.errors.SessionLockExpired if session lock has already expired.
         :raises: ~azure.servicebus.common.errors.MessageSettleFailed if message settle operation fails.
         """
-        self._check_live(MESSAGE_DEFER)
-        try:
-            self._receiver._settle_message(SETTLEMENT_DEFER, [self.lock_token])  # pylint: disable=protected-access
-        except Exception as e:
-            raise MessageSettleFailed(MESSAGE_DEFER, e)
+        self._is_live(MESSAGE_DEFER)
+        self._settle_message(MESSAGE_DEFER)
         self._settled = True
 
     def renew_lock(self):
@@ -633,7 +690,7 @@ class ReceivedMessage(PeekMessage):
                 raise TypeError("Session messages cannot be renewed. Please renew the Session lock instead.")
         except AttributeError:
             pass
-        self._check_live(MESSAGE_RENEW_LOCK)
+        self._is_live(MESSAGE_RENEW_LOCK)
         token = self.lock_token
         if not token:
             raise ValueError("Unable to renew lock - no lock token found.")

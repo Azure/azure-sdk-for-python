@@ -1,5 +1,8 @@
 # Change Log azure-ai-formrecognizer
 
+## 1.0.0b2 (Unreleased)
+
+
 ## 1.0.0b1 (2020-04-23)
 
 Version (1.0.0b1) is the first preview of our efforts to create a user-friendly and Pythonic client library for Azure Form Recognizer. 
