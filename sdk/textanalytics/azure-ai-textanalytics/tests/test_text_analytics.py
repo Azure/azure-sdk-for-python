@@ -83,6 +83,7 @@ class TextAnalyticsTest(TestAnalyticsTestCase):
             _models.SentimentConfidenceScores(positive=0.99, neutral=0.05, negative=0.02)
 
         sentence_sentiment = _models.SentenceSentiment(
+            text="This is a sentence.",
             sentiment="neutral",
             confidence_scores=sentiment_confidence_score_per_label,
             grapheme_offset=0,
@@ -154,7 +155,7 @@ class TextAnalyticsTest(TestAnalyticsTestCase):
                          "transaction_count=18), is_error=False)", repr(recognize_linked_entities_result))
         self.assertEqual("SentimentConfidenceScores(positive=0.99, neutral=0.05, negative=0.02)",
                          repr(sentiment_confidence_score_per_label))
-        self.assertEqual("SentenceSentiment(sentiment=neutral, confidence_scores=SentimentConfidenceScores("
+        self.assertEqual("SentenceSentiment(text=This is a sentence., sentiment=neutral, confidence_scores=SentimentConfidenceScores("
                          "positive=0.99, neutral=0.05, negative=0.02), grapheme_offset=0, grapheme_length=10)",
                          repr(sentence_sentiment))
         self.assertEqual("AnalyzeSentimentResult(id=1, sentiment=positive, "
@@ -163,7 +164,7 @@ class TextAnalyticsTest(TestAnalyticsTestCase):
                          "statistics=TextDocumentStatistics("
                          "grapheme_count=14, transaction_count=18), confidence_scores=SentimentConfidenceScores"
                          "(positive=0.99, neutral=0.05, negative=0.02), "
-                         "sentences=[SentenceSentiment(sentiment=neutral, confidence_scores="
+                         "sentences=[SentenceSentiment(text=This is a sentence., sentiment=neutral, confidence_scores="
                          "SentimentConfidenceScores(positive=0.99, neutral=0.05, negative=0.02), "
                          "grapheme_offset=0, grapheme_length=10)], "
                          "is_error=False)",

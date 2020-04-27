@@ -4,6 +4,7 @@
 
 **New features**
 - We now have a `warnings` property on each document-level response object returned from the endpoints. It is a list of `TextAnalyticsWarning`s.
+- Added `text` property to `SentenceSentiment`
 
 **Breaking changes**
 - `score` attribute of `DetectedLanguage` has been renamed to `confidence_score`

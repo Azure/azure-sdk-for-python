@@ -47,6 +47,15 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
             self.assertIsNotNone(doc.confidence_scores)
             self.assertIsNotNone(doc.sentences)
 
+        self.assertEqual(len(response[0].sentences), 1)
+        self.assertEqual(response[0].sentences[0].text, "Microsoft was founded by Bill Gates and Paul Allen.")
+        self.assertEqual(len(response[1].sentences), 2)
+        self.assertEqual(response[1].sentences[0].text, "I did not like the hotel we stayed at.")
+        self.assertEqual(response[1].sentences[1].text, "It was too expensive.")
+        self.assertEqual(len(response[2].sentences), 2)
+        self.assertEqual(response[2].sentences[0].text, "The restaurant had really good food.")
+        self.assertEqual(response[2].sentences[1].text, "I recommend you try it.")
+
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
     def test_all_successful_passing_text_document_input(self, client):
@@ -64,6 +73,15 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
         for doc in response:
             self.assertIsNotNone(doc.confidence_scores)
             self.assertIsNotNone(doc.sentences)
+
+        self.assertEqual(len(response[0].sentences), 1)
+        self.assertEqual(response[0].sentences[0].text, "Microsoft was founded by Bill Gates and Paul Allen.")
+        self.assertEqual(len(response[1].sentences), 2)
+        self.assertEqual(response[1].sentences[0].text, "I did not like the hotel we stayed at.")
+        self.assertEqual(response[1].sentences[1].text, "It was too expensive.")
+        self.assertEqual(len(response[2].sentences), 2)
+        self.assertEqual(response[2].sentences[0].text, "The restaurant had really good food.")
+        self.assertEqual(response[2].sentences[1].text, "I recommend you try it.")
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
