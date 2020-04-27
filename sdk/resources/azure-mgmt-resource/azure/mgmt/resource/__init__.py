@@ -6,16 +6,14 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._application_client import ApplicationClient
-
-# [ZIM] imports below are added manually to enable testing, multi-api client generation must be fixed
-from .deploymentscripts.v2019_10_preview._deployment_scripts_client import DeploymentScriptsClient
-from .features.v2015_12_01._feature_client import FeatureClient
-from .links.v2016_09_01._management_link_client import ManagementLinkClient
-from .locks.v2016_09_01._management_lock_client import ManagementLockClient
-from .policy.v2019_09_01._policy_client import PolicyClient
-from .resources.v2019_10_01._resource_management_client import ResourceManagementClient
-from .subscriptions.v2019_11_01._subscription_client import SubscriptionClient
+from .managedapplications import ApplicationClient
+from .deploymentscripts import DeploymentScriptsClient
+from .features import FeatureClient
+from .links import ManagementLinkClient
+from .locks import ManagementLockClient
+from .policy import PolicyClient
+from .resources import ResourceManagementClient
+from .subscriptions import SubscriptionClient
 __all__ = ['ApplicationClient',
            'DeploymentScriptsClient',
            'FeatureClient',
