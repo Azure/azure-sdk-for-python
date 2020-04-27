@@ -8,12 +8,13 @@
 
 from enum import Enum
 
-class ResourceIdentityType(str, Enum):
-    """The identity type.
+class PolicyMode(str, Enum):
+    """The policy definition mode. Possible values are NotSpecified, Indexed, and All.
     """
 
-    system_assigned = "SystemAssigned"
-    none = "None"
+    not_specified = "NotSpecified"
+    indexed = "Indexed"
+    all = "All"
 
 class PolicyType(str, Enum):
     """The type of policy definition. Possible values are NotSpecified, BuiltIn, and Custom.
@@ -23,10 +24,9 @@ class PolicyType(str, Enum):
     built_in = "BuiltIn"
     custom = "Custom"
 
-class PolicyMode(str, Enum):
-    """The policy definition mode. Possible values are NotSpecified, Indexed, and All.
+class ResourceIdentityType(str, Enum):
+    """The identity type.
     """
 
-    not_specified = "NotSpecified"
-    indexed = "Indexed"
-    all = "All"
+    system_assigned = "SystemAssigned"
+    none = "None"

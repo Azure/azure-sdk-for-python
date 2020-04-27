@@ -8,13 +8,6 @@
 
 from enum import Enum
 
-class ResourceIdentityType(str, Enum):
-    """The identity type.
-    """
-
-    system_assigned = "SystemAssigned"
-    none = "None"
-
 class EnforcementMode(str, Enum):
     """The policy assignment enforcement mode. Possible values are Default and DoNotEnforce.
     """
@@ -29,3 +22,10 @@ class PolicyType(str, Enum):
     not_specified = "NotSpecified"
     built_in = "BuiltIn"
     custom = "Custom"
+
+class ResourceIdentityType(str, Enum):
+    """The identity type.
+    """
+
+    system_assigned = "SystemAssigned"
+    none = "None"

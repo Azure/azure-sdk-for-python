@@ -8,14 +8,6 @@
 
 from enum import Enum
 
-class PolicyType(str, Enum):
-    """The type of policy definition. Possible values are NotSpecified, BuiltIn, and Custom.
-    """
-
-    not_specified = "NotSpecified"
-    built_in = "BuiltIn"
-    custom = "Custom"
-
 class PolicyMode(str, Enum):
     """The policy definition mode. Possible values are NotSpecified, Indexed, and All.
     """
@@ -23,3 +15,11 @@ class PolicyMode(str, Enum):
     not_specified = "NotSpecified"
     indexed = "Indexed"
     all = "All"
+
+class PolicyType(str, Enum):
+    """The type of policy definition. Possible values are NotSpecified, BuiltIn, and Custom.
+    """
+
+    not_specified = "NotSpecified"
+    built_in = "BuiltIn"
+    custom = "Custom"

@@ -147,7 +147,7 @@ class ResourceLinkFilter(msrest.serialization.Model):
         **kwargs
     ):
         super(ResourceLinkFilter, self).__init__(**kwargs)
-        self.target_id = kwargs.get('target_id', None)
+        self.target_id = kwargs['target_id']
 
 
 class ResourceLinkProperties(msrest.serialization.Model):
@@ -182,7 +182,7 @@ class ResourceLinkProperties(msrest.serialization.Model):
     ):
         super(ResourceLinkProperties, self).__init__(**kwargs)
         self.source_id = None
-        self.target_id = kwargs.get('target_id', None)
+        self.target_id = kwargs['target_id']
         self.notes = kwargs.get('notes', None)
 
 
@@ -214,5 +214,5 @@ class ResourceLinkResult(msrest.serialization.Model):
         **kwargs
     ):
         super(ResourceLinkResult, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
+        self.value = kwargs['value']
         self.next_link = None

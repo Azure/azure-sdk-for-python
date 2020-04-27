@@ -23,6 +23,17 @@ class AliasType(str, Enum):
     plain_text = "PlainText"  #: Alias value is not secret.
     mask = "Mask"  #: Alias value is secret.
 
+class ChangeType(str, Enum):
+    """Type of change that will be made to the resource when the deployment is executed.
+    """
+
+    create = "Create"  #: The resource does not exist in the current state but is present in the desired state. The resource will be created when the deployment is executed.
+    delete = "Delete"  #: The resource exists in the current state and is missing from the desired state. The resource will be deleted when the deployment is executed.
+    ignore = "Ignore"  #: The resource exists in the current state and is missing from the desired state. The resource will not be deployed or modified when the deployment is executed.
+    deploy = "Deploy"  #: The resource exists in the current state and the desired state and will be redeployed when the deployment is executed. The properties of the resource may or may not change.
+    no_change = "NoChange"  #: The resource exists in the current state and the desired state and will be redeployed when the deployment is executed. The properties of the resource will not change.
+    modify = "Modify"  #: The resource exists in the current state and the desired state and will be redeployed when the deployment is executed. The properties of the resource will change.
+
 class DeploymentMode(str, Enum):
     """The mode that is used to deploy resources. This value can be either Incremental or Complete. In
     Incremental mode, resources are deployed without deleting existing resources that are not
@@ -51,17 +62,6 @@ class PropertyChangeType(str, Enum):
     modify = "Modify"  #: The property exists in both current and desired state and is different. The value of the property will change when the deployment is executed.
     array = "Array"  #: The property is an array and contains nested changes.
 
-class ChangeType(str, Enum):
-    """Type of change that will be made to the resource when the deployment is executed.
-    """
-
-    create = "Create"  #: The resource does not exist in the current state but is present in the desired state. The resource will be created when the deployment is executed.
-    delete = "Delete"  #: The resource exists in the current state and is missing from the desired state. The resource will be deleted when the deployment is executed.
-    ignore = "Ignore"  #: The resource exists in the current state and is missing from the desired state. The resource will not be deployed or modified when the deployment is executed.
-    deploy = "Deploy"  #: The resource exists in the current state and the desired state and will be redeployed when the deployment is executed. The properties of the resource may or may not change.
-    no_change = "NoChange"  #: The resource exists in the current state and the desired state and will be redeployed when the deployment is executed. The properties of the resource will not change.
-    modify = "Modify"  #: The resource exists in the current state and the desired state and will be redeployed when the deployment is executed. The properties of the resource will change.
-
 class ProvisioningOperation(str, Enum):
     """The name of the current provisioning operation.
     """
@@ -77,6 +77,15 @@ class ProvisioningOperation(str, Enum):
     evaluate_deployment_output = "EvaluateDeploymentOutput"  #: The provisioning operation is evaluate output.
     deployment_cleanup = "DeploymentCleanup"  #: The provisioning operation is cleanup. This operation is part of the 'complete' mode deployment.
 
+class ResourceIdentityType(str, Enum):
+    """The identity type.
+    """
+
+    system_assigned = "SystemAssigned"
+    user_assigned = "UserAssigned"
+    system_assigned_user_assigned = "SystemAssigned, UserAssigned"
+    none = "None"
+
 class TagsPatchResourceOperation(str, Enum):
     """The operation type for the patch API.
     """
@@ -91,12 +100,3 @@ class WhatIfResultFormat(str, Enum):
 
     resource_id_only = "ResourceIdOnly"
     full_resource_payloads = "FullResourcePayloads"
-
-class ResourceIdentityType(str, Enum):
-    """The identity type.
-    """
-
-    system_assigned = "SystemAssigned"
-    user_assigned = "UserAssigned"
-    system_assigned_user_assigned = "SystemAssigned, UserAssigned"
-    none = "None"

@@ -8,6 +8,13 @@
 
 from enum import Enum
 
+class RegionCategory(str, Enum):
+    """The category of the region.
+    """
+
+    recommended = "Recommended"
+    other = "Other"
+
 class RegionType(str, Enum):
     """The type of the region.
     """
@@ -15,12 +22,13 @@ class RegionType(str, Enum):
     physical = "Physical"
     logical = "Logical"
 
-class RegionCategory(str, Enum):
-    """The category of the region.
+class SpendingLimit(str, Enum):
+    """The subscription spending limit.
     """
 
-    recommended = "Recommended"
-    other = "Other"
+    on = "On"
+    off = "Off"
+    current_period_off = "CurrentPeriodOff"
 
 class SubscriptionState(str, Enum):
     """The subscription state. Possible values are Enabled, Warned, PastDue, Disabled, and Deleted.
@@ -31,14 +39,6 @@ class SubscriptionState(str, Enum):
     past_due = "PastDue"
     disabled = "Disabled"
     deleted = "Deleted"
-
-class SpendingLimit(str, Enum):
-    """The subscription spending limit.
-    """
-
-    on = "On"
-    off = "Off"
-    current_period_off = "CurrentPeriodOff"
 
 class TenantCategory(str, Enum):
     """Category of the tenant.

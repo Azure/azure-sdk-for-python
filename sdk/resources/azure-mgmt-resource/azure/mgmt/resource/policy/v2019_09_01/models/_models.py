@@ -95,7 +95,7 @@ class Identity(msrest.serialization.Model):
     :ivar tenant_id: The tenant ID of the resource identity.
     :vartype tenant_id: str
     :param type: The identity type. This is the only required field when adding a system assigned
-     identity to a resource. Possible values include: 'SystemAssigned', 'None'.
+     identity to a resource. Possible values include: "SystemAssigned", "None".
     :type type: str or ~azure.mgmt.resource.policy.v2019_09_01.models.ResourceIdentityType
     """
 
@@ -123,8 +123,8 @@ class Identity(msrest.serialization.Model):
 class ParameterDefinitionsValue(msrest.serialization.Model):
     """The definition of a parameter that can be provided to the policy.
 
-    :param type: The data type of the parameter. Possible values include: 'String', 'Array',
-     'Object', 'Boolean', 'Integer', 'Float', 'DateTime'.
+    :param type: The data type of the parameter. Possible values include: "String", "Array",
+     "Object", "Boolean", "Integer", "Float", "DateTime".
     :type type: str or ~azure.mgmt.resource.policy.v2019_09_01.models.ParameterType
     :param allowed_values: The allowed values for the parameter.
     :type allowed_values: list[object]
@@ -237,7 +237,7 @@ class PolicyAssignment(msrest.serialization.Model):
      typically a collection of key value pairs.
     :type metadata: object
     :param enforcement_mode: The policy assignment enforcement mode. Possible values are Default
-     and DoNotEnforce. Possible values include: 'Default', 'DoNotEnforce'.
+     and DoNotEnforce. Possible values include: "Default", "DoNotEnforce".
     :type enforcement_mode: str or ~azure.mgmt.resource.policy.v2019_09_01.models.EnforcementMode
     """
 
@@ -320,7 +320,7 @@ class PolicyDefinition(msrest.serialization.Model):
     :ivar type: The type of the resource (Microsoft.Authorization/policyDefinitions).
     :vartype type: str
     :param policy_type: The type of policy definition. Possible values are NotSpecified, BuiltIn,
-     Custom, and Static. Possible values include: 'NotSpecified', 'BuiltIn', 'Custom', 'Static'.
+     Custom, and Static. Possible values include: "NotSpecified", "BuiltIn", "Custom", "Static".
     :type policy_type: str or ~azure.mgmt.resource.policy.v2019_09_01.models.PolicyType
     :param mode: The policy definition mode. Some examples are All, Indexed,
      Microsoft.KeyVault.Data.
@@ -411,7 +411,7 @@ class PolicyDefinitionGroup(msrest.serialization.Model):
         **kwargs
     ):
         super(PolicyDefinitionGroup, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
+        self.name = kwargs['name']
         self.display_name = kwargs.get('display_name', None)
         self.category = kwargs.get('category', None)
         self.description = kwargs.get('description', None)
@@ -476,7 +476,7 @@ class PolicyDefinitionReference(msrest.serialization.Model):
         **kwargs
     ):
         super(PolicyDefinitionReference, self).__init__(**kwargs)
-        self.policy_definition_id = kwargs.get('policy_definition_id', None)
+        self.policy_definition_id = kwargs['policy_definition_id']
         self.parameters = kwargs.get('parameters', None)
         self.policy_definition_reference_id = kwargs.get('policy_definition_reference_id', None)
         self.group_names = kwargs.get('group_names', None)
@@ -494,7 +494,7 @@ class PolicySetDefinition(msrest.serialization.Model):
     :ivar type: The type of the resource (Microsoft.Authorization/policySetDefinitions).
     :vartype type: str
     :param policy_type: The type of policy definition. Possible values are NotSpecified, BuiltIn,
-     Custom, and Static. Possible values include: 'NotSpecified', 'BuiltIn', 'Custom', 'Static'.
+     Custom, and Static. Possible values include: "NotSpecified", "BuiltIn", "Custom", "Static".
     :type policy_type: str or ~azure.mgmt.resource.policy.v2019_09_01.models.PolicyType
     :param display_name: The display name of the policy set definition.
     :type display_name: str
@@ -600,5 +600,5 @@ class PolicySku(msrest.serialization.Model):
         **kwargs
     ):
         super(PolicySku, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
+        self.name = kwargs['name']
         self.tier = kwargs.get('tier', None)

@@ -184,7 +184,7 @@ class Subscription(msrest.serialization.Model):
     :ivar display_name: The subscription display name.
     :vartype display_name: str
     :ivar state: The subscription state. Possible values are Enabled, Warned, PastDue, Disabled,
-     and Deleted. Possible values include: 'Enabled', 'Warned', 'PastDue', 'Disabled', 'Deleted'.
+     and Deleted. Possible values include: "Enabled", "Warned", "PastDue", "Disabled", "Deleted".
     :vartype state: str or ~azure.mgmt.resource.subscriptions.v2016_06_01.models.SubscriptionState
     :param subscription_policies: The subscription policies.
     :type subscription_policies:
@@ -270,8 +270,8 @@ class SubscriptionPolicies(msrest.serialization.Model):
     :vartype location_placement_id: str
     :ivar quota_id: The subscription quota ID.
     :vartype quota_id: str
-    :ivar spending_limit: The subscription spending limit. Possible values include: 'On', 'Off',
-     'CurrentPeriodOff'.
+    :ivar spending_limit: The subscription spending limit. Possible values include: "On", "Off",
+     "CurrentPeriodOff".
     :vartype spending_limit: str or
      ~azure.mgmt.resource.subscriptions.v2016_06_01.models.SpendingLimit
     """

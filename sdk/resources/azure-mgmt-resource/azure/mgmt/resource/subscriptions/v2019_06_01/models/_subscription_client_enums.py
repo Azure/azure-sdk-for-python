@@ -8,6 +8,14 @@
 
 from enum import Enum
 
+class SpendingLimit(str, Enum):
+    """The subscription spending limit.
+    """
+
+    on = "On"
+    off = "Off"
+    current_period_off = "CurrentPeriodOff"
+
 class SubscriptionState(str, Enum):
     """The subscription state. Possible values are Enabled, Warned, PastDue, Disabled, and Deleted.
     """
@@ -17,14 +25,6 @@ class SubscriptionState(str, Enum):
     past_due = "PastDue"
     disabled = "Disabled"
     deleted = "Deleted"
-
-class SpendingLimit(str, Enum):
-    """The subscription spending limit.
-    """
-
-    on = "On"
-    off = "Off"
-    current_period_off = "CurrentPeriodOff"
 
 class TenantCategory(str, Enum):
     """The tenant category.

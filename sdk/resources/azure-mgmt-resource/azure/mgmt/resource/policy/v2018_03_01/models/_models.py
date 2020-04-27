@@ -140,10 +140,10 @@ class PolicyDefinition(msrest.serialization.Model):
     :ivar type: The type of the resource (Microsoft.Authorization/policyDefinitions).
     :vartype type: str
     :param policy_type: The type of policy definition. Possible values are NotSpecified, BuiltIn,
-     and Custom. Possible values include: 'NotSpecified', 'BuiltIn', 'Custom'.
+     and Custom. Possible values include: "NotSpecified", "BuiltIn", "Custom".
     :type policy_type: str or ~azure.mgmt.resource.policy.v2018_03_01.models.PolicyType
     :param mode: The policy definition mode. Possible values are NotSpecified, Indexed, and All.
-     Possible values include: 'NotSpecified', 'Indexed', 'All'.
+     Possible values include: "NotSpecified", "Indexed", "All".
     :type mode: str or ~azure.mgmt.resource.policy.v2018_03_01.models.PolicyMode
     :param display_name: The display name of the policy definition.
     :type display_name: str
@@ -251,7 +251,7 @@ class PolicySetDefinition(msrest.serialization.Model):
     :ivar type: The type of the resource (Microsoft.Authorization/policySetDefinitions).
     :vartype type: str
     :param policy_type: The type of policy definition. Possible values are NotSpecified, BuiltIn,
-     and Custom. Possible values include: 'NotSpecified', 'BuiltIn', 'Custom'.
+     and Custom. Possible values include: "NotSpecified", "BuiltIn", "Custom".
     :type policy_type: str or ~azure.mgmt.resource.policy.v2018_03_01.models.PolicyType
     :param display_name: The display name of the policy set definition.
     :type display_name: str
@@ -349,5 +349,5 @@ class PolicySku(msrest.serialization.Model):
         **kwargs
     ):
         super(PolicySku, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
+        self.name = kwargs['name']
         self.tier = kwargs.get('tier', None)

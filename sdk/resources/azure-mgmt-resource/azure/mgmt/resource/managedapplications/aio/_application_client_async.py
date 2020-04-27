@@ -25,15 +25,16 @@ class ApplicationClient(object):
     :ivar application_definitions: ApplicationDefinitionsOperations operations
     :vartype application_definitions: azure.mgmt.resource.managedapplications.aio.operations_async.ApplicationDefinitionsOperations
     :param credential: Credential needed for the client to connect to Azure.
-    :type credential: azure.core.credentials.TokenCredential
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The ID of the target subscription.
     :type subscription_id: str
     :param str base_url: Service URL
+    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
 
     def __init__(
         self,
-        credential: "TokenCredential",
+        credential: "AsyncTokenCredential",
         subscription_id: str,
         base_url: Optional[str] = None,
         **kwargs: Any

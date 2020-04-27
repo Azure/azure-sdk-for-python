@@ -8,3 +8,9 @@
 
 from ._feature_client import FeatureClient
 __all__ = ['FeatureClient']
+
+try:
+    from ._patch import patch_sdk
+    patch_sdk()
+except ImportError:
+    pass

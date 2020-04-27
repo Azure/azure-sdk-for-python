@@ -142,8 +142,8 @@ class Application(GenericResource):
     :ivar outputs: Name and value pairs that define the managed application outputs.
     :vartype outputs: object
     :ivar provisioning_state: The managed application provisioning state. Possible values include:
-     'Accepted', 'Running', 'Ready', 'Creating', 'Created', 'Deleting', 'Deleted', 'Canceled',
-     'Failed', 'Succeeded', 'Updating'.
+     "Accepted", "Running", "Ready", "Creating", "Created", "Deleting", "Deleted", "Canceled",
+     "Failed", "Succeeded", "Updating".
     :vartype provisioning_state: str or
      ~azure.mgmt.resource.managedapplications.models.ProvisioningState
     """
@@ -182,8 +182,8 @@ class Application(GenericResource):
     ):
         super(Application, self).__init__(**kwargs)
         self.plan = kwargs.get('plan', None)
-        self.kind = kwargs.get('kind', None)
-        self.managed_resource_group_id = kwargs.get('managed_resource_group_id', None)
+        self.kind = kwargs['kind']
+        self.managed_resource_group_id = kwargs['managed_resource_group_id']
         self.application_definition_id = kwargs.get('application_definition_id', None)
         self.parameters = kwargs.get('parameters', None)
         self.outputs = None
@@ -197,8 +197,8 @@ class ApplicationArtifact(msrest.serialization.Model):
     :type name: str
     :param uri: The managed application artifact blob uri.
     :type uri: str
-    :param type: The managed application artifact type. Possible values include: 'Template',
-     'Custom'.
+    :param type: The managed application artifact type. Possible values include: "Template",
+     "Custom".
     :type type: str or ~azure.mgmt.resource.managedapplications.models.ApplicationArtifactType
     """
 
@@ -242,7 +242,7 @@ class ApplicationDefinition(GenericResource):
     :param identity: The identity of the resource.
     :type identity: ~azure.mgmt.resource.managedapplications.models.Identity
     :param lock_level: Required. The managed application lock level. Possible values include:
-     'CanNotDelete', 'ReadOnly', 'None'.
+     "CanNotDelete", "ReadOnly", "None".
     :type lock_level: str or ~azure.mgmt.resource.managedapplications.models.ApplicationLockLevel
     :param display_name: The managed application definition display name.
     :type display_name: str
@@ -300,10 +300,10 @@ class ApplicationDefinition(GenericResource):
         **kwargs
     ):
         super(ApplicationDefinition, self).__init__(**kwargs)
-        self.lock_level = kwargs.get('lock_level', None)
+        self.lock_level = kwargs['lock_level']
         self.display_name = kwargs.get('display_name', None)
         self.is_enabled = kwargs.get('is_enabled', None)
-        self.authorizations = kwargs.get('authorizations', None)
+        self.authorizations = kwargs['authorizations']
         self.artifacts = kwargs.get('artifacts', None)
         self.description = kwargs.get('description', None)
         self.package_file_uri = kwargs.get('package_file_uri', None)
@@ -394,8 +394,8 @@ class ApplicationPatchable(GenericResource):
     :ivar outputs: Name and value pairs that define the managed application outputs.
     :vartype outputs: object
     :ivar provisioning_state: The managed application provisioning state. Possible values include:
-     'Accepted', 'Running', 'Ready', 'Creating', 'Created', 'Deleting', 'Deleted', 'Canceled',
-     'Failed', 'Succeeded', 'Updating'.
+     "Accepted", "Running", "Ready", "Creating", "Created", "Deleting", "Deleted", "Canceled",
+     "Failed", "Succeeded", "Updating".
     :vartype provisioning_state: str or
      ~azure.mgmt.resource.managedapplications.models.ProvisioningState
     """
@@ -470,8 +470,8 @@ class ApplicationProviderAuthorization(msrest.serialization.Model):
         **kwargs
     ):
         super(ApplicationProviderAuthorization, self).__init__(**kwargs)
-        self.principal_id = kwargs.get('principal_id', None)
-        self.role_definition_id = kwargs.get('role_definition_id', None)
+        self.principal_id = kwargs['principal_id']
+        self.role_definition_id = kwargs['role_definition_id']
 
 
 class ErrorResponse(msrest.serialization.Model):
@@ -574,11 +574,11 @@ class Plan(msrest.serialization.Model):
         **kwargs
     ):
         super(Plan, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.publisher = kwargs.get('publisher', None)
-        self.product = kwargs.get('product', None)
+        self.name = kwargs['name']
+        self.publisher = kwargs['publisher']
+        self.product = kwargs['product']
         self.promotion_code = kwargs.get('promotion_code', None)
-        self.version = kwargs.get('version', None)
+        self.version = kwargs['version']
 
 
 class PlanPatchable(msrest.serialization.Model):
@@ -653,7 +653,7 @@ class Sku(msrest.serialization.Model):
         **kwargs
     ):
         super(Sku, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
+        self.name = kwargs['name']
         self.tier = kwargs.get('tier', None)
         self.size = kwargs.get('size', None)
         self.family = kwargs.get('family', None)

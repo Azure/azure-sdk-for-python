@@ -203,7 +203,7 @@ class DeploymentExtended(msrest.serialization.Model):
     ):
         super(DeploymentExtended, self).__init__(**kwargs)
         self.id = None
-        self.name = kwargs.get('name', None)
+        self.name = kwargs['name']
         self.properties = kwargs.get('properties', None)
 
 
@@ -362,7 +362,7 @@ class DeploymentProperties(msrest.serialization.Model):
     :type parameters: object
     :param parameters_link: The parameters URI. Use only one of Parameters or ParametersLink.
     :type parameters_link: ~azure.mgmt.resource.resources.v2016_02_01.models.ParametersLink
-    :param mode: Required. The deployment mode. Possible values include: 'Incremental', 'Complete'.
+    :param mode: Required. The deployment mode. Possible values include: "Incremental", "Complete".
     :type mode: str or ~azure.mgmt.resource.resources.v2016_02_01.models.DeploymentMode
     :param debug_setting: The debug setting of the deployment.
     :type debug_setting: ~azure.mgmt.resource.resources.v2016_02_01.models.DebugSetting
@@ -390,7 +390,7 @@ class DeploymentProperties(msrest.serialization.Model):
         self.template_link = kwargs.get('template_link', None)
         self.parameters = kwargs.get('parameters', None)
         self.parameters_link = kwargs.get('parameters_link', None)
-        self.mode = kwargs.get('mode', None)
+        self.mode = kwargs['mode']
         self.debug_setting = kwargs.get('debug_setting', None)
 
 
@@ -419,7 +419,7 @@ class DeploymentPropertiesExtended(msrest.serialization.Model):
     :param parameters_link: The URI referencing the parameters. Use only one of Parameters or
      ParametersLink.
     :type parameters_link: ~azure.mgmt.resource.resources.v2016_02_01.models.ParametersLink
-    :param mode: The deployment mode. Possible values include: 'Incremental', 'Complete'.
+    :param mode: The deployment mode. Possible values include: "Incremental", "Complete".
     :type mode: str or ~azure.mgmt.resource.resources.v2016_02_01.models.DeploymentMode
     :param debug_setting: The debug setting of the deployment.
     :type debug_setting: ~azure.mgmt.resource.resources.v2016_02_01.models.DebugSetting
@@ -872,7 +872,7 @@ class ParametersLink(msrest.serialization.Model):
         **kwargs
     ):
         super(ParametersLink, self).__init__(**kwargs)
-        self.uri = kwargs.get('uri', None)
+        self.uri = kwargs['uri']
         self.content_version = kwargs.get('content_version', None)
 
 
@@ -1039,7 +1039,7 @@ class ResourceGroup(msrest.serialization.Model):
         self.id = None
         self.name = kwargs.get('name', None)
         self.properties = kwargs.get('properties', None)
-        self.location = kwargs.get('location', None)
+        self.location = kwargs['location']
         self.tags = kwargs.get('tags', None)
 
 
@@ -1116,7 +1116,7 @@ class ResourceGroupListResult(msrest.serialization.Model):
     ):
         super(ResourceGroupListResult, self).__init__(**kwargs)
         self.value = kwargs.get('value', None)
-        self.next_link = kwargs.get('next_link', None)
+        self.next_link = kwargs['next_link']
 
 
 class ResourceGroupProperties(msrest.serialization.Model):
@@ -1170,7 +1170,7 @@ class ResourceListResult(msrest.serialization.Model):
     ):
         super(ResourceListResult, self).__init__(**kwargs)
         self.value = kwargs.get('value', None)
-        self.next_link = kwargs.get('next_link', None)
+        self.next_link = kwargs['next_link']
 
 
 class ResourceManagementErrorWithDetails(msrest.serialization.Model):
@@ -1206,8 +1206,8 @@ class ResourceManagementErrorWithDetails(msrest.serialization.Model):
         **kwargs
     ):
         super(ResourceManagementErrorWithDetails, self).__init__(**kwargs)
-        self.code = kwargs.get('code', None)
-        self.message = kwargs.get('message', None)
+        self.code = kwargs['code']
+        self.message = kwargs['message']
         self.target = kwargs.get('target', None)
         self.details = kwargs.get('details', None)
 
@@ -1414,7 +1414,7 @@ class TagsListResult(msrest.serialization.Model):
     ):
         super(TagsListResult, self).__init__(**kwargs)
         self.value = kwargs.get('value', None)
-        self.next_link = kwargs.get('next_link', None)
+        self.next_link = kwargs['next_link']
 
 
 class TagValue(msrest.serialization.Model):
@@ -1525,5 +1525,5 @@ class TemplateLink(msrest.serialization.Model):
         **kwargs
     ):
         super(TemplateLink, self).__init__(**kwargs)
-        self.uri = kwargs.get('uri', None)
+        self.uri = kwargs['uri']
         self.content_version = kwargs.get('content_version', None)

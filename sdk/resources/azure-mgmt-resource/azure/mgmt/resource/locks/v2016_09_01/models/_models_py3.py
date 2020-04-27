@@ -10,6 +10,8 @@ from typing import List, Optional, Union
 
 import msrest.serialization
 
+from ._management_lock_client_enums import *
+
 
 class ManagementLockListResult(msrest.serialization.Model):
     """The list of locks.
@@ -53,7 +55,7 @@ class ManagementLockObject(msrest.serialization.Model):
     :param level: Required. The level of the lock. Possible values are: NotSpecified, CanNotDelete,
      ReadOnly. CanNotDelete means authorized users are able to read and modify the resources, but
      not delete. ReadOnly means authorized users can only read from a resource, but they can't
-     modify or delete it. Possible values include: 'NotSpecified', 'CanNotDelete', 'ReadOnly'.
+     modify or delete it. Possible values include: "NotSpecified", "CanNotDelete", "ReadOnly".
     :type level: str or ~azure.mgmt.resource.locks.v2016_09_01.models.LockLevel
     :param notes: Notes about the lock. Maximum of 512 characters.
     :type notes: str

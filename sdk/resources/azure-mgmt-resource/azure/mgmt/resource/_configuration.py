@@ -23,7 +23,7 @@ class ApplicationClientConfiguration(Configuration):
     attributes.
 
     :param credential: Credential needed for the client to connect to Azure.
-    :type credential: azure.core.credentials.TokenCredential
+    :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The ID of the target subscription.
     :type subscription_id: str
     """
@@ -44,6 +44,7 @@ class ApplicationClientConfiguration(Configuration):
         self.credential = credential
         self.subscription_id = subscription_id
         self.credential_scopes = ['https://management.azure.com/.default']
+        self.credential_scopes.extend(kwargs.pop('credential_scopes', []))
         kwargs.setdefault('sdk_moniker', 'azure-mgmt-resource/{}'.format(VERSION))
         self._configure(**kwargs)
 

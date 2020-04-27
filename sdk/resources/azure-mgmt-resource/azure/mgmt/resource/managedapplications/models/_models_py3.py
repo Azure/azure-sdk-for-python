@@ -11,6 +11,8 @@ from typing import Dict, List, Optional, Union
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
+from ._application_client_enums import *
+
 
 class Resource(msrest.serialization.Model):
     """Resource information.
@@ -153,8 +155,8 @@ class Application(GenericResource):
     :ivar outputs: Name and value pairs that define the managed application outputs.
     :vartype outputs: object
     :ivar provisioning_state: The managed application provisioning state. Possible values include:
-     'Accepted', 'Running', 'Ready', 'Creating', 'Created', 'Deleting', 'Deleted', 'Canceled',
-     'Failed', 'Succeeded', 'Updating'.
+     "Accepted", "Running", "Ready", "Creating", "Created", "Deleting", "Deleted", "Canceled",
+     "Failed", "Succeeded", "Updating".
     :vartype provisioning_state: str or
      ~azure.mgmt.resource.managedapplications.models.ProvisioningState
     """
@@ -219,8 +221,8 @@ class ApplicationArtifact(msrest.serialization.Model):
     :type name: str
     :param uri: The managed application artifact blob uri.
     :type uri: str
-    :param type: The managed application artifact type. Possible values include: 'Template',
-     'Custom'.
+    :param type: The managed application artifact type. Possible values include: "Template",
+     "Custom".
     :type type: str or ~azure.mgmt.resource.managedapplications.models.ApplicationArtifactType
     """
 
@@ -268,7 +270,7 @@ class ApplicationDefinition(GenericResource):
     :param identity: The identity of the resource.
     :type identity: ~azure.mgmt.resource.managedapplications.models.Identity
     :param lock_level: Required. The managed application lock level. Possible values include:
-     'CanNotDelete', 'ReadOnly', 'None'.
+     "CanNotDelete", "ReadOnly", "None".
     :type lock_level: str or ~azure.mgmt.resource.managedapplications.models.ApplicationLockLevel
     :param display_name: The managed application definition display name.
     :type display_name: str
@@ -441,8 +443,8 @@ class ApplicationPatchable(GenericResource):
     :ivar outputs: Name and value pairs that define the managed application outputs.
     :vartype outputs: object
     :ivar provisioning_state: The managed application provisioning state. Possible values include:
-     'Accepted', 'Running', 'Ready', 'Creating', 'Created', 'Deleting', 'Deleted', 'Canceled',
-     'Failed', 'Succeeded', 'Updating'.
+     "Accepted", "Running", "Ready", "Creating", "Created", "Deleting", "Deleted", "Canceled",
+     "Failed", "Succeeded", "Updating".
     :vartype provisioning_state: str or
      ~azure.mgmt.resource.managedapplications.models.ProvisioningState
     """

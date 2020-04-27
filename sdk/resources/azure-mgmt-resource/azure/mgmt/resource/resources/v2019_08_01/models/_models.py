@@ -193,7 +193,7 @@ class Deployment(msrest.serialization.Model):
     ):
         super(Deployment, self).__init__(**kwargs)
         self.location = kwargs.get('location', None)
-        self.properties = kwargs.get('properties', None)
+        self.properties = kwargs['properties']
 
 
 class DeploymentExportResult(msrest.serialization.Model):
@@ -463,7 +463,7 @@ class DeploymentProperties(msrest.serialization.Model):
      resources that are not included in the template. In Complete mode, resources are deployed and
      existing resources in the resource group that are not included in the template are deleted. Be
      careful when using Complete mode as you may unintentionally delete resources. Possible values
-     include: 'Incremental', 'Complete'.
+     include: "Incremental", "Complete".
     :type mode: str or ~azure.mgmt.resource.resources.v2019_08_01.models.DeploymentMode
     :param debug_setting: The debug setting of the deployment.
     :type debug_setting: ~azure.mgmt.resource.resources.v2019_08_01.models.DebugSetting
@@ -494,7 +494,7 @@ class DeploymentProperties(msrest.serialization.Model):
         self.template_link = kwargs.get('template_link', None)
         self.parameters = kwargs.get('parameters', None)
         self.parameters_link = kwargs.get('parameters_link', None)
-        self.mode = kwargs.get('mode', None)
+        self.mode = kwargs['mode']
         self.debug_setting = kwargs.get('debug_setting', None)
         self.on_error_deployment = kwargs.get('on_error_deployment', None)
 
@@ -529,7 +529,7 @@ class DeploymentPropertiesExtended(msrest.serialization.Model):
      ParametersLink.
     :type parameters_link: ~azure.mgmt.resource.resources.v2019_08_01.models.ParametersLink
     :param mode: The deployment mode. Possible values are Incremental and Complete. Possible values
-     include: 'Incremental', 'Complete'.
+     include: "Incremental", "Complete".
     :type mode: str or ~azure.mgmt.resource.resources.v2019_08_01.models.DeploymentMode
     :param debug_setting: The debug setting of the deployment.
     :type debug_setting: ~azure.mgmt.resource.resources.v2019_08_01.models.DebugSetting
@@ -633,7 +633,7 @@ class DeploymentWhatIf(msrest.serialization.Model):
     ):
         super(DeploymentWhatIf, self).__init__(**kwargs)
         self.location = kwargs.get('location', None)
-        self.properties = kwargs.get('properties', None)
+        self.properties = kwargs['properties']
 
 
 class DeploymentWhatIfProperties(DeploymentProperties):
@@ -663,7 +663,7 @@ class DeploymentWhatIfProperties(DeploymentProperties):
      resources that are not included in the template. In Complete mode, resources are deployed and
      existing resources in the resource group that are not included in the template are deleted. Be
      careful when using Complete mode as you may unintentionally delete resources. Possible values
-     include: 'Incremental', 'Complete'.
+     include: "Incremental", "Complete".
     :type mode: str or ~azure.mgmt.resource.resources.v2019_08_01.models.DeploymentMode
     :param debug_setting: The debug setting of the deployment.
     :type debug_setting: ~azure.mgmt.resource.resources.v2019_08_01.models.DebugSetting
@@ -701,7 +701,7 @@ class DeploymentWhatIfSettings(msrest.serialization.Model):
     """Deployment What-If operation settings.
 
     :param result_format: The format of the What-If results. Possible values include:
-     'ResourceIdOnly', 'FullResourcePayloads'.
+     "ResourceIdOnly", "FullResourcePayloads".
     :type result_format: str or
      ~azure.mgmt.resource.resources.v2019_08_01.models.WhatIfResultFormat
     """
@@ -1056,8 +1056,8 @@ class Identity(msrest.serialization.Model):
     :vartype principal_id: str
     :ivar tenant_id: The tenant ID of resource.
     :vartype tenant_id: str
-    :param type: The identity type. Possible values include: 'SystemAssigned', 'UserAssigned',
-     'SystemAssigned, UserAssigned', 'None'.
+    :param type: The identity type. Possible values include: "SystemAssigned", "UserAssigned",
+     "SystemAssigned, UserAssigned", "None".
     :type type: str or ~azure.mgmt.resource.resources.v2019_08_01.models.ResourceIdentityType
     :param user_assigned_identities: The list of user identities associated with the resource. The
      user identity dictionary key references will be ARM resource ids in the form:
@@ -1093,7 +1093,7 @@ class OnErrorDeployment(msrest.serialization.Model):
     """Deployment on error behavior.
 
     :param type: The deployment on error behavior type. Possible values are LastSuccessful and
-     SpecificDeployment. Possible values include: 'LastSuccessful', 'SpecificDeployment'.
+     SpecificDeployment. Possible values include: "LastSuccessful", "SpecificDeployment".
     :type type: str or ~azure.mgmt.resource.resources.v2019_08_01.models.OnErrorDeploymentType
     :param deployment_name: The deployment to be used on error case.
     :type deployment_name: str
@@ -1121,7 +1121,7 @@ class OnErrorDeploymentExtended(msrest.serialization.Model):
     :ivar provisioning_state: The state of the provisioning for the on error deployment.
     :vartype provisioning_state: str
     :param type: The deployment on error behavior type. Possible values are LastSuccessful and
-     SpecificDeployment. Possible values include: 'LastSuccessful', 'SpecificDeployment'.
+     SpecificDeployment. Possible values include: "LastSuccessful", "SpecificDeployment".
     :type type: str or ~azure.mgmt.resource.resources.v2019_08_01.models.OnErrorDeploymentType
     :param deployment_name: The deployment to be used on error case.
     :type deployment_name: str
@@ -1249,7 +1249,7 @@ class ParametersLink(msrest.serialization.Model):
         **kwargs
     ):
         super(ParametersLink, self).__init__(**kwargs)
-        self.uri = kwargs.get('uri', None)
+        self.uri = kwargs['uri']
         self.content_version = kwargs.get('content_version', None)
 
 
@@ -1451,7 +1451,7 @@ class ResourceGroup(msrest.serialization.Model):
         self.name = None
         self.type = None
         self.properties = kwargs.get('properties', None)
-        self.location = kwargs.get('location', None)
+        self.location = kwargs['location']
         self.managed_by = kwargs.get('managed_by', None)
         self.tags = kwargs.get('tags', None)
 
@@ -1700,8 +1700,8 @@ class ScopedDeployment(msrest.serialization.Model):
         **kwargs
     ):
         super(ScopedDeployment, self).__init__(**kwargs)
-        self.location = kwargs.get('location', None)
-        self.properties = kwargs.get('properties', None)
+        self.location = kwargs['location']
+        self.properties = kwargs['properties']
 
 
 class Sku(msrest.serialization.Model):
@@ -1960,7 +1960,7 @@ class TemplateLink(msrest.serialization.Model):
         **kwargs
     ):
         super(TemplateLink, self).__init__(**kwargs)
-        self.uri = kwargs.get('uri', None)
+        self.uri = kwargs['uri']
         self.content_version = kwargs.get('content_version', None)
 
 
@@ -1972,8 +1972,8 @@ class WhatIfChange(msrest.serialization.Model):
     :param resource_id: Required. Resource ID.
     :type resource_id: str
     :param change_type: Required. Type of change that will be made to the resource when the
-     deployment is executed. Possible values include: 'Create', 'Delete', 'Ignore', 'Deploy',
-     'NoChange', 'Modify'.
+     deployment is executed. Possible values include: "Create", "Delete", "Ignore", "Deploy",
+     "NoChange", "Modify".
     :type change_type: str or ~azure.mgmt.resource.resources.v2019_08_01.models.ChangeType
     :param before: The snapshot of the resource before the deployment is executed.
     :type before: object
@@ -2001,8 +2001,8 @@ class WhatIfChange(msrest.serialization.Model):
         **kwargs
     ):
         super(WhatIfChange, self).__init__(**kwargs)
-        self.resource_id = kwargs.get('resource_id', None)
-        self.change_type = kwargs.get('change_type', None)
+        self.resource_id = kwargs['resource_id']
+        self.change_type = kwargs['change_type']
         self.before = kwargs.get('before', None)
         self.after = kwargs.get('after', None)
         self.delta = kwargs.get('delta', None)
@@ -2043,7 +2043,7 @@ class WhatIfPropertyChange(msrest.serialization.Model):
     :param path: Required. The path of the property.
     :type path: str
     :param property_change_type: Required. The type of property change. Possible values include:
-     'Create', 'Delete', 'Modify', 'Array'.
+     "Create", "Delete", "Modify", "Array".
     :type property_change_type: str or
      ~azure.mgmt.resource.resources.v2019_08_01.models.PropertyChangeType
     :param before: The value of the property before the deployment is executed.
@@ -2072,8 +2072,8 @@ class WhatIfPropertyChange(msrest.serialization.Model):
         **kwargs
     ):
         super(WhatIfPropertyChange, self).__init__(**kwargs)
-        self.path = kwargs.get('path', None)
-        self.property_change_type = kwargs.get('property_change_type', None)
+        self.path = kwargs['path']
+        self.property_change_type = kwargs['property_change_type']
         self.before = kwargs.get('before', None)
         self.after = kwargs.get('after', None)
         self.children = kwargs.get('children', None)

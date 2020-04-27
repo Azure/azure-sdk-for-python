@@ -71,7 +71,7 @@ class DeploymentScript(AzureResourceBase):
     :param tags: A set of tags. Resource tags.
     :type tags: dict[str, str]
     :param kind: Required. Type of the script.Constant filled by server.  Possible values include:
-     'AzurePowerShell', 'AzureCLI'.
+     "AzurePowerShell", "AzureCLI".
     :type kind: str or ~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.ScriptType
     :ivar system_data: The system metadata related to this resource.
     :vartype system_data: ~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.SystemData
@@ -107,8 +107,8 @@ class DeploymentScript(AzureResourceBase):
         **kwargs
     ):
         super(DeploymentScript, self).__init__(**kwargs)
-        self.identity = kwargs.get('identity', None)
-        self.location = kwargs.get('location', None)
+        self.identity = kwargs['identity']
+        self.location = kwargs['location']
         self.tags = kwargs.get('tags', None)
         self.kind = 'DeploymentScript'
         self.system_data = None
@@ -137,7 +137,7 @@ class AzureCliScript(DeploymentScript):
     :param tags: A set of tags. Resource tags.
     :type tags: dict[str, str]
     :param kind: Required. Type of the script.Constant filled by server.  Possible values include:
-     'AzurePowerShell', 'AzureCLI'.
+     "AzurePowerShell", "AzureCLI".
     :type kind: str or ~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.ScriptType
     :ivar system_data: The system metadata related to this resource.
     :vartype system_data: ~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.SystemData
@@ -145,13 +145,13 @@ class AzureCliScript(DeploymentScript):
     :type container_settings:
      ~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.ContainerConfiguration
     :param cleanup_preference: The clean up preference when the script execution gets in a terminal
-     state. Default setting is 'Always'. Possible values include: 'Always', 'OnSuccess',
-     'OnExpiration'.
+     state. Default setting is 'Always'. Possible values include: "Always", "OnSuccess",
+     "OnExpiration".
     :type cleanup_preference: str or
      ~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.CleanupOptions
     :ivar provisioning_state: State of the script execution. This only appears in the response.
-     Possible values include: 'Creating', 'ProvisioningResources', 'Running', 'Succeeded', 'Failed',
-     'Canceled'.
+     Possible values include: "Creating", "ProvisioningResources", "Running", "Succeeded", "Failed",
+     "Canceled".
     :vartype provisioning_state: str or
      ~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.ScriptProvisioningState
     :ivar status: Contains the results of script execution.
@@ -242,9 +242,9 @@ class AzureCliScript(DeploymentScript):
         self.arguments = kwargs.get('arguments', None)
         self.environment_variables = kwargs.get('environment_variables', None)
         self.force_update_tag = kwargs.get('force_update_tag', None)
-        self.retention_interval = kwargs.get('retention_interval', None)
+        self.retention_interval = kwargs['retention_interval']
         self.timeout = kwargs.get('timeout', None)
-        self.az_cli_version = kwargs.get('az_cli_version', None)
+        self.az_cli_version = kwargs['az_cli_version']
 
 
 class ScriptConfigurationBase(msrest.serialization.Model):
@@ -303,12 +303,64 @@ class ScriptConfigurationBase(msrest.serialization.Model):
         self.arguments = kwargs.get('arguments', None)
         self.environment_variables = kwargs.get('environment_variables', None)
         self.force_update_tag = kwargs.get('force_update_tag', None)
-        self.retention_interval = kwargs.get('retention_interval', None)
+        self.retention_interval = kwargs['retention_interval']
         self.timeout = kwargs.get('timeout', None)
 
 
-class AzureCliScriptProperties(ScriptConfigurationBase):
+class DeploymentScriptPropertiesBase(msrest.serialization.Model):
+    """Common properties for the deployment script.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :param container_settings: Container settings.
+    :type container_settings:
+     ~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.ContainerConfiguration
+    :param cleanup_preference: The clean up preference when the script execution gets in a terminal
+     state. Default setting is 'Always'. Possible values include: "Always", "OnSuccess",
+     "OnExpiration".
+    :type cleanup_preference: str or
+     ~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.CleanupOptions
+    :ivar provisioning_state: State of the script execution. This only appears in the response.
+     Possible values include: "Creating", "ProvisioningResources", "Running", "Succeeded", "Failed",
+     "Canceled".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.ScriptProvisioningState
+    :ivar status: Contains the results of script execution.
+    :vartype status: ~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.ScriptStatus
+    :ivar outputs: List of script outputs.
+    :vartype outputs: dict[str, object]
+    """
+
+    _validation = {
+        'provisioning_state': {'readonly': True},
+        'status': {'readonly': True},
+        'outputs': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'container_settings': {'key': 'containerSettings', 'type': 'ContainerConfiguration'},
+        'cleanup_preference': {'key': 'cleanupPreference', 'type': 'str'},
+        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'ScriptStatus'},
+        'outputs': {'key': 'outputs', 'type': '{object}'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(DeploymentScriptPropertiesBase, self).__init__(**kwargs)
+        self.container_settings = kwargs.get('container_settings', None)
+        self.cleanup_preference = kwargs.get('cleanup_preference', None)
+        self.provisioning_state = None
+        self.status = None
+        self.outputs = None
+
+
+class AzureCliScriptProperties(DeploymentScriptPropertiesBase, ScriptConfigurationBase):
     """Properties of the Azure CLI script object.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -334,6 +386,23 @@ class AzureCliScriptProperties(ScriptConfigurationBase):
     :param timeout: Maximum allowed script execution time specified in ISO 8601 format. Default
      value is PT1H.
     :type timeout: ~datetime.timedelta
+    :param container_settings: Container settings.
+    :type container_settings:
+     ~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.ContainerConfiguration
+    :param cleanup_preference: The clean up preference when the script execution gets in a terminal
+     state. Default setting is 'Always'. Possible values include: "Always", "OnSuccess",
+     "OnExpiration".
+    :type cleanup_preference: str or
+     ~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.CleanupOptions
+    :ivar provisioning_state: State of the script execution. This only appears in the response.
+     Possible values include: "Creating", "ProvisioningResources", "Running", "Succeeded", "Failed",
+     "Canceled".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.ScriptProvisioningState
+    :ivar status: Contains the results of script execution.
+    :vartype status: ~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.ScriptStatus
+    :ivar outputs: List of script outputs.
+    :vartype outputs: dict[str, object]
     :param az_cli_version: Required. Azure CLI module version to be used.
     :type az_cli_version: str
     """
@@ -341,6 +410,9 @@ class AzureCliScriptProperties(ScriptConfigurationBase):
     _validation = {
         'script_content': {'max_length': 32000, 'min_length': 0},
         'retention_interval': {'required': True},
+        'provisioning_state': {'readonly': True},
+        'status': {'readonly': True},
+        'outputs': {'readonly': True},
         'az_cli_version': {'required': True},
     }
 
@@ -353,6 +425,11 @@ class AzureCliScriptProperties(ScriptConfigurationBase):
         'force_update_tag': {'key': 'forceUpdateTag', 'type': 'str'},
         'retention_interval': {'key': 'retentionInterval', 'type': 'duration'},
         'timeout': {'key': 'timeout', 'type': 'duration'},
+        'container_settings': {'key': 'containerSettings', 'type': 'ContainerConfiguration'},
+        'cleanup_preference': {'key': 'cleanupPreference', 'type': 'str'},
+        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'ScriptStatus'},
+        'outputs': {'key': 'outputs', 'type': '{object}'},
         'az_cli_version': {'key': 'azCliVersion', 'type': 'str'},
     }
 
@@ -361,7 +438,21 @@ class AzureCliScriptProperties(ScriptConfigurationBase):
         **kwargs
     ):
         super(AzureCliScriptProperties, self).__init__(**kwargs)
-        self.az_cli_version = kwargs.get('az_cli_version', None)
+        self.primary_script_uri = kwargs.get('primary_script_uri', None)
+        self.supporting_script_uris = kwargs.get('supporting_script_uris', None)
+        self.script_content = kwargs.get('script_content', None)
+        self.arguments = kwargs.get('arguments', None)
+        self.environment_variables = kwargs.get('environment_variables', None)
+        self.force_update_tag = kwargs.get('force_update_tag', None)
+        self.retention_interval = kwargs['retention_interval']
+        self.timeout = kwargs.get('timeout', None)
+        self.az_cli_version = kwargs['az_cli_version']
+        self.container_settings = kwargs.get('container_settings', None)
+        self.cleanup_preference = kwargs.get('cleanup_preference', None)
+        self.provisioning_state = None
+        self.status = None
+        self.outputs = None
+        self.az_cli_version = kwargs['az_cli_version']
 
 
 class AzurePowerShellScript(DeploymentScript):
@@ -387,7 +478,7 @@ class AzurePowerShellScript(DeploymentScript):
     :param tags: A set of tags. Resource tags.
     :type tags: dict[str, str]
     :param kind: Required. Type of the script.Constant filled by server.  Possible values include:
-     'AzurePowerShell', 'AzureCLI'.
+     "AzurePowerShell", "AzureCLI".
     :type kind: str or ~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.ScriptType
     :ivar system_data: The system metadata related to this resource.
     :vartype system_data: ~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.SystemData
@@ -395,13 +486,13 @@ class AzurePowerShellScript(DeploymentScript):
     :type container_settings:
      ~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.ContainerConfiguration
     :param cleanup_preference: The clean up preference when the script execution gets in a terminal
-     state. Default setting is 'Always'. Possible values include: 'Always', 'OnSuccess',
-     'OnExpiration'.
+     state. Default setting is 'Always'. Possible values include: "Always", "OnSuccess",
+     "OnExpiration".
     :type cleanup_preference: str or
      ~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.CleanupOptions
     :ivar provisioning_state: State of the script execution. This only appears in the response.
-     Possible values include: 'Creating', 'ProvisioningResources', 'Running', 'Succeeded', 'Failed',
-     'Canceled'.
+     Possible values include: "Creating", "ProvisioningResources", "Running", "Succeeded", "Failed",
+     "Canceled".
     :vartype provisioning_state: str or
      ~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.ScriptProvisioningState
     :ivar status: Contains the results of script execution.
@@ -492,13 +583,15 @@ class AzurePowerShellScript(DeploymentScript):
         self.arguments = kwargs.get('arguments', None)
         self.environment_variables = kwargs.get('environment_variables', None)
         self.force_update_tag = kwargs.get('force_update_tag', None)
-        self.retention_interval = kwargs.get('retention_interval', None)
+        self.retention_interval = kwargs['retention_interval']
         self.timeout = kwargs.get('timeout', None)
-        self.az_power_shell_version = kwargs.get('az_power_shell_version', None)
+        self.az_power_shell_version = kwargs['az_power_shell_version']
 
 
-class AzurePowerShellScriptProperties(ScriptConfigurationBase):
+class AzurePowerShellScriptProperties(DeploymentScriptPropertiesBase, ScriptConfigurationBase):
     """Properties of the Azure PowerShell script object.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -524,6 +617,23 @@ class AzurePowerShellScriptProperties(ScriptConfigurationBase):
     :param timeout: Maximum allowed script execution time specified in ISO 8601 format. Default
      value is PT1H.
     :type timeout: ~datetime.timedelta
+    :param container_settings: Container settings.
+    :type container_settings:
+     ~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.ContainerConfiguration
+    :param cleanup_preference: The clean up preference when the script execution gets in a terminal
+     state. Default setting is 'Always'. Possible values include: "Always", "OnSuccess",
+     "OnExpiration".
+    :type cleanup_preference: str or
+     ~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.CleanupOptions
+    :ivar provisioning_state: State of the script execution. This only appears in the response.
+     Possible values include: "Creating", "ProvisioningResources", "Running", "Succeeded", "Failed",
+     "Canceled".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.ScriptProvisioningState
+    :ivar status: Contains the results of script execution.
+    :vartype status: ~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.ScriptStatus
+    :ivar outputs: List of script outputs.
+    :vartype outputs: dict[str, object]
     :param az_power_shell_version: Required. Azure PowerShell module version to be used.
     :type az_power_shell_version: str
     """
@@ -531,6 +641,9 @@ class AzurePowerShellScriptProperties(ScriptConfigurationBase):
     _validation = {
         'script_content': {'max_length': 32000, 'min_length': 0},
         'retention_interval': {'required': True},
+        'provisioning_state': {'readonly': True},
+        'status': {'readonly': True},
+        'outputs': {'readonly': True},
         'az_power_shell_version': {'required': True},
     }
 
@@ -543,6 +656,11 @@ class AzurePowerShellScriptProperties(ScriptConfigurationBase):
         'force_update_tag': {'key': 'forceUpdateTag', 'type': 'str'},
         'retention_interval': {'key': 'retentionInterval', 'type': 'duration'},
         'timeout': {'key': 'timeout', 'type': 'duration'},
+        'container_settings': {'key': 'containerSettings', 'type': 'ContainerConfiguration'},
+        'cleanup_preference': {'key': 'cleanupPreference', 'type': 'str'},
+        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'ScriptStatus'},
+        'outputs': {'key': 'outputs', 'type': '{object}'},
         'az_power_shell_version': {'key': 'azPowerShellVersion', 'type': 'str'},
     }
 
@@ -551,7 +669,21 @@ class AzurePowerShellScriptProperties(ScriptConfigurationBase):
         **kwargs
     ):
         super(AzurePowerShellScriptProperties, self).__init__(**kwargs)
-        self.az_power_shell_version = kwargs.get('az_power_shell_version', None)
+        self.primary_script_uri = kwargs.get('primary_script_uri', None)
+        self.supporting_script_uris = kwargs.get('supporting_script_uris', None)
+        self.script_content = kwargs.get('script_content', None)
+        self.arguments = kwargs.get('arguments', None)
+        self.environment_variables = kwargs.get('environment_variables', None)
+        self.force_update_tag = kwargs.get('force_update_tag', None)
+        self.retention_interval = kwargs['retention_interval']
+        self.timeout = kwargs.get('timeout', None)
+        self.az_power_shell_version = kwargs['az_power_shell_version']
+        self.container_settings = kwargs.get('container_settings', None)
+        self.cleanup_preference = kwargs.get('cleanup_preference', None)
+        self.provisioning_state = None
+        self.status = None
+        self.outputs = None
+        self.az_power_shell_version = kwargs['az_power_shell_version']
 
 
 class ContainerConfiguration(msrest.serialization.Model):
@@ -614,56 +746,6 @@ class DeploymentScriptListResult(msrest.serialization.Model):
         super(DeploymentScriptListResult, self).__init__(**kwargs)
         self.value = kwargs.get('value', None)
         self.next_link = None
-
-
-class DeploymentScriptPropertiesBase(msrest.serialization.Model):
-    """Common properties for the deployment script.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :param container_settings: Container settings.
-    :type container_settings:
-     ~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.ContainerConfiguration
-    :param cleanup_preference: The clean up preference when the script execution gets in a terminal
-     state. Default setting is 'Always'. Possible values include: 'Always', 'OnSuccess',
-     'OnExpiration'.
-    :type cleanup_preference: str or
-     ~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.CleanupOptions
-    :ivar provisioning_state: State of the script execution. This only appears in the response.
-     Possible values include: 'Creating', 'ProvisioningResources', 'Running', 'Succeeded', 'Failed',
-     'Canceled'.
-    :vartype provisioning_state: str or
-     ~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.ScriptProvisioningState
-    :ivar status: Contains the results of script execution.
-    :vartype status: ~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.ScriptStatus
-    :ivar outputs: List of script outputs.
-    :vartype outputs: dict[str, object]
-    """
-
-    _validation = {
-        'provisioning_state': {'readonly': True},
-        'status': {'readonly': True},
-        'outputs': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'container_settings': {'key': 'containerSettings', 'type': 'ContainerConfiguration'},
-        'cleanup_preference': {'key': 'cleanupPreference', 'type': 'str'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'ScriptStatus'},
-        'outputs': {'key': 'outputs', 'type': '{object}'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(DeploymentScriptPropertiesBase, self).__init__(**kwargs)
-        self.container_settings = kwargs.get('container_settings', None)
-        self.cleanup_preference = kwargs.get('cleanup_preference', None)
-        self.provisioning_state = None
-        self.status = None
-        self.outputs = None
 
 
 class DeploymentScriptsError(msrest.serialization.Model):
@@ -749,7 +831,7 @@ class EnvironmentVariable(msrest.serialization.Model):
         **kwargs
     ):
         super(EnvironmentVariable, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
+        self.name = kwargs['name']
         self.value = kwargs.get('value', None)
         self.secure_value = kwargs.get('secure_value', None)
 
@@ -974,7 +1056,7 @@ class SystemData(msrest.serialization.Model):
     :param created_by: The identity that created the resource.
     :type created_by: str
     :param created_by_type: The type of identity that created the resource. Possible values
-     include: 'User', 'Application', 'ManagedIdentity', 'Key'.
+     include: "User", "Application", "ManagedIdentity", "Key".
     :type created_by_type: str or
      ~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.CreatedByType
     :param created_at: The timestamp of resource creation (UTC).
@@ -982,7 +1064,7 @@ class SystemData(msrest.serialization.Model):
     :param last_modified_by: The identity that last modified the resource.
     :type last_modified_by: str
     :param last_modified_by_type: The type of identity that last modified the resource. Possible
-     values include: 'User', 'Application', 'ManagedIdentity', 'Key'.
+     values include: "User", "Application", "ManagedIdentity", "Key".
     :type last_modified_by_type: str or
      ~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.CreatedByType
     :param last_modified_at: The type of identity that last modified the resource.

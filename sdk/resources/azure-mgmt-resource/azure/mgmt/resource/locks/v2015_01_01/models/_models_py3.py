@@ -10,6 +10,8 @@ from typing import List, Optional, Union
 
 import msrest.serialization
 
+from ._management_lock_client_enums import *
+
 
 class ManagementLockListResult(msrest.serialization.Model):
     """List of management locks.
@@ -48,8 +50,8 @@ class ManagementLockObject(msrest.serialization.Model):
     :vartype type: str
     :param name: The name of the lock.
     :type name: str
-    :param level: The lock level of the management lock. Possible values include: 'NotSpecified',
-     'CanNotDelete', 'ReadOnly'.
+    :param level: The lock level of the management lock. Possible values include: "NotSpecified",
+     "CanNotDelete", "ReadOnly".
     :type level: str or ~azure.mgmt.resource.locks.v2015_01_01.models.LockLevel
     :param notes: The notes of the management lock.
     :type notes: str

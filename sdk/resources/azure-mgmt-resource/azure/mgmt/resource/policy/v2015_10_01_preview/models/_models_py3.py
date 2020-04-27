@@ -10,6 +10,8 @@ from typing import List, Optional, Union
 
 import msrest.serialization
 
+from ._policy_client_enums import *
+
 
 class PolicyAssignment(msrest.serialization.Model):
     """The policy assignment.
@@ -94,7 +96,7 @@ class PolicyDefinition(msrest.serialization.Model):
      value is inferred from the name value in the request URI.
     :type name: str
     :param policy_type: The type of policy definition. Possible values are NotSpecified, BuiltIn,
-     and Custom. Possible values include: 'NotSpecified', 'BuiltIn', 'Custom'.
+     and Custom. Possible values include: "NotSpecified", "BuiltIn", "Custom".
     :type policy_type: str or ~azure.mgmt.resource.policy.v2015_10_01_preview.models.PolicyType
     :param display_name: The display name of the policy definition.
     :type display_name: str

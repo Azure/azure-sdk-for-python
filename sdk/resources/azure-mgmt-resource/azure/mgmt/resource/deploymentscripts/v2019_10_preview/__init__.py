@@ -8,3 +8,9 @@
 
 from ._deployment_scripts_client import DeploymentScriptsClient
 __all__ = ['DeploymentScriptsClient']
+
+try:
+    from ._patch import patch_sdk
+    patch_sdk()
+except ImportError:
+    pass

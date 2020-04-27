@@ -11,6 +11,8 @@ from typing import List, Optional, Union
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
+from ._policy_client_enums import *
+
 
 class ErrorResponse(msrest.serialization.Model):
     """Error response indicates Azure Resource Manager is not able to process the incoming request. The reason is provided in the error message.
@@ -52,7 +54,7 @@ class Identity(msrest.serialization.Model):
     :vartype principal_id: str
     :ivar tenant_id: The tenant ID of the resource identity.
     :vartype tenant_id: str
-    :param type: The identity type. Possible values include: 'SystemAssigned', 'None'.
+    :param type: The identity type. Possible values include: "SystemAssigned", "None".
     :type type: str or ~azure.mgmt.resource.policy.v2018_05_01.models.ResourceIdentityType
     """
 
@@ -205,10 +207,10 @@ class PolicyDefinition(msrest.serialization.Model):
     :ivar type: The type of the resource (Microsoft.Authorization/policyDefinitions).
     :vartype type: str
     :param policy_type: The type of policy definition. Possible values are NotSpecified, BuiltIn,
-     and Custom. Possible values include: 'NotSpecified', 'BuiltIn', 'Custom'.
+     and Custom. Possible values include: "NotSpecified", "BuiltIn", "Custom".
     :type policy_type: str or ~azure.mgmt.resource.policy.v2018_05_01.models.PolicyType
     :param mode: The policy definition mode. Possible values are NotSpecified, Indexed, and All.
-     Possible values include: 'NotSpecified', 'Indexed', 'All'.
+     Possible values include: "NotSpecified", "Indexed", "All".
     :type mode: str or ~azure.mgmt.resource.policy.v2018_05_01.models.PolicyMode
     :param display_name: The display name of the policy definition.
     :type display_name: str
@@ -330,7 +332,7 @@ class PolicySetDefinition(msrest.serialization.Model):
     :ivar type: The type of the resource (Microsoft.Authorization/policySetDefinitions).
     :vartype type: str
     :param policy_type: The type of policy definition. Possible values are NotSpecified, BuiltIn,
-     and Custom. Possible values include: 'NotSpecified', 'BuiltIn', 'Custom'.
+     and Custom. Possible values include: "NotSpecified", "BuiltIn", "Custom".
     :type policy_type: str or ~azure.mgmt.resource.policy.v2018_05_01.models.PolicyType
     :param display_name: The display name of the policy set definition.
     :type display_name: str

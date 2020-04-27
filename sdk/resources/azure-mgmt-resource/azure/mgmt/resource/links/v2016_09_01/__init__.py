@@ -8,3 +8,9 @@
 
 from ._management_link_client import ManagementLinkClient
 __all__ = ['ManagementLinkClient']
+
+try:
+    from ._patch import patch_sdk
+    patch_sdk()
+except ImportError:
+    pass

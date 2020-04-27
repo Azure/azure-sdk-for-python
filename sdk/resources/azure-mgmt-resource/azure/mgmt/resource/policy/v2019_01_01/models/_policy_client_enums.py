@@ -8,13 +8,6 @@
 
 from enum import Enum
 
-class ResourceIdentityType(str, Enum):
-    """The identity type.
-    """
-
-    system_assigned = "SystemAssigned"
-    none = "None"
-
 class PolicyType(str, Enum):
     """The type of policy definition. Possible values are NotSpecified, BuiltIn, and Custom.
     """
@@ -22,3 +15,10 @@ class PolicyType(str, Enum):
     not_specified = "NotSpecified"
     built_in = "BuiltIn"
     custom = "Custom"
+
+class ResourceIdentityType(str, Enum):
+    """The identity type.
+    """
+
+    system_assigned = "SystemAssigned"
+    none = "None"

@@ -8,3 +8,9 @@
 
 from ._application_client import ApplicationClient
 __all__ = ['ApplicationClient']
+
+try:
+    from ._patch import patch_sdk
+    patch_sdk()
+except ImportError:
+    pass

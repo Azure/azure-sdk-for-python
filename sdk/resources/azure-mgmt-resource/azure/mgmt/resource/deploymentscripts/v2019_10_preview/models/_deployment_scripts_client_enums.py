@@ -8,12 +8,14 @@
 
 from enum import Enum
 
-class ScriptType(str, Enum):
-    """Type of the script.
+class CleanupOptions(str, Enum):
+    """The clean up preference when the script execution gets in a terminal state. Default setting is
+    'Always'.
     """
 
-    azure_power_shell = "AzurePowerShell"
-    azure_cli = "AzureCLI"
+    always = "Always"
+    on_success = "OnSuccess"
+    on_expiration = "OnExpiration"
 
 class CreatedByType(str, Enum):
     """The type of identity that created the resource.
@@ -23,15 +25,6 @@ class CreatedByType(str, Enum):
     application = "Application"
     managed_identity = "ManagedIdentity"
     key = "Key"
-
-class CleanupOptions(str, Enum):
-    """The clean up preference when the script execution gets in a terminal state. Default setting is
-    'Always'.
-    """
-
-    always = "Always"
-    on_success = "OnSuccess"
-    on_expiration = "OnExpiration"
 
 class ScriptProvisioningState(str, Enum):
     """State of the script execution. This only appears in the response.
@@ -43,3 +36,10 @@ class ScriptProvisioningState(str, Enum):
     succeeded = "Succeeded"
     failed = "Failed"
     canceled = "Canceled"
+
+class ScriptType(str, Enum):
+    """Type of the script.
+    """
+
+    azure_power_shell = "AzurePowerShell"
+    azure_cli = "AzureCLI"

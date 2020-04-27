@@ -89,10 +89,10 @@ class LocationMetadata(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar region_type: The type of the region. Possible values include: 'Physical', 'Logical'.
+    :ivar region_type: The type of the region. Possible values include: "Physical", "Logical".
     :vartype region_type: str or ~azure.mgmt.resource.subscriptions.v2019_11_01.models.RegionType
-    :ivar region_category: The category of the region. Possible values include: 'Recommended',
-     'Other'.
+    :ivar region_category: The category of the region. Possible values include: "Recommended",
+     "Other".
     :vartype region_category: str or
      ~azure.mgmt.resource.subscriptions.v2019_11_01.models.RegionCategory
     :ivar geography_group: The geography group of the location.
@@ -306,7 +306,7 @@ class Subscription(msrest.serialization.Model):
     :ivar tenant_id: The subscription tenant ID.
     :vartype tenant_id: str
     :ivar state: The subscription state. Possible values are Enabled, Warned, PastDue, Disabled,
-     and Deleted. Possible values include: 'Enabled', 'Warned', 'PastDue', 'Disabled', 'Deleted'.
+     and Deleted. Possible values include: "Enabled", "Warned", "PastDue", "Disabled", "Deleted".
     :vartype state: str or ~azure.mgmt.resource.subscriptions.v2019_11_01.models.SubscriptionState
     :param subscription_policies: The subscription policies.
     :type subscription_policies:
@@ -406,8 +406,8 @@ class SubscriptionPolicies(msrest.serialization.Model):
     :vartype location_placement_id: str
     :ivar quota_id: The subscription quota ID.
     :vartype quota_id: str
-    :ivar spending_limit: The subscription spending limit. Possible values include: 'On', 'Off',
-     'CurrentPeriodOff'.
+    :ivar spending_limit: The subscription spending limit. Possible values include: "On", "Off",
+     "CurrentPeriodOff".
     :vartype spending_limit: str or
      ~azure.mgmt.resource.subscriptions.v2019_11_01.models.SpendingLimit
     """
@@ -444,8 +444,8 @@ class TenantIdDescription(msrest.serialization.Model):
     :vartype id: str
     :ivar tenant_id: The tenant ID. For example, 00000000-0000-0000-0000-000000000000.
     :vartype tenant_id: str
-    :ivar tenant_category: Category of the tenant. Possible values include: 'Home', 'ProjectedBy',
-     'ManagedBy'.
+    :ivar tenant_category: Category of the tenant. Possible values include: "Home", "ProjectedBy",
+     "ManagedBy".
     :vartype tenant_category: str or
      ~azure.mgmt.resource.subscriptions.v2019_11_01.models.TenantCategory
     :ivar country: Country/region name of the address for the tenant.

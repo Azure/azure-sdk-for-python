@@ -159,7 +159,7 @@ class Deployment(msrest.serialization.Model):
         **kwargs
     ):
         super(Deployment, self).__init__(**kwargs)
-        self.properties = kwargs.get('properties', None)
+        self.properties = kwargs['properties']
 
 
 class DeploymentExportResult(msrest.serialization.Model):
@@ -214,7 +214,7 @@ class DeploymentExtended(msrest.serialization.Model):
     ):
         super(DeploymentExtended, self).__init__(**kwargs)
         self.id = None
-        self.name = kwargs.get('name', None)
+        self.name = kwargs['name']
         self.properties = kwargs.get('properties', None)
 
 
@@ -417,7 +417,7 @@ class DeploymentProperties(msrest.serialization.Model):
      resources that are not included in the template. In Complete mode, resources are deployed and
      existing resources in the resource group that are not included in the template are deleted. Be
      careful when using Complete mode as you may unintentionally delete resources. Possible values
-     include: 'Incremental', 'Complete'.
+     include: "Incremental", "Complete".
     :type mode: str or ~azure.mgmt.resource.resources.v2016_09_01.models.DeploymentMode
     :param debug_setting: The debug setting of the deployment.
     :type debug_setting: ~azure.mgmt.resource.resources.v2016_09_01.models.DebugSetting
@@ -445,7 +445,7 @@ class DeploymentProperties(msrest.serialization.Model):
         self.template_link = kwargs.get('template_link', None)
         self.parameters = kwargs.get('parameters', None)
         self.parameters_link = kwargs.get('parameters_link', None)
-        self.mode = kwargs.get('mode', None)
+        self.mode = kwargs['mode']
         self.debug_setting = kwargs.get('debug_setting', None)
 
 
@@ -477,7 +477,7 @@ class DeploymentPropertiesExtended(msrest.serialization.Model):
      ParametersLink.
     :type parameters_link: ~azure.mgmt.resource.resources.v2016_09_01.models.ParametersLink
     :param mode: The deployment mode. Possible values are Incremental and Complete. Possible values
-     include: 'Incremental', 'Complete'.
+     include: "Incremental", "Complete".
     :type mode: str or ~azure.mgmt.resource.resources.v2016_09_01.models.DeploymentMode
     :param debug_setting: The debug setting of the deployment.
     :type debug_setting: ~azure.mgmt.resource.resources.v2016_09_01.models.DebugSetting
@@ -938,7 +938,7 @@ class ParametersLink(msrest.serialization.Model):
         **kwargs
     ):
         super(ParametersLink, self).__init__(**kwargs)
-        self.uri = kwargs.get('uri', None)
+        self.uri = kwargs['uri']
         self.content_version = kwargs.get('content_version', None)
 
 
@@ -1121,7 +1121,7 @@ class ResourceGroup(msrest.serialization.Model):
         self.id = None
         self.name = kwargs.get('name', None)
         self.properties = kwargs.get('properties', None)
-        self.location = kwargs.get('location', None)
+        self.location = kwargs['location']
         self.managed_by = kwargs.get('managed_by', None)
         self.tags = kwargs.get('tags', None)
 
@@ -1611,5 +1611,5 @@ class TemplateLink(msrest.serialization.Model):
         **kwargs
     ):
         super(TemplateLink, self).__init__(**kwargs)
-        self.uri = kwargs.get('uri', None)
+        self.uri = kwargs['uri']
         self.content_version = kwargs.get('content_version', None)

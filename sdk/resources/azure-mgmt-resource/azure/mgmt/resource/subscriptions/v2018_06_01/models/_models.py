@@ -171,7 +171,7 @@ class Subscription(msrest.serialization.Model):
     :ivar tenant_id: The subscription tenant ID.
     :vartype tenant_id: str
     :ivar state: The subscription state. Possible values are Enabled, Warned, PastDue, Disabled,
-     and Deleted. Possible values include: 'Enabled', 'Warned', 'PastDue', 'Disabled', 'Deleted'.
+     and Deleted. Possible values include: "Enabled", "Warned", "PastDue", "Disabled", "Deleted".
     :vartype state: str or ~azure.mgmt.resource.subscriptions.v2018_06_01.models.SubscriptionState
     :param subscription_policies: The subscription policies.
     :type subscription_policies:
@@ -240,7 +240,7 @@ class SubscriptionListResult(msrest.serialization.Model):
     ):
         super(SubscriptionListResult, self).__init__(**kwargs)
         self.value = kwargs.get('value', None)
-        self.next_link = kwargs.get('next_link', None)
+        self.next_link = kwargs['next_link']
 
 
 class SubscriptionPolicies(msrest.serialization.Model):
@@ -254,8 +254,8 @@ class SubscriptionPolicies(msrest.serialization.Model):
     :vartype location_placement_id: str
     :ivar quota_id: The subscription quota ID.
     :vartype quota_id: str
-    :ivar spending_limit: The subscription spending limit. Possible values include: 'On', 'Off',
-     'CurrentPeriodOff'.
+    :ivar spending_limit: The subscription spending limit. Possible values include: "On", "Off",
+     "CurrentPeriodOff".
     :vartype spending_limit: str or
      ~azure.mgmt.resource.subscriptions.v2018_06_01.models.SpendingLimit
     """
@@ -359,4 +359,4 @@ class TenantListResult(msrest.serialization.Model):
     ):
         super(TenantListResult, self).__init__(**kwargs)
         self.value = kwargs.get('value', None)
-        self.next_link = kwargs.get('next_link', None)
+        self.next_link = kwargs['next_link']

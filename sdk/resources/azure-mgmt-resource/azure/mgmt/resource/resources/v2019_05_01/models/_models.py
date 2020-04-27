@@ -193,7 +193,7 @@ class Deployment(msrest.serialization.Model):
     ):
         super(Deployment, self).__init__(**kwargs)
         self.location = kwargs.get('location', None)
-        self.properties = kwargs.get('properties', None)
+        self.properties = kwargs['properties']
 
 
 class DeploymentExportResult(msrest.serialization.Model):
@@ -463,7 +463,7 @@ class DeploymentProperties(msrest.serialization.Model):
      resources that are not included in the template. In Complete mode, resources are deployed and
      existing resources in the resource group that are not included in the template are deleted. Be
      careful when using Complete mode as you may unintentionally delete resources. Possible values
-     include: 'Incremental', 'Complete'.
+     include: "Incremental", "Complete".
     :type mode: str or ~azure.mgmt.resource.resources.v2019_05_01.models.DeploymentMode
     :param debug_setting: The debug setting of the deployment.
     :type debug_setting: ~azure.mgmt.resource.resources.v2019_05_01.models.DebugSetting
@@ -494,7 +494,7 @@ class DeploymentProperties(msrest.serialization.Model):
         self.template_link = kwargs.get('template_link', None)
         self.parameters = kwargs.get('parameters', None)
         self.parameters_link = kwargs.get('parameters_link', None)
-        self.mode = kwargs.get('mode', None)
+        self.mode = kwargs['mode']
         self.debug_setting = kwargs.get('debug_setting', None)
         self.on_error_deployment = kwargs.get('on_error_deployment', None)
 
@@ -529,7 +529,7 @@ class DeploymentPropertiesExtended(msrest.serialization.Model):
      ParametersLink.
     :type parameters_link: ~azure.mgmt.resource.resources.v2019_05_01.models.ParametersLink
     :param mode: The deployment mode. Possible values are Incremental and Complete. Possible values
-     include: 'Incremental', 'Complete'.
+     include: "Incremental", "Complete".
     :type mode: str or ~azure.mgmt.resource.resources.v2019_05_01.models.DeploymentMode
     :param debug_setting: The debug setting of the deployment.
     :type debug_setting: ~azure.mgmt.resource.resources.v2019_05_01.models.DebugSetting
@@ -946,8 +946,8 @@ class Identity(msrest.serialization.Model):
     :vartype principal_id: str
     :ivar tenant_id: The tenant ID of resource.
     :vartype tenant_id: str
-    :param type: The identity type. Possible values include: 'SystemAssigned', 'UserAssigned',
-     'SystemAssigned, UserAssigned', 'None'.
+    :param type: The identity type. Possible values include: "SystemAssigned", "UserAssigned",
+     "SystemAssigned, UserAssigned", "None".
     :type type: str or ~azure.mgmt.resource.resources.v2019_05_01.models.ResourceIdentityType
     :param user_assigned_identities: The list of user identities associated with the resource. The
      user identity dictionary key references will be ARM resource ids in the form:
@@ -983,7 +983,7 @@ class OnErrorDeployment(msrest.serialization.Model):
     """Deployment on error behavior.
 
     :param type: The deployment on error behavior type. Possible values are LastSuccessful and
-     SpecificDeployment. Possible values include: 'LastSuccessful', 'SpecificDeployment'.
+     SpecificDeployment. Possible values include: "LastSuccessful", "SpecificDeployment".
     :type type: str or ~azure.mgmt.resource.resources.v2019_05_01.models.OnErrorDeploymentType
     :param deployment_name: The deployment to be used on error case.
     :type deployment_name: str
@@ -1011,7 +1011,7 @@ class OnErrorDeploymentExtended(msrest.serialization.Model):
     :ivar provisioning_state: The state of the provisioning for the on error deployment.
     :vartype provisioning_state: str
     :param type: The deployment on error behavior type. Possible values are LastSuccessful and
-     SpecificDeployment. Possible values include: 'LastSuccessful', 'SpecificDeployment'.
+     SpecificDeployment. Possible values include: "LastSuccessful", "SpecificDeployment".
     :type type: str or ~azure.mgmt.resource.resources.v2019_05_01.models.OnErrorDeploymentType
     :param deployment_name: The deployment to be used on error case.
     :type deployment_name: str
@@ -1139,7 +1139,7 @@ class ParametersLink(msrest.serialization.Model):
         **kwargs
     ):
         super(ParametersLink, self).__init__(**kwargs)
-        self.uri = kwargs.get('uri', None)
+        self.uri = kwargs['uri']
         self.content_version = kwargs.get('content_version', None)
 
 
@@ -1341,7 +1341,7 @@ class ResourceGroup(msrest.serialization.Model):
         self.name = None
         self.type = None
         self.properties = kwargs.get('properties', None)
-        self.location = kwargs.get('location', None)
+        self.location = kwargs['location']
         self.managed_by = kwargs.get('managed_by', None)
         self.tags = kwargs.get('tags', None)
 
@@ -1862,5 +1862,5 @@ class TemplateLink(msrest.serialization.Model):
         **kwargs
     ):
         super(TemplateLink, self).__init__(**kwargs)
-        self.uri = kwargs.get('uri', None)
+        self.uri = kwargs['uri']
         self.content_version = kwargs.get('content_version', None)

@@ -11,6 +11,8 @@ from typing import List, Optional, Union
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
+from ._policy_client_enums import *
+
 
 class ErrorResponse(msrest.serialization.Model):
     """Error response indicates Azure Resource Manager is not able to process the incoming request. The reason is provided in the error message.
@@ -52,7 +54,7 @@ class Identity(msrest.serialization.Model):
     :vartype principal_id: str
     :ivar tenant_id: The tenant ID of the resource identity.
     :vartype tenant_id: str
-    :param type: The identity type. Possible values include: 'SystemAssigned', 'None'.
+    :param type: The identity type. Possible values include: "SystemAssigned", "None".
     :type type: str or ~azure.mgmt.resource.policy.v2019_06_01.models.ResourceIdentityType
     """
 
@@ -113,7 +115,7 @@ class PolicyAssignment(msrest.serialization.Model):
     :param metadata: The policy assignment metadata.
     :type metadata: object
     :param enforcement_mode: The policy assignment enforcement mode. Possible values are Default
-     and DoNotEnforce. Possible values include: 'Default', 'DoNotEnforce'.
+     and DoNotEnforce. Possible values include: "Default", "DoNotEnforce".
     :type enforcement_mode: str or ~azure.mgmt.resource.policy.v2019_06_01.models.EnforcementMode
     """
 
@@ -211,7 +213,7 @@ class PolicyDefinition(msrest.serialization.Model):
     :ivar type: The type of the resource (Microsoft.Authorization/policyDefinitions).
     :vartype type: str
     :param policy_type: The type of policy definition. Possible values are NotSpecified, BuiltIn,
-     and Custom. Possible values include: 'NotSpecified', 'BuiltIn', 'Custom'.
+     and Custom. Possible values include: "NotSpecified", "BuiltIn", "Custom".
     :type policy_type: str or ~azure.mgmt.resource.policy.v2019_06_01.models.PolicyType
     :param mode: The policy definition mode. Some examples are All, Indexed,
      Microsoft.KeyVault.Data.
@@ -336,7 +338,7 @@ class PolicySetDefinition(msrest.serialization.Model):
     :ivar type: The type of the resource (Microsoft.Authorization/policySetDefinitions).
     :vartype type: str
     :param policy_type: The type of policy definition. Possible values are NotSpecified, BuiltIn,
-     and Custom. Possible values include: 'NotSpecified', 'BuiltIn', 'Custom'.
+     and Custom. Possible values include: "NotSpecified", "BuiltIn", "Custom".
     :type policy_type: str or ~azure.mgmt.resource.policy.v2019_06_01.models.PolicyType
     :param display_name: The display name of the policy set definition.
     :type display_name: str

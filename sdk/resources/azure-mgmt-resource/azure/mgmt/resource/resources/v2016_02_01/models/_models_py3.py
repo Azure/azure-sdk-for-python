@@ -11,6 +11,8 @@ from typing import Dict, List, Optional, Union
 
 import msrest.serialization
 
+from ._resource_management_client_enums import *
+
 
 class AliasPathType(msrest.serialization.Model):
     """AliasPathType.
@@ -410,7 +412,7 @@ class DeploymentProperties(msrest.serialization.Model):
     :type parameters: object
     :param parameters_link: The parameters URI. Use only one of Parameters or ParametersLink.
     :type parameters_link: ~azure.mgmt.resource.resources.v2016_02_01.models.ParametersLink
-    :param mode: Required. The deployment mode. Possible values include: 'Incremental', 'Complete'.
+    :param mode: Required. The deployment mode. Possible values include: "Incremental", "Complete".
     :type mode: str or ~azure.mgmt.resource.resources.v2016_02_01.models.DeploymentMode
     :param debug_setting: The debug setting of the deployment.
     :type debug_setting: ~azure.mgmt.resource.resources.v2016_02_01.models.DebugSetting
@@ -474,7 +476,7 @@ class DeploymentPropertiesExtended(msrest.serialization.Model):
     :param parameters_link: The URI referencing the parameters. Use only one of Parameters or
      ParametersLink.
     :type parameters_link: ~azure.mgmt.resource.resources.v2016_02_01.models.ParametersLink
-    :param mode: The deployment mode. Possible values include: 'Incremental', 'Complete'.
+    :param mode: The deployment mode. Possible values include: "Incremental", "Complete".
     :type mode: str or ~azure.mgmt.resource.resources.v2016_02_01.models.DeploymentMode
     :param debug_setting: The debug setting of the deployment.
     :type debug_setting: ~azure.mgmt.resource.resources.v2016_02_01.models.DebugSetting
