@@ -58,7 +58,7 @@ To make this possible you will need an [api-key of the Cognitive Search service]
 
 The SDK provides two clients.
 
-1. SearchIndexClient for all document operations.
+1. SearchClient for all document operations.
 2. SearchServiceClient for all CRUD operations on service resources.
 
 ### Create a SearchServiceClient
@@ -76,22 +76,22 @@ client = SearchServiceClient(endpoint="<service endpoint>"
                              credential=credential)
 ```
 
-### Create a SearchIndexClient
+### Create a SearchClient
 
-To create a SearchIndexClient, you will need an existing index name as well as the values of the Cognitive Search Service
+To create a SearchClient, you will need an existing index name as well as the values of the Cognitive Search Service
 [service endpoint](https://docs.microsoft.com/en-us/azure/search/search-create-service-portal#get-a-key-and-url-endpoint) and
 [api key](https://docs.microsoft.com/en-us/azure/search/search-security-api-keys).
 Note that you will need an admin key to index documents (query keys only work for queries).
 
 ```python
 from azure.core.credentials import AzureKeyCredential
-from azure.search.documents import SearchIndexClient
+from azure.search.documents import SearchClient
 
 credential = AzureKeyCredential("<api key>")
 
-client = SearchIndexClient(endpoint="<service endpoint>",
-                           index_name="<index name>",
-                           credential=credential)
+client = SearchClient(endpoint="<service endpoint>",
+                      index_name="<index name>",
+                      credential=credential)
 ```
 
 ## Examples
@@ -132,8 +132,8 @@ result = client.create_index(index)
 Add documents (or update existing ones), e.g add a new document for a new hotel:
 ```python
 from azure.core.credentials import AzureKeyCredential
-from azure.search.documents import SearchIndexClient
-client = SearchIndexClient("<service endpoint>", "<index_name>", AzureKeyCredential("<api key>"))
+from azure.search.documents import SearchClient
+client = SearchClient("<service endpoint>", "<index_name>", AzureKeyCredential("<api key>"))
 
 DOCUMENT = {
     'Category': 'Hotel',
@@ -152,8 +152,8 @@ print("Upload of new document succeeded: {}".format(result[0].succeeded))
 Get a specific document from the index, e.f. obtain the document for hotel "23":
 ```python
 from azure.core.credentials import AzureKeyCredential
-from azure.search.documents import SearchIndexClient
-client = SearchIndexClient("<service endpoint>", "<index_name>", AzureKeyCredential("<api key>"))
+from azure.search.documents import SearchClient
+client = SearchClient("<service endpoint>", "<index_name>", AzureKeyCredential("<api key>"))
 
 result = client.get_document(key="23")
 
@@ -168,8 +168,8 @@ Search the entire index or documents matching a simple search text, e.g. find
 hotels with the text "spa":
 ```python
 from azure.core.credentials import AzureKeyCredential
-from azure.search.documents import SearchIndexClient
-client = SearchIndexClient("<service endpoint>", "<index_name>", AzureKeyCredential("<api key>"))
+from azure.search.documents import SearchClient
+client = SearchClient("<service endpoint>", "<index_name>", AzureKeyCredential("<api key>"))
 
 results = client.search(query="spa")
 
@@ -184,8 +184,8 @@ Get search suggestions for related terms, e.g. find search suggestions for
 the term "coffee":
 ```python
 from azure.core.credentials import AzureKeyCredential
-from azure.search.documents import SearchIndexClient, SuggestQuery
-client = SearchIndexClient("<service endpoint>", "<index_name>", AzureKeyCredential("<api key>"))
+from azure.search.documents import SearchClient, SuggestQuery
+client = SearchClient("<service endpoint>", "<index_name>", AzureKeyCredential("<api key>"))
 
 query = SuggestQuery(search_text="coffee", suggester_name="sg")
 
@@ -215,7 +215,7 @@ headers, can be enabled on a client with the `logging_enable` keyword argument:
 import sys
 import logging
 from azure.core.credentials import AzureKeyCredential
-from azure.search.documents import SearchIndexClient
+from azure.search.documents import SearchClient
 
 # Create a logger for the 'azure' SDK
 logger = logging.getLogger('azure')
@@ -226,7 +226,7 @@ handler = logging.StreamHandler(stream=sys.stdout)
 logger.addHandler(handler)
 
 # This client will log detailed information about its HTTP sessions, at DEBUG level
-client = SearchIndexClient("<service endpoint>", "<index_name>", AzureKeyCredential("<api key>"), logging_enable=True)
+client = SearchClient("<service endpoint>", "<index_name>", AzureKeyCredential("<api key>"), logging_enable=True)
 
 ```
 
