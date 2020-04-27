@@ -43,13 +43,10 @@ class Operations:
 
     def list(
         self,
-        api_version: str,
         **kwargs
     ) -> AsyncIterable["models.OperationListResult"]:
         """Lists all of the available Microsoft.Resources REST API operations.
 
-        :param api_version: The API version to use for the operation.
-        :type api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of OperationListResult or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.links.v2016_09_01.models.OperationListResult]
@@ -58,6 +55,7 @@ class Operations:
         cls = kwargs.pop('cls', None)  # type: ClsType["models.OperationListResult"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2016-09-01"
 
         def prepare_request(next_link=None):
             if not next_link:
