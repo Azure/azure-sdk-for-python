@@ -13,7 +13,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-resource/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-resource/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_test_resource_groups457f1050?api-version=2019-10-01
   response:
@@ -27,7 +27,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 30 Mar 2020 08:17:16 GMT
+      - Mon, 27 Apr 2020 18:01:30 GMT
       expires:
       - '-1'
       pragma:
@@ -37,7 +37,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1198'
+      - '1199'
     status:
       code: 201
       message: Created
@@ -51,7 +51,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-resource/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-resource/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_test_resource_groups457f1050?api-version=2019-10-01
   response:
@@ -65,7 +65,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 30 Mar 2020 08:17:16 GMT
+      - Mon, 27 Apr 2020 18:01:30 GMT
       expires:
       - '-1'
       pragma:
@@ -89,7 +89,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-resource/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-resource/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: HEAD
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_test_resource_groups457f1050?api-version=2019-10-01
   response:
@@ -101,7 +101,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 30 Mar 2020 08:17:16 GMT
+      - Mon, 27 Apr 2020 18:01:30 GMT
       expires:
       - '-1'
       pragma:
@@ -123,7 +123,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-resource/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-resource/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: HEAD
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/unknowngroup?api-version=2019-10-01
   response:
@@ -137,7 +137,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 30 Mar 2020 08:17:16 GMT
+      - Mon, 27 Apr 2020 18:01:30 GMT
       expires:
       - '-1'
       pragma:
@@ -161,22 +161,22 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-resource/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-resource/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups?api-version=2019-10-01
   response:
     body:
-      string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_databox_test_databoxf3720dde","name":"test_cli_mgmt_databox_test_databoxf3720dde","type":"Microsoft.Resources/resourceGroups","location":"eastus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/qiaozhatest","name":"qiaozhatest","type":"Microsoft.Resources/resourceGroups","location":"eastus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/acctestRG-backup-200214153104593818-1","name":"acctestRG-backup-200214153104593818-1","type":"Microsoft.Resources/resourceGroups","location":"westus","tags":{},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_managed_disks_test_grant_access609310b8","name":"test_mgmt_managed_disks_test_grant_access609310b8","type":"Microsoft.Resources/resourceGroups","location":"westus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_test_deployments_basic667e10fe","name":"test_mgmt_resource_test_deployments_basic667e10fe","type":"Microsoft.Resources/resourceGroups","location":"westus","properties":{"provisioningState":"Deleting"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_test_resource_groups457f1050","name":"test_mgmt_resource_test_resource_groups457f1050","type":"Microsoft.Resources/resourceGroups","location":"westus","tags":{"tag1":"value1"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/92F95D8F-3C67-4124-91C7-8CF07CDBF241/resourceGroups/DEFAULT-EVENTGRID","name":"DEFAULT-EVENTGRID","type":"Microsoft.Resources/resourceGroups","location":"westus2","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cloud-shell-storage-southeastasia","name":"cloud-shell-storage-southeastasia","type":"Microsoft.Resources/resourceGroups","location":"southeastasia","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/testresourceGroupName","name":"testresourceGroupName","type":"Microsoft.Resources/resourceGroups","location":"eastasia","tags":{},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-sdk-for-js","name":"azure-sdk-for-js","type":"Microsoft.Resources/resourceGroups","location":"westus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-sdk-for-node","name":"azure-sdk-for-node","type":"Microsoft.Resources/resourceGroups","location":"westus","tags":{},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cleanupservice","name":"cleanupservice","type":"Microsoft.Resources/resourceGroups","location":"westus","tags":{"What
-        Is Cleanup Service":"https://aka.ms/WhatIsCleanupService"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/dev-box","name":"dev-box","type":"Microsoft.Resources/resourceGroups","location":"westus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/git2gridtemplate","name":"git2gridtemplate","type":"Microsoft.Resources/resourceGroups","location":"westus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/git2gridtesting","name":"git2gridtesting","type":"Microsoft.Resources/resourceGroups","location":"westus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ml-test","name":"ml-test","type":"Microsoft.Resources/resourceGroups","location":"southcentralus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/msi-test-functions","name":"msi-test-functions","type":"Microsoft.Resources/resourceGroups","location":"westus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/NetworkWatcherRG","name":"NetworkWatcherRG","type":"Microsoft.Resources/resourceGroups","location":"westus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/vpn","name":"vpn","type":"Microsoft.Resources/resourceGroups","location":"ukwest","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/samples","name":"samples","type":"Microsoft.Resources/resourceGroups","location":"eastus2","tags":{},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/vpn-lon","name":"vpn-lon","type":"Microsoft.Resources/resourceGroups","location":"ukwest","properties":{"provisioningState":"Succeeded"}}]}'
+      string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/st-testf365810dee394b758c5552eea26bf8da","name":"st-testf365810dee394b758c5552eea26bf8da","type":"Microsoft.Resources/resourceGroups","location":"eastus","tags":{"CleanTime":"1585499797"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/st-test02a7bc99641a44058386410673212e0e","name":"st-test02a7bc99641a44058386410673212e0e","type":"Microsoft.Resources/resourceGroups","location":"eastus","tags":{"CleanTime":"1585499815"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/NetworkWatcherRG","name":"NetworkWatcherRG","type":"Microsoft.Resources/resourceGroups","location":"eastus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/qstest1274a48c69894d9a9391960cfdd737db","name":"qstest1274a48c69894d9a9391960cfdd737db","type":"Microsoft.Resources/resourceGroups","location":"eastus","tags":{"CleanTime":"1587951416"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/qstestcacb6b01359e42cdbf62fe1c11f7d4b3","name":"qstestcacb6b01359e42cdbf62fe1c11f7d4b3","type":"Microsoft.Resources/resourceGroups","location":"eastus","tags":{"CleanTime":"1587963067"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/st-testb46a0a39b62d47628616eeb4aa7f9d0f","name":"st-testb46a0a39b62d47628616eeb4aa7f9d0f","type":"Microsoft.Resources/resourceGroups","location":"eastus","tags":{"CleanTime":"1587968628"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/st-test1b857fe52c734071aa08ee3fa3180066","name":"st-test1b857fe52c734071aa08ee3fa3180066","type":"Microsoft.Resources/resourceGroups","location":"eastus","tags":{"CleanTime":"1587968637"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/st-testbc49131bda46463891c79e1c612a3727","name":"st-testbc49131bda46463891c79e1c612a3727","type":"Microsoft.Resources/resourceGroups","location":"eastus","tags":{"CleanTime":"1587968666"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/st-test1cc3186e67f54e95883577c16f08a1d4","name":"st-test1cc3186e67f54e95883577c16f08a1d4","type":"Microsoft.Resources/resourceGroups","location":"eastus","tags":{"CleanTime":"1587968692"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/st-testcc8488c5dfd148d9ad3ba5f7846078a4","name":"st-testcc8488c5dfd148d9ad3ba5f7846078a4","type":"Microsoft.Resources/resourceGroups","location":"eastus","tags":{"CleanTime":"1587968721"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/st-testfa1f4766e20f41aa9d6d97897882a105","name":"st-testfa1f4766e20f41aa9d6d97897882a105","type":"Microsoft.Resources/resourceGroups","location":"eastus","tags":{"CleanTime":"1587968743"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/st-test48f0c13ed67d490aa205e62dd4a90c4c","name":"st-test48f0c13ed67d490aa205e62dd4a90c4c","type":"Microsoft.Resources/resourceGroups","location":"eastus","tags":{"CleanTime":"1587968792"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/st-test9bfa5e3be4404e97a312c4b1a90f2fa0","name":"st-test9bfa5e3be4404e97a312c4b1a90f2fa0","type":"Microsoft.Resources/resourceGroups","location":"eastus","tags":{"CleanTime":"1587968832"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/qstestd87ce31891334a30a448f8150a5424f4","name":"qstestd87ce31891334a30a448f8150a5424f4","type":"Microsoft.Resources/resourceGroups","location":"eastus","tags":{"CleanTime":"1587999717"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/st-test88a8d9800d1a4eb5920239e40dab9171","name":"st-test88a8d9800d1a4eb5920239e40dab9171","type":"Microsoft.Resources/resourceGroups","location":"eastus","tags":{"CleanTime":"1588005196"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/st-test2997445ac24541118bf17d0af146a37f","name":"st-test2997445ac24541118bf17d0af146a37f","type":"Microsoft.Resources/resourceGroups","location":"eastus","tags":{"CleanTime":"1588005194"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/st-test6bff85e4f2844847996f404e3e5f499f","name":"st-test6bff85e4f2844847996f404e3e5f499f","type":"Microsoft.Resources/resourceGroups","location":"eastus","tags":{"CleanTime":"1588005265"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/st-test2a122a7397af4326be21839f16bea81b","name":"st-test2a122a7397af4326be21839f16bea81b","type":"Microsoft.Resources/resourceGroups","location":"eastus","tags":{"CleanTime":"1588005270"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/st-teste17d577e20f74e49946aa80be674a496","name":"st-teste17d577e20f74e49946aa80be674a496","type":"Microsoft.Resources/resourceGroups","location":"eastus","tags":{"CleanTime":"1588005311"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/st-testcfc9617d60684a2ca0cb54bde9738794","name":"st-testcfc9617d60684a2ca0cb54bde9738794","type":"Microsoft.Resources/resourceGroups","location":"eastus","tags":{"CleanTime":"1588005303"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/st-testc262bb053c2e41e9b875920e318b153d","name":"st-testc262bb053c2e41e9b875920e318b153d","type":"Microsoft.Resources/resourceGroups","location":"eastus","tags":{"CleanTime":"1588005324"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/st-test8c8e566e15b24095a85c77598a8c42aa","name":"st-test8c8e566e15b24095a85c77598a8c42aa","type":"Microsoft.Resources/resourceGroups","location":"eastus","tags":{"CleanTime":"1588005367"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/qstest805b2f70124e4e778af34ba0c996e32c","name":"qstest805b2f70124e4e778af34ba0c996e32c","type":"Microsoft.Resources/resourceGroups","location":"eastus","tags":{"CleanTime":"1588037813"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/qstest00d45e3e5b904c96b7e4f1373f8d15e8","name":"qstest00d45e3e5b904c96b7e4f1373f8d15e8","type":"Microsoft.Resources/resourceGroups","location":"eastus","tags":{"CleanTime":"1588049458"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/st-test11605684c8d4461bbb93c7202a377d68","name":"st-test11605684c8d4461bbb93c7202a377d68","type":"Microsoft.Resources/resourceGroups","location":"eastus","tags":{"CleanTime":"1588054994"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/st-test4813989f67004061b1e7cae7ac82bb29","name":"st-test4813989f67004061b1e7cae7ac82bb29","type":"Microsoft.Resources/resourceGroups","location":"eastus","tags":{"CleanTime":"1588054999"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/st-test6c890f2f71c146ad99a891b93c06eca4","name":"st-test6c890f2f71c146ad99a891b93c06eca4","type":"Microsoft.Resources/resourceGroups","location":"eastus","tags":{"CleanTime":"1588055046"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/st-testd89204f6d0314e0d8bab3ee4a98927bd","name":"st-testd89204f6d0314e0d8bab3ee4a98927bd","type":"Microsoft.Resources/resourceGroups","location":"eastus","tags":{"CleanTime":"1588055066"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/st-testf56e106df26a4c749a5604ed9ec60f73","name":"st-testf56e106df26a4c749a5604ed9ec60f73","type":"Microsoft.Resources/resourceGroups","location":"eastus","tags":{"CleanTime":"1588055099"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/st-test21811d4dc45e4482b877def72f5473de","name":"st-test21811d4dc45e4482b877def72f5473de","type":"Microsoft.Resources/resourceGroups","location":"eastus","tags":{"CleanTime":"1588055120"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/st-test86ace9ae86e544cc8903013e817d212e","name":"st-test86ace9ae86e544cc8903013e817d212e","type":"Microsoft.Resources/resourceGroups","location":"eastus","tags":{"CleanTime":"1588055171"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/st-testabcae5b2cd67407db9cd5f16907878a2","name":"st-testabcae5b2cd67407db9cd5f16907878a2","type":"Microsoft.Resources/resourceGroups","location":"eastus","tags":{"CleanTime":"1588055536"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/jieshe-temp-test","name":"jieshe-temp-test","type":"Microsoft.Resources/resourceGroups","location":"eastus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/xuzhang3","name":"xuzhang3","type":"Microsoft.Resources/resourceGroups","location":"eastus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/qstest920a9281fdb749e7922f44d0f51a6620","name":"qstest920a9281fdb749e7922f44d0f51a6620","type":"Microsoft.Resources/resourceGroups","location":"eastus","tags":{"CleanTime":"1588086120"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/st-testfcbbd842979f4211818b02b75e50ea92","name":"st-testfcbbd842979f4211818b02b75e50ea92","type":"Microsoft.Resources/resourceGroups","location":"eastus","tags":{"CleanTime":"1588091606"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/st-tested4dd29d451f491293a73d8154462789","name":"st-tested4dd29d451f491293a73d8154462789","type":"Microsoft.Resources/resourceGroups","location":"eastus","tags":{"CleanTime":"1588091595"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/st-test1f7e175916564c87a892cf56560df1cb","name":"st-test1f7e175916564c87a892cf56560df1cb","type":"Microsoft.Resources/resourceGroups","location":"eastus","tags":{"CleanTime":"1588091629"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/st-test80ce39f12cd94879a967756bd5fc384b","name":"st-test80ce39f12cd94879a967756bd5fc384b","type":"Microsoft.Resources/resourceGroups","location":"eastus","tags":{"CleanTime":"1588091622"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/st-test132e582540d44a8c9c2c2457ef61f013","name":"st-test132e582540d44a8c9c2c2457ef61f013","type":"Microsoft.Resources/resourceGroups","location":"eastus","tags":{"CleanTime":"1588091668"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/st-test44dcc557a4644063b918e6d0e3269ee4","name":"st-test44dcc557a4644063b918e6d0e3269ee4","type":"Microsoft.Resources/resourceGroups","location":"eastus","tags":{"CleanTime":"1588091700"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/st-testaabf4c3aab384597ace7e7e3e36263c9","name":"st-testaabf4c3aab384597ace7e7e3e36263c9","type":"Microsoft.Resources/resourceGroups","location":"eastus","tags":{"CleanTime":"1588091754"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/st-test9c54bbeb58f94df88fd28bbdad492842","name":"st-test9c54bbeb58f94df88fd28bbdad492842","type":"Microsoft.Resources/resourceGroups","location":"eastus","tags":{"CleanTime":"1588092163"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/qstest4172c9ca425f4c658f97fb3b6803d7a9","name":"qstest4172c9ca425f4c658f97fb3b6803d7a9","type":"Microsoft.Resources/resourceGroups","location":"eastus","tags":{"CleanTime":"1588124217"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/qstest75b76e10c2904025b1f058f40441aac8","name":"qstest75b76e10c2904025b1f058f40441aac8","type":"Microsoft.Resources/resourceGroups","location":"eastus","tags":{"CleanTime":"1588135855"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/st-test5ade944cf7ec45fd8d1ec5f74aee043d","name":"st-test5ade944cf7ec45fd8d1ec5f74aee043d","type":"Microsoft.Resources/resourceGroups","location":"eastus","tags":{"CleanTime":"1588141392"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/st-testb72b948cf3444bc4a681f55e728181f1","name":"st-testb72b948cf3444bc4a681f55e728181f1","type":"Microsoft.Resources/resourceGroups","location":"eastus","tags":{"CleanTime":"1588141405"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/st-test91b57a21ddae40c0af42fd4d045ef9fb","name":"st-test91b57a21ddae40c0af42fd4d045ef9fb","type":"Microsoft.Resources/resourceGroups","location":"eastus","tags":{"CleanTime":"1588141453"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/st-testa3c94049866241879260fe368576c32f","name":"st-testa3c94049866241879260fe368576c32f","type":"Microsoft.Resources/resourceGroups","location":"eastus","tags":{"CleanTime":"1588141450"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/st-test8be9bbd18116455e95815dab6be75b47","name":"st-test8be9bbd18116455e95815dab6be75b47","type":"Microsoft.Resources/resourceGroups","location":"eastus","tags":{"CleanTime":"1588141494"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/st-test75ef8b7ab4c140dfb140a65d315b81e1","name":"st-test75ef8b7ab4c140dfb140a65d315b81e1","type":"Microsoft.Resources/resourceGroups","location":"eastus","tags":{"CleanTime":"1588141505"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/st-testb174b5a41b8944d99ee4b4c172760702","name":"st-testb174b5a41b8944d99ee4b4c172760702","type":"Microsoft.Resources/resourceGroups","location":"eastus","tags":{"CleanTime":"1588141595"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/st-test2863660d2eaa470faa917cdea498fb6e","name":"st-test2863660d2eaa470faa917cdea498fb6e","type":"Microsoft.Resources/resourceGroups","location":"eastus","tags":{"CleanTime":"1588141947"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/qstestf522117b70eb4d788f3e2c596331aba6","name":"qstestf522117b70eb4d788f3e2c596331aba6","type":"Microsoft.Resources/resourceGroups","location":"eastus","tags":{"CleanTime":"1588172555"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/st-test174208f8235e4a27981bc2ff1b583e32","name":"st-test174208f8235e4a27981bc2ff1b583e32","type":"Microsoft.Resources/resourceGroups","location":"eastus","tags":{"CleanTime":"1588178018"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/st-test493c6f5aa58e4c46a4750662cb183de5","name":"st-test493c6f5aa58e4c46a4750662cb183de5","type":"Microsoft.Resources/resourceGroups","location":"eastus","tags":{"CleanTime":"1588178012"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/st-test365400ad03dc465cba42e87064a2e1d9","name":"st-test365400ad03dc465cba42e87064a2e1d9","type":"Microsoft.Resources/resourceGroups","location":"eastus","tags":{"CleanTime":"1588178037"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/st-testfa4ab400740c42c3b58d7dbace73b5ea","name":"st-testfa4ab400740c42c3b58d7dbace73b5ea","type":"Microsoft.Resources/resourceGroups","location":"eastus","tags":{"CleanTime":"1588178063"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/st-test07951342b21f4ad68bd316702b2deb73","name":"st-test07951342b21f4ad68bd316702b2deb73","type":"Microsoft.Resources/resourceGroups","location":"eastus","tags":{"CleanTime":"1588178142"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/st-test719699bf2a9f42eaa2f7b62c37dc9f49","name":"st-test719699bf2a9f42eaa2f7b62c37dc9f49","type":"Microsoft.Resources/resourceGroups","location":"eastus","tags":{"CleanTime":"1588178132"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/st-testce027e1c02224a6f97530aacfbf262cb","name":"st-testce027e1c02224a6f97530aacfbf262cb","type":"Microsoft.Resources/resourceGroups","location":"eastus","tags":{"CleanTime":"1588178152"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/st-testb712cbc3d3034f10ba5a8ee66ecd091f","name":"st-testb712cbc3d3034f10ba5a8ee66ecd091f","type":"Microsoft.Resources/resourceGroups","location":"eastus","tags":{"CleanTime":"1588178140"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_test_deployments_at_scope9c41124a","name":"test_mgmt_resource_test_deployments_at_scope9c41124a","type":"Microsoft.Resources/resourceGroups","location":"westus","properties":{"provisioningState":"Deleting"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_test_deployments_basic667e10fe","name":"test_mgmt_resource_test_deployments_basic667e10fe","type":"Microsoft.Resources/resourceGroups","location":"westus","properties":{"provisioningState":"Deleting"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_test_resource_groups457f1050","name":"test_mgmt_resource_test_resource_groups457f1050","type":"Microsoft.Resources/resourceGroups","location":"westus","tags":{"tag1":"value1"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/resource-graph-queries","name":"resource-graph-queries","type":"Microsoft.Resources/resourceGroups","location":"westcentralus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/AzureDevops","name":"AzureDevops","type":"Microsoft.Resources/resourceGroups","location":"eastus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cleanupservice","name":"cleanupservice","type":"Microsoft.Resources/resourceGroups","location":"westus","tags":{"What
+        Is Cleanup Service":"https://aka.ms/WhatIsCleanupService"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ci-jenkins-agents","name":"ci-jenkins-agents","type":"Microsoft.Resources/resourceGroups","location":"westus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/jenkins","name":"jenkins","type":"Microsoft.Resources/resourceGroups","location":"westus2","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/demo-aks","name":"demo-aks","type":"Microsoft.Resources/resourceGroups","location":"eastus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/jenkins-demo-1","name":"jenkins-demo-1","type":"Microsoft.Resources/resourceGroups","location":"eastus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/jenkins-demo-2","name":"jenkins-demo-2","type":"Microsoft.Resources/resourceGroups","location":"eastus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/jenkins-demo-webapp","name":"jenkins-demo-webapp","type":"Microsoft.Resources/resourceGroups","location":"southcentralus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/jenkins-demo-cosmosdb","name":"jenkins-demo-cosmosdb","type":"Microsoft.Resources/resourceGroups","location":"australiaeast","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/jenkinsciacr","name":"jenkinsciacr","type":"Microsoft.Resources/resourceGroups","location":"eastus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/jenkins-public","name":"jenkins-public","type":"Microsoft.Resources/resourceGroups","location":"eastus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/jieshe-jenkins","name":"jieshe-jenkins","type":"Microsoft.Resources/resourceGroups","location":"eastus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/MC_demo-aks_demoaks_eastus","name":"MC_demo-aks_demoaks_eastus","type":"Microsoft.Resources/resourceGroups","location":"eastus","managedBy":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/demo-aks/providers/Microsoft.ContainerService/managedClusters/demoaks","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pcansrg","name":"pcansrg","type":"Microsoft.Resources/resourceGroups","location":"eastus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pcFunctiongp2","name":"pcFunctiongp2","type":"Microsoft.Resources/resourceGroups","location":"eastus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pclinux","name":"pclinux","type":"Microsoft.Resources/resourceGroups","location":"westeurope","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pcjenkinsdemo","name":"pcjenkinsdemo","type":"Microsoft.Resources/resourceGroups","location":"eastus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/Testing","name":"Testing","type":"Microsoft.Resources/resourceGroups","location":"westus","tags":{"testing":"testing","delete":"never"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pcansiblerg","name":"pcansiblerg","type":"Microsoft.Resources/resourceGroups","location":"westus2","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/jenkins-bi-test","name":"jenkins-bi-test","type":"Microsoft.Resources/resourceGroups","location":"southcentralus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-k8stest","name":"azure-k8stest","type":"Microsoft.Resources/resourceGroups","location":"eastus","tags":{},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/MC_azure-k8stest_k8stest_eastus","name":"MC_azure-k8stest_k8stest_eastus","type":"Microsoft.Resources/resourceGroups","location":"eastus","managedBy":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/azure-k8stest/providers/Microsoft.ContainerService/managedClusters/k8stest","tags":{"Environment":"Development"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/st-test1e58c78d873a46d9bea81ff17d3f555f","name":"st-test1e58c78d873a46d9bea81ff17d3f555f","type":"Microsoft.Resources/resourceGroups","location":"eastus","tags":{"CleanTime":"1573317502"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/st-test0904a644d7cd41c28c894b7e94f33226","name":"st-test0904a644d7cd41c28c894b7e94f33226","type":"Microsoft.Resources/resourceGroups","location":"eastus","tags":{"CleanTime":"1567269307"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cloud-shell-storage-westus","name":"cloud-shell-storage-westus","type":"Microsoft.Resources/resourceGroups","location":"westus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pcansibledev","name":"pcansibledev","type":"Microsoft.Resources/resourceGroups","location":"westus2","properties":{"provisioningState":"Succeeded"}}]}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '5225'
+      - '26686'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 30 Mar 2020 08:17:16 GMT
+      - Mon, 27 Apr 2020 18:01:31 GMT
       expires:
       - '-1'
       pragma:
@@ -204,7 +204,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-resource/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-resource/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PATCH
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_test_resource_groups457f1050?api-version=2019-10-01
   response:
@@ -218,7 +218,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 30 Mar 2020 08:17:18 GMT
+      - Mon, 27 Apr 2020 18:01:31 GMT
       expires:
       - '-1'
       pragma:
@@ -232,7 +232,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1197'
+      - '1198'
     status:
       code: 200
       message: OK
@@ -246,7 +246,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-resource/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-resource/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_test_resource_groups457f1050/resources?api-version=2019-10-01
   response:
@@ -260,7 +260,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 30 Mar 2020 08:17:19 GMT
+      - Mon, 27 Apr 2020 18:01:31 GMT
       expires:
       - '-1'
       pragma:
@@ -288,7 +288,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-resource/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-resource/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_test_resource_groups457f1050/exportTemplate?api-version=2019-10-01
   response:
@@ -302,7 +302,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 30 Mar 2020 08:17:19 GMT
+      - Mon, 27 Apr 2020 18:01:32 GMT
       expires:
       - '-1'
       pragma:
@@ -328,7 +328,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-azure-mgmt-resource/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-resource/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_test_resource_groups457f1050?api-version=2019-10-01
   response:
@@ -340,7 +340,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 30 Mar 2020 08:17:22 GMT
+      - Mon, 27 Apr 2020 18:01:35 GMT
       expires:
       - '-1'
       location:
@@ -352,7 +352,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-deletes:
-      - '14997'
+      - '14999'
     status:
       code: 202
       message: Accepted
@@ -366,7 +366,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-resource/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-resource/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFR1JPVVBERUxFVElPTkpPQi1URVNUOjVGTUdNVDo1RlJFU09VUkNFOjVGVEVTVDo1RlJFU09VUkNFOjVGR1JPVVBTNDU3RjEwNTAtV0VTVFVTIiwiam9iTG9jYXRpb24iOiJ3ZXN0dXMifQ?api-version=2019-10-01
   response:
@@ -378,7 +378,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 30 Mar 2020 08:17:38 GMT
+      - Mon, 27 Apr 2020 18:01:50 GMT
       expires:
       - '-1'
       location:
@@ -402,7 +402,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-resource/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-resource/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFR1JPVVBERUxFVElPTkpPQi1URVNUOjVGTUdNVDo1RlJFU09VUkNFOjVGVEVTVDo1RlJFU09VUkNFOjVGR1JPVVBTNDU3RjEwNTAtV0VTVFVTIiwiam9iTG9jYXRpb24iOiJ3ZXN0dXMifQ?api-version=2019-10-01
   response:
@@ -414,7 +414,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 30 Mar 2020 08:17:54 GMT
+      - Mon, 27 Apr 2020 18:02:06 GMT
       expires:
       - '-1'
       location:
@@ -438,7 +438,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-resource/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-resource/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFR1JPVVBERUxFVElPTkpPQi1URVNUOjVGTUdNVDo1RlJFU09VUkNFOjVGVEVTVDo1RlJFU09VUkNFOjVGR1JPVVBTNDU3RjEwNTAtV0VTVFVTIiwiam9iTG9jYXRpb24iOiJ3ZXN0dXMifQ?api-version=2019-10-01
   response:
@@ -450,7 +450,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 30 Mar 2020 08:18:09 GMT
+      - Mon, 27 Apr 2020 18:02:34 GMT
       expires:
       - '-1'
       pragma:

@@ -13,7 +13,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-resource/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-resource/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_locks_test_locks_at_resource_group_leveldf68187e/providers/Microsoft.Authorization/locks/pylockrg?api-version=2016-09-01
   response:
@@ -27,7 +27,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 15 Apr 2020 05:58:00 GMT
+      - Mon, 27 Apr 2020 14:18:43 GMT
       expires:
       - '-1'
       pragma:
@@ -51,7 +51,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-resource/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-resource/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_locks_test_locks_at_resource_group_leveldf68187e/providers/Microsoft.Authorization/locks/pylockrg?api-version=2016-09-01
   response:
@@ -65,7 +65,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 15 Apr 2020 05:58:01 GMT
+      - Mon, 27 Apr 2020 14:18:43 GMT
       expires:
       - '-1'
       pragma:
@@ -91,7 +91,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-resource/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-resource/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_locks_test_locks_at_resource_group_leveldf68187e/providers/Microsoft.Authorization/locks?api-version=2016-09-01
   response:
@@ -105,7 +105,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 15 Apr 2020 05:58:01 GMT
+      - Mon, 27 Apr 2020 14:18:43 GMT
       expires:
       - '-1'
       pragma:
@@ -133,7 +133,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-azure-mgmt-resource/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-resource/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_locks_test_locks_at_resource_group_leveldf68187e/providers/Microsoft.Authorization/locks/pylockrg?api-version=2016-09-01
   response:
@@ -145,7 +145,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 15 Apr 2020 05:58:01 GMT
+      - Mon, 27 Apr 2020 14:18:43 GMT
       expires:
       - '-1'
       pragma:

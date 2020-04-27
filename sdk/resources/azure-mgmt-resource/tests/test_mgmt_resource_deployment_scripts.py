@@ -25,8 +25,9 @@ class MgmtResourceDeploymentScriptTest(AzureMgmtTestCase):
         )
 
         if self.is_live:
+            from azure.mgmt.msi import ManagedServiceIdentityClient
             self.msi_client = self.create_mgmt_client(
-                azure.mgmt.msi.ManagedServiceIdentityClient
+                ManagedServiceIdentityClient
             )
 
     @ResourceGroupPreparer()
@@ -77,11 +78,13 @@ class MgmtResourceDeploymentScriptTest(AzureMgmtTestCase):
             pass
 
         # Update script tags
-        tags = {"key1": "value1"}
+        BODY = {
+          'tags': {"key1": "value1"}
+        }
         self.script_client.deployment_scripts.update(
             resource_group.name,
             script_name,
-            tags
+            BODY
         )
 
         # Get script

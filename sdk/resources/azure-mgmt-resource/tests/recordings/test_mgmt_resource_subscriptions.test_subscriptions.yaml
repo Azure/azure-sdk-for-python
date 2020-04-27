@@ -9,22 +9,23 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-resource/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-resource/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions?api-version=2019-11-01
   response:
     body:
-      string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000","authorizationSource":"RoleBased","managedByTenants":[{"tenantId":"2f4a9838-26b7-47ee-be60-ccc1fdec5953"}],"subscriptionId":"00000000-0000-0000-0000-000000000000","tenantId":"00000000-0000-0000-0000-000000000000","displayName":"Python
-        NodeJS Test with TTL = 7 days","state":"Enabled","subscriptionPolicies":{"locationPlacementId":"Internal_2014-09-01","quotaId":"Internal_2014-09-01","spendingLimit":"Off"}}],"count":{"type":"Total","value":1}}'
+      string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000","authorizationSource":"RoleBased","managedByTenants":[],"subscriptionId":"00000000-0000-0000-0000-000000000000","tenantId":"72f988bf-86f1-41af-91ab-2d7cd011db47","displayName":"Visual
+        Studio China Jenkins DevINT with TTL = 7 Days","state":"Enabled","subscriptionPolicies":{"locationPlacementId":"Internal_2014-09-01","quotaId":"Internal_2014-09-01","spendingLimit":"Off"}},{"id":"/subscriptions/685ba005-af8d-4b04-8f16-a7bf38b2eb5a","authorizationSource":"RoleBased","managedByTenants":[{"tenantId":"b5ce0030-ec42-4a62-bc94-3025993e790c"},{"tenantId":"2f4a9838-26b7-47ee-be60-ccc1fdec5953"}],"subscriptionId":"685ba005-af8d-4b04-8f16-a7bf38b2eb5a","tenantId":"72f988bf-86f1-41af-91ab-2d7cd011db47","displayName":"Java
+        Tooling Tests with TTL = 7 Days","state":"Enabled","subscriptionPolicies":{"locationPlacementId":"Internal_2014-09-01","quotaId":"Internal_2014-09-01","spendingLimit":"Off"}}],"count":{"type":"Total","value":2}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '514'
+      - '999'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sun, 22 Mar 2020 14:04:19 GMT
+      - Mon, 27 Apr 2020 12:21:18 GMT
       expires:
       - '-1'
       pragma:
@@ -48,7 +49,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-resource/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-resource/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/locations?api-version=2019-11-01
   response:
@@ -82,7 +83,8 @@ interactions:
         Pacific","longitude":"126.9780","latitude":"37.5665","physicalLocation":"Seoul","pairedRegion":[{"name":"koreasouth","id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/koreasouth"}]}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/canadacentral","name":"canadacentral","displayName":"Canada
         Central","regionalDisplayName":"(Canada) Canada Central","metadata":{"regionType":"Physical","regionCategory":"Recommended","geographyGroup":"Canada","longitude":"-79.383","latitude":"43.653","physicalLocation":"Toronto","pairedRegion":[{"name":"canadaeast","id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/canadaeast"}]}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/francecentral","name":"francecentral","displayName":"France
         Central","regionalDisplayName":"(Europe) France Central","metadata":{"regionType":"Physical","regionCategory":"Recommended","geographyGroup":"Europe","longitude":"2.3730","latitude":"46.3772","physicalLocation":"Paris","pairedRegion":[{"name":"francesouth","id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/francesouth"}]}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/germanywestcentral","name":"germanywestcentral","displayName":"Germany
-        West Central","regionalDisplayName":"(Europe) Germany West Central","metadata":{"regionType":"Physical","regionCategory":"Recommended","geographyGroup":"Europe","longitude":"8.682127","latitude":"50.110924","physicalLocation":"Frankfurt","pairedRegion":[{"name":"germanynorth","id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/germanynorth"}]}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/switzerlandnorth","name":"switzerlandnorth","displayName":"Switzerland
+        West Central","regionalDisplayName":"(Europe) Germany West Central","metadata":{"regionType":"Physical","regionCategory":"Recommended","geographyGroup":"Europe","longitude":"8.682127","latitude":"50.110924","physicalLocation":"Frankfurt","pairedRegion":[{"name":"germanynorth","id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/germanynorth"}]}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/norwayeast","name":"norwayeast","displayName":"Norway
+        East","regionalDisplayName":"(Europe) Norway East","metadata":{"regionType":"Physical","regionCategory":"Recommended","geographyGroup":"Europe","longitude":"10.752245","latitude":"59.913868","physicalLocation":"Norway","pairedRegion":[{"name":"norwaywest","id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/norwaywest"}]}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/switzerlandnorth","name":"switzerlandnorth","displayName":"Switzerland
         North","regionalDisplayName":"(Europe) Switzerland North","metadata":{"regionType":"Physical","regionCategory":"Recommended","geographyGroup":"Europe","longitude":"8.564572","latitude":"47.451542","physicalLocation":"Zurich","pairedRegion":[{"name":"switzerlandwest","id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/switzerlandwest"}]}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/uaenorth","name":"uaenorth","displayName":"UAE
         North","regionalDisplayName":"(Middle East) UAE North","metadata":{"regionType":"Physical","regionCategory":"Recommended","geographyGroup":"Middle
         East","longitude":"55.316666","latitude":"25.266666","physicalLocation":"Dubai","pairedRegion":[{"name":"uaecentral","id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/uaecentral"}]}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/brazilsouth","name":"brazilsouth","displayName":"Brazil
@@ -98,7 +100,8 @@ interactions:
         Pacific","regionalDisplayName":"Asia Pacific","metadata":{"regionType":"Logical","regionCategory":"Other"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/australia","name":"australia","displayName":"Australia","regionalDisplayName":"Australia","metadata":{"regionType":"Logical","regionCategory":"Other"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/europe","name":"europe","displayName":"Europe","regionalDisplayName":"Europe","metadata":{"regionType":"Logical","regionCategory":"Other"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/global","name":"global","displayName":"Global","regionalDisplayName":"Global","metadata":{"regionType":"Logical","regionCategory":"Other"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/japan","name":"japan","displayName":"Japan","regionalDisplayName":"Japan","metadata":{"regionType":"Logical","regionCategory":"Other"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/uk","name":"uk","displayName":"UK","regionalDisplayName":"UK","metadata":{"regionType":"Logical","regionCategory":"Other"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/unitedstates","name":"unitedstates","displayName":"United
         States","regionalDisplayName":"United States","metadata":{"regionType":"Logical","regionCategory":"Other"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/eastasiastage","name":"eastasiastage","displayName":"East
         Asia (Stage)","regionalDisplayName":"(Asia Pacific) East Asia (Stage)","metadata":{"regionType":"Logical","regionCategory":"Other","geographyGroup":"Asia
-        Pacific"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/westcentralus","name":"westcentralus","displayName":"West
+        Pacific"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/eastus2euap","name":"eastus2euap","displayName":"East
+        US 2 EUAP","regionalDisplayName":"(US) East US 2 EUAP","metadata":{"regionType":"Physical","regionCategory":"Other","geographyGroup":"US","longitude":"-78.3889","latitude":"36.6681","pairedRegion":[{"name":"centraluseuap","id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/centraluseuap"}]}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/westcentralus","name":"westcentralus","displayName":"West
         Central US","regionalDisplayName":"(US) West Central US","metadata":{"regionType":"Physical","regionCategory":"Other","geographyGroup":"US","longitude":"-110.234","latitude":"40.890","physicalLocation":"Wyoming","pairedRegion":[{"name":"westus2","id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/westus2"}]}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/southafricawest","name":"southafricawest","displayName":"South
         Africa West","regionalDisplayName":"(Africa) South Africa West","metadata":{"regionType":"Physical","regionCategory":"Other","geographyGroup":"Africa","longitude":"18.843266","latitude":"-34.075691","physicalLocation":"Cape
         Town","pairedRegion":[{"name":"southafricanorth","id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/southafricanorth"}]}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/australiacentral","name":"australiacentral","displayName":"Australia
@@ -118,7 +121,8 @@ interactions:
         Pacific","longitude":"72.868","latitude":"19.088","physicalLocation":"Mumbai","pairedRegion":[{"name":"southindia","id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/southindia"}]}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/canadaeast","name":"canadaeast","displayName":"Canada
         East","regionalDisplayName":"(Canada) Canada East","metadata":{"regionType":"Physical","regionCategory":"Other","geographyGroup":"Canada","longitude":"-71.217","latitude":"46.817","physicalLocation":"Quebec","pairedRegion":[{"name":"canadacentral","id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/canadacentral"}]}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/francesouth","name":"francesouth","displayName":"France
         South","regionalDisplayName":"(Europe) France South","metadata":{"regionType":"Physical","regionCategory":"Other","geographyGroup":"Europe","longitude":"2.1972","latitude":"43.8345","physicalLocation":"Marseille","pairedRegion":[{"name":"francecentral","id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/francecentral"}]}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/germanynorth","name":"germanynorth","displayName":"Germany
-        North","regionalDisplayName":"(Europe) Germany North","metadata":{"regionType":"Physical","regionCategory":"Other","geographyGroup":"Europe","longitude":"8.806422","latitude":"53.073635","physicalLocation":"Berlin","pairedRegion":[{"name":"germanywestcentral","id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/germanywestcentral"}]}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/switzerlandwest","name":"switzerlandwest","displayName":"Switzerland
+        North","regionalDisplayName":"(Europe) Germany North","metadata":{"regionType":"Physical","regionCategory":"Other","geographyGroup":"Europe","longitude":"8.806422","latitude":"53.073635","physicalLocation":"Berlin","pairedRegion":[{"name":"germanywestcentral","id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/germanywestcentral"}]}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/norwaywest","name":"norwaywest","displayName":"Norway
+        West","regionalDisplayName":"(Europe) Norway West","metadata":{"regionType":"Physical","regionCategory":"Other","geographyGroup":"Europe","longitude":"5.733107","latitude":"58.969975","physicalLocation":"Norway","pairedRegion":[{"name":"norwayeast","id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/norwayeast"}]}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/switzerlandwest","name":"switzerlandwest","displayName":"Switzerland
         West","regionalDisplayName":"(Europe) Switzerland West","metadata":{"regionType":"Physical","regionCategory":"Other","geographyGroup":"Europe","longitude":"6.143158","latitude":"46.204391","physicalLocation":"Geneva","pairedRegion":[{"name":"switzerlandnorth","id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/switzerlandnorth"}]}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/ukwest","name":"ukwest","displayName":"UK
         West","regionalDisplayName":"(Europe) UK West","metadata":{"regionType":"Physical","regionCategory":"Other","geographyGroup":"Europe","longitude":"-3.084","latitude":"53.427","physicalLocation":"Cardiff","pairedRegion":[{"name":"uksouth","id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/uksouth"}]}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/uaecentral","name":"uaecentral","displayName":"UAE
         Central","regionalDisplayName":"(Middle East) UAE Central","metadata":{"regionType":"Physical","regionCategory":"Other","geographyGroup":"Middle
@@ -128,11 +132,11 @@ interactions:
       cache-control:
       - no-cache
       content-length:
-      - '21400'
+      - '22751'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sun, 22 Mar 2020 14:04:19 GMT
+      - Mon, 27 Apr 2020 12:21:19 GMT
       expires:
       - '-1'
       pragma:
@@ -156,22 +160,22 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-resource/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-resource/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000?api-version=2019-11-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000","authorizationSource":"RoleBased","managedByTenants":[{"tenantId":"2f4a9838-26b7-47ee-be60-ccc1fdec5953"}],"subscriptionId":"00000000-0000-0000-0000-000000000000","tenantId":"00000000-0000-0000-0000-000000000000","displayName":"Python
-        NodeJS Test with TTL = 7 days","state":"Enabled","subscriptionPolicies":{"locationPlacementId":"Internal_2014-09-01","quotaId":"Internal_2014-09-01","spendingLimit":"Off"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000","authorizationSource":"RoleBased","managedByTenants":[],"subscriptionId":"00000000-0000-0000-0000-000000000000","tenantId":"72f988bf-86f1-41af-91ab-2d7cd011db47","displayName":"Visual
+        Studio China Jenkins DevINT with TTL = 7 Days","state":"Enabled","subscriptionPolicies":{"locationPlacementId":"Internal_2014-09-01","quotaId":"Internal_2014-09-01","spendingLimit":"Off"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '467'
+      - '432'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sun, 22 Mar 2020 14:04:20 GMT
+      - Mon, 27 Apr 2020 12:21:20 GMT
       expires:
       - '-1'
       pragma:

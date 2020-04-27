@@ -81,13 +81,13 @@ class ResourceGroupPreparer(AzureMgmtPreparer):
         if self.is_live and self._need_creation:
             try:
                 if 'wait_timeout' in kwargs:
-                    azure_poller = self.client.resource_groups.delete(name)
+                    azure_poller = self.client.resource_groups.begin_delete(name)
                     azure_poller.wait(kwargs.get('wait_timeout'))
                     if azure_poller.done():
                         return
                     raise AzureTestError('Timed out waiting for resource group to be deleted.')
                 else:
-                    self.client.resource_groups.delete(name, polling=False)
+                    self.client.resource_groups.begin_delete(name, polling=False)
             except CloudError:
                 pass
 
