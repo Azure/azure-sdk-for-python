@@ -31,13 +31,18 @@ class MgmtResourceLinksTest(AzureMgmtTestCase):
     def test_links(self, resource_group, location):
         if not self.is_playback():
             resource_name = self.get_resource_name("pytestavset")
+            # TODO: here use special api_version 2019-07-01, not 2019-10-01.
+            # Beacuse this api_version is as same as Microsoft.Compute api_version 2019-07-01
+            # If use default(2019-10-01), it will return NoRegisteredProviderFound.
+            # issue about optional api_version in resource.resources needs to be solved. 
             create_result = self.resource_client.resources.begin_create_or_update(
                 resource_group_name=resource_group.name,
                 resource_provider_namespace="Microsoft.Compute",
                 parent_resource_path="",
                 resource_type="availabilitySets",
                 resource_name=resource_name,
-                parameters={'location': location}
+                parameters={'location': location},
+                # api_version="2019-07-01"  TODO: need fix in sdk
             )
             result = create_result.result()
             self.result_id = result.id
@@ -47,7 +52,9 @@ class MgmtResourceLinksTest(AzureMgmtTestCase):
         link = self.client.resource_links.create_or_update(
             resource_group.id+'/providers/Microsoft.Resources/links/myLink',
             {
-                'target_id' : self.result_id,
+                "properties": {
+                    'target_id' : self.result_id
+                },
                 'notes': 'Testing links'
             }
         )
