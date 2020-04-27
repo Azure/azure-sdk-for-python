@@ -101,7 +101,8 @@ class RecognizeEntitiesResult(DictMixin):
     :param entities: Recognized entities in the document.
     :type entities:
         list[~azure.ai.textanalytics.CategorizedEntity]
-    :param warnings: Warnings encountered while processing document.
+    :param warnings: Warnings encountered while processing document. Results will still be returned
+     if there are warnings, but they may not be fully accurate.
     :type warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
     :param statistics: If show_stats=true was specified in the request this
         field will contain information about the document payload.
@@ -133,7 +134,8 @@ class DetectLanguageResult(DictMixin):
     :type id: str
     :param primary_language: The primary language detected in the document.
     :type primary_language: ~azure.ai.textanalytics.DetectedLanguage
-    :param warnings: Warnings encountered while processing document.
+    :param warnings: Warnings encountered while processing document. Results will still be returned
+     if there are warnings, but they may not be fully accurate.
     :type warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
     :param statistics: If show_stats=true was specified in the request this
         field will contain information about the document payload.
@@ -243,8 +245,9 @@ class TextAnalyticsError(DictMixin):
             .format(self.code, self.message, self.target)[:1024]
 
 class TextAnalyticsWarning(DictMixin):
-    """TextAnalyticsWarning contains the warning code, message, and
-    other details that explains why the response has a warning
+    """TextAnalyticsWarning contains the warning code and message that explains why
+    the response has a warning.
+
     :param code: Warning code. Possible values include: 'LongWordsInDocument',
      'DocumentTruncated'.
     :type code: str
@@ -280,7 +283,8 @@ class ExtractKeyPhrasesResult(DictMixin):
         The number of key phrases returned is proportional to the number of words
         in the input document.
     :type key_phrases: list[str]
-    :param warnings: Warnings encountered while processing document.
+    :param warnings: Warnings encountered while processing document. Results will still be returned
+     if there are warnings, but they may not be fully accurate.
     :type warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
     :param statistics: If show_stats=true was specified in the request this
         field will contain information about the document payload.
@@ -313,7 +317,8 @@ class RecognizeLinkedEntitiesResult(DictMixin):
     :param entities: Recognized well-known entities in the document.
     :type entities:
         list[~azure.ai.textanalytics.LinkedEntity]
-    :param warnings: Warnings encountered while processing document.
+    :param warnings: Warnings encountered while processing document. Results will still be returned
+     if there are warnings, but they may not be fully accurate.
     :type warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
     :param statistics: If show_stats=true was specified in the request this
         field will contain information about the document payload.
@@ -348,7 +353,8 @@ class AnalyzeSentimentResult(DictMixin):
         Neutral, Positive, or Mixed). Possible values include: 'positive',
         'neutral', 'negative', 'mixed'
     :type sentiment: str
-    :param warnings: Warnings encountered while processing document.
+    :param warnings: Warnings encountered while processing document. Results will still be returned
+     if there are warnings, but they may not be fully accurate.
     :type warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
     :param statistics: If show_stats=true was specified in the request this
         field will contain information about the document payload.
