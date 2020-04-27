@@ -86,7 +86,7 @@ class DetectedLanguage(DictMixin):
         )
 
     def __repr__(self):
-        return "DetectedLanguage(name={}, iso6391_name={}, score={})" \
+        return "DetectedLanguage(name={}, iso6391_name={}, confidence_score={})" \
             .format(self.name, self.iso6391_name, self.confidence_score)[:1024]
 
 
