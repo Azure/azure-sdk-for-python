@@ -114,7 +114,7 @@ class RecognizeEntitiesResult(DictMixin):
     def __init__(self, **kwargs):
         self.id = kwargs.get("id", None)
         self.entities = kwargs.get("entities", None)
-        self.warnings = kwargs.get("warnings", None)
+        self.warnings = kwargs.get("warnings", [])
         self.statistics = kwargs.get("statistics", None)
         self.is_error = False
 
@@ -146,7 +146,7 @@ class DetectLanguageResult(DictMixin):
     def __init__(self, **kwargs):
         self.id = kwargs.get("id", None)
         self.primary_language = kwargs.get("primary_language", None)
-        self.warnings = kwargs.get("warnings", None)
+        self.warnings = kwargs.get("warnings", [])
         self.statistics = kwargs.get("statistics", None)
         self.is_error = False
 
@@ -293,7 +293,7 @@ class ExtractKeyPhrasesResult(DictMixin):
     def __init__(self, **kwargs):
         self.id = kwargs.get("id", None)
         self.key_phrases = kwargs.get("key_phrases", None)
-        self.warnings = kwargs.get("warnings", None)
+        self.warnings = kwargs.get("warnings", [])
         self.statistics = kwargs.get("statistics", None)
         self.is_error = False
 
@@ -326,7 +326,7 @@ class RecognizeLinkedEntitiesResult(DictMixin):
     def __init__(self, **kwargs):
         self.id = kwargs.get("id", None)
         self.entities = kwargs.get("entities", None)
-        self.warnings = kwargs.get("warnings", None)
+        self.warnings = kwargs.get("warnings", [])
         self.statistics = kwargs.get("statistics", None)
         self.is_error = False
 
@@ -368,7 +368,7 @@ class AnalyzeSentimentResult(DictMixin):
     def __init__(self, **kwargs):
         self.id = kwargs.get("id", None)
         self.sentiment = kwargs.get("sentiment", None)
-        self.warnings = kwargs.get("warnings", None)
+        self.warnings = kwargs.get("warnings", [])
         self.statistics = kwargs.get("statistics", None)
         self.confidence_scores = kwargs.get("confidence_scores", None)
         self.sentences = kwargs.get("sentences", None)
