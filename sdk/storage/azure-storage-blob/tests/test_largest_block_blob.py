@@ -215,14 +215,9 @@ class StorageLargestBlockBlobTest(StorageTestCase):
         # Act
         with open(FILE_PATH, 'rb') as stream:
             blob.upload_blob(stream, max_concurrency=2)
-        block_list = blob.get_block_list()
 
         # Assert
         self._teardown(FILE_PATH)
-        self.assertIsNotNone(block_list)
-        self.assertEqual(len(block_list), 2)
-        self.assertEqual(len(block_list[1]), 0)
-        self.assertEqual(len(block_list[0]), 1)
 
     @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
