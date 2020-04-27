@@ -44,6 +44,7 @@ class ResourceLinksOperations:
     async def delete(
         self,
         link_id: str,
+        api_version: str,
         **kwargs
     ) -> None:
         """Deletes a resource link with the specified ID.
@@ -53,6 +54,8 @@ class ResourceLinksOperations:
          namespace}/{resource-type}/{resource-name}/Microsoft.Resources/links/{link-name}. For example,
          /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myGroup/Microsoft.Web/sites/mySite/Microsoft.Resources/links/myLink.
         :type link_id: str
+        :param api_version: The API version to use for the operation.
+        :type api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
@@ -61,7 +64,6 @@ class ResourceLinksOperations:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2016-09-01"
 
         # Construct URL
         url = self.delete.metadata['url']  # type: ignore
@@ -94,6 +96,7 @@ class ResourceLinksOperations:
     async def create_or_update(
         self,
         link_id: str,
+        api_version: str,
         parameters: "models.ResourceLink",
         **kwargs
     ) -> "models.ResourceLink":
@@ -104,6 +107,8 @@ class ResourceLinksOperations:
          namespace}/{resource-type}/{resource-name}/Microsoft.Resources/links/{link-name}. For example,
          /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myGroup/Microsoft.Web/sites/mySite/Microsoft.Resources/links/myLink.
         :type link_id: str
+        :param api_version: The API version to use for the operation.
+        :type api_version: str
         :param parameters: Parameters for creating or updating a resource link.
         :type parameters: ~azure.mgmt.resource.links.v2016_09_01.models.ResourceLink
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -114,7 +119,6 @@ class ResourceLinksOperations:
         cls = kwargs.pop('cls', None)  # type: ClsType["models.ResourceLink"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2016-09-01"
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
@@ -162,6 +166,7 @@ class ResourceLinksOperations:
     async def get(
         self,
         link_id: str,
+        api_version: str,
         **kwargs
     ) -> "models.ResourceLink":
         """Gets a resource link with the specified ID.
@@ -169,6 +174,8 @@ class ResourceLinksOperations:
         :param link_id: The fully qualified Id of the resource link. For example,
          /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myGroup/Microsoft.Web/sites/mySite/Microsoft.Resources/links/myLink.
         :type link_id: str
+        :param api_version: The API version to use for the operation.
+        :type api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ResourceLink or the result of cls(response)
         :rtype: ~azure.mgmt.resource.links.v2016_09_01.models.ResourceLink
@@ -177,7 +184,6 @@ class ResourceLinksOperations:
         cls = kwargs.pop('cls', None)  # type: ClsType["models.ResourceLink"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2016-09-01"
 
         # Construct URL
         url = self.get.metadata['url']  # type: ignore
@@ -213,11 +219,14 @@ class ResourceLinksOperations:
 
     def list_at_subscription(
         self,
+        api_version: str,
         filter: Optional[str] = None,
         **kwargs
     ) -> AsyncIterable["models.ResourceLinkResult"]:
         """Gets all the linked resources for the subscription.
 
+        :param api_version: The API version to use for the operation.
+        :type api_version: str
         :param filter: The filter to apply on the list resource links operation. The supported filter
      for list resource links is targetId. For example, $filter=targetId eq {value}.
         :type filter: str
@@ -229,7 +238,6 @@ class ResourceLinksOperations:
         cls = kwargs.pop('cls', None)  # type: ClsType["models.ResourceLinkResult"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2016-09-01"
 
         def prepare_request(next_link=None):
             if not next_link:
@@ -283,6 +291,7 @@ class ResourceLinksOperations:
     def list_at_source_scope(
         self,
         scope: str,
+        api_version: str,
         filter: Optional[str] = "atScope()",
         **kwargs
     ) -> AsyncIterable["models.ResourceLinkResult"]:
@@ -292,6 +301,8 @@ class ResourceLinksOperations:
      to list resource links at and under a resource group, set the scope to
      /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myGroup.
         :type scope: str
+        :param api_version: The API version to use for the operation.
+        :type api_version: str
         :param filter: The filter to apply when getting resource links. To get links only at the
      specified scope (not below the scope), use Filter.atScope().
         :type filter: str
@@ -303,7 +314,6 @@ class ResourceLinksOperations:
         cls = kwargs.pop('cls', None)  # type: ClsType["models.ResourceLinkResult"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2016-09-01"
 
         def prepare_request(next_link=None):
             if not next_link:
