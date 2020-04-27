@@ -19,13 +19,13 @@ interactions:
       string: '{"error":{"code":"InvalidRequest","message":"Specified Model version
         is incorrect. Allowed values are latest,2019-10-01"}}'
     headers:
-      apim-request-id: 6cd3ee00-928a-4edb-b538-2cc8f5363492
+      apim-request-id: 24d1071e-549a-47f8-910d-ac135d3c19b3
       content-type: application/json; charset=utf-8
-      date: Thu, 23 Apr 2020 18:33:52 GMT
+      date: Mon, 27 Apr 2020 17:37:37 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '12'
+      x-envoy-upstream-service-time: '8'
     status:
       code: 400
       message: Bad Request

@@ -1,0 +1,35 @@
+interactions:
+- request:
+    body: '{"documents": [{"id": "1", "text": "I will go to the park.", "countryHint":
+      ""}, {"id": "2", "text": "I did not like the hotel we stayed at.", "countryHint":
+      ""}, {"id": "3", "text": "The restaurant had really good food.", "countryHint":
+      "US"}]}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '245'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-textanalytics/1.0.0b5 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+        Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+    method: POST
+    uri: https://westus2.ppe.cognitiveservices.azure.com/text/analytics/v3.0/languages?showStats=false
+  response:
+    body:
+      string: '{"documents":[{"id":"1","detectedLanguage":{"name":"English","iso6391Name":"en","confidenceScore":1.0},"warnings":[]},{"id":"2","detectedLanguage":{"name":"English","iso6391Name":"en","confidenceScore":1.0},"warnings":[]},{"id":"3","detectedLanguage":{"name":"English","iso6391Name":"en","confidenceScore":1.0},"warnings":[]}],"errors":[],"modelVersion":"2019-10-01"}'
+    headers:
+      apim-request-id: 38803446-0f67-432e-8455-b31c0991646c
+      content-type: application/json; charset=utf-8
+      csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
+      date: Mon, 27 Apr 2020 17:37:45 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '2'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.ppe.cognitiveservices.azure.com/text/analytics/v3.0/languages?showStats=false
+version: 1
