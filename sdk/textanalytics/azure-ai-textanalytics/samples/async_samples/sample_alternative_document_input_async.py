@@ -44,7 +44,7 @@ class AlternativeDocumentInputSampleAsync(object):
              "text": "L'hôtel n'était pas très confortable. L'éclairage était trop sombre."}
         ]
         async with text_analytics_client:
-            result = await text_analytics_client.analyze_sentiment(documents)
+            result = await text_analytics_client.detect_language(documents)
 
         for idx, doc in enumerate(result):
             if not doc.is_error:
