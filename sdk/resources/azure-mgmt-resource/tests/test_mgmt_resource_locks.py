@@ -13,7 +13,6 @@
 import unittest
 
 import azure.mgmt.resource
-import azure.mgmt.resource.resources
 from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 
 class MgmtResourceLocksTest(AzureMgmtTestCase):
@@ -25,7 +24,7 @@ class MgmtResourceLocksTest(AzureMgmtTestCase):
         )
 
         self.resource_client = self.create_mgmt_client(
-            azure.mgmt.resource.resources.ResourceManagementClient
+            azure.mgmt.resource.ResourceManagementClient
         )
 
     def test_locks_at_subscription_level(self):
