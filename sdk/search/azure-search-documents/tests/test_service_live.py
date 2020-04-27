@@ -254,12 +254,12 @@ class SearchClientTest(AzureMgmtTestCase):
             "Washington, Wash. => WA",
         ]
 
-    # Skillset operations
+class SearchSkillsetClientTest(AzureMgmtTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_create_skillset(self, api_key, endpoint, index_name, **kwargs):
-        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key))
+        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key)).get_skillsets_client()
 
         s = EntityRecognitionSkill(inputs=[InputFieldMappingEntry(name="text", source="/document/content")],
                                    outputs=[OutputFieldMappingEntry(name="organizations", target_name="organizations")])
@@ -277,7 +277,7 @@ class SearchClientTest(AzureMgmtTestCase):
     @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_delete_skillset(self, api_key, endpoint, index_name, **kwargs):
-        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key))
+        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key)).get_skillsets_client()
         s = EntityRecognitionSkill(inputs=[InputFieldMappingEntry(name="text", source="/document/content")],
                                    outputs=[OutputFieldMappingEntry(name="organizations", target_name="organizations")])
 
@@ -290,7 +290,7 @@ class SearchClientTest(AzureMgmtTestCase):
     @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_get_skillset(self, api_key, endpoint, index_name, **kwargs):
-        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key))
+        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key)).get_skillsets_client()
         s = EntityRecognitionSkill(inputs=[InputFieldMappingEntry(name="text", source="/document/content")],
                                    outputs=[OutputFieldMappingEntry(name="organizations", target_name="organizations")])
 
@@ -308,7 +308,7 @@ class SearchClientTest(AzureMgmtTestCase):
     @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_get_skillsets(self, api_key, endpoint, index_name, **kwargs):
-        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key))
+        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key)).get_skillsets_client()
         s = EntityRecognitionSkill(inputs=[InputFieldMappingEntry(name="text", source="/document/content")],
                                    outputs=[OutputFieldMappingEntry(name="organizations", target_name="organizations")])
 
@@ -322,7 +322,7 @@ class SearchClientTest(AzureMgmtTestCase):
     @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_create_or_update_skillset(self, api_key, endpoint, index_name, **kwargs):
-        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key))
+        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key)).get_skillsets_client()
         s = EntityRecognitionSkill(inputs=[InputFieldMappingEntry(name="text", source="/document/content")],
                                    outputs=[OutputFieldMappingEntry(name="organizations", target_name="organizations")])
 
@@ -338,7 +338,7 @@ class SearchClientTest(AzureMgmtTestCase):
     @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_create_or_update_skillset_inplace(self, api_key, endpoint, index_name, **kwargs):
-        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key))
+        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key)).get_skillsets_client()
         s = EntityRecognitionSkill(inputs=[InputFieldMappingEntry(name="text", source="/document/content")],
                                    outputs=[OutputFieldMappingEntry(name="organizations", target_name="organizations")])
 
@@ -352,6 +352,7 @@ class SearchClientTest(AzureMgmtTestCase):
         assert result.description == "desc2"
 
 class SearchDataSourcesClientTest(AzureMgmtTestCase):
+
     def _create_datasource(self, name="sample-datasource"):
         credentials = DataSourceCredentials(connection_string=CONNECTION_STRING)
         container = DataContainer(name='searchcontainer')

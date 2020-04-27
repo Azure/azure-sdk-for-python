@@ -18,6 +18,7 @@ from ._generated.models import AccessCondition, Skillset, SynonymMap
 from .._headers_mixin import HeadersMixin
 from .._version import SDK_MONIKER
 from ._datasources_client import SearchDataSourcesClient
+from ._skillsets_client import SearchSkillsetsClient
 from ._utils import (
     delistize_flags_for_index,
     listize_flags_for_index,
@@ -62,6 +63,8 @@ class SearchServiceClient(HeadersMixin):  # pylint: disable=too-many-public-meth
         self._client = _SearchServiceClient(
             endpoint=endpoint, sdk_moniker=SDK_MONIKER, **kwargs
         )  # type: _SearchServiceClient
+
+        self._skillsets_client = SearchSkillsetsClient(endpoint, credential, **kwargs)
 
         self._datasources_client = SearchDataSourcesClient(
             endpoint, credential, **kwargs
@@ -418,152 +421,20 @@ class SearchServiceClient(HeadersMixin):  # pylint: disable=too-many-public-meth
         result = self._client.synonym_maps.create_or_update(name, synonym_map, **kwargs)
         return listize_synonyms(result.as_dict())
 
-    # Skillset Operations
+    def get_skillsets_client(self):
+        # type: () -> SearchSkillsetsClient
+        """Return a client to perform operations on Skillsets.
 
-    @distributed_trace
-    def get_skillsets(self, **kwargs):
-        # type: (**Any) -> List[Skillset]
-        """List the Skillsets in an Azure Search service.
-
-        :return: List of Skillsets
-        :rtype: list[dict]
-        :raises: ~azure.core.exceptions.HttpResponseError
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/sample_skillset_operations.py
-                :start-after: [START get_skillsets]
-                :end-before: [END get_skillsets]
-                :language: python
-                :dedent: 4
-                :caption: List Skillsets
-
+        :return: The Skillsets client
+        :rtype: SearchSkillsetClient
         """
-        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        result = self._client.skillsets.list(**kwargs)
-        return result.skillsets
+        return self._skillsets_client
 
-    @distributed_trace
-    def get_skillset(self, name, **kwargs):
-        # type: (str, **Any) -> Skillset
-        """Retrieve a named Skillset in an Azure Search service
-
-        :param name: The name of the Skillset to get
-        :type name: str
-        :return: The retrieved Skillset
-        :rtype: dict
-        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/sample_skillset_operations.py
-                :start-after: [START get_skillset]
-                :end-before: [END get_skillset]
-                :language: python
-                :dedent: 4
-                :caption: Get a Skillset
-
-        """
-        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        return self._client.skillsets.get(name, **kwargs)
-
-    @distributed_trace
-    def delete_skillset(self, name, **kwargs):
-        # type: (str, **Any) -> None
-        """Delete a named Skillset in an Azure Search service
-
-        :param name: The name of the Skillset to delete
-        :type name: str
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/sample_skillset_operations.py
-                :start-after: [START delete_skillset]
-                :end-before: [END delete_skillset]
-                :language: python
-                :dedent: 4
-                :caption: Delete a Skillset
-
-        """
-        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        self._client.skillsets.delete(name, **kwargs)
-
-    @distributed_trace
-    def create_skillset(self, name, skills, description, **kwargs):
-        # type: (str, Sequence[Skill], str, **Any) -> Skillset
-        """Create a new Skillset in an Azure Search service
-
-        :param name: The name of the Skillset to create
-        :type name: str
-        :param skills: A list of Skill objects to include in the Skillset
-        :type skills: List[Skill]]
-        :param description: A description for the Skillset
-        :type description: Optional[str]
-        :return: The created Skillset
-        :rtype: dict
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/sample_skillset_operations.py
-                :start-after: [START create_skillset]
-                :end-before: [END create_skillset]
-                :language: python
-                :dedent: 4
-                :caption: Create a Skillset
-
-        """
-        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-
-        skillset = Skillset(name=name, skills=list(skills), description=description)
-
-        return self._client.skillsets.create(skillset, **kwargs)
-
-    @distributed_trace
-    def create_or_update_skillset(self, name, **kwargs):
-        # type: (str, **Any) -> Skillset
-        """Create a new Skillset in an Azure Search service, or update an
-        existing one.
-
-        A `Skillset` object mat
-
-        :param name: The name of the Skillset to create or update
-        :type name: str
-        :param skills: A list of Skill objects to include in the Skillset
-        :type skills: List[Skill]
-        :param description: A description for the Skillset
-        :type description: Optional[str]
-        :param skillset: A Skillset to create or update.
-        :type skillset: :class:`~azure.search.documents.Skillset`
-        :return: The created or updated Skillset
-        :rtype: dict
-
-        If a `skillset` is passed in, any optional `skills`, or
-        `description` parameter values will override it.
-
-        """
-        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-
-        if "skillset" in kwargs:
-            skillset = kwargs.pop("skillset")
-            skillset = Skillset.deserialize(skillset.serialize())
-            skillset.name = name
-            for param in ("description", "skills"):
-                if param in kwargs:
-                    setattr(skillset, param, kwargs.pop(param))
-        else:
-
-            skillset = Skillset(
-                name=name,
-                description=kwargs.pop("description", None),
-                skills=kwargs.pop("skills", None),
-            )
-
-        return self._client.skillsets.create_or_update(name, skillset, **kwargs)
-
-    def get_datasources_client(self) -> SearchDataSourcesClient:
+    def get_datasources_client(self):
+        # type: () -> SearchDataSourcesClient
         """Return a client to perform operations on Data Sources.
 
         :return: The Data Sources client
-        :rtype: DataSourcesClient
+        :rtype: SearchDataSourcesClient
         """
         return self._datasources_client
