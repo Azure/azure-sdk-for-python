@@ -66,6 +66,33 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
 
             assert count == 10
 
+
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
+    async def test_async_queue_by_queue_client_send_multiple_messages(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+        async with ServiceBusClient.from_connection_string(
+            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
+
+            async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
+                messages = []
+                for i in range(10):
+                    message = Message("Handler message no. {}".format(i))
+                    messages.append(message)
+                await sender.send(messages)
+
+            async with sb_client.get_queue_receiver(servicebus_queue.name, idle_timeout=5) as receiver:
+                count = 0
+                async for message in receiver:
+                    print_message(_logger, message)
+                    count += 1
+                    await message.complete()
+
+                assert count == 10
+
+
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer()
@@ -688,7 +715,6 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
             await renewer.shutdown()
             assert len(messages) == 11
 
-    @pytest.mark.skip(reason='requires queuing messages')
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -703,13 +729,18 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
             async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                 with pytest.raises(MessageSendFailed):
                     await sender.send(Message(too_large))
+                    
+                half_too_large = "A" * int((1024 * 512) / 2)
+                with pytest.raises(ValueError):
+                    await sender.send([Message(half_too_large), Message(half_too_large)])
 
-            async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
-                sender.queue_message(Message(too_large))
-                results = await sender.send_pending_messages()
-                assert len(results) == 1
-                assert not results[0][0]
-                assert isinstance(results[0][1], MessageSendFailed)
+            # TODO: Reenable this when queue_message exists.
+            #async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
+            #    sender.queue_message(Message(too_large))
+            #    results = await sender.send_pending_messages()
+            #    assert len(results) == 1
+            #    assert not results[0][0]
+            #    assert isinstance(results[0][1], MessageSendFailed)
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only

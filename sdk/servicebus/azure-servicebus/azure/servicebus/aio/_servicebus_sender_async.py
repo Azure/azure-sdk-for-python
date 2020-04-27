@@ -242,11 +242,16 @@ class ServiceBusSender(BaseHandlerAsync, SenderMixin):
         # type: (Message, float) -> None
         """Sends message and blocks until acknowledgement is received or operation times out.
 
+        If a list of messages was provided, attempts to send them as a single batch, throwing a
+        `ValueError` if they cannot fit in a single batch.
+
         :param message: The ServiceBus message to be sent.
         :type message: ~azure.servicebus.Message
         :rtype: None
-        :raises: ~azure.servicebus.common.errors.MessageSendFailed if the message fails to
-         send or ~azure.servicebus.common.errors.OperationTimeoutError if sending times out.
+        :raises: :class: ~azure.servicebus.common.errors.MessageSendFailed if the message fails to
+         send
+                :class: ~azure.servicebus.common.errors.OperationTimeoutError if sending times out.
+                :class: `ValueError` if list of messages is provided and cannot fit in a batch.
 
         .. admonition:: Example:
 
@@ -258,6 +263,14 @@ class ServiceBusSender(BaseHandlerAsync, SenderMixin):
                 :caption: Send message.
 
         """
+        try:
+            batch = await self.create_batch()
+            for each in message:
+                batch.add(each)
+            message = batch
+        except TypeError: # Message was not a list or generator.
+            pass
+
         await self._do_retryable_operation(
             self._send,
             message=message,
