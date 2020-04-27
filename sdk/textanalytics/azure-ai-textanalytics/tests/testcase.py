@@ -88,13 +88,11 @@ class GlobalTextAnalyticsAccountPreparer(AzureMgmtPreparer):
 
     def create_resource(self, name, **kwargs):
         if self.is_live:
-            text_analytics_account = TextAnalyticsTest._TEXT_ANALYTICS_ACCOUNT
-
             return {
                 'location': 'westus2',
                 'resource_group': TextAnalyticsTest._RESOURCE_GROUP,
-                'text_analytics_account': text_analytics_account,
-                'text_analytics_account_key': TextAnalyticsTest._TEXT_ANALYTICS_KEY,
+                'text_analytics_account': os.environ['AZURE_TEXT_ANALYTICS_ENDPOINT'],
+                'text_analytics_account_key': os.environ['AZURE_TEXT_ANALYTICS_KEY'],
             }
         else:
             return {
