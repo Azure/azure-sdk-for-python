@@ -74,18 +74,18 @@ def _cred_write(credential):
 
 
 def _cred_delete(service_name, account_name):
-    target = u"{}/{}".format(service_name, account_name)
+    target = "{}/{}".format(service_name, account_name)
     _advapi.CredDeleteW(target, 1, 0)
 
 
 def _read_credential(service_name, account_name):
-    target = u"{}/{}".format(service_name, account_name)
+    target = "{}/{}".format(service_name, account_name)
     cred_ptr = _PCREDENTIAL()
     if _advapi.CredReadW(target, 1, 0, ct.byref(cred_ptr)):
         cred_blob = cred_ptr.contents.CredentialBlob
         cred_blob_size = cred_ptr.contents.CredentialBlobSize
-        password_as_list = [int.from_bytes(cred_blob[pos:pos + 2], 'little')
-                            for pos in range(0, cred_blob_size, 2)]
+        password_as_list = [int.from_bytes(cred_blob[pos:pos + 1], 'little')
+                            for pos in range(0, cred_blob_size)]
         cred = ''.join(map(chr, password_as_list))
         _advapi.CredFree(cred_ptr)
         return cred
@@ -117,5 +117,5 @@ def get_credentials():
         environment_name = _get_user_settings()
         credentials = _get_refresh_token(VSCODE_CREDENTIALS_SECTION, environment_name)
         return credentials
-    except Exception: #pylint: disable=broad-except
+    except Exception as ex: #pylint: disable=broad-except
         return None
