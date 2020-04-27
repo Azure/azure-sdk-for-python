@@ -9,11 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from ._configuration import TextAnalyticsClientConfiguration
-from ._text_analytics_client import TextAnalyticsClient
-__all__ = ['TextAnalyticsClient', 'TextAnalyticsClientConfiguration']
+from ._text_analytics_client_operations import TextAnalyticsClientOperationsMixin
 
-from .version import VERSION
-
-__version__ = VERSION
-
+__all__ = [
+    'TextAnalyticsClientOperationsMixin',
+]
