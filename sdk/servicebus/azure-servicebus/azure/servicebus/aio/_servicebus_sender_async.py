@@ -239,7 +239,7 @@ class ServiceBusSender(BaseHandlerAsync, SenderMixin):
         return cls(**constructor_args)
 
     async def send(self, message):
-        # type: (Message, float) -> None
+        # type: (Union[Message, BatchMessage, List[Message]], float) -> None
         """Sends message and blocks until acknowledgement is received or operation times out.
 
         If a list of messages was provided, attempts to send them as a single batch, throwing a
