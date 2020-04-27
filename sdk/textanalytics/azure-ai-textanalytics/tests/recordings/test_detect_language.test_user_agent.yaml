@@ -1,7 +1,8 @@
 interactions:
 - request:
-    body: '{"documents": [{"id": "1", "text": "hello world", "countryHint": "US"},
-      {"id": "1", "text": "I did not like the hotel we stayed at.", "countryHint":
+    body: '{"documents": [{"id": "1", "text": "I will go to the park.", "countryHint":
+      "US"}, {"id": "2", "text": "I did not like the hotel we stayed at.", "countryHint":
+      "US"}, {"id": "3", "text": "The restaurant had really good food.", "countryHint":
       "US"}]}'
     headers:
       Accept:
@@ -11,7 +12,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '156'
+      - '249'
       Content-Type:
       - application/json
       User-Agent:
@@ -21,15 +22,16 @@ interactions:
     uri: https://westus2.ppe.cognitiveservices.azure.com/text/analytics/v3.0/languages?showStats=false
   response:
     body:
-      string: '{"error":{"code":"InvalidRequest","message":"Invalid document in request.","innererror":{"code":"InvalidDocument","message":"Request
-        contains duplicated Ids. Make sure each document has a unique Id."}}}'
+      string: '{"documents":[{"id":"1","detectedLanguage":{"name":"English","iso6391Name":"en","confidenceScore":1.0},"warnings":[]},{"id":"2","detectedLanguage":{"name":"English","iso6391Name":"en","confidenceScore":1.0},"warnings":[]},{"id":"3","detectedLanguage":{"name":"English","iso6391Name":"en","confidenceScore":1.0},"warnings":[]}],"errors":[],"modelVersion":"2019-10-01"}'
     headers:
       apim-request-id:
-      - 47dcf738-95b6-4c52-ba49-04c62cbea09d
+      - 97011419-03bc-46d0-937c-1261e98f8b7e
       content-type:
       - application/json; charset=utf-8
+      csp-billing-usage:
+      - CognitiveServices.TextAnalytics.BatchScoring=3
       date:
-      - Mon, 27 Apr 2020 17:33:51 GMT
+      - Mon, 27 Apr 2020 17:33:54 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -37,8 +39,8 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '3'
+      - '2'
     status:
-      code: 400
-      message: Bad Request
+      code: 200
+      message: OK
 version: 1

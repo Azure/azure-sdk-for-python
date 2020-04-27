@@ -79,7 +79,7 @@ def prepare_result(func):
 def language_result(language):
     return DetectLanguageResult(
         id=language.id,
-        primary_language=DetectedLanguage._from_generated(language.detected_languages[0]),  # pylint: disable=protected-access
+        primary_language=DetectedLanguage._from_generated(language.detected_language),  # pylint: disable=protected-access
         statistics=TextDocumentStatistics._from_generated(language.statistics),  # pylint: disable=protected-access
     )
 
