@@ -24,11 +24,11 @@ interactions:
         is incorrect. Allowed values are latest,2019-10-01"}}'
     headers:
       apim-request-id:
-      - 3311ba23-80c3-42cc-b9ff-5d7d1bc178e8
+      - b6be92e7-8a88-41b6-be2c-7e9b62e95356
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 22 Apr 2020 22:46:50 GMT
+      - Mon, 27 Apr 2020 17:33:45 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -36,7 +36,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '145'
+      - '4'
     status:
       code: 400
       message: Bad Request

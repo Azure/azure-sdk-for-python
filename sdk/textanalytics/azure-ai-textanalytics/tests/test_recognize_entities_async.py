@@ -52,7 +52,7 @@ class TestRecognizeEntities(AsyncTextAnalyticsTest):
                 {"id": "2", "language": "es", "text": "Microsoft fue fundado por Bill Gates y Paul Allen el 4 de abril de 1975."},
                 {"id": "3", "language": "de", "text": "Microsoft wurde am 4. April 1975 von Bill Gates und Paul Allen gegründet."}]
 
-        response = await client.recognize_entities(docs, show_stats=True)
+        response = await client.recognize_entities(docs, model_version="2020-02-01", show_stats=True)
         for doc in response:
             self.assertEqual(len(doc.entities), 4)
             self.assertIsNotNone(doc.id)
@@ -73,7 +73,7 @@ class TestRecognizeEntities(AsyncTextAnalyticsTest):
             TextDocumentInput(id="3", text="Microsoft wurde am 4. April 1975 von Bill Gates und Paul Allen gegründet.", language="de")
         ]
 
-        response = await client.recognize_entities(docs)
+        response = await client.recognize_entities(docs, model_version="2020-02-01")
         for doc in response:
             self.assertEqual(len(doc.entities), 4)
             for entity in doc.entities:
