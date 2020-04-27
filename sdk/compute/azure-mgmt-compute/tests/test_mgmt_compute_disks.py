@@ -58,7 +58,7 @@ class MgmtComputeTestMultiVersion(AzureMgmtTestCase):
         )
 
     @ResourceGroupPreparer(location=AZURE_LOCATION)
-    def test_compute_disks(self, resource_group):
+    def test_compute_disks_multi(self, resource_group):
 
         DISK_NAME = self.get_resource_name("disknamex")
 
