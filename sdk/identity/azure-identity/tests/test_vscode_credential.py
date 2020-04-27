@@ -67,26 +67,6 @@ def test_redeem_token():
         assert mock_client.obtain_token_by_refresh_token.call_count == 1
 
 
-@pytest.mark.skipif(not sys.platform.startswith('win'), reason="This test only runs on Windows")
-def test_win_api():
-    from azure.identity._credentials.win_vscode_adapter import _read_credential, _cred_write
-    service_name = u"VS Code Azure"
-    account_name = u"test"
-    target = u"{}/{}".format(service_name, account_name)
-    comment = u"comment"
-    token_written = u"test_refresh_token"
-    user_name = u"test"
-    credential = {"Type": 0x1,
-                   "TargetName": target,
-                   "UserName": user_name,
-                   "CredentialBlob": token_written,
-                   "Comment": comment,
-                   "Persist": 0x2}
-    _cred_write(credential)
-    token_read = _read_credential(service_name, account_name)
-    assert token_read == token_written
-
-
 @pytest.mark.skipif(not sys.platform.startswith('darwin'), reason="This test only runs on MacOS")
 def test_mac_keychain_valid_value():
     with mock.patch('Keychain.get_generic_password', return_value="VALUE"):

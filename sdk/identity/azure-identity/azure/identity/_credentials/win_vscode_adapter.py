@@ -32,50 +32,13 @@ class _CREDENTIAL(ct.Structure):
         ("TargetAlias", ct.c_wchar_p),
         ("UserName", ct.c_wchar_p)]
 
-    @classmethod
-    def from_dict(cls, credential):
-        # pylint:disable=attribute-defined-outside-init
-        creds = cls()
-        pcreds = _PCREDENTIAL(creds)
-
-        ct.memset(pcreds, 0, ct.sizeof(creds))
-
-        for key in SUPPORTED_CREDKEYS:
-            if key in credential:
-                if key != 'CredentialBlob':
-                    setattr(creds, key, credential[key])
-                else:
-                    blob = credential['CredentialBlob']
-                    blob_data = ct.create_unicode_buffer(blob)
-                    creds.CredentialBlobSize = \
-                        ct.sizeof(blob_data) - \
-                        ct.sizeof(ct.c_wchar)
-                    creds.CredentialBlob = ct.cast(blob_data, wt.LPBYTE)
-        return creds
-
 
 _PCREDENTIAL = ct.POINTER(_CREDENTIAL)
 
-
 _advapi = ct.WinDLL('advapi32')
-_advapi.CredWriteW.argtypes = [_PCREDENTIAL, wt.DWORD]
-_advapi.CredWriteW.restype = wt.BOOL
 _advapi.CredReadW.argtypes = [wt.LPCWSTR, wt.DWORD, wt.DWORD, ct.POINTER(_PCREDENTIAL)]
 _advapi.CredReadW.restype = wt.BOOL
 _advapi.CredFree.argtypes = [_PCREDENTIAL]
-_advapi.CredDeleteW.restype = wt.BOOL
-_advapi.CredDeleteW.argtypes = [wt.LPCWSTR, wt.DWORD, wt.DWORD]
-
-
-def _cred_write(credential):
-    creds = _CREDENTIAL.from_dict(credential)
-    cred_ptr = _PCREDENTIAL(creds)
-    _advapi.CredWriteW(cred_ptr, 0)
-
-
-def _cred_delete(service_name, account_name):
-    target = "{}/{}".format(service_name, account_name)
-    _advapi.CredDeleteW(target, 1, 0)
 
 
 def _read_credential(service_name, account_name):
