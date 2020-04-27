@@ -24,7 +24,7 @@ class MgmtResourceDeploymentScriptTest(AzureMgmtTestCase):
             azure.mgmt.resource.DeploymentScriptsClient
         )
 
-        if test.is_live:
+        if self.is_live:
             self.msi_client = self.create_mgmt_client(
                 azure.mgmt.msi.ManagedServiceIdentityClient
             )
