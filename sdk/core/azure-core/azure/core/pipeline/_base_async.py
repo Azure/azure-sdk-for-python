@@ -167,8 +167,7 @@ class AsyncPipeline(
     async def __aexit__(self, *exc_details):  # pylint: disable=arguments-differ
         await self._transport.__aexit__(*exc_details)
 
-    async def _prepare_multipart_mixed_request(self, request):
-        # type: (HTTPRequestType) -> None
+    async def _prepare_multipart_mixed_request(self, request: HTTPRequestType) -> None:
         """Will execute the multipart policies.
 
         Does nothing if "set_multipart_mixed" was never called.
@@ -193,8 +192,7 @@ class AsyncPipeline(
 
         await asyncio.gather(*[prepare_requests(req) for req in requests])
 
-    async def _prepare_multipart(self, request):
-        # type: (HTTPRequestType) -> None
+    async def _prepare_multipart(self, request: HTTPRequestType) -> None:
         # This code is fine as long as HTTPRequestType is actually
         # azure.core.pipeline.transport.HTTPRequest, bu we don't check it in here
         # since we didn't see (yet) pipeline usage where it's not this actual instance

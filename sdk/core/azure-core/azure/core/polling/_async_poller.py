@@ -33,24 +33,19 @@ PollingReturnType = TypeVar("PollingReturnType")
 class AsyncPollingMethod(Generic[PollingReturnType]):
     """ABC class for polling method.
     """
-    def initialize(self, client, initial_response, deserialization_callback):
-        # type: (Any, Any, Any) -> None
+    def initialize(self, client: Any, initial_response: Any, deserialization_callback: Any) -> None:
         raise NotImplementedError("This method needs to be implemented")
 
-    async def run(self):
-        # type: () -> None
+    async def run(self) -> None:
         raise NotImplementedError("This method needs to be implemented")
 
-    def status(self):
-        # type: () -> str
+    def status(self) -> str:
         raise NotImplementedError("This method needs to be implemented")
 
-    def finished(self):
-        # type: () -> bool
+    def finished(self) -> bool:
         raise NotImplementedError("This method needs to be implemented")
 
-    def resource(self):
-        # type: () -> PollingReturnType
+    def resource(self) -> PollingReturnType:
         raise NotImplementedError("This method needs to be implemented")
 
 
