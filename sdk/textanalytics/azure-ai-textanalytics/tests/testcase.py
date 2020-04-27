@@ -87,14 +87,20 @@ class GlobalTextAnalyticsAccountPreparer(AzureMgmtPreparer):
         )
 
     def create_resource(self, name, **kwargs):
-        text_analytics_account = TextAnalyticsTest._TEXT_ANALYTICS_ACCOUNT
-
-        return {
-            'location': 'westus2',
-            'resource_group': TextAnalyticsTest._RESOURCE_GROUP,
-            'text_analytics_account': text_analytics_account,
-            'text_analytics_account_key': TextAnalyticsTest._TEXT_ANALYTICS_KEY,
-        }
+        if self.is_live:
+            return {
+                'location': 'westus2',
+                'resource_group': TextAnalyticsTest._RESOURCE_GROUP,
+                'text_analytics_account': os.environ['AZURE_TEXT_ANALYTICS_ENDPOINT'],
+                'text_analytics_account_key': os.environ['AZURE_TEXT_ANALYTICS_KEY'],
+            }
+        else:
+            return {
+                'location': 'westus2',
+                'resource_group': TextAnalyticsTest._RESOURCE_GROUP,
+                'text_analytics_account': "https://westus2.ppe.cognitiveservices.azure.com",
+                'text_analytics_account_key': "fake_key",
+            }
 
 class TextAnalyticsClientPreparer(AzureMgmtPreparer):
     def __init__(self, client_cls, client_kwargs={}, **kwargs):
@@ -129,15 +135,15 @@ class TextAnalyticsClientPreparer(AzureMgmtPreparer):
 def text_analytics_account():
     test_case = AzureTestCase("__init__")
     rg_preparer = ResourceGroupPreparer(random_name_enabled=True, name_prefix='pycog')
-    text_analytics_preparer = CognitiveServicesAccountPreparer(random_name_enabled=True, name_prefix='pycog', sku='S0')
+    text_analytics_preparer = CognitiveServicesAccountPreparer(random_name_enabled=True, name_prefix='pycog')
 
     try:
         rg_name, rg_kwargs = rg_preparer._prepare_create_resource(test_case)
         TextAnalyticsTest._RESOURCE_GROUP = rg_kwargs['resource_group']
         try:
             text_analytics_name, text_analytics_kwargs = text_analytics_preparer._prepare_create_resource(test_case, **rg_kwargs)
-            TextAnalyticsTest._TEXT_ANALYTICS_ACCOUNT = os.environ['AZURE_TEXT_ANALYTICS_ENDPOINT'] #text_analytics_kwargs['cognitiveservices_account']
-            TextAnalyticsTest._TEXT_ANALYTICS_KEY = os.environ['AZURE_TEXT_ANALYTICS_KEY'] # text_analytics_kwargs['cognitiveservices_account_key']
+            TextAnalyticsTest._TEXT_ANALYTICS_ACCOUNT = text_analytics_kwargs['cognitiveservices_account']
+            TextAnalyticsTest._TEXT_ANALYTICS_KEY = text_analytics_kwargs['cognitiveservices_account_key']
             yield
         finally:
             text_analytics_preparer.remove_resource(

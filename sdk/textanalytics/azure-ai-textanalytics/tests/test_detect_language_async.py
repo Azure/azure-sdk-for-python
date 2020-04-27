@@ -66,7 +66,7 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
         for doc in response:
             self.assertIsNotNone(doc.id)
             self.assertIsNotNone(doc.statistics)
-            self.assertIsNotNone(doc.primary_language.score)
+            self.assertIsNotNone(doc.primary_language.confidence_score)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -90,7 +90,7 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
         self.assertEqual(response[3].primary_language.iso6391_name, "de")
 
         for doc in response:
-            self.assertIsNotNone(doc.primary_language.score)
+            self.assertIsNotNone(doc.primary_language.confidence_score)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()

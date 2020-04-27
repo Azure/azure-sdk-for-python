@@ -7,7 +7,7 @@ publish/subscribe capabilities, and the ability to easily scale as your needs gr
 
 Use the Service Bus client library for Python to communicate between applications and services and implement asynchronous messaging patterns.
 
-* Create Service Bus namespaces, queues, topics, and subscriptions, and modify their settings
+* Create Service Bus namespaces, queues, topics, and subscriptions, and modify their settings.
 * Send and receive messages within your Service Bus channels.
 * Utilize message locks, sessions, and dead letter functionality to implement complex messaging patterns.
 
@@ -29,7 +29,7 @@ pip install azure-servicebus --pre
 To use this package, you must have:
 * Azure subscription - [Create a free account][azure_sub]
 * Azure Service Bus - [Namespace and management credentials][service_bus_namespace]
-* Python 2.7, 3.5, 3.6, 3.7 or 3.8 - [Install Python][python]
+* Python 2.7, 3.5 or later - [Install Python][python]
 
 
 If you need an Azure service bus namespace, you can create it via the [Azure Portal][azure_namespace_creation].
@@ -43,18 +43,16 @@ az servicebus namespace create --resource-group <resource-group-name> --name <se
 
 Interaction with Service Bus starts with an instance of the `ServiceBusClient` class. You either need a **connection string with SAS key**, or a **namespace** and one of its **account keys** to instantiate the client object.
 
-#### Get credentials
+#### Create client from connection string
 
-Use the [Azure CLI][azure_cli] snippet below to populate an environment variable with the service bus connection string (you can also find these values in the [Azure portal][azure_portal]. The snippet is formatted for the Bash shell.
+- Get credentials: Use the [Azure CLI][azure_cli] snippet below to populate an environment variable with the service bus connection string (you can also find these values in the [Azure Portal][azure_portal] by following the step-by-step guide to [Get a service bus connection string][get_servicebus_conn_str]). The snippet is formatted for the Bash shell.
 
 ```Bash
 RES_GROUP=<resource-group-name>
 NAMESPACE_NAME=<servicebus-namespace-name>
 
-export SERVICE_BUS_CONN_STR=$(az servicebus namespace authorization-rule keys list --resource-group $RES_GROUP --namespace-name $NAMESPACE_NAME --query RootManageSharedAccessKey --output tsv)
+export SERVICE_BUS_CONN_STR=$(az servicebus namespace authorization-rule keys list --resource-group $RES_GROUP --namespace-name $NAMESPACE_NAME --name RootManageSharedAccessKey --query primaryConnectionString --output tsv)
 ```
-
-#### Create client
 
 Once you've populated the `SERVICE_BUS_CONN_STR` environment variable, you can create the `ServiceBusClient`.
 
@@ -67,6 +65,28 @@ connstr = os.environ['SERVICE_BUS_CONN_STR']
 with ServiceBusClient.from_connection_string(connstr) as client:
     ...
 ```
+
+#### Create client using the azure-identity library:
+
+```python
+import os
+from azure.servicebus import ServiceBusClient
+from azure.identity import DefaultAzureCredential
+
+credential = DefaultAzureCredential()
+
+FULLY_QUALIFIED_NAMESPACE = os.environ['SERVICE_BUS_FULLY_QUALIFIED_NAMESPACE']
+with ServiceBusClient(FULLY_QUALIFIED_NAMESPACE, credential):
+    ...
+```
+
+- This constructor takes the fully qualified namespace of your Service Bus instance and a credential that implements the
+[TokenCredential][token_credential_interface]
+protocol. There are implementations of the `TokenCredential` protocol available in the
+[azure-identity package][pypi_azure_identity]. The fully qualified namespace is of the format `<yournamespace.servicebus.windows.net>`.
+- When using Azure Active Directory, your principal must be assigned a role which allows access to Service Bus, such as the
+Azure Service Bus Data Owner role. For more information about using Azure Active Directory authorization with Service Bus,
+please refer to [the associated documentation][servicebus_aad_authentication].
 
 Note: client can be initialized without a context manager, but must be manually closed via client.close() to not leak resources.
 
@@ -88,7 +108,7 @@ To interact with these resources, one should be familiar with the following SDK 
 
 * [Sender](./azure/servicebus/_servicebus_sender.py): To send messages to a Queue or Topic, one would use the corresponding `get_queue_sender` or `get_topic_sender` method off of a `ServiceBusClient` instance as seen [here](./samples/sync_samples/send_queue.py).
 
-* [Receiver](./azure/servicebus/_servicebus_receiver.py): To receive messages from a Queue or Subscription, one would use the corrosponding `get_queue_receiver` or `get_subscription_receiver` method off of a `ServiceBusClient` instance as seen [here](./samples/sync_samples/receive_queue.py).
+* [Receiver](./azure/servicebus/_servicebus_receiver.py): To receive messages from a Queue or Subscription, one would use the corresponding `get_queue_receiver` or `get_subscription_receiver` method off of a `ServiceBusClient` instance as seen [here](./samples/sync_samples/receive_queue.py).
 
 * [Message](./azure/servicebus/_common/message.py): When sending, this is the type you will construct to contain your payload.  When receiving, this is where you will access the payload and control how the message is "settled" (completed, dead-lettered, etc); these functions are only available on a received message.
 
@@ -96,14 +116,14 @@ To interact with these resources, one should be familiar with the following SDK 
 
 The following sections provide several code snippets covering some of the most common Service Bus tasks, including:
 
-* [Send a message to a queue](#send-to-a-queue)
-* [Receive a message from a queue](#receive-from-a-queue)
-* [Defer a message on receipt](#defer-a-message)
+* [Send a message to a queue](#send-a-message-to-a-queue)
+* [Receive a message from a queue](#receive-a-message-from-a-queue)
+* [Defer a message on receipt](#defer-a-message-on-receipt)
 
 To perform management tasks such as creating and deleting queues/topics/subscriptions, please utilize the azure-mgmt-servicebus library, available [here][servicebus_management_repository].
 
 
-### Send to a queue
+### Send a message to a queue
 
 This example sends a message to a queue that is assumed to already exist, created via the Azure portal or az commands.
 
@@ -121,7 +141,7 @@ with ServiceBusClient.from_connection_string(connstr) as client:
         sender.send(message)
 ```
 
-### Receive from a queue
+### Receive a message from a queue
 
 To receive from a queue, you can either perform a one-off receive via "receiver.receive()" or receive persistently as follows:
 
@@ -139,7 +159,7 @@ with ServiceBusClient.from_connection_string(connstr) as client:
             msg.complete()
 ```
 
-### Defer a message
+### Defer a message on receipt
 
 When receiving from a queue, you have multiple actions you can take on the messages you receive.  Where the prior example completes a message,
 permanently removing it from the queue and marking as complete, this example demonstrates how to defer the message, sending it back to the queue
@@ -150,6 +170,7 @@ from azure.servicebus import ServiceBusClient
 
 import os
 connstr = os.environ['SERVICE_BUS_CONN_STR']
+queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
 
 with ServiceBusClient.from_connection_string(connstr) as client:
     with client.get_queue_receiver(queue_name) as receiver:
@@ -226,3 +247,7 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 [subscription_concept]: https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-queues-topics-subscriptions#topics-and-subscriptions
 [azure_namespace_creation]: https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-create-namespace-portal
 [servicebus_management_repository]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-mgmt-servicebus
+[get_servicebus_conn_str]: https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-create-namespace-portal#get-the-connection-string
+[servicebus_aad_authentication]: https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-authentication-and-authorization
+[token_credential_interface]: ../../core/azure-core/azure/core/credentials.py
+[pypi_azure_identity]: https://pypi.org/project/azure-identity/

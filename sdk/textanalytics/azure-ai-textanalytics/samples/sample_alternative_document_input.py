@@ -44,14 +44,14 @@ class AlternativeDocumentInputSample(object):
              "text": "L'hôtel n'était pas très confortable. L'éclairage était trop sombre."}
         ]
 
-        result = text_analytics_client.analyze_sentiment(documents)
+        result = text_analytics_client.detect_language(documents)
 
         for idx, doc in enumerate(result):
             if not doc.is_error:
                 print("Document text: {}".format(documents[idx]))
                 print("Language detected: {}".format(doc.primary_language.name))
                 print("ISO6391 name: {}".format(doc.primary_language.iso6391_name))
-                print("Confidence score: {}\n".format(doc.primary_language.score))
+                print("Confidence score: {}\n".format(doc.primary_language.confidence_score))
             if doc.is_error:
                 print(doc.id, doc.error)
 
