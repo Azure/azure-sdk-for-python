@@ -30,18 +30,18 @@ try:
 except ImportError:
     from urllib.parse import urlparse
 
-from typing import Any, Callable, Union, List, Optional, TYPE_CHECKING
-from azure.core.pipeline.transport._base import HttpResponse  # type: ignore
+from typing import Any, Callable, Union, List, Optional, TypeVar, Generic, TYPE_CHECKING
+from azure.core.pipeline.transport._base import HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.common import with_current_context
 
 if TYPE_CHECKING:
     import requests
-    from msrest.serialization import Model # type: ignore # pylint: disable=unused-import
+    from msrest.serialization import Model # pylint: disable=unused-import
     DeserializationCallbackType = Union[Model, Callable[[requests.Response], Model]]
+PollingReturnType = TypeVar("PollingReturnType")
 
-
-class PollingMethod(object):
+class PollingMethod(Generic[PollingReturnType]):
     """ABC class for polling method.
     """
     def initialize(self, client, initial_response, deserialization_callback):
@@ -61,7 +61,7 @@ class PollingMethod(object):
         raise NotImplementedError("This method needs to be implemented")
 
     def resource(self):
-        # type: () -> Any
+        # type: () -> PollingReturnType
         raise NotImplementedError("This method needs to be implemented")
 
 class NoPolling(PollingMethod):
@@ -102,7 +102,7 @@ class NoPolling(PollingMethod):
         return self._deserialization_callback(self._initial_response)
 
 
-class LROPoller(object):
+class LROPoller(Generic[PollingReturnType]):
     """Poller for long running operations.
 
     :param client: A pipeline service client
@@ -176,7 +176,7 @@ class LROPoller(object):
         return self._polling_method.status()
 
     def result(self, timeout=None):
-        # type: (Optional[int]) -> Model
+        # type: (Optional[int]) -> PollingReturnType
         """Return the result of the long running operation, or
         the result available after the specified timeout.
 
@@ -184,7 +184,7 @@ class LROPoller(object):
          if one is available.
         :raises ~azure.core.exceptions.HttpResponseError: Server problem with the query.
         """
-        self.wait(timeout)  # type: ignore
+        self.wait(timeout)
         return self._polling_method.resource()
 
     @distributed_trace
@@ -203,7 +203,8 @@ class LROPoller(object):
         self._thread.join(timeout=timeout)
         try:
             # Let's handle possible None in forgiveness here
-            raise self._exception  # type: ignore
+            # https://github.com/python/mypy/issues/8165
+            raise self._exception # type: ignore
         except TypeError: # Was None
             pass
 

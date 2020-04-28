@@ -73,9 +73,8 @@ def convert_bool(value):
 
     """
     if value in (True, False):
-        return value  # type: ignore
-
-    val = value.lower()  # type: ignore
+        return cast(bool, value)
+    val = cast(str, value).lower()
     if val in ["yes", "1", "on", "true", "True"]:
         return True
     if val in ["no", "0", "off", "false", "False"]:
@@ -112,9 +111,8 @@ def convert_logging(value):
 
     """
     if value in set(_levels.values()):
-        return value  # type: ignore
-
-    val = value.upper()  # type: ignore
+        return cast(int, value)
+    val = cast(str, value).upper()
     level = _levels.get(val)
     if not level:
         raise ValueError("Cannot convert {} to log level, valid values are: {}".format(value, ", ".join(_levels)))
@@ -127,7 +125,7 @@ def get_opencensus_span():
     try:
         from azure.core.tracing.ext.opencensus_span import OpenCensusSpan  # pylint:disable=redefined-outer-name
 
-        return OpenCensusSpan  # type: ignore
+        return OpenCensusSpan
     except ImportError:
         return None
 
@@ -175,8 +173,7 @@ def convert_tracing_impl(value):
                 value, ", ".join(_tracing_implementation_dict)
             )
         )
-    # type ignored until https://github.com/python/mypy/issues/7279
-    return wrapper_class  # type: ignore
+    return wrapper_class
 
 
 class PrioritizedSetting(object):

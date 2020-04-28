@@ -41,7 +41,7 @@ ImplPoliciesType = List[
 AsyncPoliciesType = List[Union[AsyncHTTPPolicy, SansIOHTTPPolicy]]
 
 try:
-    from contextlib import AbstractAsyncContextManager  # type: ignore
+    from contextlib import AbstractAsyncContextManager
 except ImportError:  # Python <= 3.7
 
     class AbstractAsyncContextManager(object):  # type: ignore
@@ -160,13 +160,12 @@ class AsyncPipeline(
     async def __aexit__(self, *exc_details):  # pylint: disable=arguments-differ
         await self._transport.__aexit__(*exc_details)
 
-    async def _prepare_multipart_mixed_request(self, request):
-        # type: (HTTPRequestType) -> None
+    async def _prepare_multipart_mixed_request(self, request: HTTPRequestType) -> None:
         """Will execute the multipart policies.
 
         Does nothing if "set_multipart_mixed" was never called.
         """
-        multipart_mixed_info = request.multipart_mixed_info  # type: ignore
+        multipart_mixed_info = request.multipart_mixed_info # type: ignore
         if not multipart_mixed_info:
             return
 
@@ -186,6 +185,14 @@ class AsyncPipeline(
 
         await asyncio.gather(*[prepare_requests(req) for req in requests])
 
+    async def _prepare_multipart(self, request: HTTPRequestType) -> None:
+        # This code is fine as long as HTTPRequestType is actually
+        # azure.core.pipeline.transport.HTTPRequest, bu we don't check it in here
+        # since we didn't see (yet) pipeline usage where it's not this actual instance
+        # class used
+        await self._prepare_multipart_mixed_request(request)
+        request.prepare_multipart_body()  # type: ignore
+
     async def run(self, request: HTTPRequestType, **kwargs: Any):
         """Runs the HTTP Request through the chained policies.
 
@@ -194,8 +201,7 @@ class AsyncPipeline(
         :return: The PipelineResponse object.
         :rtype: ~azure.core.pipeline.PipelineResponse
         """
-        await self._prepare_multipart_mixed_request(request)
-        request.prepare_multipart_body()  # type: ignore
+        await self._prepare_multipart(request)
         context = PipelineContext(self._transport, **kwargs)
         pipeline_request = PipelineRequest(request, context)
         first_node = (
@@ -203,4 +209,4 @@ class AsyncPipeline(
             if self._impl_policies
             else _AsyncTransportRunner(self._transport)
         )
-        return await first_node.send(pipeline_request)  # type: ignore
+        return await first_node.send(pipeline_request)
