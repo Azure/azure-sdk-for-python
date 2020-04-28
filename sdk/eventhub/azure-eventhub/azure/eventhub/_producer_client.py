@@ -7,14 +7,13 @@ import threading
 
 from typing import Any, Union, TYPE_CHECKING, Dict, List, Optional, cast
 
-from azure.eventhub import EventData
 from uamqp import constants
 
 from .exceptions import ConnectError, EventHubError
 from ._client_base import ClientBase
 from ._producer import EventHubProducer
 from ._constants import ALL_PARTITIONS
-from ._common import EventDataBatch
+from ._common import EventDataBatch, EventData
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -214,7 +213,8 @@ class EventHubProducerClient(ClientBase):
          :class:`EventDataError<azure.eventhub.exceptions.EventDataError>`
          :class:`EventDataSendError<azure.eventhub.exceptions.EventDataSendError>`
          :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
-         `ValueError`
+         :class:`ValueError`
+         :class:`TypeError`
 
         .. admonition:: Example:
 
@@ -233,18 +233,9 @@ class EventHubProducerClient(ClientBase):
                 raise TypeError("partition_id and partition_key should be None when sending an EventDataBatch "
                                 "because type EventDataBatch itself may have partition_id or partition_key")
             to_send_batch = event_data_batch
-        elif isinstance(event_data_batch, List):
-            to_send_batch = self.create_batch(partition_id=partition_id, partition_key=partition_key)
-            for event_data in event_data_batch:
-                try:
-                    to_send_batch.add(event_data)
-                except ValueError:
-                    raise ValueError("The list of EventData exceeds the Event Hub frame size limit. "
-                                     "Please send a smaller list of EventData, or use EventDataBatch, "
-                                     "which is guaranteed to be under the frame size limit")
         else:
-            raise TypeError("event_data_batch must be of type List[EventData] or EventDataBatch")
-
+            to_send_batch = self.create_batch(partition_id=partition_id, partition_key=partition_key)
+            to_send_batch._load_events(event_data_batch)  # pylint:disable=protected-access
         partition_id = (
             to_send_batch._partition_id or ALL_PARTITIONS  # pylint:disable=protected-access
         )
