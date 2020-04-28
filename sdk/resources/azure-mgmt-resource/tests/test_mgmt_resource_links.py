@@ -28,8 +28,8 @@ class MgmtResourceLinksTest(AzureMgmtTestCase):
 
     @ResourceGroupPreparer()
     def test_links(self, resource_group, location):
+        resource_name = self.get_resource_name("pytestavset")
         if not self.is_playback():
-            resource_name = self.get_resource_name("pytestavset")
             create_result = self.resource_client.resources.begin_create_or_update(
                 resource_group_name=resource_group.name,
                 resource_provider_namespace="Microsoft.Compute",
