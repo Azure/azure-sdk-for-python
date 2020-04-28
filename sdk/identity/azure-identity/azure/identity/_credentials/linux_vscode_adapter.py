@@ -43,8 +43,9 @@ def _get_refresh_token(service_name, account_name):
         return None
     schema = _libsecret.secret_schema_new(_c_str("org.freedesktop.Secret.Generic"), 2,
                                           _c_str("service"), 0, _c_str("account"), 0, None)
-    return _libsecret.secret_password_lookup_sync(schema, None, None, _c_str("service"), _c_str(service_name),
-                                                  _c_str("account"), _c_str(account_name), None)
+    p_str = _libsecret.secret_password_lookup_sync(schema, None, None, _c_str("service"), _c_str(service_name),
+                                                   _c_str("account"), _c_str(account_name), None)
+    return ct.c_char_p(p_str).value
 
 
 def get_credentials():
