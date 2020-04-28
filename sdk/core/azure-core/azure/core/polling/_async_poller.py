@@ -154,3 +154,12 @@ class AsyncLROPoller(Awaitable):
             continuation_token, **kwargs
         )
         return cls(client, initial_response, deserialization_callback, polling_method)
+
+    def status(self):
+        # type: () -> str
+        """Returns the current status string.
+
+        :returns: The current status string
+        :rtype: str
+        """
+        return self._polling_method.status()
