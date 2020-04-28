@@ -36,7 +36,6 @@ Install the Azure Cognitive Search client library for Python with [pip](https://
 pip install azure-search-documents --pre
 ```
 
-
 ### Authenticate the client
 
 In order to interact with the Cognitive Search service you'll need to create an instance of the Search Client class.
@@ -53,6 +52,7 @@ To create a SearchClient, you will need an existing index name as well as the va
 [service endpoint](https://docs.microsoft.com/en-us/azure/search/search-create-service-portal#get-a-key-and-url-endpoint) and
 [api key](https://docs.microsoft.com/en-us/azure/search/search-security-api-keys).
 Note that you will need an admin key to index documents (query keys only work for queries).
+
 
 ```python
 from azure.core.credentials import AzureKeyCredential
@@ -102,8 +102,7 @@ Create a new index
 ```python
 from azure.core.credentials import AzureKeyCredential
 from azure.search.documents import SearchServiceClient, CorsOptions, Index, ScoringProfile
-client = SearchServiceClient("<service endpoint>", AzureKeyCredential("<api key>"))
-
+client = SearchServiceClient("<service endpoint>", AzureKeyCredential("<api key>")).get_indexes_client()
 name = "hotels"
 fields = [
     {

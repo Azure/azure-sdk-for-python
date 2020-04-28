@@ -113,14 +113,14 @@ def delistize_flags_for_index(index):
     # type: (Index) -> Index
     if index.analyzers:
         index.analyzers = [
-            delistize_flags_for_pattern_analyzer(x)
+            delistize_flags_for_pattern_analyzer(x)  # type: ignore
             if isinstance(x, PatternAnalyzer)
             else x
             for x in index.analyzers
-        ]
+        ]  # mypy: ignore
     if index.tokenizers:
         index.tokenizers = [
-            delistize_flags_for_pattern_tokenizer(x)
+            delistize_flags_for_pattern_tokenizer(x)  # type: ignore
             if isinstance(x, PatternTokenizer)
             else x
             for x in index.tokenizers
@@ -132,14 +132,14 @@ def listize_flags_for_index(index):
     # type: (Index) -> Index
     if index.analyzers:
         index.analyzers = [
-            listize_flags_for_pattern_analyzer(x)
+            listize_flags_for_pattern_analyzer(x)  # type: ignore
             if isinstance(x, _PatternAnalyzer)
             else x
             for x in index.analyzers
         ]
     if index.tokenizers:
         index.tokenizers = [
-            listize_flags_for_pattern_tokenizer(x)
+            listize_flags_for_pattern_tokenizer(x)  # type: ignore
             if isinstance(x, _PatternTokenizer)
             else x
             for x in index.tokenizers
