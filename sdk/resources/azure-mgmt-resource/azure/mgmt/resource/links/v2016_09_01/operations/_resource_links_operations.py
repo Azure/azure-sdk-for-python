@@ -99,7 +99,6 @@ class ResourceLinksOperations(object):
     def create_or_update(
         self,
         link_id,  # type: str
-        api_version,  # type: str
         parameters,  # type: "models.ResourceLink"
         **kwargs  # type: Any
     ):
@@ -111,8 +110,6 @@ class ResourceLinksOperations(object):
          namespace}/{resource-type}/{resource-name}/Microsoft.Resources/links/{link-name}. For example,
          /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myGroup/Microsoft.Web/sites/mySite/Microsoft.Resources/links/myLink.
         :type link_id: str
-        :param api_version: The API version to use for the operation.
-        :type api_version: str
         :param parameters: Parameters for creating or updating a resource link.
         :type parameters: ~azure.mgmt.resource.links.v2016_09_01.models.ResourceLink
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -123,6 +120,7 @@ class ResourceLinksOperations(object):
         cls = kwargs.pop('cls', None)  # type: ClsType["models.ResourceLink"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2016-09-01"
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL

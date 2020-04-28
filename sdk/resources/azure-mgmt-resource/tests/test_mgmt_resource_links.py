@@ -60,7 +60,7 @@ class MgmtResourceLinksTest(AzureMgmtTestCase):
         link = self.client.resource_links.create_or_update(
             # resource_group.id + '/providers/Microsoft.Resources/links/mylink',
             self.result_id + '/providers/Microsoft.Resources/links/myLink',
-            '2019-07-01',
+            # '2016-09-01',
             {
                 'properties': {
                   'target_id': self.result_id_2,
