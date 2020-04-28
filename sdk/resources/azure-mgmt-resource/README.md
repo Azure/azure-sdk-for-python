@@ -1,4 +1,4 @@
-## Microsoft Azure SDK for Python
+# Microsoft Azure SDK for Python
 
 This is the Microsoft Azure Resource Management Client Library.
 This package has been tested with Python 2.7, 3.5, 3.6, 3.7 and 3.8.
