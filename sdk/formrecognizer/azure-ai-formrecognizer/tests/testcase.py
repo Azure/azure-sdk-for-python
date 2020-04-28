@@ -9,7 +9,13 @@
 from datetime import datetime, timedelta
 import os
 import pytest
+import logging
 import re
+try:
+    from cStringIO import StringIO      # Python 2
+except ImportError:
+    from io import StringIO
+
 from azure.core.credentials import AzureKeyCredential
 from azure.storage.blob import ContainerSasPermissions, generate_container_sas, ContainerClient
 from devtools_testutils import (
@@ -18,9 +24,12 @@ from devtools_testutils import (
     FakeResource,
     ResourceGroupPreparer,
 )
+from azure_devtools.scenario_tests import AzureTestError
 from devtools_testutils.cognitiveservices_testcase import CognitiveServicesAccountPreparer
 from devtools_testutils.storage_testcase import StorageAccountPreparer
 from azure_devtools.scenario_tests import ReplayableTest
+
+LOGGING_FORMAT = '%(asctime)s %(name)-20s %(levelname)-5s %(message)s'
 
 
 class FormRecognizerTest(AzureTestCase):
@@ -33,6 +42,7 @@ class FormRecognizerTest(AzureTestCase):
         self.receipt_url_png = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/receipt/contoso-receipt.png"
         self.invoice_url_pdf = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/Invoice_1.pdf"
         self.form_url_jpg = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/Form_1.jpg"
+        self.multipage_url_pdf = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/training_multipage/multipage_invoice1.pdf"
 
         # file stream samples
         self.receipt_jpg = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/receipt/contoso-allinone.jpg"))
@@ -83,6 +93,8 @@ class FormRecognizerTest(AzureTestCase):
             self.assertEqual(page.height, actual_page.height)
             self.assertEqual(page.unit, actual_page.unit)
 
+            if not page.lines and not actual_page.lines:
+                continue
             for p, a in zip(page.lines, actual_page.lines):
                 self.assertEqual(p.text, a.text)
                 self.assertBoundingBoxTransformCorrect(p.bounding_box, a.bounding_box)
@@ -300,6 +312,61 @@ class FormRecognizerTest(AzureTestCase):
         for word in elements:
             self.assertFormWordHasValues(word, page_number)
 
+    def configure_logging(self):
+        try:
+            enable_logging = self.get_settings_value("ENABLE_LOGGING")
+        except AzureTestError:
+            enable_logging = True  # That's the default value in fake settings
+
+        self.enable_logging() if enable_logging else self.disable_logging()
+
+    def enable_logging(self):
+        handler = logging.StreamHandler()
+        handler.setFormatter(logging.Formatter(LOGGING_FORMAT))
+        self.logger.handlers = [handler]
+        self.logger.setLevel(logging.INFO)
+        self.logger.propagate = True
+        self.logger.disabled = False
+
+    def disable_logging(self):
+        self.logger.propagate = False
+        self.logger.disabled = True
+        self.logger.handlers = []
+
+
+class LogCaptured(object):
+    def __init__(self, test_case=None):
+        # accept the test case so that we may reset logging after capturing logs
+        self.test_case = test_case
+
+    def __enter__(self):
+        # enable logging
+        # it is possible that the global logging flag is turned off
+        self.test_case.enable_logging()
+
+        # create a string stream to send the logs to
+        self.log_stream = StringIO()
+
+        # the handler needs to be stored so that we can remove it later
+        self.handler = logging.StreamHandler(self.log_stream)
+        self.handler.setFormatter(logging.Formatter(LOGGING_FORMAT))
+
+        # get and enable the logger to send the outputs to the string stream
+        self.logger = logging.getLogger('azure.ai')
+        self.logger.level = logging.DEBUG
+        self.logger.addHandler(self.handler)
+
+        # the stream is returned to the user so that the capture logs can be retrieved
+        return self.log_stream
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        # stop the handler, and close the stream to exit
+        self.logger.removeHandler(self.handler)
+        self.log_stream.close()
+
+        # reset logging since we messed with the setting
+        self.test_case.configure_logging()
+
 
 class GlobalResourceGroupPreparer(AzureMgmtPreparer):
     def __init__(self):
@@ -439,37 +506,6 @@ class GlobalFormAndStorageAccountPreparer(AzureMgmtPreparer):
             'storage_account': FormRecognizerTest._STORAGE_ACCOUNT,
             'storage_account_key': FormRecognizerTest._STORAGE_KEY
         }
-
-
-@pytest.fixture(scope="session")
-def form_recognizer_account():
-    test_case = AzureTestCase("__init__")
-    rg_preparer = ResourceGroupPreparer(random_name_enabled=True, name_prefix='pycog')
-    form_recognizer_preparer = CognitiveServicesAccountPreparer(
-        random_name_enabled=True,
-        kind="formrecognizer",
-        name_prefix='pycog',
-        location="westus"
-    )
-
-    try:
-        rg_name, rg_kwargs = rg_preparer._prepare_create_resource(test_case)
-        FormRecognizerTest._RESOURCE_GROUP = rg_kwargs['resource_group']
-        try:
-            form_recognizer_name, form_recognizer_kwargs = form_recognizer_preparer._prepare_create_resource(test_case, **rg_kwargs)
-            FormRecognizerTest._FORM_RECOGNIZER_ACCOUNT = form_recognizer_kwargs['cognitiveservices_account']
-            FormRecognizerTest._FORM_RECOGNIZER_KEY = form_recognizer_kwargs['cognitiveservices_account_key']
-            yield
-        finally:
-            form_recognizer_preparer.remove_resource(
-                form_recognizer_name,
-                resource_group=rg_kwargs['resource_group']
-            )
-            FormRecognizerTest._FORM_RECOGNIZER_ACCOUNT = None
-            FormRecognizerTest._FORM_RECOGNIZER_KEY = None
-    finally:
-        rg_preparer.remove_resource(rg_name)
-        FormRecognizerTest._RESOURCE_GROUP = None
 
 
 @pytest.fixture(scope="session")

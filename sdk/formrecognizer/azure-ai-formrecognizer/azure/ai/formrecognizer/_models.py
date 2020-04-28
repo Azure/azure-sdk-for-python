@@ -12,6 +12,14 @@ import re
 import six
 
 
+def adjust_confidence(score):
+    """Request from service team to return 1.0 if confidence is not returned.
+    """
+    if score is None:
+        return 1.0
+    return score
+
+
 def get_elements(field, read_result):
     text_elements = []
 
@@ -259,7 +267,7 @@ class FormField(object):
             value_data=FieldText._from_generated(value, read_result),
             value=get_field_value(field, value, read_result),
             name=field,
-            confidence=value.confidence or 1.0 if value else None,
+            confidence=adjust_confidence(value.confidence) if value else None,
             page_number=value.page if value else None,
         )
 
@@ -270,7 +278,7 @@ class FormField(object):
             value_data=FieldText._from_generated_unlabeled(field.value, page, read_result),
             value=field.value.text,
             name="field-" + str(idx),
-            confidence=field.confidence or 1.0,
+            confidence=adjust_confidence(field.confidence),
             page_number=page,
         )
 
@@ -363,8 +371,8 @@ class FormPage(object):
         self.width = kwargs.get("width", None)
         self.height = kwargs.get("height", None)
         self.unit = kwargs.get("unit", None)
-        self.tables = kwargs.get("tables", None)
-        self.lines = kwargs.get("lines", None)
+        self.tables = kwargs.get("tables", [])
+        self.lines = kwargs.get("lines", [])
 
     @classmethod
     def _from_generated(cls, read_result):
@@ -441,7 +449,7 @@ class FormWord(FormContent):
                 Point(x=word.bounding_box[4], y=word.bounding_box[5]),
                 Point(x=word.bounding_box[6], y=word.bounding_box[7])
             ] if word.bounding_box else None,
-            confidence=word.confidence or 1.0,
+            confidence=adjust_confidence(word.confidence),
             page_number=page
         )
 
@@ -464,7 +472,7 @@ class USReceiptType(object):
     def _from_generated(cls, item):
         return cls(
             type=item.value_string,
-            confidence=item.confidence or 1.0) if item else None
+            confidence=adjust_confidence(item.confidence)) if item else None
 
 
 class USReceiptItem(object):
@@ -569,7 +577,7 @@ class FormTableCell(FormContent):
                 Point(x=cell.bounding_box[4], y=cell.bounding_box[5]),
                 Point(x=cell.bounding_box[6], y=cell.bounding_box[7])
             ] if cell.bounding_box else None,
-            confidence=cell.confidence or 1.0,
+            confidence=adjust_confidence(cell.confidence),
             is_header=cell.is_header or False,
             is_footer=cell.is_footer or False,
             page_number=page,
