@@ -57,12 +57,13 @@ async def test_credential_unavailable_error():
 
 
 @pytest.mark.asyncio
-async def test_get_token():
+async def test_redeem_token():
     expected_token = AccessToken("token", 42)
 
     mock_client = mock.Mock(spec=object)
     token_by_refresh_token = mock.Mock(return_value=expected_token)
     mock_client.obtain_token_by_refresh_token = wrap_in_future(token_by_refresh_token)
+    mock_client.get_cached_access_token = mock.Mock(return_value=None)
 
     with mock.patch(VSCodeCredential.__module__ + ".get_credentials", return_value="VALUE"):
         credential = VSCodeCredential(_client=mock_client)

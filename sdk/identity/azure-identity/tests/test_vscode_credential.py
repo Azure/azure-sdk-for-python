@@ -59,6 +59,7 @@ def test_redeem_token():
 
     mock_client = mock.Mock(spec=object)
     mock_client.obtain_token_by_refresh_token = mock.Mock(return_value=expected_token)
+    mock_client.get_cached_access_token = mock.Mock(return_value=None)
 
     with mock.patch(VSCodeCredential.__module__ + ".get_credentials", return_value="VALUE"):
         credential = VSCodeCredential(_client=mock_client)

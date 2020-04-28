@@ -48,5 +48,6 @@ class VSCodeCredential(object):
             raise CredentialUnavailableError(
                 message="No Azure user is logged in to Visual Studio Code."
             )
-        token = self._client.obtain_token_by_refresh_token(refresh_token, scopes, **kwargs)
+        token = self._client.get_cached_access_token(scopes) \
+                or self._client.obtain_token_by_refresh_token(refresh_token, scopes, **kwargs)
         return token
