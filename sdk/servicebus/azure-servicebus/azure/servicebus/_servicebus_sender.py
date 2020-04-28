@@ -5,7 +5,7 @@
 import logging
 import time
 import uuid
-from typing import Any, TYPE_CHECKING, Union, List, Iterable
+from typing import Any, TYPE_CHECKING, Union, List
 
 import uamqp
 from uamqp import SendClient, types
@@ -189,11 +189,11 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             raise MessageSendFailed(e)
 
     def schedule(self, messages, schedule_time_utc):
-        # type: (Union[Message, Iterable[Message]], datetime.datetime) -> List[int]
+        # type: (Union[Message, List[Message]], datetime.datetime) -> List[int]
         """Send Message or multiple Messages to be enqueued at a specific time.
         Returns a list of the sequence numbers of the enqueued messages.
         :param messages: The message or list of messages to schedule.
-        :type messages: ~azure.servicebus.Message or Iterator[~azure.servicebus.Message]
+        :type messages: ~azure.servicebus.Message or List[~azure.servicebus.Message]
         :param schedule_time_utc: The utc date and time to enqueue the messages.
         :type schedule_time_utc: ~datetime.datetime
         :rtype: list[int]
@@ -220,13 +220,15 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         )
 
     def cancel_scheduled_messages(self, sequence_numbers):
-        # type: (Union[int, Iterator[int]]) -> None
+        # type: (Union[int, List[int]]) -> None
         """
         Cancel one or more messages that have previously been scheduled and are still pending.
 
         :param sequence_numbers: The sequence numbers of the scheduled messages.
-        :type sequence_numbers: int or Iterator[int]
+        :type sequence_numbers: int or List[int]
         :rtype: None
+        :raises: ~azure.servicebus.exceptions.ServiceBusError if messages cancellation failed due to message already
+         cancelled or enqueued.
 
         .. admonition:: Example:
 
