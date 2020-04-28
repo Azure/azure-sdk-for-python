@@ -11,7 +11,7 @@ FILE: sample_get_detailed_diagnostics_information_async.py
 
 DESCRIPTION:
     This sample demonstrates how to retrieve batch statistics, the
-    model version used, and the raw response returned from the service.
+    model version used, and the raw response in JSON format returned from the service.
 
 USAGE:
     python sample_get_detailed_diagnostics_information_async.py
