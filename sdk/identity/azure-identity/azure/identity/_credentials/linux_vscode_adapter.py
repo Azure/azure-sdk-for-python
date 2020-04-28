@@ -45,7 +45,7 @@ def _get_refresh_token(service_name, account_name):
                                           _c_str("service"), 0, _c_str("account"), 0, None)
     p_str = _libsecret.secret_password_lookup_sync(schema, None, None, _c_str("service"), _c_str(service_name),
                                                    _c_str("account"), _c_str(account_name), None)
-    return ct.c_char_p(p_str).value
+    return ct.c_char_p(p_str).value.decode('utf-8')
 
 
 def get_credentials():
