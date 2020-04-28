@@ -40,7 +40,7 @@ class MsalCredential(ABC):
         authority = kwargs.pop("authority", None)
         authority = normalize_authority(authority) if authority else get_default_authority()
 
-        self._base_url = "/".join((authority.strip("/"), tenant_id.strip("/")))
+        self._base_url = "/".join((authority, tenant_id.strip("/")))
         self._client_credential = client_credential
         self._client_id = client_id
 
