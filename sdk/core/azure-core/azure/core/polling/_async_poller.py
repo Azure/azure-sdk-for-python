@@ -94,7 +94,7 @@ async def async_poller(client, initial_response, deserialization_callback, polli
     poller = AsyncLROPoller(client, initial_response, deserialization_callback, polling_method)
     return await poller
 
-class AsyncLROPoller(Awaitable):
+class AsyncLROPoller(Awaitable, Generic[PollingReturnType]):
     """Async poller for long running operations.
 
     :param client: A pipeline service client
@@ -114,7 +114,7 @@ class AsyncLROPoller(Awaitable):
             client: Any,
             initial_response: Any,
             deserialization_callback: Callable,
-            polling_method: AsyncPollingMethod
+            polling_method: AsyncPollingMethod[PollingReturnType]
         ):
         self._polling_method = polling_method
 
@@ -146,17 +146,16 @@ class AsyncLROPoller(Awaitable):
     @classmethod
     def from_continuation_token(
             cls,
-            polling_method: AsyncPollingMethod,
+            polling_method: AsyncPollingMethod[PollingReturnType],
             continuation_token: str,
             **kwargs
-        ) -> "AsyncLROPoller":
+        ) -> "AsyncLROPoller[PollingReturnType]":
         client, initial_response, deserialization_callback = polling_method.from_continuation_token(
             continuation_token, **kwargs
         )
         return cls(client, initial_response, deserialization_callback, polling_method)
 
-    def status(self):
-        # type: () -> str
+    def status(self) -> str:
         """Returns the current status string.
 
         :returns: The current status string

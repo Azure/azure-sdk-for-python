@@ -30,16 +30,13 @@ try:
 except ImportError:
     from urllib.parse import urlparse
 
-from typing import Any, Callable, Union, List, Optional, Tuple, TypeVar, Generic, TYPE_CHECKING
+from typing import Any, Callable, Union, List, Optional, Tuple, TypeVar, Generic
 from azure.core.pipeline.transport._base import HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.common import with_current_context
 
-if TYPE_CHECKING:
-    import requests
-    from msrest.serialization import Model # pylint: disable=unused-import
-    DeserializationCallbackType = Union[Model, Callable[[requests.Response], Model]]
 PollingReturnType = TypeVar("PollingReturnType")
+
 
 class PollingMethod(Generic[PollingReturnType]):
     """ABC class for polling method.
@@ -90,7 +87,7 @@ class NoPolling(PollingMethod):
         self._deserialization_callback = None
 
     def initialize(self, _, initial_response, deserialization_callback):
-        # type: (Any, requests.Response, Callable) -> None
+        # type: (Any, Any, Callable) -> None
         self._initial_response = initial_response
         self._deserialization_callback = deserialization_callback
 
@@ -152,7 +149,7 @@ class LROPoller(Generic[PollingReturnType]):
     """
 
     def __init__(self, client, initial_response, deserialization_callback, polling_method):
-        # type: (Any, HttpResponse, DeserializationCallbackType, PollingMethod) -> None
+        # type: (Any, HttpResponse, Callable, PollingMethod[PollingReturnType]) -> None
         self._callbacks = []  # type: List[Callable]
         self._polling_method = polling_method
 
@@ -209,7 +206,7 @@ class LROPoller(Generic[PollingReturnType]):
 
     @classmethod
     def from_continuation_token(cls, polling_method, continuation_token, **kwargs):
-        # type: (PollingMethod, str, Any) -> LROPoller
+        # type: (PollingMethod[PollingReturnType], str, Any) -> LROPoller[PollingReturnType]
         client, initial_response, deserialization_callback = polling_method.from_continuation_token(
             continuation_token, **kwargs
         )
