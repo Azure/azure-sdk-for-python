@@ -6,7 +6,7 @@
 
 import functools
 from azure.core.credentials import AzureKeyCredential
-from azure.core.exceptions import ServiceRequestError, ClientAuthenticationError
+from azure.core.exceptions import ServiceRequestError, ClientAuthenticationError, HttpResponseError
 from azure.ai.formrecognizer import FormRecognizerClient, FormContentType
 from azure.ai.formrecognizer._generated.models import AnalyzeOperationResult
 from azure.ai.formrecognizer._response_handlers import prepare_form_result
@@ -52,6 +52,21 @@ class TestCustomForms(FormRecognizerTest):
                 model_id="xxx",
                 stream=myfile,
             )
+
+    @GlobalFormAndStorageAccountPreparer()
+    @GlobalTrainingAccountPreparer()
+    def test_custom_form_bad_input(self, client, container_sas_url):
+        training_client = client.get_form_training_client()
+
+        poller = training_client.begin_train_model(container_sas_url)
+        model = poller.result()
+
+        with self.assertRaises(HttpResponseError):
+            poller = client.begin_recognize_custom_forms(
+                model.model_id,
+                b"\x25\x50\x44\x46\x55\x55\x55",
+            )
+            form = poller.result()
 
     @GlobalFormAndStorageAccountPreparer()
     @GlobalTrainingAccountPreparer()

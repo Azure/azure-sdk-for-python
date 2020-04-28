@@ -51,6 +51,21 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
 
     @GlobalFormAndStorageAccountPreparer()
     @GlobalTrainingAccountPreparer()
+    def test_custom_form_bad_input(self, client, container_sas_url):
+        training_client = client.get_form_training_client()
+
+        poller = training_client.begin_train_model(container_sas_url, use_labels=True)
+        model = poller.result()
+
+        with self.assertRaises(HttpResponseError):
+            poller = client.begin_recognize_custom_forms_from_url(
+                model.model_id,
+                url="https://badurl.jpg"
+            )
+            form = poller.result()
+
+    @GlobalFormAndStorageAccountPreparer()
+    @GlobalTrainingAccountPreparer()
     def test_custom_form_unlabeled(self, client, container_sas_url):
         training_client = client.get_form_training_client()
 

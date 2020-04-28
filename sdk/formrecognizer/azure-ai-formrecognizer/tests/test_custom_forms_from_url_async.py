@@ -51,6 +51,19 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
 
     @GlobalFormAndStorageAccountPreparer()
     @GlobalTrainingAccountPreparer()
+    async def test_form_bad_input(self, client, container_sas_url):
+        training_client = client.get_form_training_client()
+
+        model = await training_client.train_model(container_sas_url, use_labels=True)
+
+        with self.assertRaises(HttpResponseError):
+            form = await client.recognize_custom_forms_from_url(
+                model.model_id,
+                url="https://badurl.jpg"
+            )
+
+    @GlobalFormAndStorageAccountPreparer()
+    @GlobalTrainingAccountPreparer()
     async def test_form_unlabeled(self, client, container_sas_url):
         training_client = client.get_form_training_client()
 
@@ -90,7 +103,6 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
                 self.assertIsNotNone(field.value)
                 self.assertIsNotNone(field.value_data.text)
                 self.assertIsNotNone(field.label_data.text)
-
 
     @GlobalFormAndStorageAccountPreparer()
     @GlobalTrainingAccountPreparer()
@@ -201,7 +213,6 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
             self.assertEqual(form.page_range.first_page, actual.page)
             self.assertEqual(form.page_range.last_page, actual.page)
             self.assertUnlabeledFormFieldDictTransformCorrect(form.fields, actual.key_value_pairs, read_results, bug_skip_text_content=True)
-
 
     @GlobalFormAndStorageAccountPreparer()
     @GlobalTrainingAccountPreparer()
