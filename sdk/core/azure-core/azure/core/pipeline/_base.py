@@ -33,6 +33,7 @@ from azure.core.pipeline import (
     PipelineContext,
 )
 from azure.core.pipeline.policies import HTTPPolicy, SansIOHTTPPolicy
+from ._tools import await_result as _await_result
 
 HTTPResponseType = TypeVar("HTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")
@@ -40,16 +41,6 @@ HttpTransportType = TypeVar("HttpTransportType")
 
 _LOGGER = logging.getLogger(__name__)
 PoliciesType = List[Union[HTTPPolicy, SansIOHTTPPolicy]]
-
-
-def _await_result(func, *args, **kwargs):
-    """If func returns an awaitable, raise that this runner can't handle it."""
-    result = func(*args, **kwargs)
-    if hasattr(result, "__await__"):
-        raise TypeError(
-            "Policy {} returned awaitable object in non-async pipeline.".format(func)
-        )
-    return result
 
 
 class _SansIOHTTPPolicyRunner(HTTPPolicy, Generic[HTTPRequestType, HTTPResponseType]):

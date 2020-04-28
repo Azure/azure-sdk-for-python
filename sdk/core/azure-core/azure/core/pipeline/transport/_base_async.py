@@ -36,7 +36,7 @@ from ._base import (
     PipelineRequest,
     PipelineResponse,
 )
-from .._base_async import _await_result
+from .._tools_async import await_result as _await_result
 
 try:
     from contextlib import AbstractAsyncContextManager  # type: ignore

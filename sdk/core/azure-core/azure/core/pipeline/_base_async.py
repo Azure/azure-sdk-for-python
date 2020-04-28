@@ -29,6 +29,7 @@ from typing import Any, Union, List, Generic, TypeVar, Dict
 
 from azure.core.pipeline import PipelineRequest, PipelineResponse, PipelineContext
 from azure.core.pipeline.policies import AsyncHTTPPolicy, SansIOHTTPPolicy
+from ._tools_async import await_result as _await_result
 
 AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")
@@ -52,14 +53,6 @@ except ImportError:  # Python <= 3.7
         async def __aexit__(self, exc_type, exc_value, traceback):
             """Raise any exception triggered within the runtime context."""
             return None
-
-
-async def _await_result(func, *args, **kwargs):
-    """If func returns an awaitable, await it."""
-    result = func(*args, **kwargs)
-    if hasattr(result, "__await__"):
-        return await result
-    return result
 
 
 class _SansIOAsyncHTTPPolicyRunner(
