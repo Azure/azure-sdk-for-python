@@ -45,9 +45,6 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
         self._last_received_sequenced_number = message.sequence_number
         return message
 
-    def _check_session(self):
-        pass
-
     def _get_source(self):
         return self._entity_uri
 
@@ -78,7 +75,7 @@ class SessionReceiverMixin(ReceiverMixin):
             self._session_id = session_filter.decode(self._config.encoding)
             self._session._session_id = self._session_id
 
-    def _check_session(self):
+    def _check_session_live(self):
         if self._session and self._session.expired:
             raise SessionLockExpired(inner_exception=self._session.auto_renew_error)
 

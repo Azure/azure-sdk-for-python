@@ -53,7 +53,7 @@ class ServiceBusSession(object):
         self._locked_until_utc = None
         self.auto_renew_error = None
 
-    def _check_session(self):
+    def _check_session_live(self):
         if self.expired:
             raise SessionLockExpired(inner_exception=self.auto_renew_error)
 
@@ -74,7 +74,7 @@ class ServiceBusSession(object):
                 :dedent: 4
                 :caption: Get the session state
         """
-        self._check_session()
+        self._check_session_live()
         response = self._receiver._mgmt_request_response_with_retry(  # pylint: disable=protected-access
             REQUEST_RESPONSE_GET_SESSION_STATE_OPERATION,
             {MGMT_REQUEST_SESSION_ID: self.session_id},
@@ -101,7 +101,7 @@ class ServiceBusSession(object):
                 :dedent: 4
                 :caption: Set the session state
         """
-        self._check_session()
+        self._check_session_live()
         state = state.encode(self._encoding) if isinstance(state, six.text_type) else state
         return self._receiver._mgmt_request_response_with_retry(  # pylint: disable=protected-access
             REQUEST_RESPONSE_SET_SESSION_STATE_OPERATION,
@@ -128,7 +128,7 @@ class ServiceBusSession(object):
                 :dedent: 4
                 :caption: Renew the session lock before it expires
         """
-        self._check_session()
+        self._check_session_live()
         expiry = self._receiver._mgmt_request_response_with_retry(  # pylint: disable=protected-access
             REQUEST_RESPONSE_RENEW_SESSION_LOCK_OPERATION,
             {MGMT_REQUEST_SESSION_ID: self.session_id},

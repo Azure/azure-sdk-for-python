@@ -125,7 +125,6 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
         self._connection = kwargs.get("connection")
 
     async def __anext__(self):
-        self._check_session()
         while True:
             try:
                 return await self._do_retryable_operation(self._iter_next)
@@ -295,7 +294,9 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
                 :caption: Receive messages from ServiceBus.
 
         """
-        self._check_session()
+        if max_batch_size and self._config.prefetch < max_batch_size:
+            raise ValueError("max_batch_size should be less equal than prefetch of ServiceBusReceiver, or you "
+                             "could set larger a prefetch when you're constructing the ServiceBusReceiver.")
         return await self._do_retryable_operation(
             self._receive,
             max_batch_size=max_batch_size,
@@ -324,7 +325,6 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
                 :caption: Receive deferred messages from ServiceBus.
 
         """
-        self._check_session()
         if not sequence_numbers:
             raise ValueError("At least one sequence number must be specified.")
         await self._open()
@@ -369,7 +369,6 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
                 :dedent: 4
                 :caption: Peek messages in the queue.
         """
-        self._check_session()
         if not sequence_number:
             sequence_number = self._last_received_sequenced_number or 1
         if int(message_count) < 1:

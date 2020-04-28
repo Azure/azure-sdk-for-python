@@ -257,7 +257,7 @@ class ServiceBusSender(BaseHandlerAsync, SenderMixin):
         """
         if isinstance(message, BatchMessage):
             if len(message) == 0:
-                raise MessageError("A BatchMessage must have at least one Message")
+                raise ValueError("A BatchMessage must have at least one Message")
         elif not isinstance(message, Message):
             raise TypeError("message must be of type Message or BatchMessage")
         await self._do_retryable_operation(
