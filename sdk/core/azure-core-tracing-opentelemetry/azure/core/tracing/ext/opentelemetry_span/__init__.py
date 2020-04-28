@@ -20,9 +20,20 @@ except ImportError:
     TYPE_CHECKING = False
 
 if TYPE_CHECKING:
-    from typing import Dict, Optional, Union, Callable
+    from typing import Any, Mapping, Dict, Optional, Union, Callable, Sequence
 
     from azure.core.pipeline.transport import HttpRequest, HttpResponse
+    AttributeValue = Union[
+        str,
+        bool,
+        int,
+        float,
+        Sequence[str],
+        Sequence[bool],
+        Sequence[int],
+        Sequence[float],
+    ]
+    Attributes = Optional[Dict[str, AttributeValue]]
 
 __version__ = VERSION
 
@@ -171,8 +182,8 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
         return self.to_header()['traceparent']
 
     @classmethod
-    def link(cls, traceparent):
-        # type: (str) -> None
+    def link(cls, traceparent, attributes=None):
+        # type: (str, Attributes) -> None
         """
         Links the context to the current tracer.
 
@@ -181,11 +192,11 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
         """
         cls.link_from_headers({
             'traceparent': traceparent
-        })
+        }, attributes)
 
     @classmethod
-    def link_from_headers(cls, headers):
-        # type: (Dict[str, str]) -> None
+    def link_from_headers(cls, headers, attributes=None):
+        # type: (Dict[str, str], Attributes) -> None
         """
         Given a dictionary, extracts the context and links the context to the current tracer.
 
@@ -195,7 +206,7 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
         ctx = extract(_get_headers_from_http_request_headers, headers)
         span_ctx = get_span_from_context(ctx).get_context()
         current_span = cls.get_current_span()
-        current_span.links.append(Link(span_ctx))
+        current_span.links.append(Link(span_ctx, attributes))
 
     @classmethod
     def get_current_span(cls):

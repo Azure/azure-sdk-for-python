@@ -64,11 +64,11 @@ az cognitiveservices account show --name "resource-name" --resource-group "resou
 ```
 
 #### Types of credentials
-The `credential` parameter may be provided as a [`AzureKeyCredential`][azure-key-credential] from [azure.core][azure_core].
+The `credential` parameter may be provided as a [AzureKeyCredential][azure-key-credential] from [azure.core][azure_core].
 See the full details regarding [authentication][cognitive_authentication] of cognitive services.
 
 To use an [API key][cognitive_authentication_api_key],
-pass the key as a string into an instance of [`AzureKeyCredential("<api_key>")`][azure-key-credential].
+pass the key as a string into an instance of `AzureKeyCredential("<api_key>")`.
 The API key can be found in the Azure Portal or by running the following Azure CLI command:
 
 ```az cognitiveservices account keys list --name "resource-name" --resource-group "resource-group-name"```
@@ -108,7 +108,7 @@ succeeded, to get the result.
 Methods that train models or recognize values from forms are modeled as long-running operations. The client exposes
 a `begin_<method-name>` method that returns an `LROPoller`. Callers should wait for the operation to complete by
 calling `result()` on the operation returned from the `begin_<method-name>` method. Sample code snippets are provided
-to illustrate using long-running operations [below](#Examples).
+to illustrate using long-running operations [below](#examples "Examples").
 
 
 ## Examples

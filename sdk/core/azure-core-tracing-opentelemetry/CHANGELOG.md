@@ -4,6 +4,7 @@
 -------------------
 ## 1.0.0b4 (Unreleased)
 
+- `link` and `link_from_headers` now accepts attributes.
 
 ## 1.0.0b3 (2020-04-06)
 

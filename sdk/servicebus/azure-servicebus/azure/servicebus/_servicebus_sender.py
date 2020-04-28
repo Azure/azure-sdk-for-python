@@ -169,12 +169,16 @@ class ServiceBusSender(BaseHandler, SenderMixin):
 
         auth = None if self._connection else create_authentication(self)
         self._create_handler(auth)
-        self._handler.open(connection=self._connection)
-        while not self._handler.client_ready():
-            time.sleep(0.05)
-        self._running = True
-        self._max_message_size_on_link = self._handler.message_handler._link.peer_max_message_size \
-                                         or uamqp.constants.MAX_MESSAGE_LENGTH_BYTES
+        try:
+            self._handler.open(connection=self._connection)
+            while not self._handler.client_ready():
+                time.sleep(0.05)
+            self._running = True
+            self._max_message_size_on_link = self._handler.message_handler._link.peer_max_message_size \
+                                             or uamqp.constants.MAX_MESSAGE_LENGTH_BYTES
+        except:
+            self.close()
+            raise
 
     def _send(self, message, timeout=None, last_exception=None):
         self._open()
@@ -286,13 +290,12 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         )
         return cls(**constructor_args)
 
-    def send(self, message, timeout=None):
-        # type: (Union[Message, BatchMessage], float) -> None
+    def send(self, message):
+        # type: (Union[Message, BatchMessage]) -> None
         """Sends message and blocks until acknowledgement is received or operation times out.
 
         :param message: The ServiceBus message to be sent.
-        :type message: ~azure.servicebus.Message
-        :param float timeout: The maximum wait time to send the event data.
+        :type message: ~azure.servicebus.Message or ~azure.servicebus.BatchMessage
         :rtype: None
         :raises: ~azure.servicebus.common.errors.MessageSendFailed if the message fails to
          send or ~azure.servicebus.common.errors.OperationTimeoutError if sending times out.
@@ -310,7 +313,6 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         self._do_retryable_operation(
             self._send,
             message=message,
-            timeout=timeout,
             require_timeout=True,
             require_last_exception=True
         )

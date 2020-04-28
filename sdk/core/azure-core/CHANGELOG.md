@@ -6,10 +6,12 @@
 ### Features
 
 - Support "x-ms-retry-after-ms" in response header   #10743
+- `link` and `link_from_headers` now accepts attributes   #10765
 
 ### Bug fixes
 
 - Not retry if the status code is less than 400 #10778
+- "x-ms-request-id" is not considered safe header for logging #10967
 
 ## 1.4.0 (2020-04-06)
 

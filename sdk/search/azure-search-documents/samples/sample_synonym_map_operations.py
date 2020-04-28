@@ -26,27 +26,27 @@ key = os.getenv("AZURE_SEARCH_API_KEY")
 from azure.core.credentials import AzureKeyCredential
 from azure.search.documents import SearchServiceClient
 
-service_client = SearchServiceClient(service_endpoint, AzureKeyCredential(key))
+client = SearchServiceClient(service_endpoint, AzureKeyCredential(key)).get_synonym_maps_client()
 
 def create_synonym_map():
     # [START create_synonym_map]
-    result = service_client.create_synonym_map("test-syn-map", [
+    result = client.create_synonym_map("test-syn-map", [
         "USA, United States, United States of America",
         "Washington, Wash. => WA",
     ])
     print("Create new Synonym Map 'test-syn-map succeeded")
     # [END create_synonym_map]
 
-def list_synonym_maps():
-    # [START list_synonym_map]
-    result = service_client.list_synonym_maps()
+def get_synonym_maps():
+    # [START get_synonym_maps]
+    result = client.get_synonym_maps()
     names = [x["name"] for x in result]
     print("Found {} Synonym Maps in the service: {}".format(len(result), ", ".join(names)))
-    # [END list_synonym_map]
+    # [END get_synonym_maps]
 
 def get_synonym_map():
     # [START get_synonym_map]
-    result = service_client.get_synonym_map("test-syn-map")
+    result = client.get_synonym_map("test-syn-map")
     print("Retrived Synonym Map 'test-syn-map' with synonyms")
     for syn in result["synonyms"]:
         print("    {}".format(syn))
@@ -54,12 +54,12 @@ def get_synonym_map():
 
 def delete_synonym_map():
     # [START delete_synonym_map]
-    service_client.delete_synonym_map("test-syn-map")
+    client.delete_synonym_map("test-syn-map")
     print("Synonym Map 'test-syn-map' deleted")
     # [END delete_synonym_map]
 
 if __name__ == '__main__':
     create_synonym_map()
-    list_synonym_maps()
+    get_synonym_maps()
     get_synonym_map()
     delete_synonym_map()

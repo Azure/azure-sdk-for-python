@@ -24,27 +24,30 @@
 #
 # --------------------------------------------------------------------------
 from collections.abc import Awaitable
-from typing import Callable, Any, Tuple
-
+from typing import Callable, Any, Tuple, Generic, TypeVar
 
 from ._poller import NoPolling as _NoPolling
 
-class AsyncPollingMethod(object):
+
+PollingReturnType = TypeVar("PollingReturnType")
+
+
+class AsyncPollingMethod(Generic[PollingReturnType]):
     """ABC class for polling method.
     """
-    def initialize(self, client, initial_response, deserialization_callback):
+    def initialize(self, client: Any, initial_response: Any, deserialization_callback: Any) -> None:
         raise NotImplementedError("This method needs to be implemented")
 
-    async def run(self):
+    async def run(self) -> None:
         raise NotImplementedError("This method needs to be implemented")
 
-    def status(self):
+    def status(self) -> str:
         raise NotImplementedError("This method needs to be implemented")
 
-    def finished(self):
+    def finished(self) -> bool:
         raise NotImplementedError("This method needs to be implemented")
 
-    def resource(self):
+    def resource(self) -> PollingReturnType:
         raise NotImplementedError("This method needs to be implemented")
 
     def get_continuation_token(self) -> str:

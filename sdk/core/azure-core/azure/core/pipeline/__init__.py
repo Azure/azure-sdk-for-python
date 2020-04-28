@@ -38,7 +38,7 @@ HTTPRequestType = TypeVar("HTTPRequestType")
 try:
     from contextlib import (  # pylint: disable=unused-import
         AbstractContextManager,
-    )  # type: ignore
+    )
 except ImportError:  # Python <= 3.5
 
     class AbstractContextManager(object):  # type: ignore

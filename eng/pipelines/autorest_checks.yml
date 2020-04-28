@@ -25,7 +25,7 @@ jobs:
     displayName: 'Run AutoRest'
 
     pool:
-      vmImage: 'ubuntu-16.04'
+      vmImage: 'ubuntu-18.04'
 
     steps:
       - task: NodeTool@0
@@ -38,7 +38,9 @@ jobs:
         inputs:
           versionSpec: $(PythonVersion)
 
-      - script: pip install pytest pytest-cov pytest-asyncio isodate msrest aiohttp $(Build.SourcesDirectory)/$(source_path)
+      - script: |
+          pip install -r eng/autorest_req.txt
+          pip install $(Build.SourcesDirectory)/$(source_path)
         displayName: 'Prepare Environment'
 
       - script: |
