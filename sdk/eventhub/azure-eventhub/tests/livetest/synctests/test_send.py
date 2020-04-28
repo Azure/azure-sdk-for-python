@@ -12,7 +12,7 @@ import sys
 
 from azure.eventhub import EventData, TransportType, EventDataBatch
 from azure.eventhub import EventHubProducerClient
-
+from azure.eventhub.exceptions import EventDataSendError
 
 @pytest.mark.liveTest
 def test_send_with_partition_key(connstr_receivers):
@@ -208,14 +208,15 @@ def test_send_list_partition(connstr_receivers):
     assert received.body_as_str() == payload
 
 
+@pytest.mark.parametrize("num, exception_type", [(0, EventDataSendError), (1100, ValueError)])
 @pytest.mark.liveTest
-def test_send_list_too_large(connection_str):
+def test_send_list_wrong_data(connection_str, num, exception_type):
     client = EventHubProducerClient.from_connection_string(connection_str)
     to_send = []
-    for i in range(1100):
+    for i in range(num):
         to_send.append(EventData("A"*1024))
     with client:
-        with pytest.raises(ValueError):
+        with pytest.raises(exception_type):
             client.send_batch(to_send)
 
 
