@@ -9,7 +9,7 @@
 """
 FILE: sample_data_source_operations_async.py
 DESCRIPTION:
-    This sample demonstrates how to get, create, update, or delete a Synonym Map.
+    This sample demonstrates how to get, create, update, or delete a Data Source.
 USAGE:
     python sample_data_source_operations_async.py
 
