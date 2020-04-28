@@ -13,7 +13,6 @@ import unittest
 
 import azure.core.exceptions
 import azure.mgmt.resource
-# import azure.mgmt.msi
 from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 
 class MgmtResourceDeploymentScriptTest(AzureMgmtTestCase):
