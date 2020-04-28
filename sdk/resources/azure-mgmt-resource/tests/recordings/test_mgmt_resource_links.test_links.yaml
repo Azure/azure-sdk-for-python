@@ -15,7 +15,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-resource/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_links_test_links7650e8a/providers/Microsoft.Compute/availabilitySets/pytestavset7650e8a?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_links_test_links7650e8a/providers/Microsoft.Compute/availabilitySets/pytestavset7650e8a?api-version=2019-12-01
   response:
     body:
       string: "{\r\n  \"name\": \"pytestavset7650e8a\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_links_test_links7650e8a/providers/Microsoft.Compute/availabilitySets/pytestavset7650e8a\"\
@@ -31,7 +31,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 28 Apr 2020 10:41:00 GMT
+      - Tue, 28 Apr 2020 11:13:36 GMT
       expires:
       - '-1'
       pragma:
@@ -48,9 +48,9 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-resource:
-      - Microsoft.Compute/PutVM3Min;239,Microsoft.Compute/PutVM30Min;1196
+      - Microsoft.Compute/PutVM3Min;239,Microsoft.Compute/PutVM30Min;1188
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1199'
+      - '1196'
     status:
       code: 200
       message: OK
@@ -84,7 +84,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 28 Apr 2020 10:41:03 GMT
+      - Tue, 28 Apr 2020 11:13:38 GMT
       expires:
       - '-1'
       pragma:
@@ -97,7 +97,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1199'
+      - '1198'
     status:
       code: 400
       message: Bad Request

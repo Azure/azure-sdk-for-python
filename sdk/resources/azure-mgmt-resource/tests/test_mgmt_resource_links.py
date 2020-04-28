@@ -37,12 +37,12 @@ class MgmtResourceLinksTest(AzureMgmtTestCase):
                 resource_type="availabilitySets",
                 resource_name=resource_name,
                 parameters={'location': location},
-                api_version='2019-07-01'
+                api_version='2019-12-01'
             )
             result = create_result.result()
             self.result_id = result.id
         else:
-            self.result_id = '/subscriptions/' + SUBSCRIPTION_ID + '/resourceGroups/' + resource_group.id + "/providers/Microsoft.Compute/availabilitySets/" + resource_name
+            self.result_id = resource_group.id + "/providers/Microsoft.Compute/availabilitySets/" + resource_name
 
         SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
         link = self.client.resource_links.create_or_update(
@@ -50,7 +50,7 @@ class MgmtResourceLinksTest(AzureMgmtTestCase):
             self.result_id + '/Microsoft.Resources/links/myLink',
             '2019-07-01',
             {
-                'target_id' : self.result_id,
+                'target_id' : resource_group.id + "/providers/Microsoft.Compute/availabilitySets/mylinkedavailset",
                 'notes': 'Testing links'
             }
         )
