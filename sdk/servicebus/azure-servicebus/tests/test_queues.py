@@ -1225,3 +1225,23 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
         receiver = sb_client.get_queue_receiver(queue_name="mock")
         assert receiver._config.http_proxy == http_proxy
         assert receiver._config.transport_type == TransportType.AmqpOverWebsocket
+
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
+    def test_queue_message_settle_through_mgmt_link_due_to_broken_receiver_link(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+        with ServiceBusClient.from_connection_string(
+                servicebus_namespace_connection_string,
+                logging_enable=False) as sb_client:
+
+            with sb_client.get_queue_sender(servicebus_queue.name) as sender:
+                message = Message("Test")
+                sender.send(message)
+
+            with sb_client.get_queue_receiver(servicebus_queue.name) as receiver:
+                messages = receiver.receive(max_wait_time=5)
+                receiver._handler.message_handler.destroy()  # destroy the underlying receiver link
+                assert len(messages) == 1
+                messages[0].complete()

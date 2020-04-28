@@ -239,14 +239,14 @@ class ServiceBusSender(BaseHandlerAsync, SenderMixin):
         return cls(**constructor_args)
 
     async def send(self, message):
-        # type: (Union[Message, BatchMessage, List[Message]], float) -> None
+        # type: (Union[Message, BatchMessage, List[Message]]) -> None
         """Sends message and blocks until acknowledgement is received or operation times out.
 
         If a list of messages was provided, attempts to send them as a single batch, throwing a
         `ValueError` if they cannot fit in a single batch.
 
         :param message: The ServiceBus message to be sent.
-        :type message: ~azure.servicebus.Message
+        :type message: ~azure.servicebus.Message or ~azure.servicebus.BatchMessage
         :rtype: None
         :raises: :class: ~azure.servicebus.common.errors.MessageSendFailed if the message fails to
          send
