@@ -16,7 +16,8 @@ from azure.ai.textanalytics.aio import TextAnalyticsClient
 from azure.ai.textanalytics import (
     VERSION,
     DetectLanguageInput,
-    TextDocumentInput
+    TextDocumentInput,
+    Encoding
 )
 
 from testcase import GlobalTextAnalyticsAccountPreparer
@@ -43,7 +44,7 @@ class TestRecognizeEntities(AsyncTextAnalyticsTest):
     @TextAnalyticsClientPreparer()
     async def test_no_single_input(self, client):
         with self.assertRaises(TypeError):
-            response = await client.recognize_entities("hello world")
+            response = await client.recognize_entities("hello world", encoding=Encoding.grapheme)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -52,17 +53,19 @@ class TestRecognizeEntities(AsyncTextAnalyticsTest):
                 {"id": "2", "language": "es", "text": "Microsoft fue fundado por Bill Gates y Paul Allen el 4 de abril de 1975."},
                 {"id": "3", "language": "de", "text": "Microsoft wurde am 4. April 1975 von Bill Gates und Paul Allen gegründet."}]
 
-        response = await client.recognize_entities(docs, model_version="2020-02-01", show_stats=True)
+        response = await client.recognize_entities(docs, model_version="2020-02-01", show_stats=True, encoding=Encoding.grapheme)
         for doc in response:
             self.assertEqual(len(doc.entities), 4)
             self.assertIsNotNone(doc.id)
             self.assertIsNotNone(doc.statistics)
+            self.assertEqual(doc.statistics.encoding, Encoding.grapheme)
             for entity in doc.entities:
                 self.assertIsNotNone(entity.text)
                 self.assertIsNotNone(entity.category)
                 self.assertIsNotNone(entity.offset)
                 self.assertIsNotNone(entity.length)
                 self.assertIsNotNone(entity.confidence_score)
+                self.assertEqual(entity.encoding, Encoding.grapheme)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -73,7 +76,7 @@ class TestRecognizeEntities(AsyncTextAnalyticsTest):
             TextDocumentInput(id="3", text="Microsoft wurde am 4. April 1975 von Bill Gates und Paul Allen gegründet.", language="de")
         ]
 
-        response = await client.recognize_entities(docs, model_version="2020-02-01")
+        response = await client.recognize_entities(docs, model_version="2020-02-01", encoding=Encoding.grapheme)
         for doc in response:
             self.assertEqual(len(doc.entities), 4)
             for entity in doc.entities:
@@ -82,6 +85,21 @@ class TestRecognizeEntities(AsyncTextAnalyticsTest):
                 self.assertIsNotNone(entity.offset)
                 self.assertIsNotNone(entity.length)
                 self.assertIsNotNone(entity.confidence_score)
+                self.assertEqual(entity.encoding, Encoding.grapheme)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    async def test_using_default_encoding(self, client):
+        docs = [
+            TextDocumentInput(id="1", text="Microsoft was founded by Bill Gates and Paul Allen."),
+            TextDocumentInput(id="2", text="I did not like the hotel we stayed at. It was too expensive."),
+            TextDocumentInput(id="3", text="The restaurant had really good food. I recommend you try it."),
+        ]
+
+        response = await client.recognize_entities(docs, show_stats=True)
+        for doc in response:
+            self.assertIsNone(doc.statistics.encoding)
+            [self.assertIsNone(entity.encoding) for entity in doc.entities]
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -93,7 +111,7 @@ class TestRecognizeEntities(AsyncTextAnalyticsTest):
             u""
         ]
 
-        response = await client.recognize_entities(docs)
+        response = await client.recognize_entities(docs, encoding=Encoding.grapheme)
         self.assertEqual(len(response[0].entities), 4)
         self.assertTrue(response[3].is_error)
 
@@ -104,7 +122,7 @@ class TestRecognizeEntities(AsyncTextAnalyticsTest):
                 {"id": "2", "language": "Spanish", "text": "Hola"},
                 {"id": "3", "language": "de", "text": ""}]
 
-        response = await client.recognize_entities(docs)
+        response = await client.recognize_entities(docs, encoding=Encoding.grapheme)
         self.assertFalse(response[0].is_error)
         self.assertTrue(response[1].is_error)
         self.assertTrue(response[2].is_error)
@@ -116,7 +134,7 @@ class TestRecognizeEntities(AsyncTextAnalyticsTest):
                 {"id": "2", "language": "Spanish", "text": "Hola"},
                 {"id": "3", "language": "de", "text": ""}]
 
-        response = await client.recognize_entities(docs)
+        response = await client.recognize_entities(docs, encoding=Encoding.grapheme)
         self.assertTrue(response[0].is_error)
         self.assertTrue(response[1].is_error)
         self.assertTrue(response[2].is_error)
@@ -126,7 +144,7 @@ class TestRecognizeEntities(AsyncTextAnalyticsTest):
     async def test_empty_credential_class(self, client):
         with self.assertRaises(ClientAuthenticationError):
             response = await client.recognize_entities(
-                ["This is written in English."]
+                ["This is written in English."], encoding=Encoding.grapheme
             )
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -134,7 +152,7 @@ class TestRecognizeEntities(AsyncTextAnalyticsTest):
     async def test_bad_credentials(self, client):
         with self.assertRaises(ClientAuthenticationError):
             response = await client.recognize_entities(
-                ["This is written in English."]
+                ["This is written in English."], encoding=Encoding.grapheme
             )
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -143,7 +161,7 @@ class TestRecognizeEntities(AsyncTextAnalyticsTest):
         with self.assertRaises(HttpResponseError):
             response = await client.recognize_entities(
                 documents=["Microsoft was founded by Bill Gates."],
-                model_version="old"
+                model_version="old", encoding=Encoding.grapheme
             )
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -152,7 +170,7 @@ class TestRecognizeEntities(AsyncTextAnalyticsTest):
         docs = "This is the wrong type"
 
         with self.assertRaises(TypeError):
-            response = await client.recognize_entities(docs)
+            response = await client.recognize_entities(docs, encoding=Encoding.grapheme)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -163,7 +181,7 @@ class TestRecognizeEntities(AsyncTextAnalyticsTest):
             u"You cannot mix string input with the above inputs"
         ]
         with self.assertRaises(TypeError):
-            response = await client.recognize_entities(docs)
+            response = await client.recognize_entities(docs, encoding=Encoding.grapheme)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -174,7 +192,7 @@ class TestRecognizeEntities(AsyncTextAnalyticsTest):
                 {"id": "19", "text": ":P"},
                 {"id": "1", "text": ":D"}]
 
-        response = await client.recognize_entities(docs)
+        response = await client.recognize_entities(docs, encoding=Encoding.grapheme)
         in_order = ["56", "0", "22", "19", "1"]
         for idx, resp in enumerate(response):
             self.assertEqual(resp.id, in_order[idx])
@@ -200,7 +218,7 @@ class TestRecognizeEntities(AsyncTextAnalyticsTest):
             docs,
             show_stats=True,
             model_version="latest",
-            raw_response_hook=callback
+            raw_response_hook=callback, encoding=Encoding.grapheme
         )
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -208,7 +226,7 @@ class TestRecognizeEntities(AsyncTextAnalyticsTest):
     async def test_batch_size_over_limit(self, client):
         docs = [u"hello world"] * 1050
         with self.assertRaises(HttpResponseError):
-            response = await client.recognize_entities(docs)
+            response = await client.recognize_entities(docs, encoding=Encoding.grapheme)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -224,7 +242,7 @@ class TestRecognizeEntities(AsyncTextAnalyticsTest):
             u"The restaurant was not as good as I hoped."
         ]
 
-        response = await client.recognize_entities(docs, language="fr", raw_response_hook=callback)
+        response = await client.recognize_entities(docs, language="fr", raw_response_hook=callback, encoding=Encoding.grapheme)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -240,7 +258,7 @@ class TestRecognizeEntities(AsyncTextAnalyticsTest):
             u"The restaurant was not as good as I hoped."
         ]
 
-        response = await client.recognize_entities(docs, language="", raw_response_hook=callback)
+        response = await client.recognize_entities(docs, language="", raw_response_hook=callback, encoding=Encoding.grapheme)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -258,7 +276,7 @@ class TestRecognizeEntities(AsyncTextAnalyticsTest):
                 {"id": "2", "language": "", "text": "I did not like the hotel we stayed at."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
-        response = await client.recognize_entities(docs, raw_response_hook=callback)
+        response = await client.recognize_entities(docs, raw_response_hook=callback, encoding=Encoding.grapheme)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -274,7 +292,7 @@ class TestRecognizeEntities(AsyncTextAnalyticsTest):
             TextDocumentInput(id="3", text="猫は幸せ"),
         ]
 
-        response = await client.recognize_entities(docs, language="de", raw_response_hook=callback)
+        response = await client.recognize_entities(docs, language="de", raw_response_hook=callback, encoding=Encoding.grapheme)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -293,7 +311,7 @@ class TestRecognizeEntities(AsyncTextAnalyticsTest):
             TextDocumentInput(id="3", text="猫は幸せ"),
         ]
 
-        response = await client.recognize_entities(docs, language="en", raw_response_hook=callback)
+        response = await client.recognize_entities(docs, language="en", raw_response_hook=callback, encoding=Encoding.grapheme)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -311,7 +329,7 @@ class TestRecognizeEntities(AsyncTextAnalyticsTest):
                 {"id": "2", "language": "es", "text": "I did not like the hotel we stayed at."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
-        response = await client.recognize_entities(docs, language="en", raw_response_hook=callback)
+        response = await client.recognize_entities(docs, language="en", raw_response_hook=callback, encoding=Encoding.grapheme)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"default_language": "es"})
@@ -330,9 +348,9 @@ class TestRecognizeEntities(AsyncTextAnalyticsTest):
                 {"id": "2", "text": "I did not like the hotel we stayed at."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
-        response = await client.recognize_entities(docs, raw_response_hook=callback)
-        response = await client.recognize_entities(docs, language="en", raw_response_hook=callback_2)
-        response = await client.recognize_entities(docs, raw_response_hook=callback)
+        response = await client.recognize_entities(docs, raw_response_hook=callback, encoding=Encoding.grapheme)
+        response = await client.recognize_entities(docs, language="en", raw_response_hook=callback_2, encoding=Encoding.grapheme)
+        response = await client.recognize_entities(docs, raw_response_hook=callback, encoding=Encoding.grapheme)
 
     @GlobalTextAnalyticsAccountPreparer()
     async def test_rotate_subscription_key(self, resource_group, location, text_analytics_account, text_analytics_account_key):
@@ -343,15 +361,15 @@ class TestRecognizeEntities(AsyncTextAnalyticsTest):
                 {"id": "2", "text": "I did not like the hotel we stayed at."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
-        response = await client.recognize_entities(docs)
+        response = await client.recognize_entities(docs, encoding=Encoding.grapheme)
         self.assertIsNotNone(response)
 
         credential.update("xxx")  # Make authentication fail
         with self.assertRaises(ClientAuthenticationError):
-            response = await client.recognize_entities(docs)
+            response = await client.recognize_entities(docs, encoding=Encoding.grapheme)
 
         credential.update(text_analytics_account_key)  # Authenticate successfully again
-        response = await client.recognize_entities(docs)
+        response = await client.recognize_entities(docs, encoding=Encoding.grapheme)
         self.assertIsNotNone(response)
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -368,14 +386,14 @@ class TestRecognizeEntities(AsyncTextAnalyticsTest):
                 {"id": "2", "text": "I did not like the hotel we stayed at."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
-        response = await client.recognize_entities(docs, raw_response_hook=callback)
+        response = await client.recognize_entities(docs, raw_response_hook=callback, encoding=Encoding.grapheme)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
     async def test_document_attribute_error_no_result_attribute(self, client):
 
         docs = [{"id": "1", "text": ""}]
-        response = await client.recognize_entities(docs)
+        response = await client.recognize_entities(docs, encoding=Encoding.grapheme)
 
         # Attributes on DocumentError
         self.assertTrue(response[0].is_error)
@@ -398,7 +416,7 @@ class TestRecognizeEntities(AsyncTextAnalyticsTest):
     async def test_document_attribute_error_nonexistent_attribute(self, client):
 
         docs = [{"id": "1", "text": ""}]
-        response = await client.recognize_entities(docs)
+        response = await client.recognize_entities(docs, encoding=Encoding.grapheme)
 
         # Attribute not found on DocumentError or result obj, default behavior/message
         try:
@@ -415,7 +433,7 @@ class TestRecognizeEntities(AsyncTextAnalyticsTest):
         docs = [{"id": "1", "language": "english", "text": "I did not like the hotel we stayed at."}]
 
         try:
-            result = await client.recognize_entities(docs, model_version="bad")
+            result = await client.recognize_entities(docs, model_version="bad", encoding=Encoding.grapheme)
         except HttpResponseError as err:
             self.assertEqual(err.error.code, "InvalidRequest")
             self.assertIsNotNone(err.error.message)
@@ -431,7 +449,7 @@ class TestRecognizeEntities(AsyncTextAnalyticsTest):
                 {"id": "2", "language": "english", "text": "I did not like the hotel we stayed at."},
                 {"id": "3", "text": text}]
 
-        doc_errors = await client.recognize_entities(docs)
+        doc_errors = await client.recognize_entities(docs, encoding=Encoding.grapheme)
         self.assertEqual(doc_errors[0].error.code, "InvalidDocument")
         self.assertIsNotNone(doc_errors[0].error.message)
         self.assertEqual(doc_errors[1].error.code, "UnsupportedLanguageCode")
@@ -447,7 +465,7 @@ class TestRecognizeEntities(AsyncTextAnalyticsTest):
             {"id": "1", "text": "This won't actually create a warning :'("},
         ]
 
-        result = await client.recognize_entities(docs)
+        result = await client.recognize_entities(docs, encoding=Encoding.grapheme)
         for doc in result:
             doc_warnings = doc.warnings
             self.assertEqual(len(doc_warnings), 0)
@@ -457,7 +475,7 @@ class TestRecognizeEntities(AsyncTextAnalyticsTest):
     async def test_missing_input_records_error(self, client):
         docs = []
         with pytest.raises(ValueError) as excinfo:
-            await client.recognize_entities(docs)
+            await client.recognize_entities(docs, encoding=Encoding.grapheme)
         assert "Input documents can not be empty" in str(excinfo.value)
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -467,7 +485,7 @@ class TestRecognizeEntities(AsyncTextAnalyticsTest):
         docs = [{"id": "1", "text": "hello world"},
                 {"id": "1", "text": "I did not like the hotel we stayed at."}]
         try:
-            result = await client.recognize_entities(docs)
+            result = await client.recognize_entities(docs, encoding=Encoding.grapheme)
         except HttpResponseError as err:
             self.assertEqual(err.error.code, "InvalidDocument")
             self.assertIsNotNone(err.error.message)
@@ -478,7 +496,7 @@ class TestRecognizeEntities(AsyncTextAnalyticsTest):
         # Batch size over limit
         docs = [u"hello world"] * 1001
         try:
-            response = await client.recognize_entities(docs)
+            response = await client.recognize_entities(docs, encoding=Encoding.grapheme)
         except HttpResponseError as err:
             self.assertEqual(err.error.code, "InvalidDocumentBatch")
             self.assertIsNotNone(err.error.message)
@@ -497,7 +515,7 @@ class TestRecognizeEntities(AsyncTextAnalyticsTest):
             model_version="latest",
             show_stats=True,
             language="es",
-            raw_response_hook=callback
+            raw_response_hook=callback, encoding=Encoding.grapheme
         )
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -507,6 +525,6 @@ class TestRecognizeEntities(AsyncTextAnalyticsTest):
             return "cls result"
         res = await client.recognize_entities(
             documents=["Test passing cls to endpoint"],
-            cls=callback
+            cls=callback, encoding=Encoding.grapheme
         )
         assert res == "cls result"

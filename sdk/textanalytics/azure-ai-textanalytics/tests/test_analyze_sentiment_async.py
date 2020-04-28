@@ -16,7 +16,8 @@ from azure.ai.textanalytics.aio import TextAnalyticsClient
 from azure.ai.textanalytics import (
     VERSION,
     DetectLanguageInput,
-    TextDocumentInput
+    TextDocumentInput,
+    Encoding
 )
 
 from testcase import GlobalTextAnalyticsAccountPreparer
@@ -43,7 +44,7 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
     @TextAnalyticsClientPreparer()
     async def test_no_single_input(self, client):
         with self.assertRaises(TypeError):
-            response = await client.analyze_sentiment("hello world")
+            response = await client.analyze_sentiment("hello world", encoding=Encoding.grapheme)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -52,7 +53,7 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
                 {"id": "2", "language": "en", "text": "I did not like the hotel we stayed at. It was too expensive."},
                 {"id": "3", "language": "en", "text": "The restaurant had really good food. I recommend you try it."}]
 
-        response = await client.analyze_sentiment(docs, show_stats=True)
+        response = await client.analyze_sentiment(docs, show_stats=True, encoding=Encoding.grapheme)
         self.assertEqual(response[0].sentiment, "neutral")
         self.assertEqual(response[1].sentiment, "negative")
         self.assertEqual(response[2].sentiment, "positive")
@@ -71,6 +72,10 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
         self.assertEqual(len(response[2].sentences), 2)
         self.assertEqual(response[2].sentences[0].text, "The restaurant had really good food.")
         self.assertEqual(response[2].sentences[1].text, "I recommend you try it.")
+        [
+            self.assertEqual(sentence.encoding, Encoding.grapheme)
+            for sentence in doc.sentences for doc in response
+        ]
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -81,7 +86,7 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
             TextDocumentInput(id="3", text="The restaurant had really good food. I recommend you try it."),
         ]
 
-        response = await client.analyze_sentiment(docs)
+        response = await client.analyze_sentiment(docs, encoding=Encoding.grapheme)
         self.assertEqual(response[0].sentiment, "neutral")
         self.assertEqual(response[1].sentiment, "negative")
         self.assertEqual(response[2].sentiment, "positive")
@@ -89,6 +94,10 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
         for doc in response:
             self.assertIsNotNone(doc.confidence_scores)
             self.assertIsNotNone(doc.sentences)
+            [
+                self.assertEqual(sentence.encoding, Encoding.grapheme)
+                for sentence in doc.sentences
+            ]
 
         self.assertEqual(len(response[0].sentences), 1)
         self.assertEqual(response[0].sentences[0].text, "Microsoft was founded by Bill Gates and Paul Allen.")
@@ -101,6 +110,23 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
+    async def test_using_default_encoding(self, client):
+        docs = [
+            TextDocumentInput(id="1", text="Microsoft was founded by Bill Gates and Paul Allen."),
+            TextDocumentInput(id="2", text="I did not like the hotel we stayed at. It was too expensive."),
+            TextDocumentInput(id="3", text="The restaurant had really good food. I recommend you try it."),
+        ]
+
+        response = await client.analyze_sentiment(docs, show_stats=True)
+        for doc in response:
+            [
+                self.assertIsNone(sentence.encoding)
+                for sentence in doc.sentences
+            ]
+            self.assertIsNone(doc.statistics.encoding)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
     async def test_passing_only_string(self, client):
         docs = [
             u"Microsoft was founded by Bill Gates and Paul Allen.",
@@ -109,7 +135,7 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
             u""
         ]
 
-        response = await client.analyze_sentiment(docs)
+        response = await client.analyze_sentiment(docs, encoding=Encoding.grapheme)
         self.assertEqual(response[0].sentiment, "neutral")
         self.assertEqual(response[1].sentiment, "negative")
         self.assertEqual(response[2].sentiment, "positive")
@@ -122,7 +148,7 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
                 {"id": "2", "language": "english", "text": "I did not like the hotel we stayed at. It was too expensive."},
                 {"id": "3", "language": "en", "text": "The restaurant had really good food. I recommend you try it."}]
 
-        response = await client.analyze_sentiment(docs)
+        response = await client.analyze_sentiment(docs, encoding=Encoding.grapheme)
         self.assertTrue(response[0].is_error)
         self.assertTrue(response[1].is_error)
         self.assertFalse(response[2].is_error)
@@ -134,7 +160,7 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
                 {"id": "2", "language": "english", "text": "I did not like the hotel we stayed at. It was too expensive."},
                 {"id": "3", "language": "en", "text": ""}]
 
-        response = await client.analyze_sentiment(docs)
+        response = await client.analyze_sentiment(docs, encoding=Encoding.grapheme)
         self.assertTrue(response[0].is_error)
         self.assertTrue(response[1].is_error)
         self.assertTrue(response[2].is_error)
@@ -144,7 +170,7 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
     async def test_empty_credential_class(self, client):
         with self.assertRaises(ClientAuthenticationError):
             response = await client.analyze_sentiment(
-                ["This is written in English."]
+                ["This is written in English."], encoding=Encoding.grapheme
             )
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -152,7 +178,7 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
     async def test_bad_credentials(self, client):
         with self.assertRaises(ClientAuthenticationError):
             response = await client.analyze_sentiment(
-                ["This is written in English."]
+                ["This is written in English."], encoding=Encoding.grapheme
             )
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -161,7 +187,7 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
         with self.assertRaises(HttpResponseError):
             response = await client.analyze_sentiment(
                 documents=["Microsoft was founded by Bill Gates."],
-                model_version="old"
+                model_version="old", encoding=Encoding.grapheme
             )
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -170,7 +196,7 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
         docs = "This is the wrong type"
 
         with self.assertRaises(TypeError):
-            response = await client.analyze_sentiment(docs)
+            response = await client.analyze_sentiment(docs, encoding=Encoding.grapheme)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -181,7 +207,7 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
             u"You cannot mix string input with the above inputs"
         ]
         with self.assertRaises(TypeError):
-            response = await client.analyze_sentiment(docs)
+            response = await client.analyze_sentiment(docs, encoding=Encoding.grapheme)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -192,7 +218,7 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
                 {"id": "19", "text": ":P"},
                 {"id": "1", "text": ":D"}]
 
-        response = await client.analyze_sentiment(docs)
+        response = await client.analyze_sentiment(docs, encoding=Encoding.grapheme)
         in_order = ["56", "0", "22", "19", "1"]
         for idx, resp in enumerate(response):
             self.assertEqual(resp.id, in_order[idx])
@@ -218,7 +244,7 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
             docs,
             show_stats=True,
             model_version="latest",
-            raw_response_hook=callback
+            raw_response_hook=callback, encoding=Encoding.grapheme
         )
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -226,7 +252,7 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
     async def test_batch_size_over_limit(self, client):
         docs = [u"hello world"] * 1050
         with self.assertRaises(HttpResponseError):
-            response = await client.analyze_sentiment(docs)
+            response = await client.analyze_sentiment(docs, encoding=Encoding.grapheme)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -242,7 +268,7 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
             u"The restaurant was not as good as I hoped."
         ]
 
-        response = await client.analyze_sentiment(docs, language="fr", raw_response_hook=callback)
+        response = await client.analyze_sentiment(docs, language="fr", raw_response_hook=callback, encoding=Encoding.grapheme)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -258,7 +284,7 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
             u"The restaurant was not as good as I hoped."
         ]
 
-        response = await client.analyze_sentiment(docs, language="", raw_response_hook=callback)
+        response = await client.analyze_sentiment(docs, language="", raw_response_hook=callback, encoding=Encoding.grapheme)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -276,7 +302,7 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
                 {"id": "2", "language": "", "text": "I did not like the hotel we stayed at."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
-        response = await client.analyze_sentiment(docs, raw_response_hook=callback)
+        response = await client.analyze_sentiment(docs, raw_response_hook=callback, encoding=Encoding.grapheme)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -292,7 +318,7 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
             TextDocumentInput(id="3", text="猫は幸せ"),
         ]
 
-        response = await client.analyze_sentiment(docs, language="de", raw_response_hook=callback)
+        response = await client.analyze_sentiment(docs, language="de", raw_response_hook=callback, encoding=Encoding.grapheme)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -306,7 +332,7 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
                 {"id": "2", "text": "I did not like the hotel we stayed at."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
-        response = await client.analyze_sentiment(docs, language="es", raw_response_hook=callback)
+        response = await client.analyze_sentiment(docs, language="es", raw_response_hook=callback, encoding=Encoding.grapheme)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -325,7 +351,7 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
             TextDocumentInput(id="3", text="猫は幸せ"),
         ]
 
-        response = await client.analyze_sentiment(docs, language="en", raw_response_hook=callback)
+        response = await client.analyze_sentiment(docs, language="en", raw_response_hook=callback, encoding=Encoding.grapheme)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -343,7 +369,7 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
                 {"id": "2", "language": "es", "text": "I did not like the hotel we stayed at."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
-        response = await client.analyze_sentiment(docs, language="en", raw_response_hook=callback)
+        response = await client.analyze_sentiment(docs, language="en", raw_response_hook=callback, encoding=Encoding.grapheme)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"default_language": "es"})
@@ -362,9 +388,9 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
                 {"id": "2", "text": "I did not like the hotel we stayed at."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
-        response = await client.analyze_sentiment(docs, raw_response_hook=callback)
-        response = await client.analyze_sentiment(docs, language="en", raw_response_hook=callback_2)
-        response = await client.analyze_sentiment(docs, raw_response_hook=callback)
+        response = await client.analyze_sentiment(docs, raw_response_hook=callback, encoding=Encoding.grapheme)
+        response = await client.analyze_sentiment(docs, language="en", raw_response_hook=callback_2, encoding=Encoding.grapheme)
+        response = await client.analyze_sentiment(docs, raw_response_hook=callback, encoding=Encoding.grapheme)
 
     @GlobalTextAnalyticsAccountPreparer()
     async def test_rotate_subscription_key(self, resource_group, location, text_analytics_account, text_analytics_account_key):
@@ -375,15 +401,15 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
                 {"id": "2", "text": "I did not like the hotel we stayed at."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
-        response = await client.analyze_sentiment(docs)
+        response = await client.analyze_sentiment(docs, encoding=Encoding.grapheme)
         self.assertIsNotNone(response)
 
         credential.update("xxx")  # Make authentication fail
         with self.assertRaises(ClientAuthenticationError):
-            response = await client.analyze_sentiment(docs)
+            response = await client.analyze_sentiment(docs, encoding=Encoding.grapheme)
 
         credential.update(text_analytics_account_key)  # Authenticate successfully again
-        response = await client.analyze_sentiment(docs)
+        response = await client.analyze_sentiment(docs, encoding=Encoding.grapheme)
         self.assertIsNotNone(response)
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -399,13 +425,13 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
                 {"id": "2", "text": "I did not like the hotel we stayed at."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
-        response = await client.analyze_sentiment(docs, raw_response_hook=callback)
+        response = await client.analyze_sentiment(docs, raw_response_hook=callback, encoding=Encoding.grapheme)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
     async def test_document_attribute_error_no_result_attribute(self, client):
         docs = [{"id": "1", "text": ""}]
-        response = await client.analyze_sentiment(docs)
+        response = await client.analyze_sentiment(docs, encoding=Encoding.grapheme)
 
         # Attributes on DocumentError
         self.assertTrue(response[0].is_error)
@@ -427,7 +453,7 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
     @TextAnalyticsClientPreparer()
     async def test_document_attribute_error_nonexistent_attribute(self, client):
         docs = [{"id": "1", "text": ""}]
-        response = await client.analyze_sentiment(docs)
+        response = await client.analyze_sentiment(docs, encoding=Encoding.grapheme)
 
         # Attribute not found on DocumentError or result obj, default behavior/message
         try:
@@ -444,7 +470,7 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
         docs = [{"id": "1", "language": "english", "text": "I did not like the hotel we stayed at."}]
 
         try:
-            result = await client.analyze_sentiment(docs, model_version="bad")
+            result = await client.analyze_sentiment(docs, model_version="bad", encoding=Encoding.grapheme)
         except HttpResponseError as err:
             self.assertEqual(err.error.code, "InvalidRequest")
             self.assertIsNotNone(err.error.message)
@@ -460,7 +486,7 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
                 {"id": "2", "language": "english", "text": "I did not like the hotel we stayed at."},
                 {"id": "3", "text": text}]
 
-        doc_errors = await client.analyze_sentiment(docs)
+        doc_errors = await client.analyze_sentiment(docs, encoding=Encoding.grapheme)
         self.assertEqual(doc_errors[0].error.code, "InvalidDocument")
         self.assertIsNotNone(doc_errors[0].error.message)
         self.assertEqual(doc_errors[1].error.code, "UnsupportedLanguageCode")
@@ -476,7 +502,7 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
             {"id": "1", "text": "This won't actually create a warning :'("},
         ]
 
-        result = await client.analyze_sentiment(docs)
+        result = await client.analyze_sentiment(docs, encoding=Encoding.grapheme)
         for doc in result:
             doc_warnings = doc.warnings
             self.assertEqual(len(doc_warnings), 0)
@@ -486,7 +512,7 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
     async def test_missing_input_records_error(self, client):
         docs = []
         with pytest.raises(ValueError) as excinfo:
-            await client.analyze_sentiment(docs)
+            await client.analyze_sentiment(docs, encoding=Encoding.grapheme)
         assert "Input documents can not be empty" in str(excinfo.value)
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -496,7 +522,7 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
         docs = [{"id": "1", "text": "hello world"},
                 {"id": "1", "text": "I did not like the hotel we stayed at."}]
         try:
-            result = await client.analyze_sentiment(docs)
+            result = await client.analyze_sentiment(docs, encoding=Encoding.grapheme)
         except HttpResponseError as err:
             self.assertEqual(err.error.code, "InvalidDocument")
             self.assertIsNotNone(err.error.message)
@@ -507,7 +533,7 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
         # Batch size over limit
         docs = [u"hello world"] * 1001
         try:
-            response = await client.analyze_sentiment(docs)
+            response = await client.analyze_sentiment(docs, encoding=Encoding.grapheme)
         except HttpResponseError as err:
             self.assertEqual(err.error.code, "InvalidDocumentBatch")
             self.assertIsNotNone(err.error.message)
@@ -526,7 +552,7 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
             model_version="latest",
             show_stats=True,
             language="es",
-            raw_response_hook=callback
+            raw_response_hook=callback, encoding=Encoding.grapheme
         )
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -536,6 +562,6 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
             return "cls result"
         res = await client.analyze_sentiment(
             documents=["Test passing cls to endpoint"],
-            cls=callback
+            cls=callback, encoding=Encoding.grapheme
         )
         assert res == "cls result"

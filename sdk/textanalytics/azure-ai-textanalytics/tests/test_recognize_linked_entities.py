@@ -15,7 +15,8 @@ from testcase import TextAnalyticsClientPreparer as _TextAnalyticsClientPreparer
 from azure.ai.textanalytics import (
     TextAnalyticsClient,
     TextDocumentInput,
-    VERSION
+    VERSION,
+    Encoding
 )
 
 # pre-apply the client_cls positional argument so it needn't be explicitly passed below
@@ -27,7 +28,7 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
     @TextAnalyticsClientPreparer()
     def test_no_single_input(self, client):
         with self.assertRaises(TypeError):
-            response = client.recognize_linked_entities("hello world")
+            response = client.recognize_linked_entities("hello world", encoding=Encoding.grapheme)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -35,14 +36,16 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
         docs = [{"id": "1", "language": "en", "text": "Microsoft was founded by Bill Gates and Paul Allen"},
                 {"id": "2", "language": "es", "text": "Microsoft fue fundado por Bill Gates y Paul Allen"}]
 
-        response = client.recognize_linked_entities(docs, show_stats=True)
+        response = client.recognize_linked_entities(docs, show_stats=True, encoding=Encoding.grapheme)
         for doc in response:
             self.assertEqual(len(doc.entities), 3)
             self.assertIsNotNone(doc.id)
             self.assertIsNotNone(doc.statistics)
+            self.assertEqual(doc.statistics.encoding, Encoding.grapheme)
             for entity in doc.entities:
                 self.assertIsNotNone(entity.name)
                 self.assertIsNotNone(entity.matches)
+                [self.assertEqual(match.encoding, Encoding.grapheme) for match in entity.matches]
                 self.assertIsNotNone(entity.language)
                 self.assertIsNotNone(entity.data_source_entity_id)
                 self.assertIsNotNone(entity.url)
@@ -56,16 +59,32 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
             TextDocumentInput(id="2", text="Microsoft fue fundado por Bill Gates y Paul Allen")
         ]
 
-        response = client.recognize_linked_entities(docs)
+        response = client.recognize_linked_entities(docs, encoding=Encoding.grapheme)
         for doc in response:
             self.assertEqual(len(doc.entities), 3)
             for entity in doc.entities:
                 self.assertIsNotNone(entity.name)
                 self.assertIsNotNone(entity.matches)
+                [self.assertEqual(match.encoding, Encoding.grapheme) for match in entity.matches]
                 self.assertIsNotNone(entity.language)
                 self.assertIsNotNone(entity.data_source_entity_id)
                 self.assertIsNotNone(entity.url)
                 self.assertIsNotNone(entity.data_source)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    def test_using_default_encoding(self, client):
+        docs = [
+            TextDocumentInput(id="1", text="Microsoft was founded by Bill Gates and Paul Allen."),
+            TextDocumentInput(id="2", text="I did not like the hotel we stayed at. It was too expensive."),
+            TextDocumentInput(id="3", text="The restaurant had really good food. I recommend you try it."),
+        ]
+
+        response = client.recognize_linked_entities(docs, show_stats=True)
+        for doc in response:
+            self.assertIsNone(doc.statistics.encoding)
+            for entity in doc.entities:
+                [self.assertIsNone(match.encoding) for match in entity.matches]
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -76,7 +95,7 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
             u""
         ]
 
-        response = client.recognize_linked_entities(docs)
+        response = client.recognize_linked_entities(docs, encoding=Encoding.grapheme)
         self.assertEqual(len(response[0].entities), 3)
         self.assertEqual(len(response[1].entities), 3)
         self.assertTrue(response[2].is_error)
@@ -87,7 +106,7 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
         docs = [{"id": "1", "text": ""},
                 {"id": "2", "language": "es", "text": "Microsoft fue fundado por Bill Gates y Paul Allen"}]
 
-        response = client.recognize_linked_entities(docs)
+        response = client.recognize_linked_entities(docs, encoding=Encoding.grapheme)
         self.assertTrue(response[0].is_error)
         self.assertFalse(response[1].is_error)
 
@@ -97,7 +116,7 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
         docs = [{"id": "1", "text": ""},
                 {"id": "2", "language": "Spanish", "text": "Microsoft fue fundado por Bill Gates y Paul Allen"}]
 
-        response = client.recognize_linked_entities(docs)
+        response = client.recognize_linked_entities(docs, encoding=Encoding.grapheme)
         self.assertTrue(response[0].is_error)
         self.assertTrue(response[1].is_error)
 
@@ -106,7 +125,7 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
     def test_empty_credential_class(self, client):
         with self.assertRaises(ClientAuthenticationError):
             response = client.recognize_linked_entities(
-                ["This is written in English."]
+                ["This is written in English."], encoding=Encoding.grapheme
             )
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -114,7 +133,7 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
     def test_bad_credentials(self, client):
         with self.assertRaises(ClientAuthenticationError):
             response = client.recognize_linked_entities(
-                ["This is written in English."]
+                ["This is written in English."], encoding=Encoding.grapheme
             )
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -123,7 +142,7 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
         with self.assertRaises(HttpResponseError):
             response = client.recognize_linked_entities(
                 documents=["Microsoft was founded by Bill Gates."],
-                model_version="old"
+                model_version="old", encoding=Encoding.grapheme
             )
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -132,7 +151,7 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
         docs = "This is the wrong type"
 
         with self.assertRaises(TypeError):
-            response = client.recognize_linked_entities(docs)
+            response = client.recognize_linked_entities(docs, encoding=Encoding.grapheme)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -143,7 +162,7 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
             u"You cannot mix string input with the above inputs"
         ]
         with self.assertRaises(TypeError):
-            response = client.recognize_linked_entities(docs)
+            response = client.recognize_linked_entities(docs, encoding=Encoding.grapheme)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -154,7 +173,7 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
                 {"id": "19", "text": ":P"},
                 {"id": "1", "text": ":D"}]
 
-        response = client.recognize_linked_entities(docs)
+        response = client.recognize_linked_entities(docs, encoding=Encoding.grapheme)
         in_order = ["56", "0", "22", "19", "1"]
         for idx, resp in enumerate(response):
             self.assertEqual(resp.id, in_order[idx])
@@ -180,7 +199,7 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
             docs,
             show_stats=True,
             model_version="latest",
-            raw_response_hook=callback
+            raw_response_hook=callback, encoding=Encoding.grapheme
         )
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -188,7 +207,7 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
     def test_batch_size_over_limit(self, client):
         docs = [u"hello world"] * 1050
         with self.assertRaises(HttpResponseError):
-            response = client.recognize_linked_entities(docs)
+            response = client.recognize_linked_entities(docs, encoding=Encoding.grapheme)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -204,7 +223,7 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
             u"The restaurant was not as good as I hoped."
         ]
 
-        response = client.recognize_linked_entities(docs, language="fr", raw_response_hook=callback)
+        response = client.recognize_linked_entities(docs, language="fr", raw_response_hook=callback, encoding=Encoding.grapheme)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -220,7 +239,7 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
             u"The restaurant was not as good as I hoped."
         ]
 
-        response = client.recognize_linked_entities(docs, language="", raw_response_hook=callback)
+        response = client.recognize_linked_entities(docs, language="", raw_response_hook=callback, encoding=Encoding.grapheme)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -238,7 +257,7 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
                 {"id": "2", "language": "", "text": "I did not like the hotel we stayed at."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
-        response = client.recognize_linked_entities(docs, raw_response_hook=callback)
+        response = client.recognize_linked_entities(docs, raw_response_hook=callback, encoding=Encoding.grapheme)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -254,7 +273,7 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
             TextDocumentInput(id="3", text="猫は幸せ"),
         ]
 
-        response = client.recognize_linked_entities(docs, language="de", raw_response_hook=callback)
+        response = client.recognize_linked_entities(docs, language="de", raw_response_hook=callback, encoding=Encoding.grapheme)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -273,7 +292,7 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
             TextDocumentInput(id="3", text="猫は幸せ"),
         ]
 
-        response = client.recognize_linked_entities(docs, language="en", raw_response_hook=callback)
+        response = client.recognize_linked_entities(docs, language="en", raw_response_hook=callback, encoding=Encoding.grapheme)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -291,7 +310,7 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
                 {"id": "2", "language": "es", "text": "I did not like the hotel we stayed at."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
-        response = client.recognize_linked_entities(docs, language="en", raw_response_hook=callback)
+        response = client.recognize_linked_entities(docs, language="en", raw_response_hook=callback, encoding=Encoding.grapheme)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"default_language": "es"})
@@ -310,9 +329,9 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
                 {"id": "2", "text": "I did not like the hotel we stayed at."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
-        response = client.recognize_linked_entities(docs, raw_response_hook=callback)
-        response = client.recognize_linked_entities(docs, language="en", raw_response_hook=callback_2)
-        response = client.recognize_linked_entities(docs, raw_response_hook=callback)
+        response = client.recognize_linked_entities(docs, raw_response_hook=callback, encoding=Encoding.grapheme)
+        response = client.recognize_linked_entities(docs, language="en", raw_response_hook=callback_2, encoding=Encoding.grapheme)
+        response = client.recognize_linked_entities(docs, raw_response_hook=callback, encoding=Encoding.grapheme)
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_rotate_subscription_key(self, resource_group, location, text_analytics_account, text_analytics_account_key):
@@ -323,15 +342,15 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
                 {"id": "2", "text": "I did not like the hotel we stayed at."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
-        response = client.recognize_linked_entities(docs)
+        response = client.recognize_linked_entities(docs, encoding=Encoding.grapheme)
         self.assertIsNotNone(response)
 
         credential.update("xxx")  # Make authentication fail
         with self.assertRaises(ClientAuthenticationError):
-            response = client.recognize_linked_entities(docs)
+            response = client.recognize_linked_entities(docs, encoding=Encoding.grapheme)
 
         credential.update(text_analytics_account_key)  # Authenticate successfully again
-        response = client.recognize_linked_entities(docs)
+        response = client.recognize_linked_entities(docs, encoding=Encoding.grapheme)
         self.assertIsNotNone(response)
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -347,13 +366,13 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
                 {"id": "2", "text": "I did not like the hotel we stayed at."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
-        response = client.recognize_linked_entities(docs, raw_response_hook=callback)
+        response = client.recognize_linked_entities(docs, raw_response_hook=callback, encoding=Encoding.grapheme)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
     def test_document_attribute_error_no_result_attribute(self, client):
         docs = [{"id": "1", "text": ""}]
-        response = client.recognize_linked_entities(docs)
+        response = client.recognize_linked_entities(docs, encoding=Encoding.grapheme)
 
         # Attributes on DocumentError
         self.assertTrue(response[0].is_error)
@@ -375,7 +394,7 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
     @TextAnalyticsClientPreparer()
     def test_document_attribute_error_nonexistent_attribute(self, client):
         docs = [{"id": "1", "text": ""}]
-        response = client.recognize_linked_entities(docs)
+        response = client.recognize_linked_entities(docs, encoding=Encoding.grapheme)
 
         # Attribute not found on DocumentError or result obj, default behavior/message
         try:
@@ -392,7 +411,7 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
         docs = [{"id": "1", "language": "english", "text": "I did not like the hotel we stayed at."}]
 
         try:
-            result = client.recognize_linked_entities(docs, model_version="bad")
+            result = client.recognize_linked_entities(docs, model_version="bad", encoding=Encoding.grapheme)
         except HttpResponseError as err:
             self.assertEqual(err.error.code, "InvalidRequest")
             self.assertIsNotNone(err.error.message)
@@ -408,7 +427,7 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
                 {"id": "2", "language": "english", "text": "I did not like the hotel we stayed at."},
                 {"id": "3", "text": text}]
 
-        doc_errors = client.recognize_linked_entities(docs)
+        doc_errors = client.recognize_linked_entities(docs, encoding=Encoding.grapheme)
         self.assertEqual(doc_errors[0].error.code, "InvalidDocument")
         self.assertIsNotNone(doc_errors[0].error.message)
         self.assertEqual(doc_errors[1].error.code, "UnsupportedLanguageCode")
@@ -424,7 +443,7 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
             {"id": "1", "text": "This won't actually create a warning :'("},
         ]
 
-        result = client.recognize_linked_entities(docs)
+        result = client.recognize_linked_entities(docs, encoding=Encoding.grapheme)
         for doc in result:
             doc_warnings = doc.warnings
             self.assertEqual(len(doc_warnings), 0)
@@ -434,7 +453,7 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
     def test_missing_input_records_error(self, client):
         docs = []
         with pytest.raises(ValueError) as excinfo:
-            client.recognize_linked_entities(docs)
+            client.recognize_linked_entities(docs, encoding=Encoding.grapheme)
         assert "Input documents can not be empty" in str(excinfo.value)
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -444,7 +463,7 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
         docs = [{"id": "1", "text": "hello world"},
                 {"id": "1", "text": "I did not like the hotel we stayed at."}]
         try:
-            result = client.recognize_linked_entities(docs)
+            result = client.recognize_linked_entities(docs, encoding=Encoding.grapheme)
         except HttpResponseError as err:
             self.assertEqual(err.error.code, "InvalidDocument")
             self.assertIsNotNone(err.error.message)
@@ -455,7 +474,7 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
         # Batch size over limit
         docs = [u"hello world"] * 1001
         try:
-            response = client.recognize_linked_entities(docs)
+            response = client.recognize_linked_entities(docs, encoding=Encoding.grapheme)
         except HttpResponseError as err:
             self.assertEqual(err.error.code, "InvalidDocumentBatch")
             self.assertIsNotNone(err.error.message)
@@ -474,7 +493,7 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
             model_version="latest",
             show_stats=True,
             language="es",
-            raw_response_hook=callback
+            raw_response_hook=callback, encoding=Encoding.grapheme
         )
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -484,6 +503,6 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
             return "cls result"
         res = client.recognize_linked_entities(
             documents=["Test passing cls to endpoint"],
-            cls=callback
+            cls=callback, encoding=Encoding.grapheme
         )
         assert res == "cls result"

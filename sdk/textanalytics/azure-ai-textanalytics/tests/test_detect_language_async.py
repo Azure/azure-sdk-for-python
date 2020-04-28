@@ -16,7 +16,8 @@ from azure.ai.textanalytics.aio import TextAnalyticsClient
 from azure.ai.textanalytics import (
     VERSION,
     DetectLanguageInput,
-    TextDocumentInput
+    TextDocumentInput,
+    Encoding
 )
 
 from testcase import GlobalTextAnalyticsAccountPreparer
@@ -42,7 +43,7 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
     @TextAnalyticsClientPreparer()
     async def test_no_single_input(self, client):
         with self.assertRaises(TypeError):
-            response = await client.detect_language("hello world")
+            response = await client.detect_language("hello world", encoding=Encoding.grapheme)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -52,7 +53,7 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
                 {"id": "3", "text": "猫は幸せ"},
                 {"id": "4", "text": "Fahrt nach Stuttgart und dann zum Hotel zu Fu."}]
 
-        response = await client.detect_language(docs, show_stats=True)
+        response = await client.detect_language(docs, show_stats=True, encoding=Encoding.grapheme)
 
         self.assertEqual(response[0].primary_language.name, "English")
         self.assertEqual(response[1].primary_language.name, "Spanish")
@@ -66,7 +67,22 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
         for doc in response:
             self.assertIsNotNone(doc.id)
             self.assertIsNotNone(doc.statistics)
+            self.assertEqual(doc.statistics.encoding, Encoding.grapheme)
             self.assertIsNotNone(doc.primary_language.confidence_score)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    async def test_using_default_encoding(self, client):
+        docs = [{"id": "1", "text": "I should take my cat to the veterinarian."},
+                {"id": "2", "text": "Este es un document escrito en Español."},
+                {"id": "3", "text": "猫は幸せ"},
+                {"id": "4", "text": "Fahrt nach Stuttgart und dann zum Hotel zu Fu."}]
+
+        response = await client.detect_language(docs, show_stats=True)
+        [
+            self.assertIsNone(doc.statistics.encoding)
+            for doc in response
+        ]
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -78,7 +94,7 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
             TextDocumentInput(id="4", text="Fahrt nach Stuttgart und dann zum Hotel zu Fu.")
         ]
 
-        response = await client.detect_language(docs)
+        response = await client.detect_language(docs, encoding=Encoding.grapheme)
 
         self.assertEqual(response[0].primary_language.name, "English")
         self.assertEqual(response[1].primary_language.name, "Spanish")
@@ -103,7 +119,7 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
             u""
         ]
 
-        response = await client.detect_language(docs)
+        response = await client.detect_language(docs, encoding=Encoding.grapheme)
         self.assertEqual(response[0].primary_language.name, "English")
         self.assertEqual(response[1].primary_language.name, "Spanish")
         self.assertEqual(response[2].primary_language.name, "Japanese")
@@ -118,7 +134,7 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
                 {"id": "3", "text": ""},
                 {"id": "4", "text": "Fahrt nach Stuttgart und dann zum Hotel zu Fu."}]
 
-        response = await client.detect_language(docs)
+        response = await client.detect_language(docs, encoding=Encoding.grapheme)
 
         self.assertTrue(response[0].is_error)
         self.assertFalse(response[1].is_error)
@@ -137,7 +153,7 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
                 {"id": "3", "text": ""},
                 {"id": "4", "text": text}]
 
-        response = await client.detect_language(docs)
+        response = await client.detect_language(docs, encoding=Encoding.grapheme)
 
         for resp in response:
             self.assertTrue(resp.is_error)
@@ -147,7 +163,7 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
     async def test_empty_credential_class(self, client):
         with self.assertRaises(ClientAuthenticationError):
             response = await client.detect_language(
-                ["This is written in English."]
+                ["This is written in English."], encoding=Encoding.grapheme
             )
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -155,7 +171,7 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
     async def test_bad_credentials(self, client):
         with self.assertRaises(ClientAuthenticationError):
             response = await client.detect_language(
-                ["This is written in English."]
+                ["This is written in English."], encoding=Encoding.grapheme
             )
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -164,7 +180,7 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
         with self.assertRaises(HttpResponseError):
             response = await client.detect_language(
                 documents=["Microsoft was founded by Bill Gates."],
-                model_version="old"
+                model_version="old", encoding=Encoding.grapheme
             )
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -173,7 +189,7 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
         docs = "This is the wrong type"
 
         with self.assertRaises(TypeError):
-            response = await client.detect_language(docs)
+            response = await client.detect_language(docs, encoding=Encoding.grapheme)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -184,7 +200,7 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
             u"You cannot mix string input with the above documents"
         ]
         with self.assertRaises(TypeError):
-            response = await client.detect_language(docs)
+            response = await client.detect_language(docs, encoding=Encoding.grapheme)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -195,7 +211,7 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
                 {"id": "19", "text": ":P"},
                 {"id": "1", "text": ":D"}]
 
-        response = await client.detect_language(docs)
+        response = await client.detect_language(docs, encoding=Encoding.grapheme)
         in_order = ["56", "0", "22", "19", "1"]
         for idx, resp in enumerate(response):
             self.assertEqual(resp.id, in_order[idx])
@@ -221,7 +237,7 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
             docs,
             show_stats=True,
             model_version="latest",
-            raw_response_hook=callback
+            raw_response_hook=callback, encoding=Encoding.grapheme
         )
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -229,7 +245,7 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
     async def test_batch_size_over_limit(self, client):
         docs = [u"hello world"] * 1050
         with self.assertRaises(HttpResponseError):
-            response = await client.detect_language(docs)
+            response = await client.detect_language(docs, encoding=Encoding.grapheme)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -245,7 +261,7 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
             u"The restaurant was not as good as I hoped."
         ]
 
-        response = await client.detect_language(docs, country_hint="CA", raw_response_hook=callback)
+        response = await client.detect_language(docs, country_hint="CA", raw_response_hook=callback, encoding=Encoding.grapheme)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -261,7 +277,7 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
             u"The restaurant was not as good as I hoped."
         ]
 
-        response = await client.detect_language(docs, country_hint="", raw_response_hook=callback)
+        response = await client.detect_language(docs, country_hint="", raw_response_hook=callback, encoding=Encoding.grapheme)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -279,7 +295,7 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
                 {"id": "2", "country_hint": "", "text": "I did not like the hotel we stayed at."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
-        response = await client.detect_language(docs, raw_response_hook=callback)
+        response = await client.detect_language(docs, raw_response_hook=callback, encoding=Encoding.grapheme)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -295,7 +311,7 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
             DetectLanguageInput(id="3", text="猫は幸せ"),
         ]
 
-        response = await client.detect_language(docs, country_hint="CA", raw_response_hook=callback)
+        response = await client.detect_language(docs, country_hint="CA", raw_response_hook=callback, encoding=Encoding.grapheme)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -309,7 +325,7 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
                 {"id": "2", "text": "I did not like the hotel we stayed at."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
-        response = await client.detect_language(docs, country_hint="CA", raw_response_hook=callback)
+        response = await client.detect_language(docs, country_hint="CA", raw_response_hook=callback, encoding=Encoding.grapheme)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -328,7 +344,7 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
             DetectLanguageInput(id="3", text="猫は幸せ"),
         ]
 
-        response = await client.detect_language(docs, country_hint="US", raw_response_hook=callback)
+        response = await client.detect_language(docs, country_hint="US", raw_response_hook=callback, encoding=Encoding.grapheme)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -345,7 +361,7 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
                 {"id": "2", "country_hint": "US", "text": "I did not like the hotel we stayed at."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
-        response = await client.detect_language(docs, country_hint="CA", raw_response_hook=callback)
+        response = await client.detect_language(docs, country_hint="CA", raw_response_hook=callback, encoding=Encoding.grapheme)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"default_country_hint": "CA"})
@@ -364,9 +380,9 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
                 {"id": "2", "text": "I did not like the hotel we stayed at."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
-        response = await client.detect_language(docs, raw_response_hook=callback)
-        response = await client.detect_language(docs, country_hint="DE", raw_response_hook=callback_2)
-        response = await client.detect_language(docs, raw_response_hook=callback)
+        response = await client.detect_language(docs, raw_response_hook=callback, encoding=Encoding.grapheme)
+        response = await client.detect_language(docs, country_hint="DE", raw_response_hook=callback_2, encoding=Encoding.grapheme)
+        response = await client.detect_language(docs, raw_response_hook=callback, encoding=Encoding.grapheme)
 
     @GlobalTextAnalyticsAccountPreparer()
     async def test_rotate_subscription_key(self, resource_group, location, text_analytics_account, text_analytics_account_key):
@@ -377,15 +393,15 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
                 {"id": "2", "text": "I did not like the hotel we stayed at."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
-        response = await client.detect_language(docs)
+        response = await client.detect_language(docs, encoding=Encoding.grapheme)
         self.assertIsNotNone(response)
 
         credential.update("xxx")  # Make authentication fail
         with self.assertRaises(ClientAuthenticationError):
-            response = await client.detect_language(docs)
+            response = await client.detect_language(docs, encoding=Encoding.grapheme)
 
         credential.update(text_analytics_account_key)  # Authenticate successfully again
-        response = await client.detect_language(docs)
+        response = await client.detect_language(docs, encoding=Encoding.grapheme)
         self.assertIsNotNone(response)
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -401,13 +417,13 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
                 {"id": "2", "text": "I did not like the hotel we stayed at."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
-        response = await client.detect_language(docs, raw_response_hook=callback)
+        response = await client.detect_language(docs, raw_response_hook=callback, encoding=Encoding.grapheme)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
     async def test_document_attribute_error_no_result_attribute(self, client):
         docs = [{"id": "1", "text": ""}]
-        response = await client.detect_language(docs)
+        response = await client.detect_language(docs, encoding=Encoding.grapheme)
 
         # Attributes on DocumentError
         self.assertTrue(response[0].is_error)
@@ -429,7 +445,7 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
     @TextAnalyticsClientPreparer()
     async def test_document_attribute_error_nonexistent_attribute(self, client):
         docs = [{"id": "1", "text": ""}]
-        response = await client.detect_language(docs)
+        response = await client.detect_language(docs, encoding=Encoding.grapheme)
 
         # Attribute not found on DocumentError or result obj, default behavior/message
         try:
@@ -446,7 +462,7 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
         docs = [{"id": "1", "language": "english", "text": "I did not like the hotel we stayed at."}]
 
         try:
-            result = await client.detect_language(docs, model_version="bad")
+            result = await client.detect_language(docs, model_version="bad", encoding=Encoding.grapheme)
         except HttpResponseError as err:
             self.assertEqual(err.error.code, "InvalidRequest")
             self.assertIsNotNone(err.error.message)
@@ -461,7 +477,7 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
         docs = [{"id": "1", "text": ""},
                 {"id": "2", "text": text}]
 
-        doc_errors = await client.detect_language(docs)
+        doc_errors = await client.detect_language(docs, encoding=Encoding.grapheme)
         self.assertEqual(doc_errors[0].error.code, "InvalidDocument")
         self.assertIsNotNone(doc_errors[0].error.message)
         self.assertEqual(doc_errors[1].error.code, "InvalidDocument")
@@ -475,7 +491,7 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
             {"id": "1", "text": "This won't actually create a warning :'("},
         ]
 
-        result = await client.detect_language(docs)
+        result = await client.detect_language(docs, encoding=Encoding.grapheme)
         for doc in result:
             doc_warnings = doc.warnings
             self.assertEqual(len(doc_warnings), 0)
@@ -485,7 +501,7 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
     async def test_missing_input_records_error(self, client):
         docs = []
         with pytest.raises(ValueError) as excinfo:
-            await client.detect_language(docs)
+            await client.detect_language(docs, encoding=Encoding.grapheme)
         assert "Input documents can not be empty" in str(excinfo.value)
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -495,7 +511,7 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
         docs = [{"id": "1", "text": "hello world"},
                 {"id": "1", "text": "I did not like the hotel we stayed at."}]
         try:
-            result = await client.detect_language(docs)
+            result = await client.detect_language(docs, encoding=Encoding.grapheme)
         except HttpResponseError as err:
             self.assertEqual(err.error.code, "InvalidDocument")
             self.assertIsNotNone(err.error.message)
@@ -507,7 +523,7 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
         # Batch size over limit
         docs = [u"hello world"] * 1001
         try:
-            response = await client.detect_language(docs)
+            response = await client.detect_language(docs, encoding=Encoding.grapheme)
         except HttpResponseError as err:
             self.assertEqual(err.error.code, "InvalidDocumentBatch")
             self.assertIsNotNone(err.error.message)
@@ -519,7 +535,7 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
 
         docs = [{"id": "1", "country_hint": "United States", "text": "hello world"}]
 
-        response = await client.detect_language(docs)
+        response = await client.detect_language(docs, encoding=Encoding.grapheme)
         self.assertEqual(response[0].error.code, "invalidCountryHint")
         self.assertIsNotNone(response[0].error.message)
 
@@ -536,14 +552,14 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
             self.assertEqual(country, 1)
 
         # test dict
-        result = await client.detect_language(documents, raw_response_hook=callback)
+        result = await client.detect_language(documents, raw_response_hook=callback, encoding=Encoding.grapheme)
         # test DetectLanguageInput
-        result2 = await client.detect_language(documents2, raw_response_hook=callback)
+        result2 = await client.detect_language(documents2, raw_response_hook=callback, encoding=Encoding.grapheme)
         # test per-operation
-        result3 = await client.detect_language(documents=["this is written in english"], country_hint="none", raw_response_hook=callback)
+        result3 = await client.detect_language(documents=["this is written in english"], country_hint="none", raw_response_hook=callback, encoding=Encoding.grapheme)
         # test client default
         new_client = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key), default_country_hint="none")
-        result4 = await new_client.detect_language(documents=["this is written in english"], raw_response_hook=callback)
+        result4 = await new_client.detect_language(documents=["this is written in english"], raw_response_hook=callback, encoding=Encoding.grapheme)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -559,7 +575,7 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
             model_version="latest",
             show_stats=True,
             country_hint="ES",
-            raw_response_hook=callback
+            raw_response_hook=callback, encoding=Encoding.grapheme
         )
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -569,6 +585,6 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
         text_analytics = TextAnalyticsClient(text_analytics_account, AzureKeyCredential(text_analytics_account_key))
         res = await text_analytics.detect_language(
             documents=["Test passing cls to endpoint"],
-            cls=callback
+            cls=callback, encoding=Encoding.grapheme
         )
         assert res == "cls result"

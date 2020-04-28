@@ -1,0 +1,49 @@
+interactions:
+- request:
+    body: '{"documents": [{"id": "1", "text": "Microsoft was founded by Bill Gates
+      and Paul Allen.", "language": "en"}, {"id": "2", "text": "I did not like the
+      hotel we stayed at. It was too expensive.", "language": "en"}, {"id": "3", "text":
+      "The restaurant had really good food. I recommend you try it.", "language":
+      "en"}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '315'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-textanalytics/1.0.0b5 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+        Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+    method: POST
+    uri: https://westus2.ppe.cognitiveservices.azure.com/text/analytics/v3.0/entities/recognition/general?showStats=true
+  response:
+    body:
+      string: '{"statistics":{"documentsCount":3,"validDocumentsCount":3,"erroneousDocumentsCount":0,"transactionsCount":3},"documents":[{"id":"1","statistics":{"charactersCount":51,"transactionsCount":1},"entities":[{"text":"Microsoft","category":"Organization","offset":0,"length":9,"confidenceScore":0.52},{"text":"Bill
+        Gates","category":"Person","offset":25,"length":10,"confidenceScore":0.51},{"text":"Paul
+        Allen","category":"Person","offset":40,"length":10,"confidenceScore":0.76}],"warnings":[]},{"id":"2","statistics":{"charactersCount":60,"transactionsCount":1},"entities":[{"text":"hotel","category":"Location","offset":19,"length":5,"confidenceScore":0.74}],"warnings":[]},{"id":"3","statistics":{"charactersCount":60,"transactionsCount":1},"entities":[{"text":"restaurant","category":"Location","subcategory":"LOCATION.STRUCTURAL","offset":4,"length":10,"confidenceScore":0.71}],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}'
+    headers:
+      apim-request-id:
+      - 5bc9aa07-82fd-48f9-a676-7cf8b7605338
+      content-type:
+      - application/json; charset=utf-8
+      csp-billing-usage:
+      - CognitiveServices.TextAnalytics.BatchScoring=3
+      date:
+      - Tue, 28 Apr 2020 23:23:44 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '137'
+    status:
+      code: 200
+      message: OK
+version: 1

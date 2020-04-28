@@ -16,7 +16,8 @@ from azure.ai.textanalytics.aio import TextAnalyticsClient
 from azure.ai.textanalytics import (
     VERSION,
     DetectLanguageInput,
-    TextDocumentInput
+    TextDocumentInput,
+    Encoding
 )
 
 from testcase import GlobalTextAnalyticsAccountPreparer
@@ -43,7 +44,7 @@ class TestExtractKeyPhrases(AsyncTextAnalyticsTest):
     @TextAnalyticsClientPreparer()
     async def test_no_single_input(self, client):
         with self.assertRaises(TypeError):
-            response = await client.extract_key_phrases("hello world")
+            response = await client.extract_key_phrases("hello world", encoding=Encoding.grapheme)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -51,13 +52,14 @@ class TestExtractKeyPhrases(AsyncTextAnalyticsTest):
         docs = [{"id": "1", "language": "en", "text": "Microsoft was founded by Bill Gates and Paul Allen"},
                 {"id": "2", "language": "es", "text": "Microsoft fue fundado por Bill Gates y Paul Allen"}]
 
-        response = await client.extract_key_phrases(docs, show_stats=True)
+        response = await client.extract_key_phrases(docs, show_stats=True, encoding=Encoding.grapheme)
         for phrases in response:
             self.assertIn("Paul Allen", phrases.key_phrases)
             self.assertIn("Bill Gates", phrases.key_phrases)
             self.assertIn("Microsoft", phrases.key_phrases)
             self.assertIsNotNone(phrases.id)
             self.assertIsNotNone(phrases.statistics)
+            self.assertEqual(phrases.statistics.encoding, Encoding.grapheme)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -67,12 +69,24 @@ class TestExtractKeyPhrases(AsyncTextAnalyticsTest):
             TextDocumentInput(id="2", text="Microsoft fue fundado por Bill Gates y Paul Allen", language="es")
         ]
 
-        response = await client.extract_key_phrases(docs)
+        response = await client.extract_key_phrases(docs, encoding=Encoding.grapheme)
         for phrases in response:
             self.assertIn("Paul Allen", phrases.key_phrases)
             self.assertIn("Bill Gates", phrases.key_phrases)
             self.assertIn("Microsoft", phrases.key_phrases)
             self.assertIsNotNone(phrases.id)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    async def test_using_default_encoding(self, client):
+        docs = [{"id": "1", "language": "en", "text": "Microsoft was founded by Bill Gates and Paul Allen"},
+                {"id": "2", "language": "es", "text": "Microsoft fue fundado por Bill Gates y Paul Allen"}]
+
+        response = await client.extract_key_phrases(docs, show_stats=True)
+        [
+            self.assertIsNone(doc.statistics.encoding)
+            for doc in response
+        ]
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -83,7 +97,7 @@ class TestExtractKeyPhrases(AsyncTextAnalyticsTest):
             u""
         ]
 
-        response = await client.extract_key_phrases(docs)
+        response = await client.extract_key_phrases(docs, encoding=Encoding.grapheme)
         self.assertTrue(response[2].is_error)
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -92,7 +106,7 @@ class TestExtractKeyPhrases(AsyncTextAnalyticsTest):
         docs = [{"id": "1", "language": "English", "text": "Microsoft was founded by Bill Gates and Paul Allen"},
                 {"id": "2", "language": "es", "text": "Microsoft fue fundado por Bill Gates y Paul Allen"}]
 
-        response = await client.extract_key_phrases(docs)
+        response = await client.extract_key_phrases(docs, encoding=Encoding.grapheme)
         self.assertTrue(response[0].is_error)
         self.assertFalse(response[1].is_error)
 
@@ -102,7 +116,7 @@ class TestExtractKeyPhrases(AsyncTextAnalyticsTest):
         docs = [{"id": "1", "language": "English", "text": "Microsoft was founded by Bill Gates and Paul Allen"},
                 {"id": "2", "language": "es", "text": ""}]
 
-        response = await client.extract_key_phrases(docs)
+        response = await client.extract_key_phrases(docs, encoding=Encoding.grapheme)
         self.assertTrue(response[0].is_error)
         self.assertTrue(response[1].is_error)
 
@@ -111,7 +125,7 @@ class TestExtractKeyPhrases(AsyncTextAnalyticsTest):
     async def test_empty_credential_class(self, client):
         with self.assertRaises(ClientAuthenticationError):
             response = await client.extract_key_phrases(
-                ["This is written in English."]
+                ["This is written in English."], encoding=Encoding.grapheme
             )
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -128,7 +142,7 @@ class TestExtractKeyPhrases(AsyncTextAnalyticsTest):
         with self.assertRaises(HttpResponseError):
             response = await client.extract_key_phrases(
                 documents=["Microsoft was founded by Bill Gates."],
-                model_version="old"
+                model_version="old", encoding=Encoding.grapheme
             )
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -137,7 +151,7 @@ class TestExtractKeyPhrases(AsyncTextAnalyticsTest):
         docs = "This is the wrong type"
 
         with self.assertRaises(TypeError):
-            response = await client.extract_key_phrases(docs)
+            response = await client.extract_key_phrases(docs, encoding=Encoding.grapheme)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -148,7 +162,7 @@ class TestExtractKeyPhrases(AsyncTextAnalyticsTest):
             u"You cannot mix string input with the above inputs"
         ]
         with self.assertRaises(TypeError):
-            response = await client.extract_key_phrases(docs)
+            response = await client.extract_key_phrases(docs, encoding=Encoding.grapheme)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -159,7 +173,7 @@ class TestExtractKeyPhrases(AsyncTextAnalyticsTest):
                 {"id": "19", "text": ":P"},
                 {"id": "1", "text": ":D"}]
 
-        response = await client.extract_key_phrases(docs)
+        response = await client.extract_key_phrases(docs, encoding=Encoding.grapheme)
         in_order = ["56", "0", "22", "19", "1"]
         for idx, resp in enumerate(response):
             self.assertEqual(resp.id, in_order[idx])
@@ -185,7 +199,7 @@ class TestExtractKeyPhrases(AsyncTextAnalyticsTest):
             docs,
             show_stats=True,
             model_version="latest",
-            raw_response_hook=callback
+            raw_response_hook=callback, encoding=Encoding.grapheme
         )
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -193,7 +207,7 @@ class TestExtractKeyPhrases(AsyncTextAnalyticsTest):
     async def test_batch_size_over_limit(self, client):
         docs = [u"hello world"] * 1050
         with self.assertRaises(HttpResponseError):
-            response = await client.extract_key_phrases(docs)
+            response = await client.extract_key_phrases(docs, encoding=Encoding.grapheme)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -209,7 +223,7 @@ class TestExtractKeyPhrases(AsyncTextAnalyticsTest):
             u"The restaurant was not as good as I hoped."
         ]
 
-        response = await client.extract_key_phrases(docs, language="fr", raw_response_hook=callback)
+        response = await client.extract_key_phrases(docs, language="fr", raw_response_hook=callback, encoding=Encoding.grapheme)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -225,7 +239,7 @@ class TestExtractKeyPhrases(AsyncTextAnalyticsTest):
             u"The restaurant was not as good as I hoped."
         ]
 
-        response = await client.extract_key_phrases(docs, language="", raw_response_hook=callback)
+        response = await client.extract_key_phrases(docs, language="", raw_response_hook=callback, encoding=Encoding.grapheme)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -243,7 +257,7 @@ class TestExtractKeyPhrases(AsyncTextAnalyticsTest):
                 {"id": "2", "language": "", "text": "I did not like the hotel we stayed at."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
-        response = await client.extract_key_phrases(docs, raw_response_hook=callback)
+        response = await client.extract_key_phrases(docs, raw_response_hook=callback, encoding=Encoding.grapheme)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -259,7 +273,7 @@ class TestExtractKeyPhrases(AsyncTextAnalyticsTest):
             TextDocumentInput(id="3", text="猫は幸せ"),
         ]
 
-        response = await client.extract_key_phrases(docs, language="de", raw_response_hook=callback)
+        response = await client.extract_key_phrases(docs, language="de", raw_response_hook=callback, encoding=Encoding.grapheme)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -278,7 +292,7 @@ class TestExtractKeyPhrases(AsyncTextAnalyticsTest):
             TextDocumentInput(id="3", text="猫は幸せ"),
         ]
 
-        response = await client.extract_key_phrases(docs, language="en", raw_response_hook=callback)
+        response = await client.extract_key_phrases(docs, language="en", raw_response_hook=callback, encoding=Encoding.grapheme)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -296,7 +310,7 @@ class TestExtractKeyPhrases(AsyncTextAnalyticsTest):
                 {"id": "2", "language": "es", "text": "I did not like the hotel we stayed at."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
-        response = await client.extract_key_phrases(docs, language="en", raw_response_hook=callback)
+        response = await client.extract_key_phrases(docs, language="en", raw_response_hook=callback, encoding=Encoding.grapheme)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"default_language": "es"})
@@ -315,9 +329,9 @@ class TestExtractKeyPhrases(AsyncTextAnalyticsTest):
                 {"id": "2", "text": "I did not like the hotel we stayed at."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
-        response = await client.extract_key_phrases(docs, raw_response_hook=callback)
-        response = await client.extract_key_phrases(docs, language="en", raw_response_hook=callback_2)
-        response = await client.extract_key_phrases(docs, raw_response_hook=callback)
+        response = await client.extract_key_phrases(docs, raw_response_hook=callback, encoding=Encoding.grapheme)
+        response = await client.extract_key_phrases(docs, language="en", raw_response_hook=callback_2, encoding=Encoding.grapheme)
+        response = await client.extract_key_phrases(docs, raw_response_hook=callback, encoding=Encoding.grapheme)
 
     @GlobalTextAnalyticsAccountPreparer()
     async def test_rotate_subscription_key(self, resource_group, location, text_analytics_account, text_analytics_account_key):
@@ -328,15 +342,15 @@ class TestExtractKeyPhrases(AsyncTextAnalyticsTest):
                 {"id": "2", "text": "I did not like the hotel we stayed at."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
-        response = await client.extract_key_phrases(docs)
+        response = await client.extract_key_phrases(docs, encoding=Encoding.grapheme)
         self.assertIsNotNone(response)
 
         credential.update("xxx")  # Make authentication fail
         with self.assertRaises(ClientAuthenticationError):
-            response = await client.extract_key_phrases(docs)
+            response = await client.extract_key_phrases(docs, encoding=Encoding.grapheme)
 
         credential.update(text_analytics_account_key)  # Authenticate successfully again
-        response = await client.extract_key_phrases(docs)
+        response = await client.extract_key_phrases(docs, encoding=Encoding.grapheme)
         self.assertIsNotNone(response)
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -352,13 +366,13 @@ class TestExtractKeyPhrases(AsyncTextAnalyticsTest):
                 {"id": "2", "text": "I did not like the hotel we stayed at."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
-        response = await client.extract_key_phrases(docs, raw_response_hook=callback)
+        response = await client.extract_key_phrases(docs, raw_response_hook=callback, encoding=Encoding.grapheme)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
     async def test_document_attribute_error_no_result_attribute(self, client):
         docs = [{"id": "1", "text": ""}]
-        response = await client.extract_key_phrases(docs)
+        response = await client.extract_key_phrases(docs, encoding=Encoding.grapheme)
 
         # Attributes on DocumentError
         self.assertTrue(response[0].is_error)
@@ -380,7 +394,7 @@ class TestExtractKeyPhrases(AsyncTextAnalyticsTest):
     @TextAnalyticsClientPreparer()
     async def test_document_attribute_error_nonexistent_attribute(self, client):
         docs = [{"id": "1", "text": ""}]
-        response = await client.extract_key_phrases(docs)
+        response = await client.extract_key_phrases(docs, encoding=Encoding.grapheme)
 
         # Attribute not found on DocumentError or result obj, default behavior/message
         try:
@@ -397,7 +411,7 @@ class TestExtractKeyPhrases(AsyncTextAnalyticsTest):
         docs = [{"id": "1", "language": "english", "text": "I did not like the hotel we stayed at."}]
 
         try:
-            result = await client.extract_key_phrases(docs, model_version="bad")
+            result = await client.extract_key_phrases(docs, model_version="bad", encoding=Encoding.grapheme)
         except HttpResponseError as err:
             self.assertEqual(err.error.code, "InvalidRequest")
             self.assertIsNotNone(err.error.message)
@@ -413,7 +427,7 @@ class TestExtractKeyPhrases(AsyncTextAnalyticsTest):
                 {"id": "2", "language": "english", "text": "I did not like the hotel we stayed at."},
                 {"id": "3", "text": text}]
 
-        doc_errors = await client.extract_key_phrases(docs)
+        doc_errors = await client.extract_key_phrases(docs, encoding=Encoding.grapheme)
         self.assertEqual(doc_errors[0].error.code, "InvalidDocument")
         self.assertIsNotNone(doc_errors[0].error.message)
         self.assertEqual(doc_errors[1].error.code, "UnsupportedLanguageCode")
@@ -428,7 +442,7 @@ class TestExtractKeyPhrases(AsyncTextAnalyticsTest):
             {"id": "1", "text": "Thisisaveryveryverylongtextwhichgoesonforalongtimeandwhichalmostdoesn'tseemtostopatanygivenpointintime.ThereasonforthistestistotryandseewhathappenswhenwesubmitaveryveryverylongtexttoLanguage.Thisshouldworkjustfinebutjustincaseitisalwaysgoodtohaveatestcase.ThisallowsustotestwhathappensifitisnotOK.Ofcourseitisgoingtobeokbutthenagainitisalsobettertobesure!"},
         ]
 
-        result = await client.extract_key_phrases(docs)
+        result = await client.extract_key_phrases(docs, encoding=Encoding.grapheme)
         for doc in result:
             doc_warnings = doc.warnings
             self.assertEqual(doc_warnings[0].code, "LongWordsInDocument")
@@ -439,7 +453,7 @@ class TestExtractKeyPhrases(AsyncTextAnalyticsTest):
     async def test_missing_input_records_error(self, client):
         docs = []
         with pytest.raises(ValueError) as excinfo:
-            await client.extract_key_phrases(docs)
+            await client.extract_key_phrases(docs, encoding=Encoding.grapheme)
         assert "Input documents can not be empty" in str(excinfo.value)
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -449,7 +463,7 @@ class TestExtractKeyPhrases(AsyncTextAnalyticsTest):
         docs = [{"id": "1", "text": "hello world"},
                 {"id": "1", "text": "I did not like the hotel we stayed at."}]
         try:
-            result = await client.extract_key_phrases(docs)
+            result = await client.extract_key_phrases(docs, encoding=Encoding.grapheme)
         except HttpResponseError as err:
             self.assertEqual(err.error.code, "InvalidDocument")
             self.assertIsNotNone(err.error.message)
@@ -460,7 +474,7 @@ class TestExtractKeyPhrases(AsyncTextAnalyticsTest):
         # Batch size over limit
         docs = [u"hello world"] * 1001
         try:
-            response = await client.extract_key_phrases(docs)
+            response = await client.extract_key_phrases(docs, encoding=Encoding.grapheme)
         except HttpResponseError as err:
             self.assertEqual(err.error.code, "InvalidDocumentBatch")
             self.assertIsNotNone(err.error.message)
@@ -479,7 +493,7 @@ class TestExtractKeyPhrases(AsyncTextAnalyticsTest):
             model_version="latest",
             show_stats=True,
             language="es",
-            raw_response_hook=callback
+            raw_response_hook=callback, encoding=Encoding.grapheme
         )
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -489,6 +503,6 @@ class TestExtractKeyPhrases(AsyncTextAnalyticsTest):
             return "cls result"
         res = await client.extract_key_phrases(
             documents=["Test passing cls to endpoint"],
-            cls=callback
+            cls=callback, encoding=Encoding.grapheme
         )
         assert res == "cls result"
