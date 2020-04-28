@@ -21,6 +21,8 @@ from .. import models
 class ServicesOperations(object):
     """ServicesOperations operations.
 
+    You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
+
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -107,12 +109,12 @@ class ServicesOperations(object):
          current subscription. You can obtain this value from the Azure
          Resource Manager API or the portal.
         :type resource_group_name: str
-        :param search_service_name: The name of the Azure Search service to
-         create or update. Search service names must only contain lowercase
-         letters, digits or dashes, cannot use dash as the first two or last
-         one characters, cannot contain consecutive dashes, and must be between
-         2 and 60 characters in length. Search service names must be globally
-         unique since they are part of the service URI
+        :param search_service_name: The name of the Azure Cognitive Search
+         service to create or update. Search service names must only contain
+         lowercase letters, digits or dashes, cannot use dash as the first two
+         or last one characters, cannot contain consecutive dashes, and must be
+         between 2 and 60 characters in length. Search service names must be
+         globally unique since they are part of the service URI
          (https://<name>.search.windows.net). You cannot change the service
          name after the service is created.
         :type search_service_name: str
@@ -172,8 +174,8 @@ class ServicesOperations(object):
          current subscription. You can obtain this value from the Azure
          Resource Manager API or the portal.
         :type resource_group_name: str
-        :param search_service_name: The name of the Azure Search service to
-         update.
+        :param search_service_name: The name of the Azure Cognitive Search
+         service to update.
         :type search_service_name: str
         :param service: The definition of the Search service to update.
         :type service: ~azure.mgmt.search.models.SearchService
@@ -234,7 +236,6 @@ class ServicesOperations(object):
             raise exp
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('SearchService', response)
 
@@ -254,8 +255,8 @@ class ServicesOperations(object):
          current subscription. You can obtain this value from the Azure
          Resource Manager API or the portal.
         :type resource_group_name: str
-        :param search_service_name: The name of the Azure Search service
-         associated with the specified resource group.
+        :param search_service_name: The name of the Azure Cognitive Search
+         service associated with the specified resource group.
         :type search_service_name: str
         :param search_management_request_options: Additional parameters for
          the operation
@@ -310,7 +311,6 @@ class ServicesOperations(object):
             raise exp
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('SearchService', response)
 
@@ -330,8 +330,8 @@ class ServicesOperations(object):
          current subscription. You can obtain this value from the Azure
          Resource Manager API or the portal.
         :type resource_group_name: str
-        :param search_service_name: The name of the Azure Search service
-         associated with the specified resource group.
+        :param search_service_name: The name of the Azure Cognitive Search
+         service associated with the specified resource group.
         :type search_service_name: str
         :param search_management_request_options: Additional parameters for
          the operation
@@ -414,8 +414,7 @@ class ServicesOperations(object):
         if search_management_request_options is not None:
             client_request_id = search_management_request_options.client_request_id
 
-        def internal_paging(next_link=None, raw=False):
-
+        def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
                 url = self.list_by_resource_group.metadata['url']
@@ -447,6 +446,11 @@ class ServicesOperations(object):
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
@@ -457,12 +461,10 @@ class ServicesOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.SearchServicePaged(internal_paging, self._deserialize.dependencies)
-
+        header_dict = None
         if raw:
             header_dict = {}
-            client_raw_response = models.SearchServicePaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
+        deserialized = models.SearchServicePaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
     list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Search/searchServices'}
@@ -489,8 +491,7 @@ class ServicesOperations(object):
         if search_management_request_options is not None:
             client_request_id = search_management_request_options.client_request_id
 
-        def internal_paging(next_link=None, raw=False):
-
+        def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
                 url = self.list_by_subscription.metadata['url']
@@ -521,6 +522,11 @@ class ServicesOperations(object):
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
@@ -531,12 +537,10 @@ class ServicesOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.SearchServicePaged(internal_paging, self._deserialize.dependencies)
-
+        header_dict = None
         if raw:
             header_dict = {}
-            client_raw_response = models.SearchServicePaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
+        deserialized = models.SearchServicePaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
     list_by_subscription.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Search/searchServices'}
@@ -608,7 +612,6 @@ class ServicesOperations(object):
             raise exp
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('CheckNameAvailabilityOutput', response)
 
