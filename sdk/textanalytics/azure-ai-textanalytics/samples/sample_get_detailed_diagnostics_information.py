@@ -53,7 +53,6 @@ class GetDetailedDiagnosticsInformationSample(object):
             _LOGGER.debug("erroneous_document_count: {}".format(resp.statistics["erroneous_document_count"]))
             _LOGGER.debug("transaction_count: {}".format(resp.statistics["transaction_count"]))
             _LOGGER.debug("model_version: {}".format(resp.model_version))
-            _LOGGER.debug("raw_response: {}".format(resp.raw_response))
             json_response = json.dumps(resp.raw_response)
             json_responses.append(json_response)
 
@@ -64,8 +63,7 @@ class GetDetailedDiagnosticsInformationSample(object):
             raw_response_hook=callback
         )
 
-        for idx, json_responses in enumerate(json_respones):
-            _LOGGER.debug("json response for document #{}: {}".format(resp.raw_response, idx))
+        _LOGGER.debug("json response: {}".format(json_responses[0]))
 
 
 if __name__ == '__main__':
