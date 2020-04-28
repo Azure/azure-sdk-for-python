@@ -7,6 +7,11 @@
 - Added `text` property to `SentenceSentiment`
 
 **Breaking changes**
+- Each endpoint now has a required parameter `encoding` that specifies the encoding you would like each text unit to be recognized as.
+- `grapheme_length` and `grapheme_offset` attributes have been renamed to `length` and `offset` for the `SentenceSentiment`,
+`CategorizedEntity`, `PiiEntity`, and `LinkedEntityMatch` models. Their encoding will be the value passed in the `encoding` parameter
+to each endpoint
+- `grapheme_count` in `TextDocumentStatistics` has been renamed to `count`
 - `score` attribute of `DetectedLanguage` has been renamed to `confidence_score`
 
 ## 1.0.0b4 (2020-04-07)

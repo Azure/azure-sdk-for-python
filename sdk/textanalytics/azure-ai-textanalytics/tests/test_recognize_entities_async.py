@@ -60,8 +60,8 @@ class TestRecognizeEntities(AsyncTextAnalyticsTest):
             for entity in doc.entities:
                 self.assertIsNotNone(entity.text)
                 self.assertIsNotNone(entity.category)
-                self.assertIsNotNone(entity.grapheme_offset)
-                self.assertIsNotNone(entity.grapheme_length)
+                self.assertIsNotNone(entity.offset)
+                self.assertIsNotNone(entity.length)
                 self.assertIsNotNone(entity.confidence_score)
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -79,8 +79,8 @@ class TestRecognizeEntities(AsyncTextAnalyticsTest):
             for entity in doc.entities:
                 self.assertIsNotNone(entity.text)
                 self.assertIsNotNone(entity.category)
-                self.assertIsNotNone(entity.grapheme_offset)
-                self.assertIsNotNone(entity.grapheme_length)
+                self.assertIsNotNone(entity.offset)
+                self.assertIsNotNone(entity.length)
                 self.assertIsNotNone(entity.confidence_score)
 
     @GlobalTextAnalyticsAccountPreparer()

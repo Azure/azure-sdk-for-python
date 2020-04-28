@@ -7,6 +7,7 @@
 from ._text_analytics_client import TextAnalyticsClient
 from ._version import VERSION
 from ._models import (
+    Encoding,
     DetectLanguageInput,
     TextDocumentInput,
     DetectedLanguage,
@@ -28,6 +29,7 @@ from ._models import (
 )
 
 __all__ = [
+    'Encoding',
     'TextAnalyticsClient',
     'DetectLanguageInput',
     'TextDocumentInput',

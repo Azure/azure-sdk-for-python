@@ -93,6 +93,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     def detect_language(  # type: ignore
         self,
         documents,  # type: Union[List[str], List[DetectLanguageInput], List[Dict[str, str]]]
+        encoding,  # type: Union[str, Encoding]
         **kwargs  # type: Any
     ):
         # type: (...) -> List[Union[DetectLanguageResult, DocumentError]]
@@ -112,6 +113,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             `{"id": "1", "country_hint": "us", "text": "hello world"}`.
         :type documents:
             list[str] or list[~azure.ai.textanalytics.DetectLanguageInput]
+        :param encoding: The encoding in which you would like each text unit to be recognized as.
+        :type encoding: str or ~azure.ai.textanalytics.Encoding
         :keyword str country_hint: A country hint for the entire batch. Accepts two
             letter country codes specified by ISO 3166-1 alpha-2. Per-document
             country hints will take precedence over whole batch hints. Defaults to
@@ -157,6 +160,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     def recognize_entities(  # type: ignore
         self,
         documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
+        encoding,  # type: Union[str, Encoding]
         **kwargs  # type: Any
     ):
         # type: (...) -> List[Union[RecognizeEntitiesResult, DocumentError]]
@@ -176,6 +180,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             like `{"id": "1", "language": "en", "text": "hello world"}`.
         :type documents:
             list[str] or list[~azure.ai.textanalytics.TextDocumentInput]
+        :param encoding: The encoding in which you would like each text unit to be recognized as.
+        :type encoding: str or ~azure.ai.textanalytics.Encoding
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
             If not set, uses "en" for English as default. Per-document language will
@@ -221,6 +227,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     def recognize_linked_entities(  # type: ignore
         self,
         documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
+        encoding,  # type: Union[str, Encoding]
         **kwargs  # type: Any
     ):
         # type: (...) -> List[Union[RecognizeLinkedEntitiesResult, DocumentError]]
@@ -241,6 +248,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             `{"id": "1", "language": "en", "text": "hello world"}`.
         :type documents:
             list[str] or list[~azure.ai.textanalytics.TextDocumentInput]
+        :param encoding: The encoding in which you would like each text unit to be recognized as.
+        :type encoding: str or ~azure.ai.textanalytics.Encoding
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
             If not set, uses "en" for English as default. Per-document language will
@@ -286,6 +295,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     def extract_key_phrases(  # type: ignore
         self,
         documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
+        encoding,  # type: Union[str, Encoding]
         **kwargs  # type: Any
     ):
         # type: (...) -> List[Union[ExtractKeyPhrasesResult, DocumentError]]
@@ -306,6 +316,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             `{"id": "1", "language": "en", "text": "hello world"}`.
         :type documents:
             list[str] or list[~azure.ai.textanalytics.TextDocumentInput]
+        :param encoding: The encoding in which you would like each text unit to be recognized as.
+        :type encoding: str or ~azure.ai.textanalytics.Encoding
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
             If not set, uses "en" for English as default. Per-document language will
@@ -351,6 +363,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     def analyze_sentiment(  # type: ignore
         self,
         documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
+        encoding,  # type: Union[str, Encoding]
         **kwargs  # type: Any
     ):
         # type: (...) -> List[Union[AnalyzeSentimentResult, DocumentError]]
@@ -370,6 +383,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             `{"id": "1", "language": "en", "text": "hello world"}`.
         :type documents:
             list[str] or list[~azure.ai.textanalytics.TextDocumentInput]
+        :param encoding: The encoding in which you would like each text unit to be recognized as.
+        :type encoding: str or ~azure.ai.textanalytics.Encoding
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
             If not set, uses "en" for English as default. Per-document language will
