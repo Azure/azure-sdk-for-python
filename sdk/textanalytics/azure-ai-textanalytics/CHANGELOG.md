@@ -7,7 +7,8 @@
 - Added `text` property to `SentenceSentiment`
 
 **Breaking changes**
-- Each endpoint now has a required parameter `encoding` that specifies the encoding you would like each text unit to be recognized as.
+- Each endpoint now has a kwarg parameter `encoding` that specifies the encoding you would like each text unit to be recognized as. Though it is not required,
+we strongly suggest users to pass in a value to `encoding` since we can't guarantee the consistency of the returned offset, lengths, and counts if not.
 - `grapheme_length` and `grapheme_offset` attributes have been renamed to `length` and `offset` for the `SentenceSentiment`,
 `CategorizedEntity`, `PiiEntity`, and `LinkedEntityMatch` models. Their encoding will be the value passed in the `encoding` parameter
 to each endpoint

@@ -3,7 +3,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-
+from functools import partial
 from typing import (  # pylint: disable=unused-import
     Union,
     Optional,
@@ -33,6 +33,7 @@ from .._models import (
     ExtractKeyPhrasesResult,
     AnalyzeSentimentResult,
     DocumentError,
+    Encoding
 )
 
 if TYPE_CHECKING:
@@ -116,6 +117,10 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             `{"id": "1", "country_hint": "us", "text": "hello world"}`.
         :type documents:
             list[str] or list[~azure.ai.textanalytics.DetectLanguageInput]
+        :keyword encoding: The encoding in which you would like each text unit to be recognized as.
+            The default is `None`, but we can not guarantee the output for counts
+            will stay consistent unless you pass in a value from :class:`~azure.ai.textanalytics.Encoding`.
+        :paramtype encoding: str or ~azure.ai.textanalytics.Encoding
         :keyword str country_hint: A country hint for the entire batch. Accepts two
             letter country codes specified by ISO 3166-1 alpha-2. Per-document
             country hints will take precedence over whole batch hints. Defaults to
@@ -146,12 +151,13 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         docs = _validate_batch_input(documents, "country_hint", country_hint)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
+        encoding = kwargs.pop("encoding", None)
         try:
             return await self._client.languages(
                 documents=docs,
                 model_version=model_version,
                 show_stats=show_stats,
-                cls=kwargs.pop("cls", language_result),
+                cls=kwargs.pop("cls", partial(language_result, encoding=None)),
                 **kwargs
             )
         except HttpResponseError as error:
@@ -179,6 +185,10 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             `{"id": "1", "language": "en", "text": "hello world"}`.
         :type documents:
             list[str] or list[~azure.ai.textanalytics.TextDocumentInput]
+        :keyword encoding: The encoding in which you would like each text unit to be recognized as.
+            The default is `None`, but we can not guarantee the output for offsets, lengths, and counts
+            will stay consistent unless you pass in a value from :class:`~azure.ai.textanalytics.Encoding`.
+        :paramtype encoding: str or ~azure.ai.textanalytics.Encoding
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
             If not set, uses "en" for English as default. Per-document language will
@@ -209,12 +219,13 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         docs = _validate_batch_input(documents, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
+        encoding = kwargs.pop("encoding", None)
         try:
             return await self._client.entities_recognition_general(
                 documents=docs,
                 model_version=model_version,
                 show_stats=show_stats,
-                cls=kwargs.pop("cls", entities_result),
+                cls=kwargs.pop("cls", partial(entities_result, encoding=None)),
                 **kwargs
             )
         except HttpResponseError as error:
@@ -243,6 +254,10 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             `{"id": "1", "language": "en", "text": "hello world"}`.
         :type documents:
             list[str] or list[~azure.ai.textanalytics.TextDocumentInput]
+        :keyword encoding: The encoding in which you would like each text unit to be recognized as.
+            The default is `None`, but we can not guarantee the output for offsets, lengths, and counts
+            will stay consistent unless you pass in a value from :class:`~azure.ai.textanalytics.Encoding`.
+        :paramtype encoding: str or ~azure.ai.textanalytics.Encoding
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
             If not set, uses "en" for English as default. Per-document language will
@@ -273,12 +288,13 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         docs = _validate_batch_input(documents, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
+        encoding = kwargs.pop("encoding", None)
         try:
             return await self._client.entities_linking(
                 documents=docs,
                 model_version=model_version,
                 show_stats=show_stats,
-                cls=kwargs.pop("cls", linked_entities_result),
+                cls=kwargs.pop("cls", partial(linked_entities_result, encoding=None)),
                 **kwargs
             )
         except HttpResponseError as error:
@@ -307,6 +323,10 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             `{"id": "1", "language": "en", "text": "hello world"}`.
         :type documents:
             list[str] or list[~azure.ai.textanalytics.TextDocumentInput]
+        :keyword encoding: The encoding in which you would like each text unit to be recognized as.
+            The default is `None`, but we can not guarantee the output for counts
+            will stay consistent unless you pass in a value from :class:`~azure.ai.textanalytics.Encoding`.
+        :paramtype encoding: str or ~azure.ai.textanalytics.Encoding
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
             If not set, uses "en" for English as default. Per-document language will
@@ -337,12 +357,13 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         docs = _validate_batch_input(documents, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
+        encoding = kwargs.pop("encoding", None)
         try:
             return await self._client.key_phrases(
                 documents=docs,
                 model_version=model_version,
                 show_stats=show_stats,
-                cls=kwargs.pop("cls", key_phrases_result),
+                cls=kwargs.pop("cls", partial(key_phrases_result, encoding=None)),
                 **kwargs
             )
         except HttpResponseError as error:
@@ -370,6 +391,10 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             `{"id": "1", "language": "en", "text": "hello world"}`.
         :type documents:
             list[str] or list[~azure.ai.textanalytics.TextDocumentInput]
+        :keyword encoding: The encoding in which you would like each text unit to be recognized as.
+            The default is `None`, but we can not guarantee the output for offsets, lengths, and counts
+            will stay consistent unless you pass in a value from :class:`~azure.ai.textanalytics.Encoding`.
+        :paramtype encoding: str or ~azure.ai.textanalytics.Encoding
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
             If not set, uses "en" for English as default. Per-document language will
@@ -400,12 +425,13 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         docs = _validate_batch_input(documents, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
+        encoding = kwargs.pop("encoding", None)
         try:
             return await self._client.sentiment(
                 documents=docs,
                 model_version=model_version,
                 show_stats=show_stats,
-                cls=kwargs.pop("cls", sentiment_result),
+                cls=kwargs.pop("cls", partial(sentiment_result, encoding=None)),
                 **kwargs
             )
         except HttpResponseError as error:

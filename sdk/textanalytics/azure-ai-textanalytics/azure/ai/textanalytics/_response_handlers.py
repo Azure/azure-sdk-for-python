@@ -59,7 +59,7 @@ def order_results(response, combined):
 
 
 def prepare_result(func):
-    def wrapper(response, obj, response_headers):  # pylint: disable=unused-argument
+    def wrapper(response, obj, response_headers, encoding):  # pylint: disable=unused-argument
         if obj.errors:
             combined = obj.documents + obj.errors
             results = order_results(response, combined)
@@ -70,59 +70,59 @@ def prepare_result(func):
             if hasattr(item, "error"):
                 results[idx] = DocumentError(id=item.id, error=TextAnalyticsError._from_generated(item.error))  # pylint: disable=protected-access
             else:
-                results[idx] = func(item)
+                results[idx] = func(item, encoding)
         return results
 
     return wrapper
 
 
 @prepare_result
-def language_result(language):
+def language_result(language, encoding):
     return DetectLanguageResult(
         id=language.id,
         primary_language=DetectedLanguage._from_generated(language.detected_language),  # pylint: disable=protected-access
         warnings=[TextAnalyticsWarning._from_generated(w) for w in language.warnings],  # pylint: disable=protected-access
-        statistics=TextDocumentStatistics._from_generated(language.statistics),  # pylint: disable=protected-access
+        statistics=TextDocumentStatistics._from_generated(language.statistics, encoding),  # pylint: disable=protected-access
     )
 
 
 @prepare_result
-def entities_result(entity):
+def entities_result(entity, encoding):
     return RecognizeEntitiesResult(
         id=entity.id,
-        entities=[CategorizedEntity._from_generated(e) for e in entity.entities],  # pylint: disable=protected-access
+        entities=[CategorizedEntity._from_generated(e, encoding) for e in entity.entities],  # pylint: disable=protected-access
         warnings=[TextAnalyticsWarning._from_generated(w) for w in entity.warnings],  # pylint: disable=protected-access
-        statistics=TextDocumentStatistics._from_generated(entity.statistics),  # pylint: disable=protected-access
+        statistics=TextDocumentStatistics._from_generated(entity.statistics, encoding),  # pylint: disable=protected-access
     )
 
 
 @prepare_result
-def linked_entities_result(entity):
+def linked_entities_result(entity, encoding):
     return RecognizeLinkedEntitiesResult(
         id=entity.id,
-        entities=[LinkedEntity._from_generated(e) for e in entity.entities],  # pylint: disable=protected-access
+        entities=[LinkedEntity._from_generated(e, encoding) for e in entity.entities],  # pylint: disable=protected-access
         warnings=[TextAnalyticsWarning._from_generated(w) for w in entity.warnings],  # pylint: disable=protected-access
-        statistics=TextDocumentStatistics._from_generated(entity.statistics),  # pylint: disable=protected-access
+        statistics=TextDocumentStatistics._from_generated(entity.statistics, encoding),  # pylint: disable=protected-access
     )
 
 
 @prepare_result
-def key_phrases_result(phrases):
+def key_phrases_result(phrases, encoding):
     return ExtractKeyPhrasesResult(
         id=phrases.id,
         key_phrases=phrases.key_phrases,
         warnings=[TextAnalyticsWarning._from_generated(w) for w in phrases.warnings],  # pylint: disable=protected-access
-        statistics=TextDocumentStatistics._from_generated(phrases.statistics),  # pylint: disable=protected-access
+        statistics=TextDocumentStatistics._from_generated(phrases.statistics, encoding),  # pylint: disable=protected-access
     )
 
 
 @prepare_result
-def sentiment_result(sentiment):
+def sentiment_result(sentiment, encoding):
     return AnalyzeSentimentResult(
         id=sentiment.id,
         sentiment=sentiment.sentiment,
         warnings=[TextAnalyticsWarning._from_generated(w) for w in sentiment.warnings],  # pylint: disable=protected-access
-        statistics=TextDocumentStatistics._from_generated(sentiment.statistics),  # pylint: disable=protected-access
+        statistics=TextDocumentStatistics._from_generated(sentiment.statistics, encoding),  # pylint: disable=protected-access
         confidence_scores=SentimentConfidenceScores._from_generated(sentiment.confidence_scores),  # pylint: disable=protected-access
-        sentences=[SentenceSentiment._from_generated(s) for s in sentiment.sentences],  # pylint: disable=protected-access
+        sentences=[SentenceSentiment._from_generated(s, encoding) for s in sentiment.sentences],  # pylint: disable=protected-access
     )

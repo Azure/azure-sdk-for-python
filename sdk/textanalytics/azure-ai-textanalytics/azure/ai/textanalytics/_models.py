@@ -173,11 +173,12 @@ class CategorizedEntity(DictMixin):
     :type category: str
     :param subcategory: Entity subcategory, such as Age/Year/TimeRange etc
     :type subcategory: str
+    :param str encoding: The specified encoding for `offset` and `length`
     :param offset: Start position for the entity text. Its encoding is
-        determined by the value for `encoding` passed into `recognize_entities`
+        determined by the value for `encoding`
     :type offset: int
     :param length: Length for the entity text. Its encoding is
-        determined by the value for `encoding` passed into `recognize_entities`
+        determined by the value for `encoding`
     :type length: int
     :param confidence_score: Confidence score between 0 and 1 of the extracted
         entity.
@@ -188,25 +189,27 @@ class CategorizedEntity(DictMixin):
         self.text = kwargs.get('text', None)
         self.category = kwargs.get('category', None)
         self.subcategory = kwargs.get('subcategory', None)
+        self.encoding = kwargs.get('encoding', None)
         self.offset = kwargs.get('offset', None)
         self.length = kwargs.get('length', None)
         self.confidence_score = kwargs.get('confidence_score', None)
 
     @classmethod
-    def _from_generated(cls, entity):
+    def _from_generated(cls, entity, encoding):
         return cls(
             text=entity.text,
             category=entity.category,
             subcategory=entity.subcategory,
+            encoding=encoding,
             offset=entity.offset,
             length=entity.length,
             confidence_score=entity.confidence_score,
         )
 
     def __repr__(self):
-        return "CategorizedEntity(text={}, category={}, subcategory={}, offset={}, length={}, " \
-               "confidence_score={})".format(self.text, self.category, self.subcategory, self.offset,
-                                  self.length, self.confidence_score)[:1024]
+        return "CategorizedEntity(text={}, category={}, subcategory={}, encoding={}, offset={}, length={}, " \
+               "confidence_score={})".format(self.text, self.category, self.subcategory, self.encoding,
+                                  self.offset, self.length, self.confidence_score)[:1024]
 
 
 class TextAnalyticsError(DictMixin):
@@ -396,6 +399,7 @@ class TextDocumentStatistics(DictMixin):
     """TextDocumentStatistics contains information about
     the document payload.
 
+    :param str encoding: The specified encoding for `count`
     :param count: Number of text elements recognized in
         the document. Its encoding is determined by the value for `encoding` passed into
         the endpoint.
@@ -406,21 +410,23 @@ class TextDocumentStatistics(DictMixin):
     """
 
     def __init__(self, **kwargs):
+        self.encoding = kwargs.get("encoding", None)
         self.count = kwargs.get("count", None)
         self.transaction_count = kwargs.get("transaction_count", None)
 
     @classmethod
-    def _from_generated(cls, stats):
+    def _from_generated(cls, stats, encoding):
         if stats is None:
             return None
         return cls(
+            encoding=encoding,
             count=stats.characters_count,
             transaction_count=stats.transactions_count,
         )
 
     def __repr__(self):
-        return "TextDocumentStatistics(count={}, transaction_count={})" \
-            .format(self.count, self.transaction_count)[:1024]
+        return "TextDocumentStatistics(encoding={}, count={}, transaction_count={})" \
+            .format(self.encoding, self.count, self.transaction_count)[:1024]
 
 
 class DocumentError(DictMixin):
@@ -528,10 +534,10 @@ class LinkedEntity(DictMixin):
         self.data_source = kwargs.get("data_source", None)
 
     @classmethod
-    def _from_generated(cls, entity):
+    def _from_generated(cls, entity, encoding):
         return cls(
             name=entity.name,
-            matches=[LinkedEntityMatch._from_generated(e) for e in entity.matches],  # pylint: disable=protected-access
+            matches=[LinkedEntityMatch._from_generated(e, encoding) for e in entity.matches],  # pylint: disable=protected-access
             language=entity.language,
             data_source_entity_id=entity.id,
             url=entity.url,
@@ -555,6 +561,7 @@ class LinkedEntityMatch(DictMixin):
     :type confidence_score: float
     :param text: Entity text as appears in the request.
     :type text: str
+    :param str encoding: The specified encoding for `offset` and `length`
     :param offset: Start position for the entity match text. Its encoding is
         determined by the value for `encoding` passed into `recognize_linked_entities`
     :type offset: int
@@ -566,21 +573,23 @@ class LinkedEntityMatch(DictMixin):
     def __init__(self, **kwargs):
         self.confidence_score = kwargs.get("confidence_score", None)
         self.text = kwargs.get("text", None)
+        self.encoding = kwargs.get("encoding", None)
         self.offset = kwargs.get("offset", None)
         self.length = kwargs.get("length", None)
 
     @classmethod
-    def _from_generated(cls, match):
+    def _from_generated(cls, match, encoding):
         return cls(
             confidence_score=match.confidence_score,
             text=match.text,
+            encoding=encoding,
             offset=match.offset,
             length=match.length
         )
 
     def __repr__(self):
-        return "LinkedEntityMatch(confidence_score={}, text={}, offset={}, length={})" \
-            .format(self.confidence_score, self.text, self.offset, self.length)[:1024]
+        return "LinkedEntityMatch(confidence_score={}, text={}, encoding={}, offset={}, length={})" \
+            .format(self.confidence_score, self.text, self.encoding, self.offset, self.length)[:1024]
 
 
 class TextDocumentInput(MultiLanguageInput):
@@ -660,6 +669,7 @@ class SentenceSentiment(DictMixin):
         and 1 for the sentence for all labels.
     :type confidence_scores:
         ~azure.ai.textanalytics.SentimentConfidenceScores
+    :param str encoding: The specified encoding for `offset` and `length`
     :param offset: The sentence offset from the start of the
         document. Its encoding is determined by the value for `encoding`
         passed into `analyze_sentiment`
@@ -674,23 +684,25 @@ class SentenceSentiment(DictMixin):
         self.text = kwargs.get("text", None)
         self.sentiment = kwargs.get("sentiment", None)
         self.confidence_scores = kwargs.get("confidence_scores", None)
+        self.encoding = kwargs.get("encoding", None)
         self.offset = kwargs.get("offset", None)
         self.length = kwargs.get("length", None)
 
     @classmethod
-    def _from_generated(cls, sentence):
+    def _from_generated(cls, sentence, encoding):
         return cls(
             text=sentence.text,
             sentiment=sentence.sentiment,
             confidence_scores=SentimentConfidenceScores._from_generated(sentence.confidence_scores),  # pylint: disable=protected-access
+            encoding=encoding,
             offset=sentence.offset,
             length=sentence.length
         )
 
     def __repr__(self):
-        return "SentenceSentiment(text={}, sentiment={}, confidence_scores={}, offset={}, "\
+        return "SentenceSentiment(text={}, sentiment={}, confidence_scores={}, encoding={}, offset={}, "\
             "length={})".format(self.text, self.sentiment, repr(self.confidence_scores),
-            self.offset, self.length
+            self.encoding, self.offset, self.length
         )[:1024]
 
 
