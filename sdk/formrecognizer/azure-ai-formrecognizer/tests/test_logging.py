@@ -4,6 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
+import pytest
 from datetime import date, time
 from azure.core.exceptions import ClientAuthenticationError, ServiceRequestError, HttpResponseError
 from azure.core.credentials import AzureKeyCredential
@@ -17,6 +18,7 @@ class TestLogging(FormRecognizerTest):
 
     @GlobalFormRecognizerAccountPreparer()
     def test_logging_receipt(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
+        pytest.skip("still working on this test")
         client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
 
         with LogCaptured(self) as log_captured:
