@@ -53,7 +53,9 @@ class GetDetailedDiagnosticsInformationSampleAsync(object):
             _LOGGER.debug("erroneous_document_count: {}".format(resp.statistics["erroneous_document_count"]))
             _LOGGER.debug("transaction_count: {}".format(resp.statistics["transaction_count"]))
             _LOGGER.debug("model_version: {}".format(resp.model_version))
-            _LOGGER.debug("raw_response in json format: {}".format(json.dumps(resp.raw_response)))
+            _LOGGER.debug("raw_response: {}".format(resp.raw_response))
+            json_response = json.dumps(resp.raw_response)
+            json_responses.append(json_response)
 
         async with text_analytics_client:
             result = await text_analytics_client.analyze_sentiment(
@@ -62,6 +64,9 @@ class GetDetailedDiagnosticsInformationSampleAsync(object):
                 model_version="latest",
                 raw_response_hook=callback
             )
+
+        for idx, json_responses in enumerate(json_respones):
+            _LOGGER.debug("json response for document #{}: {}".format(resp.raw_response, idx))
 
 
 async def main():
