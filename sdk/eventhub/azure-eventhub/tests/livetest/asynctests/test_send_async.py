@@ -13,7 +13,7 @@ import json
 
 from azure.eventhub import EventData, TransportType, EventDataBatch
 from azure.eventhub.aio import EventHubProducerClient
-
+from azure.eventhub.exceptions import EventDataSendError
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio
@@ -201,15 +201,17 @@ async def test_send_list_partition_async(connstr_receivers):
     assert received.body_as_str() == payload
 
 
+@pytest.mark.parametrize("to_send, exception_type",
+                         [([], EventDataSendError),
+                          ([EventData("A"*1024)]*1100, ValueError),
+                          ("any str", AttributeError)
+                          ])
 @pytest.mark.liveTest
 @pytest.mark.asyncio
-async def test_send_list_too_large_async(connection_str):
+async def test_send_list_wrong_data_async(connection_str, to_send, exception_type):
     client = EventHubProducerClient.from_connection_string(connection_str)
-    to_send = []
-    for i in range(1100):
-        to_send.append(EventData("A"*1024))
     async with client:
-        with pytest.raises(ValueError):
+        with pytest.raises(exception_type):
             await client.send_batch(to_send)
 
 
