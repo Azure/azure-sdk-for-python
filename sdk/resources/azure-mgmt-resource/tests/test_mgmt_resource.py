@@ -374,7 +374,6 @@ class MgmtResourceTest(AzureMgmtTestCase):
 
     @ResourceGroupPreparer()
     def test_deployments_basic(self, resource_group, location):
-        raise unittest.SkipTest("Must be enabled when api_version works")
         # for more sample templates, see https://github.com/Azure/azure-quickstart-templates
         deployment_name = self.get_resource_name("pytestdeployment")
 
@@ -464,11 +463,7 @@ class MgmtResourceTest(AzureMgmtTestCase):
         validation =self.resource_client.deployments.begin_validate(
            resource_group.name,
            deployment_name,
-           {
-             "properties":{
-                'mode': 'Incremental' 
-              }
-           },
+           {"properties": deployment_params}
         )
         validation = validation.result()
         self.assertTrue(hasattr(validation, 'properties'))
@@ -489,7 +484,6 @@ class MgmtResourceTest(AzureMgmtTestCase):
 
     @ResourceGroupPreparer()
     def test_deployments_at_scope(self, resource_group, location):
-        raise unittest.SkipTest("Disabled as fails for some reason")
         SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
         SCOPE = "subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}".format(
             subscriptionId=SUBSCRIPTION_ID,
@@ -565,15 +559,12 @@ class MgmtResourceTest(AzureMgmtTestCase):
         self.assertIn('cannot be cancelled', cm.exception.message)
 
         # Validate
-        validation =self.resource_client.deployments.begin_validate_at_scope(
+        result =self.resource_client.deployments.begin_validate_at_scope(
             SCOPE,
            deployment_name,
-           {
-             "properties":{
-                'mode': 'Incremental' 
-              }
-           },
+           {"properties": deployment_params}
         )
+        validation = result.result()
         self.assertTrue(hasattr(validation, 'properties'))
 
         # Export template
@@ -591,9 +582,8 @@ class MgmtResourceTest(AzureMgmtTestCase):
         async_delete.wait()
 
     def test_deployments_at_management_group(self):
-        raise unittest.SkipTest("Fails for some reason")
         # create management group use track 1 version
-        group_id = "20000000-0001-0000-0000-000000000123"
+        group_id = "20000000-0001-0000-0000-000000000123456"
         
         if self.is_live:
             result = self.mgmtgroup_client.management_groups.create_or_update(
@@ -679,17 +669,12 @@ class MgmtResourceTest(AzureMgmtTestCase):
         self.assertIn('cannot be cancelled', cm.exception.message)
 
         # Validate
-        validation =self.resource_client.deployments.begin_validate_at_management_group_scope(
+        result =self.resource_client.deployments.begin_validate_at_management_group_scope(
             group_id,
             deployment_name,
-            {
-              "location": "West US",
-              "properties":{
-                'mode': 'Incremental' 
-              }
-            },
+            {"location": "West US", "properties": deployment_params}
         )
-        validation = validation.result()
+        validation = result.result()
         self.assertTrue(hasattr(validation, 'properties'))
 
         # Export template
@@ -712,7 +697,6 @@ class MgmtResourceTest(AzureMgmtTestCase):
             result = result.result()
     
     def test_deployments_at_subscription(self):
-        raise unittest.SkipTest("Fails for some reason")
         # for more sample templates, see https://github.com/Azure/azure-quickstart-templates
         deployment_name = self.get_resource_name("pytestlinked")
 
@@ -765,12 +749,7 @@ class MgmtResourceTest(AzureMgmtTestCase):
         # What if
         result = self.resource_client.deployments.begin_what_if_at_subscription_scope(
             deployment_name,
-            {
-              "mode": 'Incremental',
-              "template_link": template,
-              "parameters": {"location": { "value": "West US"}}
-            },
-            location="West Us"
+            {"location": "West US", "properties": deployment_params}
         )
         result = result.result()
 
@@ -796,15 +775,11 @@ class MgmtResourceTest(AzureMgmtTestCase):
         self.assertIn('cannot be cancelled', cm.exception.message)
 
         # Validate
-        validation =self.resource_client.deployments.validate_at_subscription_scope(
+        result =self.resource_client.deployments.begin_validate_at_subscription_scope(
             deployment_name,
-            {
-              "location": "West US",
-              "properties":{
-                'mode': 'Incremental' 
-              }
-            },
+            {"location": "West US", "properties": deployment_params}
         )
+        validation = result.result()
         self.assertTrue(hasattr(validation, 'properties'))
 
         # Export template
@@ -891,12 +866,7 @@ class MgmtResourceTest(AzureMgmtTestCase):
         # Validate
         validation =self.resource_client.deployments.validate_at_tenant_scope(
             deployment_name,
-            {
-              "location": "West US",
-              "properties":{
-                'mode': "Incremental"
-              }
-            },
+            {"properties": deployment_params}
         )
         self.assertTrue(hasattr(validation, 'properties'))
 
