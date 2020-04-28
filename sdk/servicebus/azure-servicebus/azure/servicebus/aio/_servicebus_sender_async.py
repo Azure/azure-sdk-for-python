@@ -248,9 +248,9 @@ class ServiceBusSender(BaseHandlerAsync, SenderMixin):
         :param message: The ServiceBus message to be sent.
         :type message: ~azure.servicebus.Message or ~azure.servicebus.BatchMessage
         :rtype: None
-        :raises: :class: ~azure.servicebus.common.errors.MessageSendFailed if the message fails to
+        :raises: :class: ~azure.servicebus.exceptions.MessageSendFailed if the message fails to
          send
-                :class: ~azure.servicebus.common.errors.OperationTimeoutError if sending times out.
+                :class: ~azure.servicebus.exceptions.OperationTimeoutError if sending times out.
                 :class: `ValueError` if list of messages is provided and cannot fit in a batch.
 
         .. admonition:: Example:
@@ -265,8 +265,7 @@ class ServiceBusSender(BaseHandlerAsync, SenderMixin):
         """
         try:
             batch = await self.create_batch()
-            for each in message:
-                batch.add(each)
+            batch._from_list(message)
             message = batch
         except TypeError: # Message was not a list or generator.
             pass

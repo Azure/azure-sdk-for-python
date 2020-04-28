@@ -724,13 +724,13 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
         async with ServiceBusClient.from_connection_string(
             servicebus_namespace_connection_string, logging_enable=False) as sb_client:
 
-            too_large = "A" * 1024 * 512
+            too_large = "A" * 1024 * 256
             
             async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                 with pytest.raises(MessageSendFailed):
                     await sender.send(Message(too_large))
                     
-                half_too_large = "A" * int((1024 * 512) / 2)
+                half_too_large = "A" * int((1024 * 256) / 2)
                 with pytest.raises(ValueError):
                     await sender.send([Message(half_too_large), Message(half_too_large)])
 
