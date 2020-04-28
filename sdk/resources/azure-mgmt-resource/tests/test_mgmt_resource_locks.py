@@ -50,7 +50,6 @@ class MgmtResourceLocksTest(AzureMgmtTestCase):
 
     @ResourceGroupPreparer()
     def test_locks_by_scope(self, resource_group):
-        raise unittest.SkipTest("Must be enabled when api_version works")
         lock_name = "pylockrg"
         SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
         resource_name = self.get_resource_name("pytestavset")
@@ -92,14 +91,13 @@ class MgmtResourceLocksTest(AzureMgmtTestCase):
         )
 
         result = self.resource_client.resources.begin_delete_by_id(
-            new_resource_id,
+            resource_id,
             api_version="2019-07-01"
         )
         result = result.result()
 
     @ResourceGroupPreparer()
     def test_locks_at_resource_level(self, resource_group, location):
-        raise unittest.SkipTest("Must be enabled when api_version works")
         lock_name = 'pylockrg'
         resource_name = self.get_resource_name("pytestavset")
 

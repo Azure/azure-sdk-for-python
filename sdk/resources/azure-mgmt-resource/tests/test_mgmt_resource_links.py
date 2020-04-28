@@ -13,7 +13,6 @@
 import unittest
 
 import azure.mgmt.resource
-import azure.mgmt.resource.resources.v2019_07_01
 from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 
 class MgmtResourceLinksTest(AzureMgmtTestCase):
@@ -24,12 +23,11 @@ class MgmtResourceLinksTest(AzureMgmtTestCase):
             azure.mgmt.resource.ManagementLinkClient
         )
         self.resource_client = self.create_mgmt_client(
-            azure.mgmt.resource.resources.v2019_07_01.ResourceManagementClient
+            azure.mgmt.resource.resources.ResourceManagementClient
         )
 
     @ResourceGroupPreparer()
     def test_links(self, resource_group, location):
-        raise unittest.SkipTest("Must be enabled when api_version works")
         if not self.is_playback():
             resource_name = self.get_resource_name("pytestavset")
             create_result = self.resource_client.resources.begin_create_or_update(
@@ -38,7 +36,8 @@ class MgmtResourceLinksTest(AzureMgmtTestCase):
                 parent_resource_path="",
                 resource_type="availabilitySets",
                 resource_name=resource_name,
-                parameters={'location': location}
+                parameters={'location': location},
+                api_version='2019-07-01'
             )
             result = create_result.result()
             self.result_id = result.id
@@ -49,6 +48,7 @@ class MgmtResourceLinksTest(AzureMgmtTestCase):
         link = self.client.resource_links.create_or_update(
             # resource_group.id+'/providers/Microsoft.Resources/links/myLink',
             self.result_id + '/Microsoft.Resources/links/myLink',
+            '2019-07-01',
             {
                 'target_id' : self.result_id,
                 'notes': 'Testing links'
