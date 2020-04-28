@@ -142,6 +142,34 @@ def test_scopes_round_trip():
     assert request_token.call_count == 1, "validation method wasn't called"
 
 
+@pytest.mark.parametrize(
+    "authority,expected_scope",
+    (
+        (KnownAuthorities.AZURE_CHINA, "https://management.core.chinacloudapi.cn//.default"),
+        (KnownAuthorities.AZURE_GERMANY, "https://management.core.cloudapi.de//.default"),
+        (KnownAuthorities.AZURE_GOVERNMENT, "https://management.core.usgovcloudapi.net//.default"),
+        (KnownAuthorities.AZURE_PUBLIC_CLOUD, "https://management.core.windows.net//.default"),
+    ),
+)
+def test_authenticate_default_scopes(authority, expected_scope):
+    """when given no scopes, authenticate should default to the ARM scope appropriate for the configured authority"""
+
+    def validate_scopes(*scopes):
+        assert scopes == (expected_scope,)
+        return {"access_token": "**", "expires_in": 42}
+
+    request_token = Mock(wraps=validate_scopes)
+    MockCredential(authority=authority, request_token=request_token).authenticate()
+    assert request_token.call_count == 1
+
+
+def test_authenticate_unknown_cloud():
+    """authenticate should raise when given no scopes in an unknown cloud"""
+
+    with pytest.raises(CredentialUnavailableError):
+        MockCredential(authority="localhost").authenticate()
+
+
 @pytest.mark.parametrize("option", (True, False))
 def test_authenticate_ignores_disable_automatic_authentication(option):
     """authenticate should prompt for authentication regardless of the credential's configuration"""

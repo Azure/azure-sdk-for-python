@@ -20,7 +20,8 @@ from azure.core.exceptions import ClientAuthenticationError
 
 from .exception_wrapper import wrap_exceptions
 from .msal_transport_adapter import MsalTransportAdapter
-from .._exceptions import AuthenticationRequiredError
+from .._constants import KnownAuthorities
+from .._exceptions import AuthenticationRequiredError, CredentialUnavailableError
 from .._internal import get_default_authority, normalize_authority
 from .._auth_record import AuthenticationRecord
 
@@ -40,6 +41,13 @@ if TYPE_CHECKING:
 
 
 _LOGGER = logging.getLogger(__name__)
+
+_DEFAULT_AUTHENTICATE_SCOPES = {
+    "https://" + KnownAuthorities.AZURE_CHINA: ("https://management.core.chinacloudapi.cn//.default",),
+    "https://" + KnownAuthorities.AZURE_GERMANY: ("https://management.core.cloudapi.de//.default",),
+    "https://" + KnownAuthorities.AZURE_GOVERNMENT: ("https://management.core.usgovcloudapi.net//.default",),
+    "https://" + KnownAuthorities.AZURE_PUBLIC_CLOUD: ("https://management.core.windows.net//.default",),
+}
 
 
 def _decode_client_info(raw):
@@ -91,11 +99,9 @@ class MsalCredential(ABC):
 
     def __init__(self, client_id, client_credential=None, **kwargs):
         # type: (str, Optional[Union[str, Mapping[str, str]]], **Any) -> None
-        tenant_id = kwargs.pop("tenant_id", None) or "organizations"
         authority = kwargs.pop("authority", None)
-        authority = normalize_authority(authority) if authority else get_default_authority()
-
-        self._base_url = "/".join((authority, tenant_id.strip("/")))
+        self._authority = normalize_authority(authority) if authority else get_default_authority()
+        self._tenant_id = kwargs.pop("tenant_id", None) or "organizations"
 
         self._client_credential = client_credential
         self._client_id = client_id
@@ -130,7 +136,7 @@ class MsalCredential(ABC):
             app = cls(
                 client_id=self._client_id,
                 client_credential=self._client_credential,
-                authority=self._base_url,
+                authority="{}/{}".format(self._authority, self._tenant_id),
                 token_cache=self._cache,
             )
 
@@ -242,7 +248,7 @@ class InteractiveCredential(PublicClientCredential):
         # type: (**Any) -> AuthenticationRecord
         """Interactively authenticate a user.
 
-        :keyword Sequence[str] scopes: optional scopes to request during authentication, such as those provided by
+        :keyword Sequence[str] scopes: scopes to request during authentication, such as those provided by
           :func:`AuthenticationRequiredError.scopes`. If provided, successful authentication will cache an access token
           for these scopes.
         :rtype: ~azure.identity.AuthenticationRecord
@@ -250,7 +256,16 @@ class InteractiveCredential(PublicClientCredential):
           attribute gives a reason.
         """
 
-        scopes = kwargs.pop("scopes", None) or ("https://management.azure.com/.default",)
+        scopes = kwargs.pop("scopes", None)
+        if not scopes:
+            if self._authority not in _DEFAULT_AUTHENTICATE_SCOPES:
+                # the credential is configured to use a cloud whose ARM scope we can't determine
+                raise CredentialUnavailableError(
+                    message="Authenticating in this environment requires a value for the 'scopes' keyword argument."
+                )
+
+            scopes = _DEFAULT_AUTHENTICATE_SCOPES[self._authority]
+
         _ = self.get_token(*scopes, _allow_prompt=True, **kwargs)
         return self.authentication_record  # type: ignore
 
