@@ -9,7 +9,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-resource/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-resource/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/providers/Microsoft.Web?api-version=2019-10-01
   response:
@@ -509,7 +509,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 27 Apr 2020 18:01:20 GMT
+      - Tue, 28 Apr 2020 09:59:09 GMT
       expires:
       - '-1'
       pragma:

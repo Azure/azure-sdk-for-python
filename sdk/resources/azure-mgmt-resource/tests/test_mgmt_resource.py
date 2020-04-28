@@ -230,7 +230,6 @@ class MgmtResourceTest(AzureMgmtTestCase):
 
     @ResourceGroupPreparer()
     def test_resources(self, resource_group, location):
-        raise unittest.SkipTest("Must be enabled when api_version works")
         SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
         resource_name = self.get_resource_name("pytestavset")
         resource_name_2 = self.get_resource_name("pytestavset123")
@@ -310,15 +309,16 @@ class MgmtResourceTest(AzureMgmtTestCase):
 
         async_move = self.resource_client.resources.begin_validate_move_resources(
            resource_group.name,
-           [get_result.id],
-           new_group.id
+           {
+             'resources': [get_result.id],
+             'target_resource_group': new_group.id
+           }
         )
         async_move.result()
 
         async_move = self.resource_client.resources.begin_move_resources(
            resource_group.name,
-           [get_result.id],
-           new_group.id
+           {                                                                                                                                                                                                             'resources': [get_result.id],                                                                                                                                                                               'target_resource_group': new_group.id                                                                                                                                                                     }
         )
         async_move.result()
 
