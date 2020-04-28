@@ -6,6 +6,9 @@
 
 * Added method `get_topic_sender` in `ServiceBusClient` to get a `ServiceBusSender` for a topic.
 * Added method `get_subscription_receiver` in `ServiceBusClient` to get a `ServiceBusReceiver` for a subscription under specific topic.
+* Added support for scheduling messages and scheduled message cancellation.
+    - Use `ServiceBusSender.schedule` for scheduling messages.
+    - Use `ServiceBusSender.cancel_scheduled_messages` for scheduled messages cancellation.
 
 **BugFixes**
 
