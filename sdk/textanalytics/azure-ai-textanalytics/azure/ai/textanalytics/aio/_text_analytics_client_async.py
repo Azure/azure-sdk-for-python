@@ -32,8 +32,7 @@ from .._models import (
     RecognizeLinkedEntitiesResult,
     ExtractKeyPhrasesResult,
     AnalyzeSentimentResult,
-    DocumentError,
-    Encoding
+    DocumentError
 )
 
 if TYPE_CHECKING:
@@ -157,7 +156,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 documents=docs,
                 model_version=model_version,
                 show_stats=show_stats,
-                cls=kwargs.pop("cls", partial(language_result, encoding=None)),
+                cls=kwargs.pop("cls", partial(language_result, encoding=encoding)),
                 **kwargs
             )
         except HttpResponseError as error:
@@ -225,7 +224,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 documents=docs,
                 model_version=model_version,
                 show_stats=show_stats,
-                cls=kwargs.pop("cls", partial(entities_result, encoding=None)),
+                cls=kwargs.pop("cls", partial(entities_result, encoding=encoding)),
                 **kwargs
             )
         except HttpResponseError as error:
@@ -294,7 +293,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 documents=docs,
                 model_version=model_version,
                 show_stats=show_stats,
-                cls=kwargs.pop("cls", partial(linked_entities_result, encoding=None)),
+                cls=kwargs.pop("cls", partial(linked_entities_result, encoding=encoding)),
                 **kwargs
             )
         except HttpResponseError as error:
@@ -363,7 +362,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 documents=docs,
                 model_version=model_version,
                 show_stats=show_stats,
-                cls=kwargs.pop("cls", partial(key_phrases_result, encoding=None)),
+                cls=kwargs.pop("cls", partial(key_phrases_result, encoding=encoding)),
                 **kwargs
             )
         except HttpResponseError as error:
@@ -431,7 +430,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 documents=docs,
                 model_version=model_version,
                 show_stats=show_stats,
-                cls=kwargs.pop("cls", partial(sentiment_result, encoding=None)),
+                cls=kwargs.pop("cls", partial(sentiment_result, encoding=encoding)),
                 **kwargs
             )
         except HttpResponseError as error:

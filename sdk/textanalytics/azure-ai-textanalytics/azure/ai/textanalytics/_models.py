@@ -4,9 +4,9 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
+from enum import Enum
 from ._generated.models._models import LanguageInput
 from ._generated.models._models import MultiLanguageInput
-from enum import Enum
 
 
 class DictMixin(object):

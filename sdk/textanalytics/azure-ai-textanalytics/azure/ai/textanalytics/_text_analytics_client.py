@@ -25,8 +25,6 @@ from ._response_handlers import (
     language_result
 )
 
-from ._models import Encoding
-
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential, AzureKeyCredential
     from ._models import (
@@ -154,7 +152,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 documents=docs,
                 model_version=model_version,
                 show_stats=show_stats,
-                cls=kwargs.pop("cls", partial(language_result, encoding=None)),
+                cls=kwargs.pop("cls", partial(language_result, encoding=encoding)),
                 **kwargs
             )
         except HttpResponseError as error:
@@ -223,7 +221,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 documents=docs,
                 model_version=model_version,
                 show_stats=show_stats,
-                cls=kwargs.pop("cls", partial(entities_result, encoding=None)),
+                cls=kwargs.pop("cls", partial(entities_result, encoding=encoding)),
                 **kwargs
             )
         except HttpResponseError as error:
@@ -293,7 +291,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 documents=docs,
                 model_version=model_version,
                 show_stats=show_stats,
-                cls=kwargs.pop("cls", partial(linked_entities_result, encoding=None)),
+                cls=kwargs.pop("cls", partial(linked_entities_result, encoding=encoding)),
                 **kwargs
             )
         except HttpResponseError as error:
@@ -363,7 +361,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 documents=docs,
                 model_version=model_version,
                 show_stats=show_stats,
-                cls=kwargs.pop("cls", partial(key_phrases_result, encoding=None)),
+                cls=kwargs.pop("cls", partial(key_phrases_result, encoding=encoding)),
                 **kwargs
             )
         except HttpResponseError as error:
