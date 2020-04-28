@@ -23,6 +23,7 @@ USAGE:
 
 import os
 import logging
+import json
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -33,7 +34,9 @@ class GetDetailedDiagnosticsInformationSample(object):
     def get_detailed_diagnostics_information(self):
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.textanalytics import TextAnalyticsClient
-        text_analytics_client = TextAnalyticsClient(endpoint=self.endpoint, credential=AzureKeyCredential(self.key))
+
+        # This client will log detailed information about its HTTP sessions, at DEBUG level
+        text_analytics_client = TextAnalyticsClient(endpoint=self.endpoint, credential=AzureKeyCredential(self.key), logging_enable=True)
 
         documents = [
             "I had the best day of my life.",
@@ -43,12 +46,12 @@ class GetDetailedDiagnosticsInformationSample(object):
         ]
 
         def callback(resp):
-            _LOGGER.info("document_count: {}".format(resp.statistics["document_count"]))
-            _LOGGER.info("valid_document_count: {}".format(resp.statistics["valid_document_count"]))
-            _LOGGER.info("erroneous_document_count: {}".format(resp.statistics["erroneous_document_count"]))
-            _LOGGER.info("transaction_count: {}".format(resp.statistics["transaction_count"]))
-            _LOGGER.info("model_version: {}".format(resp.model_version))
-            _LOGGER.info("raw_response: {}".format(resp.raw_response))
+            _LOGGER.debug("document_count: {}".format(resp.statistics["document_count"]))
+            _LOGGER.debug("valid_document_count: {}".format(resp.statistics["valid_document_count"]))
+            _LOGGER.debug("erroneous_document_count: {}".format(resp.statistics["erroneous_document_count"]))
+            _LOGGER.debug("transaction_count: {}".format(resp.statistics["transaction_count"]))
+            _LOGGER.debug("model_version: {}".format(resp.model_version))
+            _LOGGER.debug("raw_response in json format: {}".format(json.dumps(resp.raw_response)))
 
         result = text_analytics_client.analyze_sentiment(
             documents,
