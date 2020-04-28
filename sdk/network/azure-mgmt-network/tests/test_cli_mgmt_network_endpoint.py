@@ -24,8 +24,7 @@
 
 import unittest
 
-# import azure.mgmt.privatedns
-import azure.mgmt.network
+import azure.mgmt.network as az_network
 from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 
 AZURE_LOCATION = 'eastus'
@@ -35,12 +34,13 @@ class MgmtNetworkTest(AzureMgmtTestCase):
     def setUp(self):
         super(MgmtNetworkTest, self).setUp()
         self.mgmt_client = self.create_mgmt_client(
-            azure.mgmt.network.NetworkManagementClient
+            az_network.NetworkManagementClient
         )
 
         if self.is_live:
+            import azure.mgmt.privatedns as az_privatedns
             self.dns_client = self.create_mgmt_client(
-                azure.mgmt.privatedns.PrivateDnsManagementClient
+                az_privatedns.PrivateDnsManagementClient
             )
 
     def create_load_balancer(self, group_name, location, load_balancer_name, ip_config_name, subnet_id):
@@ -103,15 +103,19 @@ class MgmtNetworkTest(AzureMgmtTestCase):
         return (subnet_info_1, subnet_info_2)
 
     def create_private_dns_zone(self, group_name, zone_name):
-        # Zones are a 'global' resource.
-        zone = self.dns_client.private_zones.create_or_update(
-            group_name,
-            zone_name,
-            {
-                'location': 'global'
-            }
-        )
-        return zone.result()
+        if self.is_live:
+            # Zones are a 'global' resource.
+            zone = self.dns_client.private_zones.create_or_update(
+                group_name,
+                zone_name,
+                {
+                    'location': 'global'
+                }
+            )
+            return zone.result().id
+        else:
+            return "/subscriptions/" + "00000000-0000-0000-0000-000000000000" + "/resourceGroups/" + group_name + "/providers/Microsoft.Network/privateDnsZones/" + zone_name
+
 
     
     @ResourceGroupPreparer(location=AZURE_LOCATION)
@@ -230,8 +234,7 @@ class MgmtNetworkTest(AzureMgmtTestCase):
         }
         result = self.mgmt_client.private_link_services.update_private_endpoint_connection(resource_group_name=RESOURCE_GROUP, service_name=SERVICE_NAME, pe_connection_name=PE_CONNECTION_NAME, parameters=BODY)
 
-        if self.is_live:
-            self.create_private_dns_zone(RESOURCE_GROUP, ZONE_NAME)
+        self.create_private_dns_zone(RESOURCE_GROUP, ZONE_NAME)
 
         # /PrivateDnsZoneGroups/put/Create private dns zone group[put]  TODO: example needs imporve
         BODY = {
