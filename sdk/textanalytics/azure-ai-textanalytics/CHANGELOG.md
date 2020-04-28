@@ -5,12 +5,15 @@
 **New features**
 - We now have a `warnings` property on each document-level response object returned from the endpoints. It is a list of `TextAnalyticsWarning`s.
 - Added `text` property to `SentenceSentiment`
+- `SentenceSentiment`, `CategorizedEntity`, and `LinkedEntityMatch` will have new property `encoding`, which details the
+encoding used to determine the text unit in their `offset` and `length` properties
+- `TextDocumentStatistics` will also have new property `encoding`, which details the encoding used to determine the text unit of the `count` property.
 
 **Breaking changes**
 - Each endpoint now has a kwarg parameter `encoding` that specifies the encoding you would like each text unit to be recognized as. Though it is not required,
 we strongly suggest users to pass in a value to `encoding` since we can't guarantee the consistency of the returned offset, lengths, and counts if not.
 - `grapheme_length` and `grapheme_offset` attributes have been renamed to `length` and `offset` for the `SentenceSentiment`,
-`CategorizedEntity`, `PiiEntity`, and `LinkedEntityMatch` models. Their encoding will be the value passed in the `encoding` parameter
+`CategorizedEntity`, and `LinkedEntityMatch` models. Their encoding will be the value passed in the `encoding` parameter
 to each endpoint
 - `grapheme_count` in `TextDocumentStatistics` has been renamed to `count`
 - `score` attribute of `DetectedLanguage` has been renamed to `confidence_score`
