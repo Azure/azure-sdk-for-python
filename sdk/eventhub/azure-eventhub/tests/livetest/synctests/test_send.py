@@ -208,13 +208,14 @@ def test_send_list_partition(connstr_receivers):
     assert received.body_as_str() == payload
 
 
-@pytest.mark.parametrize("num, exception_type", [(0, EventDataSendError), (1100, ValueError)])
+@pytest.mark.parametrize("to_send, exception_type",
+                         [([], EventDataSendError),
+                          ([EventData("A"*1024)]*1100, ValueError),
+                          ("any str", AttributeError)
+                          ])
 @pytest.mark.liveTest
-def test_send_list_wrong_data(connection_str, num, exception_type):
+def test_send_list_wrong_data(connection_str, to_send, exception_type):
     client = EventHubProducerClient.from_connection_string(connection_str)
-    to_send = []
-    for i in range(num):
-        to_send.append(EventData("A"*1024))
     with client:
         with pytest.raises(exception_type):
             client.send_batch(to_send)
