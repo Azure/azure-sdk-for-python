@@ -305,7 +305,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
 
         """
         if max_batch_size and self._config.prefetch < max_batch_size:
-            raise ValueError("max_batch_size should be less equal than prefetch of ServiceBusReceiver, or you "
+            raise ValueError("max_batch_size should be less or equal to than prefetch of ServiceBusReceiver, or you "
                              "could set larger a prefetch when you're constructing the ServiceBusReceiver.")
         return self._do_retryable_operation(
             self._receive,
