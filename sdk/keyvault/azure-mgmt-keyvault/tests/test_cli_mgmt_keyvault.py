@@ -35,8 +35,9 @@ class MgmtKeyVaultTest(AzureMgmtTestCase):
     def test_keyvault(self, resource_group):
 
         SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
+        TENANT_ID = "72f988bf-86f1-41af-91ab-2d7cd011db47" # self.settings.TENANT_ID
         RESOURCE_GROUP = resource_group.name
-        VAULT_NAME = "myVaultZzkfi"
+        VAULT_NAME = "myValtZfikfik"
         OPERATION_KIND = "add"
         LOCATION = "eastus"
         PRIVATE_ENDPOINT_CONNECTION_NAME = "myPrivateEndpointConnection"
@@ -45,14 +46,14 @@ class MgmtKeyVaultTest(AzureMgmtTestCase):
         BODY = {
           "location": LOCATION,
           "properties": {
-            "tenant_id": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "tenant_id": TENANT_ID,
             "sku": {
               "family": "A",
               "name": "standard"
             },
             "access_policies": [
               {
-                "tenant_id": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+                "tenant_id": TENANT_ID,
                 "object_id": "00000000-0000-0000-0000-000000000000",
                 "permissions": {
                   "keys": [
@@ -147,7 +148,7 @@ class MgmtKeyVaultTest(AzureMgmtTestCase):
         # /Vaults/put/Add an access policy, or update an access policy with new permissions[put]
         PROPERTIES = [
               {
-                "tenant_id": "00000000-0000-0000-0000-000000000000",
+                "tenant_id": TENANT_ID,
                 "object_id": "00000000-0000-0000-0000-000000000000",
                 "permissions": {
                   "keys": [
@@ -199,14 +200,14 @@ class MgmtKeyVaultTest(AzureMgmtTestCase):
 
         # /Vaults/patch/Update an existing vault[patch]
         PROPERTIES = {
-          "tenant_id": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+          "tenant_id": TENANT_ID,
           "sku": {
             "family": "A",
             "name": "standard"
           },
           "access_policies": [
             {
-              "tenant_id": "00000000-0000-0000-0000-000000000000",
+              "tenant_id": TENANT_ID,
               "object_id": "00000000-0000-0000-0000-000000000000",
               "permissions": {
                 "keys": [
@@ -260,10 +261,10 @@ class MgmtKeyVaultTest(AzureMgmtTestCase):
           "enabled_for_disk_encryption": True,
           "enabled_for_template_deployment": True
         }
-        # result = self.mgmt_client.vaults.update(resource_group_name=RESOURCE_GROUP, vault_name=VAULT_NAME, properties=PROPERTIES)
+        result = self.mgmt_client.vaults.update(resource_group_name=RESOURCE_GROUP, vault_name=VAULT_NAME, parameters=PROPERTIES)
 
         # /Vaults/post/Validate a vault name[post]
-        # result = self.mgmt_client.vaults.check_name_availability(vault_name="sample-vault", type="Microsoft.KeyVault/vaults")
+        result = self.mgmt_client.vaults.check_name_availability({ 'name': 'sample-vault', 'type': 'Microsoft.KeyVault/vaults' })
 
         # /PrivateEndpointConnections/delete/KeyVaultDeletePrivateEndpointConnection[delete]
         # result = self.mgmt_client.private_endpoint_connections.delete(resource_group_name=RESOURCE_GROUP, vault_name=VAULT_NAME, private_endpoint_connection_name=PRIVATE_ENDPOINT_CONNECTION_NAME)
