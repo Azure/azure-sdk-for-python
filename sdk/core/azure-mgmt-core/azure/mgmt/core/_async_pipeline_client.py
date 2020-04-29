@@ -27,10 +27,9 @@ from azure.core import AsyncPipelineClient
 from azure.core.pipeline.policies import (
     ContentDecodePolicy,
     DistributedTracingPolicy,
-    HttpLoggingPolicy,
     RequestIdPolicy,
 )
-from .policies import AsyncARMAutoResourceProviderRegistrationPolicy
+from .policies import AsyncARMAutoResourceProviderRegistrationPolicy, ARMHttpLoggingPolicy
 
 
 class AsyncARMPipelineClient(AsyncPipelineClient):
@@ -66,5 +65,5 @@ class AsyncARMPipelineClient(AsyncPipelineClient):
             config.custom_hook_policy,
             config.logging_policy,
             DistributedTracingPolicy(**kwargs),
-            HttpLoggingPolicy(**kwargs),
+            ARMHttpLoggingPolicy(**kwargs),
         ]

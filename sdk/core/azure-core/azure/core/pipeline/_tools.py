@@ -24,25 +24,11 @@
 #
 # --------------------------------------------------------------------------
 
-from ._requests_basic import RequestsTransport
-from ._base_async import AsyncHttpTransport
-
-class RequestsAsyncTransportBase(RequestsTransport, AsyncHttpTransport):
-    async def _retrieve_request_data(self, request):
-        if hasattr(request.data, '__aiter__'):
-            # Need to consume that async generator, since requests can't do anything with it
-            # That's not ideal, but a list is our only choice. Memory not optimal here,
-            # but providing an async generator to a requests based transport is not optimal too
-            new_data = []
-            async for part in request.data:
-                new_data.append(part)
-            data_to_send = iter(new_data)
-        else:
-            data_to_send = request.data
-        return data_to_send
-
-    async def __aenter__(self):
-        return super(RequestsAsyncTransportBase, self).__enter__()
-
-    async def __aexit__(self, *exc_details):  # pylint: disable=arguments-differ
-        return super(RequestsAsyncTransportBase, self).__exit__()
+def await_result(func, *args, **kwargs):
+    """If func returns an awaitable, raise that this runner can't handle it."""
+    result = func(*args, **kwargs)
+    if hasattr(result, "__await__"):
+        raise TypeError(
+            "Policy {} returned awaitable object in non-async pipeline.".format(func)
+        )
+    return result
