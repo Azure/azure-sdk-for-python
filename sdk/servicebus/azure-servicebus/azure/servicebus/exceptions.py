@@ -65,25 +65,20 @@ def _error_handler(error):
 def _create_servicebus_exception(logger, exception, handler):
     error_need_close_handler = True
     error_need_raise = False
-    if isinstance(
-        exception,
-        (
-            errors.MessageAccepted,
-            errors.MessageAlreadySettled,
-            errors.MessageModified,
-            errors.MessageRejected,
-            errors.MessageReleased,
-            errors.MessageContentTooLarge,
-            # TODO: which ones should be included. Do we need to separate MessageError from MessageSendFailed?
-        ),
-    ):
-        logger.info("Message error (%r)", exception)
-        error = MessageError(exception)
-        raise error
+    if isinstance(exception, errors.MessageAlreadySettled):
+        logger.info("Message already settled (%r)", exception)
+        error = MessageAlreadySettled(exception)
+        error_need_close_handler = False
+        error_need_raise = True
+    elif isinstance(exception, errors.MessageContentTooLarge):
+        logger.info("Message content is too large (%r)", exception)
+        error = MessageContentTooLarge(exception)
+        error_need_close_handler = False
+        error_need_raise = True
     elif isinstance(exception, errors.MessageException):
         logger.info("Message send failed (%r)", exception)
         error = MessageSendFailed(exception)
-        raise error
+        error_need_raise = False
     elif isinstance(exception, errors.LinkDetach) and exception.condition == SESSION_LOCK_LOST:
         try:
             session_id = handler._session_id  # pylint: disable=protected-access
@@ -186,7 +181,15 @@ class OperationTimeoutError(ServiceBusError):
     """Operation timed out."""
 
 
-class MessageAlreadySettled(ServiceBusError):
+class MessageError(ServiceBusError):
+    """A message failed to send because the message is in a wrong state"""
+
+
+class MessageContentTooLarge(MessageError, ValueError):
+    """Message content is larger than the service bus frame size"""
+
+
+class MessageAlreadySettled(MessageError):
     """Failed to settle the message.
 
     An attempt was made to complete an operation on a message that has already
@@ -208,10 +211,6 @@ class MessageSettleFailed(ServiceBusError):
         message = "Failed to {} message. Error: {}".format(action, inner_exception)
         self.inner_exception = inner_exception
         super(MessageSettleFailed, self).__init__(message, inner_exception)
-
-
-class MessageError(ServiceBusError):
-    """A message failed to send because the message is in a wrong state"""
 
 
 class MessageSendFailed(ServiceBusError):

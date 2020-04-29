@@ -43,8 +43,8 @@ from ..exceptions import (
     MessageAlreadySettled,
     MessageLockExpired,
     SessionLockExpired,
-    MessageSettleFailed
-)
+    MessageSettleFailed,
+    MessageContentTooLarge)
 from .utils import utc_from_timestamp, utc_now
 
 _LOGGER = logging.getLogger(__name__)
@@ -334,7 +334,7 @@ class BatchMessage(object):
         )
 
         if size_after_add > self.max_size_in_bytes:
-            raise ValueError(
+            raise MessageContentTooLarge(
                 "EventDataBatch has reached its size limit: {}".format(
                     self.max_size_in_bytes
                 )
