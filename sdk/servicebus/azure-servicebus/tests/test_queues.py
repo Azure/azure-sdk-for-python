@@ -717,14 +717,6 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 with pytest.raises(ValueError):
                     sender.send([Message(half_too_large), Message(half_too_large)])
     
-            # TODO: Reenable once queue_message is added.
-            #with sb_client.get_queue_sender(servicebus_queue.name) as sender:
-            #    sender.queue_message(Message(too_large))
-            #    results = sender.send_pending_messages()
-            #    assert len(results) == 1
-            #    assert not results[0][0]
-            #    assert isinstance(results[0][1], MessageSendFailed)
-    
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only

@@ -246,7 +246,7 @@ class ServiceBusSender(BaseHandlerAsync, SenderMixin):
         `ValueError` if they cannot fit in a single batch.
 
         :param message: The ServiceBus message to be sent.
-        :type message: ~azure.servicebus.Message or ~azure.servicebus.BatchMessage
+        :type message: ~azure.servicebus.Message or ~azure.servicebus.BatchMessage or list[~azure.servicebus.Message]
         :rtype: None
         :raises: :class: ~azure.servicebus.exceptions.MessageSendFailed if the message fails to
          send

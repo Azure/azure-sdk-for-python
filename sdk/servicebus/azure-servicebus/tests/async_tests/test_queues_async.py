@@ -734,13 +734,6 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 with pytest.raises(ValueError):
                     await sender.send([Message(half_too_large), Message(half_too_large)])
 
-            # TODO: Reenable this when queue_message exists.
-            #async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
-            #    sender.queue_message(Message(too_large))
-            #    results = await sender.send_pending_messages()
-            #    assert len(results) == 1
-            #    assert not results[0][0]
-            #    assert isinstance(results[0][1], MessageSendFailed)
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
