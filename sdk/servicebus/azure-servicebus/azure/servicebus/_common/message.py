@@ -301,6 +301,12 @@ class BatchMessage(object):
     def __len__(self):
         return self._count
 
+    def _from_list(self, messages):
+        for each in messages:
+            if not isinstance(each, Message):
+                raise ValueError("Populating a message batch only supports iterables containing Message Objects.  Received instead: {}".format(each.__class__.__name__))
+            self.add(each)
+
     @property
     def size_in_bytes(self):
         # type: () -> int
@@ -599,10 +605,10 @@ class ReceivedMessage(PeekMessage):
         This removes the message from the queue.
 
         :rtype: None
-        :raises: ~azure.servicebus.common.errors.MessageAlreadySettled if the message has been settled.
-        :raises: ~azure.servicebus.common.errors.MessageLockExpired if message lock has already expired.
-        :raises: ~azure.servicebus.common.errors.SessionLockExpired if session lock has already expired.
-        :raises: ~azure.servicebus.common.errors.MessageSettleFailed if message settle operation fails.
+        :raises: ~azure.servicebus.exceptions.MessageAlreadySettled if the message has been settled.
+        :raises: ~azure.servicebus.exceptions.MessageLockExpired if message lock has already expired.
+        :raises: ~azure.servicebus.exceptions.SessionLockExpired if session lock has already expired.
+        :raises: ~azure.servicebus.exceptions.MessageSettleFailed if message settle operation fails.
         """
         # pylint: disable=protected-access
         self._is_live(MESSAGE_COMPLETE)
@@ -620,10 +626,10 @@ class ReceivedMessage(PeekMessage):
         :param str reason: The reason for dead-lettering the message.
         :param str description: The detailed description for dead-lettering the message.
         :rtype: None
-        :raises: ~azure.servicebus.common.errors.MessageAlreadySettled if the message has been settled.
-        :raises: ~azure.servicebus.common.errors.MessageLockExpired if message lock has already expired.
-        :raises: ~azure.servicebus.common.errors.SessionLockExpired if session lock has already expired.
-        :raises: ~azure.servicebus.common.errors.MessageSettleFailed if message settle operation fails.
+        :raises: ~azure.servicebus.exceptions.MessageAlreadySettled if the message has been settled.
+        :raises: ~azure.servicebus.exceptions.MessageLockExpired if message lock has already expired.
+        :raises: ~azure.servicebus.exceptions.SessionLockExpired if session lock has already expired.
+        :raises: ~azure.servicebus.exceptions.MessageSettleFailed if message settle operation fails.
         """
         # pylint: disable=protected-access
         self._is_live(MESSAGE_DEAD_LETTER)
@@ -642,10 +648,10 @@ class ReceivedMessage(PeekMessage):
         This message will be returned to the queue to be reprocessed.
 
         :rtype: None
-        :raises: ~azure.servicebus.common.errors.MessageAlreadySettled if the message has been settled.
-        :raises: ~azure.servicebus.common.errors.MessageLockExpired if message lock has already expired.
-        :raises: ~azure.servicebus.common.errors.SessionLockExpired if session lock has already expired.
-        :raises: ~azure.servicebus.common.errors.MessageSettleFailed if message settle operation fails.
+        :raises: ~azure.servicebus.exceptions.MessageAlreadySettled if the message has been settled.
+        :raises: ~azure.servicebus.exceptions.MessageLockExpired if message lock has already expired.
+        :raises: ~azure.servicebus.exceptions.SessionLockExpired if session lock has already expired.
+        :raises: ~azure.servicebus.exceptions.MessageSettleFailed if message settle operation fails.
         """
         # pylint: disable=protected-access
         self._is_live(MESSAGE_ABANDON)
@@ -660,10 +666,10 @@ class ReceivedMessage(PeekMessage):
         specifically by its sequence number in order to be processed.
 
         :rtype: None
-        :raises: ~azure.servicebus.common.errors.MessageAlreadySettled if the message has been settled.
-        :raises: ~azure.servicebus.common.errors.MessageLockExpired if message lock has already expired.
-        :raises: ~azure.servicebus.common.errors.SessionLockExpired if session lock has already expired.
-        :raises: ~azure.servicebus.common.errors.MessageSettleFailed if message settle operation fails.
+        :raises: ~azure.servicebus.exceptions.MessageAlreadySettled if the message has been settled.
+        :raises: ~azure.servicebus.exceptions.MessageLockExpired if message lock has already expired.
+        :raises: ~azure.servicebus.exceptions.SessionLockExpired if session lock has already expired.
+        :raises: ~azure.servicebus.exceptions.MessageSettleFailed if message settle operation fails.
         """
         self._is_live(MESSAGE_DEFER)
         self._settle_message(MESSAGE_DEFER)
@@ -682,8 +688,8 @@ class ReceivedMessage(PeekMessage):
 
         :rtype: None
         :raises: TypeError if the message is sessionful.
-        :raises: ~azure.servicebus.common.errors.MessageLockExpired is message lock has already expired.
-        :raises: ~azure.servicebus.common.errors.MessageAlreadySettled is message has already been settled.
+        :raises: ~azure.servicebus.exceptions.MessageLockExpired is message lock has already expired.
+        :raises: ~azure.servicebus.exceptions.MessageAlreadySettled is message has already been settled.
         """
         try:
             if self._receiver.session:

@@ -6,6 +6,7 @@
 
 * Added method `get_topic_sender` in `ServiceBusClient` to get a `ServiceBusSender` for a topic.
 * Added method `get_subscription_receiver` in `ServiceBusClient` to get a `ServiceBusReceiver` for a subscription under specific topic.
+* `ServiceBusSender.send()` can now send a list of messages in one call, if they fit into a single batch.  If they do not fit a `ValueError` is thrown.
 
 **BugFixes**
 
