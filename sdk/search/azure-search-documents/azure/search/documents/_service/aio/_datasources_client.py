@@ -15,7 +15,7 @@ from ..._version import SDK_MONIKER
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
     from .._generated.models import DataSource
-    from typing import Any, Dict, Optional, Sequence
+    from typing import Any, Dict, Optional, Sequence, Union
     from azure.core.credentials import AzureKeyCredential
 
 

@@ -16,7 +16,7 @@ from ..._version import SDK_MONIKER
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
     from .._generated.models import Skill
-    from typing import Any, List, Sequence
+    from typing import Any, List, Sequence, Union
     from azure.core.credentials import AzureKeyCredential
 
 

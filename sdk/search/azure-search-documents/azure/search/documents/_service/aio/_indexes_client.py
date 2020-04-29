@@ -6,22 +6,11 @@
 from typing import TYPE_CHECKING
 
 from azure.core.tracing.decorator_async import distributed_trace_async
-from azure.core import MatchConditions
-from azure.core.exceptions import (
-    ResourceExistsError,
-    ResourceNotFoundError,
-    ResourceModifiedError,
-    ResourceNotModifiedError,
-)
 from azure.core.async_paging import AsyncItemPaged
-
 from .._generated.aio import SearchServiceClient as _SearchServiceClient
-from .._generated.models import AccessCondition
 from .._utils import (
     delistize_flags_for_index,
     listize_flags_for_index,
-    prep_if_match,
-    prep_if_none_match,
     get_access_conditions
 )
 from ..._headers_mixin import HeadersMixin
@@ -30,7 +19,7 @@ from ..._version import SDK_MONIKER
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
     from .._generated.models import AnalyzeRequest, AnalyzeResult, Index
-    from typing import Any, Dict, List
+    from typing import Any, Dict, List, Union
     from azure.core.credentials import AzureKeyCredential
 
 

@@ -155,7 +155,7 @@ def listize_synonyms(synonym_map):
 
 def get_access_conditions(model, only_if_unchanged=False):
     if not only_if_unchanged:
-        return
+        return None
     try:
         return AccessCondition(if_match=model.e_tag)
     except AttributeError:
