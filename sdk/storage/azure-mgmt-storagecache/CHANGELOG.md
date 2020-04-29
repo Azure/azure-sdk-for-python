@@ -1,4 +1,5 @@
 # Release History
+
 ## 0.3.0 (2020-03-01)
 
 **Features**
