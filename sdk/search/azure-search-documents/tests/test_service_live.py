@@ -52,18 +52,23 @@ class SearchIndexesClientTest(AzureMgmtTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer()
-    def test_get_indexes_empty(self, api_key, endpoint, **kwargs):
+    def test_list_indexes_empty(self, api_key, endpoint, **kwargs):
         client = SearchServiceClient(endpoint, AzureKeyCredential(api_key)).get_indexes_client()
-        result = client.get_indexes()
-        assert len(result) == 0
+        result = client.list_indexes()
+        with pytest.raises(StopIteration):
+            next(result)
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
-    def test_get_indexes(self, api_key, endpoint, index_name, **kwargs):
+    def test_list_indexes(self, api_key, endpoint, index_name, **kwargs):
         client = SearchServiceClient(endpoint, AzureKeyCredential(api_key)).get_indexes_client()
-        result = client.get_indexes()
-        assert len(result) == 1
-        assert result[0].name == index_name
+        result = client.list_indexes()
+
+        first = next(result)
+        assert first.name == index_name
+
+        with pytest.raises(StopIteration):
+            next(result)
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
@@ -87,8 +92,9 @@ class SearchIndexesClientTest(AzureMgmtTestCase):
         import time
         if self.is_live:
             time.sleep(TIME_TO_SLEEP)
-        result = client.get_indexes()
-        assert len(result) == 0
+        result = client.list_indexes()
+        with pytest.raises(StopIteration):
+            next(result)
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)

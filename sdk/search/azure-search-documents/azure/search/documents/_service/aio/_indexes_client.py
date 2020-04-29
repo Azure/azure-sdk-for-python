@@ -13,6 +13,8 @@ from azure.core.exceptions import (
     ResourceModifiedError,
     ResourceNotModifiedError,
 )
+from azure.core.async_paging import AsyncItemPaged
+
 from .._generated.aio import SearchServiceClient as _SearchServiceClient
 from .._generated.models import AccessCondition
 from .._utils import (
@@ -67,8 +69,8 @@ class SearchIndexesClient(HeadersMixin):
         return await self._client.close()
 
     @distributed_trace_async
-    async def get_indexes(self, **kwargs):
-        # type: (**Any) -> List[Index]
+    async def list_indexes(self, **kwargs):
+        # type: (**Any) -> AsyncItemPaged[Index]
         """List the indexes in an Azure Search service.
 
         :return: List of indexes
@@ -77,9 +79,14 @@ class SearchIndexesClient(HeadersMixin):
 
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        result = await self._client.indexes.list(**kwargs)
-        indexes = [listize_flags_for_index(x) for x in result.indexes]
-        return indexes
+
+        async def get_next(_token):
+            return await self._client.indexes.list(**kwargs)
+
+        async def extract_data(response):
+            return None, [listize_flags_for_index(x) for x in response.indexes]
+
+        return AsyncItemPaged(get_next=get_next, extract_data=extract_data)
 
     @distributed_trace_async
     async def get_index(self, index_name, **kwargs):
