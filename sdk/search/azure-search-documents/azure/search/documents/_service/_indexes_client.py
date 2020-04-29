@@ -13,6 +13,7 @@ from azure.core.exceptions import (
     ResourceModifiedError,
     ResourceNotModifiedError,
 )
+from azure.core.paging import ItemPaged
 
 from ._generated import SearchServiceClient as _SearchServiceClient
 from ._generated.models import AccessCondition
@@ -68,8 +69,8 @@ class SearchIndexesClient(HeadersMixin):
         return self._client.close()
 
     @distributed_trace
-    def get_indexes(self, **kwargs):
-        # type: (**Any) -> List[Index]
+    def list_indexes(self, **kwargs):
+        # type: (**Any) -> ItemPaged[Index]
         """List the indexes in an Azure Search service.
 
         :return: List of indexes
@@ -78,9 +79,14 @@ class SearchIndexesClient(HeadersMixin):
 
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        result = self._client.indexes.list(**kwargs)
-        indexes = [listize_flags_for_index(x) for x in result.indexes]
-        return indexes
+
+        def get_next(_token):
+            return self._client.indexes.list(**kwargs)
+
+        def extract_data(response):
+            return None, [listize_flags_for_index(x) for x in response.indexes]
+
+        return ItemPaged(get_next=get_next, extract_data=extract_data)
 
     @distributed_trace
     def get_index(self, index_name, **kwargs):

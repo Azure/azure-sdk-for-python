@@ -11,12 +11,12 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/1.0.0b3 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
       api-key:
-      - AEC2AE27CD62E5B29C1DBC9E3F05E4DE
+      - 5D71A4AC510EB388533DCC85D1D1D37D
     method: GET
-    uri: https://search5259108a.search.windows.net/indexes?api-version=2019-05-06-Preview
+    uri: https://search64601106.search.windows.net/indexes?api-version=2019-05-06-Preview
   response:
     body:
-      string: '{"@odata.context":"https://search5259108a.search.windows.net/$metadata#indexes","value":[]}'
+      string: '{"@odata.context":"https://search64601106.search.windows.net/$metadata#indexes","value":[]}'
     headers:
       cache-control:
       - no-cache
@@ -25,9 +25,9 @@ interactions:
       content-type:
       - application/json; odata.metadata=minimal
       date:
-      - Tue, 21 Apr 2020 21:01:03 GMT
+      - Wed, 29 Apr 2020 17:45:05 GMT
       elapsed-time:
-      - '53'
+      - '46'
       expires:
       - '-1'
       odata-version:
@@ -37,7 +37,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - 35276268-8413-11ea-8200-8c8590507855
+      - 2954c348-8a41-11ea-8547-8c8590507855
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:
