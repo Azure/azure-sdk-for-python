@@ -49,8 +49,8 @@ jobs:
           cd autorest.python
           git checkout $(repo_branch)
           npm install
-          pytest test/vanila
-        displayName: 'Run Test Vanila'
+          pytest test/vanilla
+        displayName: 'Run Test Vanilla'
 
       - script: |
           pip install $(Build.SourcesDirectory)/$(source_path_azure_mgmt_core)
