@@ -70,7 +70,9 @@ def _create_servicebus_exception(logger, exception, handler):
         error = MessageAlreadySettled(exception)
         error_need_close_handler = False
         error_need_raise = True
-    elif isinstance(exception, errors.MessageContentTooLarge):
+    elif isinstance(exception, errors.MessageContentTooLarge) or \
+            (isinstance(exception, errors.MessageException) and
+             exception.condition == constants.ErrorCodes.LinkMessageSizeExceeded):
         logger.info("Message content is too large (%r)", exception)
         error = MessageContentTooLarge(exception)
         error_need_close_handler = False
