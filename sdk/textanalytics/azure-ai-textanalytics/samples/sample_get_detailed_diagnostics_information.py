@@ -32,7 +32,7 @@ class GetDetailedDiagnosticsInformationSample(object):
 
     def get_detailed_diagnostics_information(self):
         from azure.core.credentials import AzureKeyCredential
-        from azure.ai.textanalytics import TextAnalyticsClient
+        from azure.ai.textanalytics import TextAnalyticsClient, Encoding
         text_analytics_client = TextAnalyticsClient(endpoint=self.endpoint, credential=AzureKeyCredential(self.key))
 
         documents = [
@@ -52,6 +52,7 @@ class GetDetailedDiagnosticsInformationSample(object):
 
         result = text_analytics_client.extract_key_phrases(
             documents,
+            encoding=Encoding.grapheme,
             show_stats=True,
             model_version="latest",
             raw_response_hook=callback

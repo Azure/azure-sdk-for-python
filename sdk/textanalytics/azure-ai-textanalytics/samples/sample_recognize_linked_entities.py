@@ -33,7 +33,7 @@ class RecognizeLinkedEntitiesSample(object):
     def recognize_linked_entities(self):
         # [START batch_recognize_linked_entities]
         from azure.core.credentials import AzureKeyCredential
-        from azure.ai.textanalytics import TextAnalyticsClient
+        from azure.ai.textanalytics import TextAnalyticsClient, Encoding
         text_analytics_client = TextAnalyticsClient(endpoint=self.endpoint, credential=AzureKeyCredential(self.key))
         documents = [
             "Microsoft moved its headquarters to Bellevue, Washington in January 1979.",
@@ -41,7 +41,7 @@ class RecognizeLinkedEntitiesSample(object):
             "Microsoft superó a Apple Inc. como la compañía más valiosa que cotiza en bolsa en el mundo.",
         ]
 
-        result = text_analytics_client.recognize_linked_entities(documents)
+        result = text_analytics_client.recognize_linked_entities(documents, encoding=Encoding.grapheme)
         docs = [doc for doc in result if not doc.is_error]
 
         for idx, doc in enumerate(docs):

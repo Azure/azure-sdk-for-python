@@ -33,6 +33,7 @@ class DetectLanguageSampleAsync(object):
     async def detect_language_async(self):
         # [START batch_detect_language_async]
         from azure.core.credentials import AzureKeyCredential
+        from azure.ai.textanalytics import Encoding
         from azure.ai.textanalytics.aio import TextAnalyticsClient
         text_analytics_client = TextAnalyticsClient(endpoint=self.endpoint, credential=AzureKeyCredential(self.key))
         documents = [
@@ -43,7 +44,7 @@ class DetectLanguageSampleAsync(object):
             "Detta är ett dokument skrivet på engelska."
         ]
         async with text_analytics_client:
-            result = await text_analytics_client.detect_language(documents)
+            result = await text_analytics_client.detect_language(documents, encoding=Encoding.grapheme)
 
         for idx, doc in enumerate(result):
             if not doc.is_error:

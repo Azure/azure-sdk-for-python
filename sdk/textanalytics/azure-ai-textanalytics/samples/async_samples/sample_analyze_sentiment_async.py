@@ -33,6 +33,7 @@ class AnalyzeSentimentSampleAsync(object):
     async def analyze_sentiment_async(self):
         # [START batch_analyze_sentiment_async]
         from azure.core.credentials import AzureKeyCredential
+        from azure.ai.textanalytics import Encoding
         from azure.ai.textanalytics.aio import TextAnalyticsClient
         text_analytics_client = TextAnalyticsClient(endpoint=self.endpoint, credential=AzureKeyCredential(self.key))
         documents = [
@@ -43,7 +44,7 @@ class AnalyzeSentimentSampleAsync(object):
         ]
 
         async with text_analytics_client:
-            result = await text_analytics_client.analyze_sentiment(documents)
+            result = await text_analytics_client.analyze_sentiment(documents, encoding=Encoding.grapheme)
 
         docs = [doc for doc in result if not doc.is_error]
 

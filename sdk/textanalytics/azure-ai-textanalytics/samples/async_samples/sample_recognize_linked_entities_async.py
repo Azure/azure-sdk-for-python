@@ -34,6 +34,7 @@ class RecognizeLinkedEntitiesSampleAsync(object):
     async def recognize_linked_entities_async(self):
         # [START batch_recognize_linked_entities_async]
         from azure.core.credentials import AzureKeyCredential
+        from azure.ai.textanalytics import Encoding
         from azure.ai.textanalytics.aio import TextAnalyticsClient
         text_analytics_client = TextAnalyticsClient(endpoint=self.endpoint, credential=AzureKeyCredential(self.key))
         documents = [
@@ -43,7 +44,7 @@ class RecognizeLinkedEntitiesSampleAsync(object):
         ]
 
         async with text_analytics_client:
-            result = await text_analytics_client.recognize_linked_entities(documents)
+            result = await text_analytics_client.recognize_linked_entities(documents, encoding=Encoding.grapheme)
 
         docs = [doc for doc in result if not doc.is_error]
 

@@ -32,6 +32,7 @@ class ExtractKeyPhrasesSampleAsync(object):
     async def extract_key_phrases_async(self):
         # [START batch_extract_key_phrases_async]
         from azure.core.credentials import AzureKeyCredential
+        from azure.ai.textanalytics import Encoding
         from azure.ai.textanalytics.aio import TextAnalyticsClient
         text_analytics_client = TextAnalyticsClient(endpoint=self.endpoint, credential=AzureKeyCredential(self.key))
         documents = [
@@ -41,7 +42,7 @@ class ExtractKeyPhrasesSampleAsync(object):
         ]
 
         async with text_analytics_client:
-            result = await text_analytics_client.extract_key_phrases(documents)
+            result = await text_analytics_client.extract_key_phrases(documents, encoding=Encoding.grapheme)
 
         for doc in result:
             if not doc.is_error:

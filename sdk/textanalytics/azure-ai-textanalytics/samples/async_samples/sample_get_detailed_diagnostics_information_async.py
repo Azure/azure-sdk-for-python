@@ -34,6 +34,7 @@ class GetDetailedDiagnosticsInformationSampleAsync(object):
 
     async def get_detailed_diagnostics_information_async(self):
         from azure.core.credentials import AzureKeyCredential
+        from azure.ai.textanalytics import Encoding
         from azure.ai.textanalytics.aio import TextAnalyticsClient
         text_analytics_client = TextAnalyticsClient(endpoint=self.endpoint, credential=AzureKeyCredential(self.key))
 
@@ -55,6 +56,7 @@ class GetDetailedDiagnosticsInformationSampleAsync(object):
         async with text_analytics_client:
             result = await text_analytics_client.extract_key_phrases(
                 documents,
+                encoding=Encoding.grapheme,
                 show_stats=True,
                 model_version="latest",
                 raw_response_hook=callback

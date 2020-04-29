@@ -32,7 +32,7 @@ class AlternativeDocumentInputSample(object):
 
     def alternative_document_input(self):
         from azure.core.credentials import AzureKeyCredential
-        from azure.ai.textanalytics import TextAnalyticsClient
+        from azure.ai.textanalytics import TextAnalyticsClient, Encoding
         text_analytics_client = TextAnalyticsClient(endpoint=self.endpoint, credential=AzureKeyCredential(self.key))
 
         documents = [
@@ -44,7 +44,7 @@ class AlternativeDocumentInputSample(object):
              "text": "L'hôtel n'était pas très confortable. L'éclairage était trop sombre."}
         ]
 
-        result = text_analytics_client.detect_language(documents)
+        result = text_analytics_client.detect_language(documents, encoding=Encoding.grapheme)
 
         for idx, doc in enumerate(result):
             if not doc.is_error:

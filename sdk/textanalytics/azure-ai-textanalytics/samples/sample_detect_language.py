@@ -32,7 +32,7 @@ class DetectLanguageSample(object):
     def detect_language(self):
         # [START batch_detect_language]
         from azure.core.credentials import AzureKeyCredential
-        from azure.ai.textanalytics import TextAnalyticsClient
+        from azure.ai.textanalytics import TextAnalyticsClient, Encoding
         text_analytics_client = TextAnalyticsClient(endpoint=self.endpoint, credential=AzureKeyCredential(self.key))
         documents = [
             "This document is written in English.",
@@ -42,7 +42,7 @@ class DetectLanguageSample(object):
             "Detta är ett dokument skrivet på engelska."
         ]
 
-        result = text_analytics_client.detect_language(documents)
+        result = text_analytics_client.detect_language(documents, encoding=Encoding.grapheme)
 
         for idx, doc in enumerate(result):
             if not doc.is_error:

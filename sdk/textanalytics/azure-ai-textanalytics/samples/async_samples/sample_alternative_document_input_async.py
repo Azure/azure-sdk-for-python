@@ -32,6 +32,7 @@ class AlternativeDocumentInputSampleAsync(object):
 
     async def alternative_document_input(self):
         from azure.core.credentials import AzureKeyCredential
+        from azure.ai.textanalytics import Encoding
         from azure.ai.textanalytics.aio import TextAnalyticsClient
         text_analytics_client = TextAnalyticsClient(endpoint=self.endpoint, credential=AzureKeyCredential(self.key))
 
@@ -44,7 +45,7 @@ class AlternativeDocumentInputSampleAsync(object):
              "text": "L'hôtel n'était pas très confortable. L'éclairage était trop sombre."}
         ]
         async with text_analytics_client:
-            result = await text_analytics_client.detect_language(documents)
+            result = await text_analytics_client.detect_language(documents, encoding=Encoding.grapheme)
 
         for idx, doc in enumerate(result):
             if not doc.is_error:

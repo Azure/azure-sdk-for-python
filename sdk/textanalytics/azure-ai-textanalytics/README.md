@@ -192,7 +192,7 @@ The following section provides several code snippets covering some of the most c
 
 ```python
 from azure.core.credentials import AzureKeyCredential
-from azure.ai.textanalytics import TextAnalyticsClient
+from azure.ai.textanalytics import TextAnalyticsClient, Encoding
 
 credential = AzureKeyCredential("<api_key>")
 endpoint="https://<region>.api.cognitive.microsoft.com/"
@@ -205,7 +205,7 @@ documents = [
     "The food was yummy. :)"
 ]
 
-response = text_analytics_client.analyze_sentiment(documents, language="en")
+response = text_analytics_client.analyze_sentiment(documents, language="en", encoding=Encoding.grapheme)
 result = [doc for doc in response if not doc.is_error]
 
 for doc in result:
@@ -226,7 +226,7 @@ Please refer to the service documentation for a conceptual discussion of [sentim
 
 ```python
 from azure.core.credentials import AzureKeyCredential
-from azure.ai.textanalytics import TextAnalyticsClient
+from azure.ai.textanalytics import TextAnalyticsClient, Encoding
 
 credential = AzureKeyCredential("<api_key>")
 endpoint="https://<region>.api.cognitive.microsoft.com/"
@@ -239,7 +239,7 @@ documents = [
     "Jeff bought three dozen eggs because there was a 50% discount."
 ]
 
-response = text_analytics_client.recognize_entities(documents, language="en")
+response = text_analytics_client.recognize_entities(documents, language="en", encoding=Encoding.grapheme)
 result = [doc for doc in response if not doc.is_error]
 
 for doc in result:
@@ -260,7 +260,7 @@ Roman god of war). Recognized entities are associated with URLs to a well-known 
 
 ```python
 from azure.core.credentials import AzureKeyCredential
-from azure.ai.textanalytics import TextAnalyticsClient
+from azure.ai.textanalytics import TextAnalyticsClient, Encoding
 
 credential = AzureKeyCredential("<api_key>")
 endpoint="https://<region>.api.cognitive.microsoft.com/"
@@ -272,7 +272,7 @@ documents = [
     "Easter Island, a Chilean territory, is a remote volcanic island in Polynesia."
 ]
 
-response = text_analytics_client.recognize_linked_entities(documents, language="en")
+response = text_analytics_client.recognize_linked_entities(documents, language="en", encoding=Encoding.grapheme)
 result = [doc for doc in response if not doc.is_error]
 
 for doc in result:
@@ -295,7 +295,7 @@ and [supported types][linked_entities_categories].
 
 ```python
 from azure.core.credentials import AzureKeyCredential
-from azure.ai.textanalytics import TextAnalyticsClient
+from azure.ai.textanalytics import TextAnalyticsClient, Encoding
 
 credential = AzureKeyCredential("<api_key>")
 endpoint="https://<region>.api.cognitive.microsoft.com/"
@@ -308,7 +308,7 @@ documents = [
     "I will travel to South America in the summer."
 ]
 
-response = text_analytics_client.extract_key_phrases(documents, language="en")
+response = text_analytics_client.extract_key_phrases(documents, language="en", encoding=Encoding.grapheme)
 result = [doc for doc in response if not doc.is_error]
 
 for doc in result:
@@ -324,7 +324,7 @@ Please refer to the service documentation for a conceptual discussion of [key ph
 
 ```python
 from azure.core.credentials import AzureKeyCredential
-from azure.ai.textanalytics import TextAnalyticsClient
+from azure.ai.textanalytics import TextAnalyticsClient, Encoding
 
 credential = AzureKeyCredential("<api_key>")
 endpoint="https://<region>.api.cognitive.microsoft.com/"
@@ -337,7 +337,7 @@ documents = [
     "Dies ist in deutsche Sprache verfasst."
 ]
 
-response = text_analytics_client.detect_language(documents)
+response = text_analytics_client.detect_language(documents, encoding=Encoding.grapheme)
 result = [doc for doc in response if not doc.is_error]
 
 for doc in result:

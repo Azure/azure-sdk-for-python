@@ -31,7 +31,7 @@ class RecognizeEntitiesSample(object):
     def recognize_entities(self):
         # [START batch_recognize_entities]
         from azure.core.credentials import AzureKeyCredential
-        from azure.ai.textanalytics import TextAnalyticsClient
+        from azure.ai.textanalytics import TextAnalyticsClient, Encoding
         text_analytics_client = TextAnalyticsClient(endpoint=self.endpoint, credential=AzureKeyCredential(self.key))
         documents = [
             "Microsoft was founded by Bill Gates and Paul Allen.",
@@ -39,7 +39,7 @@ class RecognizeEntitiesSample(object):
             "I visited the Space Needle 2 times.",
         ]
 
-        result = text_analytics_client.recognize_entities(documents)
+        result = text_analytics_client.recognize_entities(documents, encoding=Encoding.grapheme)
         docs = [doc for doc in result if not doc.is_error]
 
         for idx, doc in enumerate(docs):

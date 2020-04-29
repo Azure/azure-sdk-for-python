@@ -32,7 +32,7 @@ class AnalyzeSentimentSample(object):
     def analyze_sentiment(self):
         # [START batch_analyze_sentiment]
         from azure.core.credentials import AzureKeyCredential
-        from azure.ai.textanalytics import TextAnalyticsClient
+        from azure.ai.textanalytics import TextAnalyticsClient, Encoding
         text_analytics_client = TextAnalyticsClient(endpoint=self.endpoint, credential=AzureKeyCredential(self.key))
         documents = [
             "I had the best day of my life.",
@@ -41,7 +41,7 @@ class AnalyzeSentimentSample(object):
             "L'hôtel n'était pas très confortable. L'éclairage était trop sombre."
         ]
 
-        result = text_analytics_client.analyze_sentiment(documents)
+        result = text_analytics_client.analyze_sentiment(documents, encoding=Encoding.grapheme)
         docs = [doc for doc in result if not doc.is_error]
 
         for idx, doc in enumerate(docs):

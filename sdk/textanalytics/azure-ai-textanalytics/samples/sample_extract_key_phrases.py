@@ -31,7 +31,7 @@ class ExtractKeyPhrasesSample(object):
     def extract_key_phrases(self):
         # [START batch_extract_key_phrases]
         from azure.core.credentials import AzureKeyCredential
-        from azure.ai.textanalytics import TextAnalyticsClient
+        from azure.ai.textanalytics import TextAnalyticsClient, Encoding
         text_analytics_client = TextAnalyticsClient(endpoint=self.endpoint, credential=AzureKeyCredential(self.key))
         documents = [
             "Redmond is a city in King County, Washington, United States, located 15 miles east of Seattle.",
@@ -39,7 +39,7 @@ class ExtractKeyPhrasesSample(object):
             "I will travel to South America in the summer.",
         ]
 
-        result = text_analytics_client.extract_key_phrases(documents)
+        result = text_analytics_client.extract_key_phrases(documents, encoding=Encoding.grapheme)
         for doc in result:
             if not doc.is_error:
                 print(doc.key_phrases)
