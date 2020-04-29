@@ -39,14 +39,15 @@ def _get_user_settings():
 
 
 def _get_refresh_token(service_name, account_name):
+    if not _libsecret:
+        return None
+
     # _libsecret.secret_password_lookup_sync raises segment fault on Python 2.7
     # temporarily disable it on 2.7
     import sys
     if sys.version_info[0] < 3:
         raise NotImplementedError("Not supported on Python 2.7")
 
-    if not _libsecret:
-        return None
     schema = _libsecret.secret_schema_new(_c_str("org.freedesktop.Secret.Generic"), 2,
                                           _c_str("service"), 0, _c_str("account"), 0, None)
     p_str = _libsecret.secret_password_lookup_sync(schema, None, None, _c_str("service"), _c_str(service_name),
