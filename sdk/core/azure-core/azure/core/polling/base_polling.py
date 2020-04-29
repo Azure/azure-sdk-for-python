@@ -361,7 +361,7 @@ class StatusCheckPolling(LongRunningOperation):
         return None
 
 
-class LROBasePolling(PollingMethod):
+class LROBasePolling(PollingMethod):  # pylint: disable=too-many-instance-attributes
     """A base LRO poller.
 
     This assumes a basic flow:
@@ -407,7 +407,7 @@ class LROBasePolling(PollingMethod):
         :rtype: bool
         """
         return self._cancellation_token.is_set() or _finished(self.status())
-    
+
     def cancelled(self):
         """Is polling cancelled?
         :rtype: bool
@@ -418,7 +418,7 @@ class LROBasePolling(PollingMethod):
         """Return the built resource.
         """
         return self._parse_resource(self._pipeline_response)
-    
+
     def cancel(self):
         if self.cancelled():
             return False

@@ -109,11 +109,11 @@ class NoPolling(PollingMethod):
     def resource(self):
         # type: () -> Any
         return self._deserialization_callback(self._initial_response)
-    
+
     def cancel(self):
         # type: () -> bool
         return False
-    
+
     def cancelled(self):
         # type: () -> bool
         return False
@@ -203,7 +203,7 @@ class LROPoller(Generic[PollingReturnType]):
         """
         self.wait(timeout)
         return self._polling_method.resource()
-    
+
     def cancel(self):
         # type: () -> bool
         """Cancel the background polling process and schedule callbacks.
