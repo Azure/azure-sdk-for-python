@@ -11,9 +11,14 @@ Use the Service Bus client library for Python to communicate between application
 * Send and receive messages within your Service Bus channels.
 * Utilize message locks, sessions, and dead letter functionality to implement complex messaging patterns.
 
-Note: This is a preview release of the Python Service Bus SDK, and is not yet at feature parity with version 0.50.  Some functionality, such as topic and subscription utilization, will be arriving in upcoming Preview releases; Thank you for your patience and interest as we roll out these changes.
-
 [Source code](./) | [Package (PyPi)][pypi] | [API reference documentation][api_docs] | [Product documentation][product_docs] | [Samples](./samples) | [Changelog](./CHANGELOG.md)
+
+> **NOTE**: This document has instructions, links and code snippets for the **preview** of the next version of the `azure-servicebus` package
+> which has different APIs than the current version (0.50). Please view the resources below for references on the existing library.
+
+[V0.50 Source code][0_50_source] | [V0.50 Package (PyPi)][0_50_pypi] | [V0.50 API reference documentation][0_50_api_docs] | [V0.50 Product documentation][0_50_product_docs] | [V0.50 Samples][0_50_samples] | [V0.50 Changelog][0_50_changelog]
+
+We also provide a migration guide for users familiar with the existing package that would like to try the preview: [migration guide to move from Service Bus V0.50 to Service Bus V7 Preview][migration_guide]
 
 ## Getting started
 
@@ -94,7 +99,7 @@ Note: client can be initialized without a context manager, but must be manually 
 
 Once you've initialized a `ServiceBusClient`, you can interact with the primary resource types within a Service Bus Namespace, of which multiple can exist and on which actual message transmission takes place, the namespace often serving as an application container:
 
-* [Queue][queue_concept]: Allows for Sending and Receiving of messages, ordered first-in-first-out.  Often used for point-to-point communication.
+* [Queue][queue_concept]: Allows for Sending and Receiving of message.  Often used for point-to-point communication.
 
 * [Topic][topic_concept]: As opposed to Queues, Topics are better suited to publish/subscribe scenarios.  A topic can be sent to, but requires a subscription, of which there can be multiple in parallel, to consume from.
 
@@ -122,6 +127,7 @@ The following sections provide several code snippets covering some of the most c
 
 To perform management tasks such as creating and deleting queues/topics/subscriptions, please utilize the azure-mgmt-servicebus library, available [here][servicebus_management_repository].
 
+Please find further examples in the [samples](./samples) directory demonstrating common Service Bus scenarios such as sending, receiving, session management and message handling.
 
 ### Send a message to a queue
 
@@ -205,7 +211,7 @@ Please view the [exceptions](./azure/servicebus/exceptions.py) file for detailed
 
 ### More sample code
 
-Please find further examples in the [samples](./samples) directory demonstrating common Service Bus scenarios such as sending, receiving, and message handling.
+Please find further examples in the [samples](./samples) directory demonstrating common Service Bus scenarios such as sending, receiving, session management and message handling.
 
 ### Additional documentation
 
@@ -227,14 +233,14 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 
 <!-- LINKS -->
 [azure_cli]: https://docs.microsoft.com/cli/azure
-[api_docs]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/7.0.0b1/index.html
+[api_docs]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/7.0.0b2/index.html
 [product_docs]: https://docs.microsoft.com/azure/service-bus-messaging/
 [azure_portal]: https://portal.azure.com
 [azure_sub]: https://azure.microsoft.com/free/
 [cloud_shell]: https://docs.microsoft.com/azure/cloud-shell/overview
 [cloud_shell_bash]: https://shell.azure.com/bash
 [pip]: https://pypi.org/project/pip/
-[pypi]: https://pypi.org/project/azure-servicebus/
+[pypi]: https://pypi.org/project/azure-servicebus/7.0.0b2/
 [python]: https://www.python.org/downloads/
 [venv]: https://docs.python.org/3/library/venv.html
 [virtualenv]: https://virtualenv.pypa.io
@@ -251,3 +257,10 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 [servicebus_aad_authentication]: https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-authentication-and-authorization
 [token_credential_interface]: ../../core/azure-core/azure/core/credentials.py
 [pypi_azure_identity]: https://pypi.org/project/azure-identity/
+[0_50_source]: https://github.com/Azure/azure-sdk-for-python/tree/servicebus_v0.50.2/sdk/servicebus/azure-servicebus/
+[0_50_pypi]: https://pypi.org/project/azure-servicebus/
+[0_50_api_docs]:https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/0.50.2/index.html
+[0_50_product_docs]: https://docs.microsoft.com/azure/service-bus-messaging/
+[0_50_samples]: https://github.com/Azure/azure-sdk-for-python/tree/servicebus_v0.50.2/sdk/servicebus/azure-servicebus/samples
+[0_50_changelog]: https://github.com/Azure/azure-sdk-for-python/blob/servicebus_v0.50.2/sdk/servicebus/azure-servicebus/CHANGELOG.md
+[migration_guide]: ./migration_guide.md
