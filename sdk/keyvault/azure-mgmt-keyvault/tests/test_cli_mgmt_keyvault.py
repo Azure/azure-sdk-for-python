@@ -36,14 +36,14 @@ class MgmtKeyVaultTest(AzureMgmtTestCase):
 
         SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
         RESOURCE_GROUP = resource_group.name
-        VAULT_NAME = "myVaultZz"
+        VAULT_NAME = "myVaultZzkfi"
         OPERATION_KIND = "add"
         LOCATION = "eastus"
         PRIVATE_ENDPOINT_CONNECTION_NAME = "myPrivateEndpointConnection"
 
         # /Vaults/put/Create a new vault or update an existing vault[put]
         BODY = {
-          "location": "westus",
+          "location": LOCATION,
           "properties": {
             "tenant_id": "72f988bf-86f1-41af-91ab-2d7cd011db47",
             "sku": {
@@ -112,7 +112,7 @@ class MgmtKeyVaultTest(AzureMgmtTestCase):
 
         # /Vaults/put/Create or update a vault with network acls[put]
         BODY = {
-          "location": "westus",
+          "location": LOCATION,
           "properties": {
             "tenant_id": "00000000-0000-0000-0000-000000000000",
             "sku": {
@@ -273,11 +273,11 @@ class MgmtKeyVaultTest(AzureMgmtTestCase):
         result = self.mgmt_client.vaults.delete(resource_group_name=RESOURCE_GROUP, vault_name=VAULT_NAME)
 
         # /Vaults/get/Retrieve a deleted vault[get]
-        # result = self.mgmt_client.vaults.get_deleted(location=LOCATION, vault_name=VAULT_NAME)
+        result = self.mgmt_client.vaults.get_deleted(location=LOCATION, vault_name=VAULT_NAME)
 
         # /Vaults/post/Purge a deleted vault[post]
-        # result = self.mgmt_client.vaults.purge_deleted(location=LOCATION, vault_name=VAULT_NAME)
-        # result = result.result()
+        result = self.mgmt_client.vaults.begin_purge_deleted(location=LOCATION, vault_name=VAULT_NAME)
+        result = result.result()
 
 #------------------------------------------------------------------------------
 if __name__ == '__main__':
