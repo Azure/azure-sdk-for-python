@@ -39,7 +39,8 @@ class InteractiveBrowserCredential(InteractiveCredential):
     :keyword AuthenticationRecord authentication_record: :class:`AuthenticationRecord` returned by :func:`authenticate`
     :keyword bool disable_automatic_authentication: if True, :func:`get_token` will raise
           :class:`AuthenticationRequiredError` when user interaction is required to acquire a token. Defaults to False.
-    :keyword bool disable_persistent_cache: if True, the credential will cache in memory only. Defaults to False.
+    :keyword bool enable_persistent_cache: if True, the credential will store tokens in a persistent cache shared by
+         other user credentials. **This is only supported on Windows.** Defaults to False.
     :keyword int timeout: seconds to wait for the user to complete authentication. Defaults to 300 (5 minutes).
     """
 

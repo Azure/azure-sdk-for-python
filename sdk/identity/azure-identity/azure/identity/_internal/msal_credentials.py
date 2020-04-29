@@ -77,11 +77,8 @@ def _build_auth_record(response):
         return None
 
 
-def _load_cache(disable_persistence):
-    # type: (bool) -> msal.TokenCache
-
-    if disable_persistence:
-        return msal.TokenCache()
+def _load_persistent_cache():
+    # type: () -> msal.TokenCache
 
     if sys.platform.startswith("win") and "LOCALAPPDATA" in os.environ:
         from msal_extensions.token_cache import WindowsTokenCache
@@ -90,8 +87,7 @@ def _load_cache(disable_persistence):
             cache_location=os.path.join(os.environ["LOCALAPPDATA"], ".IdentityService", "msal.cache")
         )
 
-    _LOGGER.warning("Caching in memory because no persistent cache is available on this platform.")
-    return msal.TokenCache()
+    raise NotImplementedError("A persistent cache is not available on this platform.")
 
 
 class MsalCredential(ABC):
@@ -108,8 +104,10 @@ class MsalCredential(ABC):
 
         self._cache = kwargs.pop("_cache", None)  # internal, for use in tests
         if not self._cache:
-            disable_persistence = kwargs.pop("disable_persistent_cache", False)
-            self._cache = _load_cache(disable_persistence)
+            if kwargs.pop("enable_persistent_cache", False):
+                self._cache = _load_persistent_cache()
+            else:
+                self._cache = msal.TokenCache()
 
         self._adapter = kwargs.pop("msal_adapter", None) or MsalTransportAdapter(**kwargs)
 
