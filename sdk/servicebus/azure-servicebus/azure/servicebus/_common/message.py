@@ -246,6 +246,7 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
         This property can be used for scheduling when sending a message through `ServiceBusSender.send` method.
         If cancelling scheduled messages is required, you should use the `ServiceBusSender.schedule` method,
         which returns sequence numbers that can be used for future cancellation.
+        `scheduled_enqueue_time_utc` is None if not set.
 
         :rtype: ~datetime.datetime
         """
