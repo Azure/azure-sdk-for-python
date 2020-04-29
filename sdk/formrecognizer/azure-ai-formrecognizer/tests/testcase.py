@@ -6,30 +6,19 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from datetime import datetime, timedelta
+
 import os
 import pytest
-import logging
 import re
-try:
-    from cStringIO import StringIO      # Python 2
-except ImportError:
-    from io import StringIO
-
 from azure.core.credentials import AzureKeyCredential
-from azure.storage.blob import ContainerSasPermissions, generate_container_sas, ContainerClient
 from devtools_testutils import (
     AzureTestCase,
     AzureMgmtPreparer,
     FakeResource,
     ResourceGroupPreparer,
 )
-from azure_devtools.scenario_tests import AzureTestError
 from devtools_testutils.cognitiveservices_testcase import CognitiveServicesAccountPreparer
-from devtools_testutils.storage_testcase import StorageAccountPreparer
-from azure_devtools.scenario_tests import ReplayableTest
-
-LOGGING_FORMAT = '%(asctime)s %(name)-20s %(levelname)-5s %(message)s'
+from azure_devtools.scenario_tests import ReplayableTest, AzureTestError
 
 
 class FormRecognizerTest(AzureTestCase):
@@ -42,7 +31,7 @@ class FormRecognizerTest(AzureTestCase):
         self.receipt_url_png = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/receipt/contoso-receipt.png"
         self.invoice_url_pdf = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/Invoice_1.pdf"
         self.form_url_jpg = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/Form_1.jpg"
-        self.multipage_url_pdf = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/training_multipage/multipage_invoice1.pdf"
+        self.multipage_url_pdf = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/multipage_invoice1.pdf"
 
         # file stream samples
         self.receipt_jpg = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/receipt/contoso-allinone.jpg"))
@@ -51,7 +40,7 @@ class FormRecognizerTest(AzureTestCase):
         self.invoice_tiff = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/Invoice_1.tiff"))
         self.form_jpg = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/Form_1.jpg"))
         self.blank_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/blank.pdf"))
-        self.multipage_invoice_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/training_multipage/multipage_invoice1.pdf"))
+        self.multipage_invoice_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/multipage_invoice1.pdf"))
         self.unsupported_content_py = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./conftest.py"))
 
     def assertModelTransformCorrect(self, model, actual, unlabeled=False):
@@ -312,61 +301,6 @@ class FormRecognizerTest(AzureTestCase):
         for word in elements:
             self.assertFormWordHasValues(word, page_number)
 
-    def configure_logging(self):
-        try:
-            enable_logging = self.get_settings_value("ENABLE_LOGGING")
-        except AzureTestError:
-            enable_logging = True  # That's the default value in fake settings
-
-        self.enable_logging() if enable_logging else self.disable_logging()
-
-    def enable_logging(self):
-        handler = logging.StreamHandler()
-        handler.setFormatter(logging.Formatter(LOGGING_FORMAT))
-        self.logger.handlers = [handler]
-        self.logger.setLevel(logging.INFO)
-        self.logger.propagate = True
-        self.logger.disabled = False
-
-    def disable_logging(self):
-        self.logger.propagate = False
-        self.logger.disabled = True
-        self.logger.handlers = []
-
-
-class LogCaptured(object):
-    def __init__(self, test_case=None):
-        # accept the test case so that we may reset logging after capturing logs
-        self.test_case = test_case
-
-    def __enter__(self):
-        # enable logging
-        # it is possible that the global logging flag is turned off
-        self.test_case.enable_logging()
-
-        # create a string stream to send the logs to
-        self.log_stream = StringIO()
-
-        # the handler needs to be stored so that we can remove it later
-        self.handler = logging.StreamHandler(self.log_stream)
-        self.handler.setFormatter(logging.Formatter(LOGGING_FORMAT))
-
-        # get and enable the logger to send the outputs to the string stream
-        self.logger = logging.getLogger('azure.ai')
-        self.logger.level = logging.DEBUG
-        self.logger.addHandler(self.handler)
-
-        # the stream is returned to the user so that the capture logs can be retrieved
-        return self.log_stream
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        # stop the handler, and close the stream to exit
-        self.logger.removeHandler(self.handler)
-        self.log_stream.close()
-
-        # reset logging since we messed with the setting
-        self.test_case.configure_logging()
-
 
 class GlobalResourceGroupPreparer(AzureMgmtPreparer):
     def __init__(self):
@@ -421,13 +355,33 @@ class GlobalTrainingAccountPreparer(AzureMgmtPreparer):
         self.client_cls = client_cls
         self.multipage_test = kwargs.get("multipage", False)
 
+    def _load_settings(self):
+        try:
+            from devtools_testutils import mgmt_settings_real as real_settings
+            return real_settings
+        except ImportError:
+            return False
+
+    def get_settings_value(self, key):
+        key_value = os.environ.get("AZURE_"+key, None)
+        self._real_settings = self._load_settings()
+
+        if key_value and self._real_settings and getattr(self._real_settings, key) != key_value:
+            raise ValueError(
+                "You have both AZURE_{key} env variable and mgmt_settings_real.py for {key} to difference values"
+                .format(key=key))
+
+        if not key_value:
+            try:
+                key_value = getattr(self._real_settings, key)
+            except Exception:
+                print("Could not get {}".format(key))
+                raise
+        return key_value
+
     def create_resource(self, name, **kwargs):
         client, container_sas_url = self.create_form_client_and_container_sas_url(**kwargs)
-        if self.is_live:
-            self.test_class_instance.scrubber.register_name_pair(
-                container_sas_url,
-                "containersasurl"
-            )
+
         return {"client": client,
                 "container_sas_url": container_sas_url}
 
@@ -440,45 +394,15 @@ class GlobalTrainingAccountPreparer(AzureMgmtPreparer):
         if form_recognizer_account_key is None:
             form_recognizer_account_key = kwargs.pop("form_recognizer_account_key")
 
-        storage_account = self.client_kwargs.pop("storage_account", None)
-        if storage_account is None:
-            storage_account = kwargs.pop("storage_account")
-
-        storage_account_key = self.client_kwargs.pop("storage_account_key", None)
-        if storage_account_key is None:
-            storage_account_key = kwargs.pop("storage_account_key")
-
         if self.is_live:
-            container_name = self.resource_random_name.replace("_", "-")  # container names can't have underscore
-            container_client = ContainerClient(storage_account.primary_endpoints.blob, container_name,
-                                               storage_account_key)
-            container_client.create_container()
-
             if self.multipage_test:
-                training_path = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/training_multipage/"))
-                for path, folder, files in os.walk(training_path):
-                    for document in files:
-                        with open(os.path.join(path, document), "rb") as data:
-                            container_client.upload_blob(name=document, data=data)
+                container_sas_url = self.get_settings_value("FORM_RECOGNIZER_MULTIPAGE_STORAGE_CONTAINER_SAS_URL")
             else:
-                training_path = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/training/"))
-                for path, folder, files in os.walk(training_path):
-                    for document in files:
-                        with open(os.path.join(path, document), "rb") as data:
-                            if document == "Form_6.jpg":
-                                document = "subfolder/Form_6.jpg"  # create virtual subfolder in container
-                            container_client.upload_blob(name=document, data=data)
-
-            sas_token = generate_container_sas(
-                storage_account.name,
-                container_name,
-                storage_account_key,
-                permission=ContainerSasPermissions.from_string("rl"),
-                expiry=datetime.utcnow() + timedelta(hours=1)
+                container_sas_url = self.get_settings_value("FORM_RECOGNIZER_STORAGE_CONTAINER_SAS_URL")
+            self.test_class_instance.scrubber.register_name_pair(
+                container_sas_url,
+                "containersasurl"
             )
-
-            container_sas_url = storage_account.primary_endpoints.blob + container_name + "?" + sas_token
-
         else:
             container_sas_url = "containersasurl"
 
@@ -489,27 +413,8 @@ class GlobalTrainingAccountPreparer(AzureMgmtPreparer):
         ), container_sas_url
 
 
-class GlobalFormAndStorageAccountPreparer(AzureMgmtPreparer):
-    def __init__(self):
-        super(GlobalFormAndStorageAccountPreparer, self).__init__(
-            name_prefix='',
-            random_name_length=42
-        )
-
-    def create_resource(self, name, **kwargs):
-        form_recognizer_and_storage_account = FormRecognizerTest._FORM_RECOGNIZER_ACCOUNT
-        return {
-            'location': 'westus2',
-            'resource_group': FormRecognizerTest._RESOURCE_GROUP,
-            'form_recognizer_account': form_recognizer_and_storage_account,
-            'form_recognizer_account_key': FormRecognizerTest._FORM_RECOGNIZER_KEY,
-            'storage_account': FormRecognizerTest._STORAGE_ACCOUNT,
-            'storage_account_key': FormRecognizerTest._STORAGE_KEY
-        }
-
-
 @pytest.fixture(scope="session")
-def form_recognizer_and_storage_account():
+def form_recognizer_account():
     test_case = AzureTestCase("__init__")
     rg_preparer = ResourceGroupPreparer(random_name_enabled=True, name_prefix='pycog')
     form_recognizer_preparer = CognitiveServicesAccountPreparer(
@@ -517,10 +422,6 @@ def form_recognizer_and_storage_account():
         kind="formrecognizer",
         name_prefix='pycog',
         location="westus"
-    )
-    storage_account_preparer = StorageAccountPreparer(
-        random_name_enabled=True,
-        name_prefix='pycog'
     )
 
     try:
@@ -531,13 +432,6 @@ def form_recognizer_and_storage_account():
                 test_case, **rg_kwargs)
             FormRecognizerTest._FORM_RECOGNIZER_ACCOUNT = form_recognizer_kwargs['cognitiveservices_account']
             FormRecognizerTest._FORM_RECOGNIZER_KEY = form_recognizer_kwargs['cognitiveservices_account_key']
-
-            storage_name, storage_kwargs = storage_account_preparer._prepare_create_resource(test_case, **rg_kwargs)
-            storage_account = storage_kwargs['storage_account']
-            storage_key = storage_kwargs['storage_account_key']
-
-            FormRecognizerTest._STORAGE_ACCOUNT = storage_account
-            FormRecognizerTest._STORAGE_KEY = storage_key
             yield
         finally:
             form_recognizer_preparer.remove_resource(
@@ -546,12 +440,7 @@ def form_recognizer_and_storage_account():
             )
             FormRecognizerTest._FORM_RECOGNIZER_ACCOUNT = None
             FormRecognizerTest._FORM_RECOGNIZER_KEY = None
-            storage_account_preparer.remove_resource(
-                storage_name,
-                resource_group=rg_kwargs['resource_group']
-            )
-            FormRecognizerTest._STORAGE_ACCOUNT = None
-            FormRecognizerTest._STORAGE_KEY = None
+
     finally:
         rg_preparer.remove_resource(rg_name)
         FormRecognizerTest._RESOURCE_GROUP = None

@@ -10,7 +10,7 @@ from azure.core.exceptions import ClientAuthenticationError
 from azure.ai.formrecognizer._generated.models import Model
 from azure.ai.formrecognizer._models import CustomFormModel
 from azure.ai.formrecognizer.aio import FormTrainingClient
-from testcase import FormRecognizerTest, GlobalFormRecognizerAccountPreparer, GlobalFormAndStorageAccountPreparer
+from testcase import FormRecognizerTest, GlobalFormRecognizerAccountPreparer
 from testcase import GlobalTrainingAccountPreparer as _GlobalTrainingAccountPreparer
 from asynctestcase import AsyncFormRecognizerTest
 
@@ -25,7 +25,7 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
         with self.assertRaises(ClientAuthenticationError):
             result = await client.train_model("xx")
 
-    @GlobalFormAndStorageAccountPreparer()
+    @GlobalFormRecognizerAccountPreparer()
     @GlobalTrainingAccountPreparer()
     async def test_training(self, client, container_sas_url):
 
@@ -47,7 +47,7 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
                 self.assertIsNotNone(field.label)
                 self.assertIsNotNone(field.name)
 
-    @GlobalFormAndStorageAccountPreparer()
+    @GlobalFormRecognizerAccountPreparer()
     @GlobalTrainingAccountPreparer(multipage=True)
     async def test_training_multipage(self, client, container_sas_url):
 
@@ -69,7 +69,7 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
                 self.assertIsNotNone(field.label)
                 self.assertIsNotNone(field.name)
 
-    @GlobalFormAndStorageAccountPreparer()
+    @GlobalFormRecognizerAccountPreparer()
     @GlobalTrainingAccountPreparer()
     async def test_training_transform(self, client, container_sas_url):
 
@@ -87,7 +87,7 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
         custom_model = raw_response[1]
         self.assertModelTransformCorrect(custom_model, raw_model, unlabeled=True)
 
-    @GlobalFormAndStorageAccountPreparer()
+    @GlobalFormRecognizerAccountPreparer()
     @GlobalTrainingAccountPreparer(multipage=True)
     async def test_training_multipage_transform(self, client, container_sas_url):
 
@@ -105,7 +105,7 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
         custom_model = raw_response[1]
         self.assertModelTransformCorrect(custom_model, raw_model, unlabeled=True)
 
-    @GlobalFormAndStorageAccountPreparer()
+    @GlobalFormRecognizerAccountPreparer()
     @GlobalTrainingAccountPreparer()
     async def test_training_with_labels(self, client, container_sas_url):
 
@@ -127,7 +127,7 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
                 self.assertIsNotNone(field.accuracy)
                 self.assertIsNotNone(field.name)
 
-    @GlobalFormAndStorageAccountPreparer()
+    @GlobalFormRecognizerAccountPreparer()
     @GlobalTrainingAccountPreparer(multipage=True)
     async def test_training_multipage_with_labels(self, client, container_sas_url):
 
@@ -150,7 +150,7 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
                 self.assertIsNotNone(field.accuracy)
                 self.assertIsNotNone(field.name)
 
-    @GlobalFormAndStorageAccountPreparer()
+    @GlobalFormRecognizerAccountPreparer()
     @GlobalTrainingAccountPreparer()
     async def test_training_with_labels_transform(self, client, container_sas_url):
 
@@ -168,7 +168,7 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
         custom_model = raw_response[1]
         self.assertModelTransformCorrect(custom_model, raw_model)
 
-    @GlobalFormAndStorageAccountPreparer()
+    @GlobalFormRecognizerAccountPreparer()
     @GlobalTrainingAccountPreparer(multipage=True)
     async def test_train_multipage_w_lbls_trnsfrm(self, client, container_sas_url):
 
@@ -185,7 +185,7 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
         custom_model = raw_response[1]
         self.assertModelTransformCorrect(custom_model, raw_model)
 
-    @GlobalFormAndStorageAccountPreparer()
+    @GlobalFormRecognizerAccountPreparer()
     @GlobalTrainingAccountPreparer()
     async def test_training_with_files_filter(self, client, container_sas_url):
 

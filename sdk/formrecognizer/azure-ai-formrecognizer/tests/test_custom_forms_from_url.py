@@ -10,7 +10,7 @@ from azure.core.exceptions import HttpResponseError, ServiceRequestError, Client
 from azure.ai.formrecognizer import FormRecognizerClient
 from azure.ai.formrecognizer._generated.models import AnalyzeOperationResult
 from azure.ai.formrecognizer._response_handlers import prepare_form_result
-from testcase import FormRecognizerTest, GlobalFormRecognizerAccountPreparer, GlobalFormAndStorageAccountPreparer
+from testcase import FormRecognizerTest, GlobalFormRecognizerAccountPreparer
 from testcase import GlobalTrainingAccountPreparer as _GlobalTrainingAccountPreparer
 
 
@@ -49,7 +49,7 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
                     url=fd,
                 )
 
-    @GlobalFormAndStorageAccountPreparer()
+    @GlobalFormRecognizerAccountPreparer()
     @GlobalTrainingAccountPreparer()
     def test_custom_form_bad_input(self, client, container_sas_url):
         training_client = client.get_form_training_client()
@@ -64,7 +64,7 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
             )
             form = poller.result()
 
-    @GlobalFormAndStorageAccountPreparer()
+    @GlobalFormRecognizerAccountPreparer()
     @GlobalTrainingAccountPreparer()
     def test_custom_form_unlabeled(self, client, container_sas_url):
         training_client = client.get_form_training_client()
@@ -85,7 +85,7 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
             self.assertIsNotNone(field.value_data.text)
             self.assertIsNotNone(field.label_data.text)
 
-    @GlobalFormAndStorageAccountPreparer()
+    @GlobalFormRecognizerAccountPreparer()
     @GlobalTrainingAccountPreparer(multipage=True)
     def test_form_multipage_unlabld(self, client, container_sas_url):
         training_client = client.get_form_training_client()
@@ -111,7 +111,7 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
                 self.assertIsNotNone(field.label_data.text)
 
 
-    @GlobalFormAndStorageAccountPreparer()
+    @GlobalFormRecognizerAccountPreparer()
     @GlobalTrainingAccountPreparer()
     def test_custom_form_labeled(self, client, container_sas_url):
         training_client = client.get_form_training_client()
@@ -131,7 +131,7 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
             self.assertIsNotNone(field.value_data.text)
             self.assertIsNotNone(field.value_data.bounding_box)
 
-    @GlobalFormAndStorageAccountPreparer()
+    @GlobalFormRecognizerAccountPreparer()
     @GlobalTrainingAccountPreparer(multipage=True)
     def test_form_multipage_labeled(self, client, container_sas_url):
         training_client = client.get_form_training_client()
@@ -159,7 +159,7 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
                 self.assertIsNotNone(field.value_data.bounding_box)
 
 
-    @GlobalFormAndStorageAccountPreparer()
+    @GlobalFormRecognizerAccountPreparer()
     @GlobalTrainingAccountPreparer()
     def test_form_unlbld_transform(self, client, container_sas_url):
         training_client = client.get_form_training_client()
@@ -193,7 +193,7 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
         self.assertEqual(recognized_form[0].page_range.last_page, page_results[0].page)
         self.assertUnlabeledFormFieldDictTransformCorrect(recognized_form[0].fields, actual_fields, read_results)
 
-    @GlobalFormAndStorageAccountPreparer()
+    @GlobalFormRecognizerAccountPreparer()
     @GlobalTrainingAccountPreparer(multipage=True)
     def test_multipg_unlbld_trnsfrm(self, client, container_sas_url):
         training_client = client.get_form_training_client()
@@ -229,7 +229,7 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
             self.assertUnlabeledFormFieldDictTransformCorrect(form.fields, actual.key_value_pairs, read_results, bug_skip_text_content=True)
 
 
-    @GlobalFormAndStorageAccountPreparer()
+    @GlobalFormRecognizerAccountPreparer()
     @GlobalTrainingAccountPreparer()
     def test_form_labeled_transform(self, client, container_sas_url):
         training_client = client.get_form_training_client()
@@ -263,7 +263,7 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
         self.assertEqual(recognized_form[0].page_range.last_page, page_results[0].page)
         self.assertLabeledFormFieldDictTransformCorrect(recognized_form[0].fields, actual_fields, read_results)
 
-    @GlobalFormAndStorageAccountPreparer()
+    @GlobalFormRecognizerAccountPreparer()
     @GlobalTrainingAccountPreparer(multipage=True)
     def test_multipg_lbld_trnsfrm(self, client, container_sas_url):
         training_client = client.get_form_training_client()
