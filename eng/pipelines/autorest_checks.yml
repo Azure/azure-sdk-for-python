@@ -45,18 +45,18 @@ jobs:
           cd autorest.python
           git checkout $(repo_branch)
           npm install
-          cd test/vanilla
-          pip install -r requirements.txt
         displayName: 'Prepare Environment'
 
       - script: |
+          cd $(Build.SourcesDirectory)/autorest.python/test/vanilla
+          pip install -r requirements.txt
           pip install --force-reinstall $(Build.SourcesDirectory)/$(source_path_azure_core)
-          cd $(Build.SourcesDirectory)/autorest.python
-          pytest test/vanilla
+          pytest $(Build.SourcesDirectory)/autorest.python/test/vanilla
         displayName: 'Install azure-core and Test Vanilla'
 
       - script: |
+          cd $(Build.SourcesDirectory)/autorest.python/test/azure
+          pip install -r requirements.txt
           pip install --force-reinstall $(Build.SourcesDirectory)/$(source_path_azure_mgmt_core)
-          cd $(Build.SourcesDirectory)/autorest.python
-          pytest test/azure
+          pytest $(Build.SourcesDirectory)/autorest.python/test/azure
         displayName: 'Install azure-mgmt-core and Test Azure'
