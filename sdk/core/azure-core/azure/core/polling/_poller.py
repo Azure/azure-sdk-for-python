@@ -23,6 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+import base64
 import threading
 import uuid
 try:
@@ -119,7 +120,7 @@ class NoPolling(PollingMethod):
     def get_continuation_token(self):
         # type() -> str
         import pickle
-        return pickle.dumps(self._initial_response)
+        return base64.b64encode(pickle.dumps(self._initial_response)).decode('ascii')
 
     @classmethod
     def from_continuation_token(cls, continuation_token, **kwargs):
@@ -129,7 +130,7 @@ class NoPolling(PollingMethod):
         except KeyError:
             raise ValueError("Need kwarg 'deserialization_callback' to be recreated from continuation_token")
         import pickle
-        initial_response = pickle.loads(continuation_token)
+        initial_response = pickle.loads(base64.b64decode(continuation_token))
         return None, initial_response, deserialization_callback
 
 
