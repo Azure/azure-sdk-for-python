@@ -9,6 +9,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 
 from .._generated.aio import SearchServiceClient as _SearchServiceClient
 from .._generated.models import Skillset
+from .._utils import get_access_conditions
 from ..._headers_mixin import HeadersMixin
 from ..._version import SDK_MONIKER
 
@@ -102,12 +103,17 @@ class SearchSkillsetsClient(HeadersMixin):
         return await self._client.skillsets.get(name, **kwargs)
 
     @distributed_trace_async
-    async def delete_skillset(self, name, **kwargs):
-        # type: (str, **Any) -> None
-        """Delete a named Skillset in an Azure Search service
+    async def delete_skillset(self, skillset, **kwargs):
+        # type: (Union[str, Skillset], **Any) -> None
+        """Delete a named Skillset in an Azure Search service. To use only_if_unchanged,
+        the Skillset model must be provided instead of the name. It is enough to provide
+        the name of the skillset to delete unconditionally
 
-        :param name: The name of the Skillset to delete
-        :type name: str
+        :param name: The Skillset to delete
+        :type name: str or ~search.models.Skillset
+        :keyword only_if_unchanged: If set to true, the operation is performed only if the
+        e_tag on the server matches the e_tag value of the passed skillset.
+        :type only_if_unchanged: bool
 
         .. admonition:: Example:
 
@@ -120,7 +126,13 @@ class SearchSkillsetsClient(HeadersMixin):
 
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        await self._client.skillsets.delete(name, **kwargs)
+        access_condition = None
+        try:
+            name = skillset.name
+            access_condition = get_access_conditions(skillset, kwargs.pop('only_if_unchanged', False))
+        except AttributeError:
+            name = skillset
+        await self._client.skillsets.delete(name, access_condition=access_condition, **kwargs)
 
     @distributed_trace_async
     async def create_skillset(self, name, skills, description, **kwargs):
@@ -156,16 +168,20 @@ class SearchSkillsetsClient(HeadersMixin):
     async def create_or_update_skillset(self, name, **kwargs):
         # type: (str, **Any) -> Skillset
         """Create a new Skillset in an Azure Search service, or update an
-        existing one.
+        existing one. The skillset param must be provided to perform the
+        operation with access conditions.
 
         :param name: The name of the Skillset to create or update
         :type name: str
-        :param skills: A list of Skill objects to include in the Skillset
+        :keyword skills: A list of Skill objects to include in the Skillset
         :type skills: List[Skill]
-        :param description: A description for the Skillset
+        :keyword description: A description for the Skillset
         :type description: Optional[str]
-        :param skillset: A Skillset to create or update.
+        :keyword skillset: A Skillset to create or update.
         :type skillset: :class:`~azure.search.documents.Skillset`
+        :keyword only_if_unchanged: If set to true, the operation is performed only if the
+        e_tag on the server matches the e_tag value of the passed skillset.
+        :type only_if_unchanged: bool
         :return: The created or updated Skillset
         :rtype: dict
 
@@ -175,9 +191,11 @@ class SearchSkillsetsClient(HeadersMixin):
 
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        access_condition = None
 
         if "skillset" in kwargs:
             skillset = kwargs.pop("skillset")
+            access_condition = get_access_conditions(skillset, kwargs.pop('only_if_unchanged', False))
             skillset = Skillset.deserialize(skillset.serialize())
             skillset.name = name
             for param in ("description", "skills"):
@@ -191,4 +209,9 @@ class SearchSkillsetsClient(HeadersMixin):
                 skills=kwargs.pop("skills", None),
             )
 
-        return await self._client.skillsets.create_or_update(name, skillset, **kwargs)
+        return await self._client.skillsets.create_or_update(
+            skillset_name=name,
+            skillset=skillset,
+            access_condition=access_condition,
+            **kwargs
+        )

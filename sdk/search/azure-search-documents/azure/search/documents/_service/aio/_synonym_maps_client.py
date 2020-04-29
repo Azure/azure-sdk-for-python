@@ -9,7 +9,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 
 from .._generated.aio import SearchServiceClient as _SearchServiceClient
 from .._generated.models import SynonymMap
-from .._utils import listize_synonyms
+from .._utils import listize_synonyms, get_access_conditions
 from ..._headers_mixin import HeadersMixin
 from ..._version import SDK_MONIKER
 
@@ -104,12 +104,20 @@ class SearchSynonymMapsClient(HeadersMixin):
         return listize_synonyms(result.as_dict())
 
     @distributed_trace_async
-    async def delete_synonym_map(self, name, **kwargs):
-        # type: (str, **Any) -> None
-        """Delete a named Synonym Map in an Azure Search service
+    async def delete_synonym_map(self, synonym_map, **kwargs):
+        # type: (Union[str, SynonymMap], **Any) -> None
+        """Delete a named Synonym Map in an Azure Search service. To use only_if_unchanged,
+        the SynonymMap model must be provided instead of the name. It is enough to provide
+        the name of the synonym map to delete unconditionally.
 
-        :param name: The name of the Synonym Map to delete
-        :type name: str
+        :param name: The Synonym Map to delete
+        :type name: str or ~search.models.SynonymMap
+        :keyword only_if_unchanged: If set to true, the operation is performed only if the
+        e_tag on the server matches the e_tag value of the passed synonym_map.
+        :type only_if_unchanged: bool
+        :return: None
+        :rtype: None
+
 
         .. admonition:: Example:
 
@@ -122,7 +130,13 @@ class SearchSynonymMapsClient(HeadersMixin):
 
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        await self._client.synonym_maps.delete(name, **kwargs)
+        access_condition = None
+        try:
+            name = synonym_map.name
+            access_condition = get_access_conditions(synonym_map, kwargs.pop('only_if_unchanged', False))
+        except AttributeError:
+            name = synonym_map
+        await self._client.synonym_maps.delete(synonym_map_name=name, access_condition=access_condition, **kwargs)
 
     @distributed_trace_async
     async def create_synonym_map(self, name, synonyms, **kwargs):
@@ -153,23 +167,37 @@ class SearchSynonymMapsClient(HeadersMixin):
         return listize_synonyms(result.as_dict())
 
     @distributed_trace_async
-    async def create_or_update_synonym_map(self, name, synonyms, **kwargs):
-        # type: (str, Sequence[str], **Any) -> dict
+    async def create_or_update_synonym_map(self, synonym_map, synonyms=None, **kwargs):
+        # type: (Union[str, SynonymMap], Optional[Sequence[str]], **Any) -> dict
         """Create a new Synonym Map in an Azure Search service, or update an
         existing one.
 
-        :param name: The name of the Synonym Map to create or update
-        :type name: str
+        :param synonym_map: The name of the Synonym Map to create or update
+        :type synonym_map: str or ~azure.search.documents.SynonymMap
         :param synonyms: A list of synonyms in SOLR format
         :type synonyms: List[str]
+        :keyword only_if_unchanged: If set to true, the operation is performed only if the
+        e_tag on the server matches the e_tag value of the passed synonym_map.
+        :type only_if_unchanged: bool
         :return: The created or updated Synonym Map
         :rtype: dict
 
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        solr_format_synonyms = "\n".join(synonyms)
-        synonym_map = SynonymMap(name=name, synonyms=solr_format_synonyms)
+        access_condition = None
+        try:
+            name = synonym_map.name
+            access_condition = get_access_conditions(synonym_map, kwargs.pop('only_if_unchanged', False))
+            if synonyms:
+                synonym_map.synonyms = "\n".join(synonyms)
+        except AttributeError:
+            name = synonym_map
+            solr_format_synonyms = "\n".join(synonyms)
+            synonym_map = SynonymMap(name=name, synonyms=solr_format_synonyms)
         result = await self._client.synonym_maps.create_or_update(
-            name, synonym_map, **kwargs
+            synonym_map_name=name,
+            synonym_map=synonym_map,
+            access_condition=access_condition,
+            **kwargs
         )
         return listize_synonyms(result.as_dict())

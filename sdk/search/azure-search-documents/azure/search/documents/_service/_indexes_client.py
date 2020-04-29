@@ -227,7 +227,6 @@ class SearchIndexesClient(HeadersMixin):
                 :dedent: 4
                 :caption: Update an index.
         """
-        error_map = {404: ResourceNotFoundError}  # type: Dict[int, Any]
         access_condition = get_access_conditions(index, kwargs.pop('only_if_unchanged', False))
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         patched_index = delistize_flags_for_index(index)

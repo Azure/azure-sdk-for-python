@@ -208,4 +208,9 @@ class SearchSkillsetsClient(HeadersMixin):
                 skills=kwargs.pop("skills", None),
             )
 
-        return self._client.skillsets.create_or_update(name, skillset, access_condition=access_condition, **kwargs)
+        return self._client.skillsets.create_or_update(
+            skillset_name=name,
+            skillset=skillset,
+            access_condition=access_condition,
+            **kwargs
+        )
