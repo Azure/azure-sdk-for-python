@@ -233,14 +233,14 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 
 <!-- LINKS -->
 [azure_cli]: https://docs.microsoft.com/cli/azure
-[api_docs]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/7.0.0b1/index.html
+[api_docs]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/7.0.0b2/index.html
 [product_docs]: https://docs.microsoft.com/azure/service-bus-messaging/
 [azure_portal]: https://portal.azure.com
 [azure_sub]: https://azure.microsoft.com/free/
 [cloud_shell]: https://docs.microsoft.com/azure/cloud-shell/overview
 [cloud_shell_bash]: https://shell.azure.com/bash
 [pip]: https://pypi.org/project/pip/
-[pypi]: https://pypi.org/project/azure-servicebus/7.0.0b1/
+[pypi]: https://pypi.org/project/azure-servicebus/7.0.0b2/
 [python]: https://www.python.org/downloads/
 [venv]: https://docs.python.org/3/library/venv.html
 [virtualenv]: https://virtualenv.pypa.io
