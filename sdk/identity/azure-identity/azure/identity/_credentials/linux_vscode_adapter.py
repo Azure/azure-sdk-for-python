@@ -43,7 +43,7 @@ def _get_refresh_token(service_name, account_name):
     # temporarily disable it on 2.7
     import sys
     if sys.version_info[0] < 3:
-        return None
+        raise NotImplementedError("Not support on Python 2.7")
 
     if not _libsecret:
         return None
@@ -59,5 +59,7 @@ def get_credentials():
         environment_name = _get_user_settings()
         credentials = _get_refresh_token(VSCODE_CREDENTIALS_SECTION, environment_name)
         return credentials
+    except NotImplementedError:  # pylint:disable=try-except-raise
+        raise
     except Exception: #pylint: disable=broad-except
         return None
