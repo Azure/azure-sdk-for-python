@@ -1069,7 +1069,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     message_id = uuid.uuid4()
                     message = Message(content)
                     message.properties.message_id = message_id
-                    message.schedule(enqueue_time)
+                    message.scheduled_enqueue_time_utc = enqueue_time
                     sender.send(message)
     
                 messages = receiver.receive(max_wait_time=120)

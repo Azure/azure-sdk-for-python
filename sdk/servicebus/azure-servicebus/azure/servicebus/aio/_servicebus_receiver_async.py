@@ -170,7 +170,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
                 await asyncio.sleep(0.05)
             self._running = True
         except:
-            self.close()
+            await self.close()
             raise
 
     async def _receive(self, max_batch_size=None, timeout=None):

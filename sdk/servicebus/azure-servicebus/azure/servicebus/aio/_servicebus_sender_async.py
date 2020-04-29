@@ -128,7 +128,7 @@ class ServiceBusSender(BaseHandlerAsync, SenderMixin):
             self._max_message_size_on_link = self._handler.message_handler._link.peer_max_message_size \
                                              or uamqp.constants.MAX_MESSAGE_LENGTH_BYTES
         except:
-            self.close()
+            await self.close()
             raise
 
     async def _send(self, message, timeout=None, last_exception=None):
@@ -144,7 +144,7 @@ class ServiceBusSender(BaseHandlerAsync, SenderMixin):
         """Send Message or multiple Messages to be enqueued at a specific time.
         Returns a list of the sequence numbers of the enqueued messages.
         :param messages: The message or list of messages to schedule.
-        :type messages: ~azure.servicebus.Message or List[~azure.servicebus.Message]
+        :type messages: ~azure.servicebus.Message or list[~azure.servicebus.Message]
         :param schedule_time_utc: The utc date and time to enqueue the messages.
         :type schedule_time_utc: ~datetime.datetime
         :rtype: list[int]
@@ -176,7 +176,7 @@ class ServiceBusSender(BaseHandlerAsync, SenderMixin):
         Cancel one or more messages that have previously been scheduled and are still pending.
 
         :param sequence_numbers: The sequence numbers of the scheduled messages.
-        :type sequence_numbers: int or List[int]
+        :type sequence_numbers: int or list[int]
         :rtype: None
         :raises: ~azure.servicebus.exceptions.ServiceBusError if messages cancellation failed due to message already
          cancelled or enqueued.

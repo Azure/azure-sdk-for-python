@@ -244,8 +244,8 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
         # type: () -> Optional[datetime.datetime]
         """Get or set the utc scheduled enqueue time to the message.
         This property can be used for scheduling when sending a message through `ServiceBusSender.send` method.
-        Or you could use `ServiceBusSender.schedule` method to schedule messages which would return scheduled messages'
-        sequence numbers that can be used for future cancellation.
+        If cancelling scheduled messages is required, you should use the `ServiceBusSender.schedule` method,
+        which returns sequence numbers that can be used for future cancellation.
 
         :rtype: ~datetime.datetime
         """
