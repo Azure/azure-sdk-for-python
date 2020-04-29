@@ -43,7 +43,7 @@ def _get_refresh_token(service_name, account_name):
     # temporarily disable it on 2.7
     import sys
     if sys.version_info[0] < 3:
-        raise NotImplementedError("Not support on Python 2.7")
+        raise NotImplementedError("Not supported on Python 2.7")
 
     if not _libsecret:
         return None
