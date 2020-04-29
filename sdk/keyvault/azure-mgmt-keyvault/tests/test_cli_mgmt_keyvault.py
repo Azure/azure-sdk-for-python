@@ -37,7 +37,7 @@ class MgmtKeyVaultTest(AzureMgmtTestCase):
         SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
         TENANT_ID = "72f988bf-86f1-41af-91ab-2d7cd011db47" # self.settings.TENANT_ID
         RESOURCE_GROUP = resource_group.name
-        VAULT_NAME = "myValtZfikfik"
+        VAULT_NAME = "myValtZikfikxy"
         OPERATION_KIND = "add"
         LOCATION = "eastus"
         PRIVATE_ENDPOINT_CONNECTION_NAME = "myPrivateEndpointConnection"
@@ -146,7 +146,9 @@ class MgmtKeyVaultTest(AzureMgmtTestCase):
         #result = result.result()
 
         # /Vaults/put/Add an access policy, or update an access policy with new permissions[put]
-        PROPERTIES = [
+        PARAMETERS = {
+          "properties": {
+            "access_policies": [
               {
                 "tenant_id": TENANT_ID,
                 "object_id": "00000000-0000-0000-0000-000000000000",
@@ -162,8 +164,11 @@ class MgmtKeyVaultTest(AzureMgmtTestCase):
                   ]
                 }
               }
-        ]
-        # result = self.mgmt_client.vaults.update_access_policy(resource_group_name=RESOURCE_GROUP, vault_name=VAULT_NAME, operation_kind=OPERATION_KIND, properties=PROPERTIES)
+            ]
+          }
+        }
+        
+        result = self.mgmt_client.vaults.update_access_policy(resource_group_name=RESOURCE_GROUP, vault_name=VAULT_NAME, operation_kind=OPERATION_KIND, parameters=PARAMETERS)
 
         # /PrivateEndpointConnections/put/KeyVaultPutPrivateEndpointConnection[put]
         BODY = {
