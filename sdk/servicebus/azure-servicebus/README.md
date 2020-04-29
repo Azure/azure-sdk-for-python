@@ -14,7 +14,7 @@ Use the Service Bus client library for Python to communicate between application
 [Source code](./) | [Package (PyPi)][pypi] | [API reference documentation][api_docs] | [Product documentation][product_docs] | [Samples](./samples) | [Changelog](./CHANGELOG.md)
 
 > **NOTE**: This document has instructions, links and code snippets for the **preview** of the next version of the `azure-servicebus` package
-> which has different APIs than the stable version (0.50). Please view the resources below for references on the existing library.
+> which has different APIs than the current version (0.50). Please view the resources below for references on the existing library.
 
 [V0.50 Source code][0_50_source] | [V0.50 Package (PyPi)][0_50_pypi] | [V0.50 API reference documentation][0_50_api_docs] | [V0.50 Product documentation][0_50_product_docs] | [V0.50 Samples][0_50_samples] | [V0.50 Changelog][0_50_changelog]
 
