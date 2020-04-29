@@ -64,6 +64,15 @@ class PollingMethod(Generic[PollingReturnType]):
         # type: () -> PollingReturnType
         raise NotImplementedError("This method needs to be implemented")
 
+    def cancel(self):
+        # type: () -> bool
+        raise NotImplementedError("This method needs to be implemented")
+
+    def cancelled(self):
+        # type: () -> bool
+        raise NotImplementedError("This method needs to be implemented")
+
+
 class NoPolling(PollingMethod):
     """An empty poller that returns the deserialized initial response.
     """
@@ -100,6 +109,14 @@ class NoPolling(PollingMethod):
     def resource(self):
         # type: () -> Any
         return self._deserialization_callback(self._initial_response)
+    
+    def cancel(self):
+        # type: () -> bool
+        return False
+    
+    def cancelled(self):
+        # type: () -> bool
+        return False
 
 
 class LROPoller(Generic[PollingReturnType]):
@@ -186,6 +203,22 @@ class LROPoller(Generic[PollingReturnType]):
         """
         self.wait(timeout)
         return self._polling_method.resource()
+    
+    def cancel(self):
+        # type: () -> bool
+        """Cancel the background polling process and schedule callbacks.
+        Returns False if the polling method is already cancelled or does
+        not support cancellation.
+
+        Note:: This will not cancel the long running operation itself.
+
+        :returns: Whether or not the polling was cancelled.
+        :rtype: bool
+        """
+        try:
+            return self._polling_method.cancel()
+        except (AttributeError, NotImplementedError):
+            return False
 
     @distributed_trace
     def wait(self, timeout=None):
@@ -216,6 +249,19 @@ class LROPoller(Generic[PollingReturnType]):
         :rtype: bool
         """
         return self._thread is None or not self._thread.is_alive()
+
+    def cancelled(self):
+        # type: () -> bool
+        """Check whether the polling method has been cancelled.
+        Returns False if the polling method does not support cancellation.
+
+        :returns: 'True' if the process has been cancelled, else 'False'.
+        :rtype: bool
+        """
+        try:
+            return self._polling_method.cancelled()
+        except (AttributeError, NotImplementedError):
+            return False
 
     def add_done_callback(self, func):
         # type: (Callable) -> None

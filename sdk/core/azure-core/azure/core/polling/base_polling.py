@@ -25,6 +25,7 @@
 # --------------------------------------------------------------------------
 import abc
 import json
+import threading
 from typing import TYPE_CHECKING, Optional, Any, Union
 
 from ..exceptions import HttpResponseError, DecodeError
@@ -389,6 +390,7 @@ class LROBasePolling(PollingMethod):
         self._operation_config = operation_config
         self._lro_options = lro_options
         self._status = None
+        self._cancellation_token = threading.Event()
 
     def status(self):
         """Return the current status as a string.
@@ -404,12 +406,24 @@ class LROBasePolling(PollingMethod):
         """Is this polling finished?
         :rtype: bool
         """
-        return _finished(self.status())
+        return self._cancellation_token.is_set() or _finished(self.status())
+    
+    def cancelled(self):
+        """Is polling cancelled?
+        :rtype: bool
+        """
+        return self._cancellation_token.is_set()
 
     def resource(self):
         """Return the built resource.
         """
         return self._parse_resource(self._pipeline_response)
+    
+    def cancel(self):
+        if self.cancelled():
+            return False
+        self._cancellation_token.set()
+        return True
 
     @property
     def _transport(self):
@@ -484,6 +498,8 @@ class LROBasePolling(PollingMethod):
             self._delay()
             self.update_status()
 
+        if self.cancelled():
+            return
         if _failed(self.status()):
             raise OperationFailed("Operation failed or canceled")
 

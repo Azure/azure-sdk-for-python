@@ -24,6 +24,7 @@
 #
 #--------------------------------------------------------------------------
 import time
+import threading
 try:
     from unittest import mock
 except ImportError:
@@ -54,6 +55,7 @@ def test_abc_polling():
 
     with pytest.raises(NotImplementedError):
         abc_polling.resource()
+
 
 def test_no_polling():
     no_polling = NoPolling()
@@ -103,6 +105,43 @@ class PollingTwoSteps(PollingMethod):
 
     def resource(self):
         return self._deserialization_callback(self._initial_response)
+
+
+class PollingThreeSteps(PollingTwoSteps):
+    """An empty poller that returns the deserialized initial response.
+    """
+    def __init__(self, sleep=0):
+        super(PollingThreeSteps, self).__init__(sleep=sleep)
+        self._cancellation_token = threading.Event()
+        self._status = 0
+
+    def run(self):
+        """Empty run, no polling.
+        """
+        while not self.finished():
+            self._status += 1
+            time.sleep(self._sleep)
+        self._finished = True
+
+    def finished(self):
+        """Is this polling finished?
+        :rtype: bool
+        """
+        return self._cancellation_token.is_set() or self._status >= 3
+
+    def status(self):
+        """Return the current status as a string.
+        :rtype: str
+        """
+        return self._status
+    
+    def cancel(self):
+        self._cancellation_token.set()
+        return True
+
+    def cancelled(self):
+        return self._cancellation_token.is_set()
+
 
 @pytest.fixture
 def client():
@@ -172,3 +211,27 @@ def test_broken_poller(client):
     with pytest.raises(ValueError) as excinfo:
         poller.result()
     assert "Something bad happened" in str(excinfo.value)
+
+
+def test_cancelled_poller(client):
+    # Same the poller itself doesn't care about the initial_response, and there is no type constraint here
+    initial_response = "Initial response"
+
+    # Same for deserialization_callback, just pass to the polling_method
+    def deserialization_callback(response):
+        assert response == initial_response
+        return "Treated: "+response
+
+    # Test poller that method do a run
+    method = PollingThreeSteps(sleep=1)
+    poller = LROPoller(client, initial_response, deserialization_callback, method)
+
+    done_cb = mock.MagicMock()
+    poller.add_done_callback(done_cb)
+
+    cancelled = poller.cancel()
+    poller.wait()
+    assert poller.cancelled()
+    assert poller.done()
+    assert poller.status() < 2
+    done_cb.assert_called_once_with(method)
