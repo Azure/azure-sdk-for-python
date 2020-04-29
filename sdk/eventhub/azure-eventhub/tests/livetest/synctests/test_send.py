@@ -229,11 +229,3 @@ def test_send_batch_pid_pk(invalid_hostname, partition_id, partition_key):
     with client:
         with pytest.raises(TypeError):
             client.send_batch(batch, partition_id=partition_id, partition_key=partition_key)
-
-
-def test_send_str(invalid_hostname):
-    # Use invalid_hostname because this is not a live test.
-    client = EventHubProducerClient.from_connection_string(invalid_hostname)
-    with client:
-        with pytest.raises(TypeError):
-            client.send_batch("aaa")

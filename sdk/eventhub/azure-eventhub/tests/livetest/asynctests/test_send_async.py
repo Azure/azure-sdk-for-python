@@ -223,11 +223,3 @@ async def test_send_batch_pid_pk_async(invalid_hostname, partition_id, partition
     async with client:
         with pytest.raises(TypeError):
             await client.send_batch(batch, partition_id=partition_id, partition_key=partition_key)
-
-
-async def test_send_str_async(invalid_hostname):
-    # Use invalid_hostname because this is not a live test.
-    client = EventHubProducerClient.from_connection_string(invalid_hostname)
-    async with client:
-        with pytest.raises(TypeError):
-            await client.send_batch("aaa")
