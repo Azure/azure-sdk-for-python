@@ -9,7 +9,7 @@ from .._constants import VSCODE_CREDENTIALS_SECTION
 
 
 def _get_user_settings_path():
-    app_data_folder = os.environ['USERPROFILE']
+    app_data_folder = os.environ['USER']
     return os.path.join(app_data_folder, "Library", "Application Support", "Code", "User", "settings.json")
 
 
