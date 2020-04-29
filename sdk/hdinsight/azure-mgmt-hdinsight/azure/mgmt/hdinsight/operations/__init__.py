@@ -17,6 +17,7 @@ from ._extensions_operations import ExtensionsOperations
 from ._script_actions_operations import ScriptActionsOperations
 from ._script_execution_history_operations import ScriptExecutionHistoryOperations
 from ._operations import Operations
+from ._virtual_machines_operations import VirtualMachinesOperations
 
 __all__ = [
     'ClustersOperations',
@@ -27,4 +28,5 @@ __all__ = [
     'ScriptActionsOperations',
     'ScriptExecutionHistoryOperations',
     'Operations',
+    'VirtualMachinesOperations',
 ]
