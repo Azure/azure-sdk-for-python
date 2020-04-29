@@ -22,6 +22,7 @@ from ._utils import (
     listize_flags_for_index,
     prep_if_match,
     prep_if_none_match,
+    get_access_conditions
 )
 from .._headers_mixin import HeadersMixin
 from .._version import SDK_MONIKER
@@ -130,12 +131,16 @@ class SearchIndexesClient(HeadersMixin):
         return result.as_dict()
 
     @distributed_trace
-    def delete_index(self, index_name, **kwargs):
-        # type: (str, **Any) -> None
-        """Deletes a search index and all the documents it contains.
+    def delete_index(self, index, **kwargs):
+        # type: (Union[str, Index], **Any) -> None
+        """Deletes a search index and all the documents it contains. The model must be
+        provided instead of the name to use the access condition only_if_unchanged
 
-        :param index_name: The name of the index to retrieve.
-        :type index_name: str
+        :param index: The index to retrieve.
+        :type index: str or ~search.models.Index
+        :keyword only_if_unchanged: If set to true, the operation is performed only if the
+        e_tag on the server matches the e_tag value of the passed index.
+        :type only_if_unchanged: bool
         :raises: ~azure.core.exceptions.HttpResponseError
 
         .. admonition:: Example:
@@ -148,7 +153,13 @@ class SearchIndexesClient(HeadersMixin):
                 :caption: Delete an index.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        self._client.indexes.delete(index_name, **kwargs)
+        access_condition = None
+        try:
+            index_name = index.name
+            access_condition = get_access_conditions(index, kwargs.pop('only_if_unchanged', False))
+        except AttributeError:
+            index_name = index
+        self._client.indexes.delete(index_name=index_name, access_condition=access_condition, **kwargs)
 
     @distributed_trace
     def create_index(self, index, **kwargs):
@@ -181,10 +192,9 @@ class SearchIndexesClient(HeadersMixin):
         index_name,
         index,
         allow_index_downtime=None,
-        match_condition=MatchConditions.Unconditionally,
         **kwargs
     ):
-        # type: (str, Index, bool, MatchConditions, **Any) -> Index
+        # type: (str, Index, bool, **Any) -> Index
         """Creates a new search index or updates an index if it already exists.
 
         :param index_name: The name of the index.
@@ -197,8 +207,9 @@ class SearchIndexesClient(HeadersMixin):
          the index can be impaired for several minutes after the index is updated, or longer for very
          large indexes.
         :type allow_index_downtime: bool
-        :param match_condition: The match condition to use upon the etag
-        :type match_condition: ~azure.core.MatchConditions
+        :keyword only_if_unchanged: If set to true, the operation is performed only if the
+        e_tag on the server matches the e_tag value of the passed index.
+        :type only_if_unchanged: bool
         :return: The index created or updated
         :rtype: :class:`~azure.search.documents.Index`
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`, \
@@ -217,21 +228,7 @@ class SearchIndexesClient(HeadersMixin):
                 :caption: Update an index.
         """
         error_map = {404: ResourceNotFoundError}  # type: Dict[int, Any]
-        access_condition = None
-        if index.e_tag:
-            access_condition = AccessCondition()
-            access_condition.if_match = prep_if_match(index.e_tag, match_condition)
-            access_condition.if_none_match = prep_if_none_match(
-                index.e_tag, match_condition
-            )
-        if match_condition == MatchConditions.IfNotModified:
-            error_map[412] = ResourceModifiedError
-        if match_condition == MatchConditions.IfModified:
-            error_map[304] = ResourceNotModifiedError
-        if match_condition == MatchConditions.IfPresent:
-            error_map[412] = ResourceNotFoundError
-        if match_condition == MatchConditions.IfMissing:
-            error_map[412] = ResourceExistsError
+        access_condition = get_access_conditions(index, kwargs.pop('only_if_unchanged', False))
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         patched_index = delistize_flags_for_index(index)
         result = self._client.indexes.create_or_update(

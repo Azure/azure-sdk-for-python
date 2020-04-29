@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING
 from azure.core.tracing.decorator import distributed_trace
 
 from ._generated import SearchServiceClient as _SearchServiceClient
+from ._utils import get_access_conditions
 from .._headers_mixin import HeadersMixin
 from .._version import SDK_MONIKER
 
@@ -78,22 +79,28 @@ class SearchDataSourcesClient(HeadersMixin):
 
     @distributed_trace
     def create_or_update_datasource(self, data_source, name=None, **kwargs):
-        # type: (DataSource, Optional[str], **Any) -> Dict[str, Any]
+        # type: (str, DataSource, Optional[str], **Any) -> Dict[str, Any]
         """Creates a new datasource or updates a datasource if it already exists.
-
         :param name: The name of the datasource to create or update.
         :type name: str
         :param data_source: The definition of the datasource to create or update.
         :type data_source: ~search.models.DataSource
+        :keyword only_if_unchanged: If set to true, the operation is performed only if the
+        e_tag on the server matches the e_tag value of the passed data_source.
+        :type only_if_unchanged: bool
         :return: The created DataSource
         :rtype: dict
         """
-        # TODO: access_condition
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-
+        access_condition = get_access_conditions(data_source, kwargs.pop('only_if_unchanged', False))
         if not name:
             name = data_source.name
-        result = self._client.data_sources.create_or_update(name, data_source, **kwargs)
+        result = self._client.data_sources.create_or_update(
+            data_source_name=name,
+            data_source=data_source,
+            access_condition=access_condition,
+            **kwargs
+        )
         return result
 
     @distributed_trace
@@ -141,13 +148,17 @@ class SearchDataSourcesClient(HeadersMixin):
         return result.data_sources
 
     @distributed_trace
-    def delete_datasource(self, name, **kwargs):
-        # type: (str, **Any) -> None
-        """Deletes a datasource.
+    def delete_datasource(self, data_source, **kwargs):
+        # type: (Union[str, DataSource], **Any) -> None
+        """Deletes a datasource. To use only_if_unchanged, the Datasource model must be
+        provided instead of the name. It is enough to provide the name of the datasource
+        to delete unconditionally
 
-        :param name: The name of the datasource to delete.
-        :type name: str
-
+        :param data_source: The datasource to delete.
+        :type data_source: str or ~search.models.DataSource
+        :keyword only_if_unchanged: If set to true, the operation is performed only if the
+        e_tag on the server matches the e_tag value of the passed data_source.
+        :type only_if_unchanged: bool
         :return: None
         :rtype: None
 
@@ -161,4 +172,14 @@ class SearchDataSourcesClient(HeadersMixin):
                 :caption: Delete a DataSource
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        self._client.data_sources.delete(name, **kwargs)
+        access_condition = None
+        try:
+            name = data_source.name
+            access_condition = get_access_conditions(data_source, kwargs.pop('only_if_unchanged', False))
+        except AttributeError:
+            name = data_source
+        self._client.data_sources.delete(
+            data_source_name=name,
+            access_condition=access_condition,
+            **kwargs
+        )

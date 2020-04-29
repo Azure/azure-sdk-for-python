@@ -10,6 +10,7 @@ from ._generated.models import (
     Index,
     PatternAnalyzer as _PatternAnalyzer,
     PatternTokenizer as _PatternTokenizer,
+    AccessCondition
 )
 from ._models import PatternAnalyzer, PatternTokenizer
 
@@ -151,3 +152,11 @@ def listize_synonyms(synonym_map):
     # type: (dict) -> dict
     synonym_map["synonyms"] = synonym_map["synonyms"].split("\n")
     return synonym_map
+
+def get_access_conditions(model, only_if_unchanged=False):
+    if not only_if_unchanged:
+        return
+    try:
+        return AccessCondition(if_match=model.e_tag)
+    except AttributeError:
+        raise ValueError("Unable to get e_tag from the model")

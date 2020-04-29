@@ -1,0 +1,164 @@
+interactions:
+- request:
+    body: '{"name": "test-syn-map", "format": "solr", "synonyms": "USA, United States,
+      United States of America\nWashington, Wash. => WA"}'
+    headers:
+      Accept:
+      - application/json;odata.metadata=minimal
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '127'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-search-documents/1.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      api-key:
+      - 13C25F60415C700FD39787BC02ACDFC0
+    method: POST
+    uri: https://search654a1633.search.windows.net/synonymmaps?api-version=2019-05-06-Preview
+  response:
+    body:
+      string: '{"@odata.context":"https://search654a1633.search.windows.net/$metadata#synonymmaps/$entity","@odata.etag":"\"0x8D7EBFA7A96EF2E\"","name":"test-syn-map","format":"solr","synonyms":"USA,
+        United States, United States of America\nWashington, Wash. => WA","encryptionKey":null}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '272'
+      content-type:
+      - application/json; odata.metadata=minimal
+      date:
+      - Wed, 29 Apr 2020 05:02:12 GMT
+      elapsed-time:
+      - '52'
+      etag:
+      - W/"0x8D7EBFA7A96EF2E"
+      expires:
+      - '-1'
+      location:
+      - https://search654a1633.search.windows.net/synonymmaps('test-syn-map')?api-version=2019-05-06-Preview
+      odata-version:
+      - '4.0'
+      pragma:
+      - no-cache
+      preference-applied:
+      - odata.include-annotations="*"
+      request-id:
+      - 95f84e62-89d6-11ea-b612-2816a845e8c6
+      strict-transport-security:
+      - max-age=15724800; includeSubDomains
+    status:
+      code: 201
+      message: Created
+- request:
+    body: '{"name": "test-syn-map", "format": "solr", "synonyms": "Washington, Wash.
+      => WA"}'
+    headers:
+      Accept:
+      - application/json;odata.metadata=minimal
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '81'
+      Content-Type:
+      - application/json
+      Prefer:
+      - return=representation
+      User-Agent:
+      - azsdk-python-search-documents/1.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      api-key:
+      - 13C25F60415C700FD39787BC02ACDFC0
+    method: PUT
+    uri: https://search654a1633.search.windows.net/synonymmaps('test-syn-map')?api-version=2019-05-06-Preview
+  response:
+    body:
+      string: '{"@odata.context":"https://search654a1633.search.windows.net/$metadata#synonymmaps/$entity","@odata.etag":"\"0x8D7EBFA7AAEC138\"","name":"test-syn-map","format":"solr","synonyms":"Washington,
+        Wash. => WA","encryptionKey":null}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '226'
+      content-type:
+      - application/json; odata.metadata=minimal
+      date:
+      - Wed, 29 Apr 2020 05:02:12 GMT
+      elapsed-time:
+      - '27'
+      etag:
+      - W/"0x8D7EBFA7AAEC138"
+      expires:
+      - '-1'
+      odata-version:
+      - '4.0'
+      pragma:
+      - no-cache
+      preference-applied:
+      - odata.include-annotations="*"
+      request-id:
+      - 9648590c-89d6-11ea-af8c-2816a845e8c6
+      strict-transport-security:
+      - max-age=15724800; includeSubDomains
+      vary:
+      - Accept-Encoding
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json;odata.metadata=minimal
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      If-Match:
+      - '"0x8D7EBFA7A96EF2E"'
+      User-Agent:
+      - azsdk-python-search-documents/1.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      api-key:
+      - 13C25F60415C700FD39787BC02ACDFC0
+    method: DELETE
+    uri: https://search654a1633.search.windows.net/synonymmaps('test-syn-map')?api-version=2019-05-06-Preview
+  response:
+    body:
+      string: '{"error":{"code":"","message":"The precondition given in one of the
+        request headers evaluated to false. No change was made to the resource from
+        this request."}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-language:
+      - en
+      content-length:
+      - '160'
+      content-type:
+      - application/json; odata.metadata=minimal
+      date:
+      - Wed, 29 Apr 2020 05:02:12 GMT
+      elapsed-time:
+      - '14'
+      expires:
+      - '-1'
+      odata-version:
+      - '4.0'
+      pragma:
+      - no-cache
+      preference-applied:
+      - odata.include-annotations="*"
+      request-id:
+      - 965ff0ba-89d6-11ea-b83f-2816a845e8c6
+      strict-transport-security:
+      - max-age=15724800; includeSubDomains
+    status:
+      code: 412
+      message: Precondition Failed
+version: 1
