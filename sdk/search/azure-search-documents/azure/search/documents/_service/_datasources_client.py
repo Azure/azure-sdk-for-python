@@ -79,7 +79,7 @@ class SearchDataSourcesClient(HeadersMixin):
 
     @distributed_trace
     def create_or_update_datasource(self, data_source, name=None, **kwargs):
-        # type: (str, DataSource, Optional[str], **Any) -> Dict[str, Any]
+        # type: (DataSource, Optional[str], **Any) -> Dict[str, Any]
         """Creates a new datasource or updates a datasource if it already exists.
         :param name: The name of the datasource to create or update.
         :type name: str
