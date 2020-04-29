@@ -57,5 +57,6 @@ jobs:
 
       - script: |
           pip install --force-reinstall $(Build.SourcesDirectory)/$(source_path_azure_mgmt_core)
+          cd $(Build.SourcesDirectory)/autorest.python
           pytest test/azure
         displayName: 'Install azure-mgmt-core and Test Azure'
