@@ -428,11 +428,13 @@ class SearchDataSourcesClientTest(AzureMgmtTestCase):
 
 class SearchIndexersClientTest(AzureMgmtTestCase):
 
-    def _prepare_indexer(self, endpoint, api_key, name="sample-indexer"):
-        credentials = DataSourceCredentials(connection_string=CONNECTION_STRING)
+    def _prepare_indexer(self, endpoint, api_key, name="sample-indexer", ds_name="sample-datasource", id_name="hotels"):
+        con_str = self.settings.AZURE_STORAGE_CONNECTION_STRING
+        self.scrubber.register_name_pair(con_str, 'connection_string')
+        credentials = DataSourceCredentials(connection_string=con_str)
         container = DataContainer(name='searchcontainer')
         data_source = DataSource(
-            name="sample-datasource",
+            name=ds_name,
             type="azureblob",
             credentials=credentials,
             container=container
@@ -440,7 +442,7 @@ class SearchIndexersClientTest(AzureMgmtTestCase):
         client = SearchServiceClient(endpoint, AzureKeyCredential(api_key))
         ds = client.get_datasources_client().create_datasource(data_source)
 
-        index_name = "hotels"
+        index_name = id_name
         fields = [
         {
           "name": "hotelId",
@@ -479,8 +481,8 @@ class SearchIndexersClientTest(AzureMgmtTestCase):
         indexer = self._prepare_indexer(endpoint, api_key)
         result = client.create_indexer(indexer)
         assert len(client.get_indexers()) == 1
-        client.reset_indexer("sample-indexer")
-        assert client.get_indexer_status("sample-indexer").last_result.status == 'reset'
+        result = client.reset_indexer("sample-indexer")
+        assert client.get_indexer_status("sample-indexer").last_result.status in ('InProgress', 'reset')
 
     @SearchResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
@@ -489,9 +491,9 @@ class SearchIndexersClientTest(AzureMgmtTestCase):
         indexer = self._prepare_indexer(endpoint, api_key)
         result = client.create_indexer(indexer)
         assert len(client.get_indexers()) == 1
-        time = time.now()
+        start = time.time()
         client.run_indexer("sample-indexer")
-        assert client.get_indexer_status("sample-indexer").last_result.start_time > time.now()
+        assert client.get_indexer_status("sample-indexer").status == 'running'
 
     @SearchResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
@@ -507,7 +509,7 @@ class SearchIndexersClientTest(AzureMgmtTestCase):
     def test_list_indexer(self, api_key, endpoint, index_name, **kwargs):
         client = SearchServiceClient(endpoint, AzureKeyCredential(api_key)).get_indexers_client()
         indexer1 = self._prepare_indexer(endpoint, api_key)
-        indexer2 = self._prepare_indexer(endpoint, api_key, name="another-indexer")
+        indexer2 = self._prepare_indexer(endpoint, api_key, name="another-indexer", ds_name="another-datasource", id_name="another-index")
         created1 = client.create_indexer(indexer1)
         created2 = client.create_indexer(indexer2)
         result = client.get_indexers()
@@ -520,34 +522,13 @@ class SearchIndexersClientTest(AzureMgmtTestCase):
         client = SearchServiceClient(endpoint, AzureKeyCredential(api_key)).get_indexers_client()
         indexer = self._prepare_indexer(endpoint, api_key)
         created = client.create_indexer(indexer)
-        assert len(client.get_indexer()) == 1
+        assert len(client.get_indexers()) == 1
         indexer.description = "updated"
-        client.create_or_update_datasource(indexer)
+        client.create_or_update_indexer(indexer)
         assert len(client.get_indexers()) == 1
         result = client.get_indexer("sample-indexer")
         assert result.name == "sample-indexer"
         assert result.description == "updated"
-
-    @SearchResourceGroupPreparer(random_name_enabled=True)
-    @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
-    def test_reset_indexer(self, api_key, endpoint, index_name, **kwargs):
-        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key)).get_indexers_client()
-        indexer = self._prepare_indexer(endpoint, api_key)
-        result = client.create_indexer(indexer)
-        assert len(client.get_indexers()) == 1
-        client.reset_indexer("sample-indexer")
-        assert client.get_indexer_status("sample-indexer").last_result.status == 'reset'
-
-    @SearchResourceGroupPreparer(random_name_enabled=True)
-    @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
-    def test_run_indexer(self, api_key, endpoint, index_name, **kwargs):
-        client = SearchServiceClient(endpoint, AzureKeyCredential(api_key)).get_indexers_client()
-        indexer = self._prepare_indexer(endpoint, api_key)
-        result = client.create_indexer(indexer)
-        assert len(client.get_indexers()) == 1
-        time = time.now()
-        client.run_indexer("sample-indexer")
-        assert client.get_indexer_status("sample-indexer").last_result.start_time > time.now()
 
     @SearchResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)

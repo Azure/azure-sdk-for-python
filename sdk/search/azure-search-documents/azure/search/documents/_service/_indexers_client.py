@@ -166,6 +166,7 @@ class SearchIndexersClient(HeadersMixin):
                 :caption: Delete an Indexer
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        access_condition = None
         try:
             name = indexer.name
             # TODO: update the placeholder
