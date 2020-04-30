@@ -65,6 +65,7 @@ def test_redeem_token():
         credential = VSCodeCredential(_client=mock_client)
         token = credential.get_token("scope")
         assert token is expected_token
+        mock_client.obtain_token_by_refresh_token.assert_called_with('VALUE', ('scope',))
         assert mock_client.obtain_token_by_refresh_token.call_count == 1
 
 
