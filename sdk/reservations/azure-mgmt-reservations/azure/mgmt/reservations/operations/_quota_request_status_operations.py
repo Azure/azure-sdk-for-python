@@ -15,8 +15,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class QuotaRequestsOperations(object):
-    """QuotaRequestsOperations operations.
+class QuotaRequestStatusOperations(object):
+    """QuotaRequestStatusOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
@@ -38,13 +38,13 @@ class QuotaRequestsOperations(object):
 
         self.config = config
 
-    def get_status(
+    def get(
             self, subscription_id, provider_id, location, id, custom_headers=None, raw=False, **operation_config):
         """Gets the Quota request status by requestId, for the specified resource
         provider at specified location.
 
-        Gets the QuotaRequest details and status by the quota requestId for the
-        resources for the resource provider at a specific location. The
+        Gets the QuotaRequest details and status by the quota request Id for
+        the resources for the resource provider at a specific location. The
         requestId is returned as response to the Put requests for
         serviceLimits.
 
@@ -68,7 +68,7 @@ class QuotaRequestsOperations(object):
          :class:`ExceptionResponseException<azure.mgmt.reservations.models.ExceptionResponseException>`
         """
         # Construct URL
-        url = self.get_status.metadata['url']
+        url = self.get.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str'),
             'providerId': self._serialize.url("provider_id", provider_id, 'str'),
@@ -107,9 +107,9 @@ class QuotaRequestsOperations(object):
             return client_raw_response
 
         return deserialized
-    get_status.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Capacity/resourceProviders/{providerId}/locations/{location}/serviceLimitsRequests/{id}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Capacity/resourceProviders/{providerId}/locations/{location}/serviceLimitsRequests/{id}'}
 
-    def list_status(
+    def list(
             self, subscription_id, provider_id, location, filter=None, top=None, skiptoken=None, custom_headers=None, raw=False, **operation_config):
         """For the specified location and resource Provider, gets the quota
         requests under the subscription over the time
@@ -152,7 +152,7 @@ class QuotaRequestsOperations(object):
         def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
-                url = self.list_status.metadata['url']
+                url = self.list.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str'),
                     'providerId': self._serialize.url("provider_id", provider_id, 'str'),
@@ -205,4 +205,4 @@ class QuotaRequestsOperations(object):
         deserialized = models.QuotaRequestDetailsPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list_status.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Capacity/resourceProviders/{providerId}/locations/{location}/serviceLimitsRequests'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Capacity/resourceProviders/{providerId}/locations/{location}/serviceLimitsRequests'}
