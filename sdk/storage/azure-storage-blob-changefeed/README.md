@@ -98,7 +98,7 @@ cf_client = ChangeFeedClient("http://{}.blob.core.windows.net".format("YOUR_ACCO
                              credential="Your_ACCOUNT_KEY")
 start_time = datetime(2020, 1, 6)
 end_time = datetime(2020, 3, 4)
-change_feed = cf_client.get_changes(start_time=start_time, end_time=end_time)
+change_feed = cf_client.list_changes(start_time=start_time, end_time=end_time)
 
 # print first page of events
 events = list(change_feed)
@@ -114,7 +114,7 @@ from azure.storage.blobchangefeed import ChangeFeedClient
 
 cf_client = ChangeFeedClient("http://{}.blob.core.windows.net".format("YOUR_ACCOUNT_NAME"),
                              credential="Your_ACCOUNT_KEY")
-change_feed = cf_client.get_changes()
+change_feed = cf_client.list_changes()
 
 # print all events
 events = list(change_feed)
@@ -131,7 +131,7 @@ from azure.storage.blobchangefeed import ChangeFeedClient
 cf_client = ChangeFeedClient("http://{}.blob.core.windows.net".format("YOUR_ACCOUNT_NAME"),
                              credential="Your_ACCOUNT_KEY")
 
-change_feed = cf_client.get_changes().by_page()
+change_feed = cf_client.list_changes().by_page()
 
 # print first page of events
 change_feed_page1 = next(change_feed)

@@ -98,6 +98,7 @@ class AvroReaderTestsAsync(unittest.TestCase):
                 expected_record = CHANGE_FEED_RECORD
                 self.assertEqual(expected_record, data[0])
 
+    @pytest.mark.asyncio
     async def test_with_hearder_reader(self):
         # Note: only when the data stream doesn't have header, we need header stream to help
         file_path = os.path.join(AvroReaderTestsAsync._samples_dir_root, 'changeFeed.avro')
@@ -107,8 +108,8 @@ class AvroReaderTestsAsync(unittest.TestCase):
             full_data = reader.read()
             await full_data_stream.write(full_data)
         # This initialization helps find the position after the first sync_marker
-        async with AsyncDataFileReader(full_data_stream, AsyncDatumReader()):
-            position_after_sync_marker = full_data_stream.tell()
+        async with await AsyncDataFileReader(full_data_stream, AsyncDatumReader()).init():
+            position_after_sync_marker = await full_data_stream.tell()
 
         # construct the partial data stream which doesn't have header
         partial_data_stream = _HeaderStream()
@@ -121,8 +122,11 @@ class AvroReaderTestsAsync(unittest.TestCase):
             header_data = reader.read()
             await header_stream.write(header_data)
 
-        async with AsyncDataFileReader(full_data_stream, AsyncDatumReader(), header_reader=header_stream) as df_reader:
-            records = list(df_reader)
+        records = []
+        df_reader = AsyncDataFileReader(partial_data_stream, AsyncDatumReader(), header_reader=header_stream)
+        df_reader = await df_reader.init()
+        async for record in df_reader:
+            records.append(record)
         self.assertEqual(CHANGE_FEED_RECORD, records[0])
         self.assertIsNot(partial_data_stream.event_position, 0)
 
@@ -147,3 +151,6 @@ class _HeaderStream(object):
 
     async def track_event_position(self):
         self.event_position = self.tell()
+
+    async def close(self):
+        self._bytes_stream.close()
