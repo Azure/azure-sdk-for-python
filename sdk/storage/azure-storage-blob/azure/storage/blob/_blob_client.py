@@ -155,6 +155,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             except TypeError:
                 self.snapshot = snapshot or path_snapshot
 
+        self.version_id = kwargs.pop('version_id', None)
+
         self._query_str, credential = self._format_query_string(sas_token, credential, snapshot=self.snapshot)
         super(BlobClient, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)
         self._client = AzureBlobStorage(self.url, pipeline=self._pipeline)
@@ -524,6 +526,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             'config': self._config,
             'start_range': offset,
             'end_range': length,
+            'version_id': kwargs.pop('version_id', None) or self.version_id,
             'validate_content': validate_content,
             'encryption_options': {
                 'required': self.require_encryption,
@@ -637,6 +640,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             raise ValueError("The delete_snapshots option cannot be used with a specific snapshot.")
         options = self._generic_delete_blob_options(delete_snapshots, **kwargs)
         options['snapshot'] = self.snapshot
+        options['version_id'] = kwargs.pop('version_id', None) or self.version_id
         return options
 
     @distributed_trace
@@ -736,6 +740,10 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             Required if the blob has an active lease. Value can be a BlobLeaseClient object
             or the lease ID as a string.
         :paramtype lease: ~azure.storage.blob.BlobLeaseClient or str
+        :keyword str version_id:
+            The version id parameter is an opaque DateTime
+            value that, when present, specifies the version of the blob to delete.
+            It for service version 2019-10-10 and newer.
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -785,6 +793,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         try:
             blob_props = self._client.blob.get_properties(
                 timeout=kwargs.pop('timeout', None),
+                version_id=kwargs.pop('version_id', None) or self.version_id,
                 snapshot=self.snapshot,
                 lease_access_conditions=access_conditions,
                 modified_access_conditions=mod_conditions,

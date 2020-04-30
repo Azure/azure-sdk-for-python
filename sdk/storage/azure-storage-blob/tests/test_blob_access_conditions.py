@@ -1524,6 +1524,27 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         self.assertEqual(content.readall(), b'AAABBBCCC')
 
     @GlobalStorageAccountPreparer()
+    def test_put_block_list_returns_vid(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+        self._setup()
+        container, blob = self._create_container_and_block_blob(
+            self.container_name, 'blob1', b'', bsc)
+        blob.stage_block('1', b'AAA')
+        blob.stage_block('2', b'BBB')
+        blob.stage_block('3', b'CCC')
+        test_datetime = (datetime.utcnow() -
+                         timedelta(minutes=15))
+
+        # Act
+        block_list = [BlobBlock(block_id='1'), BlobBlock(block_id='2'), BlobBlock(block_id='3')]
+        resp = blob.commit_block_list(block_list, if_modified_since=test_datetime)
+
+        # Assert
+        self.assertIsNotNone(resp['version_id'])
+        content = blob.download_blob()
+        self.assertEqual(content.readall(), b'AAABBBCCC')
+
+    @GlobalStorageAccountPreparer()
     def test_put_block_list_with_metadata(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()

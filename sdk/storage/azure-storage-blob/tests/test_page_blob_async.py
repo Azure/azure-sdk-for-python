@@ -57,7 +57,7 @@ class AiohttpTestTransport(AioHttpTransport):
         return response
 
 
-class StoragePageBlobTestAsync(AsyncStorageTestCase):
+class StoragePageBlobAsyncTest(AsyncStorageTestCase):
     #--Helpers-----------------------------------------------------------------
 
     async def _setup(self, bsc):
@@ -150,6 +150,22 @@ class StoragePageBlobTestAsync(AsyncStorageTestCase):
         resp = await blob.create_page_blob(1024)
 
         # Assert
+        self.assertIsNotNone(resp.get('etag'))
+        self.assertIsNotNone(resp.get('last_modified'))
+        self.assertTrue(await blob.get_blob_properties())
+
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_create_page_blob_returns_vid(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        await self._setup(bsc)
+        blob = self._get_blob_reference(bsc)
+
+        # Act
+        resp = await blob.create_page_blob(1024)
+
+        # Assert
+        self.assertIsNotNone(resp['version_id'])
         self.assertIsNotNone(resp.get('etag'))
         self.assertIsNotNone(resp.get('last_modified'))
         self.assertTrue(await blob.get_blob_properties())

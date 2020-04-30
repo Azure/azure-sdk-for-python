@@ -42,8 +42,14 @@ class StorageAppendBlobTest(StorageTestCase):
         self.container_name = self.get_resource_name('utcontainer')
         self.source_container_name = self.get_resource_name('utcontainersource')
         if self.is_live:
-            bsc.create_container(self.container_name)
-            bsc.create_container(self.source_container_name)
+            try:
+                bsc.create_container(self.container_name)
+            except:
+                pass
+            try:
+                bsc.create_container(self.source_container_name)
+            except:
+                pass
 
     def _teardown(self, file_name):
         if path.isfile(file_name):
@@ -100,6 +106,27 @@ class StorageAppendBlobTest(StorageTestCase):
         # Assert
         blob_properties = blob.get_blob_properties()
         self.assertIsNotNone(blob_properties)
+        self.assertEqual(blob_properties.etag, create_resp.get('etag'))
+        self.assertEqual(blob_properties.last_modified, create_resp.get('last_modified'))
+
+    @GlobalStorageAccountPreparer()
+    def test_get_blob_properties_using_vid(self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024)
+        self._setup(bsc)
+        blob_name = self._get_blob_reference()
+
+        # Act
+        blob = bsc.get_blob_client(self.container_name, blob_name)
+        create_resp = blob.create_append_blob()
+        # create operation will return a version id
+        self.assertIsNotNone(create_resp['version_id'])
+
+        # Assert
+        blob_properties = blob.get_blob_properties(version_id=create_resp['version_id'])
+        self.assertIsNotNone(blob_properties)
+        self.assertTrue(blob_properties.is_current_version)
+        self.assertIsNotNone(blob_properties.version_id)
         self.assertEqual(blob_properties.etag, create_resp.get('etag'))
         self.assertEqual(blob_properties.last_modified, create_resp.get('last_modified'))
 
