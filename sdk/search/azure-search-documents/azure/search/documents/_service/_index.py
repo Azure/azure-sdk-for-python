@@ -22,7 +22,6 @@ def SimpleField(
     facetable=False,
     sortable=False,
     hidden=False,
-    **kwargs
 ):
     # type: (str, str, bool, bool, bool, bool, bool, **Any) -> Dict[str, Any]
     """Configure a simple field for an Azure Search Index
