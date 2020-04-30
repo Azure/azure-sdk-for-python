@@ -40,7 +40,8 @@ class DefaultAzureCredential(ChainedTokenCredential):
     3. On Windows only: a user who has signed in with a Microsoft application, such as Visual Studio. If multiple
        identities are in the cache, then the value of  the environment variable ``AZURE_USERNAME`` is used to select
        which identity to use. See :class:`~azure.identity.SharedTokenCacheCredential` for more details.
-    4. The identity currently logged in to the Azure CLI.
+    4. The user currently signed in to Visual Studio Code.
+    5. The identity currently logged in to the Azure CLI.
 
     This default behavior is configurable with keyword arguments.
 
