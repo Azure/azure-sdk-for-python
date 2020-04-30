@@ -91,7 +91,7 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, SansIOHTTPPo
 
         if self._need_new_token:
             self._token = self._credential.get_token(*self._scopes)
-        self._update_headers(request.http_request.headers, self._token.token)  # type: ignore
+            self._update_headers(request.http_request.headers, self._token.token)
 
 
 class AzureKeyCredentialPolicy(SansIOHTTPPolicy):

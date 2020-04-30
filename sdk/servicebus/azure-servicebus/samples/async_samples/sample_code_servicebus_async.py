@@ -35,7 +35,7 @@ def example_create_servicebus_client_async():
     # [START create_sb_client_async]
     import os
     from azure.servicebus.aio import ServiceBusClient, ServiceBusSharedKeyCredential
-    fully_qualified_namespace = os.environ['SERVICE_BUS_CONNECTION_STR']
+    fully_qualified_namespace = os.environ['SERVICE_BUS_FULLY_QUALIFIED_NAMESPACE']
     shared_access_policy = os.environ['SERVICE_BUS_SAS_POLICY']
     shared_access_key = os.environ['SERVICE_BUS_SAS_KEY']
     servicebus_client = ServiceBusClient(
@@ -65,7 +65,7 @@ async def example_create_servicebus_sender_async():
     # [START create_servicebus_sender_async]
     import os
     from azure.servicebus.aio import ServiceBusSender, ServiceBusSharedKeyCredential
-    fully_qualified_namespace = os.environ['SERVICE_BUS_CONNECTION_STR']
+    fully_qualified_namespace = os.environ['SERVICE_BUS_FULLY_QUALIFIED_NAMESPACE']
     shared_access_policy = os.environ['SERVICE_BUS_SAS_POLICY']
     shared_access_key = os.environ['SERVICE_BUS_SAS_KEY']
     queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
@@ -119,7 +119,7 @@ async def example_create_servicebus_receiver_async():
     # [START create_servicebus_receiver_async]
     import os
     from azure.servicebus.aio import ServiceBusReceiver, ServiceBusSharedKeyCredential
-    fully_qualified_namespace = os.environ['SERVICE_BUS_CONNECTION_STR']
+    fully_qualified_namespace = os.environ['SERVICE_BUS_FULLY_QUALIFIED_NAMESPACE']
     shared_access_policy = os.environ['SERVICE_BUS_SAS_POLICY']
     shared_access_key = os.environ['SERVICE_BUS_SAS_KEY']
     queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
@@ -234,24 +234,24 @@ async def example_session_ops_async():
 
     async with ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str) as servicebus_client:
         # [START get_session_async]
-        async with servicebus_client.get_queue_receiver(queue_name=queue_name, session_id=session_id) as receiver:
+        async with servicebus_client.get_queue_session_receiver(queue_name=queue_name, session_id=session_id) as receiver:
             session = receiver.session
         # [END get_session_async]
 
         # [START get_session_state_async]
-        async with servicebus_client.get_queue_receiver(queue_name=queue_name, session_id=session_id) as receiver:
+        async with servicebus_client.get_queue_session_receiver(queue_name=queue_name, session_id=session_id) as receiver:
             session = receiver.session
             session_state = await session.get_session_state()
         # [END get_session_state_async]
 
         # [START set_session_state_async]
-        async with servicebus_client.get_queue_receiver(queue_name=queue_name, session_id=session_id) as receiver:
+        async with servicebus_client.get_queue_session_receiver(queue_name=queue_name, session_id=session_id) as receiver:
             session = receiver.session
             session_state = await session.set_session_state("START")
         # [END set_session_state_async]
 
         # [START session_renew_lock_async]
-        async with servicebus_client.get_queue_receiver(queue_name=queue_name, session_id=session_id) as receiver:
+        async with servicebus_client.get_queue_session_receiver(queue_name=queue_name, session_id=session_id) as receiver:
             session = receiver.session
             session_state = await session.renew_lock()
         # [END session_renew_lock_async]
@@ -260,7 +260,7 @@ async def example_session_ops_async():
         from azure.servicebus.aio import AutoLockRenew
 
         lock_renewal = AutoLockRenew()
-        async with servicebus_client.get_queue_receiver(queue_name=queue_name, session_id=session_id) as receiver:
+        async with servicebus_client.get_queue_session_receiver(queue_name=queue_name, session_id=session_id) as receiver:
             session = receiver.session
             # Auto renew session lock for 2 minutes
             lock_renewal.register(session, timeout=120)

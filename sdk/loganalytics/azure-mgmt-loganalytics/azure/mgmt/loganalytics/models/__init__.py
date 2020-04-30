@@ -10,11 +10,13 @@
 # --------------------------------------------------------------------------
 
 try:
+    from ._models_py3 import AvailableServiceTier
     from ._models_py3 import AzureEntityResource
     from ._models_py3 import Cluster
     from ._models_py3 import ClusterErrorResponse, ClusterErrorResponseException
     from ._models_py3 import ClusterPatch
     from ._models_py3 import ClusterSku
+    from ._models_py3 import CoreSummary
     from ._models_py3 import DataExport
     from ._models_py3 import DataExportErrorResponse, DataExportErrorResponseException
     from ._models_py3 import DataSource
@@ -36,6 +38,11 @@ try:
     from ._models_py3 import Resource
     from ._models_py3 import SavedSearch
     from ._models_py3 import SavedSearchesListResult
+    from ._models_py3 import SearchGetSchemaResponse
+    from ._models_py3 import SearchMetadata
+    from ._models_py3 import SearchMetadataSchema
+    from ._models_py3 import SearchSchemaValue
+    from ._models_py3 import SearchSort
     from ._models_py3 import SharedKeys
     from ._models_py3 import StorageAccount
     from ._models_py3 import StorageInsight
@@ -45,13 +52,19 @@ try:
     from ._models_py3 import UsageMetric
     from ._models_py3 import Workspace
     from ._models_py3 import WorkspacePatch
+    from ._models_py3 import WorkspacePurgeBody
+    from ._models_py3 import WorkspacePurgeBodyFilters
+    from ._models_py3 import WorkspacePurgeResponse
+    from ._models_py3 import WorkspacePurgeStatusResponse
     from ._models_py3 import WorkspaceSku
 except (SyntaxError, ImportError):
+    from ._models import AvailableServiceTier
     from ._models import AzureEntityResource
     from ._models import Cluster
     from ._models import ClusterErrorResponse, ClusterErrorResponseException
     from ._models import ClusterPatch
     from ._models import ClusterSku
+    from ._models import CoreSummary
     from ._models import DataExport
     from ._models import DataExportErrorResponse, DataExportErrorResponseException
     from ._models import DataSource
@@ -73,6 +86,11 @@ except (SyntaxError, ImportError):
     from ._models import Resource
     from ._models import SavedSearch
     from ._models import SavedSearchesListResult
+    from ._models import SearchGetSchemaResponse
+    from ._models import SearchMetadata
+    from ._models import SearchMetadataSchema
+    from ._models import SearchSchemaValue
+    from ._models import SearchSort
     from ._models import SharedKeys
     from ._models import StorageAccount
     from ._models import StorageInsight
@@ -82,6 +100,10 @@ except (SyntaxError, ImportError):
     from ._models import UsageMetric
     from ._models import Workspace
     from ._models import WorkspacePatch
+    from ._models import WorkspacePurgeBody
+    from ._models import WorkspacePurgeBodyFilters
+    from ._models import WorkspacePurgeResponse
+    from ._models import WorkspacePurgeStatusResponse
     from ._models import WorkspaceSku
 from ._paged_models import ClusterPaged
 from ._paged_models import DataExportPaged
@@ -93,24 +115,31 @@ from ._paged_models import OperationPaged
 from ._paged_models import StorageInsightPaged
 from ._paged_models import UsageMetricPaged
 from ._paged_models import WorkspacePaged
-from ._operational_insights_management_client_enums import (
+from ._log_analytics_management_client_enums import (
     Type,
     DataSourceKind,
+    LinkedServiceEntityStatus,
     DataSourceType,
     WorkspaceSkuNameEnum,
-    EntityStatus,
+    WorkspaceEntityStatus,
     PublicNetworkAccessType,
+    ClusterEntityStatus,
     ClusterSkuNameEnum,
     IdentityType,
     StorageInsightState,
+    SkuNameEnum,
+    SearchSortEnum,
+    PurgeState,
 )
 
 __all__ = [
+    'AvailableServiceTier',
     'AzureEntityResource',
     'Cluster',
     'ClusterErrorResponse', 'ClusterErrorResponseException',
     'ClusterPatch',
     'ClusterSku',
+    'CoreSummary',
     'DataExport',
     'DataExportErrorResponse', 'DataExportErrorResponseException',
     'DataSource',
@@ -132,6 +161,11 @@ __all__ = [
     'Resource',
     'SavedSearch',
     'SavedSearchesListResult',
+    'SearchGetSchemaResponse',
+    'SearchMetadata',
+    'SearchMetadataSchema',
+    'SearchSchemaValue',
+    'SearchSort',
     'SharedKeys',
     'StorageAccount',
     'StorageInsight',
@@ -141,24 +175,33 @@ __all__ = [
     'UsageMetric',
     'Workspace',
     'WorkspacePatch',
+    'WorkspacePurgeBody',
+    'WorkspacePurgeBodyFilters',
+    'WorkspacePurgeResponse',
+    'WorkspacePurgeStatusResponse',
     'WorkspaceSku',
     'DataExportPaged',
     'DataSourcePaged',
-    'ManagementGroupPaged',
-    'UsageMetricPaged',
-    'WorkspacePaged',
     'LinkedServicePaged',
     'LinkedStorageAccountsResourcePaged',
+    'ManagementGroupPaged',
     'OperationPaged',
+    'UsageMetricPaged',
+    'WorkspacePaged',
     'ClusterPaged',
     'StorageInsightPaged',
     'Type',
     'DataSourceKind',
+    'LinkedServiceEntityStatus',
     'DataSourceType',
     'WorkspaceSkuNameEnum',
-    'EntityStatus',
+    'WorkspaceEntityStatus',
     'PublicNetworkAccessType',
+    'ClusterEntityStatus',
     'ClusterSkuNameEnum',
     'IdentityType',
     'StorageInsightState',
+    'SkuNameEnum',
+    'SearchSortEnum',
+    'PurgeState',
 ]

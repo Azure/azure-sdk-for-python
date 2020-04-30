@@ -5,33 +5,20 @@
 import time
 import logging
 import functools
-import uuid
 from typing import Any, List, TYPE_CHECKING, Optional, Union
-import six
 
 from uamqp import ReceiveClient, Source, types
 from uamqp.constants import SenderSettleMode
 
 from ._base_handler import BaseHandler
-from ._common.utils import create_authentication, utc_from_timestamp, utc_now
+from ._common.utils import create_authentication
 from ._common.message import PeekMessage, ReceivedMessage
 from ._common.constants import (
-    REQUEST_RESPONSE_GET_SESSION_STATE_OPERATION,
-    REQUEST_RESPONSE_SET_SESSION_STATE_OPERATION,
-    REQUEST_RESPONSE_RENEW_SESSION_LOCK_OPERATION,
     REQUEST_RESPONSE_RECEIVE_BY_SEQUENCE_NUMBER,
     REQUEST_RESPONSE_UPDATE_DISPOSTION_OPERATION,
     REQUEST_RESPONSE_RENEWLOCK_OPERATION,
     REQUEST_RESPONSE_PEEK_OPERATION,
     ReceiveSettleMode,
-    NEXT_AVAILABLE,
-    SESSION_LOCKED_UNTIL,
-    DATETIMEOFFSET_EPOCH,
-    SESSION_FILTER,
-    MGMT_RESPONSE_SESSION_STATE,
-    MGMT_RESPONSE_RECEIVER_EXPIRATION,
-    MGMT_REQUEST_SESSION_ID,
-    MGMT_REQUEST_SESSION_STATE,
     MGMT_REQUEST_DISPOSITION_STATUS,
     MGMT_REQUEST_LOCK_TOKENS,
     MGMT_REQUEST_SEQUENCE_NUMBERS,
@@ -39,206 +26,14 @@ from ._common.constants import (
     MGMT_REQUEST_FROM_SEQUENCE_NUMBER,
     MGMT_REQUEST_MESSAGE_COUNT
 )
-from .exceptions import (
-    _ServiceBusErrorPolicy,
-    SessionLockExpired
-)
+
 from ._common import mgmt_handlers
+from ._common.receiver_mixins import ReceiverMixin
 
 if TYPE_CHECKING:
-    import datetime
     from azure.core.credentials import TokenCredential
 
 _LOGGER = logging.getLogger(__name__)
-
-
-class ServiceBusSession(object):
-    """
-    The ServiceBusSession is used for manage session states and lock renewal.
-
-    **Please use the instance variable `session` on the ServiceBusReceiver to get the corresponding ServiceBusSession
-    object linked with the receiver instead of instantiating a ServiceBusSession object directly.**
-
-    :ivar auto_renew_error: Error when AutoLockRenew is used and it fails to renew the session lock.
-    :vartype auto_renew_error: ~azure.servicebus.AutoLockRenewTimeout or ~azure.servicebus.AutoLockRenewFailed
-
-    .. admonition:: Example:
-
-        .. literalinclude:: ../samples/sync_samples/sample_code_servicebus.py
-            :start-after: [START get_session_sync]
-            :end-before: [END get_session_sync]
-            :language: python
-            :dedent: 4
-            :caption: Get session from a receiver
-    """
-    def __init__(self, session_id, receiver, encoding="UTF-8"):
-        self._session_id = session_id
-        self._receiver = receiver
-        self._encoding = encoding
-        self._session_start = None
-        self._locked_until_utc = None
-        self.auto_renew_error = None
-
-    def _can_run(self):
-        if self.expired:
-            raise SessionLockExpired(inner_exception=self.auto_renew_error)
-
-    def get_session_state(self):
-        # type: () -> str
-        """Get the session state.
-
-        Returns None if no state has been set.
-
-        :rtype: str
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/sync_samples/sample_code_servicebus.py
-                :start-after: [START get_session_state_sync]
-                :end-before: [END get_session_state_sync]
-                :language: python
-                :dedent: 4
-                :caption: Get the session state
-        """
-        self._can_run()
-        response = self._receiver._mgmt_request_response_with_retry(  # pylint: disable=protected-access
-            REQUEST_RESPONSE_GET_SESSION_STATE_OPERATION,
-            {MGMT_REQUEST_SESSION_ID: self.session_id},
-            mgmt_handlers.default
-        )
-        session_state = response.get(MGMT_RESPONSE_SESSION_STATE)
-        if isinstance(session_state, six.binary_type):
-            session_state = session_state.decode('UTF-8')
-        return session_state
-
-    def set_session_state(self, state):
-        # type: (Union[str, bytes, bytearray]) -> None
-        """Set the session state.
-
-        :param state: The state value.
-        :type state: str, bytes or bytearray
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/sync_samples/sample_code_servicebus.py
-                :start-after: [START set_session_state_sync]
-                :end-before: [END set_session_state_sync]
-                :language: python
-                :dedent: 4
-                :caption: Set the session state
-        """
-        self._can_run()
-        state = state.encode(self._encoding) if isinstance(state, six.text_type) else state
-        return self._receiver._mgmt_request_response_with_retry(  # pylint: disable=protected-access
-            REQUEST_RESPONSE_SET_SESSION_STATE_OPERATION,
-            {MGMT_REQUEST_SESSION_ID: self.session_id, MGMT_REQUEST_SESSION_STATE: bytearray(state)},
-            mgmt_handlers.default
-        )
-
-    def renew_lock(self):
-        # type: () -> None
-        """Renew the session lock.
-
-        This operation must be performed periodically in order to retain a lock on the
-        session to continue message processing.
-        Once the lock is lost the connection will be closed. This operation can
-        also be performed as a threaded background task by registering the session
-        with an `azure.servicebus.AutoLockRenew` instance.
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/sync_samples/sample_code_servicebus.py
-                :start-after: [START session_renew_lock_sync]
-                :end-before: [END session_renew_lock_sync]
-                :language: python
-                :dedent: 4
-                :caption: Renew the session lock before it expires
-        """
-        self._can_run()
-        expiry = self._receiver._mgmt_request_response_with_retry(  # pylint: disable=protected-access
-            REQUEST_RESPONSE_RENEW_SESSION_LOCK_OPERATION,
-            {MGMT_REQUEST_SESSION_ID: self.session_id},
-            mgmt_handlers.default
-        )
-        self._locked_until_utc = utc_from_timestamp(expiry[MGMT_RESPONSE_RECEIVER_EXPIRATION]/1000.0)
-
-    @property
-    def session_id(self):
-        # type: () -> str
-        """
-        Session id of the current session.
-
-        :rtype: str
-        """
-        return self._session_id
-
-    @property
-    def expired(self):
-        # type: () -> bool
-        """Whether the receivers lock on a particular session has expired.
-
-        :rtype: bool
-        """
-        return bool(self._locked_until_utc and self._locked_until_utc <= utc_now())
-
-    @property
-    def locked_until_utc(self):
-        # type: () -> datetime.datetime
-        """The time at which this session's lock will expire.
-
-        :rtype: datetime.datetime
-        """
-        return self._locked_until_utc
-
-
-class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
-    def _create_attribute(self, **kwargs):
-        if kwargs.get("subscription_name"):
-            self._subscription_name = kwargs.get("subscription_name")
-            self._is_subscription = True
-            self.entity_path = self._entity_name + "/Subscriptions/" + self._subscription_name
-        else:
-            self.entity_path = self._entity_name
-
-        self._session_id = kwargs.get("session_id")
-        self._auth_uri = "sb://{}/{}".format(self.fully_qualified_namespace, self.entity_path)
-        self._entity_uri = "amqps://{}/{}".format(self.fully_qualified_namespace, self.entity_path)
-        self._mode = kwargs.get("mode", ReceiveSettleMode.PeekLock)
-        self._error_policy = _ServiceBusErrorPolicy(
-            max_retries=self._config.retry_total,
-            is_session=bool(self._session_id)
-        )
-        self._name = "SBReceiver-{}".format(uuid.uuid4())
-        self._last_received_sequenced_number = None
-
-    def _build_message(self, received, message_type=ReceivedMessage):
-        message = message_type(message=received, mode=self._mode)
-        message._receiver = self  # pylint: disable=protected-access
-        self._last_received_sequenced_number = message.sequence_number
-        return message
-
-    def _get_source_for_session_entity(self):
-        source = Source(self._entity_uri)
-        session_filter = None if self._session_id == NEXT_AVAILABLE else self._session_id
-        source.set_filter(session_filter, name=SESSION_FILTER, descriptor=None)
-        return source
-
-    def _on_attach_for_session_entity(self, source, target, properties, error):  # pylint: disable=unused-argument
-        # pylint: disable=protected-access
-        if str(source) == self._entity_uri:
-            # This has to live on the session object so that autorenew has access to it.
-            self._session._session_start = utc_now()
-            expiry_in_seconds = properties.get(SESSION_LOCKED_UNTIL)
-            if expiry_in_seconds:
-                expiry_in_seconds = (expiry_in_seconds - DATETIMEOFFSET_EPOCH)/10000000
-                self._session._locked_until_utc = utc_from_timestamp(expiry_in_seconds)
-            session_filter = source.get_filter(name=SESSION_FILTER)
-            self._session_id = session_filter.decode(self._config.encoding)
-            self._session._session_id = self._session_id
-
-    def _can_run(self):
-        if self._session and self._session.expired:
-            raise SessionLockExpired(inner_exception=self._session.auto_renew_error)
 
 
 class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-many-instance-attributes
@@ -274,10 +69,6 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
      will be immediately removed from the queue, and cannot be subsequently rejected or re-received if
      the client fails to process the message. The default mode is PeekLock.
     :paramtype mode: ~azure.servicebus.ReceiveSettleMode
-    :keyword session_id: A specific session from which to receive. This must be specified for a
-     sessionful entity, otherwise it must be None. In order to receive messages from the next available
-     session, set this to NEXT_AVAILABLE.
-    :paramtype session_id: str or ~azure.servicebus.NEXT_AVAILABLE
     :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
     :keyword int retry_total: The total number of attempts to redo a failed operation when an error occurs.
      Default value is 3.
@@ -333,7 +124,6 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         self._message_iter = None
         self._create_attribute(**kwargs)
         self._connection = kwargs.get("connection")
-        self._session = ServiceBusSession(self._session_id, self, self._config.encoding) if self._session_id else None
         self._prefetch = kwargs.get("prefetch")
 
     def __iter__(self):
@@ -358,13 +148,13 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
 
     def _create_handler(self, auth):
         self._handler = ReceiveClient(
-            self._get_source_for_session_entity() if self._session_id else self._entity_uri,
+            self._get_source(),
             auth=auth,
             debug=self._config.logging_enable,
             properties=self._properties,
             error_policy=self._error_policy,
             client_name=self._name,
-            on_attach=self._on_attach_for_session_entity if self._session_id else None,
+            on_attach=self._on_attach,
             auto_complete=False,
             encoding=self._config.encoding,
             receive_settle_mode=self._mode.value,
@@ -381,11 +171,15 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
 
         auth = None if self._connection else create_authentication(self)
         self._create_handler(auth)
-        self._handler.open(connection=self._connection)
-        self._message_iter = self._handler.receive_messages_iter()
-        while not self._handler.client_ready():
-            time.sleep(0.05)
-        self._running = True
+        try:
+            self._handler.open(connection=self._connection)
+            self._message_iter = self._handler.receive_messages_iter()
+            while not self._handler.client_ready():
+                time.sleep(0.05)
+            self._running = True
+        except:
+            self.close()
+            raise
 
     def _receive(self, max_batch_size=None, timeout=None):
         self._open()
@@ -405,8 +199,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
             MGMT_REQUEST_LOCK_TOKENS: types.AMQPArray(lock_tokens)
         }
 
-        if self._session_id:
-            message[MGMT_REQUEST_SESSION_ID] = self._session_id
+        self._populate_message_properties(message)
         if dead_letter_details:
             message.update(dead_letter_details)
 
@@ -423,29 +216,6 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
             message,
             mgmt_handlers.lock_renew_op
         )
-
-    @property
-    def session(self):
-        # type: ()->ServiceBusSession
-        """
-        Get the ServiceBusSession object linked with the receiver. Session is only available to session-enabled
-        entities.
-
-        :rtype: ~azure.servicebus.ServiceBusSession
-        :raises: :class:`TypeError`
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/sync_samples/sample_code_servicebus.py
-                :start-after: [START get_session_sync]
-                :end-before: [END get_session_sync]
-                :language: python
-                :dedent: 4
-                :caption: Get session from a receiver
-        """
-        if not self._session_id:
-            raise TypeError("Session is only available to session-enabled entities.")
-        return self._session  # type: ignore
 
     @classmethod
     def from_connection_string(
@@ -468,10 +238,6 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
          will be immediately removed from the queue, and cannot be subsequently rejected or re-received if
          the client fails to process the message. The default mode is PeekLock.
         :paramtype mode: ~azure.servicebus.ReceiveSettleMode
-        :keyword session_id: A specific session from which to receive. This must be specified for a
-         sessionful entity, otherwise it must be None. In order to receive messages from the next available
-         session, set this to NEXT_AVAILABLE.
-        :paramtype session_id: str or ~azure.servicebus.NEXT_AVAILABLE
         :keyword int prefetch: The maximum number of messages to cache with each request to the service.
          The default value is 0, meaning messages will be received from the service and processed
          one at a time. Increasing this value will improve message throughput performance but increase
@@ -581,8 +347,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
             MGMT_REQUEST_RECEIVER_SETTLE_MODE: types.AMQPuInt(receive_mode)
         }
 
-        if self._session_id:
-            message[MGMT_REQUEST_SESSION_ID] = self._session_id
+        self._populate_message_properties(message)
 
         handler = functools.partial(mgmt_handlers.deferred_message_op, mode=self._mode)
         messages = self._mgmt_request_response_with_retry(
@@ -630,8 +395,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
             MGMT_REQUEST_MESSAGE_COUNT: message_count
         }
 
-        if self._session_id:
-            message[MGMT_REQUEST_SESSION_ID] = self._session_id
+        self._populate_message_properties(message)
 
         return self._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_PEEK_OPERATION,

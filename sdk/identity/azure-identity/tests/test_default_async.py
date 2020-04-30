@@ -41,12 +41,14 @@ async def test_iterates_only_once():
         assert successful_credential.get_token.call_count == n + 1
 
 
-def test_authority():
+@pytest.mark.parametrize("authority", ("localhost", "https://localhost"))
+def test_authority(authority):
     """the credential should accept authority configuration by keyword argument or environment"""
 
-    def test_initialization(mock_credential, expect_argument):
-        authority = "localhost"
+    parsed_authority = urlparse(authority)
+    expected_netloc = parsed_authority.netloc or authority  # "localhost" parses to netloc "", path "localhost"
 
+    def test_initialization(mock_credential, expect_argument):
         DefaultAzureCredential(authority=authority)
         assert mock_credential.call_count == 1
 
@@ -58,7 +60,9 @@ def test_authority():
 
         for _, kwargs in mock_credential.call_args_list:
             if expect_argument:
-                assert kwargs["authority"] == authority
+                actual = urlparse(kwargs["authority"])
+                assert actual.scheme == "https"
+                assert actual.netloc == expected_netloc
             else:
                 assert "authority" not in kwargs
 

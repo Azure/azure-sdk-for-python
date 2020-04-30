@@ -3,11 +3,11 @@ interactions:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-dfs/12.0.0b7 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-dfs/12.0.1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-client-request-id:
-      - 43b95c1e-3cb9-11ea-9586-001a7dda7113
+      - e7c12ed2-7926-11ea-ae07-001a7dda7113
       x-ms-date:
-      - Wed, 22 Jan 2020 01:48:19 GMT
+      - Tue, 07 Apr 2020 23:24:19 GMT
       x-ms-properties:
       - ''
       x-ms-version:
@@ -23,17 +23,17 @@ interactions:
       : '0'
       ? !!python/object/new:multidict._multidict.istr
       - Date
-      : Wed, 22 Jan 2020 01:48:19 GMT
+      : Tue, 07 Apr 2020 23:24:18 GMT
       ? !!python/object/new:multidict._multidict.istr
       - Etag
-      : '"0x8D79EDD27FD401D"'
+      : '"0x8D7DB4ACC085CB7"'
       ? !!python/object/new:multidict._multidict.istr
       - Last-Modified
-      : Wed, 22 Jan 2020 01:48:19 GMT
+      : Tue, 07 Apr 2020 23:24:19 GMT
       ? !!python/object/new:multidict._multidict.istr
       - Server
       : Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: edae762e-f01f-0056-0ec6-d0bc7b000000
+      x-ms-request-id: dab0f2d1-901f-000d-3033-0d8540000000
       x-ms-version: '2019-02-02'
     status:
       code: 201
@@ -50,11 +50,11 @@ interactions:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-dfs/12.0.0b7 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-dfs/12.0.1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-client-request-id:
-      - 43d80ee2-3cb9-11ea-861f-001a7dda7113
+      - e7df507a-7926-11ea-a623-001a7dda7113
       x-ms-date:
-      - Wed, 22 Jan 2020 01:48:19 GMT
+      - Tue, 07 Apr 2020 23:24:19 GMT
       x-ms-version:
       - '2019-02-02'
     method: DELETE
@@ -68,11 +68,11 @@ interactions:
       : '0'
       ? !!python/object/new:multidict._multidict.istr
       - Date
-      : Wed, 22 Jan 2020 01:48:19 GMT
+      : Tue, 07 Apr 2020 23:24:18 GMT
       ? !!python/object/new:multidict._multidict.istr
       - Server
       : Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: edae762f-f01f-0056-0fc6-d0bc7b000000
+      x-ms-request-id: dab0f2d2-901f-000d-3133-0d8540000000
       x-ms-version: '2019-02-02'
     status:
       code: 200
@@ -89,22 +89,22 @@ interactions:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-dfs/12.0.0b7 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-dfs/12.0.1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-client-request-id:
-      - 43dfe8ee-3cb9-11ea-9d70-001a7dda7113
+      - e7e67786-7926-11ea-870b-001a7dda7113
       x-ms-date:
-      - Wed, 22 Jan 2020 01:48:19 GMT
+      - Tue, 07 Apr 2020 23:24:19 GMT
       x-ms-version:
-      - '2019-02-02'
+      - '2019-07-07'
     method: HEAD
-    uri: https://storagename.blob.core.windows.net/filesystem2e3d0f79/%2Ffile2e3d0f79
+    uri: https://storagename.blob.core.windows.net/filesystem2e3d0f79//file2e3d0f79
   response:
     body:
       string: ''
     headers:
       ? !!python/object/new:multidict._multidict.istr
       - Date
-      : Wed, 22 Jan 2020 01:48:19 GMT
+      : Tue, 07 Apr 2020 23:24:18 GMT
       ? !!python/object/new:multidict._multidict.istr
       - Server
       : Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
@@ -112,8 +112,8 @@ interactions:
       - Transfer-Encoding
       : chunked
       x-ms-error-code: BlobNotFound
-      x-ms-request-id: cc3d72f4-001e-006d-75c6-d0f9df000000
-      x-ms-version: '2019-02-02'
+      x-ms-request-id: b07f63d0-601e-0044-1533-0dc7ab000000
+      x-ms-version: '2019-07-07'
     status:
       code: 404
       message: The specified blob does not exist.
@@ -122,7 +122,53 @@ interactions:
       - !!python/object/new:urllib.parse.SplitResult
         - https
         - xiafuhns.blob.core.windows.net
-        - /filesystem2e3d0f79/%2Ffile2e3d0f79
+        - /filesystem2e3d0f79//file2e3d0f79
         - ''
+        - ''
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-dfs/12.0.1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      x-ms-client-request-id:
+      - efba3e30-7926-11ea-b3b0-001a7dda7113
+      x-ms-date:
+      - Tue, 07 Apr 2020 23:24:32 GMT
+      x-ms-properties:
+      - ''
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://storagename.dfs.core.windows.net/filesystem2e3d0f79/file2e3d0f79?resource=file
+  response:
+    body:
+      string: '{"error":{"code":"FilesystemNotFound","message":"The specified filesystem
+        does not exist.\nRequestId:3a10c5cf-b01f-001a-1733-0d2c4b000000\nTime:2020-04-07T23:24:32.7063401Z"}}'
+    headers:
+      ? !!python/object/new:multidict._multidict.istr
+      - Content-Length
+      : '175'
+      ? !!python/object/new:multidict._multidict.istr
+      - Content-Type
+      : application/json;charset=utf-8
+      ? !!python/object/new:multidict._multidict.istr
+      - Date
+      : Tue, 07 Apr 2020 23:24:31 GMT
+      ? !!python/object/new:multidict._multidict.istr
+      - Server
+      : Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code: FilesystemNotFound
+      x-ms-request-id: 3a10c5cf-b01f-001a-1733-0d2c4b000000
+      x-ms-version: '2019-02-02'
+    status:
+      code: 404
+      message: The specified filesystem does not exist.
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - xiafuhns.dfs.core.windows.net
+        - /filesystem2e3d0f79/file2e3d0f79
+        - resource=file
         - ''
 version: 1

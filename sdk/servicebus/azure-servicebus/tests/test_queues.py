@@ -28,7 +28,7 @@ from azure.servicebus.exceptions import (
 
 from devtools_testutils import AzureMgmtTestCase, CachedResourceGroupPreparer
 from servicebus_preparer import CachedServiceBusNamespacePreparer, ServiceBusQueuePreparer, CachedServiceBusQueuePreparer
-from utilities import get_logger, print_message
+from utilities import get_logger, print_message, sleep_until_expired
 
 _logger = get_logger(logging.DEBUG)
 
@@ -114,6 +114,30 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
 
             assert count == 10
 
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
+    def test_queue_by_queue_client_send_multiple_messages(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+        with ServiceBusClient.from_connection_string(
+            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
+
+            with sb_client.get_queue_sender(servicebus_queue.name) as sender:
+                messages = []
+                for i in range(10):
+                    message = Message("Handler message no. {}".format(i))
+                    messages.append(message)
+                sender.send(messages)
+
+            with sb_client.get_queue_receiver(servicebus_queue.name, idle_timeout=5) as receiver:
+                count = 0
+                for message in receiver:
+                    print_message(_logger, message)
+                    count += 1
+                    message.complete()
+
+                assert count == 10
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -597,10 +621,10 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             servicebus_namespace_connection_string, logging_enable=False) as sb_client:
     
             with pytest.raises(ServiceBusConnectionError):
-                sb_client.get_queue_receiver(servicebus_queue.name, session_id="test")._open_with_retry()
+                sb_client.get_queue_session_receiver(servicebus_queue.name, session_id="test")._open_with_retry()
     
-            with sb_client.get_queue_sender(servicebus_queue.name, session_id="test") as sender:
-                sender.send(Message("test session sender"))
+            with sb_client.get_queue_sender(servicebus_queue.name) as sender:
+                sender.send(Message("test session sender", session_id="test"))
     
 
     @pytest.mark.liveTest
@@ -673,34 +697,25 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 assert len(messages) == 0
     
 
-    @pytest.mark.skip(reason="Pending queue message")
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @CachedServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
-    def test_queue_by_servicebus_client_fail_send_messages(self, servicebus_namespace, servicebus_namespace_key_name, servicebus_namespace_primary_key, servicebus_queue, **kwargs):
+    def test_queue_by_servicebus_client_fail_send_messages(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
         
         with ServiceBusClient.from_connection_string(
             servicebus_namespace_connection_string, logging_enable=False) as sb_client:
 
-            too_large = "A" * 1024 * 512
-            with sb_client.get_queue_sender(servicebus_queue.name) as sender:
-                try:
-                    results = sender.send(Message(too_large))
-                except MessageSendFailed:
-                    pytest.skip("Open issue for uAMQP on OSX")
+            too_large = "A" * 256 * 1024
     
             with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                 with pytest.raises(MessageSendFailed):
                     sender.send(Message(too_large))
-    
-            with sb_client.get_queue_sender(servicebus_queue.name) as sender:
-                sender.queue_message(Message(too_large))
-                results = sender.send_pending_messages()
-                assert len(results) == 1
-                assert not results[0][0]
-                assert isinstance(results[0][1], MessageSendFailed)
+
+                half_too_large = "A" * int((1024 * 256) / 2)
+                with pytest.raises(ValueError):
+                    sender.send([Message(half_too_large), Message(half_too_large)])
     
 
     @pytest.mark.liveTest
@@ -801,10 +816,11 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                         assert not message.expired
                         renewer.register(message, timeout=60)
                         print("Registered lock renew thread", message.locked_until_utc, utc_now())
-                        time.sleep(50)
+                        time.sleep(60)
                         print("Finished first sleep", message.locked_until_utc)
                         assert not message.expired
-                        time.sleep((message.locked_until_utc - utc_now()).total_seconds()+1)
+                        time.sleep(15) #generate autolockrenewtimeout error by going one iteration past.
+                        sleep_until_expired(message)
                         print("Finished second sleep", message.locked_until_utc, utc_now())
                         assert message.expired
                         try:
@@ -1201,3 +1217,23 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
         receiver = sb_client.get_queue_receiver(queue_name="mock")
         assert receiver._config.http_proxy == http_proxy
         assert receiver._config.transport_type == TransportType.AmqpOverWebsocket
+
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
+    def test_queue_message_settle_through_mgmt_link_due_to_broken_receiver_link(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+        with ServiceBusClient.from_connection_string(
+                servicebus_namespace_connection_string,
+                logging_enable=False) as sb_client:
+
+            with sb_client.get_queue_sender(servicebus_queue.name) as sender:
+                message = Message("Test")
+                sender.send(message)
+
+            with sb_client.get_queue_receiver(servicebus_queue.name) as receiver:
+                messages = receiver.receive(max_wait_time=5)
+                receiver._handler.message_handler.destroy()  # destroy the underlying receiver link
+                assert len(messages) == 1
+                messages[0].complete()

@@ -60,7 +60,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
             with pytest.raises(ServiceBusConnectionError):
                 await sb_client.get_queue_receiver(servicebus_queue.name, idle_timeout=5)._open_with_retry()
 
-            session = sb_client.get_queue_receiver(servicebus_queue.name, session_id=session_id, idle_timeout=5)
+            session = sb_client.get_queue_session_receiver(servicebus_queue.name, session_id=session_id, idle_timeout=5)
             count = 0
             async for message in session:
                 print_message(_logger, message)
@@ -87,7 +87,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                     await sender.send(message)
 
             messages = []
-            session = sb_client.get_queue_receiver(servicebus_queue.name, session_id=session_id, mode=ReceiveSettleMode.ReceiveAndDelete, idle_timeout=5)
+            session = sb_client.get_queue_session_receiver(servicebus_queue.name, session_id=session_id, mode=ReceiveSettleMode.ReceiveAndDelete, idle_timeout=5)
             async for message in session:
                 messages.append(message)
                 assert session_id == session.session.session_id
@@ -100,7 +100,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
             time.sleep(30)
 
             messages = []
-            async with sb_client.get_queue_receiver(servicebus_queue.name, session_id=session_id, mode=ReceiveSettleMode.ReceiveAndDelete, idle_timeout=5) as session:
+            async with sb_client.get_queue_session_receiver(servicebus_queue.name, session_id=session_id, mode=ReceiveSettleMode.ReceiveAndDelete, idle_timeout=5) as session:
                 async for message in session:
                     messages.append(message)
             assert len(messages) == 0
@@ -122,7 +122,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                     await sender.send(message)
 
             messages = []
-            session = sb_client.get_queue_receiver(servicebus_queue.name, session_id=session_id, idle_timeout=5)
+            session = sb_client.get_queue_session_receiver(servicebus_queue.name, session_id=session_id, idle_timeout=5)
             async with session:
                 async for message in session:
                     assert session_id == session.session.session_id
@@ -157,7 +157,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
         async with ServiceBusClient.from_connection_string(
             servicebus_namespace_connection_string, logging_enable=False) as sb_client:
 
-            session = sb_client.get_queue_receiver(servicebus_queue.name, session_id=NEXT_AVAILABLE, idle_timeout=5)
+            session = sb_client.get_queue_session_receiver(servicebus_queue.name, session_id=NEXT_AVAILABLE, idle_timeout=5)
             with pytest.raises(NoActiveSession):
                 await session._open_with_retry()
 
@@ -173,7 +173,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
 
             session_id = str(uuid.uuid4())
             messages = []
-            session = sb_client.get_queue_receiver(servicebus_queue.name, session_id=session_id, mode=ReceiveSettleMode.ReceiveAndDelete, idle_timeout=5)
+            session = sb_client.get_queue_session_receiver(servicebus_queue.name, session_id=session_id, mode=ReceiveSettleMode.ReceiveAndDelete, idle_timeout=5)
             async with session:
                 async for message in session:
                     messages.append(message)
@@ -198,7 +198,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                     await sender.send(message)
 
             count = 0
-            async with sb_client.get_queue_receiver(servicebus_queue.name, session_id=session_id, idle_timeout=5) as session:
+            async with sb_client.get_queue_session_receiver(servicebus_queue.name, session_id=session_id, idle_timeout=5) as session:
                 async for message in session:
                     deferred_messages.append(message.sequence_number)
                     print_message(_logger, message)
@@ -207,7 +207,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
 
             assert count == 10
 
-            async with sb_client.get_queue_receiver(servicebus_queue.name, session_id=session_id, idle_timeout=5) as session:
+            async with sb_client.get_queue_session_receiver(servicebus_queue.name, session_id=session_id, idle_timeout=5) as session:
                 deferred = await session.receive_deferred_messages(deferred_messages)
                 assert len(deferred) == 10
                 for message in deferred:
@@ -236,7 +236,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                     await sender.send(message)
 
             count = 0
-            async with sb_client.get_queue_receiver(servicebus_queue.name, session_id=session_id, idle_timeout=5) as session:
+            async with sb_client.get_queue_session_receiver(servicebus_queue.name, session_id=session_id, idle_timeout=5) as session:
                 async for message in session:
                     deferred_messages.append(message.sequence_number)
                     print_message(_logger, message)
@@ -245,7 +245,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
 
             assert count == 10
 
-            async with sb_client.get_queue_receiver(servicebus_queue.name, session_id=session_id, idle_timeout=5) as session:
+            async with sb_client.get_queue_session_receiver(servicebus_queue.name, session_id=session_id, idle_timeout=5) as session:
                 deferred = await session.receive_deferred_messages(deferred_messages)
                 assert len(deferred) == 10
                 for message in deferred:
@@ -279,7 +279,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                     await sender.send(message)
 
             count = 0
-            async with sb_client.get_queue_receiver(servicebus_queue.name, session_id=session_id, idle_timeout=5) as session:
+            async with sb_client.get_queue_session_receiver(servicebus_queue.name, session_id=session_id, idle_timeout=5) as session:
                 async for message in session:
                     deferred_messages.append(message.sequence_number)
                     print_message(_logger, message)
@@ -287,7 +287,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                     await message.defer()
 
             assert count == 10
-            async with sb_client.get_queue_receiver(servicebus_queue.name, session_id=session_id, idle_timeout=5, mode=ReceiveSettleMode.ReceiveAndDelete) as session:
+            async with sb_client.get_queue_session_receiver(servicebus_queue.name, session_id=session_id, idle_timeout=5, mode=ReceiveSettleMode.ReceiveAndDelete) as session:
                 deferred = await session.receive_deferred_messages(deferred_messages)
                 assert len(deferred) == 10
                 for message in deferred:
@@ -314,7 +314,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                     message = Message("Deferred message no. {}".format(i), session_id=session_id)
                     await sender.send(message)
 
-            session = sb_client.get_queue_receiver(servicebus_queue.name, session_id=session_id, idle_timeout=5)
+            session = sb_client.get_queue_session_receiver(servicebus_queue.name, session_id=session_id, idle_timeout=5)
             count = 0
             async for message in session:
                 deferred_messages.append(message.sequence_number)
@@ -339,7 +339,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
             servicebus_namespace_connection_string, logging_enable=False) as sb_client:
 
             session_id = str(uuid.uuid4())
-            async with sb_client.get_queue_receiver(servicebus_queue.name, session_id=session_id, idle_timeout=5, prefetch=10) as receiver:
+            async with sb_client.get_queue_session_receiver(servicebus_queue.name, session_id=session_id, idle_timeout=5, prefetch=10) as receiver:
 
                 async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                     for i in range(10):
@@ -381,8 +381,13 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                 for i in range(5):
                     message = Message("Test message no. {}".format(i), session_id=session_id)
                     await sender.send(message)
+            session_id_2 = str(uuid.uuid4())
+            async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
+                for i in range(3):
+                    message = Message("Test message no. {}".format(i), session_id=session_id_2)
+                    await sender.send(message)
 
-            async with sb_client.get_queue_receiver(servicebus_queue.name, session_id=session_id) as receiver:
+            async with sb_client.get_queue_session_receiver(servicebus_queue.name, session_id=session_id) as receiver:
                 messages = await receiver.peek(5)
                 assert len(messages) == 5
                 assert all(isinstance(m, PeekMessage) for m in messages)
@@ -391,6 +396,9 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                     with pytest.raises(AttributeError):
                         message.complete()
 
+            async with sb_client.get_queue_session_receiver(servicebus_queue.name, session_id=session_id_2) as receiver:
+                messages = await receiver.peek(5)
+                assert len(messages) == 3
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -402,7 +410,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
             servicebus_namespace_connection_string, logging_enable=False) as sb_client:
 
             session_id = str(uuid.uuid4())
-            async with sb_client.get_queue_receiver(servicebus_queue.name, idle_timeout=5, session_id=session_id) as receiver:
+            async with sb_client.get_queue_session_receiver(servicebus_queue.name, idle_timeout=5, session_id=session_id) as receiver:
                 async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                     for i in range(5):
                         message = Message("Test message no. {}".format(i), session_id=session_id)
@@ -429,7 +437,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
             session_id = str(uuid.uuid4())
             messages = []
             locks = 3
-            async with sb_client.get_queue_receiver(servicebus_queue.name, session_id=session_id, prefetch=10) as receiver:
+            async with sb_client.get_queue_session_receiver(servicebus_queue.name, session_id=session_id, prefetch=10) as receiver:
                 async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                     for i in range(locks):
                         message = Message("Test message no. {}".format(i), session_id=session_id)
@@ -476,7 +484,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
 
             renewer = AutoLockRenew()
             messages = []
-            async with sb_client.get_queue_receiver(servicebus_queue.name, session_id=session_id, idle_timeout=5, mode=ReceiveSettleMode.PeekLock, prefetch=20) as session:
+            async with sb_client.get_queue_session_receiver(servicebus_queue.name, session_id=session_id, idle_timeout=5, mode=ReceiveSettleMode.PeekLock, prefetch=20) as session:
                 renewer.register(session.session, timeout=60)
                 print("Registered lock renew thread", session.session.locked_until_utc, utc_now())
                 with pytest.raises(SessionLockExpired):
@@ -526,7 +534,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                 message.session_id = session_id
                 await sender.send(message)
 
-            async with sb_client.get_queue_receiver(servicebus_queue.name, session_id=session_id) as receiver:
+            async with sb_client.get_queue_session_receiver(servicebus_queue.name, session_id=session_id) as receiver:
                 messages = await receiver.receive(max_wait_time=10)
                 assert len(messages) == 1
 
@@ -550,7 +558,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                 message.session_id = session_id
                 await sender.send(message)
 
-            async with sb_client.get_queue_receiver(servicebus_queue.name, session_id=session_id) as receiver:
+            async with sb_client.get_queue_session_receiver(servicebus_queue.name, session_id=session_id) as receiver:
                 messages = await receiver.receive(max_wait_time=10)
                 assert len(messages) == 1
                 print_message(_logger, messages[0])
@@ -565,7 +573,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                 with pytest.raises(SessionLockExpired):
                     await receiver.session.renew_lock()
 
-            async with sb_client.get_queue_receiver(servicebus_queue.name, session_id=session_id) as receiver:
+            async with sb_client.get_queue_session_receiver(servicebus_queue.name, session_id=session_id) as receiver:
                 messages = await receiver.receive(max_wait_time=30)
                 assert len(messages) == 1
                 print_message(_logger, messages[0])
@@ -594,7 +602,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
 
             messages = []
             renewer = AutoLockRenew()
-            async with sb_client.get_queue_receiver(servicebus_queue.name, session_id=session_id) as receiver:
+            async with sb_client.get_queue_session_receiver(servicebus_queue.name, session_id=session_id) as receiver:
                 renewer.register(receiver.session, timeout=140)
                 messages.extend(await receiver.receive(max_wait_time=120))
                 messages.extend(await receiver.receive(max_wait_time=5))
@@ -635,7 +643,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                 assert len(tokens) == 2
 
             renewer = AutoLockRenew()
-            async with sb_client.get_queue_receiver(servicebus_queue.name, session_id=session_id, prefetch=20) as receiver:
+            async with sb_client.get_queue_session_receiver(servicebus_queue.name, session_id=session_id, prefetch=20) as receiver:
                 renewer.register(receiver.session, timeout=140)
                 messages.extend(await receiver.receive(max_wait_time=120))
                 messages.extend(await receiver.receive(max_wait_time=5))
@@ -672,7 +680,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
 
             renewer = AutoLockRenew()
             messages = []
-            async with sb_client.get_queue_receiver(servicebus_queue.name, session_id=session_id) as receiver:
+            async with sb_client.get_queue_session_receiver(servicebus_queue.name, session_id=session_id) as receiver:
                 renewer.register(receiver.session, timeout=140)
                 messages.extend(await receiver.receive(max_wait_time=120))
                 messages.extend(await receiver.receive(max_wait_time=5))
@@ -701,7 +709,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                     message = Message("Handler message no. {}".format(i), session_id=session_id)
                     await sender.send(message)
 
-            async with sb_client.get_queue_receiver(servicebus_queue.name, session_id=session_id, idle_timeout=5) as session:
+            async with sb_client.get_queue_session_receiver(servicebus_queue.name, session_id=session_id, idle_timeout=5) as session:
                 assert await session.session.get_session_state() == None
                 await session.session.set_session_state("first_state")
                 count = 0
@@ -733,10 +741,10 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                         message = Message("Test message no. {}".format(i), session_id=session)
                         await sender.send(message)
             for session in sessions:
-                async with sb_client.get_queue_receiver(servicebus_queue.name, session_id=session) as receiver:
+                async with sb_client.get_queue_session_receiver(servicebus_queue.name, session_id=session) as receiver:
                     await receiver.session.set_session_state("SESSION {}".format(session))
 
-            async with sb_client.get_queue_receiver(servicebus_queue.name, session_id=NEXT_AVAILABLE, idle_timeout=5, mode=ReceiveSettleMode.PeekLock) as receiver:
+            async with sb_client.get_queue_session_receiver(servicebus_queue.name, session_id=NEXT_AVAILABLE, idle_timeout=5, mode=ReceiveSettleMode.PeekLock) as receiver:
                 current_sessions = await receiver.list_sessions(updated_since=start_time)
                 assert len(current_sessions) == 5
                 assert current_sessions == sessions
@@ -763,7 +771,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                         message = Message("Test message no. {}".format(i), session_id=session)
                         await sender.send(message)
             for session in sessions:
-                async with sb_client.get_queue_receiver(servicebus_queue.name, session_id=session) as receiver:
+                async with sb_client.get_queue_session_receiver(servicebus_queue.name, session_id=session) as receiver:
                     await receiver.session.set_session_state("SESSION {}".format(session))
 
             current_sessions = await sb_client.list_sessions(updated_since=start_time)
@@ -783,7 +791,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
         async def message_processing(sb_client):
             while True:
                 try:
-                    async with sb_client.get_queue_receiver(servicebus_queue.name, session_id=NEXT_AVAILABLE, idle_timeout=5) as session:
+                    async with sb_client.get_queue_session_receiver(servicebus_queue.name, session_id=NEXT_AVAILABLE, idle_timeout=5) as session:
                         async for message in session:
                             print("Message: {}".format(message))
                             messages.append(message)
@@ -815,7 +823,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusTopicPreparer(name_prefix='servicebustest')
     @ServiceBusSubscriptionPreparer(name_prefix='servicebustest', requires_session=True)
-    async def test_session_basic_topic_subscription_send_and_receive(self, servicebus_namespace_connection_string, servicebus_topic, servicebus_subscription, **kwargs):
+    async def test_async_session_basic_topic_subscription_send_and_receive(self, servicebus_namespace_connection_string, servicebus_topic, servicebus_subscription, **kwargs):
         async with ServiceBusClient.from_connection_string(
                 servicebus_namespace_connection_string,
                 logging_enable=False
@@ -824,7 +832,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                 message = Message(b"Sample topic message", session_id='test_session')
                 await sender.send(message)
 
-            async with sb_client.get_subscription_receiver(
+            async with sb_client.get_subscription_session_receiver(
                 topic_name=servicebus_topic.name,
                 subscription_name=servicebus_subscription.name,
                 session_id='test_session',
@@ -835,3 +843,41 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                     count += 1
                     await message.complete()
             assert count == 1
+
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
+    async def test_async_session_connection_failure_is_idempotent(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+        #Technically this validates for all senders/receivers, not just session, but since it uses session to generate a recoverable failure, putting it in here.
+        async with ServiceBusClient.from_connection_string(
+            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
+    
+            # First let's just try the naive failure cases.
+            receiver = sb_client.get_queue_receiver("THIS_IS_WRONG_ON_PURPOSE")
+            with pytest.raises(ServiceBusConnectionError):
+                await receiver._open_with_retry()
+            assert not receiver._running
+            assert not receiver._handler
+    
+            sender = sb_client.get_queue_sender("THIS_IS_WRONG_ON_PURPOSE")
+            with pytest.raises(ServiceBusConnectionError):
+                await sender._open_with_retry()
+            assert not receiver._running
+            assert not receiver._handler
+
+            # Then let's try a case we can recover from to make sure everything works on reestablishment.
+            receiver = sb_client.get_queue_session_receiver(servicebus_queue.name, session_id=NEXT_AVAILABLE)
+            with pytest.raises(NoActiveSession):
+                await receiver._open_with_retry()
+
+            session_id = str(uuid.uuid4())
+            async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
+                await sender.send(Message("test session sender", session_id=session_id))
+
+            async with sb_client.get_queue_session_receiver(servicebus_queue.name, session_id=NEXT_AVAILABLE, idle_timeout=5) as receiver:
+                messages = []
+                async for message in receiver:
+                    messages.append(message)
+                assert len(messages) == 1

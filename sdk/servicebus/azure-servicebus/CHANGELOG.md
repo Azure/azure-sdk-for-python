@@ -6,10 +6,17 @@
 
 * Added method `get_topic_sender` in `ServiceBusClient` to get a `ServiceBusSender` for a topic.
 * Added method `get_subscription_receiver` in `ServiceBusClient` to get a `ServiceBusReceiver` for a subscription under specific topic.
+* `ServiceBusSender.send()` can now send a list of messages in one call, if they fit into a single batch.  If they do not fit a `ValueError` is thrown.
 
 **BugFixes**
 
 * Fig bug where http_proxy and transport_type in ServiceBusClient are not propagated into Sender/Receiver creation properly.
+
+**Breaking Changes**
+
+* Session receivers are now created via their own top level functions, e.g. `get_queue_sesison_receiver` and `get_subscription_session_receiver`.  Non session receivers no longer take session_id as a paramter.
+* `ServiceBusSender.send()` no longer takes a timeout parameter, as it should be redundant with retry options provided when creating the client.
+* Exception imports have been removed from module `azure.servicebus`. Import from `azure.servicebus.exceptions` instead.
 
 ## 7.0.0b1 (2020-04-06)
 
@@ -36,6 +43,7 @@ Version 7.0.0b1 is a preview of our efforts to create a client library that is u
     * `get_queue` no longer exists, utilize `get_queue_sender/receiver` instead.
     * `peek` and other `queue_client` functions have moved to their respective sender/receiver.
     * Renamed `fetch_next` to `receive`.
+    * Renamed `session` to `session_id` to normalize naming when requesting a receiver against a given session.
     * `reconnect` no longer exists, and is performed implicitly if needed.
     * `open` no longer exists, and is performed implicitly if needed.
 * Normalized top level client parameters with idiomatic and consistent naming.

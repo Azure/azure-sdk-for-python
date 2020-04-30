@@ -1,0 +1,181 @@
+interactions:
+- request:
+    body: '{"name": "test-syn-map", "format": "solr", "synonyms": "USA, United States,
+      United States of America"}'
+    headers:
+      Accept:
+      - application/json;odata.metadata=minimal
+      Content-Length:
+      - '102'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-search-documents/1.0.0b3 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
+      api-key:
+      - 1EB3C43FAD17D88EF8BB4EEA004D98D3
+    method: POST
+    uri: https://searchab401799.search.windows.net/synonymmaps?api-version=2019-05-06-Preview
+  response:
+    body:
+      string: '{"@odata.context":"https://searchab401799.search.windows.net/$metadata#synonymmaps/$entity","@odata.etag":"\"0x8D7EC9580AF6E73\"","name":"test-syn-map","format":"solr","synonyms":"USA,
+        United States, United States of America","encryptionKey":null}'
+    headers:
+      cache-control: no-cache
+      content-length: '247'
+      content-type: application/json; odata.metadata=minimal
+      date: Wed, 29 Apr 2020 23:31:54 GMT
+      elapsed-time: '54'
+      etag: W/"0x8D7EC9580AF6E73"
+      expires: '-1'
+      location: https://searchab401799.search.windows.net/synonymmaps('test-syn-map')?api-version=2019-05-06-Preview
+      odata-version: '4.0'
+      pragma: no-cache
+      preference-applied: odata.include-annotations="*"
+      request-id: 9c465bb6-8a71-11ea-889b-8c8590507855
+      strict-transport-security: max-age=15724800; includeSubDomains
+    status:
+      code: 201
+      message: Created
+    url: https://searchab401799.search.windows.net/synonymmaps?api-version=2019-05-06-Preview
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json;odata.metadata=minimal
+      User-Agent:
+      - azsdk-python-search-documents/1.0.0b3 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
+      api-key:
+      - 1EB3C43FAD17D88EF8BB4EEA004D98D3
+    method: GET
+    uri: https://searchab401799.search.windows.net/synonymmaps?api-version=2019-05-06-Preview
+  response:
+    body:
+      string: '{"@odata.context":"https://searchab401799.search.windows.net/$metadata#synonymmaps","value":[{"@odata.etag":"\"0x8D7EC9580AF6E73\"","name":"test-syn-map","format":"solr","synonyms":"USA,
+        United States, United States of America","encryptionKey":null}]}'
+    headers:
+      cache-control: no-cache
+      content-encoding: gzip
+      content-length: '315'
+      content-type: application/json; odata.metadata=minimal
+      date: Wed, 29 Apr 2020 23:31:54 GMT
+      elapsed-time: '9'
+      expires: '-1'
+      odata-version: '4.0'
+      pragma: no-cache
+      preference-applied: odata.include-annotations="*"
+      request-id: 9c5d47c2-8a71-11ea-889b-8c8590507855
+      strict-transport-security: max-age=15724800; includeSubDomains
+      vary: Accept-Encoding
+    status:
+      code: 200
+      message: OK
+    url: https://searchab401799.search.windows.net/synonymmaps?api-version=2019-05-06-Preview
+- request:
+    body: '{"name": "test-syn-map", "format": "solr", "synonyms": "Washington, Wash.
+      => WA"}'
+    headers:
+      Accept:
+      - application/json;odata.metadata=minimal
+      Content-Length:
+      - '81'
+      Content-Type:
+      - application/json
+      Prefer:
+      - return=representation
+      User-Agent:
+      - azsdk-python-search-documents/1.0.0b3 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
+      api-key:
+      - 1EB3C43FAD17D88EF8BB4EEA004D98D3
+    method: PUT
+    uri: https://searchab401799.search.windows.net/synonymmaps('test-syn-map')?api-version=2019-05-06-Preview
+  response:
+    body:
+      string: '{"@odata.context":"https://searchab401799.search.windows.net/$metadata#synonymmaps/$entity","@odata.etag":"\"0x8D7EC9580BBF3DC\"","name":"test-syn-map","format":"solr","synonyms":"Washington,
+        Wash. => WA","encryptionKey":null}'
+    headers:
+      cache-control: no-cache
+      content-encoding: gzip
+      content-length: '302'
+      content-type: application/json; odata.metadata=minimal
+      date: Wed, 29 Apr 2020 23:31:54 GMT
+      elapsed-time: '20'
+      etag: W/"0x8D7EC9580BBF3DC"
+      expires: '-1'
+      odata-version: '4.0'
+      pragma: no-cache
+      preference-applied: odata.include-annotations="*"
+      request-id: 9c62687e-8a71-11ea-889b-8c8590507855
+      strict-transport-security: max-age=15724800; includeSubDomains
+      vary: Accept-Encoding
+    status:
+      code: 200
+      message: OK
+    url: https://searchab401799.search.windows.net/synonymmaps('test-syn-map')?api-version=2019-05-06-Preview
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json;odata.metadata=minimal
+      User-Agent:
+      - azsdk-python-search-documents/1.0.0b3 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
+      api-key:
+      - 1EB3C43FAD17D88EF8BB4EEA004D98D3
+    method: GET
+    uri: https://searchab401799.search.windows.net/synonymmaps?api-version=2019-05-06-Preview
+  response:
+    body:
+      string: '{"@odata.context":"https://searchab401799.search.windows.net/$metadata#synonymmaps","value":[{"@odata.etag":"\"0x8D7EC9580BBF3DC\"","name":"test-syn-map","format":"solr","synonyms":"Washington,
+        Wash. => WA","encryptionKey":null}]}'
+    headers:
+      cache-control: no-cache
+      content-encoding: gzip
+      content-length: '307'
+      content-type: application/json; odata.metadata=minimal
+      date: Wed, 29 Apr 2020 23:31:54 GMT
+      elapsed-time: '10'
+      expires: '-1'
+      odata-version: '4.0'
+      pragma: no-cache
+      preference-applied: odata.include-annotations="*"
+      request-id: 9c69b82c-8a71-11ea-889b-8c8590507855
+      strict-transport-security: max-age=15724800; includeSubDomains
+      vary: Accept-Encoding
+    status:
+      code: 200
+      message: OK
+    url: https://searchab401799.search.windows.net/synonymmaps?api-version=2019-05-06-Preview
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json;odata.metadata=minimal
+      User-Agent:
+      - azsdk-python-search-documents/1.0.0b3 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
+      api-key:
+      - 1EB3C43FAD17D88EF8BB4EEA004D98D3
+    method: GET
+    uri: https://searchab401799.search.windows.net/synonymmaps('test-syn-map')?api-version=2019-05-06-Preview
+  response:
+    body:
+      string: '{"@odata.context":"https://searchab401799.search.windows.net/$metadata#synonymmaps/$entity","@odata.etag":"\"0x8D7EC9580BBF3DC\"","name":"test-syn-map","format":"solr","synonyms":"Washington,
+        Wash. => WA","encryptionKey":null}'
+    headers:
+      cache-control: no-cache
+      content-encoding: gzip
+      content-length: '302'
+      content-type: application/json; odata.metadata=minimal
+      date: Wed, 29 Apr 2020 23:31:54 GMT
+      elapsed-time: '7'
+      etag: W/"0x8D7EC9580BBF3DC"
+      expires: '-1'
+      odata-version: '4.0'
+      pragma: no-cache
+      preference-applied: odata.include-annotations="*"
+      request-id: 9c6f0854-8a71-11ea-889b-8c8590507855
+      strict-transport-security: max-age=15724800; includeSubDomains
+      vary: Accept-Encoding
+    status:
+      code: 200
+      message: OK
+    url: https://searchab401799.search.windows.net/synonymmaps('test-syn-map')?api-version=2019-05-06-Preview
+version: 1

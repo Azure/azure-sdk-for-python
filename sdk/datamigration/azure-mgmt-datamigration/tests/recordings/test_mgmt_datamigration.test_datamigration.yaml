@@ -7,7 +7,7 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['59']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-16.04-xenial)
+      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-18.04-bionic)
           requests/2.19.1 msrest/0.5.5 msrest_azure/0.4.32 azure-mgmt-datamigration/0.1.0
           Azure-SDK-For-Python]
       accept-language: [en-US]
@@ -37,7 +37,7 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['95']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-16.04-xenial)
+      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-18.04-bionic)
           requests/2.19.1 msrest/0.5.5 msrest_azure/0.4.32 networkmanagementclient/2.0.0
           Azure-SDK-For-Python]
       accept-language: [en-US]
@@ -73,7 +73,7 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-16.04-xenial)
+      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-18.04-bionic)
           requests/2.19.1 msrest/0.5.5 msrest_azure/0.4.32 networkmanagementclient/2.0.0
           Azure-SDK-For-Python]
     method: GET
@@ -99,7 +99,7 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-16.04-xenial)
+      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-18.04-bionic)
           requests/2.19.1 msrest/0.5.5 msrest_azure/0.4.32 networkmanagementclient/2.0.0
           Azure-SDK-For-Python]
     method: GET
@@ -125,7 +125,7 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-16.04-xenial)
+      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-18.04-bionic)
           requests/2.19.1 msrest/0.5.5 msrest_azure/0.4.32 networkmanagementclient/2.0.0
           Azure-SDK-For-Python]
     method: GET
@@ -163,7 +163,7 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['48']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-16.04-xenial)
+      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-18.04-bionic)
           requests/2.19.1 msrest/0.5.5 msrest_azure/0.4.32 networkmanagementclient/2.0.0
           Azure-SDK-For-Python]
       accept-language: [en-US]
@@ -194,7 +194,7 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-16.04-xenial)
+      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-18.04-bionic)
           requests/2.19.1 msrest/0.5.5 msrest_azure/0.4.32 networkmanagementclient/2.0.0
           Azure-SDK-For-Python]
     method: GET
@@ -220,7 +220,7 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-16.04-xenial)
+      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-18.04-bionic)
           requests/2.19.1 msrest/0.5.5 msrest_azure/0.4.32 networkmanagementclient/2.0.0
           Azure-SDK-For-Python]
     method: GET
@@ -254,7 +254,7 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['279']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-16.04-xenial)
+      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-18.04-bionic)
           requests/2.19.1 msrest/0.5.5 msrest_azure/0.4.32 azure-mgmt-datamigration/0.1.0
           Azure-SDK-For-Python]
       accept-language: [en-US]
@@ -283,7 +283,7 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-16.04-xenial)
+      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-18.04-bionic)
           requests/2.19.1 msrest/0.5.5 msrest_azure/0.4.32 azure-mgmt-datamigration/0.1.0
           Azure-SDK-For-Python]
     method: GET
@@ -309,7 +309,7 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-16.04-xenial)
+      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-18.04-bionic)
           requests/2.19.1 msrest/0.5.5 msrest_azure/0.4.32 azure-mgmt-datamigration/0.1.0
           Azure-SDK-For-Python]
     method: GET
@@ -335,7 +335,7 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-16.04-xenial)
+      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-18.04-bionic)
           requests/2.19.1 msrest/0.5.5 msrest_azure/0.4.32 azure-mgmt-datamigration/0.1.0
           Azure-SDK-For-Python]
     method: GET
@@ -361,7 +361,7 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-16.04-xenial)
+      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-18.04-bionic)
           requests/2.19.1 msrest/0.5.5 msrest_azure/0.4.32 azure-mgmt-datamigration/0.1.0
           Azure-SDK-For-Python]
     method: GET
@@ -387,7 +387,7 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-16.04-xenial)
+      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-18.04-bionic)
           requests/2.19.1 msrest/0.5.5 msrest_azure/0.4.32 azure-mgmt-datamigration/0.1.0
           Azure-SDK-For-Python]
     method: GET
@@ -413,7 +413,7 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-16.04-xenial)
+      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-18.04-bionic)
           requests/2.19.1 msrest/0.5.5 msrest_azure/0.4.32 azure-mgmt-datamigration/0.1.0
           Azure-SDK-For-Python]
     method: GET
@@ -439,7 +439,7 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-16.04-xenial)
+      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-18.04-bionic)
           requests/2.19.1 msrest/0.5.5 msrest_azure/0.4.32 azure-mgmt-datamigration/0.1.0
           Azure-SDK-For-Python]
     method: GET
@@ -465,7 +465,7 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-16.04-xenial)
+      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-18.04-bionic)
           requests/2.19.1 msrest/0.5.5 msrest_azure/0.4.32 azure-mgmt-datamigration/0.1.0
           Azure-SDK-For-Python]
     method: GET
@@ -491,7 +491,7 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-16.04-xenial)
+      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-18.04-bionic)
           requests/2.19.1 msrest/0.5.5 msrest_azure/0.4.32 azure-mgmt-datamigration/0.1.0
           Azure-SDK-For-Python]
     method: GET
@@ -517,7 +517,7 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-16.04-xenial)
+      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-18.04-bionic)
           requests/2.19.1 msrest/0.5.5 msrest_azure/0.4.32 azure-mgmt-datamigration/0.1.0
           Azure-SDK-For-Python]
     method: GET
@@ -543,7 +543,7 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-16.04-xenial)
+      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-18.04-bionic)
           requests/2.19.1 msrest/0.5.5 msrest_azure/0.4.32 azure-mgmt-datamigration/0.1.0
           Azure-SDK-For-Python]
     method: GET
@@ -569,7 +569,7 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-16.04-xenial)
+      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-18.04-bionic)
           requests/2.19.1 msrest/0.5.5 msrest_azure/0.4.32 azure-mgmt-datamigration/0.1.0
           Azure-SDK-For-Python]
     method: GET
@@ -595,7 +595,7 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-16.04-xenial)
+      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-18.04-bionic)
           requests/2.19.1 msrest/0.5.5 msrest_azure/0.4.32 azure-mgmt-datamigration/0.1.0
           Azure-SDK-For-Python]
     method: GET
@@ -621,7 +621,7 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-16.04-xenial)
+      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-18.04-bionic)
           requests/2.19.1 msrest/0.5.5 msrest_azure/0.4.32 azure-mgmt-datamigration/0.1.0
           Azure-SDK-For-Python]
     method: GET
@@ -647,7 +647,7 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-16.04-xenial)
+      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-18.04-bionic)
           requests/2.19.1 msrest/0.5.5 msrest_azure/0.4.32 azure-mgmt-datamigration/0.1.0
           Azure-SDK-For-Python]
     method: GET
@@ -673,7 +673,7 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-16.04-xenial)
+      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-18.04-bionic)
           requests/2.19.1 msrest/0.5.5 msrest_azure/0.4.32 azure-mgmt-datamigration/0.1.0
           Azure-SDK-For-Python]
     method: GET
@@ -699,7 +699,7 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-16.04-xenial)
+      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-18.04-bionic)
           requests/2.19.1 msrest/0.5.5 msrest_azure/0.4.32 azure-mgmt-datamigration/0.1.0
           Azure-SDK-For-Python]
     method: GET
@@ -725,7 +725,7 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-16.04-xenial)
+      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-18.04-bionic)
           requests/2.19.1 msrest/0.5.5 msrest_azure/0.4.32 azure-mgmt-datamigration/0.1.0
           Azure-SDK-For-Python]
     method: GET
@@ -751,7 +751,7 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-16.04-xenial)
+      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-18.04-bionic)
           requests/2.19.1 msrest/0.5.5 msrest_azure/0.4.32 azure-mgmt-datamigration/0.1.0
           Azure-SDK-For-Python]
     method: GET
@@ -777,7 +777,7 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-16.04-xenial)
+      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-18.04-bionic)
           requests/2.19.1 msrest/0.5.5 msrest_azure/0.4.32 azure-mgmt-datamigration/0.1.0
           Azure-SDK-For-Python]
     method: GET
@@ -803,7 +803,7 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-16.04-xenial)
+      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-18.04-bionic)
           requests/2.19.1 msrest/0.5.5 msrest_azure/0.4.32 azure-mgmt-datamigration/0.1.0
           Azure-SDK-For-Python]
     method: GET
@@ -829,7 +829,7 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-16.04-xenial)
+      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-18.04-bionic)
           requests/2.19.1 msrest/0.5.5 msrest_azure/0.4.32 azure-mgmt-datamigration/0.1.0
           Azure-SDK-For-Python]
     method: GET
@@ -855,7 +855,7 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-16.04-xenial)
+      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-18.04-bionic)
           requests/2.19.1 msrest/0.5.5 msrest_azure/0.4.32 azure-mgmt-datamigration/0.1.0
           Azure-SDK-For-Python]
     method: GET
@@ -881,7 +881,7 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-16.04-xenial)
+      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-18.04-bionic)
           requests/2.19.1 msrest/0.5.5 msrest_azure/0.4.32 azure-mgmt-datamigration/0.1.0
           Azure-SDK-For-Python]
     method: GET
@@ -907,7 +907,7 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-16.04-xenial)
+      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-18.04-bionic)
           requests/2.19.1 msrest/0.5.5 msrest_azure/0.4.32 azure-mgmt-datamigration/0.1.0
           Azure-SDK-For-Python]
     method: GET
@@ -933,7 +933,7 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-16.04-xenial)
+      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-18.04-bionic)
           requests/2.19.1 msrest/0.5.5 msrest_azure/0.4.32 azure-mgmt-datamigration/0.1.0
           Azure-SDK-For-Python]
     method: GET
@@ -959,7 +959,7 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-16.04-xenial)
+      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-18.04-bionic)
           requests/2.19.1 msrest/0.5.5 msrest_azure/0.4.32 azure-mgmt-datamigration/0.1.0
           Azure-SDK-For-Python]
     method: GET
@@ -985,7 +985,7 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-16.04-xenial)
+      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-18.04-bionic)
           requests/2.19.1 msrest/0.5.5 msrest_azure/0.4.32 azure-mgmt-datamigration/0.1.0
           Azure-SDK-For-Python]
     method: GET
@@ -1013,7 +1013,7 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-16.04-xenial)
+      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-18.04-bionic)
           requests/2.19.1 msrest/0.5.5 msrest_azure/0.4.32 azure-mgmt-datamigration/0.1.0
           Azure-SDK-For-Python]
       accept-language: [en-US]
@@ -1044,7 +1044,7 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['59']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-16.04-xenial)
+      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-18.04-bionic)
           requests/2.19.1 msrest/0.5.5 msrest_azure/0.4.32 azure-mgmt-datamigration/0.1.0
           Azure-SDK-For-Python]
       accept-language: [en-US]
@@ -1075,7 +1075,7 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['93']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-16.04-xenial)
+      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-18.04-bionic)
           requests/2.19.1 msrest/0.5.5 msrest_azure/0.4.32 azure-mgmt-datamigration/0.1.0
           Azure-SDK-For-Python]
       accept-language: [en-US]
@@ -1102,7 +1102,7 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-16.04-xenial)
+      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-18.04-bionic)
           requests/2.19.1 msrest/0.5.5 msrest_azure/0.4.32 azure-mgmt-datamigration/0.1.0
           Azure-SDK-For-Python]
       accept-language: [en-US]
@@ -1142,7 +1142,7 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['914']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-16.04-xenial)
+      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-18.04-bionic)
           requests/2.19.1 msrest/0.5.5 msrest_azure/0.4.32 azure-mgmt-datamigration/0.1.0
           Azure-SDK-For-Python]
       accept-language: [en-US]
@@ -1169,7 +1169,7 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-16.04-xenial)
+      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-18.04-bionic)
           requests/2.19.1 msrest/0.5.5 msrest_azure/0.4.32 azure-mgmt-datamigration/0.1.0
           Azure-SDK-For-Python]
       accept-language: [en-US]
@@ -1198,7 +1198,7 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Length: ['0']
-      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-16.04-xenial)
+      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-18.04-bionic)
           requests/2.19.1 msrest/0.5.5 msrest_azure/0.4.32 azure-mgmt-datamigration/0.1.0
           Azure-SDK-For-Python]
       accept-language: [en-US]
@@ -1224,7 +1224,7 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Length: ['0']
-      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-16.04-xenial)
+      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-18.04-bionic)
           requests/2.19.1 msrest/0.5.5 msrest_azure/0.4.32 azure-mgmt-datamigration/0.1.0
           Azure-SDK-For-Python]
       accept-language: [en-US]
@@ -1250,7 +1250,7 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Length: ['0']
-      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-16.04-xenial)
+      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-18.04-bionic)
           requests/2.19.1 msrest/0.5.5 msrest_azure/0.4.32 azure-mgmt-datamigration/0.1.0
           Azure-SDK-For-Python]
       accept-language: [en-US]
@@ -1277,7 +1277,7 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-16.04-xenial)
+      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-18.04-bionic)
           requests/2.19.1 msrest/0.5.5 msrest_azure/0.4.32 azure-mgmt-datamigration/0.1.0
           Azure-SDK-For-Python]
     method: GET
@@ -1303,7 +1303,7 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-16.04-xenial)
+      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-18.04-bionic)
           requests/2.19.1 msrest/0.5.5 msrest_azure/0.4.32 azure-mgmt-datamigration/0.1.0
           Azure-SDK-For-Python]
     method: GET
@@ -1329,7 +1329,7 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-16.04-xenial)
+      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-18.04-bionic)
           requests/2.19.1 msrest/0.5.5 msrest_azure/0.4.32 azure-mgmt-datamigration/0.1.0
           Azure-SDK-For-Python]
     method: GET
@@ -1355,7 +1355,7 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-16.04-xenial)
+      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-18.04-bionic)
           requests/2.19.1 msrest/0.5.5 msrest_azure/0.4.32 azure-mgmt-datamigration/0.1.0
           Azure-SDK-For-Python]
     method: GET
@@ -1381,7 +1381,7 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-16.04-xenial)
+      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-18.04-bionic)
           requests/2.19.1 msrest/0.5.5 msrest_azure/0.4.32 azure-mgmt-datamigration/0.1.0
           Azure-SDK-For-Python]
     method: GET
@@ -1407,7 +1407,7 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-16.04-xenial)
+      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-18.04-bionic)
           requests/2.19.1 msrest/0.5.5 msrest_azure/0.4.32 azure-mgmt-datamigration/0.1.0
           Azure-SDK-For-Python]
     method: GET
@@ -1435,7 +1435,7 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['59']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-16.04-xenial)
+      User-Agent: [python/3.5.2 (Linux-4.4.0-17134-Microsoft-x86_64-with-Ubuntu-18.04-bionic)
           requests/2.19.1 msrest/0.5.5 msrest_azure/0.4.32 azure-mgmt-datamigration/0.1.0
           Azure-SDK-For-Python]
       accept-language: [en-US]

@@ -9,9 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from ._configuration import OperationalInsightsManagementClientConfiguration
-from ._operational_insights_management_client import OperationalInsightsManagementClient
-__all__ = ['OperationalInsightsManagementClient', 'OperationalInsightsManagementClientConfiguration']
+from ._configuration import LogAnalyticsManagementClientConfiguration
+from ._log_analytics_management_client import LogAnalyticsManagementClient
+__all__ = ['LogAnalyticsManagementClient', 'LogAnalyticsManagementClientConfiguration']
 
 from .version import VERSION
 

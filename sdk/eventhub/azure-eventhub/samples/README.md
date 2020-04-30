@@ -1,13 +1,3 @@
----
-page_type: sample
-languages:
-  - python
-products:
-  - azure
-  - azure-event-hubs
-urlFragment: eventhub-samples
----
-
 # Azure Event Hubs client library for Python Samples
 
 These are code samples that show common scenario operations with the Azure Event Hubs client library.

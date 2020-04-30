@@ -7,27 +7,19 @@ import collections
 import functools
 import logging
 from typing import Any, TYPE_CHECKING, List, Union
-import six
 
 from uamqp import ReceiveClientAsync, types
 from uamqp.constants import SenderSettleMode
 
 from ._base_handler_async import BaseHandlerAsync
 from ._async_message import ReceivedMessage
-from .._servicebus_receiver import ReceiverMixin, ServiceBusSession as BaseSession
+from .._common.receiver_mixins import ReceiverMixin
 from .._common.constants import (
-    REQUEST_RESPONSE_GET_SESSION_STATE_OPERATION,
-    REQUEST_RESPONSE_SET_SESSION_STATE_OPERATION,
-    REQUEST_RESPONSE_RENEW_SESSION_LOCK_OPERATION,
     REQUEST_RESPONSE_UPDATE_DISPOSTION_OPERATION,
     REQUEST_RESPONSE_PEEK_OPERATION,
     REQUEST_RESPONSE_RECEIVE_BY_SEQUENCE_NUMBER,
     REQUEST_RESPONSE_RENEWLOCK_OPERATION,
     ReceiveSettleMode,
-    MGMT_RESPONSE_SESSION_STATE,
-    MGMT_RESPONSE_RECEIVER_EXPIRATION,
-    MGMT_REQUEST_SESSION_ID,
-    MGMT_REQUEST_SESSION_STATE,
     MGMT_REQUEST_DISPOSITION_STATUS,
     MGMT_REQUEST_LOCK_TOKENS,
     MGMT_REQUEST_SEQUENCE_NUMBERS,
@@ -36,110 +28,12 @@ from .._common.constants import (
     MGMT_REQUEST_MESSAGE_COUNT
 )
 from .._common import mgmt_handlers
-from .._common.utils import utc_from_timestamp
 from ._async_utils import create_authentication
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 _LOGGER = logging.getLogger(__name__)
-
-
-class ServiceBusSession(BaseSession):
-    """
-    The ServiceBusSession is used for manage session states and lock renewal.
-
-    **Please use the instance variable `session` on the ServiceBusReceiver to get the corresponding ServiceBusSession
-    object linked with the receiver instead of instantiating a ServiceBusSession object directly.**
-
-    .. admonition:: Example:
-
-        .. literalinclude:: ../samples/async_samples/sample_code_servicebus_async.py
-            :start-after: [START get_session_async]
-            :end-before: [END get_session_async]
-            :language: python
-            :dedent: 4
-            :caption: Get session from a receiver
-    """
-
-    async def get_session_state(self):
-        # type: () -> str
-        """Get the session state.
-
-        Returns None if no state has been set.
-
-        :rtype: str
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/async_samples/sample_code_servicebus_async.py
-                :start-after: [START get_session_state_async]
-                :end-before: [END get_session_state_async]
-                :language: python
-                :dedent: 4
-                :caption: Get the session state
-        """
-        self._can_run()
-        response = await self._receiver._mgmt_request_response_with_retry(  # pylint: disable=protected-access
-            REQUEST_RESPONSE_GET_SESSION_STATE_OPERATION,
-            {MGMT_REQUEST_SESSION_ID: self.session_id},
-            mgmt_handlers.default
-        )
-        session_state = response.get(MGMT_RESPONSE_SESSION_STATE)
-        if isinstance(session_state, six.binary_type):
-            session_state = session_state.decode('UTF-8')
-        return session_state
-
-    async def set_session_state(self, state):
-        # type: (Union[str, bytes, bytearray]) -> None
-        """Set the session state.
-
-        :param state: The state value.
-        :type state: str, bytes or bytearray
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/async_samples/sample_code_servicebus_async.py
-                :start-after: [START set_session_state_async]
-                :end-before: [END set_session_state_async]
-                :language: python
-                :dedent: 4
-                :caption: Set the session state
-        """
-        self._can_run()
-        state = state.encode(self._encoding) if isinstance(state, six.text_type) else state
-        return await self._receiver._mgmt_request_response_with_retry(  # pylint: disable=protected-access
-            REQUEST_RESPONSE_SET_SESSION_STATE_OPERATION,
-            {MGMT_REQUEST_SESSION_ID: self.session_id, MGMT_REQUEST_SESSION_STATE: bytearray(state)},
-            mgmt_handlers.default
-        )
-
-    async def renew_lock(self):
-        # type: () -> None
-        """Renew the session lock.
-
-        This operation must be performed periodically in order to retain a lock on the
-        session to continue message processing.
-        Once the lock is lost the connection will be closed. This operation can
-        also be performed as a threaded background task by registering the session
-        with an `azure.servicebus.aio.AutoLockRenew` instance.
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/async_samples/sample_code_servicebus_async.py
-                :start-after: [START session_renew_lock_async]
-                :end-before: [END session_renew_lock_async]
-                :language: python
-                :dedent: 4
-                :caption: Renew the session lock before it expires
-        """
-        self._can_run()
-        expiry = await self._receiver._mgmt_request_response_with_retry(  # pylint: disable=protected-access
-            REQUEST_RESPONSE_RENEW_SESSION_LOCK_OPERATION,
-            {MGMT_REQUEST_SESSION_ID: self.session_id},
-            mgmt_handlers.default
-        )
-        self._locked_until_utc = utc_from_timestamp(expiry[MGMT_RESPONSE_RECEIVER_EXPIRATION]/1000.0)
 
 
 class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, ReceiverMixin):
@@ -169,10 +63,6 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
      will be immediately removed from the queue, and cannot be subsequently rejected or re-received if
      the client fails to process the message. The default mode is PeekLock.
     :paramtype mode: ~azure.servicebus.ReceiveSettleMode
-    :keyword session_id: A specific session from which to receive. This must be specified for a
-     sessionful entity, otherwise it must be None. In order to receive messages from the next available
-     session, set this to NEXT_AVAILABLE.
-    :paramtype session_id: str or ~azure.servicebus.NEXT_AVAILABLE
     :keyword int prefetch: The maximum number of messages to cache with each request to the service.
      The default value is 0 meaning messages will be received from the service and processed
      one at a time. Increasing this value will improve message throughput performance but increase
@@ -231,10 +121,8 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
                 **kwargs
             )
         self._message_iter = None
-        self._session_id = None
         self._create_attribute(**kwargs)
         self._connection = kwargs.get("connection")
-        self._session = ServiceBusSession(self._session_id, self, self._config.encoding) if self._session_id else None
 
     async def __anext__(self):
         self._can_run()
@@ -253,13 +141,13 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
 
     def _create_handler(self, auth):
         self._handler = ReceiveClientAsync(
-            self._get_source_for_session_entity() if self._session_id else self._entity_uri,
+            self._get_source(),
             auth=auth,
             debug=self._config.logging_enable,
             properties=self._properties,
             error_policy=self._error_policy,
             client_name=self._name,
-            on_attach=self._on_attach_for_session_entity if self._session_id else None,
+            on_attach=self._on_attach,
             auto_complete=False,
             encoding=self._config.encoding,
             receive_settle_mode=self._mode.value,
@@ -275,11 +163,15 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
             await self._handler.close_async()
         auth = None if self._connection else (await create_authentication(self))
         self._create_handler(auth)
-        await self._handler.open_async(connection=self._connection)
-        self._message_iter = self._handler.receive_messages_iter_async()
-        while not await self._handler.client_ready_async():
-            await asyncio.sleep(0.05)
-        self._running = True
+        try:
+            await self._handler.open_async(connection=self._connection)
+            self._message_iter = self._handler.receive_messages_iter_async()
+            while not await self._handler.client_ready_async():
+                await asyncio.sleep(0.05)
+            self._running = True
+        except:
+            self.close()
+            raise
 
     async def _receive(self, max_batch_size=None, timeout=None):
         await self._open()
@@ -298,8 +190,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
             MGMT_REQUEST_DISPOSITION_STATUS: settlement,
             MGMT_REQUEST_LOCK_TOKENS: types.AMQPArray(lock_tokens)}
 
-        if self._session_id:
-            message[MGMT_REQUEST_SESSION_ID] = self._session_id
+        self._populate_message_properties(message)
         if dead_letter_details:
             message.update(dead_letter_details)
 
@@ -316,29 +207,6 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
             message,
             mgmt_handlers.lock_renew_op
         )
-
-    @property
-    def session(self):
-        # type: ()->ServiceBusSession
-        """
-        Get the ServiceBusSession object linked with the receiver. Session is only available to session-enabled
-        entities.
-
-        :rtype: ~azure.servicebus.aio.ServiceBusSession
-        :raises: :class:`TypeError`
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/async_samples/sample_code_servicebus_async.py
-                :start-after: [START get_session_async]
-                :end-before: [END get_session_async]
-                :language: python
-                :dedent: 4
-                :caption: Get session from a receiver
-        """
-        if not self._session_id:
-            raise TypeError("Session is only available to session-enabled entities.")
-        return self._session  # type: ignore
 
     @classmethod
     def from_connection_string(
@@ -360,10 +228,6 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
          will be immediately removed from the queue, and cannot be subsequently rejected or re-received if
          the client fails to process the message. The default mode is PeekLock.
         :paramtype mode: ~azure.servicebus.ReceiveSettleMode
-        :keyword session_id: A specific session from which to receive. This must be specified for a
-         sessionful entity, otherwise it must be None. In order to receive messages from the next available
-         session, set this to NEXT_AVAILABLE.
-        :paramtype session_id: str or ~azure.servicebus.NEXT_AVAILABLE
         :keyword int prefetch: The maximum number of messages to cache with each request to the service.
          The default value is 0, meaning messages will be received from the service and processed
          one at a time. Increasing this value will improve message throughput performance but increase
@@ -473,8 +337,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
             MGMT_REQUEST_RECEIVER_SETTLE_MODE: types.AMQPuInt(receive_mode)
         }
 
-        if self._session_id:
-            message[MGMT_REQUEST_SESSION_ID] = self._session_id
+        self._populate_message_properties(message)
 
         handler = functools.partial(mgmt_handlers.deferred_message_op, mode=self._mode, message_type=ReceivedMessage)
         messages = await self._mgmt_request_response_with_retry(
@@ -520,6 +383,8 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandlerAsync, Receiv
             MGMT_REQUEST_FROM_SEQUENCE_NUMBER: types.AMQPLong(sequence_number),
             MGMT_REQUEST_MESSAGE_COUNT: message_count
         }
+
+        self._populate_message_properties(message)
 
         return await self._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_PEEK_OPERATION,

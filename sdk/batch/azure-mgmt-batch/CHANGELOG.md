@@ -1,5 +1,19 @@
 # Release History
 
+## 8.0.0 (2020-04-10)
+### REST API version
+- This version targets REST API version 2020-03-01.
+
+### Features
+- Added ability to access the Batch DataPlane API without needing a public DNS entry for the account via the new `public_network_access` property on `BatchAccount`.
+- Added new `PrivateLinkResource` and `PrivateEndpointConnection` resource types. These are both only used when the `public_network_access` property on `BatchAccount` is set to `Disabled`.
+  - When `public_network_access` is set to `Disabled` a new `PrivateLinkResource` is visible in that account, which can be used to connect to the account using an ARM Private Endpoint in your VNET.
+- Added ability to encrypt `ComputeNode` disk drives using the new `disk_encryption_configuration` property of `VirtualMachineConfiguration`.
+- **[Breaking]** The `id` property of `ImageReference` can now only refer to a Shared Image Gallery image.
+- **[Breaking]** Pools can now be provisioned without a public IP using the new `public_ip_configuration` property of `NetworkConfiguration`.
+  - The `public_ips` property of `NetworkConfiguration` has moved in to `PublicIPAddressConfiguration` as well. This property can only be specified if `IPAddressProvisioningType` is `UserManaged`.
+
+
 ## 7.0.0 (2019-08-05)
 
   - Added ability to specify a collection of public IPs on
