@@ -187,7 +187,7 @@ class USReceipt(object):  # pylint: disable=too-many-instance-attributes
     :ivar list[~azure.ai.formrecognizer.USReceiptItem] receipt_items:
         The purchased items found on the receipt.
     :ivar ~azure.ai.formrecognizer.FormField subtotal:
-        The subtotal found on the receipt.formpage
+        The subtotal found on the receipt
     :ivar ~azure.ai.formrecognizer.FormField tax:
         The tax value found on the receipt.
     :ivar ~azure.ai.formrecognizer.FormField tip:
