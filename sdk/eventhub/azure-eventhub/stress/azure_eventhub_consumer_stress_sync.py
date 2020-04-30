@@ -97,7 +97,7 @@ class EventHubConsumerClientTest(EventHubConsumerClient):
 
 
 def on_event_received(partition_context, event):
-    recv_cnt_map[partition_context.partition_id] += 1
+    recv_cnt_map[partition_context.partition_id] += 1 if event else 0
     if recv_cnt_map[partition_context.partition_id] % LOG_PER_COUNT == 0:
         total_time_elapsed = time.perf_counter() - start_time
 
@@ -201,8 +201,8 @@ def run(args):
         }
         if args.max_batch_size:
             kwargs_dict["max_batch_size"] = args.max_batch_size
-            if args.max_wait_time:
-                kwargs_dict["max_wait_time"] = args.max_wait_time
+        if args.max_wait_time:
+            kwargs_dict["max_wait_time"] = args.max_wait_time
         if args.parallel_recv_cnt and args.parallel_recv_cnt > 1:
             clients = [create_client(args) for _ in range(args.parallel_recv_cnt)]
             threads = [
