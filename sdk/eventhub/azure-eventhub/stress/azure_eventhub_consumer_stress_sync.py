@@ -85,6 +85,7 @@ LOG_PER_COUNT = args.output_interval
 
 start_time = time.perf_counter()
 recv_cnt_map = defaultdict(int)
+recv_cnt_iteration_map = defaultdict(int)
 recv_time_map = dict()
 
 
@@ -116,9 +117,9 @@ def on_event_received(partition_context, event):
 
 def on_event_batch_received(partition_context, event_batch):
     recv_cnt_map[partition_context.partition_id] += len(event_batch)
-    if recv_cnt_map[partition_context.partition_id] % LOG_PER_COUNT == 0:
+    recv_cnt_iteration_map[partition_context.partition_id] += len(event_batch)
+    while recv_cnt_iteration_map[partition_context.partition_id] > LOG_PER_COUNT:
         total_time_elapsed = time.perf_counter() - start_time
-
         partition_previous_time = recv_time_map.get(partition_context.partition_id)
         partition_current_time = time.perf_counter()
         recv_time_map[partition_context.partition_id] = partition_current_time
@@ -129,6 +130,7 @@ def on_event_batch_received(partition_context, event_batch):
                     recv_cnt_map[partition_context.partition_id] / total_time_elapsed,
                     LOG_PER_COUNT / (partition_current_time - partition_previous_time) if partition_previous_time else None
                     )
+        recv_cnt_iteration_map[partition_context.partition_id] -= LOG_PER_COUNT
         partition_context.update_checkpoint()
 
 
