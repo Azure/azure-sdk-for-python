@@ -1,5 +1,8 @@
 # Release History
 
+## 12.0.2 (Unreleased)
+
+
 ## 12.0.1 (2020-04-29)
 **Fixes**
 - Fixed rename_directory and rename_file doc
