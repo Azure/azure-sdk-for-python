@@ -30,7 +30,7 @@ class Operations(object):
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.mgmt.appconfiguration.models
+    :type models: ~app_configuration_management_client.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -47,24 +47,23 @@ class Operations(object):
 
     def check_name_availability(
         self,
-        name,  # type: str
+        check_name_availability_parameters,  # type: "models.CheckNameAvailabilityParameters"
         **kwargs  # type: Any
     ):
         # type: (...) -> "models.NameAvailabilityStatus"
         """Checks whether the configuration store name is available for use.
 
-        :param name: The name to check for availability.
-        :type name: str
+        :param check_name_availability_parameters: The object containing information for the
+         availability request.
+        :type check_name_availability_parameters: ~app_configuration_management_client.models.CheckNameAvailabilityParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: NameAvailabilityStatus or the result of cls(response)
-        :rtype: ~azure.mgmt.appconfiguration.models.NameAvailabilityStatus
+        :rtype: ~app_configuration_management_client.models.NameAvailabilityStatus
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.NameAvailabilityStatus"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-
-        _check_name_availability_parameters = models.CheckNameAvailabilityParameters(name=name)
         api_version = "2019-11-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
 
@@ -86,7 +85,7 @@ class Operations(object):
 
         # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_check_name_availability_parameters, 'CheckNameAvailabilityParameters')
+        body_content = self._serialize.body(check_name_availability_parameters, 'CheckNameAvailabilityParameters')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
 
@@ -121,7 +120,7 @@ class Operations(object):
         :type skip_token: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of OperationDefinitionListResult or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.appconfiguration.models.OperationDefinitionListResult]
+        :rtype: ~azure.core.paging.ItemPaged[~app_configuration_management_client.models.OperationDefinitionListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.OperationDefinitionListResult"]

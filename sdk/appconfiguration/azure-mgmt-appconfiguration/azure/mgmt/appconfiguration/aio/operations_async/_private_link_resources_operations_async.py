@@ -26,7 +26,7 @@ class PrivateLinkResourcesOperations:
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.mgmt.appconfiguration.models
+    :type models: ~app_configuration_management_client.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -56,7 +56,7 @@ class PrivateLinkResourcesOperations:
         :type config_store_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of PrivateLinkResourceListResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.appconfiguration.models.PrivateLinkResourceListResult]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~app_configuration_management_client.models.PrivateLinkResourceListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.PrivateLinkResourceListResult"]
@@ -132,7 +132,7 @@ class PrivateLinkResourcesOperations:
         :type group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PrivateLinkResource or the result of cls(response)
-        :rtype: ~azure.mgmt.appconfiguration.models.PrivateLinkResource
+        :rtype: ~app_configuration_management_client.models.PrivateLinkResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.PrivateLinkResource"]

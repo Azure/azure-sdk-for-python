@@ -41,11 +41,13 @@ class MgmtAppConfigurationTest(AzureMgmtTestCase):
 
     def setUp(self):
         super(MgmtAppConfigurationTest, self).setUp()
+        from azure.mgmt.appconfiguration import AppConfigurationManagementClient
         self.mgmt_client = self.create_mgmt_client(
-            azure.mgmt.appconfiguration.AppConfigurationManagementClient
+            AppConfigurationManagementClient
         )
 
         if self.is_live:
+            import azure.mgmt.network
             self.network_client = self.create_mgmt_client(
               azure.mgmt.network.NetworkManagementClient
             )
@@ -203,8 +205,9 @@ class MgmtAppConfigurationTest(AzureMgmtTestCase):
 
         # ConfigurationStores_Get[get]
         conf_store = self.mgmt_client.configuration_stores.get(resource_group.name, CONFIGURATION_STORE_NAME)
-        # PRIVATE_ENDPOINT_CONNECTION_NAME = conf_store.private_endpoint_connections[0].name
-        private_connection_id = "" # FIX SWAGGER FIRST
+
+        PRIVATE_ENDPOINT_CONNECTION_NAME = conf_store.private_endpoint_connections[0].name
+        private_connection_id = conf_store.private_endpoint_connections[0].id
 
         # TODO: azure.core.exceptions.HttpResponseError: (InvalidProperty) Some of the properties of 'PrivateEndpointConnection' are invalid. Errors: 'Missing required property 'Id'.'
         # PrivateEndpointConnection_CreateOrUpdate[put]
@@ -219,18 +222,18 @@ class MgmtAppConfigurationTest(AzureMgmtTestCase):
             "description": "Auto-Approved"
           }
         }
-        #result = self.mgmt_client.private_endpoint_connections.begin_create_or_update(
-        #    resource_group.name,
-        #    CONFIGURATION_STORE_NAME,
-        #    PRIVATE_ENDPOINT_CONNECTION_NAME,
-        #    BODY)
+        result = self.mgmt_client.private_endpoint_connections.begin_create_or_update(
+            resource_group.name,
+            CONFIGURATION_STORE_NAME,
+            PRIVATE_ENDPOINT_CONNECTION_NAME,
+            BODY)
             # id=BODY["id"],
             # private_endpoint=BODY["private_endpoint"],
             # private_link_service_connection_state=BODY["private_link_service_connection_state"])
-        #result = result.result()
+        result = result.result()
           
         # PrivateEndpointConnection_GetConnection[get]
-        # result = self.mgmt_client.private_endpoint_connections.get(resource_group.name, CONFIGURATION_STORE_NAME, PRIVATE_ENDPOINT_CONNECTION_NAME)
+        result = self.mgmt_client.private_endpoint_connections.get(resource_group.name, CONFIGURATION_STORE_NAME, PRIVATE_ENDPOINT_CONNECTION_NAME)
 
         # PrivateLinkResources_ListGroupIds[get]
         privatelinks = list(self.mgmt_client.private_link_resources.list_by_configuration_store(resource_group.name, CONFIGURATION_STORE_NAME))
