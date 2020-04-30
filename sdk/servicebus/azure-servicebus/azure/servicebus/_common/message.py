@@ -43,8 +43,8 @@ from ..exceptions import (
     MessageAlreadySettled,
     MessageLockExpired,
     SessionLockExpired,
-    MessageSettleFailed
-)
+    MessageSettleFailed,
+    MessageContentTooLarge)
 from .utils import utc_from_timestamp, utc_now
 
 _LOGGER = logging.getLogger(__name__)
@@ -340,8 +340,8 @@ class BatchMessage(object):
         )
 
         if size_after_add > self.max_size_in_bytes:
-            raise ValueError(
-                "EventDataBatch has reached its size limit: {}".format(
+            raise MessageContentTooLarge(
+                "BatchMessage has reached its size limit: {}".format(
                     self.max_size_in_bytes
                 )
             )
@@ -453,7 +453,7 @@ class ReceivedMessage(PeekMessage):
         self._is_deferred_message = kwargs.get("is_deferred_message", False)
         self.auto_renew_error = None
 
-    def _is_live(self, action):
+    def _check_live(self, action):
         # pylint: disable=no-member
         if not self._receiver or not self._receiver._running:  # pylint: disable=protected-access
             raise MessageSettleFailed(action, "Orphan message had no open connection.")
@@ -611,7 +611,7 @@ class ReceivedMessage(PeekMessage):
         :raises: ~azure.servicebus.exceptions.MessageSettleFailed if message settle operation fails.
         """
         # pylint: disable=protected-access
-        self._is_live(MESSAGE_COMPLETE)
+        self._check_live(MESSAGE_COMPLETE)
         self._settle_message(MESSAGE_COMPLETE)
         self._settled = True
 
@@ -632,7 +632,7 @@ class ReceivedMessage(PeekMessage):
         :raises: ~azure.servicebus.exceptions.MessageSettleFailed if message settle operation fails.
         """
         # pylint: disable=protected-access
-        self._is_live(MESSAGE_DEAD_LETTER)
+        self._check_live(MESSAGE_DEAD_LETTER)
 
         details = {
             MGMT_REQUEST_DEAD_LETTER_REASON: str(reason) if reason else "",
@@ -654,7 +654,7 @@ class ReceivedMessage(PeekMessage):
         :raises: ~azure.servicebus.exceptions.MessageSettleFailed if message settle operation fails.
         """
         # pylint: disable=protected-access
-        self._is_live(MESSAGE_ABANDON)
+        self._check_live(MESSAGE_ABANDON)
         self._settle_message(MESSAGE_ABANDON)
         self._settled = True
 
@@ -671,7 +671,7 @@ class ReceivedMessage(PeekMessage):
         :raises: ~azure.servicebus.exceptions.SessionLockExpired if session lock has already expired.
         :raises: ~azure.servicebus.exceptions.MessageSettleFailed if message settle operation fails.
         """
-        self._is_live(MESSAGE_DEFER)
+        self._check_live(MESSAGE_DEFER)
         self._settle_message(MESSAGE_DEFER)
         self._settled = True
 
@@ -696,7 +696,7 @@ class ReceivedMessage(PeekMessage):
                 raise TypeError("Session messages cannot be renewed. Please renew the Session lock instead.")
         except AttributeError:
             pass
-        self._is_live(MESSAGE_RENEW_LOCK)
+        self._check_live(MESSAGE_RENEW_LOCK)
         token = self.lock_token
         if not token:
             raise ValueError("Unable to renew lock - no lock token found.")

@@ -24,7 +24,6 @@ from azure.servicebus.exceptions import (
     NoActiveSession,
     SessionLockExpired,
     MessageLockExpired,
-    InvalidHandlerState,
     MessageAlreadySettled,
     AutoLockRenewTimeout,
     MessageSettleFailed)

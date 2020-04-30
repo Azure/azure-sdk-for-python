@@ -12,9 +12,6 @@ from uamqp import SendClientAsync, types
 from .._common.message import Message, BatchMessage
 from .._servicebus_sender import SenderMixin
 from ._base_handler_async import BaseHandlerAsync
-from ..exceptions import (
-    MessageSendFailed
-)
 from .._common.constants import (
     REQUEST_RESPONSE_SCHEDULE_MESSAGE_OPERATION,
     REQUEST_RESPONSE_CANCEL_SCHEDULED_MESSAGE_OPERATION,
@@ -128,16 +125,13 @@ class ServiceBusSender(BaseHandlerAsync, SenderMixin):
             self._max_message_size_on_link = self._handler.message_handler._link.peer_max_message_size \
                                              or uamqp.constants.MAX_MESSAGE_LENGTH_BYTES
         except:
-            self.close()
+            await self.close()
             raise
 
     async def _send(self, message, timeout=None, last_exception=None):
         await self._open()
         self._set_msg_timeout(timeout, last_exception)
-        try:
-            await self._handler.send_message_async(message.message)
-        except Exception as e:
-            raise MessageSendFailed(e)
+        await self._handler.send_message_async(message.message)
 
     async def _schedule(self, message, schedule_time_utc):
         # type: (Union[Message, BatchMessage], datetime.datetime) -> List[int]
@@ -267,8 +261,10 @@ class ServiceBusSender(BaseHandlerAsync, SenderMixin):
             batch = await self.create_batch()
             batch._from_list(message)
             message = batch
-        except TypeError: # Message was not a list or generator.
+        except TypeError:  # Message was not a list or generator.
             pass
+        if isinstance(message, BatchMessage) and len(message) == 0:
+            raise ValueError("A BatchMessage or list of Message must have at least one Message")
 
         await self._do_retryable_operation(
             self._send,

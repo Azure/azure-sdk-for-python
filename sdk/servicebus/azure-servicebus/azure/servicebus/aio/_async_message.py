@@ -68,7 +68,7 @@ class ReceivedMessage(sync_message.ReceivedMessage):
         :raises: ~azure.servicebus.exceptions.MessageSettleFailed if message settle operation fails.
         """
         # pylint: disable=protected-access
-        self._is_live(MESSAGE_COMPLETE)
+        self._check_live(MESSAGE_COMPLETE)
         await self._settle_message(MESSAGE_COMPLETE)
         self._settled = True
 
@@ -88,7 +88,7 @@ class ReceivedMessage(sync_message.ReceivedMessage):
         :raises: ~azure.servicebus.exceptions.MessageSettleFailed if message settle operation fails.
         """
         # pylint: disable=protected-access
-        self._is_live(MESSAGE_DEAD_LETTER)
+        self._check_live(MESSAGE_DEAD_LETTER)
         await self._settle_message(MESSAGE_DEAD_LETTER)
         self._settled = True
 
@@ -102,7 +102,7 @@ class ReceivedMessage(sync_message.ReceivedMessage):
         :raises: ~azure.servicebus.exceptions.MessageSettleFailed if message settle operation fails.
         """
         # pylint: disable=protected-access
-        self._is_live(MESSAGE_ABANDON)
+        self._check_live(MESSAGE_ABANDON)
         await self._settle_message(MESSAGE_ABANDON)
         self._settled = True
 
@@ -116,7 +116,7 @@ class ReceivedMessage(sync_message.ReceivedMessage):
         :raises: ~azure.servicebus.exceptions.MessageSettleFailed if message settle operation fails.
         """
         # pylint: disable=protected-access
-        self._is_live(MESSAGE_DEFER)
+        self._check_live(MESSAGE_DEFER)
         await self._settle_message(MESSAGE_DEFER)
         self._settled = True
 
@@ -142,7 +142,7 @@ class ReceivedMessage(sync_message.ReceivedMessage):
                 raise TypeError("Session messages cannot be renewed. Please renew the Session lock instead.")
         except AttributeError:
             pass
-        self._is_live(MESSAGE_RENEW_LOCK)
+        self._check_live(MESSAGE_RENEW_LOCK)
         token = self.lock_token
         if not token:
             raise ValueError("Unable to renew lock - no lock token found.")
