@@ -64,7 +64,10 @@ class SenderMixin(object):
     def _build_schedule_request(cls, schedule_time_utc, *messages):
         request_body = {MGMT_REQUEST_MESSAGES: []}
         for message in messages:
-            message.schedule(schedule_time_utc)
+            if not isinstance(message, Message):
+                raise ValueError("Scheduling batch messages only supports iterables containing Message Objects."
+                                 " Received instead: {}".format(message.__class__.__name__))
+            message.scheduled_enqueue_time_utc = schedule_time_utc
             message_data = {}
             message_data[MGMT_REQUEST_MESSAGE_ID] = message.properties.message_id
             if message.properties.group_id:
@@ -184,15 +187,15 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         self._set_msg_timeout(timeout, last_exception)
         self._handler.send_message(message.message)
 
-    def _schedule(self, message, schedule_time_utc):
-        # type: (Union[Message, BatchMessage], datetime.datetime) -> List[int]
-        """Send Message or BatchMessage to be enqueued at a specific time.
+    def schedule(self, messages, schedule_time_utc):
+        # type: (Union[Message, List[Message]], datetime.datetime) -> List[int]
+        """Send Message or multiple Messages to be enqueued at a specific time.
         Returns a list of the sequence numbers of the enqueued messages.
-        :param message: The messages to schedule.
-        :type message: ~azure.servicebus.Message or ~azure.servicebus.BatchMessage
+        :param messages: The message or list of messages to schedule.
+        :type messages: ~azure.servicebus.Message or list[~azure.servicebus.Message]
         :param schedule_time_utc: The utc date and time to enqueue the messages.
         :type schedule_time_utc: ~datetime.datetime
-        :rtype: List[int]
+        :rtype: list[int]
 
         .. admonition:: Example:
 
@@ -205,17 +208,17 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         """
         # pylint: disable=protected-access
         self._open()
-        if isinstance(message, BatchMessage):
-            request_body = self._build_schedule_request(schedule_time_utc, *message._messages)
+        if isinstance(messages, Message):
+            request_body = self._build_schedule_request(schedule_time_utc, messages)
         else:
-            request_body = self._build_schedule_request(schedule_time_utc, message)
+            request_body = self._build_schedule_request(schedule_time_utc, *messages)
         return self._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_SCHEDULE_MESSAGE_OPERATION,
             request_body,
             mgmt_handlers.schedule_op
         )
 
-    def _cancel_scheduled_messages(self, sequence_numbers):
+    def cancel_scheduled_messages(self, sequence_numbers):
         # type: (Union[int, List[int]]) -> None
         """
         Cancel one or more messages that have previously been scheduled and are still pending.
@@ -223,6 +226,8 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         :param sequence_numbers: The sequence numbers of the scheduled messages.
         :type sequence_numbers: int or list[int]
         :rtype: None
+        :raises: ~azure.servicebus.exceptions.ServiceBusError if messages cancellation failed due to message already
+         cancelled or enqueued.
 
         .. admonition:: Example:
 
