@@ -14,10 +14,9 @@ from ._base_handler import BaseHandler
 from ._common import mgmt_handlers
 from ._common.message import Message, BatchMessage
 from .exceptions import (
-    MessageSendFailed,
     OperationTimeoutError,
-    _ServiceBusErrorPolicy
-)
+    _ServiceBusErrorPolicy,
+    )
 from ._common.utils import create_authentication
 from ._common.constants import (
     REQUEST_RESPONSE_CANCEL_SCHEDULED_MESSAGE_OPERATION,
@@ -186,10 +185,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
     def _send(self, message, timeout=None, last_exception=None):
         self._open()
         self._set_msg_timeout(timeout, last_exception)
-        try:
-            self._handler.send_message(message.message)
-        except Exception as e:
-            raise MessageSendFailed(e)
+        self._handler.send_message(message.message)
 
     def schedule(self, messages, schedule_time_utc):
         # type: (Union[Message, List[Message]], datetime.datetime) -> List[int]
@@ -296,14 +292,19 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         return cls(**constructor_args)
 
     def send(self, message):
-        # type: (Union[Message, BatchMessage], float) -> None
+        # type: (Union[Message, BatchMessage, List[Message]]) -> None
         """Sends message and blocks until acknowledgement is received or operation times out.
 
+        If a list of messages was provided, attempts to send them as a single batch, throwing a
+        `ValueError` if they cannot fit in a single batch.
+
         :param message: The ServiceBus message to be sent.
-        :type message: ~azure.servicebus.Message
+        :type message: ~azure.servicebus.Message or ~azure.servicebus.BatchMessage or list[~azure.servicebus.Message]
         :rtype: None
-        :raises: ~azure.servicebus.common.errors.MessageSendFailed if the message fails to
-         send or ~azure.servicebus.common.errors.OperationTimeoutError if sending times out.
+        :raises: :class: ~azure.servicebus.exceptions.MessageSendFailed if the message fails to
+         send
+                :class: ~azure.servicebus.exceptions.OperationTimeoutError if sending times out.
+                :class: `ValueError` if list of messages is provided and cannot fit in a batch.
 
         .. admonition:: Example:
 
@@ -315,6 +316,15 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 :caption: Send message.
 
         """
+        try:
+            batch = self.create_batch()
+            batch._from_list(message)
+            message = batch
+        except TypeError:  # Message was not a list or generator.
+            pass
+        if isinstance(message, BatchMessage) and len(message) == 0:
+            raise ValueError("A BatchMessage or list of Message must have at least one Message")
+
         self._do_retryable_operation(
             self._send,
             message=message,
