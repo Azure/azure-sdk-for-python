@@ -14,7 +14,7 @@ from azure.core.exceptions import ClientAuthenticationError
 
 from .exception_wrapper import wrap_exceptions
 from .msal_transport_adapter import MsalTransportAdapter
-from .._internal import get_default_authority
+from .._internal import get_default_authority, normalize_authority
 
 try:
     ABC = abc.ABC
@@ -37,8 +37,10 @@ class MsalCredential(ABC):
     def __init__(self, client_id, client_credential=None, **kwargs):
         # type: (str, Optional[Union[str, Mapping[str, str]]], **Any) -> None
         tenant_id = kwargs.pop("tenant_id", "organizations")
-        authority = kwargs.pop("authority", None) or get_default_authority()
-        self._base_url = "https://" + "/".join((authority.strip("/"), tenant_id.strip("/")))
+        authority = kwargs.pop("authority", None)
+        authority = normalize_authority(authority) if authority else get_default_authority()
+
+        self._base_url = "/".join((authority, tenant_id.strip("/")))
         self._client_credential = client_credential
         self._client_id = client_id
 

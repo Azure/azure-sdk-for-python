@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from unittest.mock import Mock, patch
+from urllib.parse import urlparse
 
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
@@ -106,6 +107,26 @@ async def test_user_agent():
     )
 
     await credential.get_token("scope")
+
+
+@pytest.mark.parametrize("authority", ("localhost", "https://localhost"))
+def test_authority(authority):
+    """the credential should accept an authority, with or without scheme, as an argument or environment variable"""
+
+    parsed_authority = urlparse(authority)
+    expected_netloc = parsed_authority.netloc or authority  # "localhost" parses to netloc "", path "localhost"
+
+    class MockCredential(SharedTokenCacheCredential):
+        def _get_auth_client(self, authority=None, **kwargs):
+            actual = urlparse(authority)
+            assert actual.scheme == "https"
+            assert actual.netloc == expected_netloc
+
+    transport = Mock(send=Mock(side_effect=Exception("credential shouldn't send a request")))
+    MockCredential(_cache=TokenCache(), authority=authority, transport=transport)
+
+    with patch.dict("os.environ", {EnvironmentVariables.AZURE_AUTHORITY_HOST: authority}, clear=True):
+        MockCredential(_cache=TokenCache(), authority=authority, transport=transport)
 
 
 @pytest.mark.asyncio

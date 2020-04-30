@@ -62,10 +62,10 @@ class ReceivedMessage(sync_message.ReceivedMessage):
         This removes the message from the queue.
 
         :rtype: None
-        :raises: ~azure.servicebus.common.errors.MessageAlreadySettled if the message has been settled.
-        :raises: ~azure.servicebus.common.errors.MessageLockExpired if message lock has already expired.
-        :raises: ~azure.servicebus.common.errors.SessionLockExpired if session lock has already expired.
-        :raises: ~azure.servicebus.common.errors.MessageSettleFailed if message settle operation fails.
+        :raises: ~azure.servicebus.exceptions.MessageAlreadySettled if the message has been settled.
+        :raises: ~azure.servicebus.exceptions.MessageLockExpired if message lock has already expired.
+        :raises: ~azure.servicebus.exceptions.SessionLockExpired if session lock has already expired.
+        :raises: ~azure.servicebus.exceptions.MessageSettleFailed if message settle operation fails.
         """
         # pylint: disable=protected-access
         self._check_live(MESSAGE_COMPLETE)
@@ -83,9 +83,9 @@ class ReceivedMessage(sync_message.ReceivedMessage):
         :param str reason: The reason for dead-lettering the message.
         :param str description: The detailed description for dead-lettering the message.
         :rtype: None
-        :raises: ~azure.servicebus.common.errors.MessageAlreadySettled if the message has been settled.
-        :raises: ~azure.servicebus.common.errors.MessageLockExpired if message lock has already expired.
-        :raises: ~azure.servicebus.common.errors.MessageSettleFailed if message settle operation fails.
+        :raises: ~azure.servicebus.exceptions.MessageAlreadySettled if the message has been settled.
+        :raises: ~azure.servicebus.exceptions.MessageLockExpired if message lock has already expired.
+        :raises: ~azure.servicebus.exceptions.MessageSettleFailed if message settle operation fails.
         """
         # pylint: disable=protected-access
         self._check_live(MESSAGE_DEAD_LETTER)
@@ -97,9 +97,9 @@ class ReceivedMessage(sync_message.ReceivedMessage):
         """Abandon the message. This message will be returned to the queue to be reprocessed.
 
         :rtype: None
-        :raises: ~azure.servicebus.common.errors.MessageAlreadySettled if the message has been settled.
-        :raises: ~azure.servicebus.common.errors.MessageLockExpired if message lock has already expired.
-        :raises: ~azure.servicebus.common.errors.MessageSettleFailed if message settle operation fails.
+        :raises: ~azure.servicebus.exceptions.MessageAlreadySettled if the message has been settled.
+        :raises: ~azure.servicebus.exceptions.MessageLockExpired if message lock has already expired.
+        :raises: ~azure.servicebus.exceptions.MessageSettleFailed if message settle operation fails.
         """
         # pylint: disable=protected-access
         self._check_live(MESSAGE_ABANDON)
@@ -111,9 +111,9 @@ class ReceivedMessage(sync_message.ReceivedMessage):
         """Abandon the message. This message will be returned to the queue to be reprocessed.
 
         :rtype: None
-        :raises: ~azure.servicebus.common.errors.MessageAlreadySettled if the message has been settled.
-        :raises: ~azure.servicebus.common.errors.MessageLockExpired if message lock has already expired.
-        :raises: ~azure.servicebus.common.errors.MessageSettleFailed if message settle operation fails.
+        :raises: ~azure.servicebus.exceptions.MessageAlreadySettled if the message has been settled.
+        :raises: ~azure.servicebus.exceptions.MessageLockExpired if message lock has already expired.
+        :raises: ~azure.servicebus.exceptions.MessageSettleFailed if message settle operation fails.
         """
         # pylint: disable=protected-access
         self._check_live(MESSAGE_DEFER)
@@ -133,9 +133,9 @@ class ReceivedMessage(sync_message.ReceivedMessage):
 
         :rtype: None
         :raises: TypeError if the message is sessionful.
-        :raises: ~azure.servicebus.common.errors.MessageLockExpired is message lock has already expired.
-        :raises: ~azure.servicebus.common.errors.SessionLockExpired if session lock has already expired.
-        :raises: ~azure.servicebus.common.errors.MessageAlreadySettled is message has already been settled.
+        :raises: ~azure.servicebus.exceptions.MessageLockExpired is message lock has already expired.
+        :raises: ~azure.servicebus.exceptions.SessionLockExpired if session lock has already expired.
+        :raises: ~azure.servicebus.exceptions.MessageAlreadySettled is message has already been settled.
         """
         try:
             if self._receiver.session:  # pylint: disable=protected-access

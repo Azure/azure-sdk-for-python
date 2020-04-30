@@ -29,7 +29,7 @@ from ._constants import (
     PROP_LAST_ENQUEUED_TIME_UTC,
     PROP_RUNTIME_INFO_RETRIEVAL_TIME_UTC,
     PROP_LAST_ENQUEUED_OFFSET,
-)
+    PROP_TIMESTAMP)
 
 if TYPE_CHECKING:
     # pylint: disable=ungrouped-imports
@@ -193,10 +193,12 @@ def trace_link_message(events, parent_span=None):
                     if event.properties:
                         traceparent = event.properties.get(b"Diagnostic-Id", "").decode("ascii")
                         if traceparent:
-                            current_span.link(traceparent)
+                            current_span.link(
+                                traceparent,
+                                attributes={"enqueuedTime": event.message.annotations.get(PROP_TIMESTAMP)}
+                            )
     except Exception as exp:  # pylint:disable=broad-except
         _LOGGER.warning("trace_link_message had an exception %r", exp)
-
 
 
 def event_position_selector(value, inclusive=False):

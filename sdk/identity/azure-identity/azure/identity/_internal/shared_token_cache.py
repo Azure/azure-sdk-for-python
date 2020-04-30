@@ -7,10 +7,11 @@ import os
 import sys
 
 from msal import TokenCache
+from six.moves.urllib_parse import urlparse
 
 from .. import CredentialUnavailableError
 from .._constants import KnownAuthorities
-from .._internal import get_default_authority
+from .._internal import get_default_authority, normalize_authority
 
 try:
     ABC = abc.ABC
@@ -87,8 +88,11 @@ class SharedTokenCacheBase(ABC):
     def __init__(self, username=None, **kwargs):  # pylint:disable=unused-argument
         # type: (Optional[str], **Any) -> None
 
-        self._authority = kwargs.pop("authority", None) or get_default_authority()
-        self._authority_aliases = KNOWN_ALIASES.get(self._authority) or frozenset((self._authority,))
+        authority = kwargs.pop("authority", None)
+        self._authority = normalize_authority(authority) if authority else get_default_authority()
+
+        environment = urlparse(self._authority).netloc
+        self._environment_aliases = KNOWN_ALIASES.get(environment) or frozenset((environment,))
         self._username = username
         self._tenant_id = kwargs.pop("tenant_id", None)
 
@@ -125,7 +129,7 @@ class SharedTokenCacheBase(ABC):
         items = []
         for item in self._cache.find(credential_type):
             environment = item.get("environment")
-            if environment in self._authority_aliases:
+            if environment in self._environment_aliases:
                 items.append(item)
         return items
 
