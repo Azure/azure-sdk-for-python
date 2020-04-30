@@ -1110,18 +1110,31 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
             servicebus_namespace_connection_string, logging_enable=False) as sb_client:
 
             async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
-                message = Message("Test Message")
-                await sender.send(message)
+                await sender.send(Message("Test Message"))
+                await sender.send(Message("Test Message"))
+                #Intentionally sending twice to test both auto and manual complete interaction.
 
+            count = 0
+            async with sb_client.get_queue_receiver(servicebus_queue.name, idle_timeout=1) as receiver:
+                for message in await receiver.receive(1):
+                    async with AutoComplete(message):
+                        print_message(_logger, message)
+                        count += 1
+                        await message.complete() # It should be fine with if we complete manually as well.
+            assert count == 1
+
+            count = 0
             async with sb_client.get_queue_receiver(servicebus_queue.name, idle_timeout=5) as receiver:
                 try:
                     async for message in receiver:
                         async with AutoComplete(message):
                             print_message(_logger, message)
+                            count += 1
                             raise AssertionError("Intentional Failure to trigger auto-abandon.")
                 except AssertionError as e:
                     print(e)
                     pass
+            assert count == 1
 
             async with sb_client.get_queue_receiver(servicebus_queue.name, idle_timeout=5) as receiver:
                 count = 0

@@ -1235,20 +1235,31 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             servicebus_namespace_connection_string, logging_enable=False) as sb_client:
 
             with sb_client.get_queue_sender(servicebus_queue.name) as sender:
-                message = Message("Test Message")
-                sender.send(message)
+                sender.send(Message("Test Message"))
+                sender.send(Message("Test Message"))
+                # Intentionally sending twice to test self-completion first.
 
+            count = 0
             with sb_client.get_queue_receiver(servicebus_queue.name, idle_timeout=1) as receiver:
-                try:
+                for message in receiver.receive(1):
+                    with AutoComplete(message):
+                        print_message(_logger, message)
+                        count += 1
+                        message.complete() # It should be fine with if we complete manually as well.
+            assert count == 1
+
+            count = 0
+            with sb_client.get_queue_receiver(servicebus_queue.name, idle_timeout=1) as receiver:
+                with pytest.raises(AssertionError):
                     for message in receiver:
                         with AutoComplete(message):
                             print_message(_logger, message)
+                            count += 1
                             raise AssertionError("Intentional Failure to trigger auto-abandon.")
-                except AssertionError as e:
-                    pass
+            assert count == 1
 
+            count = 0
             with sb_client.get_queue_receiver(servicebus_queue.name, idle_timeout=5) as receiver:
-                count = 0
                 #should auto complete this time.
                 for message in receiver:
                     with AutoComplete(message):

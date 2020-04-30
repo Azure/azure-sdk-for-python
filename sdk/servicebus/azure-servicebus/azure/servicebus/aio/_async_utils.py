@@ -170,13 +170,13 @@ class AutoComplete(object):
                 if not self.message._settled:
                     _log.info("Attempting to auto-abandon message due to exception: " + str(value))
                     await self.message.abandon()
-            except (MessageAlreadySettled, MessageSettleFailed) as e:
+            except MessageAlreadySettled as e:
                 _log.info("Unable to auto-abandon message: " + str(e))
             return False
         try:
             if not self.message._settled:
                 _log.info("Attempting to auto-complete message")
                 await self.message.complete()
-        except (MessageAlreadySettled, MessageSettleFailed) as e:
+        except MessageAlreadySettled as e:
             _log.info("Unable to auto-complete message: " + str(e))
         return True
