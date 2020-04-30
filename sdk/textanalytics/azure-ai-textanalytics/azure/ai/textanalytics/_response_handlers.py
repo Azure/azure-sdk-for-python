@@ -10,7 +10,6 @@ from azure.core.exceptions import (
     ClientAuthenticationError,
     ODataV4Format
 )
-from azure.core.pipeline.transport import HttpResponse
 from ._models import (
     RecognizeEntitiesResult,
     CategorizedEntity,
@@ -72,7 +71,9 @@ def prepare_result(func):
             response.status_code = 400
             response.reason = "Bad Request"
             raise HttpResponseError(
-                message="({}) {}".format(too_many_documents_error.error.innererror.code, too_many_documents_error.error.innererror.message),
+                message="({}) {}".format(
+                    too_many_documents_error.error.innererror.code, too_many_documents_error.error.innererror.message
+                ),
                 response=response
             )
 
