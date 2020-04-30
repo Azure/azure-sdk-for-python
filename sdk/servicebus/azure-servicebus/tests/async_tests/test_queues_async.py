@@ -957,7 +957,6 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                     print_message(_logger, m)
                     await m.complete()
 
-    @pytest.mark.skip(reason="requires scheduler")
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -974,7 +973,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                     message_id = uuid.uuid4()
                     message = Message(content)
                     message.properties.message_id = message_id
-                    message.schedule(enqueue_time)
+                    message.scheduled_enqueue_time_utc = enqueue_time
                     await sender.send(message)
 
                 messages = await receiver.receive(max_wait_time=120)
@@ -992,7 +991,6 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 else:
                     raise Exception("Failed to receive scheduled message.")
 
-    @pytest.mark.skip(reason="requires scheduler")
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -1012,7 +1010,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                     message_id_b = uuid.uuid4()
                     message_b = Message(content)
                     message_b.properties.message_id = message_id_b
-                    tokens = await sender.schedule(enqueue_time, message_a, message_b)
+                    tokens = await sender.schedule([message_a, message_b], enqueue_time)
                     assert len(tokens) == 2
 
                 recv = await receiver.receive(max_wait_time=120)
@@ -1048,10 +1046,10 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                     message_a = Message("Test scheduled message")
                     message_b = Message("Test scheduled message")
-                    tokens = await sender.schedule(enqueue_time, message_a, message_b)
+                    tokens = await sender.schedule([message_a, message_b], enqueue_time)
                     assert len(tokens) == 2
 
-                    await sender.cancel_scheduled_messages(*tokens)
+                    await sender.cancel_scheduled_messages(tokens)
 
                 messages = await receiver.receive(max_wait_time=120)
                 assert len(messages) == 0

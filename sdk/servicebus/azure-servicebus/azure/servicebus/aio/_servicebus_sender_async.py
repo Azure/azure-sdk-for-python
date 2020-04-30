@@ -133,15 +133,15 @@ class ServiceBusSender(BaseHandlerAsync, SenderMixin):
         self._set_msg_timeout(timeout, last_exception)
         await self._handler.send_message_async(message.message)
 
-    async def _schedule(self, message, schedule_time_utc):
-        # type: (Union[Message, BatchMessage], datetime.datetime) -> List[int]
-        """Send Message or BatchMessage to be enqueued at a specific time.
+    async def schedule(self, messages, schedule_time_utc):
+        # type: (Union[Message, List[Message]], datetime.datetime) -> List[int]
+        """Send Message or multiple Messages to be enqueued at a specific time.
         Returns a list of the sequence numbers of the enqueued messages.
-        :param message: The messages to schedule.
-        :type message: ~azure.servicebus.Message or ~azure.servicebus.BatchMessage
+        :param messages: The message or list of messages to schedule.
+        :type messages: ~azure.servicebus.Message or list[~azure.servicebus.Message]
         :param schedule_time_utc: The utc date and time to enqueue the messages.
         :type schedule_time_utc: ~datetime.datetime
-        :rtype: List[int]
+        :rtype: list[int]
 
         .. admonition:: Example:
 
@@ -154,24 +154,26 @@ class ServiceBusSender(BaseHandlerAsync, SenderMixin):
         """
         # pylint: disable=protected-access
         await self._open()
-        if isinstance(message, BatchMessage):
-            request_body = self._build_schedule_request(schedule_time_utc, *message._messages)
+        if isinstance(messages, Message):
+            request_body = self._build_schedule_request(schedule_time_utc, messages)
         else:
-            request_body = self._build_schedule_request(schedule_time_utc, message)
+            request_body = self._build_schedule_request(schedule_time_utc, *messages)
         return await self._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_SCHEDULE_MESSAGE_OPERATION,
             request_body,
             mgmt_handlers.schedule_op
         )
 
-    async def _cancel_scheduled_messages(self, sequence_numbers):
+    async def cancel_scheduled_messages(self, sequence_numbers):
         # type: (Union[int, List[int]]) -> None
         """
         Cancel one or more messages that have previously been scheduled and are still pending.
 
-        :param sequence_numbers: he sequence numbers of the scheduled messages.
+        :param sequence_numbers: The sequence numbers of the scheduled messages.
         :type sequence_numbers: int or list[int]
         :rtype: None
+        :raises: ~azure.servicebus.exceptions.ServiceBusError if messages cancellation failed due to message already
+         cancelled or enqueued.
 
         .. admonition:: Example:
 
