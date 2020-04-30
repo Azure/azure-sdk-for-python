@@ -270,6 +270,7 @@ class DataLakeFileClient(PathClient):
         content_settings = kwargs.pop('content_settings', None)
         metadata = kwargs.pop('metadata', None)
         max_concurrency = kwargs.pop('max_concurrency', 1)
+        chunk_size = kwargs.pop('chunk_size', 100 * 1024 * 1024)
 
         kwargs['properties'] = add_metadata_headers(metadata)
         kwargs['lease_access_conditions'] = get_access_conditions(kwargs.pop('lease', None))
@@ -282,6 +283,7 @@ class DataLakeFileClient(PathClient):
         kwargs['length'] = length
         kwargs['validate_content'] = validate_content
         kwargs['max_concurrency'] = max_concurrency
+        kwargs['chunk_size'] = chunk_size
         kwargs['client'] = self._client.path
 
         return kwargs
@@ -337,6 +339,9 @@ class DataLakeFileClient(PathClient):
             The match condition to use upon the etag.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
+        :keyword int chunk_size:
+            The maximum chunk size for uploading a file in chunks.
+            Defaults to 100*1024*1024, or 100MB.
         :return: response dict (Etag and last modified).
         """
         options = self._upload_options(

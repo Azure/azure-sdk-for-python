@@ -32,6 +32,7 @@ def upload_datalake_file(  # pylint: disable=unused-argument
         overwrite=None,
         validate_content=None,
         max_concurrency=None,
+        chunk_size=100 * 1024 * 1024,
         **kwargs):
     try:
         if length == 0:
@@ -67,7 +68,7 @@ def upload_datalake_file(  # pylint: disable=unused-argument
             service=client,
             uploader_class=DataLakeFileChunkUploader,
             total_size=length,
-            chunk_size=100 * 1024 * 1024,
+            chunk_size=chunk_size,
             stream=stream,
             max_concurrency=max_concurrency,
             validate_content=validate_content,
