@@ -30,7 +30,7 @@ class Operations(object):
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~app_configuration_management_client.models
+    :type models: ~azure.mgmt.appconfiguration.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -55,10 +55,10 @@ class Operations(object):
 
         :param check_name_availability_parameters: The object containing information for the
          availability request.
-        :type check_name_availability_parameters: ~app_configuration_management_client.models.CheckNameAvailabilityParameters
+        :type check_name_availability_parameters: ~azure.mgmt.appconfiguration.models.CheckNameAvailabilityParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: NameAvailabilityStatus or the result of cls(response)
-        :rtype: ~app_configuration_management_client.models.NameAvailabilityStatus
+        :rtype: ~azure.mgmt.appconfiguration.models.NameAvailabilityStatus
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.NameAvailabilityStatus"]
@@ -120,7 +120,7 @@ class Operations(object):
         :type skip_token: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of OperationDefinitionListResult or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~app_configuration_management_client.models.OperationDefinitionListResult]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.appconfiguration.models.OperationDefinitionListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.OperationDefinitionListResult"]

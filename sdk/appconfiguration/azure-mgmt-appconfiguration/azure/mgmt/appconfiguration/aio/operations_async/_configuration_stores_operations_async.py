@@ -28,7 +28,7 @@ class ConfigurationStoresOperations:
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~app_configuration_management_client.models
+    :type models: ~azure.mgmt.appconfiguration.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -57,7 +57,7 @@ class ConfigurationStoresOperations:
         :type skip_token: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of ConfigurationStoreListResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~app_configuration_management_client.models.ConfigurationStoreListResult]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.appconfiguration.models.ConfigurationStoreListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.ConfigurationStoreListResult"]
@@ -133,7 +133,7 @@ class ConfigurationStoresOperations:
         :type skip_token: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of ConfigurationStoreListResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~app_configuration_management_client.models.ConfigurationStoreListResult]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.appconfiguration.models.ConfigurationStoreListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.ConfigurationStoreListResult"]
@@ -207,7 +207,7 @@ class ConfigurationStoresOperations:
         :type config_store_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ConfigurationStore or the result of cls(response)
-        :rtype: ~app_configuration_management_client.models.ConfigurationStore
+        :rtype: ~azure.mgmt.appconfiguration.models.ConfigurationStore
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.ConfigurationStore"]
@@ -323,14 +323,14 @@ class ConfigurationStoresOperations:
         :param config_store_name: The name of the configuration store.
         :type config_store_name: str
         :param config_store_creation_parameters: The parameters for creating a configuration store.
-        :type config_store_creation_parameters: ~app_configuration_management_client.models.ConfigurationStore
+        :type config_store_creation_parameters: ~azure.mgmt.appconfiguration.models.ConfigurationStore
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: ConfigurationStore
-        :rtype: ~app_configuration_management_client.models.ConfigurationStore
+        :rtype: ~azure.mgmt.appconfiguration.models.ConfigurationStore
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -520,14 +520,14 @@ class ConfigurationStoresOperations:
         :param config_store_name: The name of the configuration store.
         :type config_store_name: str
         :param config_store_update_parameters: The parameters for updating a configuration store.
-        :type config_store_update_parameters: ~app_configuration_management_client.models.ConfigurationStoreUpdateParameters
+        :type config_store_update_parameters: ~azure.mgmt.appconfiguration.models.ConfigurationStoreUpdateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: ConfigurationStore
-        :rtype: ~app_configuration_management_client.models.ConfigurationStore
+        :rtype: ~azure.mgmt.appconfiguration.models.ConfigurationStore
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -578,7 +578,7 @@ class ConfigurationStoresOperations:
         :type skip_token: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of ApiKeyListResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~app_configuration_management_client.models.ApiKeyListResult]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.appconfiguration.models.ApiKeyListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.ApiKeyListResult"]
@@ -653,10 +653,10 @@ class ConfigurationStoresOperations:
         :param config_store_name: The name of the configuration store.
         :type config_store_name: str
         :param regenerate_key_parameters: The parameters for regenerating an access key.
-        :type regenerate_key_parameters: ~app_configuration_management_client.models.RegenerateKeyParameters
+        :type regenerate_key_parameters: ~azure.mgmt.appconfiguration.models.RegenerateKeyParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ApiKey or the result of cls(response)
-        :rtype: ~app_configuration_management_client.models.ApiKey
+        :rtype: ~azure.mgmt.appconfiguration.models.ApiKey
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.ApiKey"]
@@ -720,10 +720,10 @@ class ConfigurationStoresOperations:
         :param config_store_name: The name of the configuration store.
         :type config_store_name: str
         :param list_key_value_parameters: The parameters for retrieving a key-value.
-        :type list_key_value_parameters: ~app_configuration_management_client.models.ListKeyValueParameters
+        :type list_key_value_parameters: ~azure.mgmt.appconfiguration.models.ListKeyValueParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: KeyValue or the result of cls(response)
-        :rtype: ~app_configuration_management_client.models.KeyValue
+        :rtype: ~azure.mgmt.appconfiguration.models.KeyValue
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.KeyValue"]

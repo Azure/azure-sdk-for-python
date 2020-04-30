@@ -69,7 +69,7 @@ class ApiKeyListResult(msrest.serialization.Model):
     """The result of a request to list API keys.
 
     :param value: The collection value.
-    :type value: list[~app_configuration_management_client.models.ApiKey]
+    :type value: list[~azure.mgmt.appconfiguration.models.ApiKey]
     :param next_link: The URI that can be used to request the next set of paged results.
     :type next_link: str
     """
@@ -196,19 +196,21 @@ class ConfigurationStore(Resource):
     :param tags: A set of tags. The tags of the resource.
     :type tags: dict[str, str]
     :param identity: The managed identity information, if configured.
-    :type identity: ~app_configuration_management_client.models.ResourceIdentity
+    :type identity: ~azure.mgmt.appconfiguration.models.ResourceIdentity
     :param sku: Required. The sku of the configuration store.
-    :type sku: ~app_configuration_management_client.models.Sku
+    :type sku: ~azure.mgmt.appconfiguration.models.Sku
     :ivar provisioning_state: The provisioning state of the configuration store. Possible values
      include: "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Canceled".
-    :vartype provisioning_state: str or
-     ~app_configuration_management_client.models.ProvisioningState
+    :vartype provisioning_state: str or ~azure.mgmt.appconfiguration.models.ProvisioningState
     :ivar creation_date: The creation date of configuration store.
     :vartype creation_date: ~datetime.datetime
     :ivar endpoint: The DNS endpoint where the configuration store API will be available.
     :vartype endpoint: str
     :param encryption: The encryption settings of the configuration store.
-    :type encryption: ~app_configuration_management_client.models.EncryptionProperties
+    :type encryption: ~azure.mgmt.appconfiguration.models.EncryptionProperties
+    :ivar private_endpoint_connections: private endpoint connections of configuration store.
+    :vartype private_endpoint_connections:
+     list[~azure.mgmt.appconfiguration.models.PrivateEndpointConnection]
     """
 
     _validation = {
@@ -220,6 +222,7 @@ class ConfigurationStore(Resource):
         'provisioning_state': {'readonly': True},
         'creation_date': {'readonly': True},
         'endpoint': {'readonly': True},
+        'private_endpoint_connections': {'readonly': True},
     }
 
     _attribute_map = {
@@ -234,6 +237,7 @@ class ConfigurationStore(Resource):
         'creation_date': {'key': 'properties.creationDate', 'type': 'iso-8601'},
         'endpoint': {'key': 'properties.endpoint', 'type': 'str'},
         'encryption': {'key': 'properties.encryption', 'type': 'EncryptionProperties'},
+        'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
     }
 
     def __init__(
@@ -253,13 +257,14 @@ class ConfigurationStore(Resource):
         self.creation_date = None
         self.endpoint = None
         self.encryption = encryption
+        self.private_endpoint_connections = None
 
 
 class ConfigurationStoreListResult(msrest.serialization.Model):
     """The result of a request to list configuration stores.
 
     :param value: The collection value.
-    :type value: list[~app_configuration_management_client.models.ConfigurationStore]
+    :type value: list[~azure.mgmt.appconfiguration.models.ConfigurationStore]
     :param next_link: The URI that can be used to request the next set of paged results.
     :type next_link: str
     """
@@ -285,13 +290,13 @@ class ConfigurationStoreUpdateParameters(msrest.serialization.Model):
     """The parameters for updating a configuration store.
 
     :param identity: The managed identity information for the configuration store.
-    :type identity: ~app_configuration_management_client.models.ResourceIdentity
+    :type identity: ~azure.mgmt.appconfiguration.models.ResourceIdentity
     :param sku: The SKU of the configuration store.
-    :type sku: ~app_configuration_management_client.models.Sku
+    :type sku: ~azure.mgmt.appconfiguration.models.Sku
     :param tags: A set of tags. The ARM resource tags.
     :type tags: dict[str, str]
     :param encryption: The encryption settings of the configuration store.
-    :type encryption: ~app_configuration_management_client.models.EncryptionProperties
+    :type encryption: ~azure.mgmt.appconfiguration.models.EncryptionProperties
     """
 
     _attribute_map = {
@@ -321,7 +326,7 @@ class EncryptionProperties(msrest.serialization.Model):
     """The encryption settings for a configuration store.
 
     :param key_vault_properties: Key vault properties.
-    :type key_vault_properties: ~app_configuration_management_client.models.KeyVaultProperties
+    :type key_vault_properties: ~azure.mgmt.appconfiguration.models.KeyVaultProperties
     """
 
     _attribute_map = {
@@ -531,7 +536,7 @@ class OperationDefinition(msrest.serialization.Model):
     :param name: Operation name: {provider}/{resource}/{operation}.
     :type name: str
     :param display: The display information for the configuration store operation.
-    :type display: ~app_configuration_management_client.models.OperationDefinitionDisplay
+    :type display: ~azure.mgmt.appconfiguration.models.OperationDefinitionDisplay
     """
 
     _attribute_map = {
@@ -596,7 +601,7 @@ class OperationDefinitionListResult(msrest.serialization.Model):
     """The result of a request to list configuration store operations.
 
     :param value: The collection value.
-    :type value: list[~app_configuration_management_client.models.OperationDefinition]
+    :type value: list[~azure.mgmt.appconfiguration.models.OperationDefinition]
     :param next_link: The URI that can be used to request the next set of paged results.
     :type next_link: str
     """
@@ -644,26 +649,24 @@ class PrivateEndpointConnection(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: The resource ID.
-    :vartype id: str
+    :param id: The resource ID.
+    :type id: str
     :ivar name: The name of the resource.
     :vartype name: str
     :ivar type: The type of the resource.
     :vartype type: str
     :ivar provisioning_state: The provisioning status of the private endpoint connection. Possible
      values include: "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Canceled".
-    :vartype provisioning_state: str or
-     ~app_configuration_management_client.models.ProvisioningState
+    :vartype provisioning_state: str or ~azure.mgmt.appconfiguration.models.ProvisioningState
     :param private_endpoint: The resource of private endpoint.
-    :type private_endpoint: ~app_configuration_management_client.models.PrivateEndpoint
+    :type private_endpoint: ~azure.mgmt.appconfiguration.models.PrivateEndpoint
     :param private_link_service_connection_state: A collection of information about the state of
      the connection between service consumer and provider.
     :type private_link_service_connection_state:
-     ~app_configuration_management_client.models.PrivateLinkServiceConnectionState
+     ~azure.mgmt.appconfiguration.models.PrivateLinkServiceConnectionState
     """
 
     _validation = {
-        'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
         'provisioning_state': {'readonly': True},
@@ -681,12 +684,13 @@ class PrivateEndpointConnection(msrest.serialization.Model):
     def __init__(
         self,
         *,
+        id: Optional[str] = None,
         private_endpoint: Optional["PrivateEndpoint"] = None,
         private_link_service_connection_state: Optional["PrivateLinkServiceConnectionState"] = None,
         **kwargs
     ):
         super(PrivateEndpointConnection, self).__init__(**kwargs)
-        self.id = None
+        self.id = id
         self.name = None
         self.type = None
         self.provisioning_state = None
@@ -698,7 +702,7 @@ class PrivateEndpointConnectionListResult(msrest.serialization.Model):
     """A list of private endpoint connections.
 
     :param value: The collection value.
-    :type value: list[~app_configuration_management_client.models.PrivateEndpointConnection]
+    :type value: list[~azure.mgmt.appconfiguration.models.PrivateEndpointConnection]
     :param next_link: The URI that can be used to request the next set of paged results.
     :type next_link: str
     """
@@ -769,7 +773,7 @@ class PrivateLinkResourceListResult(msrest.serialization.Model):
     """A list of private link resources.
 
     :param value: The collection value.
-    :type value: list[~app_configuration_management_client.models.PrivateLinkResource]
+    :type value: list[~azure.mgmt.appconfiguration.models.PrivateLinkResource]
     :param next_link: The URI that can be used to request the next set of paged results.
     :type next_link: str
     """
@@ -798,12 +802,12 @@ class PrivateLinkServiceConnectionState(msrest.serialization.Model):
 
     :param status: The private link service connection status. Possible values include: "Pending",
      "Approved", "Rejected", "Disconnected".
-    :type status: str or ~app_configuration_management_client.models.ConnectionStatus
+    :type status: str or ~azure.mgmt.appconfiguration.models.ConnectionStatus
     :param description: The private link service connection description.
     :type description: str
     :ivar actions_required: Any action that is required beyond basic workflow (approve/ reject/
      disconnect). Possible values include: "None", "Recreate".
-    :vartype actions_required: str or ~app_configuration_management_client.models.ActionsRequired
+    :vartype actions_required: str or ~azure.mgmt.appconfiguration.models.ActionsRequired
     """
 
     _validation = {
@@ -859,12 +863,11 @@ class ResourceIdentity(msrest.serialization.Model):
      includes both an implicitly created identity and a set of user-assigned identities. The type
      'None' will remove any identities. Possible values include: "None", "SystemAssigned",
      "UserAssigned", "SystemAssigned, UserAssigned".
-    :type type: str or ~app_configuration_management_client.models.IdentityType
+    :type type: str or ~azure.mgmt.appconfiguration.models.IdentityType
     :param user_assigned_identities: The list of user-assigned identities associated with the
      resource. The user-assigned identity dictionary keys will be ARM resource ids in the form:
      '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
-    :type user_assigned_identities: dict[str,
-     ~app_configuration_management_client.models.UserIdentity]
+    :type user_assigned_identities: dict[str, ~azure.mgmt.appconfiguration.models.UserIdentity]
     :ivar principal_id: The principal id of the identity. This property will only be provided for a
      system-assigned identity.
     :vartype principal_id: str

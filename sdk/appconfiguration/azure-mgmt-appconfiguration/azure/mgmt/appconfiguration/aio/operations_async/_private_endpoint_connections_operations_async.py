@@ -28,7 +28,7 @@ class PrivateEndpointConnectionsOperations:
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~app_configuration_management_client.models
+    :type models: ~azure.mgmt.appconfiguration.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -58,7 +58,7 @@ class PrivateEndpointConnectionsOperations:
         :type config_store_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of PrivateEndpointConnectionListResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~app_configuration_management_client.models.PrivateEndpointConnectionListResult]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.appconfiguration.models.PrivateEndpointConnectionListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.PrivateEndpointConnectionListResult"]
@@ -134,7 +134,7 @@ class PrivateEndpointConnectionsOperations:
         :type private_endpoint_connection_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PrivateEndpointConnection or the result of cls(response)
-        :rtype: ~app_configuration_management_client.models.PrivateEndpointConnection
+        :rtype: ~azure.mgmt.appconfiguration.models.PrivateEndpointConnection
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.PrivateEndpointConnection"]
@@ -256,14 +256,14 @@ class PrivateEndpointConnectionsOperations:
         :param private_endpoint_connection_name: Private endpoint connection name.
         :type private_endpoint_connection_name: str
         :param private_endpoint_connection: The private endpoint connection properties.
-        :type private_endpoint_connection: ~app_configuration_management_client.models.PrivateEndpointConnection
+        :type private_endpoint_connection: ~azure.mgmt.appconfiguration.models.PrivateEndpointConnection
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: PrivateEndpointConnection
-        :rtype: ~app_configuration_management_client.models.PrivateEndpointConnection
+        :rtype: ~azure.mgmt.appconfiguration.models.PrivateEndpointConnection
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
