@@ -47,6 +47,10 @@ parser.add_argument("--starting_sequence_number", help="Starting sequence number
 parser.add_argument("--starting_datetime", help="Starting datetime string, should be format of YYYY-mm-dd HH:mm:ss", type=str)
 parser.add_argument("--partitions", help="Number of partitions. 0 means to get partitions from eventhubs", type=int, default=0)
 parser.add_argument("--recv_partition_id", help="Receive from a specific partition if this is set", type=int)
+parser.add_argument("--max_batch_size", type=int, default=0,
+                    help="Call EventHubConsumerClient.receive_batch() if not 0, otherwise call receive()")
+parser.add_argument("--max_wait_time", type=float, default=0,
+                    help="max_wait_time of EventHubConsumerClient.receive_batch()")
 parser.add_argument("--track_last_enqueued_event_properties", action="store_true")
 parser.add_argument("--load_balancing_interval", help="time duration in seconds between two load balance", type=float, default=10)
 parser.add_argument("--conn_str", help="EventHub connection string",
@@ -109,6 +113,24 @@ async def on_event_received(partition_context, event):
                     LOG_PER_COUNT / (partition_current_time - partition_previous_time) if partition_previous_time else None
                     )
         await partition_context.update_checkpoint(event)
+
+
+async def on_event_batch_received(partition_context, event_batch):
+    recv_cnt_map[partition_context.partition_id] += len(event_batch)
+    if recv_cnt_map[partition_context.partition_id] % LOG_PER_COUNT == 0:
+        total_time_elapsed = time.perf_counter() - start_time
+
+        partition_previous_time = recv_time_map.get(partition_context.partition_id)
+        partition_current_time = time.perf_counter()
+        recv_time_map[partition_context.partition_id] = partition_current_time
+        LOGGER.info("Partition: %r, Total received: %r, Time elapsed: %r, Speed since start: %r/s, Current speed: %r/s",
+                    partition_context.partition_id,
+                    recv_cnt_map[partition_context.partition_id],
+                    total_time_elapsed,
+                    recv_cnt_map[partition_context.partition_id] / total_time_elapsed,
+                    LOG_PER_COUNT / (partition_current_time - partition_previous_time) if partition_previous_time else None
+                    )
+        await partition_context.update_checkpoint()
 
 
 def create_client(args):
@@ -180,11 +202,19 @@ async def run(args):
             "track_last_enqueued_event_properties": args.track_last_enqueued_event_properties,
             "starting_position": starting_position
         }
+        if args.max_batch_size:
+            kwargs_dict["max_batch_size"] = args.max_batch_size
+            if args.max_wait_time:
+                kwargs_dict["max_wait_time"] = args.max_wait_time
         if args.parallel_recv_cnt and args.parallel_recv_cnt > 1:
             clients = [create_client(args) for _ in range(args.parallel_recv_cnt)]
             tasks = [
                 asyncio.ensure_future(
-                    clients[i].receive(
+                    clients[i].receive_batch(
+                        on_event_batch_received,
+                        prefetch=args.link_credit,
+                        max_batch_size=args.max_batch_size
+                    ) if args.max_batch_size else clients[0].receive_batch(
                         on_event_received,
                         **kwargs_dict
                     )
@@ -193,9 +223,13 @@ async def run(args):
         else:
             clients = [create_client(args)]
             tasks = [asyncio.ensure_future(
-                clients[0].receive(
-                    on_event_received,
+                clients[0].receive_batch(
+                    on_event_batch_received,
                     prefetch=args.link_credit,
+                    max_batch_size=args.max_batch_size
+                ) if args.max_batch_size else clients[0].receive_batch(
+                    on_event_received,
+                    **kwargs_dict
                 )
             )]
 
