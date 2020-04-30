@@ -23,11 +23,11 @@ from azure.servicebus.exceptions import (
     MessageAlreadySettled,
     AutoLockRenewTimeout,
     MessageSendFailed,
-    MessageSettleFailed)
+    MessageSettleFailed,
+    MessageContentTooLarge)
 
 from devtools_testutils import AzureMgmtTestCase, CachedResourceGroupPreparer
 from servicebus_preparer import CachedServiceBusNamespacePreparer, ServiceBusQueuePreparer, CachedServiceBusQueuePreparer
-from uamqp.errors import MessageContentTooLarge
 from utilities import get_logger, print_message, sleep_until_expired
 
 _logger = get_logger(logging.DEBUG)
