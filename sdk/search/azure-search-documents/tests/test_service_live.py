@@ -136,7 +136,7 @@ class SearchIndexesClientTest(AzureMgmtTestCase):
         with pytest.raises(HttpResponseError):
             client.delete_index(index, only_if_unchanged=True)
 
-    @ResourceGroupPreparer(random_name_enabled=True)
+    @SearchResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_create_index(self, api_key, endpoint, index_name, **kwargs):
         name = "hotels"
@@ -250,7 +250,7 @@ class SearchIndexesClientTest(AzureMgmtTestCase):
         with pytest.raises(HttpResponseError):
             client.create_or_update_index(index.name, index, only_if_unchanged=True)
 
-    @ResourceGroupPreparer(random_name_enabled=True)
+    @SearchResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_analyze_text(self, api_key, endpoint, index_name, **kwargs):
         client = SearchServiceClient(endpoint, AzureKeyCredential(api_key)).get_indexes_client()
@@ -314,7 +314,7 @@ class SearchSynonymMapsClientTest(AzureMgmtTestCase):
             client.delete_synonym_map(sm_result, only_if_unchanged=True)
             assert len(client.get_synonym_maps()) == 1
 
-    @ResourceGroupPreparer(random_name_enabled=True)
+    @SearchResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_get_synonym_map(self, api_key, endpoint, index_name, **kwargs):
         client = SearchServiceClient(endpoint, AzureKeyCredential(api_key)).get_synonym_maps_client()
@@ -365,7 +365,7 @@ class SearchSynonymMapsClientTest(AzureMgmtTestCase):
             "Washington, Wash. => WA",
         ]
 
-    @ResourceGroupPreparer(random_name_enabled=True)
+    @SearchResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_create_or_update_synonym_map_if_unchanged(self, api_key, endpoint, index_name, **kwargs):
         client = SearchServiceClient(endpoint, AzureKeyCredential(api_key)).get_synonym_maps_client()
@@ -432,7 +432,7 @@ class SearchSkillsetClientTest(AzureMgmtTestCase):
         with pytest.raises(HttpResponseError):
             client.delete_skillset(updated, only_if_unchanged=True)
 
-    @ResourceGroupPreparer(random_name_enabled=True)
+    @SearchResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_get_skillset(self, api_key, endpoint, index_name, **kwargs):
         client = SearchServiceClient(endpoint, AzureKeyCredential(api_key)).get_skillsets_client()
@@ -496,7 +496,7 @@ class SearchSkillsetClientTest(AzureMgmtTestCase):
         assert result.name == "test-ss"
         assert result.description == "desc2"
 
-    @ResourceGroupPreparer(random_name_enabled=True)
+    @SearchResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_create_or_update_skillset_if_unchanged(self, api_key, endpoint, index_name, **kwargs):
         client = SearchServiceClient(endpoint, AzureKeyCredential(api_key)).get_skillsets_client()
@@ -580,7 +580,7 @@ class SearchDataSourcesClientTest(AzureMgmtTestCase):
         assert result.name == "sample-datasource"
         assert result.description == "updated"
 
-    @ResourceGroupPreparer(random_name_enabled=True)
+    @SearchResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_create_or_update_datasource_if_unchanged(self, api_key, endpoint, index_name, **kwargs):
         client = SearchServiceClient(endpoint, AzureKeyCredential(api_key)).get_datasources_client()
@@ -599,7 +599,7 @@ class SearchDataSourcesClientTest(AzureMgmtTestCase):
             client.create_or_update_datasource(data_source, only_if_unchanged=True)
             assert len(client.get_datasources()) == 1
 
-    @ResourceGroupPreparer(random_name_enabled=True)
+    @SearchResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_delete_datasource_if_unchanged(self, api_key, endpoint, index_name, **kwargs):
         client = SearchServiceClient(endpoint, AzureKeyCredential(api_key)).get_datasources_client()
