@@ -141,12 +141,11 @@ def training_document_info(form_recognizer_error):
 class TestRepr():
     # Not inheriting form FormRecognizerTest because that doesn't allow me to define pytest fixtures in the same file
     # Not worth moving pytest fixture definitions to conftest since all I would use is assertEqual and I can just use assert
-    def test_recognized_form(self, form_field_one, form_field_two, page_range, form_page, us_receipt_type, us_receipt_item):
-        model = _models.RecognizedForm(form_type="receipt", fields={"one": form_field_one[0], "two": form_field_two[0]}, page_range=page_range[0], pages=[form_page[0]])
-        model_repr = "RecognizedForm(form_type=receipt, fields={{'one': {}, 'two': {}}}, page_range={}, pages=[{}])".format(
-            form_field_one[1], form_field_two[1], page_range[1], form_page[1]
+    def test_recognized_form(self, form_field_one, page_range, form_page, us_receipt_type, us_receipt_item):
+        model = _models.RecognizedForm(form_type="receipt", fields={"one": form_field_one[0]}, page_range=page_range[0], pages=[form_page[0]])
+        model_repr = "RecognizedForm(form_type=receipt, fields={{'one': {}}}, page_range={}, pages=[{}])".format(
+            form_field_one[1], page_range[1], form_page[1]
         )
-
         assert repr(model) == model_repr
 
     def test_us_receipt(self, form_field_one, form_field_two, us_receipt_type, us_receipt_item, page_range, form_page):
@@ -163,8 +162,7 @@ class TestRepr():
             transaction_date=form_field_two[0],
             transaction_time=form_field_one[0],
             fields={
-                "one": form_field_one[0],
-                "two": form_field_two[0]
+                "one": form_field_one[0]
             },
             page_range=page_range[0],
             pages=[form_page[0]],
@@ -172,7 +170,7 @@ class TestRepr():
             receipt_locale="en-US"
         )
         model_repr="USReceipt(merchant_address={}, merchant_name={}, merchant_phone_number={}, receipt_type={}, receipt_items=[{}, {}], subtotal={}, " \
-            "tax={}, tip={}, total={}, transaction_date={}, transaction_time={}, fields={{'one': {}, 'two': {}}}, page_range={}, pages=[{}], " \
+            "tax={}, tip={}, total={}, transaction_date={}, transaction_time={}, fields={{'one': {}}}, page_range={}, pages=[{}], " \
             "form_type=test, receipt_locale=en-US)".format(
                 form_field_one[1],
                 form_field_two[1],
@@ -187,7 +185,6 @@ class TestRepr():
                 form_field_two[1],
                 form_field_one[1],
                 form_field_one[1],
-                form_field_two[1],
                 page_range[1],
                 form_page[1]
             )
