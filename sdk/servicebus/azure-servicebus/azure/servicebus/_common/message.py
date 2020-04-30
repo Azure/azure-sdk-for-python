@@ -341,7 +341,7 @@ class BatchMessage(object):
 
         if size_after_add > self.max_size_in_bytes:
             raise MessageContentTooLarge(
-                "MessageBatch has reached its size limit: {}".format(
+                "BatchMessage has reached its size limit: {}".format(
                     self.max_size_in_bytes
                 )
             )
