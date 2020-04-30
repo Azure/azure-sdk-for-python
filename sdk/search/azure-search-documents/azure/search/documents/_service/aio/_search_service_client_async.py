@@ -12,6 +12,7 @@ from ..._headers_mixin import HeadersMixin
 from ..._version import SDK_MONIKER
 from ._datasources_client import SearchDataSourcesClient
 from ._indexes_client import SearchIndexesClient
+from ._indexers_client import SearchIndexersClient
 from ._skillsets_client import SearchSkillsetsClient
 from ._synonym_maps_client import SearchSynonymMapsClient
 
@@ -61,6 +62,8 @@ class SearchServiceClient(HeadersMixin):  # pylint: disable=too-many-public-meth
         self._datasources_client = SearchDataSourcesClient(
             endpoint, credential, **kwargs
         )
+
+        self._indexers_client = SearchIndexersClient(endpoint, credential, **kwargs)
 
     def __repr__(self):
         # type: () -> str
@@ -125,3 +128,12 @@ class SearchServiceClient(HeadersMixin):  # pylint: disable=too-many-public-meth
         :rtype: SearchDataSourcesClient
         """
         return self._datasources_client
+
+    def get_indexers_client(self):
+        # type: () -> SearchIndexersClient
+        """Return a client to perform operations on Data Sources.
+
+        :return: The Data Sources client
+        :rtype: SearchDataSourcesClient
+        """
+        return self._indexers_client
