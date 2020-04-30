@@ -92,6 +92,16 @@ class TestExtractKeyPhrases(TextAnalyticsTest):
         self.assertTrue(response[1].is_error)
 
     @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    @pytest.mark.xfail
+    def test_too_many_documents(self, client):
+        # marking as xfail since the service hasn't added this error to this endpoint
+        docs = ["One", "Two", "Three", "Four", "Five", "Six"]
+
+        with self.assertRaises(HttpResponseError):
+            response = client.extract_key_phrases(docs)
+
+    @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"text_analytics_account_key": ""})
     def test_empty_credential_class(self, client):
         with self.assertRaises(ClientAuthenticationError):

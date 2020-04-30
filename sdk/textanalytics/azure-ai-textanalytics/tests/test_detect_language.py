@@ -130,6 +130,16 @@ class TestDetectLanguage(TextAnalyticsTest):
             self.assertTrue(resp.is_error)
 
     @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    @pytest.mark.xfail
+    def test_too_many_documents(self, client):
+        # marking as xfail since the service hasn't added this error to this endpoint
+        docs = ["One", "Two", "Three", "Four", "Five", "Six"]
+
+        with self.assertRaises(HttpResponseError):
+            response = client.detect_language(docs)
+
+    @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"text_analytics_account_key": ""})
     def test_empty_credential_class(self, client):
         with self.assertRaises(ClientAuthenticationError):
