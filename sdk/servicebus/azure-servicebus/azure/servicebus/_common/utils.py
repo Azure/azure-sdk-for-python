@@ -18,7 +18,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 from uamqp import authentication
 
-from ..exceptions import AutoLockRenewFailed, AutoLockRenewTimeout
+from ..exceptions import AutoLockRenewFailed, AutoLockRenewTimeout, MessageAlreadySettled, MessageSettleFailed
 from .._version import VERSION as sdk_version
 from .constants import (
     JWT_TOKEN_SCOPE,
@@ -250,3 +250,44 @@ class AutoLockRenew(object):
         :type wait: bool
         """
         self.executor.shutdown(wait=wait)
+
+
+class AutoComplete(object):
+    """
+    Provides a ContextManager to complete a message on successful exit from the scope,
+    abandoning() otherwise, for instance if an exception is thrown.
+
+    :param message: The message to auto-complete or abandon.
+    :type message: ~azure.servicebus.ReceivedMessage
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/sync_samples/sample_code_servicebus_async.py
+            :start-after: [START auto_complete_sync]
+            :end-before: [END auto_complete_sync]
+            :language: python
+            :dedent: 4
+            :caption: Automatically complete a message
+    """
+    def __init__(self, message):
+        self.message = message
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, type, value, traceback):
+        if traceback:
+            try:
+                if not self.message._settled:
+                    _log.info("Attempting to auto-abandon message due to exception: " + str(value))
+                    self.message.abandon()
+            except (MessageAlreadySettled, MessageSettleFailed) as e:
+                _log.info("Unable to auto-abandon message: " + str(e))
+            return False
+        try:
+            if not self.message._settled:
+                _log.info("Attempting to auto-complete message")
+                self.message.complete()
+        except (MessageAlreadySettled, MessageSettleFailed) as e:
+            _log.info("Unable to auto-complete message: " + str(e))
+        return True

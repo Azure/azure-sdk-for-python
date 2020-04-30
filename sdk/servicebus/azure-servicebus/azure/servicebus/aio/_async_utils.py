@@ -87,7 +87,7 @@ class AutoLockRenew:
         self.sleep_time = 1
         self.renew_period = 10
 
-    def __aenter__(self):
+    async def __aenter__(self):
         return self
 
     async def __aexit__(self, *args):
@@ -139,3 +139,44 @@ class AutoLockRenew:
         """Cancel remaining open lock renewal futures."""
         self._shutdown.set()
         await asyncio.wait(self._futures)
+
+
+class AutoComplete(object):
+    """
+    Provides a ContextManager to complete a message on successful exit from the scope,
+    abandoning() otherwise, for instance if an exception is thrown.
+
+    :param message: The message to auto-complete or abandon.
+    :type message: ~azure.servicebus.aio.ReceivedMessage
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/async_samples/sample_code_servicebus_async.py
+            :start-after: [START auto_complete_async]
+            :end-before: [END auto_complete_async]
+            :language: python
+            :dedent: 4
+            :caption: Automatically complete a message
+    """
+    def __init__(self, message):
+        self.message = message
+
+    async def __aenter__(self):
+        return self
+
+    async def __aexit__(self, type, value, traceback):
+        if traceback:
+            try:
+                if not self.message._settled:
+                    _log.info("Attempting to auto-abandon message due to exception: " + str(value))
+                    await self.message.abandon()
+            except (MessageAlreadySettled, MessageSettleFailed) as e:
+                _log.info("Unable to auto-abandon message: " + str(e))
+            return False
+        try:
+            if not self.message._settled:
+                _log.info("Attempting to auto-complete message")
+                await self.message.complete()
+        except (MessageAlreadySettled, MessageSettleFailed) as e:
+            _log.info("Unable to auto-complete message: " + str(e))
+        return True

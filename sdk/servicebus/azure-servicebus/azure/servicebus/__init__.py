@@ -16,7 +16,7 @@ from ._servicebus_session import ServiceBusSession
 from ._base_handler import ServiceBusSharedKeyCredential
 from ._common.message import Message, BatchMessage, PeekMessage, ReceivedMessage
 from ._common.constants import ReceiveSettleMode, NEXT_AVAILABLE
-from ._common.utils import AutoLockRenew
+from ._common.utils import AutoLockRenew, AutoComplete
 
 TransportType = constants.TransportType
 
@@ -34,5 +34,6 @@ __all__ = [
     'ServiceBusSender',
     'ServiceBusSharedKeyCredential',
     'TransportType',
-    'AutoLockRenew'
+    'AutoLockRenew',
+    'AutoComplete'
 ]

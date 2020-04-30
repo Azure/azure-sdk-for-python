@@ -10,7 +10,7 @@ from ._servicebus_receiver_async import ServiceBusReceiver
 from ._servicebus_session_receiver_async import ServiceBusSessionReceiver
 from ._servicebus_session_async import ServiceBusSession
 from ._servicebus_client_async import ServiceBusClient
-from ._async_utils import AutoLockRenew
+from ._async_utils import AutoLockRenew, AutoComplete
 
 __all__ = [
     'ReceivedMessage',
@@ -20,5 +20,6 @@ __all__ = [
     'ServiceBusSessionReceiver',
     'ServiceBusSharedKeyCredential',
     'AutoLockRenew',
+    'AutoComplete',
     'ServiceBusSession'
 ]

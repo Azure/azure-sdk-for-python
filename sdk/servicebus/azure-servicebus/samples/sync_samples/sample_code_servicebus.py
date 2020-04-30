@@ -201,6 +201,16 @@ def example_send_and_receive_sync():
     # [END auto_lock_renew_message_sync]
             break
 
+    # [START auto_complete_message_sync]
+    from azure.servicebus import AutoComplete
+    with servicebus_receiver:
+        for message in servicebus_receiver:
+            # Auto-complete message if scope exits successfully, abandoning if it exits via an exception.
+            with AutoComplete(message):
+                process_message(message)
+    # [END auto_complete_message_sync]
+            break
+
     # [START receive_sync]
     with servicebus_receiver:
         messages = servicebus_receiver.receive(max_wait_time=5)

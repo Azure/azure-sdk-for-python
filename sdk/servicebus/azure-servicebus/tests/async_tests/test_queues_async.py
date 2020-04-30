@@ -16,6 +16,7 @@ from datetime import datetime, timedelta
 from azure.servicebus.aio import (
     ServiceBusClient,
     ReceivedMessage,
+    AutoComplete,
     AutoLockRenew)
 from azure.servicebus import TransportType
 from azure.servicebus._common.message import Message, BatchMessage, PeekMessage
@@ -1096,3 +1097,41 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 await receiver._handler.message_handler.destroy_async()  # destroy the underlying receiver link
                 assert len(messages) == 1
                 await messages[0].complete()
+
+
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusQueuePreparer(name_prefix='servicebustest')
+    async def test_async_queue_by_servicebus_conn_str_autocomplete(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+
+        async with ServiceBusClient.from_connection_string(
+            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
+
+            async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
+                message = Message("Test Message")
+                await sender.send(message)
+
+            async with sb_client.get_queue_receiver(servicebus_queue.name, idle_timeout=5) as receiver:
+                try:
+                    async for message in receiver:
+                        async with AutoComplete(message):
+                            print_message(_logger, message)
+                            raise AssertionError("Intentional Failure to trigger auto-abandon.")
+                except AssertionError as e:
+                    print(e)
+                    pass
+
+            async with sb_client.get_queue_receiver(servicebus_queue.name, idle_timeout=5) as receiver:
+                count = 0
+                #should auto complete this time.
+                async for message in receiver:
+                    async with AutoComplete(message):
+                        print_message(_logger, message)
+                        count += 1
+                assert count==1
+
+            async with sb_client.get_queue_receiver(servicebus_queue.name, idle_timeout=5) as receiver:
+                remaining_messages = await receiver.receive()
+                assert len(remaining_messages) == 0

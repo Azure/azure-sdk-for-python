@@ -203,6 +203,15 @@ async def example_send_and_receive_async():
             await message.complete()
     # [END auto_lock_renew_message_async]
 
+    # [START auto_complete_message_async]
+    from azure.servicebus.aio import AutoComplete
+    async with servicebus_receiver:
+        async for message in servicebus_receiver:
+            # Auto-complete message if scope exits successfully, abandoning if it exits via an exception.
+            async with AutoComplete(message):
+                await process_message(message)
+    # [END auto_complete_message_async]
+            break
 
 async def example_receive_deferred_async():
     servicebus_sender = await example_create_servicebus_sender_async()

@@ -1,5 +1,11 @@
 # Release History
 
+## 7.0.0b3 (Unreleased)
+
+**New Features**
+
+* Added `AutoComplete` as a helper, a context manager to complete a message on successful scope exit or abandon otherwise.
+
 ## 7.0.0b2 (Unreleased)
 
 **New Features**
