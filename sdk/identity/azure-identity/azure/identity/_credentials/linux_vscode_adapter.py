@@ -49,10 +49,13 @@ def _get_refresh_token(service_name, account_name):
     if sys.version_info[0] < 3:
         raise NotImplementedError("Not supported on Python 2.7")
 
+    err = ct.c_int()
     schema = _libsecret.secret_schema_new(_c_str("org.freedesktop.Secret.Generic"), 2,
                                           _c_str("service"), 0, _c_str("account"), 0, None)
-    p_str = _libsecret.secret_password_lookup_sync(schema, None, None, _c_str("service"), _c_str(service_name),
+    p_str = _libsecret.secret_password_lookup_sync(schema, None, ct.byref(err), _c_str("service"), _c_str(service_name),
                                                    _c_str("account"), _c_str(account_name), None)
+    if err.value == 0:
+        return None
     return p_str.decode('utf-8')
 
 
