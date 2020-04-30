@@ -55,7 +55,7 @@ class TestCustomForms(FormRecognizerTest):
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalTrainingAccountPreparer()
-    def test_custom_form_bad_input(self, client, container_sas_url):
+    def test_custom_form_damaged_file(self, client, container_sas_url):
         training_client = client.get_form_training_client()
 
         poller = training_client.begin_train_model(container_sas_url)
@@ -217,7 +217,7 @@ class TestCustomForms(FormRecognizerTest):
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalTrainingAccountPreparer(multipage=True)
-    def test_custmform_multipg_unlbld_trnsfrm(self, client, container_sas_url):
+    def test_custom_form_multipage_unlabeled_transform(self, client, container_sas_url):
         training_client = client.get_form_training_client()
 
         poller = training_client.begin_train_model(container_sas_url)
@@ -292,7 +292,7 @@ class TestCustomForms(FormRecognizerTest):
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalTrainingAccountPreparer(multipage=True)
-    def test_custmfrm_multipg_lbld_trnsfrm(self, client, container_sas_url):
+    def test_custom_form_multipage_labeled_transform(self, client, container_sas_url):
         training_client = client.get_form_training_client()
 
         poller = training_client.begin_train_model(container_sas_url, use_labels=True)

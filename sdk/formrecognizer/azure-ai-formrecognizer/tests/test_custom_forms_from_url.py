@@ -51,7 +51,7 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalTrainingAccountPreparer()
-    def test_custom_form_bad_input(self, client, container_sas_url):
+    def test_custom_form_bad_url(self, client, container_sas_url):
         training_client = client.get_form_training_client()
 
         poller = training_client.begin_train_model(container_sas_url, use_labels=True)
@@ -87,7 +87,7 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalTrainingAccountPreparer(multipage=True, blob_sas_url=True)
-    def test_form_multipage_unlabld(self, client, container_sas_url, blob_sas_url):
+    def test_form_multipage_unlabeled(self, client, container_sas_url, blob_sas_url):
         training_client = client.get_form_training_client()
 
         poller = training_client.begin_train_model(container_sas_url)
@@ -160,7 +160,7 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalTrainingAccountPreparer()
-    def test_form_unlbld_transform(self, client, container_sas_url):
+    def test_custom_form_unlabeled_transform(self, client, container_sas_url):
         training_client = client.get_form_training_client()
 
         poller = training_client.begin_train_model(container_sas_url)
@@ -194,7 +194,7 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalTrainingAccountPreparer(multipage=True, blob_sas_url=True)
-    def test_multipg_unlbld_trnsfrm(self, client, container_sas_url, blob_sas_url):
+    def test_custom_form_multipage_unlabeled_transform(self, client, container_sas_url, blob_sas_url):
         training_client = client.get_form_training_client()
 
         poller = training_client.begin_train_model(container_sas_url)
@@ -264,7 +264,7 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalTrainingAccountPreparer(multipage=True, blob_sas_url=True)
-    def test_multipg_lbld_trnsfrm(self, client, container_sas_url, blob_sas_url):
+    def test_custom_form_multipage_labeled_transform(self, client, container_sas_url, blob_sas_url):
         training_client = client.get_form_training_client()
 
         poller = training_client.begin_train_model(container_sas_url, use_labels=True)

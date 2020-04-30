@@ -57,7 +57,7 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalTrainingAccountPreparer()
-    async def test_custom_form_bad_input(self, client, container_sas_url):
+    async def test_custom_form_damaged_file(self, client, container_sas_url):
         training_client = client.get_form_training_client()
 
         model = await training_client.train_model(container_sas_url)
@@ -92,7 +92,7 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalTrainingAccountPreparer(multipage=True)
-    async def test_cstmfrm_multipg_unlbld(self, client, container_sas_url):
+    async def test_custom_form_multipage_unlabeled(self, client, container_sas_url):
         training_client = client.get_form_training_client()
 
         model = await training_client.train_model(container_sas_url)
@@ -139,7 +139,7 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalTrainingAccountPreparer(multipage=True)
-    async def test_cstmfrm_multipg_lbld(self, client, container_sas_url):
+    async def test_custom_form_multipage_labeled(self, client, container_sas_url):
         training_client = client.get_form_training_client()
 
         model = await training_client.train_model(
@@ -205,7 +205,7 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalTrainingAccountPreparer(multipage=True)
-    async def test_multipg_unlbld_trnsfrm(self, client, container_sas_url):
+    async def test_custom_forms_multipage_unlabeled_transform(self, client, container_sas_url):
         training_client = client.get_form_training_client()
 
         model = await training_client.train_model(container_sas_url)
@@ -279,7 +279,7 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalTrainingAccountPreparer(multipage=True)
-    async def test_multipg_lbld_trnsfrm(self, client, container_sas_url):
+    async def test_custom_forms_multipage_labeled_transform(self, client, container_sas_url):
         training_client = client.get_form_training_client()
 
         model = await training_client.train_model(container_sas_url, use_labels=True)

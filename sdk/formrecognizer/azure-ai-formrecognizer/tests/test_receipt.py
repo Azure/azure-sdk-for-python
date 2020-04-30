@@ -60,7 +60,7 @@ class TestReceiptFromStream(FormRecognizerTest):
             )
 
     @GlobalFormRecognizerAccountPreparer()
-    def test_damaged_file_bytes_fails_autodetect(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
+    def test_damaged_file_bytes_fails_autodetect_content_type(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
         client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
         damaged_pdf = b"\x50\x44\x46\x55\x55\x55"  # doesn't match any magic file numbers
         with self.assertRaises(ValueError):

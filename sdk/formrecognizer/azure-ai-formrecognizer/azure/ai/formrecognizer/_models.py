@@ -371,8 +371,8 @@ class FormPage(object):
         self.width = kwargs.get("width", None)
         self.height = kwargs.get("height", None)
         self.unit = kwargs.get("unit", None)
-        self.tables = kwargs.get("tables", [])
-        self.lines = kwargs.get("lines", [])
+        self.tables = kwargs.get("tables", None)
+        self.lines = kwargs.get("lines", None)
 
     @classmethod
     def _from_generated(cls, read_result):
@@ -403,7 +403,7 @@ class FormLine(FormContent):
 
     def __init__(self, **kwargs):
         super(FormLine, self).__init__(**kwargs)
-        self.words = kwargs.get("words", None)
+        self.words = kwargs.get("words", [])
 
     @classmethod
     def _from_generated(cls, line, page):
@@ -521,7 +521,7 @@ class FormTable(object):
     """
 
     def __init__(self, **kwargs):
-        self.cells = kwargs.get("cells", None)
+        self.cells = kwargs.get("cells", [])
         self.row_count = kwargs.get("row_count", None)
         self.column_count = kwargs.get("column_count", None)
 
@@ -613,7 +613,7 @@ class CustomFormModel(object):
         self.last_modified = kwargs.get("last_modified", None)
         self.models = kwargs.get("models", None)
         self.errors = kwargs.get("errors", None)
-        self.training_documents = kwargs.get("training_documents", None)
+        self.training_documents = kwargs.get("training_documents", [])
 
     @classmethod
     def _from_generated(cls, model):
@@ -624,7 +624,7 @@ class CustomFormModel(object):
             last_modified=model.model_info.last_updated_date_time,
             models=CustomFormSubModel._from_generated_unlabeled(model)
             if model.keys else CustomFormSubModel._from_generated_labeled(model),
-            errors=FormRecognizerError._from_generated(model.train_result.errors) if model.train_result else [],
+            errors=FormRecognizerError._from_generated(model.train_result.errors) if model.train_result else None,
             training_documents=TrainingDocumentInfo._from_generated(model.train_result)
             if model.train_result else None
         )
@@ -714,7 +714,7 @@ class TrainingDocumentInfo(object):
         self.document_name = kwargs.get("document_name", None)
         self.status = kwargs.get("status", None)
         self.page_count = kwargs.get("page_count", None)
-        self.errors = kwargs.get("errors", None)
+        self.errors = kwargs.get("errors", [])
 
     @classmethod
     def _from_generated(cls, train_result):

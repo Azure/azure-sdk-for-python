@@ -51,7 +51,7 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalTrainingAccountPreparer()
-    async def test_form_bad_input(self, client, container_sas_url):
+    async def test_form_bad_url(self, client, container_sas_url):
         training_client = client.get_form_training_client()
 
         model = await training_client.train_model(container_sas_url, use_labels=True)
@@ -83,7 +83,7 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalTrainingAccountPreparer(multipage=True, blob_sas_url=True)
-    async def test_multipg_unlbld(self, client, container_sas_url, blob_sas_url):
+    async def test_custom_form_multipage_unlabeled(self, client, container_sas_url, blob_sas_url):
         training_client = client.get_form_training_client()
 
         model = await training_client.train_model(container_sas_url)
@@ -124,7 +124,7 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalTrainingAccountPreparer(multipage=True, blob_sas_url=True)
-    async def test_multipg_lbld(self, client, container_sas_url, blob_sas_url):
+    async def test_form_multipage_labeled(self, client, container_sas_url, blob_sas_url):
         training_client = client.get_form_training_client()
 
         model = await training_client.train_model(
@@ -149,7 +149,7 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalTrainingAccountPreparer()
-    async def test_fr_unlbld_trnsfrm(self, client, container_sas_url):
+    async def test_form_unlabeled_transform(self, client, container_sas_url):
         training_client = client.get_form_training_client()
 
         model = await training_client.train_model(container_sas_url)
@@ -182,7 +182,7 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalTrainingAccountPreparer(multipage=True, blob_sas_url=True)
-    async def test_mltipg_unlbl_tfrm(self, client, container_sas_url, blob_sas_url):
+    async def test_multipage_unlabeled_transform(self, client, container_sas_url, blob_sas_url):
         training_client = client.get_form_training_client()
 
         model = await training_client.train_model(container_sas_url)
@@ -215,7 +215,7 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalTrainingAccountPreparer()
-    async def test_fr_lbld_transform(self, client, container_sas_url):
+    async def test_form_labeled_transform(self, client, container_sas_url):
         training_client = client.get_form_training_client()
 
         model = await training_client.train_model(container_sas_url, use_labels=True)
@@ -248,7 +248,7 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalTrainingAccountPreparer(multipage=True, blob_sas_url=True)
-    async def test_multipg_lbl_trfrm(self, client, container_sas_url, blob_sas_url):
+    async def test_multipage_labeled_transform(self, client, container_sas_url, blob_sas_url):
         training_client = client.get_form_training_client()
 
         model = await training_client.train_model(container_sas_url, use_labels=True)

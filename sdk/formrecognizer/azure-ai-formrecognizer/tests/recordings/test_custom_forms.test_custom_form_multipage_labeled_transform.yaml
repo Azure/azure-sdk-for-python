@@ -10,11 +10,11 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '319'
+      - '300'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/1.0.0b2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
         Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: POST
     uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models
@@ -23,19 +23,19 @@ interactions:
       string: ''
     headers:
       apim-request-id:
-      - 658aea1f-6e30-4616-81fe-5662ff23ba3e
+      - 06b97261-83d8-4d14-a04c-2970ea6f3a22
       content-length:
       - '0'
       date:
-      - Fri, 24 Apr 2020 02:21:10 GMT
+      - Thu, 30 Apr 2020 23:01:56 GMT
       location:
-      - https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/a0440fab-18f5-4c62-8128-3fc01bd04838
+      - https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/d60f64c4-e74e-41bc-a816-1ffdc20d424a
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '222'
+      - '130'
     status:
       code: 201
       message: Created
@@ -49,20 +49,20 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/1.0.0b2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
         Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: GET
-    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/a0440fab-18f5-4c62-8128-3fc01bd04838?includeKeys=true
+    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/d60f64c4-e74e-41bc-a816-1ffdc20d424a?includeKeys=true
   response:
     body:
-      string: '{"modelInfo":{"modelId":"a0440fab-18f5-4c62-8128-3fc01bd04838","status":"ready","createdDateTime":"2020-04-24T02:21:10Z","lastUpdatedDateTime":"2020-04-24T02:21:12Z"},"trainResult":{"averageModelAccuracy":0.889,"trainingDocuments":[{"documentName":"multipage_invoice1.pdf","pages":3,"status":"succeeded"},{"documentName":"multipage_invoice2.pdf","pages":3,"status":"succeeded"},{"documentName":"multipage_invoice3.pdf","pages":3,"status":"succeeded"},{"documentName":"multipage_invoice4.pdf","pages":3,"status":"succeeded"},{"documentName":"multipage_invoice5.pdf","pages":3,"status":"succeeded"}],"fields":[{"fieldName":"Customer2","accuracy":1.0},{"fieldName":"CustomerAddress","accuracy":1.0},{"fieldName":"CustomerName","accuracy":1.0},{"fieldName":"CustomerPhoneNumber","accuracy":1.0},{"fieldName":"FirstItem","accuracy":1.0},{"fieldName":"FirstPrice","accuracy":1.0},{"fieldName":"FirstQuantity","accuracy":1.0},{"fieldName":"Merchant","accuracy":0.0},{"fieldName":"Merchant2","accuracy":0.0},{"fieldName":"MerchantAddress","accuracy":1.0},{"fieldName":"MerchantPhoneNumber","accuracy":1.0},{"fieldName":"Signature","accuracy":1.0},{"fieldName":"Signature2","accuracy":1.0},{"fieldName":"Subtotal","accuracy":1.0},{"fieldName":"Tax","accuracy":1.0},{"fieldName":"Tip","accuracy":1.0},{"fieldName":"Total","accuracy":1.0},{"fieldName":"Total2","accuracy":1.0}],"errors":[]}}'
+      string: '{"modelInfo":{"modelId":"d60f64c4-e74e-41bc-a816-1ffdc20d424a","status":"creating","createdDateTime":"2020-04-30T23:01:57Z","lastUpdatedDateTime":"2020-04-30T23:01:57Z"}}'
     headers:
       apim-request-id:
-      - c5ea7790-358e-4246-9cc0-39c3091ae1f7
+      - e767852a-8a92-4a4d-872d-97f3e39d21ee
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 24 Apr 2020 02:21:16 GMT
+      - Thu, 30 Apr 2020 23:02:02 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -70,7 +70,42 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '113'
+      - '132'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/1.0.0b2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+        Python/3.7.3 (Windows-10-10.0.18362-SP0)
+    method: GET
+    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/d60f64c4-e74e-41bc-a816-1ffdc20d424a?includeKeys=true
+  response:
+    body:
+      string: '{"modelInfo":{"modelId":"d60f64c4-e74e-41bc-a816-1ffdc20d424a","status":"ready","createdDateTime":"2020-04-30T23:01:57Z","lastUpdatedDateTime":"2020-04-30T23:02:03Z"},"trainResult":{"averageModelAccuracy":0.889,"trainingDocuments":[{"documentName":"multipage_invoice1.pdf","pages":3,"status":"succeeded"},{"documentName":"multipage_invoice2.pdf","pages":3,"status":"succeeded"},{"documentName":"multipage_invoice3.pdf","pages":3,"status":"succeeded"},{"documentName":"multipage_invoice4.pdf","pages":3,"status":"succeeded"},{"documentName":"multipage_invoice5.pdf","pages":3,"status":"succeeded"}],"fields":[{"fieldName":"Customer2","accuracy":1.0},{"fieldName":"CustomerAddress","accuracy":1.0},{"fieldName":"CustomerName","accuracy":1.0},{"fieldName":"CustomerPhoneNumber","accuracy":1.0},{"fieldName":"FirstItem","accuracy":1.0},{"fieldName":"FirstPrice","accuracy":1.0},{"fieldName":"FirstQuantity","accuracy":1.0},{"fieldName":"Merchant","accuracy":0.0},{"fieldName":"Merchant2","accuracy":0.0},{"fieldName":"MerchantAddress","accuracy":1.0},{"fieldName":"MerchantPhoneNumber","accuracy":1.0},{"fieldName":"Signature","accuracy":1.0},{"fieldName":"Signature2","accuracy":1.0},{"fieldName":"Subtotal","accuracy":1.0},{"fieldName":"Tax","accuracy":1.0},{"fieldName":"Tip","accuracy":1.0},{"fieldName":"Total","accuracy":1.0},{"fieldName":"Total2","accuracy":1.0}],"errors":[]}}'
+    headers:
+      apim-request-id:
+      - bf87a39b-9730-4bdc-ad0d-3a645c60b1e6
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 30 Apr 2020 23:02:07 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '116'
     status:
       code: 200
       message: OK
@@ -2000,28 +2035,28 @@ interactions:
       Content-Type:
       - application/pdf
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/1.0.0b2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
         Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: POST
-    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/a0440fab-18f5-4c62-8128-3fc01bd04838/analyze?includeTextDetails=true
+    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/d60f64c4-e74e-41bc-a816-1ffdc20d424a/analyze?includeTextDetails=true
   response:
     body:
       string: ''
     headers:
       apim-request-id:
-      - 797fc924-28f7-407c-9fb4-b10b2f4e08cb
+      - fabf4b88-1452-4d1c-997f-8009db9a5d92
       content-length:
       - '0'
       date:
-      - Fri, 24 Apr 2020 02:21:16 GMT
+      - Thu, 30 Apr 2020 23:02:08 GMT
       operation-location:
-      - https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/a0440fab-18f5-4c62-8128-3fc01bd04838/analyzeresults/7660c458-371c-4d0a-8d12-f4266866c058
+      - https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/d60f64c4-e74e-41bc-a816-1ffdc20d424a/analyzeresults/63dd6e78-8f11-4137-9902-09128d16d1ca
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '187'
+      - '78'
     status:
       code: 202
       message: Accepted
@@ -2035,83 +2070,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/1.0.0b2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
         Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: GET
-    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/a0440fab-18f5-4c62-8128-3fc01bd04838/analyzeresults/7660c458-371c-4d0a-8d12-f4266866c058
+    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/d60f64c4-e74e-41bc-a816-1ffdc20d424a/analyzeresults/63dd6e78-8f11-4137-9902-09128d16d1ca
   response:
     body:
-      string: '{"status":"notStarted","createdDateTime":"2020-04-24T02:21:16Z","lastUpdatedDateTime":"2020-04-24T02:21:16Z"}'
-    headers:
-      apim-request-id:
-      - eedc7e48-d2d6-4d7c-82d7-0380938dd38c
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Fri, 24 Apr 2020 02:21:21 GMT
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains; preload
-      transfer-encoding:
-      - chunked
-      x-content-type-options:
-      - nosniff
-      x-envoy-upstream-service-time:
-      - '63'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-        Python/3.7.3 (Windows-10-10.0.18362-SP0)
-    method: GET
-    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/a0440fab-18f5-4c62-8128-3fc01bd04838/analyzeresults/7660c458-371c-4d0a-8d12-f4266866c058
-  response:
-    body:
-      string: '{"status":"notStarted","createdDateTime":"2020-04-24T02:21:16Z","lastUpdatedDateTime":"2020-04-24T02:21:16Z"}'
-    headers:
-      apim-request-id:
-      - 4fad9cfb-bf1d-4582-aa7b-98bc27e456d4
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Fri, 24 Apr 2020 02:21:26 GMT
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains; preload
-      transfer-encoding:
-      - chunked
-      x-content-type-options:
-      - nosniff
-      x-envoy-upstream-service-time:
-      - '128'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-        Python/3.7.3 (Windows-10-10.0.18362-SP0)
-    method: GET
-    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/a0440fab-18f5-4c62-8128-3fc01bd04838/analyzeresults/7660c458-371c-4d0a-8d12-f4266866c058
-  response:
-    body:
-      string: '{"status":"succeeded","createdDateTime":"2020-04-24T02:21:16Z","lastUpdatedDateTime":"2020-04-24T02:21:28Z","analyzeResult":{"version":"2.0.0","readResults":[{"page":1,"language":"en","angle":0,"width":8.5,"height":11,"unit":"inch","lines":[{"language":"en","boundingBox":[0.8861,1.1217,2.3783,1.1217,2.3783,1.2812,0.8861,1.2812],"text":"Company
+      string: '{"status":"succeeded","createdDateTime":"2020-04-30T23:02:08Z","lastUpdatedDateTime":"2020-04-30T23:02:14Z","analyzeResult":{"version":"2.0.0","readResults":[{"page":1,"language":"en","angle":0,"width":8.5,"height":11,"unit":"inch","lines":[{"language":"en","boundingBox":[0.8861,1.1217,2.3783,1.1217,2.3783,1.2812,0.8861,1.2812],"text":"Company
         A Invoice","words":[{"boundingBox":[0.8861,1.1232,1.6203,1.1232,1.6203,1.2812,0.8861,1.2812],"text":"Company","confidence":1},{"boundingBox":[1.6696,1.1242,1.7749,1.1242,1.7749,1.2473,1.6696,1.2473],"text":"A","confidence":1},{"boundingBox":[1.8389,1.1217,2.3783,1.1217,2.3783,1.2485,1.8389,1.2485],"text":"Invoice","confidence":1}]},{"language":"en","boundingBox":[6.0211,1.0656,7.0357,1.0656,7.0357,1.2121,6.0211,1.2121],"text":"Invoice
         For:","words":[{"boundingBox":[6.0211,1.0656,6.6362,1.0656,6.6362,1.2121,6.0211,1.2121],"text":"Invoice","confidence":1},{"boundingBox":[6.7147,1.0691,7.0357,1.0691,7.0357,1.2121,6.7147,1.2121],"text":"For:","confidence":1}]},{"language":"en","boundingBox":[0.8791,1.4825,1.5657,1.4825,1.5657,1.6155,0.8791,1.6155],"text":"Address:","words":[{"boundingBox":[0.8791,1.4825,1.5657,1.4825,1.5657,1.6155,0.8791,1.6155],"text":"Address:","confidence":1}]},{"language":"en","boundingBox":[6.0164,1.4503,6.8967,1.4503,6.8967,1.5931,6.0164,1.5931],"text":"Bilbo
         Baggins","words":[{"boundingBox":[6.0164,1.4503,6.3392,1.4503,6.3392,1.5649,6.0164,1.5649],"text":"Bilbo","confidence":1},{"boundingBox":[6.396,1.4556,6.8967,1.4556,6.8967,1.5931,6.396,1.5931],"text":"Baggins","confidence":1}]},{"language":"en","boundingBox":[6.0165,1.6707,7.1006,1.6707,7.1006,1.7854,6.0165,1.7854],"text":"123
@@ -2144,11 +2109,11 @@ interactions:
         Main St. Redmond, WA","text":"567 Main St. Redmond, WA","page":1,"boundingBox":[0.885,1.845,1.855,1.845,1.855,2.2,0.885,2.2],"confidence":1.0,"elements":["#/analyzeResult/readResults/0/lines/5/words/0","#/analyzeResult/readResults/0/lines/5/words/1","#/analyzeResult/readResults/0/lines/5/words/2","#/analyzeResult/readResults/0/lines/7/words/0","#/analyzeResult/readResults/0/lines/7/words/1"]},"FirstItem":{"type":"string","valueString":"A","text":"A","page":1,"boundingBox":[1.085,3.21,1.175,3.21,1.175,3.3200000000000003,1.085,3.3200000000000003],"confidence":1.0,"elements":["#/analyzeResult/readResults/0/lines/13/words/0"]},"CustomerPhoneNumber":{"type":"string","valueString":"555-555-5555","text":"555-555-5555","page":1,"boundingBox":[6.01,2.12,6.9350000000000005,2.12,6.9350000000000005,2.225,6.01,2.225],"confidence":1.0,"elements":["#/analyzeResult/readResults/0/lines/8/words/0"]},"FirstQuantity":{"type":"string","valueString":"1","text":"1","page":1,"boundingBox":[3.2600000000000002,3.21,3.3200000000000003,3.21,3.3200000000000003,3.3200000000000003,3.2600000000000002,3.3200000000000003],"confidence":1.0,"elements":["#/analyzeResult/readResults/0/lines/14/words/0"]},"FirstPrice":{"type":"string","valueString":"10.99","text":"10.99","page":1,"boundingBox":[5.425,3.21,5.78,3.21,5.78,3.3200000000000003,5.425,3.3200000000000003],"confidence":1.0,"elements":["#/analyzeResult/readResults/0/lines/15/words/0"]},"MerchantPhoneNumber":{"type":"string","valueString":"555-555-5555","text":"555-555-5555","page":1,"boundingBox":[0.885,2.29,1.81,2.29,1.81,2.395,0.885,2.395],"confidence":1.0,"elements":["#/analyzeResult/readResults/0/lines/9/words/0"]}}}],"errors":[]}}'
     headers:
       apim-request-id:
-      - 394f44bf-85f1-4c68-a76f-0ac91c6dc53d
+      - bdd1d032-7d43-49f0-aeaf-7cb2c1426fae
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 24 Apr 2020 02:21:31 GMT
+      - Thu, 30 Apr 2020 23:02:17 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -2156,7 +2121,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '111'
+      - '5058'
     status:
       code: 200
       message: OK
