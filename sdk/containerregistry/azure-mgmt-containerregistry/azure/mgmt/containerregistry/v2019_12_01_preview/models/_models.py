@@ -1141,6 +1141,12 @@ class ErrorResponseBody(Model):
     :type code: str
     :param message: Required. error message.
     :type message: str
+    :param target: target of the particular error.
+    :type target: str
+    :param details: an array of additional nested error response info objects,
+     as described by this contract.
+    :type details:
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.InnerErrorDescription
     """
 
     _validation = {
@@ -1151,12 +1157,16 @@ class ErrorResponseBody(Model):
     _attribute_map = {
         'code': {'key': 'code', 'type': 'str'},
         'message': {'key': 'message', 'type': 'str'},
+        'target': {'key': 'target', 'type': 'str'},
+        'details': {'key': 'details', 'type': 'InnerErrorDescription'},
     }
 
     def __init__(self, **kwargs):
         super(ErrorResponseBody, self).__init__(**kwargs)
         self.code = kwargs.get('code', None)
         self.message = kwargs.get('message', None)
+        self.target = kwargs.get('target', None)
+        self.details = kwargs.get('details', None)
 
 
 class EventInfo(Model):
@@ -1738,6 +1748,37 @@ class ImportSourceCredentials(Model):
         super(ImportSourceCredentials, self).__init__(**kwargs)
         self.username = kwargs.get('username', None)
         self.password = kwargs.get('password', None)
+
+
+class InnerErrorDescription(Model):
+    """inner error.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param code: Required. error code.
+    :type code: str
+    :param message: Required. error message.
+    :type message: str
+    :param target: target of the particular error.
+    :type target: str
+    """
+
+    _validation = {
+        'code': {'required': True},
+        'message': {'required': True},
+    }
+
+    _attribute_map = {
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+        'target': {'key': 'target', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(InnerErrorDescription, self).__init__(**kwargs)
+        self.code = kwargs.get('code', None)
+        self.message = kwargs.get('message', None)
+        self.target = kwargs.get('target', None)
 
 
 class IPRule(Model):
@@ -2370,6 +2411,11 @@ class Registry(Resource):
      for a container registry.
     :vartype private_endpoint_connections:
      list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.PrivateEndpointConnection]
+    :param public_network_access: Whether or not public network access is
+     allowed for the container registry. Possible values include: 'Enabled',
+     'Disabled'. Default value: "Enabled" .
+    :type public_network_access: str or
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.PublicNetworkAccess
     """
 
     _validation = {
@@ -2406,6 +2452,7 @@ class Registry(Resource):
         'data_endpoint_enabled': {'key': 'properties.dataEndpointEnabled', 'type': 'bool'},
         'data_endpoint_host_names': {'key': 'properties.dataEndpointHostNames', 'type': '[str]'},
         'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
+        'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -2424,6 +2471,7 @@ class Registry(Resource):
         self.data_endpoint_enabled = kwargs.get('data_endpoint_enabled', None)
         self.data_endpoint_host_names = None
         self.private_endpoint_connections = None
+        self.public_network_access = kwargs.get('public_network_access', "Enabled")
 
 
 class RegistryListCredentialsResult(Model):
@@ -2554,6 +2602,11 @@ class RegistryUpdateParameters(Model):
     :param data_endpoint_enabled: Enable a single data endpoint per region for
      serving data.
     :type data_endpoint_enabled: bool
+    :param public_network_access: Whether or not public network access is
+     allowed for the container registry. Possible values include: 'Enabled',
+     'Disabled'
+    :type public_network_access: str or
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.PublicNetworkAccess
     """
 
     _attribute_map = {
@@ -2565,6 +2618,7 @@ class RegistryUpdateParameters(Model):
         'policies': {'key': 'properties.policies', 'type': 'Policies'},
         'encryption': {'key': 'properties.encryption', 'type': 'EncryptionProperty'},
         'data_endpoint_enabled': {'key': 'properties.dataEndpointEnabled', 'type': 'bool'},
+        'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -2577,6 +2631,7 @@ class RegistryUpdateParameters(Model):
         self.policies = kwargs.get('policies', None)
         self.encryption = kwargs.get('encryption', None)
         self.data_endpoint_enabled = kwargs.get('data_endpoint_enabled', None)
+        self.public_network_access = kwargs.get('public_network_access', None)
 
 
 class RegistryUsage(Model):

@@ -94,6 +94,12 @@ class EncryptionStatus(str, Enum):
     disabled = "disabled"
 
 
+class PublicNetworkAccess(str, Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"
+
+
 class PasswordName(str, Enum):
 
     password = "password"

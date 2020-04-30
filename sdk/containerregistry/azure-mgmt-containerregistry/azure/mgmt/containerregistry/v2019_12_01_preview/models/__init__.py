@@ -50,6 +50,7 @@ try:
     from ._models_py3 import ImportImageParameters
     from ._models_py3 import ImportSource
     from ._models_py3 import ImportSourceCredentials
+    from ._models_py3 import InnerErrorDescription
     from ._models_py3 import IPRule
     from ._models_py3 import KeyVaultProperties
     from ._models_py3 import NetworkRuleSet
@@ -166,6 +167,7 @@ except (SyntaxError, ImportError):
     from ._models import ImportImageParameters
     from ._models import ImportSource
     from ._models import ImportSourceCredentials
+    from ._models import InnerErrorDescription
     from ._models import IPRule
     from ._models import KeyVaultProperties
     from ._models import NetworkRuleSet
@@ -267,6 +269,7 @@ from ._container_registry_management_client_enums import (
     PolicyStatus,
     TrustPolicyType,
     EncryptionStatus,
+    PublicNetworkAccess,
     PasswordName,
     RegistryUsageUnit,
     WebhookStatus,
@@ -332,6 +335,7 @@ __all__ = [
     'ImportImageParameters',
     'ImportSource',
     'ImportSourceCredentials',
+    'InnerErrorDescription',
     'IPRule',
     'KeyVaultProperties',
     'NetworkRuleSet',
@@ -432,6 +436,7 @@ __all__ = [
     'PolicyStatus',
     'TrustPolicyType',
     'EncryptionStatus',
+    'PublicNetworkAccess',
     'PasswordName',
     'RegistryUsageUnit',
     'WebhookStatus',
