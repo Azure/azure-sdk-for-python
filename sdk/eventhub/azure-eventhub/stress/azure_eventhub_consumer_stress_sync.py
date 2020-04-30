@@ -130,7 +130,7 @@ def on_event_batch_received(partition_context, event_batch):
                     recv_cnt_map[partition_context.partition_id] / total_time_elapsed,
                     recv_cnt_iteration_map[partition_context.partition_id] / (partition_current_time - partition_previous_time) if partition_previous_time else None
                     )
-        recv_cnt_iteration_map[partition_context.partition_id] -= LOG_PER_COUNT
+        recv_cnt_iteration_map[partition_context.partition_id] = 0
         partition_context.update_checkpoint()
 
 
