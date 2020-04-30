@@ -23,23 +23,24 @@ class AppConfigurationManagementClient(object):
     """AppConfigurationManagementClient.
 
     :ivar configuration_stores: ConfigurationStoresOperations operations
-    :vartype configuration_stores: app_configuration_management_client.aio.operations_async.ConfigurationStoresOperations
+    :vartype configuration_stores: azure.mgmt.appconfiguration.aio.operations_async.ConfigurationStoresOperations
     :ivar operations: Operations operations
-    :vartype operations: app_configuration_management_client.aio.operations_async.Operations
+    :vartype operations: azure.mgmt.appconfiguration.aio.operations_async.Operations
     :ivar private_endpoint_connections: PrivateEndpointConnectionsOperations operations
-    :vartype private_endpoint_connections: app_configuration_management_client.aio.operations_async.PrivateEndpointConnectionsOperations
+    :vartype private_endpoint_connections: azure.mgmt.appconfiguration.aio.operations_async.PrivateEndpointConnectionsOperations
     :ivar private_link_resources: PrivateLinkResourcesOperations operations
-    :vartype private_link_resources: app_configuration_management_client.aio.operations_async.PrivateLinkResourcesOperations
+    :vartype private_link_resources: azure.mgmt.appconfiguration.aio.operations_async.PrivateLinkResourcesOperations
     :param credential: Credential needed for the client to connect to Azure.
-    :type credential: azure.core.credentials.TokenCredential
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The Microsoft Azure subscription ID.
     :type subscription_id: str
     :param str base_url: Service URL
+    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
 
     def __init__(
         self,
-        credential: "TokenCredential",
+        credential: "AsyncTokenCredential",
         subscription_id: str,
         base_url: Optional[str] = None,
         **kwargs: Any

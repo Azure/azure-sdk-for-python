@@ -11,3 +11,9 @@ from ._version import VERSION
 
 __version__ = VERSION
 __all__ = ['AppConfigurationManagementClient']
+
+try:
+    from ._patch import patch_sdk
+    patch_sdk()
+except ImportError:
+    pass

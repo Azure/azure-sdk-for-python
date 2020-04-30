@@ -6,12 +6,18 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any
+from typing import TYPE_CHECKING
 
 from azure.core.configuration import Configuration
 from azure.core.pipeline import policies
 
 from ._version import VERSION
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from typing import Any
+
+    from azure.core.credentials import TokenCredential
 
 
 class AppConfigurationManagementClientConfiguration(Configuration):
@@ -21,7 +27,7 @@ class AppConfigurationManagementClientConfiguration(Configuration):
     attributes.
 
     :param credential: Credential needed for the client to connect to Azure.
-    :type credential: azure.core.credentials.TokenCredential
+    :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The Microsoft Azure subscription ID.
     :type subscription_id: str
     """
@@ -43,6 +49,7 @@ class AppConfigurationManagementClientConfiguration(Configuration):
         self.subscription_id = subscription_id
         self.api_version = "2019-11-01-preview"
         self.credential_scopes = ['https://management.azure.com/.default']
+        self.credential_scopes.extend(kwargs.pop('credential_scopes', []))
         kwargs.setdefault('sdk_moniker', 'mgmt-appconfiguration/{}'.format(VERSION))
         self._configure(**kwargs)
 

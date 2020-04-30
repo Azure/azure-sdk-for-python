@@ -6,10 +6,14 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, Optional
+from typing import TYPE_CHECKING
 
 from azure.mgmt.core import ARMPipelineClient
 from msrest import Deserializer, Serializer
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from typing import Any, Optional
 
 from ._configuration import AppConfigurationManagementClientConfiguration
 from .operations import ConfigurationStoresOperations
@@ -23,18 +27,19 @@ class AppConfigurationManagementClient(object):
     """AppConfigurationManagementClient.
 
     :ivar configuration_stores: ConfigurationStoresOperations operations
-    :vartype configuration_stores: app_configuration_management_client.operations.ConfigurationStoresOperations
+    :vartype configuration_stores: azure.mgmt.appconfiguration.operations.ConfigurationStoresOperations
     :ivar operations: Operations operations
-    :vartype operations: app_configuration_management_client.operations.Operations
+    :vartype operations: azure.mgmt.appconfiguration.operations.Operations
     :ivar private_endpoint_connections: PrivateEndpointConnectionsOperations operations
-    :vartype private_endpoint_connections: app_configuration_management_client.operations.PrivateEndpointConnectionsOperations
+    :vartype private_endpoint_connections: azure.mgmt.appconfiguration.operations.PrivateEndpointConnectionsOperations
     :ivar private_link_resources: PrivateLinkResourcesOperations operations
-    :vartype private_link_resources: app_configuration_management_client.operations.PrivateLinkResourcesOperations
+    :vartype private_link_resources: azure.mgmt.appconfiguration.operations.PrivateLinkResourcesOperations
     :param credential: Credential needed for the client to connect to Azure.
-    :type credential: azure.core.credentials.TokenCredential
+    :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The Microsoft Azure subscription ID.
     :type subscription_id: str
     :param str base_url: Service URL
+    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
 
     def __init__(

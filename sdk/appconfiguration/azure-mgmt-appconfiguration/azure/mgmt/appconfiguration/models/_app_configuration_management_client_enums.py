@@ -8,6 +8,22 @@
 
 from enum import Enum
 
+class ActionsRequired(str, Enum):
+    """Any action that is required beyond basic workflow (approve/ reject/ disconnect)
+    """
+
+    none = "None"
+    recreate = "Recreate"
+
+class ConnectionStatus(str, Enum):
+    """The private link service connection status.
+    """
+
+    pending = "Pending"
+    approved = "Approved"
+    rejected = "Rejected"
+    disconnected = "Disconnected"
+
 class IdentityType(str, Enum):
     """The type of managed identity used. The type 'SystemAssigned, UserAssigned' includes both an
     implicitly created identity and a set of user-assigned identities. The type 'None' will remove
@@ -29,19 +45,3 @@ class ProvisioningState(str, Enum):
     succeeded = "Succeeded"
     failed = "Failed"
     canceled = "Canceled"
-
-class ConnectionStatus(str, Enum):
-    """The private link service connection status.
-    """
-
-    pending = "Pending"
-    approved = "Approved"
-    rejected = "Rejected"
-    disconnected = "Disconnected"
-
-class ActionsRequired(str, Enum):
-    """Any action that is required beyond basic workflow (approve/ reject/ disconnect)
-    """
-
-    none = "None"
-    recreate = "Recreate"
