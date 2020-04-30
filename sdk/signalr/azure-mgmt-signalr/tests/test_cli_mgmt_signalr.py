@@ -41,29 +41,32 @@ class MgmtSignalRTest(AzureMgmtTestCase):
         RESOURCE_NAME = "myResource"
 
         # /SignalR/put/SignalR_CreateOrUpdate[put]
-        TAGS = {
-          "key1": "value1"
-        }
-        SKU = {
-          "name": "Standard_S1",
-          "tier": "Standard",
-          "capacity": "1"
-        }
-        PROPERTIES = {
-          "features": [
-            {
-              "flag": "ServiceMode",
-              "value": "Serverless"
+        BODY = {
+          'tags': {
+            "key1": "value1"
+          },
+          'sku': {
+            "name": "Standard_S1",
+            "tier": "Standard",
+            "capacity": "1"
+          },
+          'properties': {
+            "features": [
+              {
+                "flag": "ServiceMode",
+                "value": "Serverless"
+              }
+            ],
+            "cors": {
+              "allowed_origins": [
+                "https://foo.com",
+                "https://bar.com"
+              ]
             }
-          ],
-          "cors": {
-            "allowed_origins": [
-              "https://foo.com",
-              "https://bar.com"
-            ]
-          }
+          },
+          'location': 'eastus'
         }
-        result = self.mgmt_client.signal_r.create_or_update(resource_group_name=RESOURCE_GROUP, resource_name=RESOURCE_NAME, location="eastus", tags= TAGS, sku= SKU, properties= PROPERTIES)
+        result = self.mgmt_client.signal_r.create_or_update(resource_group_name=RESOURCE_GROUP, resource_name=RESOURCE_NAME, parameters=BODY)
         result = result.result()
 
         # /SignalR/get/SignalR_Get[get]
@@ -82,8 +85,8 @@ class MgmtSignalRTest(AzureMgmtTestCase):
         result = self.mgmt_client.operations.list()
 
         # /SignalR/post/SignalR_RegenerateKey[post]
-        result = self.mgmt_client.signal_r.regenerate_key(resource_group_name=RESOURCE_GROUP, resource_name=RESOURCE_NAME, key_type="Primary")
-        result = result.result()
+        # result = self.mgmt_client.signal_r.regenerate_key(resource_group_name=RESOURCE_GROUP, resource_name=RESOURCE_NAME, key_type="Primary")
+        # result = result.result()
 
         # /SignalR/post/SignalR_ListKeys[post]
         result = self.mgmt_client.signal_r.list_keys(resource_group_name=RESOURCE_GROUP, resource_name=RESOURCE_NAME)
@@ -121,7 +124,7 @@ class MgmtSignalRTest(AzureMgmtTestCase):
         result = result.result()
 
         # /SignalR/post/SignalR_CheckNameAvailability[post]
-        result = self.mgmt_client.signal_r.check_name_availability(location=LOCATION, type="Microsoft.SignalRService/SignalR", name="my-signalr-service")
+        result = self.mgmt_client.signal_r.check_name_availability(location="eastus", type="Microsoft.SignalRService/SignalR", name="my-signalr-service")
 
         # /SignalR/delete/SignalR_Delete[delete]
         result = self.mgmt_client.signal_r.delete(resource_group_name=RESOURCE_GROUP, resource_name=RESOURCE_NAME)
