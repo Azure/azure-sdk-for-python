@@ -13,6 +13,7 @@ from .environment import EnvironmentCredential
 from .managed_identity import ManagedIdentityCredential
 from .shared_cache import SharedTokenCacheCredential
 from .azure_cli import AzureCliCredential
+from .vscode_credential import VSCodeCredential
 
 
 try:
@@ -51,6 +52,8 @@ class DefaultAzureCredential(ChainedTokenCredential):
         variables from the credential. Defaults to **False**.
     :keyword bool exclude_managed_identity_credential: Whether to exclude managed identity from the credential.
         Defaults to **False**.
+    :keyword bool exclude_visual_studio_code_credential: Whether to exclude stored credential from VS Code.
+        Defaults to **False**.
     :keyword bool exclude_shared_token_cache_credential: Whether to exclude the shared token cache. Defaults to
         **False**.
     :keyword bool exclude_interactive_browser_credential: Whether to exclude interactive browser authentication (see
@@ -72,6 +75,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
         exclude_environment_credential = kwargs.pop("exclude_environment_credential", False)
         exclude_managed_identity_credential = kwargs.pop("exclude_managed_identity_credential", False)
         exclude_shared_token_cache_credential = kwargs.pop("exclude_shared_token_cache_credential", False)
+        exclude_visual_studio_code_credential = kwargs.pop("exclude_visual_studio_code_credential", False)
         exclude_cli_credential = kwargs.pop("exclude_cli_credential", False)
         exclude_interactive_browser_credential = kwargs.pop("exclude_interactive_browser_credential", True)
 
@@ -90,6 +94,8 @@ class DefaultAzureCredential(ChainedTokenCredential):
             except Exception as ex:  # pylint:disable=broad-except
                 # transitive dependency pywin32 doesn't support 3.8 (https://github.com/mhammond/pywin32/issues/1431)
                 _LOGGER.info("Shared token cache is unavailable: '%s'", ex)
+        if not exclude_visual_studio_code_credential:
+            credentials.append(VSCodeCredential())
         if not exclude_cli_credential:
             credentials.append(AzureCliCredential())
         if not exclude_interactive_browser_credential:
