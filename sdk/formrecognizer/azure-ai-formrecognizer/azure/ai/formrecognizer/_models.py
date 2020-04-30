@@ -634,7 +634,7 @@ class FormTableCell(FormContent):
         return "FormTableCell(text={}, row_index={}, column_index={}, row_span={}, column_span={}, " \
                 "bounding_box={}, confidence={}, is_header={}, is_footer={}, page_number={}, text_content={})".format(
                     self.text, self.row_index, self.column_index, self.row_span, self.column_span, self.bounding_box,
-                    self.confidence, self.is_header, self.is_footer, self.page_number, self.text_content
+                    self.confidence, self.is_header, self.is_footer, self.page_number, repr(self.text_content)
                 )
 
 
