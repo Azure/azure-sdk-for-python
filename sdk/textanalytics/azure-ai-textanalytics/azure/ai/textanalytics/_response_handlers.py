@@ -10,6 +10,7 @@ from azure.core.exceptions import (
     ClientAuthenticationError,
     ODataV4Format
 )
+from azure.core.pipeline.transport import HttpResponse
 from ._models import (
     RecognizeEntitiesResult,
     CategorizedEntity,
@@ -59,8 +60,25 @@ def order_results(response, combined):
 
 
 def prepare_result(func):
+    def _deal_with_too_many_documents(response, obj):
+        # special case for now if there are too many documents in the request
+        # they may change id to empty string, but currently it is "All"
+        too_many_documents_errors = [
+            error for error in obj.errors
+            if error.id == "All" and error.error.innererror.code == "InvalidDocumentBatch"
+        ]
+        if too_many_documents_errors:
+            too_many_documents_error = too_many_documents_errors[0]
+            response.status_code = 400
+            response.reason = "Bad Request"
+            raise HttpResponseError(
+                message="({}) {}".format(too_many_documents_error.error.innererror.code, too_many_documents_error.error.innererror.message),
+                response=response
+            )
+
     def wrapper(response, obj, response_headers):  # pylint: disable=unused-argument
         if obj.errors:
+            _deal_with_too_many_documents(response.http_response, obj)
             combined = obj.documents + obj.errors
             results = order_results(response, combined)
         else:
