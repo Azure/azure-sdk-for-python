@@ -212,9 +212,8 @@ async def run(args):
                 asyncio.ensure_future(
                     clients[i].receive_batch(
                         on_event_batch_received,
-                        prefetch=args.link_credit,
-                        max_batch_size=args.max_batch_size
-                    ) if args.max_batch_size else clients[0].receive_batch(
+                        **kwargs_dict
+                    ) if args.max_batch_size else clients[i].receive(
                         on_event_received,
                         **kwargs_dict
                     )
@@ -227,7 +226,7 @@ async def run(args):
                     on_event_batch_received,
                     prefetch=args.link_credit,
                     max_batch_size=args.max_batch_size
-                ) if args.max_batch_size else clients[0].receive_batch(
+                ) if args.max_batch_size else clients[0].receive(
                     on_event_received,
                     **kwargs_dict
                 )

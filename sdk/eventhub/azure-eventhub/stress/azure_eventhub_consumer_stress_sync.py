@@ -48,7 +48,7 @@ parser.add_argument("--recv_partition_id", help="Receive from a specific partiti
 parser.add_argument("--max_batch_size", type=int, default=0,
                     help="Call EventHubConsumerClient.receive_batch() if not 0, otherwise call receive()")
 parser.add_argument("--max_wait_time", type=float, default=0,
-                    help="max_wait_time of EventHubConsumerClient.receive_batch()")
+                    help="max_wait_time of EventHubConsumerClient.receive_batch() or EventHubConsumerClient.receive()")
 
 parser.add_argument("--track_last_enqueued_event_properties", action="store_true")
 parser.add_argument("--load_balancing_interval", help="time duration in seconds between two load balance", type=float, default=10)
